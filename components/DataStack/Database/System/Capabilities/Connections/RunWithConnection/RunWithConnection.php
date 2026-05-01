@@ -17,21 +17,21 @@ final readonly class RunWithConnection
     public function __construct(private ReadConnection $readConnection) {}
 
     /**
-     * @param callable(DatabaseConnection) : mixed $callback
+     * @param  callable(DatabaseConnection) : mixed  $callback
      *
      * @throws Throwable
      */
-    public function run(callable $callback, string|null $connectionName = null) : mixed
+    public function run(callable $callback, ?string $connectionName = null): mixed
     {
         return $callback($this->readConnection->connection(name: $connectionName));
     }
 
     /**
-     * @param callable(DatabaseConnection) : mixed $callback
+     * @param  callable(DatabaseConnection) : mixed  $callback
      *
      * @throws Throwable
      */
-    public function pool(callable $callback, string|null $connectionName = null) : mixed
+    public function pool(callable $callback, ?string $connectionName = null): mixed
     {
         $connection = $this->readConnection->connection(name: $connectionName);
 

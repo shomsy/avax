@@ -14,9 +14,9 @@ final readonly class CacheNode implements Stringable
     public CacheNodeStatus $status;
 
     public function __construct(
-        public CacheNodeId     $cacheNodeId,
+        public CacheNodeId $cacheNodeId,
         public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
-        public float           $weight = 1.0,
+        public float       $weight = 1.0,
     )
     {
         $this->id     = $cacheNodeId;

@@ -10,7 +10,7 @@ final readonly class CacheLock
 
     public function __construct(
         private CacheLockStore $cacheLockStore,
-        string                 $owner = '',
+        string $owner = '',
     )
     {
         $this->owner = $owner === '' ? uniqid(more_entropy: true) : $owner;

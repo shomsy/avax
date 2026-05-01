@@ -16,8 +16,8 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
         private RateLimiterInterface $limiter,
         private object $responseFactory,
         private string $keySource = 'ip',
-        private int    $maxAttempts = 60,
-        private int    $decaySeconds = 60,
+        private int $maxAttempts = 60,
+        private int $decaySeconds = 60,
     ) {}
 
     public function handle(RequestInterface $request, callable $next) : ResponseInterface

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use components\Container\Features\Think\Model\MethodPrototype;
 use components\Container\Features\Think\Model\ParameterPrototype;
 use components\Container\Features\Think\Model\ServicePrototype;
@@ -7,12 +9,10 @@ use components\HTTP\Router\Routing\StageChain;
 use components\HTTP\Router\System\Flows\RunRoute\Pipeline\StageChain;
 
 return ServicePrototype::__set_state(array: [
-                                                'class' => StageChain::class,
-                                                'constructor'        =>
-                                                    MethodPrototype::__set_state(array: [
+                                                'class'              => StageChain::class,
+                                                'constructor'        => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
-                                                                                            'parameters' =>
-                                                                                                [
+                                                                                            'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'container',
                                                                                                                                                'type'       => 'Avax\\Container\\Features\\Core\\Contracts\\ContainerInterface',
@@ -33,11 +33,9 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                 ],
                                                                                         ]),
-                                                'injectedProperties' =>
-                                                    [
+                                                'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    =>
-                                                    [
+                                                'injectedMethods'    => [
                                                     ],
                                                 'isInstantiable'     => true,
                                             ]);

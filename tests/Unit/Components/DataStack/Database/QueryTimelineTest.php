@@ -25,13 +25,13 @@ final class QueryTimelineTest extends TestCase
     // ==================== Recording queries with timestamps, duration, SQL, bindings ====================
 
     private function createSpan(
-        string  $query = 'SELECT * FROM users',
-        float   $startTime = 0.0,
-        float   $endTime = 0.0,
-        ?string $connection = null,
-        ?int    $rows = null,
-        ?string $error = null,
-        array   $bindings = [],
+        string $query = 'SELECT * FROM users',
+        float  $startTime = 0.0,
+        float  $endTime = 0.0,
+        string $connection = null,
+        int    $rows = null,
+        string $error = null,
+        array  $bindings = [],
     ) : QuerySpan
     {
         return new QuerySpan(
@@ -196,7 +196,7 @@ final class QueryTimelineTest extends TestCase
             endTime   : 1.0,
             connection: 'mysql',
             rows      : 10,
-            bindings  : ['test']
+            bindings  : ['test'],
         );
 
         $arr = $span->toArray();
@@ -225,7 +225,7 @@ final class QueryTimelineTest extends TestCase
 
         $selects = array_values(array_filter(
                                     $timeline->all(),
-                                    static fn (QuerySpan $s) => str_starts_with(strtoupper($s->query), 'SELECT')
+                                    static fn (QuerySpan $s) => str_starts_with(strtoupper($s->query), 'SELECT'),
                                 ));
 
         $this->assertCount(2, $selects);
@@ -240,7 +240,7 @@ final class QueryTimelineTest extends TestCase
 
         $inserts = array_values(array_filter(
                                     $timeline->all(),
-                                    static fn (QuerySpan $s) => str_starts_with(strtoupper($s->query), 'INSERT')
+                                    static fn (QuerySpan $s) => str_starts_with(strtoupper($s->query), 'INSERT'),
                                 ));
 
         $this->assertCount(2, $inserts);
@@ -255,7 +255,7 @@ final class QueryTimelineTest extends TestCase
 
         $updates = array_values(array_filter(
                                     $timeline->all(),
-                                    static fn (QuerySpan $s) => str_starts_with(strtoupper($s->query), 'UPDATE')
+                                    static fn (QuerySpan $s) => str_starts_with(strtoupper($s->query), 'UPDATE'),
                                 ));
 
         $this->assertCount(1, $updates);
@@ -270,7 +270,7 @@ final class QueryTimelineTest extends TestCase
 
         $deletes = array_values(array_filter(
                                     $timeline->all(),
-                                    static fn (QuerySpan $s) => str_starts_with(strtoupper($s->query), 'DELETE')
+                                    static fn (QuerySpan $s) => str_starts_with(strtoupper($s->query), 'DELETE'),
                                 ));
 
         $this->assertCount(2, $deletes);
@@ -287,7 +287,7 @@ final class QueryTimelineTest extends TestCase
 
         $mysqlSpans = array_values(array_filter(
                                        $timeline->all(),
-                                       static fn (QuerySpan $s) => $s->connection === 'mysql'
+                                       static fn (QuerySpan $s) => $s->connection === 'mysql',
                                    ));
 
         $this->assertCount(2, $mysqlSpans);
@@ -302,7 +302,7 @@ final class QueryTimelineTest extends TestCase
 
         $nullConn = array_values(array_filter(
                                      $timeline->all(),
-                                     static fn (QuerySpan $s) => $s->connection === null
+                                     static fn (QuerySpan $s) => $s->connection === null,
                                  ));
 
         $this->assertCount(1, $nullConn);
@@ -320,7 +320,7 @@ final class QueryTimelineTest extends TestCase
 
         $errorSpans = array_values(array_filter(
                                        $timeline->all(),
-                                       static fn (QuerySpan $s) => $s->error !== null
+                                       static fn (QuerySpan $s) => $s->error !== null,
                                    ));
 
         $this->assertCount(2, $errorSpans);
@@ -335,7 +335,7 @@ final class QueryTimelineTest extends TestCase
 
         $okSpans = array_values(array_filter(
                                     $timeline->all(),
-                                    static fn (QuerySpan $s) => $s->error === null
+                                    static fn (QuerySpan $s) => $s->error === null,
                                 ));
 
         $this->assertCount(2, $okSpans);

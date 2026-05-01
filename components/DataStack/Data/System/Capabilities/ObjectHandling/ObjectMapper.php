@@ -10,7 +10,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\ObjectHandling;
  */
 final class ObjectMapper
 {
-    public static function map(array $data, object $object) : object
+    public static function map(array $data, object $object): object
     {
         foreach ($data as $key => $value) {
             if (property_exists($object, $key)) {
@@ -21,7 +21,7 @@ final class ObjectMapper
         return $object;
     }
 
-    public static function toArray(object $object) : array
+    public static function toArray(object $object): array
     {
         return (array) $object;
     }

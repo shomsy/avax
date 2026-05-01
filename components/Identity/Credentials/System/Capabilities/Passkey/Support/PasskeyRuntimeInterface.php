@@ -7,48 +7,46 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Suppo
 interface PasskeyRuntimeInterface
 {
     /**
-     * @param list<string> $excludeCredentialIds
-     *
+     * @param  list<string>  $excludeCredentialIds
      * @return array<string, mixed>
      */
     public function beginRegistration(
         string $rpId,
         string $rpName,
-        int   $userId,
+        int $userId,
         string $userName,
         string $displayName,
         string $challenge,
         array $excludeCredentialIds,
-    ) : array;
+    ): array;
 
     /**
-     * @param array<string, mixed> $response
+     * @param  array<string, mixed>  $response
      */
     public function completeRegistration(
         string $rpId,
         string $challenge,
         array $response,
-    ) : ResolvedPasskeyCredential;
+    ): ResolvedPasskeyCredential;
 
     /**
-     * @param list<string> $allowCredentialIds
-     *
+     * @param  list<string>  $allowCredentialIds
      * @return array<string, mixed>
      */
     public function beginAuthentication(
         string $rpId,
         string $challenge,
         array $allowCredentialIds,
-    ) : array;
+    ): array;
 
     /**
-     * @param array<string, mixed> $response
-     * @param list<PasskeyCredential> $knownCredentials
+     * @param  array<string, mixed>  $response
+     * @param  list<PasskeyCredential>  $knownCredentials
      */
     public function completeAuthentication(
         string $rpId,
         string $challenge,
         array $response,
         array $knownCredentials,
-    ) : VerifiedPasskeyAuthentication;
+    ): VerifiedPasskeyAuthentication;
 }

@@ -11,7 +11,7 @@ final readonly class ReadTenantSecurityConfiguration
 {
     public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore) {}
 
-    public function execute(string $tenantSlug) : TenantSecurityConfiguration|null
+    public function execute(string $tenantSlug): ?TenantSecurityConfiguration
     {
         return $this->configurationStore->find(tenantSlug: $tenantSlug);
     }

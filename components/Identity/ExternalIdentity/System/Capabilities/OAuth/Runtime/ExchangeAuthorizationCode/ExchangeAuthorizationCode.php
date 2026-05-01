@@ -24,28 +24,28 @@ use SensitiveParameter;
 final readonly class ExchangeAuthorizationCode
 {
     public function __construct(
-        private OAuthClientRegistryInterface    $clientRegistry,
+        private OAuthClientRegistryInterface $clientRegistry,
         #[SensitiveParameter]
         private AuthorizationCodeStoreInterface $codeStore,
-        private UserSourceInterface             $userSource,
+        private UserSourceInterface $userSource,
         #[SensitiveParameter]
-        private JwtIdentityInterface            $jwtIdentity,
+        private JwtIdentityInterface $jwtIdentity,
         #[SensitiveParameter]
-        private RefreshTokenStoreInterface      $refreshTokenStore,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
+        private RefreshTokenStoreInterface $refreshTokenStore,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
         #[SensitiveParameter]
-        private CurrentAuthentication|null      $currentAuthentication = null,
-        private OidcProviderInterface|null      $oidcProvider = null,
+        private ?CurrentAuthentication $currentAuthentication = null,
+        private ?OidcProviderInterface $oidcProvider = null,
     ) {}
 
     /**
      * @throws OAuthTokenExchangeFailed
      * @throws DateMalformedStringException
      */
-    public function execute(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant
+    public function execute(ExchangeAuthorizationCodeData $data): OAuthTokenGrant
     {
-        $now    = $this->clock->now();
+        $now = $this->clock->now();
         $client = $this->clientRegistry->find(clientId: $data->clientId);
 
         if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
@@ -135,7 +135,7 @@ final readonly class ExchangeAuthorizationCode
             scopes           : $record->scopes,
             senderConstraint : $data->senderConstraint,
         );
-        $accessToken  = $this->jwtIdentity->issue(
+        $accessToken = $this->jwtIdentity->issue(
             user                : $user,
             mfaVerifiedAt       : $record->mfaVerifiedAt,
             phishingResistant   : $record->phishingResistant,
@@ -144,7 +144,7 @@ final readonly class ExchangeAuthorizationCode
             senderConstraint    : $data->senderConstraint,
             refreshTokenFamilyId: $refreshToken->familyId,
         );
-        $idToken      = null;
+        $idToken = null;
 
         if (in_array(needle: 'openid', haystack: $record->scopes, strict: true)) {
             if ($this->oidcProvider === null) {
@@ -165,17 +165,17 @@ final readonly class ExchangeAuthorizationCode
         }
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.oauth.authorization_code.exchanged',
-                                           occurredAt: $now,
-                                           context   : [
-                                                           'client_id'  => $client->clientId,
-                                                           'user_id'    => $user->getId()->value,
-                                                           'code_id'    => $record->codeId,
-                                                           'scope'      => implode(separator: ' ', array: $record->scopes),
-                                                           'ip_address' => $data->ipAddress,
-                                                           'user_agent' => $data->userAgent,
-                                                       ],
-                                       ));
+            name      : 'auth.oauth.authorization_code.exchanged',
+            occurredAt: $now,
+            context   : [
+                'client_id' => $client->clientId,
+                'user_id' => $user->getId()->value,
+                'code_id' => $record->codeId,
+                'scope' => implode(separator: ' ', array: $record->scopes),
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
+        ));
 
         return new OAuthTokenGrant(
             accessToken         : $accessToken->token,
@@ -193,23 +193,22 @@ final readonly class ExchangeAuthorizationCode
     private function recordFailure(
         ExchangeAuthorizationCodeData $data,
         string $reason,
-        bool   $suspicious = false,
-    ) : void
-    {
+        bool $suspicious = false,
+    ): void {
         $name = $suspicious
             ? 'auth.oauth.authorization_code.reuse_detected'
             : 'auth.oauth.authorization_code.exchange.failed';
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : $name,
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'client_id'    => $data->clientId,
-                                                           'redirect_uri' => $data->redirectUri,
-                                                           'reason'       => $reason,
-                                                           'ip_address'   => $data->ipAddress,
-                                                           'user_agent'   => $data->userAgent,
-                                                       ],
-                                       ));
+            name      : $name,
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $data->clientId,
+                'redirect_uri' => $data->redirectUri,
+                'reason' => $reason,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
+        ));
     }
 }

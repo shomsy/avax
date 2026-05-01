@@ -15,47 +15,48 @@ use SensitiveParameter;
 final readonly class AuthenticatedUser
 {
     public bool $emailVerified;
+
     /** @var list<string> */
     public array $permissions;
+
     /** @var list<string> */
     public array $roles;
 
     /**
-     * @param list<string> $roles
-     * @param list<string> $permissions
+     * @param  list<string>  $roles
+     * @param  list<string>  $permissions
      */
     public function __construct(
         public int $id,
         #[SensitiveParameter]
         public string $email,
         public string $username,
-        array|null $roles = null,
-        array|null $permissions = null,
-        bool|null  $emailVerified = null,
+        ?array $roles = null,
+        ?array $permissions = null,
+        ?bool $emailVerified = null,
         public bool $mfaEnabled = false,
     ) {
-        $roles         ??= [];
-        $permissions   ??= [];
+        $roles ??= [];
+        $permissions ??= [];
         $emailVerified ??= false;
-        $this->roles         = $roles;
-        $this->permissions   = $permissions;
+        $this->roles = $roles;
+        $this->permissions = $permissions;
         $this->emailVerified = $emailVerified;
     }
 
     public static function fromUser(
         User $user,
-        bool|null $emailVerified = null,
+        ?bool $emailVerified = null,
         bool $mfaEnabled = false,
-    ) : self
-    {
+    ): self {
         $emailVerified ??= false;
         $roles = array_map(
-            callback: static fn (UserRole $role) : string => $role->value,
+            callback: static fn (UserRole $role): string => $role->value,
             array   : $user->getRoles(),
         );
 
         $permissions = array_map(
-            callback: static fn (UserPermission $permission) : string => $permission->value,
+            callback: static fn (UserPermission $permission): string => $permission->value,
             array   : $user->getPermissions(),
         );
 
@@ -70,17 +71,17 @@ final readonly class AuthenticatedUser
         );
     }
 
-    public function hasRole(UserRole $role) : bool
+    public function hasRole(UserRole $role): bool
     {
         return in_array(needle: $role->value, haystack: $this->roles, strict: true);
     }
 
-    public function canAccessRole(UserRole $requiredRole) : bool
+    public function canAccessRole(UserRole $requiredRole): bool
     {
         return array_any(array: $this->roles, callback: static fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $requiredRole));
     }
 
-    public function hasPermission(UserPermission $permission) : bool
+    public function hasPermission(UserPermission $permission): bool
     {
         return in_array(needle: $permission->value, haystack: $this->permissions, strict: true);
     }

@@ -19,8 +19,7 @@ class SQLServerPool extends BaseConnectionPool
         int $maxConnections = 20,
         int $connectionTimeoutMs = 10000,
         int $idleTimeoutMs = 300000,
-    )
-    {
+    ) {
         parent::__construct(
             minConnections     : $minConnections,
             maxConnections     : $maxConnections,
@@ -30,14 +29,14 @@ class SQLServerPool extends BaseConnectionPool
     }
 
     #[Override]
-    protected function createConnection() : PooledConnection
+    protected function createConnection(): PooledConnection
     {
         // @todo Replace with real SQL Server connection (PDO with sqlsrv driver or ext-sqlsrv)
         return new ArrayPooledConnection(config: $this->config);
     }
 
     #[Override]
-    protected function validateConnection(PooledConnection $pooledConnection) : bool
+    protected function validateConnection(PooledConnection $pooledConnection): bool
     {
         return $pooledConnection->isValid();
     }

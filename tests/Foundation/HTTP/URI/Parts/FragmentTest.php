@@ -54,7 +54,7 @@ final class FragmentTest extends TestCase
         self::assertStringContainsString(needle: '%20', haystack: (string) $fragment);
         // Check that literal space is not in output
         $str = (string) $fragment;
-        self::assertFalse(condition: strpos($str, ' ') !== false);
+        self::assertFalse(condition: str_contains($str, ' '));
     }
 
     public function test_it_encodes_special_characters() : void

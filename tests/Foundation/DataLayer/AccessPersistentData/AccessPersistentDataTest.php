@@ -31,7 +31,7 @@ final class AccessPersistentDataTest extends TestCase
 
         $dataLayer->access()->raw(request: new PersistentDataRequest(
                                                statement : 'select * from users where id = ?',
-                                               parameters: ['id' => 10]
+                                               parameters: ['id' => 10],
                                            ));
     }
 
@@ -42,7 +42,7 @@ final class AccessPersistentDataTest extends TestCase
 
         $result = $dataLayer->access()->read(request: new PersistentDataRequest(
                                                           statement : 'select * from users where id = :id',
-                                                          parameters: ['id' => 10]
+                                                          parameters: ['id' => 10],
                                                       ));
 
         $this->assertSame([['id' => 10]], $result->rows);
@@ -56,7 +56,7 @@ final class AccessPersistentDataTest extends TestCase
 
         $result = $dataLayer->access()->transaction(
             callback      : static fn (string $connectionName) : string => 'ran-on-' . $connectionName,
-            connectionName: 'primary'
+            connectionName: 'primary',
         );
 
         $this->assertSame('ran-on-primary', $result);
@@ -77,7 +77,7 @@ final class FakeDataRuntime
         return new PersistentDataResult(rows: [['id' => $request->parameters['id'] ?? null]]);
     }
 
-    public function runDataTransaction(callable $callback, string|null $connectionName = null) : mixed
+    public function runDataTransaction(callable $callback, string $connectionName = null) : mixed
     {
         $this->lastTransactionConnection = $connectionName;
 

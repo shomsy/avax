@@ -143,11 +143,7 @@ final class ResetVerifier
         foreach ($reflection->getProperties() as $property) {
             $name = strtolower($property->getName());
 
-            if (str_contains($name, 'request') ||
-                str_contains($name, 'session') ||
-                str_contains($name, 'input') ||
-                str_contains($name, 'response') ||
-                str_contains($name, 'context')
+            if (str_contains($name, 'request') || str_contains($name, 'session') || str_contains($name, 'input') || str_contains($name, 'response') || str_contains($name, 'context')
             ) {
                 return true;
             }

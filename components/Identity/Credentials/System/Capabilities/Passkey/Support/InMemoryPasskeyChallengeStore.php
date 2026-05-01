@@ -11,17 +11,17 @@ final class InMemoryPasskeyChallengeStore implements PasskeyChallengeStoreInterf
     /** @var array<string, PasskeyChallengeRecord> */
     private array $records = [];
 
-    public function issue(PasskeyChallengeRecord $record) : void
+    public function issue(PasskeyChallengeRecord $record): void
     {
         $this->records[$record->challengeId] = $record;
     }
 
-    public function find(string $challengeId) : PasskeyChallengeRecord|null
+    public function find(string $challengeId): ?PasskeyChallengeRecord
     {
         return $this->records[$challengeId] ?? null;
     }
 
-    public function markUsed(string $challengeId, DateTimeImmutable $usedAt) : void
+    public function markUsed(string $challengeId, DateTimeImmutable $usedAt): void
     {
         $record = $this->records[$challengeId] ?? null;
 
@@ -39,12 +39,12 @@ final class InMemoryPasskeyChallengeStore implements PasskeyChallengeStoreInterf
         );
     }
 
-    public function forget(string $challengeId) : void
+    public function forget(string $challengeId): void
     {
         unset($this->records[$challengeId]);
     }
 
-    public function pruneExpired(DateTimeImmutable $now) : int
+    public function pruneExpired(DateTimeImmutable $now): int
     {
         $removed = 0;
 

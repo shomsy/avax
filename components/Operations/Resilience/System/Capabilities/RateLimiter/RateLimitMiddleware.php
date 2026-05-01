@@ -13,8 +13,8 @@ final readonly class RateLimitMiddleware
 {
     public function __construct(
         private RedisRateLimiter $limiter = new RedisRateLimiter(),
-        private ResponseFactory  $responses = new ResponseFactory(),
-        private array            $config = [],
+        private ResponseFactory $responses = new ResponseFactory(),
+        private array           $config = [],
     ) {}
 
     public function process(ServerRequestInterface $request, object $handler) : ResponseInterface

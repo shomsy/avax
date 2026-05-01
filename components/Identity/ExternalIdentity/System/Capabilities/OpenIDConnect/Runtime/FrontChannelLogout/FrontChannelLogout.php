@@ -21,26 +21,26 @@ final readonly class FrontChannelLogout
 {
     public function __construct(
         #[SensitiveParameter]
-        private CurrentAuthentication             $currentAuthentication,
-        private IdentityInterface                 $identity,
-        private AuditLogInterface                 $auditLog,
-        private Clock                             $clock,
+        private CurrentAuthentication $currentAuthentication,
+        private IdentityInterface $identity,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
         #[SensitiveParameter]
-        private SessionRegistryInterface|null     $sessionRegistry = null,
+        private ?SessionRegistryInterface $sessionRegistry = null,
         #[SensitiveParameter]
-        private RefreshTokenStoreInterface|null   $refreshTokenStore = null,
-        private OidcProviderInterface|null        $oidcProvider = null,
-        private OAuthClientRegistryInterface|null $clientRegistry = null,
+        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
+        private ?OidcProviderInterface $oidcProvider = null,
+        private ?OAuthClientRegistryInterface $clientRegistry = null,
     ) {}
 
-    public function execute(FrontChannelLogoutData $data) : LogoutResult
+    public function execute(FrontChannelLogoutData $data): LogoutResult
     {
-        $context   = $this->currentAuthentication->read();
-        $now       = $this->clock->now();
+        $context = $this->currentAuthentication->read();
+        $now = $this->clock->now();
         $sessionId = $data->sessionId ?? $context->sessionId();
 
         if ($sessionId === null && $data->idTokenHint !== null && $this->oidcProvider !== null) {
-            $claims    = $this->oidcProvider->resolveIdToken(idToken: $data->idTokenHint);
+            $claims = $this->oidcProvider->resolveIdToken(idToken: $data->idTokenHint);
             $sessionId = is_string(value: $claims['sid'] ?? null) ? trim(string: $claims['sid']) : null;
         }
 
@@ -58,17 +58,17 @@ final readonly class FrontChannelLogout
 
         if ($user !== null) {
             $this->auditLog->record(event: new AuditEvent(
-                                               name      : 'auth.oidc.front_channel_logout.succeeded',
-                                               occurredAt: $now,
-                                               context   : [
-                                                               'user_id'                        => $user->id,
-                                                               'session_id'                     => $sessionId,
-                                                               'state'                          => $data->state,
-                                                               'client_id'                      => $client?->clientId,
-                                                               'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
-                                                               'back_channel_logout_supported'  => $client?->backChannelLogoutSupported,
-                                                           ],
-                                           ));
+                name      : 'auth.oidc.front_channel_logout.succeeded',
+                occurredAt: $now,
+                context   : [
+                    'user_id' => $user->id,
+                    'session_id' => $sessionId,
+                    'state' => $data->state,
+                    'client_id' => $client?->clientId,
+                    'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
+                    'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
+                ],
+            ));
         }
 
         if ($user !== null) {
@@ -85,7 +85,7 @@ final readonly class FrontChannelLogout
         );
     }
 
-    private function resolveClientFromIdTokenHint(#[SensitiveParameter] string|null $idTokenHint) : OAuthClient|null
+    private function resolveClientFromIdTokenHint(#[SensitiveParameter] ?string $idTokenHint): ?OAuthClient
     {
         if ($idTokenHint === null || trim(string: $idTokenHint) === '' || $this->oidcProvider === null || $this->clientRegistry === null) {
             return null;

@@ -12,93 +12,105 @@ use Traversable;
 
 enum SagaStatus: string
 {
-    case DRAFT      = 'draft';
-    case DEFINED    = 'defined';
-    case VALID      = 'valid';
-    case INVALID    = 'invalid';
+    case DRAFT = 'draft';
+    case DEFINED = 'defined';
+    case VALID = 'valid';
+    case INVALID = 'invalid';
     case REGISTERED = 'registered';
 }
 
 enum SagaStartCondition: string
 {
-    case MANUAL   = 'manual';
-    case EVENT    = 'event';
+    case MANUAL = 'manual';
+    case EVENT = 'event';
     case SCHEDULE = 'schedule';
-    case COMMAND  = 'command';
+    case COMMAND = 'command';
 }
 
 final readonly class SagaDefinition implements IteratorAggregate
 {
-    public string              $name;
-    public string              $type;
-    public array               $steps;
-    public array               $stepOrder;
-    public TenantBoundary|null $tenantBoundary;
-    public SagaStartCondition  $startCondition;
-    public string|null         $startTrigger;
-    public int                 $timeoutSeconds;
-    public int                 $maxDurationSeconds;
-    public bool                $allowConcurrent;
-    public bool                $allowRemoteCompensation;
-    public string|null         $description;
-    public SagaStatus          $status;
-    public DateTimeImmutable|null $createdAt;
-    public DateTimeImmutable|null $updatedAt;
+    public string $name;
+
+    public string $type;
+
+    public array $steps;
+
+    public array $stepOrder;
+
+    public ?TenantBoundary $tenantBoundary;
+
+    public SagaStartCondition $startCondition;
+
+    public ?string $startTrigger;
+
+    public int $timeoutSeconds;
+
+    public int $maxDurationSeconds;
+
+    public bool $allowConcurrent;
+
+    public bool $allowRemoteCompensation;
+
+    public ?string $description;
+
+    public SagaStatus $status;
+
+    public ?DateTimeImmutable $createdAt;
+
+    public ?DateTimeImmutable $updatedAt;
 
     private function __construct(
-        string             $name,
-        string             $type,
-        array              $steps = null,
-        array              $stepOrder = null,
-        TenantBoundary     $tenantBoundary = null,
-        SagaStartCondition|null $startCondition = null,
-        string             $startTrigger = null,
-        int                $timeoutSeconds = null,
-        int                $maxDurationSeconds = null,
-        bool               $allowConcurrent = null,
-        bool               $allowRemoteCompensation = null,
-        string             $description = null,
-        SagaStatus         $status = null,
-        DateTimeImmutable  $createdAt = null,
-        DateTimeImmutable  $updatedAt = null,
-    )
-    {
-        $steps                   ??= [];
-        $stepOrder               ??= [];
-        $startCondition          ??= SagaStartCondition::MANUAL;
-        $timeoutSeconds          ??= 3600;
-        $maxDurationSeconds      ??= 86400;
-        $allowConcurrent         ??= false;
+        string $name,
+        string $type,
+        ?array $steps = null,
+        ?array $stepOrder = null,
+        ?TenantBoundary $tenantBoundary = null,
+        ?SagaStartCondition $startCondition = null,
+        ?string $startTrigger = null,
+        ?int $timeoutSeconds = null,
+        ?int $maxDurationSeconds = null,
+        ?bool $allowConcurrent = null,
+        ?bool $allowRemoteCompensation = null,
+        ?string $description = null,
+        ?SagaStatus $status = null,
+        ?DateTimeImmutable $createdAt = null,
+        ?DateTimeImmutable $updatedAt = null,
+    ) {
+        $steps ??= [];
+        $stepOrder ??= [];
+        $startCondition ??= SagaStartCondition::MANUAL;
+        $timeoutSeconds ??= 3600;
+        $maxDurationSeconds ??= 86400;
+        $allowConcurrent ??= false;
         $allowRemoteCompensation ??= false;
-        $status                  ??= SagaStatus::DRAFT;
-        $this->name                    = $name;
-        $this->type                    = $type;
-        $this->steps                   = $steps;
-        $this->stepOrder               = $stepOrder;
-        $this->tenantBoundary          = $tenantBoundary;
-        $this->startCondition          = $startCondition;
-        $this->startTrigger            = $startTrigger;
-        $this->timeoutSeconds          = $timeoutSeconds;
-        $this->maxDurationSeconds      = $maxDurationSeconds;
-        $this->allowConcurrent         = $allowConcurrent;
+        $status ??= SagaStatus::DRAFT;
+        $this->name = $name;
+        $this->type = $type;
+        $this->steps = $steps;
+        $this->stepOrder = $stepOrder;
+        $this->tenantBoundary = $tenantBoundary;
+        $this->startCondition = $startCondition;
+        $this->startTrigger = $startTrigger;
+        $this->timeoutSeconds = $timeoutSeconds;
+        $this->maxDurationSeconds = $maxDurationSeconds;
+        $this->allowConcurrent = $allowConcurrent;
         $this->allowRemoteCompensation = $allowRemoteCompensation;
-        $this->description             = $description;
-        $this->status                  = $status;
-        $this->createdAt               = $createdAt;
-        $this->updatedAt               = $updatedAt;
+        $this->description = $description;
+        $this->status = $status;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
     }
 
-    public static function linear(string $name, array $options = []) : self
+    public static function linear(string $name, array $options = []): self
     {
         return self::create(name: $name, type: 'linear', options: $options);
     }
 
     public static function create(
         string $name,
-        string|null $type = null,
-        array  $options = [],
-    ) : self
-    {
+        ?string $type = null,
+        array $options = [],
+    ): self {
         $type ??= 'long_running_process';
         if (empty(trim($name))) {
             throw new InvalidArgumentException(message: 'Saga name cannot be empty.');
@@ -124,17 +136,17 @@ final readonly class SagaDefinition implements IteratorAggregate
             allowRemoteCompensation: $options['remote_compensation'] ?? false,
             description            : $options['description'] ?? null,
             status                 : SagaStatus::DRAFT,
-            createdAt              : new DateTimeImmutable(),
-            updatedAt              : new DateTimeImmutable(),
+            createdAt              : new DateTimeImmutable,
+            updatedAt              : new DateTimeImmutable,
         );
     }
 
-    public static function stateMachine(string $name, array $options = []) : self
+    public static function stateMachine(string $name, array $options = []): self
     {
         return self::create(name: $name, type: 'state_machine', options: $options);
     }
 
-    public function withSteps(SagaStepDefinition ...$steps) : self
+    public function withSteps(SagaStepDefinition ...$steps): self
     {
         $result = $this;
         foreach ($steps as $step) {
@@ -144,9 +156,9 @@ final readonly class SagaDefinition implements IteratorAggregate
         return $result;
     }
 
-    public function withStep(SagaStepDefinition $step) : self
+    public function withStep(SagaStepDefinition $step): self
     {
-        $steps              = $this->steps;
+        $steps = $this->steps;
         $steps[$step->name] = $step;
 
         $stepOrder = $this->stepOrder;
@@ -169,43 +181,43 @@ final readonly class SagaDefinition implements IteratorAggregate
             description            : $this->description,
             status                 : SagaStatus::DRAFT,
             createdAt              : $this->createdAt,
-            updatedAt              : new DateTimeImmutable(),
+            updatedAt              : new DateTimeImmutable,
         );
     }
 
-    public function isValid() : bool
+    public function isValid(): bool
     {
         return $this->validate()->isValid();
     }
 
-    public function validate() : ValidateSagaDefinition
+    public function validate(): ValidateSagaDefinition
     {
         return new ValidateSagaDefinition(definition: $this);
     }
 
-    public function getValidationErrors() : array
+    public function getValidationErrors(): array
     {
         return $this->validate()->getErrors();
     }
 
-    public function getStep(string $name) : SagaStepDefinition|null
+    public function getStep(string $name): ?SagaStepDefinition
     {
         return $this->steps[$name] ?? null;
     }
 
-    public function getFirstStep() : SagaStepDefinition|null
+    public function getFirstStep(): ?SagaStepDefinition
     {
         $name = $this->stepOrder[0] ?? null;
 
         return $name ? ($this->steps[$name] ?? null) : null;
     }
 
-    public function stepCount() : int
+    public function stepCount(): int
     {
         return count($this->steps);
     }
 
-    public function totalTimeout() : int
+    public function totalTimeout(): int
     {
         $total = 0;
         foreach ($this->steps as $step) {
@@ -215,14 +227,14 @@ final readonly class SagaDefinition implements IteratorAggregate
         return min($total, $this->maxDurationSeconds);
     }
 
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         foreach ($this->stepOrder as $name) {
             yield $name => $this->steps[$name];
         }
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         $steps = [];
         foreach ($this->stepOrder as $name) {
@@ -230,20 +242,20 @@ final readonly class SagaDefinition implements IteratorAggregate
         }
 
         return [
-            'name'                => $this->name,
-            'type'                => $this->type,
-            'steps'               => $steps,
-            'tenant'              => $this->tenantBoundary?->toArray(),
-            'start_condition'     => $this->startCondition->value,
-            'start_trigger'       => $this->startTrigger,
-            'timeout'             => $this->timeoutSeconds,
-            'max_duration'        => $this->maxDurationSeconds,
-            'concurrent'          => $this->allowConcurrent,
+            'name' => $this->name,
+            'type' => $this->type,
+            'steps' => $steps,
+            'tenant' => $this->tenantBoundary?->toArray(),
+            'start_condition' => $this->startCondition->value,
+            'start_trigger' => $this->startTrigger,
+            'timeout' => $this->timeoutSeconds,
+            'max_duration' => $this->maxDurationSeconds,
+            'concurrent' => $this->allowConcurrent,
             'remote_compensation' => $this->allowRemoteCompensation,
-            'description'         => $this->description,
-            'status'              => $this->status->value,
-            'created_at'          => $this->createdAt?->format(format: DateTimeInterface::ISO8601),
-            'updated_at'          => $this->updatedAt?->format(format: DateTimeInterface::ISO8601),
+            'description' => $this->description,
+            'status' => $this->status->value,
+            'created_at' => $this->createdAt?->format(format: DateTimeInterface::ISO8601),
+            'updated_at' => $this->updatedAt?->format(format: DateTimeInterface::ISO8601),
         ];
     }
 }

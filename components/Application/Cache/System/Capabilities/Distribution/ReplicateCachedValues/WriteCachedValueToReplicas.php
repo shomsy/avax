@@ -61,8 +61,8 @@ final readonly class WriteCachedValueToReplicas
             primary    : 1,
             secondaries: count($this->stores) - 1,
         );
-        $quorumSize   = $replicaCount->quorumSize();
-        $written      = 0;
+        $quorumSize = $replicaCount->quorumSize();
+        $written = 0;
 
         foreach ($this->stores as $store) {
             try {

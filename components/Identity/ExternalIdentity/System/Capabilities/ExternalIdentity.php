@@ -18,22 +18,22 @@ final readonly class ExternalIdentity
 {
     public function __construct(
         #[SensitiveParameter]
-        private OAuth         $oauth,
+        private OAuth $oauth,
         private OpenIDConnect $oidc,
-        private SingleSignOn  $sso,
+        private SingleSignOn $sso,
     ) {}
 
-    public function oauth() : OAuth
+    public function oauth(): OAuth
     {
         return $this->oauth;
     }
 
-    public function oidc() : OpenIDConnect
+    public function oidc(): OpenIDConnect
     {
         return $this->oidc;
     }
 
-    public function sso() : SingleSignOn
+    public function sso(): SingleSignOn
     {
         return $this->sso;
     }

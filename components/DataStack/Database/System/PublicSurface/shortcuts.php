@@ -12,12 +12,10 @@ if (! function_exists('connection')) {
     /**
      * Retrieves a PDO database connection.
      *
-     * @param string|null $connectionName
      *
-     * @return PDO
      * @throws RuntimeException
      */
-    function connection(string|null $connectionName = null) : PDO
+    function connection(?string $connectionName = null): PDO
     {
         /** @var Connections $connections */
         $connections = app(Connections::class);

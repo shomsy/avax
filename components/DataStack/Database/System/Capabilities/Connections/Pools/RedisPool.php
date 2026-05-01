@@ -17,12 +17,12 @@ final class RedisPool extends MySQLPool
         );
     }
 
-    public function pipeline(callable $commands) : array
+    public function pipeline(callable $commands): array
     {
         return (array) $commands();
     }
 
-    public function transaction(callable $commands) : array
+    public function transaction(callable $commands): array
     {
         return (array) $commands();
     }

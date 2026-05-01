@@ -8,7 +8,7 @@ final readonly class RebalanceCachePartitions
 {
     public function __construct(
         private ConsistentHashRing $consistentHashRing,
-        private int                $partitionCount = 256,
+        private int $partitionCount = 256,
     ) {}
 
     public function addNode(CacheNode $cacheNode) : array

@@ -7,13 +7,13 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\R
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\MfaRecoveryFailed;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
-use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 /**
@@ -22,26 +22,26 @@ use SensitiveParameter;
 final readonly class ConfirmMfaRecovery
 {
     public function __construct(
-        private MfaStoreInterface               $mfaStore,
-        private MfaChallengeStoreInterface      $mfaChallengeStore,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
+        private MfaStoreInterface $mfaStore,
+        private MfaChallengeStoreInterface $mfaChallengeStore,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
         #[SensitiveParameter]
-        private SessionRegistryInterface|null   $sessionRegistry = null,
+        private ?SessionRegistryInterface $sessionRegistry = null,
         #[SensitiveParameter]
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         #[SensitiveParameter]
-        private CurrentAuthentication|null      $currentAuthentication = null,
-        private IdentityInterface|null          $identity = null,
+        private ?CurrentAuthentication $currentAuthentication = null,
+        private ?IdentityInterface $identity = null,
     ) {}
 
     /**
      * @throws MfaRecoveryFailed
      */
-    public function execute(ConfirmMfaRecoveryData $data) : void
+    public function execute(ConfirmMfaRecoveryData $data): void
     {
         $tokenHash = $this->hash(token: $data->token);
-        $record    = $this->mfaStore->findRecovery(tokenHash: $tokenHash);
+        $record = $this->mfaStore->findRecovery(tokenHash: $tokenHash);
 
         if ($record === null) {
             throw MfaRecoveryFailed::invalidToken();
@@ -69,25 +69,25 @@ final readonly class ConfirmMfaRecovery
         }
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.mfa.recovery.used',
-                                           occurredAt: $now,
-                                           context   : [
-                                                           'user_id'    => $record->userId->value,
-                                                           'ip_address' => $data->ipAddress,
-                                                           'user_agent' => $data->userAgent,
-                                                       ],
-                                       ));
+            name      : 'auth.mfa.recovery.used',
+            occurredAt: $now,
+            context   : [
+                'user_id' => $record->userId->value,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
+        ));
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.mfa.reset',
-                                           occurredAt: $now,
-                                           context   : [
-                                                           'user_id' => $record->userId->value,
-                                                           'reason'  => 'recovery',
-                                                       ],
-                                       ));
+            name      : 'auth.mfa.reset',
+            occurredAt: $now,
+            context   : [
+                'user_id' => $record->userId->value,
+                'reason' => 'recovery',
+            ],
+        ));
     }
 
-    private function hash(#[SensitiveParameter] string $token) : string
+    private function hash(#[SensitiveParameter] string $token): string
     {
         return hash(algo: 'sha256', data: $token);
     }

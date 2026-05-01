@@ -11,7 +11,7 @@ interface CacheContract extends CacheInterface
 {
     public function get(string $key, mixed $default = null) : mixed;
 
-    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool;
+    public function set(string $key, mixed $value, int|DateInterval $ttl = null) : bool;
 
     public function remember(string $key, int|DateInterval|null $ttl, callable $loader) : mixed;
 
@@ -23,7 +23,7 @@ interface CacheContract extends CacheInterface
 
     public function getMultiple(iterable $keys, mixed $default = null) : iterable;
 
-    public function setMultiple(iterable $values, int|DateInterval|null $ttl = null) : bool;
+    public function setMultiple(iterable $values, int|DateInterval $ttl = null) : bool;
 
     public function deleteMultiple(iterable $keys) : bool;
 }

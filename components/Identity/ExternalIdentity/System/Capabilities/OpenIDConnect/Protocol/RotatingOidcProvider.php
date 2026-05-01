@@ -11,21 +11,20 @@ use SensitiveParameter;
 final readonly class RotatingOidcProvider implements OidcProviderInterface
 {
     /**
-     * @param list<OidcProviderInterface> $verificationProviders
+     * @param  list<OidcProviderInterface>  $verificationProviders
      */
     public function __construct(private OidcProviderInterface $activeProvider, private array $verificationProviders = []) {}
 
     public function issueIdToken(
-        User                   $user,
-        string                 $clientId,
-        array                  $scopes,
-        string                 $nonce = null,
-        DateTimeImmutable|null $authenticatedAt = null,
+        User $user,
+        string $clientId,
+        array $scopes,
+        ?string $nonce = null,
+        ?DateTimeImmutable $authenticatedAt = null,
         #[SensitiveParameter]
-        string                 $sessionId = null,
-        bool                   $phishingResistant = false,
-    ) : OidcIdToken
-    {
+        ?string $sessionId = null,
+        bool $phishingResistant = false,
+    ): OidcIdToken {
         return $this->activeProvider->issueIdToken(
             user             : $user,
             clientId         : $clientId,
@@ -37,17 +36,17 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         );
     }
 
-    public function issueJwt(array $claims) : string
+    public function issueJwt(array $claims): string
     {
         return $this->activeProvider->issueJwt(claims: $claims);
     }
 
-    public function readProviderMetadata() : OidcProviderMetadata
+    public function readProviderMetadata(): OidcProviderMetadata
     {
         return $this->activeProvider->readProviderMetadata();
     }
 
-    public function readJsonWebKeySet() : OidcJsonWebKeySet
+    public function readJsonWebKeySet(): OidcJsonWebKeySet
     {
         $keys = [];
 
@@ -63,17 +62,17 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
     /**
      * @return list<OidcProviderInterface>
      */
-    private function providers() : array
+    private function providers(): array
     {
         return [$this->activeProvider, ...$this->verificationProviders];
     }
 
-    public function subjectIdentifier(User $user, string $clientId) : string
+    public function subjectIdentifier(User $user, string $clientId): string
     {
         return $this->activeProvider->subjectIdentifier(user: $user, clientId: $clientId);
     }
 
-    public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null
+    public function resolveIdToken(#[SensitiveParameter] string $idToken): ?array
     {
         foreach ($this->providers() as $provider) {
             $claims = $provider->resolveIdToken(idToken: $idToken);
@@ -86,7 +85,7 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         return null;
     }
 
-    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null
+    public function resolveJwt(#[SensitiveParameter] string $jwt): ?array
     {
         foreach ($this->providers() as $provider) {
             $claims = $provider->resolveJwt(jwt: $jwt);

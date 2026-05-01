@@ -15,9 +15,9 @@ readonly class InjectionReport
 
     public function __construct(
         public object $target,
-        array|null $injectedProperties = null,
-        array|null $injectedMethods = null,
-        public bool   $success = true,
+        array       $injectedProperties = null,
+        array       $injectedMethods = null,
+        public bool $success = true,
     )
     {
         $injectedProperties ??= [];

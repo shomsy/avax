@@ -22,11 +22,11 @@ final readonly class ActiveSession
         public DateTimeImmutable $idleExpiresAt,
         public DateTimeImmutable $absoluteExpiresAt,
         #[SensitiveParameter]
-        public string|null $ipAddress = null,
-        public string|null $userAgent = null,
-        bool|null $current = null,
-        public DateTimeImmutable|null $revokedAt = null,
-        public string|null $revokeReason = null,
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
+        ?bool $current = null,
+        public ?DateTimeImmutable $revokedAt = null,
+        public ?string $revokeReason = null,
     ) {
         $current ??= false;
         $this->current = $current;

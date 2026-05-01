@@ -7,9 +7,9 @@ declare(strict_types=1);
  * Ensures the same class name is not defined in multiple components as a real class.
  */
 
-$rootDir = dirname(__DIR__, 2);
+$rootDir          = dirname(__DIR__, 2);
 $componentsDir = $rootDir . '/components';
-$errors  = [];
+$errors           = [];
 
 if (! is_dir($componentsDir)) {
     exit(0);

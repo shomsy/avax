@@ -15,7 +15,7 @@ use Traversable;
 /**
  * Ordered transform-oriented sequence.
  */
-final readonly class Sequence implements IteratorAggregate, Countable
+final readonly class Sequence implements Countable, IteratorAggregate
 {
     /**
      * @var array<int, mixed>
@@ -23,51 +23,50 @@ final readonly class Sequence implements IteratorAggregate, Countable
     private array $items;
 
     /**
-     * @param iterable<mixed> $items
+     * @param  iterable<mixed>  $items
      */
     public function __construct(
         iterable $items = [],
-    )
-    {
+    ) {
         $this->items = array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items));
     }
 
     /**
      * @return array<int, mixed>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }
 
-    public function map(callable $callback) : self
+    public function map(callable $callback): self
     {
         return new self(items: array_values(array_map($callback, $this->items)));
     }
 
-    public function filter(callable $callback) : self
+    public function filter(callable $callback): self
     {
         return new self(items: array_values(array_filter($this->items, $callback)));
     }
 
-    public function reduce(callable $callback, mixed $initial = null) : mixed
+    public function reduce(callable $callback, mixed $initial = null): mixed
     {
         return array_reduce($this->items, $callback, $initial);
     }
 
-    public function toDataList() : DataList
+    public function toDataList(): DataList
     {
         return new DataList(items: $this->items);
     }
 
     #[Override]
-    public function count() : int
+    public function count(): int
     {
         return count($this->items);
     }
 
     #[Override]
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->items);
     }

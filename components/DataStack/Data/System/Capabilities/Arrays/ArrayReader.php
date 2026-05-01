@@ -15,17 +15,17 @@ use InvalidArgumentException;
  */
 final readonly class ArrayReader
 {
-    public function only(array $data, array $keys) : array
+    public function only(array $data, array $keys): array
     {
         return array_intersect_key($data, array_flip($keys));
     }
 
-    public function except(array $data, array $keys) : array
+    public function except(array $data, array $keys): array
     {
         return array_diff_key($data, array_flip($keys));
     }
 
-    public function getString(array $data, string $key, string|null $default = null) : string|null
+    public function getString(array $data, string $key, ?string $default = null): ?string
     {
         $value = $this->get($data, $key, $default);
 
@@ -36,12 +36,12 @@ final readonly class ArrayReader
         return (string) $value;
     }
 
-    public function get(array $data, string $key, mixed $default = null) : mixed
+    public function get(array $data, string $key, mixed $default = null): mixed
     {
         return $data[$key] ?? $default;
     }
 
-    public function getStringOrFail(array $data, string $key) : string
+    public function getStringOrFail(array $data, string $key): string
     {
         $value = $this->get($data, $key);
 
@@ -54,7 +54,7 @@ final readonly class ArrayReader
         return $value;
     }
 
-    public function getInt(array $data, string $key, int|null $default = null) : int|null
+    public function getInt(array $data, string $key, ?int $default = null): ?int
     {
         $value = $this->get($data, $key, $default);
 
@@ -69,7 +69,7 @@ final readonly class ArrayReader
     // Type-safe readers
     // ──────────────────────────────────────────────
 
-    public function getIntOrFail(array $data, string $key) : int
+    public function getIntOrFail(array $data, string $key): int
     {
         $value = $this->get($data, $key);
 
@@ -82,7 +82,7 @@ final readonly class ArrayReader
         return (int) $value;
     }
 
-    public function getFloat(array $data, string $key, float|null $default = null) : float|null
+    public function getFloat(array $data, string $key, ?float $default = null): ?float
     {
         $value = $this->get($data, $key, $default);
 
@@ -93,7 +93,7 @@ final readonly class ArrayReader
         return (float) $value;
     }
 
-    public function getBool(array $data, string $key, bool|null $default = null) : bool|null
+    public function getBool(array $data, string $key, ?bool $default = null): ?bool
     {
         $value = $this->get($data, $key);
 
@@ -104,7 +104,7 @@ final readonly class ArrayReader
         return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $default;
     }
 
-    public function getArray(array $data, string $key, array $default = []) : array
+    public function getArray(array $data, string $key, array $default = []): array
     {
         $value = $this->get($data, $key, $default);
 
@@ -118,7 +118,7 @@ final readonly class ArrayReader
     /**
      * Return the value at $key, failing hard if it does not exist.
      */
-    public function require(array $data, string $key) : mixed
+    public function require(array $data, string $key): mixed
     {
         if (! $this->has($data, $key)) {
             throw new InvalidArgumentException(
@@ -129,7 +129,7 @@ final readonly class ArrayReader
         return $data[$key];
     }
 
-    public function has(array $data, string $key) : bool
+    public function has(array $data, string $key): bool
     {
         return array_key_exists($key, $data);
     }
@@ -137,7 +137,7 @@ final readonly class ArrayReader
     /**
      * Return the nested value at $path, failing hard if it does not exist.
      */
-    public function requireNested(array $data, string $path) : mixed
+    public function requireNested(array $data, string $path): mixed
     {
         if (! $this->hasNested($data, $path)) {
             throw new InvalidArgumentException(
@@ -148,9 +148,9 @@ final readonly class ArrayReader
         return $this->getNested($data, $path);
     }
 
-    public function hasNested(array $data, string $path) : bool
+    public function hasNested(array $data, string $path): bool
     {
-        $keys    = explode(separator: '.', string: $path);
+        $keys = explode(separator: '.', string: $path);
         $current = $data;
 
         foreach ($keys as $key) {
@@ -164,9 +164,9 @@ final readonly class ArrayReader
         return true;
     }
 
-    public function getNested(array $data, string $path, mixed $default = null) : mixed
+    public function getNested(array $data, string $path, mixed $default = null): mixed
     {
-        $keys    = explode(separator: '.', string: $path);
+        $keys = explode(separator: '.', string: $path);
         $current = $data;
 
         foreach ($keys as $key) {
@@ -183,7 +183,7 @@ final readonly class ArrayReader
     /**
      * Flatten a multi-dimensional array into a single level using dot notation.
      */
-    public function dot(array $data, string $prefix = '') : array
+    public function dot(array $data, string $prefix = ''): array
     {
         $result = [];
 
@@ -203,10 +203,10 @@ final readonly class ArrayReader
     /**
      * Expand a dot-notation flat array back into a nested array.
      */
-    public function undot(array $data) : array
+    public function undot(array $data): array
     {
         $result = [];
-        $arrayWriter = new ArrayWriter();
+        $arrayWriter = new ArrayWriter;
 
         foreach ($data as $key => $value) {
             $arrayWriter->setNested($result, (string) $key, $value);

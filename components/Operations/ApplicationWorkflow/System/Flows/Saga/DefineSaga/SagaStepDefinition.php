@@ -8,77 +8,86 @@ use InvalidArgumentException;
 
 enum SagaStepKind: string
 {
-    case ACTION       = 'action';
+    case ACTION = 'action';
     case COMPENSATION = 'compensation';
-    case APPROVAL     = 'approval';
+    case APPROVAL = 'approval';
     case NOTIFICATION = 'notification';
 }
 
 enum SagaStepRetryPolicy: string
 {
-    case NONE        = 'none';
-    case IMMEDIATE   = 'immediate';
+    case NONE = 'none';
+    case IMMEDIATE = 'immediate';
     case EXPONENTIAL = 'exponential';
-    case LINEAR      = 'linear';
+    case LINEAR = 'linear';
 }
 
 final readonly class SagaStepDefinition
 {
-    public string       $name;
-    public string       $component;
+    public string $name;
+
+    public string $component;
+
     public SagaStepKind $kind;
-    public array        $input;
-    public string|null  $compensationComponent;
-    public array|null   $compensationInput;
-    public int          $maxRetries;
-    public int          $retryDelayMs;
+
+    public array $input;
+
+    public ?string $compensationComponent;
+
+    public ?array $compensationInput;
+
+    public int $maxRetries;
+
+    public int $retryDelayMs;
+
     public SagaStepRetryPolicy $retryPolicy;
-    public int          $timeoutSeconds;
-    public bool         $optional;
-    public string|null  $description;
+
+    public int $timeoutSeconds;
+
+    public bool $optional;
+
+    public ?string $description;
 
     private function __construct(
-        string              $name,
-        string              $component,
-        SagaStepKind        $kind,
-        array               $input = null,
-        string              $compensationComponent = null,
-        array               $compensationInput = null,
-        int                 $maxRetries = null,
-        int                 $retryDelayMs = null,
-        SagaStepRetryPolicy|null $retryPolicy = null,
-        int                 $timeoutSeconds = null,
-        bool                $optional = null,
-        string              $description = null,
-    )
-    {
-        $input          ??= [];
-        $maxRetries     ??= 0;
-        $retryDelayMs   ??= 1000;
-        $retryPolicy    ??= SagaStepRetryPolicy::NONE;
+        string $name,
+        string $component,
+        SagaStepKind $kind,
+        ?array $input = null,
+        ?string $compensationComponent = null,
+        ?array $compensationInput = null,
+        ?int $maxRetries = null,
+        ?int $retryDelayMs = null,
+        ?SagaStepRetryPolicy $retryPolicy = null,
+        ?int $timeoutSeconds = null,
+        ?bool $optional = null,
+        ?string $description = null,
+    ) {
+        $input ??= [];
+        $maxRetries ??= 0;
+        $retryDelayMs ??= 1000;
+        $retryPolicy ??= SagaStepRetryPolicy::NONE;
         $timeoutSeconds ??= 30;
-        $optional       ??= false;
-        $this->name                  = $name;
-        $this->component             = $component;
-        $this->kind                  = $kind;
-        $this->input                 = $input;
+        $optional ??= false;
+        $this->name = $name;
+        $this->component = $component;
+        $this->kind = $kind;
+        $this->input = $input;
         $this->compensationComponent = $compensationComponent;
-        $this->compensationInput     = $compensationInput;
-        $this->maxRetries            = $maxRetries;
-        $this->retryDelayMs          = $retryDelayMs;
-        $this->retryPolicy           = $retryPolicy;
-        $this->timeoutSeconds        = $timeoutSeconds;
-        $this->optional              = $optional;
-        $this->description           = $description;
+        $this->compensationInput = $compensationInput;
+        $this->maxRetries = $maxRetries;
+        $this->retryDelayMs = $retryDelayMs;
+        $this->retryPolicy = $retryPolicy;
+        $this->timeoutSeconds = $timeoutSeconds;
+        $this->optional = $optional;
+        $this->description = $description;
     }
 
     public static function action(
         string $name,
         string $component,
-        array  $input = null,
-        array  $options = [],
-    ) : self
-    {
+        ?array $input = null,
+        array $options = [],
+    ): self {
         $input ??= [];
 
         return self::create(name: $name, component: $component, options: array_merge($options, ['input' => $input, 'kind' => 'action']));
@@ -88,8 +97,7 @@ final readonly class SagaStepDefinition
         string $name,
         string $component,
         array $options = [],
-    ) : self
-    {
+    ): self {
         if (empty(trim($name))) {
             throw new InvalidArgumentException(message: 'Step name cannot be empty.');
         }
@@ -123,40 +131,39 @@ final readonly class SagaStepDefinition
         string $compensationComponent,
         array $compensationInput,
         array $options = [],
-    ) : self
-    {
+    ): self {
         return self::create(name: $name, component: $component, options: array_merge($options, [
-            'input'              => $input,
-            'compensation'       => $compensationComponent,
+            'input' => $input,
+            'compensation' => $compensationComponent,
             'compensation_input' => $compensationInput,
         ]));
     }
 
-    public function hasCompensation() : bool
+    public function hasCompensation(): bool
     {
         return $this->compensationComponent !== null;
     }
 
-    public function canRetry() : bool
+    public function canRetry(): bool
     {
         return $this->maxRetries > 0 && $this->retryPolicy !== SagaStepRetryPolicy::NONE;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'name'               => $this->name,
-            'component'          => $this->component,
-            'kind'               => $this->kind->value,
-            'input'              => $this->input,
-            'compensation'       => $this->compensationComponent,
+            'name' => $this->name,
+            'component' => $this->component,
+            'kind' => $this->kind->value,
+            'input' => $this->input,
+            'compensation' => $this->compensationComponent,
             'compensation_input' => $this->compensationInput,
-            'max_retries'        => $this->maxRetries,
-            'retry_delay'        => $this->retryDelayMs,
-            'retry_policy'       => $this->retryPolicy->value,
-            'timeout'            => $this->timeoutSeconds,
-            'optional'           => $this->optional,
-            'description'        => $this->description,
+            'max_retries' => $this->maxRetries,
+            'retry_delay' => $this->retryDelayMs,
+            'retry_policy' => $this->retryPolicy->value,
+            'timeout' => $this->timeoutSeconds,
+            'optional' => $this->optional,
+            'description' => $this->description,
         ];
     }
 }

@@ -13,16 +13,16 @@ namespace Avax\Framework\System\Capabilities\RuntimeSafety;
 final class RuntimeSafety
 {
     private StateLeakDetection\StateLeakDetector $leakDetector;
-    private StaticStateScanner                   $staticScanner;
-    private ResetVerification\ResetVerifier      $resetVerifier;
+    private StaticStateScanner              $staticScanner;
+    private ResetVerification\ResetVerifier $resetVerifier;
 
     public function __construct(
-        StateLeakDetection\StateLeakDetector|null $leakDetector = null,
-        StaticStateScanner|null                   $staticScanner = null,
-        ResetVerification\ResetVerifier|null      $resetVerifier = null,
+        StateLeakDetection\StateLeakDetector $leakDetector = null,
+        StaticStateScanner                   $staticScanner = null,
+        ResetVerification\ResetVerifier      $resetVerifier = null,
     )
     {
-        $this->leakDetector  = $leakDetector ?? new StateLeakDetection\StateLeakDetector();
+        $this->leakDetector = $leakDetector ?? new StateLeakDetection\StateLeakDetector();
         $this->staticScanner = $staticScanner ?? new StaticStateScanner();
         $this->resetVerifier = $resetVerifier ?? new ResetVerification\ResetVerifier();
     }

@@ -21,7 +21,7 @@ final class HintPipelineStepB
 final class HintRuntimeInputConsumer
 {
     public function __construct(public HintIdentityService $hintIdentityService, #[SensitiveParameter]
-    #[RuntimeInput(name: 'token')]public string $token)
+    #[RuntimeInput(name: 'token')] public string $token)
     {
     }
 }

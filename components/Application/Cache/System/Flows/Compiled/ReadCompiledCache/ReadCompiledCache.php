@@ -24,8 +24,8 @@ final readonly class ReadCompiledCache
     }
 
     public function read(
-        string               $name,
-        callable             $build,
+        string   $name,
+        callable $build,
         CompiledCacheSources $compiledCacheSources,
     ) : mixed
     {
@@ -42,8 +42,8 @@ final readonly class ReadCompiledCache
     }
 
     private function rebuild(
-        CompiledCacheName    $compiledCacheName,
-        callable             $build,
+        CompiledCacheName $compiledCacheName,
+        callable          $build,
         CompiledCacheSources $compiledCacheSources,
     ) : mixed
     {

@@ -16,10 +16,10 @@ abstract class Entity
      *
      * @return string The table name associated with the entity.
      */
-    public static function getTableName() : string
+    public static function getTableName(): string
     {
         $shortName = new ReflectionClass(objectOrClass: static::class)->getShortName();
 
-        return strtolower(string: $shortName) . 's';
+        return strtolower(string: $shortName).'s';
     }
 }

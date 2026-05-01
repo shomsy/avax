@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
-
-
-
-
 final readonly class CheckCompiledCacheIsFresh
 {
     public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest)

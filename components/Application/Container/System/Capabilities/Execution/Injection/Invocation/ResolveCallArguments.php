@@ -28,10 +28,10 @@ final readonly class ResolveCallArguments
      * @return array<int, mixed>
      */
     public function resolve(
-        array           $parameters,
-        array           $overrides,
+        array          $parameters,
+        array          $overrides,
         ResolveDependency $resolver,
-        ResolveRequest  $request = null,
+        ResolveRequest $request = null,
     ) : array
     {
         return $this->resolvePlan(
@@ -43,7 +43,7 @@ final readonly class ResolveCallArguments
     }
 
     /**
-     * @param ResolvePlan         $plan
+     * @param ResolvePlan $plan
      * @param array<string, mixed> $overrides
      * @param ResolveDependency $resolver
      * @param ResolveRequest|null $request
@@ -52,10 +52,10 @@ final readonly class ResolveCallArguments
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan     $plan,
-        array           $overrides,
+        ResolvePlan    $plan,
+        array          $overrides,
         ResolveDependency $resolver,
-        ResolveRequest  $request = null,
+        ResolveRequest $request = null,
     ) : array
     {
         return $this->dependencies->resolvePlan(

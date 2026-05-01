@@ -10,7 +10,7 @@ final readonly class EncryptedCache
 {
     public function __construct(
         private CacheEncryptionKey $cacheEncryptionKey,
-        private bool               $enabled = true,
+        private bool $enabled = true,
     ) {}
 
     /**

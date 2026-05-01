@@ -44,7 +44,7 @@ final class GenerateUrl
     /**
      * Generate a URL from a named route.
      *
-     * @param string               $name  Route name
+     * @param string $name Route name
      * @param array<string, mixed> $params Route parameters to substitute
      * @param array<string, mixed> $extra Query string parameters
      *

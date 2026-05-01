@@ -30,11 +30,12 @@ final class TransactionScope
 {
     /** @var bool Logical flag indicating if the technical transaction window has been finalized/committed. */
     private bool $completed = false;
+
     private readonly TransactionManagerInterface $manager;
 
     /**
-     * @param TransactionManagerInterface $manager The active technical authority responsible for atomicity and
-     *                                             persistence.
+     * @param  TransactionManagerInterface  $manager  The active technical authority responsible for atomicity and
+     *                                                persistence.
      */
     public function __construct(TransactionManagerInterface $manager)
     {
@@ -69,7 +70,7 @@ final class TransactionScope
      * of work, instructing the manager to persist changes and disabling the
      * automated rollback guardian.
      */
-    public function complete() : void
+    public function complete(): void
     {
         $this->manager->commit();
         $this->completed = true;

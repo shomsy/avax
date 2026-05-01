@@ -161,7 +161,7 @@ final class ArrhaeCharacterizationTest extends TestCase
 
     public function testForgetSupportsDotNotation() : void
     {
-        $arrh   = $this->arrhae(items: [
+        $arrh = $this->arrhae(items: [
                                            'user' => ['name' => 'Alice', 'age' => 30],
                                        ]);
         $result = $arrh->forget(key: 'user.name');
@@ -226,7 +226,7 @@ final class ArrhaeCharacterizationTest extends TestCase
         $arrh   = $this->arrhae(items: [1, 2, 3, 4]);
         $result = $arrh->reduce(
             callback: static fn (int $carry, int $n) : int => $carry + $n,
-            initial : 0
+            initial : 0,
         );
 
         $this->assertSame(10, $result);
@@ -260,7 +260,7 @@ final class ArrhaeCharacterizationTest extends TestCase
 
     public function testWhereFiltersByKey() : void
     {
-        $arrh   = $this->arrhae(items: [
+        $arrh = $this->arrhae(items: [
                                            ['name' => 'Alice', 'active' => true],
                                            ['name' => 'Bob', 'active' => false],
                                        ]);
@@ -272,7 +272,7 @@ final class ArrhaeCharacterizationTest extends TestCase
 
     public function testWhereInFiltersByKeyInArray() : void
     {
-        $arrh   = $this->arrhae(items: [
+        $arrh = $this->arrhae(items: [
                                            ['name' => 'Alice', 'role' => 'admin'],
                                            ['name' => 'Bob', 'role' => 'editor'],
                                            ['name' => 'Charlie', 'role' => 'subscriber'],
@@ -284,7 +284,7 @@ final class ArrhaeCharacterizationTest extends TestCase
 
     public function testWhereBetweenFiltersByRange() : void
     {
-        $arrh   = $this->arrhae(items: [
+        $arrh = $this->arrhae(items: [
                                            ['name' => 'Alice', 'score' => 85],
                                            ['name' => 'Bob', 'score' => 90],
                                            ['name' => 'Charlie', 'score' => 75],
@@ -296,7 +296,7 @@ final class ArrhaeCharacterizationTest extends TestCase
 
     public function testWhereNullFiltersNullValues() : void
     {
-        $arrh   = $this->arrhae(items: [
+        $arrh = $this->arrhae(items: [
                                            ['name' => 'Alice', 'age' => null],
                                            ['name' => 'Bob', 'age' => 30],
                                        ]);
@@ -427,7 +427,7 @@ final class ArrhaeCharacterizationTest extends TestCase
 
     public function testKeyByReindexesByKey() : void
     {
-        $arrh   = $this->arrhae(items: [
+        $arrh = $this->arrhae(items: [
                                            ['id' => 'a', 'name' => 'Alice'],
                                            ['id' => 'b', 'name' => 'Bob'],
                                        ]);

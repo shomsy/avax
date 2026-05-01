@@ -11,7 +11,7 @@ final readonly class SearchValue
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(mixed $value, bool $strict = true) : string|int|false
+    public function __invoke(mixed $value, bool $strict = true): string|int|false
     {
         return array_search($value, $this->items, $strict);
     }

@@ -191,7 +191,7 @@ interface ContainerInterface extends PsrContainerInterface, DependencyRegistryCo
      *
      * @throws ContainerException
      */
-    public function closeScope(string|null $kind = null) : void;
+    public function closeScope(string $kind = null) : void;
 
     /**
      * @param list<string> $serviceIds

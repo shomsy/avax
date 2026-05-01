@@ -12,17 +12,17 @@ final class RunDatabaseMigration
         private MigrationRunner $runner,
     ) {}
 
-    public function execute() : void
+    public function execute(): void
     {
         $this->runner->run();
     }
 
-    public function rollback() : void
+    public function rollback(): void
     {
         $this->runner->rollback();
     }
 
-    public function reset() : void
+    public function reset(): void
     {
         $this->runner->reset();
     }

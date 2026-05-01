@@ -16,8 +16,7 @@ final readonly class EncryptionKey
     public function __construct(
         private string $keyMaterial,
         private string $version = '1',
-    )
-    {
+    ) {
         if (strlen($this->keyMaterial) !== self::KEY_LENGTH) {
             throw new InvalidArgumentException(
                 sprintf('Encryption key must be exactly %d bytes, got %d', self::KEY_LENGTH, strlen($this->keyMaterial)),
@@ -28,7 +27,7 @@ final readonly class EncryptionKey
     /**
      * Generate a new random encryption key.
      */
-    public static function generate(string $version = '1') : self
+    public static function generate(string $version = '1'): self
     {
         return new self(random_bytes(self::KEY_LENGTH), $version);
     }
@@ -36,7 +35,7 @@ final readonly class EncryptionKey
     /**
      * Create an encryption key from a base64-encoded string.
      */
-    public static function fromBase64(string $base64, string $version = '1') : self
+    public static function fromBase64(string $base64, string $version = '1'): self
     {
         $keyMaterial = base64_decode($base64, true);
 
@@ -50,7 +49,7 @@ final readonly class EncryptionKey
     /**
      * Convert the encryption key to a base64-encoded string.
      */
-    public function toBase64() : string
+    public function toBase64(): string
     {
         return base64_encode($this->keyMaterial);
     }
@@ -58,7 +57,7 @@ final readonly class EncryptionKey
     /**
      * Check if the encryption key is valid (correct length).
      */
-    public function isValid() : bool
+    public function isValid(): bool
     {
         return strlen($this->keyMaterial) === self::KEY_LENGTH;
     }
@@ -66,7 +65,7 @@ final readonly class EncryptionKey
     /**
      * Get the raw key material.
      */
-    public function raw() : string
+    public function raw(): string
     {
         return $this->keyMaterial;
     }
@@ -74,7 +73,7 @@ final readonly class EncryptionKey
     /**
      * Get the key version identifier.
      */
-    public function version() : string
+    public function version(): string
     {
         return $this->version;
     }

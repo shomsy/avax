@@ -17,14 +17,14 @@ use Throwable;
 final readonly class BuildPhysicalConnection
 {
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      *
      * @throws ConnectionFailure
      */
-    public function from(array $config) : DatabaseConnection
+    public function from(array $config): DatabaseConnection
     {
         $connectionConfig = ConnectionConfig::from(config: $config);
-        $dsn              = Dsn::for(
+        $dsn = Dsn::for(
             driver  : $connectionConfig->driver,
             host    : $connectionConfig->host,
             database: $connectionConfig->database,
@@ -37,10 +37,10 @@ final readonly class BuildPhysicalConnection
                 username: $connectionConfig->username,
                 password: $connectionConfig->password,
                 options : [
-                              PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                              PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                              PDO::ATTR_EMULATE_PREPARES   => false,
-                          ],
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                ],
             );
 
             return new PdoConnection(
@@ -51,10 +51,10 @@ final readonly class BuildPhysicalConnection
             throw new ConnectionFailure(
                 name    : $connectionConfig->name,
                 message : sprintf(
-                              'Database connection [%s] failed: %s',
-                              $connectionConfig->name,
-                              $throwable->getMessage(),
-                          ),
+                    'Database connection [%s] failed: %s',
+                    $connectionConfig->name,
+                    $throwable->getMessage(),
+                ),
                 previous: $throwable,
             );
         }

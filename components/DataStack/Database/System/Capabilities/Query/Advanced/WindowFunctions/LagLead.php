@@ -8,12 +8,12 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 
 final class LagLead
 {
-    public static function lag(GrammarInterface $grammar, string $column) : WindowBuilder
+    public static function lag(GrammarInterface $grammar, string $column): WindowBuilder
     {
         return WindowBuilder::lag(grammar: $grammar, column: $column);
     }
 
-    public static function lead(GrammarInterface $grammar, string $column) : WindowBuilder
+    public static function lead(GrammarInterface $grammar, string $column): WindowBuilder
     {
         return WindowBuilder::lead(grammar: $grammar, column: $column);
     }

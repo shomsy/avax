@@ -14,21 +14,20 @@ final readonly class BindingBag
     private array $values;
 
     /**
-     * @param array<array-key, mixed> $values The internal storage for raw, sanitized query parameters.
+     * @param  array<array-key, mixed>  $values  The internal storage for raw, sanitized query parameters.
      */
     public function __construct(
         array $values = [],
-    )
-    {
+    ) {
         $this->values = $values;
     }
 
     /**
      * Create a new bag with an additional parameter value.
      */
-    public function with(mixed $value) : self
+    public function with(mixed $value): self
     {
-        $values   = $this->values;
+        $values = $this->values;
         $values[] = $value;
 
         return new self(values: $values);
@@ -37,7 +36,7 @@ final readonly class BindingBag
     /**
      * Merge multiple parameters into a new bag instance.
      */
-    public function merge(array $parameters) : self
+    public function merge(array $parameters): self
     {
         return new self(values: array_merge($this->values, $parameters));
     }
@@ -45,7 +44,7 @@ final readonly class BindingBag
     /**
      * Retrieve all bound parameters as an ordered array.
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->values;
     }
@@ -53,7 +52,7 @@ final readonly class BindingBag
     /**
      * Check if the bag contains no bindings.
      */
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return empty($this->values);
     }

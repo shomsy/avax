@@ -18,13 +18,13 @@ use Throwable;
 final readonly class StoreCachedValue
 {
     public function __construct(
-        private CacheStore        $cacheStore,
-        private Clock             $clock,
+        private CacheStore $cacheStore,
+        private Clock      $clock,
         private CacheMetrics|null $cacheMetrics = null,
-        private CacheTtl          $cacheTtl = new CacheTtl(),
+        private CacheTtl   $cacheTtl = new CacheTtl(),
     ) {}
 
-    public function store(CacheKey $cacheKey, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public function store(CacheKey $cacheKey, mixed $value, int|DateInterval $ttl = null) : bool
     {
         $startTime = hrtime(true);
 

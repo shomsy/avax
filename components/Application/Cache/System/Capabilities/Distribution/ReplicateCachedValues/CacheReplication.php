@@ -13,7 +13,6 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use InvalidArgumentException;
 use Throwable;
 
-
 /**
  * Manages cache replication between primary and replica nodes.
  *
@@ -28,9 +27,8 @@ final class CacheReplication
         private readonly CacheStore           $cacheStore,
         /** @var list<CacheStore> */
         private readonly array                $replicas,
-        private readonly PrimaryReplicaPolicy $primaryReplicaPolicy
-    )
-    {
+        private readonly PrimaryReplicaPolicy $primaryReplicaPolicy,
+    ) {
     }
 
     /**
@@ -54,7 +52,7 @@ final class CacheReplication
 
         // Read from primary
         $systemClock = new SystemClock();
-        $readResult   = $this->cacheStore->read(
+        $readResult = $this->cacheStore->read(
             new CacheKey($key),
             $systemClock,
         );
@@ -158,7 +156,7 @@ final class CacheReplication
     /**
      * Write a value to the primary store.
      */
-    public function write(string $key, mixed $value, int|null $ttl = null) : void
+    public function write(string $key, mixed $value, int $ttl = null) : void
     {
         $storedCacheRecord = StoredCacheRecord::create($value, $ttl);
         $this->cacheStore->write(
@@ -178,8 +176,8 @@ final class CacheReplication
      */
     public static function create(
         CacheStore $cacheStore,
-        array                     $replicas,
-        PrimaryReplicaPolicy|null $policy = null,
+        array                $replicas,
+        PrimaryReplicaPolicy $policy = null,
     ) : self
     {
         return new self(
@@ -200,7 +198,7 @@ final class CacheReplication
      *
      * @return ReplicationResult Result of the replication operation
      */
-    public function replicate(string $key, mixed $value, int|null $ttl = null) : ReplicationResult
+    public function replicate(string $key, mixed $value, int $ttl = null) : ReplicationResult
     {
         // Always write to primary first
         $primarySuccess = $this->writeToPrimary($key, $value, $ttl);

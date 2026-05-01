@@ -6,7 +6,6 @@ namespace Avax\Components\Application\Config\System\Configuration;
 
 use Avax\Components\Application\Config\System\Capabilities\Repository\ConfigurationRepository;
 use Avax\Components\Application\Config\System\PublicSurface\Config;
-use Avax\Components\DataStack\Data\System\PublicSurface\Data;
 
 /**
  * Configuration unit to assemble Config component services.

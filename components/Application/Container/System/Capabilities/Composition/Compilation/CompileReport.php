@@ -14,26 +14,26 @@ final readonly class CompileReport implements JsonSerializable
 {
     public const int SCHEMA_VERSION = 2;
     public ArtifactMetadata|null $metadata;
-    public array  $pruning;
-    public array  $statistics;
-    public array  $invalidationReasons;
-    public array  $compatibilityIssues;
-    public array  $validationIssues;
-    public array  $invalidatedServices;
-    public array  $changedServices;
-    public array  $entries;
-    public array  $lifetimePlanSummary;
-    public int    $providerBootPlanSize;
-    public int    $decorationMapSize;
-    public int    $aliasMapSize;
-    public int    $tagIndexSize;
-    public int    $lazyServicesCount;
-    public int    $deferredServicesCount;
-    public int    $invalidatedServicesCount;
-    public int    $reusedServicesCount;
-    public int    $compiledServicesCount;
-    public int    $totalServices;
-    public bool   $checksumValid;
+    public array $pruning;
+    public array $statistics;
+    public array $invalidationReasons;
+    public array $compatibilityIssues;
+    public array $validationIssues;
+    public array $invalidatedServices;
+    public array $changedServices;
+    public array $entries;
+    public array $lifetimePlanSummary;
+    public int   $providerBootPlanSize;
+    public int   $decorationMapSize;
+    public int   $aliasMapSize;
+    public int   $tagIndexSize;
+    public int   $lazyServicesCount;
+    public int   $deferredServicesCount;
+    public int   $invalidatedServicesCount;
+    public int   $reusedServicesCount;
+    public int   $compiledServicesCount;
+    public int   $totalServices;
+    public bool  $checksumValid;
     public string $fingerprint;
     public string $environment;
     public string $pruneMode;
@@ -42,10 +42,10 @@ final readonly class CompileReport implements JsonSerializable
     public string $cacheVersion;
     public string $metadataPath;
     public string $path;
-    public array  $warnings;
+    public array $warnings;
     public string $freshnessState;
-    public bool   $compatible;
-    public bool   $available;
+    public bool  $compatible;
+    public bool  $available;
 
     /**
      * @param list<string> $entries
@@ -88,7 +88,7 @@ final readonly class CompileReport implements JsonSerializable
         array            $invalidationReasons,
         array            $statistics,
         array            $pruning,
-        ArtifactMetadata|null $metadata = null,
+        ArtifactMetadata $metadata = null,
     )
     {
         $this->available                = $available;

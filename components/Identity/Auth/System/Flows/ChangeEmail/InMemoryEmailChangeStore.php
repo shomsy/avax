@@ -18,12 +18,12 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
     /**
      * @throws RandomException
      */
-    public function issue(UserId $userId, #[SensitiveParameter] string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge
+    public function issue(UserId $userId, #[SensitiveParameter] string $newEmail, DateTimeImmutable $expiresAt): EmailChangeChallenge
     {
-        $token                                             = bin2hex(string: random_bytes(length: 32));
+        $token = bin2hex(string: random_bytes(length: 32));
         $this->records[hash(algo: 'sha256', data: $token)] = [
-            'user_id'    => $userId->value,
-            'new_email'  => $newEmail,
+            'user_id' => $userId->value,
+            'new_email' => $newEmail,
             'expires_at' => $expiresAt->getTimestamp(),
         ];
 
@@ -37,9 +37,9 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : EmailChangeRecord|null
+    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now): ?EmailChangeRecord
     {
-        $key    = hash(algo: 'sha256', data: $token);
+        $key = hash(algo: 'sha256', data: $token);
         $record = $this->records[$key] ?? null;
         unset($this->records[$key]);
 
@@ -50,7 +50,7 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
         return new EmailChangeRecord(
             userId   : new UserId(value: $record['user_id']),
             newEmail : $record['new_email'],
-            expiresAt: new DateTimeImmutable(datetime: '@' . $record['expires_at']),
+            expiresAt: new DateTimeImmutable(datetime: '@'.$record['expires_at']),
         );
     }
 }

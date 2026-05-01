@@ -13,20 +13,19 @@ final readonly class ExchangeClientCredentialsData
     public array $scopes;
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
-        public string                     $clientId,
+        public string $clientId,
         #[SensitiveParameter]
-        public string|null                $clientSecret = null,
-        array                             $scopes = null,
-        public string|null                $audience = null,
+        public ?string $clientSecret = null,
+        ?array $scopes = null,
+        public ?string $audience = null,
         #[SensitiveParameter]
-        public string|null                $ipAddress = null,
-        public string|null                $userAgent = null,
-        public OAuthSenderConstraint|null $senderConstraint = null,
-    )
-    {
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
+        public ?OAuthSenderConstraint $senderConstraint = null,
+    ) {
         $scopes ??= [];
         $this->scopes = $scopes;
     }

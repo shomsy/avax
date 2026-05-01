@@ -15,12 +15,12 @@ final readonly class RegistrationData
 {
     public function __construct(
         #[SensitiveParameter]
-        public string      $email,
-        public string      $username,
+        public string $email,
+        public string $username,
         #[SensitiveParameter]
-        public string      $password,
+        public string $password,
         #[SensitiveParameter]
-        public string|null $ipAddress = null,
-        public string|null $userAgent = null,
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
     ) {}
 }

@@ -17,18 +17,18 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
     public function __construct(private string $keyRingPath) {}
 
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
-    public function encode(array $claims) : string
+    public function encode(array $claims): string
     {
         return $this->buildCodec()->encode(claims: $claims);
     }
 
-    private function buildCodec() : TokenCodecInterface
+    private function buildCodec(): TokenCodecInterface
     {
         $configuration = $this->readConfiguration();
-        $primary       = $this->createCodec(configuration: $configuration['primary']);
-        $verification  = [];
+        $primary = $this->createCodec(configuration: $configuration['primary']);
+        $verification = [];
 
         foreach ($configuration['verification'] as $key) {
             $verification[] = $this->createCodec(configuration: $key);
@@ -46,7 +46,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
      *     verification: list<array{secret:string, algorithm:string, kid:string|null}>
      * }
      */
-    private function readConfiguration() : array
+    private function readConfiguration(): array
     {
         if (! is_file(filename: $this->keyRingPath) || ! is_readable(filename: $this->keyRingPath)) {
             throw new InvalidArgumentException(message: "Key ring file is not readable: {$this->keyRingPath}");
@@ -68,7 +68,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
             throw new InvalidArgumentException(message: 'Key ring file must decode to an object.');
         }
 
-        $primary      = $this->normalizeKey(candidate: $decoded['primary'] ?? null, label: 'primary');
+        $primary = $this->normalizeKey(candidate: $decoded['primary'] ?? null, label: 'primary');
         $verification = [];
 
         foreach ($decoded['verification'] ?? [] as $index => $key) {
@@ -76,42 +76,39 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
         }
 
         return [
-            'primary'      => $primary,
+            'primary' => $primary,
             'verification' => $verification,
         ];
     }
 
     /**
-     * @param mixed  $candidate
-     * @param string $label
-     *
      * @return array{secret:string, algorithm:string, kid:string|null}
      */
-    private function normalizeKey(mixed $candidate, string $label) : array
+    private function normalizeKey(mixed $candidate, string $label): array
     {
         if (! is_array(value: $candidate)) {
             throw new InvalidArgumentException(message: "Key ring {$label} entry must be an object.");
         }
 
-        $secret    = trim(string: (string) ($candidate['secret'] ?? ''));
+        $secret = trim(string: (string) ($candidate['secret'] ?? ''));
         $algorithm = trim(string: (string) ($candidate['algorithm'] ?? 'HS256'));
-        $kid       = trim(string: (string) ($candidate['kid'] ?? ''));
+        $kid = trim(string: (string) ($candidate['kid'] ?? ''));
 
         if ($secret === '') {
             throw new InvalidArgumentException(message: "Key ring {$label} secret cannot be empty.");
         }
 
         return [
-            'secret'    => $secret,
+            'secret' => $secret,
             'algorithm' => $algorithm,
-            'kid'       => $kid !== '' ? $kid : null,
+            'kid' => $kid !== '' ? $kid : null,
         ];
     }
 
     /**
-     * @param array{secret:string, algorithm:string, kid:string|null} $configuration
+     * @param  array{secret:string, algorithm:string, kid:string|null}  $configuration
      */
-    private function createCodec(array $configuration) : TokenCodecInterface
+    private function createCodec(array $configuration): TokenCodecInterface
     {
         return new HmacTokenCodec(
             secret   : $configuration['secret'],
@@ -120,7 +117,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
         );
     }
 
-    public function decode(#[SensitiveParameter] string $token) : array|null
+    public function decode(#[SensitiveParameter] string $token): ?array
     {
         try {
             return $this->buildCodec()->decode(token: $token);

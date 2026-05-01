@@ -19,7 +19,7 @@ final class SessionCharacterizationTest extends TestCase
         $this->assertTrue($s->has(key: 'foo'));
         $this->assertSame('bar', $s->get(key: 'foo'));
 
-        $val = $s->remember(key: 'baz', callback: static function () { return 42; });
+        $val = $s->remember(key: 'baz', callback: static fn () => 42);
         $this->assertSame(42, $val);
 
         $s->forget(key: 'foo');

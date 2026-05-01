@@ -16,7 +16,7 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
 {
     public function __construct(private LoggerInterface $logger, private Config $config) {}
 
-    public function getSubscribedEvents() : array
+    public function getSubscribedEvents(): array
     {
         return [
             QueryExecuted::class => 'handleQueryExecuted',
@@ -26,16 +26,16 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
     /**
      * Handle the QueryExecuted event.
      *
-     * @param QueryExecuted $event The event containing query execution details.
+     * @param  QueryExecuted  $event  The event containing query execution details.
      */
-    public function handleQueryExecuted(QueryExecuted $event) : void
+    public function handleQueryExecuted(QueryExecuted $event): void
     {
         $this->logger->info(message: 'Query executed', context: [
-            'sql'         => $event->sql,
-            'bindings'    => $event->bindings,
+            'sql' => $event->sql,
+            'bindings' => $event->bindings,
             'duration_ms' => $event->timeMs,
-            'connection'  => $event->connectionName,
-            'trace_id'    => $event->correlationId,
+            'connection' => $event->connectionName,
+            'trace_id' => $event->correlationId,
         ]);
     }
 }

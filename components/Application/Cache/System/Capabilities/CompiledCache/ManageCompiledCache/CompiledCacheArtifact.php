@@ -17,9 +17,9 @@ final readonly class CompiledCacheArtifact
     public function __construct(
         public CompiledCacheName $compiledCacheName,
         public CompiledCachePath $compiledCachePath,
-        public Timestamp         $timestamp,
-        public string            $sourceFingerprint,
-        public mixed             $payload = null,
+        public Timestamp $timestamp,
+        public string    $sourceFingerprint,
+        public mixed     $payload = null,
     ) {
         $this->compiledCacheName = $compiledCacheName;
         $this->compiledCachePath = $compiledCachePath;
@@ -29,7 +29,7 @@ final readonly class CompiledCacheArtifact
     public static function create(
         string $name,
         string $path,
-        int    $createdAt,
+        int $createdAt,
         string $sourceFingerprint,
     ) : self
     {

@@ -11,12 +11,12 @@ final readonly class SmtpTransport implements MailTransport
 {
     public function __construct(private array $config = []) {}
 
-    public function send(MimeMessage $message, Envelope $envelope) : TransportResult
+    public function send(MimeMessage $message, Envelope $envelope): TransportResult
     {
         $headers = [
-            'From: ' . $envelope->from,
+            'From: '.$envelope->from,
             'MIME-Version: 1.0',
-            'Content-Type: ' . $message->contentType . '; charset=UTF-8',
+            'Content-Type: '.$message->contentType.'; charset=UTF-8',
         ];
 
         $sent = mail(
@@ -32,11 +32,11 @@ final readonly class SmtpTransport implements MailTransport
 
         return new TransportResult(
             success  : true,
-            messageId: '<' . uniqid(prefix: 'msg-', more_entropy: true) . '@' . ($this->config['domain'] ?? 'localhost') . '>',
+            messageId: '<'.uniqid(prefix: 'msg-', more_entropy: true).'@'.($this->config['domain'] ?? 'localhost').'>',
         );
     }
 
-    public function supports(string $driver) : bool
+    public function supports(string $driver): bool
     {
         return $driver === 'smtp';
     }

@@ -11,7 +11,7 @@ final readonly class ReadOidcProviderMetadata
 {
     public function __construct(private OidcProviderInterface $oidcProvider) {}
 
-    public function execute() : OidcProviderMetadata
+    public function execute(): OidcProviderMetadata
     {
         return $this->oidcProvider->readProviderMetadata();
     }

@@ -10,12 +10,12 @@ final readonly class LogoutData
 {
     public function __construct(
         #[SensitiveParameter]
-        public string|null $sessionId = null,
+        public ?string $sessionId = null,
         #[SensitiveParameter]
-        public string|null $idTokenHint = null,
+        public ?string $idTokenHint = null,
         #[SensitiveParameter]
-        public string|null $logoutToken = null,
-        public string|null $postLogoutRedirectUri = null,
-        public string|null $state = null,
+        public ?string $logoutToken = null,
+        public ?string $postLogoutRedirectUri = null,
+        public ?string $state = null,
     ) {}
 }

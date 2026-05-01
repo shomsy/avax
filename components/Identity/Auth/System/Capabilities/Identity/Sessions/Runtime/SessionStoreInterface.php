@@ -9,17 +9,17 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Ru
  */
 interface SessionStoreInterface
 {
-    public function start() : void;
+    public function start(): void;
 
-    public function regenerate() : string;
+    public function regenerate(): string;
 
-    public function id() : string|null;
+    public function id(): ?string;
 
-    public function get(string $key) : mixed;
+    public function get(string $key): mixed;
 
-    public function put(string $key, mixed $value) : void;
+    public function put(string $key, mixed $value): void;
 
-    public function forget(string $key) : void;
+    public function forget(string $key): void;
 
-    public function invalidate() : void;
+    public function invalidate(): void;
 }

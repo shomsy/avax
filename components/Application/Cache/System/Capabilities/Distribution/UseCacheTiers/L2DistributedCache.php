@@ -23,7 +23,7 @@ final class L2DistributedCache
 
     public static function create(
         string $basePath,
-        Clock|null $clock = null,
+        Clock $clock = null,
     ) : FileCacheStore
     {
         return new FileCacheStore(basePath: $basePath, clock: $clock ?? new SystemClock());

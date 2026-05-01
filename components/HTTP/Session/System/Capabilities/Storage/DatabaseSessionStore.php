@@ -12,7 +12,7 @@ final readonly class DatabaseSessionStore implements SessionStoreInterface
     private const ALLOWED_TABLE_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
 
     public function __construct(
-        private PDO    $pdo,
+        private PDO $pdo,
         private string $table = 'sessions',
     )
     {

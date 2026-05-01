@@ -20,12 +20,12 @@ class LocalDiskTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
-        $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_test';
+        $this->disk     = new LocalDisk();
+        $this->testDir  = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_test';
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_test.txt';
         $this->copyFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_copy.txt';
         $this->movedFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_moved.txt';
-        @mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
+        @mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
     }
 
     protected function tearDown() : void
@@ -175,7 +175,7 @@ class LocalDiskTest extends TestCase
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
 
-        $result = $this->disk->setPermissions(path: $this->testFile, permissions: 0644);
+        $result = $this->disk->setPermissions(path: $this->testFile, permissions: 0o644);
 
         self::assertTrue(condition: $result);
     }
@@ -183,9 +183,9 @@ class LocalDiskTest extends TestCase
     public function testHasPermission() : void
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
-        $this->disk->setPermissions(path: $this->testFile, permissions: 0644);
+        $this->disk->setPermissions(path: $this->testFile, permissions: 0o644);
 
-        $result = $this->disk->hasPermission(path: $this->testFile, permissions: 0644);
+        $result = $this->disk->hasPermission(path: $this->testFile, permissions: 0o644);
 
         self::assertTrue(condition: $result);
     }

@@ -16,14 +16,13 @@ final class ArrayPooledConnection implements PooledConnection
 
     public function __construct(
         private readonly array $config = [],
-    )
-    {
-        $this->createdAt  = microtime(as_float: true);
+    ) {
+        $this->createdAt = microtime(as_float: true);
         $this->lastUsedAt = $this->createdAt;
     }
 
     #[Override]
-    public function getResource() : object
+    public function getResource(): object
     {
         $this->lastUsedAt = microtime(as_float: true);
 
@@ -31,30 +30,30 @@ final class ArrayPooledConnection implements PooledConnection
     }
 
     #[Override]
-    public function isValid() : bool
+    public function isValid(): bool
     {
         return true;
     }
 
     #[Override]
-    public function getCreatedAt() : float
+    public function getCreatedAt(): float
     {
         return $this->createdAt;
     }
 
     #[Override]
-    public function getLastUsedAt() : float
+    public function getLastUsedAt(): float
     {
         return $this->lastUsedAt;
     }
 
     #[Override]
-    public function executeCount() : int
+    public function executeCount(): int
     {
         return $this->executeCount;
     }
 
-    public function recordExecution() : void
+    public function recordExecution(): void
     {
         $this->executeCount++;
         $this->lastUsedAt = microtime(as_float: true);

@@ -17,7 +17,7 @@ class PathIsDirectoryTest extends TestCase
         parent::setUp();
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/is_dir_test.txt';
         $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/is_dir_test';
-        @mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
+        @mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
     }
 
     protected function tearDown() : void

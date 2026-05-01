@@ -386,7 +386,7 @@ final class DeadlockDetectorTest extends TestCase
     {
         $config = new DeadlockDetectorConfig(
             deadlockSqlStates : ['40001'],
-            deadlockErrorCodes: ['1213', '1205']
+            deadlockErrorCodes: ['1213', '1205'],
         );
 
         $detector = new DeadlockDetector($config);
@@ -437,7 +437,7 @@ final class DeadlockDetectorTest extends TestCase
             message       : 'Test message',
             errorCode     : 'TEST',
             suggestion    : 'Test suggestion',
-            affectedTables: ['users', 'orders']
+            affectedTables: ['users', 'orders'],
         );
 
         $this->assertTrue($report->isDeadlock);
@@ -465,7 +465,7 @@ final class DeadlockDetectorTest extends TestCase
             message       : 'Test',
             errorCode     : 'E001',
             suggestion    : 'Retry',
-            affectedTables: ['users']
+            affectedTables: ['users'],
         );
 
         $summary = $report->summary();
@@ -490,7 +490,7 @@ final class DeadlockDetectorTest extends TestCase
             type      : 'test',
             message   : 'Test',
             errorCode : 'E001',
-            suggestion: 'Retry'
+            suggestion: 'Retry',
         );
 
         $summary = $report->summary();

@@ -10,7 +10,7 @@ namespace Avax\Components\DataStack\Data\System\Flows\Aggregate;
  */
 final class SumValues
 {
-    public function execute(iterable $items, string|callable|null $key = null) : int|float
+    public function execute(iterable $items, string|callable|null $key = null): int|float
     {
         $sum = 0;
         foreach ($items as $item) {
@@ -23,7 +23,7 @@ final class SumValues
         return $sum;
     }
 
-    private function extract(mixed $item, string|callable|null $key) : mixed
+    private function extract(mixed $item, string|callable|null $key): mixed
     {
         if ($key === null) {
             return $item;

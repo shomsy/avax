@@ -29,7 +29,7 @@ $nestedMoves = [
 $dryRun = ! in_array('--apply', $argv, true);
 
 echo "Phase 1: Fix Nested System Folders\n";
-echo "Mode: " . ($dryRun ? "DRY-RUN" : "APPLY") . "\n\n";
+echo 'Mode: ' . ($dryRun ? 'DRY-RUN' : 'APPLY') . "\n\n";
 
 foreach ($nestedMoves as $from => $to) {
     $fromPath = $root . '/' . $from;
@@ -40,16 +40,18 @@ foreach ($nestedMoves as $from => $to) {
     }
 
     $op = "MOVE {$from} -> {$to}";
-    echo ($dryRun ? "[dry-run] " : "") . $op . "\n";
+    echo ($dryRun ? '[dry-run] ' : '') . $op . "\n";
 
     if (! $dryRun) {
         if (! is_dir(dirname($toPath))) {
-            mkdir(dirname($toPath), 0777, true);
+            mkdir(dirname($toPath), 0o777, true);
         }
 
         $items = scandir($fromPath);
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..') continue;
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
 
             $src = $fromPath . '/' . $item;
             $dst = $toPath . '/' . $item;

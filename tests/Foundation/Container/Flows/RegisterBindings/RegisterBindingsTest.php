@@ -12,7 +12,6 @@ use components\Container\Core\AppFactory;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareBaseRegisterDependency;
 use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterBaseRegisterDependency;
-use components\HTTP\Request\Request;
 use LogicException;
 use Override;
 use Psr\Log\LoggerInterface;
@@ -27,7 +26,7 @@ final class RegisterBindingsTest extends TestCase
     {
         $this->app->getContainer()->singleton(
             abstract: 'shared_service',
-            concrete: static fn (...$arguments) : stdClass => new stdClass
+            concrete: static fn (...$arguments) : stdClass => new stdClass(),
         );
 
         $instance1 = $this->app->getContainer()->make(abstract: 'shared_service');
@@ -41,7 +40,7 @@ final class RegisterBindingsTest extends TestCase
     {
         $this->app->getContainer()->bind(
             abstract: 'transient_service',
-            concrete: static fn (...$arguments) : stdClass => new stdClass
+            concrete: static fn (...$arguments) : stdClass => new stdClass(),
         );
 
         $instance1 = $this->app->getContainer()->make(abstract: 'transient_service');
@@ -54,7 +53,7 @@ final class RegisterBindingsTest extends TestCase
     {
         $this->app->getContainer()->scoped(
             abstract: 'scoped_service',
-            concrete: static fn (...$arguments) : stdClass => new stdClass
+            concrete: static fn (...$arguments) : stdClass => new stdClass(),
         );
 
         $this->app->getContainer()->beginScope();
@@ -76,11 +75,11 @@ final class RegisterBindingsTest extends TestCase
             providers: [MiddlewareBaseRegisterDependency::class, RouterBaseRegisterDependency::class],
             routes   : $this->createRoutesFile(),
             cacheDir : sys_get_temp_dir(),
-            debug    : true
+            debug    : true,
         );
 
-        $this->app->getContainer()->instance(abstract: RouterInterface::class, instance: new RegistrationFakeRouter);
-        $this->app->getContainer()->instance(abstract: LoggerInterface::class, instance: new NullLogger);
+        $this->app->getContainer()->instance(abstract: RouterInterface::class, instance: new RegistrationFakeRouter());
+        $this->app->getContainer()->instance(abstract: LoggerInterface::class, instance: new NullLogger());
     }
 
     private function createRoutesFile() : string

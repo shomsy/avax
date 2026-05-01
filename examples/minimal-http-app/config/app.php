@@ -15,7 +15,7 @@ return [
             'Services'     => 'Infrastructure\Services',
             'Controllers'  => 'Presentation\HTTP\Controllers',
         ],
-        'paths'      => [
+        'paths' => [
             'DTO'          => 'Domain/DTO',
             'Entity'       => 'Domain/Entities',
             'Migrations'   => 'Infrastructure/Migrations',
@@ -26,5 +26,5 @@ return [
         ],
     ],
 
-    'filePermissions' => 0666,
+    'filePermissions' => 0o666,
 ];

@@ -30,7 +30,7 @@ class ConsoleOutput
     /** Whether ANSI colors are enabled */
     private readonly bool $colorsEnabled;
 
-    public function __construct(bool|null $colorsEnabled = null)
+    public function __construct(?bool $colorsEnabled = null)
     {
         $this->colorsEnabled = $colorsEnabled ?? $this->detectColors();
     }
@@ -38,7 +38,7 @@ class ConsoleOutput
     /**
      * Detect if the terminal supports colors.
      */
-    private function detectColors() : bool
+    private function detectColors(): bool
     {
         if (PHP_SAPI !== 'cli') {
             return false;
@@ -54,7 +54,7 @@ class ConsoleOutput
     /**
      * Output an info message (green).
      */
-    public function info(string $message) : void
+    public function info(string $message): void
     {
         $this->line($this->colorize($message, self::COLOR_GREEN));
     }
@@ -62,27 +62,27 @@ class ConsoleOutput
     /**
      * Output a plain line.
      */
-    public function line(string $message = '') : void
+    public function line(string $message = ''): void
     {
-        echo $message . PHP_EOL;
+        echo $message.PHP_EOL;
     }
 
     /**
      * Apply color if colors are enabled.
      */
-    private function colorize(string $message, string $color) : string
+    private function colorize(string $message, string $color): string
     {
         if (! $this->colorsEnabled) {
             return $message;
         }
 
-        return $color . $message . self::COLOR_RESET;
+        return $color.$message.self::COLOR_RESET;
     }
 
     /**
      * Output an error message (red).
      */
-    public function error(string $message) : void
+    public function error(string $message): void
     {
         $this->line($this->colorize($message, self::COLOR_RED));
     }
@@ -90,7 +90,7 @@ class ConsoleOutput
     /**
      * Output a warning message (yellow).
      */
-    public function warn(string $message) : void
+    public function warn(string $message): void
     {
         $this->line($this->colorize($message, self::COLOR_YELLOW));
     }
@@ -98,7 +98,7 @@ class ConsoleOutput
     /**
      * Output a comment message (cyan).
      */
-    public function comment(string $message) : void
+    public function comment(string $message): void
     {
         $this->line($this->colorize($message, self::COLOR_CYAN));
     }
@@ -106,7 +106,7 @@ class ConsoleOutput
     /**
      * Output a bold message.
      */
-    public function bold(string $message) : void
+    public function bold(string $message): void
     {
         $this->line($this->colorize($message, self::COLOR_BOLD));
     }
@@ -114,7 +114,7 @@ class ConsoleOutput
     /**
      * Render an ASCII table.
      */
-    public function table(array $headers, array $rows) : void
+    public function table(array $headers, array $rows): void
     {
         Table::render($headers, $rows);
     }
@@ -122,7 +122,7 @@ class ConsoleOutput
     /**
      * Create and return a progress bar.
      */
-    public function progress(int $total, int $width = 50) : ProgressBar
+    public function progress(int $total, int $width = 50): ProgressBar
     {
         return new ProgressBar($total, $width);
     }
@@ -130,7 +130,7 @@ class ConsoleOutput
     /**
      * Ask a secret question.
      */
-    public function askSecret(string $question, string|null $default = null) : string
+    public function askSecret(string $question, ?string $default = null): string
     {
         return Question::askSecret($question, $default);
     }
@@ -138,7 +138,7 @@ class ConsoleOutput
     /**
      * Ask a yes/no confirmation.
      */
-    public function confirm(string $question, bool $default = false) : bool
+    public function confirm(string $question, bool $default = false): bool
     {
         return Confirm::ask($question, $default);
     }
@@ -146,7 +146,7 @@ class ConsoleOutput
     /**
      * Ask a text question.
      */
-    public function ask(string $question, string|null $default = null) : string
+    public function ask(string $question, ?string $default = null): string
     {
         return Question::ask($question, $default);
     }
@@ -154,7 +154,7 @@ class ConsoleOutput
     /**
      * Write raw output without newline.
      */
-    public function write(string $message) : void
+    public function write(string $message): void
     {
         echo $message;
     }
@@ -162,7 +162,7 @@ class ConsoleOutput
     /**
      * Output a new line.
      */
-    public function newLine(int $count = 1) : void
+    public function newLine(int $count = 1): void
     {
         echo str_repeat(PHP_EOL, $count);
     }

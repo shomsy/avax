@@ -204,10 +204,10 @@ final class CacheHealthDetector
      * Create a new health detector with default settings.
      */
     public static function create(
-        Clock|null $clock = null,
-        int    $latencyThresholdMs = 100,
-        float  $memoryUsageThreshold = 90.0,
-        float  $hitRateThreshold = 0.5,
+        Clock $clock = null,
+        int   $latencyThresholdMs = 100,
+        float $memoryUsageThreshold = 90.0,
+        float $hitRateThreshold = 0.5,
     ) : self
     {
         return new self(
@@ -227,6 +227,7 @@ final class CacheHealthDetector
     public function checkMemory() : CacheHealthStatus
     {
         $now = $this->clock->now();
+
         try {
             // Try to get memory stats if the store supports it
             $memoryInfo = $this->getMemoryInfo();
@@ -294,6 +295,7 @@ final class CacheHealthDetector
     public function checkHitRate() : CacheHealthStatus
     {
         $now = $this->clock->now();
+
         try {
             $hitRate = $this->getHitRate();
 

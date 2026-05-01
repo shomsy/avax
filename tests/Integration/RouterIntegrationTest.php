@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Integration;
 
 use Avax\Components\Application\Container\Core\AppFactory;
@@ -70,7 +69,7 @@ class RouterIntegrationTest extends TestCase
 
         return new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : $uri
+            uri         : $uri,
         );
     }
 
@@ -186,7 +185,7 @@ class RouterIntegrationTest extends TestCase
             $this->assertInstanceOf(
                 expected: ResponseInterface::class,
                 actual  : $response,
-                message : "Route {$route} did not return a ResponseInterface"
+                message : "Route {$route} did not return a ResponseInterface",
             );
         }
     }
@@ -208,7 +207,7 @@ class RouterIntegrationTest extends TestCase
             // Then: Response has Content-Type header
             $this->assertNotEmpty(
                 actual : $response->getHeaderLine('Content-Type'),
-                message: "Route {$route} missing Content-Type header"
+                message: "Route {$route} missing Content-Type header",
             );
         }
     }
@@ -238,7 +237,7 @@ class RouterIntegrationTest extends TestCase
             providers: $providers,
             routes   : $routes,
             cacheDir : $cacheDir,
-            debug    : true
+            debug    : true,
         );
     }
 }

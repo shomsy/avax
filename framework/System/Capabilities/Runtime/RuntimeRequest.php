@@ -32,7 +32,7 @@ final readonly class RuntimeRequest
         string $method,
         string $uri,
         array $headers = [],
-        string|null $body = null,
+        string $body = null,
         array $attributes = [],
     ) {
         $normalizedMethod = strtoupper(string: trim(string: $method));

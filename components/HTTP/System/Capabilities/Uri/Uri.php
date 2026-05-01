@@ -12,7 +12,7 @@ final readonly class Uri implements Stringable
         private string $scheme = '',
         private string $host = '',
         private string $path = '/',
-        private int|null    $port = null,
+        private int|null $port = null,
         private string $query = '',
         private string $fragment = '',
         private string $user = '',

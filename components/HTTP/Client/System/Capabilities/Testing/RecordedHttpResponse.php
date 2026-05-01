@@ -27,18 +27,18 @@ final readonly class RecordedHttpResponse
     public function __construct(
         public string $urlPattern,
         public string $method = '*',
-        public int    $statusCode = 200,
-        public array  $headers = [],
+        public int   $statusCode = 200,
+        public array $headers = [],
         public string $body = '',
-        public float  $delayMs = 0.0,
-        public bool   $useRegex = false,
+        public float $delayMs = 0.0,
+        public bool  $useRegex = false,
         public Throwable|null $exception = null,
     ) {}
 
     /**
      * Create a successful response recording.
      *
-     * @param string $url  URL to match
+     * @param string $url URL to match
      * @param string $body Response body
      * @param array<string, string> $headers Headers to include
      */
@@ -67,7 +67,7 @@ final readonly class RecordedHttpResponse
     public static function json(
         string $url,
         mixed $data = [],
-        int   $status = 200,
+        int $status = 200,
     ) : self
     {
         return new self(

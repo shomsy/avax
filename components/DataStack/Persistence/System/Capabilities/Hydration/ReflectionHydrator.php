@@ -24,15 +24,15 @@ final class ReflectionHydrator implements HydratorInterface
         private readonly IdentityMap $identityMap,
     ) {}
 
-    public function hydrateAll(string $entityClass, array $rows) : array
+    public function hydrateAll(string $entityClass, array $rows): array
     {
         return array_map(
-            fn (array $row) : object => $this->hydrate($entityClass, $row),
+            fn (array $row): object => $this->hydrate($entityClass, $row),
             $rows,
         );
     }
 
-    public function hydrate(string $entityClass, array $row) : object
+    public function hydrate(string $entityClass, array $row): object
     {
         // Check IdentityMap first using 'id' column convention
         $idValue = $row['id'] ?? null;
@@ -76,7 +76,7 @@ final class ReflectionHydrator implements HydratorInterface
     /**
      * Convert a snake_case column name to a camelCase property name.
      */
-    private function columnToProperty(string $column) : string
+    private function columnToProperty(string $column): string
     {
         return lcfirst(
             str_replace(' ', '', ucwords(str_replace('_', ' ', $column))),

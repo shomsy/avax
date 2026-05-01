@@ -15,19 +15,19 @@ use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationResult;
  */
 interface AuthInterface
 {
-    public function login(Credentials $credentials) : AuthenticationResult;
+    public function login(Credentials $credentials): AuthenticationResult;
 
-    public function logout() : void;
+    public function logout(): void;
 
-    public function user() : ?User;
+    public function user(): ?User;
 
-    public function check() : bool;
+    public function check(): bool;
 
-    public function guest() : bool;
+    public function guest(): bool;
 
-    public function register(RegistrationData $data) : RegistrationResult;
+    public function register(RegistrationData $data): RegistrationResult;
 
-    public function changePassword(ChangePasswordData $data) : void;
+    public function changePassword(ChangePasswordData $data): void;
 
-    public function logoutAllSessions() : void;
+    public function logoutAllSessions(): void;
 }

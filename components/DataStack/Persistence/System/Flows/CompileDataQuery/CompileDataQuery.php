@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\CompileDataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQueryPlan;
 use InvalidArgumentException;
+
 use function end;
 use function explode;
 use function is_array;
@@ -23,15 +24,15 @@ final class CompileDataQuery
     /**
      * Compiles a DataQuery into a DataQueryPlan.
      */
-    public function compile(DataQuery $query) : DataQueryPlan
+    public function compile(DataQuery $query): DataQueryPlan
     {
         if ($query->entityType === null) {
             throw new InvalidArgumentException('Cannot compile query without entity type.');
         }
 
         $tableName = $this->extractTableName($query->entityType);
-        $sql       = $this->buildSql($query, $tableName);
-        $bindings  = $this->extractBindings($query);
+        $sql = $this->buildSql($query, $tableName);
+        $bindings = $this->extractBindings($query);
 
         return new DataQueryPlan(
             sql     : $sql,
@@ -42,11 +43,11 @@ final class CompileDataQuery
     /**
      * Extracts a table name from an entity class name.
      *
-     * @param class-string $entityType
+     * @param  class-string  $entityType
      */
-    private function extractTableName(string $entityType) : string
+    private function extractTableName(string $entityType): string
     {
-        $parts     = explode('\\', $entityType);
+        $parts = explode('\\', $entityType);
         $className = end($parts);
 
         return $this->camelToSnake($className);
@@ -55,7 +56,7 @@ final class CompileDataQuery
     /**
      * Converts camelCase to snake_case.
      */
-    private function camelToSnake(string $input) : string
+    private function camelToSnake(string $input): string
     {
         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
     }
@@ -63,10 +64,10 @@ final class CompileDataQuery
     /**
      * Builds SQL from the query and table name.
      */
-    private function buildSql(DataQuery $query, string $tableName) : string
+    private function buildSql(DataQuery $query, string $tableName): string
     {
         $select = implode(', ', $query->select);
-        $sql    = "SELECT {$select} FROM {$tableName}";
+        $sql = "SELECT {$select} FROM {$tableName}";
 
         // Add JOINs
         foreach ($query->joins as $join) {
@@ -85,7 +86,7 @@ final class CompileDataQuery
             foreach ($query->orderBy as $field => $direction) {
                 $orderByParts[] = "{$field} {$direction}";
             }
-            $sql .= ' ORDER BY ' . implode(', ', $orderByParts);
+            $sql .= ' ORDER BY '.implode(', ', $orderByParts);
         }
 
         // Add LIMIT
@@ -104,9 +105,9 @@ final class CompileDataQuery
     /**
      * Builds the WHERE clause from conditions.
      *
-     * @param array<array{field: string, value: mixed, operator: string}|mixed> $conditions
+     * @param  array<array{field: string, value: mixed, operator: string}|mixed>  $conditions
      */
-    private function buildWhereClause(array $conditions) : string
+    private function buildWhereClause(array $conditions): string
     {
         if ($conditions === []) {
             return '';
@@ -130,7 +131,7 @@ final class CompileDataQuery
      *
      * @return array<int, mixed>
      */
-    private function extractBindings(DataQuery $query) : array
+    private function extractBindings(DataQuery $query): array
     {
         $bindings = [];
 

@@ -68,37 +68,37 @@ final class ResolveDependency
     private array $lazyServices = [];
 
     /** @var array{environment: string, flags: list<string>, tenant: string, region: string, mode: string}|null */
-    private array|null                         $compositionState = null;
-    private readonly string                    $asyncTarget;
-    private readonly string                    $sliceBoundaryMode;
-    private readonly string                    $environment;
-    private readonly string                    $diagnosticsMode;
-    private readonly FunctionCaller            $caller;
-    private readonly InjectMethods             $injectMethods;
-    private readonly InjectProperties          $injectProperties;
+    private array|null                  $compositionState = null;
+    private readonly string             $asyncTarget;
+    private readonly string             $sliceBoundaryMode;
+    private readonly string             $environment;
+    private readonly string             $diagnosticsMode;
+    private readonly FunctionCaller     $caller;
+    private readonly InjectMethods      $injectMethods;
+    private readonly InjectProperties   $injectProperties;
     private readonly CreateDependencyBlueprint $blueprints;
-    private readonly BuildService              $builder;
-    private readonly ManageScopes              $scopes;
-    private readonly DependencyRegistry        $registrations;
+    private readonly BuildService       $builder;
+    private readonly ManageScopes       $scopes;
+    private readonly DependencyRegistry $registrations;
 
     public function __construct(
-        DependencyRegistry            $registrations,
-        ManageScopes                  $scopes,
-        BuildService                  $builder,
-        CreateDependencyBlueprint     $blueprints,
-        InjectProperties              $injectProperties,
-        InjectMethods                 $injectMethods,
-        FunctionCaller                $caller,
-        ResolutionMetrics             $metrics = null,
-        ResolutionTimeline            $timeline = null,
-        ResolutionPolicy              $policy = null,
-        CompiledRuntime               $compiledRuntime = null,
-        DeferredProviderRegistry|null $deferredProviders = null,
-        string                        $diagnosticsMode = null,
-        string                        $environment = null,
-        string                        $sliceBoundaryMode = null,
-        string                        $asyncTarget = null,
-        GovernComposition             $governor = null,
+        DependencyRegistry        $registrations,
+        ManageScopes              $scopes,
+        BuildService              $builder,
+        CreateDependencyBlueprint $blueprints,
+        InjectProperties          $injectProperties,
+        InjectMethods             $injectMethods,
+        FunctionCaller            $caller,
+        ResolutionMetrics         $metrics = null,
+        ResolutionTimeline        $timeline = null,
+        ResolutionPolicy          $policy = null,
+        CompiledRuntime           $compiledRuntime = null,
+        DeferredProviderRegistry  $deferredProviders = null,
+        string                    $diagnosticsMode = null,
+        string                    $environment = null,
+        string                    $sliceBoundaryMode = null,
+        string                    $asyncTarget = null,
+        GovernComposition         $governor = null,
     )
     {
         $diagnosticsMode         ??= CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL;
@@ -186,16 +186,16 @@ final class ResolveDependency
      */
     public function describeService(string $id) : array
     {
-        $resolved          = $this->registrations->resolveAlias(abstract: $id);
-        $registration      = $this->registrations->get(abstract: $resolved);
-        $lifetimePlan      = LifetimePlan::fromRegistration(
+        $resolved       = $this->registrations->resolveAlias(abstract: $id);
+        $registration   = $this->registrations->get(abstract: $resolved);
+        $lifetimePlan   = LifetimePlan::fromRegistration(
             serviceId   : $resolved,
             registration: $registration,
         );
-        $blueprintClass    = is_string(value: $registration?->concrete) && class_exists(class: $registration->concrete)
+        $blueprintClass = is_string(value: $registration?->concrete) && class_exists(class: $registration->concrete)
             ? $registration->concrete
             : (class_exists(class: $resolved) ? $resolved : null);
-        $blueprint         = is_string(value: $blueprintClass)
+        $blueprint      = is_string(value: $blueprintClass)
             ? $this->blueprints->createFor(class: $blueprintClass)
             : null;
         $compiledArtifact  = $this->compiledRuntime->report(serviceIds: [$resolved]);
@@ -212,33 +212,33 @@ final class ResolveDependency
         $overrides         = $this->registrations->overrideHistory(abstract: $resolved)[$resolved] ?? [];
 
         return [
-            'id'                 => $id,
-            'resolvedId'         => $resolved,
-            'registered'         => $registration !== null,
-            'diagnosticsMode'    => $this->diagnosticsMode,
-            'concrete'           => is_object(value: $concrete)
+            'id'                => $id,
+            'resolvedId'        => $resolved,
+            'registered'        => $registration !== null,
+            'diagnosticsMode'   => $this->diagnosticsMode,
+            'concrete'          => is_object(value: $concrete)
                 ? $concrete::class
                 : $concrete,
-            'lifetime'           => $lifetimePlan->name,
-            'lifetimePlan'       => $lifetimePlan->toArray(),
-            'deferred'           => ($registration?->deferred ?? false) || $this->deferredProviders->isDeferred(serviceId: $resolved),
-            'deferredProvider'   => $this->deferredProviders->ownerOf(serviceId: $resolved),
-            'tags'               => $registration?->tags ?? [],
-            'group'              => [
+            'lifetime'          => $lifetimePlan->name,
+            'lifetimePlan'      => $lifetimePlan->toArray(),
+            'deferred'          => ($registration?->deferred ?? false) || $this->deferredProviders->isDeferred(serviceId: $resolved),
+            'deferredProvider'  => $this->deferredProviders->ownerOf(serviceId: $resolved),
+            'tags'              => $registration?->tags ?? [],
+            'group'             => [
                 'name'  => $registration?->group,
                 'order' => $registration?->groupOrder ?? 0,
             ],
-            'ownership'          => $ownership->toArray(),
-            'conditions'         => $conditions,
-            'overrides'          => $overrides,
-            'aliases'            => array_keys(array: array_filter(
-                                                          array   : $this->registrations->allAliases(),
-                                                          callback: static fn (string $target) : bool => $target === $resolved,
-                                                      )),
-            'aliasChain'         => $aliasChain,
-            'decorationChain'    => $decorationChain,
-            'decorationDetails'  => $decorationDetails,
-            'blueprint'          => $blueprint !== null ? [
+            'ownership'         => $ownership->toArray(),
+            'conditions'        => $conditions,
+            'overrides'         => $overrides,
+            'aliases'           => array_keys(array: array_filter(
+                                                         array   : $this->registrations->allAliases(),
+                                                         callback: static fn (string $target) : bool => $target === $resolved,
+                                                     )),
+            'aliasChain'        => $aliasChain,
+            'decorationChain'   => $decorationChain,
+            'decorationDetails' => $decorationDetails,
+            'blueprint'         => $blueprint !== null ? [
                 'instantiable'         => $blueprint->instantiable,
                 'shared'               => $blueprint->shared,
                 'constructor'          => $blueprint->constructor?->parameters ?? [],
@@ -439,9 +439,9 @@ final class ResolveDependency
     }
 
     private function assertRuntimeAccess(
-        ResolveRequest              $request,
+        ResolveRequest $request,
         DependencyRegistration|null $registration,
-        LifetimePlan                $lifetime,
+        LifetimePlan   $lifetime,
     ) : void
     {
         if (! $registration instanceof DependencyRegistration) {
@@ -486,11 +486,11 @@ final class ResolveDependency
                 consumerId: $consumerId,
                 request   : $request,
             )) {
-                $access     = $this->accessForConsumer(
+                $access   = $this->accessForConsumer(
                     consumerId: $consumerId,
                     request   : $request,
                 );
-                $consumer   = $access['consumer']['ownerSlice'] ?? ($access['viewer']['slice'] ?? 'unknown');
+                $consumer = $access['consumer']['ownerSlice'] ?? ($access['viewer']['slice'] ?? 'unknown');
                 $dependency = $access['dependency']['ownerSlice'] ?? 'unknown';
 
                 throw new ContainerException(
@@ -943,8 +943,8 @@ final class ResolveDependency
     }
 
     /**
-     * @param mixed                       $candidate
-     * @param ResolveRequest              $request
+     * @param mixed          $candidate
+     * @param ResolveRequest $request
      * @param DependencyRegistration|null $registration
      *
      * @return mixed
@@ -969,7 +969,7 @@ final class ResolveDependency
                 return $this->resolveRequest(request: $request->child(serviceId: $candidate));
             }
 
-            $resolved  = $this->builder->build(
+            $resolved = $this->builder->build(
                 class    : $candidate,
                 resolver : $this,
                 overrides: array_merge($registration?->arguments ?? [], $request->overrides),
@@ -1122,7 +1122,7 @@ final class ResolveDependency
     {
         return array_map(
             callback: function (string $descriptor) use ($serviceId) : array {
-                $metadata   = $this->registrations->ownership(abstract: $descriptor)
+                $metadata = $this->registrations->ownership(abstract: $descriptor)
                     ?? RegistrationMetadata::for(unitId: $descriptor);
                 $registered = $this->registrations->has(abstract: $descriptor);
 
@@ -1134,7 +1134,7 @@ final class ResolveDependency
                     'reason'     => $registered
                         ? 'decorator resolves through a registered ownership-aware unit'
                         : 'decorator is not a registered service and only has descriptor-level diagnostics',
-                    'access'     => $registered
+                    'access' => $registered
                         ? $this->registrations->accessTo(
                             consumerId  : $serviceId,
                             dependencyId: $descriptor,
@@ -1238,7 +1238,7 @@ final class ResolveDependency
             $dependents[$serviceId] ??= [];
 
             foreach ($dependencies as $dependency) {
-                $dependents[$dependency]   ??= [];
+                $dependents[$dependency] ??= [];
                 $dependents[$dependency][] = $serviceId;
             }
         }
@@ -1340,29 +1340,29 @@ final class ResolveDependency
     }
 
     /**
-     * @param string                      $id
-     * @param string                      $resolvedId
+     * @param string                   $id
+     * @param string                   $resolvedId
      * @param DependencyRegistration|null $registration
-     * @param DependencyBlueprint|null    $blueprint
-     * @param array                       $compiledState
-     * @param array                       $compiledArtifact
-     * @param array                       $cacheState
-     * @param array                       $aliasChain
-     * @param array                       $decorationChain
+     * @param DependencyBlueprint|null $blueprint
+     * @param array                    $compiledState
+     * @param array                    $compiledArtifact
+     * @param array                    $cacheState
+     * @param array                    $aliasChain
+     * @param array                    $decorationChain
      *
      * @return array<string, mixed>
      * @throws ReflectionException
      */
     private function explainService(
-        string                      $id,
-        string                      $resolvedId,
+        string                   $id,
+        string                   $resolvedId,
         DependencyRegistration|null $registration,
-        DependencyBlueprint|null    $blueprint,
-        array                       $compiledState,
-        array                       $compiledArtifact,
-        array                       $cacheState,
-        array                       $aliasChain,
-        array                       $decorationChain,
+        DependencyBlueprint|null $blueprint,
+        array                    $compiledState,
+        array                    $compiledArtifact,
+        array                    $cacheState,
+        array                    $aliasChain,
+        array                    $decorationChain,
     ) : array
     {
         $contextualBindings = $this->contextualBindingsFor(serviceId: $resolvedId);
@@ -1380,7 +1380,7 @@ final class ResolveDependency
             ];
 
         return [
-            'failureChain'     => $this->failureChainFor(
+            'failureChain'   => $this->failureChainFor(
                 resolvedId      : $resolvedId,
                 registration    : $registration,
                 compiledState   : $compiledState,
@@ -1395,7 +1395,7 @@ final class ResolveDependency
                     ? 'no contextual override is registered for this service'
                     : 'contextual overrides exist, but no active consumer selected one for this direct diagnostics request',
             ],
-            'aliasExpansion'   => [
+            'aliasExpansion' => [
                 'requestedId' => $id,
                 'resolvedId'  => $resolvedId,
                 'chain'       => $aliasChain,
@@ -1403,14 +1403,14 @@ final class ResolveDependency
                     ? 'requested id resolves through the alias chain shown here'
                     : 'requested id is already canonical',
             ],
-            'decoration'       => [
+            'decoration'     => [
                 'chain'  => $decorationChain,
                 'count'  => count(value: $decorationChain),
                 'reason' => $decorationChain === []
                     ? 'no decorators or extenders are registered for this service'
                     : 'decorators and extenders will run in the listed order',
             ],
-            'cache'            => [
+            'cache'          => [
                 'state'  => $cacheState,
                 'reason' => match (true) {
                     $cacheState['cached']                           => 'service is already stored in shared or scoped runtime state',
@@ -1421,28 +1421,28 @@ final class ResolveDependency
                     default                                         => 'service will resolve through a fresh build path and then enter lifetime storage if needed',
                 },
             ],
-            'compiled'         => [
+            'compiled'       => [
                 'state'  => $compiledState,
                 'reason' => $compiledState['reason'],
             ],
-            'owner'            => [
+            'owner'          => [
                 'metadata' => $ownership->toArray(),
                 'reason'   => 'ownership metadata explains who owns this unit, what slice it belongs to, and how visible it is',
             ],
-            'override'         => [
+            'override'       => [
                 'history' => $overrides,
                 'reason'  => $overrides === []
                     ? 'no previous authored registration for this abstract was replaced'
                     : 'the service was rebound after one or more previous authored registrations; inspect the history to explain override posture',
             ],
-            'conditions'       => [
+            'conditions'     => [
                 'state'  => $conditions,
                 'reason' => $conditions['active']
                     ? 'all active composition conditions match this registration'
                     : 'one or more environment, flag, tenant, region, or mode conditions exclude this registration',
             ],
-            'fallback'         => $fallback,
-            'blueprint'        => [
+            'fallback'       => $fallback,
+            'blueprint'      => [
                 'available' => $blueprint !== null,
                 'reason'    => $blueprint !== null
                     ? 'compiled and dynamic resolution can explain constructor and injection metadata from the blueprint'
@@ -1455,10 +1455,10 @@ final class ResolveDependency
      * @return list<string>
      */
     private function failureChainFor(
-        string                      $resolvedId,
+        string $resolvedId,
         DependencyRegistration|null $registration,
-        array                       $compiledState,
-        array                       $compiledArtifact,
+        array  $compiledState,
+        array  $compiledArtifact,
     ) : array
     {
         $failures = [];
@@ -1632,7 +1632,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -1936,7 +1936,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param list<string>         $serviceIds
+     * @param list<string> $serviceIds
      * @param array<string, mixed> $context
      *
      * @return list<string>
@@ -2250,16 +2250,16 @@ final class ResolveDependency
 
     /**
      * @param array<string, list<string>> $graph
-     * @param array<string, string>       $state
-     * @param list<string>                $stack
-     * @param list<string>                $issues
+     * @param array<string, string> $state
+     * @param list<string>          $stack
+     * @param list<string>          $issues
      */
     private function visitDependency(
         string $serviceId,
-        array  $graph,
-        array  &$state,
-        array  $stack,
-        array  &$issues,
+        array $graph,
+        array &$state,
+        array $stack,
+        array &$issues,
     ) : void
     {
         $currentState = $state[$serviceId] ?? 'new';
@@ -2298,7 +2298,7 @@ final class ResolveDependency
 
     /**
      * @param array<string, list<string>> $graph
-     * @param list<string>                $issues
+     * @param list<string> $issues
      */
     private function validateSliceAccess(array $graph, array &$issues) : void
     {
@@ -2320,7 +2320,7 @@ final class ResolveDependency
 
     /**
      * @param array<string, list<string>> $graph
-     * @param list<string>                $issues
+     * @param list<string> $issues
      */
     private function validateLifetimeAccess(array $graph, array &$issues) : void
     {
@@ -2651,7 +2651,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param list<string>         $serviceIds
+     * @param list<string> $serviceIds
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -2724,7 +2724,7 @@ final class ResolveDependency
                     'consumerId'   => $serviceId,
                     'dependencyId' => $dependency,
                     'reason'       => $access['reason'],
-                    'consumer'     => $access['consumer'] ?? [],
+                    'consumer' => $access['consumer'] ?? [],
                     'dependency'   => $access['dependency'] ?? [],
                 ];
             }
@@ -2797,7 +2797,7 @@ final class ResolveDependency
             callback: static fn (array $frame) : array => array_intersect_key($frame, $visibleIds),
             array   : $scope['scoped'],
         );
-        $scope['sliceView']       = $this->registrations->sliceView(slice: $slice);
+        $scope['sliceView'] = $this->registrations->sliceView(slice: $slice);
 
         return $scope;
     }
@@ -2838,15 +2838,15 @@ final class ResolveDependency
             return $report;
         }
 
-        $visible             = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
-        $report['items']     = array_values(array: array_filter(
-                                                       array   : $report['items'],
-                                                       callback: static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')]),
-                                                   ));
-        $report['services']  = array_values(array: array_filter(
-                                                       array   : $report['services'],
-                                                       callback: static fn (array $service) : bool => isset($visible[(string) ($service['resolvedId'] ?? '')]),
-                                                   ));
+        $visible            = array_fill_keys(keys: $this->visibleServiceIdsForSlice(slice: $slice), value: true);
+        $report['items']    = array_values(array: array_filter(
+                                                      array   : $report['items'],
+                                                      callback: static fn (array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')]),
+                                                  ));
+        $report['services'] = array_values(array: array_filter(
+                                                      array   : $report['services'],
+                                                      callback: static fn (array $service) : bool => isset($visible[(string) ($service['resolvedId'] ?? '')]),
+                                                  ));
         $report['sliceView'] = $this->registrations->sliceView(slice: $slice);
 
         return $report;
@@ -2867,7 +2867,7 @@ final class ResolveDependency
             $registration = $this->registrations->get(abstract: $serviceId);
             $items[]      = [
                 'serviceId'  => $serviceId,
-                'order'      => $registration?->groupOrder ?? 0,
+                'order' => $registration?->groupOrder ?? 0,
                 'ownerSlice' => $registration?->metadata->ownerSlice ?? 'default',
                 'visibility' => $registration?->metadata->visibility ?? RegistrationVisibility::PUBLIC,
             ];
@@ -3003,7 +3003,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -3028,7 +3028,7 @@ final class ResolveDependency
         return $description;
     }
 
-    public function exportGraph(string|null $format = null, string|null $kind = null, string $id = '') : string
+    public function exportGraph(string $format = null, string $kind = null, string $id = '') : string
     {
         $format ??= 'json';
         $kind   ??= 'dependency';
@@ -3044,9 +3044,9 @@ final class ResolveDependency
      *
      * @return array<string, mixed>
      */
-    private function graphArtifact(string $kind, string|null $id = null, array $context = []) : array
+    private function graphArtifact(string $kind, string $id = null, array $context = []) : array
     {
-        $id             ??= '';
+        $id ??= '';
         $normalizedKind = strtolower(string: trim(string: $kind));
         $slice          = SliceContext::from(context: $context);
         if ($id !== '' && $this->registrations->sliceManifest(slice: $id) !== null) {
@@ -3287,7 +3287,7 @@ final class ResolveDependency
                     'label' => $serviceId,
                     'type'  => 'service',
                 ];
-                $edges[]           = [
+                $edges[] = [
                     'from'  => 'bucket:' . $bucket,
                     'to'    => $serviceId,
                     'label' => 'recommends',
@@ -3311,8 +3311,8 @@ final class ResolveDependency
     /**
      * @param array<string, list<string>> $graph
      * @param array<string, list<string>> $dependents
-     * @param array<string, mixed>        $governance
-     * @param array<string, mixed>        $structureDiff
+     * @param array<string, mixed> $governance
+     * @param array<string, mixed> $structureDiff
      *
      * @return array<string, mixed>
      */
@@ -3351,7 +3351,7 @@ final class ResolveDependency
                     'consumerCount' => count(value: $consumers),
                     'consumers'     => $consumers,
                 ];
-                $speculativeShared[]    = [
+                $speculativeShared[] = [
                     'serviceId'  => $serviceId,
                     'ownerSlice' => $metadata->ownerSlice,
                     'reason'     => 'shared visibility has one or zero known consumers',
@@ -3444,7 +3444,7 @@ final class ResolveDependency
         $ownershipDiff  = [];
 
         foreach (array_values(array: array_unique(array: array_merge(array_keys(array: $graph), array_keys(array: $metadata?->dependencies ?? [])))) as $serviceId) {
-            $current  = $graph[$serviceId] ?? [];
+            $current = $graph[$serviceId] ?? [];
             $compiled = $metadata?->dependencies[$serviceId] ?? [];
             sort(array: $current);
             sort(array: $compiled);
@@ -3458,7 +3458,7 @@ final class ResolveDependency
 
         foreach (array_values(array: array_unique(array: array_merge(array_keys(array: $currentOwnership), array_keys(array: $metadata?->ownership ?? [])))) as $serviceId) {
             $ownershipDiff[$serviceId] = [
-                'current'  => $currentOwnership[$serviceId] ?? [],
+                'current' => $currentOwnership[$serviceId] ?? [],
                 'compiled' => $metadata?->ownership[$serviceId] ?? [],
                 'changed'  => ($currentOwnership[$serviceId] ?? []) !== ($metadata?->ownership[$serviceId] ?? []),
             ];
@@ -3494,9 +3494,9 @@ final class ResolveDependency
             graph     : $graph,
             dependents: $this->buildDependents(graph: $graph),
         );
-        $findings   = $governance['findings'] ?? [];
-        $nodes      = [];
-        $edges      = [];
+        $findings = $governance['findings'] ?? [];
+        $nodes = [];
+        $edges = [];
 
         foreach ($findings as $serviceId => $serviceFindings) {
             $nodes[$serviceId] = ['id' => $serviceId, 'label' => $serviceId, 'type' => 'service'];
@@ -3508,7 +3508,7 @@ final class ResolveDependency
                     'label' => $finding['code'] . ' ' . $finding['severity'],
                     'type'  => 'policy',
                 ];
-                $edges[]           = ['from' => $serviceId, 'to' => $findingId, 'label' => $finding['category']];
+                $edges[] = ['from' => $serviceId, 'to' => $findingId, 'label' => $finding['category']];
             }
         }
 
@@ -3569,7 +3569,7 @@ final class ResolveDependency
         );
     }
 
-    public function diffGraph(string|null $format = null, string $id = '') : string
+    public function diffGraph(string $format = null, string $id = '') : string
     {
         $format ??= 'json';
 
@@ -3584,9 +3584,9 @@ final class ResolveDependency
      *
      * @return array<string, mixed>
      */
-    private function graphDiffArtifact(string|null $id = null, array $context = []) : array
+    private function graphDiffArtifact(string $id = null, array $context = []) : array
     {
-        $id    ??= '';
+        $id ??= '';
         $slice = SliceContext::from(context: $context);
         if ($id !== '' && $this->registrations->sliceManifest(slice: $id) !== null) {
             $slice = $id;
@@ -3610,7 +3610,7 @@ final class ResolveDependency
                 continue;
             }
 
-            $current  = $change['current'] ?? [];
+            $current = $change['current'] ?? [];
             $compiled = $change['compiled'] ?? [];
             foreach (array_values(array: array_diff($current, $compiled)) as $dependency) {
                 $added[]            = ['from' => $serviceId, 'to' => $dependency];
@@ -3638,7 +3638,7 @@ final class ResolveDependency
                 continue;
             }
 
-            $ownershipMoves[]                 = [
+            $ownershipMoves[] = [
                 'serviceId' => $serviceId,
                 'from'      => $compiledOwner,
                 'to'        => $currentOwner,
@@ -3674,7 +3674,7 @@ final class ResolveDependency
                 'ownershipMoves'      => $ownershipMoves,
                 'exportImportChanges' => $sliceChanges,
             ],
-            'raw'           => $structureDiff,
+            'raw' => $structureDiff,
         ];
     }
 
@@ -3685,7 +3685,7 @@ final class ResolveDependency
      */
     private function sliceChangeSet(array $diff, string $slice = '') : array
     {
-        $current        = $diff['current'] ?? [];
+        $current = $diff['current'] ?? [];
         $compiled       = $diff['compiled'] ?? [];
         $slices         = array_values(array: array_unique(array: array_merge(array_keys(array: $current), array_keys(array: $compiled))));
         $addedImports   = [];
@@ -3743,7 +3743,7 @@ final class ResolveDependency
 
         return [
             'service' => $description['resolvedId'] ?? $id,
-            'why'     => $description['explain'] ?? [],
+            'why' => $description['explain'] ?? [],
         ];
     }
 
@@ -3759,9 +3759,9 @@ final class ResolveDependency
 
         return [
             'service'    => $description['resolvedId'] ?? $id,
-            'sliceView'  => $description['sliceView'] ?? null,
+            'sliceView' => $description['sliceView'] ?? null,
             'viewAccess' => $description['viewAccess'] ?? null,
-            'why'        => $description['explain'] ?? [],
+            'why'       => $description['explain'] ?? [],
         ];
     }
 
@@ -3774,9 +3774,9 @@ final class ResolveDependency
         $graph = $this->debugGraph(id: $id);
 
         return [
-            'service'    => $graph['service'] ?? $id,
+            'service' => $graph['service'] ?? $id,
             'dependents' => $graph['dependents'] ?? [],
-            'impact'     => $graph['impact'] ?? [],
+            'impact'  => $graph['impact'] ?? [],
         ];
     }
 
@@ -3851,7 +3851,7 @@ final class ResolveDependency
             'topLevelAccess'    => $this->registrations->topLevelAccessTo(serviceId: $resolved),
             'structureDiff'     => [
                 'dependencies' => $structureDiff['dependencies'][$resolved] ?? ['current' => $graph[$resolved] ?? [], 'compiled' => [], 'changed' => false],
-                'ownership'    => $structureDiff['ownership'][$resolved] ?? ['current' => $description['ownership'] ?? [], 'compiled' => [], 'changed' => false],
+                'ownership' => $structureDiff['ownership'][$resolved] ?? ['current' => $description['ownership'] ?? [], 'compiled' => [], 'changed' => false],
             ],
             'duplicateConcepts' => array_values(array: array_filter(
                                                            array   : $duplicates,
@@ -3913,10 +3913,10 @@ final class ResolveDependency
             }
 
             return [
-                'sliceView'      => $view,
-                'graph'          => $filteredGraph,
-                'dependents'     => $filteredDependents,
-                'governance'     => array_merge(
+                'sliceView'  => $view,
+                'graph'      => $filteredGraph,
+                'dependents' => $filteredDependents,
+                'governance' => array_merge(
                     $graph['governance'] ?? [],
                     ['findings' => $filteredFindings],
                 ),
@@ -4121,7 +4121,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -4132,11 +4132,11 @@ final class ResolveDependency
         $graph = $this->debugGraphInContext(id: $id, context: $context);
 
         return [
-            'service'    => $graph['service'] ?? $id,
-            'sliceView'  => $graph['sliceView'] ?? null,
+            'service'   => $graph['service'] ?? $id,
+            'sliceView' => $graph['sliceView'] ?? null,
             'viewAccess' => $graph['viewAccess'] ?? null,
             'dependents' => $graph['dependents'] ?? [],
-            'impact'     => $graph['impact'] ?? [],
+            'impact'    => $graph['impact'] ?? [],
         ];
     }
 
@@ -4150,12 +4150,12 @@ final class ResolveDependency
 
         return [
             'service' => $graph['service'] ?? $id,
-            'impact'  => $graph['impact'] ?? [],
+            'impact' => $graph['impact'] ?? [],
         ];
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
@@ -4166,10 +4166,10 @@ final class ResolveDependency
         $graph = $this->debugGraphInContext(id: $id, context: $context);
 
         return [
-            'service'    => $graph['service'] ?? $id,
-            'sliceView'  => $graph['sliceView'] ?? null,
+            'service'   => $graph['service'] ?? $id,
+            'sliceView' => $graph['sliceView'] ?? null,
             'viewAccess' => $graph['viewAccess'] ?? null,
-            'impact'     => $graph['impact'] ?? [],
+            'impact'    => $graph['impact'] ?? [],
         ];
     }
 
@@ -4184,10 +4184,10 @@ final class ResolveDependency
         $description = $this->describeService(id: $id);
 
         return [
-            'service'        => $description['resolvedId'] ?? $id,
-            'ownership'      => $description['ownership'] ?? [],
+            'service'    => $description['resolvedId'] ?? $id,
+            'ownership'  => $description['ownership'] ?? [],
             'topLevelAccess' => $description['topLevelAccess'] ?? [],
-            'conditions'     => $description['conditions'] ?? [],
+            'conditions' => $description['conditions'] ?? [],
         ];
     }
 
@@ -4202,12 +4202,12 @@ final class ResolveDependency
         $description = $this->describeServiceInContext(id: $id, context: $context);
 
         return [
-            'service'        => $description['resolvedId'] ?? $id,
-            'ownership'      => $description['ownership'] ?? [],
+            'service'    => $description['resolvedId'] ?? $id,
+            'ownership'  => $description['ownership'] ?? [],
             'topLevelAccess' => $description['topLevelAccess'] ?? [],
-            'conditions'     => $description['conditions'] ?? [],
-            'sliceView'      => $description['sliceView'] ?? null,
-            'viewAccess'     => $description['viewAccess'] ?? null,
+            'conditions' => $description['conditions'] ?? [],
+            'sliceView'  => $description['sliceView'] ?? null,
+            'viewAccess' => $description['viewAccess'] ?? null,
         ];
     }
 
@@ -4261,7 +4261,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param callable|string      $callable
+     * @param callable|string $callable
      * @param array<string, mixed> $parameters
      * @param array<string, mixed> $context
      *
@@ -4283,7 +4283,7 @@ final class ResolveDependency
     /**
      * Calls one function, method, or invokable object through the resolver.
      *
-     * @param callable|string      $callable
+     * @param callable|string $callable
      * @param array<string, mixed> $parameters
      *
      * @return mixed
@@ -4380,7 +4380,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param object               $target
+     * @param object $target
      * @param array<string, mixed> $context
      *
      * @return object
@@ -4445,7 +4445,7 @@ final class ResolveDependency
     /**
      * Opens one new scope layer.
      */
-    public function openScope(string|null $kind = null, string $scopeId = '') : void
+    public function openScope(string $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->scopes->openScope(kind: $kind, scopeId: $scopeId);
@@ -4454,7 +4454,7 @@ final class ResolveDependency
     /**
      * Closes the current scope layer.
      */
-    public function closeScope(string|null $kind = null) : void
+    public function closeScope(string $kind = null) : void
     {
         $this->scopes->closeScope(kind: $kind);
     }
@@ -4474,7 +4474,7 @@ final class ResolveDependency
 
     /**
      * @param list<string> $serviceIds
-     * @param bool         $warmed
+     * @param bool $warmed
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -4725,7 +4725,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      *
      * @return mixed
@@ -4801,7 +4801,7 @@ final class ResolveDependency
     /**
      * Resolves one service and asserts that the result is an object.
      *
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $parameters
      *
      * @return object
@@ -4840,7 +4840,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $parameters
      * @param array<string, mixed> $context
      *
@@ -4866,7 +4866,7 @@ final class ResolveDependency
     /**
      * Resolves one dependency from an existing parent request.
      *
-     * @param string         $serviceId
+     * @param string $serviceId
      * @param ResolveRequest $request
      *
      * @return mixed
@@ -4878,7 +4878,7 @@ final class ResolveDependency
     }
 
     /**
-     * @param string               $id
+     * @param string $id
      * @param array<string, mixed> $context
      * @param array<string, mixed> $parameters
      *
@@ -4904,11 +4904,11 @@ final class ResolveDependency
      * @throws Throwable
      */
     public function finishCompiledService(
-        string         $serviceId,
-        object         $instance,
-        string         $class,
+        string $serviceId,
+        object $instance,
+        string $class,
         ResolveRequest $request,
-        array          $overrides = [],
+        array  $overrides = [],
     ) : object
     {
         $blueprint = $this->blueprints->createFor(class: $class);

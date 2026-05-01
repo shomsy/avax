@@ -12,7 +12,7 @@ final readonly class MapInputNameToField
     /**
      * @return array<string, DataField>
      */
-    public function map(DataShape $dataShape) : array
+    public function map(DataShape $dataShape): array
     {
         $map = [];
 

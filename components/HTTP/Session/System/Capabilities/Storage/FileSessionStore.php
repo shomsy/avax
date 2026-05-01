@@ -16,7 +16,7 @@ final class FileSessionStore implements SessionStoreInterface
         $this->ttl = $config['ttl'] ?? 1200;
 
         if (! is_dir(filename: $this->path)) {
-            mkdir(directory: $this->path, permissions: 0755, recursive: true);
+            mkdir(directory: $this->path, permissions: 0o755, recursive: true);
         }
     }
 
@@ -39,7 +39,7 @@ final class FileSessionStore implements SessionStoreInterface
         $directory = dirname(path: $file);
 
         if (! is_dir(filename: $directory)) {
-            mkdir(directory: $directory, permissions: 0755, recursive: true);
+            mkdir(directory: $directory, permissions: 0o755, recursive: true);
         }
 
         return file_put_contents(

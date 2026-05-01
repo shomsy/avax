@@ -7,19 +7,19 @@ namespace Avax\Components\Operations\Mail\System\Capabilities\Content;
 final class MimeMessage
 {
     public function __construct(
-        public readonly string      $from,
-        public readonly string      $to,
-        public readonly string      $subject,
-        public readonly string      $body,
-        public readonly string      $contentType = 'text/plain',
-        public readonly array       $headers = [],
-        public readonly array       $attachments = [],
-        public readonly string|null $replyTo = null,
-        public readonly string|null $cc = null,
-        public readonly string|null $bcc = null,
+        public readonly string $from,
+        public readonly string $to,
+        public readonly string $subject,
+        public readonly string $body,
+        public readonly string $contentType = 'text/plain',
+        public readonly array $headers = [],
+        public readonly array $attachments = [],
+        public readonly ?string $replyTo = null,
+        public readonly ?string $cc = null,
+        public readonly ?string $bcc = null,
     ) {}
 
-    public function withReplyTo(string $replyTo) : self
+    public function withReplyTo(string $replyTo): self
     {
         return new self(
             from       : $this->from,
@@ -35,7 +35,7 @@ final class MimeMessage
         );
     }
 
-    public function withCc(string $cc) : self
+    public function withCc(string $cc): self
     {
         return new self(
             from       : $this->from,
@@ -51,7 +51,7 @@ final class MimeMessage
         );
     }
 
-    public function withBcc(string $bcc) : self
+    public function withBcc(string $bcc): self
     {
         return new self(
             from       : $this->from,
@@ -67,7 +67,7 @@ final class MimeMessage
         );
     }
 
-    public function html(string $html) : self
+    public function html(string $html): self
     {
         return new self(
             from       : $this->from,
@@ -83,12 +83,12 @@ final class MimeMessage
         );
     }
 
-    public function withAttachment(string $filename, string $content, string $mimeType) : self
+    public function withAttachment(string $filename, string $content, string $mimeType): self
     {
-        $attachments   = $this->attachments;
+        $attachments = $this->attachments;
         $attachments[] = [
             'filename' => $filename,
-            'content'  => $content,
+            'content' => $content,
             'mimeType' => $mimeType,
         ];
 
@@ -106,9 +106,9 @@ final class MimeMessage
         );
     }
 
-    public function toRaw() : string
+    public function toRaw(): string
     {
-        $lines   = [];
+        $lines = [];
         $lines[] = "From: {$this->from}";
         $lines[] = "To: {$this->to}";
         $lines[] = "Subject: {$this->subject}";

@@ -9,7 +9,6 @@ use Override;
 use Redis;
 use RuntimeException;
 
-
 final class RedisCacheStore implements CacheStoreInterface
 {
     private readonly Redis $redis;
@@ -28,8 +27,8 @@ final class RedisCacheStore implements CacheStoreInterface
 
     private function connect() : void
     {
-        $host     = $this->config['host'] ?? '127.0.0.1';
-        $port     = $this->config['port'] ?? 6379;
+        $host = $this->config['host'] ?? '127.0.0.1';
+        $port = $this->config['port'] ?? 6379;
         $password = $this->config['password'] ?? null;
         $database = $this->config['database'] ?? 0;
 

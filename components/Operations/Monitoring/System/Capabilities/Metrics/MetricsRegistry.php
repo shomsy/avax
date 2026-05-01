@@ -12,23 +12,23 @@ final class MetricsRegistry
     /** @var array<string, list<float>> */
     private array $timings = [];
 
-    public function increment(string $name, float $by = 1.0) : void
+    public function increment(string $name, float $by = 1.0): void
     {
         $this->counters[$name] = ($this->counters[$name] ?? 0.0) + $by;
     }
 
-    public function timing(string $name, float $milliseconds) : void
+    public function timing(string $name, float $milliseconds): void
     {
         $this->timings[$name][] = $milliseconds;
     }
 
-    public function snapshot() : array
+    public function snapshot(): array
     {
         return [
             'counters' => $this->counters,
-            'timings'  => array_map(
-                callback: static fn (array $values) : array => [
-                    'count'  => count($values),
+            'timings' => array_map(
+                callback: static fn (array $values): array => [
+                    'count' => count($values),
                     'avg_ms' => count($values) === 0 ? 0.0 : array_sum(array: $values) / count($values),
                     'max_ms' => count($values) === 0 ? 0.0 : max($values),
                 ],
@@ -37,18 +37,18 @@ final class MetricsRegistry
         ];
     }
 
-    public function prometheus() : string
+    public function prometheus(): string
     {
         $lines = [];
 
         foreach ($this->counters as $name => $value) {
-            $lines[] = $this->normalize(name: $name) . ' ' . $value;
+            $lines[] = $this->normalize(name: $name).' '.$value;
         }
 
         return implode(separator: "\n", array: $lines);
     }
 
-    private function normalize(string $name) : string
+    private function normalize(string $name): string
     {
         return preg_replace(pattern: '/[^a-zA-Z0-9_:]/', replacement: '_', subject: $name) ?? $name;
     }

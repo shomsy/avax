@@ -21,16 +21,16 @@ abstract class BaseMigration
     /**
      * Query builder instance for executing migration statements.
      */
-    protected QueryBuilder|null $queryBuilder = null;
+    protected ?QueryBuilder $queryBuilder = null;
 
     /**
      * Set the query builder instance for this migration.
      *
      * -- intent: enable dependency injection instead of service locator pattern.
      *
-     * @param QueryBuilder $builder Query builder instance
+     * @param  QueryBuilder  $builder  Query builder instance
      */
-    public function setQueryBuilder(QueryBuilder $builder) : void
+    public function setQueryBuilder(QueryBuilder $builder): void
     {
         $this->queryBuilder = $builder;
     }
@@ -38,25 +38,25 @@ abstract class BaseMigration
     /**
      * Run the migrations.
      */
-    abstract public function up() : void;
+    abstract public function up(): void;
 
     /**
      * Reverse the migrations.
      */
-    abstract public function down() : void;
+    abstract public function down(): void;
 
     /**
      * Create a new table in the database.
      *
      * @throws Throwable
      */
-    protected function create(string $table, Closure $callback) : void
+    protected function create(string $table, Closure $callback): void
     {
         $blueprint = new Blueprint(table: $table);
         $callback($blueprint);
 
         $grammar = $this->getGrammar();
-        $sql     = $blueprint->toSql(grammar: $grammar);
+        $sql = $blueprint->toSql(grammar: $grammar);
 
         foreach ($sql as $statement) {
             $this->getConnection()->statement(query: $statement);
@@ -68,7 +68,7 @@ abstract class BaseMigration
      *
      * @throws RuntimeException If query builder is not set
      */
-    private function getGrammar() : GrammarInterface
+    private function getGrammar(): GrammarInterface
     {
         return $this->getConnection()->getGrammar();
     }
@@ -80,11 +80,11 @@ abstract class BaseMigration
      *
      * @throws RuntimeException If query builder is not set
      */
-    protected function getConnection() : QueryBuilder
+    protected function getConnection(): QueryBuilder
     {
         if ($this->queryBuilder === null) {
             throw new RuntimeException(
-                message: 'QueryBuilder must be set on migration instance. ' .
+                message: 'QueryBuilder must be set on migration instance. '.
                          'Use setQueryBuilder() method or inject via constructor in migration classes.',
             );
         }
@@ -97,13 +97,13 @@ abstract class BaseMigration
      *
      * @throws Throwable
      */
-    protected function table(string $table, Closure $callback) : void
+    protected function table(string $table, Closure $callback): void
     {
         $blueprint = new Blueprint(table: $table)->setAlterMode();
         $callback($blueprint);
 
         $grammar = $this->getGrammar();
-        $sql     = $blueprint->toSql(grammar: $grammar);
+        $sql = $blueprint->toSql(grammar: $grammar);
 
         foreach ($sql as $statement) {
             $this->getConnection()->statement(query: $statement);
@@ -115,7 +115,7 @@ abstract class BaseMigration
      *
      * @throws Throwable
      */
-    protected function dropIfExists(string $table) : void
+    protected function dropIfExists(string $table): void
     {
         $this->drop(table: $table);
     }
@@ -125,11 +125,11 @@ abstract class BaseMigration
      *
      * @throws Throwable
      */
-    protected function drop(string $table) : void
+    protected function drop(string $table): void
     {
         $grammar = $this->getGrammar();
         // noinspection SqlNoDataSourceInspection
-        $sql = 'DROP TABLE IF EXISTS ' . $grammar->wrap(value: $table);
+        $sql = 'DROP TABLE IF EXISTS '.$grammar->wrap(value: $table);
 
         $this->getConnection()->statement(query: $sql);
     }

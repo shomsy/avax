@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataField;
 
 final readonly class HideFieldFromOutput
 {
-    public function shouldHide(DataField $dataField) : bool
+    public function shouldHide(DataField $dataField): bool
     {
         return $dataField->isHidden();
     }

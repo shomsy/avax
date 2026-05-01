@@ -9,8 +9,8 @@ use Psr\Http\Message\StreamInterface;
 final readonly class ResponseData
 {
     public function __construct(
-        public int    $statusCode,
-        public array  $headers,
+        public int   $statusCode,
+        public array $headers,
         public StreamInterface $body,
         public string $reasonPhrase,
         public string $protocolVersion,

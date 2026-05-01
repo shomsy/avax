@@ -13,7 +13,6 @@ use Avax\Components\Identity\Security\System\Configuration\EncryptionConfigurati
 use Avax\Components\Identity\Security\System\Flows\DecryptValue\DecryptValue;
 use Avax\Components\Identity\Security\System\Flows\EncryptValue\EncryptValue;
 use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed;
-use Avax\Components\Identity\Security\System\Foundation\Failure\EncryptionFailed;
 use Avax\Components\Identity\Security\System\PublicSurface\Encryption;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
@@ -24,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class EncryptionTest extends TestCase
 {
-    private EncryptionKey      $key;
+    private EncryptionKey $key;
     private EncrypterInterface $encrypter;
 
     #[Test]
@@ -231,7 +230,7 @@ final class EncryptionTest extends TestCase
             $tamperedCipherText,
             $encrypted->iv(),
             $encrypted->tag(),
-            $encrypted->keyVersion()
+            $encrypted->keyVersion(),
         );
 
         $this->expectException(DecryptionFailed::class);
@@ -255,7 +254,7 @@ final class EncryptionTest extends TestCase
             $encrypted->cipherText(),
             $tamperedIv,
             $encrypted->tag(),
-            $encrypted->keyVersion()
+            $encrypted->keyVersion(),
         );
 
         $this->expectException(DecryptionFailed::class);
@@ -275,7 +274,7 @@ final class EncryptionTest extends TestCase
             $encrypted->cipherText(),
             $encrypted->iv(),
             $tamperedTag,
-            $encrypted->keyVersion()
+            $encrypted->keyVersion(),
         );
 
         $this->expectException(DecryptionFailed::class);
@@ -326,7 +325,7 @@ final class EncryptionTest extends TestCase
 
         $resolver = new KeyResolver(
             ['1' => $key1->toBase64(), '2' => $key2->toBase64()],
-            '1'
+            '1',
         );
 
         $this->assertEquals($key1->toBase64(), $resolver->getCurrentKey()->toBase64());
@@ -345,7 +344,7 @@ final class EncryptionTest extends TestCase
 
         $resolver = new KeyResolver(
             ['1' => $key1->toBase64(), '2' => $key2->toBase64()],
-            '1'
+            '1',
         );
 
         $this->assertEquals($key1->toBase64(), $resolver->getKeyByVersion('1')->toBase64());
@@ -380,7 +379,7 @@ final class EncryptionTest extends TestCase
         $key2     = EncryptionKey::generate('2');
         $resolver = new KeyResolver(
             ['1' => $key1->toBase64(), '2' => $key2->toBase64()],
-            '1'
+            '1',
         );
 
         $resolver->setCurrentVersion('2');
@@ -618,7 +617,7 @@ final class EncryptionTest extends TestCase
             cipher        : 'aes-256-gcm',
             keyVersions   : ['1' => $key->toBase64()],
             currentVersion: '1',
-            salt          : 'my-salt'
+            salt          : 'my-salt',
         );
 
         $array = $config->toArray();
@@ -646,7 +645,7 @@ final class EncryptionTest extends TestCase
 
         new EncryptionConfiguration(
             keyVersions   : ['1' => $key->toBase64()],
-            currentVersion: '99'
+            currentVersion: '99',
         );
     }
 

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Session\PublicSurface;
+
 use Avax\Tests\TestCase;
 
 final class SessionScopeTest extends TestCase

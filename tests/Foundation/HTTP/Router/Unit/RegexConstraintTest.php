@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\Components\HTTP\Request\Request;
@@ -32,7 +31,7 @@ class RegexConstraintTest extends TestCase
             method     : 'GET',
             path       : '/users/{id}',
             action     : 'UserController@show',
-            constraints: ['id' => '\d+']
+            constraints: ['id' => '\d+'],
         );
 
         $request = $this->createMock(Request::class);
@@ -54,7 +53,7 @@ class RegexConstraintTest extends TestCase
             method     : 'GET',
             path       : '/users/{id}',
             action     : 'UserController@show',
-            constraints: ['id' => '\d+']
+            constraints: ['id' => '\d+'],
         );
 
         $request = $this->createMock(Request::class);
@@ -76,7 +75,7 @@ class RegexConstraintTest extends TestCase
             method     : 'GET',
             path       : '/users/{id}',
             action     : 'UserController@show',
-            constraints: ['id' => '[invalid'] // Missing closing bracket
+            constraints: ['id' => '[invalid'], // Missing closing bracket
         );
 
         $request = $this->createMock(Request::class);
@@ -97,7 +96,7 @@ class RegexConstraintTest extends TestCase
             method     : 'GET',
             path       : '/users/{id}',
             action     : 'UserController@show',
-            constraints: ['id' => '(unclosed'] // Unclosed parenthesis
+            constraints: ['id' => '(unclosed'], // Unclosed parenthesis
         );
 
         $request = $this->createMock(Request::class);
@@ -121,7 +120,7 @@ class RegexConstraintTest extends TestCase
             method     : 'GET',
             path       : '/files/{path}',
             action     : 'FileController@show',
-            constraints: ['path' => 'folder/subfolder/file.txt'] // Contains slashes
+            constraints: ['path' => 'folder/subfolder/file.txt'], // Contains slashes
         );
 
         $request = $this->createMock(Request::class);
@@ -143,7 +142,7 @@ class RegexConstraintTest extends TestCase
             method     : 'GET',
             path       : '/users/{id}',
             action     : 'UserController@show',
-            constraints: ['id' => '\d+']
+            constraints: ['id' => '\d+'],
         );
 
         $request = $this->createMock(Request::class);
@@ -168,7 +167,7 @@ class RegexConstraintTest extends TestCase
             constraints: [
                              'id'   => '\d+',
                              'slug' => '[a-z0-9-]+',
-                         ]
+                         ],
         );
 
         $request = $this->createMock(Request::class);
@@ -199,7 +198,7 @@ class RegexConstraintTest extends TestCase
             constraints: [
                              'id'   => '[invalid', // Invalid pattern
                              'slug' => '[a-z0-9-]+',
-                         ]
+                         ],
         );
 
         $request = $this->createMock(Request::class);
@@ -212,6 +211,6 @@ class RegexConstraintTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->validator = new RouteConstraintValidator;
+        $this->validator = new RouteConstraintValidator();
     }
 }

@@ -11,7 +11,7 @@ interface DecideCachedValueState
     public function decide(
         CachedValueLifecycle|null $lifecycle,
         Clock $clock,
-        bool  $wasExplicitlyInvalidated = false,
-        bool  $wasEvicted = false,
+        bool $wasExplicitlyInvalidated = false,
+        bool $wasEvicted = false,
     ) : CachedValueState;
 }

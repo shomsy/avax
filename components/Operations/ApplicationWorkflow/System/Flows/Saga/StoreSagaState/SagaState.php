@@ -10,19 +10,19 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Store
 final readonly class SagaState
 {
     /**
-     * @param list<string> $completedStepNames
+     * @param  list<string>  $completedStepNames
      */
     public function __construct(
         public string $instanceId,
         public string $definitionName,
         public string $correlationId,
-        public string|null $currentStepName,
+        public ?string $currentStepName,
         public string $status = 'started',
-        public array  $completedStepNames = [],
-        public int    $version = 0,
+        public array $completedStepNames = [],
+        public int $version = 0,
     ) {}
 
-    public function recordCompletedStep(string $stepName, string|null $nextStepName) : self
+    public function recordCompletedStep(string $stepName, ?string $nextStepName): self
     {
         return new self(
             instanceId        : $this->instanceId,
@@ -35,7 +35,7 @@ final readonly class SagaState
         );
     }
 
-    public function recordFailedStep() : self
+    public function recordFailedStep(): self
     {
         return new self(
             instanceId        : $this->instanceId,

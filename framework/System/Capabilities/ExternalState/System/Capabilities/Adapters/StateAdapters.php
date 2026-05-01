@@ -9,7 +9,7 @@ use Redis;
 
 final class RedisStateAdapter implements StateAdapter
 {
-    private Redis  $redis;
+    private Redis $redis;
     private string $prefix;
 
     public function __construct(string $url)

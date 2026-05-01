@@ -14,8 +14,8 @@ if (! function_exists('response')) {
      * Create a new response instance.
      *
      * @param string $content
-     * @param int    $status
-     * @param array  $headers
+     * @param int   $status
+     * @param array $headers
      *
      * @return ResponseInterface
      */
@@ -30,7 +30,7 @@ if (! function_exists('json_response')) {
      * Create a JSON response.
      *
      * @param mixed $data
-     * @param int   $status
+     * @param int $status
      * @param array $headers
      *
      * @return ResponseInterface
@@ -45,7 +45,7 @@ if (! function_exists('abort')) {
     /**
      * Throw an HTTP exception or return an error response.
      *
-     * @param int    $code
+     * @param int $code
      * @param string $message
      *
      * @return never

@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\Repos
 
 final class DeleteEntity
 {
-    public function delete(Repository $repository, object $entity) : void
+    public function delete(Repository $repository, object $entity): void
     {
         $repository->delete($entity);
     }

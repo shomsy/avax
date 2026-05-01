@@ -64,7 +64,7 @@ final class RuntimeConfiguration
             'frankenphp' => new FrankenPhpRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'swoole'     => new SwooleRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'workerman'  => new WorkermanRuntime(receiver: $this->receiver(), sender: $this->sender()),
-            default     => throw new RuntimeException("Unknown adapter: {$this->adapter}"),
+            default => throw new RuntimeException("Unknown adapter: {$this->adapter}"),
         };
     }
 

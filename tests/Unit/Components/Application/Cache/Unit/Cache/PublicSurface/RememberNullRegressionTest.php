@@ -13,9 +13,9 @@ use Psr\SimpleCache\InvalidArgumentException;
 
 final class RememberNullRegressionTest extends TestCase
 {
-    private FrozenClock        $clock;
+    private FrozenClock $clock;
     private InMemoryCacheStore $store;
-    private AvaxCache          $cache;
+    private AvaxCache   $cache;
 
     /**
      * @throws InvalidArgumentException
@@ -74,11 +74,11 @@ final class RememberNullRegressionTest extends TestCase
         parent::setUp();
         $this->clock = new FrozenClock(timestamp: Timestamp::now());
         $this->store = new InMemoryCacheStore(
-            clock: $this->clock
+            clock: $this->clock,
         );
         $this->cache = new AvaxCache(
             store: $this->store,
-            clock: $this->clock
+            clock: $this->clock,
         );
     }
 }

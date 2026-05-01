@@ -6,9 +6,9 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Projectio
 
 interface Projection
 {
-    public function getTargetClass() : string;
+    public function getTargetClass(): string;
 
-    public function getFieldMappings() : array;
+    public function getFieldMappings(): array;
 
-    public function map(array $row) : object;
+    public function map(array $row): object;
 }

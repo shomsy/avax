@@ -19,14 +19,14 @@ final class TokenVerifier
         $this->signer = $signer;
     }
 
-    public function verify(string $token) : AccessToken
+    public function verify(string $token): AccessToken
     {
         $payload = $this->verifyPayload($token);
 
         return AccessToken::fromPayload($payload);
     }
 
-    public function verifyPayload(string $token) : array
+    public function verifyPayload(string $token): array
     {
         try {
             $decoded = JWT::decode(
@@ -42,7 +42,7 @@ final class TokenVerifier
 
             return $payload;
         } catch (Exception $e) {
-            throw new RuntimeException('Invalid token: ' . $e->getMessage());
+            throw new RuntimeException('Invalid token: '.$e->getMessage());
         }
     }
 }

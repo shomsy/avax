@@ -65,42 +65,42 @@ final readonly class RegistrationMetadata
      */
     public function __construct(
         string $unitId,
-        string|null $ownerSlice = null,
-        string|null $category = null,
-        string|null $visibility = null,
+        string $ownerSlice = null,
+        string $category = null,
+        string $visibility = null,
         array  $profiles = null,
         array  $flags = null,
         array  $tenants = null,
         array  $regions = null,
         array  $modes = null,
-        string|null $overrideSource = null,
-        string|null $reason = null,
-        string|null $intent = null,
-        string|null $provenance = null,
+        string $overrideSource = null,
+        string $reason = null,
+        string $intent = null,
+        string $provenance = null,
         bool   $exported = null,
         array  $imports = null,
-        string|null $concept = null,
+        string $concept = null,
         bool   $fallback = null,
         bool   $ownerLocked = null,
         bool   $categoryLocked = false,
     )
     {
-        $ownerSlice           ??= 'default';
-        $category             ??= RegistrationCategory::CONFIGURATION;
-        $visibility           ??= RegistrationVisibility::PUBLIC;
-        $profiles             ??= [];
-        $flags                ??= [];
-        $tenants              ??= [];
-        $regions              ??= [];
-        $modes                ??= [];
-        $reason               ??= 'registered service';
-        $intent               ??= 'standard';
-        $provenance           ??= 'manual registration';
-        $exported             ??= false;
-        $imports              ??= [];
-        $concept              ??= '';
-        $fallback             ??= false;
-        $ownerLocked          ??= false;
+        $ownerSlice  ??= 'default';
+        $category    ??= RegistrationCategory::CONFIGURATION;
+        $visibility  ??= RegistrationVisibility::PUBLIC;
+        $profiles    ??= [];
+        $flags       ??= [];
+        $tenants     ??= [];
+        $regions     ??= [];
+        $modes       ??= [];
+        $reason      ??= 'registered service';
+        $intent      ??= 'standard';
+        $provenance  ??= 'manual registration';
+        $exported    ??= false;
+        $imports     ??= [];
+        $concept     ??= '';
+        $fallback    ??= false;
+        $ownerLocked ??= false;
         $this->unitId         = $unitId;
         $this->ownerSlice     = self::normalizeSlice(slice: $ownerSlice);
         $this->category       = RegistrationCategory::normalize(category: $category);

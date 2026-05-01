@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\Repos
 
 final class SaveEntity
 {
-    public function save(Repository $repository, object $entity) : void
+    public function save(Repository $repository, object $entity): void
     {
         $repository->save($entity);
     }

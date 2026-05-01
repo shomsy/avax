@@ -9,12 +9,12 @@ use SensitiveParameter;
 final readonly class IntrospectTokenData
 {
     public function __construct(
-        public string      $clientId,
+        public string $clientId,
         #[SensitiveParameter]
-        public string      $token,
+        public string $token,
         #[SensitiveParameter]
-        public string|null $clientSecret = null,
-        public string|null $expectedAudience = null,
-        public string|null $expectedIssuer = null,
+        public ?string $clientSecret = null,
+        public ?string $expectedAudience = null,
+        public ?string $expectedIssuer = null,
     ) {}
 }

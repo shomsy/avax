@@ -17,17 +17,17 @@ final readonly class BuildJarmResponse
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function execute(BuildJarmResponseData $data) : JarmResponse
+    public function execute(BuildJarmResponseData $data): JarmResponse
     {
-        $issuedAt  = $this->clock->now();
+        $issuedAt = $this->clock->now();
         $expiresAt = $issuedAt->modify(modifier: '+5 minutes');
-        $claims    = [
-            'iss'  => $this->oidcProvider->readProviderMetadata()->issuer,
-            'aud'  => trim(string: $data->clientId),
+        $claims = [
+            'iss' => $this->oidcProvider->readProviderMetadata()->issuer,
+            'aud' => trim(string: $data->clientId),
             'code' => $data->code,
-            'iat'  => $issuedAt->getTimestamp(),
-            'exp'  => $expiresAt->getTimestamp(),
-            'jti'  => bin2hex(string: random_bytes(length: 16)),
+            'iat' => $issuedAt->getTimestamp(),
+            'exp' => $expiresAt->getTimestamp(),
+            'jti' => bin2hex(string: random_bytes(length: 16)),
         ];
 
         if ($data->state !== null && trim(string: $data->state) !== '') {

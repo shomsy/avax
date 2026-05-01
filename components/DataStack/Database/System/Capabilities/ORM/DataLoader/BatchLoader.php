@@ -13,7 +13,7 @@ final class BatchLoader
 
     private array $cache = [];
 
-    public function register(string $name, LoaderCallback $loaderCallback) : self
+    public function register(string $name, LoaderCallback $loaderCallback): self
     {
         $this->loaders[$name] = $loaderCallback;
 
@@ -23,9 +23,9 @@ final class BatchLoader
     /**
      * @throws JsonException
      */
-    public function load(string $name, array $keys) : array
+    public function load(string $name, array $keys): array
     {
-        $cacheKey = $name . ':' . md5(string: json_encode(value: array_values(array: $keys), flags: JSON_THROW_ON_ERROR));
+        $cacheKey = $name.':'.md5(string: json_encode(value: array_values(array: $keys), flags: JSON_THROW_ON_ERROR));
 
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
@@ -34,23 +34,23 @@ final class BatchLoader
         $callback = $this->loaders[$name] ?? null;
 
         if ($callback === null) {
-            throw new RuntimeException(message: 'No loader registered for: ' . $name);
+            throw new RuntimeException(message: 'No loader registered for: '.$name);
         }
 
-        $results                = $callback($keys);
+        $results = $callback($keys);
         $this->cache[$cacheKey] = $results;
 
         return $results;
     }
 
-    public function prime(string $name, array $data) : self
+    public function prime(string $name, array $data): self
     {
         $this->cache[$name] = $data;
 
         return $this;
     }
 
-    public function clear(string|null $name = null) : self
+    public function clear(?string $name = null): self
     {
         if ($name !== null) {
             unset($this->cache[$name]);
@@ -61,7 +61,7 @@ final class BatchLoader
         return $this;
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->loaders[$name]);
     }

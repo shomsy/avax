@@ -31,7 +31,7 @@ final readonly class PhpFpmRuntime
         array $server,
         array $query = [],
         array $parsedBody = [],
-        string|null $body = null,
+        string $body = null,
     ) : RuntimeResponse
     {
         return $this->handle(

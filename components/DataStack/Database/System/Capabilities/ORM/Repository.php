@@ -22,7 +22,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function findById(int $id) : object|null
+    public function findById(int $id): ?object
     {
         return $this->findOneBy(conditions: ['id' => $id]);
     }
@@ -30,14 +30,13 @@ abstract class Repository
     /**
      * Find one entity by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
-     *
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      * @return object|null The found entity or null.
      *
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function findOneBy(array $conditions) : object|null
+    public function findOneBy(array $conditions): ?object
     {
         try {
             $query = $this->query();
@@ -62,7 +61,7 @@ abstract class Repository
     /**
      * @throws ReflectionException
      */
-    protected function query() : QueryBuilder
+    protected function query(): QueryBuilder
     {
         return $this->queryBuilder->newQuery()->from(table: $this->getTableName());
     }
@@ -70,7 +69,7 @@ abstract class Repository
     /**
      * Get the table name for the entity.
      */
-    protected function getTableName() : string
+    protected function getTableName(): string
     {
         /** @var class-string $entityClass */
         $entityClass = $this->getEntityClass();
@@ -78,9 +77,9 @@ abstract class Repository
         if (! class_exists(class: $entityClass) || ! method_exists(object_or_class: $entityClass, method: 'getTableName')) {
             throw new RuntimeException(
                 message: sprintf(
-                             'Entity class %s must implement a getTableName() method.',
-                             $entityClass,
-                         ),
+                    'Entity class %s must implement a getTableName() method.',
+                    $entityClass,
+                ),
             );
         }
 
@@ -92,18 +91,17 @@ abstract class Repository
      *
      * @return class-string The fully qualified class name of the entity.
      */
-    abstract protected function getEntityClass() : string;
+    abstract protected function getEntityClass(): string;
 
     /**
      * Map a database row to an entity object.
      *
-     * @param array<string, mixed> $data The database row data.
-     *
+     * @param  array<string, mixed>  $data  The database row data.
      * @return object The mapped entity.
      */
-    abstract protected function mapToEntity(array $data) : object;
+    abstract protected function mapToEntity(array $data): object;
 
-    protected function logError(string $message, array $context = []) : void
+    protected function logError(string $message, array $context = []): void
     {
         logger(message: $message, context: $context, level: 'error');
     }
@@ -112,7 +110,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function findAll(int|null $limit = null, int $offset = 0) : array
+    public function findAll(?int $limit = null, int $offset = 0): array
     {
         $limit ??= 100;
 
@@ -122,25 +120,23 @@ abstract class Repository
     /**
      * Find entities by conditions with optional pagination and sorting.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
-     * @param string|null $orderBy   Column to order by.
-     * @param string|null $direction Sorting direction (ASC|DESC).
-     * @param int|null    $limit     Max results to return.
-     * @param int|null    $offset    Offset for pagination.
-     *
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
+     * @param  string|null  $orderBy  Column to order by.
+     * @param  string|null  $direction  Sorting direction (ASC|DESC).
+     * @param  int|null  $limit  Max results to return.
+     * @param  int|null  $offset  Offset for pagination.
      * @return array<object> The found entities.
      *
      * @throws ReflectionException
      * @throws Throwable
      */
     public function findBy(
-        array  $conditions,
-        string|null $orderBy = null,
-        string|null $direction = null,
+        array $conditions,
+        ?string $orderBy = null,
+        ?string $direction = null,
         ?int $limit = null,
         ?int $offset = null,
-    ) : array
-    {
+    ): array {
         try {
             $query = $this->query();
 
@@ -166,11 +162,11 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to find entities by conditions.', context: [
                 'conditions' => $conditions,
-                'orderBy'    => $orderBy,
-                'direction'  => $direction,
-                'limit'      => $limit,
-                'offset'     => $offset,
-                'exception'  => $exception,
+                'orderBy' => $orderBy,
+                'direction' => $direction,
+                'limit' => $limit,
+                'offset' => $offset,
+                'exception' => $exception,
             ]);
 
             throw $exception;
@@ -181,7 +177,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function save(object $entity) : void
+    public function save(object $entity): void
     {
         $this->beforeSave(entity: $entity);
 
@@ -202,7 +198,7 @@ abstract class Repository
         $this->afterSave(entity: $entity);
     }
 
-    protected function beforeSave(object $entity) : void
+    protected function beforeSave(object $entity): void
     {
         // Placeholder for pre-save logic.
     }
@@ -210,13 +206,12 @@ abstract class Repository
     /**
      * Map an entity object to a database row.
      *
-     * @param object $entity The entity to map.
-     *
+     * @param  object  $entity  The entity to map.
      * @return array<string, mixed> The database row representation.
      */
-    abstract protected function mapToDatabase(object $entity) : array;
+    abstract protected function mapToDatabase(object $entity): array;
 
-    protected function afterSave(object $entity) : void
+    protected function afterSave(object $entity): void
     {
         // Placeholder for post-save logic.
     }
@@ -225,7 +220,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function delete(object $entity) : void
+    public function delete(object $entity): void
     {
         if (! method_exists(object_or_class: $entity, method: 'getId') || $entity->getId() === null) {
             throw new RuntimeException(message: 'Entity must have an ID to be deleted.');
@@ -239,12 +234,12 @@ abstract class Repository
     /**
      * Check if an entity exists by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      *
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function exists(array $conditions) : bool
+    public function exists(array $conditions): bool
     {
         try {
             $query = $this->query();
@@ -257,7 +252,7 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to check if entity exists.', context: [
                 'conditions' => $conditions,
-                'exception'  => $exception,
+                'exception' => $exception,
             ]);
 
             throw $exception;
@@ -267,12 +262,12 @@ abstract class Repository
     /**
      * Count entities by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      *
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function count(array $conditions) : int
+    public function count(array $conditions): int
     {
         try {
             $query = $this->query();
@@ -285,7 +280,7 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to count entities.', context: [
                 'conditions' => $conditions,
-                'exception'  => $exception,
+                'exception' => $exception,
             ]);
 
             throw $exception;

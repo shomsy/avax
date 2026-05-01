@@ -14,15 +14,15 @@ class Clock
     /**
      * Get the current time.
      */
-    public function now() : DateTimeImmutable
+    public function now(): DateTimeImmutable
     {
-        return new DateTimeImmutable();
+        return new DateTimeImmutable;
     }
 
     /**
      * Get current timestamp.
      */
-    public function timestamp() : int
+    public function timestamp(): int
     {
         return time();
     }

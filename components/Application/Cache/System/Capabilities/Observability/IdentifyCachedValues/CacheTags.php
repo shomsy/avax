@@ -36,7 +36,7 @@ final readonly class CacheTags implements Stringable
 
     public function add(CacheTag $cacheTag) : self
     {
-        $newTags                   = $this->tags;
+        $newTags = $this->tags;
         $newTags[$cacheTag->toString()] = $cacheTag;
 
         return new self(...$newTags);

@@ -13,8 +13,8 @@ final class ShutdownSequence
      * @var list<Closure>
      */
     private static array $callbacks = [];
-    private static bool  $draining  = false;
-    private static bool  $executed  = false;
+    private static bool $draining = false;
+    private static bool $executed = false;
 
     public static function register(Closure $callback) : void
     {

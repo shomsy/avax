@@ -12,33 +12,31 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent;
 final readonly class DataQuery
 {
     /**
-     * @param class-string|null     $entityType
-     * @param array<string, mixed>  $conditions
-     * @param array<string, string> $orderBy
-     * @param array<string>         $select
-     * @param array<array{type: string, table: string, on: string}> $joins
+     * @param  class-string|null  $entityType
+     * @param  array<string, mixed>  $conditions
+     * @param  array<string, string>  $orderBy
+     * @param  array<string>  $select
+     * @param  array<array{type: string, table: string, on: string}>  $joins
      */
     public function __construct(
-        public string|null $entityType = null,
-        public array    $conditions = [],
-        public array    $orderBy = [],
-        public int|null $limit = null,
-        public int|null $offset = null,
-        public array    $joins = [],
-        public array    $select = ['*'],
+        public ?string $entityType = null,
+        public array $conditions = [],
+        public array $orderBy = [],
+        public ?int $limit = null,
+        public ?int $offset = null,
+        public array $joins = [],
+        public array $select = ['*'],
     ) {}
 
     /**
      * Returns a new instance with the added condition.
-     *
-     * @return DataQuery
      */
-    public function withCondition(string $field, mixed $value, string $operator = '=') : DataQuery
+    public function withCondition(string $field, mixed $value, string $operator = '='): DataQuery
     {
-        $conditions   = $this->conditions;
+        $conditions = $this->conditions;
         $conditions[] = [
-            'field'    => $field,
-            'value'    => $value,
+            'field' => $field,
+            'value' => $value,
             'operator' => $operator,
         ];
 
@@ -55,12 +53,10 @@ final readonly class DataQuery
 
     /**
      * Returns a new instance with the specified order by clause.
-     *
-     * @return DataQuery
      */
-    public function withOrderBy(string $field, string $direction = 'ASC') : DataQuery
+    public function withOrderBy(string $field, string $direction = 'ASC'): DataQuery
     {
-        $orderBy         = $this->orderBy;
+        $orderBy = $this->orderBy;
         $orderBy[$field] = strtoupper($direction);
 
         return new DataQuery(
@@ -76,10 +72,8 @@ final readonly class DataQuery
 
     /**
      * Returns a new instance with the specified limit.
-     *
-     * @return DataQuery
      */
-    public function withLimit(int $limit) : DataQuery
+    public function withLimit(int $limit): DataQuery
     {
         return new DataQuery(
             entityType: $this->entityType,
@@ -94,10 +88,8 @@ final readonly class DataQuery
 
     /**
      * Returns a new instance with the specified offset.
-     *
-     * @return DataQuery
      */
-    public function withOffset(int $offset) : DataQuery
+    public function withOffset(int $offset): DataQuery
     {
         return new DataQuery(
             entityType: $this->entityType,
@@ -113,11 +105,9 @@ final readonly class DataQuery
     /**
      * Returns a new instance with the specified joins.
      *
-     * @param array<array{type: string, table: string, on: string}> $joins
-     *
-     * @return DataQuery
+     * @param  array<array{type: string, table: string, on: string}>  $joins
      */
-    public function withJoins(array $joins) : DataQuery
+    public function withJoins(array $joins): DataQuery
     {
         return new DataQuery(
             entityType: $this->entityType,
@@ -133,11 +123,9 @@ final readonly class DataQuery
     /**
      * Returns a new instance with the specified select fields.
      *
-     * @param array<string> $select
-     *
-     * @return DataQuery
+     * @param  array<string>  $select
      */
-    public function withSelect(array $select) : DataQuery
+    public function withSelect(array $select): DataQuery
     {
         return new DataQuery(
             entityType: $this->entityType,
@@ -153,11 +141,9 @@ final readonly class DataQuery
     /**
      * Returns a new instance with the specified entity type.
      *
-     * @param class-string $entityType
-     *
-     * @return DataQuery
+     * @param  class-string  $entityType
      */
-    public function withEntityType(string $entityType) : DataQuery
+    public function withEntityType(string $entityType): DataQuery
     {
         return new DataQuery(
             entityType: $entityType,

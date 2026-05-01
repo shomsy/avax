@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Database\Schema\Blueprint;
 
 final class CreateTable
 {
-    public static function execute(string $table, callable $define) : Blueprint
+    public static function execute(string $table, callable $define): Blueprint
     {
         $bp = new Blueprint($table);
         $define($bp);

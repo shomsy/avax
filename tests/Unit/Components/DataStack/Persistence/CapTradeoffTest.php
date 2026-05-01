@@ -10,7 +10,6 @@ require_once __DIR__ . '/../../../../../components/DataStack/Persistence/System/
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\Consistency\CapTradeoff;
 use Avax\Components\DataStack\Persistence\System\Capabilities\Consistency\CapTradeoffPolicy;
-use Avax\Components\DataStack\Persistence\System\Capabilities\Consistency\ConflictResolution;
 use PHPUnit\Framework\TestCase;
 
 final class CapTradeoffTest extends TestCase
@@ -221,7 +220,7 @@ final class CapTradeoffTest extends TestCase
         $policy = CapTradeoffPolicy::strongConsistency(
             writeQuorum       : 3,
             readQuorum        : 2,
-            consensusTimeoutMs: 3000
+            consensusTimeoutMs: 3000,
         );
 
         $this->assertSame(3, $policy->writeQuorum);
@@ -245,7 +244,7 @@ final class CapTradeoffTest extends TestCase
     {
         $policy = CapTradeoffPolicy::highAvailability(
             maxStalenessSeconds: 30.0,
-            allowStaleReads    : false
+            allowStaleReads    : false,
         );
 
         $this->assertSame(30.0, $policy->maxStalenessSeconds);
@@ -269,7 +268,7 @@ final class CapTradeoffTest extends TestCase
         $policy = CapTradeoffPolicy::balanced(
             maxStalenessSeconds: 5.0,
             writeQuorum        : 3,
-            readQuorum         : 1
+            readQuorum         : 1,
         );
 
         $this->assertSame(5.0, $policy->maxStalenessSeconds);

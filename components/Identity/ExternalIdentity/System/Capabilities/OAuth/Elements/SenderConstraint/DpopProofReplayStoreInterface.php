@@ -11,5 +11,5 @@ use DateTimeImmutable;
  */
 interface DpopProofReplayStoreInterface
 {
-    public function remember(string $proofId, DateTimeImmutable $expiresAt) : bool;
+    public function remember(string $proofId, DateTimeImmutable $expiresAt): bool;
 }

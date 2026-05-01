@@ -12,12 +12,12 @@ use Throwable;
  */
 final class SagaStepFailure extends RuntimeException
 {
-    public static function unknownStep(string $stepName) : self
+    public static function unknownStep(string $stepName): self
     {
         return new self(message: "Saga step {$stepName} does not exist in the definition.");
     }
 
-    public static function failed(string $stepName, Throwable $previous) : self
+    public static function failed(string $stepName, Throwable $previous): self
     {
         return new self(message: "Saga step {$stepName} failed.", previous: $previous);
     }

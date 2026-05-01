@@ -16,19 +16,19 @@ final readonly class AuthenticationContext
     public function __construct(
         private bool $authenticated,
         private AuthenticationMode $mode,
-        private AuthenticatedUser|null $user = null,
-        private string|null $reason = null,
+        private ?AuthenticatedUser $user = null,
+        private ?string $reason = null,
         #[SensitiveParameter]
-        private string|null $sessionId = null,
+        private ?string $sessionId = null,
         #[SensitiveParameter]
-        private string|null $accessTokenId = null,
+        private ?string $accessTokenId = null,
         #[SensitiveParameter]
-        private DateTimeImmutable|null $accessTokenExpiresAt = null,
+        private ?DateTimeImmutable $accessTokenExpiresAt = null,
         #[SensitiveParameter]
-        private string|null $refreshTokenId = null,
+        private ?string $refreshTokenId = null,
         #[SensitiveParameter]
-        private string|null $refreshTokenFamilyId = null,
-        private DateTimeImmutable|null $mfaVerifiedAt = null,
+        private ?string $refreshTokenFamilyId = null,
+        private ?DateTimeImmutable $mfaVerifiedAt = null,
         private bool $phishingResistant = false,
     ) {
         if ($this->authenticated && $this->user === null) {
@@ -40,7 +40,7 @@ final readonly class AuthenticationContext
         }
     }
 
-    public static function guest(string|null $reason = null) : self
+    public static function guest(?string $reason = null): self
     {
         return new self(
             authenticated: false,
@@ -53,19 +53,18 @@ final readonly class AuthenticationContext
         AuthenticatedUser $user,
         AuthenticationMode $mode,
         #[SensitiveParameter]
-        string|null            $sessionId = null,
+        ?string $sessionId = null,
         #[SensitiveParameter]
-        string|null            $accessTokenId = null,
+        ?string $accessTokenId = null,
         #[SensitiveParameter]
-        DateTimeImmutable|null $accessTokenExpiresAt = null,
+        ?DateTimeImmutable $accessTokenExpiresAt = null,
         #[SensitiveParameter]
-        string|null            $refreshTokenId = null,
+        ?string $refreshTokenId = null,
         #[SensitiveParameter]
-        string|null            $refreshTokenFamilyId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
+        ?string $refreshTokenFamilyId = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
-    ) : self
-    {
+    ): self {
         return new self(
             authenticated       : true,
             mode                : $mode,
@@ -80,57 +79,57 @@ final readonly class AuthenticationContext
         );
     }
 
-    public function isAuthenticated() : bool
+    public function isAuthenticated(): bool
     {
         return $this->authenticated;
     }
 
-    public function mode() : AuthenticationMode
+    public function mode(): AuthenticationMode
     {
         return $this->mode;
     }
 
-    public function user() : AuthenticatedUser|null
+    public function user(): ?AuthenticatedUser
     {
         return $this->user;
     }
 
-    public function reason() : string|null
+    public function reason(): ?string
     {
         return $this->reason;
     }
 
-    public function sessionId() : string|null
+    public function sessionId(): ?string
     {
         return $this->sessionId;
     }
 
-    public function accessTokenId() : string|null
+    public function accessTokenId(): ?string
     {
         return $this->accessTokenId;
     }
 
-    public function accessTokenExpiresAt() : DateTimeImmutable|null
+    public function accessTokenExpiresAt(): ?DateTimeImmutable
     {
         return $this->accessTokenExpiresAt;
     }
 
-    public function refreshTokenId() : string|null
+    public function refreshTokenId(): ?string
     {
         return $this->refreshTokenId;
     }
 
-    public function refreshTokenFamilyId() : string|null
+    public function refreshTokenFamilyId(): ?string
     {
         return $this->refreshTokenFamilyId;
     }
 
-    public function mfaVerifiedAt() : DateTimeImmutable|null
+    public function mfaVerifiedAt(): ?DateTimeImmutable
     {
         return $this->mfaVerifiedAt;
     }
 
-    public function isPhishingResistant() : bool
+    public function isPhishingResistant(): bool
     {
         return $this->phishingResistant;
     }

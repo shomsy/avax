@@ -12,26 +12,26 @@ final class LogTransport implements MailTransport
     /** @var list<array<string, string>> */
     private array $messages = [];
 
-    public function send(MimeMessage $message, Envelope $envelope) : TransportResult
+    public function send(MimeMessage $message, Envelope $envelope): TransportResult
     {
         $this->messages[] = [
-            'from'    => $envelope->from,
-            'to'      => $message->to,
+            'from' => $envelope->from,
+            'to' => $message->to,
             'subject' => $message->subject,
         ];
 
         return new TransportResult(
             success  : true,
-            messageId: '<' . uniqid(prefix: 'msg-', more_entropy: true) . '-logged@local>',
+            messageId: '<'.uniqid(prefix: 'msg-', more_entropy: true).'-logged@local>',
         );
     }
 
-    public function supports(string $driver) : bool
+    public function supports(string $driver): bool
     {
         return $driver === 'log';
     }
 
-    public function messages() : array
+    public function messages(): array
     {
         return $this->messages;
     }

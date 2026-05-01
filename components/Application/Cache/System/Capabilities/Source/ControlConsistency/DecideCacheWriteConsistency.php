@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Source\ControlConsistency;
 
-use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-
 final readonly class DecideCacheWriteConsistency
 {
     public function __construct(
-        private CacheConsistencyLevel  $cacheConsistencyLevel,
+        private CacheConsistencyLevel $cacheConsistencyLevel,
         private ConsistencyWindow|null $consistencyWindow = null,
     ) {}
 

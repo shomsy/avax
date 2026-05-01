@@ -10,7 +10,7 @@ use Closure;
 final readonly class ScheduledTask
 {
     public function __construct(
-        public string  $expression,
+        public string $expression,
         public Closure $task,
     ) {}
 

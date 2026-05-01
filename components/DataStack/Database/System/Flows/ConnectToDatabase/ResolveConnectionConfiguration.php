@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Database\System\Flows\ConnectToDatabase;
 
 final class ResolveConnectionConfiguration
 {
-    public function resolve(string $name) : array
+    public function resolve(string $name): array
     {
         return ['name' => $name];
     }

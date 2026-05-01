@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\WorkerManager\System\PublicSurface;
 
-use Avax\Components\WorkerManager\System\Capabilities\Lifecycle\GracefulShutdown;
 use Avax\Components\WorkerManager\System\Capabilities\Workers\WorkerProcess;
 
 final readonly class Workers
@@ -44,7 +43,7 @@ final class WorkerPool
 {
     /** @var list<WorkerProcess> */
     private array $workers = [];
-    private bool  $running = false;
+    private bool $running = false;
 
     /**
      * @param array{max_memory?: int} $options

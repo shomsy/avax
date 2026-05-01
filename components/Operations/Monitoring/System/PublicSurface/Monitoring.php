@@ -13,9 +13,9 @@ use Throwable;
 
 final class Monitoring
 {
-    private static MetricsRegistry|null $metrics = null;
+    private static ?MetricsRegistry $metrics = null;
 
-    public static function dashboard() : array
+    public static function dashboard(): array
     {
         return (new MonitoringDashboard(
             metrics: self::metrics(),
@@ -23,22 +23,22 @@ final class Monitoring
         ))->data();
     }
 
-    public static function metrics() : MetricsRegistry
+    public static function metrics(): MetricsRegistry
     {
         if (self::$metrics === null) {
-            self::$metrics = new MetricsRegistry();
+            self::$metrics = new MetricsRegistry;
         }
 
         return self::$metrics;
     }
 
-    public static function health(array $checks = []) : HealthReport
+    public static function health(array $checks = []): HealthReport
     {
-        return (new HealthEndpoint())->report(checks: $checks);
+        return (new HealthEndpoint)->report(checks: $checks);
     }
 
-    public static function report(Throwable $throwable) : void
+    public static function report(Throwable $throwable): void
     {
-        (new SentryReporter())->capture(throwable: $throwable);
+        (new SentryReporter)->capture(throwable: $throwable);
     }
 }

@@ -38,7 +38,7 @@ final class HandleHttpFailure
         OutboundRequest $request,
         callable       $retryCallback,
         Throwable      $exception,
-        RequestOptions|null $options = null,
+        RequestOptions $options = null,
     ) : ClientResponse
     {
         $retryPolicy = $options?->retryPolicy;
@@ -108,7 +108,7 @@ final class HandleHttpFailure
     private function rethrow(
         Throwable $exception,
         OutboundRequest $request,
-        int       $retryCount = 0,
+        int $retryCount = 0,
     ) : never
     {
         $message = $exception->getMessage();

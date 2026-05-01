@@ -16,26 +16,26 @@ final readonly class Security implements SecurityInterface
 {
     public function __construct(
         private SecurityConfigurationStore $configStore,
-        private BeginSecurityChange   $beginChange,
+        private BeginSecurityChange $beginChange,
         private ApproveSecurityChange $approveChange,
     ) {}
 
-    public function readConfiguration(string $tenantId) : object
+    public function readConfiguration(string $tenantId): object
     {
         return $this->configStore->read($tenantId);
     }
 
-    public function beginChange(string $tenantId, array $data) : object
+    public function beginChange(string $tenantId, array $data): object
     {
         return $this->beginChange->execute($tenantId, $data);
     }
 
-    public function approveChange(string $requestId) : void
+    public function approveChange(string $requestId): void
     {
         $this->approveChange->execute($requestId);
     }
 
-    public function applyChange(string $requestId) : void
+    public function applyChange(string $requestId): void
     {
         throw new NotImplementedException('Security change application workflow not yet implemented');
     }

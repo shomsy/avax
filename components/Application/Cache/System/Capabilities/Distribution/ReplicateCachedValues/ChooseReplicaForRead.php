@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Rep
 final readonly class ChooseReplicaForRead
 {
     public function __construct(
-        private ReplicaCount      $replicaCount,
+        private ReplicaCount $replicaCount,
         private ReplicationPolicy $replicationPolicy = ReplicationPolicy::SYNCHRONOUS,
     ) {}
 

@@ -20,7 +20,7 @@ use Override;
 final class PostgreSQLGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
     {
         $sql = $this->compileInsert(state: $state);
 
@@ -28,11 +28,11 @@ final class PostgreSQLGrammar extends BaseGrammar
             callback: fn ($col) => $this->wrap(value: $col),
             array   : $uniqueBy,
         );
-        $conflictClause  = implode(separator: ', ', array: $conflictColumns);
+        $conflictClause = implode(separator: ', ', array: $conflictColumns);
 
         $updates = [];
         foreach ($update as $column) {
-            $updates[] = $this->wrap(value: $column) . ' = EXCLUDED.' . $this->wrap(value: $column);
+            $updates[] = $this->wrap(value: $column).' = EXCLUDED.'.$this->wrap(value: $column);
         }
 
         $updateClause = implode(separator: ', ', array: $updates);
@@ -41,7 +41,7 @@ final class PostgreSQLGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function wrap(mixed $value) : string
+    public function wrap(mixed $value): string
     {
         if ($value instanceof Expression) {
             return $value->getValue();
@@ -62,34 +62,34 @@ final class PostgreSQLGrammar extends BaseGrammar
         return $this->wrapSegment(segment: $value);
     }
 
-    protected function wrapSegment(string $segment) : string
+    protected function wrapSegment(string $segment): string
     {
         if ($segment === '*' || $segment === '') {
             return $segment;
         }
 
-        return '"' . str_replace(search: '"', replace: '""', subject: $segment) . '"';
+        return '"'.str_replace(search: '"', replace: '""', subject: $segment).'"';
     }
 
     #[Override]
-    public function compileRandomOrder() : string
+    public function compileRandomOrder(): string
     {
         return 'RANDOM()';
     }
 
     #[Override]
-    public function compileTruncate(string $table) : string
+    public function compileTruncate(string $table): string
     {
-        return 'TRUNCATE TABLE ' . $this->wrap(value: $table) . ' RESTART IDENTITY';
+        return 'TRUNCATE TABLE '.$this->wrap(value: $table).' RESTART IDENTITY';
     }
 
     #[Override]
-    public function compileDropIfExists(string $table) : string
+    public function compileDropIfExists(string $table): string
     {
-        return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table) . ' CASCADE';
+        return 'DROP TABLE IF EXISTS '.$this->wrap(value: $table).' CASCADE';
     }
 
-    public function compileReturning(array $columns) : string
+    public function compileReturning(array $columns): string
     {
         if (empty($columns)) {
             return '';
@@ -97,24 +97,24 @@ final class PostgreSQLGrammar extends BaseGrammar
 
         $cols = array_map(callback: fn ($col) => $this->wrap(value: $col), array: $columns);
 
-        return 'RETURNING ' . implode(separator: ', ', array: $cols);
+        return 'RETURNING '.implode(separator: ', ', array: $cols);
     }
 
-    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, ?string $partitionBy = null, string $orderBy = ''): string
     {
         $partitionBy ??= '';
-        $sql = $function . '(';
+        $sql = $function.'(';
 
         if ($partitionBy !== '') {
             $partitionColumns = implode(separator: ', ', array: array_map(
                 callback: fn ($col) => $this->wrap(value: $col),
                 array   : explode(separator: ',', string: $partitionBy),
             ));
-            $sql              .= 'PARTITION BY ' . $partitionColumns;
+            $sql .= 'PARTITION BY '.$partitionColumns;
         }
 
         if ($orderBy !== '') {
-            $sql .= ' ORDER BY ' . $orderBy;
+            $sql .= ' ORDER BY '.$orderBy;
         }
 
         $sql .= ')';
@@ -122,50 +122,50 @@ final class PostgreSQLGrammar extends BaseGrammar
         return $sql;
     }
 
-    public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery) : string
+    public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery): string
     {
         $sql = "WITH RECURSIVE {$name} AS (";
 
-        $sql .= $initialQuery . ' UNION ALL ' . $recursiveQuery . ')';
+        $sql .= $initialQuery.' UNION ALL '.$recursiveQuery.')';
 
         return $sql;
     }
 
-    public function compileAdvisoryLock(string $lockId) : string
+    public function compileAdvisoryLock(string $lockId): string
     {
         return "SELECT pg_advisory_lock({$lockId})";
     }
 
-    public function compileAdvisoryUnlock(string $lockId) : string
+    public function compileAdvisoryUnlock(string $lockId): string
     {
         return "SELECT pg_advisory_unlock({$lockId})";
     }
 
-    public function compileJsonbExtractPath(string $column, string $path) : string
+    public function compileJsonbExtractPath(string $column, string $path): string
     {
         return "{$this->wrap(value: $column)}->>'{$path}'";
     }
 
-    public function compileJsonbContains(string $column, string $value) : string
+    public function compileJsonbContains(string $column, string $value): string
     {
         return "{$this->wrap(value: $column)} @> '{$value}'";
     }
 
-    public function compileJsonbContainedBy(string $column, string $value) : string
+    public function compileJsonbContainedBy(string $column, string $value): string
     {
         return "{$this->wrap(value: $column)} <@ '{$value}'";
     }
 
-    public function compileArrayContains(string $column, array $values) : string
+    public function compileArrayContains(string $column, array $values): string
     {
-        $valueList = '{' . implode(separator: ',', array: $values) . '}';
+        $valueList = '{'.implode(separator: ',', array: $values).'}';
 
         return "{$this->wrap(value: $column)} @> '{$valueList}'";
     }
 
-    public function compileArrayOverlap(string $column, array $values) : string
+    public function compileArrayOverlap(string $column, array $values): string
     {
-        $valueList = '{' . implode(separator: ',', array: $values) . '}';
+        $valueList = '{'.implode(separator: ',', array: $values).'}';
 
         return "{$this->wrap(value: $column)} && '{$valueList}'";
     }

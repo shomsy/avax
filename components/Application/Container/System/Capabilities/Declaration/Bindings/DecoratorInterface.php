@@ -14,5 +14,5 @@ interface DecoratorInterface
     /**
      * Decorates one resolved service instance.
      */
-    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed;
+    public function decorate(mixed $instance, ContainerInterface $container = null) : mixed;
 }

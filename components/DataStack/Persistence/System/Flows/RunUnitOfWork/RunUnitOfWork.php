@@ -16,7 +16,7 @@ final readonly class RunUnitOfWork
         private UnitOfWorkInterface $unitOfWork,
     ) {}
 
-    public function execute(callable $operation) : mixed
+    public function execute(callable $operation): mixed
     {
         try {
             $result = $operation($this->unitOfWork);

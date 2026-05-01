@@ -13,18 +13,18 @@ final class BulkInserter
 
     public function __construct(
         private readonly GrammarInterface $grammar,
-        private readonly string           $table,
-        private readonly array            $columns,
+        private readonly string $table,
+        private readonly array $columns,
     ) {}
 
-    public function batchSize(int $size) : self
+    public function batchSize(int $size): self
     {
         $this->batchSize = $size;
 
         return $this;
     }
 
-    public function execute(array $rows) : array
+    public function execute(array $rows): array
     {
         $results = [];
         $batches = array_chunk(array: $rows, size: $this->batchSize);
@@ -36,10 +36,10 @@ final class BulkInserter
         return $results;
     }
 
-    private function executeBatch(array $batch) : bool
+    private function executeBatch(array $batch): bool
     {
         $columns = implode(separator: ', ', array: array_map(
-            callback: fn ($col) : string => $this->grammar->wrap(value: $col),
+            callback: fn ($col): string => $this->grammar->wrap(value: $col),
             array   : $this->columns,
         ));
 
@@ -50,7 +50,7 @@ final class BulkInserter
                 $placeholders[] = $value instanceof Expression ? $value->getValue() : '?';
             }
 
-            $valueGroups[] = '(' . implode(separator: ', ', array: $placeholders) . ')';
+            $valueGroups[] = '('.implode(separator: ', ', array: $placeholders).')';
         }
         implode(separator: ', ', array: $valueGroups);
         $this->grammar->wrap(value: $this->table);
@@ -58,7 +58,7 @@ final class BulkInserter
         return true;
     }
 
-    public function getBindings() : array
+    public function getBindings(): array
     {
         return [];
     }

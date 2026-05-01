@@ -20,12 +20,12 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     /** @var array<int, User> */
     private array $users = [];
 
-    public function findById(UserId $id) : User|null
+    public function findById(UserId $id): ?User
     {
         return $this->users[$id->value] ?? null;
     }
 
-    public function findByCredentials(#[SensitiveParameter] Credentials $credentials) : User|null
+    public function findByCredentials(#[SensitiveParameter] Credentials $credentials): ?User
     {
         $identifier = strtolower(string: $credentials->identifier);
 
@@ -44,12 +44,11 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     public function emailExists(
         #[SensitiveParameter]
         string $email,
-    ) : bool
-    {
+    ): bool {
         return array_any(array: $this->users, callback: static fn ($user) => strtolower(string: $user->getEmail()->value) === strtolower(string: $email));
     }
 
-    public function findByEmail(#[SensitiveParameter] string $email) : User|null
+    public function findByEmail(#[SensitiveParameter] string $email): ?User
     {
         foreach ($this->users as $user) {
             if (strtolower(string: $user->getEmail()->value) === strtolower(string: $email)) {
@@ -60,16 +59,16 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         return null;
     }
 
-    public function usernameExists(string $username) : bool
+    public function usernameExists(string $username): bool
     {
         return array_any(array: $this->users, callback: static fn ($user) => strtolower(string: $user->getUsername()) === strtolower(string: $username));
     }
 
-    public function updatePassword(UserId $id, #[SensitiveParameter] string $passwordHash) : void
+    public function updatePassword(UserId $id, #[SensitiveParameter] string $passwordHash): void
     {
         $this->replace(
             id    : $id,
-            mutate: static fn (User $user) : User => User::create(
+            mutate: static fn (User $user): User => User::create(
                 id          : $user->id,
                 email       : $user->email,
                 username    : $user->username,
@@ -82,9 +81,9 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     }
 
     /**
-     * @param callable(User) : User $mutate
+     * @param  callable(User) : User  $mutate
      */
-    private function replace(UserId $id, callable $mutate) : void
+    private function replace(UserId $id, callable $mutate): void
     {
         $user = $this->users[$id->value] ?? null;
 
@@ -95,18 +94,18 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         $this->users[$id->value] = $mutate($user);
     }
 
-    public function create(User $user) : User
+    public function create(User $user): User
     {
         $this->users[$user->getId()->value] = $user;
 
         return $user;
     }
 
-    public function updateEmail(UserId $id, #[SensitiveParameter] string $email) : void
+    public function updateEmail(UserId $id, #[SensitiveParameter] string $email): void
     {
         $this->replace(
             id    : $id,
-            mutate: static fn (User $user) : User => User::create(
+            mutate: static fn (User $user): User => User::create(
                 id          : $user->id,
                 email       : new UserEmail(value: $email),
                 username    : $user->username,
@@ -118,11 +117,11 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         );
     }
 
-    public function replaceRoles(UserId $id, array $roles) : void
+    public function replaceRoles(UserId $id, array $roles): void
     {
         $this->replace(
             id    : $id,
-            mutate: static fn (User $user) : User => User::create(
+            mutate: static fn (User $user): User => User::create(
                 id          : $user->id,
                 email       : $user->email,
                 username    : $user->username,
@@ -134,11 +133,11 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         );
     }
 
-    public function replacePermissions(UserId $id, array $permissions) : void
+    public function replacePermissions(UserId $id, array $permissions): void
     {
         $this->replace(
             id    : $id,
-            mutate: static fn (User $user) : User => User::create(
+            mutate: static fn (User $user): User => User::create(
                 id          : $user->id,
                 email       : $user->email,
                 username    : $user->username,
@@ -150,16 +149,16 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         );
     }
 
-    public function deactivate(UserId $id) : void
+    public function deactivate(UserId $id): void
     {
         $this->setActive(id: $id, isActive: false);
     }
 
-    private function setActive(UserId $id, bool $isActive) : void
+    private function setActive(UserId $id, bool $isActive): void
     {
         $this->replace(
             id    : $id,
-            mutate: static fn (User $user) : User => User::create(
+            mutate: static fn (User $user): User => User::create(
                 id          : $user->id,
                 email       : $user->email,
                 username    : $user->username,
@@ -171,7 +170,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         );
     }
 
-    public function activate(UserId $id) : void
+    public function activate(UserId $id): void
     {
         $this->setActive(id: $id, isActive: true);
     }

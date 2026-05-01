@@ -84,8 +84,8 @@ final class QueryIntentTest extends TestCase
 
     public function test_data_query_with_joins() : void
     {
-        $query    = new DataQuery();
-        $joins    = [
+        $query = new DataQuery();
+        $joins = [
             ['type' => 'LEFT', 'table' => 'users', 'on' => 'posts.user_id = users.id'],
         ];
         $newQuery = $query->withJoins($joins);
@@ -238,7 +238,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_result_rows() : void
     {
-        $rows   = [
+        $rows = [
             ['id' => 1, 'name' => 'Alice'],
             ['id' => 2, 'name' => 'Bob'],
         ];
@@ -267,7 +267,7 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_result_first() : void
     {
-        $rows   = [
+        $rows = [
             ['id' => 1, 'name' => 'Alice'],
             ['id' => 2, 'name' => 'Bob'],
         ];
@@ -502,6 +502,7 @@ final class QueryIntentTest extends TestCase
         foreach ($suggestions as $suggestion) {
             if (str_contains($suggestion, 'SELECT *')) {
                 $hasSelectStarWarning = true;
+
                 break;
             }
         }
@@ -529,38 +530,38 @@ final class QueryIntentTest extends TestCase
 
     public function test_query_fingerprint_normalize_whitespace() : void
     {
-        $fingerprint = QueryFingerprint::fromQuery("SELECT   *   FROM   users");
+        $fingerprint = QueryFingerprint::fromQuery('SELECT   *   FROM   users');
 
         $this->assertSame('SELECT * FROM users', $fingerprint->pattern());
     }
 
     public function test_query_fingerprint_hash_consistency() : void
     {
-        $fingerprint1 = QueryFingerprint::fromQuery("SELECT * FROM users WHERE id = 1");
-        $fingerprint2 = QueryFingerprint::fromQuery("SELECT * FROM users WHERE id = 2");
+        $fingerprint1 = QueryFingerprint::fromQuery('SELECT * FROM users WHERE id = 1');
+        $fingerprint2 = QueryFingerprint::fromQuery('SELECT * FROM users WHERE id = 2');
 
         $this->assertSame($fingerprint1->hash(), $fingerprint2->hash());
     }
 
     public function test_query_fingerprint_matches() : void
     {
-        $fingerprint = QueryFingerprint::fromQuery("SELECT * FROM users WHERE id = 1");
+        $fingerprint = QueryFingerprint::fromQuery('SELECT * FROM users WHERE id = 1');
 
-        $this->assertTrue($fingerprint->matches("SELECT * FROM users WHERE id = 2"));
-        $this->assertFalse($fingerprint->matches("SELECT * FROM posts WHERE id = 1"));
+        $this->assertTrue($fingerprint->matches('SELECT * FROM users WHERE id = 2'));
+        $this->assertFalse($fingerprint->matches('SELECT * FROM posts WHERE id = 1'));
     }
 
     public function test_query_fingerprint_matches_fingerprint() : void
     {
-        $fingerprint1 = QueryFingerprint::fromQuery("SELECT * FROM users WHERE id = 1");
-        $fingerprint2 = QueryFingerprint::fromQuery("SELECT * FROM users WHERE id = 2");
+        $fingerprint1 = QueryFingerprint::fromQuery('SELECT * FROM users WHERE id = 1');
+        $fingerprint2 = QueryFingerprint::fromQuery('SELECT * FROM users WHERE id = 2');
 
         $this->assertTrue($fingerprint1->matchesFingerprint($fingerprint2));
     }
 
     public function test_query_fingerprint_to_string() : void
     {
-        $fingerprint = QueryFingerprint::fromQuery("SELECT * FROM users WHERE id = 1");
+        $fingerprint = QueryFingerprint::fromQuery('SELECT * FROM users WHERE id = 1');
 
         $this->assertSame($fingerprint->pattern(), (string) $fingerprint);
     }

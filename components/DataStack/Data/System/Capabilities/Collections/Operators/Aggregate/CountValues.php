@@ -13,7 +13,7 @@ final readonly class CountValues
         private array $items = [],
     ) {}
 
-    public function __invoke() : int
+    public function __invoke(): int
     {
         return count($this->items);
     }

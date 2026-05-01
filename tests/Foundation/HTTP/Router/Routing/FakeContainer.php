@@ -11,7 +11,7 @@ final class FakeContainer implements PsrContainerInterface
 {
     public function get(string $id) : mixed
     {
-        return new $id;
+        return new $id();
     }
 
     public function has(string $id) : bool

@@ -16,8 +16,8 @@ final readonly class RollbackMigrations
 {
     public function __construct(
         private MigrationRepository $migrationRepository,
-        private MigrationRunner     $migrationRunner,
-        private MigrationLoader     $migrationLoader,
+        private MigrationRunner $migrationRunner,
+        private MigrationLoader $migrationLoader,
     ) {}
 
     /**
@@ -25,7 +25,7 @@ final readonly class RollbackMigrations
      *
      * @throws Throwable
      */
-    public function run(string $path, int $steps = 1) : array
+    public function run(string $path, int $steps = 1): array
     {
         $records = $this->migrationRepository->getLastBatch(steps: $steps);
 

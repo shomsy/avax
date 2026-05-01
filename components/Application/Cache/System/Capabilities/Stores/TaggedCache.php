@@ -18,7 +18,7 @@ final class TaggedCache
      */
     public function __construct(
         private readonly CacheStoreInterface $cacheStore,
-        array                       $tags,
+        array $tags,
     )
     {
         sort($tags);

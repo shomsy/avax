@@ -10,10 +10,10 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLog
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryUnavailable;
-use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use SensitiveParameter;
 
 /**
@@ -22,27 +22,27 @@ use SensitiveParameter;
 final readonly class LogoutAllSessions
 {
     public function __construct(
-        private IdentityInterface               $identity,
+        private IdentityInterface $identity,
         #[SensitiveParameter]
-        private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
+        private CurrentAuthentication $currentAuthentication,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
         #[SensitiveParameter]
-        private SessionRegistryInterface|null   $sessionRegistry = null,
+        private ?SessionRegistryInterface $sessionRegistry = null,
         #[SensitiveParameter]
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
     ) {}
 
     /**
      * @throws Unauthenticated
      */
-    public function execute() : void
+    public function execute(): void
     {
         $context = $this->currentAuthentication->read();
-        $user    = $context->user();
+        $user = $context->user();
 
         if ($user === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         if ($this->sessionRegistry === null) {
@@ -50,7 +50,7 @@ final readonly class LogoutAllSessions
         }
 
         $userId = new UserId(value: $user->id);
-        $now    = $this->clock->now();
+        $now = $this->clock->now();
 
         $this->sessionRegistry->revokeForUser(userId: $userId, revokedAt: $now, reason: 'logout_all');
         $this->refreshTokenStore?->revokeUser(userId: $userId);
@@ -58,12 +58,12 @@ final readonly class LogoutAllSessions
         $this->currentAuthentication->clear();
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.sessions.revoked',
-                                           occurredAt: $now,
-                                           context   : [
-                                                           'user_id' => $user->id,
-                                                           'reason'  => 'logout_all',
-                                                       ],
-                                       ));
+            name      : 'auth.sessions.revoked',
+            occurredAt: $now,
+            context   : [
+                'user_id' => $user->id,
+                'reason' => 'logout_all',
+            ],
+        ));
     }
 }

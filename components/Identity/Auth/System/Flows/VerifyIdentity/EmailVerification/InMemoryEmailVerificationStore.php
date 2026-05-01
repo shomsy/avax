@@ -20,11 +20,11 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
     /**
      * @throws RandomException
      */
-    public function issue(UserId $userId, DateTimeImmutable $expiresAt) : EmailVerificationChallenge
+    public function issue(UserId $userId, DateTimeImmutable $expiresAt): EmailVerificationChallenge
     {
-        $token                                             = bin2hex(string: random_bytes(length: 32));
+        $token = bin2hex(string: random_bytes(length: 32));
         $this->records[hash(algo: 'sha256', data: $token)] = [
-            'user_id'    => $userId->value,
+            'user_id' => $userId->value,
             'expires_at' => $expiresAt->getTimestamp(),
         ];
 
@@ -35,9 +35,9 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
         );
     }
 
-    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : UserId|null
+    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now): ?UserId
     {
-        $key    = hash(algo: 'sha256', data: $token);
+        $key = hash(algo: 'sha256', data: $token);
         $record = $this->records[$key] ?? null;
         unset($this->records[$key]);
 

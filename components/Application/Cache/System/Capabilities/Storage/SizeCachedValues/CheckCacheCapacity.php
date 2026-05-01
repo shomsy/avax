@@ -9,7 +9,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 final readonly class CheckCacheCapacity
 {
     public function __construct(
-        private CacheCapacity           $cacheCapacity,
+        private CacheCapacity $cacheCapacity,
         private EstimateCachedValueSize $estimateCachedValueSize = new EstimateCachedValueSize(),
     ) {}
 

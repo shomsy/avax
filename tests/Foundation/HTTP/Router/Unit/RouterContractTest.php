@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
+
 use Avax\Tests\TestCase;
 use components\HTTP\Request\Request;
 use components\HTTP\Router\Router;
@@ -41,7 +41,7 @@ class RouterContractTest extends TestCase
             defaults     : [],
             domain       : null,
             attributes   : [],
-            authorization: null
+            authorization: null,
         );
 
         $runtimeRouter = $this->createMock(Router::class);
@@ -75,7 +75,7 @@ class RouterContractTest extends TestCase
             defaults     : ['id' => '1'],
             domain       : null,
             attributes   : [],
-            authorization: null
+            authorization: null,
         );
 
         // When: ServerRequest matches with parameter
@@ -107,7 +107,7 @@ class RouterContractTest extends TestCase
             defaults     : [],
             domain       : null,
             attributes   : [],
-            authorization: null
+            authorization: null,
         );
 
         $request = $this->createMock(Request::class);
@@ -137,7 +137,7 @@ class RouterContractTest extends TestCase
                     defaults     : [],
                     domain       : null,
                     attributes   : [],
-                    authorization: null
+                    authorization: null,
                 ),
             ],
         ];

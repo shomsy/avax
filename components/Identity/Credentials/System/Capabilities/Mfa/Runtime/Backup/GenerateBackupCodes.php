@@ -17,23 +17,23 @@ final readonly class GenerateBackupCodes
     public function __construct(
         #[SensitiveParameter]
         private PasswordHasher $passwordHasher,
-        private Clock          $clock,
-        private int            $count = 10,
+        private Clock $clock,
+        private int $count = 10,
     ) {}
 
     /**
      * @throws RandomException
      */
-    public function execute() : GeneratedBackupCodes
+    public function execute(): GeneratedBackupCodes
     {
-        $plainCodes  = [];
-        $records     = [];
+        $plainCodes = [];
+        $records = [];
         $generatedAt = $this->clock->now();
 
         for ($index = 0; $index < $this->count; $index++) {
-            $plain        = strtoupper(string: bin2hex(string: random_bytes(length: 4)) . '-' . bin2hex(string: random_bytes(length: 4)));
+            $plain = strtoupper(string: bin2hex(string: random_bytes(length: 4)).'-'.bin2hex(string: random_bytes(length: 4)));
             $plainCodes[] = new BackupCode(value: $plain);
-            $records[]    = new BackupCodeRecord(
+            $records[] = new BackupCodeRecord(
                 backupCodeId: bin2hex(string: random_bytes(length: 16)),
                 codeHash    : $this->passwordHasher->hash(password: $plain),
             );
@@ -41,9 +41,9 @@ final readonly class GenerateBackupCodes
 
         return new GeneratedBackupCodes(
             backupCodeSet: new BackupCodeSet(
-                               codes      : $plainCodes,
-                               generatedAt: $generatedAt,
-                           ),
+                codes      : $plainCodes,
+                generatedAt: $generatedAt,
+            ),
             records      : $records,
         );
     }

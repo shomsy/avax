@@ -426,7 +426,7 @@ final class SecretRedactorTest extends TestCase
     {
         $redactor = new SecretRedactor();
         $result = $redactor->redactArray([
-            'user' => ['name' => 'John', 'password' => 'secret123', 'profile' => ['email' => 'john@example.com', 'api_key' => 'key-12345']],
+                                             'user' => ['name' => 'John', 'password' => 'secret123', 'profile' => ['email' => 'john@example.com', 'api_key' => 'key-12345']],
             'metadata' => ['version' => '1.0'],
         ]);
         self::assertSame('John', $result['user']['name']);

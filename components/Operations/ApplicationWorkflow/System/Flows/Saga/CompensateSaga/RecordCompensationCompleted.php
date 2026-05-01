@@ -10,7 +10,7 @@ final readonly class RecordCompensationCompleted
         private string $store,
     ) {}
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'records completed compensation to saga store.';
     }
@@ -19,8 +19,7 @@ final readonly class RecordCompensationCompleted
         string $sagaId,
         array $completedSteps,
         array $results,
-    ) : CompensationCompletedRecord
-    {
+    ): CompensationCompletedRecord {
         return new CompensationCompletedRecord(
             sagaId        : $sagaId,
             completedSteps: $completedSteps,
@@ -29,7 +28,7 @@ final readonly class RecordCompensationCompleted
         );
     }
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return ['store' => $this->store];
     }
@@ -44,12 +43,12 @@ final readonly class CompensationCompletedRecord
         public float $recordedAt,
     ) {}
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return [
-            'saga_id'         => $this->sagaId,
+            'saga_id' => $this->sagaId,
             'completed_steps' => $this->completedSteps,
-            'recorded_at'     => $this->recordedAt,
+            'recorded_at' => $this->recordedAt,
         ];
     }
 }

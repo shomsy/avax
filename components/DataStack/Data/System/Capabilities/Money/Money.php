@@ -13,11 +13,11 @@ use InvalidArgumentException;
 final readonly class Money
 {
     public function __construct(
-        public int      $amount,
+        public int $amount,
         public Currency $currency,
     ) {}
 
-    public function add(Money $money) : self
+    public function add(Money $money): self
     {
         if ($this->currency->code !== $money->currency->code) {
             throw new InvalidArgumentException('Currencies must match.');
@@ -26,7 +26,7 @@ final readonly class Money
         return new self($this->amount + $money->amount, $this->currency);
     }
 
-    public function toFloat() : float
+    public function toFloat(): float
     {
         return $this->amount / 100;
     }

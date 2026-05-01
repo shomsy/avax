@@ -19,7 +19,7 @@ declare(strict_types=1);
 final class RepairTestLayer
 {
     private string $root;
-    private bool   $apply;
+    private bool $apply;
 
     /** @var array<string, string> */
     private array $namespaceRewrites = [];
@@ -104,7 +104,7 @@ final class RepairTestLayer
     private function assertRepoRoot() : void
     {
         if (! is_dir($this->path('tests'))) {
-            throw new RuntimeException("Run from AvaX repo root. Missing tests/");
+            throw new RuntimeException('Run from AvaX repo root. Missing tests/');
         }
     }
 
@@ -116,7 +116,7 @@ final class RepairTestLayer
     private function printHeader() : void
     {
         echo "AvaX Test Layer Repair\n";
-        echo "Mode: " . ($this->apply ? "APPLY" : "DRY-RUN") . "\n";
+        echo 'Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN') . "\n";
         echo "Scope: tests/ only\n\n";
     }
 
@@ -174,7 +174,7 @@ final class RepairTestLayer
         }
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)
+            new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
         );
 
         foreach ($iterator as $file) {
@@ -251,7 +251,7 @@ final class RepairTestLayer
         $directory = dirname($report);
 
         if (! is_dir($directory)) {
-            mkdir($directory, 0777, true);
+            mkdir($directory, 0o777, true);
         }
 
         $lines = [

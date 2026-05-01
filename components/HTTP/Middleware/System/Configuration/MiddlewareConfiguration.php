@@ -20,10 +20,10 @@ final readonly class MiddlewareConfiguration
      * @param list<string> $skipPaths       URL paths that bypass all middleware
      */
     public function __construct(
-        private int   $timeoutMs = 30000,
-        private bool  $stopOnException = true,
+        private int  $timeoutMs = 30000,
+        private bool $stopOnException = true,
         private array $priorityOrder = [],
-        private bool  $enableMetrics = false,
+        private bool $enableMetrics = false,
         private array $skipPaths = [],
     ) {}
 

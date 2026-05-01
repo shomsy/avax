@@ -9,16 +9,16 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final readonly class FromNode
 {
     public function __construct(
-        public string      $table,
-        public string|null $alias = null,
+        public string $table,
+        public ?string $alias = null,
     ) {}
 
-    public function getSql(GrammarInterface $grammar) : string
+    public function getSql(GrammarInterface $grammar): string
     {
         $sql = $grammar->wrap(value: $this->table);
 
         if ($this->alias !== null) {
-            $sql .= ' AS ' . $grammar->wrap(value: $this->alias);
+            $sql .= ' AS '.$grammar->wrap(value: $this->alias);
         }
 
         return $sql;

@@ -17,24 +17,24 @@ use SensitiveParameter;
 interface RefreshTokenStoreInterface
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function issue(
-        UserId                     $userId,
-        DateTimeImmutable          $expiresAt,
-        string                     $familyId = null,
-        DateTimeImmutable          $mfaVerifiedAt = null,
-        bool                       $phishingResistant = false,
-        string                     $clientId = null,
-        array                      $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null,
-    ) : IssuedRefreshToken;
+        UserId $userId,
+        DateTimeImmutable $expiresAt,
+        ?string $familyId = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
+        ?string $clientId = null,
+        array $scopes = [],
+        ?OAuthSenderConstraint $senderConstraint = null,
+    ): IssuedRefreshToken;
 
-    public function find(#[SensitiveParameter] string $plainToken) : RefreshTokenRecord|null;
+    public function find(#[SensitiveParameter] string $plainToken): ?RefreshTokenRecord;
 
-    public function markRotated(#[SensitiveParameter] string $tokenId, #[SensitiveParameter] string $replacementTokenId) : void;
+    public function markRotated(#[SensitiveParameter] string $tokenId, #[SensitiveParameter] string $replacementTokenId): void;
 
-    public function revokeFamily(string $familyId) : void;
+    public function revokeFamily(string $familyId): void;
 
-    public function revokeUser(UserId $userId) : void;
+    public function revokeUser(UserId $userId): void;
 }

@@ -13,17 +13,17 @@ final readonly class UniqueValues
         private array $items = [],
     ) {}
 
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return $this->unique();
     }
 
-    public function unique() : array
+    public function unique(): array
     {
         return array_unique(array: $this->items, flags: SORT_REGULAR);
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

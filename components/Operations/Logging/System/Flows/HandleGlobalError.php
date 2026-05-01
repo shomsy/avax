@@ -27,7 +27,7 @@ final readonly class HandleGlobalError
 
         echo json_encode([
                              'status' => 500,
-            'message' => 'Internal Server Error',
+                             'message' => 'Internal Server Error',
                              'error'  => $throwable->getMessage(),
         ]);
     }

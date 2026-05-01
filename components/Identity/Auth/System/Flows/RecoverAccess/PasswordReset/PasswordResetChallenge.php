@@ -13,13 +13,13 @@ use SensitiveParameter;
 final readonly class PasswordResetChallenge
 {
     public function __construct(
-        public bool                   $dispatched,
+        public bool $dispatched,
         #[SensitiveParameter]
-        public string|null            $token = null,
-        public DateTimeImmutable|null $expiresAt = null,
+        public ?string $token = null,
+        public ?DateTimeImmutable $expiresAt = null,
     ) {}
 
-    public static function hidden() : self
+    public static function hidden(): self
     {
         return new self(dispatched: true);
     }

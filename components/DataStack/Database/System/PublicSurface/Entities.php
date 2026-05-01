@@ -18,47 +18,47 @@ final readonly class Entities
         private EntitiesCapability $entities,
     ) {}
 
-    public function metadata(string $entityClass) : EntityMetadata
+    public function metadata(string $entityClass): EntityMetadata
     {
         return $this->entities->metadata($entityClass);
     }
 
-    public function find(string $entityClass, mixed $id, string|null $connectionName = null) : ?object
+    public function find(string $entityClass, mixed $id, ?string $connectionName = null): ?object
     {
         return $this->entities->find($entityClass, $id, $connectionName);
     }
 
-    public function persist(object $entity) : void
+    public function persist(object $entity): void
     {
         $this->entities->persist($entity);
     }
 
-    public function remove(object $entity) : void
+    public function remove(object $entity): void
     {
         $this->entities->remove($entity);
     }
 
-    public function flush(string|null $connectionName = null) : void
+    public function flush(?string $connectionName = null): void
     {
         $this->entities->flush($connectionName);
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->entities->clear();
     }
 
-    public function refresh(object $entity, string|null $connectionName = null) : object
+    public function refresh(object $entity, ?string $connectionName = null): object
     {
         return $this->entities->refresh($entity, $connectionName);
     }
 
-    public function repository(string $entityClass) : EntityRepository
+    public function repository(string $entityClass): EntityRepository
     {
         return $this->entities->repository($entityClass);
     }
 
-    public function transactional(callable $callback, string|null $connectionName = null) : mixed
+    public function transactional(callable $callback, ?string $connectionName = null): mixed
     {
         return $this->entities->transactional($callback, $connectionName);
     }

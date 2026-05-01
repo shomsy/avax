@@ -17,36 +17,36 @@ final class DatabaseBuilder
 {
     private array $config = [];
 
-    public function usingConfig(array $config) : self
+    public function usingConfig(array $config): self
     {
         $this->config = $config;
 
         return $this;
     }
 
-    public function addConnection(string $name, array $config) : self
+    public function addConnection(string $name, array $config): self
     {
         $this->config['connections'][$name] = $config;
 
         return $this;
     }
 
-    public function getConfig() : array
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    public function ready() : Database
+    public function ready(): Database
     {
-        $connections = new ReadConnection();
+        $connections = new ReadConnection;
 
         return new Database(
             connections : new Connections($connections),
-            query       : new Query(),
-            schema      : new Schema(),
-            migrations  : new Migrations(),
-            transactions: new Transactions(),
-            telemetry   : new Telemetry(),
+            query       : new Query,
+            schema      : new Schema,
+            migrations  : new Migrations,
+            transactions: new Transactions,
+            telemetry   : new Telemetry,
         );
     }
 }

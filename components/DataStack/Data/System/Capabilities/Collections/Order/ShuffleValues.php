@@ -13,12 +13,12 @@ final readonly class ShuffleValues
         private array $items = [],
     ) {}
 
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return $this->shuffle();
     }
 
-    public function shuffle() : array
+    public function shuffle(): array
     {
         $items = $this->items;
         shuffle(array: $items);
@@ -26,7 +26,7 @@ final readonly class ShuffleValues
         return $items;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

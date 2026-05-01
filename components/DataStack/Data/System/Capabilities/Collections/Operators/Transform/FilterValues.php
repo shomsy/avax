@@ -13,7 +13,7 @@ final readonly class FilterValues
         private array $items = [],
     ) {}
 
-    public function __invoke(callable $callback) : array
+    public function __invoke(callable $callback): array
     {
         return array_filter(array: $this->items, callback: $callback, mode: ARRAY_FILTER_USE_BOTH);
     }

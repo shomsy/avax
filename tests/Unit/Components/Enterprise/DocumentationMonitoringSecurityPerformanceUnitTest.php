@@ -125,7 +125,7 @@ final class DocumentationMonitoringSecurityPerformanceUnitTest extends TestCase
     public function test_lazy_value_resolves_once() : void
     {
         $calls = 0;
-        $lazy  = Performance::lazy(resolver: static function () use (&$calls) : string {
+        $lazy = Performance::lazy(resolver: static function () use (&$calls) : string {
             $calls++;
 
             return 'loaded';

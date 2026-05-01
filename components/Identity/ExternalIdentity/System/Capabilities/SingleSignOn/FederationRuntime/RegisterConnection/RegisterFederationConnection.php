@@ -22,9 +22,9 @@ final readonly class RegisterFederationConnection
      * @throws FederationFailed
      * @throws RandomException
      */
-    public function execute(RegisterFederationConnectionData $data) : FederationConnection
+    public function execute(RegisterFederationConnectionData $data): FederationConnection
     {
-        $domain   = strtolower(string: trim(string: $data->domain));
+        $domain = strtolower(string: trim(string: $data->domain));
         $existing = $this->connectionStore->findByDomain(domain: $domain);
 
         if ($existing !== null) {
@@ -40,7 +40,7 @@ final readonly class RegisterFederationConnection
         }
 
         $connection = new FederationConnection(
-            connectionId           : 'fed_' . bin2hex(string: random_bytes(length: 12)),
+            connectionId           : 'fed_'.bin2hex(string: random_bytes(length: 12)),
             tenantSlug             : trim(string: $data->tenantSlug),
             name                   : trim(string: $data->name),
             provider               : $data->provider,
@@ -55,16 +55,16 @@ final readonly class RegisterFederationConnection
 
         $this->connectionStore->save(connection: $connection);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.federation.connection.registered',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'connection_id'       => $connection->connectionId,
-                                                           'tenant'              => $connection->tenantSlug,
-                                                           'domain'              => $connection->domain,
-                                                           'provider'            => $connection->provider->value,
-                                                           'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
-                                                       ],
-                                       ));
+            name      : 'auth.federation.connection.registered',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'connection_id' => $connection->connectionId,
+                'tenant' => $connection->tenantSlug,
+                'domain' => $connection->domain,
+                'provider' => $connection->provider->value,
+                'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
+            ],
+        ));
 
         return $connection;
     }

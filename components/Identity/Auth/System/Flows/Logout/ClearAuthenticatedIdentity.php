@@ -16,7 +16,7 @@ final readonly class ClearAuthenticatedIdentity
         private Sessions $sessions,
     ) {}
 
-    public function execute() : void
+    public function execute(): void
     {
         $this->sessions->clear();
     }

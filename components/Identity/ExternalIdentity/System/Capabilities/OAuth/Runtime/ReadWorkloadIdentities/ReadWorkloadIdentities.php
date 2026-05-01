@@ -13,7 +13,7 @@ final readonly class ReadWorkloadIdentities
     /**
      * @return list<WorkloadIdentityProfile>
      */
-    public function execute() : array
+    public function execute(): array
     {
         $profiles = [];
 
@@ -35,7 +35,7 @@ final readonly class ReadWorkloadIdentities
 
         usort(
             array   : $profiles,
-            callback: static fn (WorkloadIdentityProfile $left, WorkloadIdentityProfile $right) : int => strcmp(
+            callback: static fn (WorkloadIdentityProfile $left, WorkloadIdentityProfile $right): int => strcmp(
                 string1: $left->clientId,
                 string2: $right->clientId,
             ),

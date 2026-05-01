@@ -28,9 +28,9 @@ final class CreateRequestFromGlobals
     private static function getUri() : Uri
     {
         $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host   = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-        $port   = $_SERVER['SERVER_PORT'] ?? 80;
-        $path   = $_SERVER['REQUEST_URI'] ?? '/';
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+        $port = $_SERVER['SERVER_PORT'] ?? 80;
+        $path = $_SERVER['REQUEST_URI'] ?? '/';
         $query  = $_SERVER['QUERY_STRING'] ?? '';
 
         return new Uri($scheme, $host, $port, $path, $query);

@@ -12,13 +12,13 @@ use Stringable;
  */
 final class UriBuilder implements Stringable
 {
-    private string  $scheme      = '';
-    private string  $host        = '';
-    private int|null    $port     = null;
-    private string  $path        = '';
-    private array   $queryParams = [];
-    private string  $fragment    = '';
-    private string  $user        = '';
+    private string   $scheme      = '';
+    private string   $host        = '';
+    private int|null $port        = null;
+    private string   $path        = '';
+    private array    $queryParams = [];
+    private string   $fragment    = '';
+    private string   $user        = '';
     private string|null $password = null;
 
     public static function createFromString(string $uri) : self
@@ -117,7 +117,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withUserInfo(string $user, string|null $password = null) : self
+    public function withUserInfo(string $user, string $password = null) : self
     {
         $clone           = clone $this;
         $clone->user     = $user;

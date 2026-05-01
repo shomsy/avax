@@ -11,7 +11,7 @@ final class ContainerConfigTest extends TestCase
 {
     public function test_empty_cache_dir_falls_back_to_system_temp_dir() : void
     {
-        $config = new ContainerConfig;
+        $config = new ContainerConfig();
 
         $this->assertSame(expected: sys_get_temp_dir(), actual: $config->cacheDirectory());
     }

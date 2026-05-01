@@ -39,7 +39,7 @@ class EnsureDirectoryExistsTest extends TestCase
 
     public function testExecuteReturnsTrueIfExists() : void
     {
-        mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
+        mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
 
         $result = new EnsureDirectoryExists(disk: $this->disk)->execute(path: $this->testDir);
 

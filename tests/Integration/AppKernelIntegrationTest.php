@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Integration;
+
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\HTTP\AppKernel;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
@@ -66,9 +66,7 @@ class AppKernelIntegrationTest extends TestCase
             ->globalMiddleware(middleware: [
                                                new CsrfVerificationMiddleware(responseFactory: $this->responseFactory),
                                            ])
-            ->get(path: '/api/test', handler: static function () {
-                return ['message' => 'API response'];
-            })
+            ->get(path: '/api/test', handler: static fn () => ['message' => 'API response'])
             ->createApp(dispatcher: $this->dispatcher, responseFactory: $this->responseFactory);
 
         // Mock router to return a simple response
@@ -100,9 +98,7 @@ class AppKernelIntegrationTest extends TestCase
         $this->bootstrapper
             ->middlewareGroup(name: 'api', middleware: [$csrfMiddleware])
             ->useGroup(name: 'api')
-            ->get(path: '/api/data', handler: static function () {
-                return ['data' => 'test'];
-            });
+            ->get(path: '/api/data', handler: static fn () => ['data' => 'test']);
 
         // When: Getting global middleware
         $globalMiddleware = $this->bootstrapper;
@@ -121,11 +117,11 @@ class AppKernelIntegrationTest extends TestCase
         $csrfMiddleware = new CsrfVerificationMiddleware(responseFactory: $this->responseFactory);
 
         $this->bootstrapper
-            ->group(routes: static function ($router) use ($csrfMiddleware) {
+            ->group(routes: static function ($router) use ($csrfMiddleware) : void {
                 $router->middlewareGroup('secure', [$csrfMiddleware]);
                 $router->useGroup('secure');
 
-                $router->group(static function ($router) {
+                $router->group(static function ($router) : void {
                     $router->get('/admin/users', [AdminController::class, 'users']);
                     $router->post('/admin/users', [AdminController::class, 'createUser']);
                 });
@@ -168,14 +164,14 @@ class AppKernelIntegrationTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $psr17Factory = new Psr17Factory;
+        $psr17Factory = new Psr17Factory();
 
-        $this->router     = $this->createMock(RouterInterface::class);
-        $routeCollection  = new RouteCollection;
-        $this->dispatcher = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
+        $this->router          = $this->createMock(RouterInterface::class);
+        $routeCollection       = new RouteCollection();
+        $this->dispatcher      = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
         $this->responseFactory = new Responses(
             streamFactory: $psr17Factory->createStreamFactory(),
-            response     : $psr17Factory->createResponses()->createResponse()
+            response     : $psr17Factory->createResponses()->createResponse(),
         );
 
         $this->bootstrapper = new RouterBootstrapper(router: $this->router, routeCollection: $routeCollection);

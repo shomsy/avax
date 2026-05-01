@@ -104,7 +104,7 @@ final class CurlTransport implements HttpTransportInterface
      * Configure cURL options for the request.
      */
     private function configureCurl(
-        CurlHandle     $ch,
+        CurlHandle $ch,
         OutboundRequest $request,
         RequestOptions $options,
     ) : void
@@ -199,8 +199,8 @@ final class CurlTransport implements HttpTransportInterface
      */
     private function handleCurlError(
         CurlHandle $ch,
-        int        $errno,
-        string     $error,
+        int    $errno,
+        string $error,
         OutboundRequest $request,
     ) : never
     {

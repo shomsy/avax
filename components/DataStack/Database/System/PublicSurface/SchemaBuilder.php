@@ -10,11 +10,11 @@ final class SchemaBuilder
         private readonly Database $database,
     ) {}
 
-    public function create(string $table, callable $definition) : void {}
+    public function create(string $table, callable $definition): void {}
 
-    public function drop(string $table) : void {}
+    public function drop(string $table): void {}
 
-    public function hasTable(string $table) : bool
+    public function hasTable(string $table): bool
     {
         return false;
     }

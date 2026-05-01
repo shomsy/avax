@@ -17,13 +17,12 @@ final readonly class SubjectIdentifier
      * Generates a subject identifier for a user.
      */
     public function generate(
-        string      $localSubject,
-        string|null $sectorIdentifier = null,
-        string|null $pairwiseSalt = null,
-    ) : string
-    {
+        string $localSubject,
+        ?string $sectorIdentifier = null,
+        ?string $pairwiseSalt = null,
+    ): string {
         return match ($this->strategy) {
-            SubjectIdentifierStrategy::PUBLIC   => $this->publicIdentifier(localSubject: $localSubject),
+            SubjectIdentifierStrategy::PUBLIC => $this->publicIdentifier(localSubject: $localSubject),
             SubjectIdentifierStrategy::PAIRWISE => $this->pairwiseIdentifier(
                 localSubject    : $localSubject,
                 sectorIdentifier: $sectorIdentifier,
@@ -32,35 +31,34 @@ final readonly class SubjectIdentifier
         };
     }
 
-    private function publicIdentifier(string $localSubject) : string
+    private function publicIdentifier(string $localSubject): string
     {
         return $localSubject;
     }
 
     private function pairwiseIdentifier(
-        string      $localSubject,
-        string|null $sectorIdentifier,
-        string      $pairwiseSalt,
-    ) : string
-    {
+        string $localSubject,
+        ?string $sectorIdentifier,
+        string $pairwiseSalt,
+    ): string {
         $sector = $sectorIdentifier ?? $this->defaultSector();
 
         return $this->hashPairwise(localSubject: $localSubject, sector: $sector, salt: $pairwiseSalt);
     }
 
-    private function defaultSector() : string
+    private function defaultSector(): string
     {
         return 'default-sector-identifier';
     }
 
-    private function hashPairwise(string $localSubject, string $sector, string $salt) : string
+    private function hashPairwise(string $localSubject, string $sector, string $salt): string
     {
-        $input = $localSubject . '.' . $sector . '.' . $salt;
+        $input = $localSubject.'.'.$sector.'.'.$salt;
 
         return hash(algo: 'sha256', data: $input);
     }
 
-    private function defaultSalt() : string
+    private function defaultSalt(): string
     {
         return 'default-pairwise-salt';
     }
@@ -68,7 +66,7 @@ final readonly class SubjectIdentifier
     /**
      * Validates a sector identifier for pairwise subjects.
      */
-    public function isValidSectorIdentifier(string $sectorIdentifier) : bool
+    public function isValidSectorIdentifier(string $sectorIdentifier): bool
     {
         $parsed = parse_url(url: $sectorIdentifier);
 

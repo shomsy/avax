@@ -13,20 +13,20 @@ use Throwable;
 final class SagaStep
 {
     public function __construct(
-        public string  $name,
+        public string $name,
         public Closure $action,
-        public Closure|null $compensation = null,
+        public ?Closure $compensation = null,
     ) {}
 
     /**
      * Execute the step's action with the given context.
      *
-     * @param mixed $context The saga context/data
-     *
+     * @param  mixed  $context  The saga context/data
      * @return mixed The result of the action
+     *
      * @throws Throwable If the action fails
      */
-    public function execute(mixed $context) : mixed
+    public function execute(mixed $context): mixed
     {
         return ($this->action)($context);
     }
@@ -34,12 +34,12 @@ final class SagaStep
     /**
      * Execute the step's compensation logic with the given context.
      *
-     * @param mixed $context The saga context/data
-     *
+     * @param  mixed  $context  The saga context/data
      * @return mixed The result of the compensation
+     *
      * @throws Throwable If the compensation fails
      */
-    public function compensate(mixed $context) : mixed
+    public function compensate(mixed $context): mixed
     {
         if ($this->compensation === null) {
             return null;
@@ -51,7 +51,7 @@ final class SagaStep
     /**
      * Check if this step has a compensation handler.
      */
-    public function hasCompensation() : bool
+    public function hasCompensation(): bool
     {
         return $this->compensation !== null;
     }

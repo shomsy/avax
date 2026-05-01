@@ -9,8 +9,6 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use RuntimeException;
 
-
-
 /**
  * Manages compiled/optimized cache manifest for distributed cache systems.
  *
@@ -32,7 +30,7 @@ final class CompiledCacheManifest
     /**
      * Create a new empty manifest.
      */
-    public static function empty(Clock|null $clock = null) : self
+    public static function empty(Clock $clock = null) : self
     {
         return new self(clock: $clock ?? new SystemClock());
     }
@@ -42,7 +40,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file exists but contains invalid JSON
      */
-    public static function load(string $path, Clock|null $clock = null) : self
+    public static function load(string $path, Clock $clock = null) : self
     {
         $manifest               = new self(clock: $clock ?? new SystemClock());
         $manifest->manifestPath = $path;
@@ -80,7 +78,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file cannot be written
      */
-    public function save(string|null $path = null) : void
+    public function save(string $path = null) : void
     {
         $savePath = $path ?? $this->manifestPath;
 
@@ -126,12 +124,12 @@ final class CompiledCacheManifest
      * Add an entry to the manifest.
      */
     public function addEntry(
-        string  $name,
-        string  $compiledPath,
-        array   $sourceFiles,
-        string|null $type = null,
-        string|null $phpVersion = null,
-        string|null $frameworkVersion = null,
+        string $name,
+        string $compiledPath,
+        array  $sourceFiles,
+        string $type = null,
+        string $phpVersion = null,
+        string $frameworkVersion = null,
     ) : CompiledCacheManifestEntry
     {
         $now = $this->clock->now();

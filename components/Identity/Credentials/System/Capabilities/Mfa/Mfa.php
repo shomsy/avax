@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa;
 
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\BackupCodeSet;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\RegenerateBackupCodes;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Data\VerifyMfaChallengeData;
@@ -22,7 +23,6 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover\StartMfaRecovery;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\StartMfaChallenge;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\VerifyMfaChallenge;
-use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;
@@ -30,23 +30,23 @@ use SensitiveParameter;
 final readonly class Mfa
 {
     public function __construct(
-        private StartMfaEnrollment    $startMfaEnrollment,
-        private ConfirmMfaEnrollment  $confirmMfaEnrollment,
-        private CancelMfaEnrollment   $cancelMfaEnrollment,
-        private StartMfaChallenge     $startMfaChallenge,
-        private VerifyMfaChallenge    $verifyMfaChallenge,
+        private StartMfaEnrollment $startMfaEnrollment,
+        private ConfirmMfaEnrollment $confirmMfaEnrollment,
+        private CancelMfaEnrollment $cancelMfaEnrollment,
+        private StartMfaChallenge $startMfaChallenge,
+        private VerifyMfaChallenge $verifyMfaChallenge,
         #[SensitiveParameter]
         private RegenerateBackupCodes $regenerateBackupCodes,
-        private DisableMfa            $disableMfa,
-        private StartMfaRecovery      $startMfaRecovery,
-        private ConfirmMfaRecovery    $confirmMfaRecovery,
+        private DisableMfa $disableMfa,
+        private StartMfaRecovery $startMfaRecovery,
+        private ConfirmMfaRecovery $confirmMfaRecovery,
     ) {}
 
     /**
      * @throws Unauthenticated
      * @throws DateMalformedStringException
      */
-    public function startMfaEnrollment() : MfaEnrollment
+    public function startMfaEnrollment(): MfaEnrollment
     {
         return $this->startMfaEnrollment->execute();
     }
@@ -55,7 +55,7 @@ final readonly class Mfa
      * @throws Unauthenticated
      * @throws RandomException
      */
-    public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $data) : BackupCodeSet
+    public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $data): BackupCodeSet
     {
         return $this->confirmMfaEnrollment->execute(data: $data);
     }
@@ -63,7 +63,7 @@ final readonly class Mfa
     /**
      * @throws Unauthenticated
      */
-    public function cancelMfaEnrollment() : void
+    public function cancelMfaEnrollment(): void
     {
         $this->cancelMfaEnrollment->execute();
     }
@@ -73,12 +73,12 @@ final readonly class Mfa
      * @throws RandomException
      * @throws DateMalformedStringException
      */
-    public function beginMfaChallenge() : MfaChallenge
+    public function beginMfaChallenge(): MfaChallenge
     {
         return $this->startMfaChallenge->execute();
     }
 
-    public function verifyMfaChallenge(VerifyMfaChallengeData $data) : AuthenticationResult
+    public function verifyMfaChallenge(VerifyMfaChallengeData $data): AuthenticationResult
     {
         return $this->verifyMfaChallenge->execute(data: $data);
     }
@@ -87,7 +87,7 @@ final readonly class Mfa
      * @throws Unauthenticated
      * @throws RandomException
      */
-    public function regenerateBackupCodes() : BackupCodeSet
+    public function regenerateBackupCodes(): BackupCodeSet
     {
         return $this->regenerateBackupCodes->execute();
     }
@@ -95,7 +95,7 @@ final readonly class Mfa
     /**
      * @throws Unauthenticated
      */
-    public function disableMfa() : void
+    public function disableMfa(): void
     {
         $this->disableMfa->execute();
     }
@@ -104,12 +104,12 @@ final readonly class Mfa
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function beginMfaRecovery(BeginMfaRecoveryData $data) : MfaRecoveryChallenge
+    public function beginMfaRecovery(BeginMfaRecoveryData $data): MfaRecoveryChallenge
     {
         return $this->startMfaRecovery->execute(data: $data);
     }
 
-    public function confirmMfaRecovery(ConfirmMfaRecoveryData $data) : void
+    public function confirmMfaRecovery(ConfirmMfaRecoveryData $data): void
     {
         $this->confirmMfaRecovery->execute(data: $data);
     }

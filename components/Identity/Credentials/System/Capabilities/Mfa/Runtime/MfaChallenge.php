@@ -17,12 +17,12 @@ final readonly class MfaChallenge
     /**
      * @return array<string, mixed>
      */
-    public function __debugInfo() : array
+    public function __debugInfo(): array
     {
         return [
-            'challengeId'       => $this->challengeId,
-            'purpose'           => $this->purpose->value,
-            'expiresAt'         => $this->expiresAt,
+            'challengeId' => $this->challengeId,
+            'purpose' => $this->purpose->value,
+            'expiresAt' => $this->expiresAt,
             'remainingAttempts' => $this->remainingAttempts,
         ];
     }

@@ -25,8 +25,8 @@ final class SlowQueryDetectorTest extends TestCase
 
     private function createSpan(
         string $query = 'SELECT * FROM users',
-        float  $startTime = 0.0,
-        float  $endTime = 0.0,
+        float $startTime = 0.0,
+        float $endTime = 0.0,
     ) : QuerySpan
     {
         return new QuerySpan(
@@ -164,7 +164,7 @@ final class SlowQueryDetectorTest extends TestCase
 
         $total = array_sum(array_map(
                                static fn (QuerySpan $s) => $s->getDurationMs(),
-                               $detector->all()
+                               $detector->all(),
                            ));
 
         $this->assertSame(5000.0, $total);
@@ -237,7 +237,7 @@ final class SlowQueryDetectorTest extends TestCase
 
         $slowFromTimeline = array_values(array_filter(
                                              $timeline->all(),
-                                             static fn (QuerySpan $s) => $s->isSlow(1000)
+                                             static fn (QuerySpan $s) => $s->isSlow(1000),
                                          ));
 
         $this->assertCount(count($detector->all()), $slowFromTimeline);
@@ -341,7 +341,7 @@ final class SlowQueryDetectorTest extends TestCase
         // Verify duration ratios
         $ratios = array_map(
             static fn (QuerySpan $s) => $s->getDurationMs() / $threshold,
-            $all
+            $all,
         );
 
         $this->assertSame(1.5, $ratios[0]);

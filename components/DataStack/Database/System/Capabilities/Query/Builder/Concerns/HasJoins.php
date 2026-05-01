@@ -21,11 +21,10 @@ trait HasJoins
      *
      * @see /docs/Foundation/Database/DSL/Joins.md#join
      *
-     * @param string         $table    The technical name of the target database table to link.
-     * @param string|Closure $first    The left-hand field name or a configuration closure for complex logic.
-     * @param string|null    $operator The SQL comparison operator (defaults to '=' if second is provided).
-     * @param string|null    $second   The right-hand field name belonging to the target table.
-     *
+     * @param  string  $table  The technical name of the target database table to link.
+     * @param  string|Closure  $first  The left-hand field name or a configuration closure for complex logic.
+     * @param  string|null  $operator  The SQL comparison operator (defaults to '=' if second is provided).
+     * @param  string|null  $second  The right-hand field name belonging to the target table.
      * @return HasJoins|QueryBuilder A
      *                               fresh,
      *                               cloned
@@ -40,10 +39,9 @@ trait HasJoins
     public function join(
         string $table,
         string|Closure $first,
-        string|null $operator = null,
-        string|null $second = null,
-    ) : self
-    {
+        ?string $operator = null,
+        ?string $second = null,
+    ): self {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'inner');
     }
 
@@ -54,12 +52,11 @@ trait HasJoins
      * Centralize the construction of JoinNode abstractions and their registration
      * within the QueryState container, handling both simple and complex signatures.
      *
-     * @param string         $table    The technical identifier of the target table.
-     * @param string|Closure $first    Condition column label or a logic configuration closure.
-     * @param string|null    $operator The comparison operator used in the ON clause.
-     * @param string|null    $second   The target comparison field label.
-     * @param string         $type     The join strategy type (inner/left/right/cross).
-     *
+     * @param  string  $table  The technical identifier of the target table.
+     * @param  string|Closure  $first  Condition column label or a logic configuration closure.
+     * @param  string|null  $operator  The comparison operator used in the ON clause.
+     * @param  string|null  $second  The target comparison field label.
+     * @param  string  $type  The join strategy type (inner/left/right/cross).
      * @return HasJoins|QueryBuilder A
      *                               fresh,
      *                               cloned
@@ -74,11 +71,10 @@ trait HasJoins
     protected function addJoin(
         string $table,
         string|Closure $first,
-        string|null $operator = null,
-        string|null $second = null,
+        ?string $operator = null,
+        ?string $second = null,
         string $type = 'inner',
-    ) : self
-    {
+    ): self {
         $clone = clone $this;
 
         if ($first instanceof Closure) {
@@ -86,18 +82,18 @@ trait HasJoins
             $first($joinClause);
 
             $clone->state = $clone->state->addJoin(join: new JoinNode(
-                                                             table : $table,
-                                                             type  : $type,
-                                                             clause: $joinClause,
-                                                         ));
+                table : $table,
+                type  : $type,
+                clause: $joinClause,
+            ));
         } else {
             $clone->state = $clone->state->addJoin(join: new JoinNode(
-                                                             table   : $table,
-                                                             type    : $type,
-                                                             first   : $first,
-                                                             operator: $operator,
-                                                             second  : $second,
-                                                         ));
+                table   : $table,
+                type    : $type,
+                first   : $first,
+                operator: $operator,
+                second  : $second,
+            ));
         }
 
         return $clone;
@@ -108,11 +104,10 @@ trait HasJoins
      *
      * @see /docs/Foundation/Database/DSL/Joins.md#leftjoin
      *
-     * @param string         $table    The technical name of the target database table to link.
-     * @param string|Closure $first    The left-hand field name or a configuration closure.
-     * @param string|null    $operator The SQL comparison operator.
-     * @param string|null    $second   The right-hand field name.
-     *
+     * @param  string  $table  The technical name of the target database table to link.
+     * @param  string|Closure  $first  The left-hand field name or a configuration closure.
+     * @param  string|null  $operator  The SQL comparison operator.
+     * @param  string|null  $second  The right-hand field name.
      * @return HasJoins|QueryBuilder A
      *                               fresh,
      *                               cloned
@@ -127,10 +122,9 @@ trait HasJoins
     public function leftJoin(
         string $table,
         string|Closure $first,
-        string|null $operator = null,
-        string|null $second = null,
-    ) : self
-    {
+        ?string $operator = null,
+        ?string $second = null,
+    ): self {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'left');
     }
 
@@ -139,11 +133,10 @@ trait HasJoins
      *
      * @see /docs/Foundation/Database/DSL/Joins.md#rightjoin
      *
-     * @param string         $table    The technical name of the target database table to link.
-     * @param string|Closure $first    The left-hand field name or a configuration closure.
-     * @param string|null    $operator The SQL comparison operator.
-     * @param string|null    $second   The right-hand field name.
-     *
+     * @param  string  $table  The technical name of the target database table to link.
+     * @param  string|Closure  $first  The left-hand field name or a configuration closure.
+     * @param  string|null  $operator  The SQL comparison operator.
+     * @param  string|null  $second  The right-hand field name.
      * @return HasJoins|QueryBuilder A
      *                               fresh,
      *                               cloned
@@ -158,10 +151,9 @@ trait HasJoins
     public function rightJoin(
         string $table,
         string|Closure $first,
-        string|null $operator = null,
-        string|null $second = null,
-    ) : self
-    {
+        ?string $operator = null,
+        ?string $second = null,
+    ): self {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'right');
     }
 
@@ -170,8 +162,7 @@ trait HasJoins
      *
      * @see /docs/Foundation/Database/DSL/Joins.md#crossjoin
      *
-     * @param string $table The technical name of the target database table to cross-link.
-     *
+     * @param  string  $table  The technical name of the target database table to cross-link.
      * @return HasJoins|QueryBuilder A
      *                               fresh,
      *                               cloned
@@ -183,7 +174,7 @@ trait HasJoins
      *                               join
      *                               applied.
      */
-    public function crossJoin(string $table) : self
+    public function crossJoin(string $table): self
     {
         return $this->addJoin(table: $table, first: '', type: 'cross');
     }

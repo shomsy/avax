@@ -13,12 +13,12 @@ final readonly class RegistrationResult
 {
     public function __construct(private AuthenticatedUser $user, private bool $emailVerificationRequired = false) {}
 
-    public function user() : AuthenticatedUser
+    public function user(): AuthenticatedUser
     {
         return $this->user;
     }
 
-    public function emailVerificationRequired() : bool
+    public function emailVerificationRequired(): bool
     {
         return $this->emailVerificationRequired;
     }

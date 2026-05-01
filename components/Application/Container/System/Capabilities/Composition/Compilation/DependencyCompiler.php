@@ -17,14 +17,14 @@ use ReflectionFunction;
  */
 final readonly class DependencyCompiler
 {
-    private MethodEmitter             $emitter;
+    private MethodEmitter      $emitter;
     private CreateDependencyBlueprint $blueprints;
-    private DependencyRegistry        $registrations;
+    private DependencyRegistry $registrations;
 
     public function __construct(
-        DependencyRegistry        $registrations,
+        DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
-        MethodEmitter             $emitter = new MethodEmitter(),
+        MethodEmitter      $emitter = new MethodEmitter(),
     )
     {
         $this->registrations = $registrations;
@@ -105,9 +105,9 @@ final readonly class DependencyCompiler
                 || $this->registrations->hasExtenders(abstract: $serviceId);
 
             return [
-                'serviceId'             => $serviceId,
-                'method'                => $methodName,
-                'signature'             => sha1(string: serialize(value: [
+                'serviceId' => $serviceId,
+                'method'    => $methodName,
+                'signature' => sha1(string: serialize(value: [
                                                                              'serviceId' => $serviceId,
                                                                              'candidate' => $candidate,
                                                                              'lifetime'  => $registration?->lifetime,
@@ -125,9 +125,9 @@ final readonly class DependencyCompiler
         }
 
         return [
-            'serviceId'             => $serviceId,
-            'method'                => $methodName,
-            'signature'             => sha1(string: serialize(value: [
+            'serviceId' => $serviceId,
+            'method'    => $methodName,
+            'signature' => sha1(string: serialize(value: [
                                                                          'serviceId' => $serviceId,
                                                                          'candidate' => $this->dynamicSignature(candidate: $candidate),
                                                                          'lifetime'  => $registration?->lifetime,

@@ -11,7 +11,7 @@ use Avax\Framework\Foundation\Exception\NotImplementedException;
  */
 final readonly class ExchangeAuthorizationCode
 {
-    public function execute(string $code) : object
+    public function execute(string $code): object
     {
         throw new NotImplementedException('OAuth2 code exchange flow not yet implemented');
     }

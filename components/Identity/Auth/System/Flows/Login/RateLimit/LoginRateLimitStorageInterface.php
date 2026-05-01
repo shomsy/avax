@@ -11,11 +11,11 @@ namespace Avax\Components\Identity\Auth\System\Flows\Login\RateLimit;
  */
 interface LoginRateLimitStorageInterface
 {
-    public function get(string $identifier) : int;
+    public function get(string $identifier): int;
 
-    public function increment(string $identifier) : void;
+    public function increment(string $identifier): void;
 
-    public function reset(string $identifier) : void;
+    public function reset(string $identifier): void;
 
-    public function getLastAttemptTime(string $identifier) : int;
+    public function getLastAttemptTime(string $identifier): int;
 }

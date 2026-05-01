@@ -8,11 +8,11 @@ final class Envelope
 {
     public function __construct(
         public readonly string $from,
-        public readonly string|null $returnPath = null,
-        public readonly array  $senderOptions = [],
+        public readonly ?string $returnPath = null,
+        public readonly array $senderOptions = [],
     ) {}
 
-    public function withFrom(string $from) : self
+    public function withFrom(string $from): self
     {
         return new self(
             from         : $from,
@@ -21,7 +21,7 @@ final class Envelope
         );
     }
 
-    public function withReturnPath(string $returnPath) : self
+    public function withReturnPath(string $returnPath): self
     {
         return new self(
             from         : $this->from,

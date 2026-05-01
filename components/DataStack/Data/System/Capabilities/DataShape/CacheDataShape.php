@@ -14,12 +14,12 @@ final class CacheDataShape
      */
     private static array $cache = [];
 
-    public function remember(string $key, callable $builder) : DataShape
+    public function remember(string $key, callable $builder): DataShape
     {
         return self::$cache[$key] ??= $builder();
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         self::$cache = [];
     }

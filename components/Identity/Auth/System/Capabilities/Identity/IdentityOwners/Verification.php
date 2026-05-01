@@ -18,18 +18,18 @@ final readonly class Verification
         #[SensitiveParameter]
         private BeginEmailVerification $beginEmailVerification,
         #[SensitiveParameter]
-        private VerifyEmail            $verifyEmail,
+        private VerifyEmail $verifyEmail,
     ) {}
 
     /**
      * @throws DateMalformedStringException
      */
-    public function beginEmailVerification(BeginEmailVerificationData $data) : EmailVerificationChallenge
+    public function beginEmailVerification(BeginEmailVerificationData $data): EmailVerificationChallenge
     {
         return $this->beginEmailVerification->execute(data: $data);
     }
 
-    public function verifyEmail(VerifyEmailData $data) : bool
+    public function verifyEmail(VerifyEmailData $data): bool
     {
         return $this->verifyEmail->execute(data: $data);
     }

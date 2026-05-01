@@ -12,17 +12,17 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
     /** @var array<string, PasskeyCredential> */
     private array $credentials = [];
 
-    public function save(#[SensitiveParameter] PasskeyCredential $credential) : void
+    public function save(#[SensitiveParameter] PasskeyCredential $credential): void
     {
         $this->credentials[$credential->credentialId] = $credential;
     }
 
-    public function find(#[SensitiveParameter] string $credentialId) : PasskeyCredential|null
+    public function find(#[SensitiveParameter] string $credentialId): ?PasskeyCredential
     {
         return $this->credentials[$credentialId] ?? null;
     }
 
-    public function touch(#[SensitiveParameter] string $credentialId, DateTimeImmutable $usedAt) : void
+    public function touch(#[SensitiveParameter] string $credentialId, DateTimeImmutable $usedAt): void
     {
         $credential = $this->credentials[$credentialId] ?? null;
 
@@ -40,7 +40,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
         );
     }
 
-    public function rename(#[SensitiveParameter] string $credentialId, string $label) : void
+    public function rename(#[SensitiveParameter] string $credentialId, string $label): void
     {
         $credential = $this->credentials[$credentialId] ?? null;
 
@@ -58,7 +58,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
         );
     }
 
-    public function revoke(#[SensitiveParameter] string $credentialId, DateTimeImmutable $revokedAt) : void
+    public function revoke(#[SensitiveParameter] string $credentialId, DateTimeImmutable $revokedAt): void
     {
         $credential = $this->credentials[$credentialId] ?? null;
 
@@ -76,19 +76,19 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
         );
     }
 
-    public function hasActiveCredential(int $userId) : bool
+    public function hasActiveCredential(int $userId): bool
     {
         return array_any(
             array   : $this->forUser(userId: $userId),
-            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyRecord) : bool => ! $passkeyRecord->isRevoked(),
+            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyRecord): bool => ! $passkeyRecord->isRevoked(),
         );
     }
 
-    public function forUser(int $userId) : array
+    public function forUser(int $userId): array
     {
         return array_values(array: array_filter(
-                                       array   : $this->credentials,
-                                       callback: static fn (#[SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId,
-                                   ));
+            array   : $this->credentials,
+            callback: static fn (#[SensitiveParameter] PasskeyCredential $credential): bool => $credential->userId === $userId,
+        ));
     }
 }

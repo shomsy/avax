@@ -12,7 +12,7 @@ use SensitiveParameter;
  */
 interface TokenRevocationStoreInterface
 {
-    public function revoke(#[SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt) : void;
+    public function revoke(#[SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt): void;
 
-    public function isRevoked(#[SensitiveParameter] string $tokenId, DateTimeImmutable $moment) : bool;
+    public function isRevoked(#[SensitiveParameter] string $tokenId, DateTimeImmutable $moment): bool;
 }

@@ -29,17 +29,17 @@ final class SagaTest extends TestCase
         $confirmationSent = false;
 
         $saga = Saga::define('order-processing')
-            ->step('create-order', function (array $ctx) use (&$orderCreated) {
+            ->step('create-order', static function (array $ctx) use (&$orderCreated) {
                 $orderCreated = true;
 
                 return ['orderId' => 'ORD-123'];
             })
-            ->step('charge-payment', function (array $ctx) use (&$paymentCharged) {
+            ->step('charge-payment', static function (array $ctx) use (&$paymentCharged) {
                 $paymentCharged = true;
 
                 return ['paymentId' => 'PAY-456'];
             })
-            ->step('send-confirmation', function (array $ctx) use (&$confirmationSent) {
+            ->step('send-confirmation', static function (array $ctx) use (&$confirmationSent) {
                 $confirmationSent = true;
 
                 return ['sent' => true];
@@ -62,17 +62,17 @@ final class SagaTest extends TestCase
         $executionOrder = [];
 
         $saga = Saga::define('sequential-test')
-            ->step('first', function () use (&$executionOrder) {
+            ->step('first', static function () use (&$executionOrder) {
                 $executionOrder[] = 'first';
 
                 return [];
             })
-            ->step('second', function () use (&$executionOrder) {
+            ->step('second', static function () use (&$executionOrder) {
                 $executionOrder[] = 'second';
 
                 return [];
             })
-            ->step('third', function () use (&$executionOrder) {
+            ->step('third', static function () use (&$executionOrder) {
                 $executionOrder[] = 'third';
 
                 return [];
@@ -86,12 +86,8 @@ final class SagaTest extends TestCase
     public function testSagaPassesContextBetweenSteps() : void
     {
         $saga = Saga::define('context-flow')
-            ->step('step-one', function (array $ctx) {
-                return ['value1' => 'from-step-one'];
-            })
-            ->step('step-two', function (array $ctx) {
-                return ['value2' => $ctx['value1'] . '-extended'];
-            });
+            ->step('step-one', static fn (array $ctx) => ['value1' => 'from-step-one'])
+            ->step('step-two', static fn (array $ctx) => ['value2' => $ctx['value1'] . '-extended']);
 
         $result = $saga->execute([]);
 
@@ -108,24 +104,27 @@ final class SagaTest extends TestCase
         $paymentFailed = false;
 
         $saga = Saga::define('order-with-compensation')
-            ->step('create-order',
-                function (array $ctx) use (&$orderCreated) {
+            ->step(
+                'create-order',
+                static function (array $ctx) use (&$orderCreated) {
                     $orderCreated = true;
 
                     return ['orderId' => 'ORD-123'];
                 },
-                function (array $ctx) use (&$orderRefunded) {
+                static function (array $ctx) use (&$orderRefunded) : void {
                     $orderRefunded = true;
-                }
+                },
             )
-            ->step('charge-payment',
-                function (array $ctx) use (&$paymentFailed) {
+            ->step(
+                'charge-payment',
+                static function (array $ctx) use (&$paymentFailed) : void {
                     $paymentFailed = true;
+
                     throw new RuntimeException('Payment gateway unavailable');
                 },
-                function (array $ctx) {
+                static function (array $ctx) : void {
                     // This compensation should NOT run since step failed
-                }
+                },
             );
 
         $result = $saga->execute([]);
@@ -142,28 +141,32 @@ final class SagaTest extends TestCase
         $compensationOrder = [];
 
         $saga = Saga::define('reverse-compensation')
-            ->step('step-a',
-                function () { return []; },
-                function () use (&$compensationOrder) {
+            ->step(
+                'step-a',
+                static fn () => [],
+                static function () use (&$compensationOrder) : void {
                     $compensationOrder[] = 'compensate-a';
-                }
+                },
             )
-            ->step('step-b',
-                function () { return []; },
-                function () use (&$compensationOrder) {
+            ->step(
+                'step-b',
+                static fn () => [],
+                static function () use (&$compensationOrder) : void {
                     $compensationOrder[] = 'compensate-b';
-                }
+                },
             )
-            ->step('step-c',
-                function () { return []; },
-                function () use (&$compensationOrder) {
+            ->step(
+                'step-c',
+                static fn () => [],
+                static function () use (&$compensationOrder) : void {
                     $compensationOrder[] = 'compensate-c';
-                }
+                },
             )
-            ->step('step-failing',
-                function () {
+            ->step(
+                'step-failing',
+                static function () : void {
                     throw new RuntimeException('Step failed');
-                }
+                },
             );
 
         $result = $saga->execute([]);
@@ -178,17 +181,19 @@ final class SagaTest extends TestCase
         $compensated = [];
 
         $saga = Saga::define('explicit-compensation')
-            ->step('create-order',
-                function () { return ['orderId' => 'ORD-1']; },
-                function () use (&$compensated) {
+            ->step(
+                'create-order',
+                static fn () => ['orderId' => 'ORD-1'],
+                static function () use (&$compensated) : void {
                     $compensated[] = 'order';
-                }
+                },
             )
-            ->step('reserve-inventory',
-                function () { return ['reserved' => true]; },
-                function () use (&$compensated) {
+            ->step(
+                'reserve-inventory',
+                static fn () => ['reserved' => true],
+                static function () use (&$compensated) : void {
                     $compensated[] = 'inventory';
-                }
+                },
             );
 
         // Execute successfully first
@@ -205,10 +210,8 @@ final class SagaTest extends TestCase
     public function testCompensationWithoutHandler() : void
     {
         $saga = Saga::define('no-compensation-handler')
-            ->step('step-without-compensation', function () {
-                return [];
-            })
-            ->step('failing-step', function () {
+            ->step('step-without-compensation', static fn () => [])
+            ->step('failing-step', static function () : void {
                 throw new RuntimeException('Failed');
             });
 
@@ -221,7 +224,7 @@ final class SagaTest extends TestCase
     public function testFailMethod() : void
     {
         $saga = Saga::define('fail-test')
-            ->step('step-one', function () { return []; });
+            ->step('step-one', static fn () => []);
 
         $saga->execute([]);
 
@@ -242,12 +245,12 @@ final class SagaTest extends TestCase
         $executionCount = 0;
 
         $saga = Saga::define('resumable-saga')
-            ->step('step-one', function () use (&$executionCount) {
+            ->step('step-one', static function () use (&$executionCount) {
                 $executionCount++;
 
                 return ['step' => 1];
             })
-            ->step('step-two', function () use (&$executionCount) {
+            ->step('step-two', static function () use (&$executionCount) {
                 $executionCount++;
 
                 return ['step' => 2];
@@ -271,7 +274,7 @@ final class SagaTest extends TestCase
         $workflow = new Workflow($store);
 
         $saga = Saga::define('workflow-test')
-            ->step('step-one', function () { return ['data' => 'one']; })
+            ->step('step-one', static fn () => ['data' => 'one'])
             ->withStore($store);
 
         $store->save($saga);
@@ -289,11 +292,12 @@ final class SagaTest extends TestCase
         $compensated = false;
 
         $saga = Saga::define('cancellable-saga')
-            ->step('create-order',
-                function () { return ['orderId' => 'ORD-1']; },
-                function () use (&$compensated) {
+            ->step(
+                'create-order',
+                static fn () => ['orderId' => 'ORD-1'],
+                static function () use (&$compensated) : void {
                     $compensated = true;
-                }
+                },
             )
             ->withStore($store);
 
@@ -350,7 +354,7 @@ final class SagaTest extends TestCase
         $executionCount = 0;
         $step           = new SagaStep(
             name  : 'counting-step',
-            action: function () use (&$executionCount) {
+            action: static function () use (&$executionCount) {
                 $executionCount++;
 
                 return ['count' => $executionCount];
@@ -375,9 +379,7 @@ final class SagaTest extends TestCase
     {
         $step = new SagaStep(
             name  : 'test-step',
-            action: function (array $ctx) {
-                return ['processed' => true, 'input' => $ctx['input'] ?? null];
-            },
+            action: static fn (array $ctx) => ['processed' => true, 'input' => $ctx['input'] ?? null],
         );
 
         $runner = new StepRunner();
@@ -393,7 +395,7 @@ final class SagaTest extends TestCase
     {
         $step = new SagaStep(
             name  : 'failing-step',
-            action: function () {
+            action: static function () : void {
                 throw new RuntimeException('Step failed');
             },
         );
@@ -445,9 +447,15 @@ final class SagaTest extends TestCase
         $compensated = [];
 
         $steps = [
-            new SagaStep('a', function () { return []; }, function () use (&$compensated) { $compensated[] = 'a'; }),
-            new SagaStep('b', function () { return []; }, function () use (&$compensated) { $compensated[] = 'b'; }),
-            new SagaStep('c', function () { return []; }, function () use (&$compensated) { $compensated[] = 'c'; }),
+            new SagaStep('a', static fn () => [], static function () use (&$compensated) : void {
+                $compensated[] = 'a';
+            }),
+            new SagaStep('b', static fn () => [], static function () use (&$compensated) : void {
+                $compensated[] = 'b';
+            }),
+            new SagaStep('c', static fn () => [], static function () use (&$compensated) : void {
+                $compensated[] = 'c';
+            }),
         ];
 
         $executor = new CompensationExecutor();
@@ -462,9 +470,15 @@ final class SagaTest extends TestCase
         $compensated = [];
 
         $steps = [
-            new SagaStep('a', function () { return []; }, function () use (&$compensated) { $compensated[] = 'a'; }),
-            new SagaStep('b', function () { return []; }, function () use (&$compensated) { throw new RuntimeException('Compensation failed'); }),
-            new SagaStep('c', function () { return []; }, function () use (&$compensated) { $compensated[] = 'c'; }),
+            new SagaStep('a', static fn () => [], static function () use (&$compensated) : void {
+                $compensated[] = 'a';
+            }),
+            new SagaStep('b', static fn () => [], static function () use (&$compensated) : void {
+                throw new RuntimeException('Compensation failed');
+            }),
+            new SagaStep('c', static fn () => [], static function () use (&$compensated) : void {
+                $compensated[] = 'c';
+            }),
         ];
 
         $executor = new CompensationExecutor();
@@ -479,7 +493,7 @@ final class SagaTest extends TestCase
     public function testCompensationExecutorWithEmptyCompletedSteps() : void
     {
         $steps = [
-            new SagaStep('a', function () { return []; }, function () { return null; }),
+            new SagaStep('a', static fn () => [], static fn () => null),
         ];
 
         $executor = new CompensationExecutor();
@@ -507,7 +521,7 @@ final class SagaTest extends TestCase
         $store = new InMemorySagaStore();
 
         $saga = Saga::define('test-saga')
-            ->step('step-one', fn () => []);
+            ->step('step-one', static fn () => []);
 
         $store->save($saga);
 
@@ -524,7 +538,7 @@ final class SagaTest extends TestCase
         $store = new InMemorySagaStore();
 
         $saga = Saga::define('test-saga')
-            ->step('step-one', fn () => []);
+            ->step('step-one', static fn () => []);
 
         $store->save($saga);
         $this->assertSame(SagaState::Running, $saga->getStatus());
@@ -540,7 +554,7 @@ final class SagaTest extends TestCase
         $store = new InMemorySagaStore();
 
         $saga = Saga::define('test-saga')
-            ->step('step-one', fn () => []);
+            ->step('step-one', static fn () => []);
 
         $store->save($saga);
         $this->assertNotNull($store->findById($saga->getId()));
@@ -596,9 +610,7 @@ final class SagaTest extends TestCase
     {
         $step = new SagaStep(
             name  : 'test-step',
-            action: function (array $ctx) {
-                return ['result' => $ctx['value'] * 2];
-            },
+            action: static fn (array $ctx) => ['result' => $ctx['value'] * 2],
         );
 
         $result = $step->execute(['value' => 5]);
@@ -611,8 +623,8 @@ final class SagaTest extends TestCase
 
         $step = new SagaStep(
             name        : 'test-step',
-            action      : fn () => [],
-            compensation: function () use (&$compensated) {
+            action      : static fn () => [],
+            compensation: static function () use (&$compensated) : void {
                 $compensated = true;
             },
         );
@@ -625,7 +637,7 @@ final class SagaTest extends TestCase
     {
         $step = new SagaStep(
             name  : 'test-step',
-            action: fn () => [],
+            action: static fn () => [],
         );
 
         $this->assertFalse($step->hasCompensation());
@@ -642,7 +654,7 @@ final class SagaTest extends TestCase
 
         // Define saga and save it to store first
         $saga = Saga::define('order-workflow')
-            ->step('create-order', fn () => ['orderId' => 'ORD-1'])
+            ->step('create-order', static fn () => ['orderId' => 'ORD-1'])
             ->withStore($store);
 
         $store->save($saga);
@@ -668,34 +680,38 @@ final class SagaTest extends TestCase
         $events = [];
 
         $saga = Saga::define('full-lifecycle')
-            ->step('create-order',
-                function (array $ctx) use (&$events) {
+            ->step(
+                'create-order',
+                static function (array $ctx) use (&$events) {
                     $events[] = 'order-created';
 
                     return ['orderId' => 'ORD-1', ...$ctx];
                 },
-                function (array $ctx) use (&$events) {
+                static function (array $ctx) use (&$events) : void {
                     $events[] = 'order-refunded';
-                }
+                },
             )
-            ->step('reserve-inventory',
-                function (array $ctx) use (&$events) {
+            ->step(
+                'reserve-inventory',
+                static function (array $ctx) use (&$events) {
                     $events[] = 'inventory-reserved';
 
                     return ['reservationId' => 'RES-1'];
                 },
-                function (array $ctx) use (&$events) {
+                static function (array $ctx) use (&$events) : void {
                     $events[] = 'inventory-released';
-                }
+                },
             )
-            ->step('process-payment',
-                function (array $ctx) use (&$events) {
+            ->step(
+                'process-payment',
+                static function (array $ctx) use (&$events) : void {
                     $events[] = 'payment-processing';
+
                     throw new RuntimeException('Payment declined');
                 },
-                function (array $ctx) use (&$events) {
+                static function (array $ctx) use (&$events) : void {
                     $events[] = 'payment-refunded';
-                }
+                },
             );
 
         $result = $saga->execute(['customerId' => 'CUST-1']);

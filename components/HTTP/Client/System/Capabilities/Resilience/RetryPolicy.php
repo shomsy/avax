@@ -35,10 +35,10 @@ final readonly class RetryPolicy
      * @param bool      $retryOnConnectionError Whether to retry on connection errors
      */
     public function __construct(
-        public int  $attempts = 3,
-        public int  $baseDelayMs = 1000,
+        public int $attempts = 3,
+        public int $baseDelayMs = 1000,
         public float $backoffMultiplier = 2.0,
-        public int  $maxDelayMs = 30_000,
+        public int $maxDelayMs = 30_000,
         public bool $jitter = false,
         public array $retryOnStatus = [500, 502, 503, 504],
         public bool $retryOnTimeout = true,

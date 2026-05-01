@@ -25,9 +25,9 @@ use ReflectionUnionType;
 
 final class CacheReadRoutingTest extends TestCase
 {
-    private FrozenClock        $clock;
+    private FrozenClock   $clock;
     private InMemoryCacheStore $store;
-    private CacheContract      $cache;
+    private CacheContract $cache;
 
     public function test_read_method_exists() : void
     {
@@ -82,7 +82,7 @@ final class CacheReadRoutingTest extends TestCase
         $this->assertInstanceOf(expected: ReflectionUnionType::class, actual: $type);
 
         $types     = $type->getTypes();
-        $typeNames = array_map(fn ($t) => $t->getName(), $types);
+        $typeNames = array_map(static fn ($t) => $t->getName(), $types);
 
         $this->assertContains(needle: 'Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget', haystack: $typeNames);
         $this->assertContains(needle: 'string', haystack: $typeNames);
@@ -127,7 +127,7 @@ final class CacheReadRoutingTest extends TestCase
         $target = CompiledCacheTarget::artifact(
             name   : 'routes',
             builder: static fn () => [],
-            sources: new CompiledCacheSources()
+            sources: new CompiledCacheSources(),
         );
 
         $this->expectException(exception: CacheNotConfigured::class);
@@ -182,7 +182,7 @@ final class CacheReadRoutingTest extends TestCase
     {
         $this->expectException(exception: CacheReadTargetWasNotSupported::class);
 
-        Cache::read(target: new class implements CacheReadTarget {
+        Cache::read(target: new class () implements CacheReadTarget {
             public function kind() : CacheReadKind
             {
                 return CacheReadKind::RUNTIME;

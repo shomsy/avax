@@ -14,44 +14,44 @@ use SensitiveParameter;
 final readonly class OAuthTokenGrant
 {
     public string $tokenType;
+
     /** @var list<string> */
     public array $scopes;
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
         #[SensitiveParameter]
-        public string                     $accessToken,
+        public string $accessToken,
         #[SensitiveParameter]
-        public DateTimeImmutable          $accessTokenExpiresAt,
+        public DateTimeImmutable $accessTokenExpiresAt,
         #[SensitiveParameter]
-        public string|null                $refreshToken,
+        public ?string $refreshToken,
         #[SensitiveParameter]
-        public string|null                $idToken,
-        public string                     $clientId,
-        public int|null                   $userId,
-        array                             $scopes = null,
+        public ?string $idToken,
+        public string $clientId,
+        public ?int $userId,
+        ?array $scopes = null,
         #[SensitiveParameter]
-        string                            $tokenType = null,
-        public OAuthSenderConstraint|null $senderConstraint = null,
-        public string|null                $subject = null,
-        public string|null                $audience = null,
-        public bool                       $workloadIdentity = false,
-    )
-    {
-        $scopes    ??= [];
+        ?string $tokenType = null,
+        public ?OAuthSenderConstraint $senderConstraint = null,
+        public ?string $subject = null,
+        public ?string $audience = null,
+        public bool $workloadIdentity = false,
+    ) {
+        $scopes ??= [];
         $tokenType ??= 'Bearer';
-        $this->scopes    = $scopes;
+        $this->scopes = $scopes;
         $this->tokenType = $tokenType;
     }
 
-    public function expiresIn(DateTimeImmutable $moment) : int
+    public function expiresIn(DateTimeImmutable $moment): int
     {
         return max(0, $this->accessTokenExpiresAt->getTimestamp() - $moment->getTimestamp());
     }
 
-    public function scopeString() : string
+    public function scopeString(): string
     {
         return implode(separator: ' ', array: $this->scopes);
     }

@@ -9,7 +9,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Access;
  */
 final readonly class ArrayPath
 {
-    public function get(array $items, string $path, mixed $default = null) : mixed
+    public function get(array $items, string $path, mixed $default = null): mixed
     {
         $keys = explode('.', $path);
         foreach ($keys as $key) {
@@ -23,7 +23,7 @@ final readonly class ArrayPath
         return $items;
     }
 
-    public function set(array &$items, string $path, mixed $value) : void
+    public function set(array &$items, string $path, mixed $value): void
     {
         $keys = explode('.', $path);
         while (count($keys) > 1) {

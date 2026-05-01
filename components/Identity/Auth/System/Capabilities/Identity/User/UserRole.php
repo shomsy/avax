@@ -9,33 +9,33 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\User;
  */
 enum UserRole: string
 {
-    case ADMIN     = 'admin';
+    case ADMIN = 'admin';
     case MODERATOR = 'moderator';
-    case USER      = 'user';
-    case GUEST     = 'guest';
+    case USER = 'user';
+    case GUEST = 'guest';
 
-    public function label() : string
+    public function label(): string
     {
         return match ($this) {
-            self::ADMIN     => 'Administrator',
+            self::ADMIN => 'Administrator',
             self::MODERATOR => 'Moderator',
-            self::USER      => 'User',
-            self::GUEST     => 'Guest',
+            self::USER => 'User',
+            self::GUEST => 'Guest',
         };
     }
 
-    public function canAccess(self $required) : bool
+    public function canAccess(self $required): bool
     {
         return $this->hierarchyLevel() >= $required->hierarchyLevel();
     }
 
-    public function hierarchyLevel() : int
+    public function hierarchyLevel(): int
     {
         return match ($this) {
-            self::ADMIN     => 4,
+            self::ADMIN => 4,
             self::MODERATOR => 3,
-            self::USER      => 2,
-            self::GUEST     => 1,
+            self::USER => 2,
+            self::GUEST => 1,
         };
     }
 }

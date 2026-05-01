@@ -138,8 +138,8 @@ final class DependencyRegistry implements DependencyRegistryContract
     private function registrationState(DependencyRegistration $registration) : array
     {
         return [
-            'abstract'             => $registration->abstract,
-            'concrete'             => is_object(value: $registration->concrete)
+            'abstract' => $registration->abstract,
+            'concrete' => is_object(value: $registration->concrete)
                 ? $registration->concrete::class
                 : $registration->concrete,
             'lifetime'             => $registration->lifetime,
@@ -721,14 +721,14 @@ final class DependencyRegistry implements DependencyRegistryContract
         }
 
         return [
-            'allowed'    => false,
-            'reason'     => match ($dependency->visibility) {
+            'allowed' => false,
+            'reason'  => match ($dependency->visibility) {
                 RegistrationVisibility::PRIVATE  => 'private services stay inside their owning slice',
                 RegistrationVisibility::INTERNAL => 'internal services are implementation details of their owning slice',
                 RegistrationVisibility::SHARED   => $dependency->exported
                     ? "active slice [{$normalized}] does not import [{$dependency->ownerSlice}]"
                     : 'shared service is not exported by its owning slice',
-                default                          => 'service is not visible from the active slice view',
+                default => 'service is not visible from the active slice view',
             },
             'viewer'     => $viewer,
             'dependency' => $dependency->toArray(),
@@ -864,8 +864,8 @@ final class DependencyRegistry implements DependencyRegistryContract
         }
 
         return [
-            'allowed'    => false,
-            'reason'     => match ($dependency->visibility) {
+            'allowed' => false,
+            'reason'  => match ($dependency->visibility) {
                 RegistrationVisibility::PRIVATE  => 'private dependencies cannot cross slice boundaries',
                 RegistrationVisibility::INTERNAL => 'internal dependencies cannot be used outside their owning slice',
                 default                          => 'dependency is not accessible from the consumer slice',
@@ -940,8 +940,8 @@ final class DependencyRegistry implements DependencyRegistryContract
         }
 
         return [
-            'allowed'    => false,
-            'reason'     => $dependency->category === RegistrationCategory::FLOW && $dependency->intent !== 'entry'
+            'allowed' => false,
+            'reason'  => $dependency->category === RegistrationCategory::FLOW && $dependency->intent !== 'entry'
                 ? 'flow-local services must be marked entry() before they become top-level surface'
                 : match ($dependency->visibility) {
                     RegistrationVisibility::PRIVATE  => 'private services are not part of the top-level container surface',

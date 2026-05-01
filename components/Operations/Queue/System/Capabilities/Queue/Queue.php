@@ -71,7 +71,7 @@ final class Queue
     {
         $jobId                        = $job['id'] ?? uniqid(prefix: 'job_', more_entropy: true);
         $job['attempts']              = ($job['attempts'] ?? 0) + 1;
-        $job['run_at']                = time() + $delay;
+        $job['run_at'] = time() + $delay;
         self::$queues[$queue][$jobId] = $job;
     }
 

@@ -8,9 +8,9 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseC
 
 interface DatabaseInterface
 {
-    public function connection(string $name = 'default') : DatabaseConnection;
+    public function connection(string $name = 'default'): DatabaseConnection;
 
-    public function transactions() : bool;
+    public function transactions(): bool;
 
-    public function schema() : SchemaBuilder;
+    public function schema(): SchemaBuilder;
 }

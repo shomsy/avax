@@ -43,7 +43,7 @@ final class ServicePrototypeFactoryTest extends TestCase
             constructor       : null,
             injectedProperties: [],
             injectedMethods   : [],
-            isInstantiable    : true
+            isInstantiable    : true,
         );
 
         $this->cache->expects(invocationRule: $this->once())
@@ -72,7 +72,7 @@ final class ServicePrototypeFactoryTest extends TestCase
         $this->cache   = $this->createMock(PrototypeCache::class);
         $this->factory = new ServicePrototypeFactory(
             cache   : $this->cache,
-            analyzer: new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer)
+            analyzer: new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer()),
         );
     }
 }

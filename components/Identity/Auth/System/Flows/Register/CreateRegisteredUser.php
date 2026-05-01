@@ -17,10 +17,10 @@ final readonly class CreateRegisteredUser
         private UserSource $source,
     ) {}
 
-    public function execute(RegistrationData $data, string $hashedPassword) : User
+    public function execute(RegistrationData $data, string $hashedPassword): User
     {
         return $this->source->create([
-                                         'email' => $data->email,
+            'email' => $data->email,
             'password' => $hashedPassword,
             'username' => $data->username ?? $data->email,
         ]);

@@ -15,7 +15,7 @@ class PathIsWritableTest extends TestCase
     {
         parent::setUp();
         $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/writable_test';
-        @mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
+        @mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
     }
 
     protected function tearDown() : void

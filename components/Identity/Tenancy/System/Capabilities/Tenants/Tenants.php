@@ -27,20 +27,20 @@ use Random\RandomException;
 final readonly class Tenants
 {
     public function __construct(
-        private CreateTenant            $createTenant,
-        private ReadTenants             $readTenants,
-        private InviteTenantMember      $inviteTenantMember,
-        private AcceptTenantInvite      $acceptTenantInvite,
-        private ReadTenantMembers       $readTenantMembers,
-        private RemoveTenantMember      $removeTenantMember,
-        private SuspendTenantMember     $suspendTenantMember,
+        private CreateTenant $createTenant,
+        private ReadTenants $readTenants,
+        private InviteTenantMember $inviteTenantMember,
+        private AcceptTenantInvite $acceptTenantInvite,
+        private ReadTenantMembers $readTenantMembers,
+        private RemoveTenantMember $removeTenantMember,
+        private SuspendTenantMember $suspendTenantMember,
         private TransferTenantOwnership $transferTenantOwnership,
     ) {}
 
     /**
      * @throws RandomException
      */
-    public function createTenant(CreateTenantData $data) : Tenant
+    public function createTenant(CreateTenantData $data): Tenant
     {
         return $this->createTenant->execute(data: $data);
     }
@@ -48,7 +48,7 @@ final readonly class Tenants
     /**
      * @return list<Tenant>
      */
-    public function readTenants() : array
+    public function readTenants(): array
     {
         return $this->readTenants->execute();
     }
@@ -56,7 +56,7 @@ final readonly class Tenants
     /**
      * @throws RandomException
      */
-    public function inviteTenantMember(InviteTenantMemberData $data) : IssuedTenantInvite
+    public function inviteTenantMember(InviteTenantMemberData $data): IssuedTenantInvite
     {
         return $this->inviteTenantMember->execute(data: $data);
     }
@@ -64,7 +64,7 @@ final readonly class Tenants
     /**
      * @throws TenantFailed
      */
-    public function acceptTenantInvite(AcceptTenantInviteData $data) : TenantMember
+    public function acceptTenantInvite(AcceptTenantInviteData $data): TenantMember
     {
         return $this->acceptTenantInvite->execute(data: $data);
     }
@@ -72,22 +72,22 @@ final readonly class Tenants
     /**
      * @return list<TenantMember>
      */
-    public function readTenantMembers(string $tenantSlug) : array
+    public function readTenantMembers(string $tenantSlug): array
     {
         return $this->readTenantMembers->execute(tenantSlug: $tenantSlug);
     }
 
-    public function removeTenantMember(RemoveTenantMemberData $data) : void
+    public function removeTenantMember(RemoveTenantMemberData $data): void
     {
         $this->removeTenantMember->execute(data: $data);
     }
 
-    public function suspendTenantMember(SuspendTenantMemberData $data) : TenantMember
+    public function suspendTenantMember(SuspendTenantMemberData $data): TenantMember
     {
         return $this->suspendTenantMember->execute(data: $data);
     }
 
-    public function transferTenantOwnership(TransferTenantOwnershipData $data) : Tenant
+    public function transferTenantOwnership(TransferTenantOwnershipData $data): Tenant
     {
         return $this->transferTenantOwnership->execute(data: $data);
     }

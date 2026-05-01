@@ -17,23 +17,23 @@ final class EventBus implements EventBusInterface
 {
     /** @var array<string, array<int, callable>> A list of everyone signed up for each type of news. */
     private array $listeners = [];
+
     private readonly DispatchStrategyInterface $strategy;
 
     /**
-     * @param DispatchStrategyInterface $strategy The logic for HOW to deliver the news (e.g., "Do it now" or "Queue
-     *                                            it").
+     * @param  DispatchStrategyInterface  $strategy  The logic for HOW to deliver the news (e.g., "Do it now" or "Queue
+     *                                               it").
      */
     public function __construct(
-        DispatchStrategyInterface $strategy = new SyncDispatchStrategy(),
-    )
-    {
+        DispatchStrategyInterface $strategy = new SyncDispatchStrategy,
+    ) {
         $this->strategy = $strategy;
     }
 
     /**
      * Broadcast an event to all registered listeners.
      */
-    public function dispatch(Event $event) : void
+    public function dispatch(Event $event): void
     {
         $name = $event->getName();
 
@@ -49,9 +49,9 @@ final class EventBus implements EventBusInterface
     /**
      * Sign up a multi-topic "Subscriber" (a class that listens to many things).
      *
-     * @param EventSubscriberInterface $subscriber A helper object that contains multiple different listeners.
+     * @param  EventSubscriberInterface  $subscriber  A helper object that contains multiple different listeners.
      */
-    public function registerSubscriber(EventSubscriberInterface $subscriber) : void
+    public function registerSubscriber(EventSubscriberInterface $subscriber): void
     {
         foreach ($subscriber->getSubscribedEvents() as $event => $method) {
             $this->subscribe(event: $event, listener: [$subscriber, $method]);
@@ -61,10 +61,10 @@ final class EventBus implements EventBusInterface
     /**
      * Register a listener for a specific event type.
      *
-     * @param string $event Event class name.
-     * @param callable $listener Callback to invoke.
+     * @param  string  $event  Event class name.
+     * @param  callable  $listener  Callback to invoke.
      */
-    public function subscribe(string $event, callable $listener) : void
+    public function subscribe(string $event, callable $listener): void
     {
         $this->listeners[$event][] = $listener;
     }

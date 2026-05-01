@@ -128,7 +128,7 @@ final class InputAccessorTest extends TestCase
             query  : $queryBag,
             body   : $bodyBag,
             cookies: $cookiesBag,
-            files  : $filesBag
+            files  : $filesBag,
         );
     }
 }

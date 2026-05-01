@@ -19,8 +19,8 @@ final class InMemoryCacheStore implements CacheStore
     private array $records = [];
 
     public function __construct(
-        private readonly Clock                           $clock = new SystemClock(),
-        private readonly int                             $maxEntries = 1000,
+        private readonly Clock $clock = new SystemClock(),
+        private readonly int   $maxEntries = 1000,
         private readonly ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
     ) {}
 

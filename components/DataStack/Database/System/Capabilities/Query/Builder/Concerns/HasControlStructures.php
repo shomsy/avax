@@ -36,10 +36,8 @@ trait HasControlStructures
      * Provides an expressive inverse of the when() method, typically used for
      *
      * applying default filters or     * @param mixed $condition Scalar, boolean, or truthy data point to evaluate.
-     *
-     * @param callable      $callback The logic to execute if the condition evaluates to false.
-     * @param callable|null $default  Optional alternative logic to execute if the condition is true.
-     *
+     * @param  callable  $callback  The logic to execute if the condition evaluates to false.
+     * @param  callable|null  $default  Optional alternative logic to execute if the condition is true.
      * @return QueryBuilder|HasControlStructures The
      *                                           resulting
      *                                           builder
@@ -55,7 +53,7 @@ trait HasControlStructures
      * /docs/Foundation/Database/DSL/Transactions.md#transaction logic
      * when a specific flag is absent.
      */
-    public function unless(mixed $condition, callable $callback, callable|null $default = null) : self
+    public function unless(mixed $condition, callable $callback, ?callable $default = null): self
     {
         return $this->when(condition: ! $condition, callback: $callback, default: $default);
     }
@@ -67,10 +65,9 @@ trait HasControlStructures
      * Support dynamic query modification (e.g., adding filters based on user input)
      * by encapsulating the logic within a conditional fluently-chained block.
      *
-     * @param mixed         $condition Scalar, boolean, or truthy data point to evaluate.
-     * @param callable      $callback  The logic to execute if the condition evaluates to true.
-     * @param callable|null $default   Optional alternative logic to execute if the condition is false.
-     *
+     * @param  mixed  $condition  Scalar, boolean, or truthy data point to evaluate.
+     * @param  callable  $callback  The logic to execute if the condition evaluates to true.
+     * @param  callable|null  $default  Optional alternative logic to execute if the condition is false.
      * @return QueryBuilder|HasControlStructures The
      *                                           resulting
      *                                           builder
@@ -81,7 +78,7 @@ trait HasControlStructures
      *                                           conditional
      *                                           logic.
      */
-    public function when(mixed $condition, callable $callback, callable|null $default = null) : self
+    public function when(mixed $condition, callable $callback, ?callable $default = null): self
     {
         if ($condition) {
             return $callback($this, $condition) ?: $this;
@@ -101,14 +98,13 @@ trait HasControlStructures
      * Provide a mechanism for side-effects (logging, debugging, inspection)
      * within the fluent chain without requiring variable assignment.
      *
-     * @param Closure $callback A logic hook receiving the current builder instance.
-     *
+     * @param  Closure  $callback  A logic hook receiving the current builder instance.
      * @return QueryBuilder|HasControlStructures The
      *                                           current
      *                                           builder
      *                                           instance.
      */
-    public function tap(Closure $callback) : self
+    public function tap(Closure $callback): self
     {
         $callback($this);
 

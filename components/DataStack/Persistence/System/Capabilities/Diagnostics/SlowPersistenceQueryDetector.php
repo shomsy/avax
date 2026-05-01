@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics;
 
 use InvalidArgumentException;
+
 use function count;
 
 /**
@@ -23,7 +24,7 @@ final readonly class SlowPersistenceReport
         public string $fingerprint = '',
         public array $context = [],
         public float $timestamp = 0.0,
-        public int   $occurrences = 1,
+        public int $occurrences = 1,
     ) {}
 
     /**
@@ -35,8 +36,7 @@ final readonly class SlowPersistenceReport
         float $durationMs,
         float $thresholdMs,
         array $context = [],
-    ) : self
-    {
+    ): self {
         return new self(
             operation  : $operation,
             type       : $type,
@@ -51,16 +51,16 @@ final readonly class SlowPersistenceReport
     /**
      * Computes a fingerprint for the operation.
      */
-    private static function computeFingerprint(string $operation, string $type, array $context) : string
+    private static function computeFingerprint(string $operation, string $type, array $context): string
     {
-        $normalized = $type . ':' . $operation;
+        $normalized = $type.':'.$operation;
 
         if (isset($context['entity'])) {
-            $normalized .= ':entity:' . $context['entity'];
+            $normalized .= ':entity:'.$context['entity'];
         }
 
         if (isset($context['table'])) {
-            $normalized .= ':table:' . $context['table'];
+            $normalized .= ':table:'.$context['table'];
         }
 
         return hash('sha256', $normalized);
@@ -69,7 +69,7 @@ final readonly class SlowPersistenceReport
     /**
      * Returns a human-readable summary.
      */
-    public function summary() : string
+    public function summary(): string
     {
         return sprintf(
             "[%s] %s (%s) took %.2fms (threshold: %.2fms, %.1fx over)\nContext: %s",
@@ -86,22 +86,22 @@ final readonly class SlowPersistenceReport
     /**
      * Returns a severity label.
      */
-    public function severityLabel() : string
+    public function severityLabel(): string
     {
         $ratio = $this->timesOverThreshold();
 
         return match (true) {
             $ratio >= 10.0 => 'CRITICAL',
-            $ratio >= 5.0  => 'SEVERE',
-            $ratio >= 2.0  => 'WARNING',
-            default        => 'SLOW',
+            $ratio >= 5.0 => 'SEVERE',
+            $ratio >= 2.0 => 'WARNING',
+            default => 'SLOW',
         };
     }
 
     /**
      * Returns how many times the threshold was exceeded.
      */
-    public function timesOverThreshold() : float
+    public function timesOverThreshold(): float
     {
         if ($this->thresholdMs <= 0) {
             return 0.0;
@@ -113,19 +113,19 @@ final readonly class SlowPersistenceReport
     /**
      * Converts to an associative array.
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'operation'    => $this->operation,
-            'type'         => $this->type,
-            'duration_ms'  => $this->durationMs,
+            'operation' => $this->operation,
+            'type' => $this->type,
+            'duration_ms' => $this->durationMs,
             'threshold_ms' => $this->thresholdMs,
-            'fingerprint'  => $this->fingerprint,
-            'context'      => $this->context,
-            'timestamp'    => $this->timestamp,
-            'occurrences'  => $this->occurrences,
-            'severity'     => $this->severityLabel(),
-            'times_over'   => $this->timesOverThreshold(),
+            'fingerprint' => $this->fingerprint,
+            'context' => $this->context,
+            'timestamp' => $this->timestamp,
+            'occurrences' => $this->occurrences,
+            'severity' => $this->severityLabel(),
+            'times_over' => $this->timesOverThreshold(),
         ];
     }
 }
@@ -149,19 +149,19 @@ final readonly class SlowPersistenceStatistics
     /**
      * Creates statistics from a list of slow persistence reports.
      *
-     * @param list<SlowPersistenceReport> $reports
+     * @param  list<SlowPersistenceReport>  $reports
      */
-    public static function fromReports(array $reports) : self
+    public static function fromReports(array $reports): self
     {
         if (empty($reports)) {
-            return new self();
+            return new self;
         }
 
         $totalDuration = 0.0;
-        $maxDuration   = 0.0;
-        $minDuration   = PHP_FLOAT_MAX;
-        $byType        = [];
-        $byOperation   = [];
+        $maxDuration = 0.0;
+        $minDuration = PHP_FLOAT_MAX;
+        $byType = [];
+        $byOperation = [];
         $byFingerprint = [];
 
         foreach ($reports as $report) {
@@ -175,7 +175,7 @@ final readonly class SlowPersistenceStatistics
                 $minDuration = $report->durationMs;
             }
 
-            $byType[$report->type]           = ($byType[$report->type] ?? 0) + 1;
+            $byType[$report->type] = ($byType[$report->type] ?? 0) + 1;
             $byOperation[$report->operation] = ($byOperation[$report->operation] ?? 0) + 1;
             $byFingerprint[$report->fingerprint] = ($byFingerprint[$report->fingerprint] ?? 0) + 1;
         }
@@ -197,17 +197,17 @@ final readonly class SlowPersistenceStatistics
     /**
      * Returns a summary string.
      */
-    public function summary() : string
+    public function summary(): string
     {
         return sprintf(
             "Slow Persistence Statistics:\n"
-            . "  Total: %d\n"
-            . "  Avg: %.2fms\n"
-            . "  Max: %.2fms\n"
-            . "  Min: %.2fms\n"
-            . "  Total Duration: %.2fms\n"
-            . "  By Type: %s\n"
-            . '  By Operation: %s',
+            ."  Total: %d\n"
+            ."  Avg: %.2fms\n"
+            ."  Max: %.2fms\n"
+            ."  Min: %.2fms\n"
+            ."  Total Duration: %.2fms\n"
+            ."  By Type: %s\n"
+            .'  By Operation: %s',
             $this->totalSlowOperations,
             $this->averageDurationMs,
             $this->maxDurationMs,
@@ -276,24 +276,23 @@ final class SlowPersistenceQueryDetector
     public function __construct(
         float $thresholdMs = 100.0,
         int $maxEntries = 0,
-    )
-    {
+    ) {
         $this->thresholdMs = $thresholdMs;
-        $this->maxEntries  = $maxEntries;
+        $this->maxEntries = $maxEntries;
     }
 
     /**
      * Records a persistence operation using a callback that measures execution time.
      *
      * @template T
-     * @param string               $operation Operation name
-     * @param string               $type      Operation type
-     * @param callable() : T $callback The operation to time
-     * @param array<string, mixed> $context   Additional context
      *
+     * @param  string  $operation  Operation name
+     * @param  string  $type  Operation type
+     * @param  callable() : T  $callback  The operation to time
+     * @param  array<string, mixed>  $context  Additional context
      * @return T
      */
-    public function time(string $operation, string $type, callable $callback, array $context = []) : mixed
+    public function time(string $operation, string $type, callable $callback, array $context = []): mixed
     {
         $start = microtime(true);
 
@@ -310,11 +309,10 @@ final class SlowPersistenceQueryDetector
     /**
      * Records a persistence operation and checks if it's slow.
      *
-     * @param string               $operation  Operation name (e.g., 'findById', 'save', 'delete')
-     * @param string               $type       Operation type (e.g., 'find', 'save', 'delete', 'query')
-     * @param float                $durationMs Duration in milliseconds
-     * @param array<string, mixed> $context    Additional context (entity name, table, etc.)
-     *
+     * @param  string  $operation  Operation name (e.g., 'findById', 'save', 'delete')
+     * @param  string  $type  Operation type (e.g., 'find', 'save', 'delete', 'query')
+     * @param  float  $durationMs  Duration in milliseconds
+     * @param  array<string, mixed>  $context  Additional context (entity name, table, etc.)
      * @return bool Whether the operation was classified as slow
      */
     public function record(
@@ -322,8 +320,7 @@ final class SlowPersistenceQueryDetector
         string $type,
         float $durationMs,
         array $context = [],
-    ) : bool
-    {
+    ): bool {
         $this->totalOperations++;
         $this->totalTimeMs += $durationMs;
         $this->typeTotals[$type] = ($this->typeTotals[$type] ?? 0.0) + $durationMs;
@@ -348,7 +345,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Adds a slow persistence report directly.
      */
-    public function addReport(SlowPersistenceReport $report) : void
+    public function addReport(SlowPersistenceReport $report): void
     {
         $this->slowOperations[] = $report;
 
@@ -366,7 +363,7 @@ final class SlowPersistenceQueryDetector
      *
      * @return list<SlowPersistenceReport>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->slowOperations;
     }
@@ -376,12 +373,12 @@ final class SlowPersistenceQueryDetector
      *
      * @return list<SlowPersistenceReport>
      */
-    public function byType(string $type) : array
+    public function byType(string $type): array
     {
         return array_values(array_filter(
-                                $this->slowOperations,
-                                static fn (SlowPersistenceReport $r) : bool => $r->type === $type,
-                            ));
+            $this->slowOperations,
+            static fn (SlowPersistenceReport $r): bool => $r->type === $type,
+        ));
     }
 
     /**
@@ -389,12 +386,12 @@ final class SlowPersistenceQueryDetector
      *
      * @return list<SlowPersistenceReport>
      */
-    public function byOperation(string $operation) : array
+    public function byOperation(string $operation): array
     {
         return array_values(array_filter(
-                                $this->slowOperations,
-                                static fn (SlowPersistenceReport $r) : bool => $r->operation === $operation,
-                            ));
+            $this->slowOperations,
+            static fn (SlowPersistenceReport $r): bool => $r->operation === $operation,
+        ));
     }
 
     /**
@@ -402,12 +399,12 @@ final class SlowPersistenceQueryDetector
      *
      * @return list<SlowPersistenceReport>
      */
-    public function bySeverity(string $severity) : array
+    public function bySeverity(string $severity): array
     {
         return array_values(array_filter(
-                                $this->slowOperations,
-                                static fn (SlowPersistenceReport $r) : bool => $r->severityLabel() === $severity,
-                            ));
+            $this->slowOperations,
+            static fn (SlowPersistenceReport $r): bool => $r->severityLabel() === $severity,
+        ));
     }
 
     /**
@@ -415,12 +412,12 @@ final class SlowPersistenceQueryDetector
      *
      * @return list<SlowPersistenceReport>
      */
-    public function topSlow(int $limit = 10) : array
+    public function topSlow(int $limit = 10): array
     {
         $sorted = $this->slowOperations;
         usort(
             $sorted,
-            static fn (SlowPersistenceReport $a, SlowPersistenceReport $b) : int => $b->durationMs <=> $a->durationMs,
+            static fn (SlowPersistenceReport $a, SlowPersistenceReport $b): int => $b->durationMs <=> $a->durationMs,
         );
 
         return array_slice($sorted, 0, $limit);
@@ -429,7 +426,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Returns computed statistics about slow operations.
      */
-    public function statistics() : SlowPersistenceStatistics
+    public function statistics(): SlowPersistenceStatistics
     {
         return SlowPersistenceStatistics::fromReports($this->slowOperations);
     }
@@ -439,7 +436,7 @@ final class SlowPersistenceQueryDetector
      *
      * @return array<string, int>
      */
-    public function fingerprintCounts() : array
+    public function fingerprintCounts(): array
     {
         return $this->fingerprintCounts;
     }
@@ -447,7 +444,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Returns the total count of slow operations.
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->slowOperations);
     }
@@ -455,7 +452,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Returns the total count of all recorded operations.
      */
-    public function totalOperationCount() : int
+    public function totalOperationCount(): int
     {
         return $this->totalOperations;
     }
@@ -463,7 +460,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Returns the current threshold in milliseconds.
      */
-    public function getThresholdMs() : float
+    public function getThresholdMs(): float
     {
         return $this->thresholdMs;
     }
@@ -471,7 +468,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Sets a new threshold in milliseconds.
      */
-    public function setThresholdMs(float $thresholdMs) : void
+    public function setThresholdMs(float $thresholdMs): void
     {
         if ($thresholdMs <= 0) {
             throw new InvalidArgumentException('Threshold must be greater than zero');
@@ -483,7 +480,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Returns the total time spent on operations of a specific type.
      */
-    public function typeTotalMs(string $type) : float
+    public function typeTotalMs(string $type): float
     {
         return $this->typeTotals[$type] ?? 0.0;
     }
@@ -493,7 +490,7 @@ final class SlowPersistenceQueryDetector
      *
      * @return array<string, float>
      */
-    public function typeTotals() : array
+    public function typeTotals(): array
     {
         return $this->typeTotals;
     }
@@ -501,15 +498,15 @@ final class SlowPersistenceQueryDetector
     /**
      * Returns a summary of the detector's state.
      */
-    public function summary() : string
+    public function summary(): string
     {
         return sprintf(
             "Slow Persistence Detector:\n"
-            . "  Threshold: %.2fms\n"
-            . "  Total Operations: %d\n"
-            . "  Slow Operations: %d (%.1f%%)\n"
-            . "  Average Duration: %.2fms\n"
-            . '  Total Time: %.2fms',
+            ."  Threshold: %.2fms\n"
+            ."  Total Operations: %d\n"
+            ."  Slow Operations: %d (%.1f%%)\n"
+            ."  Average Duration: %.2fms\n"
+            .'  Total Time: %.2fms',
             $this->thresholdMs,
             $this->totalOperations,
             count($this->slowOperations),
@@ -522,7 +519,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Returns the percentage of operations that were slow.
      */
-    public function slowPercentage() : float
+    public function slowPercentage(): float
     {
         if ($this->totalOperations === 0) {
             return 0.0;
@@ -534,7 +531,7 @@ final class SlowPersistenceQueryDetector
     /**
      * Returns the average duration of all operations (including fast ones).
      */
-    public function averageDurationMs() : float
+    public function averageDurationMs(): float
     {
         if ($this->totalOperations === 0) {
             return 0.0;
@@ -546,12 +543,12 @@ final class SlowPersistenceQueryDetector
     /**
      * Resets the detector, clearing all recorded data.
      */
-    public function reset() : void
+    public function reset(): void
     {
-        $this->slowOperations    = [];
+        $this->slowOperations = [];
         $this->fingerprintCounts = [];
-        $this->typeTotals        = [];
-        $this->totalOperations   = 0;
-        $this->totalTimeMs       = 0.0;
+        $this->typeTotals = [];
+        $this->totalOperations = 0;
+        $this->totalTimeMs = 0.0;
     }
 }

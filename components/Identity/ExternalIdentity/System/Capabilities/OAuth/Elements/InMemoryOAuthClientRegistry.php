@@ -28,31 +28,30 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
      * @throws RandomException
      */
     public function register(
-        string                            $name,
-        OAuthClientType                   $type,
-        array                             $redirectUris,
-        string                            $tenantSlug = null,
-        array                             $allowedScopes = [],
-        array                             $allowedAudiences = [],
-        array                             $allowedGrantTypes = [],
-        array                             $audienceScopeBoundaries = [],
+        string $name,
+        OAuthClientType $type,
+        array $redirectUris,
+        ?string $tenantSlug = null,
+        array $allowedScopes = [],
+        array $allowedAudiences = [],
+        array $allowedGrantTypes = [],
+        array $audienceScopeBoundaries = [],
         #[SensitiveParameter]
-        OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
-        OAuthSenderConstraintType         $requiredSenderConstraint = null,
-        bool                              $workloadIdentity = false,
-        bool                              $phishingResistantRequired = false,
-        bool                              $requestObjectSignatureRequired = false,
-        bool                              $frontChannelLogoutSupported = false,
-        bool                              $backChannelLogoutSupported = false,
-        bool                              $approvalRequired = null,
+        ?OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod = null,
+        ?OAuthSenderConstraintType $requiredSenderConstraint = null,
+        bool $workloadIdentity = false,
+        bool $phishingResistantRequired = false,
+        bool $requestObjectSignatureRequired = false,
+        bool $frontChannelLogoutSupported = false,
+        bool $backChannelLogoutSupported = false,
+        ?bool $approvalRequired = null,
         #[SensitiveParameter]
-        string                            $requestObjectVerificationKeyPem = null,
-    ) : RegisteredOAuthClient
-    {
-        $normalizedRedirectUris            = $this->normalizeRedirectUris(redirectUris: $redirectUris);
-        $normalizedScopes                  = $this->normalizeScopes(allowedScopes: $allowedScopes);
-        $normalizedAudiences               = $this->normalizeStrings(values: $allowedAudiences);
-        $normalizedGrantTypes              = $this->normalizeGrantTypes(type: $type, allowedGrantTypes: $allowedGrantTypes);
+        ?string $requestObjectVerificationKeyPem = null,
+    ): RegisteredOAuthClient {
+        $normalizedRedirectUris = $this->normalizeRedirectUris(redirectUris: $redirectUris);
+        $normalizedScopes = $this->normalizeScopes(allowedScopes: $allowedScopes);
+        $normalizedAudiences = $this->normalizeStrings(values: $allowedAudiences);
+        $normalizedGrantTypes = $this->normalizeGrantTypes(type: $type, allowedGrantTypes: $allowedGrantTypes);
         $normalizedAudienceScopeBoundaries = $this->normalizeAudienceScopeBoundaries(audienceScopeBoundaries: $audienceScopeBoundaries);
 
         if ($normalizedRedirectUris === []) {
@@ -76,7 +75,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             requested       : $tokenEndpointAuthMethod,
             workloadIdentity: $workloadIdentity,
         );
-        $requiresApproval                  = $approvalRequired ?? false;
+        $requiresApproval = $approvalRequired ?? false;
 
         foreach (array_keys(array: $normalizedAudienceScopeBoundaries) as $audience) {
             if (! in_array(needle: $audience, haystack: $normalizedAudiences, strict: true)) {
@@ -84,13 +83,13 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             }
         }
 
-        $clientId    = 'oauth_' . bin2hex(string: random_bytes(length: 12));
+        $clientId = 'oauth_'.bin2hex(string: random_bytes(length: 12));
         $plainSecret = null;
-        $secretHash  = null;
+        $secretHash = null;
 
         if ($type === OAuthClientType::CONFIDENTIAL) {
             $plainSecret = bin2hex(string: random_bytes(length: 24));
-            $secretHash  = $this->passwordHasher->hash(password: $plainSecret);
+            $secretHash = $this->passwordHasher->hash(password: $plainSecret);
         }
 
         $client = new OAuthClient(
@@ -113,7 +112,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             approvalStatus                 : $requiresApproval
                                                  ? OAuthClientApprovalStatus::PENDING_APPROVAL
                                                  : OAuthClientApprovalStatus::APPROVED,
-            approvedAt                     : $requiresApproval ? null : new DateTimeImmutable(),
+            approvedAt                     : $requiresApproval ? null : new DateTimeImmutable,
             approvedBy                     : $requiresApproval ? null : 'system',
             active                         : ! $requiresApproval,
             secretHash                     : $secretHash,
@@ -129,11 +128,10 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param list<string> $redirectUris
-     *
+     * @param  list<string>  $redirectUris
      * @return list<string>
      */
-    private function normalizeRedirectUris(array $redirectUris) : array
+    private function normalizeRedirectUris(array $redirectUris): array
     {
         $normalized = [];
 
@@ -151,21 +149,19 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param list<string> $allowedScopes
-     *
+     * @param  list<string>  $allowedScopes
      * @return list<string>
      */
-    private function normalizeScopes(array $allowedScopes) : array
+    private function normalizeScopes(array $allowedScopes): array
     {
         return $this->normalizeStrings(values: $allowedScopes);
     }
 
     /**
-     * @param list<string> $values
-     *
+     * @param  list<string>  $values
      * @return list<string>
      */
-    private function normalizeStrings(array $values) : array
+    private function normalizeStrings(array $values): array
     {
         $normalized = [];
 
@@ -185,11 +181,10 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param list<OAuthGrantType> $allowedGrantTypes
-     *
+     * @param  list<OAuthGrantType>  $allowedGrantTypes
      * @return list<OAuthGrantType>
      */
-    private function normalizeGrantTypes(OAuthClientType $type, array $allowedGrantTypes) : array
+    private function normalizeGrantTypes(OAuthClientType $type, array $allowedGrantTypes): array
     {
         if ($allowedGrantTypes === []) {
             return [
@@ -216,11 +211,10 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param array<string, list<string>> $audienceScopeBoundaries
-     *
+     * @param  array<string, list<string>>  $audienceScopeBoundaries
      * @return array<string, list<string>>
      */
-    private function normalizeAudienceScopeBoundaries(array $audienceScopeBoundaries) : array
+    private function normalizeAudienceScopeBoundaries(array $audienceScopeBoundaries): array
     {
         $normalized = [];
 
@@ -239,19 +233,19 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         return $normalized;
     }
 
-    private function normalizeTenantSlug(string|null $tenantSlug) : string|null
+    private function normalizeTenantSlug(?string $tenantSlug): ?string
     {
         $normalized = trim(string: (string) $tenantSlug);
 
         return $normalized !== '' ? strtolower(string: $normalized) : null;
     }
 
-    public function replace(OAuthClient $client) : void
+    public function replace(OAuthClient $client): void
     {
         $this->clients[$client->clientId] = $client;
     }
 
-    public function deactivate(string $clientId) : OAuthClient|null
+    public function deactivate(string $clientId): ?OAuthClient
     {
         $client = $this->find(clientId: $clientId);
 
@@ -259,7 +253,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return null;
         }
 
-        $inactive                 = new OAuthClient(
+        $inactive = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
             type                          : $client->type,
@@ -287,12 +281,12 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         return $inactive;
     }
 
-    public function find(string $clientId) : OAuthClient|null
+    public function find(string $clientId): ?OAuthClient
     {
         return $this->clients[$clientId] ?? null;
     }
 
-    public function approve(string $clientId, string $approvedBy) : OAuthClient|null
+    public function approve(string $clientId, string $approvedBy): ?OAuthClient
     {
         $client = $this->find(clientId: $clientId);
 
@@ -300,7 +294,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return null;
         }
 
-        $approved                 = new OAuthClient(
+        $approved = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
             type                          : $client->type,
@@ -318,7 +312,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             frontChannelLogoutSupported   : $client->frontChannelLogoutSupported,
             backChannelLogoutSupported    : $client->backChannelLogoutSupported,
             approvalStatus                : OAuthClientApprovalStatus::APPROVED,
-            approvedAt                    : new DateTimeImmutable(),
+            approvedAt                    : new DateTimeImmutable,
             approvedBy                    : trim(string: $approvedBy),
             active                        : true,
             secretHash                    : $client->secretHash,
@@ -331,7 +325,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     /**
      * @throws RandomException
      */
-    public function rotateSecret(string $clientId) : RegisteredOAuthClient|null
+    public function rotateSecret(string $clientId): ?RegisteredOAuthClient
     {
         $client = $this->find(clientId: $clientId);
 
@@ -343,8 +337,8 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return new RegisteredOAuthClient(client: $client, plainTextSecret: null);
         }
 
-        $plainSecret              = bin2hex(string: random_bytes(length: 24));
-        $rotated                  = new OAuthClient(
+        $plainSecret = bin2hex(string: random_bytes(length: 24));
+        $rotated = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
             type                          : $client->type,
@@ -372,17 +366,16 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         return new RegisteredOAuthClient(client: $rotated, plainTextSecret: $plainSecret);
     }
 
-    public function all() : array
+    public function all(): array
     {
         return array_values(array: $this->clients);
     }
 
     public function verifySecret(
-        string      $clientId,
+        string $clientId,
         #[SensitiveParameter]
-        string|null $plainTextSecret,
-    ) : bool
-    {
+        ?string $plainTextSecret,
+    ): bool {
         $client = $this->find(clientId: $clientId);
 
         if ($client === null || ! $client->isActive()) {

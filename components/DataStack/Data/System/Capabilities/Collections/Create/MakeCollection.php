@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Iter
 
 final readonly class MakeCollection
 {
-    public function from(iterable $items = []) : array
+    public function from(iterable $items = []): array
     {
         return NormalizedIterable::toArrayPreserveKeys(iterable: $items);
     }

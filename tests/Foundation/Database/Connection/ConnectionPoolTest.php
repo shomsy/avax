@@ -20,7 +20,7 @@ class ConnectionPoolTest extends TestCase
                             'max_connections'      => 2,
                             'max_idle_connections' => 1,
                         ],
-                    ]
+                    ],
         );
 
         $this->assertInstanceOf(expected: ConnectionPool::class, actual: $pool);

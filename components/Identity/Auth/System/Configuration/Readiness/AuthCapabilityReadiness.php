@@ -18,43 +18,41 @@ final readonly class AuthCapabilityReadiness
         private bool $passkey,
         private bool $federation,
         private bool $scim,
-    ) {
-    }
+    ) {}
 
     public static function from(
         #[SensitiveParameter]
-        JwtIdentityInterface|null $jwtIdentity,
+        ?JwtIdentityInterface $jwtIdentity,
         #[SensitiveParameter]
-        RefreshTokenStoreInterface|null $refreshTokenStore,
-        PasskeyRuntimeInterface|null $passkeyRuntime,
-        FederationRuntimeInterface|null $federationRuntime,
-        ProvisionableUserSourceInterface|null $provisionableUserSource,
-    ) : self
-    {
+        ?RefreshTokenStoreInterface $refreshTokenStore,
+        ?PasskeyRuntimeInterface $passkeyRuntime,
+        ?FederationRuntimeInterface $federationRuntime,
+        ?ProvisionableUserSourceInterface $provisionableUserSource,
+    ): self {
         return new self(
-            oauth     : $jwtIdentity             !== null && $refreshTokenStore !== null,
-            passkey   : $passkeyRuntime          !== null,
-            federation: $federationRuntime       !== null,
+            oauth     : $jwtIdentity !== null && $refreshTokenStore !== null,
+            passkey   : $passkeyRuntime !== null,
+            federation: $federationRuntime !== null,
             scim      : $provisionableUserSource !== null,
         );
     }
 
-    public function oauth() : bool
+    public function oauth(): bool
     {
         return $this->oauth;
     }
 
-    public function passkey() : bool
+    public function passkey(): bool
     {
         return $this->passkey;
     }
 
-    public function federation() : bool
+    public function federation(): bool
     {
         return $this->federation;
     }
 
-    public function scim() : bool
+    public function scim(): bool
     {
         return $this->scim;
     }

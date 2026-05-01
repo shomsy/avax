@@ -13,6 +13,7 @@ use Avax\Components\DataStack\Persistence\System\Capabilities\UnitOfWork\UnitOfW
  * Concrete repositories should extend this class and define the entity class.
  *
  * @template T of object
+ *
  * @implements RepositoryInterface<T>
  */
 abstract class Repository implements RepositoryInterface
@@ -22,7 +23,7 @@ abstract class Repository implements RepositoryInterface
         private readonly UnitOfWorkInterface $unitOfWork,
     ) {}
 
-    public function findById(string|int $id) : object|null
+    public function findById(string|int $id): ?object
     {
         return $this->storage->find(
             entityClass: $this->entityClass(),
@@ -33,20 +34,19 @@ abstract class Repository implements RepositoryInterface
     /**
      * @return class-string<T>
      */
-    abstract protected function entityClass() : string;
+    abstract protected function entityClass(): string;
 
-    public function findAll(int|null $limit = null, int $offset = 0) : array
+    public function findAll(?int $limit = null, int $offset = 0): array
     {
         return $this->findBy(criteria: [], limit: $limit ?? 100, offset: $offset);
     }
 
     public function findBy(
         array $criteria,
-        array|null $orderBy = null,
-        int   $limit = null,
-        int   $offset = null,
-    ) : array
-    {
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null,
+    ): array {
         return $this->storage->findBy(
             entityClass: $this->entityClass(),
             criteria   : $criteria,
@@ -56,24 +56,24 @@ abstract class Repository implements RepositoryInterface
         );
     }
 
-    public function findOneBy(array $criteria) : object|null
+    public function findOneBy(array $criteria): ?object
     {
         $results = $this->findBy(criteria: $criteria, limit: 1);
 
         return $results[0] ?? null;
     }
 
-    public function save(object $entity) : void
+    public function save(object $entity): void
     {
         $this->unitOfWork->persist($entity);
     }
 
-    public function delete(object $entity) : void
+    public function delete(object $entity): void
     {
         $this->unitOfWork->remove($entity);
     }
 
-    public function exists(array $criteria) : bool
+    public function exists(array $criteria): bool
     {
         return $this->storage->exists(
             entityClass: $this->entityClass(),
@@ -81,7 +81,7 @@ abstract class Repository implements RepositoryInterface
         );
     }
 
-    public function count(array $criteria = []) : int
+    public function count(array $criteria = []): int
     {
         return $this->storage->count(
             entityClass: $this->entityClass(),

@@ -9,17 +9,17 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
     /** @var array<string, FederationConnection> */
     private array $connections = [];
 
-    public function save(FederationConnection $connection) : void
+    public function save(FederationConnection $connection): void
     {
         $this->connections[$connection->connectionId] = $connection;
     }
 
-    public function find(string $connectionId) : FederationConnection|null
+    public function find(string $connectionId): ?FederationConnection
     {
         return $this->connections[$connectionId] ?? null;
     }
 
-    public function findByDomain(string $domain) : FederationConnection|null
+    public function findByDomain(string $domain): ?FederationConnection
     {
         $normalized = strtolower(string: trim(string: $domain));
 
@@ -32,7 +32,7 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
         return null;
     }
 
-    public function all() : array
+    public function all(): array
     {
         return array_values(array: $this->connections);
     }

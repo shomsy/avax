@@ -17,19 +17,19 @@ final class CollectDiagnosticsStepTest extends TestCase
     {
         $serviceId = 'test.service';
         $traceId   = 'trace-123';
-        $telemetry = new StepTelemetryRecorder;
+        $telemetry = new StepTelemetryRecorder();
         $step      = new CollectDiagnosticsStep(telemetry: $telemetry);
 
         $context = new KernelContext(
             serviceId: $serviceId,
-            traceId  : $traceId
+            traceId  : $traceId,
         );
 
         $telemetry->onStepStarted(event: new StepStarted(
                                              stepClass: 'SomeStep',
                                              timestamp: 1000.0,
                                              serviceId: $serviceId,
-                                             traceId  : $traceId
+                                             traceId  : $traceId,
                                          ));
 
         $telemetry->onStepSucceeded(event: new StepSucceeded(
@@ -38,7 +38,7 @@ final class CollectDiagnosticsStepTest extends TestCase
                                                endedAt  : 1000.05,
                                                duration : 0.05,
                                                serviceId: $serviceId,
-                                               traceId  : $traceId
+                                               traceId  : $traceId,
                                            ));
 
         $step(context: $context);

@@ -48,7 +48,7 @@ final readonly class MemorySnapshot
     {
         return [
             'request_number'   => $this->requestNumber,
-            'memory_used_mb'   => $this->memoryUsed / 1024 / 1024,
+            'memory_used_mb' => $this->memoryUsed / 1024 / 1024,
             'worker_memory_mb' => $this->workerMemory / 1024 / 1024,
         ];
     }

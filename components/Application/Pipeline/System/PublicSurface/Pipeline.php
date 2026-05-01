@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Pipeline\System\PublicSurface;
 
-use Avax\Components\Application\Pipeline\System\Capabilities\Hooks\PipelineHook;
 use Closure;
 
 final class Pipeline

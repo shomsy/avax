@@ -64,7 +64,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         file_put_contents($sourceFile, '<?php return ["version" => 2];');
 
         $builderNew = static fn () => require $sourceFile;
-        $value                = $this->compiledCacheContract->read(name: $name, build: $builderNew, sources: $compiledCacheSources);
+        $value = $this->compiledCacheContract->read(name: $name, build: $builderNew, sources: $compiledCacheSources);
 
         $this->assertSame(expected: 2, actual: $value['version']);
     }

@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 
 final class RowNumber
 {
-    public static function build(GrammarInterface $grammar) : WindowBuilder
+    public static function build(GrammarInterface $grammar): WindowBuilder
     {
         return WindowBuilder::rowNumber(grammar: $grammar);
     }

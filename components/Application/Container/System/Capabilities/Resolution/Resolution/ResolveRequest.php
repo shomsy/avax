@@ -9,7 +9,7 @@ namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
  */
 final readonly class ResolveRequest
 {
-    public bool  $manualInjection;
+    public bool $manualInjection;
 
     public array $context;
 
@@ -19,11 +19,11 @@ final readonly class ResolveRequest
      * @param array<string, mixed> $overrides
      */
     public function __construct(
-        public string      $serviceId,
-        array|null $overrides = null,
-        array|null $context = null,
-        public self|null   $parent = null,
-        bool|null  $manualInjection = null,
+        public string    $serviceId,
+        array            $overrides = null,
+        array            $context = null,
+        public self|null $parent = null,
+        bool             $manualInjection = null,
         public string|null $consumer = null,
     )
     {

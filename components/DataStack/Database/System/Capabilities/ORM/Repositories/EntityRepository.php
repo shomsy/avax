@@ -15,7 +15,7 @@ use Throwable;
 class EntityRepository
 {
     /**
-     * @param class-string<TEntity> $entityClass
+     * @param  class-string<TEntity>  $entityClass
      */
     public function __construct(
         protected readonly EntityManager $entityManager,
@@ -24,9 +24,10 @@ class EntityRepository
 
     /**
      * @return TEntity|null
+     *
      * @throws Throwable
      */
-    public function find(mixed $id, string|null $connectionName = null) : object|null
+    public function find(mixed $id, ?string $connectionName = null): ?object
     {
         return $this->entityManager->find(
             entityClass   : $this->entityClass,
@@ -36,31 +37,30 @@ class EntityRepository
     }
 
     /**
-     * @param array<string, mixed> $criteria
-     *
+     * @param  array<string, mixed>  $criteria
      * @return TEntity|null
+     *
      * @throws Throwable
      */
-    public function findOneBy(array $criteria, string|null $connectionName = null) : object|null
+    public function findOneBy(array $criteria, ?string $connectionName = null): ?object
     {
         return $this->findBy(criteria: $criteria, limit: 1, connectionName: $connectionName)[0] ?? null;
     }
 
     /**
-     * @param array<string, mixed> $criteria
-     *
+     * @param  array<string, mixed>  $criteria
      * @return list<TEntity>
+     *
      * @throws Throwable
      */
     public function findBy(
-        array  $criteria,
-        string|null $orderBy = null,
-        string|null $direction = null,
-        int|null $limit = null,
-        int|null $offset = null,
-        string|null $connectionName = null,
-    ) : array
-    {
+        array $criteria,
+        ?string $orderBy = null,
+        ?string $direction = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?string $connectionName = null,
+    ): array {
         return $this->entityManager->findBy(
             entityClass   : $this->entityClass,
             criteria      : $criteria,
@@ -74,9 +74,10 @@ class EntityRepository
 
     /**
      * @return list<TEntity>
+     *
      * @throws Throwable
      */
-    public function findAll(string|null $connectionName = null) : array
+    public function findAll(?string $connectionName = null): array
     {
         return $this->entityManager->findBy(
             entityClass   : $this->entityClass,

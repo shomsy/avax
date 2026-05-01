@@ -28,22 +28,21 @@ final readonly class AuthenticateRequest
         private AuditLogInterface $auditLog,
         private Clock $clock,
         #[SensitiveParameter]
-        private SessionIdentityInterface|null $sessionIdentity = null,
+        private ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        private JwtIdentityInterface|null $jwtIdentity = null,
-    ) {
-    }
+        private ?JwtIdentityInterface $jwtIdentity = null,
+    ) {}
 
-    public function execute(AuthenticationRequest $request) : AuthenticationContext
+    public function execute(AuthenticationRequest $request): AuthenticationContext
     {
         [$sessionUser, $sessionId, $sessionMfaVerifiedAt, $sessionPhishingResistant] = $this->resolveSessionUser(request: $request);
-        $resolvedToken                                                               = $request->bearerToken !== null
+        $resolvedToken = $request->bearerToken !== null
             ? $this->jwtIdentity?->resolve(token: $request->bearerToken)
             : null;
 
         if (
-            $sessionUser                    !== null
-            && $resolvedToken               !== null
+            $sessionUser !== null
+            && $resolvedToken !== null
             && $sessionUser->getId()->value !== $resolvedToken->user->getId()->value
         ) {
             $context = AuthenticationContext::guest(reason: 'credential_conflict');
@@ -52,9 +51,9 @@ final readonly class AuthenticateRequest
                 name      : 'auth.ingress.conflict',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                                               'ip_address' => $request->ipAddress,
-                                                               'user_agent' => $request->userAgent,
-                                                           ],
+                    'ip_address' => $request->ipAddress,
+                    'user_agent' => $request->userAgent,
+                ],
             ));
 
             $this->currentAuthentication->store(context: $context);
@@ -118,7 +117,7 @@ final readonly class AuthenticateRequest
     /**
      * @return array{0: User|null, 1: string|null, 2: DateTimeImmutable|null, 3: bool}
      */
-    private function resolveSessionUser(AuthenticationRequest $request) : array
+    private function resolveSessionUser(AuthenticationRequest $request): array
     {
         if (! $request->allowSession || $this->sessionIdentity === null) {
             return [null, null, null, false];
@@ -145,10 +144,9 @@ final readonly class AuthenticateRequest
     }
 
     private function latestMfaMoment(
-        DateTimeImmutable|null $left,
-        DateTimeImmutable|null $right,
-    ) : DateTimeImmutable|null
-    {
+        ?DateTimeImmutable $left,
+        ?DateTimeImmutable $right,
+    ): ?DateTimeImmutable {
         if ($left === null) {
             return $right;
         }

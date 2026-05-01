@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Security;
 
 interface TenantSecurityConfigurationStoreInterface
 {
-    public function save(TenantSecurityConfiguration $configuration) : void;
+    public function save(TenantSecurityConfiguration $configuration): void;
 
-    public function find(string $tenantSlug) : TenantSecurityConfiguration|null;
+    public function find(string $tenantSlug): ?TenantSecurityConfiguration;
 }

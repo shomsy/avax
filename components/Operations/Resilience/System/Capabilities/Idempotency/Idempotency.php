@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\System\PublicSurface;
 
-use Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\System\Capabilities\Keys\IdempotencyKey;
 use Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\System\Capabilities\Keys\IdempotencyStore;
 use Closure;
 

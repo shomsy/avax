@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseC
 
 final class ConnectToDatabase
 {
-    public function connect(array $config) : DatabaseConnection
+    public function connect(array $config): DatabaseConnection
     {
         return new DatabaseConnection(
             name: $config['name'] ?? 'default',

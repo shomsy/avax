@@ -16,18 +16,18 @@ final readonly class RequireAdminElevation
 {
     public function __construct(
         #[SensitiveParameter]
-        private CurrentAuthentication        $currentAuthentication,
+        private CurrentAuthentication $currentAuthentication,
         private AdminElevationStoreInterface $elevationStore,
-        private Clock                        $clock,
+        private Clock $clock,
     ) {}
 
     /**
      * @throws AdminElevationFailed
      */
-    public function execute() : void
+    public function execute(): void
     {
-        $context   = $this->currentAuthentication->read();
-        $user      = $context->user();
+        $context = $this->currentAuthentication->read();
+        $user = $context->user();
         $bindingId = $this->bindingId(context: $context);
 
         if ($user === null) {
@@ -51,7 +51,7 @@ final readonly class RequireAdminElevation
         }
     }
 
-    private function bindingId(AuthenticationContext $context) : string|null
+    private function bindingId(AuthenticationContext $context): ?string
     {
         return $context->sessionId()
             ?? $context->accessTokenId()

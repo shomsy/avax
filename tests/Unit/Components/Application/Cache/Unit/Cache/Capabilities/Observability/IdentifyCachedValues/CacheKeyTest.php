@@ -71,7 +71,7 @@ final class CacheKeyTest extends TestCase
         $key = CacheKey::create(
             key      : 'data',
             namespace: 'app',
-            version  : new CacheVersion(major: 1, minor: 2, patch: 3)
+            version  : new CacheVersion(major: 1, minor: 2, patch: 3),
         );
 
         $this->assertSame(expected: 'app:data:v1.2.3', actual: $key->fullKey());

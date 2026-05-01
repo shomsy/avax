@@ -14,14 +14,14 @@ final class MultiTenantPool
 
     public function __construct(
         private readonly Closure $poolFactory,
-        private readonly int     $maxTenants = 100,
+        private readonly int $maxTenants = 100,
     ) {}
 
-    public function getForTenant(string $tenantId) : ConnectionPoolInterface
+    public function getForTenant(string $tenantId): ConnectionPoolInterface
     {
         if (! isset($this->pools[$tenantId])) {
             if (count(value: $this->pools) >= $this->maxTenants) {
-                throw new RuntimeException(message: 'Max tenants reached: ' . $this->maxTenants);
+                throw new RuntimeException(message: 'Max tenants reached: '.$this->maxTenants);
             }
 
             $pool = ($this->poolFactory)($tenantId);
@@ -35,14 +35,14 @@ final class MultiTenantPool
         return $this->pools[$tenantId];
     }
 
-    public function releaseForTenant(string $tenantId, PooledConnection $pooledConnection) : void
+    public function releaseForTenant(string $tenantId, PooledConnection $pooledConnection): void
     {
         if (isset($this->pools[$tenantId])) {
             $this->pools[$tenantId]->release(connection: $pooledConnection);
         }
     }
 
-    public function closeTenant(string $tenantId) : void
+    public function closeTenant(string $tenantId): void
     {
         if (! isset($this->pools[$tenantId])) {
             return;
@@ -52,7 +52,7 @@ final class MultiTenantPool
         unset($this->pools[$tenantId]);
     }
 
-    public function closeAll() : void
+    public function closeAll(): void
     {
         foreach ($this->pools as $pool) {
             $pool->destroy();
@@ -61,7 +61,7 @@ final class MultiTenantPool
         $this->pools = [];
     }
 
-    public function getStats() : array
+    public function getStats(): array
     {
         $stats = [];
 
@@ -72,7 +72,7 @@ final class MultiTenantPool
         return $stats;
     }
 
-    public function getTenantCount() : int
+    public function getTenantCount(): int
     {
         return count(value: $this->pools);
     }

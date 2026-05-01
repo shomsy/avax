@@ -16,29 +16,29 @@ final readonly class SessionRecord
 {
     public function __construct(
         #[SensitiveParameter]
-        public string                 $sessionId,
-        public UserId                 $userId,
-        public DateTimeImmutable      $createdAt,
-        public DateTimeImmutable      $lastSeenAt,
-        public DateTimeImmutable      $idleExpiresAt,
-        public DateTimeImmutable      $absoluteExpiresAt,
-        public string|null            $ipCreated = null,
-        public string|null            $userAgentCreated = null,
-        public DateTimeImmutable|null $revokedAt = null,
-        public string|null            $revokeReason = null,
+        public string $sessionId,
+        public UserId $userId,
+        public DateTimeImmutable $createdAt,
+        public DateTimeImmutable $lastSeenAt,
+        public DateTimeImmutable $idleExpiresAt,
+        public DateTimeImmutable $absoluteExpiresAt,
+        public ?string $ipCreated = null,
+        public ?string $userAgentCreated = null,
+        public ?DateTimeImmutable $revokedAt = null,
+        public ?string $revokeReason = null,
     ) {}
 
-    public function isActiveAt(DateTimeImmutable $moment) : bool
+    public function isActiveAt(DateTimeImmutable $moment): bool
     {
         return ! $this->isRevoked() && ! $this->isExpiredAt(moment: $moment);
     }
 
-    public function isRevoked() : bool
+    public function isRevoked(): bool
     {
         return $this->revokedAt !== null;
     }
 
-    public function isExpiredAt(DateTimeImmutable $moment) : bool
+    public function isExpiredAt(DateTimeImmutable $moment): bool
     {
         return $this->idleExpiresAt <= $moment || $this->absoluteExpiresAt <= $moment;
     }
@@ -46,7 +46,7 @@ final readonly class SessionRecord
     /**
      * @throws DateMalformedStringException
      */
-    public function withTouch(DateTimeImmutable $lastSeenAt, int $idleTimeoutSeconds) : self
+    public function withTouch(DateTimeImmutable $lastSeenAt, int $idleTimeoutSeconds): self
     {
         return new self(
             sessionId        : $this->sessionId,
@@ -62,7 +62,7 @@ final readonly class SessionRecord
         );
     }
 
-    public function withClientMetadata(#[SensitiveParameter] string|null $ipAddress, string|null $userAgent) : self
+    public function withClientMetadata(#[SensitiveParameter] ?string $ipAddress, ?string $userAgent): self
     {
         return new self(
             sessionId        : $this->sessionId,
@@ -78,7 +78,7 @@ final readonly class SessionRecord
         );
     }
 
-    public function withRevocation(DateTimeImmutable $revokedAt, string $revokeReason) : self
+    public function withRevocation(DateTimeImmutable $revokedAt, string $revokeReason): self
     {
         return new self(
             sessionId        : $this->sessionId,

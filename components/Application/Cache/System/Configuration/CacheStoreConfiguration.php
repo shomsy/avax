@@ -41,7 +41,7 @@ final readonly class CacheStoreConfiguration
             'file'   => new FileCacheStore(
                 basePath: $this->options['base_path'] ?? sys_get_temp_dir() . '/avax_cache',
             ),
-            default  => throw new InvalidArgumentException(message: 'Unknown store type: ' . $this->type),
+            default => throw new InvalidArgumentException(message: 'Unknown store type: ' . $this->type),
         };
     }
 }

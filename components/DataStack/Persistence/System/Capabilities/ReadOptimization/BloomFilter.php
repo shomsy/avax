@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\ReadOptimization;
 
 use InvalidArgumentException;
+
 use function count;
 
 /**
@@ -60,23 +61,22 @@ final class BloomFilter
         int $hashCount,
         float $falsePositiveRate,
         int $expectedItems,
-    )
-    {
-        $this->bitCount          = $bitCount;
-        $this->hashCount         = $hashCount;
+    ) {
+        $this->bitCount = $bitCount;
+        $this->hashCount = $hashCount;
         $this->falsePositiveRate = $falsePositiveRate;
-        $this->expectedItems     = $expectedItems;
-        $this->bits              = array_fill(0, $bitCount, false);
+        $this->expectedItems = $expectedItems;
+        $this->bits = array_fill(0, $bitCount, false);
     }
 
     /**
      * Creates a Bloom filter with optimal bit array size and hash count
      * based on the expected number of items and desired false positive rate.
      *
-     * @param int $expectedItems Expected number of items to store
-     * @param float $falsePositiveRate Desired false positive rate (0.0 to 1.0, exclusive)
+     * @param  int  $expectedItems  Expected number of items to store
+     * @param  float  $falsePositiveRate  Desired false positive rate (0.0 to 1.0, exclusive)
      */
-    public static function create(int $expectedItems, float $falsePositiveRate = 0.01) : self
+    public static function create(int $expectedItems, float $falsePositiveRate = 0.01): self
     {
         if ($expectedItems <= 0) {
             throw new InvalidArgumentException('Expected items must be greater than zero');
@@ -98,10 +98,10 @@ final class BloomFilter
     /**
      * Creates a Bloom filter with explicit size and hash count.
      *
-     * @param int $bitCount Number of bits in the array
-     * @param int $hashCount Number of hash functions
+     * @param  int  $bitCount  Number of bits in the array
+     * @param  int  $hashCount  Number of hash functions
      */
-    public static function withSize(int $bitCount, int $hashCount) : self
+    public static function withSize(int $bitCount, int $hashCount): self
     {
         if ($bitCount <= 0) {
             throw new InvalidArgumentException('Bit count must be greater than zero');
@@ -117,9 +117,9 @@ final class BloomFilter
     /**
      * Adds an item to the bloom filter.
      *
-     * @param string $item The item to add
+     * @param  string  $item  The item to add
      */
-    public function add(string $item) : void
+    public function add(string $item): void
     {
         foreach ($this->getHashIndices($item) as $index) {
             $this->bits[$index] = true;
@@ -136,11 +136,11 @@ final class BloomFilter
      *
      * @return list<int>
      */
-    private function getHashIndices(string $item) : array
+    private function getHashIndices(string $item): array
     {
         $indices = [];
-        $h1      = $this->hash1($item);
-        $h2      = $this->hash2($item);
+        $h1 = $this->hash1($item);
+        $h2 = $this->hash2($item);
 
         for ($i = 0; $i < $this->hashCount; $i++) {
             $indices[] = ($h1 + $i * $h2) % $this->bitCount;
@@ -152,7 +152,7 @@ final class BloomFilter
     /**
      * First hash function (MurmurHash-inspired).
      */
-    private function hash1(string $item) : int
+    private function hash1(string $item): int
     {
         $hash = crc32($item);
 
@@ -162,7 +162,7 @@ final class BloomFilter
     /**
      * Second hash function (different seed).
      */
-    private function hash2(string $item) : int
+    private function hash2(string $item): int
     {
         $hash = crc32(strrev($item));
 
@@ -175,7 +175,7 @@ final class BloomFilter
      *
      * This is the inverse of mightContain.
      */
-    public function definitelyNotContains(string $item) : bool
+    public function definitelyNotContains(string $item): bool
     {
         return ! $this->mightContain($item);
     }
@@ -186,9 +186,9 @@ final class BloomFilter
      * Returns true if the item is PROBABLY in the set (possible false positive).
      * Returns false if the item is DEFINITELY NOT in the set (no false negatives).
      *
-     * @param string $item The item to check
+     * @param  string  $item  The item to check
      */
-    public function mightContain(string $item) : bool
+    public function mightContain(string $item): bool
     {
         foreach ($this->getHashIndices($item) as $index) {
             if (! $this->bits[$index]) {
@@ -202,7 +202,7 @@ final class BloomFilter
     /**
      * Returns the total number of bits in the array.
      */
-    public function getBitCount() : int
+    public function getBitCount(): int
     {
         return $this->bitCount;
     }
@@ -210,7 +210,7 @@ final class BloomFilter
     /**
      * Returns the current number of set bits.
      */
-    public function setBitCount() : int
+    public function setBitCount(): int
     {
         return count(array_filter($this->bits));
     }
@@ -218,7 +218,7 @@ final class BloomFilter
     /**
      * Returns the number of hash functions used.
      */
-    public function getHashCount() : int
+    public function getHashCount(): int
     {
         return $this->hashCount;
     }
@@ -226,7 +226,7 @@ final class BloomFilter
     /**
      * Returns the number of items added to the filter.
      */
-    public function getItemCount() : int
+    public function getItemCount(): int
     {
         return $this->itemCount;
     }
@@ -236,7 +236,7 @@ final class BloomFilter
      *
      * Formula: (1 - e^(-kn/m))^k
      */
-    public function estimatedFalsePositiveRate() : float
+    public function estimatedFalsePositiveRate(): float
     {
         if ($this->itemCount === 0) {
             return 0.0;
@@ -251,7 +251,7 @@ final class BloomFilter
      * Returns whether the filter is considered saturated
      * (more than 50% of bits are set, making false positives very likely).
      */
-    public function isSaturated() : bool
+    public function isSaturated(): bool
     {
         return $this->fillRatio() > 0.5;
     }
@@ -259,7 +259,7 @@ final class BloomFilter
     /**
      * Returns the fill ratio (percentage of bits that are set).
      */
-    public function fillRatio() : float
+    public function fillRatio(): float
     {
         if ($this->bitCount === 0) {
             return 0.0;
@@ -271,9 +271,9 @@ final class BloomFilter
     /**
      * Resets the filter, clearing all bits.
      */
-    public function reset() : void
+    public function reset(): void
     {
-        $this->bits      = array_fill(0, $this->bitCount, false);
+        $this->bits = array_fill(0, $this->bitCount, false);
         $this->itemCount = 0;
     }
 
@@ -284,7 +284,7 @@ final class BloomFilter
      *
      * @throws InvalidArgumentException If filters are incompatible
      */
-    public function merge(self $other) : void
+    public function merge(self $other): void
     {
         if ($this->bitCount !== $other->bitCount) {
             throw new InvalidArgumentException('Cannot merge bloom filters with different bit counts');
@@ -306,7 +306,7 @@ final class BloomFilter
      *
      * @return list<bool>
      */
-    public function getBits() : array
+    public function getBits(): array
     {
         return $this->bits;
     }
@@ -314,7 +314,7 @@ final class BloomFilter
     /**
      * Returns the expected number of items this filter was configured for.
      */
-    public function getExpectedItems() : int
+    public function getExpectedItems(): int
     {
         return $this->expectedItems;
     }
@@ -322,7 +322,7 @@ final class BloomFilter
     /**
      * Returns the configured false positive rate.
      */
-    public function getFalsePositiveRate() : float
+    public function getFalsePositiveRate(): float
     {
         return $this->falsePositiveRate;
     }

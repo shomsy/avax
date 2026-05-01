@@ -9,11 +9,9 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\B
  */
 final readonly class BackupCode
 {
-    public function __construct(private string $value)
-    {
-    }
+    public function __construct(private string $value) {}
 
-    public function value() : string
+    public function value(): string
     {
         return $this->value;
     }
@@ -21,18 +19,18 @@ final readonly class BackupCode
     /**
      * @return array<string, string>
      */
-    public function __debugInfo() : array
+    public function __debugInfo(): array
     {
         return [
-            'value'  => '[REDACTED]',
+            'value' => '[REDACTED]',
             'masked' => $this->masked(),
         ];
     }
 
-    public function masked() : string
+    public function masked(): string
     {
         $tail = substr(string: $this->value, offset: -4);
 
-        return '****-****-' . $tail;
+        return '****-****-'.$tail;
     }
 }

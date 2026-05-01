@@ -15,12 +15,12 @@ final readonly class AssessCurrentRisk
 {
     public function __construct(
         #[SensitiveParameter]
-        private CurrentAuthentication   $currentAuthentication,
-        private UserSourceInterface     $userSource,
+        private CurrentAuthentication $currentAuthentication,
+        private UserSourceInterface $userSource,
         private DeterministicRiskEngine $riskEngine,
     ) {}
 
-    public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
+    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): ?RiskDecision
     {
         $user = $this->currentAuthentication->read()->user();
 

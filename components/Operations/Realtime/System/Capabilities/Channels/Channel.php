@@ -9,7 +9,7 @@ use Avax\Components\Operations\Realtime\System\Capabilities\Connections\Connecti
 final readonly class Channel
 {
     public function __construct(
-        public string          $name,
+        public string $name,
         private ChannelManager $manager,
     ) {}
 

@@ -15,32 +15,34 @@ use SensitiveParameter;
 
 final readonly class OpenSslOidcProvider implements OidcProviderInterface
 {
-    private OpenSSLAsymmetricKey      $privateKey;
-    private OpenSSLAsymmetricKey      $publicKey;
-    private int                       $idTokenLifetime;
+    private OpenSSLAsymmetricKey $privateKey;
+
+    private OpenSSLAsymmetricKey $publicKey;
+
+    private int $idTokenLifetime;
+
     private SubjectIdentifierStrategy $subjectIdentifierStrategy;
 
     public function __construct(
-        private string                 $issuer,
+        private string $issuer,
         #[SensitiveParameter]
-        string                         $privateKeyPem,
-        private string                 $keyId,
-        private string                 $authorizationEndpoint,
+        string $privateKeyPem,
+        private string $keyId,
+        private string $authorizationEndpoint,
         #[SensitiveParameter]
-        private string                 $tokenEndpoint,
-        private string                 $userInfoEndpoint,
-        private string                 $jsonWebKeySetUri,
-        SubjectIdentifierStrategy|null $subjectIdentifierStrategy = null,
+        private string $tokenEndpoint,
+        private string $userInfoEndpoint,
+        private string $jsonWebKeySetUri,
+        ?SubjectIdentifierStrategy $subjectIdentifierStrategy = null,
         #[SensitiveParameter]
-        private string|null            $pairwiseSalt = null,
-        int                            $idTokenLifetime = null,
-        private string                 $algorithm = 'RS256',
-    )
-    {
-        $subjectIdentifierStrategy       ??= SubjectIdentifierStrategy::PUBLIC;
-        $idTokenLifetime                 ??= 600;
+        private ?string $pairwiseSalt = null,
+        ?int $idTokenLifetime = null,
+        private string $algorithm = 'RS256',
+    ) {
+        $subjectIdentifierStrategy ??= SubjectIdentifierStrategy::PUBLIC;
+        $idTokenLifetime ??= 600;
         $this->subjectIdentifierStrategy = $subjectIdentifierStrategy;
-        $this->idTokenLifetime           = $idTokenLifetime;
+        $this->idTokenLifetime = $idTokenLifetime;
         if (trim(string: $this->issuer) === '') {
             throw new InvalidArgumentException(message: 'OIDC issuer cannot be empty.');
         }
@@ -72,32 +74,31 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         }
 
         $this->privateKey = $privateKey;
-        $this->publicKey  = $publicKey;
+        $this->publicKey = $publicKey;
     }
 
     /**
      * @throws DateMalformedStringException
      */
     public function issueIdToken(
-        User                   $user,
-        string                 $clientId,
-        array                  $scopes,
-        string                 $nonce = null,
-        DateTimeImmutable|null $authenticatedAt = null,
+        User $user,
+        string $clientId,
+        array $scopes,
+        ?string $nonce = null,
+        ?DateTimeImmutable $authenticatedAt = null,
         #[SensitiveParameter]
-        string                 $sessionId = null,
-        bool                   $phishingResistant = false,
-    ) : OidcIdToken
-    {
-        $issuedAt  = new DateTimeImmutable();
-        $expiresAt = $issuedAt->modify(modifier: '+' . $this->idTokenLifetime . ' seconds');
-        $claims    = [
-            'iss'                => $this->issuer,
-            'sub'                => $this->subjectIdentifier(user: $user, clientId: $clientId),
-            'aud'                => $clientId,
-            'iat'                => $issuedAt->getTimestamp(),
-            'exp'                => $expiresAt->getTimestamp(),
-            'auth_time'          => ($authenticatedAt ?? $issuedAt)->getTimestamp(),
+        ?string $sessionId = null,
+        bool $phishingResistant = false,
+    ): OidcIdToken {
+        $issuedAt = new DateTimeImmutable;
+        $expiresAt = $issuedAt->modify(modifier: '+'.$this->idTokenLifetime.' seconds');
+        $claims = [
+            'iss' => $this->issuer,
+            'sub' => $this->subjectIdentifier(user: $user, clientId: $clientId),
+            'aud' => $clientId,
+            'iat' => $issuedAt->getTimestamp(),
+            'exp' => $expiresAt->getTimestamp(),
+            'auth_time' => ($authenticatedAt ?? $issuedAt)->getTimestamp(),
             'preferred_username' => $user->getUsername(),
         ];
 
@@ -127,10 +128,10 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         );
     }
 
-    public function subjectIdentifier(User $user, string $clientId) : string
+    public function subjectIdentifier(User $user, string $clientId): string
     {
         return match ($this->subjectIdentifierStrategy) {
-            SubjectIdentifierStrategy::PUBLIC   => (string) $user->getId()->value,
+            SubjectIdentifierStrategy::PUBLIC => (string) $user->getId()->value,
             SubjectIdentifierStrategy::PAIRWISE => new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE)->generate(
                 localSubject    : (string) $user->getId()->value,
                 sectorIdentifier: $clientId,
@@ -139,15 +140,15 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         };
     }
 
-    public function issueJwt(array $claims) : string
+    public function issueJwt(array $claims): string
     {
         return $this->encode(claims: $claims);
     }
 
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
-    private function encode(array $claims) : string
+    private function encode(array $claims): string
     {
         $header = [
             'typ' => 'JWT',
@@ -156,25 +157,25 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         ];
 
         $headerSegment = $this->base64UrlEncode(value: $this->encodeJson(payload: $header));
-        $claimSegment  = $this->base64UrlEncode(value: $this->encodeJson(payload: $claims));
-        $signature     = '';
+        $claimSegment = $this->base64UrlEncode(value: $this->encodeJson(payload: $claims));
+        $signature = '';
 
-        if (! openssl_sign(data: $headerSegment . '.' . $claimSegment, signature: $signature, private_key: $this->privateKey, algorithm: OPENSSL_ALGO_SHA256)) {
+        if (! openssl_sign(data: $headerSegment.'.'.$claimSegment, signature: $signature, private_key: $this->privateKey, algorithm: OPENSSL_ALGO_SHA256)) {
             throw new RuntimeException(message: 'OIDC ID token signing failed.');
         }
 
-        return $headerSegment . '.' . $claimSegment . '.' . $this->base64UrlEncode(value: $signature);
+        return $headerSegment.'.'.$claimSegment.'.'.$this->base64UrlEncode(value: $signature);
     }
 
-    private function base64UrlEncode(string $value) : string
+    private function base64UrlEncode(string $value): string
     {
         return rtrim(string: strtr(base64_encode(string: $value), '+/', '-_'), characters: '=');
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
-    private function encodeJson(array $payload) : string
+    private function encodeJson(array $payload): string
     {
         try {
             return json_encode(value: $payload, flags: JSON_THROW_ON_ERROR);
@@ -183,16 +184,16 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         }
     }
 
-    public function readProviderMetadata() : OidcProviderMetadata
+    public function readProviderMetadata(): OidcProviderMetadata
     {
         return new OidcProviderMetadata(
             issuer                                        : $this->issuer,
             authorizationEndpoint                         : $this->authorizationEndpoint,
             tokenEndpoint                                 : $this->tokenEndpoint,
-            registrationEndpoint                          : $this->issuer . '/oidc/register',
+            registrationEndpoint                          : $this->issuer.'/oidc/register',
             userInfoEndpoint                              : $this->userInfoEndpoint,
-            endSessionEndpoint                            : $this->issuer . '/oidc/logout',
-            pushedAuthorizationRequestEndpoint            : $this->issuer . '/oauth/par',
+            endSessionEndpoint                            : $this->issuer.'/oidc/logout',
+            pushedAuthorizationRequestEndpoint            : $this->issuer.'/oauth/par',
             jsonWebKeySetUri                              : $this->jsonWebKeySetUri,
             scopesSupported                               : ['openid', 'profile', 'email'],
             responseTypesSupported                        : ['code'],
@@ -208,7 +209,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         );
     }
 
-    public function readJsonWebKeySet() : OidcJsonWebKeySet
+    public function readJsonWebKeySet(): OidcJsonWebKeySet
     {
         $details = openssl_pkey_get_details(key: $this->publicKey);
 
@@ -217,18 +218,18 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         }
 
         return new OidcJsonWebKeySet(keys: [
-                                               new OidcJsonWebKey(
-                                                   keyType  : 'RSA',
-                                                   keyId    : $this->keyId,
-                                                   algorithm: $this->algorithm,
-                                                   use      : 'sig',
-                                                   modulus  : $this->base64UrlEncode(value: $details['rsa']['n']),
-                                                   exponent : $this->base64UrlEncode(value: $details['rsa']['e']),
-                                               ),
-                                           ]);
+            new OidcJsonWebKey(
+                keyType  : 'RSA',
+                keyId    : $this->keyId,
+                algorithm: $this->algorithm,
+                use      : 'sig',
+                modulus  : $this->base64UrlEncode(value: $details['rsa']['n']),
+                exponent : $this->base64UrlEncode(value: $details['rsa']['e']),
+            ),
+        ]);
     }
 
-    public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null
+    public function resolveIdToken(#[SensitiveParameter] string $idToken): ?array
     {
         $claims = $this->resolveJwt(jwt: $idToken);
 
@@ -239,7 +240,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         return $claims;
     }
 
-    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null
+    public function resolveJwt(#[SensitiveParameter] string $jwt): ?array
     {
         $segments = explode(separator: '.', string: $jwt);
 
@@ -250,7 +251,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         [$headerSegment, $claimSegment, $signatureSegment] = $segments;
         $headerJson = $this->base64UrlDecode(value: $headerSegment);
         $claimsJson = $this->base64UrlDecode(value: $claimSegment);
-        $signature  = $this->base64UrlDecode(value: $signatureSegment);
+        $signature = $this->base64UrlDecode(value: $signatureSegment);
 
         if ($headerJson === null || $claimsJson === null || $signature === null) {
             return null;
@@ -273,7 +274,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         }
 
         $verified = openssl_verify(
-            data      : $headerSegment . '.' . $claimSegment,
+            data      : $headerSegment.'.'.$claimSegment,
             signature : $signature,
             public_key: $this->publicKey,
             algorithm : OPENSSL_ALGO_SHA256,
@@ -283,7 +284,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             return null;
         }
 
-        $issuer    = $claims['iss'] ?? null;
+        $issuer = $claims['iss'] ?? null;
         $expiresAt = $claims['exp'] ?? null;
 
         if (! is_string(value: $issuer) || $issuer !== $this->issuer || ! is_int(value: $expiresAt) || $expiresAt <= time()) {
@@ -293,7 +294,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         return $claims;
     }
 
-    private function base64UrlDecode(string $value) : string|null
+    private function base64UrlDecode(string $value): ?string
     {
         $padding = strlen(string: $value) % 4;
 

@@ -32,22 +32,23 @@ final class PoolState
     /** @var int The current number of connections we have "Created" and are still managing. */
     public int $spawnedCount
         = 0 {
-            get {
-                return $this->spawnedCount;
-            }
+        get {
+            return $this->spawnedCount;
         }
+    }
 
     /** @var int A persistent counter of every single time someone borrowed a connection. */
     public int $totalAcquisitions
         = 0 {
-            get {
-                return $this->totalAcquisitions;
-            }
+        get {
+            return $this->totalAcquisitions;
         }
+    }
+
     private readonly int $maxConnections;
 
     /**
-     * @param int $maxConnections The absolute maximum number of people allowed in at once.
+     * @param  int  $maxConnections  The absolute maximum number of people allowed in at once.
      */
     public function __construct(int $maxConnections)
     {
@@ -64,7 +65,7 @@ final class PoolState
      *
      * @return bool True if there was room, false if we are at capacity.
      */
-    public function tryReserveSlot() : bool
+    public function tryReserveSlot(): bool
     {
         if ($this->spawnedCount >= $this->maxConnections) {
             return false;
@@ -83,7 +84,7 @@ final class PoolState
      * Even if we didn't need to open a new connection, we still want to
      * count that a "Borrow" happened for our statistics.
      */
-    public function recordRecycledAcquisition() : void
+    public function recordRecycledAcquisition(): void
     {
         $this->totalAcquisitions++;
     }
@@ -95,9 +96,8 @@ final class PoolState
      * This "frees up" a slot so someone else can open a new connection
      * later if they need to.
      */
-    public function releaseSlot() : void
+    public function releaseSlot(): void
     {
         $this->spawnedCount = max(0, $this->spawnedCount - 1);
     }
-
 }

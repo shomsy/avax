@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Foundation\Values;
 
-use ValueError;
 use function strtoupper;
+
+use ValueError;
 
 enum HttpMethod: string
 {

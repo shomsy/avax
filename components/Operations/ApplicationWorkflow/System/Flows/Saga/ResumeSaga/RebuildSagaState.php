@@ -6,12 +6,12 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Resum
 
 final readonly class RebuildSagaState
 {
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'rebuilds saga state from stored state or event history.';
     }
 
-    public function rebuild(array $storedState, array $events) : array
+    public function rebuild(array $storedState, array $events): array
     {
         if (! empty($storedState)) {
             return $storedState;
@@ -20,12 +20,12 @@ final readonly class RebuildSagaState
         return $this->rebuildFromEvents(events: $events);
     }
 
-    private function rebuildFromEvents(array $events) : array
+    private function rebuildFromEvents(array $events): array
     {
         $state = [
-            'status'          => 'pending',
+            'status' => 'pending',
             'completed_steps' => [],
-            'current_step'    => null,
+            'current_step' => null,
         ];
 
         foreach ($events as $event) {
@@ -35,13 +35,13 @@ final readonly class RebuildSagaState
         return $state;
     }
 
-    private function applyEvent(array $state, array $event) : array
+    private function applyEvent(array $state, array $event): array
     {
         $type = $event['type'] ?? '';
 
         if ($type === 'step_completed') {
             $state['completed_steps'][] = $event['step'];
-            $state['current_step']      = $event['next_step'] ?? null;
+            $state['current_step'] = $event['next_step'] ?? null;
         }
 
         if ($type === 'step_failed') {

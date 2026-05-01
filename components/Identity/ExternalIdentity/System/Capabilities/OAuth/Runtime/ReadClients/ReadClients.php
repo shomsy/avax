@@ -14,7 +14,7 @@ final readonly class ReadClients
     /**
      * @return list<OAuthClient>
      */
-    public function execute() : array
+    public function execute(): array
     {
         return $this->clientRegistry->all();
     }

@@ -12,28 +12,28 @@ use Closure;
 
 final class Performance
 {
-    private static QueryCache|null $queries = null;
+    private static ?QueryCache $queries = null;
 
-    public static function queryCache() : QueryCache
+    public static function queryCache(): QueryCache
     {
         if (self::$queries === null) {
-            self::$queries = new QueryCache();
+            self::$queries = new QueryCache;
         }
 
         return self::$queries;
     }
 
-    public static function routes(string $path) : RouteCache
+    public static function routes(string $path): RouteCache
     {
         return new RouteCache(path: $path);
     }
 
-    public static function config(string $path) : ConfigCache
+    public static function config(string $path): ConfigCache
     {
         return new ConfigCache(path: $path);
     }
 
-    public static function lazy(Closure $resolver) : LazyValue
+    public static function lazy(Closure $resolver): LazyValue
     {
         return new LazyValue(resolver: $resolver);
     }

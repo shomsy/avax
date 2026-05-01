@@ -11,7 +11,7 @@ final readonly class UppercaseValues
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return array_map('mb_strtoupper', $this->items);
     }

@@ -15,7 +15,7 @@ final readonly class RotateClientSecret
 {
     public function __construct(private OAuthClientRegistryInterface $clientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(string $clientId) : RegisteredOAuthClient
+    public function execute(string $clientId): RegisteredOAuthClient
     {
         $registered = $this->clientRegistry->rotateSecret(clientId: $clientId);
 
@@ -24,14 +24,14 @@ final readonly class RotateClientSecret
         }
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.oauth.client.secret_rotated',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'client_id'     => $registered->client->clientId,
-                                                           'tenant_slug'   => $registered->client->tenantSlug,
-                                                           'public_client' => $registered->client->isPublic() ? 1 : 0,
-                                                       ],
-                                       ));
+            name      : 'auth.oauth.client.secret_rotated',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $registered->client->clientId,
+                'tenant_slug' => $registered->client->tenantSlug,
+                'public_client' => $registered->client->isPublic() ? 1 : 0,
+            ],
+        ));
 
         return $registered;
     }

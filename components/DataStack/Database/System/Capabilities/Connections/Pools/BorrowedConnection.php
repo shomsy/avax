@@ -21,13 +21,11 @@ final class BorrowedConnection implements DatabaseConnection
     private bool $released = false;
 
     /**
-     * @param DatabaseConnection      $databaseConnection The actual, physical connection to the database.
-     * @param ConnectionPoolInterface $connectionPool     The "Library Manager" that knows how to put this connection back on
-     *                                                    the shelf.
+     * @param  DatabaseConnection  $databaseConnection  The actual, physical connection to the database.
+     * @param  ConnectionPoolInterface  $connectionPool  The "Library Manager" that knows how to put this connection back on
+     *                                                   the shelf.
      */
-    public function __construct(private readonly DatabaseConnection $databaseConnection, private readonly ConnectionPoolInterface $connectionPool)
-    {
-    }
+    public function __construct(private readonly DatabaseConnection $databaseConnection, private readonly ConnectionPoolInterface $connectionPool) {}
 
     /**
      * Get the underlying PDO tool to run your queries.
@@ -37,7 +35,7 @@ final class BorrowedConnection implements DatabaseConnection
      * @throws ConnectionException If the connection was lost or closed unexpectedly.
      */
     #[Override]
-    public function getConnection() : PDO
+    public function getConnection(): PDO
     {
         return $this->databaseConnection->getConnection();
     }
@@ -48,7 +46,7 @@ final class BorrowedConnection implements DatabaseConnection
      * @return bool True if it responds, false if the line is dead.
      */
     #[Override]
-    public function ping() : bool
+    public function ping(): bool
     {
         return $this->databaseConnection->ping();
     }
@@ -57,7 +55,7 @@ final class BorrowedConnection implements DatabaseConnection
      * Get the technical nickname of this connection (e.g., 'primary', 'read-only').
      */
     #[Override]
-    public function getName() : string
+    public function getName(): string
     {
         return $this->databaseConnection->getName();
     }
@@ -73,7 +71,7 @@ final class BorrowedConnection implements DatabaseConnection
     /**
      * Manually return the connection to the pool early.
      */
-    public function release() : void
+    public function release(): void
     {
         if (! $this->released) {
             $this->connectionPool->release(connection: $this);
@@ -88,7 +86,7 @@ final class BorrowedConnection implements DatabaseConnection
      *
      * @internal You should never need to call this in your application code.
      */
-    public function getOriginalConnection() : DatabaseConnection
+    public function getOriginalConnection(): DatabaseConnection
     {
         return $this->databaseConnection;
     }

@@ -1,17 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
 use Avax\Components\HTTP\Router\Support\RouteRegistry;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
 
 return ServicePrototype::__set_state(array: [
-                                                'class' => RouteRegistry::class,
+                                                'class'              => RouteRegistry::class,
                                                 'constructor'        => null,
-                                                'injectedProperties' =>
-                                                    [
+                                                'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    =>
-                                                    [
+                                                'injectedMethods'    => [
                                                     ],
                                                 'isInstantiable'     => true,
                                             ]);

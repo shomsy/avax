@@ -9,7 +9,7 @@ use Throwable;
 
 final class DataTransferException extends InvalidArgumentException
 {
-    public function __construct(string $message = '', int $code = 0, Throwable|null $throwable = null)
+    public function __construct(string $message = '', int $code = 0, ?Throwable $throwable = null)
     {
         parent::__construct(message: $message, code: $code, previous: $throwable);
     }

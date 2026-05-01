@@ -10,9 +10,9 @@ use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Resetta
 
 final class PooledLifetimeSequence
 {
-    public static int $created  = 0;
+    public static int $created = 0;
 
-    public static int $reset    = 0;
+    public static int $reset = 0;
 
     public static int $disposed = 0;
 }

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
@@ -35,9 +34,7 @@ class RouterDslAnyTest extends TestCase
     public function any_registers_single_any_route() : void
     {
         // When: Registering with any()
-        $proxy = $this->dsl->any(path: '/test', action: static function () {
-            return 'any';
-        });
+        $proxy = $this->dsl->any(path: '/test', action: static fn () => 'any');
 
         // Then: Should return single RouteRegistrarProxy (not array)
         $this->assertInstanceOf(expected: RouteRegistrarProxy::class, actual: $proxy);
@@ -49,9 +46,7 @@ class RouterDslAnyTest extends TestCase
     public function any_expanded_registers_all_methods() : void
     {
         // When: Registering with anyExpanded()
-        $proxies = $this->dsl->anyExpanded(path: '/test', action: static function () {
-            return 'expanded';
-        });
+        $proxies = $this->dsl->anyExpanded(path: '/test', action: static fn () => 'expanded');
 
         // Then: Should return array with all HTTP methods except ANY
         $this->assertIsArray(actual: $proxies);
@@ -68,9 +63,7 @@ class RouterDslAnyTest extends TestCase
     public function any_expanded_excludes_any_method() : void
     {
         // When: Registering with anyExpanded()
-        $this->dsl->anyExpanded(path: '/test', action: static function () {
-            return 'expanded';
-        });
+        $this->dsl->anyExpanded(path: '/test', action: static fn () => 'expanded');
 
         // Then: ANY method should not be included
         // This is tested by the count assertion above (7 instead of 8)
@@ -89,24 +82,20 @@ class RouterDslAnyTest extends TestCase
 
         // Given: Router matcher prioritizes specific methods over ANY
         $matcher = new RouteMatcher(
-            logger: $this->createMock(LoggerInterface::class)
+            logger: $this->createMock(LoggerInterface::class),
         );
 
         // Create mock routes
         $anyRoute = new RouteDefinition(
             method: 'ANY',
             path  : '/test',
-            action: static function () {
-                return 'any';
-            }
+            action: static fn () => 'any',
         );
 
         $getRoute = new RouteDefinition(
             method: 'GET',
             path  : '/test',
-            action: static function () {
-                return 'get';
-            }
+            action: static fn () => 'get',
         );
 
         $routes = [
@@ -133,13 +122,13 @@ class RouterDslAnyTest extends TestCase
     {
         // Create minimal dependencies for testing
         $router          = $this->createMock(HttpRequestRouter::class);
-        $routeCollection = new RouteCollection;
+        $routeCollection = new RouteCollection();
 
         $this->dsl = new RouterDsl(
             registrar           : $this->createMock(RouterRegistrar::class),
             router              : $router,
             controllerDispatcher: $this->createMock(ControllerDispatcher::class),
-            fallbackManager     : $this->createMock(RegisteredFallback::class)
+            fallbackManager     : $this->createMock(RegisteredFallback::class),
         );
     }
 }

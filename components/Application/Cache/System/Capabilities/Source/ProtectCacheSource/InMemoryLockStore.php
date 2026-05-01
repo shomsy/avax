@@ -13,13 +13,12 @@ final class InMemoryLockStore implements CacheLockStore
     public function __construct(
         private readonly Clock $clock = new SystemClock(),
         /** @var array<string, CacheLockOwner> */
-        private array          $locks = []
-    )
-    {
+        private array $locks = [],
+    ) {
     }
 
     #[Override]
-    public function acquire(string $key, int $ttlSeconds = 30, string|null $owner = null) : bool
+    public function acquire(string $key, int $ttlSeconds = 30, string $owner = null) : bool
     {
         $lockOwner = $owner ?? uniqid(more_entropy: true);
 
@@ -59,7 +58,7 @@ final class InMemoryLockStore implements CacheLockStore
     }
 
     #[Override]
-    public function release(string $key, string|null $owner = null) : void
+    public function release(string $key, string $owner = null) : void
     {
         $existingOwner = $this->locks[$key] ?? null;
 

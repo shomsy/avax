@@ -16,8 +16,7 @@ final readonly class ExecuteCompensationStep
     public function execute(
         SagaStepDefinition $step,
         array $previousResult,
-    ) : array
-    {
+    ): array {
         if ($step->compensationComponent === null) {
             throw new SagaCompensationFailure(
                 message: sprintf('No compensation defined for step %s.', $step->name),
@@ -26,14 +25,14 @@ final readonly class ExecuteCompensationStep
 
         $startTime = microtime(true);
 
-        $input  = $previousResult['output'] ?? [];
+        $input = $previousResult['output'] ?? [];
         $result = ($this->compensationRunner)($step->compensationComponent, $input);
 
         $duration = (microtime(true) - $startTime) * 1000;
 
         return [
-            'success'     => true,
-            'output'      => is_array($result) ? $result : ['result' => $result],
+            'success' => true,
+            'output' => is_array($result) ? $result : ['result' => $result],
             'duration_ms' => $duration,
         ];
     }
@@ -47,8 +46,7 @@ final readonly class RecordCompensationCompleted
         string $sagaId,
         string $stepName,
         array $result,
-    ) : void
-    {
+    ): void {
         $this->inspect->record(
             SagaRuntimeEvent::create(
                 sagaId  : $sagaId,
@@ -69,8 +67,7 @@ final readonly class RecordCompensationFailed
         string $sagaId,
         string $stepName,
         string $error,
-    ) : void
-    {
+    ): void {
         $this->inspect->record(
             SagaRuntimeEvent::create(
                 sagaId  : $sagaId,
@@ -91,13 +88,12 @@ final readonly class PublishSagaCompensated
         string $sagaId,
         string $definitionName,
         array $compensationResults,
-    ) : void
-    {
+    ): void {
         $topic = sprintf('saga.%s.compensated', $definitionName);
 
         $this->messageBus->publish($topic, [
-            'saga_id'              => $sagaId,
-            'definition_name'      => $definitionName,
+            'saga_id' => $sagaId,
+            'definition_name' => $definitionName,
             'compensation_results' => $compensationResults,
         ]);
     }
@@ -105,7 +101,7 @@ final readonly class PublishSagaCompensated
 
 class SagaCompensationFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga compensation failed.', Throwable|null $previous = null)
+    public function __construct(string $message = 'Saga compensation failed.', ?Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

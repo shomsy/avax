@@ -19,43 +19,42 @@ interface MaterializedViewInterface
     /**
      * Returns the unique name of the materialized view.
      */
-    public function name() : string;
+    public function name(): string;
 
     /**
      * Refreshes the materialized view with current data.
      *
      * @return MaterializedViewStats Statistics about the refresh operation
      */
-    public function refresh() : MaterializedViewStats;
+    public function refresh(): MaterializedViewStats;
 
     /**
      * Reads data from the materialized view.
      *
-     * @param array<string, mixed> $filters Optional filters to apply
-     *
+     * @param  array<string, mixed>  $filters  Optional filters to apply
      * @return array<string, mixed>|list<mixed>
      */
-    public function read(array $filters = []) : array;
+    public function read(array $filters = []): array;
 
     /**
      * Checks if the materialized view is stale.
      */
-    public function isStale() : bool;
+    public function isStale(): bool;
 
     /**
      * Returns the age of the materialized view in seconds.
      */
-    public function age() : float;
+    public function age(): float;
 
     /**
      * Returns the timestamp of the last refresh.
      */
-    public function lastRefreshedAt() : float;
+    public function lastRefreshedAt(): float;
 
     /**
      * Returns the staleness threshold in seconds.
      */
-    public function stalenessThreshold() : float;
+    public function stalenessThreshold(): float;
 }
 
 /**
@@ -65,17 +64,17 @@ final readonly class MaterializedViewStats
 {
     public function __construct(
         public string $viewName,
-        public int    $rowsAffected = 0,
-        public float  $durationMs = 0.0,
-        public float  $refreshedAt = 0.0,
-        public bool   $success = true,
-        public string|null $error = null,
+        public int $rowsAffected = 0,
+        public float $durationMs = 0.0,
+        public float $refreshedAt = 0.0,
+        public bool $success = true,
+        public ?string $error = null,
     ) {}
 
     /**
      * Creates a failure stats object.
      */
-    public static function failure(string $viewName, string $error) : self
+    public static function failure(string $viewName, string $error): self
     {
         return new self(
             viewName   : $viewName,
@@ -94,6 +93,7 @@ final readonly class MaterializedViewStats
  * or a cache store.
  *
  * @template T of array
+ *
  * @implements MaterializedViewInterface
  */
 final class MaterializedView implements MaterializedViewInterface
@@ -111,12 +111,12 @@ final class MaterializedView implements MaterializedViewInterface
     /**
      * @var T|null Cached data
      */
-    private array|null $data = null;
+    private ?array $data = null;
 
     /**
      * @var float|null Timestamp of last refresh
      */
-    private float|null $lastRefreshedAt = null;
+    private ?float $lastRefreshedAt = null;
 
     /**
      * @var float Staleness threshold in seconds (default: 1 hour)
@@ -129,34 +129,33 @@ final class MaterializedView implements MaterializedViewInterface
     private int $rowCount = 0;
 
     /**
-     * @param Closure() : T $query Closure that produces the view data
-     * @param float        $stalenessThreshold Seconds before view is considered stale
+     * @param  Closure() : T  $query  Closure that produces the view data
+     * @param  float  $stalenessThreshold  Seconds before view is considered stale
      */
     public function __construct(
         string $name,
         Closure $query,
-        float  $stalenessThreshold = 3600.0,
-    )
-    {
-        $this->name               = $name;
-        $this->query              = $query;
+        float $stalenessThreshold = 3600.0,
+    ) {
+        $this->name = $name;
+        $this->query = $query;
         $this->stalenessThreshold = $stalenessThreshold;
     }
 
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function refresh() : MaterializedViewStats
+    public function refresh(): MaterializedViewStats
     {
         $startTime = microtime(true);
 
         try {
-            $data                  = ($this->query)();
-            $this->data            = $data;
+            $data = ($this->query)();
+            $this->data = $data;
             $this->lastRefreshedAt = microtime(true);
-            $this->rowCount        = is_array($data) ? count($data) : 0;
+            $this->rowCount = is_array($data) ? count($data) : 0;
 
             $durationMs = (microtime(true) - $startTime) * 1000;
 
@@ -171,7 +170,7 @@ final class MaterializedView implements MaterializedViewInterface
         }
     }
 
-    public function read(array $filters = []) : array
+    public function read(array $filters = []): array
     {
         if ($this->data === null) {
             throw new RuntimeException(
@@ -184,25 +183,25 @@ final class MaterializedView implements MaterializedViewInterface
         }
 
         return array_values(array_filter(
-                                $this->data,
-                                static function (array $row) use ($filters) : bool {
-                                    foreach ($filters as $key => $value) {
-                                        if (! isset($row[$key]) || $row[$key] !== $value) {
-                                            return false;
-                                        }
-                                    }
+            $this->data,
+            static function (array $row) use ($filters): bool {
+                foreach ($filters as $key => $value) {
+                    if (! isset($row[$key]) || $row[$key] !== $value) {
+                        return false;
+                    }
+                }
 
-                                    return true;
-                                },
-                            ));
+                return true;
+            },
+        ));
     }
 
-    public function lastRefreshedAt() : float
+    public function lastRefreshedAt(): float
     {
         return $this->lastRefreshedAt ?? 0.0;
     }
 
-    public function stalenessThreshold() : float
+    public function stalenessThreshold(): float
     {
         return $this->stalenessThreshold;
     }
@@ -210,7 +209,7 @@ final class MaterializedView implements MaterializedViewInterface
     /**
      * Returns the number of rows in the cached data.
      */
-    public function rowCount() : int
+    public function rowCount(): int
     {
         return $this->rowCount;
     }
@@ -218,7 +217,7 @@ final class MaterializedView implements MaterializedViewInterface
     /**
      * Checks if the view has been refreshed at least once.
      */
-    public function hasData() : bool
+    public function hasData(): bool
     {
         return $this->data !== null;
     }
@@ -226,17 +225,17 @@ final class MaterializedView implements MaterializedViewInterface
     /**
      * Clears the cached data without triggering a refresh.
      */
-    public function clear() : void
+    public function clear(): void
     {
-        $this->data            = null;
+        $this->data = null;
         $this->lastRefreshedAt = null;
-        $this->rowCount        = 0;
+        $this->rowCount = 0;
     }
 
     /**
      * Returns the cached data directly (for inspection).
      */
-    public function data() : array|null
+    public function data(): ?array
     {
         return $this->data;
     }
@@ -244,13 +243,13 @@ final class MaterializedView implements MaterializedViewInterface
     /**
      * Returns a summary of the view state.
      */
-    public function summary() : string
+    public function summary(): string
     {
         if ($this->data === null) {
             return "View '{$this->name}': not refreshed";
         }
 
-        $age       = $this->age();
+        $age = $this->age();
         $staleness = $this->isStale() ? 'STALE' : 'FRESH';
 
         return sprintf(
@@ -262,7 +261,7 @@ final class MaterializedView implements MaterializedViewInterface
         );
     }
 
-    public function age() : float
+    public function age(): float
     {
         if ($this->lastRefreshedAt === null) {
             return PHP_FLOAT_MAX;
@@ -271,7 +270,7 @@ final class MaterializedView implements MaterializedViewInterface
         return microtime(true) - $this->lastRefreshedAt;
     }
 
-    public function isStale() : bool
+    public function isStale(): bool
     {
         if ($this->lastRefreshedAt === null) {
             return true;
@@ -294,7 +293,7 @@ final class MaterializedViewRegistry
     /**
      * Registers a materialized view.
      */
-    public function register(MaterializedView $view) : void
+    public function register(MaterializedView $view): void
     {
         $this->views[$view->name()] = $view;
     }
@@ -304,7 +303,7 @@ final class MaterializedViewRegistry
      *
      * @return array<string, MaterializedViewStats>
      */
-    public function refreshAll() : array
+    public function refreshAll(): array
     {
         $results = [];
 
@@ -318,7 +317,7 @@ final class MaterializedViewRegistry
     /**
      * Refreshes a specific view.
      */
-    public function refresh(string $name) : MaterializedViewStats
+    public function refresh(string $name): MaterializedViewStats
     {
         return $this->get($name)->refresh();
     }
@@ -328,7 +327,7 @@ final class MaterializedViewRegistry
      *
      * @throws RuntimeException If the view is not found
      */
-    public function get(string $name) : MaterializedView
+    public function get(string $name): MaterializedView
     {
         if (! isset($this->views[$name])) {
             throw new RuntimeException("Materialized view '{$name}' is not registered");
@@ -342,12 +341,12 @@ final class MaterializedViewRegistry
      *
      * @return list<MaterializedView>
      */
-    public function staleViews() : array
+    public function staleViews(): array
     {
         return array_values(array_filter(
-                                $this->views,
-                                static fn (MaterializedView $view) : bool => $view->isStale(),
-                            ));
+            $this->views,
+            static fn (MaterializedView $view): bool => $view->isStale(),
+        ));
     }
 
     /**
@@ -355,7 +354,7 @@ final class MaterializedViewRegistry
      *
      * @return list<string>
      */
-    public function viewNames() : array
+    public function viewNames(): array
     {
         return array_keys($this->views);
     }
@@ -363,7 +362,7 @@ final class MaterializedViewRegistry
     /**
      * Returns whether a view is registered.
      */
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->views[$name]);
     }
@@ -371,7 +370,7 @@ final class MaterializedViewRegistry
     /**
      * Removes a registered view.
      */
-    public function remove(string $name) : void
+    public function remove(string $name): void
     {
         unset($this->views[$name]);
     }
@@ -379,7 +378,7 @@ final class MaterializedViewRegistry
     /**
      * Returns the count of registered views.
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->views);
     }
@@ -387,7 +386,7 @@ final class MaterializedViewRegistry
     /**
      * Clears all registered views.
      */
-    public function clear() : void
+    public function clear(): void
     {
         $this->views = [];
     }

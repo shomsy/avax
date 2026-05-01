@@ -17,15 +17,15 @@ final readonly class IntrospectToken
     public function __construct(
         private OAuthClientRegistryInterface $clientRegistry,
         #[SensitiveParameter]
-        private JwtIdentityInterface         $jwtIdentity,
-        private AuditLogInterface            $auditLog,
-        private Clock                        $clock,
+        private JwtIdentityInterface $jwtIdentity,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
     ) {}
 
     /**
      * @throws OAuthTokenExchangeFailed
      */
-    public function execute(IntrospectTokenData $data) : TokenIntrospection
+    public function execute(IntrospectTokenData $data): TokenIntrospection
     {
         $client = $this->clientRegistry->find(clientId: $data->clientId);
 
@@ -71,13 +71,13 @@ final readonly class IntrospectToken
         }
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.oauth.token.introspected',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'client_id' => $data->clientId,
-                                                           'active'    => $result->active ? 1 : 0,
-                                                       ],
-                                       ));
+            name      : 'auth.oauth.token.introspected',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $data->clientId,
+                'active' => $result->active ? 1 : 0,
+            ],
+        ));
 
         return $result;
     }

@@ -21,17 +21,16 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
      * @throws RandomException
      */
     public function issue(
-        UserId                     $userId,
-        DateTimeImmutable          $expiresAt,
-        string                     $familyId = null,
-        DateTimeImmutable          $mfaVerifiedAt = null,
-        bool                       $phishingResistant = false,
-        string                     $clientId = null,
-        array                      $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null,
-    ) : IssuedRefreshToken
-    {
-        $tokenId  = bin2hex(string: random_bytes(length: 32));
+        UserId $userId,
+        DateTimeImmutable $expiresAt,
+        ?string $familyId = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
+        ?string $clientId = null,
+        array $scopes = [],
+        ?OAuthSenderConstraint $senderConstraint = null,
+    ): IssuedRefreshToken {
+        $tokenId = bin2hex(string: random_bytes(length: 32));
         $familyId ??= bin2hex(string: random_bytes(length: 16));
 
         $record = new RefreshTokenRecord(
@@ -58,19 +57,19 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         );
     }
 
-    public function find(#[SensitiveParameter] string $plainToken) : RefreshTokenRecord|null
+    public function find(#[SensitiveParameter] string $plainToken): ?RefreshTokenRecord
     {
         return $this->tokens[$plainToken] ?? null;
     }
 
-    public function markRotated(#[SensitiveParameter] string $tokenId, #[SensitiveParameter] string $replacementTokenId) : void
+    public function markRotated(#[SensitiveParameter] string $tokenId, #[SensitiveParameter] string $replacementTokenId): void
     {
         if (isset($this->tokens[$tokenId])) {
             $this->tokens[$tokenId] = $this->tokens[$tokenId]->markRotated(replacementId: $replacementTokenId);
         }
     }
 
-    public function revokeFamily(string $familyId) : void
+    public function revokeFamily(string $familyId): void
     {
         foreach ($this->tokens as $id => $token) {
             if ($token->familyId === $familyId) {
@@ -79,7 +78,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         }
     }
 
-    public function revokeUser(UserId $userId) : void
+    public function revokeUser(UserId $userId): void
     {
         foreach ($this->tokens as $id => $token) {
             if ($token->userId->value === $userId->value) {

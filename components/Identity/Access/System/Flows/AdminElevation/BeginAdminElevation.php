@@ -11,7 +11,7 @@ use Avax\Framework\Foundation\Exception\NotImplementedException;
  */
 final readonly class BeginAdminElevation
 {
-    public function execute() : void
+    public function execute(): void
     {
         throw new NotImplementedException('Admin elevation workflow not yet implemented');
     }

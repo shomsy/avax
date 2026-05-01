@@ -17,12 +17,12 @@ final readonly class ConvertCollectionToXml
         private array $items = [],
     ) {}
 
-    public function __invoke(string $rootElement = 'root') : string
+    public function __invoke(string $rootElement = 'root'): string
     {
         return $this->toXml(rootElement: $rootElement);
     }
 
-    public function toXml(string $rootElement = 'root') : string
+    public function toXml(string $rootElement = 'root'): string
     {
         try {
             $xml = new SimpleXMLElement(data: sprintf('<%s/>', $rootElement));
@@ -31,14 +31,14 @@ final readonly class ConvertCollectionToXml
             return $xml->asXML() ?: '';
         } catch (Exception $exception) {
             throw new LogicException(
-                message : 'Failed to convert collection to XML: ' . $exception->getMessage(),
+                message : 'Failed to convert collection to XML: '.$exception->getMessage(),
                 code    : $exception->getCode(),
                 previous: $exception,
             );
         }
     }
 
-    private function arrayToXml(array $data, SimpleXMLElement $xml) : void
+    private function arrayToXml(array $data, SimpleXMLElement $xml): void
     {
         foreach ($data as $key => $value) {
             $tagName = is_numeric(value: $key) ? 'item' : $key;
@@ -52,7 +52,7 @@ final readonly class ConvertCollectionToXml
         }
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

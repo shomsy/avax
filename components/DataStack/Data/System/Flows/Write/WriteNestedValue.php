@@ -9,12 +9,12 @@ namespace Avax\Components\DataStack\Data\System\Flows\Write;
  */
 final class WriteNestedValue
 {
-    public function execute(array &$data, string $key, mixed $value) : void
+    public function execute(array &$data, string $key, mixed $value): void
     {
-        $keys    = explode('.', $key);
+        $keys = explode('.', $key);
         $current = &$data;
 
-        while ( count($keys) > 1 ) {
+        while (count($keys) > 1) {
             $segment = array_shift($keys);
             if (! isset($current[$segment]) || ! is_array($current[$segment])) {
                 $current[$segment] = [];

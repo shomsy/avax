@@ -13,16 +13,16 @@ use Override;
  */
 class ListCommand extends Command
 {
-    protected string $name        = 'list';
+    protected string $name = 'list';
 
     protected string $description = 'List all available commands';
 
-    protected string $signature   = 'list';
+    protected string $signature = 'list';
 
     public function __construct(private readonly Console $console) {}
 
     #[Override]
-    protected function handle() : int
+    protected function handle(): int
     {
         $commands = $this->console->getCommands();
 

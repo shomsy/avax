@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores;
 
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enums\MfaStatus;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records\MfaEnrollmentRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records\MfaMethodRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records\MfaRecoveryRecord;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use SensitiveParameter;
 
 /**
@@ -25,7 +25,7 @@ final class InMemoryMfaStore implements MfaStoreInterface
     /** @var array<string, MfaRecoveryRecord> */
     private array $recoveryTokens = [];
 
-    public function status(UserId $userId) : MfaStatus
+    public function status(UserId $userId): MfaStatus
     {
         if (isset($this->methods[$userId->value])) {
             return MfaStatus::ENABLED;
@@ -38,29 +38,29 @@ final class InMemoryMfaStore implements MfaStoreInterface
         return MfaStatus::DISABLED;
     }
 
-    public function isEnabled(UserId $userId) : bool
+    public function isEnabled(UserId $userId): bool
     {
         return isset($this->methods[$userId->value]);
     }
 
-    public function findMethod(UserId $userId) : MfaMethodRecord|null
+    public function findMethod(UserId $userId): ?MfaMethodRecord
     {
         return $this->methods[$userId->value] ?? null;
     }
 
-    public function saveMethod(MfaMethodRecord $record) : void
+    public function saveMethod(MfaMethodRecord $record): void
     {
         $this->methods[$record->userId->value] = $record;
         unset($this->pendingEnrollments[$record->userId->value]);
     }
 
-    public function disable(UserId $userId) : void
+    public function disable(UserId $userId): void
     {
         unset($this->methods[$userId->value], $this->pendingEnrollments[$userId->value]);
         $this->forgetRecoveryForUser(userId: $userId);
     }
 
-    public function forgetRecoveryForUser(UserId $userId) : void
+    public function forgetRecoveryForUser(UserId $userId): void
     {
         foreach ($this->recoveryTokens as $tokenHash => $record) {
             if ($record->userId->equals(other: $userId)) {
@@ -69,33 +69,33 @@ final class InMemoryMfaStore implements MfaStoreInterface
         }
     }
 
-    public function findPendingEnrollment(UserId $userId) : MfaEnrollmentRecord|null
+    public function findPendingEnrollment(UserId $userId): ?MfaEnrollmentRecord
     {
         return $this->pendingEnrollments[$userId->value] ?? null;
     }
 
-    public function startEnrollment(MfaEnrollmentRecord $record) : void
+    public function startEnrollment(MfaEnrollmentRecord $record): void
     {
         $this->pendingEnrollments[$record->userId->value] = $record;
     }
 
-    public function cancelEnrollment(UserId $userId) : void
+    public function cancelEnrollment(UserId $userId): void
     {
         unset($this->pendingEnrollments[$userId->value]);
     }
 
-    public function saveRecovery(MfaRecoveryRecord $record) : void
+    public function saveRecovery(MfaRecoveryRecord $record): void
     {
         $this->forgetRecoveryForUser(userId: $record->userId);
         $this->recoveryTokens[$record->tokenHash] = $record;
     }
 
-    public function findRecovery(#[SensitiveParameter] string $tokenHash) : MfaRecoveryRecord|null
+    public function findRecovery(#[SensitiveParameter] string $tokenHash): ?MfaRecoveryRecord
     {
         return $this->recoveryTokens[$tokenHash] ?? null;
     }
 
-    public function forgetRecovery(#[SensitiveParameter] string $tokenHash) : void
+    public function forgetRecovery(#[SensitiveParameter] string $tokenHash): void
     {
         unset($this->recoveryTokens[$tokenHash]);
     }

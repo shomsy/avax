@@ -18,35 +18,34 @@ final readonly class Arrhae
 
     public function __construct(
         private array $items = [],
-    )
-    {
-        $this->guard = new MutationGuard();
+    ) {
+        $this->guard = new MutationGuard;
     }
 
-    public static function from(iterable $items) : static
+    public static function from(iterable $items): static
     {
         return self::make(items: $items);
     }
 
-    public static function make(iterable $items = []) : static
+    public static function make(iterable $items = []): static
     {
         return new self(items: new MakeCollection()->from(items: $items));
     }
 
-    public static function wrap(mixed $value) : static
+    public static function wrap(mixed $value): static
     {
         return match (true) {
             $value instanceof static => $value,
-            default                  => new self(items: new WrapValue()->intoArray(value: $value)),
+            default => new self(items: new WrapValue()->intoArray(value: $value)),
         };
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         if (array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
@@ -59,7 +58,7 @@ final readonly class Arrhae
         return $default;
     }
 
-    private function getDotNotation(string $key, mixed $default = null) : mixed
+    private function getDotNotation(string $key, mixed $default = null): mixed
     {
         $array = $this->items;
 
@@ -74,13 +73,13 @@ final readonly class Arrhae
         return $array;
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return array_key_exists(key: $key, array: $this->items)
             || (str_contains(haystack: $key, needle: '.') && $this->getDotNotation(key: $key) !== null);
     }
 
-    public function set(string $key, mixed $value) : static
+    public function set(string $key, mixed $value): static
     {
         $this->assertNotLocked();
 
@@ -91,23 +90,23 @@ final readonly class Arrhae
             return new self(items: $items);
         }
 
-        $items       = $this->items;
+        $items = $this->items;
         $items[$key] = $value;
 
         return new self(items: $items);
     }
 
-    private function assertNotLocked() : void
+    private function assertNotLocked(): void
     {
         $this->guard->assertMutable();
     }
 
-    private function setDotNotation(array &$items, string $key, mixed $value) : void
+    private function setDotNotation(array &$items, string $key, mixed $value): void
     {
-        $keys    = explode(separator: '.', string: $key);
+        $keys = explode(separator: '.', string: $key);
         $current = &$items;
 
-        while ( count(value: $keys) > 1 ) {
+        while (count(value: $keys) > 1) {
             $segment = array_shift(array: $keys);
 
             if (! isset($current[$segment]) || ! is_array(value: $current[$segment])) {
@@ -120,7 +119,7 @@ final readonly class Arrhae
         $current[array_shift(array: $keys)] = $value;
     }
 
-    public function forget(string $key) : static
+    public function forget(string $key): static
     {
         $this->assertNotLocked();
 
@@ -137,12 +136,12 @@ final readonly class Arrhae
         return new self(items: $items);
     }
 
-    private function unsetDotNotation(array &$items, string $key) : void
+    private function unsetDotNotation(array &$items, string $key): void
     {
-        $keys    = explode(separator: '.', string: $key);
+        $keys = explode(separator: '.', string: $key);
         $current = &$items;
 
-        while ( count(value: $keys) > 1 ) {
+        while (count(value: $keys) > 1) {
             $segment = array_shift(array: $keys);
 
             if (! isset($current[$segment]) || ! is_array(value: $current[$segment])) {
@@ -155,32 +154,32 @@ final readonly class Arrhae
         unset($current[array_shift(array: $keys)]);
     }
 
-    public function add(mixed $value) : static
+    public function add(mixed $value): static
     {
         $this->assertNotLocked();
 
-        $items   = $this->items;
+        $items = $this->items;
         $items[] = $value;
 
         return new self(items: $items);
     }
 
-    public function merge(array $items) : static
+    public function merge(array $items): static
     {
         return new self(items: array_merge($this->items, $items));
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count(value: $this->items);
     }
 
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->items === [];
     }
 
-    public function first(mixed $default = null) : mixed
+    public function first(mixed $default = null): mixed
     {
         if ($this->items === []) {
             return $default;
@@ -189,7 +188,7 @@ final readonly class Arrhae
         return reset(array: $this->items);
     }
 
-    public function last(mixed $default = null) : mixed
+    public function last(mixed $default = null): mixed
     {
         if ($this->items === []) {
             return $default;
@@ -198,17 +197,17 @@ final readonly class Arrhae
         return end(array: $this->items);
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->items;
     }
 
-    public function isLocked() : bool
+    public function isLocked(): bool
     {
         return $this->guard->isLocked();
     }
 
-    public function lock() : static
+    public function lock(): static
     {
         $clone = new self(items: $this->items);
         $clone->guard->lock();

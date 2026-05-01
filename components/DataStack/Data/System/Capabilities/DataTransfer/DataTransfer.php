@@ -28,9 +28,9 @@ use Throwable;
  */
 final class DataTransfer
 {
-    private static DataTransferConfig|null $dataTransferConfig = null;
+    private static ?DataTransferConfig $dataTransferConfig = null;
 
-    public static function configure(DataTransferConfig $dataTransferConfig) : void
+    public static function configure(DataTransferConfig $dataTransferConfig): void
     {
         self::$dataTransferConfig = $dataTransferConfig;
     }
@@ -39,9 +39,10 @@ final class DataTransfer
      * Validate input data against a DTO class
      *
      * @template T of object
-     * @param class-string<T> $class
+     *
+     * @param  class-string<T>  $class
      */
-    public static function tryCreate(string $class, array|object $input) : DataTransferResult
+    public static function tryCreate(string $class, array|object $input): DataTransferResult
     {
         try {
             return DataTransferResult::success(object: self::create(class: $class, input: $input));
@@ -50,9 +51,9 @@ final class DataTransfer
         } catch (Throwable $exception) {
             return DataTransferResult::failure(
                 failure: new DataTransferFailure(
-                             message : 'Data transfer failed.',
-                             previous: $exception,
-                         ),
+                    message : 'Data transfer failed.',
+                    previous: $exception,
+                ),
             );
         }
     }
@@ -61,19 +62,19 @@ final class DataTransfer
      * Create a DTO instance with validation
      *
      * @template T of object
-     * @param class-string<T> $class
      *
+     * @param  class-string<T>  $class
      * @return T
      */
-    public static function create(string $class, array|object $input) : object
+    public static function create(string $class, array|object $input): object
     {
-            self::$dataTransferConfig ?? DataTransferConfig::default();
+        self::$dataTransferConfig ?? DataTransferConfig::default();
         $inputData = is_array($input) ? $input : (array) $input;
 
         $reflectionClass = new ReflectionClass($class);
-        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
+        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 
-        $values     = [];
+        $values = [];
         $violations = [];
 
         foreach ($properties as $property) {
@@ -87,7 +88,7 @@ final class DataTransfer
 
             // Check if value exists in input
             $hasValue = array_key_exists($propertyName, $inputData);
-            $value    = $inputData[$propertyName] ?? null;
+            $value = $inputData[$propertyName] ?? null;
 
             // Handle missing required fields
             if ($isRequired && ! $hasValue && $value === null) {
@@ -115,7 +116,7 @@ final class DataTransfer
             // Validate value if present and rules exist
             if ($value !== null) {
                 foreach ($property->getAttributes() as $attribute) {
-                    $attrName  = $attribute->getName();
+                    $attrName = $attribute->getName();
                     $shortName = substr($attrName, strrpos($attrName, '\\') + 1);
 
                     $validationResult = self::validatePropertyValue(
@@ -148,18 +149,17 @@ final class DataTransfer
      */
     private static function validatePropertyValue(
         string $ruleName,
-        mixed  $value,
+        mixed $value,
         string $propertyName,
-    ) : DataTransferViolation|null
-    {
+    ): ?DataTransferViolation {
         try {
             $rule = match ($ruleName) {
-                'EmailRule'              => new EmailRule(),
-                'IntegerRule'            => new IntegerRule(),
-                'MinLengthRule'          => (new ReflectionClass(new MinLengthRule(1)))->newInstance()->args[0] ?? 1,
-                'MinRule'                => new MinRule(1),
-                'PasswordComplexityRule' => new PasswordComplexityRule(),
-                default                  => null,
+                'EmailRule' => new EmailRule,
+                'IntegerRule' => new IntegerRule,
+                'MinLengthRule' => (new ReflectionClass(new MinLengthRule(1)))->newInstance()->args[0] ?? 1,
+                'MinRule' => new MinRule(1),
+                'PasswordComplexityRule' => new PasswordComplexityRule,
+                default => null,
             };
 
             if ($rule !== null) {
@@ -175,7 +175,7 @@ final class DataTransfer
         }
     }
 
-    public static function config() : DataTransferConfig
+    public static function config(): DataTransferConfig
     {
         return self::$dataTransferConfig ??= DataTransferConfig::default();
     }

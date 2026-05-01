@@ -8,13 +8,13 @@ final class BloomFilter
 {
     private array $bitset = [];
 
-    public function add(string $key) : void
+    public function add(string $key): void
     {
         $hash = crc32($key) % 1000;
         $this->bitset[$hash] = true;
     }
 
-    public function contains(string $key) : bool
+    public function contains(string $key): bool
     {
         $hash = crc32($key) % 1000;
 

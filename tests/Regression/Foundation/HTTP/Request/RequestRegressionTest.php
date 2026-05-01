@@ -46,7 +46,7 @@ class RequestRegressionTest extends TestCase
             queryParams  : [],
             parsedBody   : [],
             cookies      : [],
-            uploadedFiles: []
+            uploadedFiles: [],
         );
     }
 
@@ -93,7 +93,7 @@ class RequestRegressionTest extends TestCase
     {
         $request = $this->createBlankOldRequest(serverParams: [
                                                                   'REMOTE_ADDR'          => '192.168.1.1',
-                                                                  'HTTP_X_FORWARDED_FOR' => '8.8.8.8'
+                                                                  'HTTP_X_FORWARDED_FOR' => '8.8.8.8',
                                                               ]);
 
         // Without an explicit trusted proxy policy, the true IP should be REMOTE_ADDR.

@@ -26,7 +26,7 @@ final class DataTransferPublicApiTest extends TestCase
             'addresses' => [
                 ['city' => 'Novi Sad'],
             ],
-            'secret'    => 'hidden-value',
+            'secret' => 'hidden-value',
         ];
 
         // Act
@@ -158,7 +158,7 @@ final readonly class UnitRoleData
 final readonly class UnitScalarBoundaryData
 {
     public function __construct(
-        public int  $count,
+        public int $count,
         public bool $active,
     ) {}
 }
@@ -170,12 +170,15 @@ final readonly class UnitProfileData
      */
     public function __construct(
         #[MapFrom(name: 'user_name')]
-        public string                                $name,
-        public UnitRole                              $role,
-        #[SensitiveParameter] public UnitAddressData $address,
-        #[SensitiveParameter] #[ListOf(class: UnitAddressData::class)]
-        public array                                 $addresses,
-        #[SensitiveParameter] #[Hidden]
-        public string                                $secret,
+        public string          $name,
+        public UnitRole        $role,
+        #[SensitiveParameter]
+        public UnitAddressData $address,
+        #[SensitiveParameter]
+        #[ListOf(class: UnitAddressData::class)]
+        public array           $addresses,
+        #[SensitiveParameter]
+        #[Hidden]
+        public string          $secret,
     ) {}
 }

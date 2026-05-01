@@ -10,13 +10,13 @@ use Attribute;
 final readonly class OneToOne
 {
     /**
-     * @param list<string> $cascade
+     * @param  list<string>  $cascade
      */
     public function __construct(
         public string $targetEntity,
-        public string|null $mappedBy = null,
-        public string|null $inversedBy = null,
-        public array  $cascade = [],
-        public bool   $lazy = true,
+        public ?string $mappedBy = null,
+        public ?string $inversedBy = null,
+        public array $cascade = [],
+        public bool $lazy = true,
     ) {}
 }

@@ -169,7 +169,7 @@ final readonly class BootProviders
 
     /**
      * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
-     * @param array<class-string<RegisterDependency>, true>                                   $eager
+     * @param array<class-string<RegisterDependency>, true> $eager
      */
     private function markDependenciesAsEager(string $class, array $dependencies, array &$eager) : void
     {

@@ -13,14 +13,14 @@ use ReflectionClass;
 final readonly class ReadClassDataShape
 {
     /**
-     * @param class-string $class
+     * @param  class-string  $class
      */
-    public function read(string $class, DataTransferConfig $config) : DataShape
+    public function read(string $class, DataTransferConfig $config): DataShape
     {
         $reflection = new ReflectionClass(objectOrClass: $class);
 
         $constructorFields = new ReadConstructorDataFields()->read(class: $reflection, config: $config);
-        $publicFields      = new ReadPublicDataFields()->read(
+        $publicFields = new ReadPublicDataFields()->read(
             class         : $reflection,
             config        : $config,
             existingFields: $constructorFields,

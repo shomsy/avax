@@ -10,7 +10,7 @@ use Attribute;
 final readonly class CastWith
 {
     /**
-     * @param class-string $casterClass
+     * @param  class-string  $casterClass
      */
     public function __construct(public string $casterClass) {}
 }

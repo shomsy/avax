@@ -37,7 +37,7 @@ final class SagaLifecycleTest extends TestCase
         $definition = $this->definition();
         $instance   = $saga->start()->start(
             definition: $definition,
-            command   : new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-456')
+            command   : new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-456'),
         );
 
         $firstStep  = $saga->runStep()->run(definition: $definition, instanceId: $instance->id);
@@ -61,13 +61,13 @@ final class SagaLifecycleTest extends TestCase
             steps        : [
                                new SagaStepDefinition(
                                    name   : 'reserve_inventory',
-                                   runStep: static fn () : never => throw new RuntimeException(message: 'inventory unavailable')
+                                   runStep: static fn () : never => throw new RuntimeException(message: 'inventory unavailable'),
                                ),
-                           ]
+                           ],
         );
-        $instance   = $saga->start()->start(
+        $instance = $saga->start()->start(
             definition: $definition,
-            command   : new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-789')
+            command   : new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-789'),
         );
 
         try {
@@ -90,7 +90,7 @@ final class SagaLifecycleTest extends TestCase
             steps        : [
                                new SagaStepDefinition(name: 'reserve_inventory', nextStepName: 'charge_card', runStep: static fn () : string => 'reserved'),
                                new SagaStepDefinition(name: 'charge_card', runStep: static fn () : string => 'charged'),
-                           ]
+                           ],
         );
     }
 }

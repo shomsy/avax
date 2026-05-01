@@ -15,7 +15,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetim
 final class CreateDependencyBlueprintSmokeTest
 {
     #[Inject]
-    public stdClass          $property;
+    public stdClass $property;
     public DateTimeImmutable $createdAt;
 
     public function __construct(DateTimeImmutable $createdAt)

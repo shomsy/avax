@@ -22,51 +22,51 @@ use Throwable;
 final readonly class Database implements DatabaseInterface
 {
     public function __construct(
-        private Connections  $connections,
-        private Query        $query,
+        private Connections $connections,
+        private Query $query,
         private EntityManager $entityManager,
-        private Schema       $schema,
-        private Migrations   $migrations,
+        private Schema $schema,
+        private Migrations $migrations,
         private Transactions $transactions,
-        private Telemetry    $telemetry,
+        private Telemetry $telemetry,
     ) {}
 
-    public static function configuration() : DatabaseBuilder
+    public static function configuration(): DatabaseBuilder
     {
-        return new DatabaseBuilder();
+        return new DatabaseBuilder;
     }
 
-    public function connections() : Connections
+    public function connections(): Connections
     {
         return $this->connections;
     }
 
-    public function query() : Query
+    public function query(): Query
     {
         return $this->query;
     }
 
-    public function entityManager() : EntityManager
+    public function entityManager(): EntityManager
     {
         return $this->entityManager;
     }
 
-    public function migrations() : Migrations
+    public function migrations(): Migrations
     {
         return $this->migrations;
     }
 
-    public function schema() : Schema
+    public function schema(): Schema
     {
         return $this->schema;
     }
 
-    public function transactions() : Transactions
+    public function transactions(): Transactions
     {
         return $this->transactions;
     }
 
-    public function telemetry() : Telemetry
+    public function telemetry(): Telemetry
     {
         return $this->telemetry;
     }
@@ -75,7 +75,7 @@ final readonly class Database implements DatabaseInterface
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, string|null $connectionName = null) : QueryBuilder
+    public function table(string $table, ?string $connectionName = null): QueryBuilder
     {
         return $this->query->from(table: $table, connectionName: $connectionName);
     }

@@ -14,16 +14,16 @@ final class SchedulerReport
         $this->executed = $executed;
     }
 
-    public function addExecuted(string $task, string $status, float $duration) : void
+    public function addExecuted(string $task, string $status, float $duration): void
     {
         $this->executed[] = [
-            'task'        => $task,
-            'status'      => $status,
+            'task' => $task,
+            'status' => $status,
             'duration_ms' => $duration,
         ];
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->executed);
     }

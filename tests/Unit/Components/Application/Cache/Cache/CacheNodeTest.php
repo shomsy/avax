@@ -18,7 +18,7 @@ final class CacheNodeTest extends TestCase
             id    : 'node-a',
             host  : '127.0.0.1',
             port  : 6379,
-            weight: 200
+            weight: 200,
         );
 
         $this->assertSame('node-a', $node->id);
@@ -33,7 +33,7 @@ final class CacheNodeTest extends TestCase
         $node = new CacheNode(
             id  : 'node-b',
             host: '10.0.0.1',
-            port: 6380
+            port: 6380,
         );
 
         $this->assertSame('node-b', $node->id);
@@ -47,7 +47,7 @@ final class CacheNodeTest extends TestCase
             id    : 'node-c',
             host  : '10.0.0.2',
             port  : 6381,
-            status: CacheNodeStatus::UNHEALTHY
+            status: CacheNodeStatus::UNHEALTHY,
         );
 
         $this->assertSame(CacheNodeStatus::UNHEALTHY, $node->status);
@@ -62,7 +62,7 @@ final class CacheNodeTest extends TestCase
             host  : '192.168.1.1',
             port  : 6382,
             weight: 150,
-            status: CacheNodeStatus::DRAINING
+            status: CacheNodeStatus::DRAINING,
         );
 
         $this->assertSame('factory-node', $node->id);
@@ -196,7 +196,7 @@ final class CacheNodeTest extends TestCase
             host  : '10.0.0.5',
             port  : 6385,
             weight: 150,
-            status: CacheNodeStatus::HEALTHY
+            status: CacheNodeStatus::HEALTHY,
         );
 
         $array = $node->toArray();
@@ -220,7 +220,7 @@ final class CacheNodeTest extends TestCase
             port            : 6390,
             weight          : 200,
             status          : CacheNodeStatus::DRAINING,
-            virtualNodeCount: 300
+            virtualNodeCount: 300,
         );
 
         $array    = $original->toArray();

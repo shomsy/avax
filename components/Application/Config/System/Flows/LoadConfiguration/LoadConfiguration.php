@@ -14,7 +14,7 @@ use Avax\Components\Application\Config\System\Capabilities\Repository\Configurat
 final readonly class LoadConfiguration
 {
     public function __construct(
-        private ConfigLoaderInterface   $configLoader,
+        private ConfigLoaderInterface $configLoader,
         private ConfigurationRepository $configurationRepository,
     ) {}
 

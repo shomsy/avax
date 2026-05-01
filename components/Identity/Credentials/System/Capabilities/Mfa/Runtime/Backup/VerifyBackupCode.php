@@ -20,12 +20,12 @@ final readonly class VerifyBackupCode
     public function __construct(
         private MfaStoreInterface $mfaStore,
         #[SensitiveParameter]
-        private PasswordHasher    $passwordHasher,
+        private PasswordHasher $passwordHasher,
         private AuditLogInterface $auditLog,
-        private Clock             $clock,
+        private Clock $clock,
     ) {}
 
-    public function execute(UserId $userId, #[SensitiveParameter] string $code) : bool
+    public function execute(UserId $userId, #[SensitiveParameter] string $code): bool
     {
         $method = $this->mfaStore->findMethod(userId: $userId);
 
@@ -42,19 +42,19 @@ final readonly class VerifyBackupCode
                 continue;
             }
 
-            $codes         = $method->backupCodes;
+            $codes = $method->backupCodes;
             $codes[$index] = $backupCode->markUsed(moment: $this->clock->now());
             $this->mfaStore->saveMethod(
                 record: $method->withBackupCodes(backupCodes: array_values(array: $codes)),
             );
             $this->auditLog->record(event: new AuditEvent(
-                                               name      : 'auth.mfa.backup_code.used',
-                                               occurredAt: $this->clock->now(),
-                                               context   : [
-                                                               'user_id'        => $userId->value,
-                                                               'backup_code_id' => $backupCode->backupCodeId,
-                                                           ],
-                                           ));
+                name      : 'auth.mfa.backup_code.used',
+                occurredAt: $this->clock->now(),
+                context   : [
+                    'user_id' => $userId->value,
+                    'backup_code_id' => $backupCode->backupCodeId,
+                ],
+            ));
 
             return true;
         }

@@ -30,8 +30,8 @@ final readonly class SendHttpRequest
      */
     public function __construct(
         public BuildOutboundRequest $buildRequest,
-        public DecodeHttpResponse   $decodeResponse,
-        public HandleHttpFailure    $handleFailure,
+        public DecodeHttpResponse $decodeResponse,
+        public HandleHttpFailure  $handleFailure,
         public HttpTransportInterface $transport,
     ) {}
 

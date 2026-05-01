@@ -82,7 +82,7 @@ class RequestHeadersTest extends TestCase
     {
         $headers = new RequestHeaders(headers: [
             'x-custom' => 'Alpha',
-            'host'     => 'example.com'
+            'host' => 'example.com',
         ]);
 
         $all = $headers->all();

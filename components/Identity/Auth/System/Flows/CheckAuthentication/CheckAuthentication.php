@@ -19,7 +19,7 @@ final readonly class CheckAuthentication
         private CurrentAuthentication $currentAuthentication,
     ) {}
 
-    public function execute() : bool
+    public function execute(): bool
     {
         return $this->currentAuthentication->read()->isAuthenticated();
     }

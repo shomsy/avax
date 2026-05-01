@@ -18,18 +18,18 @@ final readonly class Recovery
         #[SensitiveParameter]
         private BeginPasswordReset $beginPasswordReset,
         #[SensitiveParameter]
-        private ResetPassword      $resetPassword,
+        private ResetPassword $resetPassword,
     ) {}
 
     /**
      * @throws DateMalformedStringException
      */
-    public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge
+    public function beginPasswordReset(BeginPasswordResetData $data): PasswordResetChallenge
     {
         return $this->beginPasswordReset->execute(data: $data);
     }
 
-    public function resetPassword(ResetPasswordData $data) : bool
+    public function resetPassword(ResetPasswordData $data): bool
     {
         return $this->resetPassword->execute(data: $data);
     }

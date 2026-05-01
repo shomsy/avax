@@ -6,9 +6,6 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Di
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
-use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
-
-
 
 /**
  * Checks freshness of compiled cache entries.
@@ -28,7 +25,7 @@ final class CompiledCacheFreshness
     /**
      * Create a new freshness checker.
      */
-    public static function create(Clock|null $clock = null) : self
+    public static function create(Clock $clock = null) : self
     {
         return new self(clock: $clock ?? new SystemClock());
     }

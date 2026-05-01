@@ -9,10 +9,10 @@ namespace Avax\Components\Identity\Security\System\Capabilities\Configuration;
  */
 final readonly class SecurityConfigurationStore
 {
-    public function read(string $tenantId) : object
+    public function read(string $tenantId): object
     {
-        return (object)[
-            'mfa_required'    => true,
+        return (object) [
+            'mfa_required' => true,
             'password_policy' => 'enterprise_strict',
         ];
     }

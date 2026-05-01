@@ -87,9 +87,7 @@ final class HttpKernelIntegrationTest extends TestCase
 
         $blockingMiddleware = $this->createMock(MiddlewareInterface::class);
         $blockingMiddleware->method('handle')
-            ->willReturnCallback(static function ($request, $next) use ($blockedResponse) {
-                return $blockedResponse;
-            });
+            ->willReturnCallback(static fn ($request, $next) => $blockedResponse);
 
         $this->kernel->use($blockingMiddleware);
 

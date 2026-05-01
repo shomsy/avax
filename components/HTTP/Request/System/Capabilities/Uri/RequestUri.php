@@ -9,13 +9,13 @@ use Psr\Http\Message\UriInterface;
 final class RequestUri implements UriInterface
 {
     public function __construct(
-        private string   $scheme = '',
-        private string   $userInfo = '',
-        private string   $host = '',
+        private string $scheme = '',
+        private string $userInfo = '',
+        private string $host = '',
         private int|null $port = null,
-        private string   $path = '',
-        private string   $query = '',
-        private string   $fragment = '',
+        private string $path = '',
+        private string $query = '',
+        private string $fragment = '',
     ) {}
 
     public function getScheme() : string

@@ -97,7 +97,7 @@ final class RouteAnalyzer
                 routeA: $a,
                 routeB: $b,
                 reason: sprintf(
-                            "Exact duplicate: %s %s",
+                            'Exact duplicate: %s %s',
                             $a->method,
                             $a->pattern,
                         ),

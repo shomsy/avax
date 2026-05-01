@@ -17,64 +17,64 @@ final readonly class Persistence implements PersistenceInterface
 {
     public function __construct(
         private UnitOfWorkInterface $unitOfWork,
-        private RepositoryRegistry                                                              $repositoryRegistry,
-        private HydratorInterface                                                               $hydrator,
-        private IdentityMap                                                                     $identityMap,
+        private RepositoryRegistry $repositoryRegistry,
+        private HydratorInterface $hydrator,
+        private IdentityMap $identityMap,
         private Entities $entities,
         private RunUnitOfWork $runUnitOfWork,
     ) {}
 
-    public function run(callable $operation) : mixed
+    public function run(callable $operation): mixed
     {
         return $this->runUnitOfWork->execute($operation);
     }
 
-    public function unitOfWork() : UnitOfWorkInterface
+    public function unitOfWork(): UnitOfWorkInterface
     {
         return $this->unitOfWork;
     }
 
-    public function repositories() : RepositoryRegistry
+    public function repositories(): RepositoryRegistry
     {
         return $this->repositoryRegistry;
     }
 
-    public function hydrator() : HydratorInterface
+    public function hydrator(): HydratorInterface
     {
         return $this->hydrator;
     }
 
-    public function identityMap() : IdentityMap
+    public function identityMap(): IdentityMap
     {
         return $this->identityMap;
     }
 
-    public function entities() : Entities
+    public function entities(): Entities
     {
         return $this->entities;
     }
 
-    public function find(string $entityClass, mixed $id) : ?object
+    public function find(string $entityClass, mixed $id): ?object
     {
         return $this->entities->find($entityClass, $id);
     }
 
-    public function persist(object $entity) : void
+    public function persist(object $entity): void
     {
         $this->unitOfWork->persist($entity);
     }
 
-    public function remove(object $entity) : void
+    public function remove(object $entity): void
     {
         $this->unitOfWork->remove($entity);
     }
 
-    public function flush(string|null $connectionName = null) : void
+    public function flush(?string $connectionName = null): void
     {
         $this->unitOfWork->flush($connectionName);
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->unitOfWork->clear();
     }

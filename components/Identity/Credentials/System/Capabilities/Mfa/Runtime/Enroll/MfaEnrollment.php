@@ -15,24 +15,24 @@ use SensitiveParameter;
 final readonly class MfaEnrollment
 {
     public function __construct(
-        public MfaMethod         $method,
-        public MfaStatus         $status,
+        public MfaMethod $method,
+        public MfaStatus $status,
         #[SensitiveParameter]
-        public string            $accountLabel,
-        public string            $issuer,
+        public string $accountLabel,
+        public string $issuer,
         #[SensitiveParameter]
-        private string           $secret,
-        public string            $otpauthUri,
+        private string $secret,
+        public string $otpauthUri,
         public DateTimeImmutable $startedAt,
         public DateTimeImmutable $expiresAt,
     ) {}
 
-    public function secret() : string
+    public function secret(): string
     {
         return $this->secret;
     }
 
-    public function qrPayload() : string
+    public function qrPayload(): string
     {
         return $this->otpauthUri;
     }
@@ -40,17 +40,17 @@ final readonly class MfaEnrollment
     /**
      * @return array<string, mixed>
      */
-    public function __debugInfo() : array
+    public function __debugInfo(): array
     {
         return [
-            'method'       => $this->method->value,
-            'status'       => $this->status->value,
+            'method' => $this->method->value,
+            'status' => $this->status->value,
             'accountLabel' => $this->accountLabel,
-            'issuer'       => $this->issuer,
-            'secret'       => '[REDACTED]',
-            'otpauthUri'   => '[REDACTED]',
-            'startedAt'    => $this->startedAt,
-            'expiresAt'    => $this->expiresAt,
+            'issuer' => $this->issuer,
+            'secret' => '[REDACTED]',
+            'otpauthUri' => '[REDACTED]',
+            'startedAt' => $this->startedAt,
+            'expiresAt' => $this->expiresAt,
         ];
     }
 }

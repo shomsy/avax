@@ -9,10 +9,10 @@ final class ReadWritePool
     public function __construct(
         private readonly ConnectionPoolInterface $readPool,
         private readonly ConnectionPoolInterface $writePool,
-        private bool                             $enableReadWriteSplit = true,
+        private bool $enableReadWriteSplit = true,
     ) {}
 
-    public function getRead() : PooledConnection
+    public function getRead(): PooledConnection
     {
         if (! $this->enableReadWriteSplit) {
             return $this->writePool->get();
@@ -21,27 +21,27 @@ final class ReadWritePool
         return $this->readPool->get();
     }
 
-    public function getWrite() : PooledConnection
+    public function getWrite(): PooledConnection
     {
         return $this->writePool->get();
     }
 
-    public function releaseRead(PooledConnection $pooledConnection) : void
+    public function releaseRead(PooledConnection $pooledConnection): void
     {
         $this->readPool->release(connection: $pooledConnection);
     }
 
-    public function releaseWrite(PooledConnection $pooledConnection) : void
+    public function releaseWrite(PooledConnection $pooledConnection): void
     {
         $this->writePool->release(connection: $pooledConnection);
     }
 
-    public function isReadWriteSplitEnabled() : bool
+    public function isReadWriteSplitEnabled(): bool
     {
         return $this->enableReadWriteSplit;
     }
 
-    public function enableReadWriteSplit(bool $enabled = true) : void
+    public function enableReadWriteSplit(bool $enabled = true): void
     {
         $this->enableReadWriteSplit = $enabled;
     }

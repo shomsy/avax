@@ -32,16 +32,15 @@ use Throwable;
 final class ConnectionException extends DatabaseException
 {
     /**
-     * @param string         $name      The nickname of the database connection that failed.
-     * @param string         $message   The human-readable description of what went wrong.
-     * @param Throwable|null $throwable The raw system error that triggered this report.
+     * @param  string  $name  The nickname of the database connection that failed.
+     * @param  string  $message  The human-readable description of what went wrong.
+     * @param  Throwable|null  $throwable  The raw system error that triggered this report.
      */
     public function __construct(
         private readonly string $name,
-        string                  $message,
-        ?Throwable              $throwable = null,
-    )
-    {
+        string $message,
+        ?Throwable $throwable = null,
+    ) {
         parent::__construct(message: sprintf('Connection [%s] failed: %s', $this->name, $message), code: 0, previous: $throwable);
     }
 
@@ -50,7 +49,7 @@ final class ConnectionException extends DatabaseException
      *
      * @return string The nickname (e.g., 'primary').
      */
-    public function getConnectionName() : string
+    public function getConnectionName(): string
     {
         return $this->name;
     }

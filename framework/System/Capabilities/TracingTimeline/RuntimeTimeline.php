@@ -27,7 +27,7 @@ final class RuntimeTimeline
     /**
      * Start timing a named operation.
      */
-    public function begin(string $name, string|null $category = null) : TraceSpan
+    public function begin(string $name, string $category = null) : TraceSpan
     {
         return new TraceSpan(
             name    : $name,
@@ -46,10 +46,10 @@ final class RuntimeTimeline
      * @param array<string, mixed> $metadata
      */
     public function record(
-        string      $name,
-        float|null  $durationMS = null,
-        string|null $category = null,
-        array       $metadata = [],
+        string $name,
+        float  $durationMS = null,
+        string $category = null,
+        array  $metadata = [],
     ) : void
     {
         $timestamp = microtime(true) * 1000;
@@ -135,7 +135,7 @@ final class RuntimeTimeline
         return [
             'duration_ms' => $this->durationMS(),
             'events'      => array_map(
-                fn (RuntimeEvent $e) : array => [
+                static fn (RuntimeEvent $e) : array => [
                     'name'         => $e->name,
                     'timestamp_ms' => round($e->timestampMS, 2),
                     'duration_ms'  => $e->durationMS !== null ? round($e->durationMS, 2) : null,

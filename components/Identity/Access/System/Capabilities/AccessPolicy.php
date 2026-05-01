@@ -10,5 +10,5 @@ namespace Avax\Components\Identity\Access\System\Capabilities;
  */
 interface AccessPolicy
 {
-    public function allows(object $user, string $permission, mixed $resource = null) : bool;
+    public function allows(object $user, string $permission, mixed $resource = null): bool;
 }

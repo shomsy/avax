@@ -11,7 +11,7 @@ final readonly class FlattenValues
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(int $depth = INF) : array
+    public function __invoke(int $depth = INF): array
     {
         $result = [];
         foreach ($this->items as $item) {

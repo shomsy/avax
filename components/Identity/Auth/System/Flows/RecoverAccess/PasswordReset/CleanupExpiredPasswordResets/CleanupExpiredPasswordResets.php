@@ -12,11 +12,11 @@ final readonly class CleanupExpiredPasswordResets
 {
     public function __construct(
         #[SensitiveParameter]
-        private PruneExpiredPasswordResetsInterface|null $passwordResetStore,
-        private Clock                                    $clock,
+        private ?PruneExpiredPasswordResetsInterface $passwordResetStore,
+        private Clock $clock,
     ) {}
 
-    public function execute() : int
+    public function execute(): int
     {
         if ($this->passwordResetStore === null) {
             return 0;

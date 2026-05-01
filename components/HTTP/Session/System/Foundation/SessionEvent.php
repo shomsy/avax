@@ -9,7 +9,7 @@ final readonly class SessionEvent
     public function __construct(
         public string $name,
         public array $data,
-        public int   $timestamp,
+        public int $timestamp,
     ) {}
 
     public static function create(string $name, array $data = []) : self

@@ -6,11 +6,11 @@ namespace Avax\Components\Security\Secrets\System\Capabilities\Stores;
 
 interface SecretStore
 {
-    public function get(string $key) : string;
+    public function get(string $key): string;
 
-    public function set(string $key, string $value) : void;
+    public function set(string $key, string $value): void;
 
-    public function has(string $key) : bool;
+    public function has(string $key): bool;
 
-    public function forget(string $key) : void;
+    public function forget(string $key): void;
 }

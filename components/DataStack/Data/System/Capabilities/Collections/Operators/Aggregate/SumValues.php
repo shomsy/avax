@@ -13,12 +13,12 @@ final readonly class SumValues
         private array $items = [],
     ) {}
 
-    public function __invoke(string|callable $key) : float|int
+    public function __invoke(string|callable $key): float|int
     {
         return $this->sum(key: $key);
     }
 
-    public function sum(string|callable $key) : float|int
+    public function sum(string|callable $key): float|int
     {
         $total = 0;
         foreach ($this->items as $item) {

@@ -36,23 +36,26 @@ final class RouteCacheTest extends TestCase
         $routesDir = sys_get_temp_dir() . '/router-cache-' . uniqid();
         $cachePath = $routesDir . '/routes.cache.php';
 
-        mkdir(directory: $routesDir, permissions: 0777, recursive: true);
+        mkdir(directory: $routesDir, permissions: 0o777, recursive: true);
         file_put_contents(filename: $routesDir . '/sample.routes.php', data: "<?php // sentinel\n");
 
-        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger);
+        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger());
         $matcher         = $matcherRegistry->get(key: 'domain');
 
         $router = new HttpRequestRouter(
-            constraintValidator: new RouteConstraintValidator,
+            constraintValidator: new RouteConstraintValidator(),
             matcher            : $matcher,
-            logger             : new NullLogger
+            logger             : new NullLogger(),
         );
         $router->registerRoute(method: 'GET', path: '/closure', action: static fn () => 'x');
 
-        $runtime = new class($router) implements RouterRuntimeInterface {
+        $runtime = new class ($router) implements RouterRuntimeInterface {
             private HttpRequestRouter $router;
 
-            public function __construct(HttpRequestRouter $router) { $this->router = $router; }
+            public function __construct(HttpRequestRouter $router)
+            {
+                $this->router = $router;
+            }
 
             public function resolve(ServerRequest $request) : ResponseInterface
             {
@@ -71,9 +74,9 @@ final class RouteCacheTest extends TestCase
         };
 
         $writer = new RouteCacheLoader(
-            registrar: new RouterRegistrar(registry: new RouteRegistry, httpRequestRouter: $router),
+            registrar: new RouterRegistrar(registry: new RouteRegistry(), httpRequestRouter: $router),
             router   : $runtime,
-            logger   : new NullLogger
+            logger   : new NullLogger(),
         );
 
         $this->expectException(exception: RuntimeException::class);

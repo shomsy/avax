@@ -21,21 +21,18 @@ use Throwable;
  */
 final readonly class PDOExecutor implements ExecutorInterface
 {
-    public function __construct(private DatabaseConnection $databaseConnection, private EventBus|null $eventBus = null, private string $connectionName = 'default')
-    {
-    }
+    public function __construct(private DatabaseConnection $databaseConnection, private ?EventBus $eventBus = null, private string $connectionName = 'default') {}
 
     /**
      * Execute a "Read" query (SELECT) and get the rows back.
      */
     #[Override]
     public function query(
-        string         $sql,
+        string $sql,
         #[SensitiveParameter]
-        array          $bindings = [],
-        ExecutionScope|null $scope = null,
-    ) : array
-    {
+        array $bindings = [],
+        ?ExecutionScope $scope = null,
+    ): array {
         $start = microtime(as_float: true);
 
         try {
@@ -54,7 +51,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             return $results;
         } catch (Throwable $throwable) {
             throw new QueryException(
-                message    : 'Query execution failed: ' . $throwable->getMessage(),
+                message    : 'Query execution failed: '.$throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
                 previous   : $throwable,
@@ -62,7 +59,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         }
     }
 
-    private function getPdo() : PDO
+    private function getPdo(): PDO
     {
         return $this->databaseConnection->getConnection();
     }
@@ -72,17 +69,16 @@ final readonly class PDOExecutor implements ExecutorInterface
      */
     #[Override]
     public function execute(
-        string         $sql,
+        string $sql,
         #[SensitiveParameter]
-        array          $bindings = [],
-        ExecutionScope|null $scope = null,
-    ) : ExecutionResult
-    {
+        array $bindings = [],
+        ?ExecutionScope $scope = null,
+    ): ExecutionResult {
         $start = microtime(as_float: true);
 
         try {
             $statement = $this->getPdo()->prepare(query: $sql);
-            $success   = $statement->execute(params: $bindings);
+            $success = $statement->execute(params: $bindings);
 
             $this->dispatch(
                 sql           : $sql,
@@ -99,7 +95,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             );
         } catch (Throwable $throwable) {
             throw new QueryException(
-                message    : 'Execution failed: ' . $throwable->getMessage(),
+                message    : 'Execution failed: '.$throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
                 previous   : $throwable,
@@ -111,38 +107,37 @@ final readonly class PDOExecutor implements ExecutorInterface
      * @throws RandomException
      */
     private function dispatch(
-        string         $sql,
+        string $sql,
         #[SensitiveParameter]
-        array          $bindings,
-        float          $start,
-        ExecutionScope|null $scope = null,
-        bool           $redactBindings = true,
-    ) : void
-    {
+        array $bindings,
+        float $start,
+        ?ExecutionScope $scope = null,
+        bool $redactBindings = true,
+    ): void {
         if (! $this->eventBus instanceof EventBus) {
             return;
         }
 
-        $correlationId = $scope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
+        $correlationId = $scope?->correlationId ?? ('ctx_'.bin2hex(string: random_bytes(length: 4)));
 
         $this->eventBus->dispatch(event: new QueryExecuted(
-                                             sql           : $sql,
-                                             bindings      : $bindings,
-                                             timeMs        : (microtime(as_float: true) - $start) * 1000,
-                                             connectionName: $this->connectionName,
-                                             correlationId : $correlationId,
-                                             redactBindings: $redactBindings,
-                                         ));
+            sql           : $sql,
+            bindings      : $bindings,
+            timeMs        : (microtime(as_float: true) - $start) * 1000,
+            connectionName: $this->connectionName,
+            correlationId : $correlationId,
+            redactBindings: $redactBindings,
+        ));
     }
 
-    private function shouldRedactBindings() : bool
+    private function shouldRedactBindings(): bool
     {
         $flag = config(key: 'database.log_bindings', default: 'redacted');
 
         return strtolower(string: (string) $flag) !== 'raw';
     }
 
-    private function resolveLastInsertId(string $sql) : int|string|null
+    private function resolveLastInsertId(string $sql): int|string|null
     {
         if (preg_match(pattern: '/^\s*insert\b/i', subject: $sql) !== 1) {
             return null;
@@ -158,7 +153,7 @@ final readonly class PDOExecutor implements ExecutorInterface
     }
 
     #[Override]
-    public function getDriverName() : string
+    public function getDriverName(): string
     {
         return $this->getPdo()->getAttribute(attribute: PDO::ATTR_DRIVER_NAME);
     }

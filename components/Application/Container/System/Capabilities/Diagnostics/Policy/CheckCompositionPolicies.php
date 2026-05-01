@@ -35,9 +35,9 @@ final readonly class CheckCompositionPolicies
      * @throws ReflectionException
      */
     public function check(
-        array            $graph,
-        array            $dependents,
-        DependencyRegistry        $registrations,
+        array              $graph,
+        array              $dependents,
+        DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
         ResolutionPolicy $policy,
     ) : array
@@ -253,10 +253,10 @@ final readonly class CheckCompositionPolicies
     private function finding(
         ResolutionPolicy $policy,
         #[SensitiveParameter]
-        string           $code,
-        string           $severity,
-        string           $category,
-        string           $message,
+        string $code,
+        string $severity,
+        string $category,
+        string $message,
     ) : array
     {
         return [

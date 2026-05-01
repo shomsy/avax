@@ -19,10 +19,9 @@ final readonly class LoginRateLimit
     public function __construct(
         private LoginRateLimitStorageInterface $storage,
         private Clock $clock,
-        int|null $maxAttempts = null,
-        private int   $decaySeconds = 60,
-    )
-    {
+        ?int $maxAttempts = null,
+        private int $decaySeconds = 60,
+    ) {
         $maxAttempts ??= 5;
         $this->maxAttempts = $maxAttempts;
         if ($this->maxAttempts < 1) {
@@ -37,14 +36,14 @@ final readonly class LoginRateLimit
     /**
      * @throws RateLimitException
      */
-    public function check(string $identifier) : void
+    public function check(string $identifier): void
     {
         $identifier = $this->normalizeIdentifier(identifier: $identifier);
-        $attempts   = $this->storage->get(identifier: $identifier);
+        $attempts = $this->storage->get(identifier: $identifier);
 
         if ($attempts >= $this->maxAttempts) {
             $lastAttemptTime = $this->storage->getLastAttemptTime(identifier: $identifier);
-            $elapsed         = $this->clock->now()->getTimestamp() - $lastAttemptTime;
+            $elapsed = $this->clock->now()->getTimestamp() - $lastAttemptTime;
 
             if ($elapsed < $this->decaySeconds) {
                 $retryAfter = max(0, $this->decaySeconds - $elapsed);
@@ -59,18 +58,18 @@ final readonly class LoginRateLimit
         }
     }
 
-    private function normalizeIdentifier(string $identifier) : string
+    private function normalizeIdentifier(string $identifier): string
     {
         return strtolower(string: trim(string: $identifier));
     }
 
-    public function reset(string $identifier) : void
+    public function reset(string $identifier): void
     {
         $identifier = $this->normalizeIdentifier(identifier: $identifier);
         $this->storage->reset(identifier: $identifier);
     }
 
-    public function recordFailed(string $identifier) : void
+    public function recordFailed(string $identifier): void
     {
         $identifier = $this->normalizeIdentifier(identifier: $identifier);
         $this->storage->increment(identifier: $identifier);

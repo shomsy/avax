@@ -10,17 +10,17 @@ final readonly class RetryablePool
 {
     public function __construct(
         private BaseConnectionPool $baseConnectionPool,
-        private int                $maxRetries = 3,
+        private int $maxRetries = 3,
     ) {}
 
     /**
      * @throws Exception
      */
-    public function execute(callable $operation) : mixed
+    public function execute(callable $operation): mixed
     {
         $attempts = 0;
 
-        while ( $attempts < $this->maxRetries ) {
+        while ($attempts < $this->maxRetries) {
             try {
                 return $operation($this->baseConnectionPool);
             } catch (Exception $exception) {

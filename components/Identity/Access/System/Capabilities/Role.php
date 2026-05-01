@@ -12,6 +12,6 @@ final readonly class Role
 {
     public function __construct(
         public string $name,
-        public array  $permissions = [],
+        public array $permissions = [],
     ) {}
 }

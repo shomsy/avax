@@ -18,22 +18,22 @@ final readonly class Tokens implements TokensInterface
         private TokenCodec $codec,
     ) {}
 
-    public function authorize(array $request) : object
+    public function authorize(array $request): object
     {
         throw new NotImplementedException('Token authorization workflow not yet implemented');
     }
 
-    public function exchangeCode(string $code) : object
+    public function exchangeCode(string $code): object
     {
         return $this->exchangeCodeFlow->execute($code);
     }
 
-    public function introspect(string $token) : object
+    public function introspect(string $token): object
     {
         throw new NotImplementedException('Token introspection workflow not yet implemented');
     }
 
-    public function revoke(string $token) : void
+    public function revoke(string $token): void
     {
         throw new NotImplementedException('Token revocation workflow not yet implemented');
     }

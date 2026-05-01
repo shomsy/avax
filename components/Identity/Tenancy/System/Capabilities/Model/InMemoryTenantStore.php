@@ -18,60 +18,60 @@ final class InMemoryTenantStore implements TenantStoreInterface
     /** @var array<string, TenantInvite> */
     private array $invites = [];
 
-    public function saveTenant(Tenant $tenant) : void
+    public function saveTenant(Tenant $tenant): void
     {
         $this->tenantsBySlug[strtolower(string: $tenant->slug)] = $tenant;
     }
 
-    public function findTenantBySlug(string $slug) : Tenant|null
+    public function findTenantBySlug(string $slug): ?Tenant
     {
         return $this->tenantsBySlug[strtolower(string: trim(string: $slug))] ?? null;
     }
 
-    public function allTenants() : array
+    public function allTenants(): array
     {
         return array_values(array: $this->tenantsBySlug);
     }
 
-    public function saveMember(TenantMember $member) : void
+    public function saveMember(TenantMember $member): void
     {
         $this->members[$this->memberKey(tenantId: $member->tenantId, userId: $member->userId)] = $member;
     }
 
-    private function memberKey(string $tenantId, int $userId) : string
+    private function memberKey(string $tenantId, int $userId): string
     {
-        return $tenantId . ':' . $userId;
+        return $tenantId.':'.$userId;
     }
 
-    public function findMember(string $tenantId, int $userId) : TenantMember|null
+    public function findMember(string $tenantId, int $userId): ?TenantMember
     {
         return $this->members[$this->memberKey(tenantId: $tenantId, userId: $userId)] ?? null;
     }
 
-    public function allMembers(string $tenantId) : array
+    public function allMembers(string $tenantId): array
     {
         return array_values(array: array_filter(
-                                       array   : $this->members,
-                                       callback: static fn (TenantMember $member) : bool => $member->tenantId === $tenantId,
-                                   ));
+            array   : $this->members,
+            callback: static fn (TenantMember $member): bool => $member->tenantId === $tenantId,
+        ));
     }
 
-    public function removeMember(string $tenantId, int $userId) : void
+    public function removeMember(string $tenantId, int $userId): void
     {
         unset($this->members[$this->memberKey(tenantId: $tenantId, userId: $userId)]);
     }
 
-    public function saveInvite(TenantInvite $invite) : void
+    public function saveInvite(TenantInvite $invite): void
     {
         $this->invites[$invite->inviteId] = $invite;
     }
 
-    public function findInviteById(string $inviteId) : TenantInvite|null
+    public function findInviteById(string $inviteId): ?TenantInvite
     {
         return $this->invites[$inviteId] ?? null;
     }
 
-    public function findInviteByToken(#[SensitiveParameter] string $plainToken) : TenantInvite|null
+    public function findInviteByToken(#[SensitiveParameter] string $plainToken): ?TenantInvite
     {
         $tokenHash = hash(algo: 'sha256', data: $plainToken);
 
@@ -88,7 +88,7 @@ final class InMemoryTenantStore implements TenantStoreInterface
         return null;
     }
 
-    public function markInviteAccepted(string $inviteId, int $acceptedByUserId, DateTimeImmutable $acceptedAt) : void
+    public function markInviteAccepted(string $inviteId, int $acceptedByUserId, DateTimeImmutable $acceptedAt): void
     {
         $invite = $this->invites[$inviteId] ?? null;
 

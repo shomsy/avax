@@ -18,7 +18,7 @@ if (! function_exists('appInstance')) {
      *
      * @return DIContainerInterface|null
      */
-    function appInstance(DIContainerInterface|null $instance = null) : DIContainerInterface|null
+    function appInstance(DIContainerInterface $instance = null) : DIContainerInterface|null
     {
         static $container = null;
 
@@ -38,7 +38,7 @@ if (! function_exists('app')) {
      *
      *
      */
-    function app(string|null $abstract = null) : mixed
+    function app(string $abstract = null) : mixed
     {
         $container = appInstance();
 

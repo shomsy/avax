@@ -24,7 +24,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private array         $cookieParams    = [];
     private array         $queryParams     = [];
     private array         $uploadedFiles   = [];
-    private array|null  $parsedBody    = null;
+    private array|null    $parsedBody      = null;
     private array         $attributes      = [];
     private string        $protocolVersion = '1.1';
     private array         $headers         = [];
@@ -40,7 +40,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         array               $uploadedFiles = [],
         array               $parsedBody = null,
         string              $method = 'GET',
-        UriInterface|string|null $uri = null,
+        UriInterface|string $uri = null,
         string              $protocolVersion = '1.1',
         array               $headers = [],
         StreamInterface     $body = null,
@@ -222,8 +222,8 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
             return new class ($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
                 public function __construct(
                     private string $tmpName,
-                    private int    $size,
-                    private int    $error,
+                    private int $size,
+                    private int $error,
                     private string $clientFilename,
                     private string $clientMediaType,
                 ) {}
@@ -263,8 +263,8 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return new class ($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
             public function __construct(
                 private string $tmpName,
-                private int    $size,
-                private int    $error,
+                private int $size,
+                private int $error,
                 private string $clientFilename,
                 private string $clientMediaType,
             ) {}

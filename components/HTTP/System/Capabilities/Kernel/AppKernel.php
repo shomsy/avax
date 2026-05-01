@@ -36,7 +36,7 @@ final readonly class AppKernel implements Kernel, HttpInterface
     public function __construct(
         private RouterRuntimeInterface $router,
         private ResponseFactory $responseFactory,
-        private array           $globalMiddleware = [],
+        private array $globalMiddleware = [],
     )
     {
         $this->middlewareStack = empty($this->globalMiddleware)

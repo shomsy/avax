@@ -12,7 +12,7 @@ final readonly class ReadSecret
         private SecretStore $store,
     ) {}
 
-    public function read(string $key) : string
+    public function read(string $key): string
     {
         return $this->store->get($key);
     }

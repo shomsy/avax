@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Foundation\Values;
 
-use ValueError;
 use function str_starts_with;
 use function strtolower;
 use function trim;
+
+use ValueError;
 
 enum ContentType: string
 {
@@ -92,7 +93,7 @@ enum ContentType: string
      *
      * @param string|null $charset Override the default charset. If null, uses utf-8.
      */
-    public function mimeTypeWithCharset(string|null $charset = null) : string
+    public function mimeTypeWithCharset(string $charset = null) : string
     {
         $charset ??= self::DEFAULT_CHARSET;
 

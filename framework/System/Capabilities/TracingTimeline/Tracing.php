@@ -24,10 +24,10 @@ final class Tracing
      * @param array<string, mixed> $metadata
      */
     public function record(
-        string      $name,
-        float|null  $durationMS = null,
-        string|null $category = null,
-        array       $metadata = [],
+        string $name,
+        float  $durationMS = null,
+        string $category = null,
+        array  $metadata = [],
     ) : void
     {
         $this->currentTimeline?->record(
@@ -43,7 +43,7 @@ final class Tracing
         return $this->currentTimeline;
     }
 
-    public function begin(string $name, string|null $category = null) : TraceSpan
+    public function begin(string $name, string $category = null) : TraceSpan
     {
         return $this->currentTimeline?->begin(
             name    : $name,

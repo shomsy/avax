@@ -27,12 +27,12 @@ final class SQLiteGrammar extends BaseGrammar
 
     public function __construct()
     {
-        $this->supportsReturning       = $this->checkVersion(required: '3.35.0');
+        $this->supportsReturning = $this->checkVersion(required: '3.35.0');
         $this->supportsWindowFunctions = $this->checkVersion(required: '3.25.0');
-        $this->supportsCTE             = $this->checkVersion(required: '3.26.0');
+        $this->supportsCTE = $this->checkVersion(required: '3.26.0');
     }
 
-    private function checkVersion(string $required) : bool
+    private function checkVersion(string $required): bool
     {
         if (! extension_loaded(extension: 'sqlite3')) {
             return false;
@@ -44,7 +44,7 @@ final class SQLiteGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
     {
         $sql = $this->compileInsert(state: $state);
 
@@ -52,11 +52,11 @@ final class SQLiteGrammar extends BaseGrammar
             callback: fn ($col) => $this->wrap(value: $col),
             array   : $uniqueBy,
         );
-        $conflictClause  = implode(separator: ', ', array: $conflictColumns);
+        $conflictClause = implode(separator: ', ', array: $conflictColumns);
 
         $updates = [];
         foreach ($update as $column) {
-            $updates[] = $this->wrap(value: $column) . ' = excluded.' . $this->wrap(value: $column);
+            $updates[] = $this->wrap(value: $column).' = excluded.'.$this->wrap(value: $column);
         }
 
         $updateClause = implode(separator: ', ', array: $updates);
@@ -65,7 +65,7 @@ final class SQLiteGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function wrap(mixed $value) : string
+    public function wrap(mixed $value): string
     {
         if ($value instanceof Expression) {
             return $value->getValue();
@@ -86,46 +86,46 @@ final class SQLiteGrammar extends BaseGrammar
         return $this->wrapSegment(segment: $value);
     }
 
-    protected function wrapSegment(string $segment) : string
+    protected function wrapSegment(string $segment): string
     {
         if ($segment === '*' || $segment === '') {
             return $segment;
         }
 
-        return '"' . str_replace(search: '"', replace: '""', subject: $segment) . '"';
+        return '"'.str_replace(search: '"', replace: '""', subject: $segment).'"';
     }
 
     #[Override]
-    public function compileRandomOrder() : string
+    public function compileRandomOrder(): string
     {
         return 'RANDOM()';
     }
 
     #[Override]
-    public function compileTruncate(string $table) : string
+    public function compileTruncate(string $table): string
     {
-        return 'DELETE FROM ' . $this->wrap(value: $table);
+        return 'DELETE FROM '.$this->wrap(value: $table);
     }
 
     #[Override]
-    public function compileDropIfExists(string $table) : string
+    public function compileDropIfExists(string $table): string
     {
-        return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
+        return 'DROP TABLE IF EXISTS '.$this->wrap(value: $table);
     }
 
     #[Override]
-    public function compileCreateDatabase(string $name) : string
+    public function compileCreateDatabase(string $name): string
     {
         return "ATTACH DATABASE '{$name}.db' AS {$this->wrap(value: $name)}";
     }
 
     #[Override]
-    public function compileDropDatabase(string $name) : string
+    public function compileDropDatabase(string $name): string
     {
-        return 'DETACH DATABASE ' . $this->wrap(value: $name);
+        return 'DETACH DATABASE '.$this->wrap(value: $name);
     }
 
-    public function compileReturning(array $columns) : string
+    public function compileReturning(array $columns): string
     {
         if (! $this->supportsReturning || empty($columns)) {
             return '';
@@ -133,43 +133,43 @@ final class SQLiteGrammar extends BaseGrammar
 
         $cols = array_map(callback: fn ($col) => $this->wrap(value: $col), array: $columns);
 
-        return 'RETURNING ' . implode(separator: ', ', array: $cols);
+        return 'RETURNING '.implode(separator: ', ', array: $cols);
     }
 
-    public function supportsWindowFunctions() : bool
+    public function supportsWindowFunctions(): bool
     {
         return $this->supportsWindowFunctions;
     }
 
-    public function supportsCTE() : bool
+    public function supportsCTE(): bool
     {
         return $this->supportsCTE;
     }
 
-    public function supportsReturning() : bool
+    public function supportsReturning(): bool
     {
         return $this->supportsReturning;
     }
 
-    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, ?string $partitionBy = null, string $orderBy = ''): string
     {
         $partitionBy ??= '';
         if (! $this->supportsWindowFunctions) {
             throw new RuntimeException(message: 'Window functions require SQLite 3.25.0+');
         }
 
-        $sql = $function . '(';
+        $sql = $function.'(';
 
         if ($partitionBy !== '') {
             $partitionColumns = array_map(
                 callback: fn ($col) => $this->wrap(value: $col),
                 array   : explode(separator: ',', string: $partitionBy),
             );
-            $sql              .= 'PARTITION BY ' . implode(separator: ', ', array: $partitionColumns);
+            $sql .= 'PARTITION BY '.implode(separator: ', ', array: $partitionColumns);
         }
 
         if ($orderBy !== '') {
-            $sql .= ' ORDER BY ' . $orderBy;
+            $sql .= ' ORDER BY '.$orderBy;
         }
 
         $sql .= ')';
@@ -177,7 +177,7 @@ final class SQLiteGrammar extends BaseGrammar
         return $sql;
     }
 
-    public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery) : string
+    public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery): string
     {
         if (! $this->supportsCTE) {
             throw new RuntimeException(message: 'CTE requires SQLite 3.26.0+');
@@ -186,7 +186,7 @@ final class SQLiteGrammar extends BaseGrammar
         return "WITH RECURSIVE {$name} AS ({$initialQuery} UNION ALL {$recursiveQuery})";
     }
 
-    public function compileRegexp(string $column, string $pattern) : string
+    public function compileRegexp(string $column, string $pattern): string
     {
         return "{$this->wrap(value: $column)} REGEXP '{$pattern}'";
     }

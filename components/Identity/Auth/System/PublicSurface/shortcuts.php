@@ -11,10 +11,8 @@ use Avax\Components\Identity\Auth\System\Auth;
 if (! function_exists('auth')) {
     /**
      * Resolve the authentication instance.
-     *
-     * @return Auth
      */
-    function auth() : Auth
+    function auth(): Auth
     {
         return app(Auth::class);
     }

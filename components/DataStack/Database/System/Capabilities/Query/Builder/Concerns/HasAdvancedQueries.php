@@ -12,7 +12,7 @@ trait HasAdvancedQueries
     /**
      * Add a recursive Common Table Expression (CTE) to the query.
      */
-    public function withRecursive(string $name, mixed $query) : static
+    public function withRecursive(string $name, mixed $query): static
     {
         return $this->with($name, $query, true);
     }
@@ -20,9 +20,9 @@ trait HasAdvancedQueries
     /**
      * Add a Common Table Expression (CTE) to the query.
      */
-    public function with(string $name, mixed $query, bool $recursive = false) : static
+    public function with(string $name, mixed $query, bool $recursive = false): static
     {
-        return clone(object: $this, withProperties: [
+        return clone (object: $this, withProperties: [
             'state' => $this->state->withCte($name, $query, $recursive),
         ]);
     }
@@ -30,9 +30,9 @@ trait HasAdvancedQueries
     /**
      * Add a window function definition to the query.
      */
-    public function over(string $name, mixed $window) : static
+    public function over(string $name, mixed $window): static
     {
-        return clone(object: $this, withProperties: [
+        return clone (object: $this, withProperties: [
             'state' => $this->state->withWindow($name, $window),
         ]);
     }

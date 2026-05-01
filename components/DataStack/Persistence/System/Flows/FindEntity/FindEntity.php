@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\Repos
 
 final class FindEntity
 {
-    public function find(Repository $repository, string $id) : object|null
+    public function find(Repository $repository, string $id): ?object
     {
         return $repository->findById($id);
     }

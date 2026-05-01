@@ -8,7 +8,6 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Distribu
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache\CompiledCacheManifest;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache\CompiledCacheManifestEntry;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache\FreshnessStatus;
-use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use JsonException;
@@ -29,7 +28,7 @@ final class CompiledCacheManifestTest extends TestCase
         $entry = $manifest->addEntry(
             name        : 'config-cache',
             compiledPath: $this->tempDir . '/config-compiled.php',
-            sourceFiles : [$sourceFile]
+            sourceFiles : [$sourceFile],
         );
 
         $this->assertSame('config-cache', $entry->name);
@@ -54,7 +53,7 @@ final class CompiledCacheManifestTest extends TestCase
         $entry = $manifest->addEntry(
             name        : 'fp-test',
             compiledPath: $this->tempDir . '/fp-compiled.php',
-            sourceFiles : [$sourceFile]
+            sourceFiles : [$sourceFile],
         );
 
         // SHA-256 produces 64 hex characters
@@ -69,7 +68,7 @@ final class CompiledCacheManifestTest extends TestCase
         $entry = $manifest->addEntry(
             name        : 'php-version-test',
             compiledPath: $this->tempDir . '/compiled.php',
-            sourceFiles : []
+            sourceFiles : [],
         );
 
         $this->assertSame(PHP_VERSION, $entry->phpVersion);
@@ -85,7 +84,7 @@ final class CompiledCacheManifestTest extends TestCase
             name        : 'routes-cache',
             compiledPath: $this->tempDir . '/routes-compiled.php',
             sourceFiles : [],
-            type        : 'routes'
+            type        : 'routes',
         );
 
         $this->assertSame('routes', $entry->type);
@@ -99,7 +98,7 @@ final class CompiledCacheManifestTest extends TestCase
             name            : 'fw-version-test',
             compiledPath    : $this->tempDir . '/compiled.php',
             sourceFiles     : [],
-            frameworkVersion: '2.0.0'
+            frameworkVersion: '2.0.0',
         );
 
         $this->assertSame('2.0.0', $entry->frameworkVersion);
@@ -112,7 +111,7 @@ final class CompiledCacheManifestTest extends TestCase
         $entry = $manifest->addEntry(
             name        : 'timestamp-test',
             compiledPath: $this->tempDir . '/compiled.php',
-            sourceFiles : []
+            sourceFiles : [],
         );
 
         $this->assertSame(1000000, $entry->createdAt->seconds);
@@ -158,7 +157,7 @@ final class CompiledCacheManifestTest extends TestCase
         $manifest->addEntry(
             name        : 'fresh-test',
             compiledPath: $this->tempDir . '/fresh-compiled.php',
-            sourceFiles : [$sourceFile]
+            sourceFiles : [$sourceFile],
         );
 
         $this->assertTrue($manifest->isFresh('fresh-test'));
@@ -172,7 +171,7 @@ final class CompiledCacheManifestTest extends TestCase
         $manifest->addEntry(
             name        : 'stale-test',
             compiledPath: $this->tempDir . '/stale-compiled.php',
-            sourceFiles : [$sourceFile]
+            sourceFiles : [$sourceFile],
         );
 
         // Modify the source file
@@ -193,7 +192,7 @@ final class CompiledCacheManifestTest extends TestCase
         $manifest->addEntry(
             name        : 'multi-test',
             compiledPath: $this->tempDir . '/multi-compiled.php',
-            sourceFiles : [$source1, $source2]
+            sourceFiles : [$source1, $source2],
         );
 
         $this->assertTrue($manifest->isFresh('multi-test'));
@@ -272,7 +271,7 @@ final class CompiledCacheManifestTest extends TestCase
             name        : 'save-test',
             compiledPath: '/compiled/test.php',
             sourceFiles : ['/src/test.php'],
-            type        : 'views'
+            type        : 'views',
         );
 
         $savePath = $this->tempDir . '/saved-manifest.json';
@@ -321,7 +320,7 @@ final class CompiledCacheManifestTest extends TestCase
             sourceFiles     : ['/src/roundtrip.php'],
             type            : 'config',
             phpVersion      : '8.2.0',
-            frameworkVersion: '1.5.0'
+            frameworkVersion: '1.5.0',
         );
 
         $savePath = $this->tempDir . '/roundtrip.json';
@@ -352,7 +351,7 @@ final class CompiledCacheManifestTest extends TestCase
             updatedAt       : Timestamp::fromUnixTime(1000001),
             type            : 'routes',
             phpVersion      : '8.1.0',
-            frameworkVersion: '1.0.0'
+            frameworkVersion: '1.0.0',
         );
 
         $this->assertSame('entry-test', $entry->name);
@@ -374,7 +373,7 @@ final class CompiledCacheManifestTest extends TestCase
             sourceFiles : ['/src/array.php'],
             fingerprint : 'hash123',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $array = $entry->toArray();
@@ -401,7 +400,7 @@ final class CompiledCacheManifestTest extends TestCase
             updatedAt       : Timestamp::fromUnixTime(1000001),
             type            : 'views',
             phpVersion      : '8.3.0',
-            frameworkVersion: '2.0.0'
+            frameworkVersion: '2.0.0',
         );
 
         $array    = $original->toArray();
@@ -428,7 +427,7 @@ final class CompiledCacheManifestTest extends TestCase
             sourceFiles : [],
             fingerprint : 'hash',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $newEntry = $entry->withUpdatedAt(Timestamp::fromUnixTime(1000010));
@@ -450,7 +449,7 @@ final class CompiledCacheManifestTest extends TestCase
             sourceFiles : [],
             fingerprint : 'hash',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $this->assertTrue($entry->compiledFileExists());
@@ -464,7 +463,7 @@ final class CompiledCacheManifestTest extends TestCase
             sourceFiles : [],
             fingerprint : 'hash',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $this->assertFalse($entry->compiledFileExists());
@@ -482,7 +481,7 @@ final class CompiledCacheManifestTest extends TestCase
             sourceFiles : [],
             fingerprint : 'hash',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $mtime = $entry->getCompiledFileMtime();
@@ -501,7 +500,7 @@ final class CompiledCacheManifestTest extends TestCase
             sourceFiles : [],
             fingerprint : 'hash',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $this->assertFalse($entry->getCompiledFileMtime());
@@ -586,7 +585,7 @@ final class CompiledCacheManifestTest extends TestCase
         $manifest->addEntry(
             name        : 'stale-get-test',
             compiledPath: $this->tempDir . '/compiled.php',
-            sourceFiles : [$sourceFile]
+            sourceFiles : [$sourceFile],
         );
 
         // Modify source
@@ -704,7 +703,7 @@ final class CompiledCacheManifestTest extends TestCase
             sourceFiles : [],
             fingerprint : 'set-hash',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $manifest->setEntry($entry);
@@ -740,7 +739,7 @@ final class CompiledCacheManifestTest extends TestCase
         $manifest->addEntry(
             name        : 'deleted-test',
             compiledPath: $this->tempDir . '/compiled.php',
-            sourceFiles : [$sourceFile]
+            sourceFiles : [$sourceFile],
         );
 
         $this->assertTrue($manifest->isFresh('deleted-test'));
@@ -758,7 +757,7 @@ final class CompiledCacheManifestTest extends TestCase
         parent::setUp();
 
         $this->tempDir = sys_get_temp_dir() . '/avax_compiled_cache_test_' . uniqid();
-        mkdir($this->tempDir, 0755, true);
+        mkdir($this->tempDir, 0o755, true);
 
         $this->clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
     }
@@ -812,7 +811,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $this->calcFingerprint([$sourceFile]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -855,7 +854,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $this->calcFingerprint([$sourceFile]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -877,7 +876,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : 'wrong-fingerprint',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         // Create the compiled file so it exists
@@ -898,7 +897,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : ['/nonexistent/source.php'],
             fingerprint : 'some-hash',
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         // Create compiled file
@@ -925,7 +924,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $fingerprint,
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         // Modify source file to make it newer
@@ -942,7 +941,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $fingerprint,
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -963,7 +962,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $this->calcFingerprint([$sourceFile]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -984,7 +983,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : 'wrong-fingerprint', // Intentionally wrong
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -1006,7 +1005,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $this->calcFingerprint([$sourceFile]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -1028,7 +1027,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $this->calcFingerprint([$sourceFile]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -1053,7 +1052,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile1],
             fingerprint : $this->calcFingerprint([$sourceFile1]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $entry2 = new CompiledCacheManifestEntry(
@@ -1062,7 +1061,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile2],
             fingerprint : $this->calcFingerprint([$sourceFile2]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -1085,7 +1084,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile1],
             fingerprint : $this->calcFingerprint([$sourceFile1]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $entry2 = new CompiledCacheManifestEntry(
@@ -1094,7 +1093,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile2],
             fingerprint : $this->calcFingerprint([$sourceFile2]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -1121,7 +1120,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $this->calcFingerprint([$sourceFile]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -1148,7 +1147,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             sourceFiles : [$sourceFile],
             fingerprint : $this->calcFingerprint([$sourceFile]),
             createdAt   : Timestamp::fromUnixTime(1000000),
-            updatedAt   : Timestamp::fromUnixTime(1000000)
+            updatedAt   : Timestamp::fromUnixTime(1000000),
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
@@ -1168,7 +1167,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             reason           : 'Test',
             checkedAt        : Timestamp::fromUnixTime(1000000),
             sourceFilesMtime : 1000000,
-            compiledFileMtime: 0
+            compiledFileMtime: 0,
         );
 
         $this->assertTrue($stale->isStale());
@@ -1179,7 +1178,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             reason           : 'Test',
             checkedAt        : Timestamp::fromUnixTime(1000000),
             sourceFilesMtime : 1000000,
-            compiledFileMtime: 1000000
+            compiledFileMtime: 1000000,
         );
 
         $this->assertFalse($fresh->isStale());
@@ -1193,7 +1192,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             reason           : 'Missing',
             checkedAt        : Timestamp::fromUnixTime(1000000),
             sourceFilesMtime : 1000000,
-            compiledFileMtime: 0
+            compiledFileMtime: 0,
         );
 
         $this->assertTrue($missing->isMissing());
@@ -1204,7 +1203,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             reason           : 'Stale',
             checkedAt        : Timestamp::fromUnixTime(1000000),
             sourceFilesMtime : 1000000,
-            compiledFileMtime: 999999
+            compiledFileMtime: 999999,
         );
 
         $this->assertFalse($missingFalse->isMissing());
@@ -1220,7 +1219,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             reason           : 'Test',
             checkedAt        : Timestamp::fromUnixTime(1000100),
             sourceFilesMtime : 1000000,
-            compiledFileMtime: 1000050
+            compiledFileMtime: 1000050,
         );
 
         $this->assertSame(50, $status->getCompiledFileAge());
@@ -1234,7 +1233,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             reason           : 'Missing',
             checkedAt        : Timestamp::fromUnixTime(1000000),
             sourceFilesMtime : 1000000,
-            compiledFileMtime: 0
+            compiledFileMtime: 0,
         );
 
         $this->assertSame(0, $status->getCompiledFileAge());
@@ -1248,7 +1247,7 @@ final class CompiledCacheFreshnessTest extends TestCase
             reason           : 'All checks passed',
             checkedAt        : Timestamp::fromUnixTime(1000000),
             sourceFilesMtime : 999999,
-            compiledFileMtime: 1000000
+            compiledFileMtime: 1000000,
         );
 
         $array = $status->toArray();
@@ -1269,7 +1268,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         parent::setUp();
 
         $this->tempDir = sys_get_temp_dir() . '/avax_freshness_test_' . uniqid();
-        mkdir($this->tempDir, 0755, true);
+        mkdir($this->tempDir, 0o755, true);
 
         $this->clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
     }

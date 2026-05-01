@@ -11,12 +11,12 @@ final readonly class IssuedRefreshToken
 {
     public function __construct(
         #[SensitiveParameter]
-        public string                 $token,
+        public string $token,
         #[SensitiveParameter]
-        public string                 $tokenId,
-        public DateTimeImmutable      $expiresAt,
-        public string                 $familyId,
-        public DateTimeImmutable|null $mfaVerifiedAt = null,
-        public bool                   $phishingResistant = false,
+        public string $tokenId,
+        public DateTimeImmutable $expiresAt,
+        public string $familyId,
+        public ?DateTimeImmutable $mfaVerifiedAt = null,
+        public bool $phishingResistant = false,
     ) {}
 }

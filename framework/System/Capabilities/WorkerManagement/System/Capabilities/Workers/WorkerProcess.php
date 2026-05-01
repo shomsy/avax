@@ -9,13 +9,13 @@ use RuntimeException;
 
 final class WorkerProcess
 {
-    private int $pid       = 0;
-    private bool  $running     = false;
-    private bool  $idle        = true;
-    private int   $taskCount   = 0;
-    private int   $memoryUsage = 0;
-    private int   $maxMemory   = 128;
-    private int $startTime = 0;
+    private int  $pid         = 0;
+    private bool $running     = false;
+    private bool $idle        = true;
+    private int  $taskCount   = 0;
+    private int  $memoryUsage = 0;
+    private int  $maxMemory   = 128;
+    private int  $startTime   = 0;
     /**
      * @var array<string, mixed>
      */

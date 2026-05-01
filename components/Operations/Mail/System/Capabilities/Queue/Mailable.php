@@ -12,7 +12,7 @@ final class Mailable
 
     private string $body = '';
 
-    private string|null $from = null;
+    private ?string $from = null;
 
     /** @var list<string> */
     private array $cc = [];
@@ -20,74 +20,74 @@ final class Mailable
     /** @var list<array{path:string,name:string}> */
     private array $attachments = [];
 
-    public function to(string $address) : self
+    public function to(string $address): self
     {
         $this->to = $address;
 
         return $this;
     }
 
-    public function subject(string $subject) : self
+    public function subject(string $subject): self
     {
         $this->subject = $subject;
 
         return $this;
     }
 
-    public function body(string $body) : self
+    public function body(string $body): self
     {
         $this->body = $body;
 
         return $this;
     }
 
-    public function from(string $address, string $name = '') : self
+    public function from(string $address, string $name = ''): self
     {
         $this->from = $name !== '' ? "{$name} <{$address}>" : $address;
 
         return $this;
     }
 
-    public function cc(string $address) : self
+    public function cc(string $address): self
     {
         $this->cc[] = $address;
 
         return $this;
     }
 
-    public function attach(string $path, string $name = '') : self
+    public function attach(string $path, string $name = ''): self
     {
         $this->attachments[] = ['path' => $path, 'name' => $name !== '' ? $name : basename(path: $path)];
 
         return $this;
     }
 
-    public function getTo() : string
+    public function getTo(): string
     {
         return $this->to;
     }
 
-    public function getSubject() : string
+    public function getSubject(): string
     {
         return $this->subject;
     }
 
-    public function getBody() : string
+    public function getBody(): string
     {
         return $this->body;
     }
 
-    public function getFrom() : string|null
+    public function getFrom(): ?string
     {
         return $this->from;
     }
 
-    public function getCc() : array
+    public function getCc(): array
     {
         return $this->cc;
     }
 
-    public function getAttachments() : array
+    public function getAttachments(): array
     {
         return $this->attachments;
     }

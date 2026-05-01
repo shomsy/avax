@@ -29,14 +29,14 @@ use ReflectionException;
 final class RegisterAuthDependencies extends BaseRegisterDependency
 {
     #[Override]
-    public function register() : void
+    public function register(): void
     {
         $this->registerFoundation();
         $this->registerIdentity();
         $this->registerAuth();
     }
 
-    private function registerFoundation() : void
+    private function registerFoundation(): void
     {
         if (! $this->container->has(id: PasswordHasher::class)) {
             $this->container->singleton(abstract: PasswordHasher::class, concrete: PasswordHasher::class);
@@ -55,7 +55,7 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
         }
     }
 
-    private function registerIdentity() : void
+    private function registerIdentity(): void
     {
         if (! $this->container->has(id: IdentityInterface::class)) {
             $this->container->singleton(abstract: IdentityInterface::class, concrete: function () {
@@ -82,15 +82,15 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
         }
     }
 
-    private function registerAuth() : void
+    private function registerAuth(): void
     {
         if (! $this->container->has(id: Auth::class)) {
             $this->container->singleton(abstract: Auth::class, concrete: function () {
                 $builder = $this->applyOptionalBindings(builder: DefaultAuth::configuration()
-                                                                     ->forUser(userSource: $this->container->get(id: UserSourceInterface::class))
-                                                                     ->withIdentity(identity: $this->container->get(id: IdentityInterface::class))
-                                                                     ->usingHasher(passwordHasher: $this->container->get(id: PasswordHasher::class))
-                                                                     ->usingIdGenerator(idGenerator: $this->container->get(id: IdGeneratorInterface::class)));
+                    ->forUser(userSource: $this->container->get(id: UserSourceInterface::class))
+                    ->withIdentity(identity: $this->container->get(id: IdentityInterface::class))
+                    ->usingHasher(passwordHasher: $this->container->get(id: PasswordHasher::class))
+                    ->usingIdGenerator(idGenerator: $this->container->get(id: IdGeneratorInterface::class)));
 
                 $rateLimit = $this->resolveLoginRateLimit();
 
@@ -106,7 +106,7 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     /**
      * @throws ReflectionException
      */
-    private function applyOptionalBindings(AuthBuilder $builder) : AuthBuilder
+    private function applyOptionalBindings(AuthBuilder $builder): AuthBuilder
     {
         if ($this->container->has(id: Clock::class)) {
             $builder->withClock(clock: $this->container->get(id: Clock::class));
@@ -122,7 +122,7 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     /**
      * @throws ReflectionException
      */
-    private function resolveLoginRateLimit() : LoginRateLimit|null
+    private function resolveLoginRateLimit(): ?LoginRateLimit
     {
         if ($this->container->has(id: LoginRateLimit::class)) {
             return $this->container->get(id: LoginRateLimit::class);

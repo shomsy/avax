@@ -12,12 +12,12 @@ use SensitiveParameter;
 interface TokenCodecInterface
 {
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
-    public function encode(array $claims) : string;
+    public function encode(array $claims): string;
 
     /**
      * @return array<string, mixed>|null
      */
-    public function decode(#[SensitiveParameter] string $token) : array|null;
+    public function decode(#[SensitiveParameter] string $token): ?array;
 }

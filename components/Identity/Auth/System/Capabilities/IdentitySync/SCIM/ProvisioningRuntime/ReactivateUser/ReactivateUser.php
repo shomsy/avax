@@ -10,14 +10,14 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
-use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
 
 final readonly class ReactivateUser
 {
-    public function __construct(private ProvisionableUserSourceInterface $userSource, private RequireAdminElevation $requireAdminElevation, private AuditLogInterface $auditLog, private Clock $clock, private LifecycleOrchestrator|null $lifecycle = null) {}
+    public function __construct(private ProvisionableUserSourceInterface $userSource, private RequireAdminElevation $requireAdminElevation, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycle = null) {}
 
-    public function execute(int $userId) : void
+    public function execute(int $userId): void
     {
         $this->requireAdminElevation->execute();
         $id = new UserId(value: $userId);
@@ -26,9 +26,9 @@ final readonly class ReactivateUser
             $this->userSource->activate(id: $id);
         }
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.provisioning.user.reactivated',
-                                           occurredAt: $this->clock->now(),
-                                           context   : ['subject_user_id' => $userId],
-                                       ));
+            name      : 'auth.provisioning.user.reactivated',
+            occurredAt: $this->clock->now(),
+            context   : ['subject_user_id' => $userId],
+        ));
     }
 }

@@ -22,10 +22,10 @@ final readonly class RequireAuthentication
     /**
      * @throws Unauthenticated
      */
-    public function execute() : void
+    public function execute(): void
     {
         if (! $this->currentAuthentication->read()->isAuthenticated()) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
     }
 }

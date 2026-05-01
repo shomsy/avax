@@ -23,20 +23,18 @@ final class InvocationExecutorTest extends TestCase
 
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
-            ->with($this->callback(callback: static function (KernelContext $context) use ($parentContext) : bool {
-                return $context->parent === $parentContext && $context->serviceId === stdClass::class;
-            }))
-            ->willReturn(value: new stdClass);
+            ->with($this->callback(callback: static fn (KernelContext $context) : bool => $context->parent === $parentContext && $context->serviceId === stdClass::class))
+            ->willReturn(value: new stdClass());
 
         $executor = new InvocationExecutor(
             container: $container,
-            resolver : new DependencyResolver
+            resolver : new DependencyResolver(),
         );
 
         $result = $executor->execute(
             context      : new InvocationContext(originalTarget: static fn (stdClass $service) : string => 'ok'),
             parameters   : [],
-            parentContext: $parentContext
+            parentContext: $parentContext,
         );
 
         $this->assertSame(expected: 'ok', actual: $result);
@@ -51,24 +49,22 @@ final class InvocationExecutorTest extends TestCase
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'get')
             ->with(InvocationTarget::class)
-            ->willReturn(value: new InvocationTarget);
+            ->willReturn(value: new InvocationTarget());
 
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
-            ->with($this->callback(callback: static function (KernelContext $context) use ($parentContext) : bool {
-                return $context->parent?->parent === $parentContext || $context->parent === $parentContext;
-            }))
-            ->willReturn(value: new stdClass);
+            ->with($this->callback(callback: static fn (KernelContext $context) : bool => $context->parent?->parent === $parentContext || $context->parent === $parentContext))
+            ->willReturn(value: new stdClass());
 
         $executor = new InvocationExecutor(
             container: $container,
-            resolver : new DependencyResolver
+            resolver : new DependencyResolver(),
         );
 
         $result = $executor->execute(
             context      : new InvocationContext(originalTarget: InvocationTarget::class . '@greet'),
             parameters   : [],
-            parentContext: $parentContext
+            parentContext: $parentContext,
         );
 
         $this->assertSame(expected: 'hi', actual: $result);

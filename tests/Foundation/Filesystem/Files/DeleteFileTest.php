@@ -18,7 +18,7 @@ class DeleteFileTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
+        $this->disk     = new LocalDisk();
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/delete_test.txt';
         $this->testDirectory = '/home/shomsy/projects/components/tests/fixtures/Filesystem/delete_test_dir';
     }
@@ -52,7 +52,7 @@ class DeleteFileTest extends TestCase
 
     public function testExecuteThrowsExceptionOnFailure() : void
     {
-        mkdir(directory: $this->testDirectory, permissions: 0755, recursive: true);
+        mkdir(directory: $this->testDirectory, permissions: 0o755, recursive: true);
 
         $this->expectException(exception: FileDeleteFailed::class);
 

@@ -15,12 +15,12 @@ final readonly class Telemetry
         private TelemetryCapability $telemetry,
     ) {}
 
-    public function profile(callable $callback, string $label = 'database_operation') : mixed
+    public function profile(callable $callback, string $label = 'database_operation'): mixed
     {
         return $this->telemetry->profile($callback, $label);
     }
 
-    public function history() : array
+    public function history(): array
     {
         return $this->telemetry->history();
     }

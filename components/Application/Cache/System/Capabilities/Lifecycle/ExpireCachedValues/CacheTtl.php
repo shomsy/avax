@@ -33,7 +33,7 @@ final readonly class CacheTtl implements CacheExpiration
     #[Override]
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
-        Clock|null $clock = null,
+        Clock $clock = null,
     ) : Timestamp|null
     {
         $clock ??= $this->clock;
@@ -60,7 +60,7 @@ final readonly class CacheTtl implements CacheExpiration
     #[Override]
     public function isExpired(
         Timestamp|null $expiresAt,
-        Clock|null $clock = null,
+        Clock $clock = null,
     ) : bool
     {
         $clock ??= $this->clock;

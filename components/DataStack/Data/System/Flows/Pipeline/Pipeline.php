@@ -12,21 +12,21 @@ use Avax\Components\DataStack\Data\Exceptions\InvalidFlowException;
 final readonly class Pipeline
 {
     /**
-     * @param array<int, Pipe> $pipes
+     * @param  array<int, Pipe>  $pipes
      */
     public function __construct(
         private array $pipes = [],
     ) {}
 
-    public function pipe(callable $callback, string|null $name = null) : self
+    public function pipe(callable $callback, ?string $name = null): self
     {
-        $pipes   = $this->pipes;
+        $pipes = $this->pipes;
         $pipes[] = Pipe::from(callback: $callback, name: $name);
 
         return new self(pipes: $pipes);
     }
 
-    public function process(mixed $input) : mixed
+    public function process(mixed $input): mixed
     {
         if ($this->pipes === []) {
             throw InvalidFlowException::pipelineHasNoStages();
@@ -44,8 +44,8 @@ final readonly class Pipeline
     /**
      * @return array<int, string>
      */
-    public function stageNames() : array
+    public function stageNames(): array
     {
-        return array_map(static fn (Pipe $pipe) : string => $pipe->name(), $this->pipes);
+        return array_map(static fn (Pipe $pipe): string => $pipe->name(), $this->pipes);
     }
 }

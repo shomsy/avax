@@ -20,7 +20,7 @@ final class SessionAuditTest extends TestCase
 
     public function test_record_with_mock_logger() : void
     {
-        $logger = new class {
+        $logger = new class () {
             public string|null $message = null;
 
             public function info($message, $context = []) : void

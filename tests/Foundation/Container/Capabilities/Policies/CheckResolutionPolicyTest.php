@@ -17,7 +17,7 @@ final class CheckResolutionPolicyTest extends TestCase
     public function test_strict_policy_blocks_unknown_classes() : void
     {
         $check = new CheckResolutionPolicy(
-            policy: new StrictResolutionPolicy(policy: new ContainerPolicy(strict: true))
+            policy: new StrictResolutionPolicy(policy: new ContainerPolicy(strict: true)),
         );
 
         $result = $check->check(abstract: 'MissingClass');
@@ -29,7 +29,7 @@ final class CheckResolutionPolicyTest extends TestCase
     public function test_strict_policy_allows_existing_classes() : void
     {
         $check = new CheckResolutionPolicy(
-            policy: new StrictResolutionPolicy(policy: new ContainerPolicy(strict: true))
+            policy: new StrictResolutionPolicy(policy: new ContainerPolicy(strict: true)),
         );
 
         $result = $check->check(abstract: stdClass::class);

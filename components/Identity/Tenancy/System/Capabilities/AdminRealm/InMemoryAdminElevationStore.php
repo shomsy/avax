@@ -9,22 +9,22 @@ final class InMemoryAdminElevationStore implements AdminElevationStoreInterface
     /** @var array<string, AdminElevationRecord> */
     private array $records = [];
 
-    public function start(AdminElevationRecord $record) : void
+    public function start(AdminElevationRecord $record): void
     {
         $this->records[$record->bindingId] = $record;
     }
 
-    public function find(string $bindingId) : AdminElevationRecord|null
+    public function find(string $bindingId): ?AdminElevationRecord
     {
         return $this->records[$bindingId] ?? null;
     }
 
-    public function revoke(string $bindingId) : void
+    public function revoke(string $bindingId): void
     {
         unset($this->records[$bindingId]);
     }
 
-    public function revokeUser(int $userId) : void
+    public function revokeUser(int $userId): void
     {
         foreach ($this->records as $bindingId => $record) {
             if ($record->userId === $userId) {

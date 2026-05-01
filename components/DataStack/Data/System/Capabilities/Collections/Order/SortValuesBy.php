@@ -13,20 +13,20 @@ final readonly class SortValuesBy
         private array $items = [],
     ) {}
 
-    public function __invoke(string|callable $key, int|null $options = null, bool $descending = false) : array
+    public function __invoke(string|callable $key, ?int $options = null, bool $descending = false): array
     {
         $options ??= SORT_REGULAR;
 
         return $this->sortBy(key: $key, options: $options, descending: $descending);
     }
 
-    public function sortBy(string|callable $key, int|null $options = null, bool $descending = false) : array
+    public function sortBy(string|callable $key, ?int $options = null, bool $descending = false): array
     {
         $options ??= SORT_REGULAR;
         $items = $this->items;
 
         $keys = array_map(
-            callback: static fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
+            callback: static fn (mixed $item): mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
             array   : $items,
         );
 
@@ -39,7 +39,7 @@ final readonly class SortValuesBy
         return $items;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

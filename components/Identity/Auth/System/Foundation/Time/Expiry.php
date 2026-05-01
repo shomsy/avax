@@ -11,16 +11,16 @@ final readonly class Expiry
 {
     public function __construct(public DateTimeImmutable $at) {}
 
-    public static function after(DateInterval $interval, Clock|null $clock = null) : self
+    public static function after(DateInterval $interval, ?Clock $clock = null): self
     {
-        $clock ??= new SystemClock();
+        $clock ??= new SystemClock;
 
         return new self(at: $clock->now()->add(interval: $interval));
     }
 
-    public function isExpired(DateTimeImmutable|null $now = null) : bool
+    public function isExpired(?DateTimeImmutable $now = null): bool
     {
-        $now ??= new DateTimeImmutable();
+        $now ??= new DateTimeImmutable;
 
         return $now >= $this->at;
     }

@@ -18,7 +18,7 @@ final readonly class RetryPolicy
     /**
      * Create a no-retry policy (execute once only).
      */
-    public static function none() : self
+    public static function none(): self
     {
         return new self(maxAttempts: 1, backoffMs: 0);
     }
@@ -26,7 +26,7 @@ final readonly class RetryPolicy
     /**
      * Create a policy with immediate retries (no delay).
      */
-    public static function immediate(int $maxAttempts = 3) : self
+    public static function immediate(int $maxAttempts = 3): self
     {
         return new self(maxAttempts: $maxAttempts, backoffMs: 0);
     }
@@ -34,7 +34,7 @@ final readonly class RetryPolicy
     /**
      * Create a policy with exponential backoff.
      */
-    public static function exponential(int $maxAttempts = 3, int $baseBackoffMs = 100) : self
+    public static function exponential(int $maxAttempts = 3, int $baseBackoffMs = 100): self
     {
         return new self(
             maxAttempts: $maxAttempts,
@@ -46,7 +46,7 @@ final readonly class RetryPolicy
     /**
      * Create a policy with linear backoff.
      */
-    public static function linear(int $maxAttempts = 3, int $backoffMs = 100) : self
+    public static function linear(int $maxAttempts = 3, int $backoffMs = 100): self
     {
         return new self(
             maxAttempts: $maxAttempts,
@@ -58,19 +58,19 @@ final readonly class RetryPolicy
     /**
      * Calculate the delay in milliseconds for a given attempt number.
      */
-    public function getDelayForAttempt(int $attempt) : int
+    public function getDelayForAttempt(int $attempt): int
     {
         return match ($this->backoffType) {
             'exponential' => (int) ($this->backoffMs * (2 ** ($attempt - 1))),
-            'linear'      => $this->backoffMs * $attempt,
-            default       => 0,
+            'linear' => $this->backoffMs * $attempt,
+            default => 0,
         };
     }
 
     /**
      * Check if another retry attempt is allowed.
      */
-    public function canRetry(int $currentAttempt) : bool
+    public function canRetry(int $currentAttempt): bool
     {
         return $currentAttempt < $this->maxAttempts;
     }

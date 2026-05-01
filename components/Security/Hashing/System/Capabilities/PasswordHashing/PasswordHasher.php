@@ -12,7 +12,7 @@ use SensitiveParameter;
 final readonly class PasswordHasher
 {
     /**
-     * @param array<string, int|string|bool> $options
+     * @param  array<string, int|string|bool>  $options
      */
     private string $algo;
 
@@ -20,13 +20,12 @@ final readonly class PasswordHasher
     private array $options;
 
     /**
-     * @param array<string, int|string|bool>|null $options
+     * @param  array<string, int|string|bool>|null  $options
      */
     public function __construct(
-        string|null $algo = null,
-        array  $options = null,
-    )
-    {
+        ?string $algo = null,
+        ?array $options = null,
+    ) {
         $this->algo = $algo
             ?? $this->inferAlgorithmFromOptions(options: $options)
             ?? $this->defaultAlgorithm();
@@ -34,9 +33,9 @@ final readonly class PasswordHasher
     }
 
     /**
-     * @param array<string, int|string|bool>|null $options
+     * @param  array<string, int|string|bool>|null  $options
      */
-    private function inferAlgorithmFromOptions(array|null $options) : string|null
+    private function inferAlgorithmFromOptions(?array $options): ?string
     {
         if ($options === null) {
             return null;
@@ -60,7 +59,7 @@ final readonly class PasswordHasher
         return null;
     }
 
-    private function defaultAlgorithm() : string
+    private function defaultAlgorithm(): string
     {
         return defined(constant_name: 'PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
     }
@@ -68,25 +67,25 @@ final readonly class PasswordHasher
     /**
      * @return array<string, int|string|bool>
      */
-    private function defaultOptions(string $algo) : array
+    private function defaultOptions(string $algo): array
     {
         if (defined(constant_name: 'PASSWORD_ARGON2ID') && $algo === PASSWORD_ARGON2ID) {
             return [
                 'memory_cost' => PASSWORD_ARGON2_DEFAULT_MEMORY_COST,
-                'time_cost'   => PASSWORD_ARGON2_DEFAULT_TIME_COST,
-                'threads'     => PASSWORD_ARGON2_DEFAULT_THREADS,
+                'time_cost' => PASSWORD_ARGON2_DEFAULT_TIME_COST,
+                'threads' => PASSWORD_ARGON2_DEFAULT_THREADS,
             ];
         }
 
         return ['cost' => 12];
     }
 
-    public function hash(#[SensitiveParameter] string $password) : string
+    public function hash(#[SensitiveParameter] string $password): string
     {
         return password_hash(password: $password, algo: $this->algo, options: $this->options);
     }
 
-    public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hash) : bool
+    public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hash): bool
     {
         return password_verify(password: $password, hash: $hash);
     }
@@ -94,14 +93,14 @@ final readonly class PasswordHasher
     /**
      * Generates a dummy hash for timing attack mitigation.
      */
-    public function dummyHash() : string
+    public function dummyHash(): string
     {
         // Use a fixed cost dummy hash that looks real.
         // This hash is for the password 'password' with cost 12.
         return '$2y$12$nO.MMTy.SQpyLSIsZpXOnuSnt.SQpyLSIsZpXOnuSnt.SQpyLSi';
     }
 
-    public function needsRehash(#[SensitiveParameter] string $hash) : bool
+    public function needsRehash(#[SensitiveParameter] string $hash): bool
     {
         return password_needs_rehash(hash: $hash, algo: $this->algo, options: $this->options);
     }

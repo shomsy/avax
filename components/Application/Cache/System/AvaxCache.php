@@ -41,23 +41,23 @@ final class AvaxCache implements CacheContract
     private bool $stampedeProtectionEnabled;
 
     public function __construct(
-        private readonly CacheStore        $cacheStore,
-        private readonly Clock             $clock = new SystemClock(),
+        private readonly CacheStore $cacheStore,
+        private readonly Clock      $clock = new SystemClock(),
         private readonly CacheMetrics|null $cacheMetrics = null,
-        StaleValuePolicy|null $stalePolicy = null,
-        RefreshPolicy|null    $refreshPolicy = null,
-        CacheLockStore|null   $cacheLockStore = null,
-        bool                  $stampedeProtection = false,
-        private readonly int  $lockWaitTimeoutSeconds = 5,
-        private readonly int  $lockTtlSeconds = 30,
-        private readonly int  $refreshAheadWindowSeconds = 60,
+        StaleValuePolicy            $stalePolicy = null,
+        RefreshPolicy               $refreshPolicy = null,
+        CacheLockStore              $cacheLockStore = null,
+        bool                        $stampedeProtection = false,
+        private readonly int        $lockWaitTimeoutSeconds = 5,
+        private readonly int        $lockTtlSeconds = 30,
+        private readonly int        $refreshAheadWindowSeconds = 60,
     )
     {
         $this->cacheTtl                    = new CacheTtl(clock: $this->clock);
         $this->decideStaleValueCanBeServed = new DecideStaleValueCanBeServed(
             staleValuePolicy: $stalePolicy ?? StaleValuePolicy::DO_NOT_SERVE_STALE,
         );
-        $this->shouldRefreshCachedValue    = new ShouldRefreshCachedValue(
+        $this->shouldRefreshCachedValue = new ShouldRefreshCachedValue(
             clock                    : $this->clock,
             refreshPolicy            : $refreshPolicy ?? RefreshPolicy::DO_NOT_REFRESH,
             refreshAheadWindowSeconds: $this->refreshAheadWindowSeconds,
@@ -178,7 +178,7 @@ final class AvaxCache implements CacheContract
      */
 
     #[Override]
-    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public function set(string $key, mixed $value, int|DateInterval $ttl = null) : bool
     {
         $startTime = hrtime(true);
 
@@ -213,7 +213,7 @@ final class AvaxCache implements CacheContract
     }
 
     private function recordMetrics(
-        int    $startTime,
+        int $startTime,
         string $operation,
     ) : void
     {
@@ -328,7 +328,7 @@ final class AvaxCache implements CacheContract
     }
 
     #[Override]
-    public function setMultiple(iterable $values, int|DateInterval|null $ttl = null) : bool
+    public function setMultiple(iterable $values, int|DateInterval $ttl = null) : bool
     {
         $values = $values instanceof Traversable ? iterator_to_array($values) : $values;
 

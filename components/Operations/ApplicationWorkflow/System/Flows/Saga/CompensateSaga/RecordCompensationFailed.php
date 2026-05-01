@@ -10,7 +10,7 @@ final readonly class RecordCompensationFailed
         private string $sagaType,
     ) {}
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'records failed compensation for saga to enable recovery.';
     }
@@ -20,8 +20,7 @@ final readonly class RecordCompensationFailed
         string $stepName,
         string $error,
         array $context = [],
-    ) : RecordCompensationFailedResult
-    {
+    ): RecordCompensationFailedResult {
         return new RecordCompensationFailedResult(
             sagaId    : $sagaId,
             stepName  : $stepName,
@@ -31,7 +30,7 @@ final readonly class RecordCompensationFailed
         );
     }
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return ['saga_type' => $this->sagaType];
     }

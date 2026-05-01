@@ -10,7 +10,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes\QueryN
 
 final class IRValidator
 {
-    public function assertValid(QueryNode $queryNode) : void
+    public function assertValid(QueryNode $queryNode): void
     {
         $errors = $this->validate(query: $queryNode);
 
@@ -22,7 +22,7 @@ final class IRValidator
     /**
      * @return list<string>
      */
-    public function validate(QueryNode $queryNode) : array
+    public function validate(QueryNode $queryNode): array
     {
         $errors = [];
 

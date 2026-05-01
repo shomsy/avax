@@ -21,44 +21,44 @@ final readonly class Auth implements AuthInterface
         private Identity $identity,
     ) {}
 
-    public function login(Credentials $credentials) : AuthenticationResult
+    public function login(Credentials $credentials): AuthenticationResult
     {
         return $this->identity->login($credentials);
     }
 
-    public function logout() : void
+    public function logout(): void
     {
         $this->identity->logout();
     }
 
-    public function user() : ?User
+    public function user(): ?User
     {
         $entity = $this->identity->authentication()->user();
 
         return $entity ? User::fromEntity($entity) : null;
     }
 
-    public function check() : bool
+    public function check(): bool
     {
         return $this->identity->authentication()->check();
     }
 
-    public function guest() : bool
+    public function guest(): bool
     {
         return ! $this->check();
     }
 
-    public function register(RegistrationData $data) : RegistrationResult
+    public function register(RegistrationData $data): RegistrationResult
     {
         return $this->identity->account()->register($data);
     }
 
-    public function changePassword(ChangePasswordData $data) : void
+    public function changePassword(ChangePasswordData $data): void
     {
         $this->identity->account()->changePassword($data);
     }
 
-    public function logoutAllSessions() : void
+    public function logoutAllSessions(): void
     {
         $this->identity->sessions()->logoutAllSessions();
     }

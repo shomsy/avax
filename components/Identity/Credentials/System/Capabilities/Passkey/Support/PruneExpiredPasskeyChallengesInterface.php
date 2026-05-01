@@ -8,5 +8,5 @@ use DateTimeImmutable;
 
 interface PruneExpiredPasskeyChallengesInterface
 {
-    public function pruneExpired(DateTimeImmutable $now) : int;
+    public function pruneExpired(DateTimeImmutable $now): int;
 }

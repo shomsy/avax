@@ -17,23 +17,23 @@ final class InMemorySagaStore implements SagaStoreInterface
      */
     private array $sagas = [];
 
-    public function save(Saga $saga) : void
+    public function save(Saga $saga): void
     {
         $this->sagas[$saga->getId()] = $saga;
     }
 
-    public function findById(string $id) : ?Saga
+    public function findById(string $id): ?Saga
     {
         return $this->sagas[$id] ?? null;
     }
 
-    public function updateStatus(Saga $saga, SagaState $status) : void
+    public function updateStatus(Saga $saga, SagaState $status): void
     {
         $saga->setStatus($status);
         $this->sagas[$saga->getId()] = $saga;
     }
 
-    public function delete(string $id) : void
+    public function delete(string $id): void
     {
         unset($this->sagas[$id]);
     }
@@ -41,7 +41,7 @@ final class InMemorySagaStore implements SagaStoreInterface
     /**
      * Clear all stored sagas (useful for testing).
      */
-    public function clear() : void
+    public function clear(): void
     {
         $this->sagas = [];
     }
@@ -49,7 +49,7 @@ final class InMemorySagaStore implements SagaStoreInterface
     /**
      * Get the count of stored sagas.
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->sagas);
     }

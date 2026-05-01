@@ -24,12 +24,12 @@ final class InjectDependenciesTest extends TestCase
     /** @throws ReflectionException */
     public function test_injecting_readonly_property_throws() : void
     {
-        $target = new ReadonlyTarget;
+        $target = new ReadonlyTarget();
 
         $prototype = new ServicePrototype(
             class             : ReadonlyTarget::class,
             injectedProperties: [new PropertyPrototype(name: 'name', type: null)],
-            injectedMethods   : []
+            injectedMethods   : [],
         );
 
         $factory = $this->createMock(ServicePrototypeFactoryInterface::class);
@@ -40,9 +40,9 @@ final class InjectDependenciesTest extends TestCase
             servicePrototypeFactory: $factory,
             propertyInjector       : new PropertyInjector(container: $container),
             methodInjector         : new MethodInjector(
-                                         parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver)
+                                         parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver()),
                                      ),
-            container              : $container
+            container              : $container,
         );
 
         $this->expectException(exception: ResolutionException::class);
@@ -52,15 +52,15 @@ final class InjectDependenciesTest extends TestCase
     /** @throws ReflectionException */
     public function test_injects_method_arguments_from_overrides() : void
     {
-        $target          = new MethodTarget;
+        $target          = new MethodTarget();
         $methodPrototype = new MethodPrototype(
             name      : 'setValue',
-            parameters: [new ParameterPrototype(name: 'value', type: null)]
+            parameters: [new ParameterPrototype(name: 'value', type: null)],
         );
         $prototype       = new ServicePrototype(
             class             : MethodTarget::class,
             injectedProperties: [],
-            injectedMethods   : [$methodPrototype]
+            injectedMethods   : [$methodPrototype],
         );
 
         $factory = $this->createMock(ServicePrototypeFactoryInterface::class);
@@ -71,9 +71,9 @@ final class InjectDependenciesTest extends TestCase
             servicePrototypeFactory: $factory,
             propertyInjector       : new PropertyInjector(container: $container),
             methodInjector         : new MethodInjector(
-                                         parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver)
+                                         parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver()),
                                      ),
-            container              : $container
+            container              : $container,
         );
 
         $result = $injector->execute(target: $target, prototype: $prototype, overrides: ['value' => 'updated']);

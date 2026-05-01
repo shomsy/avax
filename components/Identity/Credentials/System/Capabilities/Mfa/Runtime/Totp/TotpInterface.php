@@ -11,14 +11,14 @@ use DateTimeImmutable;
  */
 interface TotpInterface
 {
-    public function generateSecret() : string;
+    public function generateSecret(): string;
 
-    public function provisioningUri(string $issuer, string $accountLabel, string $secret) : string;
+    public function provisioningUri(string $issuer, string $accountLabel, string $secret): string;
 
     public function verify(
         string $secret,
         string $code,
         DateTimeImmutable $moment,
-        int    $lastAcceptedTimeStep = null,
-    ) : TotpVerification;
+        ?int $lastAcceptedTimeStep = null,
+    ): TotpVerification;
 }

@@ -12,7 +12,7 @@ final class FlushChanges
         private readonly UnitOfWork $unitOfWork,
     ) {}
 
-    public function flush() : void
+    public function flush(): void
     {
         $this->unitOfWork->flush();
     }

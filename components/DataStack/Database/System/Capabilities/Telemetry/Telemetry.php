@@ -14,22 +14,22 @@ use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\Exe
 final readonly class Telemetry
 {
     public function __construct(
-        private EventBus       $eventBus,
-        private Config|null    $config = null,
+        private EventBus $eventBus,
+        private ?Config $config = null,
         private ExecutionScope $scope = new ExecutionScope(correlationId: 'database'),
     ) {}
 
-    public function eventBus() : EventBus
+    public function eventBus(): EventBus
     {
         return $this->eventBus;
     }
 
-    public function config() : Config|null
+    public function config(): ?Config
     {
         return $this->config;
     }
 
-    public function scope() : ExecutionScope
+    public function scope(): ExecutionScope
     {
         return $this->scope;
     }

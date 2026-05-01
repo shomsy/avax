@@ -55,8 +55,8 @@ final class SessionDriver
             'database' => isset($config['database']['pdo'])
                 ? new DatabaseSessionStore(pdo: $config['database']['pdo'], table: $config['database']['table'] ?? 'sessions')
                 : new ArraySessionStore(),
-            'array'    => new ArraySessionStore(),
-            default    => new FileSessionStore(config: $config['file'] ?? []),
+            'array' => new ArraySessionStore(),
+            default => new FileSessionStore(config: $config['file'] ?? []),
         };
     }
 }

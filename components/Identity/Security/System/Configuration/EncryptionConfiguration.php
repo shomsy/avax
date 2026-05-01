@@ -23,8 +23,7 @@ final readonly class EncryptionConfiguration
         private array $keyVersions = [],
         private string $currentVersion = '1',
         private string $salt = '',
-    )
-    {
+    ) {
         if (empty($this->keyVersions)) {
             throw new InvalidArgumentException('Encryption configuration requires at least one key version');
         }
@@ -46,7 +45,7 @@ final readonly class EncryptionConfiguration
      *     salt?: string
      * } $config
      */
-    public static function fromArray(array $config) : self
+    public static function fromArray(array $config): self
     {
         return new self(
             cipher        : $config['cipher'] ?? self::DEFAULT_CIPHER,
@@ -59,7 +58,7 @@ final readonly class EncryptionConfiguration
     /**
      * Get the encryption cipher algorithm.
      */
-    public function cipher() : string
+    public function cipher(): string
     {
         return $this->cipher;
     }
@@ -69,7 +68,7 @@ final readonly class EncryptionConfiguration
      *
      * @return array<string, string>
      */
-    public function keyVersions() : array
+    public function keyVersions(): array
     {
         return $this->keyVersions;
     }
@@ -77,7 +76,7 @@ final readonly class EncryptionConfiguration
     /**
      * Get the current active key version identifier.
      */
-    public function currentVersion() : string
+    public function currentVersion(): string
     {
         return $this->currentVersion;
     }
@@ -85,7 +84,7 @@ final readonly class EncryptionConfiguration
     /**
      * Get the salt for key derivation.
      */
-    public function salt() : string
+    public function salt(): string
     {
         return $this->salt;
     }
@@ -100,13 +99,13 @@ final readonly class EncryptionConfiguration
      *     salt: string
      * }
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'cipher'          => $this->cipher,
-            'key_versions'    => $this->keyVersions,
+            'cipher' => $this->cipher,
+            'key_versions' => $this->keyVersions,
             'current_version' => $this->currentVersion,
-            'salt'            => $this->salt,
+            'salt' => $this->salt,
         ];
     }
 }

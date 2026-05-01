@@ -10,11 +10,11 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Rea
 final readonly class ResolveDefaultConnection
 {
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function __construct(private array $config) {}
 
-    public function resolve(string|null $connectionName = null) : string
+    public function resolve(?string $connectionName = null): string
     {
         return $connectionName ?? $this->config['default'] ?? 'mysql';
     }

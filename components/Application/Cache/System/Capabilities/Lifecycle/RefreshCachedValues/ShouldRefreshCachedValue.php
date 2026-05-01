@@ -10,10 +10,10 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 final readonly class ShouldRefreshCachedValue
 {
     public function __construct(
-        private Clock         $clock,
+        private Clock $clock,
         private RefreshPolicy $refreshPolicy = RefreshPolicy::DO_NOT_REFRESH,
-        private int           $refreshAheadWindowSeconds = 60,
-        private int           $staleThresholdSeconds = 300,
+        private int   $refreshAheadWindowSeconds = 60,
+        private int   $staleThresholdSeconds = 300,
     ) {}
 
     public function shouldRefresh(CachedValueLifecycle|null $lifecycle) : bool

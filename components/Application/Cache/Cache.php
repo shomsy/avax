@@ -29,12 +29,12 @@ final class Cache
         self::$cacheContract = null;
     }
 
-    public static function put(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public static function put(string $key, mixed $value, int|DateInterval $ttl = null) : bool
     {
         return self::set(key: $key, value: $value, ttl: $ttl);
     }
 
-    public static function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public static function set(string $key, mixed $value, int|DateInterval $ttl = null) : bool
     {
         return self::default()->set(key: $key, value: $value, ttl: $ttl);
     }
@@ -94,7 +94,7 @@ final class Cache
         return self::default()->get(key: $key, default: $default);
     }
 
-    public static function store(string|null $name = null) : CacheContract
+    public static function store(string $name = null) : CacheContract
     {
         if ($name !== null) {
             throw new NotConfigured(message: 'Named store requires RegisterCacheDependencies');

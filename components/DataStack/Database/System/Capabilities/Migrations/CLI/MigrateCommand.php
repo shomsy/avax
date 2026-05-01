@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\CLI;
 
-use Avax\Components\DataStack\Database\Connection;
-use Avax\Components\DataStack\Database\System\Capabilities\Migrations\MigrationRunner;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\SchemaBuilder;
 use Closure;
 use PDO;
 
 final readonly class MigrateCommand
 {
-    private string          $path;
+    private string $path;
 
     public function __construct()
     {
-        $this->path   = dirname(__DIR__, 6) . '/database/migrations';
+        $this->path = dirname(__DIR__, 6).'/database/migrations';
     }
 
-    public function up() : array
+    public function up(): array
     {
         $migrations = $this->getMigrations();
 
@@ -27,13 +25,13 @@ final readonly class MigrateCommand
             return ['status' => 'nothing', 'message' => 'Nothing to migrate'];
         }
 
-        $ran        = [];
+        $ran = [];
         $pdo = $this->getConnection();
 
         foreach ($migrations as $file) {
             require_once $file;
-            $class     = $this->getMigrationClass($file);
-            $migration = new $class();
+            $class = $this->getMigrationClass($file);
+            $migration = new $class;
 
             $migration->up();
             $ran[] = basename((string) $file);
@@ -41,26 +39,26 @@ final readonly class MigrateCommand
 
         return [
             'status' => 'success',
-            'ran'    => $ran,
-            'count'  => count($ran),
+            'ran' => $ran,
+            'count' => count($ran),
         ];
     }
 
-    private function getMigrations() : array
+    private function getMigrations(): array
     {
         if (! is_dir($this->path)) {
             return [];
         }
 
-        return glob($this->path . '/*_*.php');
+        return glob($this->path.'/*_*.php');
     }
 
-    private function getConnection() : PDO
+    private function getConnection(): PDO
     {
         return new PDO('sqlite::memory:');
     }
 
-    private function getMigrationClass(string $file) : string
+    private function getMigrationClass(string $file): string
     {
         $content = file_get_contents($file);
         preg_match('/class (\w+) extends/', $content, $match);
@@ -68,9 +66,9 @@ final readonly class MigrateCommand
         return $match[1] ?? 'Migration';
     }
 
-    public function down(int $steps = 1) : array
+    public function down(int $steps = 1): array
     {
-        $ran        = [];
+        $ran = [];
         $pdo = $this->getConnection();
 
         for ($i = 0; $i < $steps; $i++) {
@@ -81,48 +79,48 @@ final readonly class MigrateCommand
             }
 
             require_once $last['file'];
-            $class     = $this->getMigrationClass($last['file']);
-            $migration = new $class();
+            $class = $this->getMigrationClass($last['file']);
+            $migration = new $class;
             $migration->down();
 
             $ran[] = basename((string) $last['file']);
         }
 
         return [
-            'status'      => 'success',
+            'status' => 'success',
             'rolled_back' => $ran,
-            'count'       => count($ran),
+            'count' => count($ran),
         ];
     }
 
-    private function getLastMigration() : array|null
+    private function getLastMigration(): ?array
     {
         return null;
     }
 
-    public function fresh() : array
+    public function fresh(): array
     {
         $this->getConnection();
 
         return [
-            'status'  => 'success',
+            'status' => 'success',
             'message' => 'Database recreated',
         ];
     }
 
-    public function status() : array
+    public function status(): array
     {
         $migrations = $this->getMigrations();
-        $ran        = $this->getRanMigrations();
+        $ran = $this->getRanMigrations();
 
         return [
-            'status'  => 'success',
-            'ran'     => $ran,
+            'status' => 'success',
+            'ran' => $ran,
             'pending' => array_diff(array_map('basename', $migrations), $ran),
         ];
     }
 
-    private function getRanMigrations() : array
+    private function getRanMigrations(): array
     {
         return [];
     }
@@ -130,9 +128,9 @@ final readonly class MigrateCommand
 
 final class SchemaCommand
 {
-    public function create(string $table, Closure $callback) : bool
+    public function create(string $table, Closure $callback): bool
     {
-        $schemaBuilder = new SchemaBuilder();
+        $schemaBuilder = new SchemaBuilder;
         $callback($schemaBuilder);
 
         $schemaBuilder->createTable($table);
@@ -140,14 +138,14 @@ final class SchemaCommand
         return true;
     }
 
-    public function drop() : bool
+    public function drop(): bool
     {
         return true;
     }
 
-    public function table(string $table, Closure $callback) : bool
+    public function table(string $table, Closure $callback): bool
     {
-        $schemaBuilder = new SchemaBuilder();
+        $schemaBuilder = new SchemaBuilder;
         $callback($schemaBuilder);
 
         return true;
@@ -156,19 +154,19 @@ final class SchemaCommand
 
 final class SeederCommand
 {
-    public function run() : array
+    public function run(): array
     {
         $ran = [];
-        $path = dirname(__DIR__, 6) . '/database/seeders';
+        $path = dirname(__DIR__, 6).'/database/seeders';
         if (! is_dir($path)) {
             return ['status' => 'nothing', 'message' => 'No seeders found'];
         }
 
-        $files = glob($path . '/*Seeder.php');
+        $files = glob($path.'/*Seeder.php');
         foreach ($files as $file) {
             require_once $file;
-            $className = str_replace([$path . '/', '.php'], '', $file);
-            $seeder    = new $className();
+            $className = str_replace([$path.'/', '.php'], '', $file);
+            $seeder = new $className;
             $seeder->run();
 
             $ran[] = $className;
@@ -176,7 +174,7 @@ final class SeederCommand
 
         return [
             'status' => 'success',
-            'ran'    => $ran,
+            'ran' => $ran,
         ];
     }
 }

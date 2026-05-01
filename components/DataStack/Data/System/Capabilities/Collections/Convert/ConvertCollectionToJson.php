@@ -15,25 +15,25 @@ final readonly class ConvertCollectionToJson
         private array $items = [],
     ) {}
 
-    public function __invoke(int $flags = 0) : string
+    public function __invoke(int $flags = 0): string
     {
         return $this->toJson(flags: $flags);
     }
 
-    public function toJson(int $flags = 0) : string
+    public function toJson(int $flags = 0): string
     {
         $json = json_encode(value: $this->items, flags: $flags);
 
         if ($json === false) {
             throw new InvalidArgumentException(
-                message: 'Failed to encode collection to JSON: ' . json_last_error_msg(),
+                message: 'Failed to encode collection to JSON: '.json_last_error_msg(),
             );
         }
 
         return $json;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

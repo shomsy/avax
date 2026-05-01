@@ -16,12 +16,12 @@ use Throwable;
 final readonly class RetryPolicy
 {
     /**
-     * @param int                           $maxAttempts Maximum number of retry attempts (total attempts = maxAttempts)
-     * @param int                           $baseDelayMs Base delay in milliseconds before first retry
-     * @param int                           $maxDelayMs  Maximum delay cap in milliseconds
-     * @param float                         $multiplier  Exponential backoff multiplier
-     * @param list<class-string<Throwable>> $retryOn     Exception classes that should trigger a retry
-     * @param list<string>                  $errorCodes  Database error codes that should trigger a retry
+     * @param  int  $maxAttempts  Maximum number of retry attempts (total attempts = maxAttempts)
+     * @param  int  $baseDelayMs  Base delay in milliseconds before first retry
+     * @param  int  $maxDelayMs  Maximum delay cap in milliseconds
+     * @param  float  $multiplier  Exponential backoff multiplier
+     * @param  list<class-string<Throwable>>  $retryOn  Exception classes that should trigger a retry
+     * @param  list<string>  $errorCodes  Database error codes that should trigger a retry
      */
     public function __construct(
         public int $maxAttempts = 3,
@@ -35,7 +35,7 @@ final readonly class RetryPolicy
     /**
      * Creates a policy optimized for deadlock retries.
      */
-    public static function forDeadlocks(int $maxAttempts = 5) : self
+    public static function forDeadlocks(int $maxAttempts = 5): self
     {
         return new self(
             maxAttempts: $maxAttempts,
@@ -50,7 +50,7 @@ final readonly class RetryPolicy
     /**
      * Creates a policy optimized for network error retries.
      */
-    public static function forNetworkErrors(int $maxAttempts = 3) : self
+    public static function forNetworkErrors(int $maxAttempts = 3): self
     {
         return new self(
             maxAttempts: $maxAttempts,
@@ -64,7 +64,7 @@ final readonly class RetryPolicy
     /**
      * Creates a policy for transient/timeout errors.
      */
-    public static function forTimeouts(int $maxAttempts = 3) : self
+    public static function forTimeouts(int $maxAttempts = 3): self
     {
         return new self(
             maxAttempts: $maxAttempts,
@@ -78,7 +78,7 @@ final readonly class RetryPolicy
     /**
      * Creates a no-retry policy (fail immediately on any error).
      */
-    public static function noRetry() : self
+    public static function noRetry(): self
     {
         return new self(maxAttempts: 1);
     }
@@ -86,10 +86,10 @@ final readonly class RetryPolicy
     /**
      * Determines if the given exception should trigger a retry.
      *
-     * @param Throwable $exception The exception to check
-     * @param int $attempt The current attempt number (1-based, before retry)
+     * @param  Throwable  $exception  The exception to check
+     * @param  int  $attempt  The current attempt number (1-based, before retry)
      */
-    public function shouldRetry(Throwable $exception, int $attempt) : bool
+    public function shouldRetry(Throwable $exception, int $attempt): bool
     {
         if ($attempt >= $this->maxAttempts) {
             return false;
@@ -150,11 +150,10 @@ final readonly class RetryPolicy
      *
      * Uses exponential backoff: baseDelayMs * multiplier^attempt
      *
-     * @param int $attempt The attempt number (0-based)
-     *
+     * @param  int  $attempt  The attempt number (0-based)
      * @return int Delay in milliseconds, capped at maxDelayMs
      */
-    public function getDelayMs(int $attempt) : int
+    public function getDelayMs(int $attempt): int
     {
         $delay = (int) ($this->baseDelayMs * pow($this->multiplier, $attempt));
 
@@ -164,7 +163,7 @@ final readonly class RetryPolicy
     /**
      * Returns whether this policy would retry on any exception (has retry criteria).
      */
-    public function hasRetryCriteria() : bool
+    public function hasRetryCriteria(): bool
     {
         return ! empty($this->retryOn) || ! empty($this->errorCodes);
     }
@@ -172,7 +171,7 @@ final readonly class RetryPolicy
     /**
      * Creates a copy of this policy with a different maximum attempts value.
      */
-    public function withMaxAttempts(int $maxAttempts) : self
+    public function withMaxAttempts(int $maxAttempts): self
     {
         return new self(
             maxAttempts: $maxAttempts,

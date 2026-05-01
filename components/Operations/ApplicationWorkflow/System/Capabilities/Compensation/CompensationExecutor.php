@@ -13,10 +13,10 @@ use Throwable;
 final readonly class CompensationResult
 {
     public function __construct(
-        public bool  $success,
+        public bool $success,
         public array $compensatedSteps,
         public array $failedSteps,
-        public string|null $failureReason = null,
+        public ?string $failureReason = null,
     ) {}
 }
 
@@ -28,18 +28,16 @@ final class CompensationExecutor
     /**
      * Run compensation for all completed steps in reverse order.
      *
-     * @param array<SagaStep> $steps   All saga steps
-     * @param array<int, string> $completedSteps Names of completed steps (in order)
-     * @param mixed           $context The saga context
-     *
+     * @param  array<SagaStep>  $steps  All saga steps
+     * @param  array<int, string>  $completedSteps  Names of completed steps (in order)
+     * @param  mixed  $context  The saga context
      * @return CompensationResult The result of compensation execution
      */
     public function execute(
         array $steps,
         array $completedSteps,
         mixed $context,
-    ) : CompensationResult
-    {
+    ): CompensationResult {
         if (empty($completedSteps)) {
             return new CompensationResult(
                 success         : true,
@@ -54,8 +52,8 @@ final class CompensationExecutor
             $stepMap[$step->name] = $step;
         }
 
-        $compensated   = [];
-        $failed        = [];
+        $compensated = [];
+        $failed = [];
         $failureReason = null;
 
         // Run compensation in REVERSE order of completed steps
@@ -78,7 +76,7 @@ final class CompensationExecutor
                 $step->compensate($context);
                 $compensated[] = $stepName;
             } catch (Throwable $e) {
-                $failed[]      = $stepName;
+                $failed[] = $stepName;
                 $failureReason = sprintf(
                     'Compensation failed for step "%s": %s',
                     $stepName,

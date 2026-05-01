@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $mappings = [
     '.agents/how-to/how-to-architecture.md'           => '.agents/.rules/governance/architecture/how-to-architecture.md',
     '.agents/how-to/how-to-architecture-extension.md' => '.agents/.rules/governance/architecture/how-to-architecture-extension.md',
@@ -19,12 +21,14 @@ foreach ($mappings as $source => $target) {
     if (! file_exists($source)) {
         echo "❌ Source missing: $source\n";
         $allMatch = false;
+
         continue;
     }
 
     if (! file_exists($target)) {
         echo "❌ Target missing: $target\n";
         $allMatch = false;
+
         continue;
     }
 
@@ -32,9 +36,9 @@ foreach ($mappings as $source => $target) {
     $hashTarget = md5_file($target);
 
     if ($hashSource === $hashTarget) {
-        echo "✅ MATCH: " . basename($source) . "\n";
+        echo '✅ MATCH: ' . basename($source) . "\n";
     } else {
-        echo "❌ MISMATCH: " . basename($source) . " (Files differ!)\n";
+        echo '❌ MISMATCH: ' . basename($source) . " (Files differ!)\n";
         $allMatch = false;
     }
 }

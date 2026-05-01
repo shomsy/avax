@@ -14,16 +14,16 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 final readonly class Login
 {
     public function __construct(
-        private FindUserByCredentials     $findUser,
-        private VerifyPassword            $verifyPassword,
+        private FindUserByCredentials $findUser,
+        private VerifyPassword $verifyPassword,
         private StartAuthenticatedSession $startSession,
-        private Identity                  $identity,
+        private Identity $identity,
     ) {}
 
     /**
      * @throws AuthenticationFailed
      */
-    public function execute(Credentials $credentials) : AuthenticationResult
+    public function execute(Credentials $credentials): AuthenticationResult
     {
         $user = $this->findUser->execute($credentials->email);
 

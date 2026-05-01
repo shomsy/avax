@@ -16,12 +16,12 @@ use Throwable;
  */
 final readonly class BuildService
 {
-    private ResolveDependencies    $dependencies;
+    private ResolveDependencies $dependencies;
     private CreateDependencyBlueprint $blueprints;
 
     public function __construct(
         CreateDependencyBlueprint $blueprints,
-        ResolveDependencies    $dependencies,
+        ResolveDependencies $dependencies,
     )
     {
         $this->blueprints   = $blueprints;
@@ -34,10 +34,10 @@ final readonly class BuildService
      * @throws ContainerException
      */
     public function build(
-        string          $class,
+        string         $class,
         ResolveDependency $resolver,
-        array           $overrides = null,
-        ResolveRequest  $request = null,
+        array          $overrides = null,
+        ResolveRequest $request = null,
     ) : object
     {
         $overrides ??= [];

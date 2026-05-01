@@ -10,48 +10,49 @@ use SensitiveParameter;
 final readonly class FederationConnection
 {
     public FederationConnectionHealth $health;
+
     /** @var array<string, list<string>> */
     public array $groupRoleMap;
-    public bool  $ssoOnly;
+
+    public bool $ssoOnly;
 
     /**
-     * @param array<string, list<string>> $groupRoleMap
+     * @param  array<string, list<string>>  $groupRoleMap
      */
     public function __construct(
-        public string                 $connectionId,
-        public string                 $tenantSlug,
-        public string                 $name,
-        public FederationProvider     $provider,
-        public string                 $domain,
-        bool                          $ssoOnly = null,
-        array                         $groupRoleMap = null,
-        public string|null            $metadataUrl = null,
-        public string|null            $metadataIssuer = null,
+        public string $connectionId,
+        public string $tenantSlug,
+        public string $name,
+        public FederationProvider $provider,
+        public string $domain,
+        ?bool $ssoOnly = null,
+        ?array $groupRoleMap = null,
+        public ?string $metadataUrl = null,
+        public ?string $metadataIssuer = null,
         #[SensitiveParameter]
-        public string|null            $metadataHash = null,
-        public DateTimeImmutable|null $metadataSyncedAt = null,
+        public ?string $metadataHash = null,
+        public ?DateTimeImmutable $metadataSyncedAt = null,
         #[SensitiveParameter]
-        public string|null            $domainVerificationToken = null,
-        public DateTimeImmutable|null $domainVerifiedAt = null,
-        FederationConnectionHealth    $health = null,
-        public DateTimeImmutable|null $healthCheckedAt = null,
-        public bool                   $breakGlassAllowed = false,
-    )
-    {
-        $ssoOnly            ??= false;
-        $groupRoleMap       ??= [];
-        $health             ??= FederationConnectionHealth::UNKNOWN;
-        $this->ssoOnly      = $ssoOnly;
+        public ?string $domainVerificationToken = null,
+        public ?DateTimeImmutable $domainVerifiedAt = null,
+        ?FederationConnectionHealth $health = null,
+        public ?DateTimeImmutable $healthCheckedAt = null,
+        public bool $breakGlassAllowed = false,
+    ) {
+        $ssoOnly ??= false;
+        $groupRoleMap ??= [];
+        $health ??= FederationConnectionHealth::UNKNOWN;
+        $this->ssoOnly = $ssoOnly;
         $this->groupRoleMap = $groupRoleMap;
-        $this->health       = $health;
+        $this->health = $health;
     }
 
-    public function isDomainVerified() : bool
+    public function isDomainVerified(): bool
     {
         return $this->domainVerifiedAt !== null;
     }
 
-    public function withVerifiedDomain(DateTimeImmutable $verifiedAt) : self
+    public function withVerifiedDomain(DateTimeImmutable $verifiedAt): self
     {
         return new self(
             connectionId           : $this->connectionId,
@@ -74,12 +75,11 @@ final readonly class FederationConnection
     }
 
     public function withMetadata(
-        string            $metadataIssuer,
+        string $metadataIssuer,
         #[SensitiveParameter]
-        string            $metadataHash,
+        string $metadataHash,
         DateTimeImmutable $syncedAt,
-    ) : self
-    {
+    ): self {
         return new self(
             connectionId           : $this->connectionId,
             tenantSlug             : $this->tenantSlug,
@@ -102,9 +102,8 @@ final readonly class FederationConnection
 
     public function withHealth(
         FederationConnectionHealth $health,
-        DateTimeImmutable          $checkedAt,
-    ) : self
-    {
+        DateTimeImmutable $checkedAt,
+    ): self {
         return new self(
             connectionId           : $this->connectionId,
             tenantSlug             : $this->tenantSlug,

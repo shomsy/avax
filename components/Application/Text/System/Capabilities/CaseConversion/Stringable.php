@@ -147,7 +147,7 @@ final readonly class Stringable implements \Stringable
         return new self(rtrim($this->value, $characters));
     }
 
-    public function substr(int $start, int|null $length = null) : self
+    public function substr(int $start, int $length = null) : self
     {
         return new self(
             $length !== null

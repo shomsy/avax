@@ -21,7 +21,7 @@ final readonly class SyncFederationMetadata
      * @throws FederationFailed
      * @throws JsonException
      */
-    public function execute(string $connectionId) : FederationConnection
+    public function execute(string $connectionId): FederationConnection
     {
         $connection = $this->connectionStore->find(connectionId: $connectionId);
 
@@ -34,25 +34,25 @@ final readonly class SyncFederationMetadata
         }
 
         $metadata = $this->runtime->readMetadata(connection: $connection);
-        $synced   = $connection->withMetadata(
+        $synced = $connection->withMetadata(
             metadataIssuer: $metadata->issuer,
             metadataHash  : hash(algo: 'sha256', data: json_encode(value: [
-                                                                              'issuer' => $metadata->issuer,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'single_sign_on_url' => $metadata->singleSignOnUrl,
-                                                                              'claims' => $metadata->claims,
-                                                                          ], flags: JSON_THROW_ON_ERROR)),
+                'issuer' => $metadata->issuer,
+                'single_sign_on_url' => $metadata->singleSignOnUrl,
+                'claims' => $metadata->claims,
+            ], flags: JSON_THROW_ON_ERROR)),
             syncedAt      : $this->clock->now(),
         );
         $this->connectionStore->save(connection: $synced);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.federation.metadata.synced',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'connection_id'   => $synced->connectionId,
-                                                           'tenant'          => $synced->tenantSlug,
-                                                           'metadata_issuer' => $synced->metadataIssuer,
-                                                       ],
-                                       ));
+            name      : 'auth.federation.metadata.synced',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'connection_id' => $synced->connectionId,
+                'tenant' => $synced->tenantSlug,
+                'metadata_issuer' => $synced->metadataIssuer,
+            ],
+        ));
 
         return $synced;
     }

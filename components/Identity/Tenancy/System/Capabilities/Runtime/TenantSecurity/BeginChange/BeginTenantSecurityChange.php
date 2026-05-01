@@ -20,18 +20,18 @@ use Random\RandomException;
 
 final readonly class BeginTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private FederationConnectionStoreInterface|null $federationConnectionStore, private ScimDirectoryStoreInterface|null $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private ?FederationConnectionStoreInterface $federationConnectionStore, private ?ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws TenantSecurityFailed
      * @throws RandomException
      */
-    public function execute(BeginTenantSecurityChangeData $data) : TenantSecurityChangeRequest
+    public function execute(BeginTenantSecurityChangeData $data): TenantSecurityChangeRequest
     {
         $this->assertKnownReferences(after: $data->after);
 
-        $before        = $this->configurationStore->find(tenantSlug: $data->tenantSlug);
-        $after         = new TenantSecurityConfiguration(
+        $before = $this->configurationStore->find(tenantSlug: $data->tenantSlug);
+        $after = new TenantSecurityConfiguration(
             tenantSlug            : $data->tenantSlug,
             federationConnectionId: $data->after->federationConnectionId,
             scimDirectoryId       : $data->after->scimDirectoryId,
@@ -41,7 +41,7 @@ final readonly class BeginTenantSecurityChange
             rolloutVersion        : $before !== null ? $before->rolloutVersion + 1 : $data->after->rolloutVersion,
         );
         $changeRequest = new TenantSecurityChangeRequest(
-            changeId   : 'tenant_change_' . bin2hex(string: random_bytes(length: 12)),
+            changeId   : 'tenant_change_'.bin2hex(string: random_bytes(length: 12)),
             tenantSlug : $data->tenantSlug,
             requestedBy: trim(string: $data->requestedBy),
             reason     : trim(string: $data->reason),
@@ -54,15 +54,15 @@ final readonly class BeginTenantSecurityChange
 
         $this->changeRequestStore->save(changeRequest: $changeRequest);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.tenant_security.change.requested',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'change_id'    => $changeRequest->changeId,
-                                                           'tenant'       => $changeRequest->tenantSlug,
-                                                           'requested_by' => $changeRequest->requestedBy,
-                                                           'diff'         => $this->encodeDiff(value: $changeRequest->diff),
-                                                       ],
-                                       ));
+            name      : 'auth.tenant_security.change.requested',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'change_id' => $changeRequest->changeId,
+                'tenant' => $changeRequest->tenantSlug,
+                'requested_by' => $changeRequest->requestedBy,
+                'diff' => $this->encodeDiff(value: $changeRequest->diff),
+            ],
+        ));
 
         return $changeRequest;
     }
@@ -70,7 +70,7 @@ final readonly class BeginTenantSecurityChange
     /**
      * @throws TenantSecurityFailed
      */
-    private function assertKnownReferences(TenantSecurityConfiguration $after) : void
+    private function assertKnownReferences(TenantSecurityConfiguration $after): void
     {
         if (
             $after->federationConnectionId !== null
@@ -90,11 +90,11 @@ final readonly class BeginTenantSecurityChange
     /**
      * @return array<string, string>
      */
-    private function diff(TenantSecurityConfiguration|null $before, TenantSecurityConfiguration $after) : array
+    private function diff(?TenantSecurityConfiguration $before, TenantSecurityConfiguration $after): array
     {
         $beforeSnapshot = $this->snapshot(configuration: $before);
-        $afterSnapshot  = $this->snapshot(configuration: $after);
-        $diff           = [];
+        $afterSnapshot = $this->snapshot(configuration: $after);
+        $diff = [];
 
         foreach ($afterSnapshot as $field => $afterValue) {
             $beforeValue = $beforeSnapshot[$field] ?? '';
@@ -103,7 +103,7 @@ final readonly class BeginTenantSecurityChange
                 continue;
             }
 
-            $diff[$field] = $beforeValue . ' => ' . $afterValue;
+            $diff[$field] = $beforeValue.' => '.$afterValue;
         }
 
         ksort(array: $diff);
@@ -114,7 +114,7 @@ final readonly class BeginTenantSecurityChange
     /**
      * @return array<string, string>
      */
-    private function snapshot(TenantSecurityConfiguration|null $configuration) : array
+    private function snapshot(?TenantSecurityConfiguration $configuration): array
     {
         if ($configuration === null) {
             return [];
@@ -122,18 +122,18 @@ final readonly class BeginTenantSecurityChange
 
         return [
             'federation_connection_id' => (string) $configuration->federationConnectionId,
-            'scim_directory_id'        => (string) $configuration->scimDirectoryId,
-            'verified_domains'         => implode(separator: ',', array: $configuration->verifiedDomains),
-            'group_role_map'           => $this->encodeDiff(value: $configuration->groupRoleMap),
-            'policy_profile'           => $configuration->policyProfile,
-            'rollout_version'          => (string) $configuration->rolloutVersion,
+            'scim_directory_id' => (string) $configuration->scimDirectoryId,
+            'verified_domains' => implode(separator: ',', array: $configuration->verifiedDomains),
+            'group_role_map' => $this->encodeDiff(value: $configuration->groupRoleMap),
+            'policy_profile' => $configuration->policyProfile,
+            'rollout_version' => (string) $configuration->rolloutVersion,
         ];
     }
 
     /**
-     * @param array<string, mixed> $value
+     * @param  array<string, mixed>  $value
      */
-    private function encodeDiff(array $value) : string
+    private function encodeDiff(array $value): string
     {
         try {
             return json_encode(value: $value, flags: JSON_THROW_ON_ERROR);

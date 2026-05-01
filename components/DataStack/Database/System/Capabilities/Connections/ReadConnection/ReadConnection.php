@@ -26,35 +26,36 @@ final class ReadConnection
     /** @var array<string, ConnectionPool> */
     private array $pools = [];
 
-    private ExecutionScope|null         $scope;
+    private ?ExecutionScope $scope;
+
     private readonly ResolveDefaultConnection $resolveDefaultConnection;
+
     private readonly RememberConnection $rememberConnection;
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      *
      * @throws RandomException
      */
     public function __construct(
-        private readonly array   $config,
-        private readonly EventBus|null $eventBus = null,
-        ExecutionScope           $scope = null,
-        ResolveDefaultConnection|null $resolveDefaultConnection = null,
-        RememberConnection       $rememberConnection = null,
-    )
-    {
-        $this->scope              = $scope ?? ExecutionScope::fresh();
+        private readonly array $config,
+        private readonly ?EventBus $eventBus = null,
+        ?ExecutionScope $scope = null,
+        ?ResolveDefaultConnection $resolveDefaultConnection = null,
+        ?RememberConnection $rememberConnection = null,
+    ) {
+        $this->scope = $scope ?? ExecutionScope::fresh();
         $this->resolveDefaultConnection = $resolveDefaultConnection ?? new ResolveDefaultConnection(config: $this->config);
-        $this->rememberConnection = $rememberConnection ?? new RememberConnection();
+        $this->rememberConnection = $rememberConnection ?? new RememberConnection;
     }
 
     /**
      * @throws Throwable
      */
-    public function connection(string|null $name = null) : DatabaseConnection
+    public function connection(?string $name = null): DatabaseConnection
     {
         $resolvedName = $this->resolveDefaultConnection->resolve(connectionName: $name);
-        $cached       = $this->rememberConnection->read(connections: $this->connections, name: $resolvedName);
+        $cached = $this->rememberConnection->read(connections: $this->connections, name: $resolvedName);
 
         if ($cached !== null) {
             return $cached;
@@ -80,9 +81,9 @@ final class ReadConnection
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
-    private function pool(string $name, array $config) : ConnectionPool
+    private function pool(string $name, array $config): ConnectionPool
     {
         $pool = $this->rememberConnection->readPool(pools: $this->pools, name: $name)
             ?? $this->rememberConnection->rememberPool(
@@ -98,22 +99,22 @@ final class ReadConnection
         return $pool;
     }
 
-    public function withScope(ExecutionScope $scope) : self
+    public function withScope(ExecutionScope $scope): self
     {
-        return clone(object: $this, withProperties: [
+        return clone (object: $this, withProperties: [
             'scope' => $scope,
         ]);
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      *
      * @throws Throwable
      */
-    private function open(array $config) : DatabaseConnection
+    private function open(array $config): DatabaseConnection
     {
         return new OpenConnection(
-            buildPhysicalConnection: new BuildPhysicalConnection(),
+            buildPhysicalConnection: new BuildPhysicalConnection,
             eventBus               : $this->eventBus,
             scope                  : $this->scope,
         )->using(config: $config);

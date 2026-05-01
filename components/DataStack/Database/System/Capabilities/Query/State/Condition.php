@@ -12,26 +12,28 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\State;
 final readonly class Condition
 {
     public string $boolean;
+
     public mixed $value;
+
     public string $operator;
+
     public string $column;
 
     /**
-     * @param string $column  The technical identifier of the database column to be filtered.
-     * @param string $operator The logical comparison operator (e.g., '=', '<', '>', 'LIKE').
-     * @param mixed  $value   The comparison target value (scalar, array, or expression).
-     * @param string $boolean The logical joiner used to link this condition ('AND' or 'OR').
+     * @param  string  $column  The technical identifier of the database column to be filtered.
+     * @param  string  $operator  The logical comparison operator (e.g., '=', '<', '>', 'LIKE').
+     * @param  mixed  $value  The comparison target value (scalar, array, or expression).
+     * @param  string  $boolean  The logical joiner used to link this condition ('AND' or 'OR').
      */
     public function __construct(
         string $column,
         string $operator,
-        mixed  $value,
+        mixed $value,
         string $boolean = 'AND',
-    )
-    {
-        $this->column   = $column;
+    ) {
+        $this->column = $column;
         $this->operator = $operator;
-        $this->value    = $value;
-        $this->boolean  = $boolean;
+        $this->value = $value;
+        $this->boolean = $boolean;
     }
 }

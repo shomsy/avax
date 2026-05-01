@@ -16,27 +16,27 @@ final readonly class Tuple4
         private mixed $fourth,
     ) {}
 
-    public function first() : mixed
+    public function first(): mixed
     {
         return $this->first;
     }
 
-    public function second() : mixed
+    public function second(): mixed
     {
         return $this->second;
     }
 
-    public function third() : mixed
+    public function third(): mixed
     {
         return $this->third;
     }
 
-    public function fourth() : mixed
+    public function fourth(): mixed
     {
         return $this->fourth;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [$this->first, $this->second, $this->third, $this->fourth];
     }

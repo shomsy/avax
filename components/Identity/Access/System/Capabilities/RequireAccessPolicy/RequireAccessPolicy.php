@@ -28,14 +28,14 @@ final readonly class RequireAccessPolicy
 {
     public function __construct(
         #[SensitiveParameter]
-        private RequireAuthentication                  $requireAuthentication,
-        private RequireRole                            $requireRole,
-        private RequirePermission                      $requirePermission,
-        private RequireResourceOwner                   $requireResourceOwner,
+        private RequireAuthentication $requireAuthentication,
+        private RequireRole $requireRole,
+        private RequirePermission $requirePermission,
+        private RequireResourceOwner $requireResourceOwner,
         #[SensitiveParameter]
         private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
-        private RequireFreshMfa                        $requireFreshMfa,
-        private RequireAdminElevation                  $requireAdminElevation,
+        private RequireFreshMfa $requireFreshMfa,
+        private RequireAdminElevation $requireAdminElevation,
     ) {}
 
     /**
@@ -47,7 +47,7 @@ final readonly class RequireAccessPolicy
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function execute(AccessPolicy $policy) : void
+    public function execute(AccessPolicy $policy): void
     {
         $this->requireAuthentication->execute();
         $identityPolicy = $policy->identityPolicy;

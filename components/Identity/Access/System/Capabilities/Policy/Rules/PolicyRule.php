@@ -9,17 +9,17 @@ use Closure;
 final readonly class PolicyRule
 {
     public function __construct(
-        public string  $action,
+        public string $action,
         public Closure $condition,
-        public string  $reason,
+        public string $reason,
     ) {}
 
-    public function applies(string $action, object $resource) : bool
+    public function applies(string $action, object $resource): bool
     {
         return $this->action === $action;
     }
 
-    public function evaluate(string $action, object $resource, array $context) : PolicyDecision|null
+    public function evaluate(string $action, object $resource, array $context): ?PolicyDecision
     {
         $result = ($this->condition)($resource, $context);
 
@@ -37,29 +37,29 @@ final readonly class PolicyRule
 
 final readonly class AttributeCondition
 {
-    public static function owner(object $resource, array $context) : bool
+    public static function owner(object $resource, array $context): bool
     {
-        $userId  = $context['user_id'] ?? null;
+        $userId = $context['user_id'] ?? null;
         $ownerId = $resource->owner_id ?? null;
 
         return $userId === $ownerId;
     }
 
-    public static function role(string $requiredRole, object $resource, array $context) : bool
+    public static function role(string $requiredRole, object $resource, array $context): bool
     {
         $userRole = $context['role'] ?? null;
 
         return $userRole === $requiredRole;
     }
 
-    public static function withinHours(int $startHour, int $endHour, object $resource, array $context) : bool
+    public static function withinHours(int $startHour, int $endHour, object $resource, array $context): bool
     {
         $hour = (int) date('H');
 
         return $hour >= $startHour && $hour < $endHour;
     }
 
-    public static function ipWhitelist(array $allowedIps, object $resource, array $context) : bool
+    public static function ipWhitelist(array $allowedIps, object $resource, array $context): bool
     {
         $ip = $context['ip'] ?? null;
 

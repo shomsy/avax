@@ -11,6 +11,6 @@ final readonly class SessionActor
     public function __construct(
         public string $id,
         #[SensitiveParameter]
-        public array  $data = [],
+        public array $data = [],
     ) {}
 }

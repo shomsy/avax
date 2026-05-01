@@ -11,17 +11,17 @@ use Closure;
  */
 final class TraceSpan
 {
-    private float    $startMS;
+    private float $startMS;
     private Closure $onFinish;
 
     public function __construct(
-        private string      $name,
+        private string $name,
         private string|null $category = null,
-        Closure|null       $onFinish = null,
+        Closure        $onFinish = null,
     )
     {
         $this->startMS  = microtime(true) * 1000;
-        $this->onFinish = $onFinish ?? fn () => null;
+        $this->onFinish = $onFinish ?? static fn () => null;
     }
 
     public function end() : float

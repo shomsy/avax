@@ -28,7 +28,7 @@ final class PropertyInjectorTest extends TestCase
             property  : $property,
             overrides : ['foo' => 'bar'],
             context   : $context,
-            ownerClass: 'OwnerClass'
+            ownerClass: 'OwnerClass',
         );
 
         $this->assertTrue(condition: $result->resolved);
@@ -40,10 +40,8 @@ final class PropertyInjectorTest extends TestCase
         $container = $this->createMock(ContainerRuntimeInterface::class);
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
-            ->with($this->callback(callback: static function (KernelContext $context) : bool {
-                return $context->serviceId === stdClass::class;
-            }))
-            ->willReturn(value: new stdClass);
+            ->with($this->callback(callback: static fn (KernelContext $context) : bool => $context->serviceId === stdClass::class))
+            ->willReturn(value: new stdClass());
 
         $injector = new PropertyInjector(container: $container);
         $property = new PropertyPrototype(name: 'service', type: stdClass::class);
@@ -53,7 +51,7 @@ final class PropertyInjectorTest extends TestCase
             property  : $property,
             overrides : [],
             context   : $context,
-            ownerClass: 'OwnerClass'
+            ownerClass: 'OwnerClass',
         );
 
         $this->assertTrue(condition: $result->resolved);
@@ -70,7 +68,7 @@ final class PropertyInjectorTest extends TestCase
             property  : $property,
             overrides : [],
             context   : $context,
-            ownerClass: 'OwnerClass'
+            ownerClass: 'OwnerClass',
         );
 
         $this->assertTrue(condition: $result->resolved);
@@ -89,7 +87,7 @@ final class PropertyInjectorTest extends TestCase
             property  : $property,
             overrides : [],
             context   : $context,
-            ownerClass: 'OwnerClass'
+            ownerClass: 'OwnerClass',
         );
     }
 
@@ -103,7 +101,7 @@ final class PropertyInjectorTest extends TestCase
             property  : $property,
             overrides : [],
             context   : $context,
-            ownerClass: 'OwnerClass'
+            ownerClass: 'OwnerClass',
         );
 
         $this->assertFalse(condition: $result->resolved);

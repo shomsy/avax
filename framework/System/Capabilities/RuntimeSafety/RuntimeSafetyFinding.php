@@ -14,10 +14,10 @@ final readonly class RuntimeSafetyFinding
     public const SEVERITY_INFO     = 'info';
 
     public function __construct(
-        public string      $category,
-        public string      $severity,
-        public string      $component,
-        public string      $message,
+        public string $category,
+        public string $severity,
+        public string $component,
+        public string $message,
         public string|null $remediation = null,
         public string|null $location = null,
     ) {}

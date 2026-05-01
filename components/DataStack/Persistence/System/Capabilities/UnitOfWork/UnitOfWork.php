@@ -32,7 +32,7 @@ final class UnitOfWork implements UnitOfWorkInterface
         private readonly EntityPersisterInterface $persister,
     ) {}
 
-    public function persist(object $entity) : void
+    public function persist(object $entity): void
     {
         $objectId = spl_object_id(object: $entity);
 
@@ -54,7 +54,7 @@ final class UnitOfWork implements UnitOfWorkInterface
         }
     }
 
-    private function isDirty(object $entity) : bool
+    private function isDirty(object $entity): bool
     {
         $objectId = spl_object_id($entity);
         if (! isset($this->snapshots[$objectId])) {
@@ -66,7 +66,7 @@ final class UnitOfWork implements UnitOfWorkInterface
         return $currentData !== $this->snapshots[$objectId];
     }
 
-    public function flush(string|null $connectionName = null) : void
+    public function flush(?string $connectionName = null): void
     {
         // Process inserts
         foreach ($this->new as $objectId => $entity) {
@@ -110,13 +110,13 @@ final class UnitOfWork implements UnitOfWorkInterface
         }
     }
 
-    public function registerClean(object $entity) : void
+    public function registerClean(object $entity): void
     {
-        $objectId                   = spl_object_id($entity);
+        $objectId = spl_object_id($entity);
         $this->snapshots[$objectId] = $this->persister->extractData($entity);
     }
 
-    public function remove(object $entity) : void
+    public function remove(object $entity): void
     {
         $objectId = spl_object_id(object: $entity);
 
@@ -126,24 +126,24 @@ final class UnitOfWork implements UnitOfWorkInterface
         $this->removed[$objectId] = $entity;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
-        $this->new     = [];
-        $this->dirty   = [];
+        $this->new = [];
+        $this->dirty = [];
         $this->removed = [];
         $this->identityMap->clear();
     }
 
-    public function hasPendingChanges() : bool
+    public function hasPendingChanges(): bool
     {
         return $this->new !== [] || $this->dirty !== [] || $this->removed !== [];
     }
 
-    public function pendingSummary() : array
+    public function pendingSummary(): array
     {
         return [
-            'new'     => count($this->new),
-            'dirty'   => count($this->dirty),
+            'new' => count($this->new),
+            'dirty' => count($this->dirty),
             'removed' => count($this->removed),
         ];
     }

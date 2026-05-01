@@ -33,31 +33,28 @@ use SensitiveParameter;
 final readonly class CompleteFederatedLogin
 {
     public function __construct(
-        private FederationConnectionStoreInterface  $connectionStore,
-        private FederationRuntimeInterface          $runtime,
+        private FederationConnectionStoreInterface $connectionStore,
+        private FederationRuntimeInterface $runtime,
         private FederatedIdentityLinkStoreInterface $linkStore,
-        private UserSourceInterface                 $userSource,
-        private IdentityInterface                   $identity,
-        private ProjectAuthenticatedUser            $projectAuthenticatedUser,
+        private UserSourceInterface $userSource,
+        private IdentityInterface $identity,
+        private ProjectAuthenticatedUser $projectAuthenticatedUser,
         #[SensitiveParameter]
-        private CurrentAuthentication               $currentAuthentication,
+        private CurrentAuthentication $currentAuthentication,
         #[SensitiveParameter]
-        private PasswordHasher                      $passwordHasher,
-        private IdGeneratorInterface                $idGenerator,
-        private AuditLogInterface                   $auditLog,
-        private Clock                               $clock,
-        private DeterministicRiskEngine|null        $riskEngine = null,
-        private LifecycleOrchestrator|null          $lifecycle = null,
+        private PasswordHasher $passwordHasher,
+        private IdGeneratorInterface $idGenerator,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private ?DeterministicRiskEngine $riskEngine = null,
+        private ?LifecycleOrchestrator $lifecycle = null,
     ) {}
 
     /**
-     * @param CompleteFederatedLoginData $data
-     *
-     * @return AuthenticationResult
      * @throws FederationFailed
      * @throws RandomException
      */
-    public function execute(CompleteFederatedLoginData $data) : AuthenticationResult
+    public function execute(CompleteFederatedLoginData $data): AuthenticationResult
     {
         $connection = $this->connectionStore->find(connectionId: $data->connectionId);
 
@@ -70,8 +67,8 @@ final readonly class CompleteFederatedLogin
         }
 
         $federated = $this->runtime->completeLogin(connection: $connection, payload: $data->payload);
-        $link      = $this->linkStore->find(connectionId: $connection->connectionId, subject: $federated->subject);
-        $user      = $link !== null
+        $link = $this->linkStore->find(connectionId: $connection->connectionId, subject: $federated->subject);
+        $user = $link !== null
             ? $this->userSource->findById(id: new UserId(value: $link->userId))
             : null;
 
@@ -98,13 +95,13 @@ final readonly class CompleteFederatedLogin
         }
 
         $this->linkStore->save(link: new FederatedIdentityLink(
-                                         connectionId: $connection->connectionId,
-                                         subject     : $federated->subject,
-                                         userId      : $user->getId()->value,
-                                     ));
+            connectionId: $connection->connectionId,
+            subject     : $federated->subject,
+            userId      : $user->getId()->value,
+        ));
 
         $decision = $this->riskEngine?->assessSuccessfulAuthentication(user: $user, ipAddress: $data->ipAddress, userAgent: $data->userAgent);
-        $issued   = $this->identity->issue(user: $user);
+        $issued = $this->identity->issue(user: $user);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $data->ipAddress,
             userAgent: $data->userAgent,
@@ -122,17 +119,17 @@ final readonly class CompleteFederatedLogin
         $this->currentAuthentication->store(context: $context);
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.federation.login.completed',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'connection_id' => $connection->connectionId,
-                                                           'tenant'        => $connection->tenantSlug,
-                                                           'user_id'       => $user->getId()->value,
-                                                           'risk_action'   => $decision?->action->value,
-                                                           'ip_address'    => $data->ipAddress,
-                                                           'user_agent'    => $data->userAgent,
-                                                       ],
-                                       ));
+            name      : 'auth.federation.login.completed',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'connection_id' => $connection->connectionId,
+                'tenant' => $connection->tenantSlug,
+                'user_id' => $user->getId()->value,
+                'risk_action' => $decision?->action->value,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
+        ));
 
         return AuthenticationResult::success(
             context     : $context,
@@ -142,13 +139,9 @@ final readonly class CompleteFederatedLogin
     }
 
     /**
-     * @param string $email
-     * @param string $displayName
-     *
-     * @return User
      * @throws RandomException
      */
-    private function provisionUser(#[SensitiveParameter] string $email, string $displayName) : User
+    private function provisionUser(#[SensitiveParameter] string $email, string $displayName): User
     {
         $username = $this->uniqueUsername(displayName: $displayName, email: $email);
         $password = bin2hex(string: random_bytes(length: 24));
@@ -161,10 +154,10 @@ final readonly class CompleteFederatedLogin
         ));
     }
 
-    private function uniqueUsername(string $displayName, #[SensitiveParameter] string $email) : string
+    private function uniqueUsername(string $displayName, #[SensitiveParameter] string $email): string
     {
         $normalizedDisplayName = preg_replace(pattern: '/[^a-z0-9]+/i', replacement: '-', subject: strtolower(string: trim(string: $displayName)));
-        $base                  = $normalizedDisplayName !== null && $normalizedDisplayName !== ''
+        $base = $normalizedDisplayName !== null && $normalizedDisplayName !== ''
             ? $normalizedDisplayName
             : explode(separator: '@', string: $email)[0];
         $candidate = trim(string: $base, characters: '-');
@@ -174,23 +167,22 @@ final readonly class CompleteFederatedLogin
         }
 
         $username = $candidate;
-        $suffix   = 1;
+        $suffix = 1;
 
-        while ( $this->userSource->usernameExists(username: $username) ) {
+        while ($this->userSource->usernameExists(username: $username)) {
             $suffix++;
-            $username = $candidate . '-' . $suffix;
+            $username = $candidate.'-'.$suffix;
         }
 
         return $username;
     }
 
     /**
-     * @param array<string, list<string>> $groupRoleMap
-     * @param list<string> $groups
-     *
+     * @param  array<string, list<string>>  $groupRoleMap
+     * @param  list<string>  $groups
      * @return list<UserRole>
      */
-    private function mapRoles(array $groupRoleMap, array $groups) : array
+    private function mapRoles(array $groupRoleMap, array $groups): array
     {
         $roles = [];
 

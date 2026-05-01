@@ -21,15 +21,14 @@ final readonly class BeginPasswordReset
     private int $expiresAfterSeconds;
 
     public function __construct(
-        private UserSourceInterface         $userSource,
+        private UserSourceInterface $userSource,
         #[SensitiveParameter]
         private PasswordResetStoreInterface $passwordResetStore,
-        private AuditLogInterface           $auditLog,
-        private Clock                       $clock,
-        int|null $expiresAfterSeconds = null,
-        private AttemptThrottle|null        $attemptThrottle = null,
-    )
-    {
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        ?int $expiresAfterSeconds = null,
+        private ?AttemptThrottle $attemptThrottle = null,
+    ) {
         $expiresAfterSeconds ??= 3600;
         $this->expiresAfterSeconds = $expiresAfterSeconds;
     }
@@ -37,7 +36,7 @@ final readonly class BeginPasswordReset
     /**
      * @throws DateMalformedStringException
      */
-    public function execute(BeginPasswordResetData $data) : PasswordResetChallenge
+    public function execute(BeginPasswordResetData $data): PasswordResetChallenge
     {
         $throttleKey = $this->throttleKey(email: $data->email, ipAddress: $data->ipAddress);
 
@@ -45,15 +44,15 @@ final readonly class BeginPasswordReset
             $this->attemptThrottle?->check(key: $throttleKey);
         } catch (AttemptThrottleExceeded $exception) {
             $this->auditLog->record(event: new AuditEvent(
-                                               name      : 'auth.password_reset.throttled',
-                                               occurredAt: $this->clock->now(),
-                                               context   : [
-                                                               'email'       => strtolower(string: $data->email),
-                                                               'ip_address'  => $data->ipAddress,
-                                                               'user_agent'  => $data->userAgent,
-                                                               'retry_after' => $exception->retryAfter(),
-                                                           ],
-                                           ));
+                name      : 'auth.password_reset.throttled',
+                occurredAt: $this->clock->now(),
+                context   : [
+                    'email' => strtolower(string: $data->email),
+                    'ip_address' => $data->ipAddress,
+                    'user_agent' => $data->userAgent,
+                    'retry_after' => $exception->retryAfter(),
+                ],
+            ));
 
             return PasswordResetChallenge::hidden();
         }
@@ -63,15 +62,15 @@ final readonly class BeginPasswordReset
 
         if ($user === null || ! $user->isActive()) {
             $this->auditLog->record(event: new AuditEvent(
-                                               name      : 'auth.password_reset.requested',
-                                               occurredAt: $this->clock->now(),
-                                               context   : [
-                                                               'email'      => strtolower(string: $data->email),
-                                                               'dispatched' => false,
-                                                               'ip_address' => $data->ipAddress,
-                                                               'user_agent' => $data->userAgent,
-                                                           ],
-                                           ));
+                name      : 'auth.password_reset.requested',
+                occurredAt: $this->clock->now(),
+                context   : [
+                    'email' => strtolower(string: $data->email),
+                    'dispatched' => false,
+                    'ip_address' => $data->ipAddress,
+                    'user_agent' => $data->userAgent,
+                ],
+            ));
 
             return PasswordResetChallenge::hidden();
         }
@@ -82,27 +81,27 @@ final readonly class BeginPasswordReset
         );
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.password_reset.requested',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'user_id'    => $user->getId()->value,
-                                                           'dispatched' => true,
-                                                           'ip_address' => $data->ipAddress,
-                                                           'user_agent' => $data->userAgent,
-                                                       ],
-                                       ));
+            name      : 'auth.password_reset.requested',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'user_id' => $user->getId()->value,
+                'dispatched' => true,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
+        ));
 
         return $challenge;
     }
 
-    private function throttleKey(#[SensitiveParameter] string $email, #[SensitiveParameter] string|null $ipAddress) : string
+    private function throttleKey(#[SensitiveParameter] string $email, #[SensitiveParameter] ?string $ipAddress): string
     {
         $normalizedEmail = strtolower(string: trim(string: $email));
 
         if ($ipAddress === null || $ipAddress === '') {
-            return 'password_reset:' . $normalizedEmail;
+            return 'password_reset:'.$normalizedEmail;
         }
 
-        return 'password_reset:' . $normalizedEmail . '|' . trim(string: $ipAddress);
+        return 'password_reset:'.$normalizedEmail.'|'.trim(string: $ipAddress);
     }
 }

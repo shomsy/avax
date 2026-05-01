@@ -25,13 +25,13 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
     {
         $store = new InMemoryCacheStore(
             clock     : $this->clock,
-            maxEntries: 3
+            maxEntries: 3,
         );
 
         for ($i = 1; $i <= 3; $i++) {
             $store->write(
                 key   : $this->makeKey(key: "key_{$i}"),
-                record: $this->makeRecord(value: "value_{$i}", ttlSeconds: 3600)
+                record: $this->makeRecord(value: "value_{$i}", ttlSeconds: 3600),
             );
         }
 
@@ -51,12 +51,12 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $lifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $expiresAt,
-            clock    : $this->clock
+            clock    : $this->clock,
         );
 
         return new StoredCacheRecord(
             value    : $value,
-            lifecycle: $lifecycle
+            lifecycle: $lifecycle,
         );
     }
 
@@ -65,7 +65,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $store = new InMemoryCacheStore(
             clock            : $this->clock,
             maxEntries       : 3,
-            replacementPolicy: new LeastRecentlyUsedReplacement()
+            replacementPolicy: new LeastRecentlyUsedReplacement(),
         );
 
         $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
@@ -89,7 +89,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $store = new InMemoryCacheStore(
             clock            : $this->clock,
             maxEntries       : 3,
-            replacementPolicy: new FirstInFirstOutReplacement()
+            replacementPolicy: new FirstInFirstOutReplacement(),
         );
 
         $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
@@ -110,7 +110,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
     {
         $store = new InMemoryCacheStore(
             clock     : $this->clock,
-            maxEntries: 3
+            maxEntries: 3,
         );
 
         $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 1));
@@ -134,7 +134,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $store = new InMemoryCacheStore(
             clock            : $this->clock,
             maxEntries       : 2,
-            replacementPolicy: new NoReplacement()
+            replacementPolicy: new NoReplacement(),
         );
 
         $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));

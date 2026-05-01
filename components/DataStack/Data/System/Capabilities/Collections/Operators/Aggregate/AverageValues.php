@@ -11,15 +11,14 @@ final readonly class AverageValues
 {
     public function __construct(
         private array $items = [],
-    ) {
-    }
+    ) {}
 
-    public function __invoke(string|callable $key) : float
+    public function __invoke(string|callable $key): float
     {
         return $this->average(key: $key);
     }
 
-    public function average(string|callable $key) : float
+    public function average(string|callable $key): float
     {
         $count = count(value: $this->items);
 

@@ -30,7 +30,7 @@ final class CommitDataChangesTest extends TestCase
 
         $commitChanges->retryTransientFailure(
             work  : static fn () : string => 'not-safe',
-            policy: new DataTransactionPolicy(maxAttempts: 2, retryTransientFailures: true, idempotent: false)
+            policy: new DataTransactionPolicy(maxAttempts: 2, retryTransientFailures: true, idempotent: false),
         );
     }
 
@@ -49,7 +49,7 @@ final class CommitDataChangesTest extends TestCase
 
                 return 'committed';
             },
-            policy: new DataTransactionPolicy(maxAttempts: 2, retryTransientFailures: true, idempotent: true)
+            policy: new DataTransactionPolicy(maxAttempts: 2, retryTransientFailures: true, idempotent: true),
         );
 
         $this->assertSame('committed', $result);

@@ -15,13 +15,12 @@ class RepositoryGenerator extends CodeGenerator
     /**
      * Generate a repository class file.
      *
-     * @param string $name Repository name (e.g. "UserRepository" or "User")
-     * @param array $data Additional data (e.g. ['entity' => 'UserEntity'])
-     *
+     * @param  string  $name  Repository name (e.g. "UserRepository" or "User")
+     * @param  array  $data  Additional data (e.g. ['entity' => 'UserEntity'])
      * @return string The generated file path
      */
     #[Override]
-    public function generate(string $name, array $data = []) : string
+    public function generate(string $name, array $data = []): string
     {
         $className = Str::studly($name);
 
@@ -30,8 +29,8 @@ class RepositoryGenerator extends CodeGenerator
             $className .= 'Repository';
         }
 
-        $subDir          = $data['subDir'] ?? 'Repositories';
-        $namespace       = $this->getNamespace($subDir);
+        $subDir = $data['subDir'] ?? 'Repositories';
+        $namespace = $this->getNamespace($subDir);
         $entity = $data['entity'] ?? $this->inferEntity($className);
         $entityNamespace = $data['entityNamespace'] ?? $this->getNamespace('Entities');
 
@@ -46,7 +45,7 @@ class RepositoryGenerator extends CodeGenerator
     /**
      * Infer the entity name from the repository class name.
      */
-    protected function inferEntity(string $repositoryName) : string
+    protected function inferEntity(string $repositoryName): string
     {
         $base = preg_replace('/Repository$/', '', $repositoryName);
 
@@ -61,8 +60,7 @@ class RepositoryGenerator extends CodeGenerator
         string $namespace,
         string $entity,
         string $entityNamespace,
-    ) : string
-    {
+    ): string {
         $entityClass = Str::studly($entity);
 
         if (! str_ends_with($entityClass, 'Entity')) {

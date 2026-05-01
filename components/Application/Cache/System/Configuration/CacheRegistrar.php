@@ -76,16 +76,16 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
             'in_memory' => $buildCache->inMemory(
                 config: $cacheConfiguration,
             ),
-            'file'      => $buildCache->inDirectory(
+            'file'  => $buildCache->inDirectory(
                 directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir() . '/cache_' . $name,
                 config   : $cacheConfiguration,
             ),
-            'redis'     => $buildCache->redis(
+            'redis' => $buildCache->redis(
                 host  : is_string($config['host'] ?? null) ? $config['host'] : '127.0.0.1',
                 port  : is_int($config['port'] ?? null) ? $config['port'] : 6379,
                 config: $cacheConfiguration,
             ),
-            default     => $buildCache->inMemory(config: $cacheConfiguration),
+            default => $buildCache->inMemory(config: $cacheConfiguration),
         };
     }
 

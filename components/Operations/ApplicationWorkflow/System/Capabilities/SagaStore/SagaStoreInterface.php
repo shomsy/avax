@@ -15,20 +15,20 @@ interface SagaStoreInterface
     /**
      * Save a saga instance to the store.
      */
-    public function save(Saga $saga) : void;
+    public function save(Saga $saga): void;
 
     /**
      * Find a saga instance by its ID.
      */
-    public function findById(string $id) : ?Saga;
+    public function findById(string $id): ?Saga;
 
     /**
      * Update the status of a saga instance.
      */
-    public function updateStatus(Saga $saga, SagaState $status) : void;
+    public function updateStatus(Saga $saga, SagaState $status): void;
 
     /**
      * Delete a saga instance from the store.
      */
-    public function delete(string $id) : void;
+    public function delete(string $id): void;
 }

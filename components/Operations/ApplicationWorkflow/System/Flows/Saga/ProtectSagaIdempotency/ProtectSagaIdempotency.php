@@ -17,27 +17,27 @@ final readonly class ProtectSagaIdempotency
         $this->commandKeys = $commandKeys;
     }
 
-    public static function inMemory() : self
+    public static function inMemory(): self
     {
         return new self(commandKeys: []);
     }
 
-    public function record(string $key, SagaCommandResult $result) : void
+    public function record(string $key, SagaCommandResult $result): void
     {
         $this->commandKeys[$key] = $result;
     }
 
-    public function check(string $key) : SagaCommandResult|null
+    public function check(string $key): ?SagaCommandResult
     {
         return $this->commandKeys[$key] ?? null;
     }
 
-    public function exists(string $key) : bool
+    public function exists(string $key): bool
     {
         return isset($this->commandKeys[$key]);
     }
 
-    public function generateKey(string $aggregateType, string $aggregateId, string $action) : string
+    public function generateKey(string $aggregateType, string $aggregateId, string $action): string
     {
         return sprintf('%s:%s:%s', $aggregateType, $aggregateId, $action);
     }
@@ -46,33 +46,35 @@ final readonly class ProtectSagaIdempotency
 final readonly class SagaCommandKey
 {
     public string $value;
+
     public string $aggregateType;
+
     public string $aggregateId;
+
     public string $action;
-    public string|null $tenantId;
+
+    public ?string $tenantId;
 
     private function __construct(
-        string      $value,
-        string      $aggregateType,
-        string      $aggregateId,
-        string      $action,
-        string|null $tenantId,
-    )
-    {
-        $this->value         = $value;
+        string $value,
+        string $aggregateType,
+        string $aggregateId,
+        string $action,
+        ?string $tenantId,
+    ) {
+        $this->value = $value;
         $this->aggregateType = $aggregateType;
-        $this->aggregateId   = $aggregateId;
-        $this->action        = $action;
-        $this->tenantId      = $tenantId;
+        $this->aggregateId = $aggregateId;
+        $this->action = $action;
+        $this->tenantId = $tenantId;
     }
 
     public static function create(
         string $aggregateType,
         string $aggregateId,
         string $action,
-        string|null $tenantId = null,
-    ) : self
-    {
+        ?string $tenantId = null,
+    ): self {
         $parts = array_filter([$aggregateType, $aggregateId, $action, $tenantId]);
         $value = implode(':', $parts);
 
@@ -85,12 +87,12 @@ final readonly class SagaCommandKey
         );
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value;
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -98,56 +100,59 @@ final readonly class SagaCommandKey
 
 final readonly class SagaCommandResult
 {
-    public string      $sagaId;
-    public bool        $success;
-    public array       $output;
-    public string|null $error;
+    public string $sagaId;
+
+    public bool $success;
+
+    public array $output;
+
+    public ?string $error;
+
     public DateTimeImmutable $occurredAt;
 
     private function __construct(
-        string            $sagaId,
-        bool              $success,
-        array             $output,
-        string|null       $error,
+        string $sagaId,
+        bool $success,
+        array $output,
+        ?string $error,
         DateTimeImmutable $occurredAt,
-    )
-    {
-        $this->sagaId     = $sagaId;
-        $this->success    = $success;
-        $this->output     = $output;
-        $this->error      = $error;
+    ) {
+        $this->sagaId = $sagaId;
+        $this->success = $success;
+        $this->output = $output;
+        $this->error = $error;
         $this->occurredAt = $occurredAt;
     }
 
-    public static function success(string $sagaId, array $output = []) : self
+    public static function success(string $sagaId, array $output = []): self
     {
         return new self(
             sagaId    : $sagaId,
             success   : true,
             output    : $output,
             error     : null,
-            occurredAt: new DateTimeImmutable(),
+            occurredAt: new DateTimeImmutable,
         );
     }
 
-    public static function failure(string $sagaId, string $error) : self
+    public static function failure(string $sagaId, string $error): self
     {
         return new self(
             sagaId    : $sagaId,
             success   : false,
             output    : [],
             error     : $error,
-            occurredAt: new DateTimeImmutable(),
+            occurredAt: new DateTimeImmutable,
         );
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'saga_id'     => $this->sagaId,
-            'success'     => $this->success,
-            'output'      => $this->output,
-            'error'       => $this->error,
+            'saga_id' => $this->sagaId,
+            'success' => $this->success,
+            'output' => $this->output,
+            'error' => $this->error,
             'occurred_at' => $this->occurredAt->format(format: DateTimeInterface::ISO8601),
         ];
     }
@@ -155,17 +160,17 @@ final readonly class SagaCommandResult
 
 final class DuplicateSagaCommand extends Exception
 {
-    public string|null $sagaId;
-    public SagaCommandResult|null $previousResult;
+    public ?string $sagaId;
+
+    public ?SagaCommandResult $previousResult;
 
     public function __construct(
-        string            $message = 'Duplicate saga command detected.',
-        string            $sagaId = null,
-        SagaCommandResult|null $previousResult = null,
-    )
-    {
+        string $message = 'Duplicate saga command detected.',
+        ?string $sagaId = null,
+        ?SagaCommandResult $previousResult = null,
+    ) {
         parent::__construct(message: $message);
-        $this->sagaId         = $sagaId;
+        $this->sagaId = $sagaId;
         $this->previousResult = $previousResult;
     }
 }

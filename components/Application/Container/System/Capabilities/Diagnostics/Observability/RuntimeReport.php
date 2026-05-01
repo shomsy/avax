@@ -17,10 +17,10 @@ final readonly class RuntimeReport implements JsonSerializable
     public const int SCHEMA_VERSION = 4;
 
     /**
-     * @param list<string>          $lazyServices
+     * @param list<string>       $lazyServices
      * @param array<string, string> $aliases
      * @param array<string, string> $deferredProviders
-     * @param array<string, int>    $metrics
+     * @param array<string, int> $metrics
      * @param list<array{time: float, action: string, serviceId: string, outcome: string}> $timeline
      * @param array{
      *     shared: array<string, string>,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Avax\Components\Application\Container\Features\Think\Model\MethodPrototype;
 use Avax\Components\Application\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
@@ -13,11 +15,9 @@ use Psr\Log\NullLogger;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => RoutePipelineFactory::class,
-                                                'constructor'        =>
-                                                    MethodPrototype::__set_state(array: [
+                                                'constructor'        => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
-                                                                                            'parameters' =>
-                                                                                                [
+                                                                                            'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'container',
                                                                                                                                                'type'       => 'Avax\\Container\\Features\\Core\\Contracts\\ContainerInterface',
@@ -58,8 +58,7 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                                'name'       => 'logger',
                                                                                                                                                'type'       => 'Psr\\Log\\LoggerInterface',
                                                                                                                                                'hasDefault' => true,
-                                                                                                                                               'default'    =>
-                                                                                                                                                   NullLogger::__set_state([
+                                                                                                                                               'default' => NullLogger::__set_state([
                                                                                                                                                                            ]),
                                                                                                                                                'isVariadic' => false,
                                                                                                                                                'allowsNull' => false,
@@ -67,11 +66,9 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                 ],
                                                                                         ]),
-                                                'injectedProperties' =>
-                                                    [
+                                                'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    =>
-                                                    [
+                                                'injectedMethods'    => [
                                                     ],
                                                 'isInstantiable'     => true,
                                             ]);

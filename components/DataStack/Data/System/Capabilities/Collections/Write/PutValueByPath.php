@@ -15,12 +15,12 @@ final readonly class PutValueByPath
         private array $items = [],
     ) {}
 
-    public function __invoke(string $path, mixed $value) : array
+    public function __invoke(string $path, mixed $value): array
     {
         return $this->put(path: $path, value: $value);
     }
 
-    public function put(string $path, mixed $value) : array
+    public function put(string $path, mixed $value): array
     {
         $items = $this->items;
         new DotPath(path: $path)->setValue(items: $items, value: $value);
@@ -28,7 +28,7 @@ final readonly class PutValueByPath
         return $items;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

@@ -18,14 +18,13 @@ final readonly class StartSaga
     public function __construct(
         private StoreSagaState $storeSagaState,
         private ProtectSagaIdempotency $protectSagaIdempotency,
-        private InspectSaga    $inspectSaga,
+        private InspectSaga $inspectSaga,
     ) {}
 
     public function startWithIdempotency(
-        SagaDefinition   $definition,
+        SagaDefinition $definition,
         SagaStartCommand $command,
-    ) : SagaInstance
-    {
+    ): SagaInstance {
         if ($command->idempotencyKey !== null) {
             $existing = $this->protectSagaIdempotency->check(key: $command->idempotencyKey);
             if ($existing !== null) {
@@ -48,9 +47,8 @@ final readonly class StartSaga
     public function start(
         SagaDefinition $definition,
         SagaStartCommand $command,
-        callable       $correlationIdGenerator = null,
-    ) : SagaInstance
-    {
+        ?callable $correlationIdGenerator = null,
+    ): SagaInstance {
         if (! $definition->isValid()) {
             throw new SagaStartFailure(
                 message: sprintf('Saga definition %s is invalid: %s', $definition->name, implode(', ', $definition->getValidationErrors())),
@@ -71,10 +69,10 @@ final readonly class StartSaga
             type          : $definition->type,
             initialData   : $command->initialData,
             options       : [
-                                'correlation_id'  => $correlationId,
-                                'tenant_id'       => $command->tenantId,
-                                'timeout_seconds' => $definition->timeoutSeconds,
-                            ],
+                'correlation_id' => $correlationId,
+                'tenant_id' => $command->tenantId,
+                'timeout_seconds' => $definition->timeoutSeconds,
+            ],
         );
 
         $instance = $instance->start(firstStepName: $firstStep->name);
@@ -91,7 +89,7 @@ final readonly class StartSaga
     /**
      * @throws RandomException
      */
-    private function createCorrelationId() : string
+    private function createCorrelationId(): string
     {
         return sprintf('saga_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));
     }
@@ -99,36 +97,39 @@ final readonly class StartSaga
 
 final readonly class SagaStartCommand
 {
-    public string|null $sagaId;
+    public ?string $sagaId;
+
     public string $definitionName;
-    public array  $initialData;
-    public string|null $correlationId;
-    public string|null $tenantId;
-    public string|null $idempotencyKey;
+
+    public array $initialData;
+
+    public ?string $correlationId;
+
+    public ?string $tenantId;
+
+    public ?string $idempotencyKey;
 
     private function __construct(
-        string|null $sagaId,
-        string      $definitionName,
-        array       $initialData,
-        string|null $correlationId,
-        string|null $tenantId,
-        string|null $idempotencyKey,
-    )
-    {
-        $this->sagaId         = $sagaId;
+        ?string $sagaId,
+        string $definitionName,
+        array $initialData,
+        ?string $correlationId,
+        ?string $tenantId,
+        ?string $idempotencyKey,
+    ) {
+        $this->sagaId = $sagaId;
         $this->definitionName = $definitionName;
-        $this->initialData    = $initialData;
-        $this->correlationId  = $correlationId;
-        $this->tenantId       = $tenantId;
+        $this->initialData = $initialData;
+        $this->correlationId = $correlationId;
+        $this->tenantId = $tenantId;
         $this->idempotencyKey = $idempotencyKey;
     }
 
     public static function create(
         string $definitionName,
-        array  $initialData = null,
-        array  $options = [],
-    ) : self
-    {
+        ?array $initialData = null,
+        array $options = [],
+    ): self {
         $initialData ??= [];
         if (empty(trim($definitionName))) {
             throw new InvalidArgumentException(message: 'Definition name cannot be empty.');
@@ -144,7 +145,7 @@ final readonly class SagaStartCommand
         );
     }
 
-    public function withSagaId(string $id) : self
+    public function withSagaId(string $id): self
     {
         return new self(
             sagaId        : $id,
@@ -160,12 +161,14 @@ final readonly class SagaStartCommand
 final readonly class SagaCorrelationId
 {
     public string $value;
-    public string|null $prefix;
-    public string|null $suffix;
 
-    private function __construct(string $value, string|null $prefix = null, string|null $suffix = null)
+    public ?string $prefix;
+
+    public ?string $suffix;
+
+    private function __construct(string $value, ?string $prefix = null, ?string $suffix = null)
     {
-        $this->value  = $value;
+        $this->value = $value;
         $this->prefix = $prefix;
         $this->suffix = $suffix;
     }
@@ -173,7 +176,7 @@ final readonly class SagaCorrelationId
     /**
      * @throws RandomException
      */
-    public static function generate(array $options = []) : self
+    public static function generate(array $options = []): self
     {
         $prefix = $options['prefix'] ?? null;
         $suffix = $options['suffix'] ?? null;
@@ -191,17 +194,17 @@ final readonly class SagaCorrelationId
         return new self(value: $value, prefix: $prefix, suffix: $suffix);
     }
 
-    public static function fromString(string $value) : self
+    public static function fromString(string $value): self
     {
         return new self(value: $value);
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value;
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->value;
     }

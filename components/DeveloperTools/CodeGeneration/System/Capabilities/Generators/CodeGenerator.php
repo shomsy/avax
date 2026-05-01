@@ -22,10 +22,9 @@ abstract class CodeGenerator
     protected string $defaultNamespace;
 
     public function __construct(
-        string|null $baseDirectory = null,
-        string|null $defaultNamespace = null,
-    )
-    {
+        ?string $baseDirectory = null,
+        ?string $defaultNamespace = null,
+    ) {
         $this->baseDirectory = $baseDirectory ?? $this->detectBaseDirectory();
         $this->defaultNamespace = $defaultNamespace ?? 'App';
     }
@@ -33,12 +32,12 @@ abstract class CodeGenerator
     /**
      * Detect the project base directory.
      */
-    protected function detectBaseDirectory() : string
+    protected function detectBaseDirectory(): string
     {
         // Try common project root indicators
         $candidates = [
-            getcwd() . '/src',
-            getcwd() . '/app',
+            getcwd().'/src',
+            getcwd().'/app',
             getcwd(),
         ];
 
@@ -54,21 +53,21 @@ abstract class CodeGenerator
     /**
      * Generate a class file.
      *
-     * @param string $name Class name (StudlyCase)
-     * @param array $data Additional data for the template
+     * @param  string  $name  Class name (StudlyCase)
+     * @param  array  $data  Additional data for the template
      */
-    abstract public function generate(string $name, array $data = []) : string;
+    abstract public function generate(string $name, array $data = []): string;
 
     /**
      * Get the namespace for a generated class.
      */
-    protected function getNamespace(string $subDir) : string
+    protected function getNamespace(string $subDir): string
     {
         $parts = array_filter(explode('/', $subDir));
-        $ns    = $this->defaultNamespace;
+        $ns = $this->defaultNamespace;
 
         foreach ($parts as $part) {
-            $ns .= '\\' . Str::studly($part);
+            $ns .= '\\'.Str::studly($part);
         }
 
         return $ns;
@@ -79,7 +78,7 @@ abstract class CodeGenerator
      *
      * @throws RuntimeException if file cannot be written
      */
-    protected function writeFile(string $path, string $content) : void
+    protected function writeFile(string $path, string $content): void
     {
         $dir = dirname($path);
 
@@ -90,14 +89,14 @@ abstract class CodeGenerator
         $result = file_put_contents($path, $content);
 
         if ($result === false) {
-            throw new RuntimeException('Failed to write file: ' . $path);
+            throw new RuntimeException('Failed to write file: '.$path);
         }
     }
 
     /**
      * Check if a class file already exists.
      */
-    protected function exists(string $name, string $subDir) : bool
+    protected function exists(string $name, string $subDir): bool
     {
         $path = $this->getFilePath($name, $subDir);
 
@@ -107,24 +106,24 @@ abstract class CodeGenerator
     /**
      * Get the file path for a generated class.
      *
-     * @param string $name Class name
-     * @param string $subDir Subdirectory within the base (e.g. "Controllers")
+     * @param  string  $name  Class name
+     * @param  string  $subDir  Subdirectory within the base (e.g. "Controllers")
      */
-    protected function getFilePath(string $name, string $subDir) : string
+    protected function getFilePath(string $name, string $subDir): string
     {
-        $dir = rtrim($this->baseDirectory, '/') . '/' . ltrim($subDir, '/');
+        $dir = rtrim($this->baseDirectory, '/').'/'.ltrim($subDir, '/');
 
         if (! is_dir($dir)) {
             mkdir($dir, 0o755, true);
         }
 
-        return rtrim($dir, '/') . '/' . $name . '.php';
+        return rtrim($dir, '/').'/'.$name.'.php';
     }
 
     /**
      * Get the class name from a potentially qualified name.
      */
-    protected function extractClassName(string $name) : string
+    protected function extractClassName(string $name): string
     {
         $parts = explode('\\', $name);
 

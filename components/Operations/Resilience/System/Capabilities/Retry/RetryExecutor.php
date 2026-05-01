@@ -10,7 +10,7 @@ use Throwable;
 final class RetryExecutor
 {
     public function __construct(
-        private Closure     $operation,
+        private Closure $operation,
         private RetryOptions $options,
     ) {}
 

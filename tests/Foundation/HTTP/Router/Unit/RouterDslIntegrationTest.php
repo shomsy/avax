@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;

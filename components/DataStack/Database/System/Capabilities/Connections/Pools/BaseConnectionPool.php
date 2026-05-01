@@ -21,9 +21,9 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
     ) {}
 
     #[Override]
-    public function get() : PooledConnection
+    public function get(): PooledConnection
     {
-        while ( $connection = array_shift(array: $this->connections) ) {
+        while ($connection = array_shift(array: $this->connections)) {
             if ($this->validateConnection(connection: $connection)) {
                 return $connection;
             }
@@ -40,19 +40,19 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
         throw PoolException::poolExhausted();
     }
 
-    abstract protected function validateConnection(PooledConnection $pooledConnection) : bool;
+    abstract protected function validateConnection(PooledConnection $pooledConnection): bool;
 
-    abstract protected function createConnection() : PooledConnection;
+    abstract protected function createConnection(): PooledConnection;
 
     #[Override]
-    public function destroy() : void
+    public function destroy(): void
     {
-        $this->connections  = [];
+        $this->connections = [];
         $this->createdCount = 0;
     }
 
     #[Override]
-    public function stats() : PoolStats
+    public function stats(): PoolStats
     {
         return new PoolStats(
             totalConnections : $this->createdCount,
@@ -63,7 +63,7 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
         );
     }
 
-    public function warmup(int $count) : void
+    public function warmup(int $count): void
     {
         for ($i = 0; $i < min($count, $this->minConnections); $i++) {
             $this->release(connection: $this->createConnection());
@@ -71,7 +71,7 @@ abstract class BaseConnectionPool implements ConnectionPoolInterface
     }
 
     #[Override]
-    public function release(PooledConnection $pooledConnection) : void
+    public function release(PooledConnection $pooledConnection): void
     {
         if (! $this->validateConnection(connection: $pooledConnection)) {
             $this->createdCount--;

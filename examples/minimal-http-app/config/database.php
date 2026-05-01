@@ -13,7 +13,7 @@ return [
             'connection' => 'mysql:host=' . env(key: 'DB_HOST', default: '127.0.0.1') .
                 ';port=' . env(key: 'DB_PORT', default: '3306') .
                 ';dbname=' . env(key: 'DB_NAME', default: 'cashback'),
-            'options'    => [
+            'options' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ],
         ],
@@ -25,7 +25,7 @@ return [
             'connection' => 'pgsql:host=' . env(key: 'PG_DB_HOST', default: '127.0.0.1') .
                 ';port=' . env(key: 'PG_DB_PORT', default: '5432') .
                 ';dbname=' . env(key: 'PG_DB_NAME', default: 'cashback'),
-            'options'    => [
+            'options' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ],
         ],
@@ -44,7 +44,7 @@ return [
             'connection' => 'sqlsrv:Server=' . env(key: 'MSSQL_DB_HOST', default: 'localhost') .
                 ',' . env(key: 'MSSQL_DB_PORT', default: '1433') .
                 ';Database=' . env(key: 'MSSQL_DB_NAME', default: 'cashback'),
-            'options'    => [
+            'options' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ],
         ],

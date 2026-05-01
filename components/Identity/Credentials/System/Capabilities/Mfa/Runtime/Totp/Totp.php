@@ -15,17 +15,17 @@ use SensitiveParameter;
 final readonly class Totp implements TotpInterface
 {
     private int $periodSeconds;
+
     private int $digits;
 
     public function __construct(
-        int         $digits = null,
-        int         $periodSeconds = null,
+        ?int $digits = null,
+        ?int $periodSeconds = null,
         private int $allowedSkewSteps = 1,
-    )
-    {
-        $digits        ??= 6;
+    ) {
+        $digits ??= 6;
         $periodSeconds ??= 30;
-        $this->digits        = $digits;
+        $this->digits = $digits;
         $this->periodSeconds = $periodSeconds;
         if ($this->digits < 6) {
             throw new InvalidArgumentException(message: 'TOTP digits must be at least 6.');
@@ -43,27 +43,27 @@ final readonly class Totp implements TotpInterface
     /**
      * @throws RandomException
      */
-    public function generateSecret() : string
+    public function generateSecret(): string
     {
         return $this->base32Encode(bytes: random_bytes(length: 20));
     }
 
-    private function base32Encode(string $bytes) : string
+    private function base32Encode(string $bytes): string
     {
         $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-        $binary   = '';
-        $length   = strlen(string: $bytes);
+        $binary = '';
+        $length = strlen(string: $bytes);
 
         for ($index = 0; $index < $length; $index++) {
             $binary .= str_pad(string: decbin(num: ord(character: $bytes[$index])), length: 8, pad_string: '0', pad_type: STR_PAD_LEFT);
         }
 
-        $chunks  = str_split(string: $binary, length: 5);
+        $chunks = str_split(string: $binary, length: 5);
         $encoded = '';
 
         foreach ($chunks as $chunk) {
             $characterIndex = (int) bindec(binary_string: str_pad(string: $chunk, length: 5, pad_string: '0', pad_type: STR_PAD_RIGHT));
-            $character      = substr(string: $alphabet, offset: $characterIndex, length: 1);
+            $character = substr(string: $alphabet, offset: $characterIndex, length: 1);
 
             if ($character === '') {
                 throw new InvalidArgumentException(message: 'TOTP base32 encoding failed.');
@@ -75,16 +75,16 @@ final readonly class Totp implements TotpInterface
         return $encoded;
     }
 
-    public function provisioningUri(string $issuer, #[SensitiveParameter] string $accountLabel, #[SensitiveParameter] string $secret) : string
+    public function provisioningUri(string $issuer, #[SensitiveParameter] string $accountLabel, #[SensitiveParameter] string $secret): string
     {
-        $issuer       = trim(string: $issuer);
+        $issuer = trim(string: $issuer);
         $accountLabel = trim(string: $accountLabel);
 
         if ($issuer === '' || $accountLabel === '') {
             throw new InvalidArgumentException(message: 'Issuer and account label are required for MFA enrollment.');
         }
 
-        $label       = rawurlencode(string: "{$issuer}:{$accountLabel}");
+        $label = rawurlencode(string: "{$issuer}:{$accountLabel}");
         $issuerQuery = rawurlencode(string: $issuer);
         $secretQuery = rawurlencode(string: $secret);
 
@@ -93,13 +93,12 @@ final readonly class Totp implements TotpInterface
 
     public function verify(
         #[SensitiveParameter]
-        string            $secret,
+        string $secret,
         #[SensitiveParameter]
-        string            $code,
+        string $code,
         DateTimeImmutable $moment,
-        int               $lastAcceptedTimeStep = null,
-    ) : TotpVerification
-    {
+        ?int $lastAcceptedTimeStep = null,
+    ): TotpVerification {
         if (preg_match(pattern: '/^\d{6,8}$/', subject: $code) !== 1) {
             return TotpVerification::invalid(reason: 'format_invalid');
         }
@@ -141,16 +140,16 @@ final readonly class Totp implements TotpInterface
         return TotpVerification::invalid();
     }
 
-    private function base32Decode(#[SensitiveParameter] string $secret) : string|null
+    private function base32Decode(#[SensitiveParameter] string $secret): ?string
     {
-        $alphabet   = array_flip(array: str_split(string: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'));
+        $alphabet = array_flip(array: str_split(string: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'));
         $normalized = strtoupper(string: preg_replace(pattern: '/[^A-Z2-7]/', replacement: '', subject: $secret) ?? '');
 
         if ($normalized === '') {
             return null;
         }
 
-        $bits   = '';
+        $bits = '';
         $length = strlen(string: $normalized);
 
         for ($index = 0; $index < $length; $index++) {
@@ -182,25 +181,25 @@ final readonly class Totp implements TotpInterface
         return $bytes;
     }
 
-    private function hotp(#[SensitiveParameter] string $secret, int $counter) : string
+    private function hotp(#[SensitiveParameter] string $secret, int $counter): string
     {
         $binaryCounter = pack('N2', ($counter >> 32) & 0xFFFFFFFF, $counter & 0xFFFFFFFF);
-        $hash          = hash_hmac(algo: 'sha1', data: $binaryCounter, key: $secret, binary: true);
-        $offset        = ord(character: $hash[19]) & 0x0F;
-        $chunk         = substr(string: $hash, offset: $offset, length: 4);
-        $unpacked      = unpack(format: 'N', string: $chunk);
+        $hash = hash_hmac(algo: 'sha1', data: $binaryCounter, key: $secret, binary: true);
+        $offset = ord(character: $hash[19]) & 0x0F;
+        $chunk = substr(string: $hash, offset: $offset, length: 4);
+        $unpacked = unpack(format: 'N', string: $chunk);
 
         if ($unpacked === false || ! isset($unpacked[1])) {
             throw new InvalidArgumentException(message: 'TOTP hash unpack failed.');
         }
 
-        $value  = $unpacked[1] & 0x7FFFFFFF;
+        $value = $unpacked[1] & 0x7FFFFFFF;
         $modulo = 10 ** $this->digits;
 
         return str_pad(string: (string) ($value % $modulo), length: $this->digits, pad_string: '0', pad_type: STR_PAD_LEFT);
     }
 
-    public function codeAt(#[SensitiveParameter] string $secret, DateTimeImmutable $moment) : string
+    public function codeAt(#[SensitiveParameter] string $secret, DateTimeImmutable $moment): string
     {
         $secretBytes = $this->base32Decode(secret: $secret);
 

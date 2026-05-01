@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Database\System\Flows\RunDatabaseQuery;
 
 final class PrepareDatabaseQuery
 {
-    public function prepare(string $sql, array $bindings) : array
+    public function prepare(string $sql, array $bindings): array
     {
         return ['sql' => $sql, 'bindings' => $bindings];
     }

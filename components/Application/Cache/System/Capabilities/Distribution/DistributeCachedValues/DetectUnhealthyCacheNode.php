@@ -10,11 +10,10 @@ final class DetectUnhealthyCacheNode
         private readonly int $failureThreshold = 3,
         private readonly int $recoveryThreshold = 5,
         /** @var array<string, array<int, bool>> */
-        private array        $failureHistory = [],
+        private array $failureHistory = [],
         /** @var array<string, int> */
-        private array        $successCount = []
-    )
-    {
+        private array $successCount = [],
+    ) {
     }
 
     public function recordFailure(CacheNodeId $cacheNodeId) : CacheNodeStatus

@@ -16,7 +16,7 @@ final readonly class SagaTimeout
     /**
      * Create a timeout in milliseconds.
      */
-    public static function milliseconds(int $ms) : self
+    public static function milliseconds(int $ms): self
     {
         return new self(timeoutMs: $ms);
     }
@@ -24,7 +24,7 @@ final readonly class SagaTimeout
     /**
      * Create a timeout in seconds.
      */
-    public static function seconds(int $seconds) : self
+    public static function seconds(int $seconds): self
     {
         return new self(timeoutMs: $seconds * 1000);
     }
@@ -32,7 +32,7 @@ final readonly class SagaTimeout
     /**
      * Create a timeout in minutes.
      */
-    public static function minutes(int $minutes) : self
+    public static function minutes(int $minutes): self
     {
         return new self(timeoutMs: $minutes * 60 * 1000);
     }
@@ -40,7 +40,7 @@ final readonly class SagaTimeout
     /**
      * Check if a given duration exceeds this timeout.
      */
-    public function isExceeded(int $elapsedMs) : bool
+    public function isExceeded(int $elapsedMs): bool
     {
         return $elapsedMs > $this->timeoutMs;
     }
@@ -48,7 +48,7 @@ final readonly class SagaTimeout
     /**
      * Get the timeout in seconds.
      */
-    public function toSeconds() : float
+    public function toSeconds(): float
     {
         return $this->timeoutMs / 1000;
     }

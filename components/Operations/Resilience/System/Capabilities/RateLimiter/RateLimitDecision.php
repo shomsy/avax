@@ -8,10 +8,10 @@ final readonly class RateLimitDecision
 {
     public function __construct(
         public bool $allowed,
-        public int  $limit,
-        public int  $remaining,
-        public int  $retryAfter,
-        public int  $resetSeconds,
+        public int $limit,
+        public int $remaining,
+        public int $retryAfter,
+        public int $resetSeconds,
     ) {}
 
     public function headers() : array

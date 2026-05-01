@@ -14,11 +14,10 @@ final readonly class Diagnostics
 
     public function explainAccessDenied(
         string $resource,
-        string|null $requiredPermission = null,
-        string|null $tenant = null,
-        string|null $resourceTenant = null,
-    ) : AuthIssueExplanation
-    {
+        ?string $requiredPermission = null,
+        ?string $tenant = null,
+        ?string $resourceTenant = null,
+    ): AuthIssueExplanation {
         return $this->authIssueExplainer->explainAccessDenied(
             resource          : $resource,
             requiredPermission: $requiredPermission,
@@ -29,10 +28,9 @@ final readonly class Diagnostics
 
     public function explainStepUpRequired(
         string $action,
-        bool|null $phishingResistantRequired = null,
-        int|null  $freshAfterSeconds = null,
-    ) : AuthIssueExplanation
-    {
+        ?bool $phishingResistantRequired = null,
+        ?int $freshAfterSeconds = null,
+    ): AuthIssueExplanation {
         $phishingResistantRequired ??= false;
 
         return $this->authIssueExplainer->explainStepUpRequired(
@@ -42,7 +40,7 @@ final readonly class Diagnostics
         );
     }
 
-    public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : AuthIssueExplanation
+    public function explainSenderConstraintFailure(string $reason, ?string $requiredConstraint = null): AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainSenderConstraintFailure(
             reason            : $reason,
@@ -50,12 +48,12 @@ final readonly class Diagnostics
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] string|null $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] ?string $sessionId = null): AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainSessionRevocation(status: $status, sessionId: $sessionId);
     }
 
-    public function explainTrustedDeviceDecision(string|null $deviceId = null) : AuthIssueExplanation
+    public function explainTrustedDeviceDecision(?string $deviceId = null): AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainTrustedDeviceDecision(deviceId: $deviceId);
     }

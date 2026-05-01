@@ -23,12 +23,12 @@ final readonly class BeginAdminElevation
 {
     public function __construct(
         #[SensitiveParameter]
-        private CurrentAuthentication        $currentAuthentication,
-        private RequireFreshMfa              $requireFreshMfa,
+        private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa $requireFreshMfa,
         private AdminElevationStoreInterface $elevationStore,
-        private AuditLogInterface            $auditLog,
-        private Clock                        $clock,
-        private bool                         $phishingResistantRequired = false,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private bool $phishingResistantRequired = false,
     ) {}
 
     /**
@@ -36,10 +36,10 @@ final readonly class BeginAdminElevation
      * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
-    public function execute() : AdminElevation
+    public function execute(): AdminElevation
     {
         $context = $this->currentAuthentication->read();
-        $user    = $context->user();
+        $user = $context->user();
 
         if ($user === null) {
             throw AdminElevationFailed::unauthenticated();
@@ -63,19 +63,19 @@ final readonly class BeginAdminElevation
 
         $expiresAt = $this->clock->now()->modify(modifier: '+15 minutes');
         $this->elevationStore->start(record: new AdminElevationRecord(
-                                                 userId   : $user->id,
-                                                 bindingId: $bindingId,
-                                                 expiresAt: $expiresAt,
-                                             ));
+            userId   : $user->id,
+            bindingId: $bindingId,
+            expiresAt: $expiresAt,
+        ));
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.admin.elevation.started',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'user_id'    => $user->id,
-                                                           'binding_id' => $bindingId,
-                                                       ],
-                                       ));
+            name      : 'auth.admin.elevation.started',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'user_id' => $user->id,
+                'binding_id' => $bindingId,
+            ],
+        ));
 
         return new AdminElevation(
             bindingId: $bindingId,
@@ -83,7 +83,7 @@ final readonly class BeginAdminElevation
         );
     }
 
-    private function bindingId(AuthenticationContext $context) : string|null
+    private function bindingId(AuthenticationContext $context): ?string
     {
         return $context->sessionId()
             ?? $context->accessTokenId()

@@ -18,7 +18,7 @@ class EventFake
     /** @var array<string, list<callable>> */
     private array $listeners = [];
 
-    public function dispatch(string|object $event, mixed $data = null) : void
+    public function dispatch(string|object $event, mixed $data = null): void
     {
         $eventName = is_object($event) ? $event::class : $event;
 
@@ -28,7 +28,7 @@ class EventFake
 
         $this->dispatched[$eventName][] = [
             'event' => $eventName,
-            'data'  => $data,
+            'data' => $data,
         ];
 
         // Call registered listeners
@@ -39,7 +39,7 @@ class EventFake
         }
     }
 
-    public function listen(string $event, callable $listener) : void
+    public function listen(string $event, callable $listener): void
     {
         if (! isset($this->listeners[$event])) {
             $this->listeners[$event] = [];
@@ -48,16 +48,16 @@ class EventFake
         $this->listeners[$event][] = $listener;
     }
 
-    public function flush() : void
+    public function flush(): void
     {
         $this->dispatched = [];
-        $this->listeners  = [];
+        $this->listeners = [];
     }
 
     /**
      * Assert that an event was dispatched.
      */
-    public function assertDispatched(string $event) : void
+    public function assertDispatched(string $event): void
     {
         Assert::assertTrue(
             $this->hasDispatched($event),
@@ -68,7 +68,7 @@ class EventFake
     /**
      * Check if an event was dispatched.
      */
-    public function hasDispatched(string $event) : bool
+    public function hasDispatched(string $event): bool
     {
         return isset($this->dispatched[$event]) && ! empty($this->dispatched[$event]);
     }
@@ -76,7 +76,7 @@ class EventFake
     /**
      * Assert that an event was not dispatched.
      */
-    public function assertNotDispatched(string $event) : void
+    public function assertNotDispatched(string $event): void
     {
         Assert::assertFalse(
             $this->hasDispatched($event),
@@ -87,7 +87,7 @@ class EventFake
     /**
      * Assert that an event was dispatched N times.
      */
-    public function assertDispatchedTimes(string $event, int $times = 1) : void
+    public function assertDispatchedTimes(string $event, int $times = 1): void
     {
         $count = $this->dispatchedCount($event);
 
@@ -101,7 +101,7 @@ class EventFake
     /**
      * Get the count of times an event was dispatched.
      */
-    public function dispatchedCount(string $event) : int
+    public function dispatchedCount(string $event): int
     {
         return count($this->dispatched[$event] ?? []);
     }
@@ -109,7 +109,7 @@ class EventFake
     /**
      * Assert that an event was dispatched with specific data.
      */
-    public function assertDispatchedWith(string $event, mixed $expectedData) : void
+    public function assertDispatchedWith(string $event, mixed $expectedData): void
     {
         Assert::assertTrue(
             $this->hasDispatchedWith($event, $expectedData),
@@ -120,7 +120,7 @@ class EventFake
     /**
      * Check if an event was dispatched with specific data.
      */
-    public function hasDispatchedWith(string $event, mixed $expectedData) : bool
+    public function hasDispatchedWith(string $event, mixed $expectedData): bool
     {
         if (! $this->hasDispatched($event)) {
             return false;
@@ -140,7 +140,7 @@ class EventFake
      *
      * @return array<string, list<array{event: string, data: mixed}>>
      */
-    public function dispatched() : array
+    public function dispatched(): array
     {
         return $this->dispatched;
     }

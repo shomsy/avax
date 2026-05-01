@@ -13,15 +13,15 @@ final class LazyReference
     private bool $loaded = false;
 
     /**
-     * @param callable() : object|null $loader
+     * @param  callable() : object|null  $loader
      */
     public function __construct(private readonly Closure $loader) {}
 
-    public function resolve() : object|null
+    public function resolve(): ?object
     {
         if (! $this->loaded) {
             $this->resolved = ($this->loader)();
-            $this->loaded   = true;
+            $this->loaded = true;
         }
 
         return $this->resolved;

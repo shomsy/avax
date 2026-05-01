@@ -13,13 +13,13 @@ use Closure;
 final readonly class SagaRuntimeConfig
 {
     public function __construct(
-        public StoreSagaState|null $store = null,
-        public Closure|null $stepRunner = null,
-        public Closure|null $messageBus = null,
-        public Closure|null $eventRecorder = null,
+        public ?StoreSagaState $store = null,
+        public ?Closure $stepRunner = null,
+        public ?Closure $messageBus = null,
+        public ?Closure $eventRecorder = null,
     ) {}
 
-    public function withStore(StoreSagaState $store) : self
+    public function withStore(StoreSagaState $store): self
     {
         return new self(
             store        : $store,
@@ -29,7 +29,7 @@ final readonly class SagaRuntimeConfig
         );
     }
 
-    public function withStepRunner(Closure $stepRunner) : self
+    public function withStepRunner(Closure $stepRunner): self
     {
         return new self(
             store        : $this->store,
@@ -39,7 +39,7 @@ final readonly class SagaRuntimeConfig
         );
     }
 
-    public function withMessageBus(Closure $messageBus) : self
+    public function withMessageBus(Closure $messageBus): self
     {
         return new self(
             store        : $this->store,
@@ -49,7 +49,7 @@ final readonly class SagaRuntimeConfig
         );
     }
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'records saga store, step runner, message bus, and event recorder dependencies.';
     }

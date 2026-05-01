@@ -14,10 +14,9 @@ final readonly class SessionLifetime
     public int $idleTimeoutSeconds;
 
     public function __construct(
-        int|null $idleTimeoutSeconds = null,
+        ?int $idleTimeoutSeconds = null,
         public int $absoluteTimeoutSeconds = 43200,
-    )
-    {
+    ) {
         $idleTimeoutSeconds ??= 900;
         $this->idleTimeoutSeconds = $idleTimeoutSeconds;
         if ($this->idleTimeoutSeconds < 1) {

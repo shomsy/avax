@@ -11,12 +11,8 @@ use Symfony\Component\VarDumper\VarDumper;
 if (! function_exists('dd')) {
     /**
      * Dump variables and die.
-     *
-     * @param mixed ...$vars
-     *
-     * @return never
      */
-    function dd(mixed ...$vars) : never
+    function dd(mixed ...$vars): never
     {
         foreach ($vars as $var) {
             dump($var);
@@ -28,10 +24,8 @@ if (! function_exists('dd')) {
 if (! function_exists('dump')) {
     /**
      * Dump variables without dying.
-     *
-     * @param mixed ...$vars
      */
-    function dump(mixed ...$vars) : void
+    function dump(mixed ...$vars): void
     {
         foreach ($vars as $var) {
             if (class_exists(VarDumper::class)) {
@@ -46,20 +40,16 @@ if (! function_exists('dump')) {
 if (! function_exists('d')) {
     /**
      * Dump variables with label and die.
-     *
-     * @param mixed ...$vars
-     *
-     * @return never
      */
-    function d(mixed ...$vars) : never
+    function d(mixed ...$vars): never
     {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-        $file      = basename($backtrace[0]['file'] ?? 'unknown');
-        $line      = $backtrace[0]['line'] ?? '?';
+        $file = basename($backtrace[0]['file'] ?? 'unknown');
+        $line = $backtrace[0]['line'] ?? '?';
 
         echo "<pre style='background:#1e1e1e;color:#d4d4d4;padding:12px;font-size:13px;'>\n";
         echo "<strong style='color:#569cd6;'>{$file}:{$line}</strong>\n";
-        echo str_repeat('-', 60) . "\n";
+        echo str_repeat('-', 60)."\n";
 
         foreach ($vars as $key => $var) {
             echo "\n[{$key}] ";

@@ -392,12 +392,12 @@ final class SyncOperationPromise implements AsyncOperationPromise
     private Throwable|null $throwable = null;
 
     /**
-     * @param mixed          $result    The resolved value (if resolved)
+     * @param mixed $result The resolved value (if resolved)
      * @param Throwable|null $throwable The rejection exception (if rejected)
      */
     public function __construct(
-        mixed      $result = null,
-        Throwable|null $throwable = null,
+        mixed     $result = null,
+        Throwable $throwable = null,
     )
     {
         if ($throwable instanceof Throwable) {

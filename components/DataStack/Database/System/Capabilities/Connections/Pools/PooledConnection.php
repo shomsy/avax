@@ -6,13 +6,13 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Poo
 
 interface PooledConnection
 {
-    public function getResource() : object;
+    public function getResource(): object;
 
-    public function isValid() : bool;
+    public function isValid(): bool;
 
-    public function getCreatedAt() : float;
+    public function getCreatedAt(): float;
 
-    public function getLastUsedAt() : float;
+    public function getLastUsedAt(): float;
 
-    public function executeCount() : int;
+    public function executeCount(): int;
 }

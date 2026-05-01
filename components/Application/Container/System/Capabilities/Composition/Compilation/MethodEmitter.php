@@ -42,8 +42,8 @@ final class MethodEmitter
         string $serviceId,
         string $class,
         ResolvePlan|null $plan,
-        array  $registrationArguments,
-        bool   $needsFinish,
+        array $registrationArguments,
+        bool  $needsFinish,
     ) : string
     {
         $className                     = '\\' . ltrim(string: $class, characters: '\\');

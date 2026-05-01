@@ -26,7 +26,7 @@ final class CompiledCache
         if (! self::$compiledCacheContract instanceof CompiledCacheContract) {
             $directory = self::$defaultDirectory ?? sys_get_temp_dir() . '/compiled_cache';
 
-            $config  = CompiledCacheConfiguration::inDirectory($directory);
+            $config = CompiledCacheConfiguration::inDirectory($directory);
             $buildCompiledCache = new BuildCompiledCache();
 
             self::$compiledCacheContract = $buildCompiledCache->fromConfiguration(configuration: $config);

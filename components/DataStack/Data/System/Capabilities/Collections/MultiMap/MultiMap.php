@@ -15,7 +15,7 @@ use Traversable;
 /**
  * Key-value map that stores multiple values per key.
  */
-final readonly class MultiMap implements IteratorAggregate, Countable
+final readonly class MultiMap implements Countable, IteratorAggregate
 {
     /**
      * @var array<array-key, array<int, mixed>>
@@ -23,12 +23,11 @@ final readonly class MultiMap implements IteratorAggregate, Countable
     private array $items;
 
     /**
-     * @param iterable<array-key, iterable<mixed>> $items
+     * @param  iterable<array-key, iterable<mixed>>  $items
      */
     public function __construct(
         iterable $items = [],
-    )
-    {
+    ) {
         $normalized = [];
 
         foreach (NormalizedIterable::toArrayPreserveKeys(iterable: $items) as $key => $values) {
@@ -41,21 +40,21 @@ final readonly class MultiMap implements IteratorAggregate, Countable
     /**
      * @return array<array-key, array<int, mixed>>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }
 
-    public function put(int|string $key, mixed $value) : self
+    public function put(int|string $key, mixed $value): self
     {
-        $items       = $this->items;
+        $items = $this->items;
         $items[$key] ??= [];
         $items[$key][] = $value;
 
         return new self(items: $items);
     }
 
-    public function valuesFor(int|string $key) : DataList
+    public function valuesFor(int|string $key): DataList
     {
         return new DataList(items: $this->get(key: $key));
     }
@@ -63,12 +62,12 @@ final readonly class MultiMap implements IteratorAggregate, Countable
     /**
      * @return array<int, mixed>
      */
-    public function get(int|string $key) : array
+    public function get(int|string $key): array
     {
         return $this->items[$key] ?? [];
     }
 
-    public function remove(int|string $key) : self
+    public function remove(int|string $key): self
     {
         $items = $this->items;
         unset($items[$key]);
@@ -77,13 +76,13 @@ final readonly class MultiMap implements IteratorAggregate, Countable
     }
 
     #[Override]
-    public function count() : int
+    public function count(): int
     {
         return count($this->items);
     }
 
     #[Override]
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->items);
     }

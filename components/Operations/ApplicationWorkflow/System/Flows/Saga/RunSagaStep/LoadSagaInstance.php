@@ -12,7 +12,7 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaSt
  */
 final readonly class LoadSagaInstance
 {
-    public function load(StoreSagaState $storeSagaState, string $instanceId) : SagaState
+    public function load(StoreSagaState $storeSagaState, string $instanceId): SagaState
     {
         return $storeSagaState->read(instanceId: $instanceId);
     }

@@ -22,12 +22,12 @@ final readonly class RequireResourceOwner
      * @throws ResourceOwnerDenied
      * @throws Unauthenticated
      */
-    public function execute(int $ownerUserId) : void
+    public function execute(int $ownerUserId): void
     {
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         if ($user->id !== $ownerUserId) {

@@ -12,23 +12,23 @@ use Traversable;
 
 final readonly class NormalizeDataObjectValue
 {
-    public function normalize(mixed $value, int $depth, array &$seen) : mixed
+    public function normalize(mixed $value, int $depth, array &$seen): mixed
     {
         if ($depth < 0) {
             return null;
         }
 
         return match (true) {
-            $value instanceof BackedEnum        => $value->value,
+            $value instanceof BackedEnum => $value->value,
             $value instanceof DateTimeInterface => $value->format(format: DATE_ATOM),
-            is_array(value: $value)             => $this->normalizeArray(value: $value, depth: $depth, seen: $seen),
-            $value instanceof Traversable       => $this->normalizeArray(value: iterator_to_array(iterator: $value), depth: $depth, seen: $seen),
-            is_object(value: $value)            => $this->normalizeObject(value: $value, depth: $depth, seen: $seen),
-            default                             => $value,
+            is_array(value: $value) => $this->normalizeArray(value: $value, depth: $depth, seen: $seen),
+            $value instanceof Traversable => $this->normalizeArray(value: iterator_to_array(iterator: $value), depth: $depth, seen: $seen),
+            is_object(value: $value) => $this->normalizeObject(value: $value, depth: $depth, seen: $seen),
+            default => $value,
         };
     }
 
-    private function normalizeArray(array $value, int $depth, array &$seen) : array
+    private function normalizeArray(array $value, int $depth, array &$seen): array
     {
         $normalized = [];
 
@@ -39,7 +39,7 @@ final readonly class NormalizeDataObjectValue
         return $normalized;
     }
 
-    private function normalizeObject(object $value, int $depth, array &$seen) : mixed
+    private function normalizeObject(object $value, int $depth, array &$seen): mixed
     {
         $id = spl_object_id(object: $value);
 
@@ -60,7 +60,7 @@ final readonly class NormalizeDataObjectValue
         return $this->normalize(value: new ReadDataObject()->values(object: $value), depth: $depth - 1, seen: $seen);
     }
 
-    private function hasNoPublicProperties(object $value) : bool
+    private function hasNoPublicProperties(object $value): bool
     {
         return get_object_vars(object: $value) === [];
     }

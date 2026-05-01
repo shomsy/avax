@@ -17,7 +17,7 @@ final readonly class RunTransaction
     /**
      * @throws Throwable
      */
-    public function run(callable $callback, string|null $connectionName = null) : mixed
+    public function run(callable $callback, ?string $connectionName = null): mixed
     {
         return $this->onConnection->for(connectionName: $connectionName)->transaction(callback: $callback);
     }

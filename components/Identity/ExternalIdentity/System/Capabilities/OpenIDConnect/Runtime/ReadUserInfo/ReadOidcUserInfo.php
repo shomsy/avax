@@ -14,11 +14,11 @@ final readonly class ReadOidcUserInfo
 {
     public function __construct(
         #[SensitiveParameter]
-        private JwtIdentityInterface       $jwtIdentity,
-        private OidcProviderInterface|null $oidcProvider = null,
+        private JwtIdentityInterface $jwtIdentity,
+        private ?OidcProviderInterface $oidcProvider = null,
     ) {}
 
-    public function execute(#[SensitiveParameter] string $accessToken) : OidcUserInfo
+    public function execute(#[SensitiveParameter] string $accessToken): OidcUserInfo
     {
         $resolved = $this->jwtIdentity->resolve(token: $accessToken);
 
@@ -27,7 +27,7 @@ final readonly class ReadOidcUserInfo
         }
 
         $claims = [
-            'sub'                => $this->subjectIdentifier(user: $resolved->user, clientId: $resolved->clientId),
+            'sub' => $this->subjectIdentifier(user: $resolved->user, clientId: $resolved->clientId),
             'preferred_username' => $resolved->user->getUsername(),
         ];
 
@@ -46,7 +46,7 @@ final readonly class ReadOidcUserInfo
         return new OidcUserInfo(claims: $claims);
     }
 
-    private function subjectIdentifier(User $user, string|null $clientId) : string
+    private function subjectIdentifier(User $user, ?string $clientId): string
     {
         if ($this->oidcProvider !== null && $clientId !== null && trim(string: $clientId) !== '') {
             return $this->oidcProvider->subjectIdentifier(user: $user, clientId: $clientId);

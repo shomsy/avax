@@ -220,57 +220,100 @@ use SensitiveParameter;
  */
 final class AuthBuilder
 {
-    private UserSourceInterface|null $userSource                                             = null;
-    private IdentityInterface|null $identity                                                 = null;
-    private LoginRateLimit|null $rateLimit                                                   = null;
-    private PasswordHasher|null $passwordHasher                                              = null;
-    private IdGeneratorInterface|null $idGenerator                                           = null;
-    private AuditLogInterface|null $auditLog                                                 = null;
-    private string|null $auditCorrelationId                                                  = null;
-    private EmailVerificationStateStoreInterface|null $emailVerificationState                = null;
-    private MfaStoreInterface|null $mfaStore                                                 = null;
-    private RefreshTokenStoreInterface|null $refreshTokenStore                               = null;
-    private PasswordResetStoreInterface|null $passwordResetStore                             = null;
-    private EmailVerificationStoreInterface|null $emailVerificationStore                     = null;
-    private EmailChangeStoreInterface|null $emailChangeStore                                 = null;
-    private MfaChallengeStoreInterface|null $mfaChallengeStore                               = null;
-    private TotpInterface|null $totp                                                         = null;
-    private LimitMfaAttempts|null $mfaAttemptLimit                                           = null;
-    private AttemptThrottle|null $passwordResetThrottle                                      = null;
-    private AttemptThrottle|null $mfaRecoveryThrottle                                        = null;
-    private AttemptThrottle|null $scimThrottle                                               = null;
-    private Clock|null $clock                                                                = null;
-    private SessionRegistryInterface|null $sessionRegistry                                   = null;
-    private OAuthClientRegistryInterface|null $oauthClientRegistry                           = null;
-    private AuthorizationCodeStoreInterface|null $authorizationCodeStore                     = null;
-    private LifecycleStoreInterface|null $lifecycleStore                                     = null;
-    private AdminElevationStoreInterface|null $adminElevationStore                           = null;
-    private DeterministicRiskEngine|null $riskEngine                                         = null;
-    private PasskeyRuntimeInterface|null $passkeyRuntime                                     = null;
-    private PasskeyCredentialStoreInterface|null $passkeyCredentialStore                     = null;
-    private PasskeyChallengeStoreInterface|null $passkeyChallengeStore                       = null;
-    private FederationRuntimeInterface|null $federationRuntime                               = null;
-    private FederationConnectionStoreInterface|null $federationConnectionStore               = null;
-    private FederatedIdentityLinkStoreInterface|null $federatedIdentityLinkStore             = null;
-    private OidcProviderInterface|null $oidcProvider                                         = null;
-    private OidcRequestObjectStoreInterface|null $oidcRequestObjectStore                     = null;
-    private ScimDirectoryStoreInterface|null $scimDirectoryStore                             = null;
-    private ScimProvisionedIdentityStoreInterface|null $scimProvisionedIdentityStore         = null;
-    private TenantStoreInterface|null $tenantStore                                           = null;
-    private TenantSecurityConfigurationStoreInterface|null $tenantSecurityConfigurationStore = null;
-    private TenantSecurityChangeRequestStoreInterface|null $tenantSecurityChangeRequestStore = null;
-    private string $mfaIssuer                                                                = 'Avax Auth';
-    private string $passkeyRpId                                                              = 'localhost';
-    private string $passkeyRpName                                                            = 'Avax Auth';
-    private bool $adminPhishingResistantRequired                                             = false;
-    private bool $enterpriseMode                                                             = false;
+    private ?UserSourceInterface $userSource = null;
+
+    private ?IdentityInterface $identity = null;
+
+    private ?LoginRateLimit $rateLimit = null;
+
+    private ?PasswordHasher $passwordHasher = null;
+
+    private ?IdGeneratorInterface $idGenerator = null;
+
+    private ?AuditLogInterface $auditLog = null;
+
+    private ?string $auditCorrelationId = null;
+
+    private ?EmailVerificationStateStoreInterface $emailVerificationState = null;
+
+    private ?MfaStoreInterface $mfaStore = null;
+
+    private ?RefreshTokenStoreInterface $refreshTokenStore = null;
+
+    private ?PasswordResetStoreInterface $passwordResetStore = null;
+
+    private ?EmailVerificationStoreInterface $emailVerificationStore = null;
+
+    private ?EmailChangeStoreInterface $emailChangeStore = null;
+
+    private ?MfaChallengeStoreInterface $mfaChallengeStore = null;
+
+    private ?TotpInterface $totp = null;
+
+    private ?LimitMfaAttempts $mfaAttemptLimit = null;
+
+    private ?AttemptThrottle $passwordResetThrottle = null;
+
+    private ?AttemptThrottle $mfaRecoveryThrottle = null;
+
+    private ?AttemptThrottle $scimThrottle = null;
+
+    private ?Clock $clock = null;
+
+    private ?SessionRegistryInterface $sessionRegistry = null;
+
+    private ?OAuthClientRegistryInterface $oauthClientRegistry = null;
+
+    private ?AuthorizationCodeStoreInterface $authorizationCodeStore = null;
+
+    private ?LifecycleStoreInterface $lifecycleStore = null;
+
+    private ?AdminElevationStoreInterface $adminElevationStore = null;
+
+    private ?DeterministicRiskEngine $riskEngine = null;
+
+    private ?PasskeyRuntimeInterface $passkeyRuntime = null;
+
+    private ?PasskeyCredentialStoreInterface $passkeyCredentialStore = null;
+
+    private ?PasskeyChallengeStoreInterface $passkeyChallengeStore = null;
+
+    private ?FederationRuntimeInterface $federationRuntime = null;
+
+    private ?FederationConnectionStoreInterface $federationConnectionStore = null;
+
+    private ?FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore = null;
+
+    private ?OidcProviderInterface $oidcProvider = null;
+
+    private ?OidcRequestObjectStoreInterface $oidcRequestObjectStore = null;
+
+    private ?ScimDirectoryStoreInterface $scimDirectoryStore = null;
+
+    private ?ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore = null;
+
+    private ?TenantStoreInterface $tenantStore = null;
+
+    private ?TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore = null;
+
+    private ?TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore = null;
+
+    private string $mfaIssuer = 'Avax Auth';
+
+    private string $passkeyRpId = 'localhost';
+
+    private string $passkeyRpName = 'Avax Auth';
+
+    private bool $adminPhishingResistantRequired = false;
+
+    private bool $enterpriseMode = false;
 
     /**
      * Enable enterprise mode.
      * In enterprise mode, session registry becomes a required first-class runtime dependency.
      * The builder will fail-fast at build time if no durable session registry is configured.
      */
-    public function enterprise() : self
+    public function enterprise(): self
     {
         $this->enterpriseMode = true;
 
@@ -280,7 +323,7 @@ final class AuthBuilder
     /**
      * Define the data source for users.
      */
-    public function forUser(UserSourceInterface $userSource) : self
+    public function forUser(UserSourceInterface $userSource): self
     {
         $this->userSource = $userSource;
 
@@ -290,7 +333,7 @@ final class AuthBuilder
     /**
      * Define the composed identity façade for authentication state.
      */
-    public function withIdentity(IdentityInterface $identity) : self
+    public function withIdentity(IdentityInterface $identity): self
     {
         $this->identity = $identity;
 
@@ -299,11 +342,10 @@ final class AuthBuilder
 
     public function withIdentityBackends(
         #[SensitiveParameter]
-        SessionIdentityInterface|null $sessionIdentity = null,
+        ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        JwtIdentityInterface|null     $jwtIdentity = null,
-    ) : self
-    {
+        ?JwtIdentityInterface $jwtIdentity = null,
+    ): self {
         $this->identity = Identity::fromBackends(
             sessionIdentity: $sessionIdentity,
             jwtIdentity    : $jwtIdentity,
@@ -315,7 +357,7 @@ final class AuthBuilder
     /**
      * Enable rate limiting for login.
      */
-    public function protectFromBruteForce(LoginRateLimit $rateLimit) : self
+    public function protectFromBruteForce(LoginRateLimit $rateLimit): self
     {
         $this->rateLimit = $rateLimit;
 
@@ -325,7 +367,7 @@ final class AuthBuilder
     /**
      * Configure a custom password hasher.
      */
-    public function usingHasher(#[SensitiveParameter] PasswordHasher $passwordHasher) : self
+    public function usingHasher(#[SensitiveParameter] PasswordHasher $passwordHasher): self
     {
         $this->passwordHasher = $passwordHasher;
 
@@ -335,267 +377,267 @@ final class AuthBuilder
     /**
      * Configure a custom identifier generator for registrations.
      */
-    public function usingIdGenerator(IdGeneratorInterface $idGenerator) : self
+    public function usingIdGenerator(IdGeneratorInterface $idGenerator): self
     {
         $this->idGenerator = $idGenerator;
 
         return $this;
     }
 
-    public function withAuditLog(AuditLogInterface $auditLog) : self
+    public function withAuditLog(AuditLogInterface $auditLog): self
     {
         $this->auditLog = $auditLog;
 
         return $this;
     }
 
-    public function withAuditCorrelationId(string $correlationId) : self
+    public function withAuditCorrelationId(string $correlationId): self
     {
         $this->auditCorrelationId = trim(string: $correlationId) !== '' ? trim(string: $correlationId) : null;
 
         return $this;
     }
 
-    public function withEmailVerificationState(#[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState) : self
+    public function withEmailVerificationState(#[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState): self
     {
         $this->emailVerificationState = $emailVerificationState;
 
         return $this;
     }
 
-    public function withMfaStore(MfaStoreInterface $mfaStore) : self
+    public function withMfaStore(MfaStoreInterface $mfaStore): self
     {
         $this->mfaStore = $mfaStore;
 
         return $this;
     }
 
-    public function withRefreshTokenStore(#[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore) : self
+    public function withRefreshTokenStore(#[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore): self
     {
         $this->refreshTokenStore = $refreshTokenStore;
 
         return $this;
     }
 
-    public function withPasswordResetStore(#[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore) : self
+    public function withPasswordResetStore(#[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore): self
     {
         $this->passwordResetStore = $passwordResetStore;
 
         return $this;
     }
 
-    public function withEmailVerificationStore(#[SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore) : self
+    public function withEmailVerificationStore(#[SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore): self
     {
         $this->emailVerificationStore = $emailVerificationStore;
 
         return $this;
     }
 
-    public function withEmailChangeStore(#[SensitiveParameter] EmailChangeStoreInterface $emailChangeStore) : self
+    public function withEmailChangeStore(#[SensitiveParameter] EmailChangeStoreInterface $emailChangeStore): self
     {
         $this->emailChangeStore = $emailChangeStore;
 
         return $this;
     }
 
-    public function withMfaChallengeStore(MfaChallengeStoreInterface $mfaChallengeStore) : self
+    public function withMfaChallengeStore(MfaChallengeStoreInterface $mfaChallengeStore): self
     {
         $this->mfaChallengeStore = $mfaChallengeStore;
 
         return $this;
     }
 
-    public function usingTotp(TotpInterface $totp) : self
+    public function usingTotp(TotpInterface $totp): self
     {
         $this->totp = $totp;
 
         return $this;
     }
 
-    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $passwordResetThrottle) : self
+    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $passwordResetThrottle): self
     {
         $this->passwordResetThrottle = $passwordResetThrottle;
 
         return $this;
     }
 
-    public function withMfaRecoveryThrottle(AttemptThrottle $mfaRecoveryThrottle) : self
+    public function withMfaRecoveryThrottle(AttemptThrottle $mfaRecoveryThrottle): self
     {
         $this->mfaRecoveryThrottle = $mfaRecoveryThrottle;
 
         return $this;
     }
 
-    public function withScimThrottle(AttemptThrottle $scimThrottle) : self
+    public function withScimThrottle(AttemptThrottle $scimThrottle): self
     {
         $this->scimThrottle = $scimThrottle;
 
         return $this;
     }
 
-    public function withClock(Clock $clock) : self
+    public function withClock(Clock $clock): self
     {
         $this->clock = $clock;
 
         return $this;
     }
 
-    public function withSessionRegistry(#[SensitiveParameter] SessionRegistryInterface $sessionRegistry) : self
+    public function withSessionRegistry(#[SensitiveParameter] SessionRegistryInterface $sessionRegistry): self
     {
         $this->sessionRegistry = $sessionRegistry;
 
         return $this;
     }
 
-    public function withOAuthClientRegistry(#[SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry) : self
+    public function withOAuthClientRegistry(#[SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry): self
     {
         $this->oauthClientRegistry = $oauthClientRegistry;
 
         return $this;
     }
 
-    public function withAuthorizationCodeStore(#[SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore) : self
+    public function withAuthorizationCodeStore(#[SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore): self
     {
         $this->authorizationCodeStore = $authorizationCodeStore;
 
         return $this;
     }
 
-    public function withLifecycleStore(#[SensitiveParameter] LifecycleStoreInterface $lifecycleStore) : self
+    public function withLifecycleStore(#[SensitiveParameter] LifecycleStoreInterface $lifecycleStore): self
     {
         $this->lifecycleStore = $lifecycleStore;
 
         return $this;
     }
 
-    public function withAdminElevationStore(AdminElevationStoreInterface $adminElevationStore) : self
+    public function withAdminElevationStore(AdminElevationStoreInterface $adminElevationStore): self
     {
         $this->adminElevationStore = $adminElevationStore;
 
         return $this;
     }
 
-    public function withRiskEngine(DeterministicRiskEngine $riskEngine) : self
+    public function withRiskEngine(DeterministicRiskEngine $riskEngine): self
     {
         $this->riskEngine = $riskEngine;
 
         return $this;
     }
 
-    public function withPasskeyRuntime(PasskeyRuntimeInterface $passkeyRuntime) : self
+    public function withPasskeyRuntime(PasskeyRuntimeInterface $passkeyRuntime): self
     {
         $this->passkeyRuntime = $passkeyRuntime;
 
         return $this;
     }
 
-    public function withPasskeyCredentialStore(#[SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore) : self
+    public function withPasskeyCredentialStore(#[SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore): self
     {
         $this->passkeyCredentialStore = $passkeyCredentialStore;
 
         return $this;
     }
 
-    public function withPasskeyChallengeStore(PasskeyChallengeStoreInterface $passkeyChallengeStore) : self
+    public function withPasskeyChallengeStore(PasskeyChallengeStoreInterface $passkeyChallengeStore): self
     {
         $this->passkeyChallengeStore = $passkeyChallengeStore;
 
         return $this;
     }
 
-    public function withPasskeyRelyingParty(string $rpId, string $rpName) : self
+    public function withPasskeyRelyingParty(string $rpId, string $rpName): self
     {
-        $this->passkeyRpId   = $rpId;
+        $this->passkeyRpId = $rpId;
         $this->passkeyRpName = $rpName;
 
         return $this;
     }
 
-    public function requirePhishingResistantAdminElevation(bool $required = true) : self
+    public function requirePhishingResistantAdminElevation(bool $required = true): self
     {
         $this->adminPhishingResistantRequired = $required;
 
         return $this;
     }
 
-    public function withFederationRuntime(FederationRuntimeInterface $federationRuntime) : self
+    public function withFederationRuntime(FederationRuntimeInterface $federationRuntime): self
     {
         $this->federationRuntime = $federationRuntime;
 
         return $this;
     }
 
-    public function withFederationConnectionStore(FederationConnectionStoreInterface $federationConnectionStore) : self
+    public function withFederationConnectionStore(FederationConnectionStoreInterface $federationConnectionStore): self
     {
         $this->federationConnectionStore = $federationConnectionStore;
 
         return $this;
     }
 
-    public function withFederatedIdentityLinkStore(FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore) : self
+    public function withFederatedIdentityLinkStore(FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore): self
     {
         $this->federatedIdentityLinkStore = $federatedIdentityLinkStore;
 
         return $this;
     }
 
-    public function withOidcProvider(OidcProviderInterface $oidcProvider) : self
+    public function withOidcProvider(OidcProviderInterface $oidcProvider): self
     {
         $this->oidcProvider = $oidcProvider;
 
         return $this;
     }
 
-    public function withOidcRequestObjectStore(OidcRequestObjectStoreInterface $oidcRequestObjectStore) : self
+    public function withOidcRequestObjectStore(OidcRequestObjectStoreInterface $oidcRequestObjectStore): self
     {
         $this->oidcRequestObjectStore = $oidcRequestObjectStore;
 
         return $this;
     }
 
-    public function withScimDirectoryStore(ScimDirectoryStoreInterface $scimDirectoryStore) : self
+    public function withScimDirectoryStore(ScimDirectoryStoreInterface $scimDirectoryStore): self
     {
         $this->scimDirectoryStore = $scimDirectoryStore;
 
         return $this;
     }
 
-    public function withScimProvisionedIdentityStore(ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore) : self
+    public function withScimProvisionedIdentityStore(ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore): self
     {
         $this->scimProvisionedIdentityStore = $scimProvisionedIdentityStore;
 
         return $this;
     }
 
-    public function withTenantStore(#[SensitiveParameter] TenantStoreInterface $tenantStore) : self
+    public function withTenantStore(#[SensitiveParameter] TenantStoreInterface $tenantStore): self
     {
         $this->tenantStore = $tenantStore;
 
         return $this;
     }
 
-    public function withTenantSecurityConfigurationStore(#[SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self
+    public function withTenantSecurityConfigurationStore(#[SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore): self
     {
         $this->tenantSecurityConfigurationStore = $tenantSecurityConfigurationStore;
 
         return $this;
     }
 
-    public function withTenantSecurityChangeRequestStore(#[SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self
+    public function withTenantSecurityChangeRequestStore(#[SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore): self
     {
         $this->tenantSecurityChangeRequestStore = $tenantSecurityChangeRequestStore;
 
         return $this;
     }
 
-    public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit) : self
+    public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit): self
     {
         $this->mfaAttemptLimit = $mfaAttemptLimit;
 
         return $this;
     }
 
-    public function withMfaIssuer(string $mfaIssuer) : self
+    public function withMfaIssuer(string $mfaIssuer): self
     {
         $this->mfaIssuer = $mfaIssuer;
 
@@ -605,7 +647,7 @@ final class AuthBuilder
     /**
      * Build the final Auth instance.
      */
-    public function ready() : Auth
+    public function ready(): Auth
     {
         AuthBootstrapValidator::validate(
             userSource       : $this->userSource,
@@ -618,9 +660,9 @@ final class AuthBuilder
             oidcProvider     : $this->oidcProvider,
         );
 
-        $identity       = $this->identity;
-        $passwordHasher = $this->passwordHasher ?? new PasswordHasher();
-        $auditLog       = $this->auditLog       ?? new NullAuditLog();
+        $identity = $this->identity;
+        $passwordHasher = $this->passwordHasher ?? new PasswordHasher;
+        $auditLog = $this->auditLog ?? new NullAuditLog;
 
         if ($this->auditCorrelationId !== null) {
             $auditLog = new CorrelatingAuditLog(
@@ -628,46 +670,46 @@ final class AuthBuilder
                 correlationId: $this->auditCorrelationId,
             );
         }
-        $clock                  = $this->clock                  ?? new Clock();
-        $oauthClientRegistry    = $this->oauthClientRegistry    ?? new InMemoryOAuthClientRegistry(passwordHasher: $passwordHasher);
-        $authorizationCodeStore = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
-        $lifecycleStore         = $this->lifecycleStore         ?? new InMemoryLifecycleStore();
-        $adminElevationStore    = $this->adminElevationStore    ?? new InMemoryAdminElevationStore();
-        $riskEngine             = $this->riskEngine             ?? new DeterministicRiskEngine(
-            knownEnvironments: new InMemoryKnownAuthenticationEnvironmentStore(),
-            signals          : new InMemoryRiskSignalStore(),
+        $clock = $this->clock ?? new Clock;
+        $oauthClientRegistry = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry(passwordHasher: $passwordHasher);
+        $authorizationCodeStore = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore;
+        $lifecycleStore = $this->lifecycleStore ?? new InMemoryLifecycleStore;
+        $adminElevationStore = $this->adminElevationStore ?? new InMemoryAdminElevationStore;
+        $riskEngine = $this->riskEngine ?? new DeterministicRiskEngine(
+            knownEnvironments: new InMemoryKnownAuthenticationEnvironmentStore,
+            signals          : new InMemoryRiskSignalStore,
             clock            : $clock,
         );
-        $passkeyCredentialStore     = $this->passkeyCredentialStore     ?? new InMemoryPasskeyCredentialStore();
-        $passkeyChallengeStore      = $this->passkeyChallengeStore      ?? new InMemoryPasskeyChallengeStore();
-        $federationConnectionStore  = $this->federationConnectionStore  ?? new InMemoryFederationConnectionStore();
-        $federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore();
-        $groupRoleMappingValidator  = new GroupRoleMappingValidator();
-        $passwordResetStore         = $this->passwordResetStore     ?? new InMemoryPasswordResetStore();
-        $emailVerificationStore     = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
-        $emailChangeStore           = $this->emailChangeStore       ?? new InMemoryEmailChangeStore();
-        $emailVerificationState     = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
-        $mfaStore                   = $this->mfaStore               ?? new InMemoryMfaStore();
-        $mfaChallengeStore          = $this->mfaChallengeStore      ?? new InMemoryMfaChallengeStore();
-        $totp                       = $this->totp                   ?? new Totp();
-        $mfaAttemptLimit            = $this->mfaAttemptLimit        ?? new LimitMfaAttempts(
-            storage: new InMemoryAttemptLimitStorage(),
+        $passkeyCredentialStore = $this->passkeyCredentialStore ?? new InMemoryPasskeyCredentialStore;
+        $passkeyChallengeStore = $this->passkeyChallengeStore ?? new InMemoryPasskeyChallengeStore;
+        $federationConnectionStore = $this->federationConnectionStore ?? new InMemoryFederationConnectionStore;
+        $federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore;
+        $groupRoleMappingValidator = new GroupRoleMappingValidator;
+        $passwordResetStore = $this->passwordResetStore ?? new InMemoryPasswordResetStore;
+        $emailVerificationStore = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore;
+        $emailChangeStore = $this->emailChangeStore ?? new InMemoryEmailChangeStore;
+        $emailVerificationState = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore;
+        $mfaStore = $this->mfaStore ?? new InMemoryMfaStore;
+        $mfaChallengeStore = $this->mfaChallengeStore ?? new InMemoryMfaChallengeStore;
+        $totp = $this->totp ?? new Totp;
+        $mfaAttemptLimit = $this->mfaAttemptLimit ?? new LimitMfaAttempts(
+            storage: new InMemoryAttemptLimitStorage,
             clock  : $clock,
         );
         $passwordResetThrottle = $this->passwordResetThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore(),
+            store       : new InMemoryAttemptThrottleStore,
             clock       : $clock,
             maxAttempts : 5,
             decaySeconds: 900,
         );
         $mfaRecoveryThrottle = $this->mfaRecoveryThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore(),
+            store       : new InMemoryAttemptThrottleStore,
             clock       : $clock,
             maxAttempts : 3,
             decaySeconds: 1800,
         );
         $scimThrottle = $this->scimThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore(),
+            store       : new InMemoryAttemptThrottleStore,
             clock       : $clock,
             maxAttempts : 60,
             decaySeconds: 60,
@@ -676,8 +718,8 @@ final class AuthBuilder
             emailVerificationState: $emailVerificationState,
             mfaStore              : $mfaStore,
         );
-        $currentAuthentication = new CurrentAuthentication();
-        $requireFreshMfa       = new RequireFreshMfa(
+        $currentAuthentication = new CurrentAuthentication;
+        $requireFreshMfa = new RequireFreshMfa(
             currentAuthentication: $currentAuthentication,
             clock                : $clock,
         );
@@ -750,12 +792,12 @@ final class AuthBuilder
         $readOidcJsonWebKeySet = $this->oidcProvider !== null
             ? new ReadOidcJsonWebKeySet(oidcProvider: $this->oidcProvider)
             : null;
-        $jwtIdentity      = $identity->jwtIdentity();
+        $jwtIdentity = $identity->jwtIdentity();
         $readOidcUserInfo = $jwtIdentity !== null && $this->oidcProvider !== null
             ? new ReadOidcUserInfo(jwtIdentity: $jwtIdentity, oidcProvider: $this->oidcProvider)
             : null;
         $oidcRequestObjectStore = $this->oidcProvider !== null
-            ? ($this->oidcRequestObjectStore ?? new InMemoryOidcRequestObjectStore())
+            ? ($this->oidcRequestObjectStore ?? new InMemoryOidcRequestObjectStore)
             : null;
         $pushOidcAuthorizationRequest = $oidcRequestObjectStore !== null
             ? new PushAuthorizationRequest(
@@ -855,13 +897,13 @@ final class AuthBuilder
                 clock     : $clock,
             )
             : null;
-        $scimDirectoryStore               = $this->scimDirectoryStore               ?? new InMemoryScimDirectoryStore(passwordHasher: $passwordHasher);
-        $scimProvisionedIdentityStore     = $this->scimProvisionedIdentityStore     ?? new InMemoryScimProvisionedIdentityStore();
-        $tenantStore                      = $this->tenantStore                      ?? new InMemoryTenantStore();
-        $tenantSecurityConfigurationStore = $this->tenantSecurityConfigurationStore ?? new InMemoryTenantSecurityConfigurationStore();
-        $tenantSecurityChangeRequestStore = $this->tenantSecurityChangeRequestStore ?? new InMemoryTenantSecurityChangeRequestStore();
-        $readTenantSecurityConfiguration  = new ReadTenantSecurityConfiguration(configurationStore: $tenantSecurityConfigurationStore);
-        $beginTenantSecurityChange        = new BeginTenantSecurityChange(
+        $scimDirectoryStore = $this->scimDirectoryStore ?? new InMemoryScimDirectoryStore(passwordHasher: $passwordHasher);
+        $scimProvisionedIdentityStore = $this->scimProvisionedIdentityStore ?? new InMemoryScimProvisionedIdentityStore;
+        $tenantStore = $this->tenantStore ?? new InMemoryTenantStore;
+        $tenantSecurityConfigurationStore = $this->tenantSecurityConfigurationStore ?? new InMemoryTenantSecurityConfigurationStore;
+        $tenantSecurityChangeRequestStore = $this->tenantSecurityChangeRequestStore ?? new InMemoryTenantSecurityChangeRequestStore;
+        $readTenantSecurityConfiguration = new ReadTenantSecurityConfiguration(configurationStore: $tenantSecurityConfigurationStore);
+        $beginTenantSecurityChange = new BeginTenantSecurityChange(
             configurationStore       : $tenantSecurityConfigurationStore,
             changeRequestStore       : $tenantSecurityChangeRequestStore,
             federationConnectionStore: $federationConnectionStore,
@@ -886,15 +928,15 @@ final class AuthBuilder
             auditLog          : $auditLog,
             clock             : $clock,
         );
-        $readTenantSecurityChangeRequest  = new ReadTenantSecurityChangeRequest(changeRequestStore: $tenantSecurityChangeRequestStore);
+        $readTenantSecurityChangeRequest = new ReadTenantSecurityChangeRequest(changeRequestStore: $tenantSecurityChangeRequestStore);
         $readTenantSecurityChangeRequests = new ReadTenantSecurityChangeRequests(changeRequestStore: $tenantSecurityChangeRequestStore);
-        $createTenant                     = new CreateTenant(
+        $createTenant = new CreateTenant(
             tenantStore: $tenantStore,
             userSource : $this->userSource,
             auditLog   : $auditLog,
             clock      : $clock,
         );
-        $readTenants        = new ReadTenants(tenantStore: $tenantStore);
+        $readTenants = new ReadTenants(tenantStore: $tenantStore);
         $inviteTenantMember = new InviteTenantMember(
             tenantStore: $tenantStore,
             auditLog   : $auditLog,
@@ -906,7 +948,7 @@ final class AuthBuilder
             auditLog   : $auditLog,
             clock      : $clock,
         );
-        $readTenantMembers  = new ReadTenantMembers(tenantStore: $tenantStore);
+        $readTenantMembers = new ReadTenantMembers(tenantStore: $tenantStore);
         $removeTenantMember = new RemoveTenantMember(
             tenantStore: $tenantStore,
             auditLog   : $auditLog,
@@ -935,7 +977,7 @@ final class AuthBuilder
                 directoryStore : $scimDirectoryStore,
                 identityStore  : $scimProvisionedIdentityStore,
                 passwordHasher : $passwordHasher,
-                idGenerator    : $this->idGenerator ?? new IdGenerator(),
+                idGenerator    : $this->idGenerator ?? new IdGenerator,
                 auditLog       : $auditLog,
                 clock          : $clock,
                 lifecycle      : $lifecycle,
@@ -1072,7 +1114,7 @@ final class AuthBuilder
             register          : new Register(
                 userSource               : $this->userSource,
                 passwordHasher           : $passwordHasher,
-                idGenerator              : $this->idGenerator ?? new IdGenerator(),
+                idGenerator              : $this->idGenerator ?? new IdGenerator,
                 projectAuthenticatedUser : $projectAuthenticatedUser,
                 auditLog                 : $auditLog,
                 clock                    : $clock,
@@ -1467,7 +1509,7 @@ final class AuthBuilder
                                               projectAuthenticatedUser: $projectAuthenticatedUser,
                                               currentAuthentication   : $currentAuthentication,
                                               passwordHasher          : $passwordHasher,
-                                              idGenerator             : $this->idGenerator ?? new IdGenerator(),
+                                              idGenerator             : $this->idGenerator ?? new IdGenerator,
                                               auditLog                : $auditLog,
                                               clock                   : $clock,
                                               riskEngine              : $riskEngine,
@@ -1487,7 +1529,7 @@ final class AuthBuilder
                                             ? new RegisterScimDirectory(
                                                 directoryStore           : $scimDirectoryStore,
                                                 passwordHasher           : $passwordHasher,
-                                                groupRoleMappingValidator: new GroupRoleMappingValidator(),
+                                                groupRoleMappingValidator: new GroupRoleMappingValidator,
                                                 auditLog                 : $auditLog,
                                                 clock                    : $clock,
                                             )
@@ -1609,7 +1651,7 @@ final class AuthBuilder
         );
 
         $diagnostics = new Diagnostics(
-            authIssueExplainer: new AuthIssueExplainer(),
+            authIssueExplainer: new AuthIssueExplainer,
         );
 
         return new Auth(
@@ -1645,20 +1687,20 @@ final class AuthBuilder
         );
     }
 
-    private function capabilityRequests() : AuthCapabilityRequests
+    private function capabilityRequests(): AuthCapabilityRequests
     {
         return AuthCapabilityRequests::from(
             enterpriseMode                        : $this->enterpriseMode,
-            oauthClientRegistryConfigured         : $this->oauthClientRegistry          !== null,
-            authorizationCodeStoreConfigured      : $this->authorizationCodeStore       !== null,
-            oidcProviderConfigured                : $this->oidcProvider                 !== null,
-            oidcRequestObjectStoreConfigured      : $this->oidcRequestObjectStore       !== null,
-            passkeyCredentialStoreConfigured      : $this->passkeyCredentialStore       !== null,
-            passkeyChallengeStoreConfigured       : $this->passkeyChallengeStore        !== null,
-            passkeyRelyingPartyCustomized         : $this->passkeyRpId                  !== 'localhost' || $this->passkeyRpName !== 'Avax Auth',
-            federationConnectionStoreConfigured   : $this->federationConnectionStore    !== null,
-            federatedIdentityLinkStoreConfigured  : $this->federatedIdentityLinkStore   !== null,
-            scimDirectoryStoreConfigured          : $this->scimDirectoryStore           !== null,
+            oauthClientRegistryConfigured         : $this->oauthClientRegistry !== null,
+            authorizationCodeStoreConfigured      : $this->authorizationCodeStore !== null,
+            oidcProviderConfigured                : $this->oidcProvider !== null,
+            oidcRequestObjectStoreConfigured      : $this->oidcRequestObjectStore !== null,
+            passkeyCredentialStoreConfigured      : $this->passkeyCredentialStore !== null,
+            passkeyChallengeStoreConfigured       : $this->passkeyChallengeStore !== null,
+            passkeyRelyingPartyCustomized         : $this->passkeyRpId !== 'localhost' || $this->passkeyRpName !== 'Avax Auth',
+            federationConnectionStoreConfigured   : $this->federationConnectionStore !== null,
+            federatedIdentityLinkStoreConfigured  : $this->federatedIdentityLinkStore !== null,
+            scimDirectoryStoreConfigured          : $this->scimDirectoryStore !== null,
             scimProvisionedIdentityStoreConfigured: $this->scimProvisionedIdentityStore !== null,
         );
     }

@@ -8,7 +8,7 @@ use RuntimeException;
 
 final class ProvisioningFailed extends RuntimeException
 {
-    public static function unsupported() : self
+    public static function unsupported(): self
     {
         return new self(message: 'Provisioning lifecycle is not configured.');
     }

@@ -16,7 +16,7 @@ use stdClass;
 final class ContainerInterfaceTest extends TestCase
 {
     private DIContainer $container;
-    private Container   $publicContainer;
+    private Container $publicContainer;
 
     public function test_container_implements_interface() : void
     {
@@ -25,7 +25,7 @@ final class ContainerInterfaceTest extends TestCase
 
     public function test_get_resolves_service() : void
     {
-        $this->container->bind('test.service', fn () => 'test-value');
+        $this->container->bind('test.service', static fn () => 'test-value');
 
         $result = $this->publicContainer->get('test.service');
 
@@ -34,7 +34,7 @@ final class ContainerInterfaceTest extends TestCase
 
     public function test_has_returns_true_for_bound_service() : void
     {
-        $this->container->bind('bound.service', fn () => null);
+        $this->container->bind('bound.service', static fn () => null);
 
         $this->assertTrue($this->publicContainer->has('bound.service'));
     }
@@ -63,8 +63,8 @@ final class ContainerInterfaceTest extends TestCase
     public function test_call_invokes_with_dependencies() : void
     {
         $result = $this->publicContainer->call(
-            fn (string $greeting) => $greeting,
-            ['greeting' => 'Hello']
+            static fn (string $greeting) => $greeting,
+            ['greeting' => 'Hello'],
         );
 
         $this->assertSame('Hello', $result);
@@ -72,7 +72,7 @@ final class ContainerInterfaceTest extends TestCase
 
     public function test_bind_registers_service() : void
     {
-        $this->publicContainer->bind('registered', fn () => 'value');
+        $this->publicContainer->bind('registered', static fn () => 'value');
 
         $this->assertTrue($this->publicContainer->has('registered'));
     }
@@ -106,7 +106,7 @@ final class ContainerInterfaceTest extends TestCase
 
     public function test_alias_creates_nickname() : void
     {
-        $this->publicContainer->bind('original', fn () => 'value');
+        $this->publicContainer->bind('original', static fn () => 'value');
         $this->publicContainer->alias('alias', 'original');
 
         $this->assertTrue($this->publicContainer->has('alias'));
@@ -122,8 +122,8 @@ final class ContainerInterfaceTest extends TestCase
 
     public function test_tagged_returns_tagged_services() : void
     {
-        $this->publicContainer->bind('tagged.1', fn () => 'a');
-        $this->publicContainer->bind('tagged.2', fn () => 'b');
+        $this->publicContainer->bind('tagged.1', static fn () => 'a');
+        $this->publicContainer->bind('tagged.2', static fn () => 'b');
         $this->publicContainer->tag(['tagged.1', 'tagged.2'], 'group');
 
         $tagged = $this->publicContainer->tagged('group');
@@ -133,7 +133,7 @@ final class ContainerInterfaceTest extends TestCase
 
     public function test_flush_clears_all_bindings() : void
     {
-        $this->publicContainer->bind('test', fn () => null);
+        $this->publicContainer->bind('test', static fn () => null);
         $this->publicContainer->flush();
 
         $this->assertFalse($this->publicContainer->has('test'));

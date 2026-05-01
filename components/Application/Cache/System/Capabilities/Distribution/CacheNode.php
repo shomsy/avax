@@ -21,9 +21,9 @@ final readonly class CacheNode implements Stringable
         public string $id,
         public string $host,
         public int $port,
-        public int             $weight = 100,
+        public int      $weight = 100,
         public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
-        public int|null        $virtualNodeCount = null,
+        public int|null $virtualNodeCount = null,
     )
     {
         $this->cacheNodeStatus = $cacheNodeStatus;
@@ -33,12 +33,12 @@ final readonly class CacheNode implements Stringable
      * Create a new cache node with default values.
      */
     public static function create(
-        string          $id,
-        string          $host,
-        int             $port,
-        int             $weight = 100,
+        string $id,
+        string $host,
+        int    $port,
+        int    $weight = 100,
         CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
-        int|null $virtualNodeCount = null,
+        int    $virtualNodeCount = null,
     ) : self
     {
         return new self(

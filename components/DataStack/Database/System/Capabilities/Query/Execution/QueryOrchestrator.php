@@ -14,28 +14,29 @@ use Throwable;
  */
 final class QueryOrchestrator
 {
-    private bool                $isPretending = false;
-    private ExecutionScope|null $scope
-                                              = null {
-            get {
-                return $this->scope;
-            }
+    private bool $isPretending = false;
+
+    private ?ExecutionScope $scope
+        = null {
+        get {
+            return $this->scope;
         }
+    }
+
     private readonly ExecutorInterface $executor;
 
     /**
-     * @param ExecutorInterface   $executor Low-level executor.
-     * @param ExecutionScope|null $scope    Correlation scope (optional).
+     * @param  ExecutorInterface  $executor  Low-level executor.
+     * @param  ExecutionScope|null  $scope  Correlation scope (optional).
      *
      * @throws RandomException
      */
     public function __construct(
         ExecutorInterface $executor,
-        ExecutionScope    $scope = null,
-    )
-    {
+        ?ExecutionScope $scope = null,
+    ) {
         $this->executor = $executor;
-        $this->scope    = $scope;
+        $this->scope = $scope;
         $this->scope ??= ExecutionScope::fresh();
     }
 
@@ -49,7 +50,7 @@ final class QueryOrchestrator
     /**
      * Switch to pretend (dry-run) mode.
      */
-    public function pretend(bool $value = true) : void
+    public function pretend(bool $value = true): void
     {
         $this->isPretending = $value;
     }
@@ -59,7 +60,7 @@ final class QueryOrchestrator
      *
      * @throws Throwable
      */
-    public function query(string $sql, array $bindings = []) : array
+    public function query(string $sql, array $bindings = []): array
     {
         if ($this->isPretending) {
             $this->logPretend(sql: $sql);
@@ -70,7 +71,7 @@ final class QueryOrchestrator
         return $this->executor->query(sql: $sql, bindings: $bindings, scope: $this->scope);
     }
 
-    private function logPretend(string $sql) : void
+    private function logPretend(string $sql): void
     {
         echo "\033[33m[DRY RUN]\033[0m SQL: {$sql}\n";
     }
@@ -82,9 +83,8 @@ final class QueryOrchestrator
      */
     public function execute(
         string $sql,
-        array  $bindings = null,
-    ) : ExecutionResult
-    {
+        ?array $bindings = null,
+    ): ExecutionResult {
         $bindings ??= [];
 
         if ($this->isPretending) {
@@ -96,11 +96,10 @@ final class QueryOrchestrator
         return $this->executor->execute(sql: $sql, bindings: $bindings, scope: $this->scope);
     }
 
-    public function withScope(ExecutionScope $scope) : self
+    public function withScope(ExecutionScope $scope): self
     {
-        return clone(object: $this, withProperties: [
+        return clone (object: $this, withProperties: [
             'scope' => $scope,
         ]);
     }
-
 }

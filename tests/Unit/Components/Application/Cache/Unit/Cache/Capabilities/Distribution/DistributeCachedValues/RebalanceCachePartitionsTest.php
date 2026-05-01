@@ -65,6 +65,7 @@ final class RebalanceCachePartitionsTest extends TestCase
             $this->assertArrayHasKey(key: 'from', array: $move);
             $this->assertArrayHasKey(key: 'to', array: $move);
             $this->assertEquals(expected: 'node_d', actual: $move['to']);
+
             break;
         }
     }

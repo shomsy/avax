@@ -26,14 +26,14 @@ final class ConsistentHashRingTest extends TestCase
 
     // --- Adding nodes to the ring ---
 
-    private function makeNode(string $id, int $weight = 100, CacheNodeStatus|null $status = null) : CacheNode
+    private function makeNode(string $id, int $weight = 100, CacheNodeStatus $status = null) : CacheNode
     {
         return new CacheNode(
             id    : $id,
             host  : '127.0.0.1',
             port  : 6379,
             weight: $weight,
-            status: $status ?? CacheNodeStatus::HEALTHY
+            status: $status ?? CacheNodeStatus::HEALTHY,
         );
     }
 
@@ -171,7 +171,7 @@ final class ConsistentHashRingTest extends TestCase
 
         $this->assertSame(
             $ring1->getNode($key)->id,
-            $ring2->getNode($key)->id
+            $ring2->getNode($key)->id,
         );
     }
 
@@ -262,13 +262,13 @@ final class ConsistentHashRingTest extends TestCase
         $ringHigh->addNode($this->makeNode('node-b'));
         $ringHigh->addNode($this->makeNode('node-c'));
 
-        $countDistribution = function (ConsistentHashRing $ring, int $sampleSize) : float {
+        $countDistribution = static function (ConsistentHashRing $ring, int $sampleSize) : float {
             $dist = [];
             for ($i = 0; $i < $sampleSize; $i++) {
                 $node            = $ring->getNode("key:{$i}");
                 $dist[$node->id] = ($dist[$node->id] ?? 0) + 1;
             }
-            $percentages = array_map(fn ($c) => ($c / $sampleSize) * 100, $dist);
+            $percentages = array_map(static fn ($c) => ($c / $sampleSize) * 100, $dist);
 
             return max($percentages) - min($percentages);
         };
@@ -313,7 +313,7 @@ final class ConsistentHashRingTest extends TestCase
 
         $nodes = $ring->getNodes('key:replication', 3);
 
-        $ids       = array_map(fn ($n) => $n->id, $nodes);
+        $ids = array_map(static fn ($n) => $n->id, $nodes);
         $uniqueIds = array_unique($ids);
 
         $this->assertCount(3, $uniqueIds, 'getNodes should return distinct physical nodes');
@@ -374,8 +374,8 @@ final class ConsistentHashRingTest extends TestCase
         $nodes1 = $ring->getNodes('key:consistent', 2);
         $nodes2 = $ring->getNodes('key:consistent', 2);
 
-        $ids1 = array_map(fn ($n) => $n->id, $nodes1);
-        $ids2 = array_map(fn ($n) => $n->id, $nodes2);
+        $ids1 = array_map(static fn ($n) => $n->id, $nodes1);
+        $ids2 = array_map(static fn ($n) => $n->id, $nodes2);
 
         $this->assertSame($ids1, $ids2);
     }
@@ -392,8 +392,8 @@ final class ConsistentHashRingTest extends TestCase
         $nodes1 = $ring->getNodes('key:alpha', 3);
         $nodes2 = $ring->getNodes('key:beta', 3);
 
-        $ids1 = array_map(fn ($n) => $n->id, $nodes1);
-        $ids2 = array_map(fn ($n) => $n->id, $nodes2);
+        $ids1 = array_map(static fn ($n) => $n->id, $nodes1);
+        $ids2 = array_map(static fn ($n) => $n->id, $nodes2);
 
         $this->assertNotSame($ids1, $ids2);
     }
@@ -434,6 +434,7 @@ final class ConsistentHashRingTest extends TestCase
             $key = "test:{$i}";
             if ($ring->getNode($key)->id === 'node-a') {
                 $keyForA = $key;
+
                 break;
             }
         }

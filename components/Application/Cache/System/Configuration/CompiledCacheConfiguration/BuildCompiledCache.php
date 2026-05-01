@@ -36,7 +36,7 @@ final readonly class BuildCompiledCache
         ) implements CompiledCacheContract {
             public function __construct(
                 private readonly string $directory,
-                private readonly Clock  $clock,
+                private readonly Clock $clock,
             ) {}
 
             public function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed

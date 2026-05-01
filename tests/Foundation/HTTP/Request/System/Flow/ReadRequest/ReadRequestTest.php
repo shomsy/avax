@@ -16,7 +16,7 @@ use Avax\Tests\TestCase;
 
 final class ReadRequestTest extends TestCase
 {
-    private ReadRequest          $readRequest;
+    private ReadRequest $readRequest;
 
     public function test_execute_returns_result_with_all_inputs() : void
     {
@@ -26,7 +26,7 @@ final class ReadRequestTest extends TestCase
             cookies: ['session' => 'cookie-session'],
             headers: ['Authorization' => 'Bearer token123'],
             files  : [],
-            session: null
+            session: null,
         );
 
         $result = $this->readRequest->execute($data);
@@ -48,7 +48,7 @@ final class ReadRequestTest extends TestCase
             cookies: [],
             headers: [],
             files  : [],
-            session: $session
+            session: $session,
         );
 
         $result = $this->readRequest->execute($data);
@@ -64,7 +64,7 @@ final class ReadRequestTest extends TestCase
             cookies: [],
             headers: ['Authorization' => 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'],
             files  : [],
-            session: null
+            session: null,
         );
 
         $result = $this->readRequest->execute($data);
@@ -80,7 +80,7 @@ final class ReadRequestTest extends TestCase
             cookies: [],
             headers: [],
             files  : [],
-            session: null
+            session: null,
         );
 
         $result = $this->readRequest->execute($data);
@@ -96,7 +96,7 @@ final class ReadRequestTest extends TestCase
             cookies: [],
             headers: [],
             files  : [],
-            session: null
+            session: null,
         );
 
         $result = $this->readRequest->execute($data, method: 'GET', path: '/test/path');
@@ -111,11 +111,11 @@ final class ReadRequestTest extends TestCase
             query  : new ParameterBag(['foo' => 'query-foo']),
             body   : new ParameterBag(['bar' => 'body-bar']),
             cookies: new ParameterBag(['session' => 'cookie-session']),
-            files  : new ParameterBag([])
+            files  : new ParameterBag([]),
         );
 
         $sessionBridge = new RequestSessionBridge(
-            $this->createMock(SessionInterface::class)
+            $this->createMock(SessionInterface::class),
         );
 
         $jsonParser = new JsonBodyParser();
@@ -123,7 +123,7 @@ final class ReadRequestTest extends TestCase
         $this->readRequest = new ReadRequest(
             inputAccessor: $inputAccessor,
             sessionBridge: $sessionBridge,
-            jsonParser   : $jsonParser
+            jsonParser   : $jsonParser,
         );
     }
 }

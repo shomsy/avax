@@ -19,8 +19,7 @@ class CassandraPool extends BaseConnectionPool
         int $maxConnections = 20,
         int $connectionTimeoutMs = 10000,
         int $idleTimeoutMs = 300000,
-    )
-    {
+    ) {
         parent::__construct(
             minConnections     : $minConnections,
             maxConnections     : $maxConnections,
@@ -30,14 +29,14 @@ class CassandraPool extends BaseConnectionPool
     }
 
     #[Override]
-    protected function createConnection() : PooledConnection
+    protected function createConnection(): PooledConnection
     {
         // @todo Replace with real Cassandra connection: new \Cassandra\Cluster($this->config)
         return new ArrayPooledConnection(config: $this->config);
     }
 
     #[Override]
-    protected function validateConnection(PooledConnection $pooledConnection) : bool
+    protected function validateConnection(PooledConnection $pooledConnection): bool
     {
         return $pooledConnection->isValid();
     }

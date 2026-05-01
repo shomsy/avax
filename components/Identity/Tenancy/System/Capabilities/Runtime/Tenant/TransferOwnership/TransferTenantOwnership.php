@@ -6,19 +6,19 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\Tr
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\Tenant;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMember;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberRole;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberState;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFailed;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class TransferTenantOwnership
 {
     public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(TransferTenantOwnershipData $data) : Tenant
+    public function execute(TransferTenantOwnershipData $data): Tenant
     {
         $tenant = $this->tenantStore->findTenantBySlug(slug: $data->tenantSlug);
 
@@ -27,7 +27,7 @@ final readonly class TransferTenantOwnership
         }
 
         $currentOwner = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $tenant->ownerUserId);
-        $nextOwner    = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $data->newOwnerUserId);
+        $nextOwner = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $data->newOwnerUserId);
 
         if ($nextOwner === null) {
             throw TenantFailed::memberNotFound();
@@ -35,21 +35,21 @@ final readonly class TransferTenantOwnership
 
         if ($currentOwner !== null) {
             $this->tenantStore->saveMember(member: new TenantMember(
-                                                       tenantId: $currentOwner->tenantId,
-                                                       userId  : $currentOwner->userId,
-                                                       role    : TenantMemberRole::ADMIN,
-                                                       state   : $currentOwner->state,
-                                                       joinedAt: $currentOwner->joinedAt,
-                                                   ));
+                tenantId: $currentOwner->tenantId,
+                userId  : $currentOwner->userId,
+                role    : TenantMemberRole::ADMIN,
+                state   : $currentOwner->state,
+                joinedAt: $currentOwner->joinedAt,
+            ));
         }
 
         $this->tenantStore->saveMember(member: new TenantMember(
-                                                   tenantId: $nextOwner->tenantId,
-                                                   userId  : $nextOwner->userId,
-                                                   role    : TenantMemberRole::OWNER,
-                                                   state   : TenantMemberState::ACTIVE,
-                                                   joinedAt: $nextOwner->joinedAt,
-                                               ));
+            tenantId: $nextOwner->tenantId,
+            userId  : $nextOwner->userId,
+            role    : TenantMemberRole::OWNER,
+            state   : TenantMemberState::ACTIVE,
+            joinedAt: $nextOwner->joinedAt,
+        ));
 
         $updated = new Tenant(
             tenantId   : $tenant->tenantId,
@@ -60,14 +60,14 @@ final readonly class TransferTenantOwnership
         );
         $this->tenantStore->saveTenant(tenant: $updated);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.tenant.owner.transferred',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'tenant_id'         => $tenant->tenantId,
-                                                           'tenant_slug'       => $tenant->slug,
-                                                           'new_owner_user_id' => $data->newOwnerUserId,
-                                                       ],
-                                       ));
+            name      : 'auth.tenant.owner.transferred',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'tenant_id' => $tenant->tenantId,
+                'tenant_slug' => $tenant->slug,
+                'new_owner_user_id' => $data->newOwnerUserId,
+            ],
+        ));
 
         return $updated;
     }

@@ -24,7 +24,7 @@ if (! function_exists('server')) {
     /**
      * Get a value from $_SERVER.
      *
-     * @param string     $key
+     * @param string $key
      * @param mixed|null $default
      *
      * @return mixed
@@ -39,7 +39,7 @@ if (! function_exists('env')) {
     /**
      * Get an environment variable value.
      *
-     * @param string     $key
+     * @param string $key
      * @param mixed|null $default
      *
      * @return mixed

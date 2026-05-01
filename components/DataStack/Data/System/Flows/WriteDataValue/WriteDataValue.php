@@ -12,7 +12,7 @@ final readonly class WriteDataValue
         private ArrayWriter $arrayWriter,
     ) {}
 
-    public function write(array &$data, string $key, mixed $value) : void
+    public function write(array &$data, string $key, mixed $value): void
     {
         $this->arrayWriter->set($data, $key, $value);
     }

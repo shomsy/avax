@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
+
 use Avax\Tests\TestCase;
 use components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext;
 use components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupFrames;
@@ -32,8 +32,8 @@ class RouteGroupStackTest extends TestCase
      */
     public function can_push_and_pop_contexts() : void
     {
-        $context1 = new RouteGroupContext;
-        $context2 = new RouteGroupContext;
+        $context1 = new RouteGroupContext();
+        $context2 = new RouteGroupContext();
 
         // Push first context
         $this->stack->push(group: $context1);
@@ -62,8 +62,8 @@ class RouteGroupStackTest extends TestCase
      */
     public function snapshot_and_restore_preserves_state() : void
     {
-        $context1 = new RouteGroupContext;
-        $context2 = new RouteGroupContext;
+        $context1 = new RouteGroupContext();
+        $context2 = new RouteGroupContext();
 
         // Build initial state
         $this->stack->push(group: $context1);
@@ -88,7 +88,7 @@ class RouteGroupStackTest extends TestCase
      */
     public function clear_resets_stack() : void
     {
-        $context = new RouteGroupContext;
+        $context = new RouteGroupContext();
         $this->stack->push(group: $context);
 
         $this->assertFalse(condition: $this->stack->isEmpty());
@@ -104,14 +104,15 @@ class RouteGroupStackTest extends TestCase
      */
     public function exception_in_nested_operation_leaves_stack_clean() : void
     {
-        $context1 = new RouteGroupContext;
-        $context2 = new RouteGroupContext;
+        $context1 = new RouteGroupContext();
+        $context2 = new RouteGroupContext();
 
         // Simulate the group() method pattern
         $this->stack->push(group: $context1);
 
         try {
             $this->stack->push(group: $context2);
+
             // Simulate an exception during group processing
             throw new RuntimeException(message: 'Simulated exception in group callback');
         } finally {
@@ -130,10 +131,10 @@ class RouteGroupStackTest extends TestCase
      */
     public function multiple_instances_are_isolated() : void
     {
-        $stack1 = new RouteGroupFrames;
-        $stack2 = new RouteGroupFrames;
+        $stack1 = new RouteGroupFrames();
+        $stack2 = new RouteGroupFrames();
 
-        $context = new RouteGroupContext;
+        $context = new RouteGroupContext();
 
         // Modify stack1
         $stack1->push(group: $context);
@@ -149,6 +150,6 @@ class RouteGroupStackTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->stack = new RouteGroupFrames;
+        $this->stack = new RouteGroupFrames();
     }
 }

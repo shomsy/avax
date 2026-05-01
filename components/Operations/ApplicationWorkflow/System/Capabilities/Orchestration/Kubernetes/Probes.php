@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orc
 
 final readonly class GracefulStop
 {
-    public static function execute() : void
+    public static function execute(): void
     {
         echo "Starting graceful shutdown...\n";
 
@@ -23,16 +23,16 @@ final readonly class GracefulStop
         exit(0);
     }
 
-    private static function stopAcceptingNewRequests() : void
+    private static function stopAcceptingNewRequests(): void
     {
         echo "Stopping acceptance of new requests\n";
     }
 
-    private static function waitForInFlightRequests(int $maxSeconds) : void
+    private static function waitForInFlightRequests(int $maxSeconds): void
     {
         $timeout = time() + $maxSeconds;
 
-        while ( self::hasActiveRequests() ) {
+        while (self::hasActiveRequests()) {
             if (time() > $timeout) {
                 echo "Timeout reached, forcing shutdown\n";
 
@@ -45,17 +45,17 @@ final readonly class GracefulStop
         echo "All in-flight requests completed\n";
     }
 
-    private static function hasActiveRequests() : bool
+    private static function hasActiveRequests(): bool
     {
         return false;
     }
 
-    private static function flushLogs() : void
+    private static function flushLogs(): void
     {
         echo "Flushing logs\n";
     }
 
-    private static function closeConnections() : void
+    private static function closeConnections(): void
     {
         echo "Closing database connections\n";
         echo "Closing cache connections\n";
@@ -66,17 +66,17 @@ final readonly class ReadinessProbe
 {
     private static bool $ready = false;
 
-    public static function markReady() : void
+    public static function markReady(): void
     {
         self::$ready = true;
     }
 
-    public static function markNotReady() : void
+    public static function markNotReady(): void
     {
         self::$ready = false;
     }
 
-    public static function isReady() : bool
+    public static function isReady(): bool
     {
         return self::$ready;
     }
@@ -86,12 +86,12 @@ final readonly class LivenessProbe
 {
     private static bool $alive = true;
 
-    public static function isAlive() : bool
+    public static function isAlive(): bool
     {
         return self::$alive;
     }
 
-    public static function markDead() : void
+    public static function markDead(): void
     {
         self::$alive = false;
     }

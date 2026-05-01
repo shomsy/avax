@@ -31,7 +31,7 @@ final class CriticalPathTest extends TestCase
     public function test_transaction_rollback_on_failure() : void
     {
         try {
-            $this->database->transactions()->run(callback: function () {
+            $this->database->transactions()->run(callback: function () : void {
                 $this->database->table(table: 'users')->insert(values: [
                                                                            'name'  => 'Alice',
                                                                            'email' => 'alice@test.com',
@@ -42,7 +42,7 @@ final class CriticalPathTest extends TestCase
         } catch (TransactionException $e) {
             $this->assertStringContainsString(
                 needle  : 'Simulated failure',
-                haystack: $e->getMessage()
+                haystack: $e->getMessage(),
             );
             $this->assertInstanceOf(expected: Exception::class, actual: $e->getPrevious());
             $this->assertSame(expected: 'Simulated failure', actual: $e->getPrevious()?->getMessage());

@@ -15,7 +15,7 @@ final readonly class MarkScimDirectoryOutage
 {
     public function __construct(private ScimDirectoryStoreInterface $directoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(MarkScimDirectoryOutageData $data) : ScimDirectory
+    public function execute(MarkScimDirectoryOutageData $data): ScimDirectory
     {
         $directory = $this->directoryStore->find(directoryId: $data->directoryId);
 
@@ -26,14 +26,14 @@ final readonly class MarkScimDirectoryOutage
         $marked = $directory->markOutage(startedAt: $this->clock->now(), reason: $data->reason);
         $this->directoryStore->save(directory: $marked);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.scim.directory.outage_marked',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'directory_id' => $marked->directoryId,
-                                                           'tenant'       => $marked->tenantSlug,
-                                                           'reason'       => $marked->outageReason,
-                                                       ],
-                                       ));
+            name      : 'auth.scim.directory.outage_marked',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'directory_id' => $marked->directoryId,
+                'tenant' => $marked->tenantSlug,
+                'reason' => $marked->outageReason,
+            ],
+        ));
 
         return $marked;
     }

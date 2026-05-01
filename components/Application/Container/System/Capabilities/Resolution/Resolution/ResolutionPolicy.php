@@ -30,10 +30,10 @@ final readonly class ResolutionPolicy
     public bool $strict;
 
     public function __construct(
-        bool|null   $strict = null,
-        bool|null   $debug = null,
-        string|null $profile = null,
-        string|null $failMode = null,
+        bool   $strict = null,
+        bool   $debug = null,
+        string $profile = null,
+        string $failMode = null,
         public array $profiles = [],
     )
     {
@@ -67,7 +67,7 @@ final readonly class ResolutionPolicy
                 'POL-006', 'POL-009', 'POL-010', 'POL-011', 'POL-012', 'POL-013' => 'error',
                 default                                                          => $defaultSeverity,
             },
-            default              => $defaultSeverity,
+            default => $defaultSeverity,
         };
     }
 

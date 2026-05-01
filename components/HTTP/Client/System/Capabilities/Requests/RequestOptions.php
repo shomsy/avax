@@ -38,20 +38,20 @@ final readonly class RequestOptions
      * @param array<string, mixed> $additional      Additional custom options
      */
     public function __construct(
-        public int          $timeout = self::DEFAULT_TIMEOUT,
-        public int          $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT,
-        public bool         $verifySsl = true,
-        public string|null        $sslCertPath = null,
-        public string|null        $sslKeyPath = null,
-        public string|null        $proxy = null,
-        public string|null        $proxyAuth = null,
-        public bool         $followRedirects = true,
-        public int          $maxRedirects = 5,
-        public bool         $httpErrors = false,
-        public string|null        $encoding = null,
-        public RetryPolicy|null   $retryPolicy = null,
+        public int              $timeout = self::DEFAULT_TIMEOUT,
+        public int              $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT,
+        public bool             $verifySsl = true,
+        public string|null      $sslCertPath = null,
+        public string|null      $sslKeyPath = null,
+        public string|null      $proxy = null,
+        public string|null      $proxyAuth = null,
+        public bool             $followRedirects = true,
+        public int              $maxRedirects = 5,
+        public bool             $httpErrors = false,
+        public string|null      $encoding = null,
+        public RetryPolicy|null $retryPolicy = null,
         public TimeoutPolicy|null $timeoutPolicy = null,
-        public array        $additional = [],
+        public array            $additional = [],
     ) {}
 
     /**
@@ -81,7 +81,7 @@ final readonly class RequestOptions
     /**
      * Create options with a proxy.
      */
-    public static function withProxy(string $proxyUrl, string|null $auth = null) : self
+    public static function withProxy(string $proxyUrl, string $auth = null) : self
     {
         return new self(proxy: $proxyUrl, proxyAuth: $auth);
     }

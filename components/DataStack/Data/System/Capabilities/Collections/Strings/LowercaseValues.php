@@ -13,20 +13,20 @@ final readonly class LowercaseValues
         private array $items = [],
     ) {}
 
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return $this->lowercase();
     }
 
-    public function lowercase() : array
+    public function lowercase(): array
     {
         return array_map(
-            callback: static fn (mixed $value) : string => strtolower(string: (string) $value),
+            callback: static fn (mixed $value): string => strtolower(string: (string) $value),
             array   : $this->items,
         );
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

@@ -77,7 +77,7 @@ final class ConsistentHashRingTest extends TestCase
 
         foreach ($keys as $keyStr) {
             $key  = CacheKey::create(key: $keyStr);
-            $node           = $consistentHashRing->getNodeForKey(key: $key);
+            $node = $consistentHashRing->getNodeForKey(key: $key);
 
             if ($node instanceof CacheNode) {
                 $nodeId                = $node->id->toString();

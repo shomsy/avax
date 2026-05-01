@@ -9,7 +9,7 @@ use Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\Sys
 
 final readonly class ReadinessProbe
 {
-    public function read() : HealthReport
+    public function read(): HealthReport
     {
         return HealthCheck::readiness();
     }

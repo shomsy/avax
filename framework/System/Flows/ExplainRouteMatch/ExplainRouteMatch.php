@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\ExplainRouteMatch;
 
 use Avax\Framework\System\Capabilities\RouteIntelligence\RouteAnalyzer;
-use Avax\Framework\System\Capabilities\RouteIntelligence\RouteInfo;
 
 final readonly class ExplainRouteMatch
 {

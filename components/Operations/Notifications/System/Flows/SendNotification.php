@@ -28,7 +28,7 @@ final class SendNotification
         return isset($this->channels[$name]);
     }
 
-    public function sendTo(mixed $notifiable, Notification $notification, string|null $channel = null) : void
+    public function sendTo(mixed $notifiable, Notification $notification, string $channel = null) : void
     {
         $channels = $channel !== null ? [$channel] : $notification->via();
 
@@ -41,7 +41,7 @@ final class SendNotification
         }
     }
 
-    public function sendToMany(array $notifiables, Notification $notification, string|null $channel = null) : void
+    public function sendToMany(array $notifiables, Notification $notification, string $channel = null) : void
     {
         foreach ($notifiables as $notifiable) {
             $this->sendTo($notifiable, $notification, $channel);

@@ -15,7 +15,7 @@ final readonly class ReadTenantMembers
     /**
      * @return list<TenantMember>
      */
-    public function execute(string $tenantSlug) : array
+    public function execute(string $tenantSlug): array
     {
         $tenant = $this->tenantStore->findTenantBySlug(slug: $tenantSlug);
 

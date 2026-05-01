@@ -9,7 +9,6 @@ use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSou
 use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockStore;
 use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockWasNotAcquired;
 
-
 final readonly class AcquireCacheStampedeLock
 {
     public function __construct(

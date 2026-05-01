@@ -9,9 +9,9 @@ use Throwable;
 
 final readonly class TaskRunner
 {
-    public function run() : SchedulerReport
+    public function run(): SchedulerReport
     {
-        $report = new SchedulerReport();
+        $report = new SchedulerReport;
 
         foreach (Scheduler::scheduled() as $index => $scheduledTask) {
             if (! $scheduledTask instanceof ScheduledTask || ! $scheduledTask->isDue()) {
@@ -19,7 +19,7 @@ final readonly class TaskRunner
             }
 
             $startedAt = microtime(true);
-            $status    = 'ok';
+            $status = 'ok';
 
             try {
                 ($scheduledTask->task)();
@@ -28,7 +28,7 @@ final readonly class TaskRunner
             }
 
             $duration = (microtime(true) - $startedAt) * 1000;
-            $taskName = 'task_' . $index;
+            $taskName = 'task_'.$index;
             $report->addExecuted(task: $taskName, status: $status, duration: $duration);
             SchedulerHistory::record(task: $taskName, status: $status, durationMs: $duration);
         }

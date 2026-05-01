@@ -16,7 +16,7 @@ Route::fallback(static function (Request $request) : ResponseInterface {
     $message = sprintf(
         'Route not found for [%s] %s',
         $request->getMethod(),
-        $request->getUri()->getPath()
+        $request->getUri()->getPath(),
     );
 
     return Response::text(content: $message, status: 404);

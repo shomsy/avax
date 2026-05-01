@@ -18,7 +18,7 @@ final class BaseRegisterDependencyContractTest extends TestCase
 
         $this->assertSame(
             expected: ContainerInterface::class,
-            actual  : $parameter->getType()?->getName() ?? ''
+            actual  : $parameter->getType()?->getName() ?? '',
         );
     }
 }

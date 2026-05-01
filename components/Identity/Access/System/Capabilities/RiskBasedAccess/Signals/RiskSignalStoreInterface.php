@@ -6,10 +6,10 @@ namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Si
 
 interface RiskSignalStoreInterface
 {
-    public function record(RiskSignal $signal) : void;
+    public function record(RiskSignal $signal): void;
 
     /**
      * @return list<RiskSignal>
      */
-    public function forUser(int $userId) : array;
+    public function forUser(int $userId): array;
 }

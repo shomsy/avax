@@ -14,7 +14,7 @@ final readonly class ReadScimUsers
     /**
      * @return list<ScimUserProjection>
      */
-    public function execute(string $directoryId) : array
+    public function execute(string $directoryId): array
     {
         $projections = [];
 

@@ -12,14 +12,14 @@ use PHPUnit\Framework\TestCase;
 
 final class UserController
 {
-    public static function index() {}
+    public static function index() : void {}
 
-    public static function store() {}
+    public static function store() : void {}
 }
 
 final class CompiledCacheIntegrationTest extends TestCase
 {
-    private string                $tmpDir;
+    private string $tmpDir;
     private CompiledCacheContract $cache;
 
     public function test_it_compiles_reads_and_clears_route_like_artifact() : void

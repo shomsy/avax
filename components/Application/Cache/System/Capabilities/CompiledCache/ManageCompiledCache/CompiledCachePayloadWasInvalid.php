@@ -10,8 +10,8 @@ use Throwable;
 final class CompiledCachePayloadWasInvalid extends RuntimeException
 {
     public function __construct(
-        string     $reason,
-        Throwable|null $throwable = null,
+        string    $reason,
+        Throwable $throwable = null,
     )
     {
         parent::__construct(

@@ -21,10 +21,10 @@ final readonly class RouterConfiguration
      */
     public function __construct(
         private string $prefix = '',
-        private bool  $cacheEnabled = true,
-        private bool  $strictMode = false,
+        private bool $cacheEnabled = true,
+        private bool $strictMode = false,
         private array $defaults = [],
-        private int   $maxRouteCount = 1000,
+        private int  $maxRouteCount = 1000,
     ) {}
 
     public function prefix() : string

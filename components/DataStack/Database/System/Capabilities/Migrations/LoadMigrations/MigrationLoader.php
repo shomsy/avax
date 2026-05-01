@@ -17,9 +17,9 @@ final class MigrationLoader
     /**
      * Calculate the checksum for a migration file.
      */
-    public function getChecksum(string $name, string $path) : string
+    public function getChecksum(string $name, string $path): string
     {
-        $file = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . '.php';
+        $file = rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$name.'.php';
 
         if (! file_exists(filename: $file)) {
             return '';
@@ -28,7 +28,7 @@ final class MigrationLoader
         return md5_file(filename: $file);
     }
 
-    public function getPending(string $path, array $ran) : array
+    public function getPending(string $path, array $ran): array
     {
         $all = $this->load(path: $path);
 
@@ -36,19 +36,19 @@ final class MigrationLoader
 
         return array_filter(
             array   : $all,
-            callback: static fn ($name) : bool => ! in_array(needle: $name, haystack: $ranNames, strict: true),
+            callback: static fn ($name): bool => ! in_array(needle: $name, haystack: $ranNames, strict: true),
             mode    : ARRAY_FILTER_USE_KEY,
         );
     }
 
-    public function load(string $path) : array
+    public function load(string $path): array
     {
         if (! is_dir(filename: $path)) {
             return [];
         }
 
         $migrations = [];
-        $files      = $this->getMigrationFiles(path: $path);
+        $files = $this->getMigrationFiles(path: $path);
 
         foreach ($files as $file) {
             $migration = $this->loadMigrationFile(file: $file);
@@ -63,7 +63,7 @@ final class MigrationLoader
         return $migrations;
     }
 
-    private function getMigrationFiles(string $path) : array
+    private function getMigrationFiles(string $path): array
     {
         $files = [];
 
@@ -86,7 +86,7 @@ final class MigrationLoader
         return $files;
     }
 
-    private function loadMigrationFile(string $file) : BaseMigration|null
+    private function loadMigrationFile(string $file): ?BaseMigration
     {
         $migration = require $file;
 
@@ -97,7 +97,7 @@ final class MigrationLoader
         return null;
     }
 
-    public function getMigrationName(string $file) : string
+    public function getMigrationName(string $file): string
     {
         return str_replace(search: '.php', replace: '', subject: basename(path: $file));
     }

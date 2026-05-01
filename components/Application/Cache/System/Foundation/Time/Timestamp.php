@@ -39,7 +39,7 @@ final readonly class Timestamp implements Stringable
 
     public function add(Duration $duration) : self
     {
-        $totalSeconds   = $this->seconds + $duration->seconds;
+        $totalSeconds = $this->seconds + $duration->seconds;
         $totalNanos   = $this->nanoseconds + $duration->nanoseconds;
 
         if ($totalNanos >= 1_000_000_000) {

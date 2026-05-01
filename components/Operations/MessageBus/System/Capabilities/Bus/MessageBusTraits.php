@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\MessageBus\System\Capabilities\Bus;
 
-use Avax\Components\Operations\MessageBus\System\Capabilities\Middleware\BusMiddleware;
 use Avax\Components\Operations\MessageBus\System\PublicSurface\Command;
 use Closure;
 use RuntimeException;
 
 final class CommandBus
 {
-    private array $handlers   = [];
+    private array $handlers = [];
+
     private array $middleware = [];
 
-    public function register(string $commandClass, object $handler) : void
+    public function register(string $commandClass, object $handler): void
     {
         $this->handlers[$commandClass] = $handler;
     }
 
-    public function use(object $middleware) : void
+    public function use(object $middleware): void
     {
         $this->middleware[] = $middleware;
     }
 
-    public function dispatch(Command $command) : mixed
+    public function dispatch(Command $command): mixed
     {
         $class = $command::class;
 
@@ -32,26 +32,26 @@ final class CommandBus
             throw new RuntimeException("No handler registered for command: {$class}");
         }
 
-        $handler  = $this->handlers[$class];
+        $handler = $this->handlers[$class];
         $pipeline = $this->buildPipeline($command, $handler);
 
         return $pipeline($command);
     }
 
-    private function buildPipeline(Command $command, object $handler) : Closure
+    private function buildPipeline(Command $command, object $handler): Closure
     {
         $middlewares = array_reverse($this->middleware);
-        $final       = fn (Command $cmd) => $this->execute($handler, $cmd);
+        $final = fn (Command $cmd) => $this->execute($handler, $cmd);
 
         foreach ($middlewares as $middleware) {
-            $next  = $final;
-            $final = fn (Command $cmd) => $middleware->process($cmd, $next);
+            $next = $final;
+            $final = static fn (Command $cmd) => $middleware->process($cmd, $next);
         }
 
         return $final;
     }
 
-    private function execute(object $handler, Command $command) : mixed
+    private function execute(object $handler, Command $command): mixed
     {
         return $handler($command);
     }
@@ -59,20 +59,21 @@ final class CommandBus
 
 final class QueryBus
 {
-    private array $handlers   = [];
+    private array $handlers = [];
+
     private array $middleware = [];
 
-    public function register(string $queryClass, object $handler) : void
+    public function register(string $queryClass, object $handler): void
     {
         $this->handlers[$queryClass] = $handler;
     }
 
-    public function use(object $middleware) : void
+    public function use(object $middleware): void
     {
         $this->middleware[] = $middleware;
     }
 
-    public function dispatch(object $query) : mixed
+    public function dispatch(object $query): mixed
     {
         $class = $query::class;
 
@@ -91,7 +92,7 @@ final class EventBus
     /** @var array<string, list<object>> */
     private array $handlers = [];
 
-    public function register(string $eventClass, object $handler) : void
+    public function register(string $eventClass, object $handler): void
     {
         if (! isset($this->handlers[$eventClass])) {
             $this->handlers[$eventClass] = [];
@@ -100,9 +101,9 @@ final class EventBus
         $this->handlers[$eventClass][] = $handler;
     }
 
-    public function dispatch(object $event) : void
+    public function dispatch(object $event): void
     {
-        $class    = $event::class;
+        $class = $event::class;
         $handlers = $this->handlers[$class] ?? [];
 
         foreach ($handlers as $handler) {
@@ -110,7 +111,7 @@ final class EventBus
         }
     }
 
-    public function HandlersFor(string $eventClass) : array
+    public function HandlersFor(string $eventClass): array
     {
         return $this->handlers[$eventClass] ?? [];
     }

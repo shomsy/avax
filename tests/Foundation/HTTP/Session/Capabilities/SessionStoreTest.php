@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Session\Capabilities;
+
 use Avax\Tests\TestCase;
 
 final class SessionStoreTest extends TestCase

@@ -12,10 +12,10 @@ final readonly class MakeEntityCommand
 {
     public function __construct(
         private EntityGeneratorInterface $entityGenerator,
-        private LoggerInterface          $logger,
+        private LoggerInterface $logger,
     ) {}
 
-    public function execute(array $arguments) : void
+    public function execute(array $arguments): void
     {
         $table = $arguments['table'] ?? null;
         $fieldsInput = $arguments['fields'] ?? '';
@@ -31,11 +31,11 @@ final readonly class MakeEntityCommand
             $this->entityGenerator->create($table, $fields);
             $this->logger->info(sprintf("Entity for table '%s' created successfully.", $table));
         } catch (Throwable $throwable) {
-            $this->logger->error('Error creating entity: ' . $throwable->getMessage());
+            $this->logger->error('Error creating entity: '.$throwable->getMessage());
         }
     }
 
-    private function parseFields(string $input) : array
+    private function parseFields(string $input): array
     {
         if ($input === '') {
             return [];

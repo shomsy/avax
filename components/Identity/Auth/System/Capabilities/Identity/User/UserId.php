@@ -13,12 +13,12 @@ final readonly class UserId implements Stringable
 {
     public function __construct(public int $value) {}
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return (string) $this->value;
     }
 
-    public function equals(self $other) : bool
+    public function equals(self $other): bool
     {
         return $this->value === $other->value;
     }

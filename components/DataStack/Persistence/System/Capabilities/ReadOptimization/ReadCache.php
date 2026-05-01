@@ -22,7 +22,7 @@ final readonly class CacheEntry
     /**
      * Checks if this cache entry has expired.
      */
-    public function isExpired(float|null $now = null) : bool
+    public function isExpired(?float $now = null): bool
     {
         $now ??= microtime(true);
 
@@ -32,7 +32,7 @@ final readonly class CacheEntry
     /**
      * Returns the remaining time-to-live in seconds.
      */
-    public function remainingTtl(float|null $now = null) : float
+    public function remainingTtl(?float $now = null): float
     {
         $now ??= microtime(true);
         $elapsed = $now - $this->createdAt;
@@ -43,7 +43,7 @@ final readonly class CacheEntry
     /**
      * Returns the age of this entry in seconds.
      */
-    public function age(float|null $now = null) : float
+    public function age(?float $now = null): float
     {
         $now ??= microtime(true);
 
@@ -57,7 +57,7 @@ final readonly class CacheEntry
 final readonly class CacheResult
 {
     public function __construct(
-        public bool  $hit,
+        public bool $hit,
         public mixed $value = null,
         public string $key = '',
         public float $ttl = 0.0,
@@ -66,7 +66,7 @@ final readonly class CacheResult
     /**
      * Creates a cache hit result.
      */
-    public static function hit(mixed $value, string $key = '', float $ttl = 0.0) : self
+    public static function hit(mixed $value, string $key = '', float $ttl = 0.0): self
     {
         return new self(hit: true, value: $value, key: $key, ttl: $ttl);
     }
@@ -74,7 +74,7 @@ final readonly class CacheResult
     /**
      * Creates a cache miss result.
      */
-    public static function miss(string $key = '') : self
+    public static function miss(string $key = ''): self
     {
         return new self(hit: false, key: $key);
     }
@@ -119,7 +119,7 @@ final class ReadCache
     /**
      * @var QueryFingerprinter|null For generating cache keys from queries
      */
-    private QueryFingerprinter|null $fingerprinter;
+    private ?QueryFingerprinter $fingerprinter;
 
     /**
      * @var int Cache hit count
@@ -132,13 +132,12 @@ final class ReadCache
     private int $misses = 0;
 
     public function __construct(
-        float              $defaultTtl = 60.0,
-        int                $maxEntries = 0,
-        QueryFingerprinter|null $fingerprinter = null,
-    )
-    {
-        $this->defaultTtl    = $defaultTtl;
-        $this->maxEntries    = $maxEntries;
+        float $defaultTtl = 60.0,
+        int $maxEntries = 0,
+        ?QueryFingerprinter $fingerprinter = null,
+    ) {
+        $this->defaultTtl = $defaultTtl;
+        $this->maxEntries = $maxEntries;
         $this->fingerprinter = $fingerprinter;
     }
 
@@ -146,11 +145,11 @@ final class ReadCache
      * Retrieves or computes a value using a callback on cache miss.
      *
      * @template T
-     * @param callable() : T $callback
      *
+     * @param  callable() : T  $callback
      * @return T
      */
-    public function remember(string $key, callable $callback, float|null $ttl = null, array $tags = []) : mixed
+    public function remember(string $key, callable $callback, ?float $ttl = null, array $tags = []): mixed
     {
         $result = $this->get($key);
 
@@ -170,7 +169,7 @@ final class ReadCache
      *
      * @return CacheResult The cache result (hit or miss)
      */
-    public function get(string $key) : CacheResult
+    public function get(string $key): CacheResult
     {
         $entry = $this->store[$key] ?? null;
 
@@ -199,43 +198,42 @@ final class ReadCache
     /**
      * Removes a specific cache entry.
      */
-    public function forget(string $key) : void
+    public function forget(string $key): void
     {
         unset($this->store[$key]);
 
         // Clean up indices
         foreach ($this->tagIndex as $tag => $keys) {
             $this->tagIndex[$tag] = array_values(array_filter(
-                                                     $keys,
-                                                     static fn (string $k) : bool => $k !== $key,
-                                                 ));
+                $keys,
+                static fn (string $k): bool => $k !== $key,
+            ));
         }
 
         foreach ($this->fingerprintIndex as $fp => $keys) {
             $this->fingerprintIndex[$fp] = array_values(array_filter(
-                                                            $keys,
-                                                            static fn (string $k) : bool => $k !== $key,
-                                                        ));
+                $keys,
+                static fn (string $k): bool => $k !== $key,
+            ));
         }
     }
 
     /**
      * Stores a value in the cache.
      *
-     * @param string       $key         Cache key
-     * @param mixed        $value       Value to cache
-     * @param float|null   $ttl         Time-to-live in seconds (uses default if null)
-     * @param list<string> $tags        Tags for grouped invalidation
-     * @param string|null  $fingerprint Query fingerprint for pattern invalidation
+     * @param  string  $key  Cache key
+     * @param  mixed  $value  Value to cache
+     * @param  float|null  $ttl  Time-to-live in seconds (uses default if null)
+     * @param  list<string>  $tags  Tags for grouped invalidation
+     * @param  string|null  $fingerprint  Query fingerprint for pattern invalidation
      */
     public function put(
         string $key,
-        mixed  $value,
-        float  $ttl = null,
-        array  $tags = [],
-        string|null $fingerprint = null,
-    ) : void
-    {
+        mixed $value,
+        ?float $ttl = null,
+        array $tags = [],
+        ?string $fingerprint = null,
+    ): void {
         $ttl ??= $this->defaultTtl;
 
         $entry = new CacheEntry(
@@ -267,19 +265,19 @@ final class ReadCache
     /**
      * Evicts the oldest entry from the cache.
      */
-    private function evictOldest() : void
+    private function evictOldest(): void
     {
         if (empty($this->store)) {
             return;
         }
 
-        $oldestKey  = null;
+        $oldestKey = null;
         $oldestTime = PHP_FLOAT_MAX;
 
         foreach ($this->store as $key => $entry) {
             if ($entry->createdAt < $oldestTime) {
                 $oldestTime = $entry->createdAt;
-                $oldestKey  = $key;
+                $oldestKey = $key;
             }
         }
 
@@ -291,19 +289,18 @@ final class ReadCache
     /**
      * Caches a read query result using the query as cache key.
      *
-     * @param mixed        $value Query result
-     * @param string       $sql   The SQL query
-     * @param float|null   $ttl   TTL in seconds
-     * @param list<string> $tags  Tags for invalidation
+     * @param  mixed  $value  Query result
+     * @param  string  $sql  The SQL query
+     * @param  float|null  $ttl  TTL in seconds
+     * @param  list<string>  $tags  Tags for invalidation
      */
     public function cacheQuery(
         string $sql,
-        mixed  $value,
-        float  $ttl = null,
-        array  $tags = [],
-    ) : void
-    {
-        $key         = $this->generateQueryKey($sql);
+        mixed $value,
+        ?float $ttl = null,
+        array $tags = [],
+    ): void {
+        $key = $this->generateQueryKey($sql);
         $fingerprint = $this->fingerprinter !== null
             ? $this->fingerprinter->fingerprint($sql)->hash
             : '';
@@ -314,7 +311,7 @@ final class ReadCache
     /**
      * Generates a cache key from a SQL query.
      */
-    private function generateQueryKey(string $sql) : string
+    private function generateQueryKey(string $sql): string
     {
         if ($this->fingerprinter !== null) {
             $fingerprint = $this->fingerprinter->fingerprint($sql);
@@ -322,13 +319,13 @@ final class ReadCache
             return "query:{$fingerprint->hash}";
         }
 
-        return 'query:' . hash('sha256', $sql);
+        return 'query:'.hash('sha256', $sql);
     }
 
     /**
      * Retrieves a cached query result.
      */
-    public function getQuery(string $sql) : CacheResult
+    public function getQuery(string $sql): CacheResult
     {
         $key = $this->generateQueryKey($sql);
 
@@ -338,9 +335,9 @@ final class ReadCache
     /**
      * Invalidates all cache entries matching a fingerprint pattern.
      */
-    public function invalidateFingerprint(string $fingerprint) : int
+    public function invalidateFingerprint(string $fingerprint): int
     {
-        $keys  = $this->fingerprintIndex[$fingerprint] ?? [];
+        $keys = $this->fingerprintIndex[$fingerprint] ?? [];
         $count = 0;
 
         foreach ($keys as $key) {
@@ -358,9 +355,9 @@ final class ReadCache
      *
      * Useful when a write operation affects cached reads.
      *
-     * @param list<string> $tables Table names that were modified
+     * @param  list<string>  $tables  Table names that were modified
      */
-    public function invalidateTables(array $tables) : int
+    public function invalidateTables(array $tables): int
     {
         $count = 0;
 
@@ -374,9 +371,9 @@ final class ReadCache
     /**
      * Invalidates all cache entries with the given tag.
      */
-    public function invalidateTag(string $tag) : int
+    public function invalidateTag(string $tag): int
     {
-        $keys  = $this->tagIndex[$tag] ?? [];
+        $keys = $this->tagIndex[$tag] ?? [];
         $count = 0;
 
         foreach ($keys as $key) {
@@ -392,10 +389,10 @@ final class ReadCache
     /**
      * Removes all expired entries from the cache.
      */
-    public function prune() : int
+    public function prune(): int
     {
         $count = 0;
-        $now   = microtime(true);
+        $now = microtime(true);
 
         foreach ($this->store as $key => $entry) {
             if ($entry->isExpired($now)) {
@@ -410,7 +407,7 @@ final class ReadCache
     /**
      * Checks if a key exists and is not expired.
      */
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         $entry = $this->store[$key] ?? null;
 
@@ -426,23 +423,23 @@ final class ReadCache
      *
      * @return array<string, mixed>
      */
-    public function stats() : array
+    public function stats(): array
     {
         return [
-            'hits'           => $this->hits,
-            'misses'         => $this->misses,
-            'hit_rate'       => $this->hitRate(),
-            'total_entries'  => count($this->store),
+            'hits' => $this->hits,
+            'misses' => $this->misses,
+            'hit_rate' => $this->hitRate(),
+            'total_entries' => count($this->store),
             'active_entries' => $this->count(),
-            'tags'           => count($this->tagIndex),
-            'fingerprints'   => count($this->fingerprintIndex),
+            'tags' => count($this->tagIndex),
+            'fingerprints' => count($this->fingerprintIndex),
         ];
     }
 
     /**
      * Returns the cache hit rate (0.0 to 1.0).
      */
-    public function hitRate() : float
+    public function hitRate(): float
     {
         $total = $this->hits + $this->misses;
 
@@ -456,25 +453,25 @@ final class ReadCache
     /**
      * Returns the number of active (non-expired) entries.
      */
-    public function count() : int
+    public function count(): int
     {
         $now = microtime(true);
 
         return count(array_filter(
-                         $this->store,
-                         static fn (CacheEntry $entry) : bool => ! $entry->isExpired($now),
-                     ));
+            $this->store,
+            static fn (CacheEntry $entry): bool => ! $entry->isExpired($now),
+        ));
     }
 
     /**
      * Clears the entire cache.
      */
-    public function flush() : void
+    public function flush(): void
     {
-        $this->store            = [];
-        $this->tagIndex         = [];
+        $this->store = [];
+        $this->tagIndex = [];
         $this->fingerprintIndex = [];
-        $this->hits             = 0;
-        $this->misses           = 0;
+        $this->hits = 0;
+        $this->misses = 0;
     }
 }

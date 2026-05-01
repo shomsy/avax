@@ -14,7 +14,7 @@ final readonly class ReadFederationConnections
     /**
      * @return list<FederationConnection>
      */
-    public function execute() : array
+    public function execute(): array
     {
         return $this->connectionStore->all();
     }

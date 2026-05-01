@@ -12,12 +12,12 @@ class Question
     /**
      * Ask a question and return the user's answer.
      */
-    public static function ask(string $question, string|null $default = null) : string
+    public static function ask(string $question, ?string $default = null): string
     {
         if ($default !== null) {
             echo sprintf('%s [%s]: ', $question, $default);
         } else {
-            echo $question . ': ';
+            echo $question.': ';
         }
 
         $input = self::readLine();
@@ -32,7 +32,7 @@ class Question
     /**
      * Read a line from stdin.
      */
-    private static function readLine() : string
+    private static function readLine(): string
     {
         $handle = fopen('php://stdin', 'r');
         if ($handle === false) {
@@ -48,12 +48,12 @@ class Question
     /**
      * Ask a secret question (hidden input).
      */
-    public static function askSecret(string $question, string|null $default = null) : string
+    public static function askSecret(string $question, ?string $default = null): string
     {
         if ($default !== null) {
-            echo $question . ' [hidden]: ';
+            echo $question.' [hidden]: ';
         } else {
-            echo $question . ': ';
+            echo $question.': ';
         }
 
         // Hide input for sensitive data

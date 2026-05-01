@@ -15,14 +15,12 @@ final readonly class SumValues
         private array $items = [],
     ) {}
 
-
-    public function __invoke(string|callable $key) : int|float
+    public function __invoke(string|callable $key): int|float
     {
         return $this->sum(key: $key);
     }
 
-
-    public function sum(string|callable $key) : int|float
+    public function sum(string|callable $key): int|float
     {
         if ($this->items === []) {
             return 0;
@@ -30,13 +28,12 @@ final readonly class SumValues
 
         return array_reduce(
             array   : $this->items,
-            callback: fn (int|float $carry, mixed $item) : int|float => $carry + $this->extractValue(item: $item, key: $key),
+            callback: fn (int|float $carry, mixed $item): int|float => $carry + $this->extractValue(item: $item, key: $key),
             initial : 0,
         );
     }
 
-
-    private function extractValue(mixed $item, string|callable $key) : int|float
+    private function extractValue(mixed $item, string|callable $key): int|float
     {
         $value = is_callable(value: $key) ? $key($item) : ($item[$key] ?? 0);
 
@@ -47,7 +44,7 @@ final readonly class SumValues
         return $value;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

@@ -46,7 +46,7 @@ class RequestCharacterizationTest extends TestCase
             parsedBody: null,
             attributes: null,
             session: null,
-            protocolVersion: '1.1'
+            protocolVersion: '1.1',
         );
 
         $this->assertSame(expected: '/api/users?status=active', actual: $request->requestTarget);
@@ -87,7 +87,7 @@ class RequestCharacterizationTest extends TestCase
             parsedBody: null,
             attributes: null,
             session: null,
-            protocolVersion: '1.1'
+            protocolVersion: '1.1',
         );
     }
 

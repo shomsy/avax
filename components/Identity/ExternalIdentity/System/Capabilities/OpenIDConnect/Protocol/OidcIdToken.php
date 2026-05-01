@@ -11,7 +11,7 @@ final readonly class OidcIdToken
 {
     public function __construct(
         #[SensitiveParameter]
-        public string            $token,
+        public string $token,
         public DateTimeImmutable $expiresAt,
     ) {}
 }

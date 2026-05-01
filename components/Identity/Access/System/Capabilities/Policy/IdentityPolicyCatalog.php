@@ -12,7 +12,7 @@ final class IdentityPolicyCatalog
     /**
      * @return list<IdentityPolicy>
      */
-    public static function all() : array
+    public static function all(): array
     {
         return [
             self::user(),
@@ -25,21 +25,21 @@ final class IdentityPolicyCatalog
         ];
     }
 
-    public static function user() : IdentityPolicy
+    public static function user(): IdentityPolicy
     {
         return new IdentityPolicy(
             actor                 : IdentityActor::USER,
             assuranceTier         : AssuranceTier::STANDARD,
             allowedFactors        : [
-                                        AuthenticationFactor::PASSWORD,
-                                        AuthenticationFactor::TOTP,
-                                        AuthenticationFactor::BACKUP_CODE,
-                                        AuthenticationFactor::PASSKEY,
-                                        AuthenticationFactor::FEDERATED_SSO,
-                                    ],
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+                AuthenticationFactor::BACKUP_CODE,
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+            ],
             requiredFactors       : [
-                                        AuthenticationFactor::PASSWORD,
-                                    ],
+                AuthenticationFactor::PASSWORD,
+            ],
             idleTimeoutSeconds    : 1_800,
             absoluteTimeoutSeconds: 43_200,
             freshMfaMaxAgeSeconds : null,
@@ -47,22 +47,22 @@ final class IdentityPolicyCatalog
         );
     }
 
-    public static function privilegedUser() : IdentityPolicy
+    public static function privilegedUser(): IdentityPolicy
     {
         return new IdentityPolicy(
             actor                 : IdentityActor::PRIVILEGED_USER,
             assuranceTier         : AssuranceTier::HIGH,
             allowedFactors        : [
-                                        AuthenticationFactor::PASSWORD,
-                                        AuthenticationFactor::TOTP,
-                                        AuthenticationFactor::BACKUP_CODE,
-                                        AuthenticationFactor::PASSKEY,
-                                        AuthenticationFactor::FEDERATED_SSO,
-                                    ],
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+                AuthenticationFactor::BACKUP_CODE,
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+            ],
             requiredFactors       : [
-                                        AuthenticationFactor::PASSWORD,
-                                        AuthenticationFactor::TOTP,
-                                    ],
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+            ],
             idleTimeoutSeconds    : 900,
             absoluteTimeoutSeconds: 28_800,
             freshMfaMaxAgeSeconds : 300,
@@ -70,21 +70,21 @@ final class IdentityPolicyCatalog
         );
     }
 
-    public static function admin() : IdentityPolicy
+    public static function admin(): IdentityPolicy
     {
         return new IdentityPolicy(
             actor                     : IdentityActor::ADMIN,
             assuranceTier             : AssuranceTier::PHISHING_RESISTANT,
             allowedFactors            : [
-                                            AuthenticationFactor::PASSKEY,
-                                            AuthenticationFactor::FEDERATED_SSO,
-                                            AuthenticationFactor::PASSWORD,
-                                            AuthenticationFactor::TOTP,
-                                            AuthenticationFactor::BACKUP_CODE,
-                                        ],
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+                AuthenticationFactor::BACKUP_CODE,
+            ],
             requiredFactors           : [
-                                            AuthenticationFactor::PASSKEY,
-                                        ],
+                AuthenticationFactor::PASSKEY,
+            ],
             idleTimeoutSeconds        : 600,
             absoluteTimeoutSeconds    : 14_400,
             freshMfaMaxAgeSeconds     : 180,
@@ -96,21 +96,21 @@ final class IdentityPolicyCatalog
         );
     }
 
-    public static function support() : IdentityPolicy
+    public static function support(): IdentityPolicy
     {
         return new IdentityPolicy(
             actor                     : IdentityActor::SUPPORT,
             assuranceTier             : AssuranceTier::HIGH,
             allowedFactors            : [
-                                            AuthenticationFactor::PASSWORD,
-                                            AuthenticationFactor::TOTP,
-                                            AuthenticationFactor::PASSKEY,
-                                            AuthenticationFactor::FEDERATED_SSO,
-                                        ],
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+            ],
             requiredFactors           : [
-                                            AuthenticationFactor::PASSWORD,
-                                            AuthenticationFactor::TOTP,
-                                        ],
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+            ],
             idleTimeoutSeconds        : 600,
             absoluteTimeoutSeconds    : 21_600,
             freshMfaMaxAgeSeconds     : 180,
@@ -120,20 +120,20 @@ final class IdentityPolicyCatalog
         );
     }
 
-    public static function tenantAdmin() : IdentityPolicy
+    public static function tenantAdmin(): IdentityPolicy
     {
         return new IdentityPolicy(
             actor                     : IdentityActor::TENANT_ADMIN,
             assuranceTier             : AssuranceTier::PHISHING_RESISTANT,
             allowedFactors            : [
-                                            AuthenticationFactor::PASSKEY,
-                                            AuthenticationFactor::FEDERATED_SSO,
-                                            AuthenticationFactor::PASSWORD,
-                                            AuthenticationFactor::TOTP,
-                                        ],
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+            ],
             requiredFactors           : [
-                                            AuthenticationFactor::PASSKEY,
-                                        ],
+                AuthenticationFactor::PASSKEY,
+            ],
             idleTimeoutSeconds        : 900,
             absoluteTimeoutSeconds    : 21_600,
             freshMfaMaxAgeSeconds     : 180,
@@ -143,18 +143,18 @@ final class IdentityPolicyCatalog
         );
     }
 
-    public static function machineIdentity() : IdentityPolicy
+    public static function machineIdentity(): IdentityPolicy
     {
         return new IdentityPolicy(
             actor                          : IdentityActor::MACHINE_IDENTITY,
             assuranceTier                  : AssuranceTier::HIGH,
             allowedFactors                 : [
-                                                 AuthenticationFactor::DPOP,
-                                                 AuthenticationFactor::MTLS,
-                                             ],
+                AuthenticationFactor::DPOP,
+                AuthenticationFactor::MTLS,
+            ],
             requiredFactors                : [
-                                                 AuthenticationFactor::MTLS,
-                                             ],
+                AuthenticationFactor::MTLS,
+            ],
             idleTimeoutSeconds             : 300,
             absoluteTimeoutSeconds         : 3_600,
             freshMfaMaxAgeSeconds          : null,
@@ -163,17 +163,17 @@ final class IdentityPolicyCatalog
         );
     }
 
-    public static function breakGlass() : IdentityPolicy
+    public static function breakGlass(): IdentityPolicy
     {
         return new IdentityPolicy(
             actor                     : IdentityActor::BREAK_GLASS,
             assuranceTier             : AssuranceTier::EMERGENCY,
             allowedFactors            : [
-                                            AuthenticationFactor::PASSKEY,
-                                        ],
+                AuthenticationFactor::PASSKEY,
+            ],
             requiredFactors           : [
-                                            AuthenticationFactor::PASSKEY,
-                                        ],
+                AuthenticationFactor::PASSKEY,
+            ],
             idleTimeoutSeconds        : 300,
             absoluteTimeoutSeconds    : 1_800,
             freshMfaMaxAgeSeconds     : 60,

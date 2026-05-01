@@ -13,7 +13,7 @@ final readonly class StatelessGuard
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
             throw new RuntimeException(
-                'Session access violated in stateless route: session_start() called'
+                'Session access violated in stateless route: session_start() called',
             );
         }
     }

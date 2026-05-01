@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent;
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics\QueryFingerprint;
+
 use function count;
 
 /**
@@ -15,13 +16,13 @@ use function count;
 final readonly class QueryResult
 {
     /**
-     * @param array<array<string, mixed>> $rows
+     * @param  array<array<string, mixed>>  $rows
      */
     public function __construct(
-        private array     $rows = [],
-        public int|null   $count = null,
-        public float|null $tookMs = null,
-        public QueryFingerprint|null $fingerprint = null,
+        private array $rows = [],
+        public ?int $count = null,
+        public ?float $tookMs = null,
+        public ?QueryFingerprint $fingerprint = null,
     ) {}
 
     /**
@@ -29,7 +30,7 @@ final readonly class QueryResult
      *
      * @return array<array<string, mixed>>
      */
-    public function rows() : array
+    public function rows(): array
     {
         return $this->rows;
     }
@@ -37,7 +38,7 @@ final readonly class QueryResult
     /**
      * Returns the total count of rows.
      */
-    public function count() : int
+    public function count(): int
     {
         return $this->count;
     }
@@ -45,7 +46,7 @@ final readonly class QueryResult
     /**
      * Returns the execution time in milliseconds.
      */
-    public function tookMs() : float|null
+    public function tookMs(): ?float
     {
         return $this->tookMs;
     }
@@ -53,7 +54,7 @@ final readonly class QueryResult
     /**
      * Checks if the result set is empty.
      */
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->rows === [];
     }
@@ -63,7 +64,7 @@ final readonly class QueryResult
      *
      * @return array<string, mixed>|null
      */
-    public function first() : array|null
+    public function first(): ?array
     {
         return $this->rows[0] ?? null;
     }
@@ -73,7 +74,7 @@ final readonly class QueryResult
      *
      * @return array<array<string, mixed>>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->rows;
     }
@@ -81,9 +82,9 @@ final readonly class QueryResult
     /**
      * Returns a new instance with the specified rows.
      *
-     * @param array<array<string, mixed>> $rows
+     * @param  array<array<string, mixed>>  $rows
      */
-    public function withRows(array $rows) : QueryResult
+    public function withRows(array $rows): QueryResult
     {
         return new QueryResult(
             rows       : $rows,
@@ -96,7 +97,7 @@ final readonly class QueryResult
     /**
      * Returns a new instance with the specified execution time.
      */
-    public function withTookMs(float $tookMs) : QueryResult
+    public function withTookMs(float $tookMs): QueryResult
     {
         return new QueryResult(
             rows       : $this->rows,
@@ -109,7 +110,7 @@ final readonly class QueryResult
     /**
      * Returns a new instance with the specified fingerprint.
      */
-    public function withFingerprint(QueryFingerprint $fingerprint) : QueryResult
+    public function withFingerprint(QueryFingerprint $fingerprint): QueryResult
     {
         return new QueryResult(
             rows       : $this->rows,

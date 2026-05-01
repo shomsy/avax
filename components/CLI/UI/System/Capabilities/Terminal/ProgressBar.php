@@ -10,13 +10,13 @@ final class ProgressBar
 
     public function __construct(private readonly int $total, private readonly int $width = 50) {}
 
-    public function advance(int $step = 1) : void
+    public function advance(int $step = 1): void
     {
         $this->current += $step;
         $this->display();
     }
 
-    public function display() : void
+    public function display(): void
     {
         $percent = ($this->current / $this->total);
         $bar = (int) ($percent * $this->width);
@@ -24,7 +24,7 @@ final class ProgressBar
         $progress = str_repeat('=', $bar);
         $remaining = str_repeat(' ', $this->width - $bar);
 
-        printf("\r[%s%s] %d%%", $progress, $remaining, (int)($percent * 100));
+        printf("\r[%s%s] %d%%", $progress, $remaining, (int) ($percent * 100));
 
         if ($this->current >= $this->total) {
             echo "\n";

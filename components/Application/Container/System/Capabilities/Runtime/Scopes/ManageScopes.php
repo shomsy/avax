@@ -64,7 +64,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Closes the current scope layer.
      */
     #[Override]
-    public function closeScope(string|null $kind = null) : void
+    public function closeScope(string $kind = null) : void
     {
         $frame = $this->scopeStore->close(kind: $kind);
         foreach ($frame['pooled'] as $serviceId => $options) {
@@ -209,10 +209,10 @@ final readonly class ManageScopes implements ScopeInterface
     }
 
     public function setScoped(
-        string  $abstract,
-        mixed   $instance,
-        string|null $kind = null,
-        bool    $disposable = false,
+        string $abstract,
+        mixed  $instance,
+        string $kind = null,
+        bool   $disposable = false,
     ) : void
     {
         $kind ??= ScopeKind::ANY;
@@ -235,9 +235,9 @@ final readonly class ManageScopes implements ScopeInterface
     public function checkoutPooled(
         string $abstract,
         string $kind,
-        int    $maxSize,
-        bool|null $resetBeforeReuse = null,
-        bool   $disposable = false,
+        int  $maxSize,
+        bool $resetBeforeReuse = null,
+        bool $disposable = false,
     ) : array
     {
         $resetBeforeReuse ??= true;
@@ -277,11 +277,11 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function setPooled(
         string $abstract,
-        mixed  $instance,
+        mixed $instance,
         string $kind,
-        int    $maxSize,
-        bool|null $resetBeforeReuse = null,
-        bool   $disposable = false,
+        int   $maxSize,
+        bool  $resetBeforeReuse = null,
+        bool  $disposable = false,
     ) : void
     {
         $resetBeforeReuse ??= true;

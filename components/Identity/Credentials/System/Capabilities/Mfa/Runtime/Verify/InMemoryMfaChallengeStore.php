@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify;
 
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\PruneExpiredMfaChallengesInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\PruneExpiredMfaChallengesInterface;
 use DateTimeImmutable;
 
 /**
@@ -16,27 +16,27 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
     /** @var array<string, MfaChallengeRecord> */
     private array $records = [];
 
-    public function issue(MfaChallengeRecord $record) : void
+    public function issue(MfaChallengeRecord $record): void
     {
         $this->records[$record->challengeId] = $record;
     }
 
-    public function find(string $challengeId) : MfaChallengeRecord|null
+    public function find(string $challengeId): ?MfaChallengeRecord
     {
         return $this->records[$challengeId] ?? null;
     }
 
-    public function save(MfaChallengeRecord $record) : void
+    public function save(MfaChallengeRecord $record): void
     {
         $this->records[$record->challengeId] = $record;
     }
 
-    public function forget(string $challengeId) : void
+    public function forget(string $challengeId): void
     {
         unset($this->records[$challengeId]);
     }
 
-    public function forgetForUser(UserId $userId) : void
+    public function forgetForUser(UserId $userId): void
     {
         foreach ($this->records as $challengeId => $record) {
             if ($record->userId->equals(other: $userId)) {
@@ -45,7 +45,7 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
         }
     }
 
-    public function pruneExpired(DateTimeImmutable $now) : int
+    public function pruneExpired(DateTimeImmutable $now): int
     {
         $removed = 0;
 

@@ -15,13 +15,13 @@ final readonly class NodeHealthRecord
     public CacheNodeStatus $cacheNodeStatus;
 
     public function __construct(
-        public string          $nodeId,
+        public string         $nodeId,
         public CacheNodeStatus $cacheNodeStatus,
-        public Timestamp       $lastCheck,
-        public int             $consecutiveFailures,
-        public int             $consecutiveSuccesses,
-        public Timestamp|null  $lastFailure,
-        public Timestamp|null  $lastSuccess,
+        public Timestamp      $lastCheck,
+        public int            $consecutiveFailures,
+        public int            $consecutiveSuccesses,
+        public Timestamp|null $lastFailure,
+        public Timestamp|null $lastSuccess,
     )
     {
         $this->cacheNodeStatus = $cacheNodeStatus;

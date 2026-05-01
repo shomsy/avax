@@ -39,11 +39,11 @@ final class HttpContextTest extends TestCase
         self::assertSame(['theme' => 'dark'], $context->cookies());
     }
 
-    private function globals(array|null $server = null, array $cookies = []) : GlobalsProviderInterface
+    private function globals(array $server = null, array $cookies = []) : GlobalsProviderInterface
     {
         $server ??= [];
 
-        return new class($server, $cookies) implements GlobalsProviderInterface {
+        return new class ($server, $cookies) implements GlobalsProviderInterface {
             public function __construct(
                 private array $server,
                 private array $cookies,

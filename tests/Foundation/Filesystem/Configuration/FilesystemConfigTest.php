@@ -39,7 +39,7 @@ class FilesystemConfigTest extends TestCase
     {
         $config = new FilesystemConfig(
             default: 's3',
-            disks: ['s3' => ['driver' => 's3', 'bucket' => 'test']]
+            disks  : ['s3' => ['driver' => 's3', 'bucket' => 'test']],
         );
 
         self::assertSame(expected: 's3', actual: $config->default);

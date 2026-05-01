@@ -10,16 +10,15 @@ final readonly class ScimBulkOperationResult
     public array $response;
 
     /**
-     * @param array<string, mixed> $response
+     * @param  array<string, mixed>  $response
      */
     public function __construct(
-        public string      $method,
-        public string      $path,
-        public int         $status,
+        public string $method,
+        public string $path,
+        public int $status,
         array $response = [],
-        public string|null $bulkId = null,
-    )
-    {
+        public ?string $bulkId = null,
+    ) {
         $response ??= [];
         $this->response = $response;
     }

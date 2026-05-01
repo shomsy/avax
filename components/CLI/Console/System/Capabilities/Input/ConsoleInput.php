@@ -18,9 +18,9 @@ class ConsoleInput
     /**
      * Create from raw argv array.
      */
-    public static function fromArgv(array $argv) : self
+    public static function fromArgv(array $argv): self
     {
-        $input = new self();
+        $input = new self;
         $input->parse($argv);
 
         return $input;
@@ -29,20 +29,20 @@ class ConsoleInput
     /**
      * Parse raw argv into arguments and options.
      */
-    private function parse(array $argv) : void
+    private function parse(array $argv): void
     {
         foreach ($argv as $arg) {
             if (str_starts_with((string) $arg, '--')) {
                 // Long option: --key=value or --key
                 $parts = explode('=', substr((string) $arg, 2), 2);
-                $key                 = $parts[0];
+                $key = $parts[0];
                 $this->options[$key] = $parts[1] ?? true;
             } elseif (str_starts_with((string) $arg, '-') && strlen((string) $arg) > 1) {
                 // Short option: -k=value or -k or -abc
                 $rest = substr((string) $arg, 1);
 
                 if (str_contains($rest, '=')) {
-                    $parts                    = explode('=', $rest, 2);
+                    $parts = explode('=', $rest, 2);
                     $this->options[$parts[0]] = $parts[1];
                 } elseif (strlen($rest) > 1) {
                     // Multiple short flags: -abc → a, b, c
@@ -62,11 +62,11 @@ class ConsoleInput
     /**
      * Create with predefined arguments and options.
      */
-    public static function make(array $arguments = [], array $options = []) : self
+    public static function make(array $arguments = [], array $options = []): self
     {
-        $input            = new self();
+        $input = new self;
         $input->arguments = $arguments;
-        $input->options   = $options;
+        $input->options = $options;
 
         return $input;
     }
@@ -74,7 +74,7 @@ class ConsoleInput
     /**
      * Get a positional argument by index or name.
      */
-    public function getArgument(int|string $key, mixed $default = null) : mixed
+    public function getArgument(int|string $key, mixed $default = null): mixed
     {
         // Named arguments mapped from command definition
         return $this->arguments[$key] ?? $default;
@@ -83,7 +83,7 @@ class ConsoleInput
     /**
      * Get all positional arguments.
      */
-    public function getArguments() : array
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -91,7 +91,7 @@ class ConsoleInput
     /**
      * Get an option value by name.
      */
-    public function getOption(string $key, mixed $default = null) : mixed
+    public function getOption(string $key, mixed $default = null): mixed
     {
         return $this->options[$key] ?? $default;
     }
@@ -99,7 +99,7 @@ class ConsoleInput
     /**
      * Get all options.
      */
-    public function getOptions() : array
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -107,7 +107,7 @@ class ConsoleInput
     /**
      * Check if an option is present.
      */
-    public function hasOption(string $key) : bool
+    public function hasOption(string $key): bool
     {
         return array_key_exists($key, $this->options);
     }
@@ -115,7 +115,7 @@ class ConsoleInput
     /**
      * Get the first positional argument (commonly the command name).
      */
-    public function getFirstArgument() : string|null
+    public function getFirstArgument(): ?string
     {
         return $this->arguments[0] ?? null;
     }
@@ -123,7 +123,7 @@ class ConsoleInput
     /**
      * Get all arguments except the first one.
      */
-    public function getRemainingArguments() : array
+    public function getRemainingArguments(): array
     {
         return array_slice($this->arguments, 1);
     }

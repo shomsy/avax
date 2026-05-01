@@ -9,29 +9,29 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\User;
  */
 interface UserInterface
 {
-    public function getId() : UserId;
+    public function getId(): UserId;
 
-    public function getEmail() : UserEmail;
+    public function getEmail(): UserEmail;
 
-    public function getUsername() : string;
+    public function getUsername(): string;
 
-    public function getPasswordHash() : string;
+    public function getPasswordHash(): string;
 
     /**
      * @return list<UserRole>
      */
-    public function getRoles() : array;
+    public function getRoles(): array;
 
     /**
      * @return list<UserPermission>
      */
-    public function getPermissions() : array;
+    public function getPermissions(): array;
 
-    public function hasRole(UserRole $role) : bool;
+    public function hasRole(UserRole $role): bool;
 
-    public function hasPermission(UserPermission $permission) : bool;
+    public function hasPermission(UserPermission $permission): bool;
 
-    public function canAccessRole(UserRole $requiredRole) : bool;
+    public function canAccessRole(UserRole $requiredRole): bool;
 
-    public function isActive() : bool;
+    public function isActive(): bool;
 }

@@ -21,8 +21,7 @@ class YugabyteDBPool extends BaseConnectionPool
         int $maxConnections = 20,
         int $connectionTimeoutMs = 10000,
         int $idleTimeoutMs = 300000,
-    )
-    {
+    ) {
         parent::__construct(
             minConnections     : $minConnections,
             maxConnections     : $maxConnections,
@@ -32,14 +31,14 @@ class YugabyteDBPool extends BaseConnectionPool
     }
 
     #[Override]
-    protected function createConnection() : PooledConnection
+    protected function createConnection(): PooledConnection
     {
         // @todo Replace with real YugabyteDB connection (compatible with PostgreSQL wire protocol)
         return new ArrayPooledConnection(config: $this->config);
     }
 
     #[Override]
-    protected function validateConnection(PooledConnection $pooledConnection) : bool
+    protected function validateConnection(PooledConnection $pooledConnection): bool
     {
         return $pooledConnection->isValid();
     }

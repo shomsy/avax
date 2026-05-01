@@ -10,7 +10,7 @@ namespace Avax\Components\DataStack\Data\System\Flows\Read;
  */
 final class ReadNestedValue
 {
-    public function execute(array $data, string $key, mixed $default = null) : mixed
+    public function execute(array $data, string $key, mixed $default = null): mixed
     {
         if (array_key_exists($key, $data)) {
             return $data[$key];

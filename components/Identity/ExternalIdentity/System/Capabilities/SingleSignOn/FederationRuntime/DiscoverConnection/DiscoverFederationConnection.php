@@ -12,10 +12,10 @@ final readonly class DiscoverFederationConnection
 {
     public function __construct(private FederationConnectionStoreInterface $connectionStore) {}
 
-    public function execute(#[SensitiveParameter] string $email) : FederationConnection|null
+    public function execute(#[SensitiveParameter] string $email): ?FederationConnection
     {
         $separator = strrchr(haystack: $email, needle: '@');
-        $domain    = strtolower(string: trim(string: substr(string: $separator !== false ? $separator : '', offset: 1)));
+        $domain = strtolower(string: trim(string: substr(string: $separator !== false ? $separator : '', offset: 1)));
 
         if ($domain === '') {
             return null;

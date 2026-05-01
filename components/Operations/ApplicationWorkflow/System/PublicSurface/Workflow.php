@@ -20,15 +20,15 @@ final class Workflow
 {
     private SagaStoreInterface $store;
 
-    public function __construct(SagaStoreInterface|null $store = null)
+    public function __construct(?SagaStoreInterface $store = null)
     {
-        $this->store = $store ?? new InMemorySagaStore();
+        $this->store = $store ?? new InMemorySagaStore;
     }
 
     /**
      * Run a saga definition (legacy compatibility method).
      */
-    public function runSaga(SagaDefinition $definition) : void
+    public function runSaga(SagaDefinition $definition): void
     {
         $completed = [];
 
@@ -51,12 +51,11 @@ final class Workflow
     /**
      * Start a new saga with the given name and context.
      *
-     * @param string $sagaName The name of the saga to start
-     * @param mixed $context The initial context/data for the saga
-     *
+     * @param  string  $sagaName  The name of the saga to start
+     * @param  mixed  $context  The initial context/data for the saga
      * @return SagaResult The result of the saga execution
      */
-    public function start(string $sagaName, mixed $context = []) : SagaResult
+    public function start(string $sagaName, mixed $context = []): SagaResult
     {
         $saga = Saga::define($sagaName)->withStore($this->store);
 
@@ -69,12 +68,12 @@ final class Workflow
     /**
      * Resume a saga from stored state.
      *
-     * @param string $sagaId The ID of the saga to resume
-     *
+     * @param  string  $sagaId  The ID of the saga to resume
      * @return SagaResult The result of the saga execution
+     *
      * @throws RuntimeException If the saga is not found
      */
-    public function resume(string $sagaId) : SagaResult
+    public function resume(string $sagaId): SagaResult
     {
         $saga = $this->store->findById($sagaId);
 
@@ -99,12 +98,12 @@ final class Workflow
     /**
      * Cancel a saga by running compensation.
      *
-     * @param string $sagaId The ID of the saga to cancel
-     *
+     * @param  string  $sagaId  The ID of the saga to cancel
      * @return SagaResult The result of the compensation
+     *
      * @throws RuntimeException If the saga is not found
      */
-    public function cancel(string $sagaId) : SagaResult
+    public function cancel(string $sagaId): SagaResult
     {
         $saga = $this->store->findById($sagaId);
 
@@ -120,7 +119,7 @@ final class Workflow
     /**
      * Get the saga store.
      */
-    public function store() : SagaStoreInterface
+    public function store(): SagaStoreInterface
     {
         return $this->store;
     }

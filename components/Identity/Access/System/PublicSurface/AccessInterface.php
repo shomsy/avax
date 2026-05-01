@@ -9,15 +9,15 @@ namespace Avax\Components\Identity\Access\System\PublicSurface;
  */
 interface AccessInterface
 {
-    public function allows(string $permission, mixed $resource = null) : bool;
+    public function allows(string $permission, mixed $resource = null): bool;
 
-    public function denies(string $permission, mixed $resource = null) : bool;
+    public function denies(string $permission, mixed $resource = null): bool;
 
-    public function authorize(string $permission, mixed $resource = null) : void;
+    public function authorize(string $permission, mixed $resource = null): void;
 
-    public function beginElevation() : void;
+    public function beginElevation(): void;
 
-    public function endElevation() : void;
+    public function endElevation(): void;
 
-    public function isElevated() : bool;
+    public function isElevated(): bool;
 }

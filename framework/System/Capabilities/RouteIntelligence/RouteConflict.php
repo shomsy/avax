@@ -14,10 +14,10 @@ final readonly class RouteConflict
     public const CONFLICT_SHADOW    = 'shadow';
 
     public function __construct(
-        public string    $type,
+        public string $type,
         public RouteInfo $routeA,
         public RouteInfo $routeB,
-        public string    $reason,
+        public string $reason,
     ) {}
 
     public function isExact() : bool

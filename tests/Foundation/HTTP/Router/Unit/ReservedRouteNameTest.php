@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
@@ -24,10 +23,8 @@ class ReservedRouteNameTest extends TestCase
         $route = new RouteDefinition(
             method: 'GET',
             path  : '/test',
-            action: static function () {
-                return 'ok';
-            },
-            name  : 'normal.route.name'
+            action: static fn () => 'ok',
+            name  : 'normal.route.name',
         );
 
         $this->assertEquals(expected: 'normal.route.name', actual: $route->name);
@@ -43,10 +40,8 @@ class ReservedRouteNameTest extends TestCase
         $route = new RouteDefinition(
             method: 'GET',
             path  : '/test',
-            action: static function () {
-                return 'ok';
-            },
-            name  : ''
+            action: static fn () => 'ok',
+            name  : '',
         );
 
         $this->assertEquals(expected: '', actual: $route->name);
@@ -63,10 +58,8 @@ class ReservedRouteNameTest extends TestCase
         new RouteDefinition(
             method: 'GET',
             path  : '/test',
-            action: static function () {
-                return 'ok';
-            },
-            name  : '__avax.internal.route'
+            action: static fn () => 'ok',
+            name  : '__avax.internal.route',
         );
     }
 
@@ -87,10 +80,8 @@ class ReservedRouteNameTest extends TestCase
                 new RouteDefinition(
                     method: 'GET',
                     path  : '/test',
-                    action: static function () {
-                        return 'ok';
-                    },
-                    name  : $name
+                    action: static fn () => 'ok',
+                    name  : $name,
                 );
                 $this->fail(message: "Expected ReservedRouteNameException for name: {$name}");
             } catch (ReservedRouteNameException $e) {
@@ -116,10 +107,8 @@ class ReservedRouteNameTest extends TestCase
             $route = new RouteDefinition(
                 method: 'GET',
                 path  : '/test',
-                action: static function () {
-                    return 'ok';
-                },
-                name  : $name
+                action: static fn () => 'ok',
+                name  : $name,
             );
 
             $this->assertEquals(expected: $name, actual: $route->name);

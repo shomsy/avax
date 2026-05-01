@@ -20,19 +20,19 @@ final class ContainerPublicSurfaceTest extends TestCase
     {
         $this->assertSame(
             expected: BindingBuilderInterface::class,
-            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'bind'))
+            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'bind')),
         );
         $this->assertSame(
             expected: ContextBuilderInterface::class,
-            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'when'))
+            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'when')),
         );
         $this->assertSame(
             expected: InjectionReport::class,
-            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'inspectInjection'))
+            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'inspectInjection')),
         );
         $this->assertSame(
             expected: ScopeManagerInterface::class,
-            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'scopes'))
+            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'scopes')),
         );
     }
 

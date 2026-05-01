@@ -8,12 +8,12 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 
 final class Rank
 {
-    public static function build(GrammarInterface $grammar) : WindowBuilder
+    public static function build(GrammarInterface $grammar): WindowBuilder
     {
         return WindowBuilder::rank(grammar: $grammar);
     }
 
-    public static function dense(GrammarInterface $grammar) : WindowBuilder
+    public static function dense(GrammarInterface $grammar): WindowBuilder
     {
         return WindowBuilder::denseRank(grammar: $grammar);
     }

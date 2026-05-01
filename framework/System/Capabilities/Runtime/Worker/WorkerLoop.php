@@ -13,7 +13,7 @@ final class WorkerLoop
     private bool $running = false;
 
     public function __construct(
-        private RuntimeInterface|null       $runtime = null,
+        private RuntimeInterface|null $runtime = null,
         private WorkerRuntimeInterface|null $workerRuntime = null,
     ) {}
 
@@ -72,9 +72,9 @@ final class WorkerLoop
     }
 
     private function runUntilEmpty(
-        RuntimeInterface       $runtime,
+        RuntimeInterface $runtime,
         WorkerRuntimeInterface $workerRuntime,
-        WorkerLifecycle        $lifecycle,
+        WorkerLifecycle  $lifecycle,
     ) : void
     {
         $handleIncomingHttp = new HandleIncomingHttp();

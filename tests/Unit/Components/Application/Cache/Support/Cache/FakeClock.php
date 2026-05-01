@@ -13,7 +13,7 @@ final class FakeClock implements Clock
 {
     private Timestamp $currentTime;
 
-    public function __construct(Timestamp|null $timestamp = null)
+    public function __construct(Timestamp $timestamp = null)
     {
         $this->currentTime = $timestamp ?? Timestamp::now();
     }
@@ -31,7 +31,7 @@ final class FakeClock implements Clock
     public function advance(int $seconds) : void
     {
         $this->currentTime = $this->currentTime->add(
-            duration: Duration::ofSeconds(seconds: $seconds)
+            duration: Duration::ofSeconds(seconds: $seconds),
         );
     }
 

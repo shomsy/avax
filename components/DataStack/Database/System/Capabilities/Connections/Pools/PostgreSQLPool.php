@@ -19,8 +19,7 @@ class PostgreSQLPool extends BaseConnectionPool
         int $maxConnections = 20,
         int $connectionTimeoutMs = 10000,
         int $idleTimeoutMs = 300000,
-    )
-    {
+    ) {
         parent::__construct(
             minConnections     : $minConnections,
             maxConnections     : $maxConnections,
@@ -30,14 +29,14 @@ class PostgreSQLPool extends BaseConnectionPool
     }
 
     #[Override]
-    protected function createConnection() : PooledConnection
+    protected function createConnection(): PooledConnection
     {
         // @todo Replace with real PostgreSQL connection (PDO with pgsql driver or ext-pgsql)
         return new ArrayPooledConnection(config: $this->config);
     }
 
     #[Override]
-    protected function validateConnection(PooledConnection $pooledConnection) : bool
+    protected function validateConnection(PooledConnection $pooledConnection): bool
     {
         return $pooledConnection->isValid();
     }

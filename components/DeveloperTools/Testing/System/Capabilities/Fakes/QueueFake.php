@@ -21,27 +21,27 @@ class QueueFake implements QueueDriverInterface
     /** @var array<string, list<array{job: string, data: array, delay: DateTimeInterface}>> */
     private array $pushedLater = [];
 
-    public function later(DateTimeInterface $delay, string $job, array $data = []) : string
+    public function later(DateTimeInterface $delay, string $job, array $data = []): string
     {
         if (! isset($this->pushedLater[$job])) {
             $this->pushedLater[$job] = [];
         }
 
         $this->pushedLater[$job][] = [
-            'job'   => $job,
-            'data'  => $data,
+            'job' => $job,
+            'data' => $data,
             'delay' => $delay,
         ];
 
-        return 'fake-later-' . uniqid('', true);
+        return 'fake-later-'.uniqid('', true);
     }
 
-    public function pop() : ?Job
+    public function pop(): ?Job
     {
         return null; // Never pop anything in fake
     }
 
-    public function size(string $queue = 'default') : int
+    public function size(string $queue = 'default'): int
     {
         return $this->pushedCountTotal();
     }
@@ -49,7 +49,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Get the total count of all pushed jobs.
      */
-    public function pushedCountTotal() : int
+    public function pushedCountTotal(): int
     {
         $total = 0;
         foreach ($this->pushed as $jobs) {
@@ -62,7 +62,7 @@ class QueueFake implements QueueDriverInterface
         return $total;
     }
 
-    public function bulk(array $jobs, string $queue = 'default') : void
+    public function bulk(array $jobs, string $queue = 'default'): void
     {
         foreach ($jobs as $job) {
             if (is_string($job)) {
@@ -73,31 +73,31 @@ class QueueFake implements QueueDriverInterface
         }
     }
 
-    public function push(string $job, array $data = []) : string
+    public function push(string $job, array $data = []): string
     {
         if (! isset($this->pushed[$job])) {
             $this->pushed[$job] = [];
         }
 
         $this->pushed[$job][] = [
-            'job'  => $job,
+            'job' => $job,
             'data' => $data,
         ];
 
         // Don't actually execute the job - just capture it
-        return 'fake-' . uniqid('', true);
+        return 'fake-'.uniqid('', true);
     }
 
-    public function flush() : void
+    public function flush(): void
     {
-        $this->pushed      = [];
+        $this->pushed = [];
         $this->pushedLater = [];
     }
 
     /**
      * Assert that a job was pushed.
      */
-    public function assertPushed(string $job) : void
+    public function assertPushed(string $job): void
     {
         Assert::assertTrue(
             $this->hasPushed($job),
@@ -108,7 +108,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Check if a job was pushed.
      */
-    public function hasPushed(string $job) : bool
+    public function hasPushed(string $job): bool
     {
         return isset($this->pushed[$job]) && ! empty($this->pushed[$job]);
     }
@@ -116,7 +116,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Assert that a job was not pushed.
      */
-    public function assertNotPushed(string $job) : void
+    public function assertNotPushed(string $job): void
     {
         Assert::assertFalse(
             $this->hasPushed($job),
@@ -127,7 +127,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Assert that a job was pushed N times.
      */
-    public function assertPushedTimes(string $job, int $times = 1) : void
+    public function assertPushedTimes(string $job, int $times = 1): void
     {
         $count = $this->pushedCount($job);
 
@@ -141,7 +141,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Get the count of times a job was pushed.
      */
-    public function pushedCount(string $job) : int
+    public function pushedCount(string $job): int
     {
         $total = count($this->pushed[$job] ?? []);
         $total += count($this->pushedLater[$job] ?? []);
@@ -152,7 +152,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Assert that a job was pushed with specific data.
      */
-    public function assertPushedWith(string $job, array $expectedData) : void
+    public function assertPushedWith(string $job, array $expectedData): void
     {
         Assert::assertTrue(
             $this->hasPushedWith($job, $expectedData),
@@ -163,7 +163,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Check if a job was pushed with specific data.
      */
-    public function hasPushedWith(string $job, array $expectedData) : bool
+    public function hasPushedWith(string $job, array $expectedData): bool
     {
         if (! $this->hasPushed($job)) {
             return false;
@@ -181,7 +181,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Assert that a job was pushed to a specific queue.
      */
-    public function assertPushedToQueue(string $job, string $queue) : void
+    public function assertPushedToQueue(string $job, string $queue): void
     {
         Assert::assertTrue(
             $this->hasPushed($job),
@@ -192,7 +192,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Assert that a job was pushed with a delay.
      */
-    public function assertPushedLater(string $job) : void
+    public function assertPushedLater(string $job): void
     {
         Assert::assertTrue(
             $this->hasPushedLater($job),
@@ -203,7 +203,7 @@ class QueueFake implements QueueDriverInterface
     /**
      * Check if a job was pushed with a delay.
      */
-    public function hasPushedLater(string $job) : bool
+    public function hasPushedLater(string $job): bool
     {
         return isset($this->pushedLater[$job]) && ! empty($this->pushedLater[$job]);
     }
@@ -213,7 +213,7 @@ class QueueFake implements QueueDriverInterface
      *
      * @return array<string, list<array{job: string, data: array}>>
      */
-    public function pushed() : array
+    public function pushed(): array
     {
         return $this->pushed;
     }

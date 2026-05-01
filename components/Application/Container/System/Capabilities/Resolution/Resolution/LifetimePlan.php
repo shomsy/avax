@@ -21,7 +21,7 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
 final readonly class LifetimePlan
 {
     public bool $poolResetBeforeReuse;
-    public int  $poolSize;
+    public int $poolSize;
     public bool $disposable;
     public bool $lazy;
     public bool $warm;
@@ -34,7 +34,7 @@ final readonly class LifetimePlan
         string $serviceId,
         string $name,
         string $storage,
-        string|null $scopeKind = null,
+        string $scopeKind = null,
         bool   $warm = null,
         bool   $lazy = null,
         bool   $disposable = null,

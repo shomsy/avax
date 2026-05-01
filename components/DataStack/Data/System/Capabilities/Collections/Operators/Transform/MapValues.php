@@ -13,7 +13,7 @@ final readonly class MapValues
         private array $items = [],
     ) {}
 
-    public function __invoke(callable $callback) : array
+    public function __invoke(callable $callback): array
     {
         return array_map(callback: $callback, array: $this->items);
     }

@@ -7,7 +7,7 @@ namespace Avax\Framework\System\Foundation\Result;
 final readonly class Result
 {
     private function __construct(
-        private mixed        $value,
+        private mixed $value,
         private Failure|null $failure,
     ) {}
 

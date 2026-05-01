@@ -16,17 +16,17 @@ final class CurrentAuthentication
         $this->context = AuthenticationContext::guest();
     }
 
-    public function store(AuthenticationContext $context) : void
+    public function store(AuthenticationContext $context): void
     {
         $this->context = $context;
     }
 
-    public function read() : AuthenticationContext
+    public function read(): AuthenticationContext
     {
         return $this->context;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->context = AuthenticationContext::guest();
     }

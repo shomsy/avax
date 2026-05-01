@@ -13,20 +13,20 @@ final readonly class AppendValue
         private array $items = [],
     ) {}
 
-    public function __invoke(mixed $value) : array
+    public function __invoke(mixed $value): array
     {
         return $this->append(value: $value);
     }
 
-    public function append(mixed $value) : array
+    public function append(mixed $value): array
     {
-        $items   = $this->items;
+        $items = $this->items;
         $items[] = $value;
 
         return $items;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

@@ -48,18 +48,18 @@ final class KernelContextTest extends TestCase
     public function test_resolved_with_throws_on_double_call() : void
     {
         $ctx = new KernelContext(serviceId: 'S');
-        $ctx->resolvedWith(instance: new stdClass);
+        $ctx->resolvedWith(instance: new stdClass());
 
         $this->expectException(exception: LogicException::class);
-        $ctx->resolvedWith(instance: new stdClass);
+        $ctx->resolvedWith(instance: new stdClass());
     }
 
     public function test_overwrite_with_replaces_instance_without_touching_metadata() : void
     {
         $ctx = new KernelContext(serviceId: 'S', metadata: ['a' => 1]);
-        $ctx->resolvedWith(instance: new stdClass);
+        $ctx->resolvedWith(instance: new stdClass());
 
-        $replacement = new stdClass;
+        $replacement = new stdClass();
         $ctx->overwriteWith(instance: $replacement);
 
         $this->assertSame(expected: $replacement, actual: $ctx->getInstance());

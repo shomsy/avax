@@ -18,7 +18,7 @@ use RuntimeException;
  */
 final class TestDatabaseConnection implements DatabaseConnection
 {
-    public array         $calls            = [];
+    public array $calls = [];
     public ?PDOException $pendingException = null;
 
     public function getConnection() : PDO
@@ -42,6 +42,7 @@ final class TestDatabaseConnection implements DatabaseConnection
         if ($this->pendingException !== null) {
             $ex                     = $this->pendingException;
             $this->pendingException = null;
+
             throw $ex;
         }
     }
@@ -233,9 +234,7 @@ final class TransactionManagerTest extends TestCase
     {
         $conn    = $this->createTestConnection();
         $manager = new TransactionManager($conn);
-        $result  = $manager->transaction(static function (TransactionManager $tm) {
-            return 'success';
-        });
+        $result = $manager->transaction(static fn (TransactionManager $tm) => 'success');
 
         $this->assertSame('success', $result);
         $this->assertFalse($manager->isActive());
@@ -251,7 +250,7 @@ final class TransactionManagerTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Test error');
 
-        $manager->transaction(static function () {
+        $manager->transaction(static function () : void {
             throw new RuntimeException('Test error');
         });
     }
@@ -261,7 +260,7 @@ final class TransactionManagerTest extends TestCase
         $conn    = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
-        $manager->transaction(static function (TransactionManager $tm) use ($manager) {
+        $manager->transaction(static function (TransactionManager $tm) use ($manager) : void {
             self::assertSame($manager, $tm);
             self::assertTrue($tm->isActive());
         });
@@ -271,9 +270,7 @@ final class TransactionManagerTest extends TestCase
     {
         $conn    = $this->createTestConnection();
         $manager = new TransactionManager($conn);
-        $manager->transaction(static function () {
-            return 'done';
-        }, IsolationLevel::REPEATABLE_READ);
+        $manager->transaction(static fn () => 'done', IsolationLevel::REPEATABLE_READ);
 
         $hasIsolation = array_reduce($conn->calls, static fn ($c, $call) => $c || str_contains((string) $call, 'REPEATABLE READ'), false);
         $this->assertTrue($hasIsolation);
@@ -284,10 +281,8 @@ final class TransactionManagerTest extends TestCase
         $conn    = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
-        $manager->transaction(static function (TransactionManager $tm) {
-            $tm->transaction(static function () {
-                return 'nested';
-            });
+        $manager->transaction(static function (TransactionManager $tm) : void {
+            $tm->transaction(static fn () => 'nested');
         });
 
         $this->assertFalse($manager->isActive());
@@ -308,7 +303,7 @@ final class TransactionManagerTest extends TestCase
             maxDelayMs : 0,
             multiplier : 1.0,
             retryOn    : [PDOException::class],
-            errorCodes : ['40001']
+            errorCodes : ['40001'],
         );
 
         $result = $manager->transactionWithRetry(
@@ -321,7 +316,7 @@ final class TransactionManagerTest extends TestCase
                 return 'retried_success';
             },
             null,
-            $policy
+            $policy,
         );
 
         $this->assertSame('retried_success', $result);
@@ -339,17 +334,17 @@ final class TransactionManagerTest extends TestCase
             maxDelayMs : 0,
             multiplier : 1.0,
             retryOn    : [PDOException::class],
-            errorCodes : ['40001']
+            errorCodes : ['40001'],
         );
 
         $this->expectException(PDOException::class);
 
         $manager->transactionWithRetry(
-            static function () {
+            static function () : void {
                 throw new PDOException(message: 'Deadlock found', code: 40001);
             },
             null,
-            $policy
+            $policy,
         );
     }
 
@@ -358,9 +353,7 @@ final class TransactionManagerTest extends TestCase
         $conn    = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
-        $result = $manager->transactionWithRetry(static function () {
-            return 'default_policy';
-        });
+        $result = $manager->transactionWithRetry(static fn () => 'default_policy');
 
         $this->assertSame('default_policy', $result);
     }
@@ -376,18 +369,18 @@ final class TransactionManagerTest extends TestCase
             maxDelayMs : 0,
             multiplier : 1.0,
             retryOn    : [PDOException::class],
-            errorCodes : ['40001']
+            errorCodes : ['40001'],
         );
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Non-retriable error');
 
         $manager->transactionWithRetry(
-            static function () {
+            static function () : void {
                 throw new RuntimeException('Non-retriable error');
             },
             null,
-            $policy
+            $policy,
         );
     }
 
@@ -399,7 +392,7 @@ final class TransactionManagerTest extends TestCase
         $manager  = new TransactionManager($conn);
         $executed = false;
 
-        $manager->afterCommit(static function () use (&$executed) {
+        $manager->afterCommit(static function () use (&$executed) : void {
             $executed = true;
         });
 
@@ -415,7 +408,7 @@ final class TransactionManagerTest extends TestCase
         $manager  = new TransactionManager($conn);
         $executed = false;
 
-        $manager->afterCommit(static function () use (&$executed) {
+        $manager->afterCommit(static function () use (&$executed) : void {
             $executed = true;
         });
 
@@ -431,7 +424,7 @@ final class TransactionManagerTest extends TestCase
         $manager  = new TransactionManager($conn);
         $executed = false;
 
-        $manager->afterRollback(static function () use (&$executed) {
+        $manager->afterRollback(static function () use (&$executed) : void {
             $executed = true;
         });
 
@@ -447,7 +440,7 @@ final class TransactionManagerTest extends TestCase
         $manager  = new TransactionManager($conn);
         $executed = false;
 
-        $manager->afterRollback(static function () use (&$executed) {
+        $manager->afterRollback(static function () use (&$executed) : void {
             $executed = true;
         });
 
@@ -463,10 +456,10 @@ final class TransactionManagerTest extends TestCase
         $manager = new TransactionManager($conn);
         $results = [];
 
-        $manager->afterCommit(static function () use (&$results) {
+        $manager->afterCommit(static function () use (&$results) : void {
             $results[] = 'first';
         });
-        $manager->afterCommit(static function () use (&$results) {
+        $manager->afterCommit(static function () use (&$results) : void {
             $results[] = 'second';
         });
 
@@ -482,7 +475,7 @@ final class TransactionManagerTest extends TestCase
         $manager = new TransactionManager($conn);
         $count   = 0;
 
-        $manager->afterCommit(static function () use (&$count) {
+        $manager->afterCommit(static function () use (&$count) : void {
             $count++;
         });
 
@@ -501,19 +494,19 @@ final class TransactionManagerTest extends TestCase
     {
         $this->assertSame(
             'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED',
-            IsolationLevel::READ_UNCOMMITTED->toSql()
+            IsolationLevel::READ_UNCOMMITTED->toSql(),
         );
         $this->assertSame(
             'SET TRANSACTION ISOLATION LEVEL READ COMMITTED',
-            IsolationLevel::READ_COMMITTED->toSql()
+            IsolationLevel::READ_COMMITTED->toSql(),
         );
         $this->assertSame(
             'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ',
-            IsolationLevel::REPEATABLE_READ->toSql()
+            IsolationLevel::REPEATABLE_READ->toSql(),
         );
         $this->assertSame(
             'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE',
-            IsolationLevel::SERIALIZABLE->toSql()
+            IsolationLevel::SERIALIZABLE->toSql(),
         );
     }
 
@@ -521,11 +514,11 @@ final class TransactionManagerTest extends TestCase
     {
         $this->assertSame(
             'SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED',
-            IsolationLevel::READ_UNCOMMITTED->toSql('mysql')
+            IsolationLevel::READ_UNCOMMITTED->toSql('mysql'),
         );
         $this->assertSame(
             'SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE',
-            IsolationLevel::SERIALIZABLE->toSql('mysql')
+            IsolationLevel::SERIALIZABLE->toSql('mysql'),
         );
     }
 
@@ -533,11 +526,11 @@ final class TransactionManagerTest extends TestCase
     {
         $this->assertSame(
             'SET TRANSACTION ISOLATION LEVEL READ COMMITTED',
-            IsolationLevel::READ_COMMITTED->toSql('postgresql')
+            IsolationLevel::READ_COMMITTED->toSql('postgresql'),
         );
         $this->assertSame(
             'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE',
-            IsolationLevel::SERIALIZABLE->toSql('postgresql')
+            IsolationLevel::SERIALIZABLE->toSql('postgresql'),
         );
     }
 
@@ -545,11 +538,11 @@ final class TransactionManagerTest extends TestCase
     {
         $this->assertSame(
             'PRAGMA read_uncommitted = true',
-            IsolationLevel::READ_UNCOMMITTED->toSql('sqlite')
+            IsolationLevel::READ_UNCOMMITTED->toSql('sqlite'),
         );
         $this->assertSame(
             '',
-            IsolationLevel::SERIALIZABLE->toSql('sqlite')
+            IsolationLevel::SERIALIZABLE->toSql('sqlite'),
         );
     }
 
@@ -557,7 +550,7 @@ final class TransactionManagerTest extends TestCase
     {
         $this->assertSame(
             'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ',
-            IsolationLevel::REPEATABLE_READ->toSql('sqlserver')
+            IsolationLevel::REPEATABLE_READ->toSql('sqlserver'),
         );
     }
 
@@ -668,7 +661,7 @@ final class TransactionManagerTest extends TestCase
             maxAttempts: 5,
             baseDelayMs: 100,
             maxDelayMs : 5000,
-            multiplier : 2.0
+            multiplier : 2.0,
         );
 
         $this->assertSame(100, $policy->getDelayMs(0));
@@ -683,7 +676,7 @@ final class TransactionManagerTest extends TestCase
             maxAttempts: 10,
             baseDelayMs: 100,
             maxDelayMs : 500,
-            multiplier : 3.0
+            multiplier : 3.0,
         );
 
         $this->assertSame(500, $policy->getDelayMs(3));
@@ -714,8 +707,8 @@ final class TransactionManagerTest extends TestCase
         $conn    = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
-        $manager->afterCommit(static function () {});
-        $manager->afterRollback(static function () {});
+        $manager->afterCommit(static function () : void {});
+        $manager->afterRollback(static function () : void {});
         $manager->begin();
         $manager->begin();
 
@@ -732,12 +725,12 @@ final class TransactionManagerTest extends TestCase
         $manager          = new TransactionManager($conn);
         $callbackExecuted = false;
 
-        $manager->afterCommit(static function () use (&$callbackExecuted) {
+        $manager->afterCommit(static function () use (&$callbackExecuted) : void {
             $callbackExecuted = true;
         });
 
         try {
-            $manager->transaction(static function () {
+            $manager->transaction(static function () : void {
                 throw new RuntimeException('Test');
             });
         } catch (RuntimeException) {

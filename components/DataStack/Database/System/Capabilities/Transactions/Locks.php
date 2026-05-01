@@ -10,7 +10,7 @@ final class Locks
 {
     public function __construct(private readonly DatabaseConnection $connection) {}
 
-    public function namedLock(string $name, int $timeoutSeconds = 10) : bool
+    public function namedLock(string $name, int $timeoutSeconds = 10): bool
     {
         $statement = $this->connection->getConnection()->prepare(query: 'SELECT GET_LOCK(?, ?)');
         $statement->execute(params: [$name, $timeoutSeconds]);
@@ -18,7 +18,7 @@ final class Locks
         return (bool) $statement->fetchColumn();
     }
 
-    public function releaseNamedLock(string $name) : bool
+    public function releaseNamedLock(string $name): bool
     {
         $statement = $this->connection->getConnection()->prepare(query: 'SELECT RELEASE_LOCK(?)');
         $statement->execute(params: [$name]);

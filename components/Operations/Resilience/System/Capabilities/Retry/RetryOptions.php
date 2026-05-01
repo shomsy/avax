@@ -7,8 +7,8 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\Retry;
 final readonly class RetryOptions
 {
     public function __construct(
-        public int      $attempts,
-        public int      $backoffMs,
+        public int $attempts,
+        public int $backoffMs,
         public int|null $timeoutMs = null,
     ) {}
 

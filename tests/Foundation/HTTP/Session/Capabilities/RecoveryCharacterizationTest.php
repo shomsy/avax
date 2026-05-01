@@ -15,25 +15,45 @@ final class RecoveryCharacterizationTest extends TestCase
     public function test_backup_restore_and_transaction_commit_and_rollback() : void
     {
         // Fake in-memory store implementing StoreInterface
-        $store = new class implements StoreInterface {
+        $store = new class () implements StoreInterface {
             private array $data = [];
 
-            public function get(string $key, mixed $default = null) : mixed { return $this->data[$key] ?? $default; }
+            public function get(string $key, mixed $default = null) : mixed
+            {
+                return $this->data[$key] ?? $default;
+            }
 
-            public function put(string $key, mixed $value, int|null $ttl = null) : void { $this->data[$key] = $value; }
+            public function put(string $key, mixed $value, int $ttl = null) : void
+            {
+                $this->data[$key] = $value;
+            }
 
-            public function has(string $key) : bool { return array_key_exists($key, $this->data); }
+            public function has(string $key) : bool
+            {
+                return array_key_exists($key, $this->data);
+            }
 
-            public function delete(string $key) : void { unset($this->data[$key]); }
+            public function delete(string $key) : void
+            {
+                unset($this->data[$key]);
+            }
 
-            public function all() : array { return $this->data; }
+            public function all() : array
+            {
+                return $this->data;
+            }
 
-            public function flush() : void { $this->data = []; }
+            public function flush() : void
+            {
+                $this->data = [];
+            }
 
             public function flushNamespace(string $prefix) : void
             {
                 foreach (array_keys($this->data) as $k) {
-                    if (str_starts_with($k, $prefix)) unset($this->data[$k]);
+                    if (str_starts_with($k, $prefix)) {
+                        unset($this->data[$k]);
+                    }
                 }
             }
         };
@@ -60,9 +80,11 @@ final class RecoveryCharacterizationTest extends TestCase
 
         // transaction rollback
         $store->put(key: 'y', value: 'origY');
+
         try {
-            $recovery->transaction(operation: static function () use ($store) {
+            $recovery->transaction(operation: static function () use ($store) : void {
                 $store->put(key: 'y', value: 'inTx');
+
                 throw new RuntimeException(message: 'boom');
             });
             $this->fail('Expected RecoveryException');
@@ -74,25 +96,45 @@ final class RecoveryCharacterizationTest extends TestCase
 
     public function test_export_and_import_and_invalid_import() : void
     {
-        $store = new class implements StoreInterface {
+        $store = new class () implements StoreInterface {
             private array $data = [];
 
-            public function get(string $key, mixed $default = null) : mixed { return $this->data[$key] ?? $default; }
+            public function get(string $key, mixed $default = null) : mixed
+            {
+                return $this->data[$key] ?? $default;
+            }
 
-            public function put(string $key, mixed $value, int|null $ttl = null) : void { $this->data[$key] = $value; }
+            public function put(string $key, mixed $value, int $ttl = null) : void
+            {
+                $this->data[$key] = $value;
+            }
 
-            public function has(string $key) : bool { return array_key_exists($key, $this->data); }
+            public function has(string $key) : bool
+            {
+                return array_key_exists($key, $this->data);
+            }
 
-            public function delete(string $key) : void { unset($this->data[$key]); }
+            public function delete(string $key) : void
+            {
+                unset($this->data[$key]);
+            }
 
-            public function all() : array { return $this->data; }
+            public function all() : array
+            {
+                return $this->data;
+            }
 
-            public function flush() : void { $this->data = []; }
+            public function flush() : void
+            {
+                $this->data = [];
+            }
 
             public function flushNamespace(string $prefix) : void
             {
                 foreach (array_keys($this->data) as $k) {
-                    if (str_starts_with($k, $prefix)) unset($this->data[$k]);
+                    if (str_starts_with($k, $prefix)) {
+                        unset($this->data[$k]);
+                    }
                 }
             }
         };

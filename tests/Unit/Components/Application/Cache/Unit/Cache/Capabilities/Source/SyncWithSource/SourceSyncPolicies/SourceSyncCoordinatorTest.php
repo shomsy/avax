@@ -19,16 +19,16 @@ use PHPUnit\Framework\TestCase;
 
 final class SourceSyncCoordinatorTest extends TestCase
 {
-    private FrozenClock        $clock;
+    private FrozenClock     $clock;
     private InMemoryCacheStore $cache;
-    private TestCacheSource    $source;
+    private TestCacheSource $source;
 
     public function test_write_through_invalidates_cache_after_source_write() : void
     {
         $coordinator = new SourceSyncCoordinator(
             source: $this->source,
             cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_THROUGH
+            policy: SourceSyncPolicy::WRITE_THROUGH,
         );
 
         $this->cache->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
@@ -50,7 +50,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $lifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
-            clock    : $this->clock
+            clock    : $this->clock,
         );
 
         return new StoredCacheRecord(value: $value, lifecycle: $lifecycle);
@@ -61,7 +61,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $coordinator = new SourceSyncCoordinator(
             source: $this->source,
             cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_AROUND
+            policy: SourceSyncPolicy::WRITE_AROUND,
         );
 
         $this->cache->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
@@ -77,7 +77,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $coordinator = new SourceSyncCoordinator(
             source: $this->source,
             cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_THROUGH
+            policy: SourceSyncPolicy::WRITE_THROUGH,
         );
 
         $this->source->set(key: 'key_1', value: 'value');
@@ -94,7 +94,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $coordinator = new SourceSyncCoordinator(
             source: $this->source,
             cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_AROUND
+            policy: SourceSyncPolicy::WRITE_AROUND,
         );
 
         $this->source->set(key: 'key_1', value: 'value');
@@ -111,7 +111,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $coordinator = new SourceSyncCoordinator(
             source: $this->source,
             cache : $this->cache,
-            policy: SourceSyncPolicy::CACHE_ASIDE
+            policy: SourceSyncPolicy::CACHE_ASIDE,
         );
 
         $this->assertTrue(condition: $coordinator->shouldPopulateCacheOnMiss());
@@ -119,7 +119,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $coordinator = new SourceSyncCoordinator(
             source: $this->source,
             cache : $this->cache,
-            policy: SourceSyncPolicy::WRITE_AROUND
+            policy: SourceSyncPolicy::WRITE_AROUND,
         );
 
         $this->assertFalse(condition: $coordinator->shouldPopulateCacheOnMiss());

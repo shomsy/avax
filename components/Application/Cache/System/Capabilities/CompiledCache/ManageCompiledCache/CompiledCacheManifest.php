@@ -12,7 +12,7 @@ final class CompiledCacheManifest
     private array $entries = [];
 
     public function __construct(
-        CompiledCacheManifestEntry|null $entry = null,
+        CompiledCacheManifestEntry $entry = null,
     )
     {
         if ($entry instanceof CompiledCacheManifestEntry) {

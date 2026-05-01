@@ -54,11 +54,11 @@ final readonly class Duration implements Stringable
         return new self(seconds: $seconds, nanoseconds: $nanos);
     }
 
-    public static function fromDateInterval(DateInterval $interval) : self
+    public static function fromDateInterval(DateInterval $dateInterval) : self
     {
-        $days    = $interval->days === false ? $interval->d : $interval->days;
-        $seconds = $interval->s + ($interval->i * 60) + ($interval->h * 3600) + ($days * 86400);
-        $nanos   = (int) round($interval->f * self::NANOSECONDS_PER_SECOND);
+        $days    = $dateInterval->days === false ? $dateInterval->d : $dateInterval->days;
+        $seconds = $dateInterval->s + ($dateInterval->i * 60) + ($dateInterval->h * 3600) + ($days * 86400);
+        $nanos   = (int) round($dateInterval->f * self::NANOSECONDS_PER_SECOND);
 
         return new self(seconds: $seconds, nanoseconds: $nanos);
     }

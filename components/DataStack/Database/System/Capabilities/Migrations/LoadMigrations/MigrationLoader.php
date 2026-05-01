@@ -71,9 +71,11 @@ final class MigrationLoader
             if ($fileInfo->isDot()) {
                 continue;
             }
+
             if (! $fileInfo->isFile()) {
                 continue;
             }
+
             if ($fileInfo->getExtension() === 'php') {
                 $files[] = $fileInfo->getPathname();
             }

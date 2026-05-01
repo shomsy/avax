@@ -75,9 +75,9 @@ $expectedMethods = [
     'why',
 ];
 
-foreach ($expectedMethods as $method) {
-    assertTrue(condition: method_exists(object_or_class: ContainerInterface::class, method: $method), message: sprintf('ContainerInterface should expose [%s].', $method));
-    assertTrue(condition: method_exists(object_or_class: Container::class, method: $method), message: sprintf('Container should implement [%s].', $method));
+foreach ($expectedMethods as $expectedMethod) {
+    assertTrue(condition: method_exists(object_or_class: ContainerInterface::class, method: $expectedMethod), message: sprintf('ContainerInterface should expose [%s].', $expectedMethod));
+    assertTrue(condition: method_exists(object_or_class: Container::class, method: $expectedMethod), message: sprintf('Container should implement [%s].', $expectedMethod));
 }
 
 $forbiddenLegacyMethods = [

@@ -22,7 +22,7 @@ if (! function_exists('appInstance')) {
     {
         static $container = null;
 
-        if ($instance !== null) {
+        if ($instance instanceof DIContainerInterface) {
             $container = $instance;
             ContainerFacade::setContainer($instance);
             Container::setContainer($instance);
@@ -36,9 +36,7 @@ if (! function_exists('app')) {
     /**
      * Get the container or resolve a service.
      *
-     * @param string|null $abstract
      *
-     * @return mixed
      */
     function app(string|null $abstract = null) : mixed
     {
@@ -56,10 +54,7 @@ if (! function_exists('make')) {
     /**
      * Build a service from the container.
      *
-     * @param string $abstract
-     * @param array  $parameters
      *
-     * @return object
      */
     function make(string $abstract, array $parameters = []) : object
     {
@@ -71,9 +66,7 @@ if (! function_exists('bind')) {
     /**
      * Bind a service to the container.
      *
-     * @param string     $abstract
      * @param mixed|null $concrete
-     * @param bool       $shared
      */
     function bind(string $abstract, mixed $concrete = null, bool $shared = false) : void
     {
@@ -85,7 +78,6 @@ if (! function_exists('singleton')) {
     /**
      * Register a singleton in the container.
      *
-     * @param string     $abstract
      * @param mixed|null $concrete
      */
     function singleton(string $abstract, mixed $concrete = null) : void
@@ -98,10 +90,7 @@ if (! function_exists('resolve')) {
     /**
      * Resolve a service from the container.
      *
-     * @param string $abstract
-     * @param array  $parameters
      *
-     * @return object
      */
     function resolve(string $abstract, array $parameters = []) : object
     {

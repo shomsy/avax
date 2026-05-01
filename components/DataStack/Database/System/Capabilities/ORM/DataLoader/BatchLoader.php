@@ -13,9 +13,9 @@ final class BatchLoader
 
     private array $cache = [];
 
-    public function register(string $name, LoaderCallback $callback) : self
+    public function register(string $name, LoaderCallback $loaderCallback) : self
     {
-        $this->loaders[$name] = $callback;
+        $this->loaders[$name] = $loaderCallback;
 
         return $this;
     }
@@ -34,7 +34,7 @@ final class BatchLoader
         $callback = $this->loaders[$name] ?? null;
 
         if ($callback === null) {
-            throw new RuntimeException(message: "No loader registered for: {$name}");
+            throw new RuntimeException(message: 'No loader registered for: ' . $name);
         }
 
         $results                = $callback($keys);

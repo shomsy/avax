@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\Foundation\CacheStoreInterface;
 
 final class TaggedCache
 {
-    private string $tagKey;
+    private readonly string $tagKey;
 
     /** @var array<string, true> */
     private array $trackedKeys = [];
@@ -17,7 +17,7 @@ final class TaggedCache
      * @param array<string> $tags
      */
     public function __construct(
-        private CacheStoreInterface $store,
+        private readonly CacheStoreInterface $cacheStore,
         array                       $tags,
     )
     {
@@ -27,18 +27,18 @@ final class TaggedCache
 
     public function get(string $key) : mixed
     {
-        return $this->store->get($this->scopedKey(key: $key));
+        return $this->cacheStore->get($this->scopedKey(key: $key));
     }
 
     public function set(string $key, mixed $value, int $ttl = 0) : bool
     {
         $this->trackedKeys[$key] = true;
 
-        if ($this->store instanceof RedisCacheStore) {
-            $this->store->getRedis()->sAdd($this->tagKey, $key);
+        if ($this->cacheStore instanceof RedisCacheStore) {
+            $this->cacheStore->getRedis()->sAdd($this->tagKey, $key);
         }
 
-        return $this->store->set($this->scopedKey(key: $key), $value, $ttl);
+        return $this->cacheStore->set($this->scopedKey(key: $key), $value, $ttl);
     }
 
     private function scopedKey(string $key) : string
@@ -50,8 +50,8 @@ final class TaggedCache
     {
         $keys = array_keys($this->trackedKeys);
 
-        if ($this->store instanceof RedisCacheStore) {
-            $redisKeys = $this->store->getRedis()->sMembers($this->tagKey);
+        if ($this->cacheStore instanceof RedisCacheStore) {
+            $redisKeys = $this->cacheStore->getRedis()->sMembers($this->tagKey);
 
             if (is_array($redisKeys)) {
                 $keys = array_values(array_unique(array_merge($keys, array_map('strval', $redisKeys))));
@@ -59,13 +59,13 @@ final class TaggedCache
         }
 
         foreach ($keys as $key) {
-            $this->store->forget($this->scopedKey(key: $key));
+            $this->cacheStore->forget($this->scopedKey(key: $key));
         }
 
         $this->trackedKeys = [];
 
-        if ($this->store instanceof RedisCacheStore) {
-            $deleted = $this->store->getRedis()->del($this->tagKey);
+        if ($this->cacheStore instanceof RedisCacheStore) {
+            $deleted = $this->cacheStore->getRedis()->del($this->tagKey);
 
             return is_int($deleted) && $deleted > 0;
         }

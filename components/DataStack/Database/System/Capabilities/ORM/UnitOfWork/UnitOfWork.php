@@ -24,14 +24,14 @@ final class UnitOfWork
     private array $removed = [];
 
     public function __construct(
-        private readonly AttributeMetadataReader $metadata,
-        private readonly EntityPersister $persister,
+        private readonly AttributeMetadataReader $attributeMetadataReader,
+        private readonly EntityPersister         $entityPersister,
         private readonly IdentityMap     $identityMap,
     ) {}
 
     public function persist(object $entity) : void
     {
-        $metadata        = $this->metadata->for(entityClass: $entity::class);
+        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier      = $metadata->identifierField();
         $objectId        = spl_object_id(object: $entity);
         $identifierValue = $identifier === null ? null : $this->readProperty(entity: $entity, property: $identifier->property);
@@ -52,10 +52,10 @@ final class UnitOfWork
      */
     private function readProperty(object $entity, string $property) : mixed
     {
-        $reflection = new ReflectionProperty(class: $entity, property: $property);
-        $reflection->setAccessible(accessible: true);
+        $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
+        $reflectionProperty->setAccessible(accessible: true);
 
-        return $reflection->getValue(object: $entity);
+        return $reflectionProperty->getValue(object: $entity);
     }
 
     /**
@@ -64,10 +64,10 @@ final class UnitOfWork
     public function flush(string|null $connectionName = null) : void
     {
         foreach ($this->new as $objectId => $entity) {
-            $this->persister->insert(entity: $entity, connectionName: $connectionName);
+            $this->entityPersister->insert(entity: $entity, connectionName: $connectionName);
             unset($this->new[$objectId]);
 
-            $metadata   = $this->metadata->for(entityClass: $entity::class);
+            $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
             $identifier = $metadata->identifierField();
             if ($identifier === null) {
                 throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
@@ -80,16 +80,16 @@ final class UnitOfWork
         }
 
         foreach ($this->dirty as $objectId => $entity) {
-            $this->persister->update(entity: $entity, connectionName: $connectionName);
+            $this->entityPersister->update(entity: $entity, connectionName: $connectionName);
             unset($this->dirty[$objectId]);
         }
 
         foreach ($this->removed as $objectId => $entity) {
-            $metadata        = $this->metadata->for(entityClass: $entity::class);
+            $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
             $identifier      = $metadata->identifierField();
             $identifierValue = $identifier === null ? null : $this->readProperty(entity: $entity, property: $identifier->property);
 
-            $this->persister->delete(entity: $entity, connectionName: $connectionName);
+            $this->entityPersister->delete(entity: $entity, connectionName: $connectionName);
             unset($this->removed[$objectId]);
 
             if ($identifierValue !== null) {

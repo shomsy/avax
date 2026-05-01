@@ -31,10 +31,10 @@ final class CompiledCacheIntegrationTest extends TestCase
 
         $compiledCacheSources = CompiledCacheSources::empty();
 
-        $artifact = $this->compiledCacheContract->compile(name: $name, build: $builder, sources: $compiledCacheSources);
+        $compiledCacheArtifact = $this->compiledCacheContract->compile(name: $name, build: $builder, sources: $compiledCacheSources);
 
-        $this->assertSame(expected: 'routes', actual: $artifact->name->toString());
-        $this->assertFileExists(filename: $artifact->path->toString());
+        $this->assertSame(expected: 'routes', actual: $compiledCacheArtifact->name->toString());
+        $this->assertFileExists(filename: $compiledCacheArtifact->path->toString());
 
         $value = $this->compiledCacheContract->read(name: $name, build: $builder, sources: $compiledCacheSources);
 
@@ -43,7 +43,7 @@ final class CompiledCacheIntegrationTest extends TestCase
 
         $this->compiledCacheContract->clear(name: $name);
 
-        $this->assertFileDoesNotExist(filename: $artifact->path->toString());
+        $this->assertFileDoesNotExist(filename: $compiledCacheArtifact->path->toString());
     }
 
     public function test_it_rebuilds_when_source_file_changes() : void

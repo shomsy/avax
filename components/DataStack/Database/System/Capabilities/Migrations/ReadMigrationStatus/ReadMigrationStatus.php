@@ -33,7 +33,7 @@ final readonly class ReadMigrationStatus
         $ranMap = array_column(array: $ran, column_key: 'checksum', index_key: 'migration');
         $rows   = [];
 
-        foreach ($all as $name => $migration) {
+        foreach (array_keys($all) as $name) {
             $isRan     = isset($ranMap[$name]);
             $integrity = '---';
 

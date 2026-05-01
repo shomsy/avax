@@ -15,15 +15,15 @@ final readonly class CompiledCacheArtifact
     public Timestamp $timestamp;
 
     public function __construct(
-        public CompiledCacheName $name,
-        public CompiledCachePath $path,
-        public Timestamp         $createdAt,
+        public CompiledCacheName $compiledCacheName,
+        public CompiledCachePath $compiledCachePath,
+        public Timestamp         $timestamp,
         public string            $sourceFingerprint,
         public mixed             $payload = null,
     ) {
-        $this->compiledCacheName = $name;
-        $this->compiledCachePath = $path;
-        $this->timestamp         = $createdAt;
+        $this->compiledCacheName = $compiledCacheName;
+        $this->compiledCachePath = $compiledCachePath;
+        $this->timestamp         = $timestamp;
     }
 
     public static function create(
@@ -45,8 +45,8 @@ final readonly class CompiledCacheArtifact
     {
         return sprintf(
             'CompiledCacheArtifact(%s, %s)',
-            $this->name->toString(),
-            $this->path->toString(),
+            $this->compiledCacheName->toString(),
+            $this->compiledCachePath->toString(),
         );
     }
 }

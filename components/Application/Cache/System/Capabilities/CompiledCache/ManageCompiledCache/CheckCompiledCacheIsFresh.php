@@ -10,38 +10,29 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 final readonly class CheckCompiledCacheIsFresh
 {
-    private CompiledCacheDirectory $compiledCacheDirectory;
-
-    private CompiledCacheManifest $compiledCacheManifest;
-
-    public function __construct(
-        CompiledCacheDirectory $directory,
-        CompiledCacheManifest  $manifest,
-    )
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest)
     {
-        $this->compiledCacheDirectory = $directory;
-        $this->compiledCacheManifest  = $manifest;
     }
 
-    public function requiresRebuild(CompiledCacheName $name, CompiledCacheSources $sources) : bool
+    public function requiresRebuild(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources) : bool
     {
-        return $this->check(name: $name, sources: $sources) !== CompiledCacheFreshness::FRESH;
+        return $this->check(name: $compiledCacheName, sources: $compiledCacheSources) !== CompiledCacheFreshness::FRESH;
     }
 
-    public function check(CompiledCacheName $name, CompiledCacheSources $sources) : CompiledCacheFreshness
+    public function check(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources) : CompiledCacheFreshness
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $name);
+        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
         if (! file_exists($compiledCachePath->toString())) {
             return CompiledCacheFreshness::MISSING;
         }
 
-        if (! $this->compiledCacheManifest->has(name: $name->toString())) {
+        if (! $this->compiledCacheManifest->has(name: $compiledCacheName->toString())) {
             return CompiledCacheFreshness::STALE;
         }
 
-        if (! $this->compiledCacheManifest->isFresh(name: $name->toString(), sources: $sources)) {
+        if (! $this->compiledCacheManifest->isFresh(name: $compiledCacheName->toString(), sources: $compiledCacheSources)) {
             return CompiledCacheFreshness::STALE;
         }
 

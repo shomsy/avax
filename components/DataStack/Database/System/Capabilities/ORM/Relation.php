@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM;
 
+use Override;
+
 abstract class Relation
 {
     public function __construct(
@@ -18,6 +20,7 @@ abstract class Relation
 
 final class HasMany extends Relation
 {
+    #[Override]
     public function getResults() : array
     {
         // Placeholder for ORM logic

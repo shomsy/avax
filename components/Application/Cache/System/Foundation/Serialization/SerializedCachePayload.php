@@ -14,16 +14,8 @@ use Stringable;
 
 final readonly class SerializedCachePayload implements Stringable
 {
-    public Timestamp $timestamp;
-
-    public function __construct(
-        public string      $data,
-        public string      $format,
-        Timestamp $createdAt,
-        public string|null $checksum = null,
-    )
+    public function __construct(public string $data, public string $format, public Timestamp $timestamp, public string|null $checksum = null)
     {
-        $this->timestamp = $createdAt;
     }
 
     public static function create(string $data, string $format, Clock|null $clock = null) : self
@@ -51,9 +43,9 @@ final readonly class SerializedCachePayload implements Stringable
     public function isOlderThan(DateInterval $dateInterval) : bool
     {
         $now    = Timestamp::now();
-        $maxAge = $this->timestamp->add(duration: Duration::fromDateInterval(interval: $dateInterval));
+        $timestamp = $this->timestamp->add(duration: Duration::fromDateInterval(interval: $dateInterval));
 
-        return $now->isAfter(other: $maxAge);
+        return $now->isAfter(other: $timestamp);
     }
 
     #[Override]

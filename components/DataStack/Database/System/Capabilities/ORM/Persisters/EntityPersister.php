@@ -17,7 +17,7 @@ final readonly class EntityPersister
 {
     public function __construct(
         private Query    $query,
-        private AttributeMetadataReader $metadata,
+        private AttributeMetadataReader $attributeMetadataReader,
         private Hydrator $hydrator,
     ) {}
 
@@ -26,7 +26,7 @@ final readonly class EntityPersister
      */
     public function insert(object $entity, string|null $connectionName = null) : void
     {
-        $metadata   = $this->metadata->for(entityClass: $entity::class);
+        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $metadata->identifierField();
         $payload    = $this->payload(entity: $entity, metadata: $metadata, includeIdentifier: false);
 
@@ -41,11 +41,11 @@ final readonly class EntityPersister
     /**
      * @return array<string, mixed>
      */
-    private function payload(object $entity, EntityMetadata $metadata, bool $includeIdentifier) : array
+    private function payload(object $entity, EntityMetadata $entityMetadata, bool $includeIdentifier) : array
     {
         $payload = [];
 
-        foreach ($metadata->fields as $field) {
+        foreach ($entityMetadata->fields as $field) {
             if (! $includeIdentifier && ($field->id || $field->generated)) {
                 continue;
             }
@@ -61,10 +61,10 @@ final readonly class EntityPersister
      */
     private function propertyValue(object $entity, string $property) : mixed
     {
-        $reflection = new ReflectionProperty(class: $entity, property: $property);
-        $reflection->setAccessible(accessible: true);
+        $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
+        $reflectionProperty->setAccessible(accessible: true);
 
-        return $reflection->getValue(object: $entity);
+        return $reflectionProperty->getValue(object: $entity);
     }
 
     /**
@@ -72,9 +72,9 @@ final readonly class EntityPersister
      */
     private function setPropertyValue(object $entity, string $property, mixed $value) : void
     {
-        $reflection = new ReflectionProperty(class: $entity, property: $property);
-        $reflection->setAccessible(accessible: true);
-        $reflection->setValue(objectOrValue: $entity, value: $value);
+        $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
+        $reflectionProperty->setAccessible(accessible: true);
+        $reflectionProperty->setValue(objectOrValue: $entity, value: $value);
     }
 
     /**
@@ -82,7 +82,7 @@ final readonly class EntityPersister
      */
     public function update(object $entity, string|null $connectionName = null) : void
     {
-        $metadata   = $this->metadata->for(entityClass: $entity::class);
+        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $metadata->identifierField();
 
         if ($identifier === null) {
@@ -107,7 +107,7 @@ final readonly class EntityPersister
      */
     public function delete(object $entity, string|null $connectionName = null) : void
     {
-        $metadata   = $this->metadata->for(entityClass: $entity::class);
+        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $metadata->identifierField();
 
         if ($identifier === null) {
@@ -130,7 +130,7 @@ final readonly class EntityPersister
      */
     public function refresh(object $entity, string|null $connectionName = null) : object
     {
-        $metadata   = $this->metadata->for(entityClass: $entity::class);
+        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $metadata->identifierField();
 
         if ($identifier === null) {
@@ -165,7 +165,7 @@ final readonly class EntityPersister
      */
     public function find(string $entityClass, mixed $id, string|null $connectionName = null) : object|null
     {
-        $metadata   = $this->metadata->for(entityClass: $entityClass);
+        $metadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
         $identifier = $metadata->identifierField();
 
         if ($identifier === null) {
@@ -210,12 +210,12 @@ final readonly class EntityPersister
         array  $criteria,
         string|null $orderBy = null,
         string|null $direction = null,
-        int    $limit = null,
-        int    $offset = null,
+        ?int $limit = null,
+        ?int $offset = null,
         string|null $connectionName = null,
     ) : array
     {
-        $metadata = $this->metadata->for(entityClass: $entityClass);
+        $metadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
         $query    = $this->query->builder(connectionName: $connectionName)->from(table: $metadata->table);
 
         foreach ($criteria as $column => $value) {

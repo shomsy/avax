@@ -13,6 +13,7 @@ final class ResolutionTimeline
 {
     /** @var list<array{time: float, action: string, serviceId: string, outcome: string}> */
     private array $entries = [];
+
     private readonly Clock $clock;
 
     public function __construct(

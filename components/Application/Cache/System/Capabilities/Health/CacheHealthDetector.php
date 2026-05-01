@@ -224,7 +224,7 @@ final class CacheHealthDetector
      * Note: This requires the cache store to support memory stats.
      * For stores that don't support it, returns a status with 0 memory usage.
      */
-    public function checkMemory(CacheStore|null $cacheStore = null) : CacheHealthStatus
+    public function checkMemory() : CacheHealthStatus
     {
         $now = $this->clock->now();
         try {
@@ -291,7 +291,7 @@ final class CacheHealthDetector
      * Note: This requires the cache store to support hit/miss stats.
      * For stores that don't support it, returns a status with default hit rate.
      */
-    public function checkHitRate(CacheStore|null $cacheStore = null) : CacheHealthStatus
+    public function checkHitRate() : CacheHealthStatus
     {
         $now = $this->clock->now();
         try {

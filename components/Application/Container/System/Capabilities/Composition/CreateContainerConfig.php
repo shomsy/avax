@@ -54,6 +54,7 @@ final readonly class CreateContainerConfig
     public const string DIAGNOSTICS_MODE_DETAILED = 'detailed';
 
     public const string DIAGNOSTICS_MODE_CI = 'ci';
+
     public string $sliceBoundaryMode;
 
     public array $policyProfiles;
@@ -255,9 +256,11 @@ final readonly class CreateContainerConfig
             if (! is_string(value: $environment)) {
                 continue;
             }
+
             if (! is_string(value: $profile)) {
                 continue;
             }
+
             $environment = trim(string: $environment);
             if ($environment === '') {
                 continue;

@@ -12,25 +12,20 @@ final class DeferredSourceWrite
     /** @var array<string, array{key: CacheSourceKey, value: mixed}> */
     private array $queue = [];
 
-    private readonly CacheSource $cacheSource;
-
-    public function __construct(
-        CacheSource $source,
-    )
+    public function __construct(private readonly CacheSource $cacheSource)
     {
-        $this->cacheSource = $source;
     }
 
-    public function queueFromCacheKey(CacheKey $key, mixed $value) : void
+    public function queueFromCacheKey(CacheKey $cacheKey, mixed $value) : void
     {
-        $cacheSourceKey = CacheSourceKey::create(key: $key->fullKey(), namespace: $key->namespace);
+        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
         $this->queue(key: $cacheSourceKey, value: $value);
     }
 
-    public function queue(CacheSourceKey $key, mixed $value) : void
+    public function queue(CacheSourceKey $cacheSourceKey, mixed $value) : void
     {
-        $this->queue[$key->fullKey()] = [
-            'key'   => $key,
+        $this->queue[$cacheSourceKey->fullKey()] = [
+            'key' => $cacheSourceKey,
             'value' => $value,
         ];
     }

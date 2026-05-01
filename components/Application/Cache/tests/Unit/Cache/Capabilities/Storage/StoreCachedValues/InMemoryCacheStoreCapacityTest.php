@@ -47,11 +47,11 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
     private function makeRecord(mixed $value, int $ttlSeconds) : StoredCacheRecord
     {
         $now = $this->frozenClock->now();
-        $expiresAt = $now->add(duration: Duration::ofSeconds(seconds: $ttlSeconds));
+        $timestamp = $now->add(duration: Duration::ofSeconds(seconds: $ttlSeconds));
 
         $cachedValueLifecycle = CachedValueLifecycle::create(
             createdAt: $now,
-            expiresAt: $expiresAt,
+            expiresAt: $timestamp,
             clock    : $this->frozenClock,
         );
 

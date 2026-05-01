@@ -16,7 +16,7 @@ use DateInterval;
 final readonly class WarmCache
 {
     public function __construct(
-        private CacheStore $store,
+        private CacheStore $cacheStore,
         private Clock      $clock,
         private CacheTtl   $cacheTtl = new CacheTtl(),
     ) {}
@@ -40,7 +40,7 @@ final readonly class WarmCache
                 clock    : $this->clock,
             );
 
-            $this->store->write(
+            $this->cacheStore->write(
                 key   : $cacheKey,
                 record: new StoredCacheRecord(value: $value, lifecycle: $lifecycle),
             );

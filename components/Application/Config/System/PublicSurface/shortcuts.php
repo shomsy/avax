@@ -13,10 +13,8 @@ if (! function_exists('config')) {
     /**
      * Retrieve a configuration value or the entire configuration instance.
      *
-     * @param string     $key
      * @param mixed|null $default
      *
-     * @return mixed
      */
     function config(string $key, mixed $default = null) : mixed
     {
@@ -42,9 +40,7 @@ if (! function_exists('storage_path')) {
     /**
      * Resolves the storage path.
      *
-     * @param string $path
      *
-     * @return string
      */
     function storage_path(string $path = '') : string
     {

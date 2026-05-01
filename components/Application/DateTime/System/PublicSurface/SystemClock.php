@@ -13,7 +13,7 @@ final class SystemClock
 
     public static function create(string|null $timezone = null) : DateTimeImmutable
     {
-        if (self::$dateTimeImmutable !== null) {
+        if (self::$dateTimeImmutable instanceof DateTimeImmutable) {
             $tz = $timezone ?? date_default_timezone_get();
 
             return self::$dateTimeImmutable->setTimezone(new DateTimeZone($tz));
@@ -36,6 +36,6 @@ final class SystemClock
 
     public static function isFrozen() : bool
     {
-        return self::$dateTimeImmutable !== null;
+        return self::$dateTimeImmutable instanceof DateTimeImmutable;
     }
 }

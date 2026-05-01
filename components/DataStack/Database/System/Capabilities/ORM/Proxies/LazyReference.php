@@ -9,6 +9,7 @@ use Closure;
 final class LazyReference
 {
     private mixed $resolved = null;
+
     private bool $loaded = false;
 
     /**

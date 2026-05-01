@@ -18,11 +18,11 @@ interface FlagStoreInterface
 
 final class FeatureFlags
 {
-    private static FlagStoreInterface|null $store = null;
+    private static FlagStoreInterface|null $flagStore = null;
 
-    public static function setStore(FlagStoreInterface $store) : void
+    public static function setStore(FlagStoreInterface $flagStore) : void
     {
-        self::$store = $store;
+        self::$flagStore = $flagStore;
     }
 
     public static function enable(string $flag) : void
@@ -32,11 +32,11 @@ final class FeatureFlags
 
     private static function store() : FlagStoreInterface
     {
-        if (self::$store === null) {
-            self::$store = new InMemoryFlagStore();
+        if (self::$flagStore === null) {
+            self::$flagStore = new InMemoryFlagStore();
         }
 
-        return self::$store;
+        return self::$flagStore;
     }
 
     public static function disable(string $flag) : void

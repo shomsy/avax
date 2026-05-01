@@ -27,7 +27,7 @@ interface EnvironmentConfig
 
 final class Environment
 {
-    private static EnvironmentDetector $detector;
+    private static EnvironmentDetector $environmentDetector;
 
     public static function isLocal() : bool
     {
@@ -41,11 +41,11 @@ final class Environment
 
     private static function detector() : EnvironmentDetector
     {
-        if (! isset(self::$detector)) {
-            self::$detector = new EnvironmentDetector();
+        if (! isset(self::$environmentDetector)) {
+            self::$environmentDetector = new EnvironmentDetector();
         }
 
-        return self::$detector;
+        return self::$environmentDetector;
     }
 
     public static function isStaging() : bool

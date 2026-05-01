@@ -6,14 +6,9 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 final readonly class ResolveCompiledCachePath
 {
-    public function __construct(
-        CompiledCacheDirectory $directory,
-    )
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory)
     {
-        $this->compiledCacheDirectory = $directory;
     }
-
-    private CompiledCacheDirectory $compiledCacheDirectory;
 
     public function resolveManifestPath() : CompiledCachePath
     {
@@ -25,8 +20,8 @@ final readonly class ResolveCompiledCachePath
         return $this->resolveArtifactPath(name: new CompiledCacheName(name: $artifactName));
     }
 
-    public function resolveArtifactPath(CompiledCacheName $name) : CompiledCachePath
+    public function resolveArtifactPath(CompiledCacheName $compiledCacheName) : CompiledCachePath
     {
-        return $this->compiledCacheDirectory->resolve(filename: $name->toString());
+        return $this->compiledCacheDirectory->resolve(filename: $compiledCacheName->toString());
     }
 }

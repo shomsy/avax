@@ -19,12 +19,12 @@ final readonly class ReadCachedValue
         private CacheMetrics|null $cacheMetrics = null,
     ) {}
 
-    public function read(CacheKey $key, mixed $default = null) : mixed
+    public function read(CacheKey $cacheKey, mixed $default = null) : mixed
     {
         $startTime = hrtime(true);
 
         try {
-            $result = $this->cacheStore->read(key: $key, clock: $this->clock);
+            $result = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
 
             if ($result instanceof CacheStoreRecordWasMissing) {
                 $this->recordLatency(startTime: $startTime);
@@ -53,7 +53,7 @@ final readonly class ReadCachedValue
 
     private function recordLatency(int $startTime) : void
     {
-        if ($this->cacheMetrics === null) {
+        if (! $this->cacheMetrics instanceof CacheMetrics) {
             return;
         }
 

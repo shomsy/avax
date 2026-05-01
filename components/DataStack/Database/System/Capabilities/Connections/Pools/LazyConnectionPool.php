@@ -60,7 +60,7 @@ final class LazyConnectionPool implements ConnectionPoolInterface
 
     private function pool() : ConnectionPoolInterface
     {
-        if ($this->connectionPool === null) {
+        if (! $this->connectionPool instanceof ConnectionPoolInterface) {
             $pool = ($this->factory)();
 
             if (! $pool instanceof ConnectionPoolInterface) {

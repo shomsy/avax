@@ -24,9 +24,9 @@ final class CacheCluster
         $this->detectUnhealthyCacheNode = new DetectUnhealthyCacheNode(failureThreshold: $failureThreshold);
     }
 
-    public function getNode(CacheNodeId $nodeId) : CacheNode|null
+    public function getNode(CacheNodeId $cacheNodeId) : CacheNode|null
     {
-        return $this->nodes[$nodeId->toString()] ?? null;
+        return $this->nodes[$cacheNodeId->toString()] ?? null;
     }
 
     public function getHealthyNodes() : array
@@ -34,49 +34,49 @@ final class CacheCluster
         return array_filter($this->nodes, static fn (CacheNode $cacheNode) : bool => $cacheNode->isHealthy());
     }
 
-    public function recordSuccess(CacheNodeId $nodeId) : void
+    public function recordSuccess(CacheNodeId $cacheNodeId) : void
     {
-        $newStatus = $this->detectUnhealthyCacheNode->recordSuccess(nodeId: $nodeId);
+        $cacheNodeStatus = $this->detectUnhealthyCacheNode->recordSuccess(nodeId: $cacheNodeId);
 
-        if ($newStatus === CacheNodeStatus::HEALTHY && isset($this->nodes[$nodeId->toString()])) {
-            $this->nodes[$nodeId->toString()] = $this->nodes[$nodeId->toString()]->withStatus(status: $newStatus);
-            $this->consistentHashRing->addNode(node: $this->nodes[$nodeId->toString()]);
+        if ($cacheNodeStatus === CacheNodeStatus::HEALTHY && isset($this->nodes[$cacheNodeId->toString()])) {
+            $this->nodes[$cacheNodeId->toString()] = $this->nodes[$cacheNodeId->toString()]->withStatus(status: $cacheNodeStatus);
+            $this->consistentHashRing->addNode(node: $this->nodes[$cacheNodeId->toString()]);
         }
     }
 
-    public function addNode(CacheNode $node) : self
+    public function addNode(CacheNode $cacheNode) : self
     {
-        $this->nodes[$node->id->toString()] = $node;
-        $this->consistentHashRing->addNode(node: $node);
+        $this->nodes[$cacheNode->id->toString()] = $cacheNode;
+        $this->consistentHashRing->addNode(node: $cacheNode);
 
         return $this;
     }
 
-    public function recordFailure(CacheNodeId $nodeId) : void
+    public function recordFailure(CacheNodeId $cacheNodeId) : void
     {
-        $newStatus = $this->detectUnhealthyCacheNode->recordFailure(nodeId: $nodeId);
+        $cacheNodeStatus = $this->detectUnhealthyCacheNode->recordFailure(nodeId: $cacheNodeId);
 
-        if (isset($this->nodes[$nodeId->toString()])) {
-            $this->nodes[$nodeId->toString()] = $this->nodes[$nodeId->toString()]->withStatus(status: $newStatus);
-            $this->consistentHashRing->removeNode(nodeId: $nodeId);
+        if (isset($this->nodes[$cacheNodeId->toString()])) {
+            $this->nodes[$cacheNodeId->toString()] = $this->nodes[$cacheNodeId->toString()]->withStatus(status: $cacheNodeStatus);
+            $this->consistentHashRing->removeNode(nodeId: $cacheNodeId);
         }
     }
 
-    public function removeNode(CacheNodeId $nodeId) : self
+    public function removeNode(CacheNodeId $cacheNodeId) : self
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (isset($this->nodes[$nodeIdStr])) {
             unset($this->nodes[$nodeIdStr]);
-            $this->consistentHashRing->removeNode(nodeId: $nodeId);
+            $this->consistentHashRing->removeNode(nodeId: $cacheNodeId);
         }
 
         return $this;
     }
 
-    public function getNodeForKey(CacheKey $key) : CacheNode|null
+    public function getNodeForKey(CacheKey $cacheKey) : CacheNode|null
     {
-        return $this->consistentHashRing->getNodeForKey(key: $key);
+        return $this->consistentHashRing->getNodeForKey(key: $cacheKey);
     }
 
     public function nodeCount() : int

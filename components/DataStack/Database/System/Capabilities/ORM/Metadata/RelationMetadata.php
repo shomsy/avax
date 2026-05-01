@@ -13,7 +13,7 @@ final readonly class RelationMetadata
      */
     public function __construct(
         public string      $property,
-        public RelationKind $kind,
+        public RelationKind $relationKind,
         public string      $targetEntity,
         public string|null $mappedBy = null,
         public string|null $inversedBy = null,

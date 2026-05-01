@@ -37,32 +37,32 @@ final readonly class ReadCachedValueFromReplica
         };
     }
 
-    private function readFromPrimary(CacheKey $key) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    private function readFromPrimary(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        return $this->stores[0]->read(key: $key, clock: $this->clock);
+        return $this->stores[0]->read(key: $cacheKey, clock: $this->clock);
     }
 
-    private function readFromClosest(CacheKey $key) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    private function readFromClosest(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         foreach ($this->stores as $store) {
-            $result = $store->read(key: $key, clock: $this->clock);
+            $result = $store->read(key: $cacheKey, clock: $this->clock);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 return $result;
             }
         }
 
-        return new CacheStoreRecordWasMissing(key: $key);
+        return new CacheStoreRecordWasMissing(key: $cacheKey);
     }
 
-    private function readWithQuorum(CacheKey $key) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    private function readWithQuorum(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $results = [];
         $found   = null;
 
         foreach ($this->stores as $store) {
             try {
-                $result = $store->read(key: $key, clock: $this->clock);
+                $result = $store->read(key: $cacheKey, clock: $this->clock);
 
                 if ($result instanceof CacheStoreRecordWasFound) {
                     $results[] = $result;
@@ -73,9 +73,9 @@ final readonly class ReadCachedValueFromReplica
         }
 
         if (count($results) >= $this->chooseReplicaForRead->replicaCount()->quorumSize()) {
-            return $found ?? new CacheStoreRecordWasMissing(key: $key);
+            return $found ?? new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        return new CacheStoreRecordWasMissing(key: $key);
+        return new CacheStoreRecordWasMissing(key: $cacheKey);
     }
 }

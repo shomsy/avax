@@ -9,7 +9,7 @@ use Closure;
 
 final class Pipeline
 {
-    private static HookRegistry|null $registry = null;
+    private static HookRegistry|null $hookRegistry = null;
 
     public static function beforeRoute(Closure $handler) : void
     {
@@ -18,11 +18,11 @@ final class Pipeline
 
     private static function registry() : HookRegistry
     {
-        if (self::$registry === null) {
-            self::$registry = new HookRegistry();
+        if (self::$hookRegistry === null) {
+            self::$hookRegistry = new HookRegistry();
         }
 
-        return self::$registry;
+        return self::$hookRegistry;
     }
 
     public static function afterRoute(Closure $handler) : void

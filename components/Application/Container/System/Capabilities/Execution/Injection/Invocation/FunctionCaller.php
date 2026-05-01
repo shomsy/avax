@@ -20,7 +20,7 @@ use Throwable;
  */
 final class FunctionCaller
 {
-    private ResolveDependency|null $serviceResolver = null;
+    private ResolveDependency|null $resolveDependency = null;
 
     /** @var array<string, ResolvePlan> */
     private array $plans = [];
@@ -32,9 +32,9 @@ final class FunctionCaller
     /**
      * Attaches the runtime resolver used for argument resolution.
      */
-    public function setResolver(ResolveDependency $serviceResolver) : void
+    public function setResolver(ResolveDependency $resolveDependency) : void
     {
-        $this->serviceResolver = $serviceResolver;
+        $this->resolveDependency = $resolveDependency;
     }
 
     /**
@@ -52,7 +52,7 @@ final class FunctionCaller
     ) : mixed
     {
         $parameters ??= [];
-        if ($this->serviceResolver === null) {
+        if ($this->resolveDependency === null) {
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
         }
 
@@ -61,7 +61,7 @@ final class FunctionCaller
         $arguments                  = $this->resolveCallArguments->resolvePlan(
             plan     : $this->planFor(reflection: $reflectionFunctionAbstract),
             overrides: $parameters,
-            resolver : $this->serviceResolver,
+            resolver : $this->resolveDependency,
             request  : $resolveRequest ?? new ResolveRequest(serviceId: $this->nameOf(reflection: $reflectionFunctionAbstract)),
         );
 
@@ -73,7 +73,6 @@ final class FunctionCaller
             return $reflectionFunctionAbstract->invokeArgs(object: $object, args: $arguments);
         }
 
-        /** @var ReflectionFunction $reflection */
         return $reflectionFunctionAbstract->invokeArgs(args: $arguments);
     }
 
@@ -94,8 +93,8 @@ final class FunctionCaller
 
         if (is_string(value: $target) && class_exists(class: $target) && method_exists(object_or_class: $target, method: '__invoke')) {
             return $context !== []
-                ? $this->serviceResolver->makeInContext(id: $target, parameters: [], context: $context)
-                : $this->serviceResolver->get(id: $target);
+                ? $this->resolveDependency->makeInContext(id: $target, parameters: [], context: $context)
+                : $this->resolveDependency->get(id: $target);
         }
 
         if (is_string(value: $target) && str_contains(haystack: $target, needle: '@')) {
@@ -103,8 +102,8 @@ final class FunctionCaller
 
             return [
                 $context !== []
-                    ? $this->serviceResolver->makeInContext(id: $class, parameters: [], context: $context)
-                    : $this->serviceResolver->get(id: $class),
+                    ? $this->resolveDependency->makeInContext(id: $class, parameters: [], context: $context)
+                    : $this->resolveDependency->get(id: $class),
                 $method,
             ];
         }
@@ -117,8 +116,8 @@ final class FunctionCaller
                 ? [$class, $method]
                 : [
                     $context !== []
-                        ? $this->serviceResolver->makeInContext(id: $class, parameters: [], context: $context)
-                        : $this->serviceResolver->get(id: $class),
+                        ? $this->resolveDependency->makeInContext(id: $class, parameters: [], context: $context)
+                        : $this->resolveDependency->get(id: $class),
                     $method,
                 ];
         }
@@ -128,8 +127,8 @@ final class FunctionCaller
             if (! $reflection->isStatic()) {
                 return [
                     $context !== []
-                        ? $this->serviceResolver->makeInContext(id: $target[0], parameters: [], context: $context)
-                        : $this->serviceResolver->get(id: $target[0]),
+                        ? $this->resolveDependency->makeInContext(id: $target[0], parameters: [], context: $context)
+                        : $this->resolveDependency->get(id: $target[0]),
                     $target[1],
                 ];
             }

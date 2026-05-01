@@ -23,12 +23,12 @@ final class FakeCacheStore implements CacheStore
     }
 
     #[Override]
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        $fullKey = $key->fullKey();
+        $fullKey = $cacheKey->fullKey();
 
         if (! isset($this->records[$fullKey])) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
         $record = $this->records[$fullKey];
@@ -36,22 +36,22 @@ final class FakeCacheStore implements CacheStore
         if ($record->lifecycle->isExpired(clock: $clock)) {
             unset($this->records[$fullKey]);
 
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
+        return new CacheStoreRecordWasFound(key: $cacheKey, record: $record, clock: $clock);
     }
 
     #[Override]
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
-        $this->records[$key->fullKey()] = $record;
+        $this->records[$cacheKey->fullKey()] = $storedCacheRecord;
     }
 
     #[Override]
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $cacheKey) : void
     {
-        unset($this->records[$key->fullKey()]);
+        unset($this->records[$cacheKey->fullKey()]);
     }
 
     #[Override]
@@ -61,9 +61,9 @@ final class FakeCacheStore implements CacheStore
     }
 
     #[Override]
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $cacheKey) : bool
     {
-        $fullKey = $key->fullKey();
+        $fullKey = $cacheKey->fullKey();
 
         if (! isset($this->records[$fullKey])) {
             return false;

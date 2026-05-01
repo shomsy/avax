@@ -14,7 +14,7 @@ final readonly class CacheOperation implements Stringable
 
     public function __construct(
         public string      $operation,
-        public CacheKey $key,
+        public CacheKey $cacheKey,
         public float       $timestamp,
         public int|null    $ttlSeconds = null,
         public int|null    $durationMicroseconds = null,
@@ -22,7 +22,7 @@ final readonly class CacheOperation implements Stringable
         public string|null $tier = null,
     )
     {
-        $this->cacheKey = $key;
+        $this->cacheKey = $cacheKey;
     }
 
     public static function read(

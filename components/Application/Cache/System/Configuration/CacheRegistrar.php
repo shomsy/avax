@@ -14,6 +14,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
+use Override;
 
 final class RegisterCacheDependencies extends BaseRegisterDependency
 {
@@ -21,6 +22,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
 
     private string|null $compiledCacheDirectory = null;
 
+    #[Override]
     public function register() : void
     {
         if ($this->namedCaches === []) {

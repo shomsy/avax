@@ -25,14 +25,14 @@ final readonly class BuildCache
         return $this->fromStore(store: $inMemoryCacheStore, config: $config);
     }
 
-    public function fromStore(CacheStore $store, CacheConfiguration|null $config = null) : AvaxCache
+    public function fromStore(CacheStore $cacheStore, CacheConfiguration|null $config = null) : AvaxCache
     {
         $config ??= new CacheConfiguration();
 
         $metrics = $config->enableMetrics ? new CacheMetrics() : null;
 
         return new AvaxCache(
-            store      : $store,
+            store      : $cacheStore,
             clock      : $this->clock,
             metrics    : $metrics,
             stalePolicy: $config->staleValuePolicy,

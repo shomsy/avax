@@ -16,7 +16,7 @@ final readonly class NodeHealthRecord
 
     public function __construct(
         public string          $nodeId,
-        public CacheNodeStatus $status,
+        public CacheNodeStatus $cacheNodeStatus,
         public Timestamp       $lastCheck,
         public int             $consecutiveFailures,
         public int             $consecutiveSuccesses,
@@ -24,7 +24,7 @@ final readonly class NodeHealthRecord
         public Timestamp|null  $lastSuccess,
     )
     {
-        $this->cacheNodeStatus = $status;
+        $this->cacheNodeStatus = $cacheNodeStatus;
     }
 
     /**
@@ -34,7 +34,7 @@ final readonly class NodeHealthRecord
     {
         return new self(
             nodeId              : $this->nodeId,
-            status              : $this->status,
+            status              : $this->cacheNodeStatus,
             lastCheck           : $timestamp,
             consecutiveFailures : $this->consecutiveFailures,
             consecutiveSuccesses: $this->consecutiveSuccesses,
@@ -71,7 +71,7 @@ final readonly class NodeHealthRecord
     {
         return [
             'nodeId'               => $this->nodeId,
-            'status' => $this->status->value,
+            'status' => $this->cacheNodeStatus->value,
             'lastCheck'            => $this->lastCheck->seconds,
             'consecutiveFailures'  => $this->consecutiveFailures,
             'consecutiveSuccesses' => $this->consecutiveSuccesses,

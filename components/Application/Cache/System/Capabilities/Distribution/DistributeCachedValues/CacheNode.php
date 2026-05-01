@@ -23,11 +23,11 @@ final readonly class CacheNode implements Stringable
         $this->status = $cacheNodeStatus;
     }
 
-    public static function create(string $id, CacheNodeStatus $status = CacheNodeStatus::HEALTHY) : self
+    public static function create(string $id, CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY) : self
     {
         return new self(
             cacheNodeId    : CacheNodeId::from(id: $id),
-            cacheNodeStatus: $status,
+            cacheNodeStatus: $cacheNodeStatus,
         );
     }
 
@@ -36,9 +36,9 @@ final readonly class CacheNode implements Stringable
         return $this->cacheNodeStatus === CacheNodeStatus::HEALTHY;
     }
 
-    public function withStatus(CacheNodeStatus $status) : self
+    public function withStatus(CacheNodeStatus $cacheNodeStatus) : self
     {
-        return new self(cacheNodeId: $this->cacheNodeId, cacheNodeStatus: $status, weight: $this->weight);
+        return new self(cacheNodeId: $this->cacheNodeId, cacheNodeStatus: $cacheNodeStatus, weight: $this->weight);
     }
 
     public function withWeight(float $weight) : self
@@ -49,6 +49,6 @@ final readonly class CacheNode implements Stringable
     #[Override]
     public function __toString() : string
     {
-        return (string) $this->cacheNodeId->toString();
+        return $this->cacheNodeId->toString();
     }
 }

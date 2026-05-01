@@ -126,7 +126,7 @@ final readonly class CacheKey implements Stringable
 
         $parts[] = $this->normalized;
 
-        if ($this->cacheVersion !== null) {
+        if ($this->cacheVersion instanceof CacheVersion) {
             $parts[] = 'v' . $this->cacheVersion->toString();
         }
 

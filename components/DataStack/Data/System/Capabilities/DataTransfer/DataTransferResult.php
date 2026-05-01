@@ -30,7 +30,7 @@ final readonly class DataTransferResult
 
     public function isFailure() : bool
     {
-        return $this->dataTransferFailure !== null;
+        return $this->dataTransferFailure instanceof DataTransferFailure;
     }
 
     public function object() : object

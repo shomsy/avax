@@ -15,32 +15,32 @@ final readonly class CacheStoreRecordWasFound
     public StoredCacheRecord $storedCacheRecord;
 
     public function __construct(
-        public CacheKey          $key,
-        public StoredCacheRecord $record,
+        public CacheKey          $cacheKey,
+        public StoredCacheRecord $storedCacheRecord,
         public Clock             $clock,
     )
     {
-        $this->cacheKey          = $key;
-        $this->storedCacheRecord = $record;
+        $this->cacheKey          = $cacheKey;
+        $this->storedCacheRecord = $storedCacheRecord;
     }
 
     public function value() : mixed
     {
-        return $this->record->value;
+        return $this->storedCacheRecord->value;
     }
 
     public function isExpired() : bool
     {
-        return $this->record->isExpired(clock: $this->clock);
+        return $this->storedCacheRecord->isExpired(clock: $this->clock);
     }
 
     public function timeToLive() : int
     {
-        return $this->record->timeToLive(clock: $this->clock);
+        return $this->storedCacheRecord->timeToLive(clock: $this->clock);
     }
 
     public function lifecycle() : CachedValueLifecycle
     {
-        return $this->record->lifecycle;
+        return $this->storedCacheRecord->lifecycle;
     }
 }

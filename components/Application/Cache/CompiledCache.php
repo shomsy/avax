@@ -14,34 +14,34 @@ use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigur
  */
 final class CompiledCache
 {
-    private static CompiledCacheContract|null $compiledCache = null;
+    private static CompiledCacheContract|null $compiledCacheContract = null;
 
-    public static function use(CompiledCacheContract $compiledCache) : void
+    public static function use(CompiledCacheContract $compiledCacheContract) : void
     {
-        self::$compiledCache = $compiledCache;
+        self::$compiledCacheContract = $compiledCacheContract;
     }
 
     public static function reset() : void
     {
-        self::$compiledCache = null;
+        self::$compiledCacheContract = null;
     }
 
-    public static function read(string $name, callable $build, CompiledCacheSources $sources) : mixed
+    public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed
     {
-        return self::instance()->read(name: $name, build: $build, sources: $sources);
+        return self::instance()->read(name: $name, build: $build, sources: $compiledCacheSources);
     }
 
     private static function instance() : CompiledCacheContract
     {
-        if (self::$compiledCache === null) {
+        if (self::$compiledCacheContract === null) {
             throw new NotConfigured(message: 'No compiled cache configured');
         }
 
-        return self::$compiledCache;
+        return self::$compiledCacheContract;
     }
 
-    public static function compile(string $name, callable $build, CompiledCacheSources $sources) : CompiledCacheArtifact
+    public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : CompiledCacheArtifact
     {
-        return self::instance()->compile(name: $name, build: $build, sources: $sources);
+        return self::instance()->compile(name: $name, build: $build, sources: $compiledCacheSources);
     }
 }

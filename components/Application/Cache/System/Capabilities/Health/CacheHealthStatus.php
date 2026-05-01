@@ -21,7 +21,7 @@ final readonly class CacheHealthStatus
         public int       $latency,
         public float     $memoryUsage,
         public float     $hitRate,
-        public Timestamp $lastCheck,
+        public Timestamp $timestamp,
         public string|null $error = null,
         public int       $memoryLimit = 0,
         public int       $keyCount = 0,
@@ -29,7 +29,7 @@ final readonly class CacheHealthStatus
         public string    $version = '',
     )
     {
-        $this->timestamp = $lastCheck;
+        $this->timestamp = $timestamp;
     }
 
     /**
@@ -202,7 +202,7 @@ final readonly class CacheHealthStatus
             'latency'            => $this->latency,
             'memoryUsage'        => $this->memoryUsage,
             'hitRate'            => $this->hitRate,
-            'lastCheck' => $this->lastCheck->seconds,
+            'lastCheck' => $this->timestamp->seconds,
             'error'              => $this->error,
             'memoryLimit'        => $this->memoryLimit,
             'keyCount'           => $this->keyCount,

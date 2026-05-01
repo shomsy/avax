@@ -12,7 +12,7 @@ use ReflectionException;
  */
 final readonly class ExplainService
 {
-    public function __construct(private ResolveDependency $serviceResolver) {}
+    public function __construct(private ResolveDependency $resolveDependency) {}
 
     /**
      * @param array<string, mixed> $context
@@ -23,10 +23,10 @@ final readonly class ExplainService
     public function describe(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->describeService(id: $id);
+            return $this->resolveDependency->describeService(id: $id);
         }
 
-        return $this->serviceResolver->describeServiceInContext(id: $id, context: $context);
+        return $this->resolveDependency->describeServiceInContext(id: $id, context: $context);
     }
 
     /**
@@ -38,10 +38,10 @@ final readonly class ExplainService
     public function debugPlan(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->debugPlan(id: $id);
+            return $this->resolveDependency->debugPlan(id: $id);
         }
 
-        return $this->serviceResolver->debugPlanInContext(id: $id, context: $context);
+        return $this->resolveDependency->debugPlanInContext(id: $id, context: $context);
     }
 
     /**
@@ -53,10 +53,10 @@ final readonly class ExplainService
     {
         $id ??= '';
         if ($context === []) {
-            return $this->serviceResolver->debugGovernance(id: $id);
+            return $this->resolveDependency->debugGovernance(id: $id);
         }
 
-        return $this->serviceResolver->debugGovernanceInContext(id: $id, context: $context);
+        return $this->resolveDependency->debugGovernanceInContext(id: $id, context: $context);
     }
 
     /**
@@ -68,10 +68,10 @@ final readonly class ExplainService
     {
         $id ??= '';
         if ($context === []) {
-            return $this->serviceResolver->debugArchitecture(id: $id);
+            return $this->resolveDependency->debugArchitecture(id: $id);
         }
 
-        return $this->serviceResolver->debugArchitectureInContext(id: $id, context: $context);
+        return $this->resolveDependency->debugArchitectureInContext(id: $id, context: $context);
     }
 
     /**
@@ -83,10 +83,10 @@ final readonly class ExplainService
     {
         $slice ??= '';
         if ($context === []) {
-            return $this->serviceResolver->debugSlice(slice: $slice);
+            return $this->resolveDependency->debugSlice(slice: $slice);
         }
 
-        return $this->serviceResolver->debugSliceInContext(slice: $slice, context: $context);
+        return $this->resolveDependency->debugSliceInContext(slice: $slice, context: $context);
     }
 
     /**
@@ -98,10 +98,10 @@ final readonly class ExplainService
     {
         $slice ??= '';
         if ($context === []) {
-            return $this->serviceResolver->debugImports(slice: $slice);
+            return $this->resolveDependency->debugImports(slice: $slice);
         }
 
-        return $this->serviceResolver->debugImportsInContext(slice: $slice, context: $context);
+        return $this->resolveDependency->debugImportsInContext(slice: $slice, context: $context);
     }
 
     /**
@@ -114,10 +114,10 @@ final readonly class ExplainService
     {
         $slice ??= '';
         if ($context === []) {
-            return $this->serviceResolver->debugExports(slice: $slice);
+            return $this->resolveDependency->debugExports(slice: $slice);
         }
 
-        return $this->serviceResolver->debugExportsInContext(slice: $slice, context: $context);
+        return $this->resolveDependency->debugExportsInContext(slice: $slice, context: $context);
     }
 
     /**
@@ -130,10 +130,10 @@ final readonly class ExplainService
     {
         $serviceIds ??= [];
         if ($context === []) {
-            return $this->serviceResolver->debugVisibilityViolations(serviceIds: $serviceIds);
+            return $this->resolveDependency->debugVisibilityViolations(serviceIds: $serviceIds);
         }
 
-        return $this->serviceResolver->debugVisibilityViolationsInContext(
+        return $this->resolveDependency->debugVisibilityViolationsInContext(
             serviceIds: $serviceIds,
             context   : $context,
         );
@@ -148,10 +148,10 @@ final readonly class ExplainService
     public function debugTags(string $tag, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->debugTags(tag: $tag);
+            return $this->resolveDependency->debugTags(tag: $tag);
         }
 
-        return $this->serviceResolver->debugTagsInContext(tag: $tag, context: $context);
+        return $this->resolveDependency->debugTagsInContext(tag: $tag, context: $context);
     }
 
     /**
@@ -163,10 +163,10 @@ final readonly class ExplainService
     public function debugGroup(string $group, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->debugGroup(group: $group);
+            return $this->resolveDependency->debugGroup(group: $group);
         }
 
-        return $this->serviceResolver->debugGroupInContext(group: $group, context: $context);
+        return $this->resolveDependency->debugGroupInContext(group: $group, context: $context);
     }
 
     /**
@@ -178,10 +178,10 @@ final readonly class ExplainService
     public function debugSelection(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->debugSelection(id: $id);
+            return $this->resolveDependency->debugSelection(id: $id);
         }
 
-        return $this->serviceResolver->debugSelectionInContext(id: $id, context: $context);
+        return $this->resolveDependency->debugSelectionInContext(id: $id, context: $context);
     }
 
     /**
@@ -192,10 +192,10 @@ final readonly class ExplainService
     public function debugAliases(array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->debugAliases();
+            return $this->resolveDependency->debugAliases();
         }
 
-        return $this->serviceResolver->debugAliasesInContext(context: $context);
+        return $this->resolveDependency->debugAliasesInContext(context: $context);
     }
 
     /**
@@ -206,9 +206,9 @@ final readonly class ExplainService
     public function debugScope(array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->debugScope();
+            return $this->resolveDependency->debugScope();
         }
 
-        return $this->serviceResolver->debugScopeInContext(context: $context);
+        return $this->resolveDependency->debugScopeInContext(context: $context);
     }
 }

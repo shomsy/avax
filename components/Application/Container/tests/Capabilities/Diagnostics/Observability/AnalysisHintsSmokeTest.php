@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 
-$tool      = dirname(path: __DIR__, levels: 4) . '/tools/generate-analysis-hints.php';
-$fixture   = dirname(path: __DIR__, levels: 3) . '/fixtures/analysis_hints_fixture.php';
+$tool    = dirname(path: __DIR__, 4) . '/tools/generate-analysis-hints.php';
+$fixture = dirname(path: __DIR__, 3) . '/fixtures/analysis_hints_fixture.php';
 $outputDir = sys_get_temp_dir() . '/container-analysis-hints-' . uniqid(prefix: '', more_entropy: true);
 
 $result = shell_exec(

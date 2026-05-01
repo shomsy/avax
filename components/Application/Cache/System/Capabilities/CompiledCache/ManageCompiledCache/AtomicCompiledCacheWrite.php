@@ -9,23 +9,17 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class AtomicCompiledCacheWrite
 {
-    private CompiledCacheDirectory $compiledCacheDirectory;
-
-    public function __construct(
-        CompiledCacheDirectory $directory,
-        private Clock          $clock = new SystemClock(),
-    )
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private Clock $clock = new SystemClock())
     {
-        $this->compiledCacheDirectory = $directory;
     }
 
     public function write(
-        CompiledCacheName $name,
+        CompiledCacheName $compiledCacheName,
         string            $payload,
     ) : CompiledCacheArtifact
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $name);
+        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
         $temporaryPath = $compiledCachePath->toTemporaryPath();
 
@@ -36,7 +30,7 @@ final readonly class AtomicCompiledCacheWrite
         if ($written === false) {
             @unlink($temporaryPath);
 
-            throw new CompiledCacheCouldNotBeWritten(name: $name->toString());
+            throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
 
         $syntaxValid = $this->validatePhpSyntax(path: $temporaryPath);
@@ -44,19 +38,19 @@ final readonly class AtomicCompiledCacheWrite
         if (! $syntaxValid) {
             @unlink($temporaryPath);
 
-            throw new CompiledCacheCouldNotBeWritten(name: $name->toString());
+            throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
 
         if (! rename($temporaryPath, $compiledCachePath->toString())) {
             @unlink($temporaryPath);
 
-            throw new CompiledCacheCouldNotBeWritten(name: $name->toString());
+            throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
 
         $now = $this->clock->now();
 
         return CompiledCacheArtifact::create(
-            name             : $name->toString(),
+            name             : $compiledCacheName->toString(),
             path             : $compiledCachePath->toString(),
             createdAt        : $now->seconds,
             sourceFingerprint: '',

@@ -55,8 +55,6 @@ abstract class BaseFacade implements FacadeInterface
 
     /**
      * Replace the facade's resolved instance with a fake.
-     *
-     * @param callable|object|null $callback
      */
     public static function fake(callable|object|null $callback = null) : mixed
     {

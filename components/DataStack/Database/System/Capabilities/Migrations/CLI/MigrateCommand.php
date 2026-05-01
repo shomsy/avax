@@ -10,27 +10,25 @@ use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Sch
 use Closure;
 use PDO;
 
-final class MigrateCommand
+final readonly class MigrateCommand
 {
-    private MigrationRunner $runner;
     private string          $path;
 
     public function __construct()
     {
         $this->path   = dirname(__DIR__, 6) . '/database/migrations';
-        $this->runner = new MigrationRunner();
     }
 
     public function up() : array
     {
         $migrations = $this->getMigrations();
 
-        if (empty($migrations)) {
+        if ($migrations === []) {
             return ['status' => 'nothing', 'message' => 'Nothing to migrate'];
         }
 
         $ran        = [];
-        $connection = $this->getConnection();
+        $pdo = $this->getConnection();
 
         foreach ($migrations as $file) {
             require_once $file;
@@ -38,7 +36,7 @@ final class MigrateCommand
             $migration = new $class();
 
             $migration->up();
-            $ran[] = basename($file);
+            $ran[] = basename((string) $file);
         }
 
         return [
@@ -73,12 +71,12 @@ final class MigrateCommand
     public function down(int $steps = 1) : array
     {
         $ran        = [];
-        $connection = $this->getConnection();
+        $pdo = $this->getConnection();
 
         for ($i = 0; $i < $steps; $i++) {
             $last = $this->getLastMigration();
 
-            if (! $last) {
+            if ($last === null || $last === []) {
                 break;
             }
 
@@ -87,7 +85,7 @@ final class MigrateCommand
             $migration = new $class();
             $migration->down();
 
-            $ran[] = basename($last['file']);
+            $ran[] = basename((string) $last['file']);
         }
 
         return [
@@ -104,7 +102,7 @@ final class MigrateCommand
 
     public function fresh() : array
     {
-        $connection = $this->getConnection();
+        $this->getConnection();
 
         return [
             'status'  => 'success',
@@ -134,23 +132,23 @@ final class SchemaCommand
 {
     public function create(string $table, Closure $callback) : bool
     {
-        $schema = new SchemaBuilder();
-        $callback($schema);
+        $schemaBuilder = new SchemaBuilder();
+        $callback($schemaBuilder);
 
-        $sql = $schema->createTable($table);
+        $schemaBuilder->createTable($table);
 
         return true;
     }
 
-    public function drop(string $table) : bool
+    public function drop() : bool
     {
         return true;
     }
 
     public function table(string $table, Closure $callback) : bool
     {
-        $schema = new SchemaBuilder();
-        $callback($schema);
+        $schemaBuilder = new SchemaBuilder();
+        $callback($schemaBuilder);
 
         return true;
     }
@@ -158,20 +156,14 @@ final class SchemaCommand
 
 final class SeederCommand
 {
-    private array $seeders = [];
-
-    public function run(string|null $class = null) : array
+    public function run() : array
     {
         $ran = [];
-
         $path = dirname(__DIR__, 6) . '/database/seeders';
-
         if (! is_dir($path)) {
             return ['status' => 'nothing', 'message' => 'No seeders found'];
         }
-
         $files = glob($path . '/*Seeder.php');
-
         foreach ($files as $file) {
             require_once $file;
             $className = str_replace([$path . '/', '.php'], '', $file);
@@ -180,7 +172,6 @@ final class SeederCommand
 
             $ran[] = $className;
         }
-
         return [
             'status' => 'success',
             'ran'    => $ran,

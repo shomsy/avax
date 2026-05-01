@@ -9,15 +9,12 @@ use Throwable;
 
 final class CacheSourceFailed extends RuntimeException
 {
-    public readonly CacheSourceKey $cacheSourceKey;
-
     public function __construct(
         string                         $message,
-        CacheSourceKey $sourceKey,
+        public readonly CacheSourceKey $cacheSourceKey,
         ?Throwable                     $throwable = null,
     )
     {
-        $this->cacheSourceKey = $sourceKey;
         parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 

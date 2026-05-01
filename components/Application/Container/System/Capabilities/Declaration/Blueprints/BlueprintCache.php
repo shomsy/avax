@@ -14,6 +14,7 @@ final class BlueprintCache
 {
     /** @var array<string, DependencyBlueprint> */
     private array         $items = [];
+
     private readonly bool $debug;
 
     private readonly string $cacheVersion;
@@ -125,23 +126,23 @@ final class BlueprintCache
      *
      * @throws ContainerException
      */
-    public function put(DependencyBlueprint $serviceBlueprint) : DependencyBlueprint
+    public function put(DependencyBlueprint $dependencyBlueprint) : DependencyBlueprint
     {
-        $this->items[$serviceBlueprint->class] = $serviceBlueprint;
+        $this->items[$dependencyBlueprint->class] = $dependencyBlueprint;
         $this->resolutionMetrics?->increment(name: 'container_blueprint_compiles_total');
 
         if (! $this->isEnabled()) {
-            return $serviceBlueprint;
+            return $dependencyBlueprint;
         }
 
-        $directory = dirname(path: $this->pathFor(class: $serviceBlueprint->class));
+        $directory = dirname(path: $this->pathFor(class: $dependencyBlueprint->class));
         if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0o777, recursive: true) && ! is_dir(filename: $directory)) {
             throw new ContainerException(message: sprintf('Cannot create blueprint cache directory [%s].', $directory));
         }
 
-        $path = $this->pathFor(class: $serviceBlueprint->class);
+        $path = $this->pathFor(class: $dependencyBlueprint->class);
         $temp = $path . '.' . uniqid(prefix: 'tmp', more_entropy: true);
-        $body = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export(value: $serviceBlueprint, return: true) . ';' . PHP_EOL;
+        $body = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export(value: $dependencyBlueprint, return: true) . ';' . PHP_EOL;
 
         if (file_put_contents(filename: $temp, data: $body, flags: LOCK_EX) === false) {
             throw new ContainerException(message: sprintf('Cannot write blueprint cache file [%s].', $temp));
@@ -153,7 +154,7 @@ final class BlueprintCache
             throw new ContainerException(message: sprintf('Cannot publish blueprint cache file [%s].', $path));
         }
 
-        return $serviceBlueprint;
+        return $dependencyBlueprint;
     }
 
     /**
@@ -177,9 +178,11 @@ final class BlueprintCache
             if ($file === '.') {
                 continue;
             }
+
             if ($file === '..') {
                 continue;
             }
+
             $path = $directory . '/' . $file;
             if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);
@@ -202,9 +205,11 @@ final class BlueprintCache
             if ($file === '.') {
                 continue;
             }
+
             if ($file === '..') {
                 continue;
             }
+
             $path = $directory . '/' . $file;
             if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);

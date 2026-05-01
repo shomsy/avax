@@ -9,7 +9,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataField;
 final readonly class ValueConversionContext
 {
     public function __construct(
-        public DataField $field,
+        public DataField $dataField,
         public ?object   $parent = null,
         public ?string   $propertyName = null,
     ) {}

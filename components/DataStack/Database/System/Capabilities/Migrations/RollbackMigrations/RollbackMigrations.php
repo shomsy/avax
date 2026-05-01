@@ -29,7 +29,7 @@ final readonly class RollbackMigrations
     {
         $records = $this->migrationRepository->getLastBatch(steps: $steps);
 
-        if (empty($records)) {
+        if ($records === []) {
             return [];
         }
 

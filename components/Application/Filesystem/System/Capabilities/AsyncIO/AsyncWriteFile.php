@@ -65,7 +65,7 @@ final readonly class AsyncWriteFile
      */
     public function isScheduled() : bool
     {
-        return $this->asyncOperationPromise !== null;
+        return $this->asyncOperationPromise instanceof AsyncOperationPromise;
     }
 
     /**
@@ -75,7 +75,7 @@ final readonly class AsyncWriteFile
      */
     public function attachPromise(AsyncOperationPromise $asyncOperationPromise) : self
     {
-        if ($this->asyncOperationPromise !== null) {
+        if ($this->asyncOperationPromise instanceof AsyncOperationPromise) {
             throw new LogicException(
                 sprintf('Cannot attach promise to write operation for "%s": promise already set', $this->path),
             );

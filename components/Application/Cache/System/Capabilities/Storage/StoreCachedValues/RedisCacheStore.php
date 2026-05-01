@@ -53,29 +53,29 @@ final class RedisCacheStore implements CacheStore
      * @throws RedisClusterException
      */
     #[Override]
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key->fullKey();
+        $fullKey = $this->prefix . $cacheKey->fullKey();
         $data    = $this->redis->get($fullKey);
 
         if ($data === false || $data === null) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
         $decoded = json_decode($data, associative: true);
 
         if ($decoded === null) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
         $cachedValueLifecycle = $this->deserializeLifecycle(data: $decoded['lifecycle'] ?? [], clock: $clock);
 
         if ($cachedValueLifecycle->isExpired(clock: $clock)) {
-            $this->forget(key: $key);
+            $this->forget(key: $cacheKey);
 
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
         $serializedCachePayload = SerializedCachePayload::create(
@@ -86,12 +86,12 @@ final class RedisCacheStore implements CacheStore
 
         $value = $this->cacheSerializer->unserialize(payload: $serializedCachePayload);
 
-        $record = new StoredCacheRecord(
+        $storedCacheRecord = new StoredCacheRecord(
             value    : $value,
             lifecycle: $cachedValueLifecycle,
         );
 
-        return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
+        return new CacheStoreRecordWasFound(key: $cacheKey, record: $storedCacheRecord, clock: $clock);
     }
 
     private function ensureConnected() : void
@@ -139,11 +139,11 @@ final class RedisCacheStore implements CacheStore
      * @throws RedisClusterException
      */
     #[Override]
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $cacheKey) : void
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key->fullKey();
+        $fullKey = $this->prefix . $cacheKey->fullKey();
         $this->redis->del($fullKey);
     }
 
@@ -152,21 +152,21 @@ final class RedisCacheStore implements CacheStore
      * @throws RedisClusterException
      */
     #[Override]
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key->fullKey();
+        $fullKey = $this->prefix . $cacheKey->fullKey();
 
-        $serializedPayload = $this->cacheSerializer->serialize(value: $record->value);
+        $serializedCachePayload = $this->cacheSerializer->serialize(value: $storedCacheRecord->value);
 
         $data = json_encode([
-                                'value'     => $serializedPayload->data,
-                                'format'    => $serializedPayload->format,
-                                'lifecycle' => $this->serializeLifecycle(lifecycle: $record->lifecycle),
+                                'value'     => $serializedCachePayload->data,
+                                'format'    => $serializedCachePayload->format,
+                                'lifecycle' => $this->serializeLifecycle(lifecycle: $storedCacheRecord->lifecycle),
                             ], JSON_THROW_ON_ERROR);
 
-        $ttl = $record->lifecycle->timeToLive(clock: $this->clock);
+        $ttl = $storedCacheRecord->lifecycle->timeToLive(clock: $this->clock);
 
         if ($ttl > 0 && $ttl < PHP_INT_MAX) {
             $this->redis->setex($fullKey, $ttl, $data);
@@ -175,15 +175,15 @@ final class RedisCacheStore implements CacheStore
         }
     }
 
-    private function serializeLifecycle(CachedValueLifecycle $lifecycle) : array
+    private function serializeLifecycle(CachedValueLifecycle $cachedValueLifecycle) : array
     {
         return [
-            'createdAt'      => $lifecycle->createdAt->toUnixTime(),
-            'lastAccessedAt' => $lifecycle->lastAccessedAt->toUnixTime(),
-            'expiresAt'      => $lifecycle->expiresAt->toUnixTime(),
-            'refreshedAt'    => $lifecycle->refreshedAt->toUnixTime(),
-            'hitCount'       => $lifecycle->hitCount,
-            'refreshCount'   => $lifecycle->refreshCount,
+            'createdAt'      => $cachedValueLifecycle->createdAt->toUnixTime(),
+            'lastAccessedAt' => $cachedValueLifecycle->lastAccessedAt->toUnixTime(),
+            'expiresAt'      => $cachedValueLifecycle->expiresAt->toUnixTime(),
+            'refreshedAt'    => $cachedValueLifecycle->refreshedAt->toUnixTime(),
+            'hitCount'       => $cachedValueLifecycle->hitCount,
+            'refreshCount'   => $cachedValueLifecycle->refreshCount,
         ];
     }
 
@@ -219,11 +219,11 @@ final class RedisCacheStore implements CacheStore
      * @throws RedisClusterException
      */
     #[Override]
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $cacheKey) : bool
     {
         $this->ensureConnected();
 
-        $fullKey = $this->prefix . $key->fullKey();
+        $fullKey = $this->prefix . $cacheKey->fullKey();
 
         return (bool) $this->redis->exists($fullKey);
     }

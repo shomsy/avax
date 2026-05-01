@@ -10,6 +10,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\Quer
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\QueryExecuted;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Override;
 use PDO;
 use Random\RandomException;
 use SensitiveParameter;
@@ -20,24 +21,14 @@ use Throwable;
  */
 final readonly class PDOExecutor implements ExecutorInterface
 {
-    private string        $connectionName;
-    private EventBus|null $eventBus;
-    private DatabaseConnection $connection;
-
-    public function __construct(
-        DatabaseConnection $connection,
-        EventBus|null $eventBus = null,
-        string   $connectionName = 'default',
-    )
+    public function __construct(private DatabaseConnection $databaseConnection, private EventBus|null $eventBus = null, private string $connectionName = 'default')
     {
-        $this->connection     = $connection;
-        $this->eventBus       = $eventBus;
-        $this->connectionName = $connectionName;
     }
 
     /**
      * Execute a "Read" query (SELECT) and get the rows back.
      */
+    #[Override]
     public function query(
         string         $sql,
         #[SensitiveParameter]
@@ -61,24 +52,25 @@ final readonly class PDOExecutor implements ExecutorInterface
             );
 
             return $results;
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             throw new QueryException(
-                message    : 'Query execution failed: ' . $e->getMessage(),
+                message    : 'Query execution failed: ' . $throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
-                previous   : $e,
+                previous   : $throwable,
             );
         }
     }
 
     private function getPdo() : PDO
     {
-        return $this->connection->getConnection();
+        return $this->databaseConnection->getConnection();
     }
 
     /**
      * Execute a "Change" query (INSERT/UPDATE/DELETE/DDL).
      */
+    #[Override]
     public function execute(
         string         $sql,
         #[SensitiveParameter]
@@ -105,12 +97,12 @@ final readonly class PDOExecutor implements ExecutorInterface
                 affectedRows: $statement->rowCount(),
                 lastInsertId: $this->resolveLastInsertId(sql: $sql),
             );
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             throw new QueryException(
-                message    : 'Execution failed: ' . $e->getMessage(),
+                message    : 'Execution failed: ' . $throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
-                previous   : $e,
+                previous   : $throwable,
             );
         }
     }
@@ -127,7 +119,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         bool           $redactBindings = true,
     ) : void
     {
-        if ($this->eventBus === null) {
+        if (! $this->eventBus instanceof EventBus) {
             return;
         }
 
@@ -147,7 +139,7 @@ final readonly class PDOExecutor implements ExecutorInterface
     {
         $flag = config(key: 'database.log_bindings', default: 'redacted');
 
-        return strtolower(string: $flag) !== 'raw';
+        return strtolower(string: (string) $flag) !== 'raw';
     }
 
     private function resolveLastInsertId(string $sql) : int|string|null
@@ -165,6 +157,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         }
     }
 
+    #[Override]
     public function getDriverName() : string
     {
         return $this->getPdo()->getAttribute(attribute: PDO::ATTR_DRIVER_NAME);

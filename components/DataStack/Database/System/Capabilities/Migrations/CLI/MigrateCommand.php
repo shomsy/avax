@@ -163,6 +163,7 @@ final class SeederCommand
         if (! is_dir($path)) {
             return ['status' => 'nothing', 'message' => 'No seeders found'];
         }
+
         $files = glob($path . '/*Seeder.php');
         foreach ($files as $file) {
             require_once $file;
@@ -172,6 +173,7 @@ final class SeederCommand
 
             $ran[] = $className;
         }
+
         return [
             'status' => 'success',
             'ran'    => $ran,

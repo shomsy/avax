@@ -29,7 +29,7 @@ final readonly class RebalanceCachePartitions
         for ($i = 0; $i < $this->partitionCount; $i++) {
             $node = $this->consistentHashRing->getNodeForPartition(partitionIndex: $i);
 
-            if ($node !== null) {
+            if ($node instanceof CacheNode) {
                 $moves[$i] = $node->id->toString();
             }
         }

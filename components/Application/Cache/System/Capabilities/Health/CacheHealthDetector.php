@@ -59,8 +59,8 @@ final class CacheHealthDetector
 
         // Run additional checks
         $latencyStatus = $this->checkLatency($cacheStore);
-        $memoryStatus  = $this->checkMemory($cacheStore);
-        $hitRateStatus = $this->checkHitRate($cacheStore);
+        $memoryStatus = $this->checkMemory();
+        $hitRateStatus = $this->checkHitRate();
 
         // Combine results - use the most severe status
         $status = $this->combineStatuses(

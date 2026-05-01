@@ -177,7 +177,7 @@ final readonly class ManageScopes implements ScopeInterface
             return true;
         }
 
-        return (bool) $this->dependencyPool->has(abstract: $abstract);
+        return $this->dependencyPool->has(abstract: $abstract);
     }
 
     public function getShared(string $abstract) : mixed

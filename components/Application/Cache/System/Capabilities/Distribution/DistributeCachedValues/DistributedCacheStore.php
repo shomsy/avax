@@ -37,7 +37,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     {
         $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
 
-        if ($node === null) {
+        if (! $node instanceof CacheNode) {
             return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
@@ -60,7 +60,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     {
         $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
 
-        if ($node === null) {
+        if (! $node instanceof CacheNode) {
             return;
         }
 
@@ -81,7 +81,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     {
         $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
 
-        if ($node === null) {
+        if (! $node instanceof CacheNode) {
             return;
         }
 
@@ -105,7 +105,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     {
         $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
 
-        if ($node === null) {
+        if (! $node instanceof CacheNode) {
             return false;
         }
 

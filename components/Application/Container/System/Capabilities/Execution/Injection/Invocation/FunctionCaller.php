@@ -52,7 +52,7 @@ final class FunctionCaller
     ) : mixed
     {
         $parameters ??= [];
-        if ($this->resolveDependency === null) {
+        if (! $this->resolveDependency instanceof ResolveDependency) {
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
         }
 

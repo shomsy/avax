@@ -27,14 +27,12 @@ final class JoinClause
 {
     /** @var array<int, array{first: string, operator: string, second: string, boolean: string}> Collection of captured join conditions. */
     private array $conditions = [];
-    private readonly GrammarInterface $grammar;
 
     /**
      * @param GrammarInterface $grammar The authorized technical SQL grammar used for secure identifier projection.
      */
-    public function __construct(GrammarInterface $grammar)
+    public function __construct(private readonly GrammarInterface $grammar)
     {
-        $this->grammar = $grammar;
     }
 
     /**
@@ -100,7 +98,7 @@ final class JoinClause
      */
     public function toSql() : string
     {
-        if (empty($this->conditions)) {
+        if ($this->conditions === []) {
             return '';
         }
 
@@ -111,7 +109,7 @@ final class JoinClause
             $operator = $condition['operator'];
             $second   = $this->grammar->wrap(value: $condition['second']);
 
-            $sql[] = $prefix . "{$first} {$operator} {$second}";
+            $sql[] = $prefix . sprintf('%s %s %s', $first, $operator, $second);
         }
 
         return implode(separator: ' ', array: $sql);

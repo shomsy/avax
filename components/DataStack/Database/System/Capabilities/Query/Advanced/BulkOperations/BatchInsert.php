@@ -6,13 +6,13 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Advanced\
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class BatchInsert
+final readonly class BatchInsert
 {
     public function __construct(
-        private readonly GrammarInterface $grammar,
-        private readonly string $table,
-        private readonly array  $columns,
-        private readonly int    $batchSize = 100,
+        private GrammarInterface $grammar,
+        private string           $table,
+        private array            $columns,
+        private int              $batchSize = 100,
     ) {}
 
     /**
@@ -48,7 +48,7 @@ final class BatchInsert
     {
         return implode(
             separator: ', ',
-            array    : array_map(callback: fn ($column) => $this->grammar->wrap(value: $column), array: $this->columns),
+            array    : array_map(callback: fn ($column) : string => $this->grammar->wrap(value: $column), array: $this->columns),
         );
     }
 }

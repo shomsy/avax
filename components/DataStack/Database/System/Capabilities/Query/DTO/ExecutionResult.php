@@ -20,24 +20,20 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\DTO;
  */
 final readonly class ExecutionResult
 {
-    private int|string|null $lastInsertId;
     private int  $affectedRows;
-    private bool $success;
 
     /**
      * @param bool $success      Whether the database accepted and performed the instruction.
      * @param int  $affectedRows The number of records touched (if applicable).
      */
     public function __construct(
-        bool       $success,
-        int        $affectedRows = null,
-        int|string|null $lastInsertId = null,
+        private bool            $success,
+        ?int                    $affectedRows = null,
+        private int|string|null $lastInsertId = null,
     )
     {
         $affectedRows ??= 0;
-        $this->success      = $success;
         $this->affectedRows = $affectedRows;
-        $this->lastInsertId = $lastInsertId;
     }
 
     /**

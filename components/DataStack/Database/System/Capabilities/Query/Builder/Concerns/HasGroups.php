@@ -73,7 +73,7 @@ trait HasGroups
     public function having(string $column, string $operator, mixed $value, string $boolean = 'AND') : self
     {
         $clone        = clone $this;
-        $clone->state = $clone->state->addHaving(having: compact('column', 'operator', 'value', 'boolean'));
+        $clone->state = $clone->state->addHaving(having: ['column' => $column, 'operator' => $operator, 'value' => $value, 'boolean' => $boolean]);
         $clone->state = $clone->state->addBinding(value: $value);
 
         return $clone;

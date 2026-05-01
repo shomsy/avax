@@ -6,6 +6,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\UnitOfWork;
 
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\FieldMetadata;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Persisters\EntityPersister;
 use ReflectionException;
 use ReflectionProperty;
@@ -31,10 +32,10 @@ final class UnitOfWork
 
     public function persist(object $entity) : void
     {
-        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier      = $metadata->identifierField();
+        $entityMetadata  = $this->attributeMetadataReader->for(entityClass: $entity::class);
+        $identifier      = $entityMetadata->identifierField();
         $objectId        = spl_object_id(object: $entity);
-        $identifierValue = $identifier === null ? null : $this->readProperty(entity: $entity, property: $identifier->property);
+        $identifierValue = $identifier instanceof FieldMetadata ? $this->readProperty(entity: $entity, property: $identifier->property) : null;
 
         unset($this->removed[$objectId]);
 
@@ -69,7 +70,7 @@ final class UnitOfWork
 
             $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
             $identifier = $metadata->identifierField();
-            if ($identifier === null) {
+            if (! $identifier instanceof FieldMetadata) {
                 throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
             }
 
@@ -87,7 +88,7 @@ final class UnitOfWork
         foreach ($this->removed as $objectId => $entity) {
             $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
             $identifier      = $metadata->identifierField();
-            $identifierValue = $identifier === null ? null : $this->readProperty(entity: $entity, property: $identifier->property);
+            $identifierValue = $identifier instanceof FieldMetadata ? $this->readProperty(entity: $entity, property: $identifier->property) : null;
 
             $this->entityPersister->delete(entity: $entity, connectionName: $connectionName);
             unset($this->removed[$objectId]);

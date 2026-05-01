@@ -6,24 +6,24 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class CTENode
+final readonly class CTENode
 {
     public function __construct(
-        public readonly string  $name,
-        public readonly array   $columns,
-        public readonly string  $query,
-        public readonly CTEType $type = CTEType::SIMPLE,
+        public string  $name,
+        public array   $columns,
+        public string  $query,
+        public CTEType $cteType = CTEType::SIMPLE,
     ) {}
 
     public function getSql(GrammarInterface $grammar) : string
     {
-        $columns = empty($this->columns)
+        $columns = $this->columns === []
             ? ''
             : '(' . implode(separator: ', ', array: array_map(
-                callback: static fn ($col) => $grammar->wrap(value: $col),
+                callback: static fn ($col) : string => $grammar->wrap(value: $col),
                 array   : $this->columns,
             )) . ')';
 
-        return "{$this->name}{$columns} AS ({$this->query})";
+        return sprintf('%s%s AS (%s)', $this->name, $columns, $this->query);
     }
 }

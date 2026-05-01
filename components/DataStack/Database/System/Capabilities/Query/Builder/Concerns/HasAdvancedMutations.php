@@ -46,7 +46,7 @@ trait HasAdvancedMutations
      */
     public function upsert(array $values, array|string $uniqueBy, array|null $update = null) : int
     {
-        if (empty($values)) {
+        if ($values === []) {
             return 0;
         }
 
@@ -60,7 +60,7 @@ trait HasAdvancedMutations
 
         $state = $this->state
             ->withValues(values: $values)
-            ->withUpdateColumns(columns: (array) $update);
+            ->withUpdateColumns(columns: $update);
 
         $sql = $this->grammar->compileUpsert(
             state   : $state,
@@ -94,7 +94,7 @@ trait HasAdvancedMutations
     {
         $amount ??= 1;
         $wrapped = $this->grammar->wrap(value: $column);
-        $update  = array_merge([$column => $this->raw(value: "{$wrapped} + {$amount}")], $extra);
+        $update = array_merge([$column => $this->raw(value: sprintf('%s + %s', $wrapped, $amount))], $extra);
 
         return $this->update(values: $update);
     }
@@ -120,7 +120,7 @@ trait HasAdvancedMutations
     {
         $amount ??= 1;
         $wrapped = $this->grammar->wrap(value: $column);
-        $update  = array_merge([$column => $this->raw(value: "{$wrapped} - {$amount}")], $extra);
+        $update = array_merge([$column => $this->raw(value: sprintf('%s - %s', $wrapped, $amount))], $extra);
 
         return $this->update(values: $update);
     }

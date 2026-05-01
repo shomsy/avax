@@ -32,7 +32,7 @@ final class FeatureFlags
 
     private static function store() : FlagStoreInterface
     {
-        if (self::$flagStore === null) {
+        if (! self::$flagStore instanceof FlagStoreInterface) {
             self::$flagStore = new InMemoryFlagStore();
         }
 

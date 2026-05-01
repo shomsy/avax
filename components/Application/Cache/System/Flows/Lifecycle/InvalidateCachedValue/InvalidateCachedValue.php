@@ -20,7 +20,7 @@ final readonly class InvalidateCachedValue
 
     public function invalidateByKey(CacheKey $cacheKey) : void
     {
-        $this->invalidate(key: $cacheKey, reason: InvalidationReason::EXPLICIT);
+        $this->invalidate(key: $cacheKey);
     }
 
     public function invalidate(CacheKey $cacheKey) : void

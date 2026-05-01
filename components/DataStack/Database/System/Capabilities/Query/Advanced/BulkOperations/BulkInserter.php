@@ -12,9 +12,9 @@ final class BulkInserter
     private int $batchSize = 100;
 
     public function __construct(
-        private GrammarInterface $grammar,
-        private string $table,
-        private array  $columns,
+        private readonly GrammarInterface $grammar,
+        private readonly string           $table,
+        private readonly array            $columns,
     ) {}
 
     public function batchSize(int $size) : self
@@ -39,7 +39,7 @@ final class BulkInserter
     private function executeBatch(array $batch) : bool
     {
         $columns = implode(separator: ', ', array: array_map(
-            callback: fn ($col) => $this->grammar->wrap(value: $col),
+            callback: fn ($col) : string => $this->grammar->wrap(value: $col),
             array   : $this->columns,
         ));
 
@@ -49,10 +49,11 @@ final class BulkInserter
             foreach ($row as $value) {
                 $placeholders[] = $value instanceof Expression ? $value->getValue() : '?';
             }
+
             $valueGroups[] = '(' . implode(separator: ', ', array: $placeholders) . ')';
         }
-
-        $sql = 'INSERT INTO ' . $this->grammar->wrap(value: $this->table) . ' (' . $columns . ') VALUES ' . implode(separator: ', ', array: $valueGroups);
+        implode(separator: ', ', array: $valueGroups);
+        $this->grammar->wrap(value: $this->table);
 
         return true;
     }

@@ -18,9 +18,12 @@ final class PreCommitResult
 
     private string $status;
     private string $timestamp;
+    /** @var list<PreCommitIssue> */
     private array  $issues;
+    /** @var list<string> */
     private array  $passedChecks;
     private float  $executionTime;
+    /** @var array<string, mixed> */
     private array  $metadata;
 
     public function __construct()
@@ -58,13 +61,13 @@ final class PreCommitResult
         return $this->timestamp;
     }
 
-    /** @return array<PreCommitIssue> */
+    /** @return list<PreCommitIssue> */
     public function getIssues() : array
     {
         return $this->issues;
     }
 
-    /** @return array<string> */
+    /** @return list<string> */
     public function getPassedChecks() : array
     {
         return $this->passedChecks;
@@ -80,6 +83,9 @@ final class PreCommitResult
         $this->executionTime = $seconds;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getMetadata() : array
     {
         return $this->metadata;
@@ -109,36 +115,48 @@ final class PreCommitResult
         return self::STATUS_PASSED;
     }
 
+    /**
+     * @return list<PreCommitIssue>
+     */
     public function getCriticalIssues() : array
     {
-        return array_filter(
+        return array_values(array_filter(
             $this->issues,
-            fn ($issue) => $issue->getSeverity() === PreCommitIssue::SEVERITY_CRITICAL
-        );
+                                static fn (PreCommitIssue $issue) : bool => $issue->getSeverity() === PreCommitIssue::SEVERITY_CRITICAL
+                            ));
     }
 
+    /**
+     * @return list<PreCommitIssue>
+     */
     public function getErrorIssues() : array
     {
-        return array_filter(
+        return array_values(array_filter(
             $this->issues,
-            fn ($issue) => $issue->getSeverity() === PreCommitIssue::SEVERITY_ERROR
-        );
+                                static fn (PreCommitIssue $issue) : bool => $issue->getSeverity() === PreCommitIssue::SEVERITY_ERROR
+                            ));
     }
 
+    /**
+     * @return list<PreCommitIssue>
+     */
     public function getWarningIssues() : array
     {
-        return array_filter(
+        return array_values(array_filter(
             $this->issues,
-            fn ($issue) => $issue->getSeverity() === PreCommitIssue::SEVERITY_WARNING
-        );
+                                static fn (PreCommitIssue $issue) : bool => $issue->getSeverity() === PreCommitIssue::SEVERITY_WARNING
+                            ));
     }
 
+    /**
+     * @return list<PreCommitIssue>
+     */
     public function getInfoIssues() : array
     {
-        return array_filter(
+        return array_values(array_filter(
             $this->issues,
-            fn ($issue) => $issue->getSeverity() === PreCommitIssue::SEVERITY_INFO
-        );
+                                static fn (PreCommitIssue $issue) : bool => $issue->getSeverity() === PreCommitIssue::SEVERITY_INFO
+                            ));
     }
 
     public function isPassed() : bool
@@ -148,6 +166,9 @@ final class PreCommitResult
         return $this->status === self::STATUS_PASSED;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray() : array
     {
         return [
@@ -166,7 +187,7 @@ final class PreCommitResult
                 'manual_review_candidates' => count($this->getManualReviewCandidates()),
             ],
             'issues'                 => array_map(
-                fn ($issue) => $issue->toArray(),
+                static fn (PreCommitIssue $issue) : array => $issue->toArray(),
                 $this->issues
             ),
             'passed_checks'          => $this->passedChecks,
@@ -199,28 +220,37 @@ final class PreCommitResult
         return count($this->getInfoIssues());
     }
 
+    /**
+     * @return list<PreCommitIssue>
+     */
     public function getDeleteCandidates() : array
     {
-        return array_filter(
+        return array_values(array_filter(
             $this->issues,
-            fn ($issue) => $issue->canDelete()
-        );
+                                static fn (PreCommitIssue $issue) : bool => $issue->canDelete()
+                            ));
     }
 
+    /**
+     * @return list<PreCommitIssue>
+     */
     public function getAutoFixCandidates() : array
     {
-        return array_filter(
+        return array_values(array_filter(
             $this->issues,
-            fn ($issue) => $issue->canAutoFix()
-        );
+                                static fn (PreCommitIssue $issue) : bool => $issue->canAutoFix()
+                            ));
     }
 
+    /**
+     * @return list<PreCommitIssue>
+     */
     public function getManualReviewCandidates() : array
     {
-        return array_filter(
+        return array_values(array_filter(
             $this->issues,
-            fn ($issue) => $issue->requiresReview()
-        );
+                                static fn (PreCommitIssue $issue) : bool => $issue->requiresReview()
+                            ));
     }
 
     public function getSummaryText() : string
@@ -325,6 +355,9 @@ final class PreCommitResult
         return in_array($this->status, [self::STATUS_PASSED, self::STATUS_WARNING, self::STATUS_INFO], true);
     }
 
+    /**
+     * @return list<string>
+     */
     public function getTodoLines() : array
     {
         $lines = [];

@@ -14,8 +14,17 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
  */
 interface ValidatorInterface
 {
-    public function setNext(?ValidatorInterface $validator): ValidatorInterface;
+    public function setNext(ValidatorInterface $validator) : ValidatorInterface;
+
+    /**
+     * @param array<string, mixed> $context
+     */
     public function validate(array $context): ValidationResult;
+
     public function getName(): string;
+
+    /**
+     * @param array<string, mixed> $context
+     */
     public function supports(array $context): bool;
 }

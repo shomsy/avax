@@ -29,8 +29,12 @@ class PreCommitValidator
     private ValidationChain $chain;
     private ValidationReport $report;
     private ReportStorage $storage;
+    /** @var array<string, mixed> */
     private array $options;
 
+    /**
+     * @param list<string> $argv
+     */
     public function __construct(array $argv)
     {
         $this->options = $this->parseOptions($argv);
@@ -40,6 +44,11 @@ class PreCommitValidator
         $this->configureChain();
     }
 
+    /**
+     * @param list<string> $argv
+     *
+     * @return array<string, mixed>
+     */
     private function parseOptions(array $argv): array
     {
         $options = [
@@ -117,25 +126,28 @@ class PreCommitValidator
         return $result->isPassed() ? 0 : 1;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function buildContext(): array
     {
-        $files = [];
-        $basePath = getcwd();
+        $files    = [];
+        $basePath = getcwd() ?: '.';
 
         if (isset($this->options['files'])) {
             $files = is_array($this->options['files'])
                 ? $this->options['files']
-                : array_filter(explode(',', $this->options['files']));
+                : array_values(array_filter(explode(',', (string) $this->options['files'])));
         } elseif (isset($this->options['staged-files-file'])) {
             $content = file_get_contents($this->options['staged-files-file']);
             if ($content !== false) {
-                $files = array_filter(array_map('trim', explode("\n", $content)));
+                $files = array_values(array_filter(array_map('trim', explode("\n", $content))));
             }
         } elseif ($this->options['staged']) {
             $gitBin = $this->findGitBinary();
             exec("{$gitBin} diff --cached --name-only --diff-filter=ACM 2>/dev/null", $output, $returnVar);
             if ($returnVar === 0 && !empty($output)) {
-                $files = array_filter($output);
+                $files = array_values(array_filter($output));
             }
         } else {
             $gitBin = $this->findGitBinary();
@@ -216,12 +228,6 @@ class PreCommitValidator
             ob_flush();
         }
         flush();
-    }
-}
-
-else {
-    echo $this->report->getSummaryText();
-}
     }
 
     private function printHelp(): void

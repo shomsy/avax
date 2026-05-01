@@ -16,7 +16,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 final class CheckHowToRules
 {
     private PreCommitConfig $config;
-    /** @var array<string, array> */
+    /** @var array<string, array{file: string, forbidden_patterns: list<string>}> */
     private array $rules = [];
 
     public function __construct(PreCommitConfig $config)
@@ -27,14 +27,14 @@ final class CheckHowToRules
 
     private function loadRules() : void
     {
-        $basePath = getcwd();
+        $basePath = getcwd() ?: '.';
         $howToDir = $basePath . '/.agents/how-to';
 
         if (! is_dir($howToDir)) {
             return;
         }
 
-        $files = glob($howToDir . '/how-to-*.md');
+        $files = glob($howToDir . '/how-to-*.md') ?: [];
         foreach ($files as $file) {
             $this->parseRuleFile($file);
         }
@@ -65,7 +65,7 @@ final class CheckHowToRules
         // Look for naming restrictions
         if (preg_match_all('/forbidden (?:name|names|pattern)?s?[\s:]+([A-Z][a-zA-Z,\s]+)/i', $content, $matches)) {
             foreach ($matches[1] as $match) {
-                $names = preg_split('/[,\s]+/', $match);
+                $names = preg_split('/[,\s]+/', $match) ?: [];
                 foreach ($names as $name) {
                     $name = trim($name);
                     if (! empty($name)) {
@@ -77,10 +77,15 @@ final class CheckHowToRules
 
         $this->rules[$fileName] = [
             'file'               => $fileName,
-            'forbidden_patterns' => array_unique($forbiddenPatterns),
+            'forbidden_patterns' => array_values(array_unique($forbiddenPatterns)),
         ];
     }
 
+    /**
+     * @param array<string, mixed> $context
+     *
+     * @return list<PreCommitIssue>
+     */
     public function run(array $context) : array
     {
         $issues = [];
@@ -89,10 +94,14 @@ final class CheckHowToRules
             return $issues;
         }
 
-        $files    = $context['files'] ?? [];
-        $basePath = $context['base_path'] ?? getcwd();
+        $files    = is_array($context['files'] ?? null) ? $context['files'] : [];
+        $basePath = is_string($context['base_path'] ?? null) ? $context['base_path'] : (getcwd() ?: '.');
 
         foreach ($files as $file) {
+            if (! is_string($file)) {
+                continue;
+            }
+
             $filePath = $basePath . '/' . $file;
             if (! file_exists($filePath)) {
                 continue;

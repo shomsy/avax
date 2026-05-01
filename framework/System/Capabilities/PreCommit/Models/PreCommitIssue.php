@@ -26,9 +26,10 @@ final class PreCommitIssue
     private string  $checkName;
     private string  $severity;
     private string  $message;
-    private ?string $file;
-    private ?int    $line;
+    private string|null $file;
+    private int|null    $line;
     private string  $ruleCode;
+    /** @var array<string, mixed> */
     private array   $metadata;
     private string  $deleteClassification;
 
@@ -36,10 +37,10 @@ final class PreCommitIssue
         string  $checkName,
         string  $severity,
         string  $message,
-        ?string $file = null,
-        ?int    $line = null,
+        string|null $file = null,
+        int|null    $line = null,
         string  $ruleCode = '',
-        ?string $deleteClassification = null
+        string|null $deleteClassification = null
     )
     {
         $this->checkName            = $checkName;
@@ -52,6 +53,9 @@ final class PreCommitIssue
         $this->deleteClassification = $deleteClassification ?? self::DELETE_UNSAFE;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data) : self
     {
         return new self(
@@ -80,12 +84,12 @@ final class PreCommitIssue
         return $this->message;
     }
 
-    public function getFile() : ?string
+    public function getFile() : string|null
     {
         return $this->file;
     }
 
-    public function getLine() : ?int
+    public function getLine() : int|null
     {
         return $this->line;
     }
@@ -110,6 +114,9 @@ final class PreCommitIssue
         return $this->severity === self::SEVERITY_INFO;
     }
 
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function withMetadata(array $metadata) : self
     {
         $new           = clone $this;
@@ -126,6 +133,9 @@ final class PreCommitIssue
         return $new;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray() : array
     {
         return [

@@ -22,6 +22,11 @@ final class DetectLegacyAliases
         $this->config = $config;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     *
+     * @return list<PreCommitIssue>
+     */
     public function run(array $context) : array
     {
         $issues   = [];

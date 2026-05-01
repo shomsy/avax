@@ -232,6 +232,8 @@ class FileStructureValidator extends BaseValidator
 
     /**
      * Check folder vs file naming consistency
+     *
+     * @param list<string> $pathParts
      */
     private function checkFolderFileNaming(array $pathParts, string $file): ValidationResult
     {

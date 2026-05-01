@@ -13,9 +13,10 @@ namespace Avax\Framework\System\Capabilities\PreCommit;
 final class ValidationReport
 {
     private string $timestamp;
-    /** @var array<ValidationResult> */
+    /** @var list<ValidationResult> */
     private array $results;
     private string $reportId;
+    /** @var array<string, mixed> */
     private array $metadata;
     private float $executionTime;
 
@@ -34,21 +35,29 @@ final class ValidationReport
     }
 
     /**
-     * @return array<ValidationResult>
+     * @return list<ValidationResult>
      */
     public function getResults(): array
     {
         return $this->results;
     }
 
+    /** @return list<ValidationResult> */
     public function getFailedResults(): array
     {
-        return array_filter($this->results, fn($r) => $r->isFailed());
+        return array_values(array_filter(
+                                $this->results,
+                                static fn (ValidationResult $result) : bool => $result->isFailed()
+                            ));
     }
 
+    /** @return list<ValidationResult> */
     public function getPassedResults(): array
     {
-        return array_filter($this->results, fn($r) => $r->isPassed());
+        return array_values(array_filter(
+                                $this->results,
+                                static fn (ValidationResult $result) : bool => $result->isPassed()
+                            ));
     }
 
     public function isAllPassed(): bool
@@ -96,6 +105,7 @@ final class ValidationReport
         $this->metadata[$key] = $value;
     }
 
+    /** @return array<string, mixed> */
     public function getMetadata(): array
     {
         return $this->metadata;
@@ -174,7 +184,7 @@ final class ValidationReport
 
         foreach ($this->results as $idx => $result) {
             $status = $result->isPassed() ? '✅' : '❌';
-            $severity = strtoupper($result->getSeverity() ?? 'INFO');
+            $severity = strtoupper($result->getSeverity());
             $output .= sprintf("  %s [%s] %s\n", $status, $severity, implode('; ', $result->getMessages()));
         }
 

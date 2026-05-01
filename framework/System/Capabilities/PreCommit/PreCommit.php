@@ -38,9 +38,13 @@ final class PreCommit
     private PreCommitConfig       $config;
     private PreCommitResult       $result;
     private PreCommitReportWriter $reportWriter;
+    /** @var list<string> */
     private array                 $files;
     private bool                  $touchedOnly;
 
+    /**
+     * @param list<string>|null $files
+     */
     public function __construct(
         ?PreCommitConfig $config = null,
         ?array           $files = null,
@@ -84,11 +88,13 @@ final class PreCommit
     }
 
     /**
-     * Build context for checks
+     * Build context for checks.
+     *
+     * @return array<string, mixed>
      */
     private function buildContext() : array
     {
-        $basePath = getcwd();
+        $basePath = getcwd() ?: '.';
 
         // If no files provided, detect from git
         $files = $this->files;
@@ -108,7 +114,9 @@ final class PreCommit
     }
 
     /**
-     * Detect staged files from git
+     * Detect staged files from git.
+     *
+     * @return list<string>
      */
     private function detectStagedFiles(string $basePath) : array
     {
@@ -124,7 +132,7 @@ final class PreCommit
             return [];
         }
 
-        return array_filter($output);
+        return array_values(array_filter($output));
     }
 
     /**
@@ -177,7 +185,9 @@ final class PreCommit
     }
 
     /**
-     * Run all enabled checks in order
+     * Run all enabled checks in order.
+     *
+     * @param array<string, mixed> $context
      */
     private function runChecks(array $context) : void
     {

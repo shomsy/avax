@@ -20,8 +20,8 @@ final class TodoGenerator
 
     /**
      * Generate todo tasks from validation failures
-     * 
-     * @param array<array> $failures Array of failure data
+     *
+     * @param list<array{messages: list<string>|string, severity: string, file: string|null, line: int|null, rule_code: string|null}> $failures
      */
     public function generate(array $failures, string $reportId): void
     {
@@ -35,8 +35,10 @@ final class TodoGenerator
 
     /**
      * Create todo task entries
-     * 
-     * @return array<string>
+     *
+     * @param list<array{messages: list<string>|string, severity: string, file: string|null, line: int|null, rule_code: string|null}> $failures
+     *
+     * @return list<string>
      */
     private function createTasks(array $failures, string $reportId): array
     {
@@ -48,7 +50,7 @@ final class TodoGenerator
             $line = $failure['line'] ?? '';
             $location = $file . ($line ? ":{$line}" : '');
             $messages = is_array($failure['messages']) ? $failure['messages'] : [$failure['messages']];
-            $severity = $failure['severity'] ?? 'error';
+            $severity = $failure['severity'];
             $ruleCode = $failure['rule_code'] ?? 'UNKNOWN';
 
             $priority = $this->mapSeverityToPriority($severity);

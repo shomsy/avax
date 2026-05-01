@@ -8,6 +8,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 
 /**
  * Run External Tooling Scripts
@@ -17,7 +18,7 @@ use RecursiveIteratorIterator;
  */
 final class RunExternalToolingScripts
 {
-    /** @var array<string, array> */
+    /** @var array<string, array{command: string, extension: string, timeout: int}> */
     private static array    $scriptExecutors
         = [
             'php'    => ['command' => 'php', 'extension' => '.php', 'timeout' => 30],
@@ -33,10 +34,15 @@ final class RunExternalToolingScripts
         $this->config = $config;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     *
+     * @return list<PreCommitIssue>
+     */
     public function run(array $context) : array
     {
-        $issues      = [];
-        $basePath    = getcwd();
+        $issues   = [];
+        $basePath = getcwd() ?: '.';
         $toolingPath = $basePath . '/tooling';
 
         if (! is_dir($toolingPath)) {
@@ -65,7 +71,7 @@ final class RunExternalToolingScripts
     }
 
     /**
-     * @return array<string, array>
+     * @return array<string, array{path: string, type: string, name: string}>
      */
     private function discoverScripts(string $toolingPath) : array
     {
@@ -76,6 +82,10 @@ final class RunExternalToolingScripts
         );
 
         foreach ($iterator as $file) {
+            if (! $file instanceof SplFileInfo) {
+                continue;
+            }
+
             if (! $file->isFile()) {
                 continue;
             }
@@ -131,6 +141,8 @@ final class RunExternalToolingScripts
     }
 
     /**
+     * @param array{path: string, type: string, name: string} $script
+     *
      * @return array{passed: bool, severity: string, message: string}
      */
     private function executeScript(array $script) : array

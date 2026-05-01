@@ -21,18 +21,25 @@ abstract class BaseValidator implements ValidatorInterface
         $this->name = $name ?: static::class;
     }
 
-    public function setNext(?ValidatorInterface $validator): ValidatorInterface
+    public function setNext(ValidatorInterface $validator) : ValidatorInterface
     {
         $this->next = $validator;
+
         return $validator;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     abstract public function validate(array $context): ValidationResult;
 
     abstract public function getName(): string;
 
     /**
      * Check if this validator should run for given context
+     */
+    /**
+     * @param array<string, mixed> $context
      */
     public function supports(array $context): bool
     {
@@ -41,6 +48,9 @@ abstract class BaseValidator implements ValidatorInterface
 
     /**
      * Pass to next validator in chain
+     */
+    /**
+     * @param array<string, mixed> $context
      */
     protected function passToNext(array $context): ValidationResult
     {
@@ -52,6 +62,9 @@ abstract class BaseValidator implements ValidatorInterface
 
     /**
      * Combine current result with next validator
+     */
+    /**
+     * @param array<string, mixed> $context
      */
     protected function combineWithNext(array $context, ValidationResult $current): ValidationResult
     {

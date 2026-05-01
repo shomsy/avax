@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChange;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChange;

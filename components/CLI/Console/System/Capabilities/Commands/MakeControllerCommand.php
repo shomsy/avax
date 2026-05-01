@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\CLI\Console\System\Capabilities\Commands;
 
-use Avax\Components\CLI\Console\System\Capabilities\Generators\ControllerGenerator;
+use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\ControllerGenerator;
 use Avax\Components\CLI\Console\System\PublicSurface\Command;
 use Override;
 use RuntimeException;

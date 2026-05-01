@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottle;
-use Avax\Components\Identity\Auth\System\Capabilities\Access\Authentication\Throttle\AttemptThrottleExceeded;
+use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottle;
+use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottleExceeded;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\PasswordHashing\PasswordHasher;
+use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;

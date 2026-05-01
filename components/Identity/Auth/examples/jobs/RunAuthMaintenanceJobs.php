@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Auth\Examples\Jobs;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\ExportAuditEvents\ExportAuditEvents;
-use Avax\Components\Identity\Auth\System\Capabilities\ExternalIdentity\OAuth\Runtime\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\Limit\CleanupExpiredMfaChallenges;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Runtime\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\CleanupExpiredMfaChallenges;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
 use SensitiveParameter;

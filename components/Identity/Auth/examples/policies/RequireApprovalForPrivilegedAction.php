@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\Examples\Policies;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Access\Policy\IdentityPolicyCatalog;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\IdentityPolicyCatalog;
 
 /**
  * Example: host applications can branch on policy for approval workflows.

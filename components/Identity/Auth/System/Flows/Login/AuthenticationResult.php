@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Login;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Runtime\MfaChallenge;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\MfaChallenge;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use SensitiveParameter;

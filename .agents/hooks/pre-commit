@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Pre-commit validation hook
+# Runs validation chain before allowing commit
+
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+echo "🔍 Running pre-commit validation..."
+
+# Capture staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "ℹ No staged files to validate."
+    exit 0
+fi
+
+cd "${REPO_ROOT}"
+
+# Run validation with file list via temp file
+TMP_FILE=$(mktemp)
+echo "$STAGED_FILES" > "$TMP_FILE"
+
+php avax validate --staged-files-file="${TMP_FILE}" --format=text 2>&1
+VALIDATION_RESULT=$?
+
+rm -f "${TMP_FILE}"
+
+if [ ${VALIDATION_RESULT} -ne 0 ]; then
+    echo ""
+    echo "❌ Validation failed. Commit aborted."
+    echo "   Review the validation report above and fix issues."
+    echo "   Run 'php avax validate --staged-files-file=<file>' for details."
+    exit 1
+fi
+
+echo "✅ Validation passed. Proceeding with commit."
+exit 0
+fi
+
+cd "${REPO_ROOT}"
+
+# Run validation with file list via temp file
+TMP_FILE=$(mktemp)
+echo "$STAGED_FILES" > "$TMP_FILE"
+
+php avax validate --staged-files-file="${TMP_FILE}" --format=text 2>&1
+VALIDATION_RESULT=$?
+
+rm -f "${TMP_FILE}"
+
+if [ ${VALIDATION_RESULT} -ne 0 ]; then
+    echo ""
+    echo "❌ Validation failed. Commit aborted."
+    echo "   Review the validation report above and fix issues."
+    echo "   Run 'php avax validate --staged-files-file=<file>' for details."
+    exit 1
+fi
+
+echo "✅ Validation passed. Proceeding with commit."
+exit 0

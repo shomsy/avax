@@ -145,3 +145,15 @@ Iako su glavni taskovi "COMPLETED", sledeći propusti su detektovani tokom "Zero
     - `ServiceMap` komponenta ➔ `DependencyMap` ili `DependencyGraph`.
     - `MakeServiceCommand` i `ServiceGenerator` ➔ `MakeActionCommand` / `CapabilityGenerator`.
     - `StatefulServiceDetector` ➔ `StatefulDependencyDetector`.
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: Security check failed - dangerous functions detected - Location: general - Ref: val-69f4d29e0164b9.54472934
+
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: Security check failed - dangerous functions detected - Location: general - Ref: val-69f4d2b70faeb1.34605750
+
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: Security check failed - dangerous functions detected - Location: general - Ref: val-69f4d2f5387068.40441453
+
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: Security check failed - dangerous functions detected - Location: general - Ref: val-69f4d30db67277.74862771
+
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: Security check failed - dangerous functions detected - Location: general - Ref: val-69f4d31a8fc491.88629667
+
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: PHP Syntax Error:  Parse error: syntax error, unexpected end of file in /home/shomsy/projects/avax/test_good_file.php on line 2 Errors parsing /home/shomsy/projects/avax/test_good_file.php - Location: general - Ref: val-69f4d365279573.63923309
+

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Scheduler\System\Flows\RegisterScheduledTask;
+namespace Avax\Components\Operations\Scheduler\System\Flows\RegisterScheduledTask;
 
-use Avax\Components\Scheduler\System\PublicSurface\ScheduledTask;
-use Avax\Components\Scheduler\System\PublicSurface\Scheduler;
+use Avax\Components\Operations\Scheduler\System\PublicSurface\ScheduledTask;
+use Avax\Components\Operations\Scheduler\System\PublicSurface\Scheduler;
 use Closure;
 
 final readonly class RegisterScheduledTask

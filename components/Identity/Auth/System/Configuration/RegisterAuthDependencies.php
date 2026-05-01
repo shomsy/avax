@@ -10,7 +10,6 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLog
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Configuration\AuthBuilder;
@@ -21,6 +20,7 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Auth\System\Foundation\Exceptions\ConfigurationException;
 use Avax\Components\Identity\Auth\System\Foundation\IdGenerator;
 use Avax\Components\Identity\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Override;
 use ReflectionException;
 

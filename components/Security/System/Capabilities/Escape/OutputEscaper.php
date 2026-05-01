@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Security\System\Capabilities\Escape;
+namespace Avax\Components\Security\System\System\Capabilities\Escape;
 
 final readonly class OutputEscaper
 {

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration\GoldenPath;
 
-use Avax\Components\Concurrency\System\PublicSurface\Concurrency;
-use Avax\Components\Fallback\System\PublicSurface\Fallback;
-use Avax\Components\FeatureFlags\System\PublicSurface\FeatureFlags;
-use Avax\Components\Pipeline\System\PublicSurface\Pipeline;
-use Avax\Components\Security\System\PublicSurface\Security;
-use Avax\Components\Tenancy\System\PublicSurface\Tenancy;
+use Avax\Components\Application\FeatureFlags\System\PublicSurface\FeatureFlags;
+use Avax\Components\Application\Pipeline\System\PublicSurface\Pipeline;
+use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
+use Avax\Components\Operations\Concurrency\System\PublicSurface\Concurrency;
+use Avax\Components\Operations\Resilience\System\Capabilities\Fallback\System\PublicSurface\Fallback;
+use Avax\Components\Security\System\System\PublicSurface\Security;
 use Avax\Tests\TestCase;
 use RuntimeException;
 

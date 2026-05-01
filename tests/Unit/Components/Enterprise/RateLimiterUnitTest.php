@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Enterprise;
 
-use Avax\Components\Resilience\System\Capabilities\RateLimiter\RateLimit;
-use Avax\Components\Resilience\System\Capabilities\RateLimiter\RateLimiter;
-use Avax\Components\Resilience\System\Capabilities\RateLimiter\RateLimitMiddleware;
-use Avax\Components\Resilience\System\Capabilities\RateLimiter\RedisRateLimiter;
+use Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter\RateLimit;
+use Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter\RateLimiter;
+use Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter\RateLimitMiddleware;
+use Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter\RedisRateLimiter;
 use Avax\Tests\TestCase;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;

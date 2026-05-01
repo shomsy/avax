@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Login;
 
-use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 
 /**
  * VerifyPassword - Action to verify user password against hash.

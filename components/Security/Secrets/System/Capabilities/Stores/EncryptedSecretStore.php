@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Secrets\System\Capabilities\Stores;
+namespace Avax\Components\Security\Secrets\System\Capabilities\Stores;
 
-use Avax\Components\Secrets\System\Capabilities\Encryption\SecretEncrypter;
+use Avax\Components\Security\Secrets\System\Capabilities\Encryption\SecretEncrypter;
 
 final readonly class EncryptedSecretStore implements SecretStore
 {

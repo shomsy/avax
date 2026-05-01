@@ -7,13 +7,7 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Support\DeterministicRiskEngine;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\FederationFailed;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\FederatedIdentityLink;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\FederatedIdentityLinkStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\FederationRuntimeInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
@@ -27,6 +21,12 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\FederationFailed;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\FederatedIdentityLink;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\FederatedIdentityLinkStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\FederationConnectionStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\FederationRuntimeInterface;
+use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Random\RandomException;
 use SensitiveParameter;
 

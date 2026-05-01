@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support;
 
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
-use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Random\RandomException;

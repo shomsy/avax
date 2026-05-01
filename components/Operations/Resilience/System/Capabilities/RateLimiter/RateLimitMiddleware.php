@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Resilience\System\Capabilities\RateLimiter;
+namespace Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter;
 
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Closure;

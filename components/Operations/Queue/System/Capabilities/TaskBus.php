@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Tasks\System\Capabilities;
+namespace Avax\Components\Operations\Tasks\System\Capabilities;
 
 use DateInterval;
 

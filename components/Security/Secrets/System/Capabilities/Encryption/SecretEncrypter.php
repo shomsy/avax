@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Secrets\System\Capabilities\Encryption;
+namespace Avax\Components\Security\Secrets\System\Capabilities\Encryption;
 
 use RuntimeException;
 

@@ -15,11 +15,20 @@ final class CheckComponentSuiteStructure
         'Operations',
         'Presentation',
         'DeveloperTools',
+        'Security',
     ];
 
     private array $allowedBridges = [
-        'DataFoundation', // Legacy bridge
-        'DataLayer',     // Legacy bridge
+        'DataFoundation',
+        'DataLayer',
+    ];
+
+    private array $allowedExperimental
+        = [
+            'Documentation',
+            'DependencyMap',
+            'Performance',
+            'Server',
     ];
 
     private array $helperFolders = [
@@ -27,7 +36,6 @@ final class CheckComponentSuiteStructure
         'Context',
         'Dispatcher',
         'Enums',
-        'Security',
         'System',
         'URI',
     ];
@@ -67,7 +75,7 @@ final class CheckComponentSuiteStructure
             }
 
             // Allow known bridges and helper folders
-            if (in_array($item, $this->allowedSuites, true) || in_array($item, $this->allowedBridges, true) || in_array($item, $this->helperFolders, true)) {
+            if (in_array($item, $this->allowedSuites, true) || in_array($item, $this->allowedBridges, true) || in_array($item, $this->helperFolders, true) || in_array($item, $this->allowedExperimental, true)) {
                 continue;
             }
 

@@ -13,7 +13,7 @@ use Avax\Components\Operations\Mail\System\Capabilities\Queue\SmtpMailer;
 use Avax\Components\Operations\Mail\System\Capabilities\Transport\LogTransport;
 use Avax\Components\Operations\Mail\System\Flows\Send\SendMail;
 use Avax\Components\Operations\Mail\System\PublicSurface\Mailer;
-use Avax\Components\Tasks\System\Capabilities\Queue\Queue;
+use Avax\Components\Operations\Tasks\System\Capabilities\Queue\Queue;
 use Avax\Tests\TestCase;
 
 final class MailQueueUnitTest extends TestCase

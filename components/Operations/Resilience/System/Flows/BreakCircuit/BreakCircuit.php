@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Resilience\System\Flows\BreakCircuit;
+namespace Avax\Components\Operations\Resilience\System\Flows\BreakCircuit;
 
-use Avax\Components\Resilience\System\Capabilities\CircuitBreaker\CircuitBreaker;
+use Avax\Components\Operations\Resilience\System\Capabilities\CircuitBreaker\CircuitBreaker;
 
 final readonly class BreakCircuit
 {

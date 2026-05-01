@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Secrets\System\PublicSurface;
+namespace Avax\Components\Security\Secrets\System\PublicSurface;
 
-use Avax\Components\Secrets\System\Capabilities\Stores\InMemorySecretStore;
-use Avax\Components\Secrets\System\Capabilities\Stores\SecretStore;
+use Avax\Components\Security\Secrets\System\Capabilities\Stores\InMemorySecretStore;
+use Avax\Components\Security\Secrets\System\Capabilities\Stores\SecretStore;
 
 final class Secrets
 {

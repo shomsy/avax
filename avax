@@ -56,20 +56,41 @@ if (in_array(needle: $command, haystack: ['serve', 'make:controller', 'make:mode
     exit(handleStandaloneCommand(command: $command, arg1: $arg1, arg2: $arg2, argv: $argv, rootDir: $rootDir));
 }
 
-// Get dependencies from container
-$repository = app(abstract: LegacyMigrationRepository::class);
-$runner     = app(abstract: LegacyMigrationRunner::class);
-$builder    = app(abstract: QueryBuilder::class);
-$loader     = new LegacyMigrationLoader();
-$generator  = new LegacyMigrationGenerator();
-$exporter   = new LegacyDatabaseExporter(builder: $builder);
-
-// Migrations directory
+// Migrations directory - declared here but initialized lazily
 $migrationsPath = $rootDir . '/database/migrations';
 $seedersPath    = $rootDir . '/database/seeders';
 $exportPath     = $rootDir . '/database/exports';
 
 try {
+    // Initialize container-dependent services only when needed
+    switch ($command) {
+        case 'db:create':
+        case 'db:drop':
+        case 'db:export':
+        case 'table:drop':
+        case 'table:truncate':
+            $builder = app(abstract: QueryBuilder::class);
+            break;
+        case 'migrate':
+        case 'run':
+        case 'rollback':
+        case 'status':
+            $repository = app(abstract: LegacyMigrationRepository::class);
+            $runner     = app(abstract: LegacyMigrationRunner::class);
+            $loader     = new LegacyMigrationLoader();
+            break;
+        case 'make':
+            $generator = new LegacyMigrationGenerator();
+            $exporter  = new LegacyDatabaseExporter(builder: app(abstract: QueryBuilder::class));
+            break;
+        case 'db:seed':
+            $builder = app(abstract: QueryBuilder::class);
+            break;
+        default:
+            // Commands that don't need container services are handled in the main switch
+            break;
+    }
+
     switch ($command) {
         case 'db:create':
             if (! $arg1) {

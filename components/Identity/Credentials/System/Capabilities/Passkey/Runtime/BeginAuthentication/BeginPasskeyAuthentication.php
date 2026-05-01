@@ -37,10 +37,10 @@ final readonly class BeginPasskeyAuthentication
      */
     public function execute(BeginPasskeyAuthenticationData $data): PasskeyAuthenticationChallenge
     {
-        $challengeId = 'pkauth_'.bin2hex(string: random_bytes(length: 12));
-        $challenge = bin2hex(string: random_bytes(length: 32));
-        $userId = null;
-        $allowIds = [];
+        $challengeId = 'pkauth_' . bin2hex(string: random_bytes(length: 12));
+        $challenge   = bin2hex(string: random_bytes(length: 32));
+        $userId      = null;
+        $allowIds    = [];
 
         if ($data->identifier !== null && $data->identifier !== '') {
             $user = $this->userSource->findByEmail(email: $data->identifier);

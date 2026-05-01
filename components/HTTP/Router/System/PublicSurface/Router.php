@@ -20,8 +20,8 @@ final class Router implements RouterInterface
 
     public function __construct()
     {
-        $this->routes = new RouteCollection;
-        $this->matcher = new MatchRoute;
+        $this->routes  = new RouteCollection();
+        $this->matcher = new MatchRoute();
     }
 
     public function get(string $u, $a): void

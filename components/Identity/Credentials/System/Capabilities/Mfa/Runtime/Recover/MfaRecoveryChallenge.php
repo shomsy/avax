@@ -31,7 +31,7 @@ final readonly class MfaRecoveryChallenge
     {
         return [
             'dispatched' => $this->dispatched,
-            'token' => $this->token === null ? null : '[REDACTED]',
+            'token'     => $this->token === null ? null : '[REDACTED]',
             'expiresAt' => $this->expiresAt,
         ];
     }

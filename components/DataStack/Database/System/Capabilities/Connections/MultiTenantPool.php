@@ -31,5 +31,5 @@ final class MultiTenantPool implements ConnectionPool
     }
 
     #[Override]
-    public function release(PDO $pdo): void {}
+    public function release(PDO $pdo) : void {}
 }

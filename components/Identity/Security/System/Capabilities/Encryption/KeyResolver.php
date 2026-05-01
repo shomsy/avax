@@ -22,8 +22,8 @@ final class KeyResolver
     private string $currentVersion;
 
     /**
-     * @param  array<string, string>  $keyVersions  Map of version => base64-encoded key
-     * @param  string  $currentVersion  The version to use for new encryptions
+     * @param array<string, string> $keyVersions    Map of version => base64-encoded key
+     * @param string                $currentVersion The version to use for new encryptions
      */
     public function __construct(
         array $keyVersions,
@@ -55,7 +55,8 @@ final class KeyResolver
     /**
      * Get a specific key by version (for decrypting older payloads).
      *
-     * @param  string  $version  The key version to retrieve
+     * @param string $version The key version to retrieve
+     *
      * @return EncryptionKey|null The encryption key or null if not found
      */
     public function getKeyByVersion(string $version): ?EncryptionKey

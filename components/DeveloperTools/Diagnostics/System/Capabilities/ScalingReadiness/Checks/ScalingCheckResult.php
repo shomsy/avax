@@ -15,7 +15,7 @@ final readonly class ScalingCheckResult
     public function toArray(): array
     {
         return [
-            'name' => $this->name,
+            'name'   => $this->name,
             'passed' => $this->passed,
             'message' => $this->message,
         ];

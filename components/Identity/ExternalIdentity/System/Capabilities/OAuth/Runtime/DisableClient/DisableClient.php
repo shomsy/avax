@@ -27,7 +27,7 @@ final readonly class DisableClient
             name      : 'auth.oauth.client.disabled',
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $client->clientId,
+                            'client_id' => $client->clientId,
                 'tenant_slug' => $client->tenantSlug,
             ],
         ));

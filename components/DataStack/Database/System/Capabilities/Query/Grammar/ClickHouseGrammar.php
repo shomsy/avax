@@ -20,7 +20,7 @@ final class ClickHouseGrammar extends BaseGrammar
 
         $components = [
             'select' => $this->compileColumns(state: $state),
-            'from' => $this->compileFrom(state: $state),
+            'from'  => $this->compileFrom(state: $state),
             'joins' => $this->compileJoins(state: $state),
             'wheres' => $this->compileWheres(state: $state),
             'groups' => $this->compileGroups(state: $state),
@@ -40,7 +40,7 @@ final class ClickHouseGrammar extends BaseGrammar
 
         $columns = array_map(callback: fn ($c) => $this->wrap(value: $c), array: $state->columns ?: ['*']);
 
-        return $select.implode(separator: ', ', array: $columns);
+        return $select . implode(separator: ', ', array: $columns);
     }
 
     #[Override]
@@ -68,10 +68,10 @@ final class ClickHouseGrammar extends BaseGrammar
             $sets[] = "{$col} = {$val}";
         }
 
-        $sql = "ALTER TABLE {$table} UPDATE ".implode(separator: ', ', array: $sets);
+        $sql = "ALTER TABLE {$table} UPDATE " . implode(separator: ', ', array: $sets);
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE '.$this->compileWheres(state: $state);
+            $sql .= ' WHERE ' . $this->compileWheres(state: $state);
         }
 
         return $sql;
@@ -104,7 +104,7 @@ final class ClickHouseGrammar extends BaseGrammar
     {
         parent::compileInsert(state: $state);
 
-        $table = $this->wrap(value: $state->from);
+        $table  = $this->wrap(value: $state->from);
         $columns = implode(separator: ', ', array: array_keys(array: $state->values));
         $values = implode(separator: ', ', array: array_map(
             callback: static fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
@@ -121,12 +121,12 @@ final class ClickHouseGrammar extends BaseGrammar
 
     public function compileArrayJoin(string $column): string
     {
-        return 'ARRAY JOIN '.$this->wrap(value: $column);
+        return 'ARRAY JOIN ' . $this->wrap(value: $column);
     }
 
     public function compilePrewhere(array $columns): string
     {
-        return 'PREWHERE '.implode(separator: ', ', array: $columns);
+        return 'PREWHERE ' . implode(separator: ', ', array: $columns);
     }
 
     public function compileFinal(): string
@@ -141,37 +141,37 @@ final class ClickHouseGrammar extends BaseGrammar
 
     public function compileWithSeries(int $start, int $end): string
     {
-        return "WITH series AS (SELECT toUInt64(number) AS n FROM numbers({$start}, ".($end - $start).'))';
+        return "WITH series AS (SELECT toUInt64(number) AS n FROM numbers({$start}, " . ($end - $start) . '))';
     }
 
     public function compileUsing(array $columns): string
     {
-        return 'USING '.implode(separator: ', ', array: $columns);
+        return 'USING ' . implode(separator: ', ', array: $columns);
     }
 
     public function compileGlobal(array $columns): string
     {
-        return 'GLOBAL '.implode(separator: ', ', array: $columns);
+        return 'GLOBAL ' . implode(separator: ', ', array: $columns);
     }
 
     public function compileGroupArray(string $column): string
     {
-        return 'groupArray('.$this->wrap(value: $column).')';
+        return 'groupArray(' . $this->wrap(value: $column) . ')';
     }
 
     public function compileGroupUniqArray(string $column): string
     {
-        return 'groupUniqArray('.$this->wrap(value: $column).')';
+        return 'groupUniqArray(' . $this->wrap(value: $column) . ')';
     }
 
     public function compileQuantile(float $q, string $column): string
     {
-        return "quantile({$q})(".$this->wrap(value: $column).')';
+        return "quantile({$q})(" . $this->wrap(value: $column) . ')';
     }
 
     #[Override]
     public function compileTruncate(string $table): string
     {
-        return 'DROP TABLE IF EXISTS '.$this->wrap(value: $table);
+        return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
     }
 }

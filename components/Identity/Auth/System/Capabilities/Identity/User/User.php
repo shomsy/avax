@@ -35,22 +35,22 @@ final class User implements Stringable, UserInterface
         string $_username,
         #[SensitiveParameter]
         string $_passwordHash,
-        ?array $roles = null,
-        ?array $permissions = null,
+        array $roles = null,
+        array $permissions = null,
         bool $_isActive = true,
     ) {
-        $this->id = $_id;
-        $this->email = $_email;
-        $this->username = $_username;
+        $this->id          = $_id;
+        $this->email       = $_email;
+        $this->username    = $_username;
         $this->passwordHash = $_passwordHash;
-        $this->isActive = $_isActive;
-        $this->roles = array_values(array: $roles ?? []);
+        $this->isActive    = $_isActive;
+        $this->roles       = array_values(array: $roles ?? []);
         $this->permissions = array_values(array: $permissions ?? []);
     }
 
     /**
-     * @param  list<UserRole>|null  $roles
-     * @param  list<UserPermission>|null  $permissions
+     * @param list<UserRole>|null       $roles
+     * @param list<UserPermission>|null $permissions
      */
     public static function create(
         UserId $id,
@@ -59,8 +59,8 @@ final class User implements Stringable, UserInterface
         string $username,
         #[SensitiveParameter]
         string $passwordHash,
-        ?array $roles = null,
-        ?array $permissions = null,
+        array $roles = null,
+        array $permissions = null,
         bool $isActive = true,
     ): self {
         return new self(

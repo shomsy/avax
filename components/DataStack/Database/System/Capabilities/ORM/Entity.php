@@ -20,6 +20,6 @@ abstract class Entity
     {
         $shortName = new ReflectionClass(objectOrClass: static::class)->getShortName();
 
-        return strtolower(string: $shortName).'s';
+        return strtolower(string: $shortName) . 's';
     }
 }

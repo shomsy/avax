@@ -17,7 +17,7 @@ final class SchedulerReport
     public function addExecuted(string $task, string $status, float $duration): void
     {
         $this->executed[] = [
-            'task' => $task,
+            'task'   => $task,
             'status' => $status,
             'duration_ms' => $duration,
         ];

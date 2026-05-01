@@ -27,7 +27,7 @@ final readonly class RequireAdminElevation
     public function execute(): void
     {
         $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $user    = $context->user();
         $bindingId = $this->bindingId(context: $context);
 
         if ($user === null) {

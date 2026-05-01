@@ -26,18 +26,18 @@ final class PersistenceTimeline
     /**
      * Records a query execution in the timeline.
      *
-     * @param  string  $query  The SQL query
-     * @param  float  $duration  Duration in milliseconds
-     * @param  float|null  $timestamp  Optional timestamp in milliseconds
+     * @param string     $query     The SQL query
+     * @param float      $duration  Duration in milliseconds
+     * @param float|null $timestamp Optional timestamp in milliseconds
      */
-    public function record(string $query, float $duration, ?float $timestamp = null): void
+    public function record(string $query, float $duration, float $timestamp = null) : void
     {
         $timestamp ??= microtime(true) * 1000;
         $fingerprint = QueryFingerprint::fromQuery($query);
 
         $this->entries[] = [
-            'query' => $query,
-            'duration' => $duration,
+            'query'     => $query,
+            'duration'  => $duration,
             'timestamp' => $timestamp,
             'fingerprint' => $fingerprint,
         ];
@@ -77,7 +77,8 @@ final class PersistenceTimeline
     /**
      * Returns queries that took longer than the specified threshold.
      *
-     * @param  float  $thresholdMs  Threshold in milliseconds
+     * @param float $thresholdMs Threshold in milliseconds
+     *
      * @return array<array{query: string, duration: float, timestamp: float, fingerprint: QueryFingerprint}>
      */
     public function getSlowQueries(float $thresholdMs): array
@@ -93,9 +94,9 @@ final class PersistenceTimeline
      */
     public function reset(): void
     {
-        $this->entries = [];
+        $this->entries   = [];
         $this->startTime = null;
-        $this->endTime = null;
+        $this->endTime   = null;
     }
 
     /**
@@ -112,10 +113,10 @@ final class PersistenceTimeline
     public function summary(): array
     {
         return [
-            'count' => $this->getQueryCount(),
-            'totalTime' => $this->getTotalTime(),
+            'count'       => $this->getQueryCount(),
+            'totalTime'   => $this->getTotalTime(),
             'averageTime' => $this->getAverageTime(),
-            'timeSpan' => $this->getTimeSpan(),
+            'timeSpan'    => $this->getTimeSpan(),
             'slowestQuery' => $this->getSlowestQuery(),
         ];
     }
@@ -183,7 +184,7 @@ final class PersistenceTimeline
         foreach ($this->entries as $entry) {
             if ($entry['duration'] > $maxDuration) {
                 $maxDuration = $entry['duration'];
-                $slowest = $entry;
+                $slowest     = $entry;
             }
         }
 

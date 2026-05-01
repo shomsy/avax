@@ -75,7 +75,7 @@ final class QueryReport
     public function toArray(): array
     {
         return [
-            'n_plus_one' => $this->nPlusOne,
+            'n_plus_one'   => $this->nPlusOne,
             'slow_queries' => $this->slowQueries,
             'binding_violations' => $this->bindingViolations,
         ];

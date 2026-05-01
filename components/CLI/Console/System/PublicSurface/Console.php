@@ -25,7 +25,7 @@ class Console
     public function __construct(
         ?string $name = null,
         ?string $version = null,
-        private readonly ConsoleOutput $consoleOutput = new ConsoleOutput,
+        private readonly ConsoleOutput $consoleOutput = new ConsoleOutput(),
     ) {
         $this->appName = $name ?? 'Avax Console';
         $this->appVersion = $version ?? '1.0.0';

@@ -52,7 +52,7 @@ final class RouterBuilder
     /**
      * Set default route parameters.
      *
-     * @param  array<string, mixed>  $defaults
+     * @param array<string, mixed> $defaults
      */
     public function withDefaults(array $defaults): self
     {
@@ -78,7 +78,7 @@ final class RouterBuilder
      */
     public function build(): Router
     {
-        return new Router;
+        return new Router();
     }
 
     /**

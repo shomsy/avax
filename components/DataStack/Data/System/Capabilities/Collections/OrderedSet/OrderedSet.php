@@ -25,12 +25,12 @@ final readonly class OrderedSet implements Countable, IteratorAggregate
     private array $items;
 
     /**
-     * @param  iterable<mixed>  $items
+     * @param iterable<mixed> $items
      */
     public function __construct(
         iterable $items = [],
     ) {
-        $seen = [];
+        $seen          = [];
         $ordered = [];
 
         foreach (NormalizedIterable::toArrayPreserveKeys(iterable: $items) as $item) {

@@ -24,15 +24,15 @@ final class CassandraGrammar extends BaseGrammar
         $sql = "SELECT {$columns} FROM {$table}";
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE '.$this->compileCassandraWhere(state: $state);
+            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
         }
 
         if (! empty($state->orders)) {
-            $sql .= ' ORDER BY '.$this->compileCassandraOrder(state: $state);
+            $sql .= ' ORDER BY ' . $this->compileCassandraOrder(state: $state);
         }
 
         if ($state->limit) {
-            $sql .= ' LIMIT '.$state->limit;
+            $sql .= ' LIMIT ' . $state->limit;
         }
 
         return $sql;
@@ -82,10 +82,10 @@ final class CassandraGrammar extends BaseGrammar
             $sets[] = "{$col} = {$val}";
         }
 
-        $sql = "UPDATE {$table} SET ".implode(separator: ', ', array: $sets);
+        $sql = "UPDATE {$table} SET " . implode(separator: ', ', array: $sets);
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE '.$this->compileCassandraWhere(state: $state);
+            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
         }
 
         return $sql;
@@ -101,7 +101,7 @@ final class CassandraGrammar extends BaseGrammar
         $sql = "DELETE FROM {$table}";
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE '.$this->compileCassandraWhere(state: $state);
+            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
         }
 
         return $sql;
@@ -123,7 +123,7 @@ final class CassandraGrammar extends BaseGrammar
     {
         parent::compileInsert(state: $state);
 
-        $table = $this->wrap(value: $state->from);
+        $table  = $this->wrap(value: $state->from);
         $columns = implode(separator: ', ', array: array_keys(array: $state->values));
         $values = implode(separator: ', ', array: array_map(
             callback: static fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,

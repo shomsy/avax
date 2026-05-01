@@ -15,7 +15,7 @@ final readonly class LocalStorageAdapter implements StorageAdapter
     public function __construct(private array $config = [])
     {
         $this->root = rtrim(
-            string    : $config['root'] ?? dirname(path: __DIR__, levels: 6).'/storage/app',
+            string    : $config['root'] ?? dirname(path: __DIR__, levels: 6) . '/storage/app',
             characters: '/',
         );
 
@@ -35,7 +35,7 @@ final readonly class LocalStorageAdapter implements StorageAdapter
 
     private function fullPath(string $path): string
     {
-        return $this->root.'/'.$this->normalize(path: $path);
+        return $this->root . '/' . $this->normalize(path: $path);
     }
 
     private function normalize(string $path): string
@@ -58,15 +58,15 @@ final readonly class LocalStorageAdapter implements StorageAdapter
     {
         $expiresAt = time() + $expiresInSeconds;
         $normalizedPath = $this->normalize(path: $path);
-        $secret = $this->config['signing_key'] ?? 'avax-local-storage';
-        $signature = hash_hmac(algo: 'sha256', data: $normalizedPath.'|'.$expiresAt, key: $secret);
+        $secret    = $this->config['signing_key'] ?? 'avax-local-storage';
+        $signature = hash_hmac(algo: 'sha256', data: $normalizedPath . '|' . $expiresAt, key: $secret);
 
-        return $this->url(path: $normalizedPath).'?expires='.$expiresAt.'&signature='.$signature;
+        return $this->url(path: $normalizedPath) . '?expires=' . $expiresAt . '&signature=' . $signature;
     }
 
     public function url(string $path): string
     {
-        return rtrim(string: $this->config['url'] ?? '/storage', characters: '/').'/'.$this->normalize(path: $path);
+        return rtrim(string: $this->config['url'] ?? '/storage', characters: '/') . '/' . $this->normalize(path: $path);
     }
 
     public function size(string $path): int

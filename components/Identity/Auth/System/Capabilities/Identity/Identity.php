@@ -59,9 +59,9 @@ final readonly class Identity implements IdentityInterface
 
     public static function fromBackends(
         #[SensitiveParameter]
-        ?SessionIdentityInterface $sessionIdentity = null,
+        SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        ?JwtIdentityInterface $jwtIdentity = null,
+        JwtIdentityInterface     $jwtIdentity = null,
     ): self {
         return new self(
             sessionIdentity: $sessionIdentity,
@@ -73,7 +73,7 @@ final readonly class Identity implements IdentityInterface
 
     public function issue(
         User $user,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
+        DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): IssuedAuthentication {
         if (! $user->isActive()) {
@@ -120,7 +120,7 @@ final readonly class Identity implements IdentityInterface
         return AuthenticationMode::TOKEN;
     }
 
-    public function clear(?AuthenticationContext $context = null): void
+    public function clear(AuthenticationContext $context = null) : void
     {
         $this->sessionIdentity?->clear();
 

@@ -11,7 +11,7 @@ final class MetricsExporter
     /** @var list<array<string, mixed>> */
     private array $exported = [];
 
-    public function export(DbMetricsCollector $collector, OtelConfig $config = new OtelConfig): void
+    public function export(DbMetricsCollector $collector, OtelConfig $config = new OtelConfig()) : void
     {
         if (! $config->enabled) {
             return;

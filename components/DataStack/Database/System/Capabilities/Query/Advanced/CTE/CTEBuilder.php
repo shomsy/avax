@@ -25,7 +25,7 @@ final class CTEBuilder
         $this->ctes[$name] = [
             'initial' => $initialQuery,
             'recursive' => $recursiveQuery,
-            'type' => 'recursive',
+            'type'    => 'recursive',
         ];
 
         return $this;
@@ -47,7 +47,7 @@ final class CTEBuilder
             return '';
         }
 
-        return 'WITH '.($isRecursive ? 'RECURSIVE ' : '').implode(separator: ', ', array: $definitions);
+        return 'WITH ' . ($isRecursive ? 'RECURSIVE ' : '') . implode(separator: ', ', array: $definitions);
     }
 
     private function buildCTE(QueryState $queryState): string

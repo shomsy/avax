@@ -14,6 +14,6 @@ final readonly class GroupByNode
     {
         $columns = array_map(callback: static fn ($column): string => $grammar->wrap(value: $column), array: $this->columns);
 
-        return 'GROUP BY '.implode(separator: ', ', array: $columns);
+        return 'GROUP BY ' . implode(separator: ', ', array: $columns);
     }
 }

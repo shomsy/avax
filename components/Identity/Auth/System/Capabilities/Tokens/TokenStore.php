@@ -12,9 +12,9 @@ use DateTimeImmutable;
  */
 final readonly class TokenStore
 {
-    public function save(string $tokenId, DateTimeImmutable $expiresAt): void {}
+    public function save(string $tokenId, DateTimeImmutable $expiresAt) : void {}
 
-    public function revoke(string $tokenId): void {}
+    public function revoke(string $tokenId) : void {}
 
     public function isRevoked(string $tokenId): bool
     {

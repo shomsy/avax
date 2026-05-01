@@ -28,7 +28,7 @@ abstract class BaseMigration
      *
      * -- intent: enable dependency injection instead of service locator pattern.
      *
-     * @param  QueryBuilder  $builder  Query builder instance
+     * @param QueryBuilder $builder Query builder instance
      */
     public function setQueryBuilder(QueryBuilder $builder): void
     {
@@ -84,7 +84,7 @@ abstract class BaseMigration
     {
         if ($this->queryBuilder === null) {
             throw new RuntimeException(
-                message: 'QueryBuilder must be set on migration instance. '.
+                message: 'QueryBuilder must be set on migration instance. ' .
                          'Use setQueryBuilder() method or inject via constructor in migration classes.',
             );
         }
@@ -129,7 +129,7 @@ abstract class BaseMigration
     {
         $grammar = $this->getGrammar();
         // noinspection SqlNoDataSourceInspection
-        $sql = 'DROP TABLE IF EXISTS '.$grammar->wrap(value: $table);
+        $sql = 'DROP TABLE IF EXISTS ' . $grammar->wrap(value: $table);
 
         $this->getConnection()->statement(query: $sql);
     }

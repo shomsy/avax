@@ -19,7 +19,7 @@ final class QueryCache
             return $cached['value'];
         }
 
-        $value = $query();
+        $value             = $query();
         $this->items[$key] = [
             'value' => $value,
             'expires_at' => $ttlSeconds === null ? null : time() + $ttlSeconds,

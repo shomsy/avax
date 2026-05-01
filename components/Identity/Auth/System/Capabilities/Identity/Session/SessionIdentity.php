@@ -40,35 +40,35 @@ final class SessionIdentity implements SessionIdentityInterface
     private readonly SessionStoreInterface $store;
 
     public function __construct(
-        ?SessionStoreInterface $store = null,
-        ?Clock $clock = null,
-        ?AuditLogInterface $auditLog = null,
-        ?SessionLifetime $lifetime = null,
+        SessionStoreInterface $store = null,
+        Clock                 $clock = null,
+        AuditLogInterface     $auditLog = null,
+        SessionLifetime       $lifetime = null,
         #[SensitiveParameter]
         private readonly ?SessionRegistryInterface $sessionRegistry = null,
         #[SensitiveParameter]
-        ?string $sessionKey = null,
-        ?string $mfaVerifiedAtKey = null,
-        ?string $phishingResistantKey = null,
-        ?string $issuedAtKey = null,
+        string                $sessionKey = null,
+        string                $mfaVerifiedAtKey = null,
+        string                $phishingResistantKey = null,
+        string                $issuedAtKey = null,
         private readonly string $lastSeenAtKey = 'auth_session_last_seen_at',
     ) {
-        $store ??= new NativeSessionStore;
-        $clock ??= new Clock;
-        $auditLog ??= new NullAuditLog;
-        $lifetime ??= new SessionLifetime;
-        $sessionKey ??= 'auth_user_id';
-        $mfaVerifiedAtKey ??= 'auth_mfa_verified_at';
+        $store                  ??= new NativeSessionStore();
+        $clock                  ??= new Clock();
+        $auditLog               ??= new NullAuditLog();
+        $lifetime               ??= new SessionLifetime();
+        $sessionKey             ??= 'auth_user_id';
+        $mfaVerifiedAtKey       ??= 'auth_mfa_verified_at';
         $phishingResistantKey ??= 'auth_phishing_resistant';
-        $issuedAtKey ??= 'auth_session_issued_at';
-        $this->store = $store;
-        $this->clock = $clock;
-        $this->auditLog = $auditLog;
-        $this->lifetime = $lifetime;
-        $this->sessionKey = $sessionKey;
+        $issuedAtKey            ??= 'auth_session_issued_at';
+        $this->store            = $store;
+        $this->clock            = $clock;
+        $this->auditLog         = $auditLog;
+        $this->lifetime         = $lifetime;
+        $this->sessionKey       = $sessionKey;
         $this->mfaVerifiedAtKey = $mfaVerifiedAtKey;
         $this->phishingResistantKey = $phishingResistantKey;
-        $this->issuedAtKey = $issuedAtKey;
+        $this->issuedAtKey      = $issuedAtKey;
     }
 
     /**
@@ -76,7 +76,7 @@ final class SessionIdentity implements SessionIdentityInterface
      */
     public function issue(
         int $userId,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
+        DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): ?string {
         $sessionId = $this->store->regenerate();
@@ -105,7 +105,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function captureCurrentSession(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): void
+    public function captureCurrentSession(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : void
     {
         $sessionId = $this->currentSessionId();
 

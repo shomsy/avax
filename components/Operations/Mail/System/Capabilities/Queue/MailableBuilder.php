@@ -10,7 +10,7 @@ final readonly class MailableBuilder
 
     public function __construct(string $to)
     {
-        $this->mailable = (new Mailable)->to(address: $to);
+        $this->mailable = (new Mailable())->to(address: $to);
     }
 
     public function subject(string $subject): Mailable

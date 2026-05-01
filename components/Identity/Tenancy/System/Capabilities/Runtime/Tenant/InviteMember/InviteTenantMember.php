@@ -29,7 +29,7 @@ final readonly class InviteTenantMember
 
         $plainTextToken = bin2hex(string: random_bytes(length: 32));
         $invite = new TenantInvite(
-            inviteId : 'invite_'.bin2hex(string: random_bytes(length: 12)),
+            inviteId : 'invite_' . bin2hex(string: random_bytes(length: 12)),
             tenantId : $tenant->tenantId,
             email    : strtolower(string: trim(string: $data->email)),
             role     : $data->role,
@@ -42,12 +42,12 @@ final readonly class InviteTenantMember
             name      : 'auth.tenant.member.invited',
             occurredAt: $invite->createdAt,
             context   : [
-                'tenant_id' => $tenant->tenantId,
+                            'tenant_id'  => $tenant->tenantId,
                 'tenant_slug' => $tenant->slug,
-                'invite_id' => $invite->inviteId,
-                'email' => $invite->email,
-                'role' => $invite->role->value,
-                'invited_by' => $invite->invitedBy,
+                            'invite_id'  => $invite->inviteId,
+                            'email'      => $invite->email,
+                            'role'       => $invite->role->value,
+                            'invited_by' => $invite->invitedBy,
             ],
         ));
 

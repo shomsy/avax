@@ -18,8 +18,8 @@ final readonly class ExecutionScope
     public string $correlationId;
 
     /**
-     * @param  string  $correlationId  The unique "Trace ID" for this specific run.
-     * @param  array  $metadata  Any extra notes you want to carry with the query for logging.
+     * @param string $correlationId The unique "Trace ID" for this specific run.
+     * @param array  $metadata      Any extra notes you want to carry with the query for logging.
      */
     public function __construct(
         string $correlationId,
@@ -32,7 +32,7 @@ final readonly class ExecutionScope
     /**
      * Create a new scope with a randomly generated correlation ID.
      *
-     * @param  array  $metadata  Initial metrics/context data.
+     * @param array $metadata Initial metrics/context data.
      *
      * @throws RandomException
      */

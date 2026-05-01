@@ -31,7 +31,7 @@ final readonly class Database
 
     public static function configuration(): DatabaseBuilder
     {
-        return new DatabaseBuilder;
+        return new DatabaseBuilder();
     }
 
     public function connections(): Connections
@@ -69,7 +69,7 @@ final readonly class Database
         return new Telemetry(telemetry: $this->telemetryCapability);
     }
 
-    public function table(string $table, ?string $connectionName = null): QueryBuilder
+    public function table(string $table, string $connectionName = null) : QueryBuilder
     {
         return $this->queryCapability->from(table: $table, connectionName: $connectionName);
     }

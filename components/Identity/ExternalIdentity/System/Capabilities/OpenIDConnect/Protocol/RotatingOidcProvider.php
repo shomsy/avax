@@ -11,7 +11,7 @@ use SensitiveParameter;
 final readonly class RotatingOidcProvider implements OidcProviderInterface
 {
     /**
-     * @param  list<OidcProviderInterface>  $verificationProviders
+     * @param list<OidcProviderInterface> $verificationProviders
      */
     public function __construct(private OidcProviderInterface $activeProvider, private array $verificationProviders = []) {}
 
@@ -19,10 +19,10 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         User $user,
         string $clientId,
         array $scopes,
-        ?string $nonce = null,
-        ?DateTimeImmutable $authenticatedAt = null,
+        string            $nonce = null,
+        DateTimeImmutable $authenticatedAt = null,
         #[SensitiveParameter]
-        ?string $sessionId = null,
+        string            $sessionId = null,
         bool $phishingResistant = false,
     ): OidcIdToken {
         return $this->activeProvider->issueIdToken(

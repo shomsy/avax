@@ -7,7 +7,7 @@ return Avax\Container\Features\Think\Model\ServicePrototype::__set_state([
                                                                              'constructor'        => null,
                                                                              'injectedProperties' => [
                                                                              ],
-                                                                             'injectedMethods'    => [
+                                                                             'injectedMethods' => [
                                                                              ],
    'isInstantiable' => true,
                                                                          ]);

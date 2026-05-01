@@ -16,8 +16,8 @@ use components\HTTP\Router\System\Flows\RunRoute\Pipeline\RoutePipelineFactory;
 use components\HTTP\Router\System\Flows\RunRoute\RouterKernel;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => RouterKernel::class,
-                                                'constructor'        => MethodPrototype::__set_state(array: [
+                                                'class'           => RouterKernel::class,
+                                                'constructor'     => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
                                                                                             'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
@@ -60,7 +60,7 @@ return ServicePrototype::__set_state(array: [
                                                                                         ]),
                                                 'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    => [
+                                                'injectedMethods' => [
                                                     ],
-                                                'isInstantiable'     => true,
+                                                'isInstantiable'  => true,
                                             ]);

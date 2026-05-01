@@ -18,7 +18,7 @@ final class Events implements EventsInterface
 
     public function __construct()
     {
-        $this->registry = new ListenerRegistry;
+        $this->registry = new ListenerRegistry();
         $this->dispatcher = new EventDispatcher($this->registry);
     }
 

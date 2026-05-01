@@ -54,8 +54,8 @@ final readonly class ApplyTenantSecurityChange
             name      : 'auth.tenant_security.change.applied',
             occurredAt: $this->clock->now(),
             context   : [
-                'change_id' => $applied->changeId,
-                'tenant' => $applied->tenantSlug,
+                            'change_id' => $applied->changeId,
+                            'tenant'    => $applied->tenantSlug,
                 'rollout_version' => $applied->after->rolloutVersion,
             ],
         ));

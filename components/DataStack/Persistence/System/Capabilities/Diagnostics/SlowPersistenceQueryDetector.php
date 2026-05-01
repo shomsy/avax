@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics;
 
 use InvalidArgumentException;
-
 use function count;
 
 /**
@@ -53,14 +52,14 @@ final readonly class SlowPersistenceReport
      */
     private static function computeFingerprint(string $operation, string $type, array $context): string
     {
-        $normalized = $type.':'.$operation;
+        $normalized = $type . ':' . $operation;
 
         if (isset($context['entity'])) {
-            $normalized .= ':entity:'.$context['entity'];
+            $normalized .= ':entity:' . $context['entity'];
         }
 
         if (isset($context['table'])) {
-            $normalized .= ':table:'.$context['table'];
+            $normalized .= ':table:' . $context['table'];
         }
 
         return hash('sha256', $normalized);
@@ -94,7 +93,7 @@ final readonly class SlowPersistenceReport
             $ratio >= 10.0 => 'CRITICAL',
             $ratio >= 5.0 => 'SEVERE',
             $ratio >= 2.0 => 'WARNING',
-            default => 'SLOW',
+            default       => 'SLOW',
         };
     }
 
@@ -116,16 +115,16 @@ final readonly class SlowPersistenceReport
     public function toArray(): array
     {
         return [
-            'operation' => $this->operation,
-            'type' => $this->type,
+            'operation'   => $this->operation,
+            'type'        => $this->type,
             'duration_ms' => $this->durationMs,
             'threshold_ms' => $this->thresholdMs,
             'fingerprint' => $this->fingerprint,
-            'context' => $this->context,
-            'timestamp' => $this->timestamp,
+            'context'     => $this->context,
+            'timestamp'   => $this->timestamp,
             'occurrences' => $this->occurrences,
-            'severity' => $this->severityLabel(),
-            'times_over' => $this->timesOverThreshold(),
+            'severity'    => $this->severityLabel(),
+            'times_over'  => $this->timesOverThreshold(),
         ];
     }
 }
@@ -149,12 +148,12 @@ final readonly class SlowPersistenceStatistics
     /**
      * Creates statistics from a list of slow persistence reports.
      *
-     * @param  list<SlowPersistenceReport>  $reports
+     * @param list<SlowPersistenceReport> $reports
      */
     public static function fromReports(array $reports): self
     {
         if (empty($reports)) {
-            return new self;
+            return new self();
         }
 
         $totalDuration = 0.0;
@@ -175,7 +174,7 @@ final readonly class SlowPersistenceStatistics
                 $minDuration = $report->durationMs;
             }
 
-            $byType[$report->type] = ($byType[$report->type] ?? 0) + 1;
+            $byType[$report->type]           = ($byType[$report->type] ?? 0) + 1;
             $byOperation[$report->operation] = ($byOperation[$report->operation] ?? 0) + 1;
             $byFingerprint[$report->fingerprint] = ($byFingerprint[$report->fingerprint] ?? 0) + 1;
         }
@@ -201,13 +200,13 @@ final readonly class SlowPersistenceStatistics
     {
         return sprintf(
             "Slow Persistence Statistics:\n"
-            ."  Total: %d\n"
-            ."  Avg: %.2fms\n"
-            ."  Max: %.2fms\n"
-            ."  Min: %.2fms\n"
-            ."  Total Duration: %.2fms\n"
-            ."  By Type: %s\n"
-            .'  By Operation: %s',
+            . "  Total: %d\n"
+            . "  Avg: %.2fms\n"
+            . "  Max: %.2fms\n"
+            . "  Min: %.2fms\n"
+            . "  Total Duration: %.2fms\n"
+            . "  By Type: %s\n"
+            . '  By Operation: %s',
             $this->totalSlowOperations,
             $this->averageDurationMs,
             $this->maxDurationMs,
@@ -286,10 +285,11 @@ final class SlowPersistenceQueryDetector
      *
      * @template T
      *
-     * @param  string  $operation  Operation name
-     * @param  string  $type  Operation type
-     * @param  callable() : T  $callback  The operation to time
-     * @param  array<string, mixed>  $context  Additional context
+     * @param string               $operation Operation name
+     * @param string               $type      Operation type
+     * @param callable() : T       $callback  The operation to time
+     * @param array<string, mixed> $context   Additional context
+     *
      * @return T
      */
     public function time(string $operation, string $type, callable $callback, array $context = []): mixed
@@ -309,10 +309,11 @@ final class SlowPersistenceQueryDetector
     /**
      * Records a persistence operation and checks if it's slow.
      *
-     * @param  string  $operation  Operation name (e.g., 'findById', 'save', 'delete')
-     * @param  string  $type  Operation type (e.g., 'find', 'save', 'delete', 'query')
-     * @param  float  $durationMs  Duration in milliseconds
-     * @param  array<string, mixed>  $context  Additional context (entity name, table, etc.)
+     * @param string               $operation  Operation name (e.g., 'findById', 'save', 'delete')
+     * @param string               $type       Operation type (e.g., 'find', 'save', 'delete', 'query')
+     * @param float                $durationMs Duration in milliseconds
+     * @param array<string, mixed> $context    Additional context (entity name, table, etc.)
+     *
      * @return bool Whether the operation was classified as slow
      */
     public function record(
@@ -502,11 +503,11 @@ final class SlowPersistenceQueryDetector
     {
         return sprintf(
             "Slow Persistence Detector:\n"
-            ."  Threshold: %.2fms\n"
-            ."  Total Operations: %d\n"
-            ."  Slow Operations: %d (%.1f%%)\n"
-            ."  Average Duration: %.2fms\n"
-            .'  Total Time: %.2fms',
+            . "  Threshold: %.2fms\n"
+            . "  Total Operations: %d\n"
+            . "  Slow Operations: %d (%.1f%%)\n"
+            . "  Average Duration: %.2fms\n"
+            . '  Total Time: %.2fms',
             $this->thresholdMs,
             $this->totalOperations,
             count($this->slowOperations),
@@ -543,12 +544,12 @@ final class SlowPersistenceQueryDetector
     /**
      * Resets the detector, clearing all recorded data.
      */
-    public function reset(): void
+    public function reset() : void
     {
-        $this->slowOperations = [];
+        $this->slowOperations    = [];
         $this->fingerprintCounts = [];
-        $this->typeTotals = [];
-        $this->totalOperations = 0;
-        $this->totalTimeMs = 0.0;
+        $this->typeTotals        = [];
+        $this->totalOperations   = 0;
+        $this->totalTimeMs       = 0.0;
     }
 }

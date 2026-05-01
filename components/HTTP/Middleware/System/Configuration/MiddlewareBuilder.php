@@ -48,7 +48,7 @@ final class MiddlewareBuilder
     /**
      * Add multiple middleware at once.
      *
-     * @param  list<MiddlewareInterface>  $middleware
+     * @param list<MiddlewareInterface> $middleware
      */
     public function addMany(array $middleware): self
     {

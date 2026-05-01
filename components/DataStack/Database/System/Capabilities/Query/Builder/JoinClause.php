@@ -29,7 +29,7 @@ final class JoinClause
     private array $conditions = [];
 
     /**
-     * @param  GrammarInterface  $grammar  The authorized technical SQL grammar used for secure identifier projection.
+     * @param GrammarInterface $grammar The authorized technical SQL grammar used for secure identifier projection.
      */
     public function __construct(private readonly GrammarInterface $grammar) {}
 
@@ -40,13 +40,14 @@ final class JoinClause
      * Appends a new comparison constraint linked via the OR logical operator,
      * allowing for alternative relationship matches.
      *
-     * @param  string  $first  The structural identifier of the left-hand column.
-     * @param  string|null  $operator  The technical comparison operator (defaults to '=' if second is provided).
-     * @param  string|null  $second  The structural identifier of the right-hand column or the value (if operator is
-     *                               omitted).
+     * @param string      $first    The structural identifier of the left-hand column.
+     * @param string|null $operator The technical comparison operator (defaults to '=' if second is provided).
+     * @param string|null $second   The structural identifier of the right-hand column or the value (if operator is
+     *                              omitted).
+     *
      * @return self The current builder instance for further fluent configuration.
      */
-    public function orOn(string $first, ?string $operator = null, ?string $second = null): self
+    public function orOn(string $first, string $operator = null, string $second = null): self
     {
         return $this->on(first: $first, operator: $operator, second: $second, boolean: 'OR');
     }
@@ -59,13 +60,14 @@ final class JoinClause
      * supporting both the standard three-argument form and the shortcut
      * two-argument equality form.
      *
-     * @param  string  $first  The structural identifier of the left-hand column.
-     * @param  string|null  $operator  The technical comparison operator or the target value (for shortcuts).
-     * @param  string|null  $second  The structural identifier of the right-hand target column.
-     * @param  string  $boolean  The logical joiner used to link this condition ('AND' or 'OR').
+     * @param string      $first    The structural identifier of the left-hand column.
+     * @param string|null $operator The technical comparison operator or the target value (for shortcuts).
+     * @param string|null $second   The structural identifier of the right-hand target column.
+     * @param string      $boolean  The logical joiner used to link this condition ('AND' or 'OR').
+     *
      * @return self The current builder instance.
      */
-    public function on(string $first, ?string $operator = null, ?string $second = null, string $boolean = 'AND'): self
+    public function on(string $first, string $operator = null, string $second = null, string $boolean = 'AND'): self
     {
         // Technical shortcut: handle two-argument equality form.
         if ($operator !== null && $second === null) {
@@ -74,10 +76,10 @@ final class JoinClause
         }
 
         $this->conditions[] = [
-            'first' => $first,
+            'first'    => $first,
             'operator' => $operator ?? '=',
-            'second' => $second ?? '',
-            'boolean' => $boolean,
+            'second'   => $second ?? '',
+            'boolean'  => $boolean,
         ];
 
         return $this;
@@ -100,12 +102,12 @@ final class JoinClause
 
         $sql = [];
         foreach ($this->conditions as $i => $condition) {
-            $prefix = $i === 0 ? '' : ($condition['boolean'].' ');
-            $first = $this->grammar->wrap(value: $condition['first']);
+            $prefix   = $i === 0 ? '' : ($condition['boolean'] . ' ');
+            $first    = $this->grammar->wrap(value: $condition['first']);
             $operator = $condition['operator'];
-            $second = $this->grammar->wrap(value: $condition['second']);
+            $second   = $this->grammar->wrap(value: $condition['second']);
 
-            $sql[] = $prefix.sprintf('%s %s %s', $first, $operator, $second);
+            $sql[] = $prefix . sprintf('%s %s %s', $first, $operator, $second);
         }
 
         return implode(separator: ' ', array: $sql);

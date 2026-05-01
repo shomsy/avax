@@ -33,8 +33,8 @@ final class UnitOfWork
     public function persist(object $entity): void
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier = $entityMetadata->identifierField();
-        $objectId = spl_object_id(object: $entity);
+        $identifier     = $entityMetadata->identifierField();
+        $objectId       = spl_object_id(object: $entity);
         $identifierValue = $identifier instanceof FieldMetadata ? $this->readProperty(entity: $entity, property: $identifier->property) : null;
 
         unset($this->removed[$objectId]);
@@ -86,7 +86,7 @@ final class UnitOfWork
         }
 
         foreach ($this->removed as $objectId => $entity) {
-            $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
+            $metadata   = $this->attributeMetadataReader->for(entityClass: $entity::class);
             $identifier = $metadata->identifierField();
             $identifierValue = $identifier instanceof FieldMetadata ? $this->readProperty(entity: $entity, property: $identifier->property) : null;
 
@@ -108,7 +108,7 @@ final class UnitOfWork
 
     public function clear(): void
     {
-        $this->new = [];
+        $this->new   = [];
         $this->dirty = [];
         $this->removed = [];
     }

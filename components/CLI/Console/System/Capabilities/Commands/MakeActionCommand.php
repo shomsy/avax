@@ -53,11 +53,11 @@ class MakeServiceCommand extends Command
         try {
             $path = $this->serviceGenerator->generate($name, ['methods' => $methods]);
 
-            $this->info('Service created successfully: '.$path);
+            $this->info('Service created successfully: ' . $path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create service: '.$runtimeException->getMessage());
+            $this->error('Failed to create service: ' . $runtimeException->getMessage());
 
             return self::FAILURE;
         }

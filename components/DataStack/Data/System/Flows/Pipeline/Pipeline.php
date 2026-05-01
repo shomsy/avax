@@ -12,7 +12,7 @@ use Avax\Components\DataStack\Data\Exceptions\InvalidFlowException;
 final readonly class Pipeline
 {
     /**
-     * @param  array<int, Pipe>  $pipes
+     * @param array<int, Pipe> $pipes
      */
     public function __construct(
         private array $pipes = [],

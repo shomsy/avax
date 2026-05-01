@@ -46,9 +46,9 @@ final class MySQLGrammar extends BaseGrammar
      * insert this row. But if you find someone with the same ID already
      * there, just update these specific columns instead."
      *
-     * @param  QueryState  $state  The instructions of what to insert.
-     * @param  array  $uniqueBy  Ignored in MySQL (MySQL figures this out from your DB keys).
-     * @param  array  $update  The list of columns to change if a conflict happens.
+     * @param QueryState $state    The instructions of what to insert.
+     * @param array      $uniqueBy Ignored in MySQL (MySQL figures this out from your DB keys).
+     * @param array      $update   The list of columns to change if a conflict happens.
      */
     #[Override]
     public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
@@ -58,10 +58,10 @@ final class MySQLGrammar extends BaseGrammar
 
         $updates = [];
         foreach ($update as $column) {
-            $updates[] = $this->wrap(value: $column).' = VALUES('.$this->wrap(value: $column).')';
+            $updates[] = $this->wrap(value: $column) . ' = VALUES(' . $this->wrap(value: $column) . ')';
         }
 
-        return $sql.implode(separator: ', ', array: $updates);
+        return $sql . implode(separator: ', ', array: $updates);
     }
 
     /**
@@ -72,7 +72,7 @@ final class MySQLGrammar extends BaseGrammar
      * would break because `order` is a special MySQL command. By wrapping
      * it as `` `users`.`order` ``, we tell MySQL: "This is a name, not a command."
      *
-     * @param  mixed  $value  The name (e.g., 'users.name').
+     * @param mixed $value The name (e.g., 'users.name').
      */
     #[Override]
     public function wrap(mixed $value): string
@@ -117,7 +117,7 @@ final class MySQLGrammar extends BaseGrammar
         }
 
         // We wrap in backticks and handle escaping if the segment already contains a backtick.
-        return '`'.str_replace(search: '`', replace: '``', subject: $segment).'`';
+        return '`' . str_replace(search: '`', replace: '``', subject: $segment) . '`';
     }
 
     /**
@@ -135,7 +135,7 @@ final class MySQLGrammar extends BaseGrammar
     #[Override]
     public function compileTruncate(string $table): string
     {
-        return 'TRUNCATE TABLE '.$this->wrap(value: $table);
+        return 'TRUNCATE TABLE ' . $this->wrap(value: $table);
     }
 
     /**
@@ -145,6 +145,6 @@ final class MySQLGrammar extends BaseGrammar
     public function compileDropIfExists(string $table): string
     {
         // noinspection SqlNoDataSourceInspection
-        return 'DROP TABLE IF EXISTS '.$this->wrap(value: $table);
+        return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
     }
 }

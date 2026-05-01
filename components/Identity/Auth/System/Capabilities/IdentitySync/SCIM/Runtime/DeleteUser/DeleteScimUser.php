@@ -49,9 +49,9 @@ final readonly class DeleteScimUser
             occurredAt: $this->clock->now(),
             context   : [
                 'directory_id' => $directory->directoryId,
-                'tenant' => $directory->tenantSlug,
+                'tenant'      => $directory->tenantSlug,
                 'external_id' => $data->externalId,
-                'user_id' => $identity->userId->value,
+                'user_id'     => $identity->userId->value,
             ],
         ));
     }
@@ -90,7 +90,7 @@ final readonly class DeleteScimUser
             return;
         }
 
-        $key = 'scim:'.$directoryId.':'.'delete';
+        $key = 'scim:' . $directoryId . ':' . 'delete';
 
         try {
             $this->attemptThrottle->check(key: $key);

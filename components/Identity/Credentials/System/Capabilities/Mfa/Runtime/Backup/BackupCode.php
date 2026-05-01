@@ -31,6 +31,6 @@ final readonly class BackupCode
     {
         $tail = substr(string: $this->value, offset: -4);
 
-        return '****-****-'.$tail;
+        return '****-****-' . $tail;
     }
 }

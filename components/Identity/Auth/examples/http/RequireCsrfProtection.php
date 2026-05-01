@@ -14,7 +14,7 @@ final readonly class RequireCsrfProtection
     private string $cookieName;
 
     public function __construct(
-        ?string $cookieName = null,
+        string $cookieName = null,
         #[SensitiveParameter]
         private string $headerName = 'x-csrf-token',
     ) {
@@ -23,15 +23,15 @@ final readonly class RequireCsrfProtection
     }
 
     /**
-     * @param  array<string, mixed>  $server
-     * @param  array<string, mixed>  $headers
-     * @param  array<string, mixed>  $cookies
+     * @param array<string, mixed> $server
+     * @param array<string, mixed> $headers
+     * @param array<string, mixed> $cookies
      */
     public function execute(
         string $method,
-        ?array $server = null,
+        array $server = null,
         #[SensitiveParameter]
-        ?array $headers = null,
+        array $headers = null,
         array $cookies = [],
     ): bool {
         $server ??= [];
@@ -42,7 +42,7 @@ final readonly class RequireCsrfProtection
 
         $origin = $this->readValue(values: $server, key: 'HTTP_ORIGIN');
         $referer = $this->readValue(values: $server, key: 'HTTP_REFERER');
-        $host = $this->readValue(values: $server, key: 'HTTP_HOST');
+        $host   = $this->readValue(values: $server, key: 'HTTP_HOST');
 
         if (! $this->sameOrigin(originLikeValue: $origin, host: $host) && ! $this->sameOrigin(originLikeValue: $referer, host: $host)) {
             return false;
@@ -64,7 +64,7 @@ final readonly class RequireCsrfProtection
     }
 
     /**
-     * @param  array<string, mixed>  $values
+     * @param array<string, mixed> $values
      */
     private function readValue(array $values, string $key): ?string
     {

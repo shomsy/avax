@@ -11,7 +11,7 @@ enum UserRole: string
 {
     case ADMIN = 'admin';
     case MODERATOR = 'moderator';
-    case USER = 'user';
+    case USER  = 'user';
     case GUEST = 'guest';
 
     public function label(): string
@@ -19,7 +19,7 @@ enum UserRole: string
         return match ($this) {
             self::ADMIN => 'Administrator',
             self::MODERATOR => 'Moderator',
-            self::USER => 'User',
+            self::USER  => 'User',
             self::GUEST => 'Guest',
         };
     }
@@ -34,7 +34,7 @@ enum UserRole: string
         return match ($this) {
             self::ADMIN => 4,
             self::MODERATOR => 3,
-            self::USER => 2,
+            self::USER  => 2,
             self::GUEST => 1,
         };
     }

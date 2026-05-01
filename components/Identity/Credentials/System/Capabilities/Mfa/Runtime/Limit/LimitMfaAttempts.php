@@ -17,7 +17,7 @@ final readonly class LimitMfaAttempts
     public function __construct(
         private AttemptLimitStorageInterface $storage,
         private Clock $clock,
-        ?int $maxAttempts = null,
+        int $maxAttempts = null,
         private int $decaySeconds = 300,
     ) {
         $maxAttempts ??= 5;

@@ -21,7 +21,8 @@ final class SagaStep
     /**
      * Execute the step's action with the given context.
      *
-     * @param  mixed  $context  The saga context/data
+     * @param mixed $context The saga context/data
+     *
      * @return mixed The result of the action
      *
      * @throws Throwable If the action fails
@@ -34,7 +35,8 @@ final class SagaStep
     /**
      * Execute the step's compensation logic with the given context.
      *
-     * @param  mixed  $context  The saga context/data
+     * @param mixed $context The saga context/data
+     *
      * @return mixed The result of the compensation
      *
      * @throws Throwable If the compensation fails

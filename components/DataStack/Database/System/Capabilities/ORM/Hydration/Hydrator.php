@@ -14,8 +14,8 @@ final class Hydrator
     public function __construct(private readonly IdentityMap $identityMap) {}
 
     /**
-     * @param  class-string  $entityClass
-     * @param  array<string, mixed>  $row
+     * @param class-string         $entityClass
+     * @param array<string, mixed> $row
      */
     public function hydrate(string $entityClass, array $row, EntityMetadata $metadata): object
     {

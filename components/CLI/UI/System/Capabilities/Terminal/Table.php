@@ -52,7 +52,7 @@ final readonly class Table
     {
         echo '+';
         foreach ($widths as $width) {
-            echo str_repeat('-', $width + 2).'+';
+            echo str_repeat('-', $width + 2) . '+';
         }
 
         echo "\n";

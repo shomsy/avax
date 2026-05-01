@@ -9,8 +9,9 @@ final class TypedResult
     /**
      * @template T of object
      *
-     * @param  class-string<T>  $className
-     * @param  array<array-key, mixed>  $rows
+     * @param class-string<T>         $className
+     * @param array<array-key, mixed> $rows
+     *
      * @return list<T>
      */
     public static function fromRows(string $className, array $rows): array
@@ -26,8 +27,9 @@ final class TypedResult
     /**
      * @template T of object
      *
-     * @param  class-string<T>  $className
-     * @param  array<array-key, mixed>  $row
+     * @param class-string<T>         $className
+     * @param array<array-key, mixed> $row
+     *
      * @return T|null
      */
     public static function fromRow(string $className, array $row): ?object

@@ -19,11 +19,11 @@ final readonly class Totp implements TotpInterface
     private int $digits;
 
     public function __construct(
-        ?int $digits = null,
-        ?int $periodSeconds = null,
+        int $digits = null,
+        int $periodSeconds = null,
         private int $allowedSkewSteps = 1,
     ) {
-        $digits ??= 6;
+        $digits       ??= 6;
         $periodSeconds ??= 30;
         $this->digits = $digits;
         $this->periodSeconds = $periodSeconds;
@@ -58,7 +58,7 @@ final readonly class Totp implements TotpInterface
             $binary .= str_pad(string: decbin(num: ord(character: $bytes[$index])), length: 8, pad_string: '0', pad_type: STR_PAD_LEFT);
         }
 
-        $chunks = str_split(string: $binary, length: 5);
+        $chunks        = str_split(string: $binary, length: 5);
         $encoded = '';
 
         foreach ($chunks as $chunk) {
@@ -97,7 +97,7 @@ final readonly class Totp implements TotpInterface
         #[SensitiveParameter]
         string $code,
         DateTimeImmutable $moment,
-        ?int $lastAcceptedTimeStep = null,
+        int $lastAcceptedTimeStep = null,
     ): TotpVerification {
         if (preg_match(pattern: '/^\d{6,8}$/', subject: $code) !== 1) {
             return TotpVerification::invalid(reason: 'format_invalid');

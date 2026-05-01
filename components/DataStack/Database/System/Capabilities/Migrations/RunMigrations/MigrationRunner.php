@@ -22,16 +22,16 @@ final readonly class MigrationRunner
     {
         try {
             $builder = $dryRun ? $this->queryBuilder->pretend() : $this->queryBuilder;
-            $ran = $this->migrationRepository->getRan();
+            $ran     = $this->migrationRepository->getRan();
             $ranNames = array_column(array: $ran, column_key: 'migration');
-            $batch = $this->migrationRepository->getNextBatchNumber();
+            $batch   = $this->migrationRepository->getNextBatchNumber();
 
             foreach ($migrations as $name => $migration) {
                 if (in_array(needle: $name, haystack: $ranNames, strict: true)) {
                     continue;
                 }
 
-                $checksum = md5_file(filename: rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$name.'.php');
+                $checksum = md5_file(filename: rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . '.php');
                 $this->runMigration(
                     migration: $migration,
                     method   : 'up',
@@ -72,7 +72,7 @@ final readonly class MigrationRunner
         } catch (Throwable $throwable) {
             throw new MigrationException(
                 migrationClass: $name,
-                message       : sprintf('Failed during [%s]: ', $method).$throwable->getMessage(),
+                message       : sprintf('Failed during [%s]: ', $method) . $throwable->getMessage(),
                 previous      : $throwable,
             );
         }

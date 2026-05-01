@@ -17,7 +17,7 @@ final readonly class ConvertDataObjectToJsonApi
         return [
             'data' => [
                 'type' => $type,
-                'id' => $array['id'] ?? null,
+                'id'   => $array['id'] ?? null,
                 'attributes' => $array,
             ],
         ];

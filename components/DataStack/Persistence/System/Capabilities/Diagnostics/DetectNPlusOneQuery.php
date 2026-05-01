@@ -27,7 +27,7 @@ final class DetectNPlusOneQuery
     private int $threshold;
 
     /**
-     * @param  int  $threshold  Number of same-pattern queries to trigger detection (default: 20)
+     * @param int $threshold Number of same-pattern queries to trigger detection (default: 20)
      */
     public function __construct(int $threshold = 20)
     {
@@ -37,10 +37,10 @@ final class DetectNPlusOneQuery
     /**
      * Records a query execution for analysis.
      *
-     * @param  string  $query  The SQL query string
-     * @param  float|null  $timestamp  Optional timestamp in milliseconds
+     * @param string     $query     The SQL query string
+     * @param float|null $timestamp Optional timestamp in milliseconds
      */
-    public function record(string $query, ?float $timestamp = null): void
+    public function record(string $query, float $timestamp = null) : void
     {
         $timestamp ??= microtime(true) * 1000;
         $fingerprint = QueryFingerprint::fromQuery($query);
@@ -48,11 +48,11 @@ final class DetectNPlusOneQuery
 
         if (! isset($this->queryPatterns[$hash])) {
             $this->queryPatterns[$hash] = [
-                'count' => 0,
-                'queries' => [],
+                'count'    => 0,
+                'queries'  => [],
                 'firstSeen' => $timestamp,
                 'lastSeen' => $timestamp,
-                'pattern' => $fingerprint,
+                'pattern'  => $fingerprint,
             ];
         }
 

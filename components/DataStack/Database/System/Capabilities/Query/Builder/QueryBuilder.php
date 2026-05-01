@@ -48,10 +48,10 @@ class QueryBuilder
     /**
      * Set up the builder with its two "helpers".
      *
-     * @param  GrammarInterface  $grammar  The "Translator". It knows how to turn your PHP code into specific SQL
-     *                                     for MySQL/SQLite/etc.
-     * @param  QueryOrchestrator  $orchestrator  The "Conductor". It doesn't write SQL, but it knows how to send the
-     *                                           final SQL to the database and get results back.
+     * @param GrammarInterface  $grammar      The "Translator". It knows how to turn your PHP code into specific SQL
+     *                                        for MySQL/SQLite/etc.
+     * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the
+     *                                        final SQL to the database and get results back.
      *
      * @throws ReflectionException
      */
@@ -61,7 +61,7 @@ class QueryBuilder
     ) {
         $this->grammar = $grammar;
         $this->orchestrator = $orchestrator;
-        $this->state = new QueryState;
+        $this->state   = new QueryState();
 
         // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
         if (property_exists(object_or_class: $this, property: 'tableName')) {
@@ -106,7 +106,7 @@ class QueryBuilder
      *
      * Use only for trusted literals (e.g., functions/CASE expressions), never for user input.
      *
-     * @param  string  $value  SQL fragment to include verbatim.
+     * @param string $value SQL fragment to include verbatim.
      *
      * @throws InvalidCriteriaException When the fragment contains disallowed characters.
      *
@@ -122,8 +122,8 @@ class QueryBuilder
     /**
      * Security Check: Make sure raw SQL fragments aren't dangerous.
      *
-     * @param  string  $expression  The text to check.
-     * @param  string  $context  Where this check is happening (for error messages).
+     * @param string $expression The text to check.
+     * @param string $context    Where this check is happening (for error messages).
      *
      * @throws InvalidCriteriaException If dangerous characters are found.
      */
@@ -173,8 +173,9 @@ class QueryBuilder
     /**
      * Execute a raw SQL "Statement" that doesn't return data (e.g., cleanup commands).
      *
-     * @param  string  $query  SQL command to run.
-     * @param  array  $bindings  Parameter bindings for the command.
+     * @param string $query    SQL command to run.
+     * @param array  $bindings Parameter bindings for the command.
+     *
      * @return bool True if the database accepted the command.
      *
      * @throws Throwable
@@ -187,7 +188,7 @@ class QueryBuilder
     /**
      * Set the target table.
      *
-     * @param  string  $table  Table name.
+     * @param string $table Table name.
      */
     public function from(string $table): self
     {
@@ -199,7 +200,7 @@ class QueryBuilder
     /**
      * Mix raw SQL into your column selection.
      *
-     * @param  string  ...$expressions  Raw SQL snippets for selection.
+     * @param string ...$expressions Raw SQL snippets for selection.
      *
      * @throws InvalidCriteriaException When the fragment contains disallowed characters.
      *
@@ -235,7 +236,8 @@ class QueryBuilder
      * Essential for "Page 2" or "Page 3" of results. If each page has 10
      * items, Page 2 would skip the first 10.
      *
-     * @param  int  $offset  How many rows to jump over.
+     * @param int $offset How many rows to jump over.
+     *
      * @return self A builder copy with this skip applied.
      */
     public function offset(int $offset): self
@@ -271,7 +273,7 @@ class QueryBuilder
     /**
      * Apply a maximum ceiling to the number of rows returned.
      *
-     * @param  int  $limit  Maximum results to retrieve.
+     * @param int $limit Maximum results to retrieve.
      *
      * @throws InvalidCriteriaException If limit is negative.
      */
@@ -289,7 +291,7 @@ class QueryBuilder
     /**
      * Persist a new record into the database.
      *
-     * @param  array  $values  Associative array of column => values.
+     * @param array $values Associative array of column => values.
      *
      * @throws Throwable
      *
@@ -311,11 +313,11 @@ class QueryBuilder
     /**
      * @return list<mixed>
      */
-    private function extractMutationBindings(array $values): array
+    private function extractMutationBindings(array $values) : array
     {
-        $rows = [];
+        $rows    = [];
         $isBatch = array_is_list(array: $values) && is_array(value: $values[0] ?? null);
-        $rows[] = $isBatch ? null : $values;
+        $rows[]  = $isBatch ? null : $values;
 
         if ($isBatch) {
             $rows = $values;
@@ -354,7 +356,7 @@ class QueryBuilder
         $clone = clone (object: $this, withProperties: [
             'state' => $this->state->withValues(values: $values),
         ]);
-        $sql = $clone->grammar->compileInsert(state: $clone->state);
+        $sql   = $clone->grammar->compileInsert(state: $clone->state);
         $result = $clone->orchestrator->execute(
             sql     : $sql,
             bindings: $clone->extractMutationBindings(values: $values),
@@ -380,7 +382,7 @@ class QueryBuilder
     /**
      * Modify existing records in the database.
      *
-     * @param  array  $values  Associative array of updates.
+     * @param array $values Associative array of updates.
      *
      * @throws Throwable
      *
@@ -390,9 +392,9 @@ class QueryBuilder
     {
         $instance = clone $this;
 
-        $instance = $instance->withSoftDeleteFilter();
+        $instance        = $instance->withSoftDeleteFilter();
         $instance->state = $instance->state->withValues(values: $values);
-        $sql = $instance->grammar->compileUpdate(state: $instance->state);
+        $sql             = $instance->grammar->compileUpdate(state: $instance->state);
 
         return $instance->orchestrator->execute(
             sql     : $sql,
@@ -429,12 +431,12 @@ class QueryBuilder
     /**
      * Retrieve a flattened array of values from a single column.
      *
-     * @param  string  $value  Target column name.
-     * @param  string|null  $key  Optional column to use for array keys.
+     * @param string      $value Target column name.
+     * @param string|null $key   Optional column to use for array keys.
      *
      * @throws Throwable
      */
-    public function pluck(string $value, ?string $key = null): array
+    public function pluck(string $value, string $key = null): array
     {
         $columns = $key ? [$value, $key] : [$value];
         $results = $this->select(...$columns)->get();
@@ -477,7 +479,7 @@ class QueryBuilder
     /**
      * Select specific columns.
      *
-     * @param  string  ...$columns  Columns to include (defaults to `*` when empty).
+     * @param string ...$columns Columns to include (defaults to `*` when empty).
      */
     public function select(string ...$columns): self
     {
@@ -489,8 +491,8 @@ class QueryBuilder
     /**
      * Retrieve a single scalar value from the first matching record.
      *
-     * @param  string  $column  Target column name.
-     * @param  mixed  $default  Fallback value if no record exists.
+     * @param string $column  Target column name.
+     * @param mixed  $default Fallback value if no record exists.
      *
      * @throws Throwable
      */
@@ -504,15 +506,15 @@ class QueryBuilder
     /**
      * Execute the query and return the first matching record.
      *
-     * @param  string|callable|null  $key  Optional column or transform callback.
-     * @param  mixed  $default  Fallback value if no record exists.
+     * @param string|callable|null $key     Optional column or transform callback.
+     * @param mixed                $default Fallback value if no record exists.
      *
      * @throws Throwable
      */
-    public function first(string|callable|null $key = null, mixed $default = null): mixed
+    public function first(string|callable $key = null, mixed $default = null): mixed
     {
         $instance = clone $this;
-        $result = $instance->limit(limit: 1)->get();
+        $result   = $instance->limit(limit: 1)->get();
 
         if (empty($result)) {
             return $default;
@@ -549,15 +551,15 @@ class QueryBuilder
     /**
      * Retrieve the total number of records matching the query.
      *
-     * @param  string  $column  Column to count (defaults to '*').
+     * @param string $column Column to count (defaults to '*').
      *
      * @throws Throwable
      */
-    public function count(string $column = '*'): int
+    public function count(string $column = '*') : int
     {
-        $instance = clone $this;
+        $instance        = clone $this;
         $instance->state = $instance->state->withColumns(columns: ["COUNT({$column}) as aggregate"]);
-        $result = $instance->first();
+        $result          = $instance->first();
 
         return (int) ($result['aggregate'] ?? 0);
     }
@@ -565,8 +567,8 @@ class QueryBuilder
     /**
      * Retrieve a single record by its primary identity.
      *
-     * @param  mixed  $id  Identity value.
-     * @param  string  $column  Field name for the identity (defaults to 'id').
+     * @param mixed  $id     Identity value.
+     * @param string $column Field name for the identity (defaults to 'id').
      *
      * @throws Throwable
      */

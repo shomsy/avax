@@ -12,14 +12,14 @@ final readonly class FederatedIdentity
     public array $groups;
 
     /**
-     * @param  list<string>  $groups
+     * @param list<string> $groups
      */
     public function __construct(
         public string $subject,
         #[SensitiveParameter]
         public string $email,
         public string $displayName,
-        ?array $groups = null,
+        array $groups = null,
         public bool $emailVerified = true,
     ) {
         $groups ??= [];

@@ -125,7 +125,7 @@ final class DependencyGraph
 final readonly class DependencyNode
 {
     /**
-     * @param  list<string>  $dependsOn
+     * @param list<string> $dependsOn
      */
     public function __construct(
         public string $name,

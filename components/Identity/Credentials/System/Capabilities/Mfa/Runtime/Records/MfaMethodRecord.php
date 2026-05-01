@@ -13,7 +13,7 @@ use SensitiveParameter;
 /**
  * Stored active MFA method and recovery state.
  *
- * @param  list<BackupCodeRecord>  $backupCodes
+ * @param list<BackupCodeRecord> $backupCodes
  */
 final readonly class MfaMethodRecord
 {
@@ -21,7 +21,7 @@ final readonly class MfaMethodRecord
     public array $backupCodes;
 
     /**
-     * @param  list<BackupCodeRecord>  $backupCodes
+     * @param list<BackupCodeRecord> $backupCodes
      */
     public function __construct(
         public UserId $userId,
@@ -30,7 +30,7 @@ final readonly class MfaMethodRecord
         public string $secret,
         public DateTimeImmutable $enabledAt,
         #[SensitiveParameter]
-        ?array $backupCodes = null,
+        array $backupCodes = null,
         public ?int $lastAcceptedTimeStep = null,
     ) {
         $backupCodes ??= [];
@@ -38,7 +38,7 @@ final readonly class MfaMethodRecord
     }
 
     /**
-     * @param  list<BackupCodeRecord>  $backupCodes
+     * @param list<BackupCodeRecord> $backupCodes
      */
     public function withBackupCodes(#[SensitiveParameter] array $backupCodes): self
     {

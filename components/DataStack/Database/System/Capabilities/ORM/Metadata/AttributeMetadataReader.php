@@ -24,7 +24,7 @@ final class AttributeMetadataReader
     private array $cache = [];
 
     /**
-     * @param  class-string  $entityClass
+     * @param class-string $entityClass
      */
     public function for(string $entityClass): EntityMetadata
     {
@@ -32,7 +32,7 @@ final class AttributeMetadataReader
     }
 
     /**
-     * @param  class-string  $entityClass
+     * @param class-string $entityClass
      */
     private function read(string $entityClass): EntityMetadata
     {
@@ -46,7 +46,7 @@ final class AttributeMetadataReader
         $tableAttribute = $reflectionClass->getAttributes(name: Table::class)[0] ?? null;
         $table = $tableAttribute !== null
             ? $tableAttribute->newInstance()->name
-            : strtolower(string: $reflectionClass->getShortName()).'s';
+            : strtolower(string: $reflectionClass->getShortName()) . 's';
 
         $entity = $entityAttribute->newInstance();
         $fields = [];
@@ -54,11 +54,11 @@ final class AttributeMetadataReader
 
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $columnAttribute = $reflectionProperty->getAttributes(name: Column::class)[0] ?? null;
-            $idAttribute = $reflectionProperty->getAttributes(name: Id::class)[0] ?? null;
+            $idAttribute     = $reflectionProperty->getAttributes(name: Id::class)[0] ?? null;
             $generatedAttribute = $reflectionProperty->getAttributes(name: GeneratedValue::class)[0] ?? null;
 
             if ($columnAttribute !== null || $idAttribute !== null) {
-                $column = $columnAttribute?->newInstance() ?? new Column(name: $reflectionProperty->getName());
+                $column                                 = $columnAttribute?->newInstance() ?? new Column(name: $reflectionProperty->getName());
                 $fields[$reflectionProperty->getName()] = new FieldMetadata(
                     property : $reflectionProperty->getName(),
                     column   : $column->name ?? $reflectionProperty->getName(),
@@ -70,7 +70,7 @@ final class AttributeMetadataReader
             }
 
             $joinColumn = $reflectionProperty->getAttributes(name: JoinColumn::class)[0] ?? null;
-            $relation = $reflectionProperty->getAttributes(name: ManyToOne::class)[0]
+            $relation        = $reflectionProperty->getAttributes(name: ManyToOne::class)[0]
                 ?? $reflectionProperty->getAttributes(name: OneToMany::class)[0]
                 ?? $reflectionProperty->getAttributes(name: OneToOne::class)[0]
                 ?? $reflectionProperty->getAttributes(name: ManyToMany::class)[0]
@@ -81,11 +81,11 @@ final class AttributeMetadataReader
             }
 
             $instance = $relation->newInstance();
-            $kind = match (true) {
+            $kind            = match (true) {
                 $instance instanceof ManyToOne => RelationKind::ManyToOne,
                 $instance instanceof OneToMany => RelationKind::OneToMany,
                 $instance instanceof OneToOne => RelationKind::OneToOne,
-                default => RelationKind::ManyToMany,
+                default                       => RelationKind::ManyToMany,
             };
 
             $relations[$reflectionProperty->getName()] = new RelationMetadata(

@@ -26,7 +26,7 @@ final class CockroachDBGrammar extends PostgreSQLGrammar
 
         $updates = [];
         foreach ($update as $column) {
-            $updates[] = $this->wrap(value: $column).' = EXCLUDED.'.$this->wrap(value: $column);
+            $updates[] = $this->wrap(value: $column) . ' = EXCLUDED.' . $this->wrap(value: $column);
         }
 
         $updateClause = implode(separator: ', ', array: $updates);

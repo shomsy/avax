@@ -74,7 +74,7 @@ final readonly class SagaRecoveryPlan
         array $recoverySteps,
         bool $isRecoverable,
     ) {
-        $this->sagaId = $sagaId;
+        $this->sagaId     = $sagaId;
         $this->failedStep = $failedStep;
         $this->attemptNumber = $attemptNumber;
         $this->recoverySteps = $recoverySteps;
@@ -98,7 +98,7 @@ final readonly class SagaRecoveryPlan
     public function toArray(): array
     {
         return [
-            'saga_id' => $this->sagaId,
+            'saga_id'     => $this->sagaId,
             'failed_step' => $this->failedStep,
             'attempt_number' => $this->attemptNumber,
             'recovery_steps' => $this->recoverySteps,

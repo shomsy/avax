@@ -13,8 +13,8 @@ final readonly class OAuthTokenEndpointAuthMethodPolicy
 {
     public function resolve(
         OAuthClientType $type,
-        ?OAuthTokenEndpointAuthMethod $requested = null,
-        ?OAuthTokenEndpointAuthMethod $current = null,
+        OAuthTokenEndpointAuthMethod $requested = null,
+        OAuthTokenEndpointAuthMethod $current = null,
         bool $workloadIdentity = false,
     ): OAuthTokenEndpointAuthMethod {
         $default = $this->defaultForType(type: $type);

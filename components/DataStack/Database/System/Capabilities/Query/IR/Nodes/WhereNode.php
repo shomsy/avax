@@ -18,7 +18,7 @@ final class WhereNode
 
     public function getSql(GrammarInterface $grammar): string
     {
-        $column = $grammar->wrap(value: $this->column);
+        $column  = $grammar->wrap(value: $this->column);
         $operator = $this->operator->value;
         $boolean = strtoupper(string: $this->boolean);
 

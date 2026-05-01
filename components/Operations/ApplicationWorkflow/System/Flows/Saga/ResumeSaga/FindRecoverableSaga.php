@@ -13,7 +13,7 @@ final readonly class FindRecoverableSaga
 {
     public function __construct(private object $store) {}
 
-    public function find(?string $tenantId = null, int $limit = 100): array
+    public function find(string $tenantId = null, int $limit = 100) : array
     {
         $recoverable = [];
         $allSagas = $this->store->all();
@@ -55,9 +55,9 @@ final readonly class RebuildSagaState
         string $sagaId,
         array $events,
     ): array {
-        $data = [];
-        $completedSteps = [];
-        $stepResults = [];
+        $data            = [];
+        $completedSteps  = [];
+        $stepResults     = [];
         $currentStepIndex = 0;
         $currentStepName = null;
 
@@ -72,10 +72,10 @@ final readonly class RebuildSagaState
                     break;
 
                 case 'step_completed':
-                    $stepName = $event['step_name'] ?? '';
+                    $stepName         = $event['step_name'] ?? '';
                     $completedSteps[] = $stepName;
                     $stepResults[$stepName] = $event['payload'] ?? [];
-                    $currentStepName = $stepName;
+                    $currentStepName  = $stepName;
                     $currentStepIndex++;
 
                     break;
@@ -90,9 +90,9 @@ final readonly class RebuildSagaState
         }
 
         return [
-            'data' => $data,
-            'completed_steps' => $completedSteps,
-            'step_results' => $stepResults,
+            'data'              => $data,
+            'completed_steps'   => $completedSteps,
+            'step_results'      => $stepResults,
             'current_step_index' => $currentStepIndex,
             'current_step_name' => $currentStepName,
         ];
@@ -110,7 +110,7 @@ final readonly class ContinueSagaAfterFailure
         }
 
         $definitionSteps = $definition['steps'] ?? [];
-        $stepOrder = $definition['stepOrder'] ?? [];
+        $stepOrder       = $definition['stepOrder'] ?? [];
 
         $currentIndex = $instance->currentStepIndex;
         if ($currentIndex >= count($stepOrder)) {

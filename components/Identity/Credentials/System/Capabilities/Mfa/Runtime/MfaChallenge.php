@@ -21,8 +21,8 @@ final readonly class MfaChallenge
     {
         return [
             'challengeId' => $this->challengeId,
-            'purpose' => $this->purpose->value,
-            'expiresAt' => $this->expiresAt,
+            'purpose'     => $this->purpose->value,
+            'expiresAt'   => $this->expiresAt,
             'remainingAttempts' => $this->remainingAttempts,
         ];
     }

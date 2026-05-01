@@ -10,15 +10,15 @@ use Avax\Components\Documentation\Api\System\Capabilities\Swagger\SwaggerUi;
 final readonly class ApiDocumentation
 {
     /**
-     * @param  list<array{method:string,path:string,summary?:string,tags?:list<string>}>  $routes
+     * @param list<array{method:string,path:string,summary?:string,tags?:list<string>}> $routes
      */
     public static function openApi(array $routes = []): array
     {
-        return (new OpenApiGenerator)->generate(routes: $routes);
+        return (new OpenApiGenerator())->generate(routes: $routes);
     }
 
     public static function swagger(string $openApiUrl = '/api/docs/openapi.json'): string
     {
-        return (new SwaggerUi)->html(openApiUrl: $openApiUrl);
+        return (new SwaggerUi())->html(openApiUrl: $openApiUrl);
     }
 }

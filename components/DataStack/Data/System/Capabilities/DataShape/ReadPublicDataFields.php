@@ -15,8 +15,9 @@ use ReflectionProperty;
 final readonly class ReadPublicDataFields
 {
     /**
-     * @param  ReflectionClass<object>  $class
-     * @param  array<string, DataField>  $existingFields
+     * @param ReflectionClass<object>  $class
+     * @param array<string, DataField> $existingFields
+     *
      * @return array<string, DataField>
      */
     public function read(ReflectionClass $class, DataTransferConfig $config, array $existingFields = []): array
@@ -33,7 +34,7 @@ final readonly class ReadPublicDataFields
             }
 
             $attributes = new ReadDataFieldAttributes()->read(property: $property);
-            $inputName = new ReadMappedInputName()->read(
+            $inputName  = new ReadMappedInputName()->read(
                 fieldName : $property->getName(),
                 attributes: $attributes,
                 config    : $config,

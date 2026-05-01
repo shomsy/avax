@@ -30,9 +30,9 @@ final readonly class PushAuthorizationRequest
      */
     public function execute(PushAuthorizationRequestData $data): PushedAuthorizationRequest
     {
-        $now = $this->clock->now();
-        $signed = $this->resolveSignedRequestObject(data: $data, now: $now);
-        $claims = $signed['claims'] ?? $this->claimsFromPlainRequest(data: $data);
+        $now      = $this->clock->now();
+        $signed   = $this->resolveSignedRequestObject(data: $data, now: $now);
+        $claims   = $signed['claims'] ?? $this->claimsFromPlainRequest(data: $data);
         $clientId = trim(string: (string) ($claims['client_id'] ?? ''));
         $redirectUri = trim(string: (string) ($claims['redirect_uri'] ?? ''));
 
@@ -46,8 +46,8 @@ final readonly class PushAuthorizationRequest
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
-        $requestUri = 'urn:ietf:params:oauth:request_uri:'.bin2hex(string: random_bytes(length: 16));
-        $expiresAt = $now->modify(modifier: '+5 minutes');
+        $requestUri = 'urn:ietf:params:oauth:request_uri:' . bin2hex(string: random_bytes(length: 16));
+        $expiresAt  = $now->modify(modifier: '+5 minutes');
 
         $this->requestObjectStore->store(
             requestUri       : $requestUri,
@@ -62,11 +62,11 @@ final readonly class PushAuthorizationRequest
             name      : 'auth.oidc.par.pushed',
             occurredAt: $now,
             context   : [
-                'client_id' => $clientId,
-                'request_uri' => $requestUri,
-                'redirect_uri' => $redirectUri,
+                            'client_id'                  => $clientId,
+                            'request_uri'                => $requestUri,
+                            'redirect_uri'               => $redirectUri,
                 'request_object_signature_verified' => ($signed['signature_verified'] ?? false) === true ? 1 : 0,
-                'request_object_signing_alg' => $signed['signing_algorithm'] ?? null,
+                            'request_object_signing_alg' => $signed['signing_algorithm'] ?? null,
             ],
         ));
 
@@ -99,10 +99,10 @@ final readonly class PushAuthorizationRequest
         }
 
         [$header, $claims] = $this->decodeJwtWithoutVerification(jwt: $jwt);
-        $algorithm = $this->readStringValue(value: $header['alg'] ?? null);
-        $clientId = $this->readStringValue(value: $claims['client_id'] ?? null);
+        $algorithm    = $this->readStringValue(value: $header['alg'] ?? null);
+        $clientId     = $this->readStringValue(value: $claims['client_id'] ?? null);
         $clientSecret = $data->clientSecret !== null ? trim(string: $data->clientSecret) : '';
-        $client = $clientId !== null ? $this->clientRegistry->find(clientId: $clientId) : null;
+        $client       = $clientId !== null ? $this->clientRegistry->find(clientId: $clientId) : null;
 
         if ($algorithm === null || $clientId === null || $client === null) {
             throw OAuthAuthorizationFailed::invalidRequestObject();
@@ -146,7 +146,7 @@ final readonly class PushAuthorizationRequest
         }
 
         return [
-            'claims' => $verifiedClaims,
+            'claims'            => $verifiedClaims,
             'signature_verified' => true,
             'signing_algorithm' => $algorithm,
         ];
@@ -252,8 +252,8 @@ final readonly class PushAuthorizationRequest
             return null;
         }
 
-        $signingInput = $segments[0].'.'.$segments[1];
-        $signature = $this->base64UrlDecode(value: $segments[2]);
+        $signingInput = $segments[0] . '.' . $segments[1];
+        $signature    = $this->base64UrlDecode(value: $segments[2]);
 
         if ($signature === null) {
             return null;
@@ -271,7 +271,7 @@ final readonly class PushAuthorizationRequest
     }
 
     /**
-     * @param  array<string, mixed>  $claims
+     * @param array<string, mixed> $claims
      */
     private function claimsMatchSignedRequestObjectPolicy(array $claims, string $clientId): bool
     {
@@ -305,18 +305,19 @@ final readonly class PushAuthorizationRequest
     private function claimsFromPlainRequest(PushAuthorizationRequestData $data): array
     {
         return [
-            'client_id' => trim(string: $data->clientId),
-            'redirect_uri' => trim(string: $data->redirectUri),
-            'scope' => implode(separator: ' ', array: $this->normalizeScopes(scopes: $data->scopes)),
-            'state' => $data->state !== null ? trim(string: $data->state) : null,
-            'nonce' => $data->nonce !== null ? trim(string: $data->nonce) : null,
+            'client_id'      => trim(string: $data->clientId),
+            'redirect_uri'   => trim(string: $data->redirectUri),
+            'scope'          => implode(separator: ' ', array: $this->normalizeScopes(scopes: $data->scopes)),
+            'state'          => $data->state !== null ? trim(string: $data->state) : null,
+            'nonce'          => $data->nonce !== null ? trim(string: $data->nonce) : null,
             'code_challenge' => $data->codeChallenge !== null ? trim(string: $data->codeChallenge) : null,
             'code_challenge_method' => $data->codeChallengeMethod?->value,
         ];
     }
 
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
+     *
      * @return list<string>
      */
     private function normalizeScopes(array $scopes): array
@@ -345,7 +346,7 @@ final readonly class PushAuthorizationRequest
     }
 
     /**
-     * @param  array<int, string>|string|null  $value
+     * @param array<int, string>|string|null $value
      * @return list<string>
      */
     private function normalizeScopeValue(string|array|null $value): array

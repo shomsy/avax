@@ -9,7 +9,7 @@ final class Diagnostics
     public static function health(): array
     {
         return [
-            'php' => PHP_VERSION,
+            'php'    => PHP_VERSION,
             'memory' => memory_get_usage(true),
             'peak_memory' => memory_get_peak_usage(true),
         ];

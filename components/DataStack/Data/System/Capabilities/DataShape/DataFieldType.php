@@ -13,7 +13,7 @@ use ReflectionUnionType;
 final readonly class DataFieldType
 {
     /**
-     * @param  list<string>  $names
+     * @param list<string> $names
      */
     public function __construct(
         private array $names,

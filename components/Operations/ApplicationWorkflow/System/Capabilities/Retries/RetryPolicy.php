@@ -63,7 +63,7 @@ final readonly class RetryPolicy
         return match ($this->backoffType) {
             'exponential' => (int) ($this->backoffMs * (2 ** ($attempt - 1))),
             'linear' => $this->backoffMs * $attempt,
-            default => 0,
+            default  => 0,
         };
     }
 

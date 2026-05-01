@@ -27,7 +27,7 @@ final readonly class ValidateRequestObject
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
-        $claims = $requestObject->claims;
+        $claims   = $requestObject->claims;
         $clientId = $this->readStringValue(value: $claims['client_id'] ?? null);
         $redirectUri = $this->readStringValue(value: $claims['redirect_uri'] ?? null);
 
@@ -69,7 +69,8 @@ final readonly class ValidateRequestObject
     }
 
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
+     *
      * @return list<string>
      */
     private function normalizeScopes(array $scopes): array
@@ -98,7 +99,7 @@ final readonly class ValidateRequestObject
     }
 
     /**
-     * @param  array<int, string>|string|null  $value
+     * @param array<int, string>|string|null $value
      * @return list<string>
      */
     private function normalizeScopeValue(string|array|null $value): array

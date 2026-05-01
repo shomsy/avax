@@ -10,9 +10,9 @@ final readonly class AuthIssueExplainer
 {
     public function explainAccessDenied(
         string $resource,
-        ?string $requiredPermission = null,
-        ?string $tenant = null,
-        ?string $resourceTenant = null,
+        string $requiredPermission = null,
+        string $tenant = null,
+        string $resourceTenant = null,
     ): AuthIssueExplanation {
         $resourceName = trim(string: $resource) !== '' ? trim(string: $resource) : 'resource';
 
@@ -26,18 +26,18 @@ final readonly class AuthIssueExplainer
                 'Review the active access policy for this resource and action.',
             ],
             context   : [
-                'resource' => $resourceName,
+                            'resource'        => $resourceName,
                 'required_permission' => $requiredPermission !== null && trim(string: $requiredPermission) !== '' ? trim(string: $requiredPermission) : null,
-                'tenant' => $tenant !== null && trim(string: $tenant) !== '' ? trim(string: $tenant) : null,
-                'resource_tenant' => $resourceTenant !== null && trim(string: $resourceTenant) !== '' ? trim(string: $resourceTenant) : null,
+                            'tenant'          => $tenant !== null && trim(string: $tenant) !== '' ? trim(string: $tenant) : null,
+                            'resource_tenant' => $resourceTenant !== null && trim(string: $resourceTenant) !== '' ? trim(string: $resourceTenant) : null,
             ],
         );
     }
 
     public function explainStepUpRequired(
         string $action,
-        ?bool $phishingResistantRequired = null,
-        ?int $freshAfterSeconds = null,
+        bool $phishingResistantRequired = null,
+        int  $freshAfterSeconds = null,
     ): AuthIssueExplanation {
         $phishingResistantRequired ??= false;
         $actionName = trim(string: $action) !== '' ? trim(string: $action) : 'sensitive_action';
@@ -56,16 +56,16 @@ final readonly class AuthIssueExplainer
                 'If this is unexpected, review the fresh-auth threshold for the action.',
             ],
             context   : [
-                'action' => $actionName,
+                            'action'              => $actionName,
                 'phishing_resistant_required' => $phishingResistantRequired ? 1 : 0,
-                'fresh_after_seconds' => $freshAfterSeconds,
+                            'fresh_after_seconds' => $freshAfterSeconds,
             ],
         );
     }
 
     public function explainSenderConstraintFailure(
         string $reason,
-        ?string $requiredConstraint = null,
+        string $requiredConstraint = null,
     ): AuthIssueExplanation {
         $normalizedReason = trim(string: $reason) !== '' ? trim(string: $reason) : 'unknown_reason';
 
@@ -79,20 +79,20 @@ final readonly class AuthIssueExplainer
                 'Compare the presented proof thumbprint against the token binding recorded at issuance time.',
             ],
             context   : [
-                'reason' => $normalizedReason,
+                            'reason' => $normalizedReason,
                 'required_constraint' => $requiredConstraint !== null && trim(string: $requiredConstraint) !== '' ? trim(string: $requiredConstraint) : null,
             ],
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] ?string $sessionId = null): AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] string $sessionId = null) : AuthIssueExplanation
     {
         $normalizedStatus = strtoupper(string: trim(string: $status));
         $meaning = match ($normalizedStatus) {
             'LOCAL_ONLY' => 'The local session state was revoked, but relying-party propagation is not part of this flow.',
             'PARTIAL' => 'The local session state was revoked, but at least one downstream relying party still needs operator attention.',
             'PROPAGATED' => 'The local session state and downstream relying parties acknowledged the revocation.',
-            default => 'The session revocation state needs review.',
+            default   => 'The session revocation state needs review.',
         };
 
         return new AuthIssueExplanation(
@@ -105,13 +105,13 @@ final readonly class AuthIssueExplainer
                 'Use the audit trail to confirm whether the revocation was local-only, partial, or fully propagated.',
             ],
             context   : [
-                'status' => $normalizedStatus !== '' ? $normalizedStatus : 'UNKNOWN',
-                'session_id' => $sessionId !== null && trim(string: $sessionId) !== '' ? trim(string: $sessionId) : null,
+                            'status'     => $normalizedStatus !== '' ? $normalizedStatus : 'UNKNOWN',
+                            'session_id' => $sessionId !== null && trim(string: $sessionId) !== '' ? trim(string: $sessionId) : null,
             ],
         );
     }
 
-    public function explainTrustedDeviceDecision(?string $deviceId = null): AuthIssueExplanation
+    public function explainTrustedDeviceDecision(string $deviceId = null) : AuthIssueExplanation
     {
         return new AuthIssueExplanation(
             code      : 'trusted_device_not_supported',

@@ -13,14 +13,14 @@ use DateTimeImmutable;
 /**
  * Stored MFA challenge lifecycle state.
  *
- * @param  list<MfaVerificationAttempt>  $attempts
+ * @param list<MfaVerificationAttempt> $attempts
  */
 final readonly class MfaChallengeRecord
 {
     public int $maxAttempts;
 
     /**
-     * @param  list<MfaVerificationAttempt>  $attempts
+     * @param list<MfaVerificationAttempt> $attempts
      */
     public function __construct(
         public string $challengeId,
@@ -28,7 +28,7 @@ final readonly class MfaChallengeRecord
         public MfaChallengePurpose $purpose,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $expiresAt,
-        ?int $maxAttempts = null,
+        int $maxAttempts = null,
         public array $attempts = [],
     ) {
         $maxAttempts ??= 5;

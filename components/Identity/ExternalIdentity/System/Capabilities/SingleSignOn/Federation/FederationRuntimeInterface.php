@@ -9,11 +9,11 @@ interface FederationRuntimeInterface
     public function startLogin(
         FederationConnection $connection,
         string $redirectUri,
-        ?string $state = null,
+        string $state = null,
     ): StartedFederatedLogin;
 
     /**
-     * @param  array<string, mixed>  $payload
+     * @param array<string, mixed> $payload
      */
     public function completeLogin(
         FederationConnection $connection,

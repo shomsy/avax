@@ -58,8 +58,8 @@ final readonly class CompensationStepResult
     {
         return [
             'step_name' => $this->stepName,
-            'status' => $this->status->value,
-            'error' => $this->error,
+            'status'    => $this->status->value,
+            'error'     => $this->error,
             'duration_ms' => $this->durationMs(),
         ];
     }

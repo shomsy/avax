@@ -34,8 +34,8 @@ final class TransactionScope
     private readonly TransactionManagerInterface $manager;
 
     /**
-     * @param  TransactionManagerInterface  $manager  The active technical authority responsible for atomicity and
-     *                                                persistence.
+     * @param TransactionManagerInterface $manager The active technical authority responsible for atomicity and
+     *                                             persistence.
      */
     public function __construct(TransactionManagerInterface $manager)
     {

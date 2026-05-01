@@ -17,7 +17,7 @@ final readonly class MonitoringDashboard
     public function data(): array
     {
         return [
-            'health' => $this->health->toArray(),
+            'health'  => $this->health->toArray(),
             'metrics' => $this->metrics->snapshot(),
             'generated_at' => date(format: DATE_ATOM),
         ];

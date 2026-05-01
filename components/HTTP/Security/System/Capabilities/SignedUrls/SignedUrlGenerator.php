@@ -31,7 +31,7 @@ final class SignedUrlGenerator
 
         $token = JWT::encode($payload, self::secret(), self::$algo);
 
-        return $path.'?signature='.$token;
+        return $path . '?signature=' . $token;
     }
 
     public static function secret(): string

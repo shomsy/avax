@@ -27,7 +27,7 @@ final readonly class RequireResourceOwner
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         if ($user->id !== $ownerUserId) {

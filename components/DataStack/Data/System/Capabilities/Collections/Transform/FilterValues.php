@@ -14,7 +14,8 @@ final readonly class FilterValues
     ) {}
 
     /**
-     * @param  callable  $callback  fn(mixed $item, int|string $key) : bool
+     * @param callable $callback fn(mixed $item, int|string $key) : bool
+     *
      * @return array<mixed>
      */
     public function __invoke(callable $callback): array
@@ -23,7 +24,7 @@ final readonly class FilterValues
     }
 
     /**
-     * @param  callable  $callback  fn(mixed $item, int|string $key) : bool
+     * @param callable $callback fn(mixed $item, int|string $key) : bool
      * @return array<mixed>
      */
     public function filter(callable $callback): array

@@ -10,7 +10,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Prote
 final readonly class ReadPreviousSagaCommandResult
 {
     /**
-     * @param  array<string, SagaCommandResult>  $results
+     * @param array<string, SagaCommandResult> $results
      */
     public function read(array $results, SagaCommandKey $key): ?SagaCommandResult
     {

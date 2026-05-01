@@ -33,26 +33,26 @@ final class ReadConnection
     private readonly RememberConnection $rememberConnection;
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param array<string, mixed> $config
      *
      * @throws RandomException
      */
     public function __construct(
         private readonly array $config,
         private readonly ?EventBus $eventBus = null,
-        ?ExecutionScope $scope = null,
-        ?ResolveDefaultConnection $resolveDefaultConnection = null,
-        ?RememberConnection $rememberConnection = null,
+        ExecutionScope           $scope = null,
+        ResolveDefaultConnection $resolveDefaultConnection = null,
+        RememberConnection       $rememberConnection = null,
     ) {
-        $this->scope = $scope ?? ExecutionScope::fresh();
+        $this->scope              = $scope ?? ExecutionScope::fresh();
         $this->resolveDefaultConnection = $resolveDefaultConnection ?? new ResolveDefaultConnection(config: $this->config);
-        $this->rememberConnection = $rememberConnection ?? new RememberConnection;
+        $this->rememberConnection = $rememberConnection ?? new RememberConnection();
     }
 
     /**
      * @throws Throwable
      */
-    public function connection(?string $name = null): DatabaseConnection
+    public function connection(string $name = null) : DatabaseConnection
     {
         $resolvedName = $this->resolveDefaultConnection->resolve(connectionName: $name);
         $cached = $this->rememberConnection->read(connections: $this->connections, name: $resolvedName);
@@ -81,7 +81,7 @@ final class ReadConnection
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param array<string, mixed> $config
      */
     private function pool(string $name, array $config): ConnectionPool
     {
@@ -107,14 +107,14 @@ final class ReadConnection
     }
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param array<string, mixed> $config
      *
      * @throws Throwable
      */
     private function open(array $config): DatabaseConnection
     {
         return new OpenConnection(
-            buildPhysicalConnection: new BuildPhysicalConnection,
+            buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
             scope                  : $this->scope,
         )->using(config: $config);

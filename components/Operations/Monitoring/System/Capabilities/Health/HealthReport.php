@@ -7,7 +7,7 @@ namespace Avax\Components\Operations\Monitoring\System\Capabilities\Health;
 final readonly class HealthReport
 {
     /**
-     * @param  array<string, HealthCheckResult>  $checks
+     * @param array<string, HealthCheckResult> $checks
      */
     public function __construct(
         public string $status,

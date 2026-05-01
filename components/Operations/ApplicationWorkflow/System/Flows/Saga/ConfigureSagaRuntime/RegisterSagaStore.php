@@ -14,8 +14,8 @@ final readonly class RegisterSagaStore
         return match ($type) {
             'memory' => $this->createInMemoryStore(config: $config),
             'database' => $this->createDatabaseStore(config: $config),
-            'redis' => $this->createRedisStore(config: $config),
-            default => throw new SagaRuntimeConfigurationFailure(
+            'redis'  => $this->createRedisStore(config: $config),
+            default  => throw new SagaRuntimeConfigurationFailure(
                 message: sprintf('Unknown saga store type: %s', $type),
             ),
         };
@@ -23,8 +23,7 @@ final readonly class RegisterSagaStore
 
     private function createInMemoryStore(array $config): object
     {
-        return new class
-        {
+        return new class () {
             public array $data = [];
 
             public function get(string $key): ?array
@@ -51,8 +50,7 @@ final readonly class RegisterSagaStore
 
     private function createDatabaseStore(array $config): object
     {
-        return new class($config)
-        {
+        return new class ($config) {
             public function __construct(private array $config) {}
 
             public function get(string $key): ?array
@@ -60,9 +58,9 @@ final readonly class RegisterSagaStore
                 return null;
             }
 
-            public function set(string $key, array $value): void {}
+            public function set(string $key, array $value) : void {}
 
-            public function delete(string $key): void {}
+            public function delete(string $key) : void {}
 
             public function all(): array
             {
@@ -73,8 +71,7 @@ final readonly class RegisterSagaStore
 
     private function createRedisStore(array $config): object
     {
-        return new class($config)
-        {
+        return new class ($config) {
             public function __construct(private array $config) {}
 
             public function get(string $key): ?array
@@ -82,9 +79,9 @@ final readonly class RegisterSagaStore
                 return null;
             }
 
-            public function set(string $key, array $value): void {}
+            public function set(string $key, array $value) : void {}
 
-            public function delete(string $key): void {}
+            public function delete(string $key) : void {}
 
             public function all(): array
             {
@@ -98,8 +95,7 @@ final readonly class RegisterSagaStepRunner
 {
     public function register(): object
     {
-        return new class
-        {
+        return new class () {
             public function run(array $stepDefinition, array $sagaData): mixed
             {
                 throw new RuntimeException(message: 'Step runner not configured.');
@@ -128,8 +124,7 @@ final readonly class RegisterSagaMessageBus
 
     private function createInMemoryBus(array $config): object
     {
-        return new class
-        {
+        return new class () {
             public array $published = [];
 
             public function publish(string $topic, array $message): void
@@ -137,19 +132,18 @@ final readonly class RegisterSagaMessageBus
                 $this->published[$topic][] = $message;
             }
 
-            public function subscribe(string $topic, callable $handler): void {}
+            public function subscribe(string $topic, callable $handler) : void {}
         };
     }
 
     private function createAsyncBus(array $config): object
     {
-        return new class($config)
-        {
+        return new class ($config) {
             public function __construct(private array $config) {}
 
-            public function publish(string $topic, array $message): void {}
+            public function publish(string $topic, array $message) : void {}
 
-            public function subscribe(string $topic, callable $handler): void {}
+            public function subscribe(string $topic, callable $handler) : void {}
         };
     }
 }
@@ -191,7 +185,7 @@ final readonly class ValidateSagaRuntimeConfig
 
 final class SagaRuntimeConfigurationFailure extends RuntimeException
 {
-    public function __construct(string $message = '', int $code = 0, ?Throwable $previous = null)
+    public function __construct(string $message = '', int $code = 0, Throwable $previous = null)
     {
         parent::__construct(message: $message, code: $code, previous: $previous);
     }

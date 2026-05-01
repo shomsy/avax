@@ -12,17 +12,17 @@ use Traversable;
 
 enum SagaStatus: string
 {
-    case DRAFT = 'draft';
+    case DRAFT   = 'draft';
     case DEFINED = 'defined';
-    case VALID = 'valid';
+    case VALID   = 'valid';
     case INVALID = 'invalid';
     case REGISTERED = 'registered';
 }
 
 enum SagaStartCondition: string
 {
-    case MANUAL = 'manual';
-    case EVENT = 'event';
+    case MANUAL  = 'manual';
+    case EVENT   = 'event';
     case SCHEDULE = 'schedule';
     case COMMAND = 'command';
 }
@@ -62,43 +62,43 @@ final readonly class SagaDefinition implements IteratorAggregate
     private function __construct(
         string $name,
         string $type,
-        ?array $steps = null,
-        ?array $stepOrder = null,
-        ?TenantBoundary $tenantBoundary = null,
-        ?SagaStartCondition $startCondition = null,
-        ?string $startTrigger = null,
-        ?int $timeoutSeconds = null,
-        ?int $maxDurationSeconds = null,
-        ?bool $allowConcurrent = null,
-        ?bool $allowRemoteCompensation = null,
-        ?string $description = null,
-        ?SagaStatus $status = null,
-        ?DateTimeImmutable $createdAt = null,
-        ?DateTimeImmutable $updatedAt = null,
+        array              $steps = null,
+        array              $stepOrder = null,
+        TenantBoundary     $tenantBoundary = null,
+        SagaStartCondition $startCondition = null,
+        string             $startTrigger = null,
+        int                $timeoutSeconds = null,
+        int                $maxDurationSeconds = null,
+        bool               $allowConcurrent = null,
+        bool               $allowRemoteCompensation = null,
+        string             $description = null,
+        SagaStatus         $status = null,
+        DateTimeImmutable  $createdAt = null,
+        DateTimeImmutable  $updatedAt = null,
     ) {
-        $steps ??= [];
-        $stepOrder ??= [];
-        $startCondition ??= SagaStartCondition::MANUAL;
-        $timeoutSeconds ??= 3600;
-        $maxDurationSeconds ??= 86400;
-        $allowConcurrent ??= false;
+        $steps                    ??= [];
+        $stepOrder                ??= [];
+        $startCondition           ??= SagaStartCondition::MANUAL;
+        $timeoutSeconds           ??= 3600;
+        $maxDurationSeconds       ??= 86400;
+        $allowConcurrent          ??= false;
         $allowRemoteCompensation ??= false;
-        $status ??= SagaStatus::DRAFT;
-        $this->name = $name;
-        $this->type = $type;
-        $this->steps = $steps;
-        $this->stepOrder = $stepOrder;
-        $this->tenantBoundary = $tenantBoundary;
-        $this->startCondition = $startCondition;
-        $this->startTrigger = $startTrigger;
-        $this->timeoutSeconds = $timeoutSeconds;
+        $status                   ??= SagaStatus::DRAFT;
+        $this->name               = $name;
+        $this->type               = $type;
+        $this->steps              = $steps;
+        $this->stepOrder          = $stepOrder;
+        $this->tenantBoundary     = $tenantBoundary;
+        $this->startCondition     = $startCondition;
+        $this->startTrigger       = $startTrigger;
+        $this->timeoutSeconds     = $timeoutSeconds;
         $this->maxDurationSeconds = $maxDurationSeconds;
-        $this->allowConcurrent = $allowConcurrent;
+        $this->allowConcurrent    = $allowConcurrent;
         $this->allowRemoteCompensation = $allowRemoteCompensation;
-        $this->description = $description;
-        $this->status = $status;
-        $this->createdAt = $createdAt;
-        $this->updatedAt = $updatedAt;
+        $this->description        = $description;
+        $this->status             = $status;
+        $this->createdAt          = $createdAt;
+        $this->updatedAt          = $updatedAt;
     }
 
     public static function linear(string $name, array $options = []): self
@@ -108,7 +108,7 @@ final readonly class SagaDefinition implements IteratorAggregate
 
     public static function create(
         string $name,
-        ?string $type = null,
+        string $type = null,
         array $options = [],
     ): self {
         $type ??= 'long_running_process';
@@ -136,8 +136,8 @@ final readonly class SagaDefinition implements IteratorAggregate
             allowRemoteCompensation: $options['remote_compensation'] ?? false,
             description            : $options['description'] ?? null,
             status                 : SagaStatus::DRAFT,
-            createdAt              : new DateTimeImmutable,
-            updatedAt              : new DateTimeImmutable,
+            createdAt              : new DateTimeImmutable(),
+            updatedAt              : new DateTimeImmutable(),
         );
     }
 
@@ -181,7 +181,7 @@ final readonly class SagaDefinition implements IteratorAggregate
             description            : $this->description,
             status                 : SagaStatus::DRAFT,
             createdAt              : $this->createdAt,
-            updatedAt              : new DateTimeImmutable,
+            updatedAt              : new DateTimeImmutable(),
         );
     }
 
@@ -242,20 +242,20 @@ final readonly class SagaDefinition implements IteratorAggregate
         }
 
         return [
-            'name' => $this->name,
-            'type' => $this->type,
-            'steps' => $steps,
-            'tenant' => $this->tenantBoundary?->toArray(),
+            'name'            => $this->name,
+            'type'            => $this->type,
+            'steps'           => $steps,
+            'tenant'          => $this->tenantBoundary?->toArray(),
             'start_condition' => $this->startCondition->value,
-            'start_trigger' => $this->startTrigger,
-            'timeout' => $this->timeoutSeconds,
-            'max_duration' => $this->maxDurationSeconds,
-            'concurrent' => $this->allowConcurrent,
+            'start_trigger'   => $this->startTrigger,
+            'timeout'         => $this->timeoutSeconds,
+            'max_duration'    => $this->maxDurationSeconds,
+            'concurrent'      => $this->allowConcurrent,
             'remote_compensation' => $this->allowRemoteCompensation,
-            'description' => $this->description,
-            'status' => $this->status->value,
-            'created_at' => $this->createdAt?->format(format: DateTimeInterface::ISO8601),
-            'updated_at' => $this->updatedAt?->format(format: DateTimeInterface::ISO8601),
+            'description'     => $this->description,
+            'status'          => $this->status->value,
+            'created_at'      => $this->createdAt?->format(format: DateTimeInterface::ISO8601),
+            'updated_at'      => $this->updatedAt?->format(format: DateTimeInterface::ISO8601),
         ];
     }
 }

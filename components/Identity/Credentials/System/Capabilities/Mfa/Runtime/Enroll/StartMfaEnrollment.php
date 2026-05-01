@@ -33,7 +33,7 @@ final readonly class StartMfaEnrollment
         private TotpInterface $totp,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        ?string $issuer = null,
+        string $issuer = null,
         private int $expiresAfterSeconds = 900,
     ) {
         $issuer ??= 'Avax Auth';
@@ -50,7 +50,7 @@ final readonly class StartMfaEnrollment
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         $userId = new UserId(value: $user->id);

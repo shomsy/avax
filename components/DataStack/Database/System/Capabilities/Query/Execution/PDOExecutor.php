@@ -31,7 +31,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         string $sql,
         #[SensitiveParameter]
         array $bindings = [],
-        ?ExecutionScope $scope = null,
+        ExecutionScope $scope = null,
     ): array {
         $start = microtime(as_float: true);
 
@@ -51,7 +51,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             return $results;
         } catch (Throwable $throwable) {
             throw new QueryException(
-                message    : 'Query execution failed: '.$throwable->getMessage(),
+                message    : 'Query execution failed: ' . $throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
                 previous   : $throwable,
@@ -72,7 +72,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         string $sql,
         #[SensitiveParameter]
         array $bindings = [],
-        ?ExecutionScope $scope = null,
+        ExecutionScope $scope = null,
     ): ExecutionResult {
         $start = microtime(as_float: true);
 
@@ -95,7 +95,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             );
         } catch (Throwable $throwable) {
             throw new QueryException(
-                message    : 'Execution failed: '.$throwable->getMessage(),
+                message    : 'Execution failed: ' . $throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
                 previous   : $throwable,
@@ -111,14 +111,14 @@ final readonly class PDOExecutor implements ExecutorInterface
         #[SensitiveParameter]
         array $bindings,
         float $start,
-        ?ExecutionScope $scope = null,
+        ExecutionScope $scope = null,
         bool $redactBindings = true,
     ): void {
         if (! $this->eventBus instanceof EventBus) {
             return;
         }
 
-        $correlationId = $scope?->correlationId ?? ('ctx_'.bin2hex(string: random_bytes(length: 4)));
+        $correlationId = $scope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
 
         $this->eventBus->dispatch(event: new QueryExecuted(
             sql           : $sql,

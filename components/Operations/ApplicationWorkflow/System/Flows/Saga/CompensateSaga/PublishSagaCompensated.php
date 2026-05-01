@@ -43,7 +43,7 @@ final readonly class SagaCompensatedEvent
     public function toMetadata(): array
     {
         return [
-            'saga_id' => $this->sagaId,
+            'saga_id'   => $this->sagaId,
             'compensated_steps' => $this->compensatedSteps,
             'timestamp' => $this->timestamp,
         ];

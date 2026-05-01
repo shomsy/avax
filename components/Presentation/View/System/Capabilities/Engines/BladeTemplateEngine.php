@@ -38,7 +38,7 @@ class BladeTemplateEngine extends Blade implements TemplateEngineInterface
 
     public function clearCompiledViews(): void
     {
-        foreach (glob(pattern: rtrim(string: $this->getCachePath(), characters: '/').'/*.php') ?: [] as $compiledView) {
+        foreach (glob(pattern: rtrim(string: $this->getCachePath(), characters: '/') . '/*.php') ?: [] as $compiledView) {
             unlink(filename: $compiledView);
         }
     }

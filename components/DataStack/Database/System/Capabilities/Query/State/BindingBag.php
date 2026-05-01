@@ -14,7 +14,7 @@ final readonly class BindingBag
     private array $values;
 
     /**
-     * @param  array<array-key, mixed>  $values  The internal storage for raw, sanitized query parameters.
+     * @param array<array-key, mixed> $values The internal storage for raw, sanitized query parameters.
      */
     public function __construct(
         array $values = [],

@@ -117,7 +117,8 @@ trait HasSoftDeletes
      * @see /docs/Foundation/Database/DSL/SoftDeletes.md#restoring-records
      * t.
      *
-     * @param  string  $column  The technical deletion field identifier (defaults to 'deleted_at').
+     * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
+     *
      * @return bool True if the records were successfully marked as active.
      *
      * @throws Throwable If the restoration update fails at the persistence layer.
@@ -135,7 +136,8 @@ trait HasSoftDeletes
      * the current feature flags (withTrashed, onlyTrashed), ensuring that
      * logical deletion is respected in all final SQL instructions.
      *
-     * @param  string  $column  The technical deletion field identifier (defaults to 'deleted_at').
+     * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
+     *
      * @return QueryBuilder|HasSoftDeletes A
      *                                     fresh,
      *                                     cloned
@@ -172,8 +174,9 @@ trait HasSoftDeletes
      * Provide an expressive DSL for SQL "IS NOT NULL" logic, acting as a
      * categorical filter for required technical metadata.
      *
-     * @param  string  $column  The technical field name to target for the non-null check.
-     * @param  string  $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
+     * @param string $column  The technical field name to target for the non-null check.
+     * @param string $boolean The logical joiner used to attach this condition ('AND' or 'OR').
+     *
      * @return QueryBuilder|HasSoftDeletes A
      *                                     fresh,
      *                                     cloned
@@ -196,9 +199,10 @@ trait HasSoftDeletes
      * Provide an expressive DSL for SQL "IS NULL" logic, primarily used for
      * checking existence flags or soft-delete statuses.
      *
-     * @param  string  $column  The technical field name to target for the null check.
-     * @param  string|null  $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
-     * @param  bool  $not  Flag indicating whether to check for existence (IS NOT NULL) instead.
+     * @param string      $column  The technical field name to target for the null check.
+     * @param string|null $boolean The logical joiner used to attach this condition ('AND' or 'OR').
+     * @param bool        $not     Flag indicating whether to check for existence (IS NOT NULL) instead.
+     *
      * @return QueryBuilder|HasSoftDeletes A
      *                                     fresh,
      *                                     cloned
@@ -209,12 +213,12 @@ trait HasSoftDeletes
      *                                     null
      *                                     filter.
      */
-    public function whereNull(string $column, ?string $boolean = null, bool $not = false): self
+    public function whereNull(string $column, string $boolean = null, bool $not = false): self
     {
         $boolean ??= 'AND';
         $operator = $not ? 'IS NOT NULL' : 'IS NULL';
 
-        $clone = clone $this;
+        $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
             column  : $column,
             operator: $operator,

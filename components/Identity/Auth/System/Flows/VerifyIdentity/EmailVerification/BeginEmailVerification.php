@@ -45,7 +45,7 @@ final readonly class BeginEmailVerification
             name      : 'auth.email_verification.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $user->getId()->value,
+                            'user_id' => $user->getId()->value,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],

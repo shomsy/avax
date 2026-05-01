@@ -26,7 +26,7 @@ final class TaskBus
 
     public function __construct()
     {
-        $this->driver = new SyncDriver;
+        $this->driver = new SyncDriver();
     }
 
     public function register(string $taskClass, TaskHandlerInterface $handler): void

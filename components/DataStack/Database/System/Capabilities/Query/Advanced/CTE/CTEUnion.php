@@ -14,6 +14,6 @@ final readonly class CTEUnion
 
     public function toSql(): string
     {
-        return $this->left.($this->all ? ' UNION ALL ' : ' UNION ').$this->right;
+        return $this->left . ($this->all ? ' UNION ALL ' : ' UNION ') . $this->right;
     }
 }

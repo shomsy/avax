@@ -7,8 +7,8 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\DataShape;
 final readonly class DataShape
 {
     /**
-     * @param  class-string  $class
-     * @param  array<string, DataField>  $fields
+     * @param class-string             $class
+     * @param array<string, DataField> $fields
      */
     public function __construct(
         public string $class,

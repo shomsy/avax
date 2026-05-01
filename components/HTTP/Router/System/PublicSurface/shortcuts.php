@@ -28,7 +28,7 @@ if (! function_exists('redirect')) {
      */
     function redirect(string $url, int $status = 302): ResponseInterface
     {
-        $factory = new ResponseFactory;
+        $factory = new ResponseFactory();
 
         return $factory->redirect($url, $status);
     }
@@ -45,7 +45,7 @@ if (! function_exists('url')) {
         $path = ltrim($path, '/');
 
         if (! empty($parameters)) {
-            $path .= '?'.http_build_query($parameters);
+            $path .= '?' . http_build_query($parameters);
         }
 
         return "{$scheme}://{$host}/{$path}";

@@ -9,7 +9,7 @@ use SensitiveParameter;
 final readonly class CompletePasskeyRegistrationData
 {
     /**
-     * @param  array<string, mixed>  $response
+     * @param array<string, mixed> $response
      */
     public function __construct(
         public string $challengeId,

@@ -123,11 +123,11 @@ final readonly class CompleteFederatedLogin
             occurredAt: $this->clock->now(),
             context   : [
                 'connection_id' => $connection->connectionId,
-                'tenant' => $connection->tenantSlug,
-                'user_id' => $user->getId()->value,
+                'tenant'      => $connection->tenantSlug,
+                'user_id'     => $user->getId()->value,
                 'risk_action' => $decision?->action->value,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                'ip_address'  => $data->ipAddress,
+                'user_agent'  => $data->userAgent,
             ],
         ));
 
@@ -171,15 +171,16 @@ final readonly class CompleteFederatedLogin
 
         while ($this->userSource->usernameExists(username: $username)) {
             $suffix++;
-            $username = $candidate.'-'.$suffix;
+            $username = $candidate . '-' . $suffix;
         }
 
         return $username;
     }
 
     /**
-     * @param  array<string, list<string>>  $groupRoleMap
-     * @param  list<string>  $groups
+     * @param array<string, list<string>> $groupRoleMap
+     * @param list<string>                $groups
+     *
      * @return list<UserRole>
      */
     private function mapRoles(array $groupRoleMap, array $groups): array

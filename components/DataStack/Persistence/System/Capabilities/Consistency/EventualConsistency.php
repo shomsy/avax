@@ -25,8 +25,8 @@ final readonly class VersionedValue
     public static function create(
         mixed $value,
         string $nodeId,
-        ?VectorClock $clock = null,
-        ?float $timestamp = null,
+        VectorClock $clock = null,
+        float       $timestamp = null,
     ): self {
         $clock ??= VectorClock::initial($nodeId);
         $timestamp ??= microtime(true);
@@ -155,8 +155,8 @@ final class EventualConsistency implements ConsistencyPolicy
     private int $maxConflictHistory;
 
     public function __construct(
-        ?ConflictResolution $resolutionStrategy = null,
-        ?Closure $customResolver = null,
+        ConflictResolution $resolutionStrategy = null,
+        Closure            $customResolver = null,
         int $maxConflictHistory = 100,
     ) {
         $this->resolutionStrategy = $resolutionStrategy ?? ConflictResolution::lastWriteWins();
@@ -181,7 +181,8 @@ final class EventualConsistency implements ConsistencyPolicy
     /**
      * Merges a set of versioned values from multiple replicas.
      *
-     * @param  list<VersionedValue>  $values
+     * @param list<VersionedValue> $values
+     *
      * @return VersionedValue The merged value
      */
     public function mergeReplicas(array $values): VersionedValue
@@ -210,7 +211,7 @@ final class EventualConsistency implements ConsistencyPolicy
 
                 // Create new versioned value with merged clock and resolved value
                 $mergedClock = $latest->clock->merge($current->clock);
-                $latest = new VersionedValue(
+                $latest      = new VersionedValue(
                     value    : $resolved,
                     clock    : $mergedClock,
                     nodeId   : 'merged',
@@ -263,7 +264,7 @@ final class EventualConsistency implements ConsistencyPolicy
                 strategy: 'custom',
                 details : [
                     'conflict' => $conflict,
-                    'context' => $context,
+                    'context'  => $context,
                 ],
             );
         }
@@ -273,12 +274,12 @@ final class EventualConsistency implements ConsistencyPolicy
             valueA : $valueA->value,
             valueB : $valueB->value,
             context: array_merge($context, [
-                'clockA' => $valueA->clock,
-                'clockB' => $valueB->clock,
+                         'clockA'  => $valueA->clock,
+                         'clockB'  => $valueB->clock,
                 'timestampA' => $valueA->timestamp,
                 'timestampB' => $valueB->timestamp,
-                'nodeIdA' => $valueA->nodeId,
-                'nodeIdB' => $valueB->nodeId,
+                         'nodeIdA' => $valueA->nodeId,
+                         'nodeIdB' => $valueB->nodeId,
             ]),
         );
     }

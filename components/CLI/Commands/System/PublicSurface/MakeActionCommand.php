@@ -28,7 +28,7 @@ final readonly class MakeActionCommand
             $this->capabilityGenerator->create($name);
             $this->logger->info(sprintf("Action '%s' created successfully.", $name));
         } catch (Throwable $throwable) {
-            $this->logger->error('Error creating action: '.$throwable->getMessage());
+            $this->logger->error('Error creating action: ' . $throwable->getMessage());
         }
     }
 }

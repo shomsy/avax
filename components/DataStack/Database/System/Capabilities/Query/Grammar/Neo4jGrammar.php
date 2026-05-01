@@ -20,18 +20,18 @@ final class Neo4jGrammar extends BaseGrammar
         $sql = "MATCH {$pattern}";
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE '.$this->compileCypherWhere(state: $state);
+            $sql .= ' WHERE ' . $this->compileCypherWhere(state: $state);
         }
 
         $return = empty($state->columns) ? '*' : implode(separator: ', ', array: $state->columns);
         $sql .= " RETURN {$return}";
 
         if (! empty($state->orders)) {
-            $sql .= ' ORDER BY '.$this->compileCypherOrder(state: $state);
+            $sql .= ' ORDER BY ' . $this->compileCypherOrder(state: $state);
         }
 
         if ($state->limit) {
-            $sql .= ' LIMIT '.$state->limit;
+            $sql .= ' LIMIT ' . $state->limit;
         }
 
         return $sql;
@@ -94,7 +94,7 @@ final class Neo4jGrammar extends BaseGrammar
             $props[] = "{$key}: {$val}";
         }
 
-        return '{'.implode(separator: ', ', array: $props).'}';
+        return '{' . implode(separator: ', ', array: $props) . '}';
     }
 
     #[Override]
@@ -106,7 +106,7 @@ final class Neo4jGrammar extends BaseGrammar
         $sql = "MATCH {$pattern}";
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE '.$this->compileCypherWhere(state: $state);
+            $sql .= ' WHERE ' . $this->compileCypherWhere(state: $state);
         }
 
         $sql .= " SET {$props}";
@@ -141,10 +141,10 @@ final class Neo4jGrammar extends BaseGrammar
 
     public function compilePath(array $nodes, array $relations): string
     {
-        $path = '('.$nodes[0].')';
+        $path = '(' . $nodes[0] . ')';
 
         for ($i = 0; $i < count(value: $relations); $i++) {
-            $path .= "-[r:{$relations[$i]}]->(".$nodes[$i + 1].')';
+            $path .= "-[r:{$relations[$i]}]->(" . $nodes[$i + 1] . ')';
         }
 
         return $path;

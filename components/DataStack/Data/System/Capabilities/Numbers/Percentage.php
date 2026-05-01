@@ -20,6 +20,6 @@ final readonly class Percentage
 
     public function format(int $decimals = 2): string
     {
-        return number_format($this->value, $decimals).'%';
+        return number_format($this->value, $decimals) . '%';
     }
 }

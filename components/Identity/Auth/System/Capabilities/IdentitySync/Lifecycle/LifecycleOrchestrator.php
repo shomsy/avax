@@ -14,7 +14,7 @@ final readonly class LifecycleOrchestrator
 {
     public function __construct(private ProvisionableUserSourceInterface $userSource, private LifecycleStoreInterface $store, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function activate(UserId $userId, LifecycleSource $source, ?string $reason = null): LifecycleRecord
+    public function activate(UserId $userId, LifecycleSource $source, string $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::ACTIVE, source: $source, reason: $reason);
     }
@@ -35,7 +35,7 @@ final readonly class LifecycleOrchestrator
         }
 
         match ($target) {
-            LifecycleState::ACTIVE => $this->userSource->activate(id: $userId),
+            LifecycleState::ACTIVE    => $this->userSource->activate(id: $userId),
             LifecycleState::SUSPENDED => $this->userSource->deactivate(id: $userId),
             LifecycleState::DEPROVISIONED => $this->deprovisionUser(userId: $userId),
         };
@@ -54,7 +54,7 @@ final readonly class LifecycleOrchestrator
             occurredAt: $record->changedAt,
             context   : [
                 'user_id' => $record->userId,
-                'state' => $record->state->value,
+                'state'  => $record->state->value,
                 'source' => $record->source->value,
                 'reason' => $record->reason,
             ],
@@ -78,12 +78,12 @@ final readonly class LifecycleOrchestrator
         $this->userSource->deactivate(id: $userId);
     }
 
-    public function suspend(UserId $userId, LifecycleSource $source, ?string $reason = null): LifecycleRecord
+    public function suspend(UserId $userId, LifecycleSource $source, string $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::SUSPENDED, source: $source, reason: $reason);
     }
 
-    public function deprovision(UserId $userId, LifecycleSource $source, ?string $reason = null): LifecycleRecord
+    public function deprovision(UserId $userId, LifecycleSource $source, string $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::DEPROVISIONED, source: $source, reason: $reason);
     }

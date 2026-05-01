@@ -12,9 +12,9 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent;
 final readonly class DataQueryPlan
 {
     /**
-     * @param  array<string, mixed>  $bindings
-     * @param  array<string>  $indexesUsed
-     * @param  array<string>  $suggestions
+     * @param array<string, mixed> $bindings
+     * @param array<string>        $indexesUsed
+     * @param array<string>        $suggestions
      */
     public function __construct(
         public ?string $sql = null,
@@ -36,7 +36,7 @@ final readonly class DataQueryPlan
         }
 
         if ($this->bindings !== []) {
-            $parts[] = 'Bindings: '.json_encode($this->bindings, JSON_THROW_ON_ERROR);
+            $parts[] = 'Bindings: ' . json_encode($this->bindings, JSON_THROW_ON_ERROR);
         }
 
         if ($this->estimatedCost !== null) {
@@ -44,11 +44,11 @@ final readonly class DataQueryPlan
         }
 
         if ($this->indexesUsed !== []) {
-            $parts[] = 'Indexes Used: '.implode(', ', $this->indexesUsed);
+            $parts[] = 'Indexes Used: ' . implode(', ', $this->indexesUsed);
         }
 
         if ($this->suggestions !== []) {
-            $parts[] = 'Suggestions: '.implode('; ', $this->suggestions);
+            $parts[] = 'Suggestions: ' . implode('; ', $this->suggestions);
         }
 
         return implode("\n", $parts);
@@ -75,7 +75,7 @@ final readonly class DataQueryPlan
     /**
      * Returns a new instance with added suggestions.
      *
-     * @param  array<string>  $suggestions
+     * @param array<string> $suggestions
      */
     public function withSuggestions(array $suggestions): DataQueryPlan
     {
@@ -105,7 +105,7 @@ final readonly class DataQueryPlan
     /**
      * Returns a new instance with the specified bindings.
      *
-     * @param  array<string, mixed>  $bindings
+     * @param array<string, mixed> $bindings
      */
     public function withBindings(array $bindings): DataQueryPlan
     {
@@ -135,7 +135,7 @@ final readonly class DataQueryPlan
     /**
      * Returns a new instance with the specified indexes used.
      *
-     * @param  array<string>  $indexesUsed
+     * @param array<string> $indexesUsed
      */
     public function withIndexesUsed(array $indexesUsed): DataQueryPlan
     {

@@ -18,27 +18,27 @@ final readonly class Query
         private ?string $connectionName = null,
     ) {}
 
-    public function on(?string $connectionName = null): self
+    public function on(string $connectionName = null) : self
     {
         return new self($this->query, $connectionName);
     }
 
-    public function builder(?string $connectionName = null): QueryBuilder
+    public function builder(string $connectionName = null) : QueryBuilder
     {
         return $this->query->builder($connectionName ?? $this->connectionName);
     }
 
-    public function table(string $table, ?string $connectionName = null): QueryBuilder
+    public function table(string $table, string $connectionName = null) : QueryBuilder
     {
         return $this->from($table, $connectionName);
     }
 
-    public function from(string $table, ?string $connectionName = null): QueryBuilder
+    public function from(string $table, string $connectionName = null) : QueryBuilder
     {
         return $this->query->from($table, $connectionName ?? $this->connectionName);
     }
 
-    public function raw(string $value, ?string $connectionName = null): Expression
+    public function raw(string $value, string $connectionName = null) : Expression
     {
         return $this->query->raw($value, $connectionName ?? $this->connectionName);
     }

@@ -205,8 +205,8 @@ final readonly class ArrayReader
      */
     public function undot(array $data): array
     {
-        $result = [];
-        $arrayWriter = new ArrayWriter;
+        $result      = [];
+        $arrayWriter = new ArrayWriter();
 
         foreach ($data as $key => $value) {
             $arrayWriter->setNested($result, (string) $key, $value);

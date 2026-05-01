@@ -6,7 +6,6 @@ namespace Avax\Components\Identity\Security\System\Capabilities\Encryption;
 
 use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed;
 use Avax\Components\Identity\Security\System\Foundation\Failure\EncryptionFailed;
-
 use function is_string;
 
 /**
@@ -34,8 +33,9 @@ final class Encrypter implements EncrypterInterface
     /**
      * Encrypt a value using AES-256-GCM.
      *
-     * @param  mixed  $value  The value to encrypt (will be serialized if not string)
-     * @param  EncryptionKey  $key  The encryption key to use
+     * @param mixed         $value The value to encrypt (will be serialized if not string)
+     * @param EncryptionKey $key   The encryption key to use
+     *
      * @return EncryptedPayload The encrypted payload with cipher text, IV, and auth tag
      *
      * @throws EncryptionFailed if encryption operation fails
@@ -77,8 +77,9 @@ final class Encrypter implements EncrypterInterface
      *
      * Validates the authentication tag to detect tampering.
      *
-     * @param  EncryptedPayload  $payload  The encrypted payload to decrypt
-     * @param  EncryptionKey  $key  The encryption key to use
+     * @param EncryptedPayload $payload The encrypted payload to decrypt
+     * @param EncryptionKey    $key     The encryption key to use
+     *
      * @return string The decrypted plaintext
      *
      * @throws DecryptionFailed if decryption fails or payload has been tampered with

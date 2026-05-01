@@ -13,13 +13,13 @@ final readonly class ExchangeClientCredentialsData
     public array $scopes;
 
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
      */
     public function __construct(
         public string $clientId,
         #[SensitiveParameter]
         public ?string $clientSecret = null,
-        ?array $scopes = null,
+        array $scopes = null,
         public ?string $audience = null,
         #[SensitiveParameter]
         public ?string $ipAddress = null,

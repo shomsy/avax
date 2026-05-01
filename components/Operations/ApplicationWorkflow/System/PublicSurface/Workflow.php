@@ -20,9 +20,9 @@ final class Workflow
 {
     private SagaStoreInterface $store;
 
-    public function __construct(?SagaStoreInterface $store = null)
+    public function __construct(SagaStoreInterface $store = null)
     {
-        $this->store = $store ?? new InMemorySagaStore;
+        $this->store = $store ?? new InMemorySagaStore();
     }
 
     /**
@@ -51,8 +51,9 @@ final class Workflow
     /**
      * Start a new saga with the given name and context.
      *
-     * @param  string  $sagaName  The name of the saga to start
-     * @param  mixed  $context  The initial context/data for the saga
+     * @param string $sagaName The name of the saga to start
+     * @param mixed  $context  The initial context/data for the saga
+     *
      * @return SagaResult The result of the saga execution
      */
     public function start(string $sagaName, mixed $context = []): SagaResult
@@ -68,7 +69,8 @@ final class Workflow
     /**
      * Resume a saga from stored state.
      *
-     * @param  string  $sagaId  The ID of the saga to resume
+     * @param string $sagaId The ID of the saga to resume
+     *
      * @return SagaResult The result of the saga execution
      *
      * @throws RuntimeException If the saga is not found
@@ -98,7 +100,8 @@ final class Workflow
     /**
      * Cancel a saga by running compensation.
      *
-     * @param  string  $sagaId  The ID of the saga to cancel
+     * @param string $sagaId The ID of the saga to cancel
+     *
      * @return SagaResult The result of the compensation
      *
      * @throws RuntimeException If the saga is not found

@@ -35,13 +35,13 @@ final readonly class BackChannelLogout
 
     public function execute(BackChannelLogoutData $data): LogoutResult
     {
-        $context = $this->currentAuthentication->read();
-        $now = $this->clock->now();
-        $claims = $this->oidcProvider?->resolveJwt(jwt: $data->logoutToken);
+        $context   = $this->currentAuthentication->read();
+        $now       = $this->clock->now();
+        $claims    = $this->oidcProvider?->resolveJwt(jwt: $data->logoutToken);
         $sessionId = is_string(value: $claims['sid'] ?? null) ? trim(string: $claims['sid']) : null;
-        $events = $claims['events'] ?? null;
+        $events    = $claims['events'] ?? null;
         $backChannelEvent = 'https://schemas.openid.net/event/backchannel-logout';
-        $client = $this->resolveClientFromClaims(claims: $claims);
+        $client    = $this->resolveClientFromClaims(claims: $claims);
 
         if (! is_array(value: $events) || ! array_key_exists(key: $backChannelEvent, array: $events)) {
             return new LogoutResult(revoked: false);
@@ -62,12 +62,12 @@ final readonly class BackChannelLogout
                 name      : 'auth.oidc.back_channel_logout.succeeded',
                 occurredAt: $now,
                 context   : [
-                    'user_id' => $user->id,
-                    'session_id' => $sessionId,
-                    'aud' => $claims['aud'] ?? null,
-                    'client_id' => $client?->clientId,
+                                'user_id'                       => $user->id,
+                                'session_id'                    => $sessionId,
+                                'aud'                           => $claims['aud'] ?? null,
+                                'client_id'                     => $client?->clientId,
                     'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
-                    'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
+                                'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
                 ],
             ));
         }
@@ -85,7 +85,7 @@ final readonly class BackChannelLogout
     }
 
     /**
-     * @param  array<string, mixed>|null  $claims
+     * @param array<string, mixed>|null $claims
      */
     private function resolveClientFromClaims(?array $claims): ?OAuthClient
     {

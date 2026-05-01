@@ -11,14 +11,14 @@ final readonly class OidcRequestObject
     public bool $signatureVerified;
 
     /**
-     * @param  array<string, mixed>  $claims
+     * @param array<string, mixed> $claims
      */
     public function __construct(
         public string $requestUri,
         public array $claims,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $expiresAt,
-        ?bool $signatureVerified = null,
+        bool $signatureVerified = null,
         public ?string $signingAlgorithm = null,
         public ?string $signingClientId = null,
     ) {

@@ -17,7 +17,7 @@ final readonly class RunWithConnection
     public function __construct(private ReadConnection $readConnection) {}
 
     /**
-     * @param  callable(DatabaseConnection) : mixed  $callback
+     * @param callable(DatabaseConnection) : mixed $callback
      *
      * @throws Throwable
      */
@@ -27,7 +27,7 @@ final readonly class RunWithConnection
     }
 
     /**
-     * @param  callable(DatabaseConnection) : mixed  $callback
+     * @param callable(DatabaseConnection) : mixed $callback
      *
      * @throws Throwable
      */

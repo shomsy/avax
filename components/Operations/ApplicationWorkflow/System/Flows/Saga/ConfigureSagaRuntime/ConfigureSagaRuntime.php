@@ -12,9 +12,9 @@ use stdClass;
 final readonly class ConfigureSagaRuntime
 {
     public function __construct(
-        private RegisterSagaStore $registerSagaStore = new RegisterSagaStore,
-        private RegisterSagaStepRunner $registerSagaStepRunner = new RegisterSagaStepRunner,
-        private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus,
+        private RegisterSagaStore      $registerSagaStore = new RegisterSagaStore(),
+        private RegisterSagaStepRunner $registerSagaStepRunner = new RegisterSagaStepRunner(),
+        private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus(),
     ) {}
 
     public function configure(SagaRuntimeConfig $config): SagaRuntime
@@ -36,7 +36,7 @@ final readonly class ConfigureSagaRuntime
             store      : $store,
             stepRunner : $stepRunner,
             messageBus : $messageBus,
-            idempotency: new ProtectSagaIdempotency,
+            idempotency: new ProtectSagaIdempotency(),
             inspect    : InspectSaga::inMemory(),
         );
     }
@@ -56,8 +56,8 @@ final readonly class SagaRuntime
     {
         return new self(
             store      : StoreSagaState::inMemory(),
-            stepRunner : new stdClass,
-            messageBus : new stdClass,
+            stepRunner : new stdClass(),
+            messageBus : new stdClass(),
             idempotency: ProtectSagaIdempotency::inMemory(),
             inspect    : InspectSaga::inMemory(),
         );
@@ -86,12 +86,12 @@ final readonly class SagaRuntimeConfig
         ?int $timeoutSeconds,
         ?int $maxRetries,
     ) {
-        $this->storeType = $storeType;
-        $this->storeConfig = $storeConfig;
+        $this->storeType      = $storeType;
+        $this->storeConfig    = $storeConfig;
         $this->messageBusType = $messageBusType;
         $this->messageBusConfig = $messageBusConfig;
         $this->timeoutSeconds = $timeoutSeconds;
-        $this->maxRetries = $maxRetries;
+        $this->maxRetries     = $maxRetries;
     }
 
     public static function inMemory(): self

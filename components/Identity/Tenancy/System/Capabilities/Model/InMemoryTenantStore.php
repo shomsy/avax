@@ -40,7 +40,7 @@ final class InMemoryTenantStore implements TenantStoreInterface
 
     private function memberKey(string $tenantId, int $userId): string
     {
-        return $tenantId.':'.$userId;
+        return $tenantId . ':' . $userId;
     }
 
     public function findMember(string $tenantId, int $userId): ?TenantMember

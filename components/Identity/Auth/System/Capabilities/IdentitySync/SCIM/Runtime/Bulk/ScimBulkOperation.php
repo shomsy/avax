@@ -10,7 +10,7 @@ final readonly class ScimBulkOperation
     public array $body;
 
     /**
-     * @param  array<string, mixed>  $body
+     * @param array<string, mixed> $body
      */
     public function __construct(
         public string $method,

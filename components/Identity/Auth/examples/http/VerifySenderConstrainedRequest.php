@@ -21,8 +21,8 @@ use SensitiveParameter;
 final readonly class VerifySenderConstrainedRequest
 {
     /**
-     * @param  array<string, mixed>  $headers
-     * @param  array<string, mixed>  $server
+     * @param array<string, mixed> $headers
+     * @param array<string, mixed> $server
      */
     public function execute(
         string $method,
@@ -32,15 +32,15 @@ final readonly class VerifySenderConstrainedRequest
         array $server,
         #[SensitiveParameter]
         ?string $accessToken,
-        ?OAuthSenderConstraint $expectedSenderConstraint = null,
-        ?OAuthSenderConstraintType $requiredSenderConstraint = null,
+        OAuthSenderConstraint     $expectedSenderConstraint = null,
+        OAuthSenderConstraintType $requiredSenderConstraint = null,
     ): ?OAuthSenderConstraint {
-        $auditLog = new NullAuditLog;
+        $auditLog = new NullAuditLog();
 
         return new VerifyOAuthSenderConstraint(
             verifyDpopProof           : new VerifyDpopProof(
                 codec      : new HmacTokenCodec(secret: 'replace-me'),
-                replayStore: new InMemoryDpopProofReplayStore,
+                replayStore: new InMemoryDpopProofReplayStore(),
                 auditLog   : $auditLog,
             ),
             verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $auditLog),

@@ -21,7 +21,7 @@ final class MultiTenantPool
     {
         if (! isset($this->pools[$tenantId])) {
             if (count(value: $this->pools) >= $this->maxTenants) {
-                throw new RuntimeException(message: 'Max tenants reached: '.$this->maxTenants);
+                throw new RuntimeException(message: 'Max tenants reached: ' . $this->maxTenants);
             }
 
             $pool = ($this->poolFactory)($tenantId);

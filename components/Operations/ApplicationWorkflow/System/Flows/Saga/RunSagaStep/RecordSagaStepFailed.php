@@ -20,7 +20,7 @@ final readonly class RecordSagaStepFailed
     public function record(StoreSagaState $storeSagaState, string $instanceId, string $stepName, string $correlationId, Throwable $failure): SagaEvent
     {
         return $storeSagaState->appendEvent(event: new SagaEvent(
-            id           : 'saga-event-'.bin2hex(string: random_bytes(length: 8)),
+                                                       id: 'saga-event-' . bin2hex(string: random_bytes(length: 8)),
             instanceId   : $instanceId,
             type         : 'saga.step.failed',
             payload      : ['step' => $stepName, 'failure' => $failure->getMessage()],

@@ -10,8 +10,8 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Defin
 final readonly class DefineSaga
 {
     public function __construct(
-        private ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition,
-        private RegisterSagaDefinition $registerSagaDefinition = new RegisterSagaDefinition,
+        private ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition(),
+        private RegisterSagaDefinition $registerSagaDefinition = new RegisterSagaDefinition(),
     ) {}
 
     public function validate(SagaDefinition $definition): void

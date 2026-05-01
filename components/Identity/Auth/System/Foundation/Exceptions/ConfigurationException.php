@@ -10,7 +10,7 @@ use Throwable;
 final class ConfigurationException extends AuthException
 {
     /**
-     * @param  array<string, scalar|list<string>|null>  $context
+     * @param array<string, scalar|list<string>|null> $context
      */
     public function __construct(
         string $message,
@@ -18,7 +18,7 @@ final class ConfigurationException extends AuthException
         private readonly string $errorCode = 'auth.configuration.invalid',
         private readonly array $context = [],
         int $code = 0,
-        ?Throwable $previous = null,
+        Throwable $previous = null,
     ) {
         parent::__construct(message: $message, code: $code, previous: $previous);
     }
@@ -48,7 +48,7 @@ final class ConfigurationException extends AuthException
     }
 
     public static function missingIdentityBackend(
-        ?string $buildPath = null,
+        string $buildPath = null,
         string $hint = 'Provide at least one session or JWT backend.',
     ): self {
         $buildPath ??= 'AuthBuilder::ready()';
@@ -69,10 +69,10 @@ final class ConfigurationException extends AuthException
             message  : "{$buildPath} cannot enable [enterprise_mode] because [session_registry] is missing. Use withSessionRegistry() to provide a SQL or Redis session registry.",
             errorCode: 'auth.configuration.dependency_missing',
             context  : [
-                'build_path' => $buildPath,
-                'capability' => 'enterprise_mode',
+                           'build_path' => $buildPath,
+                           'capability' => 'enterprise_mode',
                 'requirement' => 'session_registry',
-                'option' => 'withSessionRegistry()',
+                           'option'     => 'withSessionRegistry()',
             ],
         );
     }
@@ -88,11 +88,11 @@ final class ConfigurationException extends AuthException
             message  : "{$buildPath} cannot enable [{$capability}] because [{$requirement}] is missing. {$cause} Provide {$option} or remove the capability-specific configuration.",
             errorCode: 'auth.configuration.dependency_missing',
             context  : [
-                'build_path' => $buildPath,
-                'capability' => $capability,
+                           'build_path' => $buildPath,
+                           'capability' => $capability,
                 'requirement' => $requirement,
-                'option' => $option,
-                'cause' => $cause,
+                           'option'     => $option,
+                           'cause'      => $cause,
             ],
         );
     }

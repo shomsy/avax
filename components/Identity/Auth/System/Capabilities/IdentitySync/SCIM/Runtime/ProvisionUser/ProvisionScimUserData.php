@@ -13,7 +13,7 @@ final readonly class ProvisionScimUserData
     public array $groups;
 
     /**
-     * @param  list<string>  $groups
+     * @param list<string> $groups
      */
     public function __construct(
         public string $directoryId,

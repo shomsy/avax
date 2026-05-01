@@ -29,15 +29,15 @@ final class TransactionException extends DatabaseException
     private readonly int $nestingLevel;
 
     /**
-     * @param  string  $message  The detailed technical description of the transaction coordination failure.
-     * @param  int  $nestingLevel  The technical transaction depth (0-based or 1-based) when the failure was
-     *                             intercepted.
-     * @param  Throwable|null  $previous  The underlying technical driver or unit-of-work exception.
+     * @param string         $message      The detailed technical description of the transaction coordination failure.
+     * @param int            $nestingLevel The technical transaction depth (0-based or 1-based) when the failure was
+     *                                     intercepted.
+     * @param Throwable|null $previous     The underlying technical driver or unit-of-work exception.
      */
     public function __construct(
         string $message,
         int $nestingLevel,
-        ?Throwable $previous = null,
+        Throwable $previous = null,
     ) {
         $this->nestingLevel = $nestingLevel;
         parent::__construct(

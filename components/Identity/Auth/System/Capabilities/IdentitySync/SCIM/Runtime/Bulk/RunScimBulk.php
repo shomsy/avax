@@ -45,10 +45,10 @@ final readonly class RunScimBulk
     private function executeOperation(ScimBulkRequest $request, ScimBulkOperation $operation): ScimBulkOperationResult
     {
         $method = strtoupper(string: trim(string: $operation->method));
-        $path = '/'.trim(string: $operation->path, characters: '/');
+        $path = '/' . trim(string: $operation->path, characters: '/');
 
         return match (true) {
-            $method === 'POST' && $path === '/Users' => $this->createUser(request: $request, operation: $operation),
+            $method === 'POST' && $path === '/Users'                                                                => $this->createUser(request: $request, operation: $operation),
             $method === 'PUT' && preg_match(pattern: '~^/Users/([^/]+)$~', subject: $path, matches: $matches) === 1 => $this->replaceUser(
                 request   : $request,
                 operation : $operation,
@@ -80,9 +80,9 @@ final readonly class RunScimBulk
             status  : 201,
             response: [
                 'externalId' => $result->externalId,
-                'userId' => $result->userId,
-                'state' => $result->state->value,
-                'roles' => $result->roles,
+                'userId'  => $result->userId,
+                'state'   => $result->state->value,
+                'roles'   => $result->roles,
                 'created' => $result->created,
             ],
             bulkId  : $operation->bulkId,
@@ -90,7 +90,7 @@ final readonly class RunScimBulk
     }
 
     /**
-     * @param  array<string, mixed>  $body
+     * @param array<string, mixed> $body
      */
     private function provisionData(ScimBulkRequest $request, array $body, string $externalId): ProvisionScimUserData
     {
@@ -106,7 +106,7 @@ final readonly class RunScimBulk
     }
 
     /**
-     * @param  array<string, mixed>  $body
+     * @param array<string, mixed> $body
      */
     private function email(array $body): string
     {
@@ -128,7 +128,7 @@ final readonly class RunScimBulk
     }
 
     /**
-     * @param  array<string, mixed>  $body
+     * @param array<string, mixed> $body
      */
     private function requiredString(array $body, string $field): string
     {
@@ -142,7 +142,8 @@ final readonly class RunScimBulk
     }
 
     /**
-     * @param  array<string, mixed>  $body
+     * @param array<string, mixed> $body
+     *
      * @return list<string>
      */
     private function groups(array $body): array
@@ -165,17 +166,17 @@ final readonly class RunScimBulk
     }
 
     /**
-     * @param  array<string, mixed>  $body
+     * @param array<string, mixed> $body
      */
     private function state(array $body): ScimAccountState
     {
         $active = $body['active'] ?? null;
-        $state = is_string(value: $body['state'] ?? null) ? strtolower(string: trim(string: $body['state'])) : null;
+        $state  = is_string(value: $body['state'] ?? null) ? strtolower(string: trim(string: $body['state'])) : null;
 
         return match (true) {
-            $state === 'disabled' => ScimAccountState::DISABLED,
+            $state === 'disabled'                     => ScimAccountState::DISABLED,
             $state === 'suspended', $active === false => ScimAccountState::SUSPENDED,
-            default => ScimAccountState::ACTIVE,
+            default                                   => ScimAccountState::ACTIVE,
         };
     }
 
@@ -192,14 +193,14 @@ final readonly class RunScimBulk
 
         return new ScimBulkOperationResult(
             method  : 'PUT',
-            path    : '/Users/'.rawurlencode(string: $externalId),
+            path    : '/Users/' . rawurlencode(string: $externalId),
             status  : 200,
             response: [
                 'externalId' => $result->externalId,
-                'userId' => $result->userId,
-                'state' => $result->state->value,
-                'roles' => $result->roles,
-                'updated' => $result->updated,
+                'userId'     => $result->userId,
+                'state'      => $result->state->value,
+                'roles'      => $result->roles,
+                'updated'    => $result->updated,
                 'idempotent' => $result->idempotent,
             ],
             bulkId  : $operation->bulkId,
@@ -216,7 +217,7 @@ final readonly class RunScimBulk
 
         return new ScimBulkOperationResult(
             method  : 'DELETE',
-            path    : '/Users/'.rawurlencode(string: $externalId),
+            path    : '/Users/' . rawurlencode(string: $externalId),
             status  : 204,
             response: [],
             bulkId  : $operation->bulkId,

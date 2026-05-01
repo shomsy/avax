@@ -72,7 +72,7 @@ final readonly class ConfirmMfaRecovery
             name      : 'auth.mfa.recovery.used',
             occurredAt: $now,
             context   : [
-                'user_id' => $record->userId->value,
+                            'user_id' => $record->userId->value,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],

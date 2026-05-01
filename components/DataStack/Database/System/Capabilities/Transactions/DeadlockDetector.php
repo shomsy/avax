@@ -72,7 +72,7 @@ final readonly class DeadlockReport
         $summary .= "Message: {$this->message}\n";
 
         if (! empty($this->affectedTables)) {
-            $summary .= 'Affected Tables: '.implode(', ', $this->affectedTables);
+            $summary .= 'Affected Tables: ' . implode(', ', $this->affectedTables);
             $summary .= "\n";
         }
 
@@ -116,9 +116,9 @@ final class DeadlockDetector
      */
     private DeadlockDetectorConfig $config;
 
-    public function __construct(?DeadlockDetectorConfig $config = null)
+    public function __construct(DeadlockDetectorConfig $config = null)
     {
-        $this->config = $config ?? new DeadlockDetectorConfig;
+        $this->config = $config ?? new DeadlockDetectorConfig();
     }
 
     /**
@@ -128,7 +128,7 @@ final class DeadlockDetector
      */
     public function analyze(Throwable $exception): DeadlockReport
     {
-        $message = strtolower($exception->getMessage());
+        $message  = strtolower($exception->getMessage());
         $errorCode = (string) $exception->getCode();
         $sqlState = $this->extractSqlState($exception);
 
@@ -181,7 +181,8 @@ final class DeadlockDetector
     /**
      * Analyzes multiple exceptions to find deadlocks.
      *
-     * @param  list<Throwable>  $exceptions
+     * @param list<Throwable> $exceptions
+     *
      * @return list<DeadlockReport>
      */
     public function analyzeBatch(array $exceptions): array
@@ -276,11 +277,11 @@ final class DeadlockDetector
     private function getSuggestionForPattern(string $pattern): string
     {
         return match ($pattern) {
-            'deadlock' => 'Deadlock detected. Ensure transactions access resources in a consistent order to prevent circular waits.',
-            'serialization failure' => 'Serialization failure. Consider using SERIALIZABLE isolation level or retrying the transaction.',
-            'lock wait timeout' => 'Lock wait timeout. The transaction waited too long for a lock. Check for long-running transactions.',
+            'deadlock'                   => 'Deadlock detected. Ensure transactions access resources in a consistent order to prevent circular waits.',
+            'serialization failure'      => 'Serialization failure. Consider using SERIALIZABLE isolation level or retrying the transaction.',
+            'lock wait timeout'          => 'Lock wait timeout. The transaction waited too long for a lock. Check for long-running transactions.',
             'try restarting transaction' => 'Database recommends restarting the transaction. Implement retry logic with backoff.',
-            default => 'Deadlock-like error detected. Retry the transaction with exponential backoff.',
+            default                      => 'Deadlock-like error detected. Retry the transaction with exponential backoff.',
         };
     }
 }
@@ -291,13 +292,14 @@ final class DeadlockDetector
 final readonly class DeadlockDetectorConfig
 {
     /**
-     * @param  list<string>  $deadlockSqlStates  SQLSTATE codes that indicate deadlocks
-     * @param  list<string>  $deadlockErrorCodes  Additional error codes to check
+     * @param list<string> $deadlockSqlStates  SQLSTATE codes that indicate deadlocks
+     * @param list<string> $deadlockErrorCodes Additional error codes to check
      */
     public function __construct(
         public array $deadlockSqlStates = ['40001', '40P01'],
         public array $deadlockErrorCodes = [],
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a configuration with MySQL-specific deadlock codes.

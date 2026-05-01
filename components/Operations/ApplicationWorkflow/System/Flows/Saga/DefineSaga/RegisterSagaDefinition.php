@@ -12,7 +12,7 @@ final class RegisterSagaDefinition
     /** @var array<string, SagaDefinition> */
     private array $definitions = [];
 
-    public function __construct(private readonly ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition) {}
+    public function __construct(private readonly ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition()) {}
 
     public function register(SagaDefinition $definition): SagaDefinition
     {

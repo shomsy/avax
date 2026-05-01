@@ -50,7 +50,7 @@ final class BulkInserter
                 $placeholders[] = $value instanceof Expression ? $value->getValue() : '?';
             }
 
-            $valueGroups[] = '('.implode(separator: ', ', array: $placeholders).')';
+            $valueGroups[] = '(' . implode(separator: ', ', array: $placeholders) . ')';
         }
         implode(separator: ', ', array: $valueGroups);
         $this->grammar->wrap(value: $this->table);

@@ -64,7 +64,7 @@ final class DeferredDispatcher
 
     private function executeNow(object $task): void
     {
-        (new SyncDispatcher)->dispatch($task);
+        (new SyncDispatcher())->dispatch($task);
     }
 
     private function executeLater(object $task, int $delayMs): void

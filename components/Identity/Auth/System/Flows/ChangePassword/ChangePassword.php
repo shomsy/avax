@@ -59,13 +59,13 @@ final readonly class ChangePassword
         $currentUser = $context->user();
 
         if ($currentUser === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         $user = $this->userSource->findById(id: new UserId(value: $currentUser->id));
 
         if ($user === null || ! $user->isActive()) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         if ($currentUser->mfaEnabled) {

@@ -29,7 +29,7 @@ final readonly class StartMfaRecovery
         private MfaStoreInterface $mfaStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        ?int $expiresAfterSeconds = null,
+        int $expiresAfterSeconds = null,
         private ?AttemptThrottle $attemptThrottle = null,
     ) {
         $expiresAfterSeconds ??= 900;
@@ -51,9 +51,9 @@ final readonly class StartMfaRecovery
                 name      : 'auth.mfa.recovery.throttled',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'email' => strtolower(string: $data->email),
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
+                                'email'      => strtolower(string: $data->email),
+                                'ip_address' => $data->ipAddress,
+                                'user_agent' => $data->userAgent,
                     'retry_after' => $exception->retryAfter(),
                 ],
             ));
@@ -69,7 +69,7 @@ final readonly class StartMfaRecovery
                 name      : 'auth.mfa.recovery.started',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'email' => strtolower(string: $data->email),
+                                'email' => strtolower(string: $data->email),
                     'dispatched' => false,
                     'ip_address' => $data->ipAddress,
                     'user_agent' => $data->userAgent,
@@ -87,10 +87,10 @@ final readonly class StartMfaRecovery
         $normalizedEmail = strtolower(string: trim(string: $email));
 
         if ($ipAddress === null || $ipAddress === '') {
-            return 'mfa_recovery:'.$normalizedEmail;
+            return 'mfa_recovery:' . $normalizedEmail;
         }
 
-        return 'mfa_recovery:'.$normalizedEmail.'|'.trim(string: $ipAddress);
+        return 'mfa_recovery:' . $normalizedEmail . '|' . trim(string: $ipAddress);
     }
 
     /**
@@ -111,7 +111,7 @@ final readonly class StartMfaRecovery
             name      : 'auth.mfa.recovery.started',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $userId,
+                            'user_id' => $userId,
                 'dispatched' => true,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,

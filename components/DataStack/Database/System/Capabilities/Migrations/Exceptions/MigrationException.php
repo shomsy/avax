@@ -19,10 +19,10 @@ final class MigrationException extends DatabaseException
      *
      * -- intent: link the failure to the specific migration file and query.
      *
-     * @param  string  $migrationClass  Technical class name of the migration
-     * @param  string  $message  Detailed failure description
-     * @param  string|null  $sql  The specific SQL statement that failed
-     * @param  Throwable|null  $throwable  Underlying system trigger
+     * @param string         $migrationClass Technical class name of the migration
+     * @param string         $message        Detailed failure description
+     * @param string|null    $sql            The specific SQL statement that failed
+     * @param Throwable|null $throwable      Underlying system trigger
      */
     public function __construct(
         private readonly string $migrationClass,

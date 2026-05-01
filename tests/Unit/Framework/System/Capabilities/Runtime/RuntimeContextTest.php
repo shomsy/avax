@@ -21,7 +21,7 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_has_no_active_request_when_created(): void
     {
-        $context = new RuntimeContext;
+        $context = new RuntimeContext();
 
         self::assertFalse($context->hasActiveRequest());
         self::assertNull($context->currentRequest());
@@ -32,7 +32,7 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_starts_request_and_sets_active_request(): void
     {
-        $context = new RuntimeContext;
+        $context = new RuntimeContext();
         $scopeId = RequestScopeId::generate();
         $request = new RuntimeRequest(method: 'GET', uri: '/test');
 
@@ -46,7 +46,7 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_throws_when_starting_request_while_another_is_active(): void
     {
-        $context = new RuntimeContext;
+        $context = new RuntimeContext();
         $scopeId = RequestScopeId::generate();
         $request = new RuntimeRequest(method: 'GET', uri: '/test');
 
@@ -64,10 +64,10 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_finishes_request_and_clears_active_request(): void
     {
-        $context = new RuntimeContext;
+        $context = new RuntimeContext();
         $scopeId = RequestScopeId::generate();
         $request = new RuntimeRequest(method: 'GET', uri: '/test');
-        $result = RuntimeResult::fromConsoleOutput(output: 'done');
+        $result  = RuntimeResult::fromConsoleOutput(output: 'done');
 
         $context->startRequest(scopeId: $scopeId, request: $request);
         $context->finishRequest(result: $result);
@@ -81,10 +81,10 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_records_result_without_affecting_active_request(): void
     {
-        $context = new RuntimeContext;
+        $context = new RuntimeContext();
         $scopeId = RequestScopeId::generate();
         $request = new RuntimeRequest(method: 'GET', uri: '/test');
-        $result = RuntimeResult::fromConsoleOutput(output: 'output');
+        $result  = RuntimeResult::fromConsoleOutput(output: 'output');
 
         $context->startRequest(scopeId: $scopeId, request: $request);
         $context->recordResult(result: $result);
@@ -97,8 +97,8 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_returns_last_result_when_no_request_is_active(): void
     {
-        $context = new RuntimeContext;
-        $result = RuntimeResult::fromConsoleOutput(output: 'result');
+        $context = new RuntimeContext();
+        $result  = RuntimeResult::fromConsoleOutput(output: 'result');
 
         $context->recordResult(result: $result);
 
@@ -109,10 +109,10 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_resets_state_and_clears_all_values(): void
     {
-        $context = new RuntimeContext;
+        $context = new RuntimeContext();
         $scopeId = RequestScopeId::generate();
         $request = new RuntimeRequest(method: 'GET', uri: '/test');
-        $result = RuntimeResult::fromConsoleOutput(output: 'done');
+        $result  = RuntimeResult::fromConsoleOutput(output: 'done');
 
         $context->startRequest(scopeId: $scopeId, request: $request);
         $context->recordResult(result: $result);

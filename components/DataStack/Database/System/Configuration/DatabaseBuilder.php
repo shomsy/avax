@@ -38,15 +38,15 @@ final class DatabaseBuilder
 
     public function ready(): Database
     {
-        $connections = new ReadConnection;
+        $connections = new ReadConnection();
 
         return new Database(
             connections : new Connections($connections),
-            query       : new Query,
-            schema      : new Schema,
-            migrations  : new Migrations,
-            transactions: new Transactions,
-            telemetry   : new Telemetry,
+            query       : new Query(),
+            schema      : new Schema(),
+            migrations  : new Migrations(),
+            transactions: new Transactions(),
+            telemetry   : new Telemetry(),
         );
     }
 }

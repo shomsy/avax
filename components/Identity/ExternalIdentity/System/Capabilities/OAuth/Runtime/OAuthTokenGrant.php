@@ -19,7 +19,7 @@ final readonly class OAuthTokenGrant
     public array $scopes;
 
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
      */
     public function __construct(
         #[SensitiveParameter]
@@ -32,15 +32,15 @@ final readonly class OAuthTokenGrant
         public ?string $idToken,
         public string $clientId,
         public ?int $userId,
-        ?array $scopes = null,
+        array  $scopes = null,
         #[SensitiveParameter]
-        ?string $tokenType = null,
+        string $tokenType = null,
         public ?OAuthSenderConstraint $senderConstraint = null,
         public ?string $subject = null,
         public ?string $audience = null,
         public bool $workloadIdentity = false,
     ) {
-        $scopes ??= [];
+        $scopes       ??= [];
         $tokenType ??= 'Bearer';
         $this->scopes = $scopes;
         $this->tokenType = $tokenType;

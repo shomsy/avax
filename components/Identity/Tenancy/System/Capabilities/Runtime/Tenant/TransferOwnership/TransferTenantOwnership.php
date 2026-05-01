@@ -63,8 +63,8 @@ final readonly class TransferTenantOwnership
             name      : 'auth.tenant.owner.transferred',
             occurredAt: $this->clock->now(),
             context   : [
-                'tenant_id' => $tenant->tenantId,
-                'tenant_slug' => $tenant->slug,
+                            'tenant_id'   => $tenant->tenantId,
+                            'tenant_slug' => $tenant->slug,
                 'new_owner_user_id' => $data->newOwnerUserId,
             ],
         ));

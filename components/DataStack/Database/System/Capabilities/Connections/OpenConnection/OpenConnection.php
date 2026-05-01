@@ -23,7 +23,7 @@ final readonly class OpenConnection
     ) {}
 
     /**
-     * @param  array<string, mixed>  $config
+     * @param array<string, mixed> $config
      *
      * @throws Throwable
      */

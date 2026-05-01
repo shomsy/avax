@@ -145,13 +145,13 @@ final class GlobalErrorHandler
         } catch (Throwable $handlerException) {
             // If the handler itself fails, log and exit
             $this->logger->critical(
-                'Error handler failed: '.$handlerException->getMessage(),
+                'Error handler failed: ' . $handlerException->getMessage(),
                 [
                     'original_error' => [
                         'severity' => $severity,
                         'message' => $message,
-                        'file' => $file,
-                        'line' => $line,
+                        'file'    => $file,
+                        'line'    => $line,
                     ],
                     'handler_exception' => $handlerException->getMessage(),
                 ],

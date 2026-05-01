@@ -33,7 +33,7 @@ final readonly class Database implements DatabaseInterface
 
     public static function configuration(): DatabaseBuilder
     {
-        return new DatabaseBuilder;
+        return new DatabaseBuilder();
     }
 
     public function connections(): Connections
@@ -75,7 +75,7 @@ final readonly class Database implements DatabaseInterface
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, ?string $connectionName = null): QueryBuilder
+    public function table(string $table, string $connectionName = null) : QueryBuilder
     {
         return $this->query->from(table: $table, connectionName: $connectionName);
     }

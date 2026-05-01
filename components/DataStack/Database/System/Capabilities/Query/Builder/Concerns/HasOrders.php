@@ -19,7 +19,8 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#orderbydesc
      *
-     * @param  string  $column  The technical field name to target for descending sort.
+     * @param string $column The technical field name to target for descending sort.
+     *
      * @return HasOrders|QueryBuilder A
      *                                fresh,
      *                                cloned
@@ -40,8 +41,9 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#orderby
      *
-     * @param  string  $column  The technical field name to target for sorting.
-     * @param  string  $direction  The sorting orientation ('ASC' or 'DESC').
+     * @param string $column    The technical field name to target for sorting.
+     * @param string $direction The sorting orientation ('ASC' or 'DESC').
+     *
      * @return HasOrders|QueryBuilder A
      *                                fresh,
      *                                cloned
@@ -52,7 +54,7 @@ trait HasOrders
      *                                applied
      *                                order.
      */
-    public function orderBy(string $column, string $direction = 'ASC'): self
+    public function orderBy(string $column, string $direction = 'ASC') : self
     {
         $clone = clone $this;
         $clone->state = $clone->state->addOrder(order: new OrderNode(
@@ -78,7 +80,7 @@ trait HasOrders
      *                                ordering
      *                                active.
      */
-    public function inRandomOrder(): self
+    public function inRandomOrder() : self
     {
         $clone = clone $this;
         $clone->state = $clone->state->addOrder(order: new OrderNode(
@@ -94,7 +96,8 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#latest
      *
-     * @param  string  $column  The timestamp or sequence field to target (defaults to 'created_at').
+     * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
+     *
      * @return HasOrders|QueryBuilder A
      *                                fresh,
      *                                cloned
@@ -115,7 +118,8 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#oldest
      *
-     * @param  string  $column  The timestamp or sequence field to target (defaults to 'created_at').
+     * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
+     *
      * @return HasOrders|QueryBuilder A
      *                                fresh,
      *                                cloned

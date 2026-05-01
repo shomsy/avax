@@ -9,8 +9,8 @@ use components\HTTP\Router\Routing\StageChain;
 use components\HTTP\Router\System\Flows\RunRoute\Pipeline\StageChain;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => StageChain::class,
-                                                'constructor'        => MethodPrototype::__set_state(array: [
+                                                'class'           => StageChain::class,
+                                                'constructor'     => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
                                                                                             'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
@@ -35,7 +35,7 @@ return ServicePrototype::__set_state(array: [
                                                                                         ]),
                                                 'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    => [
+                                                'injectedMethods' => [
                                                     ],
-                                                'isInstantiable'     => true,
+                                                'isInstantiable'  => true,
                                             ]);

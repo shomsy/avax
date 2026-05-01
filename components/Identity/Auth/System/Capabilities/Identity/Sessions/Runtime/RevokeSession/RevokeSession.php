@@ -39,7 +39,7 @@ final readonly class RevokeSession
         $user = $context->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         if ($this->sessionRegistry === null) {
@@ -65,9 +65,9 @@ final readonly class RevokeSession
             name      : 'auth.session.revoked',
             occurredAt: $now,
             context   : [
-                'user_id' => $user->id,
+                            'user_id' => $user->id,
                 'session_id' => $sessionId,
-                'reason' => 'user_revoke',
+                            'reason'  => 'user_revoke',
             ],
         ));
     }

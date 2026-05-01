@@ -37,7 +37,7 @@ final class MongoDBGrammar extends BaseGrammar
             $options[] = "sort: {$sort}";
         }
 
-        $optionsStr = empty($options) ? '' : ', {'.implode(separator: ', ', array: $options).'}';
+        $optionsStr = empty($options) ? '' : ', {' . implode(separator: ', ', array: $options) . '}';
 
         return "db.{$collection}.find({$filter}{$optionsStr})";
     }
@@ -62,21 +62,21 @@ final class MongoDBGrammar extends BaseGrammar
         foreach ($state->wheres as $where) {
             $column = $where->column;
             $operator = $where->operator;
-            $value = $where->value;
+            $value  = $where->value;
 
             $mongoOp = match ($operator) {
-                '=' => $value,
-                '!=' => ['$ne' => $value],
-                '>' => ['$gt' => $value],
-                '>=' => ['$gte' => $value],
-                '<' => ['$lt' => $value],
-                '<=' => ['$lte' => $value],
-                'LIKE' => ['$regex' => str_replace(search: '%', replace: '.*', subject: $value)],
-                'IN' => ['$in' => $value],
-                'NOT IN' => ['$nin' => $value],
+                '='       => $value,
+                '!='      => ['$ne' => $value],
+                '>'       => ['$gt' => $value],
+                '>='      => ['$gte' => $value],
+                '<'       => ['$lt' => $value],
+                '<='      => ['$lte' => $value],
+                'LIKE'    => ['$regex' => str_replace(search: '%', replace: '.*', subject: $value)],
+                'IN'      => ['$in' => $value],
+                'NOT IN'  => ['$nin' => $value],
                 'IS NULL' => ['$exists' => false],
                 'IS NOT NULL' => ['$exists' => true, '$ne' => null],
-                default => $value,
+                default   => $value,
             };
 
             $conditions[$column] = $mongoOp;
@@ -92,7 +92,7 @@ final class MongoDBGrammar extends BaseGrammar
             $projection[$col] = 1;
         }
 
-        return ', '.json_encode(value: $projection);
+        return ', ' . json_encode(value: $projection);
     }
 
     private function compileMongoSort(array $orders): string

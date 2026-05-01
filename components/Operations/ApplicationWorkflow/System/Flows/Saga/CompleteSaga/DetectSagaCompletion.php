@@ -77,20 +77,20 @@ final readonly class PublishSagaCompleted
         $topic = sprintf('saga.%s.completed', $instance->definitionName);
 
         $this->messageBus->publish($topic, [
-            'saga_id' => $instance->id,
+            'saga_id'        => $instance->id,
             'definition_name' => $instance->definitionName,
-            'final_data' => $instance->data,
+            'final_data'     => $instance->data,
             'completed_steps' => $instance->completedSteps,
             'correlation_id' => $instance->correlationId,
-            'tenant_id' => $instance->tenantId,
-            'completed_at' => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
+            'tenant_id'      => $instance->tenantId,
+            'completed_at'   => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
         ]);
     }
 }
 
 final class SagaCompletionFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga completion failed.', ?Throwable $previous = null)
+    public function __construct(string $message = 'Saga completion failed.', Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

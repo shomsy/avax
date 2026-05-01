@@ -25,7 +25,7 @@ final class ResultMapper
      */
     private function buildMappings(string $className): array
     {
-        $ref = new ReflectionClass(objectOrClass: $className);
+        $ref          = new ReflectionClass(objectOrClass: $className);
         $mappings = [];
 
         foreach ($ref->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $property) {

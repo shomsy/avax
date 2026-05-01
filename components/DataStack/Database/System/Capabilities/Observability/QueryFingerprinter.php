@@ -173,7 +173,8 @@ final readonly class QueryFingerprinter
     /**
      * Groups queries by their fingerprints.
      *
-     * @param  list<string>  $queries
+     * @param list<string> $queries
+     *
      * @return array<string, list<string>> Hash => [queries...]
      */
     public function groupByFingerprint(array $queries): array
@@ -191,7 +192,7 @@ final readonly class QueryFingerprinter
     /**
      * Returns the number of unique fingerprints in a list of queries.
      *
-     * @param  list<string>  $queries
+     * @param list<string> $queries
      */
     public function uniqueCount(array $queries): int
     {

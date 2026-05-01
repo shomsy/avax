@@ -33,7 +33,7 @@ final readonly class StartMfaChallenge
         private MfaChallengeStoreInterface $challengeStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        ?int $expiresAfterSeconds = null,
+        int $expiresAfterSeconds = null,
         private int $maxAttempts = 5,
     ) {
         $expiresAfterSeconds ??= 300;
@@ -45,12 +45,12 @@ final readonly class StartMfaChallenge
      * @throws RandomException
      * @throws Unauthenticated
      */
-    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): MfaChallenge
+    public function execute(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : MfaChallenge
     {
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         return $this->issueForUserId(
@@ -94,11 +94,11 @@ final readonly class StartMfaChallenge
             name      : 'auth.mfa.challenge.requested',
             occurredAt: $now,
             context   : [
-                'user_id' => $userId->value,
+                            'user_id'    => $userId->value,
                 'challenge_id' => $record->challengeId,
-                'purpose' => $purpose->value,
-                'ip_address' => $ipAddress,
-                'user_agent' => $userAgent,
+                            'purpose'    => $purpose->value,
+                            'ip_address' => $ipAddress,
+                            'user_agent' => $userAgent,
             ],
         ));
 
@@ -109,7 +109,7 @@ final readonly class StartMfaChallenge
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function issueForLogin(User $user, #[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): MfaChallenge
+    public function issueForLogin(User $user, #[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : MfaChallenge
     {
         return $this->issueForUserId(
             userId   : $user->getId(),

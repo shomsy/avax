@@ -46,7 +46,7 @@ final readonly class DisableMfa
         $user = $context->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         if (! $user->mfaEnabled) {

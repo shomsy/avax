@@ -15,13 +15,13 @@ final readonly class SmtpMailer
         }
 
         $headers = [
-            'From: '.($mailable->getFrom() ?? $this->config['from'] ?? 'noreply@localhost'),
+            'From: ' . ($mailable->getFrom() ?? $this->config['from'] ?? 'noreply@localhost'),
             'MIME-Version: 1.0',
             'Content-Type: text/html; charset=UTF-8',
         ];
 
         foreach ($mailable->getCc() as $cc) {
-            $headers[] = 'Cc: '.$cc;
+            $headers[] = 'Cc: ' . $cc;
         }
 
         return mail(

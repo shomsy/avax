@@ -106,10 +106,10 @@ final readonly class CompletePasskeyAuthentication
             name      : 'auth.passkey.authentication.succeeded',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $user->getId()->value,
+                            'user_id'    => $user->getId()->value,
                 'credential_id' => $credential->credentialId,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $data->ipAddress,
+                            'user_agent' => $data->userAgent,
             ],
         ));
 

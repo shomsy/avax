@@ -10,12 +10,12 @@ use SensitiveParameter;
 /**
  * Plain-text backup codes returned after generation or regeneration.
  *
- * @param  list<BackupCode>  $codes
+ * @param list<BackupCode> $codes
  */
 final readonly class BackupCodeSet
 {
     /**
-     * @param  list<BackupCode>  $codes
+     * @param list<BackupCode> $codes
      */
     public function __construct(
         #[SensitiveParameter]

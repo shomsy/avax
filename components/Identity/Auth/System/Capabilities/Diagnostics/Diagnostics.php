@@ -14,9 +14,9 @@ final readonly class Diagnostics
 
     public function explainAccessDenied(
         string $resource,
-        ?string $requiredPermission = null,
-        ?string $tenant = null,
-        ?string $resourceTenant = null,
+        string $requiredPermission = null,
+        string $tenant = null,
+        string $resourceTenant = null,
     ): AuthIssueExplanation {
         return $this->authIssueExplainer->explainAccessDenied(
             resource          : $resource,
@@ -28,8 +28,8 @@ final readonly class Diagnostics
 
     public function explainStepUpRequired(
         string $action,
-        ?bool $phishingResistantRequired = null,
-        ?int $freshAfterSeconds = null,
+        bool $phishingResistantRequired = null,
+        int  $freshAfterSeconds = null,
     ): AuthIssueExplanation {
         $phishingResistantRequired ??= false;
 
@@ -40,7 +40,7 @@ final readonly class Diagnostics
         );
     }
 
-    public function explainSenderConstraintFailure(string $reason, ?string $requiredConstraint = null): AuthIssueExplanation
+    public function explainSenderConstraintFailure(string $reason, string $requiredConstraint = null) : AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainSenderConstraintFailure(
             reason            : $reason,
@@ -48,12 +48,12 @@ final readonly class Diagnostics
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] ?string $sessionId = null): AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] string $sessionId = null) : AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainSessionRevocation(status: $status, sessionId: $sessionId);
     }
 
-    public function explainTrustedDeviceDecision(?string $deviceId = null): AuthIssueExplanation
+    public function explainTrustedDeviceDecision(string $deviceId = null) : AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainTrustedDeviceDecision(deviceId: $deviceId);
     }

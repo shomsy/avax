@@ -14,8 +14,8 @@ final readonly class MigrationEngine
     public function migrate(): void
     {
         $this->migrationRepository->ensureTableExists();
-        $ran = $this->migrationRepository->getRan();
-        $files = glob($this->migrationsPath.'/*.php');
+        $ran   = $this->migrationRepository->getRan();
+        $files = glob($this->migrationsPath . '/*.php');
         $batch = $this->migrationRepository->getLastBatchNumber() + 1;
 
         foreach ($files as $file) {

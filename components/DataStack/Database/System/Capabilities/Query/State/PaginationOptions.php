@@ -18,18 +18,18 @@ final readonly class PaginationOptions
     public int $page;
 
     /**
-     * @param  int  $page  The current logical 1-based page index.
-     * @param  int  $perPage  The technical volume of records to be retrieved per resulting page.
-     * @param  int|null  $total  The optional total record count discovered for calculating pagination metadata.
+     * @param int      $page    The current logical 1-based page index.
+     * @param int      $perPage The technical volume of records to be retrieved per resulting page.
+     * @param int|null $total   The optional total record count discovered for calculating pagination metadata.
      */
     public function __construct(
-        ?int $page = null,
-        ?int $perPage = null,
-        ?int $total = null,
+        int $page = null,
+        int $perPage = null,
+        int $total = null,
     ) {
-        $page ??= 1;
+        $page        ??= 1;
         $perPage ??= 15;
-        $this->page = $page;
+        $this->page  = $page;
         $this->perPage = $perPage;
         $this->total = $total;
     }

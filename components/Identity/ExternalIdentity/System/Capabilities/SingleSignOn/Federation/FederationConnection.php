@@ -17,7 +17,7 @@ final readonly class FederationConnection
     public bool $ssoOnly;
 
     /**
-     * @param  array<string, list<string>>  $groupRoleMap
+     * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
         public string $connectionId,
@@ -25,8 +25,8 @@ final readonly class FederationConnection
         public string $name,
         public FederationProvider $provider,
         public string $domain,
-        ?bool $ssoOnly = null,
-        ?array $groupRoleMap = null,
+        bool                       $ssoOnly = null,
+        array                      $groupRoleMap = null,
         public ?string $metadataUrl = null,
         public ?string $metadataIssuer = null,
         #[SensitiveParameter]
@@ -35,16 +35,16 @@ final readonly class FederationConnection
         #[SensitiveParameter]
         public ?string $domainVerificationToken = null,
         public ?DateTimeImmutable $domainVerifiedAt = null,
-        ?FederationConnectionHealth $health = null,
+        FederationConnectionHealth $health = null,
         public ?DateTimeImmutable $healthCheckedAt = null,
         public bool $breakGlassAllowed = false,
     ) {
-        $ssoOnly ??= false;
+        $ssoOnly       ??= false;
         $groupRoleMap ??= [];
-        $health ??= FederationConnectionHealth::UNKNOWN;
+        $health        ??= FederationConnectionHealth::UNKNOWN;
         $this->ssoOnly = $ssoOnly;
         $this->groupRoleMap = $groupRoleMap;
-        $this->health = $health;
+        $this->health  = $health;
     }
 
     public function isDomainVerified(): bool

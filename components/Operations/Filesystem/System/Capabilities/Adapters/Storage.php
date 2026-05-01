@@ -19,7 +19,7 @@ final class Storage
         return self::disk()->put(path: $path, contents: $contents);
     }
 
-    public static function disk(?string $name = null): StorageAdapter
+    public static function disk(string $name = null) : StorageAdapter
     {
         $disk = $name ?? 'local';
 

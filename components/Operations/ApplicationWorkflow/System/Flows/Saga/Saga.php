@@ -33,12 +33,12 @@ final readonly class Saga
 
     public static function inMemory(): self
     {
-        $store = new StoreSagaState;
-        $idempotency = new ProtectSagaIdempotency;
-        $inspect = new InspectSaga;
+        $store       = new StoreSagaState();
+        $idempotency = new ProtectSagaIdempotency();
+        $inspect     = new InspectSaga();
 
         return new self(
-            defineSaga            : new DefineSaga,
+            defineSaga            : new DefineSaga(),
             startSaga             : new StartSaga(storeSagaState: $store, protectSagaIdempotency: $idempotency, inspectSaga: $inspect),
             runSagaStep           : new RunSagaStep(storeSagaState: $store, inspectSaga: $inspect),
             completeSaga          : new CompleteSaga(storeSagaState: $store, inspectSaga: $inspect),

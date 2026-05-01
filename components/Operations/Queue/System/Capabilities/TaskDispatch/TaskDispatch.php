@@ -31,7 +31,7 @@ final class TaskDispatch
     private static function resolver(): DispatchStrategyResolver
     {
         if (! isset(self::$resolver)) {
-            self::$resolver = new DispatchStrategyResolver;
+            self::$resolver = new DispatchStrategyResolver();
         }
 
         return self::$resolver;
@@ -39,13 +39,13 @@ final class TaskDispatch
 
     public static function sync(object $task): void
     {
-        $dispatcher = new SyncDispatcher;
+        $dispatcher = new SyncDispatcher();
         $dispatcher->dispatch($task);
     }
 
     public static function async(object $task): void
     {
-        $dispatcher = new AsyncDispatcher;
+        $dispatcher = new AsyncDispatcher();
         $dispatcher->dispatch($task);
     }
 

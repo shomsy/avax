@@ -41,7 +41,7 @@ final class Policy
     private static function evaluator(): PolicyEvaluator
     {
         if (! isset(self::$evaluator)) {
-            self::$evaluator = new PolicyEvaluator;
+            self::$evaluator = new PolicyEvaluator();
         }
 
         return self::$evaluator;
@@ -65,12 +65,12 @@ final readonly class PolicyDecision
         public ?string $reason = null,
     ) {}
 
-    public static function allow(?string $reason = null): self
+    public static function allow(string $reason = null) : self
     {
         return new self(true, $reason);
     }
 
-    public static function deny(?string $reason = null): self
+    public static function deny(string $reason = null) : self
     {
         return new self(false, $reason);
     }
@@ -91,7 +91,7 @@ final readonly class DecisionExplanation
     public function toString(): string
     {
         return $this->allowed
-            ? 'ALLOWED: '.implode(' AND ', $this->reasons)
-            : 'DENIED: '.implode(' AND ', $this->reasons);
+            ? 'ALLOWED: ' . implode(' AND ', $this->reasons)
+            : 'DENIED: ' . implode(' AND ', $this->reasons);
     }
 }

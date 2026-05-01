@@ -39,8 +39,8 @@ final class PhpBuiltInServer
 
     public static function findDocumentRoot(): string
     {
-        $basePath = dirname(path: __DIR__, levels: 4);
-        $publicPath = $basePath.'/public';
+        $basePath   = dirname(path: __DIR__, levels: 4);
+        $publicPath = $basePath . '/public';
 
         if (! is_dir($publicPath)) {
             mkdir($publicPath, 0o755, true);
@@ -52,7 +52,7 @@ final class PhpBuiltInServer
 
     private static function createBasicIndex(string $publicPath): void
     {
-        $index = $publicPath.'/index.php';
+        $index = $publicPath . '/index.php';
 
         if (! file_exists($index)) {
             $content = '<?php
@@ -79,7 +79,7 @@ echo "<p>Create routes/web.php to get started.</p>";
             throw new RuntimeException("Port {$port} is already in use");
         }
 
-        $logFile = sys_get_temp_dir().'/avax-server-'.$port.'.log';
+        $logFile = sys_get_temp_dir() . '/avax-server-' . $port . '.log';
 
         $pipes = [];
         $process = proc_open($command, $descriptorSpec = [], $pipes);
@@ -136,7 +136,7 @@ echo "<p>Create routes/web.php to get started.</p>";
             'routes/api.php',
             'bootstrap/routes.php',
             'public/index.php',
-            $basePath.'/router.php',
+            $basePath . '/router.php',
         ];
 
         foreach ($candidates as $candidate) {
@@ -145,7 +145,7 @@ echo "<p>Create routes/web.php to get started.</p>";
             }
         }
 
-        return $basePath.'/router.php';
+        return $basePath . '/router.php';
     }
 
     public static function stop(int $port): bool

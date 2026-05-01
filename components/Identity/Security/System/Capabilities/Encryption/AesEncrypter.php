@@ -38,7 +38,7 @@ final class AesEncrypter implements EncrypterInterface
         }
 
         // IV + tag (16 bytes for GCM) + ciphertext
-        return base64_encode($iv.$tag.$ciphertext);
+        return base64_encode($iv . $tag . $ciphertext);
     }
 
     /**
@@ -60,7 +60,7 @@ final class AesEncrypter implements EncrypterInterface
             throw new RuntimeException('Invalid encrypted payload.');
         }
 
-        $iv = substr($payload, 0, $ivLen);
+        $iv  = substr($payload, 0, $ivLen);
         $tag = substr($payload, $ivLen, $tagLen);
         $ciphertext = substr($payload, $ivLen + $tagLen);
 

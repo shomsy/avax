@@ -15,12 +15,12 @@ final readonly class AuditEvent
     public array $context;
 
     /**
-     * @param  array<string, scalar|null>  $context
+     * @param array<string, scalar|null> $context
      */
     public function __construct(
         public string $name,
         public DateTimeImmutable $occurredAt,
-        ?array $context = null,
+        array $context = null,
         public ?string $correlationId = null,
     ) {
         $context ??= [];

@@ -67,11 +67,11 @@ final readonly class RevokeToken
             name      : 'auth.oauth.token.revoked',
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $data->clientId,
+                            'client_id'  => $data->clientId,
                 'token_type_hint' => $data->tokenTypeHint,
-                'revoked' => $revoked ? 1 : 0,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'revoked'    => $revoked ? 1 : 0,
+                            'ip_address' => $data->ipAddress,
+                            'user_agent' => $data->userAgent,
             ],
         ));
     }

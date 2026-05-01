@@ -58,11 +58,11 @@ class MakeRepositoryCommand extends Command
 
             $path = $this->repositoryGenerator->generate($name, $data);
 
-            $this->info('Repository created successfully: '.$path);
+            $this->info('Repository created successfully: ' . $path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create repository: '.$runtimeException->getMessage());
+            $this->error('Failed to create repository: ' . $runtimeException->getMessage());
 
             return self::FAILURE;
         }

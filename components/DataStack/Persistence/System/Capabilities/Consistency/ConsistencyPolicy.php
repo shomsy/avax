@@ -20,25 +20,26 @@ interface ConsistencyPolicy
     /**
      * Determines if a read is allowed given the current state.
      *
-     * @param  mixed  $currentValue  The current value
-     * @param  mixed  $pendingWrite  Any pending write
+     * @param mixed $currentValue The current value
+     * @param mixed $pendingWrite Any pending write
      */
     public function canRead(mixed $currentValue, mixed $pendingWrite = null): bool;
 
     /**
      * Determines if a write should be accepted.
      *
-     * @param  mixed  $currentValue  The current value
-     * @param  mixed  $newValue  The proposed new value
+     * @param mixed $currentValue The current value
+     * @param mixed $newValue     The proposed new value
      */
     public function canWrite(mixed $currentValue, mixed $newValue): bool;
 
     /**
      * Resolves a conflict between two values.
      *
-     * @param  mixed  $valueA  First conflicting value
-     * @param  mixed  $valueB  Second conflicting value
-     * @param  array<string, mixed>  $context  Additional context for resolution
+     * @param mixed                $valueA  First conflicting value
+     * @param mixed                $valueB  Second conflicting value
+     * @param array<string, mixed> $context Additional context for resolution
+     *
      * @return mixed The resolved value
      */
     public function resolveConflict(mixed $valueA, mixed $valueB, array $context = []): mixed;
@@ -77,7 +78,7 @@ final class VectorClock
      */
     public static function empty(): self
     {
-        return new self;
+        return new self();
     }
 
     /**
@@ -138,7 +139,7 @@ final class VectorClock
         $atLeastOneLess = false;
 
         foreach ($allNodes as $nodeId) {
-            $thisValue = $this->clock[$nodeId] ?? 0;
+            $thisValue = $this->clock[$nodeId]  ?? 0;
             $otherValue = $other->clock[$nodeId] ?? 0;
 
             if ($thisValue > $otherValue) {
@@ -196,6 +197,6 @@ final class VectorClock
             $parts[] = "{$nodeId}:{$timestamp}";
         }
 
-        return '{'.implode(', ', $parts).'}';
+        return '{' . implode(', ', $parts) . '}';
     }
 }

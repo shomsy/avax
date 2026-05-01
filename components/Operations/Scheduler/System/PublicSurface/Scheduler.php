@@ -41,7 +41,7 @@ final class Scheduler
     private static function getRunner(): TaskRunner
     {
         if (! isset(self::$runner)) {
-            self::$runner = new TaskRunner;
+            self::$runner = new TaskRunner();
         }
 
         return self::$runner;

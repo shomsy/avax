@@ -13,8 +13,8 @@ use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatche
 use Avax\Components\HTTP\Router\Validation\RouteConstraintValidator;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => HttpRequestRouter::class,
-                                                'constructor'        => MethodPrototype::__set_state(array: [
+                                                'class'           => HttpRequestRouter::class,
+                                                'constructor'     => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
                                                                                             'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
@@ -48,7 +48,7 @@ return ServicePrototype::__set_state(array: [
                                                                                         ]),
                                                 'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    => [
+                                                'injectedMethods' => [
                                                     ],
-                                                'isInstantiable'     => true,
+                                                'isInstantiable'  => true,
                                             ]);

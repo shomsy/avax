@@ -33,7 +33,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     }
 
     /**
-     * @param  array<string, mixed>  $row
+     * @param array<string, mixed> $row
      *
      * @throws DateMalformedStringException
      */
@@ -90,16 +90,16 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     private function mapRecord(SessionRecord $record): array
     {
         return [
-            'session_id' => $record->sessionId,
-            'user_id' => $record->userId->value,
-            'created_at' => $record->createdAt->format(format: DATE_ATOM),
-            'last_seen_at' => $record->lastSeenAt->format(format: DATE_ATOM),
-            'idle_expires_at' => $record->idleExpiresAt->format(format: DATE_ATOM),
+            'session_id'         => $record->sessionId,
+            'user_id'            => $record->userId->value,
+            'created_at'         => $record->createdAt->format(format: DATE_ATOM),
+            'last_seen_at'       => $record->lastSeenAt->format(format: DATE_ATOM),
+            'idle_expires_at'    => $record->idleExpiresAt->format(format: DATE_ATOM),
             'absolute_expires_at' => $record->absoluteExpiresAt->format(format: DATE_ATOM),
-            'ip_created' => $record->ipCreated,
+            'ip_created'         => $record->ipCreated,
             'user_agent_created' => $record->userAgentCreated,
-            'revoked_at' => $record->revokedAt?->format(format: DATE_ATOM),
-            'revoke_reason' => $record->revokeReason,
+            'revoked_at'         => $record->revokedAt?->format(format: DATE_ATOM),
+            'revoke_reason'      => $record->revokeReason,
         ];
     }
 
@@ -128,8 +128,8 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id',
         );
         $statement->execute(params: [
-            'session_id' => $sessionId,
-            'revoked_at' => $revokedAt->format(format: DATE_ATOM),
+                                        'session_id' => $sessionId,
+                                        'revoked_at' => $revokedAt->format(format: DATE_ATOM),
             'revoke_reason' => $reason,
         ]);
     }
@@ -141,8 +141,8 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id',
         );
         $statement->execute(params: [
-            'user_id' => $userId->value,
-            'revoked_at' => $revokedAt->format(format: DATE_ATOM),
+                                        'user_id'    => $userId->value,
+                                        'revoked_at' => $revokedAt->format(format: DATE_ATOM),
             'revoke_reason' => $reason,
         ]);
     }

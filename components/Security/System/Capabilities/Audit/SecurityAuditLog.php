@@ -12,7 +12,7 @@ final class SecurityAuditLog
     public function record(string $event, array $context = []): void
     {
         $this->events[] = [
-            'event' => $event,
+            'event'   => $event,
             'context' => $this->redact(context: $context),
             'recorded_at' => date(format: DATE_ATOM),
         ];

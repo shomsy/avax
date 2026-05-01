@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use Avax\Components\Identity\Auth\System\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentity;
@@ -14,8 +14,8 @@ use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 
-$passwordHasher = new PasswordHasher;
-$userSource = new InMemoryUserSource;
+$passwordHasher = new PasswordHasher();
+$userSource     = new InMemoryUserSource();
 
 $userSource->create(user: User::create(
     id          : new UserId(value: 1),
@@ -26,7 +26,7 @@ $userSource->create(user: User::create(
 
 $auth = Auth::configuration()
     ->forUser(userSource: $userSource)
-    ->withIdentityBackends(sessionIdentity: new SessionIdentity)
+    ->withIdentityBackends(sessionIdentity: new SessionIdentity())
     ->usingHasher(passwordHasher: $passwordHasher)
     ->ready();
 
@@ -36,16 +36,16 @@ try {
         password  : 'password',
     ));
 
-    echo 'Welcome, '.$loginResult->user()->email().PHP_EOL;
+    echo 'Welcome, ' . $loginResult->user()->email() . PHP_EOL;
 } catch (AuthenticationFailed $exception) {
-    echo 'Login failed: '.$exception->getMessage().PHP_EOL;
+    echo 'Login failed: ' . $exception->getMessage() . PHP_EOL;
 }
 
 if ($auth->check()) {
     $currentUser = $auth->user();
 
     if ($currentUser !== null) {
-        echo 'Current user: '.$currentUser->email().PHP_EOL;
+        echo 'Current user: ' . $currentUser->email() . PHP_EOL;
     }
 }
 

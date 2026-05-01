@@ -21,10 +21,10 @@ final class SessionIdentity
         private readonly string $lastSeenAtKey = 'auth_session_last_seen_at',
     ) {}
 
-    public function issue(int $userId, ?DateTimeImmutable $mfaVerifiedAt = null, bool $phishingResistant = false): string
+    public function issue(int $userId, DateTimeImmutable $mfaVerifiedAt = null, bool $phishingResistant = false) : string
     {
         $this->session->regenerate();
-        $now = (new DateTimeImmutable)->format(DATE_ATOM);
+        $now = (new DateTimeImmutable())->format(DATE_ATOM);
 
         $this->session->put($this->sessionKey, $userId);
         $this->session->put($this->mfaVerifiedAtKey, $mfaVerifiedAt?->format(DATE_ATOM));
@@ -63,7 +63,7 @@ final class SessionIdentity
             return false;
         }
 
-        $now = new DateTimeImmutable;
+        $now = new DateTimeImmutable();
 
         if ($issuedAt->modify("+{$this->lifetime->absoluteTimeoutSeconds} seconds") <= $now) {
             $this->expire();
@@ -101,7 +101,7 @@ final class SessionIdentity
 
     private function touch(): void
     {
-        $this->session->put($this->lastSeenAtKey, (new DateTimeImmutable)->format(DATE_ATOM));
+        $this->session->put($this->lastSeenAtKey, (new DateTimeImmutable())->format(DATE_ATOM));
     }
 
     public function resolveMfaVerifiedAt(): ?DateTimeImmutable

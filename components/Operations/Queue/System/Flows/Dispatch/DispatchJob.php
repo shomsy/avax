@@ -38,7 +38,7 @@ final class DispatchJob
         $queue = $job->queue ?? 'default';
         $jobId = JobId::generate($queue);
 
-        $jobData = $job->toArray();
+        $jobData       = $job->toArray();
         $jobData['id'] = $jobId->value;
         $jobData['executeAt'] = $delay->getTimestamp();
 

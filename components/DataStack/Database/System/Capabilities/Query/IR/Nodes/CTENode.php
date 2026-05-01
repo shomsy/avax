@@ -19,10 +19,10 @@ final readonly class CTENode
     {
         $columns = $this->columns === []
             ? ''
-            : '('.implode(separator: ', ', array: array_map(
+            : '(' . implode(separator: ', ', array: array_map(
                 callback: static fn ($col): string => $grammar->wrap(value: $col),
                 array   : $this->columns,
-            )).')';
+            )) . ')';
 
         return sprintf('%s%s AS (%s)', $this->name, $columns, $this->query);
     }

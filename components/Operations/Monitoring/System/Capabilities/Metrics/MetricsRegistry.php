@@ -42,7 +42,7 @@ final class MetricsRegistry
         $lines = [];
 
         foreach ($this->counters as $name => $value) {
-            $lines[] = $this->normalize(name: $name).' '.$value;
+            $lines[] = $this->normalize(name: $name) . ' ' . $value;
         }
 
         return implode(separator: "\n", array: $lines);

@@ -16,7 +16,7 @@ final readonly class UserEmail implements Stringable
     public function __construct(
         public string $value,
     ) {
-        if (! (new ValidateEmail)->execute(email: $this->value)) {
+        if (! (new ValidateEmail())->execute(email: $this->value)) {
             throw new InvalidArgumentException(message: "Invalid email format: {$this->value}");
         }
     }

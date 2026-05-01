@@ -12,7 +12,7 @@ final readonly class ScimDirectory
     public ScimDirectoryHealth $health;
 
     /**
-     * @param  array<string, list<string>>  $groupRoleMap
+     * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
         public string $directoryId,
@@ -23,7 +23,7 @@ final readonly class ScimDirectory
         public array $groupRoleMap,
         public DateTimeImmutable $createdAt,
         public ?DateTimeImmutable $rotatedAt = null,
-        ?ScimDirectoryHealth $health = null,
+        ScimDirectoryHealth $health = null,
         public ?DateTimeImmutable $healthCheckedAt = null,
         public ?string $outageReason = null,
         public ?DateTimeImmutable $outageStartedAt = null,
@@ -38,7 +38,7 @@ final readonly class ScimDirectory
         return $this->health !== ScimDirectoryHealth::UNAVAILABLE;
     }
 
-    public function markOutage(DateTimeImmutable $startedAt, ?string $reason = null): self
+    public function markOutage(DateTimeImmutable $startedAt, string $reason = null) : self
     {
         return new self(
             directoryId      : $this->directoryId,

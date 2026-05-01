@@ -34,7 +34,7 @@ final class GenerateUrl
     /**
      * Set default parameters for URL generation.
      *
-     * @param  array<string, mixed>  $defaults
+     * @param array<string, mixed> $defaults
      */
     public function setDefaults(array $defaults): void
     {
@@ -44,9 +44,9 @@ final class GenerateUrl
     /**
      * Generate a URL from a named route.
      *
-     * @param  string  $name  Route name
-     * @param  array<string, mixed>  $params  Route parameters to substitute
-     * @param  array<string, mixed>  $extra  Query string parameters
+     * @param string               $name   Route name
+     * @param array<string, mixed> $params Route parameters to substitute
+     * @param array<string, mixed> $extra  Query string parameters
      *
      * @throws RouterFailure If the route is not found or parameters are missing
      */
@@ -79,7 +79,7 @@ final class GenerateUrl
         if ($extra !== []) {
             $query = http_build_query($extra);
             if ($query !== '') {
-                $url .= '?'.$query;
+                $url .= '?' . $query;
             }
         }
 

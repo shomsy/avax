@@ -75,8 +75,8 @@ final readonly class ExchangeClientCredentials
             }
         }
 
-        $subject = 'client:'.$client->clientId;
-        $issued = $this->jwtIdentity->issueWorkloadToken(
+        $subject = 'client:' . $client->clientId;
+        $issued  = $this->jwtIdentity->issueWorkloadToken(
             subject         : $subject,
             clientId        : $client->clientId,
             scopes          : $scopes,
@@ -88,9 +88,9 @@ final readonly class ExchangeClientCredentials
             name      : 'auth.oauth.client_credentials.exchanged',
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $client->clientId,
-                'scope' => implode(separator: ' ', array: $scopes),
-                'audience' => $audience,
+                            'client_id' => $client->clientId,
+                            'scope'     => implode(separator: ' ', array: $scopes),
+                            'audience'  => $audience,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],
@@ -118,9 +118,9 @@ final readonly class ExchangeClientCredentials
             name      : 'auth.oauth.client_credentials.failed',
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $data->clientId,
-                'reason' => $reason,
-                'audience' => $this->normalizeAudience(audience: $data->audience),
+                            'client_id' => $data->clientId,
+                            'reason'    => $reason,
+                            'audience'  => $this->normalizeAudience(audience: $data->audience),
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],
@@ -135,7 +135,8 @@ final readonly class ExchangeClientCredentials
     }
 
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
+     *
      * @return list<string>
      */
     private function normalizeScopes(array $scopes): array

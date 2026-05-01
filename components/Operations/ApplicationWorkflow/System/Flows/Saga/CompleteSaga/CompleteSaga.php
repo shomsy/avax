@@ -62,9 +62,9 @@ final readonly class CompleteSaga
     public function publishCompletion(SagaInstance $instance): void
     {
         $payload = [
-            'saga_id' => $instance->id,
+            'saga_id'      => $instance->id,
             'definition_name' => $instance->definitionName,
-            'data' => $instance->data,
+            'data'         => $instance->data,
             'completed_steps' => $instance->completedSteps,
             'completed_at' => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
         ];
@@ -102,11 +102,11 @@ final readonly class SagaCompletion
         DateTimeImmutable $completedAt,
         float $totalDurationMs,
     ) {
-        $this->sagaId = $sagaId;
+        $this->sagaId         = $sagaId;
         $this->definitionName = $definitionName;
-        $this->finalData = $finalData;
+        $this->finalData      = $finalData;
         $this->completedSteps = $completedSteps;
-        $this->completedAt = $completedAt;
+        $this->completedAt    = $completedAt;
         $this->totalDurationMs = $totalDurationMs;
     }
 
@@ -119,7 +119,7 @@ final readonly class SagaCompletion
             definitionName : $instance->definitionName,
             finalData      : $instance->data,
             completedSteps : $instance->completedSteps,
-            completedAt    : new DateTimeImmutable,
+            completedAt    : new DateTimeImmutable(),
             totalDurationMs: (microtime(true) * 1000) - $startTimeMs,
         );
     }
@@ -127,11 +127,11 @@ final readonly class SagaCompletion
     public function toArray(): array
     {
         return [
-            'saga_id' => $this->sagaId,
+            'saga_id'         => $this->sagaId,
             'definition_name' => $this->definitionName,
-            'final_data' => $this->finalData,
+            'final_data'      => $this->finalData,
             'completed_steps' => $this->completedSteps,
-            'completed_at' => $this->completedAt->format(format: DateTimeInterface::ISO8601),
+            'completed_at'    => $this->completedAt->format(format: DateTimeInterface::ISO8601),
             'total_duration_ms' => $this->totalDurationMs,
         ];
     }

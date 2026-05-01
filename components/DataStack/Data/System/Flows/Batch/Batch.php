@@ -18,7 +18,7 @@ use Traversable;
 final readonly class Batch implements Countable, IteratorAggregate
 {
     /**
-     * @param  array<int, array<int, mixed>>  $batches
+     * @param array<int, array<int, mixed>> $batches
      */
     private function __construct(
         private array $batches,

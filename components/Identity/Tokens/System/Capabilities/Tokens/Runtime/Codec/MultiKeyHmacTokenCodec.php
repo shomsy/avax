@@ -12,7 +12,7 @@ use SensitiveParameter;
 final readonly class MultiKeyHmacTokenCodec implements TokenCodecInterface
 {
     /**
-     * @param  list<TokenCodecInterface>  $verificationCodecs
+     * @param list<TokenCodecInterface> $verificationCodecs
      */
     public function __construct(
         private TokenCodecInterface $primaryCodec,

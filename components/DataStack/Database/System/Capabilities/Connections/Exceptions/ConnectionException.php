@@ -32,9 +32,9 @@ use Throwable;
 final class ConnectionException extends DatabaseException
 {
     /**
-     * @param  string  $name  The nickname of the database connection that failed.
-     * @param  string  $message  The human-readable description of what went wrong.
-     * @param  Throwable|null  $throwable  The raw system error that triggered this report.
+     * @param string         $name      The nickname of the database connection that failed.
+     * @param string         $message   The human-readable description of what went wrong.
+     * @param Throwable|null $throwable The raw system error that triggered this report.
      */
     public function __construct(
         private readonly string $name,

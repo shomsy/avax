@@ -37,9 +37,9 @@ final readonly class SyncFederationMetadata
         $synced = $connection->withMetadata(
             metadataIssuer: $metadata->issuer,
             metadataHash  : hash(algo: 'sha256', data: json_encode(value: [
-                'issuer' => $metadata->issuer,
+                                                                              'issuer' => $metadata->issuer,
                 'single_sign_on_url' => $metadata->singleSignOnUrl,
-                'claims' => $metadata->claims,
+                                                                              'claims' => $metadata->claims,
             ], flags: JSON_THROW_ON_ERROR)),
             syncedAt      : $this->clock->now(),
         );
@@ -48,8 +48,8 @@ final readonly class SyncFederationMetadata
             name      : 'auth.federation.metadata.synced',
             occurredAt: $this->clock->now(),
             context   : [
-                'connection_id' => $synced->connectionId,
-                'tenant' => $synced->tenantSlug,
+                            'connection_id' => $synced->connectionId,
+                            'tenant'        => $synced->tenantSlug,
                 'metadata_issuer' => $synced->metadataIssuer,
             ],
         ));

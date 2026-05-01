@@ -48,10 +48,10 @@ final readonly class VerifyCsrfToken
 
     private function createErrorResponse(): Response
     {
-        $response = new Response;
+        $response = new Response();
         $response->withStatus(403);
         $response->body()->write(json_encode([
-            'error' => 'CSRF_TOKEN_MISMATCH',
+                                                 'error' => 'CSRF_TOKEN_MISMATCH',
             'message' => 'The CSRF token is invalid or expired.',
         ]));
 

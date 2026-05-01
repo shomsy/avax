@@ -43,7 +43,7 @@ final readonly class RegenerateBackupCodes
         $user = $context->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         $this->requireFreshMfa->execute();

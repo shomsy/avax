@@ -33,8 +33,8 @@ use Avax\Components\DataStack\Database\System\Foundation\Exceptions\DatabaseExce
 final class PoolLimitReachedException extends DatabaseException
 {
     /**
-     * @param  string  $name  The nickname of the pool that is full.
-     * @param  int  $limit  The maximum number of people allowed in at once.
+     * @param string $name  The nickname of the pool that is full.
+     * @param int    $limit The maximum number of people allowed in at once.
      */
     public function __construct(
         private readonly string $name,

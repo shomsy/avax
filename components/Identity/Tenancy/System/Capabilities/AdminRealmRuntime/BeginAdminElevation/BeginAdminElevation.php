@@ -72,7 +72,7 @@ final readonly class BeginAdminElevation
             name      : 'auth.admin.elevation.started',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $user->id,
+                            'user_id' => $user->id,
                 'binding_id' => $bindingId,
             ],
         ));

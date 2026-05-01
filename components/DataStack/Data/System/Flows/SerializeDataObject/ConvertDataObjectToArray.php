@@ -12,12 +12,12 @@ final readonly class ConvertDataObjectToArray
 {
     public function __construct(private ?DataTransferConfig $config = null) {}
 
-    public function convert(object $object, ?int $depth = null, bool $excludeHidden = true): array
+    public function convert(object $object, int $depth = null, bool $excludeHidden = true) : array
     {
-        $config = $this->config ?? DataTransferConfig::default();
+        $config   = $this->config ?? DataTransferConfig::default();
         $maxDepth = $depth ?? $config->maxDepth;
-        $seen = [];
-        $values = new ReadDataObject(config: $config)->values(object: $object, excludeHidden: $excludeHidden);
+        $seen     = [];
+        $values   = new ReadDataObject(config: $config)->values(object: $object, excludeHidden: $excludeHidden);
 
         return new NormalizeDataObjectValue()->normalize(value: $values, depth: $maxDepth, seen: $seen);
     }

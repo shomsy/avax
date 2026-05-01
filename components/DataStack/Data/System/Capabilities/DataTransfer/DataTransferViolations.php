@@ -18,7 +18,7 @@ use Traversable;
 final readonly class DataTransferViolations implements Countable, IteratorAggregate, JsonSerializable
 {
     /**
-     * @param  DataTransferViolation[]  $violations
+     * @param DataTransferViolation[] $violations
      */
     public function __construct(
         private array $violations = [],

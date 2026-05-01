@@ -12,7 +12,7 @@ use SensitiveParameter;
 final readonly class ResolvedToken
 {
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
      */
     public function __construct(
         public User $user,
@@ -29,6 +29,6 @@ final readonly class ResolvedToken
 
     public function isExpired(): bool
     {
-        return $this->expiresAt < new DateTimeImmutable;
+        return $this->expiresAt < new DateTimeImmutable();
     }
 }

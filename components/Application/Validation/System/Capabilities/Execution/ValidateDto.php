@@ -16,7 +16,7 @@ final readonly class ValidateDto
 {
     public function execute(object $dto) : ValidationResult
     {
-        $validationResult = new ValidationResult;
+        $validationResult = new ValidationResult();
         $reflectionClass  = new ReflectionClass($dto);
 
         foreach ($reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {

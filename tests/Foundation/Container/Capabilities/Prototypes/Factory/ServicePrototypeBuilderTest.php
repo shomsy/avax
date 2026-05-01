@@ -17,12 +17,12 @@ final class ServicePrototypeBuilderTest extends TestCase
     {
         $this->expectException(exception: InvalidArgumentException::class);
 
-        (new ServicePrototypeBuilder)->build();
+        (new ServicePrototypeBuilder())->build();
     }
 
     public function test_build_creates_prototype_with_declared_parts() : void
     {
-        $prototype = (new ServicePrototypeBuilder)
+        $prototype = (new ServicePrototypeBuilder())
             ->for(class: BuilderFixture::class)
             ->withConstructor(prototype: new MethodPrototype(
                                              name      : '__construct',

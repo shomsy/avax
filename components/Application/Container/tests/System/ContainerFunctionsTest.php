@@ -14,15 +14,15 @@ final class ContainerFunctionsTest extends TestCase
 {
     private DIContainer $container;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->container = new DIContainer;
+        $this->container = new DIContainer();
         appInstance($this->container);
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         // Clear the app instance
         appInstance(null);
@@ -30,23 +30,23 @@ final class ContainerFunctionsTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_app_instance_gets_container() : void
+    public function test_app_instance_gets_container(): void
     {
         $result = appInstance();
 
         $this->assertSame($this->container, $result);
     }
 
-    public function test_app_instance_sets_container() : void
+    public function test_app_instance_sets_container(): void
     {
-        $newContainer = new DIContainer;
+        $newContainer = new DIContainer();
 
         appInstance($newContainer);
 
         $this->assertSame($newContainer, appInstance());
     }
 
-    public function test_app_resolves_service() : void
+    public function test_app_resolves_service(): void
     {
         $this->container->bind('test.service', static fn () => 'test-value');
 
@@ -55,23 +55,23 @@ final class ContainerFunctionsTest extends TestCase
         $this->assertSame('test-value', $result);
     }
 
-    public function test_app_returns_container_when_null() : void
+    public function test_app_returns_container_when_null(): void
     {
         $result = app();
 
         $this->assertSame($this->container, $result);
     }
 
-    public function test_make_creates_instance() : void
+    public function test_make_creates_instance(): void
     {
         $result = make(DateTime::class);
 
         $this->assertInstanceOf(DateTime::class, $result);
     }
 
-    public function test_make_with_parameters() : void
+    public function test_make_with_parameters(): void
     {
-        $instance = new class {
+        $instance = new class () {
             public string $value;
         };
 
@@ -80,7 +80,7 @@ final class ContainerFunctionsTest extends TestCase
         $this->assertSame('test', $result->value);
     }
 
-    public function test_bind_registers_binding() : void
+    public function test_bind_registers_binding(): void
     {
         bind('bound.service', static fn () => 'value');
 
@@ -89,9 +89,9 @@ final class ContainerFunctionsTest extends TestCase
         $this->assertSame('value', $result);
     }
 
-    public function test_bind_with_shared_parameter() : void
+    public function test_bind_with_shared_parameter(): void
     {
-        bind('shared.service', static fn () => new stdClass, shared: true);
+        bind('shared.service', static fn () => new stdClass(), shared: true);
 
         $result1 = $this->container->make('shared.service');
         $result2 = $this->container->make('shared.service');
@@ -99,9 +99,9 @@ final class ContainerFunctionsTest extends TestCase
         $this->assertSame($result1, $result2);
     }
 
-    public function test_singleton_registers_single_instance() : void
+    public function test_singleton_registers_single_instance(): void
     {
-        singleton('single', static fn () => new stdClass);
+        singleton('single', static fn () => new stdClass());
 
         $result1 = $this->container->make('single');
         $result2 = $this->container->make('single');
@@ -109,17 +109,19 @@ final class ContainerFunctionsTest extends TestCase
         $this->assertSame($result1, $result2);
     }
 
-    public function test_resolve_alias_for_make() : void
+    public function test_resolve_alias_for_make(): void
     {
         $result = resolve(DateTimeImmutable::class);
 
         $this->assertInstanceOf(DateTimeImmutable::class, $result);
     }
 
-    public function test_resolve_with_parameters() : void
+    public function test_resolve_with_parameters(): void
     {
-        $instance = new class('param') {
-            public function __construct(public string $param) {}
+        $instance = new class ('param') {
+            public function __construct(public string $param)
+            {
+            }
         };
 
         $result = resolve($instance::class, ['param' => 'value']);

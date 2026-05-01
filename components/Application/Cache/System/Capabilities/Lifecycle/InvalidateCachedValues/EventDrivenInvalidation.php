@@ -14,8 +14,7 @@ final class EventDrivenInvalidation implements InvalidationStrategy
     public function __construct(
         array $eventRules = [],
         array $eventMapping = [],
-    )
-    {
+    ) {
         foreach ($eventRules as $event => $reason) {
             $this->eventMapping[$event] = $reason;
         }
@@ -26,7 +25,7 @@ final class EventDrivenInvalidation implements InvalidationStrategy
     }
 
     #[Override]
-    public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
+    public function shouldInvalidate(string $key, string $reason, array $context = []): bool
     {
         if (isset($this->eventMapping[$reason])) {
             return true;
@@ -38,14 +37,14 @@ final class EventDrivenInvalidation implements InvalidationStrategy
     }
 
     #[Override]
-    public function strategyName() : string
+    public function strategyName(): string
     {
         return 'event_driven';
     }
 
-    public function addRule(string $event, string $invalidationReason) : self
+    public function addRule(string $event, string $invalidationReason): self
     {
-        $new = clone $this;
+        $new                       = clone $this;
         $new->eventMapping[$event] = $invalidationReason;
 
         return $new;

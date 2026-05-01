@@ -26,7 +26,7 @@ readonly class ReadFromCache
             return $this->readCompiled(target: $target);
         }
 
-        throw new CompiledNotConfigured;
+        throw new CompiledNotConfigured();
     }
 
     private function readRuntime(RuntimeCacheTarget $runtimeCacheTarget) : mixed
@@ -41,7 +41,7 @@ readonly class ReadFromCache
     private function readCompiled(CompiledCacheTarget $compiledCacheTarget) : mixed
     {
         if (! $this->compiledCacheContract instanceof CompiledCacheContract) {
-            throw new CompiledNotConfigured;
+            throw new CompiledNotConfigured();
         }
 
         return $this->compiledCacheContract->read(

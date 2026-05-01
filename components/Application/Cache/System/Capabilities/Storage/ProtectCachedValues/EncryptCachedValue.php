@@ -8,16 +8,17 @@ final readonly class EncryptCachedValue
 {
     public function __construct(
         private EncryptedCache $encryptedCache,
-    ) {}
+    ) {
+    }
 
-    public function encrypt(mixed $value) : string
+    public function encrypt(mixed $value): string
     {
         $serialized = json_encode($value, JSON_THROW_ON_ERROR);
 
         return $this->encryptedCache->encrypt(plaintext: $serialized);
     }
 
-    public function decrypt(string $encrypted) : mixed
+    public function decrypt(string $encrypted): mixed
     {
         $decrypted = $this->encryptedCache->decrypt(encrypted: $encrypted);
 

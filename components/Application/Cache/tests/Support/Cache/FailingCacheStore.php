@@ -20,18 +20,18 @@ final class FailingCacheStore implements CacheStore
 
     private bool $shouldFail = false;
 
-    public function setFailureRate(float $rate) : void
+    public function setFailureRate(float $rate): void
     {
         $this->failureRate = max(0.0, min(1.0, $rate));
     }
 
-    public function forceFailure() : void
+    public function forceFailure(): void
     {
         $this->shouldFail = true;
     }
 
     #[Override]
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $this->maybeFail();
 
@@ -41,7 +41,7 @@ final class FailingCacheStore implements CacheStore
     /**
      * @throws RandomException
      */
-    private function maybeFail() : void
+    private function maybeFail(): void
     {
         if ($this->shouldFail || (random_int(0, 100) / 100) < $this->failureRate) {
             throw new RuntimeException(message: 'Simulated cache store failure');
@@ -49,25 +49,25 @@ final class FailingCacheStore implements CacheStore
     }
 
     #[Override]
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void
     {
         $this->maybeFail();
     }
 
     #[Override]
-    public function forget(CacheKey $cacheKey) : void
+    public function forget(CacheKey $cacheKey): void
     {
         $this->maybeFail();
     }
 
     #[Override]
-    public function clear() : void
+    public function clear(): void
     {
         $this->maybeFail();
     }
 
     #[Override]
-    public function exists(CacheKey $cacheKey) : bool
+    public function exists(CacheKey $cacheKey): bool
     {
         $this->maybeFail();
 

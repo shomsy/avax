@@ -22,7 +22,7 @@ assertTrue(condition: is_file(filename: $jsonPath), message: 'Hint generator sho
 assertTrue(condition: is_file(filename: $stubPath), message: 'Hint generator should emit a PHP stub artifact.');
 
 $payload = json_decode(json: (string) file_get_contents(filename: $jsonPath), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
-$stub     = (string) file_get_contents(filename: $stubPath);
+$stub    = (string) file_get_contents(filename: $stubPath);
 
 assertSame(expected: 1, actual: $payload['schemaVersion'] ?? null, message: 'Hint payloads should expose a stable schema version.');
 assertTrue(condition: in_array(needle: 'HintIdentityService', haystack: $payload['serviceIds'] ?? [], strict: true), message: 'Hint payloads should include service ids.');

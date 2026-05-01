@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class EmitResponseTest extends TestCase
 {
-    public function test_emit_response_writes_status_headers_and_body() : void
+    public function test_emit_response_writes_status_headers_and_body(): void
     {
         http_response_code(response_code: 200);
         header_remove();

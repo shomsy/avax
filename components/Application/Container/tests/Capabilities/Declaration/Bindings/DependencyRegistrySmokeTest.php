@@ -6,7 +6,7 @@ require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DependencyRegistry;
 
-$registry = new DependencyRegistry;
+$registry = new DependencyRegistry();
 
 $registry->bind(abstract: 'logger', concrete: DateTimeImmutable::class)->tag(tags: 'infra');
 $deferred = $registry->defer(abstract: 'deferred.logger', concrete: ArrayObject::class);
@@ -23,7 +23,7 @@ assertTrue(condition: isset($registry->all()['cache']), message: 'Registry shoul
 
 assertThrows(
     expectedClass: LogicException::class,
-    callback     : static function () use ($registry) : void {
+    callback     : static function () use ($registry): void {
         $registry->alias(alias: 'logger.alias', abstract: 'logger');
         $registry->alias(alias: 'logger', abstract: 'logger.alias');
     },

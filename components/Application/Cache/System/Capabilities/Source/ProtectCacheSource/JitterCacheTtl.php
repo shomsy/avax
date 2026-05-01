@@ -11,9 +11,10 @@ final readonly class JitterCacheTtl
 {
     public function __construct(
         private int $jitterPercent = 10,
-    ) {}
+    ) {
+    }
 
-    public function addJitterToTtl(int $ttlSeconds) : int
+    public function addJitterToTtl(int $ttlSeconds): int
     {
         return $this->addJitter(ttlSeconds: $ttlSeconds);
     }
@@ -21,7 +22,7 @@ final readonly class JitterCacheTtl
     /**
      * @throws RandomException
      */
-    public function addJitter(int $ttlSeconds) : int
+    public function addJitter(int $ttlSeconds): int
     {
         if ($ttlSeconds <= 0 || $this->jitterPercent <= 0) {
             return $ttlSeconds;
@@ -38,7 +39,7 @@ final readonly class JitterCacheTtl
         return max(1, $ttlSeconds + $jitter);
     }
 
-    public function jitterForDuration(int $ttlSeconds) : Duration
+    public function jitterForDuration(int $ttlSeconds): Duration
     {
         $jittered = $this->addJitter(ttlSeconds: $ttlSeconds);
 

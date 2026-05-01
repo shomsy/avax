@@ -9,12 +9,12 @@ use Throwable;
 
 interface BusMiddleware
 {
-    public function process(object $message, Closure $next) : mixed;
+    public function process(object $message, Closure $next): mixed;
 }
 
 final readonly class BusLoggingMiddleware implements BusMiddleware
 {
-    public function process(object $message, Closure $next) : mixed
+    public function process(object $message, Closure $next): mixed
     {
         $class = $message::class;
         $start = microtime(true);
@@ -40,7 +40,7 @@ final readonly class BusValidationMiddleware implements BusMiddleware
         $this->validator = $validator;
     }
 
-    public function process(object $message, Closure $next) : mixed
+    public function process(object $message, Closure $next): mixed
     {
         if (method_exists($this->validator, 'validate')) {
             $this->validator->validate($message);
@@ -52,7 +52,7 @@ final readonly class BusValidationMiddleware implements BusMiddleware
 
 final readonly class BusTransactionMiddleware implements BusMiddleware
 {
-    public function process(object $message, Closure $next) : mixed
+    public function process(object $message, Closure $next): mixed
     {
         try {
             $result = $next($message);

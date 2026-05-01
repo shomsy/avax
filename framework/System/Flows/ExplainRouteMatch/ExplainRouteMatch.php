@@ -9,17 +9,18 @@ use Avax\Framework\System\Capabilities\RouteIntelligence\RouteAnalyzer;
 final readonly class ExplainRouteMatch
 {
     public function __construct(
-        private RouteAnalyzer $analyzer = new RouteAnalyzer,
-    ) {}
+        private RouteAnalyzer $analyzer = new RouteAnalyzer(),
+    ) {
+    }
 
-    public function loadRoutes(array $routes) : self
+    public function loadRoutes(array $routes): self
     {
         $this->analyzer->setRoutes($routes);
 
         return $this;
     }
 
-    public function explain(string $method, string $path) : string
+    public function explain(string $method, string $path): string
     {
         $matched = $this->analyzer->explainMatch($method, $path);
 

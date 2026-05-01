@@ -8,42 +8,42 @@ use Avax\Components\Application\FeatureFlags\System\Capabilities\Flags\InMemoryF
 
 interface FlagStoreInterface
 {
-    public function get(string $flag) : mixed;
+    public function get(string $flag): mixed;
 
-    public function set(string $flag, mixed $value) : void;
+    public function set(string $flag, mixed $value): void;
 
-    public function all() : array;
+    public function all(): array;
 }
 
 final class FeatureFlags
 {
     private static ?FlagStoreInterface $flagStore = null;
 
-    public static function setStore(FlagStoreInterface $flagStore) : void
+    public static function setStore(FlagStoreInterface $flagStore): void
     {
         self::$flagStore = $flagStore;
     }
 
-    public static function enable(string $flag) : void
+    public static function enable(string $flag): void
     {
         self::store()->set($flag, true);
     }
 
-    private static function store() : FlagStoreInterface
+    private static function store(): FlagStoreInterface
     {
         if (! self::$flagStore instanceof FlagStoreInterface) {
-            self::$flagStore = new InMemoryFlagStore;
+            self::$flagStore = new InMemoryFlagStore();
         }
 
         return self::$flagStore;
     }
 
-    public static function disable(string $flag) : void
+    public static function disable(string $flag): void
     {
         self::store()->set($flag, false);
     }
 
-    public static function enabled(string $flag) : bool
+    public static function enabled(string $flag): bool
     {
         $store = self::store();
         $value = $store->get($flag);
@@ -51,14 +51,14 @@ final class FeatureFlags
         return $value === true || $value === 'true' || $value === '1' || $value === 1;
     }
 
-    public static function variant(string $flag) : string
+    public static function variant(string $flag): string
     {
         $store = self::store();
 
         return (string) $store->get($flag);
     }
 
-    public static function all() : array
+    public static function all(): array
     {
         return self::store()->all();
     }

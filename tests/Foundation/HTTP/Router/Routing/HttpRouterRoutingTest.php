@@ -30,7 +30,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_optional_segment_with_value_is_captured() : void
+    public function test_optional_segment_with_value_is_captured(): void
     {
         $this->router->registerRoute(
             method: 'GET',
@@ -54,7 +54,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_optional_segment_is_accepted() : void
+    public function test_optional_segment_is_accepted(): void
     {
         $this->router->registerRoute(
             method: 'GET',
@@ -81,7 +81,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_optional_segment_without_value_falls_back_to_defaults() : void
+    public function test_optional_segment_without_value_falls_back_to_defaults(): void
     {
         $this->router->registerRoute(
             method: 'GET',
@@ -106,7 +106,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_wildcard_segment_captures_remainder() : void
+    public function test_wildcard_segment_captures_remainder(): void
     {
         $this->router->registerRoute(
             method: 'GET',
@@ -130,7 +130,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_wildcard_segment_captures_single_segment_too() : void
+    public function test_wildcard_segment_captures_single_segment_too(): void
     {
         $this->router->registerRoute(
             method: 'GET',
@@ -153,7 +153,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_fallback_route_is_returned_when_no_match() : void
+    public function test_fallback_route_is_returned_when_no_match(): void
     {
         $this->router->fallback(handler: 'fallback-handler');
 
@@ -173,7 +173,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_fallback_handles_different_http_method() : void
+    public function test_fallback_handles_different_http_method(): void
     {
         $this->router->fallback(handler: 'fallback-handler');
 
@@ -194,7 +194,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_domain_route_matches_only_when_host_matches() : void
+    public function test_domain_route_matches_only_when_host_matches(): void
     {
         $this->router->registerRoute(
             method: 'GET',
@@ -223,7 +223,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws DuplicateRouteException
      */
-    public function test_wildcard_must_be_final_segment() : void
+    public function test_wildcard_must_be_final_segment(): void
     {
         $this->expectException(exception: InvalidRouteException::class);
 
@@ -238,7 +238,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws DuplicateRouteException
      */
-    public function test_only_one_wildcard_allowed() : void
+    public function test_only_one_wildcard_allowed(): void
     {
         $this->expectException(exception: InvalidRouteException::class);
 
@@ -253,7 +253,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws DuplicateRouteException
      */
-    public function test_wildcard_must_be_named() : void
+    public function test_wildcard_must_be_named(): void
     {
         $this->expectException(exception: InvalidRouteException::class);
 
@@ -270,7 +270,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReflectionException
      */
-    public function test_constraint_failure_throws() : void
+    public function test_constraint_failure_throws(): void
     {
         $this->router->registerRoute(
             method: 'GET',
@@ -291,7 +291,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws DuplicateRouteException
      */
-    public function test_named_route_lookup() : void
+    public function test_named_route_lookup(): void
     {
         $this->router->registerRoute(
             method: 'GET',
@@ -310,7 +310,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws DuplicateRouteException
      * @throws DuplicateRouteException
      */
-    public function test_prefix_is_applied_and_cleared() : void
+    public function test_prefix_is_applied_and_cleared(): void
     {
         $this->router->setPrefix('/api');
         $this->router->registerRoute(
@@ -337,7 +337,7 @@ final class HttpRouterRoutingTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws DuplicateRouteException
      */
-    public function test_invalid_path_throws_exception() : void
+    public function test_invalid_path_throws_exception(): void
     {
         $this->expectException(exception: InvalidRouteException::class);
         $this->router->registerRoute(
@@ -348,15 +348,15 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
-        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger);
+        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger());
         $matcher         = $matcherRegistry->get(key: 'domain');
 
         $this->router = new HttpRequestRouter(
-            constraintValidator: new RouteConstraintValidator,
+            constraintValidator: new RouteConstraintValidator(),
             matcher            : $matcher,
-            logger             : new NullLogger,
+            logger             : new NullLogger(),
         );
     }
 }

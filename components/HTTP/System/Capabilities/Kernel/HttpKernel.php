@@ -25,14 +25,15 @@ final class HttpKernel implements HttpInterface
 
     public function __construct(
         private readonly RouterInterface $router,
-        private readonly BootHttpKernel      $boot = new BootHttpKernel,
-        private readonly TerminateHttpKernel $terminator = new TerminateHttpKernel,
-    ) {}
+        private readonly BootHttpKernel $boot = new BootHttpKernel(),
+        private readonly TerminateHttpKernel $terminator = new TerminateHttpKernel(),
+    ) {
+    }
 
     /**
      * Register middleware to be executed in order.
      */
-    public function use(MiddlewareInterface $middleware) : self
+    public function use(MiddlewareInterface $middleware): self
     {
         $this->middleware[] = $middleware;
 
@@ -42,7 +43,7 @@ final class HttpKernel implements HttpInterface
     /**
      * Boot the kernel (error handlers, service initialization).
      */
-    public function boot() : void
+    public function boot(): void
     {
         if ($this->booted) {
             return;
@@ -60,15 +61,15 @@ final class HttpKernel implements HttpInterface
      * 3. Dispatch to router
      * 4. Return response
      */
-    public function handle(RequestInterface $request) : ResponseInterface
+    public function handle(RequestInterface $request): ResponseInterface
     {
         $this->boot();
 
-        $handler = fn (RequestInterface $req) : ResponseInterface => $this->router->dispatch($req);
+        $handler = fn (RequestInterface $req): ResponseInterface => $this->router->dispatch($req);
 
         // Build middleware pipeline in reverse order so first middleware runs first
         $pipeline = $this->middleware;
-        while ( $mw = array_pop($pipeline) ) {
+        while ($mw = array_pop($pipeline)) {
             $handler = $this->wrapMiddleware($mw, $handler);
         }
 
@@ -78,7 +79,7 @@ final class HttpKernel implements HttpInterface
     /**
      * Terminate the request lifecycle (cleanup, logging, session write).
      */
-    public function terminate(RequestInterface $request, ResponseInterface $response) : void
+    public function terminate(RequestInterface $request, ResponseInterface $response): void
     {
         $this->terminator->terminate($request, $response);
     }
@@ -86,7 +87,7 @@ final class HttpKernel implements HttpInterface
     /**
      * Full request lifecycle: handle + terminate.
      */
-    public function run(RequestInterface $request) : ResponseInterface
+    public function run(RequestInterface $request): ResponseInterface
     {
         $response = $this->handle($request);
         $this->terminate($request, $response);
@@ -98,18 +99,17 @@ final class HttpKernel implements HttpInterface
      * Wrap a handler with middleware execution.
      *
      * @param callable(RequestInterface) : ResponseInterface $next
-     *
      * @return callable(RequestInterface) : ResponseInterface
      */
-    private function wrapMiddleware(MiddlewareInterface $middleware, callable $next) : callable
+    private function wrapMiddleware(MiddlewareInterface $middleware, callable $next): callable
     {
-        return static fn (RequestInterface $request) : ResponseInterface => $middleware->handle($request, $next);
+        return static fn (RequestInterface $request): ResponseInterface => $middleware->handle($request, $next);
     }
 
     /**
      * Get the registered router.
      */
-    public function router() : RouterInterface
+    public function router(): RouterInterface
     {
         return $this->router;
     }

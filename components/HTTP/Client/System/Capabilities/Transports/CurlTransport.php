@@ -30,9 +30,9 @@ final class CurlTransport implements HttpTransportInterface
      * @throws HttpRequestFailed if the request cannot be completed
      * @throws HttpTimeout if the request times out
      */
-    public function send(OutboundRequest $request) : ClientResponse
+    public function send(OutboundRequest $request): ClientResponse
     {
-        $options = $request->options ?? new RequestOptions;
+        $options = $request->options ?? new RequestOptions();
 
         $ch = curl_init();
         if ($ch === false) {
@@ -51,7 +51,7 @@ final class CurlTransport implements HttpTransportInterface
 
             // Get timing info from cURL
             $connectTimeMs = (curl_getinfo($ch, CURLINFO_CONNECT_TIME) ?: 0.0) * 1000;
-            $totalTimeMs = (curl_getinfo($ch, CURLINFO_TOTAL_TIME) ?: 0.0) * 1000;
+            $totalTimeMs   = (curl_getinfo($ch, CURLINFO_TOTAL_TIME) ?: 0.0)   * 1000;
             if ($totalTimeMs === 0.0) {
                 $totalTimeMs = ($endTime - $startTime) * 1000;
             }
@@ -70,7 +70,7 @@ final class CurlTransport implements HttpTransportInterface
             $effectiveUrl  = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL) ?: null;
             $redirectCount = curl_getinfo($ch, CURLINFO_REDIRECT_COUNT) ?: 0;
 
-            $headers = $this->parseHeaders($headerStr);
+            $headers      = $this->parseHeaders($headerStr);
             $reasonPhrase = curl_getinfo($ch, CURLINFO_HTTP_VERSION) !== false
                 ? $this->getReasonPhrase($statusCode)
                 : '';
@@ -107,7 +107,7 @@ final class CurlTransport implements HttpTransportInterface
         CurlHandle $ch,
         OutboundRequest $request,
         RequestOptions $options,
-    ) : void {
+    ): void {
         // Basic options
         curl_setopt_array($ch, [
             CURLOPT_URL               => $request->url,
@@ -173,7 +173,7 @@ final class CurlTransport implements HttpTransportInterface
     /**
      * Normalize the request body to a string.
      */
-    private function normalizeBody(mixed $body) : string
+    private function normalizeBody(mixed $body): string
     {
         if ($body === null) {
             return '';
@@ -197,11 +197,11 @@ final class CurlTransport implements HttpTransportInterface
      * @throws HttpRequestFailed for other errors
      */
     private function handleCurlError(
-        CurlHandle      $ch,
-        int             $errno,
+        CurlHandle $ch,
+        int $errno,
         string $error,
         OutboundRequest $request,
-    ) : never {
+    ): never {
         $url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL) ?: $request->url;
 
         // Timeout errors
@@ -240,8 +240,8 @@ final class CurlTransport implements HttpTransportInterface
 
             $parts = explode(':', $line, 2);
             if (count($parts) === 2) {
-                $name  = trim($parts[0]);
-                $value = trim($parts[1]);
+                $name             = trim($parts[0]);
+                $value            = trim($parts[1]);
                 $headers[$name][] = $value;
             }
         }
@@ -252,27 +252,27 @@ final class CurlTransport implements HttpTransportInterface
     /**
      * Get the standard reason phrase for a status code.
      */
-    private function getReasonPhrase(int $statusCode) : string
+    private function getReasonPhrase(int $statusCode): string
     {
         return match ($statusCode) {
-            200 => 'OK',
-            201 => 'Created',
-            204 => 'No Content',
-            301 => 'Moved Permanently',
-            302 => 'Found',
-            304 => 'Not Modified',
-            400 => 'Bad Request',
-            401 => 'Unauthorized',
-            403 => 'Forbidden',
-            404 => 'Not Found',
-            405 => 'Method Not Allowed',
-            408 => 'Request Timeout',
-            422 => 'Unprocessable Entity',
-            429 => 'Too Many Requests',
-            500 => 'Internal Server Error',
-            502 => 'Bad Gateway',
-            503 => 'Service Unavailable',
-            504 => 'Gateway Timeout',
+            200     => 'OK',
+            201     => 'Created',
+            204     => 'No Content',
+            301     => 'Moved Permanently',
+            302     => 'Found',
+            304     => 'Not Modified',
+            400     => 'Bad Request',
+            401     => 'Unauthorized',
+            403     => 'Forbidden',
+            404     => 'Not Found',
+            405     => 'Method Not Allowed',
+            408     => 'Request Timeout',
+            422     => 'Unprocessable Entity',
+            429     => 'Too Many Requests',
+            500     => 'Internal Server Error',
+            502     => 'Bad Gateway',
+            503     => 'Service Unavailable',
+            504     => 'Gateway Timeout',
             default => "Status {$statusCode}",
         };
     }
@@ -280,7 +280,7 @@ final class CurlTransport implements HttpTransportInterface
     /**
      * Build a PSR-7 request from the outbound request.
      */
-    public function buildPsr7Request(OutboundRequest $request) : Request
+    public function buildPsr7Request(OutboundRequest $request): Request
     {
         $body = $this->normalizeBody($request->body);
 

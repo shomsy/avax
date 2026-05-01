@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 return [
-    '*'          => [
+    '*'         => [
         'max_time_ratio_vs_peer' => 1.75,
         'max_peak_ratio_vs_peer' => 2.00,
     ],
-    'cold_boot'  => [
+    'cold_boot' => [
         'max_time_ratio_vs_peer' => 1.50,
         'max_peak_ratio_vs_peer' => 2.00,
     ],
-    'warm_boot'  => [
+    'warm_boot' => [
         'max_time_ratio_vs_peer' => 1.50,
         'max_peak_ratio_vs_peer' => 2.00,
     ],

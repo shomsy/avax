@@ -12,10 +12,10 @@ interface FacadeInterface
     /**
      * Get the accessor name for this facade.
      */
-    public static function getFacadeAccessor() : string;
+    public static function getFacadeAccessor(): string;
 
     /**
      * Clear the resolved instance (for testing).
      */
-    public static function clearResolvedInstance() : void;
+    public static function clearResolvedInstance(): void;
 }

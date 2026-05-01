@@ -19,56 +19,56 @@ final class Cache
 {
     private static ?CacheContract $cacheContract = null;
 
-    public static function use(CacheContract $cacheContract) : void
+    public static function use(CacheContract $cacheContract): void
     {
         self::$cacheContract = $cacheContract;
     }
 
-    public static function reset() : void
+    public static function reset(): void
     {
         self::$cacheContract = null;
     }
 
-    public static function put(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public static function put(string $key, mixed $value, int|DateInterval|null $ttl = null): bool
     {
         return self::set(key: $key, value: $value, ttl: $ttl);
     }
 
-    public static function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public static function set(string $key, mixed $value, int|DateInterval|null $ttl = null): bool
     {
         return self::default()->set(key: $key, value: $value, ttl: $ttl);
     }
 
-    private static function default() : CacheContract
+    private static function default(): CacheContract
     {
         if (! self::$cacheContract instanceof CacheContract) {
-            throw new NotConfigured;
+            throw new NotConfigured();
         }
 
         return self::$cacheContract;
     }
 
-    public static function remember(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
+    public static function remember(string $key, int|DateInterval|null $ttl, callable $loader): mixed
     {
         return self::default()->remember(key: $key, ttl: $ttl, loader: $loader);
     }
 
-    public static function forget(string $key) : bool
+    public static function forget(string $key): bool
     {
         return self::default()->delete(key: $key);
     }
 
-    public static function clear() : bool
+    public static function clear(): bool
     {
         return self::default()->clear();
     }
 
-    public static function has(string $key) : bool
+    public static function has(string $key): bool
     {
         return self::default()->has(key: $key);
     }
 
-    public static function read(CacheReadTarget|string $target, mixed $default = null) : mixed
+    public static function read(CacheReadTarget|string $target, mixed $default = null): mixed
     {
         if (is_string($target)) {
             return self::get(key: $target, default: $default);
@@ -89,12 +89,12 @@ final class Cache
         throw new InvalidTarget(targetClass: $target::class);
     }
 
-    public static function get(string $key, mixed $default = null) : mixed
+    public static function get(string $key, mixed $default = null): mixed
     {
         return self::default()->get(key: $key, default: $default);
     }
 
-    public static function store(?string $name = null) : CacheContract
+    public static function store(?string $name = null): CacheContract
     {
         if ($name !== null) {
             throw new NotConfigured(message: 'Named store requires RegisterCacheDependencies');

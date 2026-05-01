@@ -239,7 +239,7 @@ final class SagaTest extends TestCase
 
     public function test_resume_from_stored_state() : void
     {
-        $store = new InMemorySagaStore;
+        $store = new InMemorySagaStore();
         $workflow = new Workflow($store);
 
         $executionCount = 0;
@@ -270,7 +270,7 @@ final class SagaTest extends TestCase
 
     public function test_workflow_start_and_resume() : void
     {
-        $store = new InMemorySagaStore;
+        $store = new InMemorySagaStore();
         $workflow = new Workflow($store);
 
         $saga = Saga::define('workflow-test')
@@ -288,7 +288,7 @@ final class SagaTest extends TestCase
 
     public function test_workflow_cancel() : void
     {
-        $store = new InMemorySagaStore;
+        $store = new InMemorySagaStore();
         $compensated = false;
 
         $saga = Saga::define('cancellable-saga')
@@ -316,7 +316,7 @@ final class SagaTest extends TestCase
 
     public function test_resume_not_found_saga() : void
     {
-        $workflow = new Workflow(new InMemorySagaStore);
+        $workflow = new Workflow(new InMemorySagaStore());
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Saga with ID "nonexistent" not found');
@@ -338,7 +338,7 @@ final class SagaTest extends TestCase
 
     public function test_idempotency_store_prevents_duplicate_execution() : void
     {
-        $store = new IdempotencyStore;
+        $store = new IdempotencyStore();
         $key   = IdempotencyKey::generate('saga-1', 'step-a', '0');
 
         $this->assertFalse($store->hasExecuted($key));
@@ -361,7 +361,7 @@ final class SagaTest extends TestCase
             },
         );
 
-        $runner = new StepRunner;
+        $runner = new StepRunner();
         $key    = IdempotencyKey::generate('saga-1', 'counting-step', '0');
 
         $result1 = $runner->execute($step, [], $key);
@@ -382,7 +382,7 @@ final class SagaTest extends TestCase
             action: static fn (array $ctx) => ['processed' => true, 'input' => $ctx['input'] ?? null],
         );
 
-        $runner = new StepRunner;
+        $runner = new StepRunner();
         $key    = IdempotencyKey::generate('saga-1', 'test-step', '0');
 
         $result = $runner->execute($step, ['input' => 'data'], $key);
@@ -458,7 +458,7 @@ final class SagaTest extends TestCase
             }),
         ];
 
-        $executor = new CompensationExecutor;
+        $executor = new CompensationExecutor();
         $result   = $executor->execute($steps, ['a', 'b', 'c'], []);
 
         $this->assertTrue($result->success);
@@ -481,7 +481,7 @@ final class SagaTest extends TestCase
             }),
         ];
 
-        $executor = new CompensationExecutor;
+        $executor = new CompensationExecutor();
         $result   = $executor->execute($steps, ['a', 'b', 'c'], []);
 
         $this->assertFalse($result->success);
@@ -496,7 +496,7 @@ final class SagaTest extends TestCase
             new SagaStep('a', static fn () => [], static fn () => null),
         ];
 
-        $executor = new CompensationExecutor;
+        $executor = new CompensationExecutor();
         $result   = $executor->execute($steps, [], []);
 
         $this->assertTrue($result->success);
@@ -518,7 +518,7 @@ final class SagaTest extends TestCase
 
     public function test_in_memory_saga_store() : void
     {
-        $store = new InMemorySagaStore;
+        $store = new InMemorySagaStore();
 
         $saga = Saga::define('test-saga')
             ->step('step-one', static fn () => []);
@@ -535,7 +535,7 @@ final class SagaTest extends TestCase
 
     public function test_in_memory_saga_store_update_status() : void
     {
-        $store = new InMemorySagaStore;
+        $store = new InMemorySagaStore();
 
         $saga = Saga::define('test-saga')
             ->step('step-one', static fn () => []);
@@ -551,7 +551,7 @@ final class SagaTest extends TestCase
 
     public function test_in_memory_saga_store_delete() : void
     {
-        $store = new InMemorySagaStore;
+        $store = new InMemorySagaStore();
 
         $saga = Saga::define('test-saga')
             ->step('step-one', static fn () => []);
@@ -649,7 +649,7 @@ final class SagaTest extends TestCase
 
     public function test_workflow_start() : void
     {
-        $store = new InMemorySagaStore;
+        $store = new InMemorySagaStore();
         $workflow = new Workflow($store);
 
         // Define saga and save it to store first
@@ -667,7 +667,7 @@ final class SagaTest extends TestCase
 
     public function test_workflow_with_custom_store() : void
     {
-        $store = new InMemorySagaStore;
+        $store = new InMemorySagaStore();
         $workflow = new Workflow($store);
 
         $this->assertSame($store, $workflow->store());

@@ -12,18 +12,17 @@ final class CompiledCacheManifest
     private array $entries = [];
 
     public function __construct(
-        ?CompiledCacheManifestEntry $entry = null,
-    )
-    {
+        CompiledCacheManifestEntry $entry = null,
+    ) {
         if ($entry instanceof CompiledCacheManifestEntry) {
             $this->entries[$entry->name->toString()] = $entry;
         }
     }
 
-    public static function load(string $path) : self
+    public static function load(string $path): self
     {
         if (! file_exists($path)) {
-            return new self;
+            return new self();
         }
 
         $data = require $path;
@@ -32,7 +31,7 @@ final class CompiledCacheManifest
             throw new RuntimeException(message: 'Invalid manifest file');
         }
 
-        $manifest = new self;
+        $manifest = new self();
 
         foreach ($data as $entryData) {
             $entry = CompiledCacheManifestEntry::fromArray(data: $entryData);
@@ -42,27 +41,27 @@ final class CompiledCacheManifest
         return $manifest;
     }
 
-    public function set(CompiledCacheManifestEntry $compiledCacheManifestEntry) : void
+    public function set(CompiledCacheManifestEntry $compiledCacheManifestEntry): void
     {
         $this->entries[$compiledCacheManifestEntry->name->toString()] = $compiledCacheManifestEntry;
     }
 
-    public static function empty() : self
+    public static function empty(): self
     {
-        return new self;
+        return new self();
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->entries[$name]);
     }
 
-    public function remove(string $name) : void
+    public function remove(string $name): void
     {
         unset($this->entries[$name]);
     }
 
-    public function isFresh(string $name, CompiledCacheSources $compiledCacheSources) : bool
+    public function isFresh(string $name, CompiledCacheSources $compiledCacheSources): bool
     {
         $entry = $this->get(name: $name);
 
@@ -73,25 +72,25 @@ final class CompiledCacheManifest
         return $entry->sourceFingerprint === $compiledCacheSources->fingerprint();
     }
 
-    public function get(string $name) : ?CompiledCacheManifestEntry
+    public function get(string $name): ?CompiledCacheManifestEntry
     {
         return $this->entries[$name] ?? null;
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->entries;
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->entries);
     }
 
-    public function save(string $path) : void
+    public function save(string $path): void
     {
         $entries = array_map(
-            static fn (CompiledCacheManifestEntry $compiledCacheManifestEntry) : array => $compiledCacheManifestEntry->toArray(),
+            static fn (CompiledCacheManifestEntry $compiledCacheManifestEntry): array => $compiledCacheManifestEntry->toArray(),
             $this->entries,
         );
 

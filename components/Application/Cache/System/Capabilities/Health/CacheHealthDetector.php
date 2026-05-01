@@ -25,19 +25,20 @@ final class CacheHealthDetector
     private array $statusCache = [];
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock,
+        private readonly Clock $clock = new SystemClock(),
         private readonly int $latencyThresholdMs = 100,
         private readonly float $memoryUsageThreshold = 90.0,
         private readonly float $hitRateThreshold = 0.5,
         private readonly int $statusCacheTtlSeconds = 10,
-    ) {}
+    ) {
+    }
 
     /**
      * Detect health issues for a cache store.
      *
      * Runs all health checks and returns a comprehensive status.
      */
-    public function detect(CacheStore $cacheStore, string $storeId = 'default') : CacheHealthStatus
+    public function detect(CacheStore $cacheStore, string $storeId = 'default'): CacheHealthStatus
     {
         $now = $this->clock->now();
 
@@ -59,7 +60,7 @@ final class CacheHealthDetector
 
         // Run additional checks
         $latencyStatus = $this->checkLatency($cacheStore);
-        $memoryStatus = $this->checkMemory();
+        $memoryStatus  = $this->checkMemory();
         $hitRateStatus = $this->checkHitRate();
 
         // Combine results - use the most severe status
@@ -78,14 +79,14 @@ final class CacheHealthDetector
     /**
      * Get cached health status if still valid.
      */
-    private function getCachedStatus(string $storeId, Timestamp $timestamp) : ?CacheHealthStatus
+    private function getCachedStatus(string $storeId, Timestamp $timestamp): ?CacheHealthStatus
     {
         if (! isset($this->statusCache[$storeId])) {
             return null;
         }
 
         $status = $this->statusCache[$storeId];
-        $age = $timestamp->difference($status->lastCheck)->seconds;
+        $age    = $timestamp->difference($status->lastCheck)->seconds;
 
         if ($age > $this->statusCacheTtlSeconds) {
             unset($this->statusCache[$storeId]);
@@ -99,9 +100,9 @@ final class CacheHealthDetector
     /**
      * Check if the cache store is connected.
      */
-    public function checkConnection(CacheStore $cacheStore) : CacheHealthStatus
+    public function checkConnection(CacheStore $cacheStore): CacheHealthStatus
     {
-        $now = $this->clock->now();
+        $now       = $this->clock->now();
         $startTime = microtime(true);
 
         try {
@@ -110,7 +111,7 @@ final class CacheHealthDetector
                 '__health_check_connection__',
             );
 
-            $result = $cacheStore->read($cacheKey, $this->clock);
+            $result    = $cacheStore->read($cacheKey, $this->clock);
             $latencyMs = (int) ((microtime(true) - $startTime) * 1000);
 
             // If we got here, the connection is working
@@ -132,7 +133,7 @@ final class CacheHealthDetector
     /**
      * Cache a health status.
      */
-    private function cacheStatus(string $storeId, CacheHealthStatus $cacheHealthStatus) : void
+    private function cacheStatus(string $storeId, CacheHealthStatus $cacheHealthStatus): void
     {
         $this->statusCache[$storeId] = $cacheHealthStatus;
     }
@@ -142,11 +143,11 @@ final class CacheHealthDetector
      *
      * Performs multiple read/write operations and measures response time.
      */
-    public function checkLatency(CacheStore $cacheStore, int $samples = 5) : CacheHealthStatus
+    public function checkLatency(CacheStore $cacheStore, int $samples = 5): CacheHealthStatus
     {
-        $now    = $this->clock->now();
+        $now       = $this->clock->now();
         $latencies = [];
-        $errors = [];
+        $errors    = [];
 
         for ($i = 0; $i < $samples; $i++) {
             $testKey = new CacheKey(
@@ -169,7 +170,7 @@ final class CacheHealthDetector
                 // Delete test
                 $cacheStore->forget($testKey);
 
-                $latency = (int) ((microtime(true) - $startTime) * 1000);
+                $latency     = (int) ((microtime(true) - $startTime) * 1000);
                 $latencies[] = $latency;
             } catch (Throwable $e) {
                 $errors[] = $e->getMessage();
@@ -205,13 +206,12 @@ final class CacheHealthDetector
      */
     public static function create(
         ?Clock $clock = null,
-        int    $latencyThresholdMs = 100,
+        int $latencyThresholdMs = 100,
         float $memoryUsageThreshold = 90.0,
         float $hitRateThreshold = 0.5,
-    ) : self
-    {
+    ): self {
         return new self(
-            clock               : $clock ?? new SystemClock,
+            clock               : $clock ?? new SystemClock(),
             latencyThresholdMs  : $latencyThresholdMs,
             memoryUsageThreshold: $memoryUsageThreshold,
             hitRateThreshold    : $hitRateThreshold,
@@ -224,7 +224,7 @@ final class CacheHealthDetector
      * Note: This requires the cache store to support memory stats.
      * For stores that don't support it, returns a status with 0 memory usage.
      */
-    public function checkMemory() : CacheHealthStatus
+    public function checkMemory(): CacheHealthStatus
     {
         $now = $this->clock->now();
 
@@ -233,17 +233,17 @@ final class CacheHealthDetector
             $memoryInfo = $this->getMemoryInfo();
 
             $usagePercent = $memoryInfo['usagePercent'];
-            $memoryUsed = $memoryInfo['used'];
-            $memoryLimit = $memoryInfo['limit'];
+            $memoryUsed   = $memoryInfo['used'];
+            $memoryLimit  = $memoryInfo['limit'];
 
             if ($usagePercent > $this->memoryUsageThreshold) {
                 return CacheHealthStatus::degraded(
                     error      : sprintf(
-                                     'High memory usage: %.1f%% (%d / %d bytes)',
-                                     $usagePercent,
-                                     $memoryUsed,
-                                     $memoryLimit,
-                                 ),
+                        'High memory usage: %.1f%% (%d / %d bytes)',
+                        $usagePercent,
+                        $memoryUsed,
+                        $memoryLimit,
+                    ),
                     memoryUsage: $usagePercent,
                     memoryLimit: $memoryLimit,
                     keyCount   : $memoryInfo['keyCount'],
@@ -273,16 +273,16 @@ final class CacheHealthDetector
      *
      * @return array{used: int, limit: int, usagePercent: float, keyCount: int}
      */
-    private function getMemoryInfo() : array
+    private function getMemoryInfo(): array
     {
-        $used = memory_get_usage(true);
+        $used  = memory_get_usage(true);
         $limit = $this->memoryLimitBytes();
 
         return [
-            'used'     => $used,
-            'limit'    => $limit,
+            'used'         => $used,
+            'limit'        => $limit,
             'usagePercent' => $limit > 0 ? ($used / $limit) * 100 : 0.0,
-            'keyCount' => 0,
+            'keyCount'     => 0,
         ];
     }
 
@@ -292,7 +292,7 @@ final class CacheHealthDetector
      * Note: This requires the cache store to support hit/miss stats.
      * For stores that don't support it, returns a status with default hit rate.
      */
-    public function checkHitRate() : CacheHealthStatus
+    public function checkHitRate(): CacheHealthStatus
     {
         $now = $this->clock->now();
 
@@ -310,10 +310,10 @@ final class CacheHealthDetector
             if ($hitRate < $this->hitRateThreshold) {
                 return CacheHealthStatus::degraded(
                     error    : sprintf(
-                                   'Low hit rate: %.1f%% (threshold: %.1f%%)',
-                                   $hitRate * 100,
-                                   $this->hitRateThreshold * 100,
-                               ),
+                        'Low hit rate: %.1f%% (threshold: %.1f%%)',
+                        $hitRate                * 100,
+                        $this->hitRateThreshold * 100,
+                    ),
                     hitRate  : $hitRate,
                     lastCheck: $now,
                 );
@@ -337,12 +337,12 @@ final class CacheHealthDetector
      *
      * Override this method in a subclass to support specific cache backends.
      */
-    private function getHitRate() : ?float
+    private function getHitRate(): ?float
     {
         return $this->hitRateThreshold >= 0.0 ? null : 1.0;
     }
 
-    private function memoryLimitBytes() : int
+    private function memoryLimitBytes(): int
     {
         $memoryLimit = ini_get('memory_limit');
 
@@ -350,13 +350,13 @@ final class CacheHealthDetector
             return 0;
         }
 
-        $unit = strtolower(substr($memoryLimit, -1));
+        $unit  = strtolower(substr($memoryLimit, -1));
         $value = (int) $memoryLimit;
 
         return match ($unit) {
-            'g' => $value * 1024 * 1024 * 1024,
-            'm' => $value * 1024 * 1024,
-            'k' => $value * 1024,
+            'g'     => $value * 1024 * 1024 * 1024,
+            'm'     => $value * 1024 * 1024,
+            'k'     => $value * 1024,
             default => $value,
         };
     }
@@ -369,8 +369,7 @@ final class CacheHealthDetector
         CacheHealthStatus $latency,
         CacheHealthStatus $memory,
         CacheHealthStatus $hitRate,
-    ) : CacheHealthStatus
-    {
+    ): CacheHealthStatus {
         // If not connected, return connection status
         if (! $connection->connected) {
             return $connection;
@@ -421,7 +420,7 @@ final class CacheHealthDetector
     /**
      * Clear the cached status for a store.
      */
-    public function clearCachedStatus(string $storeId) : void
+    public function clearCachedStatus(string $storeId): void
     {
         unset($this->statusCache[$storeId]);
     }
@@ -429,7 +428,7 @@ final class CacheHealthDetector
     /**
      * Clear all cached statuses.
      */
-    public function clearAllCachedStatuses() : void
+    public function clearAllCachedStatuses(): void
     {
         $this->statusCache = [];
     }

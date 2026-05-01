@@ -21,12 +21,13 @@ final readonly class EmailRule
     public function __construct(
         private bool $requireDnsValidation = false,
         private string $message = 'Field "{property}" must be a valid email address.',
-    ) {}
+    ) {
+    }
 
     /**
      * @throws InvalidArgumentException if email is invalid
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if ($value === null || $value === '') {
             return;

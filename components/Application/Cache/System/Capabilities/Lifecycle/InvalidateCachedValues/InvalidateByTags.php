@@ -11,10 +11,10 @@ interface InvalidateByTags
     /**
      * @param iterable<CacheTag> $tags
      */
-    public function invalidateByTags(iterable $tags) : int;
+    public function invalidateByTags(iterable $tags): int;
 
     /**
      * @param iterable<CacheTag> $tags
      */
-    public function areAllTagsInvalidated(iterable $tags) : bool;
+    public function areAllTagsInvalidated(iterable $tags): bool;
 }

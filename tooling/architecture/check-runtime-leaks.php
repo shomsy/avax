@@ -6,9 +6,9 @@ declare(strict_types=1);
  * Check for runtime leaks.
  * Ensures Swoole, FrankenPHP, etc. do not leak outside Runtime adapters.
  */
-$root         = dirname(__DIR__, 2);
+$root            = dirname(__DIR__, 2);
 $forbiddenTokens = ['FrankenPhp', 'RoadRunner', 'Swoole', 'Workerman', 'ReactPHP', 'Amp'];
-$allowedPaths = [
+$allowedPaths    = [
     '/framework/System/Capabilities/Runtime/Adapters/',
     '/components/Runtime/',
     '/components/RuntimeSafety/',

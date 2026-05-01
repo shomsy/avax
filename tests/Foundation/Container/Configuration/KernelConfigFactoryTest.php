@@ -25,17 +25,17 @@ use components\Container\DependencyInjection\Configuration\KernelConfigFactory;
 
 final class KernelConfigFactoryTest extends TestCase
 {
-    public function test_debug_true_config() : void
+    public function test_debug_true_config(): void
     {
         $config = $this->makeFactory()->create(
             engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
-            scopes          : new ScopeManager(registry: new ScopeRegistry),
+            scopes          : new ScopeManager(registry: new ScopeRegistry()),
             prototypeFactory: $this->makePrototypeFactory(),
             timeline        : $this->createMock(ResolutionTimeline::class),
-            metrics         : new CollectMetrics,
-            policy          : new ContainerPolicy,
+            metrics         : new CollectMetrics(),
+            policy          : new ContainerPolicy(),
             debug           : true,
         );
 
@@ -44,48 +44,48 @@ final class KernelConfigFactoryTest extends TestCase
         $this->assertTrue(condition: $config->devMode);
     }
 
-    private function makeFactory() : KernelConfigFactory
+    private function makeFactory(): KernelConfigFactory
     {
-        return new KernelConfigFactory;
+        return new KernelConfigFactory();
     }
 
-    private function makeInjector() : InjectDependencies
+    private function makeInjector(): InjectDependencies
     {
-        $resolver = new DependencyResolver;
+        $resolver = new DependencyResolver();
 
         return new InjectDependencies(
             servicePrototypeFactory: $this->makePrototypeFactory(),
             propertyInjector       : new PropertyInjector(container: null),
             methodInjector         : new MethodInjector(
-                                         parameterResolver: new ResolveMethodParameters(resolver: $resolver),
-                                     ),
+                parameterResolver: new ResolveMethodParameters(resolver: $resolver),
+            ),
         );
     }
 
-    private function makePrototypeFactory() : ServicePrototypeFactory
+    private function makePrototypeFactory(): ServicePrototypeFactory
     {
         return new ServicePrototypeFactory(
             cache   : new FilePrototypeCache(directory: sys_get_temp_dir()),
-            analyzer: new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer),
+            analyzer: new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer()),
         );
     }
 
-    private function makeInvoker() : InvokeAction
+    private function makeInvoker(): InvokeAction
     {
-        return new InvokeAction(container: null, resolver: new DependencyResolver);
+        return new InvokeAction(container: null, resolver: new DependencyResolver());
     }
 
-    public function test_debug_false_config() : void
+    public function test_debug_false_config(): void
     {
         $config = $this->makeFactory()->create(
             engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
-            scopes          : new ScopeManager(registry: new ScopeRegistry),
+            scopes          : new ScopeManager(registry: new ScopeRegistry()),
             prototypeFactory: $this->makePrototypeFactory(),
             timeline        : $this->createMock(ResolutionTimeline::class),
-            metrics         : new CollectMetrics,
-            policy          : new ContainerPolicy,
+            metrics         : new CollectMetrics(),
+            policy          : new ContainerPolicy(),
             debug           : false,
         );
 
@@ -94,17 +94,17 @@ final class KernelConfigFactoryTest extends TestCase
         $this->assertFalse(condition: $config->devMode);
     }
 
-    public function test_override_honored() : void
+    public function test_override_honored(): void
     {
         $config = $this->makeFactory()->create(
             engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
-            scopes          : new ScopeManager(registry: new ScopeRegistry),
+            scopes          : new ScopeManager(registry: new ScopeRegistry()),
             prototypeFactory: $this->makePrototypeFactory(),
             timeline        : $this->createMock(ResolutionTimeline::class),
-            metrics         : new CollectMetrics,
-            policy          : new ContainerPolicy,
+            metrics         : new CollectMetrics(),
+            policy          : new ContainerPolicy(),
             debug           : false,
             strictMode      : true,
             autoDefine      : false,

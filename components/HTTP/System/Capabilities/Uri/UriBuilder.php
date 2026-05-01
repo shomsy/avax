@@ -36,13 +36,13 @@ final class UriBuilder implements Stringable
             throw new InvalidArgumentException("Invalid URI: {$uri}");
         }
 
-        $builder = new self;
-        $builder->scheme = $parts['scheme'] ?? '';
-        $builder->host = $parts['host'] ?? '';
-        $builder->path = $parts['path'] ?? '';
-        $builder->port = $parts['port'] ?? null;
+        $builder           = new self();
+        $builder->scheme   = $parts['scheme'] ?? '';
+        $builder->host     = $parts['host'] ?? '';
+        $builder->path     = $parts['path'] ?? '';
+        $builder->port     = $parts['port'] ?? null;
         $builder->fragment = $parts['fragment'] ?? '';
-        $builder->user = $parts['user'] ?? '';
+        $builder->user     = $parts['user'] ?? '';
         $builder->password = $parts['pass'] ?? null;
 
         if (isset($parts['query'])) {
@@ -124,7 +124,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withUserInfo(string $user, ?string $password = null) : self
+    public function withUserInfo(string $user, string $password = null) : self
     {
         $clone       = clone $this;
         $clone->user = $user;

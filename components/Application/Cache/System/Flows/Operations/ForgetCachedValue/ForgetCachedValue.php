@@ -14,9 +14,10 @@ final readonly class ForgetCachedValue
     public function __construct(
         private CacheStore $cacheStore,
         private ?CacheMetrics $cacheMetrics = null,
-    ) {}
+    ) {
+    }
 
-    public function forgetMany(iterable $keys) : int
+    public function forgetMany(iterable $keys): int
     {
         $count = 0;
 
@@ -29,7 +30,7 @@ final readonly class ForgetCachedValue
         return $count;
     }
 
-    public function forget(CacheKey $cacheKey) : bool
+    public function forget(CacheKey $cacheKey): bool
     {
         $startTime = hrtime(true);
 
@@ -47,13 +48,13 @@ final readonly class ForgetCachedValue
         }
     }
 
-    private function recordLatency(int $startTime) : void
+    private function recordLatency(int $startTime): void
     {
         if (! $this->cacheMetrics instanceof CacheMetrics) {
             return;
         }
 
-        $endTime = hrtime(true);
+        $endTime             = hrtime(true);
         $latencyMicroseconds = (int) (($endTime - $startTime) / 1000);
 
         $this->cacheMetrics->recordLatency(microseconds: $latencyMicroseconds);

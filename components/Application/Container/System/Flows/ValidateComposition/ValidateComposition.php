@@ -15,7 +15,7 @@ final readonly class ValidateComposition
     public function __construct(private ResolveDependency $resolveDependency) {}
 
     /**
-     * @param list<string>         $serviceIds
+     * @param list<string> $serviceIds
      * @param array<string, mixed> $context
      *
      * @return list<string>

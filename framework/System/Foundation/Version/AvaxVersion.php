@@ -16,17 +16,17 @@ final class AvaxVersion
 
     public const NAME = 'Avax Runtime-Agnostic Framework';
 
-    public static function version() : string
+    public static function version(): string
     {
         return self::VERSION;
     }
 
-    public static function name() : string
+    public static function name(): string
     {
         return self::NAME;
     }
 
-    public static function isCompatible(string $constraint) : bool
+    public static function isCompatible(string $constraint): bool
     {
         return version_compare(self::VERSION, $constraint, '>=');
     }

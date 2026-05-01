@@ -17,18 +17,17 @@ final readonly class CacheHealthStatus
     public Timestamp $timestamp;
 
     public function __construct(
-        public bool    $connected,
-        public int     $latency,
-        public float   $memoryUsage,
-        public float   $hitRate,
+        public bool $connected,
+        public int $latency,
+        public float $memoryUsage,
+        public float $hitRate,
         public Timestamp $timestamp,
         public ?string $error = null,
-        public int     $memoryLimit = 0,
-        public int     $keyCount = 0,
-        public int     $connectionCount = 0,
+        public int $memoryLimit = 0,
+        public int $keyCount = 0,
+        public int $connectionCount = 0,
         public string $version = '',
-    )
-    {
+    ) {
         $this->timestamp = $timestamp;
     }
 
@@ -36,17 +35,16 @@ final readonly class CacheHealthStatus
      * Create a healthy status.
      */
     public static function healthy(
-        int        $latency = 0,
-        float      $memoryUsage = 0.0,
-        float      $hitRate = 1.0,
+        int $latency = 0,
+        float $memoryUsage = 0.0,
+        float $hitRate = 1.0,
         ?Timestamp $lastCheck = null,
         ?Timestamp $timestamp = null,
-        int        $memoryLimit = 0,
-        int        $keyCount = 0,
-        int        $connectionCount = 0,
-        string     $version = '',
-    ) : self
-    {
+        int $memoryLimit = 0,
+        int $keyCount = 0,
+        int $connectionCount = 0,
+        string $version = '',
+    ): self {
         return new self(
             connected      : true,
             latency        : $latency,
@@ -65,14 +63,13 @@ final readonly class CacheHealthStatus
      * Create an unhealthy status with an error.
      */
     public static function unhealthy(
-        string     $error,
-        int        $latency = 0,
-        float      $memoryUsage = 0.0,
-        float      $hitRate = 0.0,
+        string $error,
+        int $latency = 0,
+        float $memoryUsage = 0.0,
+        float $hitRate = 0.0,
         ?Timestamp $lastCheck = null,
         ?Timestamp $timestamp = null,
-    ) : self
-    {
+    ): self {
         return new self(
             connected  : false,
             latency    : $latency,
@@ -87,18 +84,17 @@ final readonly class CacheHealthStatus
      * Create a degraded status (connected but with issues).
      */
     public static function degraded(
-        string     $error,
-        int        $latency = 0,
-        float      $memoryUsage = 0.0,
-        float      $hitRate = 0.5,
+        string $error,
+        int $latency = 0,
+        float $memoryUsage = 0.0,
+        float $hitRate = 0.5,
         ?Timestamp $lastCheck = null,
         ?Timestamp $timestamp = null,
-        int        $memoryLimit = 0,
-        int        $keyCount = 0,
-        int        $connectionCount = 0,
-        string     $version = '',
-    ) : self
-    {
+        int $memoryLimit = 0,
+        int $keyCount = 0,
+        int $connectionCount = 0,
+        string $version = '',
+    ): self {
         return new self(
             connected  : true,
             latency    : $latency,
@@ -122,13 +118,12 @@ final readonly class CacheHealthStatus
         int $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
         float $minHitRate = 0.5,
-    ) : bool
-    {
+    ): bool {
         if (! $this->connected) {
             return false;
         }
 
-        return $this->latency > $maxLatencyMs
+        return $this->latency     > $maxLatencyMs
             || $this->memoryUsage > $maxMemoryUsagePercent
             || $this->hitRate < $minHitRate;
     }
@@ -136,7 +131,7 @@ final readonly class CacheHealthStatus
     /**
      * Check if memory usage is critically high (above 95%).
      */
-    public function isMemoryCritical() : bool
+    public function isMemoryCritical(): bool
     {
         return $this->getMemoryUsagePercent() > 95.0;
     }
@@ -144,7 +139,7 @@ final readonly class CacheHealthStatus
     /**
      * Get memory usage as a percentage.
      */
-    public function getMemoryUsagePercent() : float
+    public function getMemoryUsagePercent(): float
     {
         if ($this->memoryLimit <= 0) {
             return $this->memoryUsage;
@@ -156,7 +151,7 @@ final readonly class CacheHealthStatus
     /**
      * Check if memory usage is high (above 80%).
      */
-    public function isMemoryHigh() : bool
+    public function isMemoryHigh(): bool
     {
         return $this->getMemoryUsagePercent() > 80.0;
     }
@@ -164,7 +159,7 @@ final readonly class CacheHealthStatus
     /**
      * Check if latency is high.
      */
-    public function isLatencyHigh(int $thresholdMs = 100) : bool
+    public function isLatencyHigh(int $thresholdMs = 100): bool
     {
         return $this->latency > $thresholdMs;
     }
@@ -172,7 +167,7 @@ final readonly class CacheHealthStatus
     /**
      * Check if hit rate is low.
      */
-    public function isHitRateLow(float $threshold = 0.5) : bool
+    public function isHitRateLow(float $threshold = 0.5): bool
     {
         return $this->hitRate < $threshold;
     }
@@ -195,21 +190,21 @@ final readonly class CacheHealthStatus
      *     healthLevel: string
      * }
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'connected'       => $this->connected,
-            'latency'         => $this->latency,
-            'memoryUsage'     => $this->memoryUsage,
-            'hitRate'         => $this->hitRate,
-            'lastCheck' => $this->timestamp->seconds,
-            'error'           => $this->error,
-            'memoryLimit'     => $this->memoryLimit,
-            'keyCount'        => $this->keyCount,
-            'connectionCount' => $this->connectionCount,
-            'version'         => $this->version,
+            'connected'          => $this->connected,
+            'latency'            => $this->latency,
+            'memoryUsage'        => $this->memoryUsage,
+            'hitRate'            => $this->hitRate,
+            'lastCheck'          => $this->timestamp->seconds,
+            'error'              => $this->error,
+            'memoryLimit'        => $this->memoryLimit,
+            'keyCount'           => $this->keyCount,
+            'connectionCount'    => $this->connectionCount,
+            'version'            => $this->version,
             'memoryUsagePercent' => $this->getMemoryUsagePercent(),
-            'healthLevel'     => $this->getHealthLevel(),
+            'healthLevel'        => $this->getHealthLevel(),
         ];
     }
 
@@ -220,8 +215,7 @@ final readonly class CacheHealthStatus
         int $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
         float $minHitRate = 0.5,
-    ) : string
-    {
+    ): string {
         if (! $this->connected) {
             return 'unhealthy';
         }
@@ -242,8 +236,7 @@ final readonly class CacheHealthStatus
         int $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
         float $minHitRate = 0.5,
-    ) : bool
-    {
+    ): bool {
         if (! $this->connected) {
             return false;
         }

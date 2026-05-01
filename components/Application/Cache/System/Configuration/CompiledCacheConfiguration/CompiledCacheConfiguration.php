@@ -12,14 +12,15 @@ final readonly class CompiledCacheConfiguration
         public bool $validateFreshness = true,
         public bool $failOnBuildError = true,
         public bool $useManifest = true,
-    ) {}
+    ) {
+    }
 
-    public static function inDirectory(string $directory) : self
+    public static function inDirectory(string $directory): self
     {
         return new self(directory: $directory);
     }
 
-    public static function disabled() : self
+    public static function disabled(): self
     {
         return new self(directory: '', enabled: false);
     }

@@ -11,7 +11,9 @@ use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfigur
 use Override;
 use PHPUnit\Framework\TestCase;
 
-final class UserController {}
+final class UserController
+{
+}
 
 final class CompiledCacheIntegrationTest extends TestCase
 {
@@ -19,11 +21,11 @@ final class CompiledCacheIntegrationTest extends TestCase
 
     private CompiledCacheContract $compiledCacheContract;
 
-    public function test_it_compiles_reads_and_clears_route_like_artifact() : void
+    public function test_it_compiles_reads_and_clears_route_like_artifact(): void
     {
         $name    = 'routes';
-        $builder = static fn () : array => [
-            'GET /users' => ['controller' => UserController::class, 'method' => 'index'],
+        $builder = static fn (): array => [
+            'GET /users'  => ['controller' => UserController::class, 'method' => 'index'],
             'POST /users' => ['controller' => UserController::class, 'method' => 'store'],
         ];
 
@@ -44,12 +46,12 @@ final class CompiledCacheIntegrationTest extends TestCase
         $this->assertFileDoesNotExist(filename: $compiledCacheArtifact->path->toString());
     }
 
-    public function test_it_rebuilds_when_source_file_changes() : void
+    public function test_it_rebuilds_when_source_file_changes(): void
     {
         $sourceFile = $this->tmpDir . '/source.php';
         file_put_contents($sourceFile, '<?php return ["version" => 1];');
 
-        $name = 'config';
+        $name    = 'config';
         $builder = static fn () => require $sourceFile;
 
         $compiledCacheSources = CompiledCacheSources::fromPaths($sourceFile);
@@ -62,30 +64,30 @@ final class CompiledCacheIntegrationTest extends TestCase
         file_put_contents($sourceFile, '<?php return ["version" => 2];');
 
         $builderNew = static fn () => require $sourceFile;
-        $value = $this->compiledCacheContract->read(name: $name, build: $builderNew, sources: $compiledCacheSources);
+        $value      = $this->compiledCacheContract->read(name: $name, build: $builderNew, sources: $compiledCacheSources);
 
         $this->assertSame(expected: 2, actual: $value['version']);
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
-        $this->tmpDir       = sys_get_temp_dir() . '/compiled_integration_' . uniqid();
+        $this->tmpDir = sys_get_temp_dir() . '/compiled_integration_' . uniqid();
         mkdir($this->tmpDir);
 
         $compiledCacheConfiguration = CompiledCacheConfiguration::inDirectory($this->tmpDir);
-        $buildCompiledCache = new BuildCompiledCache;
+        $buildCompiledCache         = new BuildCompiledCache();
 
         $this->compiledCacheContract = $buildCompiledCache->fromConfiguration($compiledCacheConfiguration);
     }
 
     #[Override]
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         $this->recursiveDelete(dir: $this->tmpDir);
     }
 
-    private function recursiveDelete(string $dir) : void
+    private function recursiveDelete(string $dir): void
     {
         if (! is_dir($dir)) {
             return;

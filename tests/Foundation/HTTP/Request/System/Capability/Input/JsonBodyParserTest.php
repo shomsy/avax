@@ -12,45 +12,45 @@ final class JsonBodyParserTest extends TestCase
 {
     private JsonBodyParser $parser;
 
-    public function test_parse_returns_array_from_valid_json() : void
+    public function test_parse_returns_array_from_valid_json(): void
     {
         $result = $this->parser->parse('{"foo": "bar", "num": 42}');
 
         $this->assertSame(expected: ['foo' => 'bar', 'num' => 42], actual: $result);
     }
 
-    public function test_parse_returns_empty_array_for_empty_string() : void
+    public function test_parse_returns_empty_array_for_empty_string(): void
     {
         $result = $this->parser->parse('');
 
         $this->assertSame(expected: [], actual: $result);
     }
 
-    public function test_parse_throws_for_invalid_json() : void
+    public function test_parse_throws_for_invalid_json(): void
     {
         $this->expectException(RuntimeException::class);
 
         $this->parser->parse('{invalid json}');
     }
 
-    public function test_parse_handles_nested_json() : void
+    public function test_parse_handles_nested_json(): void
     {
-        $json = '{"user": {"name": "John", "address": {"city": "NYC"}}}';
+        $json   = '{"user": {"name": "John", "address": {"city": "NYC"}}}';
         $result = $this->parser->parse($json);
 
         $this->assertIsArray(actual: $result);
         $this->assertArrayHasKey(key: 'user', array: $result);
     }
 
-    public function test_parse_handles_json_array() : void
+    public function test_parse_handles_json_array(): void
     {
-        $json = '[1, 2, 3, "four"]';
+        $json   = '[1, 2, 3, "four"]';
         $result = $this->parser->parse($json);
 
         $this->assertSame(expected: [1, 2, 3, 'four'], actual: $result);
     }
 
-    public function test_get_nested_value_returns_value() : void
+    public function test_get_nested_value_returns_value(): void
     {
         $data = ['user' => ['name' => 'John']];
 
@@ -59,7 +59,7 @@ final class JsonBodyParserTest extends TestCase
         $this->assertSame(expected: 'John', actual: $result);
     }
 
-    public function test_get_nested_value_returns_default_when_missing() : void
+    public function test_get_nested_value_returns_default_when_missing(): void
     {
         $data = ['user' => ['name' => 'John']];
 
@@ -68,8 +68,8 @@ final class JsonBodyParserTest extends TestCase
         $this->assertSame(expected: 'default@example.com', actual: $result);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
-        $this->parser = new JsonBodyParser;
+        $this->parser = new JsonBodyParser();
     }
 }

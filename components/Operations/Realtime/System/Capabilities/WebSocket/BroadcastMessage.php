@@ -10,9 +10,10 @@ final readonly class BroadcastMessage
         public string $event,
         public mixed $data,
         public string $channel,
-    ) {}
+    ) {
+    }
 
-    public function toJson() : string
+    public function toJson(): string
     {
         return json_encode(
             value: [

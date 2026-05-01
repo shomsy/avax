@@ -21,7 +21,7 @@ class GoldenPathTest extends TestCase
     /**
      * @test
      */
-    public function feature_flags_work() : void
+    public function feature_flags_work(): void
     {
         FeatureFlags::enable('new_dashboard');
         $this->assertTrue(FeatureFlags::enabled('new_dashboard'));
@@ -36,7 +36,7 @@ class GoldenPathTest extends TestCase
     /**
      * @test
      */
-    public function tenancy_isolation() : void
+    public function tenancy_isolation(): void
     {
         Tenancy::setTenantId('tenant_123');
         $this->assertEquals('tenant_123', Tenancy::getTenantId());
@@ -51,7 +51,7 @@ class GoldenPathTest extends TestCase
     /**
      * @test
      */
-    public function pipeline_hooks() : void
+    public function pipeline_hooks(): void
     {
         Pipeline::beforeController(static fn ($r) => $r);
         Pipeline::afterController(static fn ($r) => $r);
@@ -65,23 +65,23 @@ class GoldenPathTest extends TestCase
     /**
      * @test
      */
-    public function fallback_chain() : void
+    public function fallback_chain(): void
     {
         $callCount = 0;
 
         $result = Fallback::execute(
             fallbacks: [
-                           static function () use (&$callCount) : void {
-                               $callCount++;
+                static function () use (&$callCount): void {
+                    $callCount++;
 
-                               throw new RuntimeException('Primary failed');
-                           },
-                           static function () use (&$callCount) {
-                               $callCount++;
+                    throw new RuntimeException('Primary failed');
+                },
+                static function () use (&$callCount) {
+                    $callCount++;
 
-                               return 'fallback_result';
-                           },
-                       ],
+                    return 'fallback_result';
+                },
+            ],
         );
 
         $this->assertEquals('fallback_result', $result);
@@ -91,10 +91,10 @@ class GoldenPathTest extends TestCase
     /**
      * @test
      */
-    public function security_hash_verify() : void
+    public function security_hash_verify(): void
     {
         $password = 'test_password_123';
-        $hashed = Security::hash($password);
+        $hashed   = Security::hash($password);
 
         $this->assertTrue(Security::verify($password, $hashed));
         $this->assertFalse(Security::verify('wrong_password', $hashed));
@@ -103,7 +103,7 @@ class GoldenPathTest extends TestCase
     /**
      * @test
      */
-    public function security_generate_token() : void
+    public function security_generate_token(): void
     {
         $token = Security::generateToken();
 
@@ -114,14 +114,14 @@ class GoldenPathTest extends TestCase
     /**
      * @test
      */
-    public function concurrency_parallel() : void
+    public function concurrency_parallel(): void
     {
         $results = Concurrency::run(
             tasks        : [
-                               static fn () => 'task1',
-                               static fn () => 'task2',
-                               static fn () => 'task3',
-                           ],
+                static fn () => 'task1',
+                static fn () => 'task2',
+                static fn () => 'task3',
+            ],
             maxConcurrent: 3,
         );
 

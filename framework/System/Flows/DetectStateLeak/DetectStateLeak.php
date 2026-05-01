@@ -10,13 +10,14 @@ use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
 final readonly class DetectStateLeak
 {
     public function __construct(
-        private RuntimeSafety $runtimeSafety = new RuntimeSafety,
-    ) {}
+        private RuntimeSafety $runtimeSafety = new RuntimeSafety(),
+    ) {
+    }
 
     /**
      * @return list<RuntimeSafetyFinding>
      */
-    public function detect() : array
+    public function detect(): array
     {
         return $this->runtimeSafety->leakDetector()->detect();
     }

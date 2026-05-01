@@ -16,45 +16,45 @@ final class CompiledCacheSources
         }
     }
 
-    public static function empty() : self
+    public static function empty(): self
     {
-        return new self;
+        return new self();
     }
 
-    public static function fromPaths(string ...$paths) : self
+    public static function fromPaths(string ...$paths): self
     {
         $sources = array_map(
-            static fn (string $path) : CompiledCacheSource => CompiledCacheSource::fromPath(path: $path),
+            static fn (string $path): CompiledCacheSource => CompiledCacheSource::fromPath(path: $path),
             $paths,
         );
 
         return new self(...$sources);
     }
 
-    public function add(CompiledCacheSource $compiledCacheSource) : self
+    public function add(CompiledCacheSource $compiledCacheSource): self
     {
-        $new = clone $this;
+        $new                                      = clone $this;
         $new->sources[$compiledCacheSource->path] = $compiledCacheSource;
 
         return $new;
     }
 
-    public function has(string $path) : bool
+    public function has(string $path): bool
     {
         return isset($this->sources[$path]);
     }
 
-    public function get(string $path) : ?CompiledCacheSource
+    public function get(string $path): ?CompiledCacheSource
     {
         return $this->sources[$path] ?? null;
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->sources);
     }
 
-    public function fingerprint() : string
+    public function fingerprint(): string
     {
         $fingerprints = [];
 
@@ -67,7 +67,7 @@ final class CompiledCacheSources
         return md5(implode('|', $fingerprints));
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->sources;
     }

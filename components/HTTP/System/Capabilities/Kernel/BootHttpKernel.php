@@ -26,7 +26,7 @@ final class BootHttpKernel
     /**
      * Register a callback to run during boot.
      */
-    public function onBoot(callable $callback) : self
+    public function onBoot(callable $callback): self
     {
         $this->bootCallbacks[] = $callback;
 
@@ -38,7 +38,7 @@ final class BootHttpKernel
      *
      * Idempotent - calling multiple times has no additional effect.
      */
-    public function boot() : void
+    public function boot(): void
     {
         if ($this->booted) {
             return;
@@ -54,7 +54,7 @@ final class BootHttpKernel
     /**
      * Check if the kernel has been booted.
      */
-    public function isBooted() : bool
+    public function isBooted(): bool
     {
         return $this->booted;
     }
@@ -62,10 +62,10 @@ final class BootHttpKernel
     /**
      * Configure PHP error and exception handlers.
      */
-    private function configureErrorHandling() : void
+    private function configureErrorHandling(): void
     {
         // Convert all errors to ErrorExceptions for consistent handling
-        set_error_handler(static function (int $severity, string $message, string $file, int $line) : bool {
+        set_error_handler(static function (int $severity, string $message, string $file, int $line): bool {
             if ((error_reporting() & $severity) === 0) {
                 return false; // Let PHP handle suppressed errors normally
             }
@@ -79,7 +79,7 @@ final class BootHttpKernel
      *
      * @throws RuntimeException If required extensions are missing
      */
-    private function validateEnvironment() : void
+    private function validateEnvironment(): void
     {
         $requiredExtensions = ['mbstring', 'json', 'pcre'];
         foreach ($requiredExtensions as $ext) {
@@ -92,7 +92,7 @@ final class BootHttpKernel
     /**
      * Execute all registered boot callbacks.
      */
-    private function runBootCallbacks() : void
+    private function runBootCallbacks(): void
     {
         foreach ($this->bootCallbacks as $callback) {
             $callback();
@@ -102,7 +102,7 @@ final class BootHttpKernel
     /**
      * Reset the boot state (useful for testing).
      */
-    public function reset() : void
+    public function reset(): void
     {
         $this->booted = false;
     }

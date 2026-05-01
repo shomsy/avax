@@ -14,10 +14,11 @@ final readonly class FallbackCacheStore implements CacheStore
     public function __construct(
         private CacheStore $primary,
         private CacheStore $fallback,
-    ) {}
+    ) {
+    }
 
     #[Override]
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         try {
             $result = $this->primary->read(key: $cacheKey, clock: $clock);
@@ -42,7 +43,7 @@ final readonly class FallbackCacheStore implements CacheStore
     }
 
     #[Override]
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void
     {
         try {
             $this->primary->write(key: $cacheKey, record: $storedCacheRecord);
@@ -52,7 +53,7 @@ final readonly class FallbackCacheStore implements CacheStore
     }
 
     #[Override]
-    public function forget(CacheKey $cacheKey) : void
+    public function forget(CacheKey $cacheKey): void
     {
         try {
             $this->primary->forget(key: $cacheKey);
@@ -66,7 +67,7 @@ final readonly class FallbackCacheStore implements CacheStore
     }
 
     #[Override]
-    public function clear() : void
+    public function clear(): void
     {
         try {
             $this->primary->clear();
@@ -80,7 +81,7 @@ final readonly class FallbackCacheStore implements CacheStore
     }
 
     #[Override]
-    public function exists(CacheKey $cacheKey) : bool
+    public function exists(CacheKey $cacheKey): bool
     {
         try {
             return $this->primary->exists(key: $cacheKey);

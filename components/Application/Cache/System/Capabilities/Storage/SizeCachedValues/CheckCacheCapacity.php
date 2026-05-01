@@ -10,10 +10,11 @@ final readonly class CheckCacheCapacity
 {
     public function __construct(
         private CacheCapacity $cacheCapacity,
-        private EstimateCachedValueSize $estimateCachedValueSize = new EstimateCachedValueSize,
-    ) {}
+        private EstimateCachedValueSize $estimateCachedValueSize = new EstimateCachedValueSize(),
+    ) {
+    }
 
-    public function canStore(CacheStore $cacheStore, mixed $value) : bool
+    public function canStore(CacheStore $cacheStore, mixed $value): bool
     {
         if ($this->cacheCapacity->isValueTooLarge(valueSizeBytes: $this->estimateCachedValueSize->estimate(value: $value))) {
             return false;
@@ -25,12 +26,12 @@ final readonly class CheckCacheCapacity
         );
     }
 
-    public function getCurrentEntryCount() : int
+    public function getCurrentEntryCount(): int
     {
         return 0;
     }
 
-    public function getCurrentSizeBytes() : int
+    public function getCurrentSizeBytes(): int
     {
         return 0;
     }

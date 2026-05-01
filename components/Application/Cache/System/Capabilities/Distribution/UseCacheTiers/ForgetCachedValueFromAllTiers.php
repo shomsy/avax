@@ -10,9 +10,10 @@ final readonly class ForgetCachedValueFromAllTiers
 {
     public function __construct(
         private TieredCache $tieredCache,
-    ) {}
+    ) {
+    }
 
-    public function forgetMany(iterable $keys) : int
+    public function forgetMany(iterable $keys): int
     {
         $count = 0;
 
@@ -25,7 +26,7 @@ final readonly class ForgetCachedValueFromAllTiers
         return $count;
     }
 
-    public function forget(CacheKey $cacheKey) : void
+    public function forget(CacheKey $cacheKey): void
     {
         $this->tieredCache->forget(key: $cacheKey);
     }

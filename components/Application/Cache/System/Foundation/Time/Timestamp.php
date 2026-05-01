@@ -40,7 +40,7 @@ final readonly class Timestamp implements Stringable
     public function add(Duration $duration) : self
     {
         $totalSeconds = $this->seconds + $duration->seconds;
-        $totalNanos = $this->nanoseconds + $duration->nanoseconds;
+        $totalNanos   = $this->nanoseconds + $duration->nanoseconds;
 
         if ($totalNanos >= 1_000_000_000) {
             $totalSeconds += (int) floor($totalNanos / 1_000_000_000);
@@ -53,7 +53,7 @@ final readonly class Timestamp implements Stringable
     public function subtract(Duration $duration) : self
     {
         $totalSeconds = $this->seconds - $duration->seconds;
-        $totalNanos = $this->nanoseconds - $duration->nanoseconds;
+        $totalNanos   = $this->nanoseconds - $duration->nanoseconds;
 
         if ($totalNanos < 0) {
             $totalSeconds--;
@@ -81,8 +81,8 @@ final readonly class Timestamp implements Stringable
 
     public function difference(self $other) : Duration
     {
-        $diffSeconds = $this->seconds - $other->seconds;
-        $diffNanos = $this->nanoseconds - $other->nanoseconds;
+        $diffSeconds   = $this->seconds - $other->seconds;
+        $diffNanos     = $this->nanoseconds - $other->nanoseconds;
 
         if ($diffNanos < 0) {
             $diffSeconds--;

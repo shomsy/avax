@@ -28,26 +28,27 @@ final class CreateRequestFromGlobals
         private NormalizeUploadedFiles $fileNormalizer,
         private ParseJsonBody $jsonParser,
         private ParseFormBody $formParser,
-    ) {}
+    ) {
+    }
 
-    public function execute() : Request
+    public function execute(): Request
     {
         try {
-            $server     = $this->serverReader->read();
-            $query      = $this->queryReader->read();
-            $files      = $this->fileReader->read();
+            $server  = $this->serverReader->read();
+            $query   = $this->queryReader->read();
+            $files   = $this->fileReader->read();
             $rawBody = $this->bodyReader->read();
 
             $headers = new RequestHeaders($this->headerNormalizer->normalize($server));
 
             $contentType = $headers->get('Content-Type')?->first() ?? '';
-            $parsedData = match (true) {
-                str_contains($contentType, 'application/json') => $this->jsonParser->parse($rawBody),
+            $parsedData  = match (true) {
+                str_contains($contentType, 'application/json')                  => $this->jsonParser->parse($rawBody),
                 str_contains($contentType, 'application/x-www-form-urlencoded') => $this->formParser->parse($rawBody),
-                default => $_POST
+                default                                                         => $_POST
             };
 
-            $body = new RequestBody(new RawBody($rawBody), new ParsedBody($parsedData));
+            $body          = new RequestBody(new RawBody($rawBody), new ParsedBody($parsedData));
             $uploadedFiles = new UploadedFiles($this->fileNormalizer->normalize($files));
 
             $uri = new RequestUri(

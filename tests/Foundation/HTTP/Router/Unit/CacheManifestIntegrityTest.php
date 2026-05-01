@@ -17,7 +17,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function accepts_identical_manifests() : void
+    public function accepts_identical_manifests(): void
     {
         $files = [
             '/app/routes/web.php' => 1640995200,
@@ -34,7 +34,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * Helper method to create a manifest with checksum.
      */
-    private function createManifest(array $files, int $generatedAt) : RouteCacheManifest
+    private function createManifest(array $files, int $generatedAt): RouteCacheManifest
     {
         ksort(array: $files);
         $hash     = sha1(string: json_encode(value: $files));
@@ -51,7 +51,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function rejects_stale_manifests() : void
+    public function rejects_stale_manifests(): void
     {
         $files = [
             '/app/routes/web.php' => 1640995200,
@@ -70,7 +70,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function rejects_modified_file_list() : void
+    public function rejects_modified_file_list(): void
     {
         $files1 = [
             '/app/routes/web.php' => 1640995200,
@@ -78,7 +78,7 @@ class CacheManifestIntegrityTest extends TestCase
         ];
 
         $files2 = [
-            '/app/routes/web.php' => 1640995200,
+            '/app/routes/web.php'   => 1640995200,
             '/app/routes/admin.php' => 1640995300, // Different file
         ];
 
@@ -92,7 +92,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function rejects_modified_file_timestamps() : void
+    public function rejects_modified_file_timestamps(): void
     {
         $files1 = [
             '/app/routes/web.php' => 1640995200,
@@ -112,7 +112,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function accepts_manifests_with_checksum() : void
+    public function accepts_manifests_with_checksum(): void
     {
         $files = [
             '/app/routes/web.php' => 1640995200,
@@ -128,7 +128,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function rejects_manifests_with_mismatched_checksums() : void
+    public function rejects_manifests_with_mismatched_checksums(): void
     {
         $files = [
             '/app/routes/web.php' => 1640995200,
@@ -150,7 +150,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function accepts_manifests_without_checksums_backward_compatibility() : void
+    public function accepts_manifests_without_checksums_backward_compatibility(): void
     {
         $files = [
             '/app/routes/web.php' => 1640995200,
@@ -177,7 +177,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function rejects_manifests_with_partial_checksum_match() : void
+    public function rejects_manifests_with_partial_checksum_match(): void
     {
         $files = [
             '/app/routes/web.php' => 1640995200,
@@ -200,7 +200,7 @@ class CacheManifestIntegrityTest extends TestCase
     /**
      * @test
      */
-    public function build_from_directory_creates_valid_manifest() : void
+    public function build_from_directory_creates_valid_manifest(): void
     {
         // Create a temporary directory structure for testing
         $tempDir = sys_get_temp_dir() . '/router_test_' . uniqid();

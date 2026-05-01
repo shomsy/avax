@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$testDir = 'tests';
+$testDir          = 'tests';
 $legacyNamespaces = [
     'Avax\DataLayer',
     'Avax\DataFoundation',
@@ -14,9 +14,9 @@ $legacyNamespaces = [
 ];
 
 $results = [
-    'legacy_usage' => [],
+    'legacy_usage'    => [],
     'invalid_imports' => [],
-    'psr4_drift' => [],
+    'psr4_drift'      => [],
 ];
 
 if (! is_dir($testDir)) {
@@ -30,7 +30,7 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path = $file->getPathname();
+    $path    = $file->getPathname();
     $content = file_get_contents($path);
 
     // Check for legacy namespace usage
@@ -42,7 +42,7 @@ foreach ($iterator as $file) {
 
     // Check if the file's own namespace matches its path (PSR-4 Drift)
     if (preg_match('/namespace\s+([^;]+);/', $content, $matches)) {
-        $namespace = $matches[1];
+        $namespace       = $matches[1];
         $expectedSubPath = str_replace('\\', '/', str_replace('Tests\\', '', $namespace));
         if (! str_contains(str_replace('\\', '/', $path), $expectedSubPath) && ! str_contains($path, 'Integration')) {
             $results['psr4_drift'][$path] = $namespace;

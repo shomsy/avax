@@ -7,7 +7,6 @@ require_once __DIR__ . '/adapters/ArtifactBenchmarkPeerAdapter.php';
 
 /**
  * @param array<int, string> $arguments
- *
  * @return array<string, string>
  */
 function peerTargets(array $arguments) : array
@@ -82,7 +81,6 @@ function parityIssuesFor(string $peerName, array $current, array $peer) : array
 
 /**
  * @param array<string, array<string, float>> $thresholds
- *
  * @return array{max_time_ratio_vs_peer: float, max_peak_ratio_vs_peer: float}
  */
 function peerThresholdFor(string $scenario, array $thresholds) : array
@@ -101,7 +99,8 @@ function peerThresholdFor(string $scenario, array $thresholds) : array
 
 /**
  * @param array<string, array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}> $artifacts
- * @param array<string, array<string, float>>                                                            $thresholds
+ * @param array<string, array<string, float>> $thresholds
+ *
  * @return array<string, mixed>
  */
 function peerMatrixPayload(array $artifacts, array $thresholds) : array
@@ -131,8 +130,8 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
             array   : $artifacts,
         ),
         'parityIssues' => [],
-        'regressions'   => [],
-        'comparisons'   => [],
+        'regressions'  => [],
+        'comparisons'  => [],
     ];
 
     foreach ($peers as $peerName) {
@@ -143,7 +142,7 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
         );
 
         $scenarios = benchmarkScenariosForArtifact(artifact: $current);
-        $peerRows = [];
+        $peerRows  = [];
 
         foreach ($scenarios as $scenario) {
             $currentRow = $current['results'][$scenario];

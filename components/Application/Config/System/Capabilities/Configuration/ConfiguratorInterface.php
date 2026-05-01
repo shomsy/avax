@@ -25,7 +25,7 @@ interface ConfiguratorInterface
      * @return array<string, string> Associative array where the key is the configuration namespace
      *                               and the value is the path to the configuration file.
      */
-    public function configurationFilePaths() : array;
+    public function configurationFilePaths(): array;
 
     /**
      * Retrieves a configuration value by its key with an optional default.
@@ -34,15 +34,15 @@ interface ConfiguratorInterface
      * hard-coded configuration keys and enhancing code consistency. If the key does not exist,
      * a default value can be returned.
      *
-     * @param string $key       The configuration key to retrieve.
-     * @param mixed  $default   A default value to return if the key does not exist.
-     *                          Use meaningful defaults relevant to the configuration context.
+     * @param string $key The configuration key to retrieve.
+     * @param mixed $default A default value to return if the key does not exist.
+     *                       Use meaningful defaults relevant to the configuration context.
      *
      * @return mixed The configuration value, or the default if the key is missing.
      *
      * @throws InvalidArgumentException if the configuration key does not exist and no default is provided.
      */
-    public function get(string $key, mixed $default = null) : mixed;
+    public function get(string $key, mixed $default = null): mixed;
 
     /**
      * Determines if a configuration key exists.

@@ -21,7 +21,7 @@ final class ResolutionTimeline
         private readonly bool $enabled = true,
     )
     {
-        $clock ??= new Clock;
+        $clock ??= new Clock();
         $this->clock = $clock;
     }
 

@@ -31,7 +31,7 @@ final class SeedSystemDependencies
     public function seed(
         RuntimeAssembly $runtime,
         ObservabilityAssembly $observability,
-        Container       $container,
+        Container $container,
         CreateContainerConfig $config,
         ResolutionTelemetry $telemetry,
     ) : void

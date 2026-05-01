@@ -21,7 +21,7 @@ final class RedisCacheStore implements CacheStoreInterface
     {
         $this->prefix = $config['prefix'] ?? 'cache_';
 
-        $this->redis = new Redis;
+        $this->redis = new Redis();
         $this->connect();
     }
 

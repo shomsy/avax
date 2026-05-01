@@ -39,7 +39,6 @@ final readonly class SendHttpRequest
      * Execute an outbound HTTP request.
      *
      * @param OutboundRequest $request The outbound request to execute
-     *
      * @return ClientResponse The HTTP response
      *
      * @throws HttpRequestFailed if the request fails and retries are exhausted

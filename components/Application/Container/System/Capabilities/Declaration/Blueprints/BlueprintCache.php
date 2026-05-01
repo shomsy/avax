@@ -22,24 +22,23 @@ final class BlueprintCache
     private readonly string $cacheDir;
 
     public function __construct(
-        ?string                             $cacheDir = null,
-        ?string                             $cacheVersion = null,
-        ?bool                               $debug = null,
+        ?string $cacheDir = null,
+        ?string $cacheVersion = null,
+        ?bool $debug = null,
         private readonly ?ResolutionMetrics $resolutionMetrics = null,
-    )
-    {
-        $cacheDir       ??= '';
+    ) {
+        $cacheDir     ??= '';
         $cacheVersion ??= 'container-v1';
-        $debug          ??= false;
-        $this->cacheDir = $cacheDir;
+        $debug        ??= false;
+        $this->cacheDir     = $cacheDir;
         $this->cacheVersion = $cacheVersion;
-        $this->debug    = $debug;
+        $this->debug        = $debug;
     }
 
     /**
      * Returns whether source freshness should be rechecked on reads.
      */
-    public function shouldValidateSource() : bool
+    public function shouldValidateSource(): bool
     {
         return $this->debug;
     }
@@ -47,7 +46,7 @@ final class BlueprintCache
     /**
      * Reads one blueprint from memory or disk cache.
      */
-    public function get(string $class, string $fingerprint = '') : ?DependencyBlueprint
+    public function get(string $class, string $fingerprint = ''): ?DependencyBlueprint
     {
         $cached = $this->items[$class] ?? null;
         if ($cached instanceof DependencyBlueprint) {
@@ -93,17 +92,17 @@ final class BlueprintCache
         return $loaded;
     }
 
-    private function isEnabled() : bool
+    private function isEnabled(): bool
     {
         return $this->cacheDir !== '';
     }
 
-    private function pathFor(string $class) : string
+    private function pathFor(string $class): string
     {
         return $this->directory() . '/' . sha1(string: $class) . '.php';
     }
 
-    private function directory() : string
+    private function directory(): string
     {
         return rtrim(string: $this->cacheDir, characters: '/\\') . '/container/' . rawurlencode(string: $this->cacheVersion) . '/blueprints';
     }
@@ -111,7 +110,7 @@ final class BlueprintCache
     /**
      * Removes one blueprint from memory and disk cache.
      */
-    public function forget(string $class) : void
+    public function forget(string $class): void
     {
         unset($this->items[$class]);
 
@@ -126,7 +125,7 @@ final class BlueprintCache
      *
      * @throws ContainerException
      */
-    public function put(DependencyBlueprint $dependencyBlueprint) : DependencyBlueprint
+    public function put(DependencyBlueprint $dependencyBlueprint): DependencyBlueprint
     {
         $this->items[$dependencyBlueprint->class] = $dependencyBlueprint;
         $this->resolutionMetrics?->increment(name: 'container_blueprint_compiles_total');
@@ -160,7 +159,7 @@ final class BlueprintCache
     /**
      * Clears the full blueprint cache.
      */
-    public function flush() : void
+    public function flush(): void
     {
         $this->items = [];
 
@@ -194,7 +193,7 @@ final class BlueprintCache
         }
     }
 
-    private function deleteDirectory(string $directory) : void
+    private function deleteDirectory(string $directory): void
     {
         $files = scandir(directory: $directory);
         if ($files === false) {

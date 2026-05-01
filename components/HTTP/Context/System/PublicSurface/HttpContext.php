@@ -19,18 +19,19 @@ final readonly class HttpContext implements HttpContextInterface
     public function __construct(
         private ?ServerRequestInterface $request,
         private GlobalsProviderInterface $globals,
-    ) {}
+    ) {
+    }
 
-    public function request() : ?ServerRequestInterface
+    public function request(): ?ServerRequestInterface
     {
         return $this->request;
     }
 
-    public function baseUrl() : string
+    public function baseUrl(): string
     {
         $scheme = $this->scheme();
-        $host = $this->host();
-        $port = $this->port();
+        $host   = $this->host();
+        $port   = $this->port();
 
         $authority = $host;
         if ($port !== null && ! $this->isStandardPort($scheme, $port)) {
@@ -40,7 +41,7 @@ final readonly class HttpContext implements HttpContextInterface
         return sprintf('%s://%s', $scheme, $authority);
     }
 
-    public function scheme() : string
+    public function scheme(): string
     {
         $uri = $this->request?->getUri();
         if ($uri instanceof UriInterface && ($scheme = $uri->getScheme()) !== '') {
@@ -52,7 +53,7 @@ final readonly class HttpContext implements HttpContextInterface
         return (! empty($server['HTTPS']) && $server['HTTPS'] !== 'off') ? 'https' : 'http';
     }
 
-    public function host() : string
+    public function host(): string
     {
         $uri = $this->request?->getUri();
         if ($uri instanceof UriInterface && ($host = $uri->getHost()) !== '') {
@@ -64,12 +65,12 @@ final readonly class HttpContext implements HttpContextInterface
         return $server['HTTP_HOST'] ?? $server['SERVER_NAME'] ?? 'localhost';
     }
 
-    public function serverParams() : array
+    public function serverParams(): array
     {
         return $this->request?->getServerParams() ?? $this->globals->server();
     }
 
-    private function port() : ?int
+    private function port(): ?int
     {
         $uri = $this->request?->getUri();
         if ($uri instanceof UriInterface && ($port = $uri->getPort()) !== null) {
@@ -77,22 +78,22 @@ final readonly class HttpContext implements HttpContextInterface
         }
 
         $server = $this->serverParams();
-        $value = $server['SERVER_PORT'] ?? null;
+        $value  = $server['SERVER_PORT'] ?? null;
 
         return ($value !== null && $value !== '') ? (int) $value : null;
     }
 
-    private function isStandardPort(string $scheme, int $port) : bool
+    private function isStandardPort(string $scheme, int $port): bool
     {
         return ($scheme === 'http' && $port === 80) || ($scheme === 'https' && $port === 443);
     }
 
-    public function isSecure() : bool
+    public function isSecure(): bool
     {
         return $this->scheme() === 'https';
     }
 
-    public function clientIp() : ?string
+    public function clientIp(): ?string
     {
         $server = $this->serverParams();
 
@@ -102,14 +103,14 @@ final readonly class HttpContext implements HttpContextInterface
             ?? null;
     }
 
-    public function userAgent() : ?string
+    public function userAgent(): ?string
     {
         return $this->request?->getHeaderLine('User-Agent')
             ?? $this->serverParams()['HTTP_USER_AGENT']
             ?? null;
     }
 
-    public function authHeader() : ?string
+    public function authHeader(): ?string
     {
         return $this->request?->getHeaderLine('Authorization')
             ?? $this->serverParams()['HTTP_AUTHORIZATION']
@@ -117,17 +118,17 @@ final readonly class HttpContext implements HttpContextInterface
             ?? null;
     }
 
-    public function cookies() : array
+    public function cookies(): array
     {
         return $this->request?->getCookieParams() ?? $this->globals->cookies();
     }
 
-    public function query() : array
+    public function query(): array
     {
         return $this->request?->getQueryParams() ?? $this->globals->query();
     }
 
-    public function post() : array
+    public function post(): array
     {
         $parsed = $this->request?->getParsedBody();
         if (is_array($parsed)) {
@@ -137,7 +138,7 @@ final readonly class HttpContext implements HttpContextInterface
         return $this->globals->post();
     }
 
-    public function files() : array
+    public function files(): array
     {
         return $this->request?->getUploadedFiles() ?? $this->globals->files();
     }

@@ -16,5 +16,6 @@ final readonly class Failure
         public string $code,
         public string $message,
         public array $context = [],
-    ) {}
+    ) {
+    }
 }

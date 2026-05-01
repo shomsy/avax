@@ -131,7 +131,7 @@ final class SourceSyncCoordinatorTest extends TestCase
     {
         $this->clock  = new FrozenClock(timestamp: Timestamp::now());
         $this->cache  = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
-        $this->source = new TestCacheSource;
+        $this->source = new TestCacheSource();
     }
 }
 

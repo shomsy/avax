@@ -6,9 +6,9 @@ namespace Avax\Components\Application\Cache\System\Foundation\Serialization;
 
 interface CacheSerializer
 {
-    public function serialize(mixed $value) : SerializedCachePayload;
+    public function serialize(mixed $value): SerializedCachePayload;
 
-    public function unserialize(SerializedCachePayload $serializedCachePayload) : mixed;
+    public function unserialize(SerializedCachePayload $serializedCachePayload): mixed;
 
-    public function supportedType() : string;
+    public function supportedType(): string;
 }

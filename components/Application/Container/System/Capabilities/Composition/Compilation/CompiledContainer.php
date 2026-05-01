@@ -11,17 +11,17 @@ abstract class CompiledContainer
     /** @var array<string, string> */
     protected array $entries = [];
 
-    public function fingerprint() : string
+    public function fingerprint(): string
     {
         return $this->fingerprint;
     }
 
-    public function has(string $serviceId) : bool
+    public function has(string $serviceId): bool
     {
         return isset($this->entries[$serviceId]);
     }
 
-    public function methodFor(string $serviceId) : ?string
+    public function methodFor(string $serviceId): ?string
     {
         return $this->entries[$serviceId] ?? null;
     }
@@ -29,7 +29,7 @@ abstract class CompiledContainer
     /**
      * @return list<string>
      */
-    public function entryIds() : array
+    public function entryIds(): array
     {
         $ids = array_keys(array: $this->entries);
         sort(array: $ids);
@@ -37,7 +37,7 @@ abstract class CompiledContainer
         return $ids;
     }
 
-    public function entryCount() : int
+    public function entryCount(): int
     {
         return count(value: $this->entries);
     }

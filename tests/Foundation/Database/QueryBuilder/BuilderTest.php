@@ -16,7 +16,7 @@ class BuilderTest extends TestCase
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function test_basic_select() : void
+    public function test_basic_select(): void
     {
         $results = $this->database->table(table: 'users')->select('id', 'name')->get();
 
@@ -28,7 +28,7 @@ class BuilderTest extends TestCase
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function test_where_clauses() : void
+    public function test_where_clauses(): void
     {
         $builder = $this->database->table(table: 'users')
             ->where(column: 'id', value: 1)
@@ -41,7 +41,7 @@ class BuilderTest extends TestCase
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function test_joins() : void
+    public function test_joins(): void
     {
         $builder = $this->database->table(table: 'users')
             ->join(table: 'posts', first: 'users.id', operator: '=', second: 'posts.user_id')
@@ -54,7 +54,7 @@ class BuilderTest extends TestCase
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function test_aggregates() : void
+    public function test_aggregates(): void
     {
         $count = $this->database->table(table: 'users')->count();
 
@@ -65,7 +65,7 @@ class BuilderTest extends TestCase
      * @throws Throwable
      */
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 

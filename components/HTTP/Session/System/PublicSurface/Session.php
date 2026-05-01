@@ -19,7 +19,7 @@ final class Session implements SessionInterface
     private SessionTransaction $transaction;
 
     public function __construct(
-        private readonly SessionScope     $scope,
+        private readonly SessionScope $scope,
         private readonly ?SessionMetadata $metadata = null,
         private readonly ?SessionAudit $audit = null,
         private readonly ?SessionEventBus $events = null,
@@ -70,7 +70,7 @@ final class Session implements SessionInterface
 
     private function createNewRecord() : void
     {
-        $now = new DateTimeImmutable;
+        $now = new DateTimeImmutable();
         $this->record = new SessionRecord(
             sessionId        : bin2hex(random_bytes(16)),
             createdAt        : $now,
@@ -89,7 +89,7 @@ final class Session implements SessionInterface
             return;
         }
 
-        $now = new DateTimeImmutable;
+        $now = new DateTimeImmutable();
         $this->record = new SessionRecord(
             ...((array) $this->record),
             lastSeenAt   : $now,
@@ -217,6 +217,6 @@ final class Session implements SessionInterface
 
     public function events() : SessionEventBus
     {
-        return $this->events ?? new SessionEventBus;
+        return $this->events ?? new SessionEventBus();
     }
 }

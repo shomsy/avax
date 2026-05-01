@@ -8,9 +8,11 @@ use Avax\Components\Application\Filesystem\Disks\Disk;
 
 final readonly class ClearDirectory
 {
-    public function __construct(private Disk $disk) {}
+    public function __construct(private Disk $disk)
+    {
+    }
 
-    public function execute(string $path) : bool
+    public function execute(string $path): bool
     {
         return $this->disk->clear(path: $path);
     }

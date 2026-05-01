@@ -8,7 +8,7 @@ use RuntimeException;
 
 final class CurlClient
 {
-    public function send(ClientRequest $request) : ClientResponse
+    public function send(ClientRequest $request): ClientResponse
     {
         $ch = curl_init();
 
@@ -45,12 +45,12 @@ final class CurlClient
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         $headerContent = substr($response, 0, $headerSize);
-        $body = substr($response, $headerSize);
+        $body          = substr($response, $headerSize);
 
         $respHeaders = [];
         foreach (explode("\r\n", $headerContent) as $line) {
             if (str_contains($line, ':')) {
-                [$name, $value] = explode(':', $line, 2);
+                [$name, $value]           = explode(':', $line, 2);
                 $respHeaders[trim($name)] = trim($value);
             }
         }

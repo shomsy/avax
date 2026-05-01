@@ -33,7 +33,7 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function request_scoped_services_reset_properly() : void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
 
         // Request 1: open scope, write service data
         $scope1 = $store->open();
@@ -77,7 +77,7 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function session_state_is_request_bound() : void
     {
-        $store = new ArraySessionStore;
+        $store = new ArraySessionStore();
 
         // --- Session A (Request A) ---
         $scopeA = new SessionScope(store: $store);
@@ -141,9 +141,9 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function auth_current_user_resets_between_requests() : void
     {
-        $context    = new RuntimeContext;
-        $scopeStore = new RequestScopeStore;
-        $registry   = new StateResetRegistry;
+        $context    = new RuntimeContext();
+        $scopeStore = new RequestScopeStore();
+        $registry   = new StateResetRegistry();
         $registry->register(name: 'request-scopes', state: $scopeStore);
         $registry->register(name: 'runtime-context', state: $context);
 
@@ -208,7 +208,7 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function request_scope_id_is_unique_per_request() : void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
 
         $scope1 = $store->open();
         $id1   = $scope1->id();
@@ -243,7 +243,7 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function request_scope_operations_throw_when_no_scope_open() : void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
 
         // Without opening a scope, operations should fail
         $this->expectException(RequestScopeNotOpen::class);
@@ -255,9 +255,9 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     {
         // Simulates what happens in a worker-loop runtime where
         // requests are handled sequentially in the same process
-        $context    = new RuntimeContext;
-        $scopeStore = new RequestScopeStore;
-        $registry   = new StateResetRegistry;
+        $context    = new RuntimeContext();
+        $scopeStore = new RequestScopeStore();
+        $registry   = new StateResetRegistry();
         $registry->register(name: 'request-scopes', state: $scopeStore);
         $registry->register(name: 'runtime-context', state: $context);
 
@@ -321,11 +321,11 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function state_reset_registry_tracks_component_count() : void
     {
-        $registry = new StateResetRegistry;
+        $registry = new StateResetRegistry();
 
         // The framework registers at least these components
-        $registry->register(name: 'request-scopes', state: new RequestScopeStore);
-        $registry->register(name: 'runtime-context', state: new RuntimeContext);
+        $registry->register(name: 'request-scopes', state: new RequestScopeStore());
+        $registry->register(name: 'runtime-context', state: new RuntimeContext());
 
         $report = $registry->resetAll();
 

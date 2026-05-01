@@ -24,7 +24,7 @@ $container = makeTestContainer(config: CreateContainerConfig::create(
 
 $container->get(id: ObservableService::class);
 $container->call(callable: ObservableAction::class);
-$container->injectInto(target: new class {});
+$container->injectInto(target: new class ( ) {});
 
 $metrics = $container->exportMetrics();
 $timeline = $container->get(id: ResolutionTimeline::class)->all();

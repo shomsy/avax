@@ -13,21 +13,21 @@ use Avax\Tests\TestCase;
 
 final class CollectionFamilyTest extends TestCase
 {
-    public function test_data_list_keeps_sequential_keys() : void
+    public function test_data_list_keeps_sequential_keys(): void
     {
         $list = new DataList(items: [2 => 'a', 5 => 'b']);
 
         $this->assertSame(['a', 'b'], $list->all());
     }
 
-    public function test_set_keeps_unique_values() : void
+    public function test_set_keeps_unique_values(): void
     {
         $set = new Set(items: [1, 2, 2, 3]);
 
         $this->assertSame([1, 2, 3], $set->all());
     }
 
-    public function test_map_stores_key_value_pairs() : void
+    public function test_map_stores_key_value_pairs(): void
     {
         $map = new Map(items: ['name' => 'Alice'])->put(key: 'age', value: 30);
 
@@ -35,18 +35,18 @@ final class CollectionFamilyTest extends TestCase
         $this->assertSame(30, $map->get(key: 'age'));
     }
 
-    public function test_multi_map_keeps_multiple_values_per_key() : void
+    public function test_multi_map_keeps_multiple_values_per_key(): void
     {
         $map = new MultiMap()->put(key: 'role', value: 'admin')->put(key: 'role', value: 'editor');
 
         $this->assertSame(['admin', 'editor'], $map->get(key: 'role'));
     }
 
-    public function test_sequence_transforms_values_in_order() : void
+    public function test_sequence_transforms_values_in_order(): void
     {
         $sequence = new Sequence(items: [1, 2, 3])
-            ->map(callback: static fn (int $value) : int => $value * 2)
-            ->filter(callback: static fn (int $value) : bool => $value > 2);
+            ->map(callback: static fn (int $value): int => $value * 2)
+            ->filter(callback: static fn (int $value): bool => $value > 2);
 
         $this->assertSame([4, 6], $sequence->all());
     }

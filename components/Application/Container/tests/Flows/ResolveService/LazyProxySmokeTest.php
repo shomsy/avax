@@ -8,7 +8,7 @@ final class LazyProxySmokeTest
 {
     public int $value = 0;
 
-    public function increment() : int
+    public function increment(): int
     {
         return ++$this->value;
     }

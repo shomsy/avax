@@ -18,12 +18,14 @@ use Throwable;
 
 final readonly class HandleIncomingHttp
 {
-    public function __construct(private ResponseFactory $responseFactory = new ResponseFactory) {}
+    public function __construct(private ResponseFactory $responseFactory = new ResponseFactory())
+    {
+    }
 
     /**
      * @throws RandomException
      */
-    public function handle(RuntimeInterface $runtime, RuntimeRequest $request) : RuntimeResponse
+    public function handle(RuntimeInterface $runtime, RuntimeRequest $request): RuntimeResponse
     {
         $openRequestScope = new OpenHttpRequestScope(
             requestScopes : $runtime->requestScopes(),
@@ -40,7 +42,7 @@ final readonly class HandleIncomingHttp
         }
     }
 
-    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $request) : RuntimeResponse
+    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $request): RuntimeResponse
     {
         $httpHandler = $runtime->httpHandler();
 
@@ -74,7 +76,7 @@ final readonly class HandleIncomingHttp
         }
     }
 
-    private function normalizeResponse(mixed $value) : RuntimeResponse
+    private function normalizeResponse(mixed $value): RuntimeResponse
     {
         if ($value instanceof RuntimeResponse) {
             return $value;
@@ -92,9 +94,9 @@ final readonly class HandleIncomingHttp
 
         $normalizedBody = match (true) {
             $value instanceof Stringable => (string) $value,
-            is_scalar(value: $value) => (string) $value,
-            $value === null          => '',
-            default                  => '',
+            is_scalar(value: $value)     => (string) $value,
+            $value === null              => '',
+            default                      => '',
         };
 
         return RuntimeResponse::fromPsrResponse(

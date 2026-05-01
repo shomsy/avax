@@ -11,14 +11,14 @@ final class DependencyPoolSmokeTest implements ResettableInterface
 {
     public int $resets = 0;
 
-    public function reset() : void
+    public function reset(): void
     {
         $this->resets++;
     }
 }
 
-$pool     = new DependencyPool;
-$instance = new stdClass;
+$pool     = new DependencyPool();
+$instance = new stdClass();
 
 assertSame(expected: false, actual: $pool->has(abstract: 'shared'), message: 'Service pool should start empty.');
 
@@ -36,7 +36,7 @@ $pool->flush();
 assertSame(expected: null, actual: $pool->get(abstract: 'shared'), message: 'Service pool flush should clear all shared instances.');
 assertSame(expected: 0, actual: $pool->count(), message: 'Service pool flush should reset the shared instance count.');
 
-$pooled = new PoolBucketService;
+$pooled   = new PoolBucketService();
 $released = $pool->releasePooled(abstract: 'pooled', instance: $pooled, maxSize: 2, resetBeforeReuse: true);
 assertSame(expected: true, actual: $released['returned'], message: 'Pooled services should return to the available bucket when reset succeeds.');
 assertSame(expected: 1, actual: $pooled->resets, message: 'Pooled release should reset the instance before reuse.');

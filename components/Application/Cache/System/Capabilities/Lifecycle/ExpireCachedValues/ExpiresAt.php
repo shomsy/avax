@@ -12,18 +12,20 @@ use Override;
 
 final readonly class ExpiresAt implements CacheExpiration
 {
-    public function __construct(private Timestamp $timestamp) {}
+    public function __construct(private Timestamp $timestamp)
+    {
+    }
 
-    public static function secondsFromNow(int $seconds, Clock $clock) : self
+    public static function secondsFromNow(int $seconds, Clock $clock): self
     {
         return new self(
             expiresAt: $clock->now()->add(
-                         duration: Duration::ofSeconds(seconds: $seconds),
-                     ),
+                duration: Duration::ofSeconds(seconds: $seconds),
+            ),
         );
     }
 
-    public static function atTimestamp(int $timestamp) : self
+    public static function atTimestamp(int $timestamp): self
     {
         return new self(
             expiresAt: Timestamp::fromUnixTime(timestamp: $timestamp),
@@ -34,21 +36,19 @@ final readonly class ExpiresAt implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ) : ?Timestamp
-    {
+    ): ?Timestamp {
         return $this->timestamp;
     }
 
     #[Override]
     public function isExpired(
-        ?Timestamp $expiresAt,
+        ?Timestamp $timestamp,
         Clock $clock,
-    ) : bool
-    {
-        if (! $expiresAt instanceof Timestamp) {
+    ): bool {
+        if (! $timestamp instanceof Timestamp) {
             return true;
         }
 
-        return $clock->now()->isAfter(other: $expiresAt);
+        return $clock->now()->isAfter(other: $timestamp);
     }
 }

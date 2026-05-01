@@ -15,7 +15,6 @@ final class SliceContext
 
     /**
      * @param array<string, mixed> $context
-     *
      * @return array<string, mixed>
      */
     public static function with(array $context, string $slice): array

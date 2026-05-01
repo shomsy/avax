@@ -219,6 +219,6 @@ class RegexConstraintTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->validator = new RouteConstraintValidator;
+        $this->validator = new RouteConstraintValidator();
     }
 }

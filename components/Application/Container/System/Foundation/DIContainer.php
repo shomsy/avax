@@ -39,29 +39,31 @@ use Throwable;
  */
 final readonly class Container implements ContainerInterface
 {
-    public function __construct(private ResolveDependency $resolver) {}
+    public function __construct(private ResolveDependency $resolver)
+    {
+    }
 
     /**
      * @throws Throwable
      */
-    public function get(string $id) : mixed
+    public function get(string $id): mixed
     {
         return $this->resolveService()->get(id: $id);
     }
 
-    private function resolveService() : ResolveService
+    private function resolveService(): ResolveService
     {
         return new ResolveService(resolver: $this->resolver);
     }
 
-    public function has(string $id) : bool
+    public function has(string $id): bool
     {
         return $this->resolver->has(id: $id);
     }
 
-    public function factory(string $abstract) : Closure
+    public function factory(string $abstract): Closure
     {
-        return fn (array $parameters = []) : object => $this->make(
+        return fn (array $parameters = []): object => $this->make(
             abstract  : $abstract,
             parameters: $parameters,
         );
@@ -70,7 +72,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws Throwable
      */
-    public function make(string $abstract, array $parameters = []) : object
+    public function make(string $abstract, array $parameters = []): object
     {
         return $this->resolveService()->make(abstract: $abstract, parameters: $parameters);
     }
@@ -78,12 +80,12 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function call(callable|string $callable, array $parameters = []) : mixed
+    public function call(callable|string $callable, array $parameters = []): mixed
     {
         return $this->callFunction()->call(target: $callable, parameters: $parameters);
     }
 
-    private function callFunction() : CallFunction
+    private function callFunction(): CallFunction
     {
         return new CallFunction(resolver: $this->resolver);
     }
@@ -91,27 +93,27 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function injectInto(object $target) : object
+    public function injectInto(object $target): object
     {
         return $this->resolver->injectInto(target: $target);
     }
 
-    public function flush() : void
+    public function flush(): void
     {
         $this->resolver->flush();
     }
 
-    public function reset() : void
+    public function reset(): void
     {
         $this->resolver->reset();
     }
 
-    public function instance(string $abstract, object $instance) : void
+    public function instance(string $abstract, object $instance): void
     {
         $this->registerServices()->instance(abstract: $abstract, instance: $instance);
     }
 
-    private function registerServices() : RegisterDependencies
+    private function registerServices(): RegisterDependencies
     {
         return new RegisterDependencies(resolver: $this->resolver);
     }
@@ -119,7 +121,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @param array<int, string|RegisterDependency> $providers
      */
-    public function bootProviders(array $providers) : void
+    public function bootProviders(array $providers): void
     {
         new BootProviders(container: $this)->boot(providers: $providers);
     }
@@ -136,7 +138,7 @@ final readonly class Container implements ContainerInterface
         return $this->validateComposition()->validate(serviceIds: $serviceIds);
     }
 
-    private function validateComposition() : ValidateComposition
+    private function validateComposition(): ValidateComposition
     {
         return new ValidateComposition(resolver: $this->resolver);
     }
@@ -151,7 +153,7 @@ final readonly class Container implements ContainerInterface
         return $this->explainService()->describe(id: $id);
     }
 
-    private function explainService() : ExplainService
+    private function explainService(): ExplainService
     {
         return new ExplainService(resolver: $this->resolver);
     }
@@ -186,7 +188,7 @@ final readonly class Container implements ContainerInterface
         return $this->exportGraphFlow()->debugGraph(id: $id);
     }
 
-    private function exportGraphFlow() : ExportGraph
+    private function exportGraphFlow(): ExportGraph
     {
         return new ExportGraph(resolver: $this->resolver);
     }
@@ -276,17 +278,17 @@ final readonly class Container implements ContainerInterface
         $this->openScopeFlow()->open(kind: $kind, scopeId: $scopeId);
     }
 
-    private function openScopeFlow() : OpenScope
+    private function openScopeFlow(): OpenScope
     {
         return new OpenScope(resolver: $this->resolver);
     }
 
-    public function closeScope(?string $kind = null): void
+    public function closeScope(string $kind = null): void
     {
         $this->closeScopeFlow()->close(kind: $kind);
     }
 
-    private function closeScopeFlow() : CloseScope
+    private function closeScopeFlow(): CloseScope
     {
         return new CloseScope(resolver: $this->resolver);
     }
@@ -321,12 +323,12 @@ final readonly class Container implements ContainerInterface
         $this->resolver->rebuildCompiled(serviceIds: $serviceIds);
     }
 
-    public function compileReport(array $serviceIds = []) : ?CompileReport
+    public function compileReport(array $serviceIds = []): ?CompileReport
     {
         return $this->resolver->compileReport(serviceIds: $serviceIds);
     }
 
-    public function runtimeReport() : RuntimeReport
+    public function runtimeReport(): RuntimeReport
     {
         return $this->resolver->runtimeReport();
     }
@@ -369,27 +371,27 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function inspectInjection(object $target) : InjectionReport
+    public function inspectInjection(object $target): InjectionReport
     {
         return $this->resolver->inspectInjection(target: $target);
     }
 
-    public function scopes() : ScopeInterface
+    public function scopes(): ScopeInterface
     {
         return $this->resolver->scopes();
     }
 
-    public function exportMetrics() : string
+    public function exportMetrics(): string
     {
         return $this->resolver->exportMetrics();
     }
 
-    public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = '') : string
+    public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = ''): string
     {
         return $this->exportGraphFlow()->export(format: $format, kind: $kind, id: $id);
     }
 
-    public function diffGraph(string $format = 'json', string $id = '') : string
+    public function diffGraph(string $format = 'json', string $id = ''): string
     {
         return $this->exportGraphFlow()->diff(format: $format, id: $id);
     }
@@ -436,22 +438,22 @@ final readonly class Container implements ContainerInterface
         $this->registerServices()->alias(alias: $alias, abstract: $abstract);
     }
 
-    public function bind(string $abstract, mixed $concrete = null) : DependencyRegistration
+    public function bind(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->registerServices()->bind(abstract: $abstract, concrete: $concrete);
     }
 
-    public function singleton(string $abstract, mixed $concrete = null) : DependencyRegistration
+    public function singleton(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->registerServices()->singleton(abstract: $abstract, concrete: $concrete);
     }
 
-    public function scoped(string $abstract, mixed $concrete = null) : DependencyRegistration
+    public function scoped(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->registerServices()->scoped(abstract: $abstract, concrete: $concrete);
     }
 
-    public function when(string $consumer) : RegisterForTarget
+    public function when(string $consumer): RegisterForTarget
     {
         return $this->registerServices()->when(consumer: $consumer);
     }
@@ -487,17 +489,17 @@ final readonly class Container implements ContainerInterface
         return $this->resolver->grouped(group: $group);
     }
 
-    public function lazy(string $abstract) : LazyProxy
+    public function lazy(string $abstract): LazyProxy
     {
         return $this->resolver->lazy(abstract: $abstract);
     }
 
-    public function defer(string $abstract, mixed $concrete = null) : DependencyRegistration
+    public function defer(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->registerServices()->defer(abstract: $abstract, concrete: $concrete);
     }
 
-    public function forContext(array $context) : ContainerInterface
+    public function forContext(array $context): ContainerInterface
     {
         if ($context === []) {
             return $this;
@@ -506,7 +508,7 @@ final readonly class Container implements ContainerInterface
         return new ContextContainer(base: $this, resolver: $this->resolver, context: $context);
     }
 
-    public function forSlice(string $slice) : ContainerInterface
+    public function forSlice(string $slice): ContainerInterface
     {
         if (SliceContext::isRoot(slice: $slice)) {
             return new RootCompositionView(base: $this, resolver: $this->resolver, context: []);
@@ -523,7 +525,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @param array<string, mixed> $context
      */
-    private function sliceView(array $context) : ContainerInterface
+    private function sliceView(array $context): ContainerInterface
     {
         return match (SliceContext::category(slice: SliceContext::from(context: $context))) {
             'flow'          => new FlowSliceView(base: $this, resolver: $this->resolver, context: $context),

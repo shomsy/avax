@@ -14,7 +14,7 @@ final class ConfigValidator
      */
     private array $schemas = [];
 
-    public function register(ConfigSchema $schema) : self
+    public function register(ConfigSchema $schema): self
     {
         $this->schemas[$schema->name] = $schema;
 
@@ -33,7 +33,7 @@ final class ConfigValidator
         $violations = [];
 
         foreach ($this->schemas as $name => $schema) {
-            $section = $allConfig[$name] ?? [];
+            $section    = $allConfig[$name] ?? [];
             $violations = [...$violations, ...$this->validate($name, $section)];
         }
 
@@ -51,10 +51,10 @@ final class ConfigValidator
     {
         if (! isset($this->schemas[$schemaName])) {
             return [new ConfigSchemaViolation(
-                        severity: ConfigSchemaViolation::SEVERITY_WARNING,
-                        key     : $schemaName,
-                        message : "No schema registered for '{$schemaName}'",
-                    )];
+                severity: ConfigSchemaViolation::SEVERITY_WARNING,
+                key     : $schemaName,
+                message : "No schema registered for '{$schemaName}'",
+            )];
         }
 
         $schema     = $this->schemas[$schemaName];
@@ -88,16 +88,16 @@ final class ConfigValidator
                     severity   : ConfigSchemaViolation::SEVERITY_ERROR,
                     key        : $dotKey,
                     message    : sprintf(
-                                     "Config '%s' has invalid value '%s'. Allowed: %s",
-                                     $dotKey,
-                                     var_export($value, true),
-                                     implode(', ', array_map(static fn (mixed $value) : string => var_export($value, true), $field->allowed)),
-                                 ),
+                        "Config '%s' has invalid value '%s'. Allowed: %s",
+                        $dotKey,
+                        var_export($value, true),
+                        implode(', ', array_map(static fn (mixed $value): string => var_export($value, true), $field->allowed)),
+                    ),
                     remediation: sprintf(
-                                     'Change %s to one of: %s',
-                                     $dotKey,
-                                     implode(', ', array_map(static fn (mixed $value) : string => var_export($value, true), $field->allowed)),
-                                 ),
+                        'Change %s to one of: %s',
+                        $dotKey,
+                        implode(', ', array_map(static fn (mixed $value): string => var_export($value, true), $field->allowed)),
+                    ),
                 );
             }
         }
@@ -119,9 +119,9 @@ final class ConfigValidator
             ConfigSchemaField::TYPE_FLOAT            => is_float($value) || is_int($value),
             ConfigSchemaField::TYPE_BOOL             => is_bool($value),
             ConfigSchemaField::TYPE_ARRAY            => is_array($value),
-            ConfigSchemaField::TYPE_URL => is_string($value) && filter_var($value, FILTER_VALIDATE_URL) !== false,
+            ConfigSchemaField::TYPE_URL              => is_string($value) && filter_var($value, FILTER_VALIDATE_URL)   !== false,
             ConfigSchemaField::TYPE_EMAIL            => is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false,
-            default => true,
+            default                                  => true,
         };
 
         if (! $isValid) {
@@ -129,16 +129,16 @@ final class ConfigValidator
                 severity   : ConfigSchemaViolation::SEVERITY_ERROR,
                 key        : $key,
                 message    : sprintf(
-                                 "Config '%s' expected type '%s', got '%s'",
-                                 $key,
-                                 $field->type,
-                                 get_debug_type($value),
-                             ),
+                    "Config '%s' expected type '%s', got '%s'",
+                    $key,
+                    $field->type,
+                    get_debug_type($value),
+                ),
                 remediation: sprintf(
-                                 'Change %s to a %s value',
-                                 $key,
-                                 $field->type,
-                             ),
+                    'Change %s to a %s value',
+                    $key,
+                    $field->type,
+                ),
             );
         }
 

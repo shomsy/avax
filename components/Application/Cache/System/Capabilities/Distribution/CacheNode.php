@@ -21,11 +21,10 @@ final readonly class CacheNode implements Stringable
         public string $id,
         public string $host,
         public int $port,
-        public int  $weight = 100,
+        public int $weight = 100,
         public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
         public ?int $virtualNodeCount = null,
-    )
-    {
+    ) {
         $this->cacheNodeStatus = $cacheNodeStatus;
     }
 
@@ -35,12 +34,11 @@ final readonly class CacheNode implements Stringable
     public static function create(
         string $id,
         string $host,
-        int  $port,
-        int  $weight = 100,
+        int $port,
+        int $weight = 100,
         CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
         ?int $virtualNodeCount = null,
-    ) : self
-    {
+    ): self {
         return new self(
             id              : $id,
             host            : $host,
@@ -57,7 +55,7 @@ final readonly class CacheNode implements Stringable
      * If not explicitly set, calculates based on weight:
      * (weight / 100) * DEFAULT_VIRTUAL_NODES
      */
-    public function virtualNodeCount() : int
+    public function virtualNodeCount(): int
     {
         if ($this->virtualNodeCount !== null) {
             return $this->virtualNodeCount;
@@ -69,7 +67,7 @@ final readonly class CacheNode implements Stringable
     /**
      * Check if the node is available for use.
      */
-    public function isAvailable() : bool
+    public function isAvailable(): bool
     {
         return $this->cacheNodeStatus->isAvailable();
     }
@@ -77,7 +75,7 @@ final readonly class CacheNode implements Stringable
     /**
      * Get the connection string for this node.
      */
-    public function connectionString() : string
+    public function connectionString(): string
     {
         return sprintf('%s:%d', $this->host, $this->port);
     }
@@ -85,7 +83,7 @@ final readonly class CacheNode implements Stringable
     /**
      * Create a copy of this node with a different status.
      */
-    public function withStatus(CacheNodeStatus $cacheNodeStatus) : self
+    public function withStatus(CacheNodeStatus $cacheNodeStatus): self
     {
         return new self(
             id              : $this->id,
@@ -100,7 +98,7 @@ final readonly class CacheNode implements Stringable
     /**
      * Create a copy of this node with a different weight.
      */
-    public function withWeight(int $weight) : self
+    public function withWeight(int $weight): self
     {
         return new self(
             id              : $this->id,
@@ -124,14 +122,14 @@ final readonly class CacheNode implements Stringable
      *     virtualNodeCount: int
      * }
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'id'     => $this->id,
-            'host'   => $this->host,
-            'port'   => $this->port,
-            'weight' => $this->weight,
-            'status' => $this->cacheNodeStatus->value,
+            'id'               => $this->id,
+            'host'             => $this->host,
+            'port'             => $this->port,
+            'weight'           => $this->weight,
+            'status'           => $this->cacheNodeStatus->value,
             'virtualNodeCount' => $this->virtualNodeCount(),
         ];
     }
@@ -148,7 +146,7 @@ final readonly class CacheNode implements Stringable
      *     virtualNodeCount?: int|null
      * } $data
      */
-    public static function fromArray(array $data) : self
+    public static function fromArray(array $data): self
     {
         $status = isset($data['status'])
             ? CacheNodeStatus::from($data['status'])
@@ -165,7 +163,7 @@ final readonly class CacheNode implements Stringable
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return sprintf(
             'CacheNode{id: %s, host: %s:%d, weight: %d, status: %s}',

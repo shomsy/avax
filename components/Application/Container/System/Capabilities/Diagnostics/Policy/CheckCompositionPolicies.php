@@ -36,12 +36,12 @@ final readonly class CheckCompositionPolicies
      * @throws ReflectionException
      */
     public function check(
-        array            $graph,
-        array            $dependents,
+        array $graph,
+        array $dependents,
         DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
         ResolutionPolicy $policy,
-    ) : array {
+    ): array {
         $findings = [];
 
         foreach ($graph as $serviceId => $dependencies) {
@@ -55,7 +55,7 @@ final readonly class CheckCompositionPolicies
             }
 
             if (is_string(value: $candidate) && class_exists(class: $candidate)) {
-                $blueprint = $blueprints->createFor(class: $candidate);
+                $blueprint        = $blueprints->createFor(class: $candidate);
                 $constructorArity = count(value: $blueprint->constructor?->parameters ?? []);
                 if ($constructorArity >= 6) {
                     $findings[$serviceId][] = $this->finding(
@@ -96,7 +96,7 @@ final readonly class CheckCompositionPolicies
                     ?? RegistrationMetadata::for(unitId: $dependency);
 
                 if (
-                    $metadata->category === RegistrationCategory::FLOW
+                    $metadata->category              === RegistrationCategory::FLOW
                     && $dependencyMetadata->category === RegistrationCategory::FLOW
                     && $metadata->ownerSlice !== $dependencyMetadata->ownerSlice
                 ) {
@@ -237,7 +237,7 @@ final readonly class CheckCompositionPolicies
 
             usort(
                 array   : $findings[$serviceId],
-                callback: static fn (array $left, array $right) : int => [$left['severity'], $left['code']]
+                callback: static fn (array $left, array $right): int => [$left['severity'], $left['code']]
                     <=> [$right['severity'], $right['code']],
             );
         }
@@ -257,7 +257,7 @@ final readonly class CheckCompositionPolicies
         string $severity,
         string $category,
         string $message,
-    ) : array {
+    ): array {
         return [
             'code'     => $code,
             'severity' => $policy->severityFor(code: $code, defaultSeverity: $severity),

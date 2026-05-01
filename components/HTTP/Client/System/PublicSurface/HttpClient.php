@@ -11,15 +11,16 @@ use Avax\Components\HTTP\Client\System\Capabilities\Http\CurlClient;
 final readonly class HttpClient
 {
     public function __construct(
-        private CurlClient $client = new CurlClient,
-    ) {}
+        private CurlClient $client = new CurlClient(),
+    ) {
+    }
 
-    public function get(string $url, array $headers = [], array $options = []) : ClientResponse
+    public function get(string $url, array $headers = [], array $options = []): ClientResponse
     {
         return $this->send(new ClientRequest('GET', $url, $headers, null, $options));
     }
 
-    public function post(string $url, mixed $data = null, array $headers = [], array $options = []) : ClientResponse
+    public function post(string $url, mixed $data = null, array $headers = [], array $options = []): ClientResponse
     {
         $body = is_array($data) ? json_encode($data) : (string) $data;
         if (is_array($data) && ! isset($headers['Content-Type'])) {
@@ -29,7 +30,7 @@ final readonly class HttpClient
         return $this->send(new ClientRequest('POST', $url, $headers, $body, $options));
     }
 
-    public function send(ClientRequest $request) : ClientResponse
+    public function send(ClientRequest $request): ClientResponse
     {
         return $this->client->send($request);
     }

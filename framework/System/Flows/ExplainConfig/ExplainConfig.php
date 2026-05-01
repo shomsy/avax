@@ -10,13 +10,14 @@ use Avax\Framework\System\Capabilities\ConfigExplanation\ConfigSource;
 final readonly class ExplainConfig
 {
     public function __construct(
-        private ConfigExplainer $explainer = new ConfigExplainer,
-    ) {}
+        private ConfigExplainer $explainer = new ConfigExplainer(),
+    ) {
+    }
 
     /**
      * @param array<string, ConfigSource> $sources
      */
-    public static function printSources(array $sources, bool $safe = false) : void
+    public static function printSources(array $sources, bool $safe = false): void
     {
         foreach ($sources as $key => $source) {
             $value = $safe ? self::redact($key, $source->value) : $source->value;
@@ -38,7 +39,7 @@ final readonly class ExplainConfig
         }
     }
 
-    private static function redact(string $key, mixed $value) : mixed
+    private static function redact(string $key, mixed $value): mixed
     {
         $secretPatterns = ['password', 'secret', 'key', 'token', 'api_key', 'apikey'];
 
@@ -53,7 +54,7 @@ final readonly class ExplainConfig
         return $value;
     }
 
-    public function explain(string $key) : string
+    public function explain(string $key): string
     {
         $source = $this->explainer->getSource($key);
 
@@ -81,7 +82,7 @@ final readonly class ExplainConfig
     /**
      * @return array<string, ConfigSource>
      */
-    public function allSources() : array
+    public function allSources(): array
     {
         return $this->explainer->allSources();
     }

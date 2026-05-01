@@ -11,23 +11,22 @@ use Throwable;
 final class CacheLockWasNotAcquired extends RuntimeException
 {
     public function __construct(
-        string     $message,
+        string $message,
         public readonly CacheKey $cacheKey,
         public readonly int $timeoutSeconds,
         ?Throwable $throwable = null,
-    )
-    {
+    ) {
         parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 
-    public static function timeout(CacheKey $cacheKey, int $timeoutSeconds) : self
+    public static function timeout(CacheKey $cacheKey, int $timeoutSeconds): self
     {
         return new self(
             message       : sprintf(
-                                'Lock for key "%s" could not be acquired after %d seconds',
-                                $cacheKey->fullKey(),
-                                $timeoutSeconds,
-                            ),
+                'Lock for key "%s" could not be acquired after %d seconds',
+                $cacheKey->fullKey(),
+                $timeoutSeconds,
+            ),
             key           : $cacheKey,
             timeoutSeconds: $timeoutSeconds,
         );

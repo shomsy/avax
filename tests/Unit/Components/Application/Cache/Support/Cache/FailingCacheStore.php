@@ -22,22 +22,22 @@ final class FailingCacheStore implements CacheStore
 
     private bool $shouldFail = false;
 
-    public function __construct(?Clock $clock = null)
+    public function __construct(Clock $clock = null)
     {
-        $this->clock = $clock ?? new SystemClock;
+        $this->clock = $clock ?? new SystemClock();
     }
 
-    public function setFailureRate(float $rate) : void
+    public function setFailureRate(float $rate): void
     {
         $this->failureRate = max(0.0, min(1.0, $rate));
     }
 
-    public function forceFailure() : void
+    public function forceFailure(): void
     {
         $this->shouldFail = true;
     }
 
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $key, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $this->maybeFail();
 
@@ -47,29 +47,29 @@ final class FailingCacheStore implements CacheStore
     /**
      * @throws RandomException
      */
-    private function maybeFail() : void
+    private function maybeFail(): void
     {
         if ($this->shouldFail || (random_int(0, 100) / 100) < $this->failureRate) {
             throw new RuntimeException(message: 'Simulated cache store failure');
         }
     }
 
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $key, StoredCacheRecord $record): void
     {
         $this->maybeFail();
     }
 
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $key): void
     {
         $this->maybeFail();
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->maybeFail();
     }
 
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $key): bool
     {
         $this->maybeFail();
 

@@ -8,7 +8,7 @@ use RuntimeException;
 
 class ChangePathPermissions
 {
-    public function execute(string $path, int $permissions) : bool
+    public function execute(string $path, int $permissions): bool
     {
         if (! file_exists(filename: $path)) {
             throw new RuntimeException(message: 'Path does not exist: ' . $path);

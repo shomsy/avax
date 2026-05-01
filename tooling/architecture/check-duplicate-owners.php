@@ -23,8 +23,8 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path                     = $file->getRealPath();
-    $relativePath             = str_replace($rootDir . '/', '', $path);
+    $path         = $file->getRealPath();
+    $relativePath = str_replace($rootDir . '/', '', $path);
 
     // Ignore vendor, tests, tooling
     if (str_contains($relativePath, 'vendor/') || str_contains($relativePath, 'tests/')) {
@@ -38,7 +38,7 @@ foreach ($iterator as $file) {
 
         // Exclude common names that are expected to be duplicated across components like Exception, Configuration
         $commonNames = ['Exception', 'Configuration', 'ServiceProvider', 'Factory', 'Manager', 'Builder'];
-        $isCommon = false;
+        $isCommon    = false;
         foreach ($commonNames as $common) {
             if (str_ends_with($className, $common)) {
                 $isCommon = true;
@@ -53,7 +53,7 @@ foreach ($iterator as $file) {
 
         if (isset($classMap[$className])) {
             // Check if one is a bridge
-            $isCurrentBridge = str_contains($content, '@deprecated') || str_contains($content, 'bridge');
+            $isCurrentBridge  = str_contains($content, '@deprecated')                                                  || str_contains($content, 'bridge');
             $isPreviousBridge = str_contains(file_get_contents($rootDir . '/' . $classMap[$className]), '@deprecated') || str_contains(file_get_contents($rootDir . '/' . $classMap[$className]), 'bridge');
 
             if (! $isCurrentBridge && ! $isPreviousBridge) {

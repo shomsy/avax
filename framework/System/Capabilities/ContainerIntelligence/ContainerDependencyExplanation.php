@@ -21,5 +21,6 @@ final readonly class ContainerDependencyExplanation
         public array $dependencies,
         public bool $workerSafe,
         public string $explanation,
-    ) {}
+    ) {
+    }
 }

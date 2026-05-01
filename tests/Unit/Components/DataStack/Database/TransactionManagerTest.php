@@ -83,7 +83,7 @@ final class TransactionManagerTest extends TestCase
 
     private function createTestConnection() : TestDatabaseConnection
     {
-        return new TestDatabaseConnection;
+        return new TestDatabaseConnection();
     }
 
     public function test_commit_commits_transaction() : void
@@ -233,7 +233,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_closure_auto_commits() : void
     {
-        $conn = $this->createTestConnection();
+        $conn   = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $result = $manager->transaction(static fn (TransactionManager $tm) => 'success');
 
@@ -695,7 +695,7 @@ final class TransactionManagerTest extends TestCase
     public function test_retry_policy_has_retry_criteria() : void
     {
         $policyWith    = RetryPolicy::forDeadlocks();
-        $policyWithout = new RetryPolicy;
+        $policyWithout = new RetryPolicy();
 
         $this->assertTrue($policyWith->hasRetryCriteria());
         $this->assertFalse($policyWithout->hasRetryCriteria());

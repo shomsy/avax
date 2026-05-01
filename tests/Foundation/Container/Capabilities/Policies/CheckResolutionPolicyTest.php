@@ -14,7 +14,7 @@ use stdClass;
 
 final class CheckResolutionPolicyTest extends TestCase
 {
-    public function test_strict_policy_blocks_unknown_classes() : void
+    public function test_strict_policy_blocks_unknown_classes(): void
     {
         $check = new CheckResolutionPolicy(
             policy: new StrictResolutionPolicy(policy: new ContainerPolicy(strict: true)),
@@ -26,7 +26,7 @@ final class CheckResolutionPolicyTest extends TestCase
         $this->assertSame(expected: 'policy.blocked', actual: $result->code);
     }
 
-    public function test_strict_policy_allows_existing_classes() : void
+    public function test_strict_policy_allows_existing_classes(): void
     {
         $check = new CheckResolutionPolicy(
             policy: new StrictResolutionPolicy(policy: new ContainerPolicy(strict: true)),

@@ -24,14 +24,14 @@ final readonly class RefreshCachedValue
         private Clock                    $clock,
         private ShouldRefreshCachedValue $shouldRefreshCachedValue
         = new ShouldRefreshCachedValue(
-            clock: new SystemClock,
+            clock: new SystemClock(),
         ),
-        private CacheTtl                 $cacheTtl = new CacheTtl,
+        private CacheTtl                 $cacheTtl = new CacheTtl(),
     ) {}
 
     public function refreshIfNeeded(
-        CacheKey              $cacheKey,
-        callable              $loader,
+        CacheKey         $cacheKey,
+        callable         $loader,
         int|DateInterval|null $ttl = null,
     ) : mixed
     {
@@ -50,7 +50,7 @@ final readonly class RefreshCachedValue
 
     public function refresh(
         CacheKey $cacheKey,
-        callable              $loader,
+        callable         $loader,
         int|DateInterval|null $ttl = null,
     ) : mixed
     {

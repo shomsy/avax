@@ -18,16 +18,16 @@ final class Request implements RequestInterface
     private RequestData $data;
 
     public function __construct(
-        string     $method,
+        string $method,
         RequestUri $uri,
         RequestHeaders $headers,
         RequestBody $body,
         UploadedFiles $files,
-        array      $serverParams = [],
-        array      $cookieParams = [],
-        array      $queryParams = [],
-        array      $attributes = [],
-        string     $protocolVersion = '1.1',
+        array  $serverParams = [],
+        array  $cookieParams = [],
+        array  $queryParams = [],
+        array  $attributes = [],
+        string $protocolVersion = '1.1',
     )
     {
         $this->data = new RequestData(

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 final class DataTransferViolationsTest extends TestCase
 {
-    public function test_it_returns_empty_collection_when_no_violations_are_recorded() : void
+    public function test_it_returns_empty_collection_when_no_violations_are_recorded(): void
     {
         // Act
         $violations = DataTransferViolations::empty();
@@ -22,7 +22,7 @@ final class DataTransferViolationsTest extends TestCase
         self::assertSame(expected: [], actual: $violations->toLegacyErrors());
     }
 
-    public function test_it_groups_messages_by_path_when_multiple_violations_share_a_path() : void
+    public function test_it_groups_messages_by_path_when_multiple_violations_share_a_path(): void
     {
         // Arrange
         $violations = DataTransferViolations::from(violations: [
@@ -44,7 +44,7 @@ final class DataTransferViolationsTest extends TestCase
         );
     }
 
-    public function test_it_keeps_latest_legacy_error_when_multiple_violations_share_a_path() : void
+    public function test_it_keeps_latest_legacy_error_when_multiple_violations_share_a_path(): void
     {
         // Arrange
         $violations = DataTransferViolations::from(violations: [
@@ -59,7 +59,7 @@ final class DataTransferViolationsTest extends TestCase
         self::assertSame(expected: ['email' => 'Email is invalid.'], actual: $errors);
     }
 
-    public function test_it_exposes_structured_violation_data_when_failure_is_created_with_single_violation() : void
+    public function test_it_exposes_structured_violation_data_when_failure_is_created_with_single_violation(): void
     {
         // Act
         $failure = DataTransferFailure::withViolation(

@@ -13,31 +13,31 @@ final class ApiVersion
 {
     private static VersionRegistry $registry;
 
-    public static function resolve(RequestInterface $request) : ApiVersionResolved
+    public static function resolve(RequestInterface $request): ApiVersionResolved
     {
         return VersionResolver::resolve($request);
     }
 
-    public static function current() : int
+    public static function current(): int
     {
         return self::registry()->current();
     }
 
-    private static function registry() : VersionRegistry
+    private static function registry(): VersionRegistry
     {
         if (! isset(self::$registry)) {
-            self::$registry = new VersionRegistry;
+            self::$registry = new VersionRegistry();
         }
 
         return self::$registry;
     }
 
-    public static function deprecated(int $version, DateTimeInterface $sunset) : void
+    public static function deprecated(int $version, DateTimeInterface $sunset): void
     {
         self::registry()->markDeprecated($version, $sunset);
     }
 
-    public static function supported() : array
+    public static function supported(): array
     {
         return self::registry()->supported();
     }
@@ -46,8 +46,9 @@ final class ApiVersion
 final readonly class ApiVersionResolved
 {
     public function __construct(
-        public int                $version,
+        public int $version,
         public bool $deprecated,
         public ?DateTimeInterface $sunset = null,
-    ) {}
+    ) {
+    }
 }

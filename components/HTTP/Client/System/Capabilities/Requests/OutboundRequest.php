@@ -13,12 +13,12 @@ namespace Avax\Components\HTTP\Client\System\Capabilities\Requests;
 final readonly class OutboundRequest
 {
     /**
-     * @param string                $method  HTTP method (GET, POST, etc.)
-     * @param string                $url     Full URL or path
-     * @param mixed                 $body    Request body (string, array, null)
+     * @param string               $method  HTTP method (GET, POST, etc.)
+     * @param string               $url     Full URL or path
+     * @param mixed                $body    Request body (string, array, null)
      * @param array<string, string> $headers HTTP headers
-     * @param RequestOptions|null   $options Request options
-     * @param array<string, mixed>  $context Additional context for middleware
+     * @param RequestOptions|null  $options Request options
+     * @param array<string, mixed> $context Additional context for middleware
      */
     public function __construct(
         public string $method = 'GET',

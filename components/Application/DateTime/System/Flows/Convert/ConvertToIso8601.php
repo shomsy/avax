@@ -9,7 +9,7 @@ use DateTimeInterface;
 
 final class ConvertToIso8601
 {
-    public static function execute(DateTimeInterface $dt) : string
+    public static function execute(DateTimeInterface $dt): string
     {
         return $dt->format(DateTime::ATOM);
     }

@@ -24,8 +24,8 @@ final class RequestBehaviorTest extends TestCase
     }
 
     private function createRequest(
-        ?array $serverParams = null,
-        ?array $queryParams = null,
+        array $serverParams = null,
+        array $queryParams = null,
         array $parsedBody = [],
     ) : Request
     {

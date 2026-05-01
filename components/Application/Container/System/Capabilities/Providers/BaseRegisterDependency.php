@@ -13,17 +13,18 @@ abstract class BaseRegisterDependency
 {
     public function __construct(
         protected readonly ContainerInterface $container,
-    ) {}
+    ) {
+    }
 
     /**
      * Register services in the container.
      */
-    abstract public function register() : void;
+    abstract public function register(): void;
 
     /**
      * Boot services after all have been registered.
      */
-    public function boot() : void
+    public function boot(): void
     {
         // Optional boot logic.
     }

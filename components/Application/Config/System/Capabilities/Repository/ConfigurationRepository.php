@@ -11,7 +11,7 @@ final class ConfigurationRepository
 {
     private array $items = [];
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         if (isset($this->items[$key])) {
             return $this->items[$key];
@@ -24,7 +24,7 @@ final class ConfigurationRepository
         return $this->getDot($key, $default);
     }
 
-    public function set(string $key, mixed $value) : void
+    public function set(string $key, mixed $value): void
     {
         if (! str_contains($key, '.')) {
             $this->items[$key] = $value;
@@ -35,22 +35,22 @@ final class ConfigurationRepository
         $this->setDot($key, $value);
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return $this->get($key, $this) !== $this;
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }
 
-    public function merge(array $config) : void
+    public function merge(array $config): void
     {
         $this->items = array_replace_recursive($this->items, $config);
     }
 
-    private function getDot(string $key, mixed $default) : mixed
+    private function getDot(string $key, mixed $default): mixed
     {
         $array = $this->items;
 
@@ -65,12 +65,12 @@ final class ConfigurationRepository
         return $array;
     }
 
-    private function setDot(string $key, mixed $value) : void
+    private function setDot(string $key, mixed $value): void
     {
         $array = &$this->items;
-        $keys = explode('.', $key);
+        $keys  = explode('.', $key);
 
-        while ( count($keys) > 1 ) {
+        while (count($keys) > 1) {
             $key = array_shift($keys);
 
             if (! isset($array[$key]) || ! is_array($array[$key])) {

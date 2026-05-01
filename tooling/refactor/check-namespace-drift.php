@@ -26,24 +26,24 @@ final class CheckNamespaceDrift
 
     private array $checkedFiles = [];
 
-    public function check() : array
+    public function check(): array
     {
         $this->scanForNamespaceDrift();
 
         return [
             'status' => empty($this->checkedFiles) ? 'PASS' : 'FAIL',
-            'files' => $this->checkedFiles,
+            'files'  => $this->checkedFiles,
         ];
     }
 
-    private function scanForNamespaceDrift() : void
+    private function scanForNamespaceDrift(): void
     {
         $basePath = dirname(__DIR__, 2);
         $this->checkDirectory($basePath . '/components');
         $this->checkDirectory($basePath . '/framework');
     }
 
-    private function checkDirectory(string $path) : void
+    private function checkDirectory(string $path): void
     {
         if (! is_dir($path)) {
             return;
@@ -78,8 +78,8 @@ final class CheckNamespaceDrift
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckNamespaceDrift;
-    $result = $checker->check();
+    $checker = new CheckNamespaceDrift();
+    $result  = $checker->check();
 
     echo $result['status'] . "\n";
 

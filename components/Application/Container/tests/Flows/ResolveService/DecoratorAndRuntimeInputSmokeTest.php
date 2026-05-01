@@ -11,7 +11,7 @@ use Avax\Components\Application\Container\DI\ContainerInterface;
 
 interface DecoratedContract
 {
-    public function label() : string;
+    public function label(): string;
 }
 
 final class DecoratedService implements DecoratedContract
@@ -19,7 +19,7 @@ final class DecoratedService implements DecoratedContract
     public bool $decorated = false;
 
     #[Override]
-    public function label() : string
+    public function label(): string
     {
         return 'decorated';
     }
@@ -27,7 +27,7 @@ final class DecoratedService implements DecoratedContract
 
 final class OwnedDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null): mixed
     {
         assertInstanceOf(expectedClass: DecoratedService::class, value: $instance, message: 'Decorators should receive the resolved concrete instance.');
         $instance->decorated = true;
@@ -38,7 +38,7 @@ final class OwnedDecorator implements DecoratorInterface
 
 final class InvisibleDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null): mixed
     {
         return $instance;
     }
@@ -46,12 +46,14 @@ final class InvisibleDecorator implements DecoratorInterface
 
 final class RuntimeInputConsumer
 {
-    public function __construct(public DecoratedContract $decoratedContract, #[RuntimeInput(name: 'name')] public string $name) {}
+    public function __construct(public DecoratedContract $decoratedContract, #[RuntimeInput(name: 'name')] public string $name)
+    {
+    }
 }
 
 final class FirstGroupedStep
 {
-    public function name() : string
+    public function name(): string
     {
         return 'first';
     }
@@ -59,7 +61,7 @@ final class FirstGroupedStep
 
 final class SecondGroupedStep
 {
-    public function name() : string
+    public function name(): string
     {
         return 'second';
     }
@@ -67,7 +69,7 @@ final class SecondGroupedStep
 
 final class ConflictingGroupedStep
 {
-    public function name() : string
+    public function name(): string
     {
         return 'conflict';
     }
@@ -99,13 +101,13 @@ $container->singleton(abstract: SecondGroupedStep::class, concrete: SecondGroupe
     ->export()
     ->group(group: 'checkout.steps', order: 10);
 
-$runtimeFactory = $container->factory(abstract: RuntimeInputConsumer::class);
-$consumer       = $container->make(abstract: RuntimeInputConsumer::class, parameters: ['name' => 'Ada']);
+$runtimeFactory  = $container->factory(abstract: RuntimeInputConsumer::class);
+$consumer        = $container->make(abstract: RuntimeInputConsumer::class, parameters: ['name' => 'Ada']);
 $factoryConsumer = $runtimeFactory(['name' => 'Grace']);
-$description    = $container->describeService(id: DecoratedContract::class);
-$grouped        = $container->grouped(group: 'checkout.steps');
-$graph          = $container->debugGraph();
-$groupReport    = $container->debugGroup(group: 'checkout.steps');
+$description     = $container->describeService(id: DecoratedContract::class);
+$grouped         = $container->grouped(group: 'checkout.steps');
+$graph           = $container->debugGraph();
+$groupReport     = $container->debugGroup(group: 'checkout.steps');
 $selectionReport = $container->debugSelection(id: DecoratedContract::class);
 
 assertSame(expected: 'Ada', actual: $consumer->name, message: 'Runtime input should come from explicit caller overrides.');
@@ -113,7 +115,7 @@ assertSame(expected: 'Grace', actual: $factoryConsumer->name, message: 'Factory 
 assertTrue(condition: $consumer->service instanceof DecoratedService && $consumer->service->decorated, message: 'Decorators should still run before runtime-input consumers receive the service.');
 assertSame(
     expected: [SecondGroupedStep::class, FirstGroupedStep::class],
-    actual  : array_map(callback: static fn (object $service) : string => $service::class, array: $grouped),
+    actual  : array_map(callback: static fn (object $service): string => $service::class, array: $grouped),
     message : 'Grouped multi-bindings should resolve in deterministic order.',
 );
 assertSame(

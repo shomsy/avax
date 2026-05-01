@@ -29,33 +29,34 @@ final class ApplicationBuilder
     public function __construct(
         private ProjectPath $projectPath,
         private EnvironmentName $environment,
-        private Clock $clock = new SystemClock,
+        private Clock $clock = new SystemClock(),
         private string $runtimeName = 'avax',
-    ) {}
+    ) {
+    }
 
-    public function projectPath() : ProjectPath
+    public function projectPath(): ProjectPath
     {
         return $this->projectPath;
     }
 
-    public function environment() : EnvironmentName
+    public function environment(): EnvironmentName
     {
         return $this->environment;
     }
 
-    public function clock() : Clock
+    public function clock(): Clock
     {
         return $this->clock;
     }
 
-    public function runtimeName() : string
+    public function runtimeName(): string
     {
         return $this->runtimeName;
     }
 
-    public function withEnvironment(EnvironmentName|string $environment) : self
+    public function withEnvironment(EnvironmentName|string $environment): self
     {
-        $clone = clone $this;
+        $clone              = clone $this;
         $clone->environment = $environment instanceof EnvironmentName
             ? $environment
             : new EnvironmentName(value: $environment);
@@ -63,31 +64,31 @@ final class ApplicationBuilder
         return $clone;
     }
 
-    public function withClock(Clock $clock) : self
+    public function withClock(Clock $clock): self
     {
-        $clone = clone $this;
+        $clone        = clone $this;
         $clone->clock = $clock;
 
         return $clone;
     }
 
-    public function withRuntimeName(string $runtimeName) : self
+    public function withRuntimeName(string $runtimeName): self
     {
-        $clone = clone $this;
+        $clone              = clone $this;
         $clone->runtimeName = trim(string: $runtimeName);
 
         return $clone;
     }
 
-    public function withHttpHandler(callable $httpHandler) : self
+    public function withHttpHandler(callable $httpHandler): self
     {
-        $clone = clone $this;
+        $clone              = clone $this;
         $clone->httpHandler = Closure::fromCallable($httpHandler);
 
         return $clone;
     }
 
-    public function withHttpRouteDefinitions(callable $routeDefinitions) : self
+    public function withHttpRouteDefinitions(callable $routeDefinitions): self
     {
         return $this->withHttpHandler(
             httpHandler: ConfiguredRoutesHttpHandler::fromRouteDefinitions(
@@ -96,7 +97,7 @@ final class ApplicationBuilder
         );
     }
 
-    public function withHttpRoutes(string $routesFile) : self
+    public function withHttpRoutes(string $routesFile): self
     {
         $resolvedPath = $this->projectPath->join(relativePath: $routesFile);
 
@@ -111,17 +112,17 @@ final class ApplicationBuilder
         );
     }
 
-    public function registerConsoleCommand(string $name, callable $command) : self
+    public function registerConsoleCommand(string $name, callable $command): self
     {
-        $clone = clone $this;
+        $clone                         = clone $this;
         $clone->consoleCommands[$name] = Closure::fromCallable($command);
 
         return $clone;
     }
 
-    public function registerComponentProvider(ComponentProviderInterface $provider) : self
+    public function registerComponentProvider(ComponentProviderInterface $provider): self
     {
-        $clone = clone $this;
+        $clone                     = clone $this;
         $clone->componentProviders = [...$clone->componentProviders, $provider];
 
         return $clone;
@@ -130,7 +131,7 @@ final class ApplicationBuilder
     /**
      * @return list<ComponentProviderInterface>
      */
-    public function componentProviders() : array
+    public function componentProviders(): array
     {
         return $this->componentProviders;
     }
@@ -138,12 +139,12 @@ final class ApplicationBuilder
     /**
      * @return array<string, Closure>
      */
-    public function consoleCommands() : array
+    public function consoleCommands(): array
     {
         return $this->consoleCommands;
     }
 
-    public function httpHandler() : ?Closure
+    public function httpHandler(): ?Closure
     {
         return $this->httpHandler;
     }

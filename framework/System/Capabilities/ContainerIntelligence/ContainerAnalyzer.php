@@ -10,9 +10,10 @@ final readonly class ContainerAnalyzer
 {
     public function __construct(
         private ContainerInterface $container,
-    ) {}
+    ) {
+    }
 
-    public function assessWorkerSafety() : SafetyAssessment
+    public function assessWorkerSafety(): SafetyAssessment
     {
         return new SafetyAssessment(safe: true, violations: []);
     }
@@ -20,7 +21,7 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function detectScopeViolations() : array
+    public function detectScopeViolations(): array
     {
         return [];
     }
@@ -28,12 +29,12 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function getServiceDependencies(string $id) : array
+    public function getServiceDependencies(string $id): array
     {
         return [];
     }
 
-    public function why(string $id) : string
+    public function why(string $id): string
     {
         return "Service {$id} is available.";
     }
@@ -41,7 +42,7 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function whoUses(string $id) : array
+    public function whoUses(string $id): array
     {
         return [];
     }
@@ -49,7 +50,7 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function whatBreaksIf(string $id) : array
+    public function whatBreaksIf(string $id): array
     {
         return [];
     }
@@ -63,5 +64,6 @@ final readonly class SafetyAssessment
     public function __construct(
         public bool $safe,
         public array $violations = [],
-    ) {}
+    ) {
+    }
 }

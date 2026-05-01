@@ -14,22 +14,22 @@ final class GraphExporter
     /**
      * @param array<string, mixed> $artifact
      */
-    public function export(array $artifact, string $format = 'json') : string
+    public function export(array $artifact, string $format = 'json'): string
     {
         return match (strtolower(string: trim(string: $format))) {
-            'mermaid' => $this->toMermaid(artifact: $artifact),
+            'mermaid'         => $this->toMermaid(artifact: $artifact),
             'dot', 'graphviz' => $this->toDot(artifact: $artifact),
-            'html'    => $this->toHtml(artifact: $artifact),
-            default   => $this->toJson(artifact: $artifact),
+            'html'            => $this->toHtml(artifact: $artifact),
+            default           => $this->toJson(artifact: $artifact),
         };
     }
 
     /**
      * @param array<string, mixed> $artifact
      */
-    private function toMermaid(array $artifact) : string
+    private function toMermaid(array $artifact): string
     {
-        $lines = ['flowchart LR'];
+        $lines   = ['flowchart LR'];
         $nodeIds = [];
 
         foreach ($artifact['nodes'] ?? [] as $node) {
@@ -39,8 +39,8 @@ final class GraphExporter
         }
 
         foreach ($artifact['edges'] ?? [] as $edge) {
-            $from = $this->nodeId(label: (string) ($edge['from'] ?? 'from'), seen: $nodeIds);
-            $to   = $this->nodeId(label: (string) ($edge['to'] ?? 'to'), seen: $nodeIds);
+            $from  = $this->nodeId(label: (string) ($edge['from'] ?? 'from'), seen: $nodeIds);
+            $to    = $this->nodeId(label: (string) ($edge['to'] ?? 'to'), seen: $nodeIds);
             $label = trim(string: (string) ($edge['label'] ?? ''));
 
             $lines[] = $label !== ''
@@ -54,7 +54,7 @@ final class GraphExporter
     /**
      * @param array<string, string> $seen
      */
-    private function nodeId(string $label, array &$seen) : string
+    private function nodeId(string $label, array &$seen): string
     {
         if (isset($seen[$label])) {
             return $seen[$label];
@@ -65,7 +65,7 @@ final class GraphExporter
         return $seen[$label];
     }
 
-    private function escapeMermaid(string $label) : string
+    private function escapeMermaid(string $label): string
     {
         return str_replace(search: ['"', "\n", "\r"], replace: ["'", ' ', ' '], subject: $label);
     }
@@ -73,7 +73,7 @@ final class GraphExporter
     /**
      * @param array<string, mixed> $artifact
      */
-    private function toDot(array $artifact) : string
+    private function toDot(array $artifact): string
     {
         $lines = ['digraph container {', '  rankdir=LR;'];
 
@@ -84,8 +84,8 @@ final class GraphExporter
         }
 
         foreach ($artifact['edges'] ?? [] as $edge) {
-            $from = $this->quote(value: (string) ($edge['from'] ?? 'from'));
-            $to   = $this->quote(value: (string) ($edge['to'] ?? 'to'));
+            $from  = $this->quote(value: (string) ($edge['from'] ?? 'from'));
+            $to    = $this->quote(value: (string) ($edge['to'] ?? 'to'));
             $label = trim(string: (string) ($edge['label'] ?? ''));
 
             $lines[] = $label !== ''
@@ -98,7 +98,7 @@ final class GraphExporter
         return implode(separator: PHP_EOL, array: $lines) . PHP_EOL;
     }
 
-    private function quote(string $value) : string
+    private function quote(string $value): string
     {
         return '"' . str_replace(search: ['\\', '"'], replace: ['\\\\', '\\"'], subject: $value) . '"';
     }
@@ -106,7 +106,7 @@ final class GraphExporter
     /**
      * @param array<string, mixed> $artifact
      */
-    private function toHtml(array $artifact) : string
+    private function toHtml(array $artifact): string
     {
         $json = $this->toJson(artifact: $artifact);
 
@@ -330,7 +330,7 @@ final class GraphExporter
     /**
      * @param array<string, mixed> $artifact
      */
-    private function toJson(array $artifact) : string
+    private function toJson(array $artifact): string
     {
         try {
             return (string) json_encode(value: $artifact, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);

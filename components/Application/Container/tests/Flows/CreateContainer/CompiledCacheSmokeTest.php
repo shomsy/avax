@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 final class CompiledCacheDependency
 {
-    public function id() : string
+    public function id(): string
     {
         return 'compiled';
     }
@@ -16,7 +16,9 @@ final class CompiledCacheDependency
 
 final class CompiledCacheTarget
 {
-    public function __construct(public CompiledCacheDependency $compiledCacheDependency) {}
+    public function __construct(public CompiledCacheDependency $compiledCacheDependency)
+    {
+    }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-compiled-' . uniqid();
@@ -37,9 +39,9 @@ $container->rebuildCompiled(serviceIds: [CompiledCacheTarget::class, CompiledCac
 assertTrue(condition: is_file(filename: $artifact), message: 'Rebuild should repopulate compiled blueprints.');
 assertTrue(condition: str_contains(haystack: (string) $container->exportMetrics(), needle: 'container_compiled_rebuilds_total'), message: 'Rebuild should be reported in metrics.');
 
-$second  = makeTestContainer(config: $config);
+$second   = makeTestContainer(config: $config);
 $resolved = $second->get(id: CompiledCacheTarget::class);
-$metrics = $second->exportMetrics();
+$metrics  = $second->exportMetrics();
 
 assertInstanceOf(expectedClass: CompiledCacheTarget::class, value: $resolved, message: 'Compiled cache should still resolve services correctly.');
 assertSame(expected: 'compiled', actual: $resolved->dependency->id(), message: 'Compiled cache should preserve dependency resolution behavior.');

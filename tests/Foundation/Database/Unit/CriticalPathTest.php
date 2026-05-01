@@ -28,10 +28,10 @@ final class CriticalPathTest extends TestCase
      *
      * @throws Throwable
      */
-    public function test_transaction_rollback_on_failure() : void
+    public function test_transaction_rollback_on_failure(): void
     {
         try {
-            $this->database->transactions()->run(callback: function () : void {
+            $this->database->transactions()->run(callback: function (): void {
                 $this->database->table(table: 'users')->insert(values: [
                                                                            'name'  => 'Alice',
                                                                            'email' => 'alice@test.com',
@@ -57,10 +57,10 @@ final class CriticalPathTest extends TestCase
      *
      * @throws Throwable
      */
-    public function test_entity_manager_persists_and_rehydrates_entity() : void
+    public function test_entity_manager_persists_and_rehydrates_entity(): void
     {
         $entityManager = $this->database->entityManager();
-        $user = new TestUserEntity(name: 'Bob', email: 'bob@test.com');
+        $user          = new TestUserEntity(name: 'Bob', email: 'bob@test.com');
 
         $entityManager->persist(entity: $user);
         $entityManager->flush();
@@ -78,10 +78,10 @@ final class CriticalPathTest extends TestCase
      *
      * @throws Throwable
      */
-    public function test_entity_manager_resolves_custom_repository() : void
+    public function test_entity_manager_resolves_custom_repository(): void
     {
         $entityManager = $this->database->entityManager();
-        $repository = $entityManager->repository(entityClass: TestUserEntity::class);
+        $repository    = $entityManager->repository(entityClass: TestUserEntity::class);
 
         $this->assertInstanceOf(expected: TestUserRepository::class, actual: $repository);
 
@@ -101,7 +101,7 @@ final class CriticalPathTest extends TestCase
      *
      * @throws Throwable
      */
-    public function test_query_exception_redacts_bindings_by_default() : void
+    public function test_query_exception_redacts_bindings_by_default(): void
     {
         try {
             $this->database->table(table: 'nonexistent')->insert(values: ['secret' => 'password123']);
@@ -122,7 +122,7 @@ final class CriticalPathTest extends TestCase
      * @throws Throwable
      * @throws RandomException
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -150,7 +150,7 @@ final class TestUserEntity
 
     public function __construct(string $name, #[SensitiveParameter] string $email)
     {
-        $this->name = $name;
+        $this->name  = $name;
         $this->email = $email;
     }
 }
@@ -160,7 +160,7 @@ final class TestUserRepository extends EntityRepository
     /**
      * @throws Throwable
      */
-    public function findByEmail(#[SensitiveParameter] string $email) : ?TestUserEntity
+    public function findByEmail(#[SensitiveParameter] string $email): ?TestUserEntity
     {
         $entity = $this->findOneBy(criteria: ['email' => $email]);
 

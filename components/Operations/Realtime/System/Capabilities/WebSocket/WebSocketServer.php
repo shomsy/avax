@@ -87,7 +87,7 @@ final class WebSocketServer
         return WebSocketClientScript::forEndpoint(endpoint: $endpoint);
     }
 
-    public static function connections(?string $channel = null) : array
+    public static function connections(string $channel = null) : array
     {
         if ($channel === null) {
             return array_keys(array: self::$connections);

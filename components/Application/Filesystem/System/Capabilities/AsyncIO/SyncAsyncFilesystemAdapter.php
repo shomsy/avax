@@ -271,7 +271,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
 
         $recursive = $options['recursive'] ?? false;
         $includeHidden = $options['includeHidden'] ?? false;
-        $filter = $options['filter'] ?? null;
+        $filter    = $options['filter'] ?? null;
 
         if ($filter !== null && ! is_callable($filter)) {
             return new SyncOperationPromise(
@@ -392,11 +392,11 @@ final class SyncOperationPromise implements AsyncOperationPromise
     private ?Throwable $throwable = null;
 
     /**
-     * @param mixed          $result    The resolved value (if resolved)
+     * @param mixed $result The resolved value (if resolved)
      * @param Throwable|null $throwable The rejection exception (if rejected)
      */
     public function __construct(
-        mixed      $result = null,
+        mixed     $result = null,
         ?Throwable $throwable = null,
     )
     {

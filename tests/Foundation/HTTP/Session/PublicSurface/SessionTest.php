@@ -14,7 +14,7 @@ final class SessionTest extends TestCase
 {
     private function createSession() : Session
     {
-        $scope = new SessionScope(new ArraySessionStore);
+        $scope = new SessionScope(new ArraySessionStore());
 
         return new Session($scope);
     }
@@ -133,7 +133,7 @@ final class SessionTest extends TestCase
 
     public function test_save_persists_data() : void
     {
-        $store = new ArraySessionStore;
+        $store = new ArraySessionStore();
         $scope = new SessionScope($store);
         $session = new Session($scope);
         $session->start();

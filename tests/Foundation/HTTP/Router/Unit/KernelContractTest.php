@@ -22,13 +22,13 @@ class KernelContractTest extends TestCase
     /**
      * @test
      */
-    public function kernel_accepts_psr7_request_and_returns_psr7_response() : void
+    public function kernel_accepts_psr7_request_and_returns_psr7_response(): void
     {
         // Given: A kernel implementation
         $kernel = $this->createMock(Kernel::class);
 
         // When: We call handle with a PSR-7 request
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request  = $this->createMock(ServerRequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
 
         $kernel->expects(invocationRule: $this->once())
@@ -44,7 +44,7 @@ class KernelContractTest extends TestCase
     /**
      * @test
      */
-    public function kernel_handles_router_resolution_success() : void
+    public function kernel_handles_router_resolution_success(): void
     {
         // Given: Router resolves successfully
         // When: Kernel processes request
@@ -58,7 +58,7 @@ class KernelContractTest extends TestCase
     /**
      * @test
      */
-    public function kernel_handles_middleware_short_circuit() : void
+    public function kernel_handles_middleware_short_circuit(): void
     {
         // Given: Middleware returns response directly
         // When: Kernel processes request
@@ -71,7 +71,7 @@ class KernelContractTest extends TestCase
     /**
      * @test
      */
-    public function kernel_handles_route_not_found() : void
+    public function kernel_handles_route_not_found(): void
     {
         // Given: Router throws RouteNotFoundException
         // When: Kernel processes request
@@ -84,7 +84,7 @@ class KernelContractTest extends TestCase
     /**
      * @test
      */
-    public function kernel_handles_method_not_allowed() : void
+    public function kernel_handles_method_not_allowed(): void
     {
         // Given: Router throws MethodNotAllowedException
         // When: Kernel processes request
@@ -97,7 +97,7 @@ class KernelContractTest extends TestCase
     /**
      * @test
      */
-    public function kernel_handles_unexpected_exceptions() : void
+    public function kernel_handles_unexpected_exceptions(): void
     {
         // Given: Any unexpected exception during processing
         // When: Kernel processes request

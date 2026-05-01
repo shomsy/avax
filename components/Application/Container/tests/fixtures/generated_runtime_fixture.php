@@ -6,7 +6,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 final class GeneratedFixtureDependency
 {
-    public function label() : string
+    public function label(): string
     {
         return 'generated';
     }
@@ -14,11 +14,13 @@ final class GeneratedFixtureDependency
 
 final class GeneratedFixtureEntry
 {
-    public function __construct(public GeneratedFixtureDependency $generatedFixtureDependency) {}
+    public function __construct(public GeneratedFixtureDependency $generatedFixtureDependency)
+    {
+    }
 }
 
 return static function () {
-    $cacheDir = sys_get_temp_dir() . '/container-generated-fixture-' . uniqid();
+    $cacheDir  = sys_get_temp_dir() . '/container-generated-fixture-' . uniqid();
     $container = makeTestContainer(config: CreateContainerConfig::create(
         cacheDir     : $cacheDir,
         cacheVersion : 'generated-fixture',

@@ -23,7 +23,7 @@ class DomainAwareMatcherTest extends TestCase
     /**
      * @test
      */
-    public function matches_routes_without_domain_constraints() : void
+    public function matches_routes_without_domain_constraints(): void
     {
         $route = new RouteDefinition(
             method: 'GET',
@@ -49,7 +49,7 @@ class DomainAwareMatcherTest extends TestCase
     /**
      * @test
      */
-    public function matches_exact_domain_constraints() : void
+    public function matches_exact_domain_constraints(): void
     {
         $route = new RouteDefinition(
             method: 'GET',
@@ -75,7 +75,7 @@ class DomainAwareMatcherTest extends TestCase
     /**
      * @test
      */
-    public function rejects_wrong_domain() : void
+    public function rejects_wrong_domain(): void
     {
         $route = new RouteDefinition(
             method: 'GET',
@@ -100,7 +100,7 @@ class DomainAwareMatcherTest extends TestCase
     /**
      * @test
      */
-    public function supports_wildcard_subdomains() : void
+    public function supports_wildcard_subdomains(): void
     {
         $route = new RouteDefinition(
             method: 'GET',
@@ -126,7 +126,7 @@ class DomainAwareMatcherTest extends TestCase
     /**
      * @test
      */
-    public function rejects_wildcard_subdomain_mismatch() : void
+    public function rejects_wildcard_subdomain_mismatch(): void
     {
         $route = new RouteDefinition(
             method: 'GET',
@@ -150,7 +150,7 @@ class DomainAwareMatcherTest extends TestCase
     /**
      * @test
      */
-    public function handles_port_numbers_in_host() : void
+    public function handles_port_numbers_in_host(): void
     {
         $route = new RouteDefinition(
             method: 'GET',
@@ -176,7 +176,7 @@ class DomainAwareMatcherTest extends TestCase
     /**
      * @test
      */
-    public function converts_host_to_lowercase() : void
+    public function converts_host_to_lowercase(): void
     {
         $route = new RouteDefinition(
             method: 'GET',
@@ -202,7 +202,7 @@ class DomainAwareMatcherTest extends TestCase
     /**
      * @test
      */
-    public function match_method_finds_best_domain_match() : void
+    public function match_method_finds_best_domain_match(): void
     {
         $routes = [
             'GET' => [
@@ -248,9 +248,9 @@ class DomainAwareMatcherTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->baseMatcher = $this->createMock(RouteMatcher::class);
-        $this->matcher = new DomainAwareMatcher(baseMatcher: $this->baseMatcher);
+        $this->matcher     = new DomainAwareMatcher(baseMatcher: $this->baseMatcher);
     }
 }

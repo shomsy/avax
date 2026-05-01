@@ -9,14 +9,15 @@ final readonly class ComponentDefinition
     public function __construct(
         private string $name,
         private ?string $providerClass = null,
-    ) {}
+    ) {
+    }
 
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function providerClass() : ?string
+    public function providerClass(): ?string
     {
         return $this->providerClass;
     }

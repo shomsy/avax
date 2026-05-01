@@ -28,7 +28,7 @@ final class EncryptionTest extends TestCase
     private EncrypterInterface $encrypter;
 
     #[Test]
-    public function key_generate_creates_valid_key() : void
+    public function key_generate_creates_valid_key(): void
     {
         $key = EncryptionKey::generate('1');
 
@@ -41,10 +41,10 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function key_from_base64_creates_valid_key() : void
+    public function key_from_base64_creates_valid_key(): void
     {
         $originalKey = EncryptionKey::generate('test');
-        $base64 = $originalKey->toBase64();
+        $base64      = $originalKey->toBase64();
 
         $restoredKey = EncryptionKey::fromBase64($base64, 'test');
 
@@ -54,7 +54,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function key_from_invalid_base64_throws_exception() : void
+    public function key_from_invalid_base64_throws_exception(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -62,7 +62,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function key_with_wrong_length_throws_exception() : void
+    public function key_with_wrong_length_throws_exception(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -70,7 +70,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function key_is_always_valid_after_construction() : void
+    public function key_is_always_valid_after_construction(): void
     {
         $key = EncryptionKey::generate('1');
 
@@ -78,13 +78,13 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function payload_serialize_and_deserialize_roundtrip() : void
+    public function payload_serialize_and_deserialize_roundtrip(): void
     {
         $cipherText = random_bytes(32);
-        $iv = random_bytes(12);
-        $tag = random_bytes(16);
+        $iv         = random_bytes(12);
+        $tag        = random_bytes(16);
 
-        $payload = new EncryptedPayload($cipherText, $iv, $tag, '1');
+        $payload    = new EncryptedPayload($cipherText, $iv, $tag, '1');
         $serialized = $payload->serialize();
 
         $restored = EncryptedPayload::deserialize($serialized);
@@ -100,7 +100,7 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function payload_deserialize_invalid_format_throws_exception() : void
+    public function payload_deserialize_invalid_format_throws_exception(): void
     {
         $this->expectException(DecryptionFailed::class);
 
@@ -108,7 +108,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function payload_deserialize_invalid_version_throws_exception() : void
+    public function payload_deserialize_invalid_version_throws_exception(): void
     {
         $this->expectException(DecryptionFailed::class);
 
@@ -116,7 +116,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function payload_deserialize_invalid_base64_throws_exception() : void
+    public function payload_deserialize_invalid_base64_throws_exception(): void
     {
         $this->expectException(DecryptionFailed::class);
 
@@ -124,11 +124,11 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function payload_is_immutable() : void
+    public function payload_is_immutable(): void
     {
         $cipherText = random_bytes(32);
-        $iv = random_bytes(12);
-        $tag = random_bytes(16);
+        $iv         = random_bytes(12);
+        $tag        = random_bytes(16);
 
         $payload = new EncryptedPayload($cipherText, $iv, $tag, '1');
 
@@ -139,7 +139,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encrypt_decrypt_string_roundtrip() : void
+    public function encrypt_decrypt_string_roundtrip(): void
     {
         $originalValue = 'Hello, World!';
 
@@ -154,7 +154,7 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function encrypt_decrypt_empty_string() : void
+    public function encrypt_decrypt_empty_string(): void
     {
         $originalValue = '';
 
@@ -165,7 +165,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encrypt_decrypt_special_characters() : void
+    public function encrypt_decrypt_special_characters(): void
     {
         $originalValue = 'Special chars: !@#$%^&*()_+-=[]{}|;:\'",.<>?/~`';
 
@@ -176,7 +176,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encrypt_decrypt_unicode_characters() : void
+    public function encrypt_decrypt_unicode_characters(): void
     {
         $originalValue = 'Unicode: 你好世界 🌍 éàü';
 
@@ -187,7 +187,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encrypt_decrypt_array() : void
+    public function encrypt_decrypt_array(): void
     {
         $originalValue = ['key1' => 'value1', 'key2' => 'value2', 'nested' => ['a', 'b', 'c']];
 
@@ -198,7 +198,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encrypt_produces_different_ciphertext_each_time() : void
+    public function encrypt_produces_different_ciphertext_each_time(): void
     {
         $value = 'same value';
 
@@ -211,7 +211,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encrypter_supports_aes_256_gcm() : void
+    public function encrypter_supports_aes_256_gcm(): void
     {
         $this->assertTrue($this->encrypter->supports('aes-256-gcm'));
         $this->assertFalse($this->encrypter->supports('aes-256-cbc'));
@@ -219,10 +219,10 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function tampered_cipher_text_throws_decryption_failed() : void
+    public function tampered_cipher_text_throws_decryption_failed(): void
     {
         $originalValue = 'Secret data';
-        $encrypted = $this->encrypter->encrypt($originalValue, $this->key);
+        $encrypted     = $this->encrypter->encrypt($originalValue, $this->key);
 
         // Tamper with the cipher text
         $tamperedCipherText = $encrypted->cipherText() ^ "\x01";
@@ -243,10 +243,10 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function tampered_iv_throws_decryption_failed() : void
+    public function tampered_iv_throws_decryption_failed(): void
     {
         $originalValue = 'Secret data';
-        $encrypted = $this->encrypter->encrypt($originalValue, $this->key);
+        $encrypted     = $this->encrypter->encrypt($originalValue, $this->key);
 
         // Tamper with the IV
         $tamperedIv = $encrypted->iv() ^ "\x01";
@@ -263,10 +263,10 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function tampered_tag_throws_decryption_failed() : void
+    public function tampered_tag_throws_decryption_failed(): void
     {
         $originalValue = 'Secret data';
-        $encrypted = $this->encrypter->encrypt($originalValue, $this->key);
+        $encrypted     = $this->encrypter->encrypt($originalValue, $this->key);
 
         // Tamper with the authentication tag
         $tamperedTag = $encrypted->tag() ^ "\x01";
@@ -283,16 +283,16 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function tampered_serialized_payload_throws_decryption_failed() : void
+    public function tampered_serialized_payload_throws_decryption_failed(): void
     {
         $originalValue = 'Secret data';
-        $encrypted = $this->encrypter->encrypt($originalValue, $this->key);
-        $serialized = $encrypted->serialize();
+        $encrypted     = $this->encrypter->encrypt($originalValue, $this->key);
+        $serialized    = $encrypted->serialize();
 
         // Tamper with the serialized payload (modify cipher text portion)
-        $parts    = explode(':', $serialized);
+        $parts              = explode(':', $serialized);
         $tamperedCipherText = base64_encode(base64_decode($parts[1]) ^ "\x01");
-        $parts[1] = $tamperedCipherText;
+        $parts[1]           = $tamperedCipherText;
         $tamperedSerialized = implode(':', $parts);
 
         $this->expectException(DecryptionFailed::class);
@@ -302,10 +302,10 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function wrong_key_throws_decryption_failed() : void
+    public function wrong_key_throws_decryption_failed(): void
     {
         $originalValue = 'Secret data';
-        $encrypted = $this->encrypter->encrypt($originalValue, $this->key);
+        $encrypted     = $this->encrypter->encrypt($originalValue, $this->key);
 
         // Create a different key
         $wrongKey = EncryptionKey::generate('1');
@@ -319,7 +319,7 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function key_resolver_returns_current_key() : void
+    public function key_resolver_returns_current_key(): void
     {
         $key1 = EncryptionKey::generate('1');
         $key2 = EncryptionKey::generate('2');
@@ -338,7 +338,7 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function key_resolver_returns_key_by_version() : void
+    public function key_resolver_returns_key_by_version(): void
     {
         $key1 = EncryptionKey::generate('1');
         $key2 = EncryptionKey::generate('2');
@@ -354,7 +354,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function key_resolver_throws_on_invalid_current_version() : void
+    public function key_resolver_throws_on_invalid_current_version(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -362,9 +362,9 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function key_resolver_add_key() : void
+    public function key_resolver_add_key(): void
     {
-        $key1 = EncryptionKey::generate('1');
+        $key1     = EncryptionKey::generate('1');
         $resolver = new KeyResolver(['1' => $key1->toBase64()], '1');
 
         $key2 = EncryptionKey::generate('2');
@@ -374,10 +374,10 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function key_resolver_set_current_version() : void
+    public function key_resolver_set_current_version(): void
     {
-        $key1 = EncryptionKey::generate('1');
-        $key2 = EncryptionKey::generate('2');
+        $key1     = EncryptionKey::generate('1');
+        $key2     = EncryptionKey::generate('2');
         $resolver = new KeyResolver(
             ['1' => $key1->toBase64(), '2' => $key2->toBase64()],
             '1',
@@ -390,9 +390,9 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function key_resolver_set_invalid_version_throws() : void
+    public function key_resolver_set_invalid_version_throws(): void
     {
-        $key1 = EncryptionKey::generate('1');
+        $key1     = EncryptionKey::generate('1');
         $resolver = new KeyResolver(['1' => $key1->toBase64()], '1');
 
         $this->expectException(InvalidArgumentException::class);
@@ -400,17 +400,17 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function key_rotation_decrypts_old_data_with_old_key() : void
+    public function key_rotation_decrypts_old_data_with_old_key(): void
     {
         $key1 = EncryptionKey::generate('1');
         $key2 = EncryptionKey::generate('2');
 
         $resolver  = new KeyResolver(['1' => $key1->toBase64()], '1');
-        $encrypter = new Encrypter;
+        $encrypter = new Encrypter();
 
         // Encrypt with key1
         $originalValue = 'Secret data before rotation';
-        $encrypted = $encrypter->encrypt($originalValue, $key1);
+        $encrypted     = $encrypter->encrypt($originalValue, $key1);
 
         // Add key2 and rotate
         $resolver->addKey($key2);
@@ -421,7 +421,7 @@ final class EncryptionTest extends TestCase
         $this->assertEquals($originalValue, $decrypted);
 
         // New encryption uses key2
-        $newValue = 'Secret data after rotation';
+        $newValue     = 'Secret data after rotation';
         $newEncrypted = $encrypter->encrypt($newValue, $key2);
         $newDecrypted = $encrypter->decrypt($newEncrypted, $key2);
         $this->assertEquals($newValue, $newDecrypted);
@@ -432,13 +432,13 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function encrypt_value_flow() : void
+    public function encrypt_value_flow(): void
     {
         $key       = EncryptionKey::generate('1');
         $resolver  = new KeyResolver(['1' => $key->toBase64()], '1');
-        $encrypter = new Encrypter;
+        $encrypter = new Encrypter();
 
-        $flow = new EncryptValue($encrypter, $resolver);
+        $flow    = new EncryptValue($encrypter, $resolver);
         $payload = $flow->execute('Test value');
 
         $this->assertInstanceOf(EncryptedPayload::class, $payload);
@@ -450,17 +450,17 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function decrypt_value_flow() : void
+    public function decrypt_value_flow(): void
     {
         $key       = EncryptionKey::generate('1');
         $resolver  = new KeyResolver(['1' => $key->toBase64()], '1');
-        $encrypter = new Encrypter;
+        $encrypter = new Encrypter();
 
         $encryptFlow = new EncryptValue($encrypter, $resolver);
         $decryptFlow = new DecryptValue($encrypter, $resolver);
 
         $originalValue = 'Test value for flow';
-        $encrypted = $encryptFlow->execute($originalValue);
+        $encrypted     = $encryptFlow->execute($originalValue);
 
         $decrypted = $decryptFlow->execute($encrypted);
 
@@ -469,18 +469,18 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function decrypt_value_flow_with_serialized_payload() : void
+    public function decrypt_value_flow_with_serialized_payload(): void
     {
-        $key        = EncryptionKey::generate('1');
-        $resolver   = new KeyResolver(['1' => $key->toBase64()], '1');
-        $encrypter  = new Encrypter;
+        $key       = EncryptionKey::generate('1');
+        $resolver  = new KeyResolver(['1' => $key->toBase64()], '1');
+        $encrypter = new Encrypter();
 
         $encryptFlow = new EncryptValue($encrypter, $resolver);
         $decryptFlow = new DecryptValue($encrypter, $resolver);
 
         $originalValue = 'Test value';
-        $encrypted  = $encryptFlow->execute($originalValue);
-        $serialized = $encrypted->serialize();
+        $encrypted     = $encryptFlow->execute($originalValue);
+        $serialized    = $encrypted->serialize();
 
         $decrypted = $decryptFlow->execute($serialized);
 
@@ -489,12 +489,12 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function decrypt_value_flow_with_missing_key_version() : void
+    public function decrypt_value_flow_with_missing_key_version(): void
     {
         $key1      = EncryptionKey::generate('1');
         $key2      = EncryptionKey::generate('2');
         $resolver  = new KeyResolver(['1' => $key1->toBase64()], '1');
-        $encrypter = new Encrypter;
+        $encrypter = new Encrypter();
 
         // Encrypt with key2 (not in resolver)
         $encrypted = $encrypter->encrypt('Secret', $key2);
@@ -506,11 +506,11 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encryption_public_api_encrypt_and_decrypt() : void
+    public function encryption_public_api_encrypt_and_decrypt(): void
     {
         $key       = EncryptionKey::generate('1');
         $resolver  = new KeyResolver(['1' => $key->toBase64()], '1');
-        $encrypter = new Encrypter;
+        $encrypter = new Encrypter();
 
         $encryptFlow = new EncryptValue($encrypter, $resolver);
         $decryptFlow = new DecryptValue($encrypter, $resolver);
@@ -518,7 +518,7 @@ final class EncryptionTest extends TestCase
         $encryption = new Encryption($encryptFlow, $decryptFlow, $resolver);
 
         $originalValue = ['user' => 'john', 'email' => 'john@example.com'];
-        $encrypted = $encryption->encrypt($originalValue);
+        $encrypted     = $encryption->encrypt($originalValue);
 
         $this->assertIsString($encrypted);
         $this->assertStringStartsWith('v1:', $encrypted);
@@ -532,11 +532,11 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function encryption_public_api_rotate_keys() : void
+    public function encryption_public_api_rotate_keys(): void
     {
         $key1      = EncryptionKey::generate('1');
         $resolver  = new KeyResolver(['1' => $key1->toBase64()], '1');
-        $encrypter = new Encrypter;
+        $encrypter = new Encrypter();
 
         $encryptFlow = new EncryptValue($encrypter, $resolver);
         $decryptFlow = new DecryptValue($encrypter, $resolver);
@@ -544,7 +544,7 @@ final class EncryptionTest extends TestCase
         $encryption = new Encryption($encryptFlow, $decryptFlow, $resolver);
 
         // Encrypt with key1
-        $oldValue = 'Old data';
+        $oldValue     = 'Old data';
         $oldEncrypted = $encryption->encrypt($oldValue);
 
         // Rotate keys
@@ -557,17 +557,17 @@ final class EncryptionTest extends TestCase
         $this->assertEquals($oldValue, $encryption->decrypt($oldEncrypted));
 
         // New encryption uses key2
-        $newValue = 'New data';
+        $newValue     = 'New data';
         $newEncrypted = $encryption->encrypt($newValue);
         $this->assertEquals($newValue, $encryption->decrypt($newEncrypted));
     }
 
     #[Test]
-    public function encryption_public_api_tamper_detection() : void
+    public function encryption_public_api_tamper_detection(): void
     {
         $key       = EncryptionKey::generate('1');
         $resolver  = new KeyResolver(['1' => $key->toBase64()], '1');
-        $encrypter = new Encrypter;
+        $encrypter = new Encrypter();
 
         $encryptFlow = new EncryptValue($encrypter, $resolver);
         $decryptFlow = new DecryptValue($encrypter, $resolver);
@@ -575,20 +575,20 @@ final class EncryptionTest extends TestCase
         $encryption = new Encryption($encryptFlow, $decryptFlow, $resolver);
 
         $originalValue = 'Secret data';
-        $encrypted = $encryption->encrypt($originalValue);
+        $encrypted     = $encryption->encrypt($originalValue);
 
         // Tamper with the serialized payload
-        $parts             = explode(':', $encrypted);
+        $parts              = explode(':', $encrypted);
         $tamperedCipherText = base64_encode(base64_decode($parts[1]) ^ "\x01");
-        $parts[1]          = $tamperedCipherText;
-        $tamperedEncrypted = implode(':', $parts);
+        $parts[1]           = $tamperedCipherText;
+        $tamperedEncrypted  = implode(':', $parts);
 
         $this->expectException(DecryptionFailed::class);
         $encryption->decrypt($tamperedEncrypted);
     }
 
     #[Test]
-    public function encryption_configuration_from_array() : void
+    public function encryption_configuration_from_array(): void
     {
         $key = EncryptionKey::generate('1');
 
@@ -610,7 +610,7 @@ final class EncryptionTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function encryption_configuration_to_array() : void
+    public function encryption_configuration_to_array(): void
     {
         $key = EncryptionKey::generate('1');
 
@@ -630,7 +630,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encryption_configuration_requires_key_versions() : void
+    public function encryption_configuration_requires_key_versions(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -638,7 +638,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encryption_configuration_requires_valid_current_version() : void
+    public function encryption_configuration_requires_valid_current_version(): void
     {
         $key = EncryptionKey::generate('1');
 
@@ -651,7 +651,7 @@ final class EncryptionTest extends TestCase
     }
 
     #[Test]
-    public function encryption_configuration_default_cipher() : void
+    public function encryption_configuration_default_cipher(): void
     {
         $key = EncryptionKey::generate('1');
 
@@ -662,9 +662,9 @@ final class EncryptionTest extends TestCase
         $this->assertEquals('aes-256-gcm', $config->cipher());
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->key       = EncryptionKey::generate('1');
-        $this->encrypter = new Encrypter;
+        $this->encrypter = new Encrypter();
     }
 }

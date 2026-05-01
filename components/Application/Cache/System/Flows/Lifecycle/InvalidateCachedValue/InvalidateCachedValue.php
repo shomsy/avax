@@ -13,21 +13,22 @@ final readonly class InvalidateCachedValue
     public function __construct(
         private CacheStore $cacheStore,
         private ?CacheMetrics $cacheMetrics = null,
-    ) {}
+    ) {
+    }
 
-    public function invalidateByKey(CacheKey $cacheKey) : void
+    public function invalidateByKey(CacheKey $cacheKey): void
     {
         $this->invalidate(key: $cacheKey);
     }
 
-    public function invalidate(CacheKey $cacheKey) : void
+    public function invalidate(CacheKey $cacheKey): void
     {
         $this->cacheStore->forget(key: $cacheKey);
 
         $this->cacheMetrics?->recordInvalidation();
     }
 
-    public function invalidateByKeys(iterable $keys) : int
+    public function invalidateByKeys(iterable $keys): int
     {
         $count = 0;
 
@@ -42,14 +43,14 @@ final readonly class InvalidateCachedValue
         return $count;
     }
 
-    public function invalidateByTag() : int
+    public function invalidateByTag(): int
     {
         $this->cacheMetrics?->recordInvalidation();
 
         return 0;
     }
 
-    public function invalidateByNamespace() : int
+    public function invalidateByNamespace(): int
     {
         $this->cacheMetrics?->recordInvalidation();
 

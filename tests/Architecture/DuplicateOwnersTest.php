@@ -19,7 +19,7 @@ final class DuplicateOwnersTest extends TestCase
     private string $projectRoot;
 
     #[Test]
-    public function no_duplicate_class_definitions_in_framework() : void
+    public function no_duplicate_class_definitions_in_framework(): void
     {
         $duplicates = $this->findDuplicatesInDirectory(
             directory: $this->projectRoot . '/framework',
@@ -36,14 +36,14 @@ final class DuplicateOwnersTest extends TestCase
      *
      * @return array<string, list<string>>
      */
-    private function findDuplicatesInDirectory(string $directory) : array
+    private function findDuplicatesInDirectory(string $directory): array
     {
         if (! is_dir($directory)) {
             return [];
         }
 
         $definitions = [];
-        $iterator = new RecursiveIteratorIterator(
+        $iterator    = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
         );
 
@@ -67,15 +67,15 @@ final class DuplicateOwnersTest extends TestCase
 
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $content, $matches)) {
-                    $name         = $matches[1];
-                    $relativePath = str_replace($this->projectRoot . '/', '', $file->getPathname());
+                    $name                 = $matches[1];
+                    $relativePath         = str_replace($this->projectRoot . '/', '', $file->getPathname());
                     $definitions[$name][] = $relativePath;
                 }
             }
         }
 
         // Filter to only duplicates
-        return array_filter($definitions, static fn (array $paths) : bool => count($paths) > 1);
+        return array_filter($definitions, static fn (array $paths): bool => count($paths) > 1);
     }
 
     /**
@@ -83,7 +83,7 @@ final class DuplicateOwnersTest extends TestCase
      *
      * @param array<string, list<string>> $duplicates
      */
-    private function formatDuplicates(array $duplicates) : string
+    private function formatDuplicates(array $duplicates): string
     {
         $output = '';
         foreach ($duplicates as $name => $paths) {
@@ -97,7 +97,7 @@ final class DuplicateOwnersTest extends TestCase
     }
 
     #[Test]
-    public function no_duplicate_class_definitions_in_components() : void
+    public function no_duplicate_class_definitions_in_components(): void
     {
         $duplicates = $this->findDuplicatesInDirectory(
             directory: $this->projectRoot . '/components',
@@ -110,7 +110,7 @@ final class DuplicateOwnersTest extends TestCase
     }
 
     #[Test]
-    public function no_duplicate_interface_definitions() : void
+    public function no_duplicate_interface_definitions(): void
     {
         $duplicates = $this->findInterfaceDuplicates();
 
@@ -125,7 +125,7 @@ final class DuplicateOwnersTest extends TestCase
      *
      * @return array<string, list<string>>
      */
-    private function findInterfaceDuplicates() : array
+    private function findInterfaceDuplicates(): array
     {
         $directories = [
             $this->projectRoot . '/framework',
@@ -160,16 +160,16 @@ final class DuplicateOwnersTest extends TestCase
                     if (in_array($name, ['Stringable'], true)) {
                         continue;
                     }
-                    $relativePath = str_replace($this->projectRoot . '/', '', $file->getPathname());
+                    $relativePath         = str_replace($this->projectRoot . '/', '', $file->getPathname());
                     $definitions[$name][] = $relativePath;
                 }
             }
         }
 
-        return array_filter($definitions, static fn (array $paths) : bool => count($paths) > 1);
+        return array_filter($definitions, static fn (array $paths): bool => count($paths) > 1);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->projectRoot = dirname(__DIR__, 2);
     }

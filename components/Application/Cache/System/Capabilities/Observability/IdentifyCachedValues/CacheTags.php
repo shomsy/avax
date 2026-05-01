@@ -16,33 +16,32 @@ final readonly class CacheTags implements Stringable
 
     public function __construct(
         CacheTag ...$cacheTag,
-    )
-    {
-        $tagStrings = array_map(static fn (CacheTag $cacheTag) : string => $cacheTag->toString(), $cacheTag);
+    ) {
+        $tagStrings = array_map(static fn (CacheTag $cacheTag): string => $cacheTag->toString(), $cacheTag);
         $this->tags = array_combine($tagStrings, $cacheTag);
     }
 
-    public static function create(string ...$tagNames) : self
+    public static function create(string ...$tagNames): self
     {
-        $tags = array_map(static fn (string $name) : CacheTag => CacheTag::create(name: $name), $tagNames);
+        $tags = array_map(static fn (string $name): CacheTag => CacheTag::create(name: $name), $tagNames);
 
         return new self(...$tags);
     }
 
-    public static function empty() : self
+    public static function empty(): self
     {
-        return new self;
+        return new self();
     }
 
-    public function add(CacheTag $cacheTag) : self
+    public function add(CacheTag $cacheTag): self
     {
-        $newTags = $this->tags;
+        $newTags                        = $this->tags;
         $newTags[$cacheTag->toString()] = $cacheTag;
 
         return new self(...$newTags);
     }
 
-    public function remove(CacheTag $cacheTag) : self
+    public function remove(CacheTag $cacheTag): self
     {
         $newTags = $this->tags;
         unset($newTags[$cacheTag->toString()]);
@@ -50,7 +49,7 @@ final readonly class CacheTags implements Stringable
         return new self(...$newTags);
     }
 
-    public function hasAny(self $other) : bool
+    public function hasAny(self $other): bool
     {
         foreach ($this->tags as $tag) {
             if ($other->has(tag: $tag)) {
@@ -61,12 +60,12 @@ final readonly class CacheTags implements Stringable
         return false;
     }
 
-    public function has(CacheTag $cacheTag) : bool
+    public function has(CacheTag $cacheTag): bool
     {
         return isset($this->tags[$cacheTag->toString()]);
     }
 
-    public function hasAll(self $other) : bool
+    public function hasAll(self $other): bool
     {
         foreach ($other->tags as $tag) {
             if (! $this->has(tag: $tag)) {
@@ -77,28 +76,28 @@ final readonly class CacheTags implements Stringable
         return true;
     }
 
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->count() === 0;
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->tags);
     }
 
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->tags);
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return implode(', ', $this->toArray());
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return array_keys($this->tags);
     }

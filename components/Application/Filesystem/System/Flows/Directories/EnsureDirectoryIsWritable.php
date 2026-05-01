@@ -12,9 +12,11 @@ final class EnsureDirectoryIsWritable
 
     private const int RETRY_DELAY = 100000;
 
-    public function __construct(private readonly Disk $disk) {}
+    public function __construct(private readonly Disk $disk)
+    {
+    }
 
-    public function execute(string $path) : bool
+    public function execute(string $path): bool
     {
         new EnsureDirectoryExists(disk: $this->disk)->execute(path: $path);
 

@@ -16,15 +16,14 @@ final readonly class CacheNamespace implements Stringable
 
     public function __construct(
         public string $name,
-    )
-    {
+    ) {
         $this->validate(name: $name);
     }
 
-    private function validate(string $name) : void
+    private function validate(string $name): void
     {
         $normalized = trim($name);
-        $length = strlen($normalized);
+        $length     = strlen($normalized);
 
         if ($length === 0) {
             throw new InvalidArgumentException(message: 'Namespace cannot be empty');
@@ -43,12 +42,12 @@ final readonly class CacheNamespace implements Stringable
         }
     }
 
-    public static function create(string $name) : self
+    public static function create(string $name): self
     {
         return new self(name: $name);
     }
 
-    public static function fromKey(CacheKey $cacheKey) : self
+    public static function fromKey(CacheKey $cacheKey): self
     {
         $keyNamespace = $cacheKey->namespace;
 
@@ -60,12 +59,12 @@ final readonly class CacheNamespace implements Stringable
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->name;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->name;
     }

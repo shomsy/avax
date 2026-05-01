@@ -19,13 +19,14 @@ final class InMemoryCacheStore implements CacheStore
     private array $records = [];
 
     public function __construct(
-        private readonly Clock                           $clock = new SystemClock,
-        private readonly int                             $maxEntries = 1000,
-        private readonly ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement,
-    ) {}
+        private readonly Clock $clock = new SystemClock(),
+        private readonly int $maxEntries = 1000,
+        private readonly ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
+    ) {
+    }
 
     #[Override]
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $fullKey = $cacheKey->fullKey();
 
@@ -45,7 +46,7 @@ final class InMemoryCacheStore implements CacheStore
             $this->chooseCachedValueForReplacement->recordAccess(key: $fullKey);
         }
 
-        $cachedValueLifecycle = $record->lifecycle->withAccessed(clock: $clock);
+        $cachedValueLifecycle    = $record->lifecycle->withAccessed(clock: $clock);
         $this->records[$fullKey] = new StoredCacheRecord(
             value         : $record->value,
             lifecycle     : $cachedValueLifecycle,
@@ -57,7 +58,7 @@ final class InMemoryCacheStore implements CacheStore
     }
 
     #[Override]
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void
     {
         $fullKey = $cacheKey->fullKey();
 
@@ -74,7 +75,7 @@ final class InMemoryCacheStore implements CacheStore
         $this->records[$fullKey] = $storedCacheRecord;
     }
 
-    private function evictOne() : void
+    private function evictOne(): void
     {
         $entries = [];
 
@@ -100,7 +101,7 @@ final class InMemoryCacheStore implements CacheStore
     }
 
     #[Override]
-    public function forget(CacheKey $cacheKey) : void
+    public function forget(CacheKey $cacheKey): void
     {
         $fullKey = $cacheKey->fullKey();
 
@@ -112,7 +113,7 @@ final class InMemoryCacheStore implements CacheStore
     }
 
     #[Override]
-    public function clear() : void
+    public function clear(): void
     {
         if ($this->chooseCachedValueForReplacement instanceof TrackCachedValueAccess) {
             $this->chooseCachedValueForReplacement->reset();
@@ -122,7 +123,7 @@ final class InMemoryCacheStore implements CacheStore
     }
 
     #[Override]
-    public function exists(CacheKey $cacheKey) : bool
+    public function exists(CacheKey $cacheKey): bool
     {
         $fullKey = $cacheKey->fullKey();
 
@@ -133,17 +134,17 @@ final class InMemoryCacheStore implements CacheStore
         return ! $this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->records);
     }
 
-    public function getAllKeys() : array
+    public function getAllKeys(): array
     {
         return array_keys($this->records);
     }
 
-    public function withCapacity(int $maxEntries) : self
+    public function withCapacity(int $maxEntries): self
     {
         return new self(
             clock            : $this->clock,
@@ -152,7 +153,7 @@ final class InMemoryCacheStore implements CacheStore
         );
     }
 
-    public function withReplacementPolicy(ChooseCachedValueForReplacement $chooseCachedValueForReplacement) : self
+    public function withReplacementPolicy(ChooseCachedValueForReplacement $chooseCachedValueForReplacement): self
     {
         return new self(
             clock            : $this->clock,

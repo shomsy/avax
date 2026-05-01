@@ -12,7 +12,7 @@ final class QueryTimelineTest extends TestCase
 {
     public function test_add_span_to_timeline() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $span     = $this->createSpan('SELECT * FROM users', 0.0, 1.0);
 
         $result = $timeline->add($span);
@@ -26,12 +26,12 @@ final class QueryTimelineTest extends TestCase
 
     private function createSpan(
         string $query = 'SELECT * FROM users',
-        float   $startTime = 0.0,
-        float   $endTime = 0.0,
-        ?string $connection = null,
-        ?int    $rows = null,
-        ?string $error = null,
-        array   $bindings = [],
+        float  $startTime = 0.0,
+        float  $endTime = 0.0,
+        string $connection = null,
+        int    $rows = null,
+        string $error = null,
+        array  $bindings = [],
     ) : QuerySpan
     {
         return new QuerySpan(
@@ -47,7 +47,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_add_multiple_spans() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $span1    = $this->createSpan('SELECT * FROM users');
         $span2    = $this->createSpan('INSERT INTO logs');
         $span3    = $this->createSpan('UPDATE users SET name = ?');
@@ -59,7 +59,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_spans_preserve_order() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $span1    = $this->createSpan('SELECT 1');
         $span2    = $this->createSpan('SELECT 2');
 
@@ -71,7 +71,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_all_returns_array_of_spans() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
 
         $this->assertIsArray($timeline->all());
         $this->assertEmpty($timeline->all());
@@ -81,7 +81,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_total_duration_ms() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1', 0.0, 0.5)); // 500ms
         $timeline->add($this->createSpan('SELECT 2', 0.0, 0.3)); // 300ms
 
@@ -90,14 +90,14 @@ final class QueryTimelineTest extends TestCase
 
     public function test_total_duration_empty_timeline() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
 
         $this->assertSame(0.0, $timeline->totalDurationMs());
     }
 
     public function test_total_duration_single_span() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1', 1.0, 2.5));
 
         $this->assertSame(1500.0, $timeline->totalDurationMs());
@@ -218,7 +218,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_filter_spans_by_query_type_select() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT * FROM users'));
         $timeline->add($this->createSpan('INSERT INTO users'));
         $timeline->add($this->createSpan('SELECT * FROM orders'));
@@ -233,7 +233,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_filter_spans_by_query_type_insert() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT * FROM users'));
         $timeline->add($this->createSpan('INSERT INTO logs'));
         $timeline->add($this->createSpan('INSERT INTO audit'));
@@ -248,7 +248,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_filter_spans_by_query_type_update() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1'));
         $timeline->add($this->createSpan('UPDATE users SET name = ?'));
         $timeline->add($this->createSpan('DELETE FROM logs'));
@@ -263,7 +263,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_filter_spans_by_query_type_delete() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('DELETE FROM users'));
         $timeline->add($this->createSpan('DELETE FROM logs'));
         $timeline->add($this->createSpan('SELECT 1'));
@@ -280,7 +280,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_filter_spans_by_connection() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1', connection: 'mysql'));
         $timeline->add($this->createSpan('SELECT 1', connection: 'pgsql'));
         $timeline->add($this->createSpan('SELECT 1', connection: 'mysql'));
@@ -295,7 +295,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_filter_spans_by_null_connection() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1', connection: 'mysql'));
         $timeline->add($this->createSpan('SELECT 1'));
         $timeline->add($this->createSpan('SELECT 1', connection: 'pgsql'));
@@ -312,7 +312,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_filter_spans_with_errors() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1'));
         $timeline->add($this->createSpan('SELECT 1', error: 'Timeout'));
         $timeline->add($this->createSpan('SELECT 1', error: 'Deadlock'));
@@ -328,7 +328,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_filter_spans_without_errors() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1'));
         $timeline->add($this->createSpan('SELECT 1', error: 'Timeout'));
         $timeline->add($this->createSpan('SELECT 1'));
@@ -345,7 +345,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_statistics_total_queries() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1'));
         $timeline->add($this->createSpan('SELECT 2'));
         $timeline->add($this->createSpan('SELECT 3'));
@@ -355,7 +355,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_statistics_average_duration() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1', 0.0, 0.1)); // 100ms
         $timeline->add($this->createSpan('SELECT 2', 0.0, 0.2)); // 200ms
         $timeline->add($this->createSpan('SELECT 3', 0.0, 0.3)); // 300ms
@@ -369,7 +369,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_statistics_max_duration() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1', 0.0, 0.1));
         $timeline->add($this->createSpan('SELECT 2', 0.0, 0.5));
         $timeline->add($this->createSpan('SELECT 3', 0.0, 0.3));
@@ -382,7 +382,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_statistics_slowest_query() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('FAST', 0.0, 0.1));
         $timeline->add($this->createSpan('SLOWEST', 0.0, 1.0));
         $timeline->add($this->createSpan('MEDIUM', 0.0, 0.5));
@@ -404,7 +404,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_reset_clears_all_spans() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('SELECT 1'));
         $timeline->add($this->createSpan('SELECT 2'));
 
@@ -416,7 +416,7 @@ final class QueryTimelineTest extends TestCase
 
     public function test_reset_then_add_new_spans() : void
     {
-        $timeline = new QueryTimeline;
+        $timeline = new QueryTimeline();
         $timeline->add($this->createSpan('OLD'));
         $timeline->reset();
         $timeline->add($this->createSpan('NEW'));

@@ -17,9 +17,10 @@ final readonly class ControllerDispatcher
 {
     public function __construct(
         private DispatchRouteAction $dispatchFlow,
-    ) {}
+    ) {
+    }
 
-    public function dispatch(callable|array|string $action, ServerRequestInterface $request) : ResponseInterface
+    public function dispatch(callable|array|string $action, ServerRequestInterface $request): ResponseInterface
     {
         return $this->dispatchFlow->execute($action, $request);
     }

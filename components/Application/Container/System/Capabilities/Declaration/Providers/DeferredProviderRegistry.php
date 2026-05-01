@@ -22,7 +22,7 @@ final class DeferredProviderRegistry
     /** @var array<class-string<RegisterDependency>, true> */
     private array $bootedProviders = [];
 
-    public function isDeferred(string $serviceId) : bool
+    public function isDeferred(string $serviceId): bool
     {
         return isset($this->serviceOwners[$serviceId]);
     }
@@ -30,7 +30,7 @@ final class DeferredProviderRegistry
     /**
      * @return array<string, string>
      */
-    public function services() : array
+    public function services(): array
     {
         $services = $this->serviceOwners;
         ksort(array: $services);
@@ -38,7 +38,7 @@ final class DeferredProviderRegistry
         return $services;
     }
 
-    public function ownerOf(string $serviceId) : ?string
+    public function ownerOf(string $serviceId): ?string
     {
         return $this->serviceOwners[$serviceId] ?? null;
     }
@@ -46,7 +46,7 @@ final class DeferredProviderRegistry
     /**
      * @param list<string> $serviceIds
      */
-    public function bootFor(array $serviceIds, DependencyRegistry $registrations, ?ResolutionMetrics $metrics = null) : void
+    public function bootFor(array $serviceIds, DependencyRegistry $registrations, ResolutionMetrics $metrics = null): void
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             $this->bootIfNeeded(
@@ -56,7 +56,7 @@ final class DeferredProviderRegistry
         }
     }
 
-    public function bootIfNeeded(string $serviceId, ?ResolutionMetrics $metrics = null) : void
+    public function bootIfNeeded(string $serviceId, ResolutionMetrics $metrics = null): void
     {
         $providerClass = $this->serviceOwners[$serviceId] ?? null;
         if ($providerClass === null || isset($this->bootedProviders[$providerClass])) {
@@ -69,7 +69,7 @@ final class DeferredProviderRegistry
     /**
      * @param class-string<RegisterDependency> $providerClass
      */
-    private function bootProvider(string $providerClass, ?ResolutionMetrics $metrics = null) : void
+    private function bootProvider(string $providerClass, ResolutionMetrics $metrics = null): void
     {
         $provider = $this->providers[$providerClass] ?? null;
         if (! $provider instanceof RegisterDependency) {
@@ -90,14 +90,14 @@ final class DeferredProviderRegistry
         $this->bootedProviders[$providerClass] = true;
     }
 
-    public function register(RegisterDependency $provider, array $serviceIds, DependencyRegistry $registrations, ?ResolutionMetrics $metrics = null) : void
+    public function register(RegisterDependency $provider, array $serviceIds, DependencyRegistry $registrations, ResolutionMetrics $metrics = null): void
     {
         $providerClass = $provider::class;
-        $ids = array_map(
-                callback: static fn (string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
-                array   : $serviceIds,
-            )
-                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $serviceId) : bool => $serviceId !== ''))
+        $ids           = array_map(
+            callback: static fn (string $serviceId): string => $registrations->resolveAlias(abstract: $serviceId),
+            array   : $serviceIds,
+        )
+                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $serviceId): bool => $serviceId !== ''))
                 |> array_unique(...)
                 |> array_values(...);
 

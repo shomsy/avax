@@ -17,13 +17,12 @@ final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValue
     public function __construct(
         ?Clock $clock = null,
         float $decayFactor = 0.5,
-    )
-    {
-        $this->frequencyTracker = new FrequencyTracker(clock: $clock ?? new SystemClock, decayFactor: $decayFactor);
+    ) {
+        $this->frequencyTracker = new FrequencyTracker(clock: $clock ?? new SystemClock(), decayFactor: $decayFactor);
     }
 
     #[Override]
-    public function choose(array $entries) : ?string
+    public function choose(array $entries): ?string
     {
         if ($entries === []) {
             return null;
@@ -33,24 +32,24 @@ final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValue
     }
 
     #[Override]
-    public function recordAccess(string $key) : void
+    public function recordAccess(string $key): void
     {
         $this->frequencyTracker->recordAccess(key: $key);
     }
 
-    public function getFrequency(string $key) : int
+    public function getFrequency(string $key): int
     {
         return $this->frequencyTracker->getFrequency(key: $key);
     }
 
     #[Override]
-    public function removeKey(string $key) : void
+    public function removeKey(string $key): void
     {
         $this->frequencyTracker->remove(key: $key);
     }
 
     #[Override]
-    public function reset() : void
+    public function reset(): void
     {
         $this->frequencyTracker->reset();
     }

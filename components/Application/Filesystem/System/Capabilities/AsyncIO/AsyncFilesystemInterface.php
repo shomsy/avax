@@ -25,23 +25,23 @@ interface AsyncFilesystemInterface
     /**
      * Asynchronously read the contents of a file.
      *
-     * @param string               $path    The file path to read
+     * @param string $path The file path to read
      * @param array<string, mixed> $options Optional flags (e.g., encoding, offset, length)
      *
      * @return AsyncOperationPromise Promise resolving to file contents (string)
      */
-    public function asyncRead(string $path, array $options = []) : AsyncOperationPromise;
+    public function asyncRead(string $path, array $options = []): AsyncOperationPromise;
 
     /**
      * Asynchronously write contents to a file.
      *
-     * @param string               $path     The file path to write
-     * @param string               $contents The file contents to write
-     * @param array<string, mixed> $options  Optional flags (e.g., permissions, append mode)
+     * @param string $path The file path to write
+     * @param string $contents The file contents to write
+     * @param array<string, mixed> $options Optional flags (e.g., permissions, append mode)
      *
      * @return AsyncOperationPromise Promise resolving to true on success
      */
-    public function asyncWrite(string $path, string $contents, array $options = []) : AsyncOperationPromise;
+    public function asyncWrite(string $path, string $contents, array $options = []): AsyncOperationPromise;
 
     /**
      * Asynchronously check if a file or directory exists.
@@ -50,12 +50,12 @@ interface AsyncFilesystemInterface
      *
      * @return AsyncOperationPromise Promise resolving to bool
      */
-    public function asyncExists(string $path) : AsyncOperationPromise;
+    public function asyncExists(string $path): AsyncOperationPromise;
 
     /**
      * Asynchronously delete a file or directory.
      *
-     * @param string               $path    The path to delete
+     * @param string $path The path to delete
      * @param array<string, mixed> $options Optional flags (e.g., recursive for directories)
      *
      * @return AsyncOperationPromise Promise resolving to true on success
@@ -65,7 +65,7 @@ interface AsyncFilesystemInterface
     /**
      * Asynchronously list the contents of a directory.
      *
-     * @param string               $path    The directory path to list
+     * @param string $path The directory path to list
      * @param array<string, mixed> $options Optional flags (e.g., recursive, include hidden, filter)
      *
      * @return AsyncOperationPromise Promise resolving to array of file/directory paths

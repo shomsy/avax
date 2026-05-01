@@ -9,13 +9,13 @@ use Override;
 final readonly class FirstInFirstOutReplacement implements ChooseCachedValueForReplacement
 {
     #[Override]
-    public function choose(array $entries) : ?string
+    public function choose(array $entries): ?string
     {
         if ($entries === []) {
             return null;
         }
 
-        $oldest         = null;
+        $oldest     = null;
         $oldestTime = PHP_INT_MAX;
 
         foreach ($entries as $key => $lifecycle) {
@@ -23,7 +23,7 @@ final readonly class FirstInFirstOutReplacement implements ChooseCachedValueForR
 
             if ($createdAt < $oldestTime) {
                 $oldestTime = $createdAt;
-                $oldest = $key;
+                $oldest     = $key;
             }
         }
 

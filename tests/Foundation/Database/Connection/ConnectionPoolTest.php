@@ -9,7 +9,7 @@ use Avax\Tests\TestCase;
 
 class ConnectionPoolTest extends TestCase
 {
-    public function test_connection_pool_initialization() : void
+    public function test_connection_pool_initialization(): void
     {
         $pool = new ConnectionPool(
             config: [
@@ -27,7 +27,7 @@ class ConnectionPoolTest extends TestCase
         $this->assertSame(expected: 'sqlite_pool', actual: $pool->getName());
     }
 
-    public function test_prune_stale_connections() : void
+    public function test_prune_stale_connections(): void
     {
         $pool = new ConnectionPool(config: [
                                                'name' => 'sqlite_pool',

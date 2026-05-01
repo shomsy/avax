@@ -6,22 +6,34 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 require_once dirname(path: __DIR__) . '/bootstrap.php';
 
-final class GraphToolIdentityService {}
+final class GraphToolIdentityService
+{
+}
 
-final class GraphToolIdentitySecret {}
+final class GraphToolIdentitySecret
+{
+}
 
 final class GraphToolLoginEntry
 {
-    public function __construct(public GraphToolIdentityService $graphToolIdentityService) {}
+    public function __construct(public GraphToolIdentityService $graphToolIdentityService)
+    {
+    }
 }
 
-final class GraphToolStructureTarget {}
+final class GraphToolStructureTarget
+{
+}
 
-final class GraphToolStepOne {}
+final class GraphToolStepOne
+{
+}
 
-final class GraphToolStepTwo {}
+final class GraphToolStepTwo
+{
+}
 
-$cacheDir = sys_get_temp_dir() . '/container-graph-tool-' . uniqid(prefix: '', more_entropy: true);
+$cacheDir  = sys_get_temp_dir() . '/container-graph-tool-' . uniqid(prefix: '', more_entropy: true);
 $container = makeTestContainer(config: CreateContainerConfig::create(cacheDir: $cacheDir));
 
 $container->singleton(abstract: GraphToolIdentityService::class, concrete: GraphToolIdentityService::class)
@@ -52,12 +64,12 @@ $container->singleton(abstract: GraphToolStepTwo::class, concrete: GraphToolStep
     ->group(group: 'graph.steps', order: 10);
 
 $container->compileContainer(serviceIds: [
-                                             GraphToolStructureTarget::class,
-                                             GraphToolLoginEntry::class,
-                                             GraphToolIdentityService::class,
-                                             GraphToolStepOne::class,
-                                             GraphToolStepTwo::class,
-                                         ]);
+    GraphToolStructureTarget::class,
+    GraphToolLoginEntry::class,
+    GraphToolIdentityService::class,
+    GraphToolStepOne::class,
+    GraphToolStepTwo::class,
+]);
 $container->singleton(abstract: GraphToolStructureTarget::class, concrete: GraphToolStructureTarget::class)
     ->asFoundation(ownerSlice: 'foundation.graph')
     ->asPublic();

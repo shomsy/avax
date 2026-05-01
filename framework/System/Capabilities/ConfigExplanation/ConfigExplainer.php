@@ -17,7 +17,7 @@ final class ConfigExplainer
     /**
      * Record that a config value came from a file.
      */
-    public function recordFileSource(string $key, mixed $value, string $filePath) : void
+    public function recordFileSource(string $key, mixed $value, string $filePath): void
     {
         $this->sources[$key] = new ConfigSource(
             key     : $key,
@@ -30,7 +30,7 @@ final class ConfigExplainer
     /**
      * Record that a config value came from an environment variable.
      */
-    public function recordEnvSource(string $key, mixed $value, string $envVar) : void
+    public function recordEnvSource(string $key, mixed $value, string $envVar): void
     {
         $this->sources[$key] = new ConfigSource(
             key   : $key,
@@ -43,7 +43,7 @@ final class ConfigExplainer
     /**
      * Record that a config value was set as a runtime override.
      */
-    public function recordOverrideSource(string $key, mixed $value) : void
+    public function recordOverrideSource(string $key, mixed $value): void
     {
         $this->sources[$key] = new ConfigSource(
             key   : $key,
@@ -55,7 +55,7 @@ final class ConfigExplainer
     /**
      * Get the source of a config value.
      */
-    public function getSource(string $key) : ?ConfigSource
+    public function getSource(string $key): ?ConfigSource
     {
         return $this->sources[$key] ?? null;
     }
@@ -63,7 +63,7 @@ final class ConfigExplainer
     /**
      * @return array<string, ConfigSource>
      */
-    public function allSources() : array
+    public function allSources(): array
     {
         return $this->sources;
     }

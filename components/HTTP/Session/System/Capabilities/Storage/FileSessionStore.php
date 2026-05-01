@@ -13,14 +13,14 @@ final class FileSessionStore implements SessionStoreInterface
     public function __construct(private array $config = [])
     {
         $this->path = $config['path'] ?? sys_get_temp_dir() . '/avax-sessions';
-        $this->ttl = $config['ttl'] ?? 1200;
+        $this->ttl  = $config['ttl']  ?? 1200;
 
         if (! is_dir(filename: $this->path)) {
             mkdir(directory: $this->path, permissions: 0o755, recursive: true);
         }
     }
 
-    public function read(string $id) : array
+    public function read(string $id): array
     {
         $file = $this->filePath(sessionId: $id);
 
@@ -33,9 +33,9 @@ final class FileSessionStore implements SessionStoreInterface
         return is_array(value: $payload['data'] ?? null) ? $payload['data'] : [];
     }
 
-    public function write(string $id, array $data) : bool
+    public function write(string $id, array $data): bool
     {
-        $file = $this->filePath(sessionId: $id);
+        $file      = $this->filePath(sessionId: $id);
         $directory = dirname(path: $file);
 
         if (! is_dir(filename: $directory)) {
@@ -43,24 +43,24 @@ final class FileSessionStore implements SessionStoreInterface
         }
 
         return file_put_contents(
-                filename: $file,
-                data    : json_encode(value: ['data' => $data, 'updated_at' => time()], flags: JSON_THROW_ON_ERROR),
-            ) !== false;
+            filename: $file,
+            data    : json_encode(value: ['data' => $data, 'updated_at' => time()], flags: JSON_THROW_ON_ERROR),
+        ) !== false;
     }
 
-    public function destroy(string $id) : bool
+    public function destroy(string $id): bool
     {
         $file = $this->filePath(sessionId: $id);
 
         return ! is_file(filename: $file) || unlink(filename: $file);
     }
 
-    public function exists(string $sessionId) : bool
+    public function exists(string $sessionId): bool
     {
         return is_file(filename: $this->filePath(sessionId: $sessionId));
     }
 
-    public function gc(int $maxLifetime) : int
+    public function gc(int $maxLifetime): int
     {
         $removed = 0;
 
@@ -73,7 +73,7 @@ final class FileSessionStore implements SessionStoreInterface
         return $removed;
     }
 
-    private function filePath(string $sessionId) : string
+    private function filePath(string $sessionId): string
     {
         $prefix = substr(string: $sessionId, offset: 0, length: 2);
 

@@ -10,10 +10,9 @@ use Throwable;
 final class CompiledCachePayloadWasInvalid extends RuntimeException
 {
     public function __construct(
-        string     $reason,
-        ?Throwable $throwable = null,
-    )
-    {
+        string $reason,
+        Throwable $throwable = null,
+    ) {
         parent::__construct(
             message : sprintf('Compiled cache payload was invalid: %s', $reason),
             code    : 0,

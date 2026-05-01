@@ -9,17 +9,17 @@ use Avax\Components\ExternalState\System\Capabilities\Adapters\RedisStateAdapter
 
 interface StateAdapter
 {
-    public function get(string $key) : mixed;
+    public function get(string $key): mixed;
 
-    public function set(string $key, mixed $value, int $ttl = 0) : void;
+    public function set(string $key, mixed $value, int $ttl = 0): void;
 
-    public function delete(string $key) : void;
+    public function delete(string $key): void;
 
-    public function exists(string $key) : bool;
+    public function exists(string $key): bool;
 
-    public function increment(string $key, int $value = 1) : int;
+    public function increment(string $key, int $value = 1): int;
 
-    public function expire(string $key, int $ttl) : void;
+    public function expire(string $key, int $ttl): void;
 }
 
 final class ExternalState
@@ -32,7 +32,7 @@ final class ExternalState
 
     private static ?StateAdapter $rateLimit = null;
 
-    public static function session() : StateAdapter
+    public static function session(): StateAdapter
     {
         if (self::$session === null) {
             self::$session = self::defaultSessionAdapter();
@@ -41,7 +41,7 @@ final class ExternalState
         return self::$session;
     }
 
-    private static function defaultSessionAdapter() : StateAdapter
+    private static function defaultSessionAdapter(): StateAdapter
     {
         $url = getenv('REDIS_URL') ?: (getenv('SESSION_STORE') ?: '');
 
@@ -49,10 +49,10 @@ final class ExternalState
             return new RedisStateAdapter($url);
         }
 
-        return new MemoryStateAdapter;
+        return new MemoryStateAdapter();
     }
 
-    public static function cache() : StateAdapter
+    public static function cache(): StateAdapter
     {
         if (self::$cache === null) {
             self::$cache = self::defaultCacheAdapter();
@@ -61,7 +61,7 @@ final class ExternalState
         return self::$cache;
     }
 
-    private static function defaultCacheAdapter() : StateAdapter
+    private static function defaultCacheAdapter(): StateAdapter
     {
         $url = getenv('REDIS_URL') ?: (getenv('CACHE_STORE') ?: '');
 
@@ -69,10 +69,10 @@ final class ExternalState
             return new RedisStateAdapter($url);
         }
 
-        return new MemoryStateAdapter;
+        return new MemoryStateAdapter();
     }
 
-    public static function lock() : StateAdapter
+    public static function lock(): StateAdapter
     {
         if (self::$lock === null) {
             self::$lock = self::defaultLockAdapter();
@@ -81,7 +81,7 @@ final class ExternalState
         return self::$lock;
     }
 
-    private static function defaultLockAdapter() : StateAdapter
+    private static function defaultLockAdapter(): StateAdapter
     {
         $url = getenv('REDIS_URL') ?: (getenv('LOCK_STORE') ?: '');
 
@@ -89,10 +89,10 @@ final class ExternalState
             return new RedisStateAdapter($url);
         }
 
-        return new MemoryStateAdapter;
+        return new MemoryStateAdapter();
     }
 
-    public static function rateLimit() : StateAdapter
+    public static function rateLimit(): StateAdapter
     {
         if (self::$rateLimit === null) {
             self::$rateLimit = self::defaultRateLimitAdapter();
@@ -101,7 +101,7 @@ final class ExternalState
         return self::$rateLimit;
     }
 
-    private static function defaultRateLimitAdapter() : StateAdapter
+    private static function defaultRateLimitAdapter(): StateAdapter
     {
         $url = getenv('REDIS_URL') ?: (getenv('RATE_LIMIT_STORE') ?: '');
 
@@ -109,20 +109,20 @@ final class ExternalState
             return new RedisStateAdapter($url);
         }
 
-        return new MemoryStateAdapter;
+        return new MemoryStateAdapter();
     }
 
-    public static function setSession(StateAdapter $adapter) : void
+    public static function setSession(StateAdapter $adapter): void
     {
         self::$session = $adapter;
     }
 
-    public static function setCache(StateAdapter $adapter) : void
+    public static function setCache(StateAdapter $adapter): void
     {
         self::$cache = $adapter;
     }
 
-    public static function audit() : StateAudit
+    public static function audit(): StateAudit
     {
         return new StateAudit(
             session  : self::adapterType(adapter: self::session()),
@@ -132,7 +132,7 @@ final class ExternalState
         );
     }
 
-    private static function adapterType(?StateAdapter $adapter) : string
+    private static function adapterType(?StateAdapter $adapter): string
     {
         if ($adapter instanceof RedisStateAdapter) {
             return 'Redis';
@@ -153,26 +153,27 @@ final readonly class StateAudit
         public string $cache,
         public string $lock,
         public string $rateLimit,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array{session: string, cache: string, lock: string, rate_limit: string}
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'session' => $this->session,
-            'cache'   => $this->cache,
-            'lock'    => $this->lock,
+            'session'    => $this->session,
+            'cache'      => $this->cache,
+            'lock'       => $this->lock,
             'rate_limit' => $this->rateLimit,
         ];
     }
 
-    public function isHorizontalReady() : bool
+    public function isHorizontalReady(): bool
     {
-        return $this->session === 'Redis'
-            && $this->cache === 'Redis'
-            && $this->lock === 'Redis'
+        return $this->session   === 'Redis'
+            && $this->cache     === 'Redis'
+            && $this->lock      === 'Redis'
             && $this->rateLimit === 'Redis';
     }
 }

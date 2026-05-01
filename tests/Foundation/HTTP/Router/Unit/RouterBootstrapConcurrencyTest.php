@@ -86,8 +86,8 @@ class RouterBootstrapConcurrencyTest extends TestCase
      */
     public function multiple_instances_are_independent() : void
     {
-        $state1 = new RouterBootstrapState;
-        $state2 = new RouterBootstrapState;
+        $state1 = new RouterBootstrapState();
+        $state2 = new RouterBootstrapState();
 
         // Bootstrap first instance
         $state1->ensureNotBooted();
@@ -108,6 +108,6 @@ class RouterBootstrapConcurrencyTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->bootstrapState = new RouterBootstrapState;
+        $this->bootstrapState = new RouterBootstrapState();
     }
 }

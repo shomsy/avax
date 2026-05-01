@@ -11,9 +11,9 @@ use stdClass;
 
 final class KernelContextTest extends TestCase
 {
-    public function test_child_context_inherits_parent_depth() : void
+    public function test_child_context_inherits_parent_depth(): void
     {
-        $root = new KernelContext(serviceId: 'root', depth: 1, debug: true, allowAutowire: false, manualInjection: true, traceId: 't1', overrides: ['a' => 1]);
+        $root  = new KernelContext(serviceId: 'root', depth: 1, debug: true, allowAutowire: false, manualInjection: true, traceId: 't1', overrides: ['a' => 1]);
         $child = $root->child(serviceId: 'child', overrides: ['b' => 2]);
 
         $this->assertSame(expected: 2, actual: $child->depth);
@@ -25,7 +25,7 @@ final class KernelContextTest extends TestCase
         $this->assertSame(expected: ['b' => 2], actual: $child->overrides);
     }
 
-    public function test_cycle_detection() : void
+    public function test_cycle_detection(): void
     {
         $a = new KernelContext(serviceId: 'A');
         $b = $a->child(serviceId: 'B');
@@ -36,7 +36,7 @@ final class KernelContextTest extends TestCase
         $this->assertFalse(condition: $c->contains(serviceId: 'Z'));
     }
 
-    public function test_set_meta_once_throws_on_conflicting_value() : void
+    public function test_set_meta_once_throws_on_conflicting_value(): void
     {
         $ctx = new KernelContext(serviceId: 'S');
         $ctx->setMetaOnce(namespace: 'n', key: 'k', value: 1);
@@ -45,21 +45,21 @@ final class KernelContextTest extends TestCase
         $ctx->setMetaOnce(namespace: 'n', key: 'k', value: 2);
     }
 
-    public function test_resolved_with_throws_on_double_call() : void
+    public function test_resolved_with_throws_on_double_call(): void
     {
         $ctx = new KernelContext(serviceId: 'S');
-        $ctx->resolvedWith(instance: new stdClass);
+        $ctx->resolvedWith(instance: new stdClass());
 
         $this->expectException(exception: LogicException::class);
-        $ctx->resolvedWith(instance: new stdClass);
+        $ctx->resolvedWith(instance: new stdClass());
     }
 
-    public function test_overwrite_with_replaces_instance_without_touching_metadata() : void
+    public function test_overwrite_with_replaces_instance_without_touching_metadata(): void
     {
         $ctx = new KernelContext(serviceId: 'S', metadata: ['a' => 1]);
-        $ctx->resolvedWith(instance: new stdClass);
+        $ctx->resolvedWith(instance: new stdClass());
 
-        $replacement = new stdClass;
+        $replacement = new stdClass();
         $ctx->overwriteWith(instance: $replacement);
 
         $this->assertSame(expected: $replacement, actual: $ctx->getInstance());

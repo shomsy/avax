@@ -18,16 +18,16 @@ final readonly class CompiledCacheManifestEntry
         public CompiledCacheName $compiledCacheName,
         public CompiledCachePath $compiledCachePath,
         public Timestamp $timestamp,
-        public string    $sourceFingerprint,
-        public ?string   $phpVersion = null,
-        public ?string   $frameworkVersion = null,
+        public string $sourceFingerprint,
+        public ?string $phpVersion = null,
+        public ?string $frameworkVersion = null,
     ) {
         $this->compiledCacheName = $compiledCacheName;
         $this->compiledCachePath = $compiledCachePath;
-        $this->timestamp = $timestamp;
+        $this->timestamp         = $timestamp;
     }
 
-    public static function fromArray(array $data) : self
+    public static function fromArray(array $data): self
     {
         return self::create(
             name             : $data['name'],
@@ -42,8 +42,7 @@ final readonly class CompiledCacheManifestEntry
         string $path,
         int $createdAt,
         string $sourceFingerprint,
-    ) : self
-    {
+    ): self {
         return new self(
             name             : new CompiledCacheName(name: $name),
             path             : new CompiledCachePath(path: $path),
@@ -52,15 +51,15 @@ final readonly class CompiledCacheManifestEntry
         );
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'name'             => $this->compiledCacheName->toString(),
-            'path'             => $this->compiledCachePath->toString(),
-            'createdAt' => $this->timestamp->seconds,
+            'name'              => $this->compiledCacheName->toString(),
+            'path'              => $this->compiledCachePath->toString(),
+            'createdAt'         => $this->timestamp->seconds,
             'sourceFingerprint' => $this->sourceFingerprint,
-            'phpVersion'       => $this->phpVersion,
-            'frameworkVersion' => $this->frameworkVersion,
+            'phpVersion'        => $this->phpVersion,
+            'frameworkVersion'  => $this->frameworkVersion,
         ];
     }
 }

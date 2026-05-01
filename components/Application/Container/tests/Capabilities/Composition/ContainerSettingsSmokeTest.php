@@ -7,7 +7,7 @@ require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 use Avax\Components\Application\Container\DI\Capabilities\Composition\ContainerSettings;
 
 $settings = new ContainerSettings(items: ['app' => ['name' => 'Container']]);
-$envKey = 'AVAX_CONTAINER_SETTINGS_ENV_' . uniqid();
+$envKey   = 'AVAX_CONTAINER_SETTINGS_ENV_' . uniqid();
 putenv(assignment: $envKey);
 
 assertSame(expected: 'Container', actual: $settings->get(key: 'app.name'), message: 'Container settings should read dot-notation keys.');

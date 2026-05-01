@@ -8,13 +8,13 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 interface DiagnosticsContract
 {
-    public function label() : string;
+    public function label(): string;
 }
 
 final class DiagnosticsService implements DiagnosticsContract
 {
     #[Override]
-    public function label() : string
+    public function label(): string
     {
         return 'diagnostics';
     }
@@ -22,12 +22,16 @@ final class DiagnosticsService implements DiagnosticsContract
 
 final class ContextualNameConsumer
 {
-    public function __construct(public string $name) {}
+    public function __construct(public string $name)
+    {
+    }
 }
 
 final class DiagnosticsScopedService
 {
-    public function __construct(public string $id = 'scoped') {}
+    public function __construct(public string $id = 'scoped')
+    {
+    }
 }
 
 final class ContextualInjectionTarget
@@ -38,7 +42,7 @@ final class ContextualInjectionTarget
 $envKey = 'AVAX_CONTAINER_ENV_' . uniqid();
 putenv(assignment: $envKey);
 
-$config = CreateContainerConfig::create(settings: ['env' => [$envKey => 'test']]);
+$config    = CreateContainerConfig::create(settings: ['env' => [$envKey => 'test']]);
 $container = makeTestContainer(config: $config);
 
 $container->singleton(abstract: DiagnosticsContract::class, concrete: DiagnosticsService::class);
@@ -49,24 +53,24 @@ $container->openScope();
 $container->get(id: DiagnosticsScopedService::class);
 $container->compileContainer(serviceIds: [DiagnosticsContract::class, ContextualNameConsumer::class, DiagnosticsScopedService::class]);
 
-$description   = $container->describeService(id: DiagnosticsContract::class);
+$description      = $container->describeService(id: DiagnosticsContract::class);
 $aliasDescription = $container->describeService(id: 'diagnostics.service');
-$debugService  = $container->debugService(id: DiagnosticsContract::class);
-$plan          = $container->debugPlan(id: DiagnosticsContract::class);
-$tags          = $container->debugTags(tag: 'diagnostics');
-$selection     = $container->debugSelection(id: DiagnosticsContract::class);
-$governance    = $container->debugGovernance();
-$architecture  = $container->debugArchitecture();
-$aliases       = $container->debugAliases();
-$scope         = $container->debugScope();
-$compileReport = $container->compileReport(serviceIds: [DiagnosticsContract::class]);
-$runtimeReport = $container->runtimeReport();
-$validated     = $container->validate(serviceIds: [DiagnosticsContract::class, ContextualNameConsumer::class]);
-$contextual    = $container->forContext(context: ['name' => 'from-context'])->make(abstract: ContextualNameConsumer::class);
-$called        = $container->forContext(context: ['name' => 'from-call'])->call(
-    callable: static fn (string $name) : string => $name,
+$debugService     = $container->debugService(id: DiagnosticsContract::class);
+$plan             = $container->debugPlan(id: DiagnosticsContract::class);
+$tags             = $container->debugTags(tag: 'diagnostics');
+$selection        = $container->debugSelection(id: DiagnosticsContract::class);
+$governance       = $container->debugGovernance();
+$architecture     = $container->debugArchitecture();
+$aliases          = $container->debugAliases();
+$scope            = $container->debugScope();
+$compileReport    = $container->compileReport(serviceIds: [DiagnosticsContract::class]);
+$runtimeReport    = $container->runtimeReport();
+$validated        = $container->validate(serviceIds: [DiagnosticsContract::class, ContextualNameConsumer::class]);
+$contextual       = $container->forContext(context: ['name' => 'from-context'])->make(abstract: ContextualNameConsumer::class);
+$called           = $container->forContext(context: ['name' => 'from-call'])->call(
+    callable: static fn (string $name): string => $name,
 );
-$injected      = $container->forContext(context: ['name' => 'from-injection'])->injectInto(target: new ContextualInjectionTarget);
+$injected = $container->forContext(context: ['name' => 'from-injection'])->injectInto(target: new ContextualInjectionTarget());
 
 assertSame(expected: 'test', actual: $container->env(key: $envKey), message: 'Environment access should prefer configured env values.');
 assertSame(expected: [], actual: $validated, message: 'Validation should pass for explicitly checked services.');

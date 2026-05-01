@@ -21,13 +21,13 @@ use PHPUnit\Framework\TestCase;
 
 final class DataTransferRuntimeTest extends TestCase
 {
-    public function test_it_creates_native_constructor_data_object_when_input_matches_shape() : void
+    public function test_it_creates_native_constructor_data_object_when_input_matches_shape(): void
     {
         // Arrange
         $input = [
             'user_name' => '  Mira  ',
-            'role'    => 'admin',
-            'address' => ['city' => 'Belgrade'],
+            'role'      => 'admin',
+            'address'   => ['city' => 'Belgrade'],
             'addresses' => [
                 ['city' => 'Novi Sad'],
             ],
@@ -48,15 +48,15 @@ final class DataTransferRuntimeTest extends TestCase
     /**
      * @throws JsonException
      */
-    public function test_it_removes_hidden_field_when_serializing_data_object() : void
+    public function test_it_removes_hidden_field_when_serializing_data_object(): void
     {
         // Arrange
         $profile = DataTransfer::create(class: RuntimeProfileData::class, input: [
             'user_name' => 'Mira',
-            'role'    => 'user',
-            'address' => ['city' => 'Belgrade'],
+            'role'      => 'user',
+            'address'   => ['city' => 'Belgrade'],
             'addresses' => [],
-            'secret'  => 'hashed',
+            'secret'    => 'hashed',
         ]);
 
         // Act
@@ -70,20 +70,20 @@ final class DataTransferRuntimeTest extends TestCase
     /**
      * @throws JsonException
      */
-    public function test_it_returns_json_outputs_when_serializing_data_object() : void
+    public function test_it_returns_json_outputs_when_serializing_data_object(): void
     {
         // Arrange
         $profile = DataTransfer::create(class: RuntimeProfileData::class, input: [
             'user_name' => 'Mira',
-            'role'    => 'user',
-            'address' => ['city' => 'Belgrade'],
+            'role'      => 'user',
+            'address'   => ['city' => 'Belgrade'],
             'addresses' => [],
-            'secret'  => 'hashed',
+            'secret'    => 'hashed',
         ]);
 
         // Act
-        $json    = DataTransfer::toJson(object: $profile);
-        $jsonApi = DataTransfer::toJsonApi(object: $profile, type: 'runtime-profile');
+        $json     = DataTransfer::toJson(object: $profile);
+        $jsonApi  = DataTransfer::toJsonApi(object: $profile, type: 'runtime-profile');
         $stdClass = DataTransfer::toStdClass(object: $profile);
 
         // Assert
@@ -92,11 +92,11 @@ final class DataTransferRuntimeTest extends TestCase
         $this->assertSame(expected: 'Mira', actual: $stdClass->name);
     }
 
-    public function test_it_returns_structured_failure_when_unknown_field_is_rejected() : void
+    public function test_it_returns_structured_failure_when_unknown_field_is_rejected(): void
     {
         // Arrange
         $input = [
-            'city' => 'Belgrade',
+            'city'    => 'Belgrade',
             'unknown' => 'value',
         ];
 
@@ -111,7 +111,7 @@ final class DataTransferRuntimeTest extends TestCase
         );
     }
 
-    public function test_it_casts_docblock_list_items_when_public_property_declares_item_type() : void
+    public function test_it_casts_docblock_list_items_when_public_property_declares_item_type(): void
     {
         // Arrange
         $input = [
@@ -130,12 +130,12 @@ final class DataTransferRuntimeTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function test_it_hydrates_legacy_abstract_dto_when_input_is_valid() : void
+    public function test_it_hydrates_legacy_abstract_dto_when_input_is_valid(): void
     {
         // Arrange
         $input = [
             'email' => 'ada@example.com',
-            'name' => 'Ada',
+            'name'  => 'Ada',
         ];
 
         // Act
@@ -149,12 +149,12 @@ final class DataTransferRuntimeTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function test_it_throws_dto_validation_exception_when_legacy_input_fails_rules() : void
+    public function test_it_throws_dto_validation_exception_when_legacy_input_fails_rules(): void
     {
         // Arrange
         $input = [
             'email' => 'not-an-email',
-            'name' => 'A',
+            'name'  => 'A',
         ];
 
         // Assert
@@ -164,12 +164,12 @@ final class DataTransferRuntimeTest extends TestCase
         new RuntimeLegacyUserDTO(data: $input);
     }
 
-    public function test_it_creates_legacy_public_property_dto_when_data_transfer_targets_legacy_class() : void
+    public function test_it_creates_legacy_public_property_dto_when_data_transfer_targets_legacy_class(): void
     {
         // Arrange
         $input = [
             'email' => 'grace@example.com',
-            'name' => 'Grace',
+            'name'  => 'Grace',
         ];
 
         // Act
@@ -184,12 +184,14 @@ final class DataTransferRuntimeTest extends TestCase
 enum RuntimeRole: string
 {
     case Admin = 'admin';
-    case User = 'user';
+    case User  = 'user';
 }
 
 final readonly class RuntimeAddressData
 {
-    public function __construct(public string $city) {}
+    public function __construct(public string $city)
+    {
+    }
 }
 
 final readonly class RuntimeProfileData
@@ -200,17 +202,18 @@ final readonly class RuntimeProfileData
     public function __construct(
         #[MapFrom(name: 'user_name')]
         #[CastWith(casterClass: TrimStringCaster::class)]
-        public string      $name,
+        public string $name,
         public RuntimeRole $role,
         #[SensitiveParameter]
         public RuntimeAddressData $address,
         #[SensitiveParameter]
         #[ListOf(class: RuntimeAddressData::class)]
-        public array       $addresses,
+        public array $addresses,
         #[SensitiveParameter]
         #[Hidden]
-        public string      $secret,
-    ) {}
+        public string $secret,
+    ) {
+    }
 }
 
 final class RuntimeDocumentedListData
@@ -221,7 +224,7 @@ final class RuntimeDocumentedListData
 
 final readonly class TrimStringCaster implements ValueCasterInterface
 {
-    public function cast(mixed $value, DataField $field, ValueConversionContext $context) : mixed
+    public function cast(mixed $value, DataField $field, ValueConversionContext $context): mixed
     {
         return is_string(value: $value) ? trim(string: $value) : $value;
     }

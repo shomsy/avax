@@ -9,10 +9,12 @@ require_once __DIR__ . '/BenchmarkPeerAdapter.php';
  */
 final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapter
 {
-    public function __construct(private string $peerName, private string $path) {}
+    public function __construct(private string $peerName, private string $path)
+    {
+    }
 
     #[Override]
-    public function name() : string
+    public function name(): string
     {
         return $this->peerName;
     }
@@ -21,7 +23,7 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
      * @throws JsonException
      */
     #[Override]
-    public function load() : array
+    public function load(): array
     {
         if (! is_file(filename: $this->path)) {
             throw new RuntimeException(message: sprintf('Benchmark artifact [%s] does not exist.', $this->path));
@@ -46,7 +48,7 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
         $results = $decoded['results'];
 
         return [
-            'meta' => $meta,
+            'meta'    => $meta,
             'results' => $results,
         ];
     }

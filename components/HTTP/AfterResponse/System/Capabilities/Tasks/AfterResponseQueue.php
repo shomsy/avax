@@ -12,14 +12,14 @@ final class AfterResponseQueue
     /** @var list<AfterResponseTask> */
     private array $tasks = [];
 
-    public function enqueue(AfterResponseTask $task) : void
+    public function enqueue(AfterResponseTask $task): void
     {
         $this->tasks[] = $task;
     }
 
-    public function execute() : void
+    public function execute(): void
     {
-        while ( $task = array_shift($this->tasks) ) {
+        while ($task = array_shift($this->tasks)) {
             try {
                 $task->execute();
             } catch (Throwable $e) {
@@ -28,12 +28,12 @@ final class AfterResponseQueue
         }
     }
 
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return empty($this->tasks);
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->tasks);
     }
@@ -48,7 +48,7 @@ final readonly class AfterResponseTask
         $this->task = $task;
     }
 
-    public function execute() : void
+    public function execute(): void
     {
         ($this->task)();
     }

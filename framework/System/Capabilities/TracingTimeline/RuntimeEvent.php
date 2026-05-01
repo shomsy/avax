@@ -13,11 +13,11 @@ final readonly class RuntimeEvent
      * @param array<string, mixed> $metadata
      */
     public function __construct(
-        public string  $name,
-        public float   $timestampMS,
-        public ?float  $durationMS = null,
+        public string $name,
+        public float  $timestampMS,
+        public ?float $durationMS = null,
         public ?string $category = null,
-        public array   $metadata = [],
+        public array  $metadata = [],
     ) {}
 
     /**
@@ -25,9 +25,9 @@ final readonly class RuntimeEvent
      */
     public static function make(
         string $name,
-        ?float  $durationMS = null,
-        ?string $category = null,
-        array   $metadata = [],
+        float  $durationMS = null,
+        string $category = null,
+        array  $metadata = [],
     ) : self
     {
         return new self(

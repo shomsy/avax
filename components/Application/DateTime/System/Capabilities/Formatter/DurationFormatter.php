@@ -8,7 +8,7 @@ use DateInterval;
 
 final class DurationFormatter
 {
-    public function format(DateInterval $dateInterval) : string
+    public function format(DateInterval $dateInterval): string
     {
         $parts = [];
 
@@ -39,7 +39,7 @@ final class DurationFormatter
         return empty($parts) ? '0 seconds' : implode(', ', $parts);
     }
 
-    public function formatCompact(DateInterval $dateInterval) : string
+    public function formatCompact(DateInterval $dateInterval): string
     {
         $parts = [];
 
@@ -70,7 +70,7 @@ final class DurationFormatter
         return implode(' ', $parts);
     }
 
-    public function formatSeconds(int $seconds) : string
+    public function formatSeconds(int $seconds): string
     {
         if ($seconds < 60) {
             return $seconds . 's';
@@ -87,7 +87,7 @@ final class DurationFormatter
         return floor($seconds / 86400) . 'd ' . floor(($seconds % 86400) / 3600) . 'h';
     }
 
-    public function formatForHumans(DateInterval $dateInterval) : string
+    public function formatForHumans(DateInterval $dateInterval): string
     {
         $text = $this->format($dateInterval);
 

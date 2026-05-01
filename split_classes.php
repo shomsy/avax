@@ -36,10 +36,10 @@ foreach ($files as $file) {
     // Split the file by `^(?:final\s+|readonly\s+|abstract\s+)*class\s+` or `enum` or `interface`
     // Actually, splitting by regex for classes is hard. Let's use tokens to find the start and end of each declaration.
 
-    $tokens                      = token_get_all($content);
+    $tokens                         = token_get_all($content);
     $declarations = [];
-    $currentDecl                 = null;
-    $braceLevel                  = 0;
+    $currentDecl                    = null;
+    $braceLevel                     = 0;
 
     for ($i = 0; $i < count($tokens); $i++) {
         $token = $tokens[$i];
@@ -82,10 +82,10 @@ foreach ($files as $file) {
                 }
 
                 $currentDecl = [
-                    'name' => $name,
+                    'name'  => $name,
                     'start' => $startIndex,
                     'braceStart' => -1,
-                    'end'  => -1,
+                    'end'   => -1,
                 ];
             }
         }
@@ -102,7 +102,7 @@ foreach ($files as $file) {
                 if ($braceLevel === 0) {
                     $currentDecl['end'] = $i;
                     $declarations[] = $currentDecl;
-                    $currentDecl = null;
+                    $currentDecl    = null;
                 }
             }
         }
@@ -110,7 +110,7 @@ foreach ($files as $file) {
 
     if (count($declarations) > 1) {
         $baseName = pathinfo($file, PATHINFO_FILENAME);
-        $dir                     = dirname($file);
+        $dir                        = dirname($file);
 
         // The first declaration stays in the original file, unless its name matches the filename perfectly
         // Actually, let's just rewrite the original file with the declaration that matches the filename,
@@ -143,7 +143,7 @@ foreach ($files as $file) {
             }
 
             $newName = $decl['name'];
-            $newPath             = $dir . '/' . $newName . '.php';
+            $newPath                = $dir . '/' . $newName . '.php';
 
             $newContent = "<?php\n\ndeclare(strict_types=1);\n\n$namespace\n\n$uses\n\n";
             for ($i = $decl['start']; $i <= $decl['end']; $i++) {

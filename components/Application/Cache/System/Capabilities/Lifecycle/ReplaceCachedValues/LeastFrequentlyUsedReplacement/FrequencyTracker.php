@@ -21,17 +21,18 @@ final class FrequencyTracker
     public function __construct(
         private readonly Clock $clock,
         private readonly float $decayFactor = 0.5,
-    ) {}
+    ) {
+    }
 
-    public function recordAccess(string $key) : void
+    public function recordAccess(string $key): void
     {
         $this->maybeDecay();
 
-        $this->frequencies[$key] = ($this->frequencies[$key] ?? 0) + 1;
+        $this->frequencies[$key]    = ($this->frequencies[$key] ?? 0) + 1;
         $this->lastDecayTimes[$key] = $this->now();
     }
 
-    private function maybeDecay() : void
+    private function maybeDecay(): void
     {
         $now = $this->now();
 
@@ -41,33 +42,33 @@ final class FrequencyTracker
         }
     }
 
-    private function now() : int
+    private function now(): int
     {
         return $this->clock->now()->toUnixTime();
     }
 
-    private function applyGlobalDecay(int $now) : void
+    private function applyGlobalDecay(int $now): void
     {
         foreach ($this->frequencies as $key => $freq) {
-            $lastDecay    = $this->lastDecayTimes[$key] ?? $now;
+            $lastDecay          = $this->lastDecayTimes[$key] ?? $now;
             $timeSinceLastDecay = $now - $lastDecay;
-            $decayPeriods = (int) floor($timeSinceLastDecay / self::DECAY_INTERVAL_SECONDS);
+            $decayPeriods       = (int) floor($timeSinceLastDecay / self::DECAY_INTERVAL_SECONDS);
 
             if ($decayPeriods > 0) {
-                $this->frequencies[$key] = (int) ($freq * $this->decayFactor ** $decayPeriods);
+                $this->frequencies[$key]    = (int) ($freq * $this->decayFactor ** $decayPeriods);
                 $this->lastDecayTimes[$key] = $now;
             }
         }
     }
 
-    public function getFrequency(string $key) : int
+    public function getFrequency(string $key): int
     {
         $this->maybeDecayKey(key: $key);
 
         return $this->frequencies[$key] ?? 0;
     }
 
-    private function maybeDecayKey(string $key) : void
+    private function maybeDecayKey(string $key): void
     {
         if (! isset($this->lastDecayTimes[$key])) {
             return;
@@ -76,17 +77,17 @@ final class FrequencyTracker
         $now = $this->now();
 
         if ($now - $this->lastDecayTimes[$key] >= self::DECAY_INTERVAL_SECONDS) {
-            $this->frequencies[$key] = (int) ($this->frequencies[$key] * $this->decayFactor);
+            $this->frequencies[$key]    = (int) ($this->frequencies[$key] * $this->decayFactor);
             $this->lastDecayTimes[$key] = $now;
         }
     }
 
-    public function remove(string $key) : void
+    public function remove(string $key): void
     {
         unset($this->frequencies[$key], $this->lastDecayTimes[$key]);
     }
 
-    public function getLeastFrequent(array $keys) : ?string
+    public function getLeastFrequent(array $keys): ?string
     {
         if ($keys === []) {
             return null;
@@ -94,7 +95,7 @@ final class FrequencyTracker
 
         $this->maybeDecay();
 
-        $leastKey         = null;
+        $leastKey  = null;
         $leastFreq = PHP_INT_MAX;
 
         foreach ($keys as $key) {
@@ -102,17 +103,17 @@ final class FrequencyTracker
 
             if ($freq < $leastFreq) {
                 $leastFreq = $freq;
-                $leastKey = $key;
+                $leastKey  = $key;
             }
         }
 
         return $leastKey;
     }
 
-    public function reset() : void
+    public function reset(): void
     {
-        $this->frequencies    = [];
-        $this->lastDecayTimes = [];
+        $this->frequencies     = [];
+        $this->lastDecayTimes  = [];
         $this->lastGlobalDecay = $this->now();
     }
 }

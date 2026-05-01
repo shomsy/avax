@@ -12,7 +12,7 @@ final class BloomFilterTest extends TestCase
 {
     // ==================== Adding items to filter ====================
 
-    public function test_add_single_item() : void
+    public function test_add_single_item(): void
     {
         $filter = BloomFilter::create(100);
         $filter->add('hello');
@@ -20,7 +20,7 @@ final class BloomFilterTest extends TestCase
         $this->assertSame(1, $filter->getItemCount());
     }
 
-    public function test_add_multiple_items() : void
+    public function test_add_multiple_items(): void
     {
         $filter = BloomFilter::create(100);
         $filter->add('hello');
@@ -30,7 +30,7 @@ final class BloomFilterTest extends TestCase
         $this->assertSame(3, $filter->getItemCount());
     }
 
-    public function test_add_duplicate_items() : void
+    public function test_add_duplicate_items(): void
     {
         $filter = BloomFilter::create(100);
         $filter->add('hello');
@@ -40,7 +40,7 @@ final class BloomFilterTest extends TestCase
         $this->assertSame(3, $filter->getItemCount());
     }
 
-    public function test_add_empty_string() : void
+    public function test_add_empty_string(): void
     {
         $filter = BloomFilter::create(100);
         $filter->add('');
@@ -50,7 +50,7 @@ final class BloomFilterTest extends TestCase
 
     // ==================== mightContain() returning true for added items ====================
 
-    public function test_might_contain_returns_true_for_added_item() : void
+    public function test_might_contain_returns_true_for_added_item(): void
     {
         $filter = BloomFilter::create(1000);
         $filter->add('hello');
@@ -58,10 +58,10 @@ final class BloomFilterTest extends TestCase
         $this->assertTrue($filter->mightContain('hello'));
     }
 
-    public function test_might_contain_returns_true_for_all_added_items() : void
+    public function test_might_contain_returns_true_for_all_added_items(): void
     {
         $filter = BloomFilter::create(1000);
-        $items = ['apple', 'banana', 'cherry', 'date', 'elderberry'];
+        $items  = ['apple', 'banana', 'cherry', 'date', 'elderberry'];
 
         foreach ($items as $item) {
             $filter->add($item);
@@ -74,7 +74,7 @@ final class BloomFilterTest extends TestCase
 
     // ==================== mightContain() possibly returning false for non-added items ====================
 
-    public function test_might_contain_returns_false_for_definitely_not_present() : void
+    public function test_might_contain_returns_false_for_definitely_not_present(): void
     {
         $filter = BloomFilter::create(1000, 0.001);
         $filter->add('hello');
@@ -82,7 +82,7 @@ final class BloomFilterTest extends TestCase
         $this->assertFalse($filter->mightContain('world'));
     }
 
-    public function test_might_contain_returns_false_for_many_non_added_items() : void
+    public function test_might_contain_returns_false_for_many_non_added_items(): void
     {
         $filter = BloomFilter::create(1000, 0.001);
 
@@ -95,7 +95,7 @@ final class BloomFilterTest extends TestCase
         $this->assertFalse($filter->mightContain('not_present'));
     }
 
-    public function test_definitely_not_contains() : void
+    public function test_definitely_not_contains(): void
     {
         $filter = BloomFilter::create(1000, 0.001);
         $filter->add('hello');
@@ -106,7 +106,7 @@ final class BloomFilterTest extends TestCase
 
     // ==================== Optimal size calculation ====================
 
-    public function test_create_calculates_optimal_size() : void
+    public function test_create_calculates_optimal_size(): void
     {
         $filter = BloomFilter::create(100, 0.01);
 
@@ -114,7 +114,7 @@ final class BloomFilterTest extends TestCase
         $this->assertGreaterThan(0, $filter->getHashCount());
     }
 
-    public function test_create_with_more_items_larger_filter() : void
+    public function test_create_with_more_items_larger_filter(): void
     {
         $filter1 = BloomFilter::create(100, 0.01);
         $filter2 = BloomFilter::create(1000, 0.01);
@@ -122,7 +122,7 @@ final class BloomFilterTest extends TestCase
         $this->assertGreaterThan($filter1->getBitCount(), $filter2->getBitCount());
     }
 
-    public function test_create_with_lower_fpr_larger_filter() : void
+    public function test_create_with_lower_fpr_larger_filter(): void
     {
         $filter1 = BloomFilter::create(100, 0.1);
         $filter2 = BloomFilter::create(100, 0.001);
@@ -130,14 +130,14 @@ final class BloomFilterTest extends TestCase
         $this->assertGreaterThan($filter1->getBitCount(), $filter2->getBitCount());
     }
 
-    public function test_create_with_expected_items() : void
+    public function test_create_with_expected_items(): void
     {
         $filter = BloomFilter::create(500, 0.05);
 
         $this->assertSame(500, $filter->getExpectedItems());
     }
 
-    public function test_create_with_expected_fpr() : void
+    public function test_create_with_expected_fpr(): void
     {
         $filter = BloomFilter::create(100, 0.03);
 
@@ -146,7 +146,7 @@ final class BloomFilterTest extends TestCase
 
     // ==================== Double hashing (CRC32-based) ====================
 
-    public function test_same_item_always_produces_same_bits() : void
+    public function test_same_item_always_produces_same_bits(): void
     {
         $filter1 = BloomFilter::withSize(100, 3);
         $filter2 = BloomFilter::withSize(100, 3);
@@ -157,7 +157,7 @@ final class BloomFilterTest extends TestCase
         $this->assertSame($filter1->getBits(), $filter2->getBits());
     }
 
-    public function test_different_items_produce_different_bits() : void
+    public function test_different_items_produce_different_bits(): void
     {
         $filter1 = BloomFilter::withSize(1000, 4);
         $filter2 = BloomFilter::withSize(1000, 4);
@@ -170,7 +170,7 @@ final class BloomFilterTest extends TestCase
 
     // ==================== Merge two filters ====================
 
-    public function test_merge_two_filters() : void
+    public function test_merge_two_filters(): void
     {
         $filter1 = BloomFilter::withSize(1000, 3);
         $filter2 = BloomFilter::withSize(1000, 3);
@@ -184,7 +184,7 @@ final class BloomFilterTest extends TestCase
         $this->assertTrue($filter1->mightContain('world'));
     }
 
-    public function test_merge_preserves_items_from_both_filters() : void
+    public function test_merge_preserves_items_from_both_filters(): void
     {
         $filter1 = BloomFilter::withSize(1000, 3);
         $filter2 = BloomFilter::withSize(1000, 3);
@@ -203,7 +203,7 @@ final class BloomFilterTest extends TestCase
         }
     }
 
-    public function test_merge_increments_item_count() : void
+    public function test_merge_increments_item_count(): void
     {
         $filter1 = BloomFilter::withSize(1000, 3);
         $filter2 = BloomFilter::withSize(1000, 3);
@@ -217,7 +217,7 @@ final class BloomFilterTest extends TestCase
         $this->assertSame(3, $filter1->getItemCount());
     }
 
-    public function test_merge_incompatible_bit_counts_throws() : void
+    public function test_merge_incompatible_bit_counts_throws(): void
     {
         $filter1 = BloomFilter::withSize(100, 3);
         $filter2 = BloomFilter::withSize(200, 3);
@@ -228,7 +228,7 @@ final class BloomFilterTest extends TestCase
         $filter1->merge($filter2);
     }
 
-    public function test_merge_incompatible_hash_counts_throws() : void
+    public function test_merge_incompatible_hash_counts_throws(): void
     {
         $filter1 = BloomFilter::withSize(100, 3);
         $filter2 = BloomFilter::withSize(100, 5);
@@ -241,14 +241,14 @@ final class BloomFilterTest extends TestCase
 
     // ==================== Saturation detection ====================
 
-    public function test_saturation_not_saturated_when_empty() : void
+    public function test_saturation_not_saturated_when_empty(): void
     {
         $filter = BloomFilter::withSize(100, 3);
 
         $this->assertFalse($filter->isSaturated());
     }
 
-    public function test_saturation_not_saturated_when_few_items() : void
+    public function test_saturation_not_saturated_when_few_items(): void
     {
         $filter = BloomFilter::withSize(1000, 3);
 
@@ -259,7 +259,7 @@ final class BloomFilterTest extends TestCase
         $this->assertFalse($filter->isSaturated());
     }
 
-    public function test_saturation_detected_when_many_items() : void
+    public function test_saturation_detected_when_many_items(): void
     {
         // Small filter to quickly saturate
         $filter = BloomFilter::withSize(20, 2);
@@ -271,7 +271,7 @@ final class BloomFilterTest extends TestCase
         $this->assertTrue($filter->isSaturated());
     }
 
-    public function test_fill_ratio_increases_with_items() : void
+    public function test_fill_ratio_increases_with_items(): void
     {
         $filter = BloomFilter::withSize(100, 3);
 
@@ -282,7 +282,7 @@ final class BloomFilterTest extends TestCase
         $this->assertGreaterThanOrEqual($ratioBefore, $ratioAfter);
     }
 
-    public function test_fill_ratio_is_zero_when_empty() : void
+    public function test_fill_ratio_is_zero_when_empty(): void
     {
         $filter = BloomFilter::withSize(100, 3);
 
@@ -291,14 +291,14 @@ final class BloomFilterTest extends TestCase
 
     // ==================== False positive rate estimation ====================
 
-    public function test_estimated_false_positive_rate_zero_when_empty() : void
+    public function test_estimated_false_positive_rate_zero_when_empty(): void
     {
         $filter = BloomFilter::create(100);
 
         $this->assertSame(0.0, $filter->estimatedFalsePositiveRate());
     }
 
-    public function test_estimated_false_positive_rate_increases_with_items() : void
+    public function test_estimated_false_positive_rate_increases_with_items(): void
     {
         $filter = BloomFilter::withSize(1000, 3);
 
@@ -312,7 +312,7 @@ final class BloomFilterTest extends TestCase
         $this->assertGreaterThanOrEqual($rate2, $rate3);
     }
 
-    public function test_estimated_fpr_is_between_zero_and_one() : void
+    public function test_estimated_fpr_is_between_zero_and_one(): void
     {
         $filter = BloomFilter::create(100, 0.01);
 
@@ -328,28 +328,28 @@ final class BloomFilterTest extends TestCase
 
     // ==================== Factory methods with different FPR values ====================
 
-    public function test_create_with_default_fpr() : void
+    public function test_create_with_default_fpr(): void
     {
         $filter = BloomFilter::create(100);
 
         $this->assertSame(0.01, $filter->getFalsePositiveRate());
     }
 
-    public function test_create_with_custom_fpr() : void
+    public function test_create_with_custom_fpr(): void
     {
         $filter = BloomFilter::create(100, 0.05);
 
         $this->assertSame(0.05, $filter->getFalsePositiveRate());
     }
 
-    public function test_create_with_very_low_fpr() : void
+    public function test_create_with_very_low_fpr(): void
     {
         $filter = BloomFilter::create(100, 0.001);
 
         $this->assertSame(0.001, $filter->getFalsePositiveRate());
     }
 
-    public function test_with_size_factory() : void
+    public function test_with_size_factory(): void
     {
         $filter = BloomFilter::withSize(500, 5);
 
@@ -357,7 +357,7 @@ final class BloomFilterTest extends TestCase
         $this->assertSame(5, $filter->getHashCount());
     }
 
-    public function test_with_size_invalid_bit_count_throws() : void
+    public function test_with_size_invalid_bit_count_throws(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Bit count must be greater than zero');
@@ -365,7 +365,7 @@ final class BloomFilterTest extends TestCase
         BloomFilter::withSize(0, 3);
     }
 
-    public function test_with_size_invalid_hash_count_throws() : void
+    public function test_with_size_invalid_hash_count_throws(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Hash count must be greater than zero');
@@ -373,7 +373,7 @@ final class BloomFilterTest extends TestCase
         BloomFilter::withSize(100, 0);
     }
 
-    public function test_create_invalid_expected_items_throws() : void
+    public function test_create_invalid_expected_items_throws(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected items must be greater than zero');
@@ -381,14 +381,14 @@ final class BloomFilterTest extends TestCase
         BloomFilter::create(0);
     }
 
-    public function test_create_negative_expected_items_throws() : void
+    public function test_create_negative_expected_items_throws(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         BloomFilter::create(-1);
     }
 
-    public function test_create_invalid_fpr_zero_throws() : void
+    public function test_create_invalid_fpr_zero_throws(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('False positive rate must be between 0 and 1');
@@ -396,14 +396,14 @@ final class BloomFilterTest extends TestCase
         BloomFilter::create(100, 0.0);
     }
 
-    public function test_create_invalid_fpr_one_throws() : void
+    public function test_create_invalid_fpr_one_throws(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         BloomFilter::create(100, 1.0);
     }
 
-    public function test_create_invalid_fpr_negative_throws() : void
+    public function test_create_invalid_fpr_negative_throws(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -412,7 +412,7 @@ final class BloomFilterTest extends TestCase
 
     // ==================== Reset ====================
 
-    public function test_reset_clears_filter() : void
+    public function test_reset_clears_filter(): void
     {
         $filter = BloomFilter::withSize(1000, 3);
         $filter->add('hello');
@@ -424,7 +424,7 @@ final class BloomFilterTest extends TestCase
         $this->assertSame(0.0, $filter->fillRatio());
     }
 
-    public function test_reset_then_reuse() : void
+    public function test_reset_then_reuse(): void
     {
         $filter = BloomFilter::withSize(1000, 3);
         $filter->add('old_item');
@@ -437,21 +437,21 @@ final class BloomFilterTest extends TestCase
 
     // ==================== Accessor methods ====================
 
-    public function test_get_bit_count() : void
+    public function test_get_bit_count(): void
     {
         $filter = BloomFilter::create(100);
 
         $this->assertGreaterThan(0, $filter->getBitCount());
     }
 
-    public function test_get_hash_count() : void
+    public function test_get_hash_count(): void
     {
         $filter = BloomFilter::create(100);
 
         $this->assertGreaterThan(0, $filter->getHashCount());
     }
 
-    public function test_get_bits() : void
+    public function test_get_bits(): void
     {
         $filter = BloomFilter::withSize(100, 3);
 
@@ -461,7 +461,7 @@ final class BloomFilterTest extends TestCase
         $this->assertCount(100, $bits);
     }
 
-    public function test_set_bit_count() : void
+    public function test_set_bit_count(): void
     {
         $filter = BloomFilter::withSize(100, 3);
 
@@ -472,7 +472,7 @@ final class BloomFilterTest extends TestCase
 
     // ==================== Large scale test ====================
 
-    public function test_large_filter_accuracy() : void
+    public function test_large_filter_accuracy(): void
     {
         $filter = BloomFilter::create(10000, 0.01);
 

@@ -19,11 +19,11 @@ final readonly class CompiledCacheArtifact
         public CompiledCachePath $compiledCachePath,
         public Timestamp $timestamp,
         public string $sourceFingerprint,
-        public mixed  $payload = null,
+        public mixed $payload = null,
     ) {
         $this->compiledCacheName = $compiledCacheName;
         $this->compiledCachePath = $compiledCachePath;
-        $this->timestamp = $timestamp;
+        $this->timestamp         = $timestamp;
     }
 
     public static function create(
@@ -31,8 +31,7 @@ final readonly class CompiledCacheArtifact
         string $path,
         int $createdAt,
         string $sourceFingerprint,
-    ) : self
-    {
+    ): self {
         return new self(
             name             : new CompiledCacheName(name: $name),
             path             : new CompiledCachePath(path: $path),
@@ -41,7 +40,7 @@ final readonly class CompiledCacheArtifact
         );
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return sprintf(
             'CompiledCacheArtifact(%s, %s)',

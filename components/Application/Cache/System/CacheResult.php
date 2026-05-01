@@ -14,16 +14,15 @@ class CacheResult
 
     public function __construct(
         public readonly CacheResultState $cacheResultState,
-        public readonly mixed     $value,
+        public readonly mixed $value,
         public readonly ?CacheKey $cacheKey = null,
-        public readonly ?string   $message = null,
-    )
-    {
+        public readonly ?string $message = null,
+    ) {
         $this->cacheResultState = $cacheResultState;
-        $this->cacheKey = $cacheKey;
+        $this->cacheKey         = $cacheKey;
     }
 
-    public static function hit(mixed $value, ?CacheKey $cacheKey = null) : self
+    public static function hit(mixed $value, ?CacheKey $cacheKey = null): self
     {
         return new self(
             state: CacheResultState::HIT,
@@ -32,7 +31,7 @@ class CacheResult
         );
     }
 
-    public static function miss(?CacheKey $cacheKey = null) : self
+    public static function miss(?CacheKey $cacheKey = null): self
     {
         return new self(
             state: CacheResultState::MISS,
@@ -41,7 +40,7 @@ class CacheResult
         );
     }
 
-    public static function expired(mixed $value, ?CacheKey $cacheKey = null) : self
+    public static function expired(mixed $value, ?CacheKey $cacheKey = null): self
     {
         return new self(
             state: CacheResultState::EXPIRED,
@@ -50,7 +49,7 @@ class CacheResult
         );
     }
 
-    public static function stale(mixed $value, ?CacheKey $cacheKey = null) : self
+    public static function stale(mixed $value, ?CacheKey $cacheKey = null): self
     {
         return new self(
             state: CacheResultState::STALE,
@@ -59,7 +58,7 @@ class CacheResult
         );
     }
 
-    public static function stored(bool $success, ?CacheKey $cacheKey = null) : self
+    public static function stored(bool $success, ?CacheKey $cacheKey = null): self
     {
         return new self(
             state: $success ? CacheResultState::STORED : CacheResultState::STORE_FAILED,
@@ -68,7 +67,7 @@ class CacheResult
         );
     }
 
-    public static function deleted(bool $success, ?CacheKey $cacheKey = null) : self
+    public static function deleted(bool $success, ?CacheKey $cacheKey = null): self
     {
         return new self(
             state: $success ? CacheResultState::DELETED : CacheResultState::DELETE_FAILED,
@@ -77,7 +76,7 @@ class CacheResult
         );
     }
 
-    public static function cleared(bool $success) : self
+    public static function cleared(bool $success): self
     {
         return new self(
             state: $success ? CacheResultState::CLEARED : CacheResultState::CLEAR_FAILED,
@@ -85,7 +84,7 @@ class CacheResult
         );
     }
 
-    public static function error(string $message, ?CacheKey $cacheKey = null) : self
+    public static function error(string $message, ?CacheKey $cacheKey = null): self
     {
         return new self(
             state  : CacheResultState::ERROR,
@@ -95,12 +94,12 @@ class CacheResult
         );
     }
 
-    public function isMiss() : bool
+    public function isMiss(): bool
     {
         return $this->cacheResultState === CacheResultState::MISS;
     }
 
-    public function isSuccess() : bool
+    public function isSuccess(): bool
     {
         return in_array($this->cacheResultState, [
             CacheResultState::HIT,
@@ -113,7 +112,7 @@ class CacheResult
         ], strict:      true);
     }
 
-    public function getValueOrDefault(mixed $default = null) : mixed
+    public function getValueOrDefault(mixed $default = null): mixed
     {
         if ($this->isHit() || $this->isStale() || $this->isExpired()) {
             return $this->value;
@@ -122,17 +121,17 @@ class CacheResult
         return $default;
     }
 
-    public function isHit() : bool
+    public function isHit(): bool
     {
         return $this->cacheResultState === CacheResultState::HIT;
     }
 
-    public function isStale() : bool
+    public function isStale(): bool
     {
         return $this->cacheResultState === CacheResultState::STALE;
     }
 
-    public function isExpired() : bool
+    public function isExpired(): bool
     {
         return $this->cacheResultState === CacheResultState::EXPIRED;
     }

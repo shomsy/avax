@@ -36,14 +36,14 @@ final class RedisCacheStore implements CacheStore
 
     public function __construct(
         private readonly string $host = '127.0.0.1',
-        private readonly int     $port = self::DEFAULT_PORT,
+        private readonly int   $port = self::DEFAULT_PORT,
         #[SensitiveParameter]
         private readonly ?string $connectionSecret = null,
-        private readonly int     $database = 0,
-        private readonly float   $timeout = self::DEFAULT_TIMEOUT,
+        private readonly int   $database = 0,
+        private readonly float $timeout = self::DEFAULT_TIMEOUT,
         private readonly string $prefix = self::DEFAULT_PREFIX,
-        private readonly Clock   $clock = new SystemClock,
-        ?CacheSerializer         $cacheSerializer = null,
+        private readonly Clock $clock = new SystemClock(),
+        ?CacheSerializer        $cacheSerializer = null,
     )
     {
         $this->cacheSerializer = $cacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);
@@ -107,7 +107,7 @@ final class RedisCacheStore implements CacheStore
             return;
         }
 
-        $this->redis = new Redis;
+        $this->redis = new Redis();
         $this->redis->connect(host: $this->host, port: $this->port, timeout: $this->timeout);
 
         if ($this->connectionSecret !== null) {

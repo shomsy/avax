@@ -18,10 +18,9 @@ final readonly class FreshnessStatus
         public bool $isFresh,
         public string $reason,
         public Timestamp $timestamp,
-        public int  $sourceFilesMtime,
+        public int $sourceFilesMtime,
         public int|false $compiledFileMtime,
-    )
-    {
+    ) {
         $this->timestamp = $timestamp;
     }
 
@@ -40,25 +39,25 @@ final readonly class FreshnessStatus
      *     compiledFileAge: int
      * }
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'entryName'        => $this->entryName,
-            'isFresh'          => $this->isFresh,
-            'reason'           => $this->reason,
-            'checkedAt' => $this->timestamp->seconds,
-            'sourceFilesMtime' => $this->sourceFilesMtime,
+            'entryName'         => $this->entryName,
+            'isFresh'           => $this->isFresh,
+            'reason'            => $this->reason,
+            'checkedAt'         => $this->timestamp->seconds,
+            'sourceFilesMtime'  => $this->sourceFilesMtime,
             'compiledFileMtime' => $this->compiledFileMtime,
-            'isStale'          => $this->isStale(),
-            'isMissing'        => $this->isMissing(),
-            'compiledFileAge'  => $this->getCompiledFileAge(),
+            'isStale'           => $this->isStale(),
+            'isMissing'         => $this->isMissing(),
+            'compiledFileAge'   => $this->getCompiledFileAge(),
         ];
     }
 
     /**
      * Check if the entry is stale (not fresh).
      */
-    public function isStale() : bool
+    public function isStale(): bool
     {
         return ! $this->isFresh;
     }
@@ -66,7 +65,7 @@ final readonly class FreshnessStatus
     /**
      * Check if the entry is missing.
      */
-    public function isMissing() : bool
+    public function isMissing(): bool
     {
         return $this->compiledFileMtime === 0 || $this->compiledFileMtime === false;
     }
@@ -74,7 +73,7 @@ final readonly class FreshnessStatus
     /**
      * Get the age of the compiled file in seconds.
      */
-    public function getCompiledFileAge() : int
+    public function getCompiledFileAge(): int
     {
         if ($this->compiledFileMtime === false || $this->compiledFileMtime === 0) {
             return 0;

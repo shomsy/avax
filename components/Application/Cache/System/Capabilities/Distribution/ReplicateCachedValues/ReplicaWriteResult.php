@@ -10,9 +10,9 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Rep
 final readonly class ReplicaWriteResult
 {
     public function __construct(
-        public int     $replicaIndex,
+        public int  $replicaIndex,
         public string $key,
-        public bool    $success,
+        public bool $success,
         public ?string $error,
     ) {}
 }

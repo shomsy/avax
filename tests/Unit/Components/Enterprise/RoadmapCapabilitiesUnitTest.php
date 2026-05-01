@@ -71,18 +71,18 @@ final class RoadmapCapabilitiesUnitTest extends TestCase
 
     public function test_concurrency_flows_run_and_await_tasks() : void
     {
-        $results = (new RunConcurrentTasks)->run([
-                                                     static fn () => 'a',
-                                                     static fn () => 'b',
-                                                 ]);
+        $results = (new RunConcurrentTasks())->run([
+                                                       static fn () => 'a',
+                                                       static fn () => 'b',
+                                                   ]);
 
         $this->assertSame(expected: ['a', 'b'], actual: $results);
-        $this->assertSame(expected: 'done', actual: (new AwaitTask)->await(static fn () => 'done'));
+        $this->assertSame(expected: 'done', actual: (new AwaitTask())->await(static fn () => 'done'));
     }
 
     public function test_cancellation_token_records_cancelled_state() : void
     {
-        $token = new CancellationToken;
+        $token = new CancellationToken();
 
         $this->assertFalse(condition: $token->isCancelled());
 
@@ -96,14 +96,14 @@ final class RoadmapCapabilitiesUnitTest extends TestCase
         Scheduler::clear();
         $ran = false;
 
-        (new RegisterScheduledTask)->register(
+        (new RegisterScheduledTask())->register(
             expression: '* * * * *',
             task      : static function () use (&$ran) : void {
                 $ran = true;
             },
         );
 
-        $report = (new RunDueTasks)->run();
+        $report = (new RunDueTasks())->run();
 
         $this->assertTrue(condition: $ran);
         $this->assertSame(expected: 1, actual: $report->count());
@@ -112,14 +112,14 @@ final class RoadmapCapabilitiesUnitTest extends TestCase
 
     public function test_secret_store_reads_redacts_and_encrypts_values() : void
     {
-        $store = new InMemorySecretStore;
+        $store = new InMemorySecretStore();
         $store->set(key: 'api-key', value: 'supersecret');
 
         $this->assertSame(expected: 'supersecret', actual: (new ReadSecret(store: $store))->read(key: 'api-key'));
-        $this->assertSame(expected: 'su*******et', actual: (new RedactSecret)->redact(value: 'supersecret'));
+        $this->assertSame(expected: 'su*******et', actual: (new RedactSecret())->redact(value: 'supersecret'));
 
         $encrypted = new EncryptedSecretStore(
-            inner        : new InMemorySecretStore,
+            inner        : new InMemorySecretStore(),
             encryptionKey: str_repeat(string: 'a', times: 32),
         );
         $encrypted->set(key: 'token', value: 'secret-value');
@@ -129,14 +129,14 @@ final class RoadmapCapabilitiesUnitTest extends TestCase
 
     public function test_health_liveness_probe_returns_ok_report() : void
     {
-        $report = (new LivenessProbe)->read();
+        $report = (new LivenessProbe())->read();
 
         $this->assertSame(expected: 'ok', actual: $report->status);
     }
 
     public function test_runtime_isolation_guard_detects_runtime_api_leaks_outside_adapters() : void
     {
-        $guard = new RuntimeIsolationGuard;
+        $guard = new RuntimeIsolationGuard();
 
         $this->assertSame(
             expected: ['Swoole\\'],
@@ -150,8 +150,8 @@ final class RoadmapCapabilitiesUnitTest extends TestCase
 
     public function test_task_fake_records_dispatched_tasks() : void
     {
-        $fake = new TaskFake;
-        $task = new class {};
+        $fake = new TaskFake();
+        $task = new class ( ) {};
 
         $fake->dispatch(task: $task);
 

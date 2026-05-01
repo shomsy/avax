@@ -12,12 +12,13 @@ final readonly class AuditContainerScope
 {
     public function __construct(
         private ContainerInterface $container,
-    ) {}
+    ) {
+    }
 
     /**
      * @param list<ScopeViolation> $violations
      */
-    public static function printReport(array $violations) : int
+    public static function printReport(array $violations): int
     {
         if (empty($violations)) {
             echo "\033[32mNo scope violations detected.\033[0m\n";
@@ -42,7 +43,7 @@ final readonly class AuditContainerScope
     /**
      * @return list<ScopeViolation>
      */
-    public function audit() : array
+    public function audit(): array
     {
         $analyzer = new ContainerAnalyzer($this->container);
 

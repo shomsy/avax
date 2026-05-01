@@ -9,9 +9,9 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 interface DecideCachedValueState
 {
     public function decide(
-        ?CachedValueLifecycle $lifecycle,
+        ?CachedValueLifecycle $cachedValueLifecycle,
         Clock $clock,
         bool $wasExplicitlyInvalidated = false,
         bool $wasEvicted = false,
-    ) : CachedValueState;
+    ): CachedValueState;
 }

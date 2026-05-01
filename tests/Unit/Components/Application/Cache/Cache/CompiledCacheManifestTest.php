@@ -20,10 +20,10 @@ final class CompiledCacheManifestTest extends TestCase
 
     private FrozenClock $clock;
 
-    public function test_add_entry_creates_entry_with_source_files() : void
+    public function test_add_entry_creates_entry_with_source_files(): void
     {
         $sourceFile = $this->createTempFile('source.php', '<?php // source');
-        $manifest = CompiledCacheManifest::empty($this->clock);
+        $manifest   = CompiledCacheManifest::empty($this->clock);
 
         $entry = $manifest->addEntry(
             name        : 'config-cache',
@@ -37,7 +37,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertNotNull($entry->fingerprint);
     }
 
-    private function createTempFile(string $name, string $content = '') : string
+    private function createTempFile(string $name, string $content = ''): string
     {
         $path = $this->tempDir . '/' . $name;
         file_put_contents($path, $content);
@@ -45,10 +45,10 @@ final class CompiledCacheManifestTest extends TestCase
         return $path;
     }
 
-    public function test_add_entry_generates_sha256_fingerprint() : void
+    public function test_add_entry_generates_sha256_fingerprint(): void
     {
         $sourceFile = $this->createTempFile('fingerprint-source.php', '<?php // fp source');
-        $manifest = CompiledCacheManifest::empty($this->clock);
+        $manifest   = CompiledCacheManifest::empty($this->clock);
 
         $entry = $manifest->addEntry(
             name        : 'fp-test',
@@ -61,7 +61,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $entry->fingerprint);
     }
 
-    public function test_add_entry_includes_php_version() : void
+    public function test_add_entry_includes_php_version(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -76,7 +76,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- addEntry(key, sourceFiles) ---
 
-    public function test_add_entry_with_custom_type() : void
+    public function test_add_entry_with_custom_type(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -90,7 +90,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertSame('routes', $entry->type);
     }
 
-    public function test_add_entry_with_framework_version() : void
+    public function test_add_entry_with_framework_version(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -104,7 +104,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertSame('2.0.0', $entry->frameworkVersion);
     }
 
-    public function test_add_entry_sets_created_at_and_updated_at() : void
+    public function test_add_entry_sets_created_at_and_updated_at(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -118,7 +118,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertSame(1000000, $entry->updatedAt->seconds);
     }
 
-    public function test_remove_entry_removes_existing_entry() : void
+    public function test_remove_entry_removes_existing_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'to-remove', compiledPath: '/path', sourceFiles: []);
@@ -131,7 +131,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertFalse($manifest->hasEntry('to-remove'));
     }
 
-    public function test_remove_entry_returns_false_for_nonexistent_entry() : void
+    public function test_remove_entry_returns_false_for_nonexistent_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -140,7 +140,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_is_fresh_returns_false_for_nonexistent_entry() : void
+    public function test_is_fresh_returns_false_for_nonexistent_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -149,10 +149,10 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- removeEntry(key) ---
 
-    public function test_is_fresh_returns_true_when_source_files_unchanged() : void
+    public function test_is_fresh_returns_true_when_source_files_unchanged(): void
     {
         $sourceFile = $this->createTempFile('fresh-source.php', '<?php // fresh');
-        $manifest = CompiledCacheManifest::empty($this->clock);
+        $manifest   = CompiledCacheManifest::empty($this->clock);
 
         $manifest->addEntry(
             name        : 'fresh-test',
@@ -163,10 +163,10 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertTrue($manifest->isFresh('fresh-test'));
     }
 
-    public function test_is_fresh_returns_false_when_source_file_modified() : void
+    public function test_is_fresh_returns_false_when_source_file_modified(): void
     {
         $sourceFile = $this->createTempFile('stale-source.php', '<?php // original');
-        $manifest = CompiledCacheManifest::empty($this->clock);
+        $manifest   = CompiledCacheManifest::empty($this->clock);
 
         $manifest->addEntry(
             name        : 'stale-test',
@@ -183,10 +183,10 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- isFresh() ---
 
-    public function test_is_fresh_with_multiple_source_files() : void
+    public function test_is_fresh_with_multiple_source_files(): void
     {
-        $source1 = $this->createTempFile('multi-source-1.php', '<?php // 1');
-        $source2 = $this->createTempFile('multi-source-2.php', '<?php // 2');
+        $source1  = $this->createTempFile('multi-source-1.php', '<?php // 1');
+        $source2  = $this->createTempFile('multi-source-2.php', '<?php // 2');
         $manifest = CompiledCacheManifest::empty($this->clock);
 
         $manifest->addEntry(
@@ -198,23 +198,23 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertTrue($manifest->isFresh('multi-test'));
     }
 
-    public function test_load_from_json_file() : void
+    public function test_load_from_json_file(): void
     {
         $manifestPath = $this->tempDir . '/manifest.json';
 
         $data = [
-            'version' => '1.0',
+            'version'     => '1.0',
             'generatedAt' => 1000000,
-            'entries' => [
+            'entries'     => [
                 'config-cache' => [
-                    'name'         => 'config-cache',
-                    'compiledPath' => '/compiled/config.php',
-                    'sourceFiles'  => ['/src/config.php'],
-                    'fingerprint'  => 'abc123',
-                    'createdAt'    => 1000000,
-                    'updatedAt'    => 1000000,
-                    'type'         => 'config',
-                    'phpVersion'   => '8.2.0',
+                    'name'             => 'config-cache',
+                    'compiledPath'     => '/compiled/config.php',
+                    'sourceFiles'      => ['/src/config.php'],
+                    'fingerprint'      => 'abc123',
+                    'createdAt'        => 1000000,
+                    'updatedAt'        => 1000000,
+                    'type'             => 'config',
+                    'phpVersion'       => '8.2.0',
                     'frameworkVersion' => '1.0.0',
                 ],
             ],
@@ -235,14 +235,14 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertSame('config', $entry->type);
     }
 
-    public function test_load_returns_empty_manifest_when_file_does_not_exist() : void
+    public function test_load_returns_empty_manifest_when_file_does_not_exist(): void
     {
         $manifest = CompiledCacheManifest::load($this->tempDir . '/nonexistent.json', $this->clock);
 
         $this->assertCount(0, $manifest->getAllEntries());
     }
 
-    public function test_load_throws_on_invalid_json() : void
+    public function test_load_throws_on_invalid_json(): void
     {
         $manifestPath = $this->tempDir . '/invalid.json';
         file_put_contents($manifestPath, 'not valid json {{{');
@@ -254,7 +254,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- load() from JSON file ---
 
-    public function test_load_throws_on_invalid_format() : void
+    public function test_load_throws_on_invalid_format(): void
     {
         $manifestPath = $this->tempDir . '/wrong-format.json';
         file_put_contents($manifestPath, '"just a string"');
@@ -264,7 +264,7 @@ final class CompiledCacheManifestTest extends TestCase
         CompiledCacheManifest::load($manifestPath, $this->clock);
     }
 
-    public function test_save_to_json_file() : void
+    public function test_save_to_json_file(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(
@@ -280,7 +280,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertFileExists($savePath);
 
         $content = file_get_contents($savePath);
-        $data     = json_decode($content, true);
+        $data    = json_decode($content, true);
 
         $this->assertArrayHasKey('version', $data);
         $this->assertSame('1.0', $data['version']);
@@ -288,7 +288,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertArrayHasKey('save-test', $data['entries']);
     }
 
-    public function test_save_throws_without_path() : void
+    public function test_save_throws_without_path(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -298,7 +298,7 @@ final class CompiledCacheManifestTest extends TestCase
         $manifest->save();
     }
 
-    public function test_save_creates_directory_if_needed() : void
+    public function test_save_creates_directory_if_needed(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'dir-test', compiledPath: '/path', sourceFiles: []);
@@ -311,7 +311,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- save() to JSON file ---
 
-    public function test_save_and_load_roundtrip() : void
+    public function test_save_and_load_roundtrip(): void
     {
         $original = CompiledCacheManifest::empty($this->clock);
         $original->addEntry(
@@ -340,7 +340,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertSame('1.5.0', $entry->frameworkVersion);
     }
 
-    public function test_manifest_entry_properties() : void
+    public function test_manifest_entry_properties(): void
     {
         $entry = new CompiledCacheManifestEntry(
             name            : 'entry-test',
@@ -365,7 +365,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertSame('1.0.0', $entry->frameworkVersion);
     }
 
-    public function test_manifest_entry_to_array() : void
+    public function test_manifest_entry_to_array(): void
     {
         $entry = new CompiledCacheManifestEntry(
             name        : 'array-test',
@@ -389,7 +389,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- File roundtrip (save then load) ---
 
-    public function test_manifest_entry_from_array_roundtrip() : void
+    public function test_manifest_entry_from_array_roundtrip(): void
     {
         $original = new CompiledCacheManifestEntry(
             name            : 'roundtrip-entry',
@@ -403,7 +403,7 @@ final class CompiledCacheManifestTest extends TestCase
             frameworkVersion: '2.0.0',
         );
 
-        $array = $original->toArray();
+        $array    = $original->toArray();
         $restored = CompiledCacheManifestEntry::fromArray($array);
 
         $this->assertSame($original->name, $restored->name);
@@ -419,7 +419,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- Manifest entry properties ---
 
-    public function test_manifest_entry_with_updated_at() : void
+    public function test_manifest_entry_with_updated_at(): void
     {
         $entry = new CompiledCacheManifestEntry(
             name        : 'touch-test',
@@ -439,7 +439,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- toArray() and fromArray() roundtrip ---
 
-    public function test_compiled_file_exists_when_file_exists() : void
+    public function test_compiled_file_exists_when_file_exists(): void
     {
         $compiledPath = $this->createTempFile('exists.php', '<?php');
 
@@ -455,7 +455,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertTrue($entry->compiledFileExists());
     }
 
-    public function test_compiled_file_exists_when_file_does_not_exist() : void
+    public function test_compiled_file_exists_when_file_does_not_exist(): void
     {
         $entry = new CompiledCacheManifestEntry(
             name        : 'not-exists-test',
@@ -471,7 +471,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- withUpdatedAt() ---
 
-    public function test_get_compiled_file_mtime_returns_mtime() : void
+    public function test_get_compiled_file_mtime_returns_mtime(): void
     {
         $compiledPath = $this->createTempFile('mtime.php', '<?php');
 
@@ -492,7 +492,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- compiledFileExists() and getCompiledFileMtime() ---
 
-    public function test_get_compiled_file_mtime_returns_false_when_file_missing() : void
+    public function test_get_compiled_file_mtime_returns_false_when_file_missing(): void
     {
         $entry = new CompiledCacheManifestEntry(
             name        : 'missing-mtime-test',
@@ -506,7 +506,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertFalse($entry->getCompiledFileMtime());
     }
 
-    public function test_has_entry_returns_true_for_existing_entry() : void
+    public function test_has_entry_returns_true_for_existing_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'check-entry', compiledPath: '/path', sourceFiles: []);
@@ -514,14 +514,14 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertTrue($manifest->hasEntry('check-entry'));
     }
 
-    public function test_has_entry_returns_false_for_missing_entry() : void
+    public function test_has_entry_returns_false_for_missing_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
         $this->assertFalse($manifest->hasEntry('missing'));
     }
 
-    public function test_get_entry_returns_entry() : void
+    public function test_get_entry_returns_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'get-entry', compiledPath: '/path', sourceFiles: []);
@@ -534,14 +534,14 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- getEntry / hasEntry ---
 
-    public function test_get_entry_returns_null_for_missing_entry() : void
+    public function test_get_entry_returns_null_for_missing_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
         $this->assertNull($manifest->getEntry('missing'));
     }
 
-    public function test_get_all_entries_returns_all_entries() : void
+    public function test_get_all_entries_returns_all_entries(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'entry-1', compiledPath: '/path1', sourceFiles: []);
@@ -554,7 +554,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertArrayHasKey('entry-2', $all);
     }
 
-    public function test_get_entries_by_type() : void
+    public function test_get_entries_by_type(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'config-1', compiledPath: '/c1', sourceFiles: [], type: 'config');
@@ -566,7 +566,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertCount(2, $configEntries);
     }
 
-    public function test_get_entries_by_type_returns_empty_for_unknown_type() : void
+    public function test_get_entries_by_type_returns_empty_for_unknown_type(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'entry-1', compiledPath: '/path', sourceFiles: []);
@@ -578,10 +578,10 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- getAllEntries ---
 
-    public function test_get_stale_entries_returns_stale_entries() : void
+    public function test_get_stale_entries_returns_stale_entries(): void
     {
         $sourceFile = $this->createTempFile('stale-get.php', '<?php // original');
-        $manifest = CompiledCacheManifest::empty($this->clock);
+        $manifest   = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(
             name        : 'stale-get-test',
             compiledPath: $this->tempDir . '/compiled.php',
@@ -600,7 +600,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- getEntriesByType ---
 
-    public function test_get_stale_entries_returns_empty_when_all_fresh() : void
+    public function test_get_stale_entries_returns_empty_when_all_fresh(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'fresh-get', compiledPath: '/path', sourceFiles: []);
@@ -610,7 +610,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertCount(0, $stale);
     }
 
-    public function test_count_returns_entry_count() : void
+    public function test_count_returns_entry_count(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -624,7 +624,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- getStaleEntries ---
 
-    public function test_empty_creates_manifest_with_no_entries() : void
+    public function test_empty_creates_manifest_with_no_entries(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -632,7 +632,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertTrue($manifest->count() === 0);
     }
 
-    public function test_clear_removes_all_entries() : void
+    public function test_clear_removes_all_entries(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'clear-1', compiledPath: '/path1', sourceFiles: []);
@@ -646,7 +646,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- count() ---
 
-    public function test_touch_entry_updates_timestamp() : void
+    public function test_touch_entry_updates_timestamp(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'touch-entry', compiledPath: '/path', sourceFiles: []);
@@ -664,7 +664,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- empty() ---
 
-    public function test_touch_entry_returns_false_for_missing_entry() : void
+    public function test_touch_entry_returns_false_for_missing_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -673,7 +673,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- clear() ---
 
-    public function test_get_manifest_path_returns_null_initially() : void
+    public function test_get_manifest_path_returns_null_initially(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -682,7 +682,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- touchEntry ---
 
-    public function test_get_manifest_path_returns_path_after_save() : void
+    public function test_get_manifest_path_returns_path_after_save(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
         $manifest->addEntry(name: 'path-test', compiledPath: '/path', sourceFiles: []);
@@ -693,7 +693,7 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertSame($savePath, $manifest->getManifestPath());
     }
 
-    public function test_set_entry_adds_entry() : void
+    public function test_set_entry_adds_entry(): void
     {
         $manifest = CompiledCacheManifest::empty($this->clock);
 
@@ -713,7 +713,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- getManifestPath ---
 
-    public function test_same_source_files_produce_same_fingerprint() : void
+    public function test_same_source_files_produce_same_fingerprint(): void
     {
         $sourceFile = $this->createTempFile('fp-consistent.php', '<?php // consistent');
 
@@ -731,10 +731,10 @@ final class CompiledCacheManifestTest extends TestCase
         $this->assertSame($entry1->fingerprint, $entry2->fingerprint);
     }
 
-    public function test_entry_becomes_stale_when_source_deleted() : void
+    public function test_entry_becomes_stale_when_source_deleted(): void
     {
         $sourceFile = $this->createTempFile('deleted-source.php', '<?php // delete me');
-        $manifest = CompiledCacheManifest::empty($this->clock);
+        $manifest   = CompiledCacheManifest::empty($this->clock);
 
         $manifest->addEntry(
             name        : 'deleted-test',
@@ -752,7 +752,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- setEntry ---
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -764,7 +764,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- Fingerprint consistency ---
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         $this->removeDirectory($this->tempDir);
 
@@ -773,7 +773,7 @@ final class CompiledCacheManifestTest extends TestCase
 
     // --- Entry staleness detection ---
 
-    private function removeDirectory(string $dir) : void
+    private function removeDirectory(string $dir): void
     {
         if (! is_dir($dir)) {
             return;
@@ -796,9 +796,9 @@ final class CompiledCacheFreshnessTest extends TestCase
 
     private FrozenClock $clock;
 
-    public function test_check_returns_fresh_when_compiled_is_newer() : void
+    public function test_check_returns_fresh_when_compiled_is_newer(): void
     {
-        $sourceFile = $this->createTempFile('check-source.php', '<?php // source');
+        $sourceFile   = $this->createTempFile('check-source.php', '<?php // source');
         $compiledFile = $this->createTempFile('check-compiled.php', '<?php // compiled');
 
         // Make compiled newer
@@ -815,13 +815,13 @@ final class CompiledCacheFreshnessTest extends TestCase
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
-        $status     = $freshness->check($entry);
+        $status    = $freshness->check($entry);
 
         $this->assertTrue($status->isFresh);
         $this->assertSame('All checks passed', $status->reason);
     }
 
-    private function createTempFile(string $name, string $content = '') : string
+    private function createTempFile(string $name, string $content = ''): string
     {
         $path = $this->tempDir . '/' . $name;
         file_put_contents($path, $content);
@@ -829,7 +829,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         return $path;
     }
 
-    private function calcFingerprint(array $sourceFiles) : string
+    private function calcFingerprint(array $sourceFiles): string
     {
         $hashParts = [];
 
@@ -844,7 +844,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         return hash('sha256', implode('|', $hashParts));
     }
 
-    public function test_check_returns_stale_when_compiled_missing() : void
+    public function test_check_returns_stale_when_compiled_missing(): void
     {
         $sourceFile = $this->createTempFile('missing-compiled-source.php', '<?php');
 
@@ -858,7 +858,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
-        $status = $freshness->check($entry);
+        $status    = $freshness->check($entry);
 
         $this->assertFalse($status->isFresh);
         $this->assertSame('Compiled file does not exist', $status->reason);
@@ -866,7 +866,7 @@ final class CompiledCacheFreshnessTest extends TestCase
 
     // --- check() ---
 
-    public function test_check_returns_stale_on_fingerprint_mismatch() : void
+    public function test_check_returns_stale_on_fingerprint_mismatch(): void
     {
         $sourceFile = $this->createTempFile('mismatch-source.php', '<?php // mismatch');
 
@@ -883,13 +883,13 @@ final class CompiledCacheFreshnessTest extends TestCase
         file_put_contents($this->tempDir . '/mismatch-compiled.php', '<?php');
 
         $freshness = CompiledCacheFreshness::create($this->clock);
-        $status = $freshness->check($entry);
+        $status    = $freshness->check($entry);
 
         $this->assertFalse($status->isFresh);
         $this->assertSame('Source files have changed (fingerprint mismatch)', $status->reason);
     }
 
-    public function test_check_returns_stale_when_source_missing() : void
+    public function test_check_returns_stale_when_source_missing(): void
     {
         $entry = new CompiledCacheManifestEntry(
             name        : 'missing-source-test',
@@ -904,15 +904,15 @@ final class CompiledCacheFreshnessTest extends TestCase
         file_put_contents($this->tempDir . '/compiled-with-missing-source.php', '<?php');
 
         $freshness = CompiledCacheFreshness::create($this->clock);
-        $status = $freshness->check($entry);
+        $status    = $freshness->check($entry);
 
         $this->assertFalse($status->isFresh);
         $this->assertStringContainsString('Missing source files', $status->reason);
     }
 
-    public function test_check_returns_stale_when_source_newer() : void
+    public function test_check_returns_stale_when_source_newer(): void
     {
-        $sourceFile = $this->createTempFile('newer-source.php', '<?php // old');
+        $sourceFile   = $this->createTempFile('newer-source.php', '<?php // old');
         $compiledFile = $this->createTempFile('newer-compiled.php', '<?php // compiled');
 
         // Create entry with current fingerprint
@@ -951,9 +951,9 @@ final class CompiledCacheFreshnessTest extends TestCase
         $this->assertFalse($status->isFresh);
     }
 
-    public function test_mark_dirty_returns_stale_status() : void
+    public function test_mark_dirty_returns_stale_status(): void
     {
-        $sourceFile = $this->createTempFile('dirty-source.php', '<?php');
+        $sourceFile   = $this->createTempFile('dirty-source.php', '<?php');
         $compiledFile = $this->createTempFile('dirty-compiled.php', '<?php');
 
         $entry = new CompiledCacheManifestEntry(
@@ -966,15 +966,15 @@ final class CompiledCacheFreshnessTest extends TestCase
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
-        $status     = $freshness->markDirty($entry);
+        $status    = $freshness->markDirty($entry);
 
         $this->assertFalse($status->isFresh);
         $this->assertSame('Manually marked as dirty', $status->reason);
     }
 
-    public function test_mark_fresh_returns_fresh_status() : void
+    public function test_mark_fresh_returns_fresh_status(): void
     {
-        $sourceFile = $this->createTempFile('fresh-mark-source.php', '<?php');
+        $sourceFile   = $this->createTempFile('fresh-mark-source.php', '<?php');
         $compiledFile = $this->createTempFile('fresh-mark-compiled.php', '<?php');
 
         $entry = new CompiledCacheManifestEntry(
@@ -987,7 +987,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
-        $status     = $freshness->markFresh($entry);
+        $status    = $freshness->markFresh($entry);
 
         $this->assertTrue($status->isFresh);
         $this->assertSame('Manually marked as fresh', $status->reason);
@@ -995,7 +995,7 @@ final class CompiledCacheFreshnessTest extends TestCase
 
     // --- markDirty / markFresh ---
 
-    public function test_needs_rebuild_returns_true_when_stale() : void
+    public function test_needs_rebuild_returns_true_when_stale(): void
     {
         $sourceFile = $this->createTempFile('rebuild-source.php', '<?php');
 
@@ -1013,9 +1013,9 @@ final class CompiledCacheFreshnessTest extends TestCase
         $this->assertTrue($freshness->needsRebuild($entry));
     }
 
-    public function test_needs_rebuild_returns_false_when_fresh() : void
+    public function test_needs_rebuild_returns_false_when_fresh(): void
     {
-        $sourceFile = $this->createTempFile('no-rebuild-source.php', '<?php');
+        $sourceFile   = $this->createTempFile('no-rebuild-source.php', '<?php');
         $compiledFile = $this->createTempFile('no-rebuild-compiled.php', '<?php');
 
         sleep(1);
@@ -1037,10 +1037,10 @@ final class CompiledCacheFreshnessTest extends TestCase
 
     // --- needsRebuild ---
 
-    public function test_get_entries_needing_rebuild_returns_only_stale_entries() : void
+    public function test_get_entries_needing_rebuild_returns_only_stale_entries(): void
     {
-        $sourceFile1 = $this->createTempFile('rebuild1-source.php', '<?php');
-        $sourceFile2 = $this->createTempFile('rebuild2-source.php', '<?php');
+        $sourceFile1   = $this->createTempFile('rebuild1-source.php', '<?php');
+        $sourceFile2   = $this->createTempFile('rebuild2-source.php', '<?php');
         $compiledFile2 = $this->createTempFile('rebuild2-compiled.php', '<?php');
 
         sleep(1);
@@ -1073,7 +1073,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         $this->assertSame('needs-rebuild', $needsRebuild[0]->name);
     }
 
-    public function test_check_all_checks_multiple_entries() : void
+    public function test_check_all_checks_multiple_entries(): void
     {
         $sourceFile1 = $this->createTempFile('checkall1-source.php', '<?php');
         $sourceFile2 = $this->createTempFile('checkall2-source.php', '<?php');
@@ -1097,7 +1097,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         );
 
         $freshness = CompiledCacheFreshness::create($this->clock);
-        $results = $freshness->checkAll([$entry1, $entry2]);
+        $results   = $freshness->checkAll([$entry1, $entry2]);
 
         $this->assertCount(2, $results);
         $this->assertArrayHasKey('checkall-1', $results);
@@ -1106,9 +1106,9 @@ final class CompiledCacheFreshnessTest extends TestCase
 
     // --- getEntriesNeedingRebuild ---
 
-    public function test_clear_cache_clears_all_cached_statuses() : void
+    public function test_clear_cache_clears_all_cached_statuses(): void
     {
-        $sourceFile = $this->createTempFile('clear-source.php', '<?php');
+        $sourceFile   = $this->createTempFile('clear-source.php', '<?php');
         $compiledFile = $this->createTempFile('clear-compiled.php', '<?php');
 
         sleep(1);
@@ -1133,9 +1133,9 @@ final class CompiledCacheFreshnessTest extends TestCase
 
     // --- checkAll ---
 
-    public function test_clear_entry_cache_clears_specific_entry() : void
+    public function test_clear_entry_cache_clears_specific_entry(): void
     {
-        $sourceFile = $this->createTempFile('clear-entry-source.php', '<?php');
+        $sourceFile   = $this->createTempFile('clear-entry-source.php', '<?php');
         $compiledFile = $this->createTempFile('clear-entry-compiled.php', '<?php');
 
         sleep(1);
@@ -1159,7 +1159,7 @@ final class CompiledCacheFreshnessTest extends TestCase
 
     // --- clearCache / clearEntryCache ---
 
-    public function test_freshness_status_is_stale() : void
+    public function test_freshness_status_is_stale(): void
     {
         $stale = new FreshnessStatus(
             entryName        : 'stale-test',
@@ -1184,7 +1184,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         $this->assertFalse($fresh->isStale());
     }
 
-    public function test_freshness_status_is_missing() : void
+    public function test_freshness_status_is_missing(): void
     {
         $missing = new FreshnessStatus(
             entryName        : 'missing-test',
@@ -1211,7 +1211,7 @@ final class CompiledCacheFreshnessTest extends TestCase
 
     // --- FreshnessStatus properties ---
 
-    public function test_freshness_status_get_compiled_file_age() : void
+    public function test_freshness_status_get_compiled_file_age(): void
     {
         $status = new FreshnessStatus(
             entryName        : 'age-test',
@@ -1225,7 +1225,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         $this->assertSame(50, $status->getCompiledFileAge());
     }
 
-    public function test_freshness_status_get_compiled_file_age_when_missing() : void
+    public function test_freshness_status_get_compiled_file_age_when_missing(): void
     {
         $status = new FreshnessStatus(
             entryName        : 'age-missing-test',
@@ -1239,7 +1239,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         $this->assertSame(0, $status->getCompiledFileAge());
     }
 
-    public function test_freshness_status_to_array() : void
+    public function test_freshness_status_to_array(): void
     {
         $status = new FreshnessStatus(
             entryName        : 'array-test',
@@ -1263,7 +1263,7 @@ final class CompiledCacheFreshnessTest extends TestCase
         $this->assertSame(0, $array['compiledFileAge']);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -1273,14 +1273,14 @@ final class CompiledCacheFreshnessTest extends TestCase
         $this->clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         $this->removeDirectory($this->tempDir);
 
         parent::tearDown();
     }
 
-    private function removeDirectory(string $dir) : void
+    private function removeDirectory(string $dir): void
     {
         if (! is_dir($dir)) {
             return;

@@ -17,7 +17,7 @@ final readonly class ProviderBootPlan
     public array $order;
 
     /**
-     * @param list<class-string<RegisterDependency>>                                          $order
+     * @param list<class-string<RegisterDependency>> $order
      * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
      */
     private function __construct(
@@ -66,9 +66,9 @@ final readonly class ProviderBootPlan
 
     /**
      * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
-     * @param list<class-string<RegisterDependency>>                                          $ordered
-     * @param array<class-string<RegisterDependency>, string>                                 $state
-     * @param list<class-string<RegisterDependency>>                                          $stack
+     * @param list<class-string<RegisterDependency>>          $ordered
+     * @param array<class-string<RegisterDependency>, string> $state
+     * @param list<class-string<RegisterDependency>>          $stack
      */
     private static function visit(
         string $class,
@@ -114,7 +114,6 @@ final readonly class ProviderBootPlan
 
     /**
      * @param array<class-string<RegisterDependency>, RegisterDependency> $instances
-     *
      * @return list<RegisterDependency>
      */
     public function orderedInstances(array $instances): array

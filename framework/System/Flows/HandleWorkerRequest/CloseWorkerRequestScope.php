@@ -10,9 +10,10 @@ final class CloseWorkerRequestScope
 {
     public function __construct(
         private readonly RequestScope $requestScope,
-    ) {}
+    ) {
+    }
 
-    public function close() : void
+    public function close(): void
     {
         $this->requestScope->close();
     }

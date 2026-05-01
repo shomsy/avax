@@ -18,14 +18,14 @@ final class HotPathInlinerSmokeTest extends CompiledContainer
             'inline.service' => 'resolveInlineService',
         ];
 
-    public function resolveInlineService(mixed $resolver, ResolveRequest $resolveRequest, array $overrides) : string
+    public function resolveInlineService(mixed $resolver, ResolveRequest $resolveRequest, array $overrides): string
     {
         return 'compiled:' . $resolveRequest->serviceId . ':' . ($overrides['suffix'] ?? 'none');
     }
 }
 
-$inliner  = new HotPathInliner;
-$compiled = new InlineSmokeCompiled;
+$inliner  = new HotPathInliner();
+$compiled = new InlineSmokeCompiled();
 $resolver = makeTestContainer()->get(id: ResolveDependency::class);
 
 assertTrue(condition: ! $inliner->isAttached(), message: 'HotPathInliner should start detached.');

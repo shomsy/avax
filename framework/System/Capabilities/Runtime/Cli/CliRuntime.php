@@ -11,14 +11,15 @@ final readonly class CliRuntime
 {
     public function __construct(
         private ConsoleKernelInterface $consoleKernel,
-        private CliInputReader  $inputReader = new CliInputReader,
-        private CliOutputWriter $outputWriter = new CliOutputWriter,
-    ) {}
+        private CliInputReader $inputReader = new CliInputReader(),
+        private CliOutputWriter $outputWriter = new CliOutputWriter(),
+    ) {
+    }
 
     /**
      * @param list<string> $argv
      */
-    public function run(array $argv) : RuntimeResult
+    public function run(array $argv): RuntimeResult
     {
         $input = $this->inputReader->read(argv: $argv);
 
@@ -28,7 +29,7 @@ final readonly class CliRuntime
         );
     }
 
-    public function render(RuntimeResult $result) : string
+    public function render(RuntimeResult $result): string
     {
         return $this->outputWriter->render(result: $result);
     }

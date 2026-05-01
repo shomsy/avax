@@ -20,7 +20,7 @@ class Date extends DateTimeImmutable
     /**
      * Create from a Unix timestamp.
      */
-    public static function fromTimestamp(int $timestamp, DateTimeZone|string|null $tz = null) : self
+    public static function fromTimestamp(int $timestamp, DateTimeZone|string|null $tz = null): self
     {
         return self::parse('@' . $timestamp, $tz);
     }
@@ -28,7 +28,7 @@ class Date extends DateTimeImmutable
     /**
      * Create a new Date instance from a string.
      */
-    public static function parse(string $datetime, DateTimeZone|string|null $tz = null) : self
+    public static function parse(string $datetime, DateTimeZone|string|null $tz = null): self
     {
         $dateTimeZone = self::resolveTimezone($tz);
 
@@ -39,7 +39,7 @@ class Date extends DateTimeImmutable
         }
     }
 
-    private static function resolveTimezone(DateTimeZone|string|null $tz) : DateTimeZone
+    private static function resolveTimezone(DateTimeZone|string|null $tz): DateTimeZone
     {
         if ($tz instanceof DateTimeZone) {
             return $tz;
@@ -57,7 +57,7 @@ class Date extends DateTimeImmutable
     /**
      * Create from year, month, day.
      */
-    public static function create(int $year, int $month = 1, int $day = 1, DateTimeZone|string|null $tz = null) : self
+    public static function create(int $year, int $month = 1, int $day = 1, DateTimeZone|string|null $tz = null): self
     {
         return self::parse(sprintf('%d-%d-%d', $year, $month, $day), $tz);
     }
@@ -66,33 +66,32 @@ class Date extends DateTimeImmutable
      * Create from year, month, day, hour, minute, second.
      */
     public static function createFromDateTime(
-        int                      $year,
-        int                      $month = 1,
-        int                      $day = 1,
-        int                      $hour = 0,
-        int                      $minute = 0,
-        int                      $second = 0,
+        int $year,
+        int $month = 1,
+        int $day = 1,
+        int $hour = 0,
+        int $minute = 0,
+        int $second = 0,
         DateTimeZone|string|null $tz = null,
-    ) : self
-    {
+    ): self {
         return self::parse(sprintf('%d-%d-%d %d:%d:%d', $year, $month, $day, $hour, $minute, $second), $tz);
     }
 
     /**
      * Get a human-readable difference (e.g., "2 hours ago", "3 days from now").
      */
-    public function diffForHumans(self|DateTimeImmutable|null $other = null) : string
+    public function diffForHumans(self|DateTimeImmutable|null $other = null): string
     {
         $other ??= self::now($this->getTimezone());
 
-        $diff = $this->diff($other);
+        $diff   = $this->diff($other);
         $isPast = $other > $this;
 
         $units = [
-            'year'  => $diff->y,
-            'month' => $diff->m,
-            'day'   => $diff->d,
-            'hour'  => $diff->h,
+            'year'   => $diff->y,
+            'month'  => $diff->m,
+            'day'    => $diff->d,
+            'hour'   => $diff->h,
             'minute' => $diff->i,
             'second' => $diff->s,
         ];
@@ -101,7 +100,7 @@ class Date extends DateTimeImmutable
         foreach ($units as $unit => $value) {
             if ($value > 0) {
                 $suffix = $isPast ? ' ago' : ' from now';
-                $label = $value === 1 ? $unit : $unit . 's';
+                $label  = $value === 1 ? $unit : $unit . 's';
 
                 return sprintf('%d %s%s', $value, $label, $suffix);
             }
@@ -113,7 +112,7 @@ class Date extends DateTimeImmutable
     /**
      * Create a new Date instance for now.
      */
-    public static function now(DateTimeZone|string|null $tz = null) : self
+    public static function now(DateTimeZone|string|null $tz = null): self
     {
         $dateTimeZone = self::resolveTimezone($tz);
 
@@ -123,7 +122,7 @@ class Date extends DateTimeImmutable
     /**
      * Add hours to the date.
      */
-    public function addHours(int $hours) : self
+    public function addHours(int $hours): self
     {
         return $this->add(new DateInterval(sprintf('PT%dH', $hours)));
     }
@@ -131,7 +130,7 @@ class Date extends DateTimeImmutable
     /**
      * Subtract hours from the date.
      */
-    public function subHours(int $hours) : self
+    public function subHours(int $hours): self
     {
         return $this->sub(new DateInterval(sprintf('PT%dH', $hours)));
     }
@@ -139,7 +138,7 @@ class Date extends DateTimeImmutable
     /**
      * Add minutes to the date.
      */
-    public function addMinutes(int $minutes) : self
+    public function addMinutes(int $minutes): self
     {
         return $this->add(new DateInterval(sprintf('PT%dM', $minutes)));
     }
@@ -147,7 +146,7 @@ class Date extends DateTimeImmutable
     /**
      * Subtract minutes from the date.
      */
-    public function subMinutes(int $minutes) : self
+    public function subMinutes(int $minutes): self
     {
         return $this->sub(new DateInterval(sprintf('PT%dM', $minutes)));
     }
@@ -155,7 +154,7 @@ class Date extends DateTimeImmutable
     /**
      * Add seconds to the date.
      */
-    public function addSeconds(int $seconds) : self
+    public function addSeconds(int $seconds): self
     {
         return $this->add(new DateInterval(sprintf('PT%dS', $seconds)));
     }
@@ -163,7 +162,7 @@ class Date extends DateTimeImmutable
     /**
      * Subtract seconds from the date.
      */
-    public function subSeconds(int $seconds) : self
+    public function subSeconds(int $seconds): self
     {
         return $this->sub(new DateInterval(sprintf('PT%dS', $seconds)));
     }
@@ -171,7 +170,7 @@ class Date extends DateTimeImmutable
     /**
      * Add weeks to the date.
      */
-    public function addWeeks(int $weeks) : self
+    public function addWeeks(int $weeks): self
     {
         return $this->add(new DateInterval(sprintf('P%dW', $weeks)));
     }
@@ -179,7 +178,7 @@ class Date extends DateTimeImmutable
     /**
      * Subtract weeks from the date.
      */
-    public function subWeeks(int $weeks) : self
+    public function subWeeks(int $weeks): self
     {
         return $this->sub(new DateInterval(sprintf('P%dW', $weeks)));
     }
@@ -187,7 +186,7 @@ class Date extends DateTimeImmutable
     /**
      * Add months to the date.
      */
-    public function addMonths(int $months) : self
+    public function addMonths(int $months): self
     {
         return $this->add(new DateInterval(sprintf('P%dM', $months)));
     }
@@ -195,7 +194,7 @@ class Date extends DateTimeImmutable
     /**
      * Subtract months from the date.
      */
-    public function subMonths(int $months) : self
+    public function subMonths(int $months): self
     {
         return $this->sub(new DateInterval(sprintf('P%dM', $months)));
     }
@@ -203,7 +202,7 @@ class Date extends DateTimeImmutable
     /**
      * Add years to the date.
      */
-    public function addYears(int $years) : self
+    public function addYears(int $years): self
     {
         return $this->add(new DateInterval(sprintf('P%dY', $years)));
     }
@@ -211,7 +210,7 @@ class Date extends DateTimeImmutable
     /**
      * Subtract years from the date.
      */
-    public function subYears(int $years) : self
+    public function subYears(int $years): self
     {
         return $this->sub(new DateInterval(sprintf('P%dY', $years)));
     }
@@ -219,7 +218,7 @@ class Date extends DateTimeImmutable
     /**
      * Set the timezone.
      */
-    public function timezone(DateTimeZone|string $tz) : self
+    public function timezone(DateTimeZone|string $tz): self
     {
         return $this->setTimezone(self::resolveTimezone($tz));
     }
@@ -227,7 +226,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the timezone name.
      */
-    public function timezoneName() : string
+    public function timezoneName(): string
     {
         return $this->getTimezone()->getName();
     }
@@ -235,7 +234,7 @@ class Date extends DateTimeImmutable
     /**
      * Check if the date is today.
      */
-    public function isToday() : bool
+    public function isToday(): bool
     {
         return $this->format('Y-m-d') === self::now($this->getTimezone())->format('Y-m-d');
     }
@@ -244,7 +243,7 @@ class Date extends DateTimeImmutable
      * Format the date using a format string.
      */
     #[Override]
-    public function format(string $format = 'Y-m-d H:i:s') : string
+    public function format(string $format = 'Y-m-d H:i:s'): string
     {
         return parent::format($format);
     }
@@ -252,7 +251,7 @@ class Date extends DateTimeImmutable
     /**
      * Check if the date is in the past.
      */
-    public function isPast() : bool
+    public function isPast(): bool
     {
         return $this < self::now($this->getTimezone());
     }
@@ -260,7 +259,7 @@ class Date extends DateTimeImmutable
     /**
      * Check if the date is in the future.
      */
-    public function isFuture() : bool
+    public function isFuture(): bool
     {
         return $this > self::now($this->getTimezone());
     }
@@ -268,7 +267,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the start of the week (Monday).
      */
-    public function startOfWeek() : self
+    public function startOfWeek(): self
     {
         $dayOfWeek = (int) $this->format('N');
 
@@ -278,7 +277,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the start of the day.
      */
-    public function startOfDay() : self
+    public function startOfDay(): self
     {
         return $this->setTime(0, 0, 0);
     }
@@ -286,7 +285,7 @@ class Date extends DateTimeImmutable
     /**
      * Subtract days from the date.
      */
-    public function subDays(int $days) : self
+    public function subDays(int $days): self
     {
         return $this->sub(new DateInterval(sprintf('P%dD', $days)));
     }
@@ -294,7 +293,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the end of the week (Sunday).
      */
-    public function endOfWeek() : self
+    public function endOfWeek(): self
     {
         $dayOfWeek = (int) $this->format('N');
 
@@ -304,7 +303,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the end of the day.
      */
-    public function endOfDay() : self
+    public function endOfDay(): self
     {
         return $this->setTime(23, 59, 59);
     }
@@ -312,7 +311,7 @@ class Date extends DateTimeImmutable
     /**
      * Add days to the date.
      */
-    public function addDays(int $days) : self
+    public function addDays(int $days): self
     {
         return $this->add(new DateInterval(sprintf('P%dD', $days)));
     }
@@ -320,7 +319,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the start of the month.
      */
-    public function startOfMonth() : self
+    public function startOfMonth(): self
     {
         return self::parse($this->format('Y-m-01'), $this->getTimezone())->startOfDay();
     }
@@ -328,7 +327,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the end of the month.
      */
-    public function endOfMonth() : self
+    public function endOfMonth(): self
     {
         return self::parse($this->format('Y-m-t'), $this->getTimezone())->endOfDay();
     }
@@ -336,7 +335,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the Unix timestamp.
      */
-    public function timestamp() : int
+    public function timestamp(): int
     {
         return (int) $this->format('U');
     }
@@ -344,7 +343,7 @@ class Date extends DateTimeImmutable
     /**
      * Convert to ISO 8601 string.
      */
-    public function toIso8601String() : string
+    public function toIso8601String(): string
     {
         return $this->format('c');
     }
@@ -352,7 +351,7 @@ class Date extends DateTimeImmutable
     /**
      * Convert to date string (Y-m-d).
      */
-    public function toDateString() : string
+    public function toDateString(): string
     {
         return $this->format('Y-m-d');
     }
@@ -360,7 +359,7 @@ class Date extends DateTimeImmutable
     /**
      * Convert to time string (H:i:s).
      */
-    public function toTimeString() : string
+    public function toTimeString(): string
     {
         return $this->format('H:i:s');
     }
@@ -368,7 +367,7 @@ class Date extends DateTimeImmutable
     /**
      * Convert to date-time string (Y-m-d H:i:s).
      */
-    public function toDateTimeString() : string
+    public function toDateTimeString(): string
     {
         return $this->format('Y-m-d H:i:s');
     }
@@ -376,7 +375,7 @@ class Date extends DateTimeImmutable
     /**
      * Check if the date is the same as another.
      */
-    public function isSameDay(self|DateTimeImmutable $other) : bool
+    public function isSameDay(self|DateTimeImmutable $other): bool
     {
         return $this->format('Y-m-d') === $other->format('Y-m-d');
     }
@@ -384,7 +383,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the day of the week (1-7, Monday is 1).
      */
-    public function dayOfWeek() : int
+    public function dayOfWeek(): int
     {
         return (int) $this->format('N');
     }
@@ -392,7 +391,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the day of the month.
      */
-    public function day() : int
+    public function day(): int
     {
         return (int) $this->format('j');
     }
@@ -400,7 +399,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the month.
      */
-    public function month() : int
+    public function month(): int
     {
         return (int) $this->format('n');
     }
@@ -408,7 +407,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the year.
      */
-    public function year() : int
+    public function year(): int
     {
         return (int) $this->format('Y');
     }
@@ -416,7 +415,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the hour.
      */
-    public function hour() : int
+    public function hour(): int
     {
         return (int) $this->format('G');
     }
@@ -424,7 +423,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the minute.
      */
-    public function minute() : int
+    public function minute(): int
     {
         return (int) $this->format('i');
     }
@@ -432,7 +431,7 @@ class Date extends DateTimeImmutable
     /**
      * Get the second.
      */
-    public function second() : int
+    public function second(): int
     {
         return (int) $this->format('s');
     }
@@ -440,7 +439,7 @@ class Date extends DateTimeImmutable
     /**
      * Copy the date instance.
      */
-    public function copy() : self
+    public function copy(): self
     {
         return new self($this->format('Y-m-d H:i:s.u'), $this->getTimezone());
     }

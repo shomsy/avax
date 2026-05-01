@@ -9,14 +9,15 @@ final readonly class ChooseReplicaForRead
     public function __construct(
         private ReplicaCount $replicaCount,
         private ReplicationPolicy $replicationPolicy = ReplicationPolicy::SYNCHRONOUS,
-    ) {}
+    ) {
+    }
 
-    public function choosePrimary() : PrimaryReplica
+    public function choosePrimary(): PrimaryReplica
     {
         return new PrimaryReplica(index: 0);
     }
 
-    public function chooseSecondary() : ?SecondaryReplica
+    public function chooseSecondary(): ?SecondaryReplica
     {
         if ($this->replicaCount->secondaries === 0) {
             return null;
@@ -25,12 +26,12 @@ final readonly class ChooseReplicaForRead
         return new SecondaryReplica(index: 1);
     }
 
-    public function chooseAny() : PrimaryReplica|SecondaryReplica
+    public function chooseAny(): PrimaryReplica|SecondaryReplica
     {
         return new PrimaryReplica(index: 0);
     }
 
-    public function getAllReplicas() : array
+    public function getAllReplicas(): array
     {
         $replicas = [new PrimaryReplica(index: 0)];
 
@@ -41,12 +42,12 @@ final readonly class ChooseReplicaForRead
         return $replicas;
     }
 
-    public function replicaCount() : ReplicaCount
+    public function replicaCount(): ReplicaCount
     {
         return $this->replicaCount;
     }
 
-    public function requiresQuorum() : bool
+    public function requiresQuorum(): bool
     {
         return $this->replicationPolicy === ReplicationPolicy::QUORUM;
     }

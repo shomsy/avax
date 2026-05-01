@@ -17,7 +17,7 @@ final class ListDirectoryFilesTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk;
+        $this->disk = new LocalDisk();
         $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/list_dir_test';
         @mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
     }

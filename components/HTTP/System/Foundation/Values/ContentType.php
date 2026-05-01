@@ -11,36 +11,36 @@ use function trim;
 
 enum ContentType: string
 {
-    case APPLICATION_JSON         = 'application/json';
-    case APPLICATION_XML          = 'application/xml';
-    case TEXT_HTML                = 'text/html';
-    case TEXT_PLAIN               = 'text/plain';
-    case TEXT_XML                 = 'text/xml';
-    case TEXT_CSS                 = 'text/css';
-    case TEXT_CSV                 = 'text/csv';
-    case APPLICATION_JAVASCRIPT   = 'application/javascript';
+    case APPLICATION_JSON            = 'application/json';
+    case APPLICATION_XML             = 'application/xml';
+    case TEXT_HTML                   = 'text/html';
+    case TEXT_PLAIN                  = 'text/plain';
+    case TEXT_XML                    = 'text/xml';
+    case TEXT_CSS                    = 'text/css';
+    case TEXT_CSV                    = 'text/csv';
+    case APPLICATION_JAVASCRIPT      = 'application/javascript';
     case APPLICATION_FORM_URLENCODED = 'application/x-www-form-urlencoded';
-    case MULTIPART_FORM_DATA      = 'multipart/form-data';
-    case APPLICATION_OCTET_STREAM = 'application/octet-stream';
-    case APPLICATION_PDF          = 'application/pdf';
-    case APPLICATION_ZIP          = 'application/zip';
-    case APPLICATION_GZIP         = 'application/gzip';
-    case IMAGE_PNG                = 'image/png';
-    case IMAGE_JPEG               = 'image/jpeg';
-    case IMAGE_GIF                = 'image/gif';
-    case IMAGE_SVG_XML            = 'image/svg+xml';
-    case IMAGE_WEBP               = 'image/webp';
-    case IMAGE_ICON               = 'image/x-icon';
-    case APPLICATION_ATOM_XML     = 'application/atom+xml';
-    case APPLICATION_RSS_XML      = 'application/rss+xml';
-    case APPLICATION_GRAPHQL      = 'application/graphql+json';
-    case APPLICATION_PROBLEM_JSON = 'application/problem+json';
-    case APPLICATION_PROBLEM_XML  = 'application/problem+xml';
-    case APPLICATION_YAML         = 'application/yaml';
-    case APPLICATION_TOML         = 'application/toml';
-    case TEXT_MARKDOWN            = 'text/markdown';
-    case TEXT_CALENDAR            = 'text/calendar';
-    case EVENT_STREAM             = 'text/event-stream';
+    case MULTIPART_FORM_DATA         = 'multipart/form-data';
+    case APPLICATION_OCTET_STREAM    = 'application/octet-stream';
+    case APPLICATION_PDF             = 'application/pdf';
+    case APPLICATION_ZIP             = 'application/zip';
+    case APPLICATION_GZIP            = 'application/gzip';
+    case IMAGE_PNG                   = 'image/png';
+    case IMAGE_JPEG                  = 'image/jpeg';
+    case IMAGE_GIF                   = 'image/gif';
+    case IMAGE_SVG_XML               = 'image/svg+xml';
+    case IMAGE_WEBP                  = 'image/webp';
+    case IMAGE_ICON                  = 'image/x-icon';
+    case APPLICATION_ATOM_XML        = 'application/atom+xml';
+    case APPLICATION_RSS_XML         = 'application/rss+xml';
+    case APPLICATION_GRAPHQL         = 'application/graphql+json';
+    case APPLICATION_PROBLEM_JSON    = 'application/problem+json';
+    case APPLICATION_PROBLEM_XML     = 'application/problem+xml';
+    case APPLICATION_YAML            = 'application/yaml';
+    case APPLICATION_TOML            = 'application/toml';
+    case TEXT_MARKDOWN               = 'text/markdown';
+    case TEXT_CALENDAR               = 'text/calendar';
+    case EVENT_STREAM                = 'text/event-stream';
 
     /**
      * Default charset used when a charset parameter is requested.
@@ -52,7 +52,7 @@ enum ContentType: string
      *
      * @throws ValueError if the MIME type is not recognized
      */
-    public static function fromMimeType(string $mimeType) : self
+    public static function fromMimeType(string $mimeType): self
     {
         $normalized = strtolower(trim($mimeType));
 
@@ -62,7 +62,7 @@ enum ContentType: string
     /**
      * Check if a string is a valid, recognized content type.
      */
-    public static function isValid(string $mimeType) : bool
+    public static function isValid(string $mimeType): bool
     {
         return self::tryFromMimeType($mimeType) !== null;
     }
@@ -71,7 +71,7 @@ enum ContentType: string
      * Try to create a ContentType from a MIME type string.
      * Returns null if the MIME type is not recognized.
      */
-    public static function tryFromMimeType(string $mimeType) : ?self
+    public static function tryFromMimeType(string $mimeType): ?self
     {
         $normalized = strtolower(trim($mimeType));
 
@@ -82,7 +82,7 @@ enum ContentType: string
      * Get the full MIME type string.
      * This is equivalent to accessing the backed value directly.
      */
-    public function mimeType() : string
+    public function mimeType(): string
     {
         return $this->value;
     }
@@ -92,7 +92,7 @@ enum ContentType: string
      *
      * @param string|null $charset Override the default charset. If null, uses utf-8.
      */
-    public function mimeTypeWithCharset(?string $charset = null) : string
+    public function mimeTypeWithCharset(string $charset = null): string
     {
         $charset ??= self::DEFAULT_CHARSET;
 
@@ -122,7 +122,7 @@ enum ContentType: string
     /**
      * Check if this content type is a text-based type (supports charset).
      */
-    public function isTextBased() : bool
+    public function isTextBased(): bool
     {
         return $this->charset() !== null;
     }
@@ -131,7 +131,7 @@ enum ContentType: string
      * Get the default charset for this content type, if applicable.
      * Returns null for binary or charset-irrelevant content types.
      */
-    public function charset() : ?string
+    public function charset(): ?string
     {
         return match ($this) {
             self::APPLICATION_JSON,
@@ -158,20 +158,20 @@ enum ContentType: string
     /**
      * Check if this content type is JSON.
      */
-    public function isJson() : bool
+    public function isJson(): bool
     {
         return match ($this) {
             self::APPLICATION_JSON,
             self::APPLICATION_GRAPHQL,
             self::APPLICATION_PROBLEM_JSON => true,
-            default => false,
+            default                        => false,
         };
     }
 
     /**
      * Check if this content type is XML.
      */
-    public function isXml() : bool
+    public function isXml(): bool
     {
         return match ($this) {
             self::APPLICATION_XML,
@@ -179,14 +179,14 @@ enum ContentType: string
             self::APPLICATION_ATOM_XML,
             self::APPLICATION_RSS_XML,
             self::APPLICATION_PROBLEM_XML => true,
-            default => false,
+            default                       => false,
         };
     }
 
     /**
      * Check if this content type is an image type.
      */
-    public function isImage() : bool
+    public function isImage(): bool
     {
         return str_starts_with($this->value, 'image/');
     }
@@ -194,24 +194,24 @@ enum ContentType: string
     /**
      * Check if this content type is a form type.
      */
-    public function isForm() : bool
+    public function isForm(): bool
     {
         return match ($this) {
             self::APPLICATION_FORM_URLENCODED,
             self::MULTIPART_FORM_DATA => true,
-            default => false,
+            default                   => false,
         };
     }
 
     /**
      * Check if this content type represents an error/problem response.
      */
-    public function isProblem() : bool
+    public function isProblem(): bool
     {
         return match ($this) {
             self::APPLICATION_PROBLEM_JSON,
             self::APPLICATION_PROBLEM_XML => true,
-            default => false,
+            default                       => false,
         };
     }
 }

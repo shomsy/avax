@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 final class CompatibilityDependency
 {
-    public function id() : string
+    public function id(): string
     {
         return 'compatibility';
     }
@@ -16,7 +16,9 @@ final class CompatibilityDependency
 
 final class CompatibilityTarget
 {
-    public function __construct(public CompatibilityDependency $compatibilityDependency) {}
+    public function __construct(public CompatibilityDependency $compatibilityDependency)
+    {
+    }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-compatibility-' . uniqid();
@@ -41,7 +43,7 @@ $reloaded = makeTestContainer(config: CreateContainerConfig::create(
 ));
 $reloaded->singleton(abstract: CompatibilityDependency::class, concrete: CompatibilityDependency::class);
 
-$report = $reloaded->compileReport(serviceIds: [CompatibilityTarget::class]);
+$report   = $reloaded->compileReport(serviceIds: [CompatibilityTarget::class]);
 $resolved = $reloaded->get(id: CompatibilityTarget::class);
 
 assertTrue(condition: $report !== null, message: 'Compile reports should still exist for incompatible artifacts.');

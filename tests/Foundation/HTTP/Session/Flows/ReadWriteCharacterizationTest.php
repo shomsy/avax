@@ -11,7 +11,7 @@ final class ReadWriteCharacterizationTest extends TestCase
 {
     public function test_read_write_has_behaviour() : void
     {
-        $s = new NullSession;
+        $s = new NullSession();
 
         $this->assertFalse($s->has(key: 'k'));
         $this->assertNull($s->get(key: 'k'));

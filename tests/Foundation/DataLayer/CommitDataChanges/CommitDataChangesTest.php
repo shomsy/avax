@@ -12,9 +12,9 @@ use RuntimeException;
 
 final class CommitDataChangesTest extends TestCase
 {
-    public function test_rollback_closes_open_transaction() : void
+    public function test_rollback_closes_open_transaction(): void
     {
-        $commitChanges = new CommitDataChanges;
+        $commitChanges = new CommitDataChanges();
         $transaction   = $commitChanges->open();
 
         $rolledBack = $commitChanges->rollback(transaction: $transaction);
@@ -22,25 +22,25 @@ final class CommitDataChangesTest extends TestCase
         $this->assertSame('rolled_back', $rolledBack->status);
     }
 
-    public function test_retry_is_rejected_when_work_is_not_idempotent() : void
+    public function test_retry_is_rejected_when_work_is_not_idempotent(): void
     {
-        $commitChanges = new CommitDataChanges;
+        $commitChanges = new CommitDataChanges();
 
         $this->expectException(DataTransactionFailure::class);
 
         $commitChanges->retryTransientFailure(
-            work  : static fn () : string => 'not-safe',
+            work  : static fn (): string => 'not-safe',
             policy: new DataTransactionPolicy(maxAttempts: 2, retryTransientFailures: true, idempotent: false),
         );
     }
 
-    public function test_deadlock_retry_can_replay_idempotent_work() : void
+    public function test_deadlock_retry_can_replay_idempotent_work(): void
     {
-        $commitChanges = new CommitDataChanges;
+        $commitChanges = new CommitDataChanges();
         $attempts      = 0;
 
         $result = $commitChanges->retryTransientFailure(
-            work  : static function () use (&$attempts) : string {
+            work  : static function () use (&$attempts): string {
                 $attempts++;
 
                 if ($attempts === 1) {

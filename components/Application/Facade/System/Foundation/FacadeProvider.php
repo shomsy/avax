@@ -16,7 +16,7 @@ class FacadeProvider
     /** @var array<string, class-string<BaseFacade>> */
     private array $facades = [];
 
-    public function register(string $accessor, string $facadeClass) : self
+    public function register(string $accessor, string $facadeClass): self
     {
         if (! is_subclass_of($facadeClass, BaseFacade::class)) {
             throw new InvalidArgumentException($facadeClass . ' must extend ' . BaseFacade::class);
@@ -27,7 +27,7 @@ class FacadeProvider
         return $this;
     }
 
-    public function boot(ContainerInterface $container) : void
+    public function boot(ContainerInterface $container): void
     {
         BaseFacade::setContainer($container);
 
@@ -37,12 +37,12 @@ class FacadeProvider
     }
 
     /** @return array<string, class-string<BaseFacade>> */
-    public function getFacades() : array
+    public function getFacades(): array
     {
         return $this->facades;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         BaseFacade::clearAllResolvedInstances();
         $this->facades = [];

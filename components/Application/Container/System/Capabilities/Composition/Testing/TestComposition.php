@@ -25,7 +25,7 @@ final readonly class TestComposition
     public static function create() : self
     {
         return new self(
-            container: (new CreateContainer)->create(),
+            container: (new CreateContainer())->create(),
         );
     }
 

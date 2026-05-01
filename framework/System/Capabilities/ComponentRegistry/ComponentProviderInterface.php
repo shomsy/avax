@@ -8,7 +8,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 
 interface ComponentProviderInterface
 {
-    public static function name() : string;
+    public static function name(): string;
 
-    public function boot(RuntimeInterface $runtime) : void;
+    public function boot(RuntimeInterface $runtime): void;
 }

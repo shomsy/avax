@@ -6,11 +6,11 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\
 
 interface IdempotencyStore
 {
-    public function get(string $key) : ?array;
+    public function get(string $key): ?array;
 
-    public function set(string $key, array $value, int $ttl) : void;
+    public function set(string $key, array $value, int $ttl): void;
 
-    public function has(string $key) : bool;
+    public function has(string $key): bool;
 }
 
 final class InMemoryIdempotencyStore implements IdempotencyStore
@@ -18,20 +18,20 @@ final class InMemoryIdempotencyStore implements IdempotencyStore
     /** @var array<string, array{value: array, expires_at: int}> */
     private array $store = [];
 
-    public function set(string $key, array $value, int $ttl) : void
+    public function set(string $key, array $value, int $ttl): void
     {
         $this->store[$key] = [
-            'value' => $value,
+            'value'      => $value,
             'expires_at' => time() + $ttl,
         ];
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return $this->get($key) !== null;
     }
 
-    public function get(string $key) : ?array
+    public function get(string $key): ?array
     {
         if (! isset($this->store[$key])) {
             return null;

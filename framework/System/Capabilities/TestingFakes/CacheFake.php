@@ -31,41 +31,41 @@ final class CacheFake
      */
     private array $deleteCalls = [];
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         $this->getCalls[] = $key;
 
         return $this->store[$key] ?? $default;
     }
 
-    public function set(string $key, mixed $value, ?int $ttl = null) : void
+    public function set(string $key, mixed $value, int $ttl = null): void
     {
-        $this->setCalls[] = ['key' => $key, 'value' => $value, 'ttl' => $ttl];
+        $this->setCalls[]  = ['key' => $key, 'value' => $value, 'ttl' => $ttl];
         $this->store[$key] = $value;
     }
 
-    public function forget(string $key) : void
+    public function forget(string $key): void
     {
         $this->deleteCalls[] = $key;
         unset($this->store[$key]);
     }
 
-    public function clear() : void
+    public function clear(): void
     {
-        $this->store    = [];
-        $this->getCalls = [];
-        $this->setCalls = [];
+        $this->store       = [];
+        $this->getCalls    = [];
+        $this->setCalls    = [];
         $this->deleteCalls = [];
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         $this->getCalls[] = $key;
 
         return array_key_exists($key, $this->store);
     }
 
-    public function assertGet(string $key) : self
+    public function assertGet(string $key): self
     {
         if (! in_array($key, $this->getCalls, true)) {
             throw new TestingFakeException(
@@ -76,7 +76,7 @@ final class CacheFake
         return $this;
     }
 
-    public function assertSet(string $key, mixed $value = null) : self
+    public function assertSet(string $key, mixed $value = null): self
     {
         foreach ($this->setCalls as $call) {
             if ($call['key'] === $key && ($value === null || $call['value'] === $value)) {
@@ -93,7 +93,7 @@ final class CacheFake
         );
     }
 
-    public function assertForget(string $key) : self
+    public function assertForget(string $key): self
     {
         if (! in_array($key, $this->deleteCalls, true)) {
             throw new TestingFakeException(
@@ -107,7 +107,7 @@ final class CacheFake
     /**
      * @return list<string>
      */
-    public function getCalls() : array
+    public function getCalls(): array
     {
         return $this->getCalls;
     }
@@ -115,7 +115,7 @@ final class CacheFake
     /**
      * @return list<array{key: string, value: mixed, ttl: int|null}>
      */
-    public function setCalls() : array
+    public function setCalls(): array
     {
         return $this->setCalls;
     }
@@ -123,7 +123,7 @@ final class CacheFake
     /**
      * @return list<string>
      */
-    public function deleteCalls() : array
+    public function deleteCalls(): array
     {
         return $this->deleteCalls;
     }
@@ -131,7 +131,7 @@ final class CacheFake
     /**
      * @return array<string, mixed>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->store;
     }

@@ -9,9 +9,10 @@ readonly class FilesystemConfig
     public function __construct(
         public string $default = 'local',
         public array $disks = [],
-    ) {}
+    ) {
+    }
 
-    public static function defaults() : self
+    public static function defaults(): self
     {
         return new self(
             default: 'local',
@@ -23,7 +24,7 @@ readonly class FilesystemConfig
         );
     }
 
-    public function disk(string $name) : ?array
+    public function disk(string $name): ?array
     {
         return $this->disks[$name] ?? null;
     }

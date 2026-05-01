@@ -38,7 +38,7 @@ class ControllerDispatcherUnitTest extends TestCase
     /**
      * @test
      */
-    public function dispatch_callable_returns_response_when_callable_returns_null() : void
+    public function dispatch_callable_returns_response_when_callable_returns_null(): void
     {
         // Given: A callable that returns null
         $callable = static fn (ServerRequestInterface $request) => null;
@@ -57,11 +57,11 @@ class ControllerDispatcherUnitTest extends TestCase
     /**
      * @test
      */
-    public function dispatch_controller_method_returns_response_when_method_returns_null() : void
+    public function dispatch_controller_method_returns_response_when_method_returns_null(): void
     {
         // Given: A controller with a method that returns null
-        $controller = new class {
-            public function test_method(ServerRequestInterface $request) : ?ResponseInterface
+        $controller = new class () {
+            public function test_method(ServerRequestInterface $request): ?ResponseInterface
             {
                 return null;
             }
@@ -85,11 +85,11 @@ class ControllerDispatcherUnitTest extends TestCase
     /**
      * @test
      */
-    public function dispatch_invokable_controller_returns_response_when_controller_returns_null() : void
+    public function dispatch_invokable_controller_returns_response_when_controller_returns_null(): void
     {
         // Given: An invokable controller that returns null
-        $controller = new class {
-            public function __invoke(ServerRequestInterface $request) : ?ResponseInterface
+        $controller = new class () {
+            public function __invoke(ServerRequestInterface $request): ?ResponseInterface
             {
                 return null;
             }
@@ -109,13 +109,15 @@ class ControllerDispatcherUnitTest extends TestCase
     /**
      * @test
      */
-    public function dispatch_controller_method_autowires_request_dto_from_server_request() : void
+    public function dispatch_controller_method_autowires_request_dto_from_server_request(): void
     {
         // Given: A controller that expects a Request DTO parameter
-        $controller = new class($this) {
-            public function __construct(private readonly TestCase $test) {}
+        $controller = new class ($this) {
+            public function __construct(private readonly TestCase $test)
+            {
+            }
 
-            public function handle(Request $request) : ResponseInterface
+            public function handle(Request $request): ResponseInterface
             {
                 // Verify that the Request DTO has access to ServerRequest
                 $this->test->assertEquals('POST', $request->method());
@@ -128,20 +130,20 @@ class ControllerDispatcherUnitTest extends TestCase
         // Create a real ServerRequest using the assembler
         $assembler = new AssembleIncomingRequest(
             preparer : new PrepareRequest(
-                           bodyParser        : new ParseBodyByContentType(
-                                                   jsonParser: new ParseJsonBody,
-                                                   formParser: new ParseFormBody,
-                                               ),
-                           protocolNormalizer: new NormalizeProtocolVersion,
-                           filesNormalizer   : new NormalizeUploadedFiles,
-                           trustedProxyPolicy: new TrustedIpv4ProxyPolicy,
-                           clientResolver    : new ResolveClientAddress(
-                                                   proxyPolicy    : new TrustedIpv4ProxyPolicy,
-                                                   forwardedParser: new ParseForwardedAddresses,
-                                               ),
-                       ),
-            sanitizer: new InputSanitizer,
-            mapper   : new MapRequestedInputsToDto,
+                bodyParser        : new ParseBodyByContentType(
+                    jsonParser: new ParseJsonBody(),
+                    formParser: new ParseFormBody(),
+                ),
+                protocolNormalizer: new NormalizeProtocolVersion(),
+                filesNormalizer   : new NormalizeUploadedFiles(),
+                trustedProxyPolicy: new TrustedIpv4ProxyPolicy(),
+                clientResolver    : new ResolveClientAddress(
+                    proxyPolicy    : new TrustedIpv4ProxyPolicy(),
+                    forwardedParser: new ParseForwardedAddresses(),
+                ),
+            ),
+            sanitizer: new InputSanitizer(),
+            mapper   : new MapRequestedInputsToDto(),
         );
 
         $serverRequest = $assembler->fromSlices(
@@ -151,15 +153,15 @@ class ControllerDispatcherUnitTest extends TestCase
         )->withUri(uri: Uri::fromString(uri: 'https://example.com/api'));
 
         // Mock container to return RequestDtoFactory
-        $factory = new RequestDtoFactory;
+        $factory = new RequestDtoFactory();
         $this->container->method('has')->willReturnCallback(
             static fn ($id) => $id === RequestDtoFactory::class || $id === get_class(object: $controller),
         );
         $this->container->method('get')->willReturnCallback(
             static fn ($id) => match ($id) {
-                RequestDtoFactory::class => $factory,
+                RequestDtoFactory::class       => $factory,
                 get_class(object: $controller) => $controller,
-                default                  => null
+                default                        => null
             },
         );
 
@@ -174,10 +176,10 @@ class ControllerDispatcherUnitTest extends TestCase
         $this->assertEquals(expected: 'success', actual: (string) $response->getBody());
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->container = $this->createMock(originalClassName: ContainerInterface::class);
+        $this->container  = $this->createMock(originalClassName: ContainerInterface::class);
         $this->dispatcher = new ControllerDispatcher(container: $this->container);
     }
 }

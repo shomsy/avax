@@ -9,29 +9,30 @@ final readonly class DecideCacheWriteConsistency
     public function __construct(
         private CacheConsistencyLevel $cacheConsistencyLevel,
         private ?ConsistencyWindow $consistencyWindow = null,
-    ) {}
+    ) {
+    }
 
-    public function shouldWriteSynchronously() : bool
+    public function shouldWriteSynchronously(): bool
     {
         return match ($this->cacheConsistencyLevel) {
-            CacheConsistencyLevel::STRONG   => true,
-            CacheConsistencyLevel::LOCAL    => true,
-            CacheConsistencyLevel::EVENTUAL => false,
+            CacheConsistencyLevel::STRONG           => true,
+            CacheConsistencyLevel::LOCAL            => true,
+            CacheConsistencyLevel::EVENTUAL         => false,
             CacheConsistencyLevel::READ_YOUR_WRITES => true,
         };
     }
 
-    public function shouldWaitForPropagation() : bool
+    public function shouldWaitForPropagation(): bool
     {
         return match ($this->cacheConsistencyLevel) {
-            CacheConsistencyLevel::STRONG   => true,
-            CacheConsistencyLevel::LOCAL    => false,
-            CacheConsistencyLevel::EVENTUAL => false,
+            CacheConsistencyLevel::STRONG           => true,
+            CacheConsistencyLevel::LOCAL            => false,
+            CacheConsistencyLevel::EVENTUAL         => false,
             CacheConsistencyLevel::READ_YOUR_WRITES => true,
         };
     }
 
-    public function propagationDelayMs() : int
+    public function propagationDelayMs(): int
     {
         return $this->consistencyWindow?->propagationDelayMs ?? 100;
     }

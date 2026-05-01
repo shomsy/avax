@@ -13,9 +13,10 @@ final class HandleWorkerRequest
     public function __construct(
         private readonly RuntimeContext $context,
         private readonly RequestScope $requestScope,
-    ) {}
+    ) {
+    }
 
-    public function handle(object $request) : object
+    public function handle(object $request): object
     {
         $this->openWorkerRequestScope();
 
@@ -32,17 +33,17 @@ final class HandleWorkerRequest
         }
     }
 
-    private function openWorkerRequestScope() : void
+    private function openWorkerRequestScope(): void
     {
         $this->requestScope->open();
     }
 
-    private function runWorkerRequest(object $request) : object
+    private function runWorkerRequest(object $request): object
     {
         return $this->context->getRuntime()->handleRequest($request);
     }
 
-    private function closeWorkerRequestScope() : void
+    private function closeWorkerRequestScope(): void
     {
         $this->requestScope->close();
     }

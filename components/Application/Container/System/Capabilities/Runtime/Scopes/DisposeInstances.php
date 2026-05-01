@@ -11,9 +11,9 @@ final class DisposeInstances
 {
     /**
      * @param array<string, mixed> $instances
-     * @param array<string, bool>  $disposable
+     * @param array<string, bool> $disposable
      */
-    public function disposeMany(array $instances, array $disposable = []) : void
+    public function disposeMany(array $instances, array $disposable = []): void
     {
         foreach ($instances as $serviceId => $instance) {
             $this->dispose(
@@ -24,7 +24,7 @@ final class DisposeInstances
         }
     }
 
-    public function dispose(mixed $instance, bool $disposable = false) : void
+    public function dispose(mixed $instance, bool $disposable = false): void
     {
         if (! is_object(value: $instance)) {
             return;

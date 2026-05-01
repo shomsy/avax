@@ -15,9 +15,9 @@ use Throwable;
 final readonly class RememberCachedValue
 {
     public function __construct(
-        private CacheStore        $cacheStore,
-        private Clock             $clock,
-        private ?ReadCachedValue  $readCachedValue = null,
+        private CacheStore       $cacheStore,
+        private Clock            $clock,
+        private ?ReadCachedValue $readCachedValue = null,
         private ?StoreCachedValue $storeCachedValue = null,
     ) {}
 

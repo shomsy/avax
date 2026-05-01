@@ -43,7 +43,7 @@ final readonly class MailChannel implements NotificationChannel
         );
 
         // Create a minimal envelope
-        $envelope = new class($this->fromAddress, $email) {
+        $envelope = new class ($this->fromAddress, $email) {
             public function __construct(
                 public readonly string $from,
                 public readonly string $to,

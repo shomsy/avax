@@ -8,5 +8,5 @@ use Avax\Components\Application\Cache\System\PublicSurface\Read\CacheReadKind;
 
 interface CacheReadTarget
 {
-    public function kind() : CacheReadKind;
+    public function kind(): CacheReadKind;
 }

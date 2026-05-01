@@ -12,14 +12,15 @@ final class ComponentRegistration
 {
     public function __construct(
         private readonly ComponentRegistry $registry,
-    ) {}
+    ) {
+    }
 
-    public function register(ComponentDefinition $definition) : void
+    public function register(ComponentDefinition $definition): void
     {
         $this->registry->register(definition: $definition);
     }
 
-    public function registerProvider(ComponentProviderInterface $provider) : void
+    public function registerProvider(ComponentProviderInterface $provider): void
     {
         $this->registry->registerProvider(provider: $provider);
     }
@@ -27,7 +28,7 @@ final class ComponentRegistration
     /**
      * @return list<ComponentDefinition>
      */
-    public function getRegistered() : array
+    public function getRegistered(): array
     {
         return $this->registry->all();
     }

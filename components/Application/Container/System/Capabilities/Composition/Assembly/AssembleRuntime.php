@@ -30,24 +30,24 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final class AssembleRuntime
 {
-    public function assemble(CreateContainerConfig $config, ObservabilityAssembly $observability) : RuntimeAssembly
+    public function assemble(CreateContainerConfig $config, ObservabilityAssembly $observability): RuntimeAssembly
     {
-        $registrations = new DependencyRegistry;
-        $scopeStore    = new ScopeStore;
-        $servicePool   = new DependencyPool;
+        $registrations = new DependencyRegistry();
+        $scopeStore    = new ScopeStore();
+        $servicePool   = new DependencyPool();
         $scopes        = new ManageScopes(
             store  : $scopeStore,
             pool   : $servicePool,
             metrics: $observability->metrics,
         );
-        $dependencies  = new ResolveDependencies;
-        $blueprints = new CreateDependencyBlueprint(
+        $dependencies = new ResolveDependencies();
+        $blueprints   = new CreateDependencyBlueprint(
             cache       : new BlueprintCache(
-                              cacheDir    : $config->cacheDir,
-                              cacheVersion: $config->cacheVersion,
-                              debug       : $config->debug,
-                              metrics     : $observability->metrics,
-                          ),
+                cacheDir    : $config->cacheDir,
+                cacheVersion: $config->cacheVersion,
+                debug       : $config->debug,
+                metrics     : $observability->metrics,
+            ),
             dependencies: $dependencies,
         );
         $callArguments = new ResolveCallArguments(dependencies: $dependencies);
@@ -78,31 +78,31 @@ final class AssembleRuntime
             validateBeforeCompile : $config->validatesBeforeCompile(),
             metrics               : $observability->metrics,
             services              : new DependencyCompiler(
-                                        registrations: $registrations,
-                                        blueprints   : $blueprints,
-                                    ),
+                registrations: $registrations,
+                blueprints   : $blueprints,
+            ),
         );
         $resolver = new ResolveDependency(
             registrations    : $registrations,
             scopes           : $scopes,
             builder          : new BuildService(
-                                   blueprints  : $blueprints,
-                                   dependencies: $dependencies,
-                               ),
+                blueprints  : $blueprints,
+                dependencies: $dependencies,
+            ),
             blueprints       : $blueprints,
-            injectProperties : new InjectProperties,
+            injectProperties : new InjectProperties(),
             injectMethods    : new InjectMethods(arguments: $callArguments),
             caller           : $caller,
             metrics          : $observability->metrics,
             timeline         : $observability->timeline,
             policy           : $policy,
             compiledRuntime  : new CompiledRuntime(
-                                   compiler     : $compiler,
-                                   inliner      : new HotPathInliner,
-                                   metrics      : $observability->metrics,
-                                   executionMode: $config->executionMode,
-                               ),
-            deferredProviders: new DeferredProviderRegistry,
+                compiler     : $compiler,
+                inliner      : new HotPathInliner(),
+                metrics      : $observability->metrics,
+                executionMode: $config->executionMode,
+            ),
+            deferredProviders: new DeferredProviderRegistry(),
             diagnosticsMode  : $config->diagnosticsMode,
             environment      : $config->environment(),
             sliceBoundaryMode: $config->sliceBoundaryMode,

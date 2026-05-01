@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter;
 
 final readonly class RateLimiter
 {
-    public function __construct(private RedisRateLimiter $limiter = new RedisRateLimiter) {}
+    public function __construct(private RedisRateLimiter $limiter = new RedisRateLimiter()) {}
 
     public function attempt(string $key, int $maxAttempts, int $decaySeconds = 60) : RateLimitDecision
     {

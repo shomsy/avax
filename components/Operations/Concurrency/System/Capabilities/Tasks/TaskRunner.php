@@ -11,7 +11,6 @@ final readonly class TaskRunner
 {
     /**
      * @param list<Closure(): mixed> $tasks
-     *
      * @return list<mixed>
      */
     public function runAll(array $tasks): array
@@ -51,7 +50,7 @@ final readonly class TaskRunner
 
         $results = array_fill(0, count($tasks), null);
 
-        while ( $this->hasActiveFibers($fibers)) {
+        while ( $this->hasActiveFibers($fibers) ) {
             foreach ($fibers as $index => $fiber) {
                 if (! $fiber->isStarted()) {
                     $fiber->start();

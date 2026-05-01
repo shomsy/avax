@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Storage\SizeCach
 
 final readonly class EstimateCachedValueSize
 {
-    public function estimate(mixed $value) : int
+    public function estimate(mixed $value): int
     {
         if (is_string($value)) {
             return strlen($value);
@@ -31,7 +31,7 @@ final readonly class EstimateCachedValueSize
         return 0;
     }
 
-    private function estimateArray(array $value) : int
+    private function estimateArray(array $value): int
     {
         $size = 0;
 
@@ -43,7 +43,7 @@ final readonly class EstimateCachedValueSize
         return $size;
     }
 
-    private function estimateObject(object $value) : int
+    private function estimateObject(object $value): int
     {
         return strlen(serialize($value));
     }

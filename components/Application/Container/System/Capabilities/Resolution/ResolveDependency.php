@@ -96,7 +96,7 @@ final class ResolveDependency
         $constructor = $reflectionClass->getConstructor();
 
         if ($constructor === null) {
-            return new $concrete;
+            return new $concrete();
         }
 
         $dependencies = $this->resolveDependencies($constructor->getParameters(), $parameters);

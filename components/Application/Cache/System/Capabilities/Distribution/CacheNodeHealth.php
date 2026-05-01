@@ -20,20 +20,21 @@ final class CacheNodeHealth
     private array $records = [];
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock,
+        private readonly Clock $clock = new SystemClock(),
         private readonly int $failureThreshold = 3,
         private readonly int $recoveryThreshold = 5,
-    ) {}
+    ) {
+    }
 
     /**
      * Check the health of a specific node.
      *
      * Returns the current health status and updates the last check time.
      */
-    public function check(CacheNode $cacheNode) : NodeHealthRecord
+    public function check(CacheNode $cacheNode): NodeHealthRecord
     {
         $nodeId = $cacheNode->id;
-        $now = $this->clock->now();
+        $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
@@ -49,7 +50,7 @@ final class CacheNodeHealth
             return $this->records[$nodeId];
         }
 
-        $record = $this->records[$nodeId];
+        $record                 = $this->records[$nodeId];
         $this->records[$nodeId] = $record->withLastCheck($now);
 
         return $this->records[$nodeId];
@@ -58,10 +59,10 @@ final class CacheNodeHealth
     /**
      * Mark a node as healthy after a successful health check.
      */
-    public function markHealthy(CacheNode $cacheNode) : NodeHealthRecord
+    public function markHealthy(CacheNode $cacheNode): NodeHealthRecord
     {
         $nodeId = $cacheNode->id;
-        $now = $this->clock->now();
+        $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
@@ -77,9 +78,9 @@ final class CacheNodeHealth
             return $this->records[$nodeId];
         }
 
-        $record    = $this->records[$nodeId];
+        $record       = $this->records[$nodeId];
         $newSuccesses = $record->consecutiveSuccesses + 1;
-        $newStatus = $record->status;
+        $newStatus    = $record->status;
 
         // If we've recovered enough times, mark as healthy
         if ($newSuccesses >= $this->recoveryThreshold) {
@@ -102,10 +103,10 @@ final class CacheNodeHealth
     /**
      * Mark a node as unhealthy after a failed health check.
      */
-    public function markUnhealthy(CacheNode $cacheNode) : NodeHealthRecord
+    public function markUnhealthy(CacheNode $cacheNode): NodeHealthRecord
     {
         $nodeId = $cacheNode->id;
-        $now = $this->clock->now();
+        $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
@@ -121,9 +122,9 @@ final class CacheNodeHealth
             return $this->records[$nodeId];
         }
 
-        $record    = $this->records[$nodeId];
+        $record      = $this->records[$nodeId];
         $newFailures = $record->consecutiveFailures + 1;
-        $newStatus = $record->status;
+        $newStatus   = $record->status;
 
         // If we've failed enough times, mark as unhealthy
         if ($newFailures >= $this->failureThreshold) {
@@ -148,7 +149,7 @@ final class CacheNodeHealth
      *
      * @return list<NodeHealthRecord>
      */
-    public function getHealthyNodes() : array
+    public function getHealthyNodes(): array
     {
         $healthy = [];
 
@@ -166,7 +167,7 @@ final class CacheNodeHealth
      *
      * @return list<NodeHealthRecord>
      */
-    public function getUnhealthyNodes() : array
+    public function getUnhealthyNodes(): array
     {
         $unhealthy = [];
 
@@ -182,7 +183,7 @@ final class CacheNodeHealth
     /**
      * Get the health record for a specific node.
      */
-    public function getRecord(string $nodeId) : ?NodeHealthRecord
+    public function getRecord(string $nodeId): ?NodeHealthRecord
     {
         return $this->records[$nodeId] ?? null;
     }
@@ -192,7 +193,7 @@ final class CacheNodeHealth
      *
      * @return array<string, NodeHealthRecord>
      */
-    public function getAllRecords() : array
+    public function getAllRecords(): array
     {
         return $this->records;
     }
@@ -200,7 +201,7 @@ final class CacheNodeHealth
     /**
      * Remove a node's health record.
      */
-    public function removeRecord(string $nodeId) : void
+    public function removeRecord(string $nodeId): void
     {
         unset($this->records[$nodeId]);
     }
@@ -208,7 +209,7 @@ final class CacheNodeHealth
     /**
      * Reset all health records.
      */
-    public function reset() : void
+    public function reset(): void
     {
         $this->records = [];
     }
@@ -216,7 +217,7 @@ final class CacheNodeHealth
     /**
      * Get the count of tracked nodes.
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->records);
     }

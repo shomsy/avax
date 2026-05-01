@@ -83,27 +83,27 @@ final readonly class ArtifactMetadata
     public string $format;
 
     /**
-     * @param array<string, string>                                   $entries
+     * @param array<string, string> $entries
      * @param array<string, array{method: string, signature: string}> $schemaVersion
-     *                                                                                  $services
-     * @param array<string, string>                                   $sources
-     * @param array<string, list<string>>                             $dependencies
-     * @param array<string, string>                                   $aliases
-     * @param array<string, list<string>>                             $tags
+     *                                                                               $services
+     * @param array<string, string> $sources
+     * @param array<string, list<string>> $dependencies
+     * @param array<string, string> $aliases
+     * @param array<string, list<string>> $tags
      * @param array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool, poolSize:
      *                                  int, poolResetBeforeReuse: bool}> $lifetimes
-     * @param array<string, bool>                                     $deferred
-     * @param array<string, int>                                      $decorations
-     * @param array<string, array<string, mixed>>                     $pruneMode
-     *                                                                                  $ownership
-     * @param array<string, array<string, mixed>>                     $diagnosticsMode
-     *                                                                                  $slices
-     * @param array<string, mixed>                                    $pruning
-     * @param list<string>                                            $changedServices
-     * @param list<string>                                            $invalidatedServices
-     * @param list<string>                                            $validationIssues
-     * @param list<string>                                            $invalidationReasons
-     * @param array<string, int>                                      $statistics
+     * @param array<string, bool> $deferred
+     * @param array<string, int> $decorations
+     * @param array<string, array<string, mixed>> $pruneMode
+     *                                                       $ownership
+     * @param array<string, array<string, mixed>> $diagnosticsMode
+     *                                                             $slices
+     * @param array<string, mixed> $pruning
+     * @param list<string> $changedServices
+     * @param list<string> $invalidatedServices
+     * @param list<string> $validationIssues
+     * @param list<string> $invalidationReasons
+     * @param array<string, int> $statistics
      */
     public function __construct(
         string $format,
@@ -143,47 +143,47 @@ final readonly class ArtifactMetadata
         array $statistics,
         string $checksum,
     ) {
-        $this->format               = $format;
-        $this->schemaVersion        = $schemaVersion;
-        $this->compiledAt           = $compiledAt;
-        $this->cacheVersion         = $cacheVersion;
-        $this->configHash           = $configHash;
-        $this->settingsFingerprint  = $settingsFingerprint;
-        $this->environment          = $environment;
-        $this->compileMode          = $compileMode;
-        $this->executionMode        = $executionMode;
-        $this->pruneMode            = $pruneMode;
-        $this->diagnosticsMode      = $diagnosticsMode;
-        $this->strict               = $strict;
-        $this->fingerprint          = $fingerprint;
+        $this->format                  = $format;
+        $this->schemaVersion           = $schemaVersion;
+        $this->compiledAt              = $compiledAt;
+        $this->cacheVersion            = $cacheVersion;
+        $this->configHash              = $configHash;
+        $this->settingsFingerprint     = $settingsFingerprint;
+        $this->environment             = $environment;
+        $this->compileMode             = $compileMode;
+        $this->executionMode           = $executionMode;
+        $this->pruneMode               = $pruneMode;
+        $this->diagnosticsMode         = $diagnosticsMode;
+        $this->strict                  = $strict;
+        $this->fingerprint             = $fingerprint;
         $this->dependencyGraphRevision = $dependencyGraphRevision;
-        $this->artifactPaths        = $artifactPaths;
-        $this->warmed               = $warmed;
-        $this->benchmarkBuildMarker = $benchmarkBuildMarker;
-        $this->entries              = $entries;
-        $this->services             = $services;
-        $this->sources              = $sources;
-        $this->dependencies         = $dependencies;
-        $this->aliases              = $aliases;
-        $this->tags                 = $tags;
-        $this->lifetimes            = $lifetimes;
-        $this->deferred             = $deferred;
-        $this->decorations          = $decorations;
-        $this->ownership            = $ownership;
-        $this->slices               = $slices;
-        $this->pruning              = $pruning;
-        $this->changedServices      = $changedServices;
-        $this->invalidatedServices  = $invalidatedServices;
-        $this->validationIssues     = $validationIssues;
-        $this->invalidationReasons  = $invalidationReasons;
-        $this->statistics           = $statistics;
-        $this->checksum             = $checksum;
+        $this->artifactPaths           = $artifactPaths;
+        $this->warmed                  = $warmed;
+        $this->benchmarkBuildMarker    = $benchmarkBuildMarker;
+        $this->entries                 = $entries;
+        $this->services                = $services;
+        $this->sources                 = $sources;
+        $this->dependencies            = $dependencies;
+        $this->aliases                 = $aliases;
+        $this->tags                    = $tags;
+        $this->lifetimes               = $lifetimes;
+        $this->deferred                = $deferred;
+        $this->decorations             = $decorations;
+        $this->ownership               = $ownership;
+        $this->slices                  = $slices;
+        $this->pruning                 = $pruning;
+        $this->changedServices         = $changedServices;
+        $this->invalidatedServices     = $invalidatedServices;
+        $this->validationIssues        = $validationIssues;
+        $this->invalidationReasons     = $invalidationReasons;
+        $this->statistics              = $statistics;
+        $this->checksum                = $checksum;
     }
 
     /**
      * @param list<string> $serviceIds
      */
-    public function includes(array $serviceIds) : bool
+    public function includes(array $serviceIds): bool
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             if (! $this->hasEntry(serviceId: $serviceId)) {
@@ -194,7 +194,7 @@ final readonly class ArtifactMetadata
         return true;
     }
 
-    public function hasEntry(string $serviceId) : bool
+    public function hasEntry(string $serviceId): bool
     {
         return isset($this->entries[$serviceId]);
     }
@@ -202,7 +202,7 @@ final readonly class ArtifactMetadata
     /**
      * @return list<string>
      */
-    public function entryIds() : array
+    public function entryIds(): array
     {
         return array_keys(array: $this->entries);
     }
@@ -210,7 +210,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, LifetimePlan>
      */
-    public function lifetimePlans() : array
+    public function lifetimePlans(): array
     {
         $plans = [];
 
@@ -226,7 +226,7 @@ final readonly class ArtifactMetadata
     /**
      * @param array<string, mixed> $state
      */
-    public static function fromArray(array $state) : self
+    public static function fromArray(array $state): self
     {
         return new self(
             format                 : (string) ($state['format'] ?? ''),
@@ -270,7 +270,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, string>
      */
-    private static function stringMap(mixed $state) : array
+    private static function stringMap(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -294,7 +294,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, array{method: string, signature: string}>
      */
-    private static function services(mixed $state) : array
+    private static function services(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -308,7 +308,7 @@ final readonly class ArtifactMetadata
             }
 
             $services[$serviceId] = [
-                'method' => (string) ($service['method'] ?? ''),
+                'method'    => (string) ($service['method'] ?? ''),
                 'signature' => (string) ($service['signature'] ?? ''),
             ];
         }
@@ -321,7 +321,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, list<string>>
      */
-    private static function tags(mixed $state) : array
+    private static function tags(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -335,7 +335,7 @@ final readonly class ArtifactMetadata
             }
 
             $values = array_map(
-                    callback: static fn (mixed $value) : string => (string) $value,
+                callback: static fn (mixed $value): string => (string) $value,
                 array   : $serviceIds,
             )
                     |> array_unique(...)
@@ -352,7 +352,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, array{name: string, shared: bool, scoped: bool, transient: bool}>
      */
-    private static function lifetimes(mixed $state) : array
+    private static function lifetimes(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -379,51 +379,51 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, mixed>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'format'               => $this->format,
-            'schemaVersion'        => $this->schemaVersion,
-            'compiledAt'           => $this->compiledAt,
-            'cacheVersion'         => $this->cacheVersion,
-            'configHash'           => $this->configHash,
-            'settingsFingerprint'  => $this->settingsFingerprint,
-            'environment'          => $this->environment,
-            'compileMode'          => $this->compileMode,
-            'executionMode'        => $this->executionMode,
-            'pruneMode'            => $this->pruneMode,
-            'diagnosticsMode'      => $this->diagnosticsMode,
-            'strict'               => $this->strict,
-            'fingerprint'          => $this->fingerprint,
+            'format'                  => $this->format,
+            'schemaVersion'           => $this->schemaVersion,
+            'compiledAt'              => $this->compiledAt,
+            'cacheVersion'            => $this->cacheVersion,
+            'configHash'              => $this->configHash,
+            'settingsFingerprint'     => $this->settingsFingerprint,
+            'environment'             => $this->environment,
+            'compileMode'             => $this->compileMode,
+            'executionMode'           => $this->executionMode,
+            'pruneMode'               => $this->pruneMode,
+            'diagnosticsMode'         => $this->diagnosticsMode,
+            'strict'                  => $this->strict,
+            'fingerprint'             => $this->fingerprint,
             'dependencyGraphRevision' => $this->dependencyGraphRevision,
-            'artifactPaths'        => $this->artifactPaths,
-            'warmed'               => $this->warmed,
-            'benchmarkBuildMarker' => $this->benchmarkBuildMarker,
-            'entries'              => $this->entries,
-            'services'             => $this->services,
-            'sources'              => $this->sources,
-            'dependencies'         => $this->dependencies,
-            'aliases'              => $this->aliases,
-            'tags'                 => $this->tags,
-            'lifetimes'            => $this->lifetimes,
-            'deferred'             => $this->deferred,
-            'decorations'          => $this->decorations,
-            'ownership'            => $this->ownership,
-            'slices'               => $this->slices,
-            'pruning'              => $this->pruning,
-            'changedServices'      => $this->changedServices,
-            'invalidatedServices'  => $this->invalidatedServices,
-            'validationIssues'     => $this->validationIssues,
-            'invalidationReasons'  => $this->invalidationReasons,
-            'statistics'           => $this->statistics,
-            'checksum'             => $this->checksum,
+            'artifactPaths'           => $this->artifactPaths,
+            'warmed'                  => $this->warmed,
+            'benchmarkBuildMarker'    => $this->benchmarkBuildMarker,
+            'entries'                 => $this->entries,
+            'services'                => $this->services,
+            'sources'                 => $this->sources,
+            'dependencies'            => $this->dependencies,
+            'aliases'                 => $this->aliases,
+            'tags'                    => $this->tags,
+            'lifetimes'               => $this->lifetimes,
+            'deferred'                => $this->deferred,
+            'decorations'             => $this->decorations,
+            'ownership'               => $this->ownership,
+            'slices'                  => $this->slices,
+            'pruning'                 => $this->pruning,
+            'changedServices'         => $this->changedServices,
+            'invalidatedServices'     => $this->invalidatedServices,
+            'validationIssues'        => $this->validationIssues,
+            'invalidationReasons'     => $this->invalidationReasons,
+            'statistics'              => $this->statistics,
+            'checksum'                => $this->checksum,
         ];
     }
 
     /**
      * @return array<string, bool>
      */
-    private static function boolMap(mixed $state) : array
+    private static function boolMap(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -447,7 +447,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, int>
      */
-    private static function intMap(mixed $state) : array
+    private static function intMap(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -471,7 +471,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, array<string, mixed>>
      */
-    private static function mapOfMaps(mixed $state) : array
+    private static function mapOfMaps(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -496,7 +496,7 @@ final readonly class ArtifactMetadata
     /**
      * @return array<string, mixed>
      */
-    private static function map(mixed $state) : array
+    private static function map(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
@@ -520,14 +520,14 @@ final readonly class ArtifactMetadata
     /**
      * @return list<string>
      */
-    private static function stringList(mixed $state) : array
+    private static function stringList(mixed $state): array
     {
         if (! is_array(value: $state)) {
             return [];
         }
 
         $items = array_values(array: array_map(
-                                         callback: static fn (mixed $value) : string => (string) $value,
+            callback: static fn (mixed $value): string => (string) $value,
             array   : $state,
         ));
 

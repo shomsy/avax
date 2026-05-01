@@ -9,5 +9,5 @@ namespace Avax\Components\Application\Config\System\Capabilities\ConfigLoader;
  */
 interface ConfigLoaderInterface
 {
-    public function loadConfigFile(string $filePath) : array;
+    public function loadConfigFile(string $filePath): array;
 }

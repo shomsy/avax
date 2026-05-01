@@ -8,12 +8,12 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 interface CompileReportContract
 {
-    public function dependency() : CompileReportDependency;
+    public function dependency(): CompileReportDependency;
 }
 
 final class CompileReportDependency
 {
-    public function value() : string
+    public function value(): string
     {
         return 'dependency';
     }
@@ -21,7 +21,7 @@ final class CompileReportDependency
 
 final class CompileReportDeferredService
 {
-    public function value() : string
+    public function value(): string
     {
         return 'deferred';
     }
@@ -29,10 +29,12 @@ final class CompileReportDeferredService
 
 final readonly class CompileReportService implements CompileReportContract
 {
-    public function __construct(private CompileReportDependency $compileReportDependency) {}
+    public function __construct(private CompileReportDependency $compileReportDependency)
+    {
+    }
 
     #[Override]
-    public function dependency() : CompileReportDependency
+    public function dependency(): CompileReportDependency
     {
         return $this->compileReportDependency;
     }

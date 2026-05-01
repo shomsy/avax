@@ -10,14 +10,13 @@ final readonly class CompiledCacheSource
 {
     public function __construct(
         public string $path,
-        public int     $mtime,
+        public int $mtime,
         public ?string $checksum = null,
-    )
-    {
+    ) {
         $this->validate();
     }
 
-    private function validate() : void
+    private function validate(): void
     {
         if ($this->path === '') {
             throw new InvalidArgumentException(message: 'Source path cannot be empty');
@@ -32,7 +31,7 @@ final readonly class CompiledCacheSource
         }
     }
 
-    public static function fromPath(string $path) : self
+    public static function fromPath(string $path): self
     {
         if (! file_exists($path)) {
             throw new InvalidArgumentException(message: sprintf('Source file does not exist: %s', $path));
@@ -47,7 +46,7 @@ final readonly class CompiledCacheSource
         );
     }
 
-    public function fingerprint() : string
+    public function fingerprint(): string
     {
         if ($this->checksum !== null) {
             return $this->checksum;

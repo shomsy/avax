@@ -9,13 +9,13 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 interface CacheStore
 {
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing;
+    public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing;
 
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void;
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void;
 
-    public function forget(CacheKey $cacheKey) : void;
+    public function forget(CacheKey $cacheKey): void;
 
-    public function clear() : void;
+    public function clear(): void;
 
-    public function exists(CacheKey $cacheKey) : bool;
+    public function exists(CacheKey $cacheKey): bool;
 }

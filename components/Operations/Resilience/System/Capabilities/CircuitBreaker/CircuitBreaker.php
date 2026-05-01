@@ -18,7 +18,8 @@ final class CircuitBreaker
     public function __construct(
         private readonly int $failureThreshold = 3,
         private readonly int $cooldownSeconds = 30,
-    ) {}
+    ) {
+    }
 
     /**
      * @template TResult
@@ -52,7 +53,7 @@ final class CircuitBreaker
         return $this->state() !== CircuitBreakerState::Open;
     }
 
-    public function state() : CircuitBreakerState
+    public function state(): CircuitBreakerState
     {
         if ($this->state === CircuitBreakerState::Open && $this->cooldownExpired()) {
             $this->state = CircuitBreakerState::HalfOpen;
@@ -70,7 +71,7 @@ final class CircuitBreaker
     {
         $this->failures = 0;
         $this->openedAt = null;
-        $this->state = CircuitBreakerState::Closed;
+        $this->state    = CircuitBreakerState::Closed;
     }
 
     private function recordFailure(): void
@@ -78,7 +79,7 @@ final class CircuitBreaker
         $this->failures++;
 
         if ($this->failures >= $this->failureThreshold) {
-            $this->state = CircuitBreakerState::Open;
+            $this->state    = CircuitBreakerState::Open;
             $this->openedAt = time();
         }
     }

@@ -36,9 +36,9 @@ final readonly class RuntimeAssembly
 
     public function __construct(
         DependencyRegistry $registrations,
-        ScopeStore     $scopeStore,
+        ScopeStore   $scopeStore,
         DependencyPool $servicePool,
-        ManageScopes   $scopes,
+        ManageScopes $scopes,
         FunctionCaller $caller,
         ResolutionPolicy $policy,
         CompileContainer $compiler,

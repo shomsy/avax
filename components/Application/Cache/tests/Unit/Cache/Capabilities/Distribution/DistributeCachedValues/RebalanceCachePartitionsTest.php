@@ -14,7 +14,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 {
     public function test_add_node_calculates_partition_moves() : void
     {
-        $consistentHashRing = new ConsistentHashRing;
+        $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
         $rebalanceCachePartitions = new RebalanceCachePartitions(ring: $consistentHashRing, partitionCount: 256);
@@ -26,7 +26,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
     public function test_remove_node_calculates_partition_moves() : void
     {
-        $consistentHashRing = new ConsistentHashRing;
+        $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -39,7 +39,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
     public function test_rebalance_returns_all_partitions() : void
     {
-        $consistentHashRing = new ConsistentHashRing;
+        $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -52,7 +52,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
     public function test_partition_moves_have_from_and_to() : void
     {
-        $consistentHashRing = new ConsistentHashRing;
+        $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_c'));
@@ -72,7 +72,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
     public function test_empty_ring_returns_empty_distribution() : void
     {
-        $consistentHashRing = new ConsistentHashRing;
+        $consistentHashRing = new ConsistentHashRing();
 
         $rebalanceCachePartitions = new RebalanceCachePartitions(ring: $consistentHashRing, partitionCount: 256);
 

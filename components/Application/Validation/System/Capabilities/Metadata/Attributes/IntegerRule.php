@@ -17,9 +17,10 @@ final readonly class IntegerRule
         private ?int $min = null,
         private ?int $max = null,
         private string $message = 'Field "{property}" must be a valid integer.',
-    ) {}
+    ) {
+    }
 
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if ($value === null || $value === '') {
             return;

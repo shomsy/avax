@@ -12,77 +12,77 @@ use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\
 
 interface EnvironmentConfig
 {
-    public function errorDetail() : string;
+    public function errorDetail(): string;
 
-    public function cacheEnabled() : bool;
+    public function cacheEnabled(): bool;
 
-    public function queueSync() : bool;
+    public function queueSync(): bool;
 
-    public function securityHeadersStrict() : bool;
+    public function securityHeadersStrict(): bool;
 
-    public function debugEndpointsEnabled() : bool;
+    public function debugEndpointsEnabled(): bool;
 
-    public function queryLogEnabled() : bool;
+    public function queryLogEnabled(): bool;
 }
 
 final class Environment
 {
     private static EnvironmentDetector $environmentDetector;
 
-    public static function isLocal() : bool
+    public static function isLocal(): bool
     {
         return self::current() === 'local';
     }
 
-    public static function current() : string
+    public static function current(): string
     {
         return self::detector()->detect();
     }
 
-    private static function detector() : EnvironmentDetector
+    private static function detector(): EnvironmentDetector
     {
         if (! isset(self::$environmentDetector)) {
-            self::$environmentDetector = new EnvironmentDetector;
+            self::$environmentDetector = new EnvironmentDetector();
         }
 
         return self::$environmentDetector;
     }
 
-    public static function isStaging() : bool
+    public static function isStaging(): bool
     {
         return self::current() === 'staging';
     }
 
-    public static function isProduction() : bool
+    public static function isProduction(): bool
     {
         return self::current() === 'production';
     }
 
-    public static function isTesting() : bool
+    public static function isTesting(): bool
     {
         return self::current() === 'testing';
     }
 
-    public static function runtime() : string
+    public static function runtime(): string
     {
         return self::detector()->detectRuntime();
     }
 
-    public static function container() : ?string
+    public static function container(): ?string
     {
         return self::detector()->detectContainer();
     }
 
-    public static function config() : EnvironmentConfig
+    public static function config(): EnvironmentConfig
     {
         $env = self::current();
 
         return match ($env) {
-            'local'      => new LocalPolicy,
-            'staging'    => new StagingPolicy,
-            'production' => new ProductionPolicy,
-            'testing'    => new TestingPolicy,
-            default      => new LocalPolicy,
+            'local'      => new LocalPolicy(),
+            'staging'    => new StagingPolicy(),
+            'production' => new ProductionPolicy(),
+            'testing'    => new TestingPolicy(),
+            default      => new LocalPolicy(),
         };
     }
 }

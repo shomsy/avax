@@ -24,8 +24,8 @@ class LocalDiskTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk    = new LocalDisk;
-        $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_test';
+        $this->disk     = new LocalDisk();
+        $this->testDir  = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_test';
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_test.txt';
         $this->copyFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_copy.txt';
         $this->movedFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/local_disk_moved.txt';

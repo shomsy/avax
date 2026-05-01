@@ -13,13 +13,13 @@ final class Inflector
     /** @var array<string, string> Irregular word mappings */
     private array $irregular
         = [
-            'person'   => 'people', 'man' => 'men', 'woman' => 'women',
-            'child'    => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
-            'goose'    => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
-            'datum'    => 'data', 'medium' => 'media', 'analysis' => 'analyses',
-            'basis'    => 'bases', 'crisis' => 'crises', 'diagnosis' => 'diagnoses',
-            'ellipsis' => 'ellipses', 'hypothesis' => 'hypotheses',
-            'oasis'    => 'oases', 'parenthesis' => 'parentheses',
+            'person'     => 'people', 'man' => 'men', 'woman' => 'women',
+            'child'      => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
+            'goose'      => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
+            'datum'      => 'data', 'medium' => 'media', 'analysis' => 'analyses',
+            'basis'      => 'bases', 'crisis' => 'crises', 'diagnosis' => 'diagnoses',
+            'ellipsis'   => 'ellipses', 'hypothesis' => 'hypotheses',
+            'oasis'      => 'oases', 'parenthesis' => 'parentheses',
             'phenomenon' => 'phenomena', 'criterion' => 'criteria',
         ];
 
@@ -39,22 +39,22 @@ final class Inflector
             ['pattern' => '/([a-z])s$/i', 'replacement' => '${1}'],
         ];
 
-    public function addIrregular(string $singular, string $plural) : void
+    public function addIrregular(string $singular, string $plural): void
     {
         $this->irregular[$singular] = $plural;
     }
 
-    public function addPluralRule(string $pattern, string $replacement) : void
+    public function addPluralRule(string $pattern, string $replacement): void
     {
         array_unshift($this->pluralRules, ['pattern' => $pattern, 'replacement' => $replacement]);
     }
 
-    public function addSingularRule(string $pattern, string $replacement) : void
+    public function addSingularRule(string $pattern, string $replacement): void
     {
         array_unshift($this->singularRules, ['pattern' => $pattern, 'replacement' => $replacement]);
     }
 
-    public function pluralize(string $word, int $count = 2) : string
+    public function pluralize(string $word, int $count = 2): string
     {
         if ($count === 1) {
             return $word;
@@ -78,7 +78,7 @@ final class Inflector
         return $word . 's';
     }
 
-    private function preserveCase(string $original, string $replacement) : string
+    private function preserveCase(string $original, string $replacement): string
     {
         if ($original === ucfirst($original)) {
             return ucfirst($replacement);
@@ -91,7 +91,7 @@ final class Inflector
         return $replacement;
     }
 
-    public function singularize(string $word) : string
+    public function singularize(string $word): string
     {
         $lower = strtolower($word);
 
@@ -112,27 +112,27 @@ final class Inflector
         return $word;
     }
 
-    public function camelCase(string $value) : string
+    public function camelCase(string $value): string
     {
         return lcfirst($this->studlyCase($value));
     }
 
-    public function studlyCase(string $value) : string
+    public function studlyCase(string $value): string
     {
         $words = preg_split('/[\s\-_]+/', $value);
         if ($words === false) {
             $words = [$value];
         }
 
-        return implode('', array_map(static fn (string $w) : string => ucfirst(strtolower($w)), $words));
+        return implode('', array_map(static fn (string $w): string => ucfirst(strtolower($w)), $words));
     }
 
-    public function kebabCase(string $value) : string
+    public function kebabCase(string $value): string
     {
         return $this->snakeCase($value, '-');
     }
 
-    public function snakeCase(string $value, string $delimiter = '_') : string
+    public function snakeCase(string $value, string $delimiter = '_'): string
     {
         $value = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $delimiter . '$2', $value);
         $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1' . $delimiter . '$2', (string) $value);

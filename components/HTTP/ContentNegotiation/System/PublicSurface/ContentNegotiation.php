@@ -10,9 +10,9 @@ use SimpleXMLElement;
 
 interface ContentFormatter
 {
-    public function format(mixed $data) : string;
+    public function format(mixed $data): string;
 
-    public function mimeType() : string;
+    public function mimeType(): string;
 }
 
 final readonly class ContentNegotiation
@@ -20,8 +20,7 @@ final readonly class ContentNegotiation
     public static function negotiate(
         RequestInterface $request,
         array $supported = ['application/json', 'application/xml', 'text/csv'],
-    ) : NegotiatedContent
-    {
+    ): NegotiatedContent {
         $header = $request->getHeaderLine('Accept');
 
         $parsed = AcceptHeaderParser::parse($header);
@@ -41,18 +40,18 @@ final readonly class ContentNegotiation
         );
     }
 
-    public static function parse(string $acceptHeader) : array
+    public static function parse(string $acceptHeader): array
     {
         return AcceptHeaderParser::parse($acceptHeader);
     }
 
-    public static function formatFor(string $mime) : ContentFormatter
+    public static function formatFor(string $mime): ContentFormatter
     {
         return match ($mime) {
-            'application/json', 'application/json-api' => new JsonFormatter,
-            'application/xml', 'text/xml'              => new XmlFormatter,
-            'text/csv'                                 => new CsvFormatter,
-            default                                    => new JsonFormatter,
+            'application/json', 'application/json-api' => new JsonFormatter(),
+            'application/xml', 'text/xml'              => new XmlFormatter(),
+            'text/csv'                                 => new CsvFormatter(),
+            default                                    => new JsonFormatter(),
         };
     }
 }
@@ -62,17 +61,18 @@ final readonly class NegotiatedContent
     public function __construct(
         public string $mimeType,
         public ContentFormatter $formatter,
-    ) {}
+    ) {
+    }
 }
 
 final class JsonFormatter implements ContentFormatter
 {
-    public function format(mixed $data) : string
+    public function format(mixed $data): string
     {
         return json_encode($data, JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS);
     }
 
-    public function mimeType() : string
+    public function mimeType(): string
     {
         return 'application/json';
     }
@@ -80,7 +80,7 @@ final class JsonFormatter implements ContentFormatter
 
 final class XmlFormatter implements ContentFormatter
 {
-    public function format(mixed $data) : string
+    public function format(mixed $data): string
     {
         if (is_array($data)) {
             return $this->arrayToXml($data);
@@ -89,7 +89,7 @@ final class XmlFormatter implements ContentFormatter
         return (string) $data;
     }
 
-    private function arrayToXml(array $data) : string
+    private function arrayToXml(array $data): string
     {
         $xml = new SimpleXMLElement('<root/>');
 
@@ -98,7 +98,7 @@ final class XmlFormatter implements ContentFormatter
         return $xml->asXML();
     }
 
-    private function arrayToXmlRecursive(array $data, SimpleXMLElement $xml) : void
+    private function arrayToXmlRecursive(array $data, SimpleXMLElement $xml): void
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
@@ -110,7 +110,7 @@ final class XmlFormatter implements ContentFormatter
         }
     }
 
-    public function mimeType() : string
+    public function mimeType(): string
     {
         return 'application/xml';
     }
@@ -118,7 +118,7 @@ final class XmlFormatter implements ContentFormatter
 
 final class CsvFormatter implements ContentFormatter
 {
-    public function format(mixed $data) : string
+    public function format(mixed $data): string
     {
         if (! is_array($data)) {
             return (string) $data;
@@ -144,7 +144,7 @@ final class CsvFormatter implements ContentFormatter
         return $content;
     }
 
-    public function mimeType() : string
+    public function mimeType(): string
     {
         return 'text/csv';
     }

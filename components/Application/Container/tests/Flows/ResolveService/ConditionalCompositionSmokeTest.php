@@ -9,13 +9,13 @@ use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\Con
 
 interface ConditionalGateway
 {
-    public function name() : string;
+    public function name(): string;
 }
 
 final class ActiveConditionalGateway implements ConditionalGateway
 {
     #[Override]
-    public function name() : string
+    public function name(): string
     {
         return 'active';
     }
@@ -24,7 +24,7 @@ final class ActiveConditionalGateway implements ConditionalGateway
 final class OverrideConditionalGateway implements ConditionalGateway
 {
     #[Override]
-    public function name() : string
+    public function name(): string
     {
         return 'override';
     }
@@ -53,7 +53,7 @@ $active->singleton(abstract: ConditionalGateway::class, concrete: ActiveConditio
     ->because(reason: 'regional payments gateway');
 
 $activeDescription = $active->describeService(id: ConditionalGateway::class);
-$activeGraph  = $active->debugGraph();
+$activeGraph       = $active->debugGraph();
 
 assertTrue(condition: $active->has(id: ConditionalGateway::class), message: 'Active conditional registrations should remain resolvable.');
 assertSame(expected: 'active', actual: $active->get(id: ConditionalGateway::class)->name(), message: 'Active conditional registrations should resolve normally.');
@@ -87,10 +87,10 @@ $inactive->singleton(abstract: ConditionalGateway::class, concrete: ActiveCondit
 assertTrue(condition: ! $inactive->has(id: ConditionalGateway::class), message: 'Inactive conditional registrations should not report as resolvable.');
 assertTrue(
     condition: in_array(
-                   needle  : 'region [us] is not in [eu]',
-                   haystack: $inactive->describeService(id: ConditionalGateway::class)['conditions']['reasons'],
-                   strict  : true,
-               ),
+        needle  : 'region [us] is not in [eu]',
+        haystack: $inactive->describeService(id: ConditionalGateway::class)['conditions']['reasons'],
+        strict  : true,
+    ),
     message  : 'Service descriptions should explain why a conditional registration is inactive.',
 );
 
@@ -131,7 +131,7 @@ $override->singleton(abstract: ConditionalGateway::class, concrete: OverrideCond
     ->because(reason: 'test override')
     ->concept(concept: 'payments.gateway');
 
-$overrideDebug = $override->debugGraph(id: ConditionalGateway::class);
+$overrideDebug  = $override->debugGraph(id: ConditionalGateway::class);
 $overrideIssues = implode(separator: "\n", array: $override->validate(serviceIds: [ConditionalGateway::class]));
 
 assertTrue(condition: $overrideDebug['overrides'] !== [], message: 'Graph diagnostics should expose override history for rebound abstracts.');

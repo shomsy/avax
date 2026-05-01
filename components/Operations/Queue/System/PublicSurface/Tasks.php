@@ -11,13 +11,13 @@ final readonly class Tasks
 {
     public static function dispatch(object $task) : void
     {
-        $bus = new TaskBus;
+        $bus = new TaskBus();
         $bus->dispatch($task);
     }
 
     public static function later(object $task, DateInterval $delay) : void
     {
-        $bus = new TaskBus;
+        $bus = new TaskBus();
         $bus->dispatchlater($task, $delay);
     }
 
@@ -39,7 +39,7 @@ final readonly class TaskBatch
 
     public function dispatch() : void
     {
-        $bus = new TaskBus;
+        $bus = new TaskBus();
 
         foreach ($this->tasks as $task) {
             $bus->dispatch($task);

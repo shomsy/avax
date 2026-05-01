@@ -22,40 +22,40 @@ final class ConsistencyPolicyTest extends TestCase
 {
     // ==================== VectorClock: increment ====================
 
-    public function test_increment_initial_empty_clock() : void
+    public function test_increment_initial_empty_clock(): void
     {
-        $clock = VectorClock::empty();
+        $clock       = VectorClock::empty();
         $incremented = $clock->increment('nodeA');
 
         $this->assertSame(['nodeA' => 1], $incremented->toArray());
     }
 
-    public function test_increment_existing_node() : void
+    public function test_increment_existing_node(): void
     {
-        $clock = VectorClock::initial('nodeA');
+        $clock       = VectorClock::initial('nodeA');
         $incremented = $clock->increment('nodeA');
 
         $this->assertSame(['nodeA' => 2], $incremented->toArray());
     }
 
-    public function test_increment_adds_new_node() : void
+    public function test_increment_adds_new_node(): void
     {
-        $clock = VectorClock::initial('nodeA');
+        $clock       = VectorClock::initial('nodeA');
         $incremented = $clock->increment('nodeB');
 
         $this->assertSame(['nodeA' => 1, 'nodeB' => 1], $incremented->toArray());
     }
 
-    public function test_increment_is_immutable() : void
+    public function test_increment_is_immutable(): void
     {
-        $clock = VectorClock::initial('nodeA');
+        $clock       = VectorClock::initial('nodeA');
         $incremented = $clock->increment('nodeA');
 
         $this->assertSame(['nodeA' => 1], $clock->toArray());
         $this->assertSame(['nodeA' => 2], $incremented->toArray());
     }
 
-    public function test_multiple_increments() : void
+    public function test_multiple_increments(): void
     {
         $clock = VectorClock::empty();
         $clock = $clock->increment('nodeA');
@@ -67,7 +67,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== VectorClock: merge ====================
 
-    public function test_merge_takes_maximum() : void
+    public function test_merge_takes_maximum(): void
     {
         $clockA = new VectorClock(['nodeA' => 3, 'nodeB' => 1]);
         $clockB = new VectorClock(['nodeA' => 1, 'nodeB' => 5]);
@@ -77,7 +77,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(['nodeA' => 3, 'nodeB' => 5], $merged->toArray());
     }
 
-    public function test_merge_with_new_nodes() : void
+    public function test_merge_with_new_nodes(): void
     {
         $clockA = new VectorClock(['nodeA' => 1]);
         $clockB = new VectorClock(['nodeB' => 2]);
@@ -87,7 +87,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(['nodeA' => 1, 'nodeB' => 2], $merged->toArray());
     }
 
-    public function test_merge_is_immutable() : void
+    public function test_merge_is_immutable(): void
     {
         $clockA = new VectorClock(['nodeA' => 1]);
         $clockB = new VectorClock(['nodeB' => 2]);
@@ -98,7 +98,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(['nodeB' => 2], $clockB->toArray());
     }
 
-    public function test_merge_empty_clocks() : void
+    public function test_merge_empty_clocks(): void
     {
         $clockA = VectorClock::empty();
         $clockB = VectorClock::empty();
@@ -110,7 +110,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== VectorClock: happened-before ====================
 
-    public function test_happened_before_true() : void
+    public function test_happened_before_true(): void
     {
         $clockA = new VectorClock(['nodeA' => 1]);
         $clockB = new VectorClock(['nodeA' => 2]);
@@ -118,7 +118,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertTrue($clockA->happenedBefore($clockB));
     }
 
-    public function test_happened_before_false_equal_clocks() : void
+    public function test_happened_before_false_equal_clocks(): void
     {
         $clockA = new VectorClock(['nodeA' => 1]);
         $clockB = new VectorClock(['nodeA' => 1]);
@@ -126,7 +126,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertFalse($clockA->happenedBefore($clockB));
     }
 
-    public function test_happened_before_false_concurrent() : void
+    public function test_happened_before_false_concurrent(): void
     {
         $clockA = new VectorClock(['nodeA' => 2, 'nodeB' => 1]);
         $clockB = new VectorClock(['nodeA' => 1, 'nodeB' => 2]);
@@ -134,7 +134,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertFalse($clockA->happenedBefore($clockB));
     }
 
-    public function test_happened_before_false_greater() : void
+    public function test_happened_before_false_greater(): void
     {
         $clockA = new VectorClock(['nodeA' => 5]);
         $clockB = new VectorClock(['nodeA' => 1]);
@@ -142,7 +142,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertFalse($clockA->happenedBefore($clockB));
     }
 
-    public function test_happened_before_multiple_nodes() : void
+    public function test_happened_before_multiple_nodes(): void
     {
         $clockA = new VectorClock(['nodeA' => 1, 'nodeB' => 2]);
         $clockB = new VectorClock(['nodeA' => 2, 'nodeB' => 3]);
@@ -150,7 +150,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertTrue($clockA->happenedBefore($clockB));
     }
 
-    public function test_happened_before_with_missing_nodes() : void
+    public function test_happened_before_with_missing_nodes(): void
     {
         $clockA = new VectorClock(['nodeA' => 1]);
         $clockB = new VectorClock(['nodeA' => 1, 'nodeB' => 1]);
@@ -160,7 +160,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== VectorClock: concurrent detection ====================
 
-    public function test_is_concurrent_true() : void
+    public function test_is_concurrent_true(): void
     {
         $clockA = new VectorClock(['nodeA' => 2, 'nodeB' => 1]);
         $clockB = new VectorClock(['nodeA' => 1, 'nodeB' => 2]);
@@ -168,7 +168,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertTrue($clockA->isConcurrent($clockB));
     }
 
-    public function test_is_concurrent_false_causally_related() : void
+    public function test_is_concurrent_false_causally_related(): void
     {
         $clockA = new VectorClock(['nodeA' => 1]);
         $clockB = new VectorClock(['nodeA' => 2]);
@@ -176,7 +176,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertFalse($clockA->isConcurrent($clockB));
     }
 
-    public function test_is_concurrent_false_equal_clocks() : void
+    public function test_is_concurrent_false_equal_clocks(): void
     {
         $clockA = new VectorClock(['nodeA' => 1, 'nodeB' => 2]);
         $clockB = new VectorClock(['nodeA' => 1, 'nodeB' => 2]);
@@ -186,21 +186,21 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== VectorClock: other methods ====================
 
-    public function test_vector_clock_empty_factory() : void
+    public function test_vector_clock_empty_factory(): void
     {
         $clock = VectorClock::empty();
 
         $this->assertSame([], $clock->toArray());
     }
 
-    public function test_vector_clock_initial_factory() : void
+    public function test_vector_clock_initial_factory(): void
     {
         $clock = VectorClock::initial('nodeA');
 
         $this->assertSame(['nodeA' => 1], $clock->toArray());
     }
 
-    public function test_vector_clock_happened_after() : void
+    public function test_vector_clock_happened_after(): void
     {
         $clockA = new VectorClock(['nodeA' => 2]);
         $clockB = new VectorClock(['nodeA' => 1]);
@@ -208,7 +208,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertTrue($clockA->happenedAfter($clockB));
     }
 
-    public function test_vector_clock_equals() : void
+    public function test_vector_clock_equals(): void
     {
         $clockA = new VectorClock(['nodeA' => 1, 'nodeB' => 2]);
         $clockB = new VectorClock(['nodeA' => 1, 'nodeB' => 2]);
@@ -218,7 +218,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertFalse($clockA->equals($clockC));
     }
 
-    public function test_vector_clock_to_string() : void
+    public function test_vector_clock_to_string(): void
     {
         $clock = new VectorClock(['nodeA' => 1, 'nodeB' => 2]);
 
@@ -230,9 +230,9 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== EventualConsistency: mergeReplicas ====================
 
-    public function test_merge_replicas_single_value() : void
+    public function test_merge_replicas_single_value(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $value  = VersionedValue::create('data', 'nodeA');
 
         $merged = $policy->mergeReplicas([$value]);
@@ -240,9 +240,9 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('data', $merged->value);
     }
 
-    public function test_merge_replicas_causally_ordered() : void
+    public function test_merge_replicas_causally_ordered(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $v1     = VersionedValue::create('v1', 'nodeA');
         $v2     = $v1->update('v2');
 
@@ -251,9 +251,9 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('v2', $merged->value);
     }
 
-    public function test_merge_replicas_concurrent_conflict() : void
+    public function test_merge_replicas_concurrent_conflict(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $base   = VersionedValue::create('base', 'nodeA');
         $v1     = $base->update('from_nodeA');
         $v2     = VersionedValue::create('from_nodeB', 'nodeB');
@@ -263,9 +263,9 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertNotNull($merged->value);
     }
 
-    public function test_merge_replicas_empty_throws() : void
+    public function test_merge_replicas_empty_throws(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
 
         $this->expectException(RuntimeException::class);
 
@@ -274,34 +274,34 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== EventualConsistency: conflict detection ====================
 
-    public function test_detect_conflict_concurrent_writes() : void
+    public function test_detect_conflict_concurrent_writes(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $v1     = VersionedValue::create('value_a', 'nodeA');
         $v2     = VersionedValue::create('value_b', 'nodeB');
 
         $this->assertTrue($policy->detectConflict($v1, $v2));
     }
 
-    public function test_detect_no_conflict_causal() : void
+    public function test_detect_no_conflict_causal(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $v1     = VersionedValue::create('v1', 'nodeA');
         $v2     = $v1->update('v2');
 
         $this->assertFalse($policy->detectConflict($v1, $v2));
     }
 
-    public function test_detect_conflict_non_versioned_values() : void
+    public function test_detect_conflict_non_versioned_values(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
 
         $this->assertFalse($policy->detectConflict('value_a', 'value_b'));
     }
 
     // ==================== ConflictResolution: lastWriteWins ====================
 
-    public function test_last_write_wins_selects_newer() : void
+    public function test_last_write_wins_selects_newer(): void
     {
         $strategy = ConflictResolution::lastWriteWins();
 
@@ -314,7 +314,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('new_value', $result);
     }
 
-    public function test_last_write_wins_equal_timestamps() : void
+    public function test_last_write_wins_equal_timestamps(): void
     {
         $strategy = ConflictResolution::lastWriteWins();
 
@@ -327,7 +327,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('value_b', $result);
     }
 
-    public function test_last_write_wins_missing_timestamps() : void
+    public function test_last_write_wins_missing_timestamps(): void
     {
         $strategy = ConflictResolution::lastWriteWins();
 
@@ -338,7 +338,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== ConflictResolution: firstWriteWins ====================
 
-    public function test_first_write_wins_selects_older() : void
+    public function test_first_write_wins_selects_older(): void
     {
         $strategy = ConflictResolution::firstWriteWins();
 
@@ -351,7 +351,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('first_value', $result);
     }
 
-    public function test_first_write_wins_equal_timestamps() : void
+    public function test_first_write_wins_equal_timestamps(): void
     {
         $strategy = ConflictResolution::firstWriteWins();
 
@@ -366,7 +366,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== ConflictResolution: highestValueWins ====================
 
-    public function test_highest_value_wins_numeric() : void
+    public function test_highest_value_wins_numeric(): void
     {
         $strategy = ConflictResolution::highestValueWins();
 
@@ -379,7 +379,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(20, $result);
     }
 
-    public function test_highest_value_wins_float() : void
+    public function test_highest_value_wins_float(): void
     {
         $strategy = ConflictResolution::highestValueWins();
 
@@ -392,7 +392,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(2.7, $result);
     }
 
-    public function test_highest_value_wins_non_numeric_fallback() : void
+    public function test_highest_value_wins_non_numeric_fallback(): void
     {
         $strategy = ConflictResolution::highestValueWins();
 
@@ -407,7 +407,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== ConflictResolution: merge ====================
 
-    public function test_merge_arrays() : void
+    public function test_merge_arrays(): void
     {
         $strategy = ConflictResolution::merge();
 
@@ -420,7 +420,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(['a', 'b', 'c', 'd'], $result);
     }
 
-    public function test_merge_strings() : void
+    public function test_merge_strings(): void
     {
         $strategy = ConflictResolution::merge();
 
@@ -433,7 +433,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('hello world', $result);
     }
 
-    public function test_merge_non_mergeable_fallback() : void
+    public function test_merge_non_mergeable_fallback(): void
     {
         $strategy = ConflictResolution::merge();
 
@@ -448,7 +448,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== Custom conflict resolver ====================
 
-    public function test_custom_resolver() : void
+    public function test_custom_resolver(): void
     {
         $resolver = static fn (mixed $a, mixed $b) => "merged:{$a}+{$b}";
         $strategy = ConflictResolution::custom($resolver);
@@ -458,7 +458,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('merged:hello+world', $result);
     }
 
-    public function test_custom_resolver_with_context() : void
+    public function test_custom_resolver_with_context(): void
     {
         $resolver = static fn (mixed $a, mixed $b, array $ctx) => $ctx['preferred'] ?? $a;
         $strategy = ConflictResolution::custom($resolver);
@@ -470,9 +470,9 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== Conflict history tracking ====================
 
-    public function test_conflict_history_records_conflicts() : void
+    public function test_conflict_history_records_conflicts(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $v1     = VersionedValue::create('v1', 'nodeA');
         $v2     = VersionedValue::create('v2', 'nodeB');
 
@@ -482,9 +482,9 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertCount(1, $policy->getConflicts());
     }
 
-    public function test_conflict_history_clear() : void
+    public function test_conflict_history_clear(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $v1     = VersionedValue::create('v1', 'nodeA');
         $v2     = VersionedValue::create('v2', 'nodeB');
 
@@ -495,7 +495,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertEmpty($policy->getConflicts());
     }
 
-    public function test_conflict_history_max_retained() : void
+    public function test_conflict_history_max_retained(): void
     {
         $policy = new EventualConsistency(maxConflictHistory: 2);
 
@@ -510,7 +510,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== VersionedValue properties ====================
 
-    public function test_versioned_value_create() : void
+    public function test_versioned_value_create(): void
     {
         $value = VersionedValue::create('data', 'nodeA');
 
@@ -520,17 +520,17 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(['nodeA' => 1], $value->clock->toArray());
     }
 
-    public function test_versioned_value_update() : void
+    public function test_versioned_value_update(): void
     {
         $original = VersionedValue::create('v1', 'nodeA');
-        $updated = $original->update('v2');
+        $updated  = $original->update('v2');
 
         $this->assertSame('v2', $updated->value);
         $this->assertSame('nodeA', $updated->nodeId);
         $this->assertSame(['nodeA' => 2], $updated->clock->toArray());
     }
 
-    public function test_versioned_value_update_preserves_other_nodes() : void
+    public function test_versioned_value_update_preserves_other_nodes(): void
     {
         $original = new VersionedValue(
             value    : 'v1',
@@ -543,7 +543,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(['nodeA' => 3, 'nodeB' => 3], $updated->clock->toArray());
     }
 
-    public function test_versioned_value_with_custom_clock() : void
+    public function test_versioned_value_with_custom_clock(): void
     {
         $clock = new VectorClock(['nodeA' => 5, 'nodeB' => 3]);
         $value = VersionedValue::create('data', 'nodeA', $clock);
@@ -551,7 +551,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame(['nodeA' => 5, 'nodeB' => 3], $value->clock->toArray());
     }
 
-    public function test_versioned_value_with_custom_timestamp() : void
+    public function test_versioned_value_with_custom_timestamp(): void
     {
         $value = VersionedValue::create('data', 'nodeA', timestamp: 12345.0);
 
@@ -560,52 +560,52 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== EventualConsistency interface methods ====================
 
-    public function test_eventual_consistency_name() : void
+    public function test_eventual_consistency_name(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
 
         $this->assertSame('eventual', $policy->name());
     }
 
-    public function test_eventual_consistency_can_read() : void
+    public function test_eventual_consistency_can_read(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
 
         $this->assertTrue($policy->canRead('current'));
         $this->assertTrue($policy->canRead('current', 'pending'));
     }
 
-    public function test_eventual_consistency_can_write() : void
+    public function test_eventual_consistency_can_write(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
 
         $this->assertTrue($policy->canWrite('current', 'new'));
     }
 
-    public function test_eventual_consistency_description() : void
+    public function test_eventual_consistency_description(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $desc   = $policy->description();
 
         $this->assertStringContainsString('eventual', strtolower($desc));
         $this->assertStringContainsString('vector clock', strtolower($desc));
     }
 
-    public function test_eventual_consistency_consistency_level() : void
+    public function test_eventual_consistency_consistency_level(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
 
         $this->assertSame(0.3, $policy->consistencyLevel());
     }
 
-    public function test_eventual_consistency_resolution_strategy_name() : void
+    public function test_eventual_consistency_resolution_strategy_name(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
 
         $this->assertSame('last_write_wins', $policy->resolutionStrategyName());
     }
 
-    public function test_eventual_consistency_with_custom_strategy() : void
+    public function test_eventual_consistency_with_custom_strategy(): void
     {
         $policy = new EventualConsistency(ConflictResolution::firstWriteWins());
 
@@ -614,9 +614,9 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== EventualConsistency resolveConflict with non-versioned values ====================
 
-    public function test_resolve_conflict_non_versioned_returns_first() : void
+    public function test_resolve_conflict_non_versioned_returns_first(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
 
         $result = $policy->resolveConflict('valueA', 'valueB');
 
@@ -625,9 +625,9 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== EventualConsistency resolveConflict with causal ordering ====================
 
-    public function test_resolve_conflict_causal_ordering() : void
+    public function test_resolve_conflict_causal_ordering(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $v1     = VersionedValue::create('v1', 'nodeA');
         $v2     = $v1->update('v2');
 
@@ -637,9 +637,9 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('v2', $result->value);
     }
 
-    public function test_resolve_conflict_causal_reverse_order() : void
+    public function test_resolve_conflict_causal_reverse_order(): void
     {
-        $policy = new EventualConsistency;
+        $policy = new EventualConsistency();
         $v1     = VersionedValue::create('v1', 'nodeA');
         $v2     = $v1->update('v2');
 
@@ -651,21 +651,21 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== ConflictPair ====================
 
-    public function test_conflict_pair_choose_a() : void
+    public function test_conflict_pair_choose_a(): void
     {
         $pair = new ConflictPair(valueA: 'a', valueB: 'b');
 
         $this->assertSame('a', $pair->chooseA());
     }
 
-    public function test_conflict_pair_choose_b() : void
+    public function test_conflict_pair_choose_b(): void
     {
         $pair = new ConflictPair(valueA: 'a', valueB: 'b');
 
         $this->assertSame('b', $pair->chooseB());
     }
 
-    public function test_conflict_pair_age() : void
+    public function test_conflict_pair_age(): void
     {
         $pair = new ConflictPair(valueA: 'a', valueB: 'b', createdAt: microtime(true) - 1.0);
 
@@ -674,7 +674,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertGreaterThanOrEqual(0.9, $age);
     }
 
-    public function test_conflict_pair_summary() : void
+    public function test_conflict_pair_summary(): void
     {
         $pair = new ConflictPair(valueA: 'a', valueB: 'b');
 
@@ -687,7 +687,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== Conflict factory methods ====================
 
-    public function test_conflict_from_values() : void
+    public function test_conflict_from_values(): void
     {
         $v1 = VersionedValue::create('a', 'nodeA');
         $v2 = VersionedValue::create('b', 'nodeB');
@@ -702,7 +702,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== ConflictResolutionResult ====================
 
-    public function test_conflict_resolution_result_no_conflict() : void
+    public function test_conflict_resolution_result_no_conflict(): void
     {
         $result = ConflictResolutionResult::noConflict('value');
 
@@ -711,7 +711,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertFalse($result->wasConflict);
     }
 
-    public function test_conflict_resolution_result_resolved() : void
+    public function test_conflict_resolution_result_resolved(): void
     {
         $result = ConflictResolutionResult::resolved('merged', 'custom', ['detail' => 'info']);
 
@@ -723,7 +723,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== ConflictResolution strategy names ====================
 
-    public function test_strategy_names() : void
+    public function test_strategy_names(): void
     {
         $this->assertSame('last_write_wins', ConflictResolution::lastWriteWins()->name());
         $this->assertSame('first_write_wins', ConflictResolution::firstWriteWins()->name());
@@ -735,7 +735,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('node_priority', ConflictResolution::nodePriority(['a'])->name());
     }
 
-    public function test_strategy_descriptions() : void
+    public function test_strategy_descriptions(): void
     {
         $this->assertStringContainsString('most recent', ConflictResolution::lastWriteWins()->description());
         $this->assertStringContainsString('earliest', ConflictResolution::firstWriteWins()->description());
@@ -746,7 +746,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== lowestValueWins ====================
 
-    public function test_lowest_value_wins_numeric() : void
+    public function test_lowest_value_wins_numeric(): void
     {
         $strategy = ConflictResolution::lowestValueWins();
 
@@ -761,7 +761,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== nodePriority ====================
 
-    public function test_node_priority_selects_higher_priority() : void
+    public function test_node_priority_selects_higher_priority(): void
     {
         $strategy = ConflictResolution::nodePriority(['nodeA', 'nodeB']);
 
@@ -774,7 +774,7 @@ final class ConsistencyPolicyTest extends TestCase
         $this->assertSame('from_a', $result);
     }
 
-    public function test_node_priority_fallback_to_last_write() : void
+    public function test_node_priority_fallback_to_last_write(): void
     {
         $strategy = ConflictResolution::nodePriority(['nodeA']);
 
@@ -789,7 +789,7 @@ final class ConsistencyPolicyTest extends TestCase
 
     // ==================== manualIntervention ====================
 
-    public function test_manual_intervention_returns_conflict_pair() : void
+    public function test_manual_intervention_returns_conflict_pair(): void
     {
         $strategy = ConflictResolution::manualIntervention();
 

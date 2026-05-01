@@ -15,19 +15,19 @@ use Avax\Framework\System\PublicSurface\Runtime\RuntimeKernelInterface;
 
 interface AvaxInterface
 {
-    public function state() : RuntimeState;
+    public function state(): RuntimeState;
 
-    public function context() : RuntimeContext;
+    public function context(): RuntimeContext;
 
-    public function requestScopes() : RequestScopeStore;
+    public function requestScopes(): RequestScopeStore;
 
-    public function components() : ComponentRegistry;
+    public function components(): ComponentRegistry;
 
-    public function http() : HttpKernelInterface;
+    public function http(): HttpKernelInterface;
 
-    public function console() : ConsoleKernelInterface;
+    public function console(): ConsoleKernelInterface;
 
-    public function runtime() : RuntimeKernelInterface;
+    public function runtime(): RuntimeKernelInterface;
 
-    public function resetState() : StateResetReport;
+    public function resetState(): StateResetReport;
 }

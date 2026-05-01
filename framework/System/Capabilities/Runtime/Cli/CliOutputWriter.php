@@ -8,7 +8,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 
 final readonly class CliOutputWriter
 {
-    public function render(RuntimeResult $result) : string
+    public function render(RuntimeResult $result): string
     {
         return $result->output() === '' ? '' : $result->output() . PHP_EOL;
     }

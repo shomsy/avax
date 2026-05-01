@@ -12,7 +12,7 @@ use Avax\Components\Application\Container\DI\Container;
 
 final class OrderingProviderAlpha implements RegisterDependency
 {
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [];
     }
@@ -20,7 +20,7 @@ final class OrderingProviderAlpha implements RegisterDependency
 
 final class OrderingProviderBeta implements RegisterDependency
 {
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [OrderingProviderAlpha::class];
     }
@@ -28,44 +28,60 @@ final class OrderingProviderBeta implements RegisterDependency
 
 final class OrderingProviderGamma implements RegisterDependency
 {
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [OrderingProviderAlpha::class];
     }
 }
 
-final class OrderingTaggedA {}
+final class OrderingTaggedA
+{
+}
 
-final class OrderingTaggedB {}
+final class OrderingTaggedB
+{
+}
 
-final class OrderingTaggedC {}
+final class OrderingTaggedC
+{
+}
 
 final class OrderingDecoratedService
 {
-    public function __construct(public string $value = 'base') {}
+    public function __construct(public string $value = 'base')
+    {
+    }
 }
 
 final class OrderingFirstDecorator
 {
-    public function __construct(public OrderingDecoratedService $orderingDecoratedService) {}
+    public function __construct(public OrderingDecoratedService $orderingDecoratedService)
+    {
+    }
 }
 
 final class OrderingSecondDecorator
 {
-    public function __construct(public OrderingFirstDecorator $orderingFirstDecorator) {}
+    public function __construct(public OrderingFirstDecorator $orderingFirstDecorator)
+    {
+    }
 }
 
-final class OrderingArtifactDependency {}
+final class OrderingArtifactDependency
+{
+}
 
 final class OrderingArtifactService
 {
-    public function __construct(public OrderingArtifactDependency $orderingArtifactDependency) {}
+    public function __construct(public OrderingArtifactDependency $orderingArtifactDependency)
+    {
+    }
 }
 
 /**
  * @return array<string, mixed>
  */
-function normalizedArtifactMetadata(Container $container) : array
+function normalizedArtifactMetadata(Container $container): array
 {
     $report = $container->compileReport(serviceIds: [OrderingArtifactService::class, OrderingArtifactDependency::class]);
     assertTrue(condition: $report !== null && $report->metadata !== null, message: 'Compile report metadata should exist for ordering proofs.');
@@ -88,7 +104,7 @@ assertSame(
     message : 'Provider boot order must stay deterministic and dependency-aware.',
 );
 
-$registry = new DependencyRegistry;
+$registry = new DependencyRegistry();
 $registry->bind(abstract: OrderingTaggedC::class, concrete: OrderingTaggedC::class)->tag(tags: 'ordered');
 $registry->bind(abstract: OrderingTaggedA::class, concrete: OrderingTaggedA::class)->tag(tags: 'ordered');
 $registry->bind(abstract: OrderingTaggedB::class, concrete: OrderingTaggedB::class)->tag(tags: 'ordered');

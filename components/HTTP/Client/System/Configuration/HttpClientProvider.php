@@ -56,15 +56,14 @@ final class HttpClientProvider
         string $baseUrl,
         int $timeoutMs = 15000,
         int $retryAttempts = 3,
-    ) : HttpClient
-    {
+    ): HttpClient {
         $options = new RequestOptions(
             timeout    : $timeoutMs,
             retryPolicy: RetryPolicy::exponential(
-                             attempts   : $retryAttempts,
-                             baseDelayMs: 500,
-                             maxDelayMs : 5000,
-                         ),
+                attempts   : $retryAttempts,
+                baseDelayMs: 500,
+                maxDelayMs : 5000,
+            ),
             httpErrors : true,
         );
 
@@ -82,18 +81,17 @@ final class HttpClientProvider
     public static function forWebhooks(
         int $timeoutMs = 5000,
         int $retryAttempts = 5,
-    ) : HttpClient
-    {
+    ): HttpClient {
         $options = new RequestOptions(
             timeout        : $timeoutMs,
             connectTimeout : 2000,
             followRedirects: false,
             retryPolicy    : RetryPolicy::exponential(
-                                 attempts         : $retryAttempts,
-                                 baseDelayMs      : 1000,
-                                 backoffMultiplier: 3.0,
-                                 maxDelayMs       : 15000,
-                             ),
+                attempts         : $retryAttempts,
+                baseDelayMs      : 1000,
+                backoffMultiplier: 3.0,
+                maxDelayMs       : 15000,
+            ),
             httpErrors     : true,
         );
 
@@ -109,8 +107,7 @@ final class HttpClientProvider
      */
     public static function forFileDownloads(
         int $timeoutMs = 300000,
-    ) : HttpClient
-    {
+    ): HttpClient {
         $options = new RequestOptions(
             timeout        : $timeoutMs,
             connectTimeout : 30000,
@@ -128,10 +125,9 @@ final class HttpClientProvider
      * Create a client with strict timeouts.
      */
     public static function withStrictTimeouts(
-        ?string $baseUrl = null,
-        int     $timeoutMs = 3000,
-    ) : HttpClient
-    {
+        string $baseUrl = null,
+        int $timeoutMs = 3000,
+    ): HttpClient {
         $options = new RequestOptions(
             timeout       : $timeoutMs,
             connectTimeout: 1000,
@@ -149,10 +145,9 @@ final class HttpClientProvider
      * Create a client with middleware.
      */
     public static function withMiddleware(
-        ?string $baseUrl = null,
+        string $baseUrl = null,
         ClientMiddlewareInterface ...$middlewares,
-    ) : HttpClient
-    {
+    ): HttpClient {
         return new HttpClient(
             baseUrl    : $baseUrl,
             middlewares: $middlewares,
@@ -162,27 +157,26 @@ final class HttpClientProvider
     /**
      * Get or create an HTTP client with the given configuration.
      *
-     * @param string|null                      $baseUrl     Base URL for requests
-     * @param RequestOptions|null              $options     Default request options
-     * @param HttpTransportInterface|null      $transport   Custom transport
+     * @param string|null $baseUrl Base URL for requests
+     * @param RequestOptions|null $options Default request options
+     * @param HttpTransportInterface|null $transport Custom transport
      * @param array<ClientMiddlewareInterface> $middlewares Middleware to apply
-     * @param string|null                      $name        Named client identifier (for caching)
+     * @param string|null $name Named client identifier (for caching)
      */
     public function client(
-        ?string                 $baseUrl = null,
-        ?RequestOptions         $options = null,
-        ?HttpTransportInterface $transport = null,
-        array                   $middlewares = [],
-        ?string                 $name = null,
-    ) : HttpClient
-    {
+        string $baseUrl = null,
+        RequestOptions $options = null,
+        HttpTransportInterface $transport = null,
+        array $middlewares = [],
+        string $name = null,
+    ): HttpClient {
         // Use name-based caching if a name is provided
         if ($name !== null && isset($this->clients[$name])) {
             return $this->clients[$name];
         }
 
-        $resolvedOptions = $options ?? $this->resolveOptions();
-        $resolvedTransport = $transport ?? new CurlTransport;
+        $resolvedOptions   = $options   ?? $this->resolveOptions();
+        $resolvedTransport = $transport ?? new CurlTransport();
 
         $client = new HttpClient(
             baseUrl       : $baseUrl ?? $this->config['base_url'] ?? null,
@@ -201,14 +195,14 @@ final class HttpClientProvider
     /**
      * Resolve default options from configuration.
      */
-    private function resolveOptions() : RequestOptions
+    private function resolveOptions(): RequestOptions
     {
-        $timeout      = $this->config['timeout'] ?? RequestOptions::DEFAULT_TIMEOUT;
-        $connectTimeout = $this->config['connect_timeout'] ?? RequestOptions::DEFAULT_CONNECT_TIMEOUT;
-        $verifySsl    = $this->config['verify_ssl'] ?? true;
-        $proxy        = $this->config['proxy'] ?? null;
+        $timeout         = $this->config['timeout']          ?? RequestOptions::DEFAULT_TIMEOUT;
+        $connectTimeout  = $this->config['connect_timeout']  ?? RequestOptions::DEFAULT_CONNECT_TIMEOUT;
+        $verifySsl       = $this->config['verify_ssl']       ?? true;
+        $proxy           = $this->config['proxy']            ?? null;
         $followRedirects = $this->config['follow_redirects'] ?? true;
-        $maxRedirects = $this->config['max_redirects'] ?? 5;
+        $maxRedirects    = $this->config['max_redirects']    ?? 5;
 
         $retryPolicy = null;
         if ($this->config['retry_attempts'] ?? 0 > 0) {
@@ -232,7 +226,7 @@ final class HttpClientProvider
     /**
      * Get a cached client by name.
      */
-    public function getCached(string $name) : ?HttpClient
+    public function getCached(string $name): ?HttpClient
     {
         return $this->clients[$name] ?? null;
     }
@@ -240,7 +234,7 @@ final class HttpClientProvider
     /**
      * Clear all cached clients.
      */
-    public function clearCache() : void
+    public function clearCache(): void
     {
         $this->clients = [];
     }
@@ -250,7 +244,7 @@ final class HttpClientProvider
      *
      * @return array<string, mixed>
      */
-    public function getConfig() : array
+    public function getConfig(): array
     {
         return $this->config;
     }

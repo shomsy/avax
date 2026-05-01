@@ -16,22 +16,22 @@ final class CapTradeoffTest extends TestCase
 {
     // ==================== CapTradeoff enum: CP, AP, BALANCED ====================
 
-    public function test_cp_value() : void
+    public function test_cp_value(): void
     {
         $this->assertSame('CP', CapTradeoff::CP->value);
     }
 
-    public function test_ap_value() : void
+    public function test_ap_value(): void
     {
         $this->assertSame('AP', CapTradeoff::AP->value);
     }
 
-    public function test_balanced_value() : void
+    public function test_balanced_value(): void
     {
         $this->assertSame('BALANCED', CapTradeoff::BALANCED->value);
     }
 
-    public function test_there_are_three_cases() : void
+    public function test_there_are_three_cases(): void
     {
         $cases = CapTradeoff::cases();
 
@@ -43,7 +43,7 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== CapTradeoff descriptions ====================
 
-    public function test_cp_description() : void
+    public function test_cp_description(): void
     {
         $desc = CapTradeoff::CP->description();
 
@@ -51,7 +51,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertStringContainsString('Availability', $desc);
     }
 
-    public function test_ap_description() : void
+    public function test_ap_description(): void
     {
         $desc = CapTradeoff::AP->description();
 
@@ -59,7 +59,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertStringContainsString('Consistency', $desc);
     }
 
-    public function test_balanced_description() : void
+    public function test_balanced_description(): void
     {
         $desc = CapTradeoff::BALANCED->description();
 
@@ -68,99 +68,99 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== consistencyLevel() ====================
 
-    public function test_cp_consistency_level() : void
+    public function test_cp_consistency_level(): void
     {
         $this->assertSame(1.0, CapTradeoff::CP->consistencyLevel());
     }
 
-    public function test_ap_consistency_level() : void
+    public function test_ap_consistency_level(): void
     {
         $this->assertSame(0.3, CapTradeoff::AP->consistencyLevel());
     }
 
-    public function test_balanced_consistency_level() : void
+    public function test_balanced_consistency_level(): void
     {
         $this->assertSame(0.7, CapTradeoff::BALANCED->consistencyLevel());
     }
 
-    public function test_cp_has_higher_consistency_than_ap() : void
+    public function test_cp_has_higher_consistency_than_ap(): void
     {
         $this->assertGreaterThan(CapTradeoff::AP->consistencyLevel(), CapTradeoff::CP->consistencyLevel());
     }
 
     // ==================== availabilityLevel() ====================
 
-    public function test_cp_availability_level() : void
+    public function test_cp_availability_level(): void
     {
         $this->assertSame(0.5, CapTradeoff::CP->availabilityLevel());
     }
 
-    public function test_ap_availability_level() : void
+    public function test_ap_availability_level(): void
     {
         $this->assertSame(1.0, CapTradeoff::AP->availabilityLevel());
     }
 
-    public function test_balanced_availability_level() : void
+    public function test_balanced_availability_level(): void
     {
         $this->assertSame(0.8, CapTradeoff::BALANCED->availabilityLevel());
     }
 
-    public function test_ap_has_higher_availability_than_cp() : void
+    public function test_ap_has_higher_availability_than_cp(): void
     {
         $this->assertGreaterThan(CapTradeoff::CP->availabilityLevel(), CapTradeoff::AP->availabilityLevel());
     }
 
     // ==================== shouldWaitForConsistentRead() ====================
 
-    public function test_cp_waits_for_consistent_read() : void
+    public function test_cp_waits_for_consistent_read(): void
     {
         $this->assertTrue(CapTradeoff::CP->shouldWaitForConsistentRead());
     }
 
-    public function test_ap_does_not_wait() : void
+    public function test_ap_does_not_wait(): void
     {
         $this->assertFalse(CapTradeoff::AP->shouldWaitForConsistentRead());
     }
 
-    public function test_balanced_waits_for_consistent_read() : void
+    public function test_balanced_waits_for_consistent_read(): void
     {
         $this->assertTrue(CapTradeoff::BALANCED->shouldWaitForConsistentRead());
     }
 
     // ==================== shouldRejectInconsistentWrites() ====================
 
-    public function test_cp_rejects_inconsistent_writes() : void
+    public function test_cp_rejects_inconsistent_writes(): void
     {
         $this->assertTrue(CapTradeoff::CP->shouldRejectInconsistentWrites());
     }
 
-    public function test_ap_accepts_inconsistent_writes() : void
+    public function test_ap_accepts_inconsistent_writes(): void
     {
         $this->assertFalse(CapTradeoff::AP->shouldRejectInconsistentWrites());
     }
 
-    public function test_balanced_rejects_inconsistent_writes() : void
+    public function test_balanced_rejects_inconsistent_writes(): void
     {
         $this->assertTrue(CapTradeoff::BALANCED->shouldRejectInconsistentWrites());
     }
 
     // ==================== recommendedConflictStrategy() ====================
 
-    public function test_cp_recommends_last_write_wins() : void
+    public function test_cp_recommends_last_write_wins(): void
     {
         $strategy = CapTradeoff::CP->recommendedConflictStrategy();
 
         $this->assertSame('last_write_wins', $strategy->name());
     }
 
-    public function test_ap_recommends_merge() : void
+    public function test_ap_recommends_merge(): void
     {
         $strategy = CapTradeoff::AP->recommendedConflictStrategy();
 
         $this->assertSame('merge', $strategy->name());
     }
 
-    public function test_balanced_recommends_last_write_wins() : void
+    public function test_balanced_recommends_last_write_wins(): void
     {
         $strategy = CapTradeoff::BALANCED->recommendedConflictStrategy();
 
@@ -169,41 +169,41 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== prioritizesConsistency() ====================
 
-    public function test_cp_prioritizes_consistency() : void
+    public function test_cp_prioritizes_consistency(): void
     {
         $this->assertTrue(CapTradeoff::CP->prioritizesConsistency());
     }
 
-    public function test_ap_does_not_prioritize_consistency() : void
+    public function test_ap_does_not_prioritize_consistency(): void
     {
         $this->assertFalse(CapTradeoff::AP->prioritizesConsistency());
     }
 
-    public function test_balanced_prioritizes_consistency() : void
+    public function test_balanced_prioritizes_consistency(): void
     {
         $this->assertTrue(CapTradeoff::BALANCED->prioritizesConsistency());
     }
 
     // ==================== prioritizesAvailability() ====================
 
-    public function test_cp_does_not_prioritize_availability() : void
+    public function test_cp_does_not_prioritize_availability(): void
     {
         $this->assertFalse(CapTradeoff::CP->prioritizesAvailability());
     }
 
-    public function test_ap_prioritizes_availability() : void
+    public function test_ap_prioritizes_availability(): void
     {
         $this->assertTrue(CapTradeoff::AP->prioritizesAvailability());
     }
 
-    public function test_balanced_prioritizes_availability() : void
+    public function test_balanced_prioritizes_availability(): void
     {
         $this->assertTrue(CapTradeoff::BALANCED->prioritizesAvailability());
     }
 
     // ==================== CapTradeoffPolicy: factory methods ====================
 
-    public function test_strong_consistency_factory() : void
+    public function test_strong_consistency_factory(): void
     {
         $policy = CapTradeoffPolicy::strongConsistency();
 
@@ -215,7 +215,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertSame(2, $policy->readQuorum);
     }
 
-    public function test_strong_consistency_custom_params() : void
+    public function test_strong_consistency_custom_params(): void
     {
         $policy = CapTradeoffPolicy::strongConsistency(
             writeQuorum       : 3,
@@ -228,7 +228,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertSame(3000, $policy->consensusTimeoutMs);
     }
 
-    public function test_high_availability_factory() : void
+    public function test_high_availability_factory(): void
     {
         $policy = CapTradeoffPolicy::highAvailability();
 
@@ -240,7 +240,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertSame(1, $policy->readQuorum);
     }
 
-    public function test_high_availability_custom_params() : void
+    public function test_high_availability_custom_params(): void
     {
         $policy = CapTradeoffPolicy::highAvailability(
             maxStalenessSeconds: 30.0,
@@ -251,7 +251,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertFalse($policy->allowStaleReads);
     }
 
-    public function test_balanced_factory() : void
+    public function test_balanced_factory(): void
     {
         $policy = CapTradeoffPolicy::balanced();
 
@@ -263,7 +263,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertSame(2, $policy->readQuorum);
     }
 
-    public function test_balanced_custom_params() : void
+    public function test_balanced_custom_params(): void
     {
         $policy = CapTradeoffPolicy::balanced(
             maxStalenessSeconds: 5.0,
@@ -278,9 +278,9 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== Policy properties ====================
 
-    public function test_default_policy() : void
+    public function test_default_policy(): void
     {
-        $policy = new CapTradeoffPolicy;
+        $policy = new CapTradeoffPolicy();
 
         $this->assertSame(CapTradeoff::CP, $policy->tradeoff);
         $this->assertSame(30.0, $policy->maxStalenessSeconds);
@@ -290,7 +290,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertSame(2, $policy->readQuorum);
     }
 
-    public function test_custom_policy() : void
+    public function test_custom_policy(): void
     {
         $policy = new CapTradeoffPolicy(
             tradeoff           : CapTradeoff::AP,
@@ -311,21 +311,21 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== requiresQuorum() ====================
 
-    public function test_requires_quorum_when_write_quorum_gt_1() : void
+    public function test_requires_quorum_when_write_quorum_gt_1(): void
     {
         $policy = new CapTradeoffPolicy(writeQuorum: 2, readQuorum: 1);
 
         $this->assertTrue($policy->requiresQuorum());
     }
 
-    public function test_requires_quorum_when_read_quorum_gt_1() : void
+    public function test_requires_quorum_when_read_quorum_gt_1(): void
     {
         $policy = new CapTradeoffPolicy(writeQuorum: 1, readQuorum: 3);
 
         $this->assertTrue($policy->requiresQuorum());
     }
 
-    public function test_no_quorum_when_both_are_1() : void
+    public function test_no_quorum_when_both_are_1(): void
     {
         $policy = new CapTradeoffPolicy(writeQuorum: 1, readQuorum: 1);
 
@@ -334,9 +334,9 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== summary() ====================
 
-    public function test_policy_summary_contains_key_info() : void
+    public function test_policy_summary_contains_key_info(): void
     {
-        $policy = CapTradeoffPolicy::strongConsistency();
+        $policy  = CapTradeoffPolicy::strongConsistency();
         $summary = $policy->summary();
 
         $this->assertStringContainsString('CAP Policy', $summary);
@@ -346,26 +346,26 @@ final class CapTradeoffTest extends TestCase
         $this->assertStringContainsString('Consensus Timeout', $summary);
     }
 
-    public function test_policy_summary_for_ap() : void
+    public function test_policy_summary_for_ap(): void
     {
-        $policy = CapTradeoffPolicy::highAvailability();
+        $policy  = CapTradeoffPolicy::highAvailability();
         $summary = $policy->summary();
 
         $this->assertStringContainsString('AP', $summary);
     }
 
-    public function test_policy_summary_for_balanced() : void
+    public function test_policy_summary_for_balanced(): void
     {
-        $policy = CapTradeoffPolicy::balanced();
+        $policy  = CapTradeoffPolicy::balanced();
         $summary = $policy->summary();
 
         $this->assertStringContainsString('BALANCED', $summary);
     }
 
-    public function test_policy_summary_shows_stale_reads() : void
+    public function test_policy_summary_shows_stale_reads(): void
     {
         $policyYes = CapTradeoffPolicy::highAvailability();
-        $policyNo = CapTradeoffPolicy::strongConsistency();
+        $policyNo  = CapTradeoffPolicy::strongConsistency();
 
         $this->assertStringContainsString('Yes', $policyYes->summary());
         $this->assertStringContainsString('No', $policyNo->summary());
@@ -373,21 +373,21 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== Consistency/availability level accessors ====================
 
-    public function test_strong_consistency_has_max_consistency() : void
+    public function test_strong_consistency_has_max_consistency(): void
     {
         $policy = CapTradeoffPolicy::strongConsistency();
 
         $this->assertSame(1.0, $policy->tradeoff->consistencyLevel());
     }
 
-    public function test_high_availability_has_max_availability() : void
+    public function test_high_availability_has_max_availability(): void
     {
         $policy = CapTradeoffPolicy::highAvailability();
 
         $this->assertSame(1.0, $policy->tradeoff->availabilityLevel());
     }
 
-    public function test_balanced_has_moderate_levels() : void
+    public function test_balanced_has_moderate_levels(): void
     {
         $policy = CapTradeoffPolicy::balanced();
 
@@ -397,7 +397,7 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== Quorum configurations ====================
 
-    public function test_strong_consistency_quorums() : void
+    public function test_strong_consistency_quorums(): void
     {
         $policy = CapTradeoffPolicy::strongConsistency(writeQuorum: 3, readQuorum: 3);
 
@@ -405,7 +405,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertSame(3, $policy->readQuorum);
     }
 
-    public function test_high_availability_minimal_quorums() : void
+    public function test_high_availability_minimal_quorums(): void
     {
         $policy = CapTradeoffPolicy::highAvailability();
 
@@ -415,7 +415,7 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== Readonly value object ====================
 
-    public function test_policy_is_readonly() : void
+    public function test_policy_is_readonly(): void
     {
         $policy = CapTradeoffPolicy::strongConsistency();
 
@@ -430,22 +430,22 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== Edge cases and additional scenarios ====================
 
-    public function test_consistency_ordering() : void
+    public function test_consistency_ordering(): void
     {
         $this->assertGreaterThan(CapTradeoff::BALANCED->consistencyLevel(), CapTradeoff::CP->consistencyLevel());
         $this->assertGreaterThan(CapTradeoff::AP->consistencyLevel(), CapTradeoff::BALANCED->consistencyLevel());
     }
 
-    public function test_availability_ordering() : void
+    public function test_availability_ordering(): void
     {
         $this->assertGreaterThan(CapTradeoff::CP->availabilityLevel(), CapTradeoff::AP->availabilityLevel());
         $this->assertGreaterThan(CapTradeoff::CP->availabilityLevel(), CapTradeoff::BALANCED->availabilityLevel());
     }
 
-    public function test_tradeoff_from_string() : void
+    public function test_tradeoff_from_string(): void
     {
-        $cp = CapTradeoff::from('CP');
-        $ap = CapTradeoff::from('AP');
+        $cp       = CapTradeoff::from('CP');
+        $ap       = CapTradeoff::from('AP');
         $balanced = CapTradeoff::from('BALANCED');
 
         $this->assertSame(CapTradeoff::CP, $cp);
@@ -453,14 +453,14 @@ final class CapTradeoffTest extends TestCase
         $this->assertSame(CapTradeoff::BALANCED, $balanced);
     }
 
-    public function test_strong_consistency_does_not_allow_stale_reads() : void
+    public function test_strong_consistency_does_not_allow_stale_reads(): void
     {
         $policy = CapTradeoffPolicy::strongConsistency();
 
         $this->assertFalse($policy->allowStaleReads);
     }
 
-    public function test_high_availability_short_consensus_timeout() : void
+    public function test_high_availability_short_consensus_timeout(): void
     {
         $policy = CapTradeoffPolicy::highAvailability();
 
@@ -468,7 +468,7 @@ final class CapTradeoffTest extends TestCase
         $this->assertLessThan(CapTradeoffPolicy::strongConsistency()->consensusTimeoutMs, $policy->consensusTimeoutMs);
     }
 
-    public function test_balanced_moderate_consensus_timeout() : void
+    public function test_balanced_moderate_consensus_timeout(): void
     {
         $policy = CapTradeoffPolicy::balanced();
 
@@ -479,17 +479,17 @@ final class CapTradeoffTest extends TestCase
 
     // ==================== Summary format validation ====================
 
-    public function test_summary_format_contains_consistency_level() : void
+    public function test_summary_format_contains_consistency_level(): void
     {
-        $policy = CapTradeoffPolicy::strongConsistency();
+        $policy  = CapTradeoffPolicy::strongConsistency();
         $summary = $policy->summary();
 
         $this->assertStringContainsString('1.0', $summary);
     }
 
-    public function test_summary_format_contains_availability_level() : void
+    public function test_summary_format_contains_availability_level(): void
     {
-        $policy = CapTradeoffPolicy::highAvailability();
+        $policy  = CapTradeoffPolicy::highAvailability();
         $summary = $policy->summary();
 
         $this->assertStringContainsString('1.0', $summary);

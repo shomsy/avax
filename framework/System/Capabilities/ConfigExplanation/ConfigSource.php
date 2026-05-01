@@ -20,17 +20,18 @@ final readonly class ConfigSource
     public function __construct(
         public string $key,
         public string $source,
-        public mixed   $value,
+        public mixed $value,
         public ?string $envVar = null,
         public ?string $filePath = null,
-    ) {}
+    ) {
+    }
 
-    public function isFromEnv() : bool
+    public function isFromEnv(): bool
     {
         return $this->source === self::SOURCE_ENV;
     }
 
-    public function isFromFile() : bool
+    public function isFromFile(): bool
     {
         return $this->source === self::SOURCE_FILE;
     }

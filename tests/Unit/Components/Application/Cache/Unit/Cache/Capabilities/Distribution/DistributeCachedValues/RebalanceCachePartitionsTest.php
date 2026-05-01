@@ -14,7 +14,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 {
     public function test_add_node_calculates_partition_moves() : void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
 
         $rebalancer = new RebalanceCachePartitions(ring: $ring, partitionCount: 256);
@@ -26,7 +26,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
     public function test_remove_node_calculates_partition_moves() : void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
         $ring->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -39,7 +39,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
     public function test_rebalance_returns_all_partitions() : void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
         $ring->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -52,7 +52,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
     public function test_partition_moves_have_from_and_to() : void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
         $ring->addNode(node: CacheNode::create(id: 'node_a'));
         $ring->addNode(node: CacheNode::create(id: 'node_b'));
         $ring->addNode(node: CacheNode::create(id: 'node_c'));
@@ -72,7 +72,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
     public function test_empty_ring_returns_empty_distribution() : void
     {
-        $ring = new ConsistentHashRing;
+        $ring = new ConsistentHashRing();
 
         $rebalancer = new RebalanceCachePartitions(ring: $ring, partitionCount: 256);
 

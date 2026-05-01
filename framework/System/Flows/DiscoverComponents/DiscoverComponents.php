@@ -9,13 +9,14 @@ use Avax\Framework\System\Capabilities\ComponentManifest\ComponentDiscovery;
 final readonly class DiscoverComponents
 {
     public function __construct(
-        private ComponentDiscovery $discovery = new ComponentDiscovery,
-    ) {}
+        private ComponentDiscovery $discovery = new ComponentDiscovery(),
+    ) {
+    }
 
     /**
      * @param list<string> $missingDeps
      */
-    public static function printReport(array $manifests, array $missingDeps) : int
+    public static function printReport(array $manifests, array $missingDeps): int
     {
         echo "\033[33mComponent Discovery Report\033[0m\n\n";
 
@@ -41,7 +42,7 @@ final readonly class DiscoverComponents
     /**
      * @param list<string> $searchPaths
      */
-    public function search(array $searchPaths) : self
+    public function search(array $searchPaths): self
     {
         $this->discovery->discover($searchPaths);
 
@@ -51,7 +52,7 @@ final readonly class DiscoverComponents
     /**
      * @return list<string>
      */
-    public function detectMissingDeps() : array
+    public function detectMissingDeps(): array
     {
         return $this->discovery->detectMissingDependencies();
     }

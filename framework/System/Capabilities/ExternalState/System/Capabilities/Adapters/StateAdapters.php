@@ -15,7 +15,7 @@ final class RedisStateAdapter implements StateAdapter
 
     public function __construct(string $url)
     {
-        $this->redis = new Redis;
+        $this->redis = new Redis();
         $this->redis->connect('127.0.0.1', 6379);
         $this->prefix = 'avax:';
     }

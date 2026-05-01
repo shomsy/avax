@@ -13,7 +13,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 interface DeferredProvidedContract
 {
-    public function id() : string;
+    public function id(): string;
 }
 
 final class ProviderState
@@ -38,12 +38,12 @@ final class BaseProvider implements RegisterDependency
         $this->app = $app;
     }
 
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [];
     }
 
-    public function register() : void
+    public function register(): void
     {
         ProviderState::$events[] = 'base-register';
         $this->app->instance(abstract: ProviderState::class, instance: new ProviderState(message: 'base-register'));
@@ -53,9 +53,9 @@ final class BaseProvider implements RegisterDependency
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function boot() : void
+    public function boot(): void
     {
-        ProviderState::$events[] = 'base-boot';
+        ProviderState::$events[]                           = 'base-boot';
         $this->app->get(id: ProviderState::class)->message = 'base-booted';
     }
 }
@@ -69,7 +69,7 @@ final class DemoProvider implements RegisterDependency
         $this->app = $app;
     }
 
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [BaseProvider::class];
     }
@@ -78,7 +78,7 @@ final class DemoProvider implements RegisterDependency
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function register() : void
+    public function register(): void
     {
         ProviderState::$events[] = 'demo-register';
         assertSame(
@@ -93,7 +93,7 @@ final class DemoProvider implements RegisterDependency
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function boot() : void
+    public function boot(): void
     {
         ProviderState::$events[] = 'demo-boot';
         assertSame(
@@ -107,7 +107,7 @@ final class DemoProvider implements RegisterDependency
 
 final class DeferredProvidedService implements DeferredProvidedContract
 {
-    public function id() : string
+    public function id(): string
     {
         return 'deferred-provider';
     }
@@ -132,28 +132,28 @@ final class DeferredDemoProvider implements RegisterDeferredDependency
         $this->app = $app;
     }
 
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [];
     }
 
-    public function deferred() : bool
+    public function deferred(): bool
     {
         return true;
     }
 
-    public function provides() : array
+    public function provides(): array
     {
         return [DeferredProvidedContract::class];
     }
 
-    public function register() : void
+    public function register(): void
     {
         ProviderState::$events[] = 'deferred-register';
         $this->app->singleton(abstract: DeferredProvidedContract::class, concrete: DeferredProvidedService::class);
     }
 
-    public function boot() : void
+    public function boot(): void
     {
         ProviderState::$events[] = 'deferred-boot';
     }
@@ -168,17 +168,19 @@ final class CycleProviderA implements RegisterDependency
         $this->app = $app;
     }
 
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [CycleProviderB::class];
     }
 
-    public function register() : void
+    public function register(): void
     {
-        $this->app->instance(abstract: 'cycle-a', instance: new stdClass);
+        $this->app->instance(abstract: 'cycle-a', instance: new stdClass());
     }
 
-    public function boot() : void {}
+    public function boot(): void
+    {
+    }
 }
 
 final class CycleProviderB implements RegisterDependency
@@ -190,21 +192,23 @@ final class CycleProviderB implements RegisterDependency
         $this->app = $app;
     }
 
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [CycleProviderA::class];
     }
 
-    public function register() : void
+    public function register(): void
     {
-        $this->app->instance(abstract: 'cycle-b', instance: new stdClass);
+        $this->app->instance(abstract: 'cycle-b', instance: new stdClass());
     }
 
-    public function boot() : void {}
+    public function boot(): void
+    {
+    }
 }
 
 ProviderState::$events = [];
-$container = makeTestContainer();
+$container             = makeTestContainer();
 
 new BootProviders(container: $container)->boot(providers: [DemoProvider::class]);
 
@@ -225,7 +229,7 @@ assertTrue(
 );
 
 ProviderState::$events = [];
-$deferredContainer = makeTestContainer();
+$deferredContainer     = makeTestContainer();
 
 new BootProviders(container: $deferredContainer)->boot(providers: [DeferredDemoProvider::class]);
 
@@ -251,7 +255,7 @@ assertTrue(
     message  : 'Deferred provider metrics should record lazy provider boots.',
 );
 
-ProviderState::$events = [];
+ProviderState::$events     = [];
 $compiledDeferredContainer = makeTestContainer();
 $compiledDeferredContainer->singleton(abstract: DeferredProviderConsumer::class, concrete: DeferredProviderConsumer::class);
 
@@ -279,7 +283,7 @@ assertTrue(
 
 assertThrows(
     expectedClass: LogicException::class,
-    callback     : static function () use ($container) : void {
+    callback     : static function () use ($container): void {
         new BootProviders(container: $container)->boot(providers: [CycleProviderA::class]);
     },
     message      : 'Provider dependency cycles should fail fast.',

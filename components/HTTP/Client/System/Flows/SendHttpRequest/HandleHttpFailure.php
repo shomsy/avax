@@ -23,12 +23,11 @@ final class HandleHttpFailure
     /**
      * Handle a request failure, potentially retrying based on the retry policy.
      *
-     * @param OutboundRequest     $request       The original request
-     * @param callable            $retryCallback Callback to execute for retry (receives OutboundRequest, returns
-     *                                           ClientResponse)
-     * @param Throwable           $exception     The exception that occurred
-     * @param RequestOptions|null $options       Request options (may contain retry policy)
-     *
+     * @param OutboundRequest $request The original request
+     * @param callable $retryCallback Callback to execute for retry (receives OutboundRequest, returns
+     *                                ClientResponse)
+     * @param Throwable $exception The exception that occurred
+     * @param RequestOptions|null $options Request options (may contain retry policy)
      * @return ClientResponse The response from a successful retry
      *
      * @throws HttpRequestFailed if all retries are exhausted
@@ -36,17 +35,17 @@ final class HandleHttpFailure
      */
     public function handle(
         OutboundRequest $request,
-        callable        $retryCallback,
-        Throwable       $exception,
-        ?RequestOptions $options = null,
-    ) : ClientResponse {
+        callable $retryCallback,
+        Throwable $exception,
+        RequestOptions $options = null,
+    ): ClientResponse {
         $retryPolicy = $options?->retryPolicy;
 
         if ($retryPolicy === null) {
             $this->rethrow($exception, $request);
         }
 
-        $retryCount = 0;
+        $retryCount    = 0;
         $lastException = $exception;
 
         // Determine if we should retry based on the exception type
@@ -55,7 +54,7 @@ final class HandleHttpFailure
         }
 
         // Attempt retries
-        while ( $retryPolicy->hasRemainingAttempts($retryCount + 1)) {
+        while ($retryPolicy->hasRemainingAttempts($retryCount + 1)) {
             $retryCount++;
             $delay = $retryPolicy->delayForAttempt($retryCount);
 
@@ -97,9 +96,9 @@ final class HandleHttpFailure
     /**
      * Rethrow an exception with additional context.
      *
-     * @param Throwable       $exception  The original exception
-     * @param OutboundRequest $request    The request that failed
-     * @param int             $retryCount Number of retries attempted
+     * @param Throwable $exception The original exception
+     * @param OutboundRequest $request The request that failed
+     * @param int $retryCount Number of retries attempted
      *
      * @throws HttpRequestFailed
      * @throws HttpTimeout
@@ -108,7 +107,7 @@ final class HandleHttpFailure
         Throwable $exception,
         OutboundRequest $request,
         int $retryCount = 0,
-    ) : never {
+    ): never {
         $message = $exception->getMessage();
 
         if ($retryCount > 0) {

@@ -42,34 +42,34 @@ final readonly class LifetimePlan
         string $serviceId,
         string $name,
         string $storage,
-        ?string $scopeKind = null,
-        ?bool   $warm = null,
-        ?bool   $lazy = null,
-        ?bool   $disposable = null,
-        ?int    $poolSize = null,
-        bool    $poolResetBeforeReuse = true,
+        string $scopeKind = null,
+        bool $warm = null,
+        bool $lazy = null,
+        bool $disposable = null,
+        int  $poolSize = null,
+        bool $poolResetBeforeReuse = true,
     )
     {
-        $scopeKind        ??= '';
-        $warm             ??= false;
-        $lazy             ??= false;
+        $scopeKind                  ??= '';
+        $warm                       ??= false;
+        $lazy                       ??= false;
         $disposable ??= false;
-        $poolSize         ??= 8;
-        $this->serviceId  = $serviceId;
-        $this->name       = $name;
-        $this->storage    = $storage;
-        $this->scopeKind  = $scopeKind;
-        $this->warm       = $warm;
-        $this->lazy       = $lazy;
-        $this->disposable = $disposable;
-        $this->poolSize   = $poolSize;
+        $poolSize                   ??= 8;
+        $this->serviceId            = $serviceId;
+        $this->name                 = $name;
+        $this->storage              = $storage;
+        $this->scopeKind            = $scopeKind;
+        $this->warm                 = $warm;
+        $this->lazy                 = $lazy;
+        $this->disposable           = $disposable;
+        $this->poolSize             = $poolSize;
         $this->poolResetBeforeReuse = $poolResetBeforeReuse;
     }
 
-    public static function fromRegistration(string $serviceId, ?DependencyRegistration $registration) : self
+    public static function fromRegistration(string $serviceId, ?DependencyRegistration $registration): self
     {
-        $name    = $registration?->lifetime ?? TransientLifetime::NAME;
-        $storage = self::storageFor(name: $name);
+        $name      = $registration?->lifetime ?? TransientLifetime::NAME;
+        $storage   = self::storageFor(name: $name);
         $scopeKind = $name === PooledLifetime::NAME
             ? (string) ($registration?->poolScopeKind ?? ScopeKind::OPERATION)
             : self::scopeKindFor(name: $name);
@@ -87,7 +87,7 @@ final readonly class LifetimePlan
         );
     }
 
-    private static function storageFor(string $name) : string
+    private static function storageFor(string $name): string
     {
         return match ($name) {
             SingletonLifetime::NAME => SingletonLifetime::NAME,
@@ -97,28 +97,28 @@ final readonly class LifetimePlan
             JobLifetime::NAME,
             TenantLifetime::NAME => ScopedLifetime::NAME,
             PooledLifetime::NAME => PooledLifetime::NAME,
-            default => TransientLifetime::NAME,
+            default              => TransientLifetime::NAME,
         };
     }
 
-    private static function scopeKindFor(string $name) : string
+    private static function scopeKindFor(string $name): string
     {
         return match ($name) {
             OperationLifetime::NAME, PooledLifetime::NAME => ScopeKind::OPERATION,
-            RequestLifetime::NAME => ScopeKind::REQUEST,
-            JobLifetime::NAME     => ScopeKind::JOB,
-            TenantLifetime::NAME  => ScopeKind::TENANT,
-            ScopedLifetime::NAME  => ScopeKind::ANY,
-            default               => '',
+            RequestLifetime::NAME                         => ScopeKind::REQUEST,
+            JobLifetime::NAME                             => ScopeKind::JOB,
+            TenantLifetime::NAME                          => ScopeKind::TENANT,
+            ScopedLifetime::NAME                          => ScopeKind::ANY,
+            default                                       => '',
         };
     }
 
     /**
      * @param array<string, mixed> $state
      */
-    public static function fromArray(string $serviceId, array $state) : self
+    public static function fromArray(string $serviceId, array $state): self
     {
-        $name = (string) ($state['name'] ?? TransientLifetime::NAME);
+        $name      = (string) ($state['name'] ?? TransientLifetime::NAME);
         $scopeKind = (string) ($state['scopeKind'] ?? self::scopeKindFor(name: $name));
 
         return new self(
@@ -134,17 +134,17 @@ final readonly class LifetimePlan
         );
     }
 
-    public function requiresScope() : bool
+    public function requiresScope(): bool
     {
         return $this->isScoped() || $this->isPooled();
     }
 
-    public function isScoped() : bool
+    public function isScoped(): bool
     {
         return $this->storage === ScopedLifetime::NAME;
     }
 
-    public function isPooled() : bool
+    public function isPooled(): bool
     {
         return $this->storage === PooledLifetime::NAME;
     }
@@ -168,32 +168,32 @@ final readonly class LifetimePlan
     public function toArray() : array
     {
         return [
-            'name'       => $this->name,
-            'storage'    => $this->storage,
-            'scopeKind'  => $this->scopeKind(),
-            'shared'     => $this->isShared(),
-            'scoped'     => $this->isScoped(),
-            'transient'  => $this->isTransient(),
-            'pooled'     => $this->isPooled(),
-            'warm'       => $this->warm,
-            'lazy'       => $this->lazy,
-            'disposable' => $this->disposable,
-            'poolSize'   => $this->poolSize,
+            'name'                 => $this->name,
+            'storage'              => $this->storage,
+            'scopeKind'            => $this->scopeKind(),
+            'shared'               => $this->isShared(),
+            'scoped'               => $this->isScoped(),
+            'transient'            => $this->isTransient(),
+            'pooled'               => $this->isPooled(),
+            'warm'                 => $this->warm,
+            'lazy'                 => $this->lazy,
+            'disposable'           => $this->disposable,
+            'poolSize'             => $this->poolSize,
             'poolResetBeforeReuse' => $this->poolResetBeforeReuse,
         ];
     }
 
-    public function scopeKind() : string
+    public function scopeKind(): string
     {
         return $this->scopeKind !== '' ? $this->scopeKind : ScopeKind::ANY;
     }
 
-    public function isShared() : bool
+    public function isShared(): bool
     {
         return $this->storage === SingletonLifetime::NAME;
     }
 
-    public function isTransient() : bool
+    public function isTransient(): bool
     {
         return $this->storage === TransientLifetime::NAME;
     }

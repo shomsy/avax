@@ -12,50 +12,50 @@ interface DependencyRegistryContract
     /**
      * Registers one alias for one canonical service id.
      */
-    public function alias(string $alias, string $abstract) : void;
+    public function alias(string $alias, string $abstract): void;
 
     /**
      * Registers one transient service.
      */
-    public function bind(string $abstract, mixed $concrete = null) : DependencyRegistration;
+    public function bind(string $abstract, mixed $concrete = null): DependencyRegistration;
 
     /**
      * Registers one deferred transient service.
      */
-    public function defer(string $abstract, mixed $concrete = null) : DependencyRegistration;
+    public function defer(string $abstract, mixed $concrete = null): DependencyRegistration;
 
     /**
      * Registers one shared service.
      */
-    public function singleton(string $abstract, mixed $concrete = null) : DependencyRegistration;
+    public function singleton(string $abstract, mixed $concrete = null): DependencyRegistration;
 
     /**
      * Registers one scoped service.
      */
-    public function scoped(string $abstract, mixed $concrete = null) : DependencyRegistration;
+    public function scoped(string $abstract, mixed $concrete = null): DependencyRegistration;
 
     /**
      * Registers one prebuilt instance.
      */
-    public function instance(string $abstract, object $instance) : void;
+    public function instance(string $abstract, object $instance): void;
 
     /**
      * Appends one post-build extender.
      */
-    public function extend(string $abstract, callable $closure) : void;
+    public function extend(string $abstract, callable $closure): void;
 
     /**
      * Appends one explicit decorator to one service id.
      */
-    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator) : void;
+    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator): void;
 
     /**
      * Starts one target-specific registration override.
      */
-    public function when(string $consumer) : RegisterForTarget;
+    public function when(string $consumer): RegisterForTarget;
 
     /**
      * Tags one or more services.
      */
-    public function tag(string|array $abstracts, string|array $tags) : void;
+    public function tag(string|array $abstracts, string|array $tags): void;
 }

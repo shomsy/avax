@@ -85,6 +85,6 @@ final class RouteResolutionTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->matcher = new RouteMatcher(logger: new NullLogger);
+        $this->matcher = new RouteMatcher(logger: new NullLogger());
     }
 }

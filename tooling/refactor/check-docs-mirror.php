@@ -18,7 +18,7 @@ final class CheckDocsMirror
 
     private array $errors = [];
 
-    public function check() : array
+    public function check(): array
     {
         $this->scanDocsForObsoleteRefs();
 
@@ -28,7 +28,7 @@ final class CheckDocsMirror
         ];
     }
 
-    private function scanDocsForObsoleteRefs() : void
+    private function scanDocsForObsoleteRefs(): void
     {
         $docsPath = dirname(__DIR__, 2) . '/docs';
 
@@ -58,8 +58,8 @@ final class CheckDocsMirror
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckDocsMirror;
-    $result = $checker->check();
+    $checker = new CheckDocsMirror();
+    $result  = $checker->check();
 
     echo $result['status'] . "\n";
 

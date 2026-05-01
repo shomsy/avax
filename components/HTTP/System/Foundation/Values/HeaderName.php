@@ -14,100 +14,100 @@ use function ucwords;
 enum HeaderName: string
 {
     // Standard Request Headers
-    case ACCEPT            = 'Accept';
-    case ACCEPT_CHARSET    = 'Accept-Charset';
-    case ACCEPT_ENCODING   = 'Accept-Encoding';
-    case ACCEPT_LANGUAGE   = 'Accept-Language';
-    case AUTHORIZATION     = 'Authorization';
-    case CACHE_CONTROL     = 'Cache-Control';
-    case CONNECTION        = 'Connection';
-    case CONTENT_LENGTH    = 'Content-Length';
-    case CONTENT_TYPE      = 'Content-Type';
-    case COOKIE            = 'Cookie';
-    case DATE              = 'Date';
-    case EXPECT            = 'Expect';
-    case FORWARDED         = 'Forwarded';
-    case FROM              = 'From';
-    case HOST              = 'Host';
-    case IF_MATCH          = 'If-Match';
-    case IF_MODIFIED_SINCE = 'If-Modified-Since';
-    case IF_NONE_MATCH     = 'If-None-Match';
-    case IF_RANGE          = 'If-Range';
+    case ACCEPT              = 'Accept';
+    case ACCEPT_CHARSET      = 'Accept-Charset';
+    case ACCEPT_ENCODING     = 'Accept-Encoding';
+    case ACCEPT_LANGUAGE     = 'Accept-Language';
+    case AUTHORIZATION       = 'Authorization';
+    case CACHE_CONTROL       = 'Cache-Control';
+    case CONNECTION          = 'Connection';
+    case CONTENT_LENGTH      = 'Content-Length';
+    case CONTENT_TYPE        = 'Content-Type';
+    case COOKIE              = 'Cookie';
+    case DATE                = 'Date';
+    case EXPECT              = 'Expect';
+    case FORWARDED           = 'Forwarded';
+    case FROM                = 'From';
+    case HOST                = 'Host';
+    case IF_MATCH            = 'If-Match';
+    case IF_MODIFIED_SINCE   = 'If-Modified-Since';
+    case IF_NONE_MATCH       = 'If-None-Match';
+    case IF_RANGE            = 'If-Range';
     case IF_UNMODIFIED_SINCE = 'If-Unmodified-Since';
-    case MAX_FORWARDS      = 'Max-Forwards';
-    case ORIGIN            = 'Origin';
-    case PRAGMA            = 'Pragma';
+    case MAX_FORWARDS        = 'Max-Forwards';
+    case ORIGIN              = 'Origin';
+    case PRAGMA              = 'Pragma';
     case PROXY_AUTHORIZATION = 'Proxy-Authorization';
-    case RANGE             = 'Range';
-    case REFERER           = 'Referer';
-    case TE                = 'TE';
-    case TRAILER           = 'Trailer';
-    case TRANSFER_ENCODING = 'Transfer-Encoding';
-    case USER_AGENT        = 'User-Agent';
-    case UPGRADE           = 'Upgrade';
-    case VIA               = 'Via';
-    case WARNING           = 'Warning';
+    case RANGE               = 'Range';
+    case REFERER             = 'Referer';
+    case TE                  = 'TE';
+    case TRAILER             = 'Trailer';
+    case TRANSFER_ENCODING   = 'Transfer-Encoding';
+    case USER_AGENT          = 'User-Agent';
+    case UPGRADE             = 'Upgrade';
+    case VIA                 = 'Via';
+    case WARNING             = 'Warning';
 
     // Standard Response Headers
-    case ACCEPT_RANGES       = 'Accept-Ranges';
-    case AGE                 = 'Age';
-    case ALLOW               = 'Allow';
-    case ALT_SVC             = 'Alt-Svc';
-    case CDN_CACHE_CONTROL   = 'CDN-Cache-Control';
-    case CONTENT_DISPOSITION = 'Content-Disposition';
-    case CONTENT_ENCODING    = 'Content-Encoding';
-    case CONTENT_LANGUAGE    = 'Content-Language';
-    case CONTENT_LOCATION    = 'Content-Location';
-    case CONTENT_RANGE       = 'Content-Range';
-    case ETAG                = 'ETag';
-    case EXPIRES             = 'Expires';
-    case LAST_MODIFIED       = 'Last-Modified';
-    case LINK                = 'Link';
-    case LOCATION            = 'Location';
-    case RETRY_AFTER         = 'Retry-After';
-    case SERVER              = 'Server';
-    case SET_COOKIE          = 'Set-Cookie';
+    case ACCEPT_RANGES             = 'Accept-Ranges';
+    case AGE                       = 'Age';
+    case ALLOW                     = 'Allow';
+    case ALT_SVC                   = 'Alt-Svc';
+    case CDN_CACHE_CONTROL         = 'CDN-Cache-Control';
+    case CONTENT_DISPOSITION       = 'Content-Disposition';
+    case CONTENT_ENCODING          = 'Content-Encoding';
+    case CONTENT_LANGUAGE          = 'Content-Language';
+    case CONTENT_LOCATION          = 'Content-Location';
+    case CONTENT_RANGE             = 'Content-Range';
+    case ETAG                      = 'ETag';
+    case EXPIRES                   = 'Expires';
+    case LAST_MODIFIED             = 'Last-Modified';
+    case LINK                      = 'Link';
+    case LOCATION                  = 'Location';
+    case RETRY_AFTER               = 'Retry-After';
+    case SERVER                    = 'Server';
+    case SET_COOKIE                = 'Set-Cookie';
     case STRICT_TRANSPORT_SECURITY = 'Strict-Transport-Security';
-    case TRAILERS            = 'Trailers';
-    case VARY                = 'Vary';
-    case WWW_AUTHENTICATE    = 'WWW-Authenticate';
+    case TRAILERS                  = 'Trailers';
+    case VARY                      = 'Vary';
+    case WWW_AUTHENTICATE          = 'WWW-Authenticate';
 
     // Common Custom / Application Headers
-    case X_REQUESTED_WITH               = 'X-Requested-With';
-    case X_FORWARDED_FOR                = 'X-Forwarded-For';
-    case X_FORWARDED_PROTO              = 'X-Forwarded-Proto';
-    case X_FORWARDED_HOST               = 'X-Forwarded-Host';
-    case X_FORWARDED_PORT               = 'X-Forwarded-Port';
-    case X_REAL_IP                      = 'X-Real-IP';
-    case X_HTTP_METHOD_OVERRIDE         = 'X-HTTP-Method-Override';
-    case X_CSRF_TOKEN                   = 'X-CSRF-Token';
-    case X_XSS_PROTECTION               = 'X-XSS-Protection';
-    case X_FRAME_OPTIONS                = 'X-Frame-Options';
-    case X_CONTENT_TYPE_OPTIONS         = 'X-Content-Type-Options';
-    case X_POWERED_BY                   = 'X-Powered-By';
-    case X_RATELIMIT_LIMIT              = 'X-RateLimit-Limit';
-    case X_RATELIMIT_REMAINING          = 'X-RateLimit-Remaining';
-    case X_RATELIMIT_RESET              = 'X-RateLimit-Reset';
-    case ACCESS_CONTROL_ALLOW_ORIGIN    = 'Access-Control-Allow-Origin';
-    case ACCESS_CONTROL_ALLOW_METHODS   = 'Access-Control-Allow-Methods';
-    case ACCESS_CONTROL_ALLOW_HEADERS   = 'Access-Control-Allow-Headers';
+    case X_REQUESTED_WITH                 = 'X-Requested-With';
+    case X_FORWARDED_FOR                  = 'X-Forwarded-For';
+    case X_FORWARDED_PROTO                = 'X-Forwarded-Proto';
+    case X_FORWARDED_HOST                 = 'X-Forwarded-Host';
+    case X_FORWARDED_PORT                 = 'X-Forwarded-Port';
+    case X_REAL_IP                        = 'X-Real-IP';
+    case X_HTTP_METHOD_OVERRIDE           = 'X-HTTP-Method-Override';
+    case X_CSRF_TOKEN                     = 'X-CSRF-Token';
+    case X_XSS_PROTECTION                 = 'X-XSS-Protection';
+    case X_FRAME_OPTIONS                  = 'X-Frame-Options';
+    case X_CONTENT_TYPE_OPTIONS           = 'X-Content-Type-Options';
+    case X_POWERED_BY                     = 'X-Powered-By';
+    case X_RATELIMIT_LIMIT                = 'X-RateLimit-Limit';
+    case X_RATELIMIT_REMAINING            = 'X-RateLimit-Remaining';
+    case X_RATELIMIT_RESET                = 'X-RateLimit-Reset';
+    case ACCESS_CONTROL_ALLOW_ORIGIN      = 'Access-Control-Allow-Origin';
+    case ACCESS_CONTROL_ALLOW_METHODS     = 'Access-Control-Allow-Methods';
+    case ACCESS_CONTROL_ALLOW_HEADERS     = 'Access-Control-Allow-Headers';
     case ACCESS_CONTROL_ALLOW_CREDENTIALS = 'Access-Control-Allow-Credentials';
-    case ACCESS_CONTROL_EXPOSE_HEADERS  = 'Access-Control-Expose-Headers';
-    case ACCESS_CONTROL_MAX_AGE         = 'Access-Control-Max-Age';
-    case ACCESS_CONTROL_REQUEST_METHOD  = 'Access-Control-Request-Method';
-    case ACCESS_CONTROL_REQUEST_HEADERS = 'Access-Control-Request-Headers';
-    case CONTENT_SECURITY_POLICY        = 'Content-Security-Policy';
-    case REFERRER_POLICY                = 'Referrer-Policy';
-    case PERMISSIONS_POLICY             = 'Permissions-Policy';
-    case CROSS_ORIGIN_OPENER_POLICY     = 'Cross-Origin-Opener-Policy';
-    case CROSS_ORIGIN_RESOURCE_POLICY   = 'Cross-Origin-Resource-Policy';
+    case ACCESS_CONTROL_EXPOSE_HEADERS    = 'Access-Control-Expose-Headers';
+    case ACCESS_CONTROL_MAX_AGE           = 'Access-Control-Max-Age';
+    case ACCESS_CONTROL_REQUEST_METHOD    = 'Access-Control-Request-Method';
+    case ACCESS_CONTROL_REQUEST_HEADERS   = 'Access-Control-Request-Headers';
+    case CONTENT_SECURITY_POLICY          = 'Content-Security-Policy';
+    case REFERRER_POLICY                  = 'Referrer-Policy';
+    case PERMISSIONS_POLICY               = 'Permissions-Policy';
+    case CROSS_ORIGIN_OPENER_POLICY       = 'Cross-Origin-Opener-Policy';
+    case CROSS_ORIGIN_RESOURCE_POLICY     = 'Cross-Origin-Resource-Policy';
 
     /**
      * Create a HeaderName from a header string (case-insensitive).
      *
      * @throws ValueError if the header name is not recognized
      */
-    public static function fromName(string $name) : self
+    public static function fromName(string $name): self
     {
         $normalized = ucwords(strtolower(trim($name)), '-');
 
@@ -123,7 +123,7 @@ enum HeaderName: string
     /**
      * Check if a string is a valid, recognized HTTP header name.
      */
-    public static function isValid(string $name) : bool
+    public static function isValid(string $name): bool
     {
         return self::tryFromName($name) !== null;
     }
@@ -132,7 +132,7 @@ enum HeaderName: string
      * Try to create a HeaderName from a header string (case-insensitive).
      * Returns null if the header name is not recognized.
      */
-    public static function tryFromName(string $name) : ?self
+    public static function tryFromName(string $name): ?self
     {
         $normalized = ucwords(strtolower(trim($name)), '-');
 
@@ -149,7 +149,7 @@ enum HeaderName: string
      * Get the canonical header name string.
      * This is equivalent to accessing the backed value directly.
      */
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value;
     }
@@ -157,7 +157,7 @@ enum HeaderName: string
     /**
      * Check if this header is used in both requests and responses.
      */
-    public function isBidirectional() : bool
+    public function isBidirectional(): bool
     {
         return ! $this->isRequestHeader() && ! $this->isResponseHeader();
     }
@@ -165,7 +165,7 @@ enum HeaderName: string
     /**
      * Check if this is a request header (commonly sent by clients).
      */
-    public function isRequestHeader() : bool
+    public function isRequestHeader(): bool
     {
         return match ($this) {
             self::ACCEPT,
@@ -211,14 +211,14 @@ enum HeaderName: string
             self::X_CSRF_TOKEN,
             self::ACCESS_CONTROL_REQUEST_METHOD,
             self::ACCESS_CONTROL_REQUEST_HEADERS => true,
-            default => false,
+            default                              => false,
         };
     }
 
     /**
      * Check if this is a response header (commonly sent by servers).
      */
-    public function isResponseHeader() : bool
+    public function isResponseHeader(): bool
     {
         return match ($this) {
             self::ACCEPT_RANGES,
@@ -261,14 +261,14 @@ enum HeaderName: string
             self::PERMISSIONS_POLICY,
             self::CROSS_ORIGIN_OPENER_POLICY,
             self::CROSS_ORIGIN_RESOURCE_POLICY => true,
-            default => false,
+            default                            => false,
         };
     }
 
     /**
      * Check if this is a security-related header.
      */
-    public function isSecurityHeader() : bool
+    public function isSecurityHeader(): bool
     {
         return match ($this) {
             self::AUTHORIZATION,
@@ -288,14 +288,14 @@ enum HeaderName: string
             self::ACCESS_CONTROL_ALLOW_METHODS,
             self::ACCESS_CONTROL_ALLOW_HEADERS,
             self::ACCESS_CONTROL_ALLOW_CREDENTIALS => true,
-            default => false,
+            default                                => false,
         };
     }
 
     /**
      * Check if this is a CORS-related header.
      */
-    public function isCorsHeader() : bool
+    public function isCorsHeader(): bool
     {
         return match ($this) {
             self::ORIGIN,
@@ -307,14 +307,14 @@ enum HeaderName: string
             self::ACCESS_CONTROL_MAX_AGE,
             self::ACCESS_CONTROL_REQUEST_METHOD,
             self::ACCESS_CONTROL_REQUEST_HEADERS => true,
-            default => false,
+            default                              => false,
         };
     }
 
     /**
      * Check if this is a caching-related header.
      */
-    public function isCachingHeader() : bool
+    public function isCachingHeader(): bool
     {
         return match ($this) {
             self::CACHE_CONTROL,
@@ -329,7 +329,7 @@ enum HeaderName: string
             self::IF_UNMODIFIED_SINCE,
             self::PRAGMA,
             self::VARY => true,
-            default => false,
+            default    => false,
         };
     }
 }

@@ -8,7 +8,7 @@ use Avax\Components\Operations\Resilience\System\Capabilities\CircuitBreaker\Cir
 
 final readonly class BreakCircuit
 {
-    public function breaker(int $failureThreshold = 3, int $cooldownSeconds = 30) : CircuitBreaker
+    public function breaker(int $failureThreshold = 3, int $cooldownSeconds = 30): CircuitBreaker
     {
         return new CircuitBreaker(
             failureThreshold: $failureThreshold,

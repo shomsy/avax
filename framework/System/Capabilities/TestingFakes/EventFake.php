@@ -26,13 +26,13 @@ final class EventFake
     /**
      * @param array<string, mixed> $payload
      */
-    public function dispatch(string $event, array $payload = []) : void
+    public function dispatch(string $event, array $payload = []): void
     {
-        $this->dispatched[$event] = ($this->dispatched[$event] ?? 0) + 1;
+        $this->dispatched[$event]           = ($this->dispatched[$event] ?? 0) + 1;
         $this->dispatchedPayloads[$event][] = $payload;
     }
 
-    public function assertDispatched(string $event, ?int $times = null) : self
+    public function assertDispatched(string $event, int $times = null): self
     {
         if (! $this->wasDispatched($event)) {
             throw new TestingFakeException(
@@ -57,12 +57,12 @@ final class EventFake
         return $this;
     }
 
-    public function wasDispatched(string $event) : bool
+    public function wasDispatched(string $event): bool
     {
         return isset($this->dispatched[$event]);
     }
 
-    public function assertNotDispatched(string $event) : self
+    public function assertNotDispatched(string $event): self
     {
         if ($this->wasDispatched($event)) {
             throw new TestingFakeException(
@@ -77,7 +77,7 @@ final class EventFake
         return $this;
     }
 
-    public function assertNothingDispatched() : self
+    public function assertNothingDispatched(): self
     {
         if (! empty($this->dispatched)) {
             throw new TestingFakeException(
@@ -92,7 +92,7 @@ final class EventFake
         return $this;
     }
 
-    public function dispatchCount(string $event) : int
+    public function dispatchCount(string $event): int
     {
         return $this->dispatched[$event] ?? 0;
     }
@@ -100,7 +100,7 @@ final class EventFake
     /**
      * @return list<array<string, mixed>>
      */
-    public function payloads(string $event) : array
+    public function payloads(string $event): array
     {
         return $this->dispatchedPayloads[$event] ?? [];
     }
@@ -108,33 +108,33 @@ final class EventFake
     /**
      * @return array<string, int>
      */
-    public function dispatched() : array
+    public function dispatched(): array
     {
         return $this->dispatched;
     }
 
-    public function preventRealDispatch() : self
+    public function preventRealDispatch(): self
     {
         $this->preventingRealDispatch = true;
 
         return $this;
     }
 
-    public function allowRealDispatch() : self
+    public function allowRealDispatch(): self
     {
         $this->preventingRealDispatch = false;
 
         return $this;
     }
 
-    public function isPreventingRealDispatch() : bool
+    public function isPreventingRealDispatch(): bool
     {
         return $this->preventingRealDispatch;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
-        $this->dispatched = [];
+        $this->dispatched         = [];
         $this->dispatchedPayloads = [];
     }
 }

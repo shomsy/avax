@@ -24,14 +24,14 @@ final class ConsistentHashRing
     /**
      * Add a cache node to the hash ring.
      */
-    public function addNode(CacheNode $cacheNode) : self
+    public function addNode(CacheNode $cacheNode): self
     {
         $this->physicalNodes[$cacheNode->id] = $cacheNode;
 
         $virtualNodeCount = $cacheNode->virtualNodeCount();
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
-            $hash = $this->hash($cacheNode->id . '#' . $i);
+            $hash              = $this->hash($cacheNode->id . '#' . $i);
             $this->ring[$hash] = $cacheNode;
         }
 
@@ -43,13 +43,13 @@ final class ConsistentHashRing
     /**
      * Remove a cache node from the hash ring.
      */
-    public function removeNode(string $nodeId) : self
+    public function removeNode(string $nodeId): self
     {
         if (! isset($this->physicalNodes[$nodeId])) {
             return $this;
         }
 
-        $node = $this->physicalNodes[$nodeId];
+        $node             = $this->physicalNodes[$nodeId];
         $virtualNodeCount = $node->virtualNodeCount();
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
@@ -67,7 +67,7 @@ final class ConsistentHashRing
      *
      * @throws RuntimeException if the ring has no nodes
      */
-    public function getNode(string $key) : CacheNode
+    public function getNode(string $key): CacheNode
     {
         if ($this->ring === []) {
             throw new RuntimeException('Cannot get node: hash ring is empty');
@@ -116,10 +116,10 @@ final class ConsistentHashRing
 
         $hash     = $this->hash($key);
         $selected = [];
-        $seen = [];
+        $seen     = [];
 
         // Walk the ring forward from the key's hash position
-        $ringKeys = array_keys($this->ring);
+        $ringKeys   = array_keys($this->ring);
         $ringLength = count($ringKeys);
 
         // Find starting position
@@ -140,10 +140,10 @@ final class ConsistentHashRing
         }
 
         $position      = $startIndex;
-        $iterations = 0;
+        $iterations    = 0;
         $maxIterations = $ringLength;
 
-        while ( count($selected) < $count && $iterations < $maxIterations) {
+        while (count($selected) < $count && $iterations < $maxIterations) {
             $node = $this->ring[$ringKeys[$position]];
 
             if (! isset($seen[$node->id])) {

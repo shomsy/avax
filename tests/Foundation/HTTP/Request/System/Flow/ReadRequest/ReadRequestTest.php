@@ -118,7 +118,7 @@ final class ReadRequestTest extends TestCase
             $this->createMock(SessionInterface::class),
         );
 
-        $jsonParser = new JsonBodyParser;
+        $jsonParser = new JsonBodyParser();
 
         $this->readRequest = new ReadRequest(
             inputAccessor: $inputAccessor,

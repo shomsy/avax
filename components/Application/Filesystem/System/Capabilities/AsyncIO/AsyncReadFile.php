@@ -21,15 +21,16 @@ use LogicException;
 final readonly class AsyncReadFile
 {
     /**
-     * @param string                     $path                  Absolute or relative file path to read
-     * @param array<string, mixed>       $options               Read operation options (encoding, offset, length, etc.)
+     * @param string $path Absolute or relative file path to read
+     * @param array<string, mixed> $options Read operation options (encoding, offset, length, etc.)
      * @param AsyncOperationPromise|null $asyncOperationPromise The promise associated with this operation (null until scheduled)
      */
     public function __construct(
         public string $path,
-        public array                  $options = [],
+        public array $options = [],
         public ?AsyncOperationPromise $asyncOperationPromise = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a read operation descriptor without an associated promise.
@@ -37,7 +38,7 @@ final readonly class AsyncReadFile
      * The promise will be attached when the operation is scheduled
      * by an AsyncFilesystemInterface implementation.
      */
-    public static function create(string $path, array $options = []) : self
+    public static function create(string $path, array $options = []): self
     {
         return new self($path, $options);
     }
@@ -52,15 +53,14 @@ final readonly class AsyncReadFile
         string $path,
         AsyncOperationPromise $asyncOperationPromise,
         array $options = [],
-    ) : self
-    {
+    ): self {
         return new self($path, $options, $asyncOperationPromise);
     }
 
     /**
      * Check if this operation has been scheduled (has an attached promise).
      */
-    public function isScheduled() : bool
+    public function isScheduled(): bool
     {
         return $this->asyncOperationPromise instanceof AsyncOperationPromise;
     }
@@ -70,7 +70,7 @@ final readonly class AsyncReadFile
      *
      * @throws LogicException If a promise is already attached
      */
-    public function attachPromise(AsyncOperationPromise $asyncOperationPromise) : self
+    public function attachPromise(AsyncOperationPromise $asyncOperationPromise): self
     {
         if ($this->asyncOperationPromise instanceof AsyncOperationPromise) {
             throw new LogicException(

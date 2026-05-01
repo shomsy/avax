@@ -6,13 +6,13 @@ require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
 
 interface CallGreeterContract
 {
-    public function message() : string;
+    public function message(): string;
 }
 
 final class CallGreeter implements CallGreeterContract
 {
     #[Override]
-    public function message() : string
+    public function message(): string
     {
         return 'hello';
     }
@@ -20,19 +20,21 @@ final class CallGreeter implements CallGreeterContract
 
 final readonly class CallAction
 {
-    public function __construct(private CallGreeterContract $callGreeterContract) {}
+    public function __construct(private CallGreeterContract $callGreeterContract)
+    {
+    }
 
-    public static function staticHello() : string
+    public static function staticHello(): string
     {
         return 'static';
     }
 
-    public function __invoke() : string
+    public function __invoke(): string
     {
         return $this->callGreeterContract->message();
     }
 
-    public function greet(CallGreeterContract $callGreeterContract) : string
+    public function greet(CallGreeterContract $callGreeterContract): string
     {
         return $callGreeterContract->message();
     }

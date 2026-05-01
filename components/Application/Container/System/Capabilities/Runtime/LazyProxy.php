@@ -18,15 +18,14 @@ final class LazyProxy
     public function __construct(
         private readonly string $serviceId,
         private readonly Closure $factory,
-    )
-    {
-        self::$instances ??= new WeakMap;
+    ) {
+        self::$instances ??= new WeakMap();
     }
 
     /**
      * Returns the proxied service id.
      */
-    public function serviceId() : string
+    public function serviceId(): string
     {
         return $this->serviceId;
     }
@@ -34,7 +33,7 @@ final class LazyProxy
     /**
      * Forwards one method call to the resolved service.
      */
-    public function __call(string $name, array $arguments) : mixed
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->resolve()->{$name}(...$arguments);
     }
@@ -42,7 +41,7 @@ final class LazyProxy
     /**
      * Resolves and returns the proxied service instance.
      */
-    public function resolve() : object
+    public function resolve(): object
     {
         if (! isset(self::$instances[$this])) {
             self::$instances[$this] = ($this->factory)();
@@ -54,7 +53,7 @@ final class LazyProxy
     /**
      * Forwards one property read to the resolved service.
      */
-    public function __get(string $name) : mixed
+    public function __get(string $name): mixed
     {
         return $this->resolve()->{$name};
     }
@@ -62,7 +61,7 @@ final class LazyProxy
     /**
      * Forwards one property write to the resolved service.
      */
-    public function __set(string $name, mixed $value) : void
+    public function __set(string $name, mixed $value): void
     {
         $this->resolve()->{$name} = $value;
     }
@@ -70,7 +69,7 @@ final class LazyProxy
     /**
      * Reports whether one proxied property is set.
      */
-    public function __isset(string $name) : bool
+    public function __isset(string $name): bool
     {
         return isset($this->resolve()->{$name});
     }
@@ -78,7 +77,7 @@ final class LazyProxy
     /**
      * Forwards one invocation to the resolved service.
      */
-    public function __invoke(mixed ...$arguments) : mixed
+    public function __invoke(mixed ...$arguments): mixed
     {
         return ($this->resolve())(...$arguments);
     }
@@ -86,11 +85,11 @@ final class LazyProxy
     /**
      * Exposes safe debug metadata for the proxy.
      */
-    public function __debugInfo() : array
+    public function __debugInfo(): array
     {
         return [
             'serviceId' => $this->serviceId,
-            'resolved' => isset(self::$instances[$this]),
+            'resolved'  => isset(self::$instances[$this]),
         ];
     }
 }

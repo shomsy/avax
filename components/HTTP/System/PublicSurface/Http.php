@@ -11,12 +11,16 @@ use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 
 final class Http implements HttpInterface
 {
-    public function __construct(private RouterInterface $router, private MiddlewarePipeline $pipeline) {}
+    public function __construct(private RouterInterface $router, private MiddlewarePipeline $pipeline)
+    {
+    }
 
-    public function handle(RequestInterface $req) : ResponseInterface
+    public function handle(RequestInterface $req): ResponseInterface
     {
         return $this->pipeline->run($req, fn ($request) => $this->router->dispatch($request));
     }
 
-    public function terminate(RequestInterface $req, ResponseInterface $res) : void {}
+    public function terminate(RequestInterface $req, ResponseInterface $res): void
+    {
+    }
 }

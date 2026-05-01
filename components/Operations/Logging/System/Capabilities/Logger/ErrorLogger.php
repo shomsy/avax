@@ -21,14 +21,15 @@ final readonly class ErrorLogger implements LoggerInterface
 {
     public function __construct(
         private LogWriterInterface $writer,
-    ) {}
+    ) {
+    }
 
-    public function emergency(Stringable|string $message, array $context = []) : void
+    public function emergency(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::EMERGENCY, $message, $context);
     }
 
-    public function log(mixed $level, Stringable|string $message, array $context = []) : void
+    public function log(mixed $level, Stringable|string $message, array $context = []): void
     {
         if (! is_string($level)) {
             throw new InvalidArgumentException('Log level must be a string.');
@@ -48,7 +49,7 @@ final readonly class ErrorLogger implements LoggerInterface
         $this->writer->write($entry);
     }
 
-    private function formatContext(array $context) : string
+    private function formatContext(array $context): string
     {
         if (empty($context)) {
             return '';
@@ -57,10 +58,10 @@ final readonly class ErrorLogger implements LoggerInterface
         if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
             $e                    = $context['exception'];
             $context['exception'] = [
-                'class' => $e::class,
+                'class'   => $e::class,
                 'message' => $e->getMessage(),
-                'file'  => $e->getFile() . ':' . $e->getLine(),
-                'trace' => array_slice(explode("\n", $e->getTraceAsString()), 0, 10),
+                'file'    => $e->getFile() . ':' . $e->getLine(),
+                'trace'   => array_slice(explode("\n", $e->getTraceAsString()), 0, 10),
             ];
         }
 
@@ -71,37 +72,37 @@ final readonly class ErrorLogger implements LoggerInterface
         }
     }
 
-    public function alert(Stringable|string $message, array $context = []) : void
+    public function alert(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::ALERT, $message, $context);
     }
 
-    public function critical(Stringable|string $message, array $context = []) : void
+    public function critical(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::CRITICAL, $message, $context);
     }
 
-    public function error(Stringable|string $message, array $context = []) : void
+    public function error(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::ERROR, $message, $context);
     }
 
-    public function warning(Stringable|string $message, array $context = []) : void
+    public function warning(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::WARNING, $message, $context);
     }
 
-    public function notice(Stringable|string $message, array $context = []) : void
+    public function notice(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::NOTICE, $message, $context);
     }
 
-    public function info(Stringable|string $message, array $context = []) : void
+    public function info(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::INFO, $message, $context);
     }
 
-    public function debug(Stringable|string $message, array $context = []) : void
+    public function debug(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::DEBUG, $message, $context);
     }

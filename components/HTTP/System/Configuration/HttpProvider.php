@@ -11,11 +11,11 @@ use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 
 final class HttpProvider implements ComponentProviderInterface
 {
-    public function register(ComponentRegistry $registry) : void
+    public function register(ComponentRegistry $registry): void
     {
         $registry->single('http', static fn () => new Http(
             $registry->get('router'),
-            new MiddlewarePipeline, // Should be populated with global middlewares
+            new MiddlewarePipeline(), // Should be populated with global middlewares
         ));
     }
 }

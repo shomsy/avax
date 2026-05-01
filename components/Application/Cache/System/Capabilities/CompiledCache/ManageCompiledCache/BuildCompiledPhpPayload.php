@@ -8,7 +8,7 @@ use Closure;
 
 final class BuildCompiledPhpPayload
 {
-    public function build(mixed $payload) : string
+    public function build(mixed $payload): string
     {
         $this->validate(payload: $payload);
 
@@ -28,7 +28,7 @@ final class BuildCompiledPhpPayload
             PHP;
     }
 
-    private function validate(mixed $payload) : void
+    private function validate(mixed $payload): void
     {
         if ($payload instanceof Closure) {
             throw new CompiledCachePayloadWasInvalid(
@@ -38,9 +38,9 @@ final class BuildCompiledPhpPayload
 
         if (! is_array($payload) && ! is_scalar($payload) && $payload !== null) {
             throw new CompiledCachePayloadWasInvalid(reason: sprintf(
-                                                                 'Type %s cannot be exported to PHP',
-                                                                 gettype($payload),
-                                                             ));
+                'Type %s cannot be exported to PHP',
+                gettype($payload),
+            ));
         }
 
         if (is_array($payload)) {
@@ -48,7 +48,7 @@ final class BuildCompiledPhpPayload
         }
     }
 
-    private function validateArray(array $data) : void
+    private function validateArray(array $data): void
     {
         foreach ($data as $key => $value) {
             if (is_string($key) && $key === '') {
@@ -75,7 +75,7 @@ final class BuildCompiledPhpPayload
         }
     }
 
-    private function export(mixed $payload) : string
+    private function export(mixed $payload): string
     {
         if (is_array($payload)) {
             return var_export($payload, true);

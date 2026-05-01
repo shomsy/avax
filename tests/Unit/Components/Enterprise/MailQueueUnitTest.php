@@ -29,35 +29,35 @@ final class MailQueueUnitTest extends TestCase
 
     public function test_mailable_tracks_from_address() : void
     {
-        $mailable = (new Mailable)->from(address: 'noreply@example.com', name: 'Avax');
+        $mailable = (new Mailable())->from(address: 'noreply@example.com', name: 'Avax');
 
         self::assertSame(expected: 'Avax <noreply@example.com>', actual: $mailable->getFrom());
     }
 
     public function test_mailable_tracks_cc_recipients() : void
     {
-        $mailable = (new Mailable)->cc(address: 'cc@example.com');
+        $mailable = (new Mailable())->cc(address: 'cc@example.com');
 
         self::assertSame(expected: ['cc@example.com'], actual: $mailable->getCc());
     }
 
     public function test_mailable_tracks_attachments() : void
     {
-        $mailable = (new Mailable)->attach(path: '/tmp/report.txt');
+        $mailable = (new Mailable())->attach(path: '/tmp/report.txt');
 
         self::assertSame(expected: 'report.txt', actual: $mailable->getAttachments()[0]['name']);
     }
 
     public function test_mail_queue_pushes_mail_jobs() : void
     {
-        MailQueue::send(mailable: (new Mailable)->to(address: 'a@example.com'));
+        MailQueue::send(mailable: (new Mailable())->to(address: 'a@example.com'));
 
         self::assertSame(expected: 1, actual: MailQueue::queuedCount());
     }
 
     public function test_mail_queue_schedules_delayed_mail_jobs() : void
     {
-        MailQueue::later(delay: 60, mailable: (new Mailable)->to(address: 'a@example.com'));
+        MailQueue::later(delay: 60, mailable: (new Mailable())->to(address: 'a@example.com'));
 
         self::assertSame(expected: 1, actual: Queue::size(queue: 'mail'));
     }
@@ -66,7 +66,7 @@ final class MailQueueUnitTest extends TestCase
     {
         $mailer = new SmtpMailer(config: ['driver' => 'array']);
 
-        self::assertTrue(condition: $mailer->send(mailable: (new Mailable)->to(address: 'a@example.com')));
+        self::assertTrue(condition: $mailer->send(mailable: (new Mailable())->to(address: 'a@example.com')));
     }
 
     public function test_mime_message_renders_raw_headers() : void
@@ -78,7 +78,7 @@ final class MailQueueUnitTest extends TestCase
 
     public function test_log_transport_records_successful_send() : void
     {
-        $transport = new LogTransport;
+        $transport = new LogTransport();
         $result    = $transport->send(
             message : new MimeMessage(from: 'a@example.com', to: 'b@example.com', subject: 'Hi', body: 'Body'),
             envelope: new Envelope(from: 'a@example.com'),
@@ -90,7 +90,7 @@ final class MailQueueUnitTest extends TestCase
     public function test_public_mailer_raw_builder_sends_through_flow() : void
     {
         $mailer = new Mailer(
-            sendMail: new SendMail(transport: new LogTransport),
+            sendMail: new SendMail(transport: new LogTransport()),
             envelope: new Envelope(from: 'noreply@example.com'),
         );
 

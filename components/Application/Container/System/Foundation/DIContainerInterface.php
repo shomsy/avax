@@ -31,14 +31,14 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
      * @throws ContainerException
      * @throws DependencyNotFoundException
      */
-    public function make(string $abstract, array $parameters = []) : object;
+    public function make(string $abstract, array $parameters = []): object;
 
     /**
      * Returns a thin factory closure over one container entry.
      *
      * @return Closure(array<string, mixed>=) : object
      */
-    public function factory(string $abstract) : Closure;
+    public function factory(string $abstract): Closure;
 
     /**
      * Executes one callable through the container.
@@ -48,7 +48,7 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
      * @throws ContainerException
      * @throws DependencyNotFoundException
      */
-    public function call(callable|string $callable, array $parameters = []) : mixed;
+    public function call(callable|string $callable, array $parameters = []): mixed;
 
     /**
      * Applies property and method injection to one existing object.
@@ -56,31 +56,31 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
      * @throws ContainerException
      * @throws DependencyNotFoundException
      */
-    public function injectInto(object $target) : object;
+    public function injectInto(object $target): object;
 
     /**
      * Reports whether one object exposes injectable members.
      */
-    public function canInject(object $target) : bool;
+    public function canInject(object $target): bool;
 
     /**
      * Returns the injection report for one object.
      */
-    public function inspectInjection(object $target) : InjectionReport;
+    public function inspectInjection(object $target): InjectionReport;
 
     /**
      * Clears derived caches, runtime state, and compiled artifacts.
      *
      * Canonical authored registrations stay intact.
      */
-    public function flush() : void;
+    public function flush(): void;
 
     /**
      * Resets disposable runtime state to a clean boundary.
      *
      * Canonical registrations and compiled artifacts stay intact.
      */
-    public function reset() : void;
+    public function reset(): void;
 
     /**
      * @param array<int, string|RegisterDependency> $providers
@@ -88,95 +88,95 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
      * @throws InvalidArgumentException
      * @throws ContainerException
      */
-    public function bootProviders(array $providers) : void;
+    public function bootProviders(array $providers): void;
 
     /**
      * @param list<string> $serviceIds
      *
      * @return list<string>
      */
-    public function validate(array $serviceIds = []) : array;
+    public function validate(array $serviceIds = []): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function describeService(string $id) : array;
+    public function describeService(string $id): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugService(string $id) : array;
+    public function debugService(string $id): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugPlan(string $id) : array;
+    public function debugPlan(string $id): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugGraph(string $id = '') : array;
+    public function debugGraph(string $id = ''): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugGovernance(string $id = '') : array;
+    public function debugGovernance(string $id = ''): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugArchitecture(string $id = '') : array;
+    public function debugArchitecture(string $id = ''): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugSlice(string $slice = '') : array;
+    public function debugSlice(string $slice = ''): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugImports(string $slice = '') : array;
+    public function debugImports(string $slice = ''): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugExports(string $slice = '') : array;
+    public function debugExports(string $slice = ''): array;
 
     /**
      * @param list<string> $serviceIds
      * @return array<string, mixed>
      */
-    public function debugVisibilityViolations(array $serviceIds = []) : array;
+    public function debugVisibilityViolations(array $serviceIds = []): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugTags(string $tag) : array;
+    public function debugTags(string $tag): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugGroup(string $group) : array;
+    public function debugGroup(string $group): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugSelection(string $id) : array;
+    public function debugSelection(string $id): array;
 
     /**
      * @return array<string, string>
      */
-    public function debugAliases() : array;
+    public function debugAliases(): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function debugScope() : array;
+    public function debugScope(): array;
 
     /**
      * Reads one environment-backed setting.
      */
-    public function env(string $key, mixed $default = null) : mixed;
+    public function env(string $key, mixed $default = null): mixed;
 
     /**
      * Opens one new scope frame.
@@ -221,12 +221,12 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
     /**
      * @param list<string> $serviceIds
      */
-    public function compileReport(array $serviceIds = []) : ?CompileReport;
+    public function compileReport(array $serviceIds = []): ?CompileReport;
 
     /**
      * Returns the current runtime state report.
      */
-    public function runtimeReport() : RuntimeReport;
+    public function runtimeReport(): RuntimeReport;
 
     /**
      * Reports whether one alias exists.
@@ -256,7 +256,7 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
     /**
      * Returns the runtime scope boundary.
      */
-    public function scopes() : ScopeInterface;
+    public function scopes(): ScopeInterface;
 
     /**
      * Resolves every service carrying one tag.
@@ -264,7 +264,7 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
      * @throws ContainerException
      * @throws DependencyNotFoundException
      */
-    public function tagged(string $tag) : array;
+    public function tagged(string $tag): array;
 
     /**
      * Resolves every service in one ordered group.
@@ -272,52 +272,52 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
      * @throws ContainerException
      * @throws DependencyNotFoundException
      */
-    public function grouped(string $group) : array;
+    public function grouped(string $group): array;
 
     /**
      * Returns one lazy proxy for the requested service.
      */
-    public function lazy(string $abstract) : LazyProxy;
+    public function lazy(string $abstract): LazyProxy;
 
     /**
      * Exports numeric runtime metrics.
      */
-    public function exportMetrics() : string;
+    public function exportMetrics(): string;
 
     /**
      * Exports one graph artifact in the requested format.
      */
-    public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = '') : string;
+    public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = ''): string;
 
     /**
      * Exports one structural graph diff artifact.
      */
-    public function diffGraph(string $format = 'json', string $id = '') : string;
+    public function diffGraph(string $format = 'json', string $id = ''): string;
 
     /**
      * @return array<string, mixed>
      */
-    public function why(string $id) : array;
+    public function why(string $id): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function whoUses(string $id) : array;
+    public function whoUses(string $id): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function whatBreaksIf(string $id) : array;
+    public function whatBreaksIf(string $id): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function showOwner(string $id) : array;
+    public function showOwner(string $id): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function showSlice(string $slice = '') : array;
+    public function showSlice(string $slice = ''): array;
 
     /**
      * Returns a contextual view over the same container.

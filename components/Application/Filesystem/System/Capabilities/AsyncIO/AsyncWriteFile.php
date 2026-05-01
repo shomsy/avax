@@ -21,17 +21,18 @@ use LogicException;
 final readonly class AsyncWriteFile
 {
     /**
-     * @param string                     $path                  Absolute or relative file path to write
-     * @param string                     $contents              File contents to write
-     * @param array<string, mixed>       $options               Write operation options (permissions, append mode, etc.)
+     * @param string $path Absolute or relative file path to write
+     * @param string $contents File contents to write
+     * @param array<string, mixed> $options Write operation options (permissions, append mode, etc.)
      * @param AsyncOperationPromise|null $asyncOperationPromise The promise associated with this operation (null until scheduled)
      */
     public function __construct(
         public string $path,
         public string $contents,
-        public array                  $options = [],
+        public array $options = [],
         public ?AsyncOperationPromise $asyncOperationPromise = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a write operation descriptor without an associated promise.
@@ -39,7 +40,7 @@ final readonly class AsyncWriteFile
      * The promise will be attached when the operation is scheduled
      * by an AsyncFilesystemInterface implementation.
      */
-    public static function create(string $path, string $contents, array $options = []) : self
+    public static function create(string $path, string $contents, array $options = []): self
     {
         return new self($path, $contents, $options);
     }
@@ -55,15 +56,14 @@ final readonly class AsyncWriteFile
         string $contents,
         AsyncOperationPromise $asyncOperationPromise,
         array $options = [],
-    ) : self
-    {
+    ): self {
         return new self($path, $contents, $options, $asyncOperationPromise);
     }
 
     /**
      * Check if this operation has been scheduled (has an attached promise).
      */
-    public function isScheduled() : bool
+    public function isScheduled(): bool
     {
         return $this->asyncOperationPromise instanceof AsyncOperationPromise;
     }
@@ -73,7 +73,7 @@ final readonly class AsyncWriteFile
      *
      * @throws LogicException If a promise is already attached
      */
-    public function attachPromise(AsyncOperationPromise $asyncOperationPromise) : self
+    public function attachPromise(AsyncOperationPromise $asyncOperationPromise): self
     {
         if ($this->asyncOperationPromise instanceof AsyncOperationPromise) {
             throw new LogicException(

@@ -19,9 +19,9 @@ final readonly class StoreCachedValue
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private Clock         $clock,
+        private Clock    $clock,
         private ?CacheMetrics $cacheMetrics = null,
-        private CacheTtl      $cacheTtl = new CacheTtl,
+        private CacheTtl $cacheTtl = new CacheTtl(),
     ) {}
 
     public function store(CacheKey $cacheKey, mixed $value, int|DateInterval|null $ttl = null) : bool

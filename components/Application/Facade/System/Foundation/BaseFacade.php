@@ -20,7 +20,7 @@ abstract class BaseFacade implements FacadeInterface
 
     protected static ?ContainerInterface $container = null;
 
-    public static function __callStatic(string $method, array $args) : mixed
+    public static function __callStatic(string $method, array $args): mixed
     {
         $instance = static::resolveInstance();
 
@@ -32,23 +32,23 @@ abstract class BaseFacade implements FacadeInterface
     }
 
     #[Override]
-    public static function getFacadeAccessor() : string
+    public static function getFacadeAccessor(): string
     {
         return static::$accessor;
     }
 
     #[Override]
-    public static function clearResolvedInstance() : void
+    public static function clearResolvedInstance(): void
     {
         unset(static::$resolvedInstances[static::getFacadeAccessor()]);
     }
 
-    public static function clearAllResolvedInstances() : void
+    public static function clearAllResolvedInstances(): void
     {
         static::$resolvedInstances = [];
     }
 
-    public static function setContainer(ContainerInterface $container) : void
+    public static function setContainer(ContainerInterface $container): void
     {
         static::$container = $container;
     }
@@ -56,19 +56,19 @@ abstract class BaseFacade implements FacadeInterface
     /**
      * Replace the facade's resolved instance with a fake.
      */
-    public static function fake(callable|object|null $callback = null) : mixed
+    public static function fake(callable|object|null $callback = null): mixed
     {
         if ($callback === null) {
-            $callback = static fn () : null => null;
+            $callback = static fn (): null => null;
         }
 
-        $instance = is_callable($callback) && ! is_object($callback) ? $callback() : $callback;
+        $instance                                               = is_callable($callback) && ! is_object($callback) ? $callback() : $callback;
         static::$resolvedInstances[static::getFacadeAccessor()] = $instance;
 
         return $instance;
     }
 
-    protected static function resolveInstance() : mixed
+    protected static function resolveInstance(): mixed
     {
         $accessor = static::getFacadeAccessor();
 

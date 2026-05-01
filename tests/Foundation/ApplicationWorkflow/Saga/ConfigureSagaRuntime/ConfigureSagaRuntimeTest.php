@@ -12,18 +12,18 @@ use Avax\Tests\TestCase;
 
 final class ConfigureSagaRuntimeTest extends TestCase
 {
-    public function test_missing_saga_store_fails_before_runtime() : void
+    public function test_missing_saga_store_fails_before_runtime(): void
     {
         $this->expectException(SagaRuntimeConfigurationFailure::class);
         $this->expectExceptionMessage('StoreSagaState');
 
-        new ConfigureSagaRuntime()->validate(config: new SagaRuntimeConfig);
+        new ConfigureSagaRuntime()->validate(config: new SagaRuntimeConfig());
     }
 
-    public function test_missing_step_runner_fails_before_runtime() : void
+    public function test_missing_step_runner_fails_before_runtime(): void
     {
-        $runtime = new ConfigureSagaRuntime;
-        $config  = $runtime->withStore(store: new StoreSagaState);
+        $runtime = new ConfigureSagaRuntime();
+        $config  = $runtime->withStore(store: new StoreSagaState());
 
         $this->expectException(SagaRuntimeConfigurationFailure::class);
         $this->expectExceptionMessage('step runner');
@@ -31,11 +31,11 @@ final class ConfigureSagaRuntimeTest extends TestCase
         $runtime->validate(config: $config);
     }
 
-    public function test_valid_runtime_config_keeps_explicit_dependencies() : void
+    public function test_valid_runtime_config_keeps_explicit_dependencies(): void
     {
-        $runtime    = new ConfigureSagaRuntime;
-        $store      = new StoreSagaState;
-        $stepRunner = static fn () : string => 'ran';
+        $runtime    = new ConfigureSagaRuntime();
+        $store      = new StoreSagaState();
+        $stepRunner = static fn (): string => 'ran';
 
         $config = $runtime->withStepRunner(
             stepRunner: $stepRunner,

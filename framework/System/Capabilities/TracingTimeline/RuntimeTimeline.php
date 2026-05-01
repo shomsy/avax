@@ -28,7 +28,7 @@ final class RuntimeTimeline
     /**
      * Start timing a named operation.
      */
-    public function begin(string $name, ?string $category = null) : TraceSpan
+    public function begin(string $name, string $category = null) : TraceSpan
     {
         return new TraceSpan(
             name    : $name,
@@ -48,9 +48,9 @@ final class RuntimeTimeline
      */
     public function record(
         string $name,
-        ?float  $durationMS = null,
-        ?string $category = null,
-        array   $metadata = [],
+        float  $durationMS = null,
+        string $category = null,
+        array  $metadata = [],
     ) : void
     {
         $timestamp = microtime(true) * 1000;

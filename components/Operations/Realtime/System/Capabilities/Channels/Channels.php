@@ -11,22 +11,22 @@ final class Channels
     /** @var array<string, array<string, Connection>> */
     private array $channels = [];
 
-    public function get(string $name) : Channel
+    public function get(string $name): Channel
     {
         return new Channel(name: $name, channels: $this);
     }
 
-    public function subscribe(Connection $connection, string $channel) : void
+    public function subscribe(Connection $connection, string $channel): void
     {
         $this->channels[$channel][$connection->id] = $connection;
     }
 
-    public function unsubscribe(Connection $connection, string $channel) : void
+    public function unsubscribe(Connection $connection, string $channel): void
     {
         unset($this->channels[$channel][$connection->id]);
     }
 
-    public function forget(Connection|string $connection) : void
+    public function forget(Connection|string $connection): void
     {
         $connectionId = $connection instanceof Connection ? $connection->id : $connection;
 
@@ -35,7 +35,7 @@ final class Channels
         }
     }
 
-    public function broadcast(string $channel, mixed $message) : int
+    public function broadcast(string $channel, mixed $message): int
     {
         $sent = 0;
 
@@ -47,7 +47,7 @@ final class Channels
         return $sent;
     }
 
-    public function subscriberCount(string $channel) : int
+    public function subscriberCount(string $channel): int
     {
         return count($this->channels[$channel] ?? []);
     }
@@ -55,7 +55,7 @@ final class Channels
     /**
      * @return list<string>
      */
-    public function connectionIds(string $channel) : array
+    public function connectionIds(string $channel): array
     {
         return array_keys(array: $this->channels[$channel] ?? []);
     }

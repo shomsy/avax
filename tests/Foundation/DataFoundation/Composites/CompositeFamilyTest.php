@@ -15,7 +15,7 @@ use Avax\Tests\TestCase;
 
 final class CompositeFamilyTest extends TestCase
 {
-    public function test_pair_keeps_both_slots() : void
+    public function test_pair_keeps_both_slots(): void
     {
         $pair = new Pair(first: 'left', second: 'right');
 
@@ -24,7 +24,7 @@ final class CompositeFamilyTest extends TestCase
         $this->assertSame(['left', 'right'], $pair->toArray());
     }
 
-    public function test_tuple_types_preserve_fixed_shape() : void
+    public function test_tuple_types_preserve_fixed_shape(): void
     {
         $tuple2 = new Tuple2(first: 1, second: 2);
         $tuple3 = new Tuple3(first: 1, second: 2, third: 3);
@@ -35,7 +35,7 @@ final class CompositeFamilyTest extends TestCase
         $this->assertSame([1, 2, 3, 4], $tuple4->toArray());
     }
 
-    public function test_record_can_be_built_from_fields() : void
+    public function test_record_can_be_built_from_fields(): void
     {
         $record = Record::fromFields(
             new RecordField(name: 'name', value: 'Alice'),
@@ -48,7 +48,7 @@ final class CompositeFamilyTest extends TestCase
         $this->assertSame(['name' => 'Alice', 'age' => 30], $record->toArray());
     }
 
-    public function test_map_entry_keeps_key_and_value() : void
+    public function test_map_entry_keeps_key_and_value(): void
     {
         $entry = new MapEntry(key: 'role', value: 'admin');
 

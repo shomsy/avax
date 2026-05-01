@@ -7,13 +7,13 @@ require_once dirname(path: __DIR__) . '/bootstrap.php';
 use Avax\Components\Application\Container\DI\Foundation\Ids\IdGenerator;
 use Avax\Components\Application\Container\DI\Foundation\Time\Clock;
 
-$clock     = new Clock;
-$generator = new IdGenerator;
+$clock     = new Clock();
+$generator = new IdGenerator();
 
 $first = $clock->now();
 usleep(microseconds: 10);
 $second = $clock->now();
-$id        = $generator->next(prefix: 'svc_');
+$id     = $generator->next(prefix: 'svc_');
 
 assertTrue(condition: $second >= $first, message: 'Clock should move forward.');
 assertTrue(condition: str_starts_with(haystack: $id, needle: 'svc_'), message: 'Generated ids should preserve the prefix.');

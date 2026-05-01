@@ -13,11 +13,11 @@ final readonly class CliInputReader
      */
     public function read(array $argv): array
     {
-        $command = $argv[1] ?? 'help';
+        $command   = $argv[1] ?? 'help';
         $arguments = array_slice($argv, 2);
 
         return [
-            'command' => $command,
+            'command'   => $command,
             'arguments' => array_values($arguments),
         ];
     }

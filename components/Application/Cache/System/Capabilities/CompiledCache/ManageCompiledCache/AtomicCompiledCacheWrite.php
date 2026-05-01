@@ -9,15 +9,16 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class AtomicCompiledCacheWrite
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private Clock $clock = new SystemClock) {}
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private Clock $clock = new SystemClock())
+    {
+    }
 
     public function write(
         CompiledCacheName $compiledCacheName,
         string $payload,
-    ) : CompiledCacheArtifact
-    {
+    ): CompiledCacheArtifact {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
         $temporaryPath = $compiledCachePath->toTemporaryPath();
 
@@ -55,14 +56,14 @@ final readonly class AtomicCompiledCacheWrite
         );
     }
 
-    private function ensureDirectoryExists(string $directory) : void
+    private function ensureDirectoryExists(string $directory): void
     {
         if (! is_dir($directory)) {
             mkdir($directory, 0o755, true);
         }
     }
 
-    private function validatePhpSyntax(string $path) : bool
+    private function validatePhpSyntax(string $path): bool
     {
         $output = shell_exec('php -l ' . escapeshellarg($path));
         if ($output === false || $output === null) {

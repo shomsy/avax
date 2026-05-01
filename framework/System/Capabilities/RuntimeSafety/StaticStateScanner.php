@@ -58,7 +58,6 @@ final class StaticStateScanner
 
     /**
      * @param class-string $className
-     *
      * @return list<RuntimeSafetyFinding>
      */
     private function scanClass(string $className): array
@@ -138,6 +137,6 @@ final class StaticStateScanner
         $file  = $class->getFileName();
         $line  = $class->getStartLine();
 
-        return ($file !== false ? $file : $class->getName()) . ':'.$line;
+        return ($file !== false ? $file : $class->getName()) . ':' . $line;
     }
 }

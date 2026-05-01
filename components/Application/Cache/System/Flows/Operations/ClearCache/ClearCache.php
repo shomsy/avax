@@ -13,14 +13,15 @@ final readonly class ClearCache
     public function __construct(
         private CacheStore $cacheStore,
         private ?CacheMetrics $cacheMetrics = null,
-    ) {}
+    ) {
+    }
 
-    public function clearNamespace() : int
+    public function clearNamespace(): int
     {
         return $this->clear() ? 1 : 0;
     }
 
-    public function clear() : bool
+    public function clear(): bool
     {
         try {
             $this->cacheStore->clear();

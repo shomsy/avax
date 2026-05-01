@@ -34,7 +34,7 @@ final class SessionScope
             }
         }
 
-        $this->id = session_id() ?: '';
+        $this->id   = session_id() ?: '';
         $this->data = $this->store->read($this->id);
         $this->started = true;
 

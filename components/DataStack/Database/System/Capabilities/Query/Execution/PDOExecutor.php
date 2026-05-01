@@ -31,7 +31,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         string $sql,
         #[SensitiveParameter]
         array $bindings = [],
-        ExecutionScope $scope = null,
+        ?ExecutionScope $executionScope = null,
     ): array {
         $start = microtime(as_float: true);
 
@@ -44,7 +44,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                 sql           : $sql,
                 bindings      : $bindings,
                 start         : $start,
-                scope         : $scope,
+                scope         : $executionScope,
                 redactBindings: $this->shouldRedactBindings(),
             );
 
@@ -72,7 +72,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         string $sql,
         #[SensitiveParameter]
         array $bindings = [],
-        ExecutionScope $scope = null,
+        ?ExecutionScope $executionScope = null,
     ): ExecutionResult {
         $start = microtime(as_float: true);
 
@@ -84,7 +84,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                 sql           : $sql,
                 bindings      : $bindings,
                 start         : $start,
-                scope         : $scope,
+                scope         : $executionScope,
                 redactBindings: $this->shouldRedactBindings(),
             );
 
@@ -111,14 +111,14 @@ final readonly class PDOExecutor implements ExecutorInterface
         #[SensitiveParameter]
         array $bindings,
         float $start,
-        ExecutionScope $scope = null,
+        ?ExecutionScope $executionScope = null,
         bool $redactBindings = true,
     ): void {
         if (! $this->eventBus instanceof EventBus) {
             return;
         }
 
-        $correlationId = $scope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
+        $correlationId = $executionScope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
 
         $this->eventBus->dispatch(event: new QueryExecuted(
             sql           : $sql,

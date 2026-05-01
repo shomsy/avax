@@ -27,17 +27,17 @@ final class QueryException extends DatabaseException
      *
      * @param string         $message  Technical failure description
      * @param string         $sql      The dialect-specific SQL string that failed
-     * @param Throwable|null $previous The underlying driver exception
+     * @param Throwable|null $throwable The underlying driver exception
      */
     public function __construct(
         string $message,
         private readonly string $sql,
         #[SensitiveParameter]
         private readonly array $rawBindings = [],
-        ?Throwable $previous = null,
+        ?Throwable $throwable = null,
     ) {
         $this->redactedBindings = $this->redactBindings(bindings: $this->rawBindings);
-        parent::__construct(message: $message, code: 0, previous: $previous);
+        parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 
     /**

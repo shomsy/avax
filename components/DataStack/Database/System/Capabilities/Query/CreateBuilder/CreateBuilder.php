@@ -30,7 +30,7 @@ final readonly class CreateBuilder
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function for(string $connectionName = null) : QueryBuilder
+    public function for(?string $connectionName = null) : QueryBuilder
     {
         $connection = $this->connections->connection(name: $connectionName);
         $queryOrchestrator = new QueryOrchestrator(

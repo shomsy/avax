@@ -28,7 +28,7 @@ final readonly class ExecutionResult
      */
     public function __construct(
         private bool $success,
-        int $affectedRows = null,
+        ?int $affectedRows = null,
         private int|string|null $lastInsertId = null,
     ) {
         $affectedRows ??= 0;
@@ -38,7 +38,7 @@ final readonly class ExecutionResult
     /**
      * Create a success report.
      */
-    public static function success(int $affectedRows = null, int|string $lastInsertId = null) : self
+    public static function success(?int $affectedRows = null, int|string|null $lastInsertId = null) : self
     {
         $affectedRows ??= 0;
 

@@ -12,8 +12,7 @@ final class ComponentRegistration
 {
     public function __construct(
         private readonly ComponentRegistry $registry,
-    ) {
-    }
+    ) {}
 
     public function register(ComponentDefinition $definition) : void
     {

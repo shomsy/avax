@@ -12,7 +12,7 @@ final class RequestUri implements UriInterface
         private string $scheme = '',
         private string $userInfo = '',
         private string $host = '',
-        private int|null $port = null,
+        private ?int $port = null,
         private string $path = '',
         private string $query = '',
         private string $fragment = '',
@@ -38,7 +38,7 @@ final class RequestUri implements UriInterface
         return $this->host;
     }
 
-    public function getPort() : int|null
+    public function getPort() : ?int
     {
         return $this->port;
     }
@@ -60,7 +60,7 @@ final class RequestUri implements UriInterface
 
     public function withScheme($scheme) : self
     {
-        $clone         = clone $this;
+        $clone = clone $this;
         $clone->scheme = $scheme;
 
         return $clone;
@@ -68,7 +68,7 @@ final class RequestUri implements UriInterface
 
     public function withUserInfo($userInfo, $password = null) : self
     {
-        $clone           = clone $this;
+        $clone = clone $this;
         $clone->userInfo = $userInfo;
 
         return $clone;
@@ -76,7 +76,7 @@ final class RequestUri implements UriInterface
 
     public function withHost($host) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->host = $host;
 
         return $clone;
@@ -84,7 +84,7 @@ final class RequestUri implements UriInterface
 
     public function withPort($port) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->port = $port;
 
         return $clone;
@@ -92,7 +92,7 @@ final class RequestUri implements UriInterface
 
     public function withPath($path) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->path = $path;
 
         return $clone;
@@ -100,7 +100,7 @@ final class RequestUri implements UriInterface
 
     public function withQuery($query) : self
     {
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->query = $query;
 
         return $clone;
@@ -108,7 +108,7 @@ final class RequestUri implements UriInterface
 
     public function withFragment($fragment) : self
     {
-        $clone           = clone $this;
+        $clone = clone $this;
         $clone->fragment = $fragment;
 
         return $clone;

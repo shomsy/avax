@@ -26,10 +26,10 @@ final class DataTransferViolationsTest extends TestCase
     {
         // Arrange
         $violations = DataTransferViolations::from(violations: [
-                                                       new DataTransferViolation(path: 'email', code: 'required', message: 'Email is required.'),
-                                                       new DataTransferViolation(path: 'email', code: 'invalid', message: 'Email is invalid.'),
-                                                       new DataTransferViolation(path: 'name', code: 'required', message: 'Name is required.'),
-                                                   ]);
+                                                                   new DataTransferViolation(path: 'email', code: 'required', message: 'Email is required.'),
+                                                                   new DataTransferViolation(path: 'email', code: 'invalid', message: 'Email is invalid.'),
+                                                                   new DataTransferViolation(path: 'name', code: 'required', message: 'Name is required.'),
+                                                               ]);
 
         // Act
         $grouped = $violations->byPath();
@@ -48,9 +48,9 @@ final class DataTransferViolationsTest extends TestCase
     {
         // Arrange
         $violations = DataTransferViolations::from(violations: [
-                                                       new DataTransferViolation(path: 'email', code: 'required', message: 'Email is required.'),
-                                                       new DataTransferViolation(path: 'email', code: 'invalid', message: 'Email is invalid.'),
-                                                   ]);
+                                                                   new DataTransferViolation(path: 'email', code: 'required', message: 'Email is required.'),
+                                                                   new DataTransferViolation(path: 'email', code: 'invalid', message: 'Email is invalid.'),
+                                                               ]);
 
         // Act
         $errors = $violations->toLegacyErrors();

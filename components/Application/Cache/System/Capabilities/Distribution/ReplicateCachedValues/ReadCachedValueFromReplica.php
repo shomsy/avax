@@ -19,7 +19,7 @@ final readonly class ReadCachedValueFromReplica
     public function __construct(
         private ChooseReplicaForRead $chooseReplicaForRead,
         private Clock $clock,
-        CacheStore    ...$cacheStore,
+        CacheStore ...$cacheStore,
     )
     {
         $this->stores = $cacheStore;
@@ -31,9 +31,9 @@ final readonly class ReadCachedValueFromReplica
     ) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         return match ($replicationPolicy) {
-            ReplicationPolicy::SYNCHRONOUS  => $this->readFromPrimary(key: $cacheKey),
+            ReplicationPolicy::SYNCHRONOUS => $this->readFromPrimary(key: $cacheKey),
             ReplicationPolicy::ASYNCHRONOUS => $this->readFromClosest(key: $cacheKey),
-            ReplicationPolicy::QUORUM       => $this->readWithQuorum(key: $cacheKey),
+            ReplicationPolicy::QUORUM      => $this->readWithQuorum(key: $cacheKey),
         };
     }
 
@@ -58,7 +58,7 @@ final readonly class ReadCachedValueFromReplica
     private function readWithQuorum(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $results = [];
-        $found   = null;
+        $found = null;
 
         foreach ($this->stores as $store) {
             try {

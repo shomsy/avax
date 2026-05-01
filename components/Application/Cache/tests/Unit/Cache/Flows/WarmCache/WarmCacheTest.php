@@ -45,7 +45,7 @@ final class WarmCacheTest extends TestCase
 
         $entries = [
             'config:theme' => 'dark',
-            'config:lang'  => 'en',
+            'config:lang' => 'en',
         ];
 
         $count = $warmCache->warm(entries: $entries);
@@ -112,7 +112,7 @@ final class WarmCacheTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
     }
 }

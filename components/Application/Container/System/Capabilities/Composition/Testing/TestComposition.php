@@ -25,7 +25,7 @@ final readonly class TestComposition
     public static function create() : self
     {
         return new self(
-            container: (new CreateContainer())->create(),
+            container: (new CreateContainer)->create(),
         );
     }
 
@@ -38,7 +38,7 @@ final readonly class TestComposition
         string $slice,
         string $abstract,
         mixed $concrete = null,
-        bool  $entry = null,
+        ?bool $entry = null,
         array $imports = [],
     ) : DependencyRegistration
     {

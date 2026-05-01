@@ -15,14 +15,13 @@ final class GraphToolLoginEntry
     public function __construct(public GraphToolIdentityService $graphToolIdentityService) {}
 }
 
-final class GraphToolStructureTarget {
-}
+final class GraphToolStructureTarget {}
 
 final class GraphToolStepOne {}
 
 final class GraphToolStepTwo {}
 
-$cacheDir  = sys_get_temp_dir() . '/container-graph-tool-' . uniqid(prefix: '', more_entropy: true);
+$cacheDir = sys_get_temp_dir() . '/container-graph-tool-' . uniqid(prefix: '', more_entropy: true);
 $container = makeTestContainer(config: CreateContainerConfig::create(cacheDir: $cacheDir));
 
 $container->singleton(abstract: GraphToolIdentityService::class, concrete: GraphToolIdentityService::class)

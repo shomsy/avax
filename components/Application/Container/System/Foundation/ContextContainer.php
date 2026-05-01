@@ -36,7 +36,9 @@ use Throwable;
 readonly class ContextContainer implements ContainerInterface
 {
     private array $context;
+
     private ResolveDependency $resolver;
+
     private Container $base;
 
     /**
@@ -48,9 +50,9 @@ readonly class ContextContainer implements ContainerInterface
         array $context,
     )
     {
-        $this->base     = $base;
+        $this->base    = $base;
         $this->resolver = $resolver;
-        $this->context  = $context;
+        $this->context = $context;
     }
 
     public function has(string $id) : bool
@@ -288,7 +290,7 @@ readonly class ContextContainer implements ContainerInterface
         $this->base->openScope(kind: $kind, scopeId: $scopeId);
     }
 
-    public function closeScope(string $kind = null) : void
+    public function closeScope(?string $kind = null) : void
     {
         $this->base->closeScope(kind: $kind);
     }
@@ -306,7 +308,7 @@ readonly class ContextContainer implements ContainerInterface
      *
      * @return list<string>
      */
-    protected function compileTargets(array $serviceIds) : array
+    protected function compileTargets(array $serviceIds): array
     {
         $slice = $this->slice();
         if (! $this->strictSliceBoundaries() || $slice === '') {
@@ -340,12 +342,12 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function warmCompiled(array $serviceIds = []) : void
+    public function warmCompiled(array $serviceIds = []): void
     {
         $this->base->warmCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
-    public function flushCompiled() : void
+    public function flushCompiled(): void
     {
         $this->assertGlobalMutationAllowed(action: 'flush compiled artifacts');
         $this->base->flushCompiled();
@@ -355,12 +357,12 @@ readonly class ContextContainer implements ContainerInterface
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function rebuildCompiled(array $serviceIds = []) : void
+    public function rebuildCompiled(array $serviceIds = []): void
     {
         $this->base->rebuildCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
-    public function compileReport(array $serviceIds = []) : CompileReport|null
+    public function compileReport(array $serviceIds = []) : ?CompileReport
     {
         return $this->base->compileReport(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
@@ -370,27 +372,27 @@ readonly class ContextContainer implements ContainerInterface
         return $this->base->runtimeReport();
     }
 
-    public function hasAlias(string $alias) : bool
+    public function hasAlias(string $alias): bool
     {
         return $this->base->hasAlias(alias: $alias);
     }
 
-    public function isDeferred(string $id) : bool
+    public function isDeferred(string $id): bool
     {
         return $this->base->isDeferred(id: $id);
     }
 
-    public function isLazy(string $id) : bool
+    public function isLazy(string $id): bool
     {
         return $this->base->isLazy(id: $id);
     }
 
-    public function isCompiled(string $id) : bool
+    public function isCompiled(string $id): bool
     {
         return $this->base->isCompiled(id: $id);
     }
 
-    public function isWarmedUp() : bool
+    public function isWarmedUp(): bool
     {
         return $this->base->isWarmedUp();
     }
@@ -403,7 +405,7 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @throws Throwable
      */
-    public function tagged(string $tag) : array
+    public function tagged(string $tag): array
     {
         return $this->resolver->taggedInContext(tag: $tag, context: $this->context);
     }
@@ -411,7 +413,7 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @throws Throwable
      */
-    public function grouped(string $group) : array
+    public function grouped(string $group): array
     {
         return $this->resolver->groupedInContext(group: $group, context: $this->context);
     }
@@ -444,7 +446,7 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function why(string $id) : array
+    public function why(string $id): array
     {
         return $this->exportGraphFlow()->why(id: $id, context: $this->context);
     }
@@ -452,7 +454,7 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function whoUses(string $id) : array
+    public function whoUses(string $id): array
     {
         return $this->exportGraphFlow()->whoUses(id: $id, context: $this->context);
     }
@@ -460,7 +462,7 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function whatBreaksIf(string $id) : array
+    public function whatBreaksIf(string $id): array
     {
         return $this->exportGraphFlow()->whatBreaksIf(id: $id, context: $this->context);
     }
@@ -468,17 +470,17 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function showOwner(string $id) : array
+    public function showOwner(string $id): array
     {
         return $this->exportGraphFlow()->showOwner(id: $id, context: $this->context);
     }
 
-    public function showSlice(string $slice = '') : array
+    public function showSlice(string $slice = ''): array
     {
         return $this->exportGraphFlow()->showSlice(slice: $slice, context: $this->context);
     }
 
-    public function alias(string $alias, string $abstract) : void
+    public function alias(string $alias, string $abstract): void
     {
         $this->assertGlobalMutationAllowed(action: 'register aliases');
         $this->base->alias(alias: $alias, abstract: $abstract);
@@ -550,7 +552,7 @@ readonly class ContextContainer implements ContainerInterface
         );
     }
 
-    public function instance(string $abstract, object $instance) : void
+    public function instance(string $abstract, object $instance): void
     {
         $this->base->instance(abstract: $abstract, instance: $instance);
         $registration = $this->resolver->registrations()->get(abstract: $abstract);
@@ -562,18 +564,18 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @throws Throwable
      */
-    public function get(string $id) : mixed
+    public function get(string $id): mixed
     {
         return $this->resolver->getInContext(id: $id, context: $this->context);
     }
 
-    public function extend(string $abstract, callable $closure) : void
+    public function extend(string $abstract, callable $closure): void
     {
         $this->assertOwnedMutation(abstract: $abstract, action: 'extend');
         $this->base->extend(abstract: $abstract, closure: $closure);
     }
 
-    protected function assertOwnedMutation(string $abstract, string $action) : void
+    protected function assertOwnedMutation(string $abstract, string $action): void
     {
         $slice = $this->slice();
         if (! $this->strictSliceBoundaries() || $slice === '') {
@@ -596,7 +598,7 @@ readonly class ContextContainer implements ContainerInterface
         }
     }
 
-    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator) : void
+    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator): void
     {
         $this->assertOwnedMutation(abstract: $abstract, action: 'decorate');
         $this->base->decorate(abstract: $abstract, decorator: $decorator);
@@ -609,7 +611,7 @@ readonly class ContextContainer implements ContainerInterface
         return $this->base->when(consumer: $consumer);
     }
 
-    public function tag(string|array $abstracts, string|array $tags) : void
+    public function tag(string|array $abstracts, string|array $tags): void
     {
         foreach ((array) $abstracts as $abstract) {
             if (is_string(value: $abstract) && $abstract !== '') {

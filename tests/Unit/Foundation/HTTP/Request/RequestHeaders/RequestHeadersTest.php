@@ -51,7 +51,7 @@ class RequestHeadersTest extends TestCase
 
     public function test_replaces_header_values_immutably() : void
     {
-        $headers    = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
+        $headers = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
         $newHeaders = $headers->put(name: 'X-Custom', value: 'Beta');
 
         $this->assertNotSame(expected: $headers, actual: $newHeaders);
@@ -61,7 +61,7 @@ class RequestHeadersTest extends TestCase
 
     public function test_appends_header_values_immutably() : void
     {
-        $headers    = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
+        $headers = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
         $newHeaders = $headers->append(name: 'X-Custom', value: 'Beta');
 
         $this->assertNotSame(expected: $headers, actual: $newHeaders);
@@ -71,7 +71,7 @@ class RequestHeadersTest extends TestCase
 
     public function test_drops_header_immutably() : void
     {
-        $headers    = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
+        $headers = new RequestHeaders(headers: ['X-Custom' => 'Alpha']);
         $newHeaders = $headers->drop(name: 'X-Custom');
 
         $this->assertTrue(condition: $headers->has(name: 'X-Custom'));

@@ -14,9 +14,9 @@ use Throwable;
 final readonly class EvictCachedValue
 {
     public function __construct(
-        private CacheStore        $cacheStore,
-        private ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
-        private CacheMetrics|null $cacheMetrics = null,
+        private CacheStore                      $cacheStore,
+        private ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement,
+        private ?CacheMetrics                   $cacheMetrics = null,
     ) {}
 
     public function evict(CacheKey $cacheKey) : bool

@@ -19,9 +19,7 @@ final class PolicyDependencyE {}
 
 final class PolicyDependencyF {}
 
-final readonly class OverInjectedPolicyService
-{
-}
+final readonly class OverInjectedPolicyService {}
 
 final class OtherFlowLocal {}
 
@@ -44,8 +42,8 @@ final class LocatorDriftService
     }
 }
 
-$cacheDir  = sys_get_temp_dir() . '/container-policy-diff-' . uniqid(prefix: '', more_entropy: true);
-$config    = CreateContainerConfig::create(cacheDir: $cacheDir);
+$cacheDir = sys_get_temp_dir() . '/container-policy-diff-' . uniqid(prefix: '', more_entropy: true);
+$config   = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer(config: $config);
 
 $container->bind(abstract: PolicyDependencyA::class, concrete: PolicyDependencyA::class);
@@ -96,9 +94,9 @@ $issues       = implode(separator: "\n", array: $container->validate(serviceIds:
                                                                                  ]));
 
 $overInjectedCodes = array_column(array: $graph['policyFindings'][OverInjectedPolicyService::class] ?? [], column_key: 'code');
-$flowCodes         = array_column(array: $graph['policyFindings'][FlowToFlowEntry::class] ?? [], column_key: 'code');
-$genericCodes      = array_column(array: $graph['policyFindings'][GenericHelperService::class] ?? [], column_key: 'code');
-$locatorCodes      = array_column(array: $graph['policyFindings'][LocatorDriftService::class] ?? [], column_key: 'code');
+$flowCodes    = array_column(array: $graph['policyFindings'][FlowToFlowEntry::class] ?? [], column_key: 'code');
+$genericCodes = array_column(array: $graph['policyFindings'][GenericHelperService::class] ?? [], column_key: 'code');
+$locatorCodes = array_column(array: $graph['policyFindings'][LocatorDriftService::class] ?? [], column_key: 'code');
 
 assertTrue(condition: in_array(needle: 'POL-001', haystack: $overInjectedCodes, strict: true), message: 'Policy diagnostics should flag over-injected constructors.');
 assertTrue(condition: in_array(needle: 'POL-004', haystack: $flowCodes, strict: true), message: 'Policy diagnostics should flag direct flow-to-flow dependencies.');

@@ -9,7 +9,7 @@ use Psr\Http\Message\StreamInterface;
 final readonly class ResponseData
 {
     public function __construct(
-        public int   $statusCode,
+        public int $statusCode,
         public array $headers,
         public StreamInterface $body,
         public string $reasonPhrase,
@@ -29,7 +29,7 @@ final readonly class ResponseData
 
     public function withHeader(string $name, array $values) : self
     {
-        $headers                    = $this->headers;
+        $headers = $this->headers;
         $headers[strtolower($name)] = $values;
 
         return new self(

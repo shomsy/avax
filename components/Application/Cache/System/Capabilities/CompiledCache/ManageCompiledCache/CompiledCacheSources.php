@@ -18,7 +18,7 @@ final class CompiledCacheSources
 
     public static function empty() : self
     {
-        return new self();
+        return new self;
     }
 
     public static function fromPaths(string ...$paths) : self
@@ -44,7 +44,7 @@ final class CompiledCacheSources
         return isset($this->sources[$path]);
     }
 
-    public function get(string $path) : CompiledCacheSource|null
+    public function get(string $path) : ?CompiledCacheSource
     {
         return $this->sources[$path] ?? null;
     }

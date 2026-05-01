@@ -42,17 +42,17 @@ interface HttpContextInterface
     /**
      * Get the client IP address (supports forwarded headers).
      */
-    public function clientIp() : string|null;
+    public function clientIp() : ?string;
 
     /**
      * Get the User-Agent header value.
      */
-    public function userAgent() : string|null;
+    public function userAgent() : ?string;
 
     /**
      * Get the Authorization header value.
      */
-    public function authHeader() : string|null;
+    public function authHeader() : ?string;
 
     /**
      * Get mockable access to $_COOKIE.

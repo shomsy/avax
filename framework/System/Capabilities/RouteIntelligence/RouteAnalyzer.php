@@ -67,7 +67,7 @@ final class RouteAnalyzer
     public function detectConflicts() : array
     {
         $conflicts = [];
-        $count     = count($this->routes);
+        $count = count($this->routes);
 
         for ($i = 0; $i < $count; $i++) {
             for ($j = $i + 1; $j < $count; $j++) {
@@ -89,7 +89,7 @@ final class RouteAnalyzer
         return $conflicts;
     }
 
-    private function checkConflict(RouteInfo $a, RouteInfo $b) : RouteConflict|null
+    private function checkConflict(RouteInfo $a, RouteInfo $b) : ?RouteConflict
     {
         if ($a->pattern === $b->pattern) {
             return new RouteConflict(
@@ -146,7 +146,7 @@ final class RouteAnalyzer
     /**
      * Explain how a request would be matched.
      */
-    public function explainMatch(string $method, string $path) : RouteInfo|null
+    public function explainMatch(string $method, string $path) : ?RouteInfo
     {
         $method = strtoupper($method);
 
@@ -166,7 +166,7 @@ final class RouteAnalyzer
     private function matchesPattern(string $pattern, string $path) : bool
     {
         $patternParts = explode('/', trim($pattern, '/'));
-        $pathParts    = explode('/', trim($path, '/'));
+        $pathParts = explode('/', trim($path, '/'));
 
         if (count($patternParts) !== count($pathParts)) {
             return false;
@@ -175,7 +175,7 @@ final class RouteAnalyzer
         foreach ($patternParts as $i => $part) {
             if (str_starts_with($part, '{')) {
                 $isOptional = str_ends_with($part, '?}');
-                $pathPart   = $pathParts[$i] ?? '';
+                $pathPart = $pathParts[$i] ?? '';
 
                 if ($isOptional && $pathPart === '') {
                     continue;
@@ -238,7 +238,7 @@ final class RouteAnalyzer
     private function isShadowed(RouteInfo $specific, RouteInfo $general) : bool
     {
         $specificParams = $specific->parameters();
-        $generalParams  = $general->parameters();
+        $generalParams = $general->parameters();
 
         if (count($specificParams) === 0 && count($generalParams) > 0) {
             $patternParts1 = explode('/', $specific->pattern);

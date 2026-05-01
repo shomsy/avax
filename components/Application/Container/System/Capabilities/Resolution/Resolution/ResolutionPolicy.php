@@ -30,20 +30,20 @@ final readonly class ResolutionPolicy
     public bool $strict;
 
     public function __construct(
-        bool   $strict = null,
-        bool   $debug = null,
-        string $profile = null,
-        string $failMode = null,
+        ?bool   $strict = null,
+        ?bool   $debug = null,
+        ?string $profile = null,
+        ?string $failMode = null,
         public array $profiles = [],
     )
     {
-        $strict   ??= false;
-        $debug    ??= false;
-        $profile  ??= self::PROFILE_BALANCED;
+        $strict        ??= false;
+        $debug         ??= false;
+        $profile       ??= self::PROFILE_BALANCED;
         $failMode ??= self::FAIL_MODE_CLOSED;
-        $this->strict   = $strict;
-        $this->debug    = $debug;
-        $this->profile  = $profile;
+        $this->strict  = $strict;
+        $this->debug   = $debug;
+        $this->profile = $profile;
         $this->failMode = $failMode;
     }
 
@@ -61,11 +61,11 @@ final readonly class ResolutionPolicy
         return match ($this->profile) {
             self::PROFILE_RELAXED => match ($code) {
                 'POL-001', 'POL-002', 'POL-003', 'POL-005', 'POL-006', 'POL-009', 'POL-010', 'POL-011', 'POL-012', 'POL-013' => 'warn',
-                default                                                                                                      => $defaultSeverity,
+                default => $defaultSeverity,
             },
             self::PROFILE_STRICT => match ($code) {
                 'POL-006', 'POL-009', 'POL-010', 'POL-011', 'POL-012', 'POL-013' => 'error',
-                default                                                          => $defaultSeverity,
+                default => $defaultSeverity,
             },
             default => $defaultSeverity,
         };

@@ -19,8 +19,10 @@ use PHPUnit\Framework\TestCase;
 
 final class SourceSyncCoordinatorTest extends TestCase
 {
-    private FrozenClock     $clock;
+    private FrozenClock $clock;
+
     private InMemoryCacheStore $cache;
+
     private TestCacheSource $source;
 
     public function test_write_through_invalidates_cache_after_source_write() : void
@@ -46,7 +48,7 @@ final class SourceSyncCoordinatorTest extends TestCase
 
     private function makeRecord(string $value) : StoredCacheRecord
     {
-        $now       = $this->clock->now();
+        $now = $this->clock->now();
         $lifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
@@ -129,7 +131,7 @@ final class SourceSyncCoordinatorTest extends TestCase
     {
         $this->clock  = new FrozenClock(timestamp: Timestamp::now());
         $this->cache  = new InMemoryCacheStore(clock: $this->clock, maxEntries: 100);
-        $this->source = new TestCacheSource();
+        $this->source = new TestCacheSource;
     }
 }
 

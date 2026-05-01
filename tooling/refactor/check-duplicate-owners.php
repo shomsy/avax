@@ -73,7 +73,7 @@ final class CheckDuplicateOwners
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckDuplicateOwners();
+    $checker = new CheckDuplicateOwners;
     $result = $checker->check();
 
     echo $result['status'] . "\n";

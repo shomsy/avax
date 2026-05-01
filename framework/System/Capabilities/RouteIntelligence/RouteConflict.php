@@ -9,9 +9,11 @@ namespace Avax\Framework\System\Capabilities\RouteIntelligence;
  */
 final readonly class RouteConflict
 {
-    public const CONFLICT_EXACT     = 'exact';
+    public const CONFLICT_EXACT = 'exact';
+
     public const CONFLICT_AMBIGUOUS = 'ambiguous';
-    public const CONFLICT_SHADOW    = 'shadow';
+
+    public const CONFLICT_SHADOW = 'shadow';
 
     public function __construct(
         public string $type,

@@ -11,12 +11,13 @@ use Avax\Tests\TestCase;
 class EnsureDirectoryExistsTest extends TestCase
 {
     private LocalDisk $disk;
+
     private string $testDir;
 
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
+        $this->disk = new LocalDisk;
         $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/ensure_dir_test';
     }
 
@@ -29,7 +30,7 @@ class EnsureDirectoryExistsTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteCreatesDirectoryIfNotExists() : void
+    public function test_execute_creates_directory_if_not_exists() : void
     {
         $result = new EnsureDirectoryExists(disk: $this->disk)->execute(path: $this->testDir);
 
@@ -37,7 +38,7 @@ class EnsureDirectoryExistsTest extends TestCase
         self::assertTrue(condition: is_dir(filename: $this->testDir));
     }
 
-    public function testExecuteReturnsTrueIfExists() : void
+    public function test_execute_returns_true_if_exists() : void
     {
         mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
 

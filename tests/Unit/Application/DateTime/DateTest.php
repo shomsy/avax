@@ -26,7 +26,7 @@ final class DateTest extends TestCase
     public function now_accepts_timezone() : void
     {
         $utc = Date::now(tz: 'UTC');
-        $ny  = Date::now(tz: 'America/New_York');
+        $ny = Date::now(tz: 'America/New_York');
 
         $this->assertEquals('UTC', $utc->timezoneName());
         $this->assertEquals('America/New_York', $ny->timezoneName());
@@ -47,7 +47,7 @@ final class DateTest extends TestCase
     public function from_timestamp_creates_date_from_unix_timestamp() : void
     {
         $timestamp = 1700000000;
-        $date      = Date::fromTimestamp($timestamp);
+        $date = Date::fromTimestamp($timestamp);
 
         $this->assertEquals($timestamp, $date->timestamp());
     }
@@ -75,7 +75,7 @@ final class DateTest extends TestCase
     public function diff_for_humans_returns_future_difference() : void
     {
         $future = Date::parse('2030-01-01');
-        $diff   = $future->diffForHumans(other: Date::parse('2023-01-01'));
+        $diff = $future->diffForHumans(other: Date::parse('2023-01-01'));
 
         $this->assertStringContainsString('from now', $diff);
     }
@@ -83,7 +83,7 @@ final class DateTest extends TestCase
     #[Test]
     public function add_days_adds_specified_days() : void
     {
-        $date    = Date::parse('2024-01-01');
+        $date = Date::parse('2024-01-01');
         $newDate = $date->addDays(10);
 
         $this->assertEquals(11, $newDate->day());
@@ -92,7 +92,7 @@ final class DateTest extends TestCase
     #[Test]
     public function sub_days_subtracts_specified_days() : void
     {
-        $date    = Date::parse('2024-01-15');
+        $date = Date::parse('2024-01-15');
         $newDate = $date->subDays(10);
 
         $this->assertEquals(5, $newDate->day());
@@ -101,7 +101,7 @@ final class DateTest extends TestCase
     #[Test]
     public function add_hours_adds_specified_hours() : void
     {
-        $date    = Date::parse('2024-01-01 10:00:00');
+        $date = Date::parse('2024-01-01 10:00:00');
         $newDate = $date->addHours(5);
 
         $this->assertEquals(15, $newDate->hour());
@@ -110,7 +110,7 @@ final class DateTest extends TestCase
     #[Test]
     public function add_minutes_adds_specified_minutes() : void
     {
-        $date    = Date::parse('2024-01-01 10:30:00');
+        $date = Date::parse('2024-01-01 10:30:00');
         $newDate = $date->addMinutes(45);
 
         $this->assertEquals(15, $newDate->minute());
@@ -119,7 +119,7 @@ final class DateTest extends TestCase
     #[Test]
     public function add_seconds_adds_specified_seconds() : void
     {
-        $date    = Date::parse('2024-01-01 10:00:30');
+        $date = Date::parse('2024-01-01 10:00:30');
         $newDate = $date->addSeconds(45);
 
         $this->assertEquals(15, $newDate->second());
@@ -128,7 +128,7 @@ final class DateTest extends TestCase
     #[Test]
     public function add_weeks_adds_specified_weeks() : void
     {
-        $date    = Date::parse('2024-01-01');
+        $date = Date::parse('2024-01-01');
         $newDate = $date->addWeeks(2);
 
         $this->assertEquals(15, $newDate->day());
@@ -137,7 +137,7 @@ final class DateTest extends TestCase
     #[Test]
     public function add_months_adds_specified_months() : void
     {
-        $date    = Date::parse('2024-01-15');
+        $date = Date::parse('2024-01-15');
         $newDate = $date->addMonths(3);
 
         $this->assertEquals(4, $newDate->month());
@@ -146,7 +146,7 @@ final class DateTest extends TestCase
     #[Test]
     public function add_years_adds_specified_years() : void
     {
-        $date    = Date::parse('2024-06-15');
+        $date = Date::parse('2024-06-15');
         $newDate = $date->addYears(5);
 
         $this->assertEquals(2029, $newDate->year());
@@ -176,7 +176,7 @@ final class DateTest extends TestCase
     #[Test]
     public function start_of_day_returns_midnight() : void
     {
-        $date       = Date::parse('2024-06-15 14:30:45');
+        $date = Date::parse('2024-06-15 14:30:45');
         $startOfDay = $date->startOfDay();
 
         $this->assertEquals(0, $startOfDay->hour());
@@ -187,7 +187,7 @@ final class DateTest extends TestCase
     #[Test]
     public function end_of_day_returns_last_second() : void
     {
-        $date     = Date::parse('2024-06-15 14:30:45');
+        $date = Date::parse('2024-06-15 14:30:45');
         $endOfDay = $date->endOfDay();
 
         $this->assertEquals(23, $endOfDay->hour());
@@ -220,7 +220,7 @@ final class DateTest extends TestCase
     public function to_iso8601_string_returns_iso_format() : void
     {
         $date = Date::parse('2024-06-15 10:30:00', tz: 'UTC');
-        $iso  = $date->toIso8601String();
+        $iso = $date->toIso8601String();
 
         $this->assertStringContainsString('2024-06-15', $iso);
     }
@@ -250,7 +250,7 @@ final class DateTest extends TestCase
     public function start_of_week_returns_monday() : void
     {
         // Wednesday June 19, 2024
-        $date        = Date::parse('2024-06-19');
+        $date = Date::parse('2024-06-19');
         $startOfWeek = $date->startOfWeek();
 
         $this->assertEquals(17, $startOfWeek->day()); // Monday
@@ -260,7 +260,7 @@ final class DateTest extends TestCase
     public function end_of_week_returns_sunday() : void
     {
         // Wednesday June 19, 2024
-        $date      = Date::parse('2024-06-19');
+        $date = Date::parse('2024-06-19');
         $endOfWeek = $date->endOfWeek();
 
         $this->assertEquals(23, $endOfWeek->day()); // Sunday
@@ -269,7 +269,7 @@ final class DateTest extends TestCase
     #[Test]
     public function start_of_month_returns_first_day() : void
     {
-        $date         = Date::parse('2024-06-15');
+        $date = Date::parse('2024-06-15');
         $startOfMonth = $date->startOfMonth();
 
         $this->assertEquals(1, $startOfMonth->day());
@@ -278,7 +278,7 @@ final class DateTest extends TestCase
     #[Test]
     public function end_of_month_returns_last_day() : void
     {
-        $date       = Date::parse('2024-06-15');
+        $date = Date::parse('2024-06-15');
         $endOfMonth = $date->endOfMonth();
 
         $this->assertEquals(30, $endOfMonth->day()); // June has 30 days
@@ -294,7 +294,7 @@ final class DateTest extends TestCase
     #[Test]
     public function timezone_changes_timezone() : void
     {
-        $date   = Date::parse('2024-06-15 12:00:00', tz: 'UTC');
+        $date = Date::parse('2024-06-15 12:00:00', tz: 'UTC');
         $nyDate = $date->timezone('America/New_York');
 
         $this->assertEquals('America/New_York', $nyDate->timezoneName());

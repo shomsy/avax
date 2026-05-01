@@ -50,7 +50,7 @@ final readonly class Filesystem implements FilesystemInterface
     }
 
     #[Override]
-    public function lastModified(string $path) : int|null
+    public function lastModified(string $path) : ?int
     {
         return $this->disk->lastModified($path);
     }

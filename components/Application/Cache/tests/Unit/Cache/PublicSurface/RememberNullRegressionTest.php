@@ -76,7 +76,7 @@ final class RememberNullRegressionTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $this->inMemoryCacheStore = new InMemoryCacheStore(
             clock: $this->frozenClock,
         );

@@ -21,13 +21,13 @@ final readonly class FakeContainer
     private bool $hasSession;
 
     public function __construct(
-        bool  $hasSession,
+        bool $hasSession,
         #[SensitiveParameter]
         mixed $session,
     )
     {
         $this->hasSession = $hasSession;
-        $this->session    = $session;
+        $this->session = $session;
     }
 
     public function has(string $id) : bool
@@ -59,7 +59,7 @@ final class RequestFromGlobalsTest extends TestCase
 
     public function test_create_from_globals_ignores_invalid_session_binding() : void
     {
-        appInstance(instance: new FakeContainer(hasSession: true, session: new stdClass()));
+        appInstance(instance: new FakeContainer(hasSession: true, session: new stdClass));
 
         $request = Request::createFromGlobals();
 
@@ -77,7 +77,7 @@ final class RequestFromGlobalsTest extends TestCase
 
     public function test_create_from_globals_uses_session_interface() : void
     {
-        $session = new NullSession();
+        $session = new NullSession;
         appInstance(instance: new FakeContainer(hasSession: true, session: $session));
 
         $request = Request::createFromGlobals();
@@ -95,12 +95,12 @@ final class RequestFromGlobalsTest extends TestCase
         $this->filesBackup = $_FILES ?? [];
 
         $_SERVER = [
-            'HTTP_HOST'       => 'components.test',
-            'REQUEST_URI'     => '/',
-            'REQUEST_METHOD'  => 'GET',
+            'HTTP_HOST'      => 'components.test',
+            'REQUEST_URI'    => '/',
+            'REQUEST_METHOD' => 'GET',
             'SERVER_PROTOCOL' => '1.1',
-            'SERVER_PORT'     => '443',
-            'QUERY_STRING'    => '',
+            'SERVER_PORT'    => '443',
+            'QUERY_STRING'   => '',
         ];
         $_GET    = [];
         $_POST   = [];
@@ -112,10 +112,10 @@ final class RequestFromGlobalsTest extends TestCase
     protected function tearDown() : void
     {
         $_SERVER = $this->serverBackup;
-        $_GET    = $this->getBackup;
-        $_POST   = $this->postBackup;
+        $_GET = $this->getBackup;
+        $_POST = $this->postBackup;
         $_COOKIE = $this->cookieBackup;
-        $_FILES  = $this->filesBackup;
+        $_FILES = $this->filesBackup;
 
     }
 }

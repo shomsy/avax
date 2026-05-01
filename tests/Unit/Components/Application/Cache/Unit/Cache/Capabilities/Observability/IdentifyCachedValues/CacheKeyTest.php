@@ -60,7 +60,7 @@ final class CacheKeyTest extends TestCase
 
     public function test_adds_namespace_to_key() : void
     {
-        $key        = CacheKey::create(key: 'profile');
+        $key = CacheKey::create(key: 'profile');
         $namespaced = $key->withNamespace(namespace: 'users');
 
         $this->assertSame(expected: 'users:profile', actual: $namespaced->fullKey());

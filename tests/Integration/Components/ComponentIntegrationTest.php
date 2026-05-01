@@ -54,9 +54,9 @@ class ComponentIntegrationTest extends TestCase
 
     public function test_storage_put_and_get() : void
     {
-        $storage = new LocalStorageAdapter();
+        $storage = new LocalStorageAdapter;
 
-        $path    = 'test/' . uniqid() . '.txt';
+        $path = 'test/' . uniqid() . '.txt';
         $content = 'Hello, Avax!';
 
         $this->assertTrue($storage->put($path, $content));
@@ -70,7 +70,7 @@ class ComponentIntegrationTest extends TestCase
 
     public function test_storage_url_generation() : void
     {
-        $storage = new LocalStorageAdapter();
+        $storage = new LocalStorageAdapter;
 
         $url = $storage->url('test/file.txt');
 
@@ -90,7 +90,7 @@ class ComponentIntegrationTest extends TestCase
 
     public function test_mailable_class() : void
     {
-        $mailable = new Mailable();
+        $mailable = new Mailable;
         $mailable->to('user@example.com')
             ->subject('Welcome')
             ->body('<h1>Welcome!</h1>')

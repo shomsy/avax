@@ -163,7 +163,7 @@ final readonly class RetryPolicy
      *
      * @return int Delay in milliseconds
      */
-    public function delayForAttempt(int $attempt) : int
+    public function delayForAttempt(int $attempt): int
     {
         if ($attempt < 1 || $attempt > $this->attempts) {
             return 0;

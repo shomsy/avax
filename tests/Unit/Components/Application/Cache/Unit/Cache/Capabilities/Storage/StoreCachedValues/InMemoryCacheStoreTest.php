@@ -121,7 +121,7 @@ final class InMemoryCacheStoreTest extends TestCase
         $cache->set(key: 'existing', value: 'original');
 
         $loadCount = 0;
-        $result    = $cache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) {
+        $result = $cache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) {
             $loadCount++;
 
             return 'loaded';

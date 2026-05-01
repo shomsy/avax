@@ -61,7 +61,7 @@ final class BloomFilterTest extends TestCase
     public function test_might_contain_returns_true_for_all_added_items() : void
     {
         $filter = BloomFilter::create(1000);
-        $items  = ['apple', 'banana', 'cherry', 'date', 'elderberry'];
+        $items = ['apple', 'banana', 'cherry', 'date', 'elderberry'];
 
         foreach ($items as $item) {
             $filter->add($item);

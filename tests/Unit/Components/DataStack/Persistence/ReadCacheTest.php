@@ -19,7 +19,7 @@ final class ReadCacheTest extends TestCase
         $cache->put('key1', 'value1');
 
         $callCount = 0;
-        $result    = $cache->remember('key1', static function () use (&$callCount) {
+        $result = $cache->remember('key1', static function () use (&$callCount) {
             $callCount++;
 
             return 'computed';
@@ -40,7 +40,7 @@ final class ReadCacheTest extends TestCase
 
     public function test_remember_caches_computed_value() : void
     {
-        $cache     = new ReadCache(defaultTtl: 60.0);
+        $cache = new ReadCache(defaultTtl: 60.0);
         $callCount = 0;
 
         $first = $cache->remember('key1', static function () use (&$callCount) {
@@ -70,7 +70,7 @@ final class ReadCacheTest extends TestCase
 
     public function test_remember_with_tags() : void
     {
-        $cache     = new ReadCache(defaultTtl: 60.0);
+        $cache = new ReadCache(defaultTtl: 60.0);
         $callCount = 0;
 
         $cache->remember('key1', static function () use (&$callCount) {
@@ -468,7 +468,7 @@ final class ReadCacheTest extends TestCase
     public function test_cache_query() : void
     {
         $cache = new ReadCache(defaultTtl: 60.0);
-        $sql   = 'SELECT * FROM users WHERE id = 1';
+        $sql = 'SELECT * FROM users WHERE id = 1';
 
         $cache->cacheQuery($sql, ['id' => 1, 'name' => 'John']);
 
@@ -490,7 +490,7 @@ final class ReadCacheTest extends TestCase
     public function test_cache_query_with_tags() : void
     {
         $cache = new ReadCache(defaultTtl: 60.0);
-        $sql   = 'SELECT * FROM users';
+        $sql = 'SELECT * FROM users';
 
         $cache->cacheQuery($sql, ['users'], tags: ['table:users']);
 

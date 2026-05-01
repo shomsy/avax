@@ -12,14 +12,14 @@ use Avax\Tests\TestCase;
 
 class ResolveDiskTest extends TestCase
 {
-    public function testExecuteReturnsLocalDisk() : void
+    public function test_execute_returns_local_disk() : void
     {
         $result = new ResolveDisk()->execute(name: 'local');
 
         self::assertInstanceOf(LocalDisk::class, $result);
     }
 
-    public function testExecuteThrowsExceptionForUnsupportedDriver() : void
+    public function test_execute_throws_exception_for_unsupported_driver() : void
     {
         $this->expectException(exception: InvalidDiskDriver::class);
         $this->expectExceptionMessage(message: 'Unsupported disk driver:');
@@ -27,14 +27,14 @@ class ResolveDiskTest extends TestCase
         new ResolveDisk()->execute(name: 'unknown');
     }
 
-    public function testExecuteWithNullReturnsLocalDisk() : void
+    public function test_execute_with_null_returns_local_disk() : void
     {
         $result = new ResolveDisk()->execute(name: null);
 
         self::assertInstanceOf(LocalDisk::class, $result);
     }
 
-    public function testExecuteUsesConfiguredDefaultDisk() : void
+    public function test_execute_uses_configured_default_disk() : void
     {
         $resolver = new ResolveDisk(
             config: new FilesystemConfig(

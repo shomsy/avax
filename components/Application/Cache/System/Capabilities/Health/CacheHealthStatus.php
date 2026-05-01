@@ -17,15 +17,15 @@ final readonly class CacheHealthStatus
     public Timestamp $timestamp;
 
     public function __construct(
-        public bool   $connected,
-        public int    $latency,
-        public float  $memoryUsage,
-        public float  $hitRate,
+        public bool    $connected,
+        public int     $latency,
+        public float   $memoryUsage,
+        public float   $hitRate,
         public Timestamp $timestamp,
-        public string|null $error = null,
-        public int    $memoryLimit = 0,
-        public int    $keyCount = 0,
-        public int    $connectionCount = 0,
+        public ?string $error = null,
+        public int     $memoryLimit = 0,
+        public int     $keyCount = 0,
+        public int     $connectionCount = 0,
         public string $version = '',
     )
     {
@@ -36,15 +36,15 @@ final readonly class CacheHealthStatus
      * Create a healthy status.
      */
     public static function healthy(
-        int       $latency = 0,
-        float     $memoryUsage = 0.0,
-        float     $hitRate = 1.0,
-        Timestamp $lastCheck = null,
-        Timestamp $timestamp = null,
-        int       $memoryLimit = 0,
-        int       $keyCount = 0,
-        int       $connectionCount = 0,
-        string    $version = '',
+        int        $latency = 0,
+        float      $memoryUsage = 0.0,
+        float      $hitRate = 1.0,
+        ?Timestamp $lastCheck = null,
+        ?Timestamp $timestamp = null,
+        int        $memoryLimit = 0,
+        int        $keyCount = 0,
+        int        $connectionCount = 0,
+        string     $version = '',
     ) : self
     {
         return new self(
@@ -65,12 +65,12 @@ final readonly class CacheHealthStatus
      * Create an unhealthy status with an error.
      */
     public static function unhealthy(
-        string    $error,
-        int       $latency = 0,
-        float     $memoryUsage = 0.0,
-        float     $hitRate = 0.0,
-        Timestamp $lastCheck = null,
-        Timestamp $timestamp = null,
+        string     $error,
+        int        $latency = 0,
+        float      $memoryUsage = 0.0,
+        float      $hitRate = 0.0,
+        ?Timestamp $lastCheck = null,
+        ?Timestamp $timestamp = null,
     ) : self
     {
         return new self(
@@ -87,16 +87,16 @@ final readonly class CacheHealthStatus
      * Create a degraded status (connected but with issues).
      */
     public static function degraded(
-        string    $error,
-        int       $latency = 0,
-        float     $memoryUsage = 0.0,
-        float     $hitRate = 0.5,
-        Timestamp $lastCheck = null,
-        Timestamp $timestamp = null,
-        int       $memoryLimit = 0,
-        int       $keyCount = 0,
-        int       $connectionCount = 0,
-        string    $version = '',
+        string     $error,
+        int        $latency = 0,
+        float      $memoryUsage = 0.0,
+        float      $hitRate = 0.5,
+        ?Timestamp $lastCheck = null,
+        ?Timestamp $timestamp = null,
+        int        $memoryLimit = 0,
+        int        $keyCount = 0,
+        int        $connectionCount = 0,
+        string     $version = '',
     ) : self
     {
         return new self(
@@ -198,18 +198,18 @@ final readonly class CacheHealthStatus
     public function toArray() : array
     {
         return [
-            'connected'          => $this->connected,
-            'latency'            => $this->latency,
-            'memoryUsage'        => $this->memoryUsage,
-            'hitRate'            => $this->hitRate,
+            'connected'       => $this->connected,
+            'latency'         => $this->latency,
+            'memoryUsage'     => $this->memoryUsage,
+            'hitRate'         => $this->hitRate,
             'lastCheck' => $this->timestamp->seconds,
-            'error'              => $this->error,
-            'memoryLimit'        => $this->memoryLimit,
-            'keyCount'           => $this->keyCount,
-            'connectionCount'    => $this->connectionCount,
-            'version'            => $this->version,
+            'error'           => $this->error,
+            'memoryLimit'     => $this->memoryLimit,
+            'keyCount'        => $this->keyCount,
+            'connectionCount' => $this->connectionCount,
+            'version'         => $this->version,
             'memoryUsagePercent' => $this->getMemoryUsagePercent(),
-            'healthLevel'        => $this->getHealthLevel(),
+            'healthLevel'     => $this->getHealthLevel(),
         ];
     }
 

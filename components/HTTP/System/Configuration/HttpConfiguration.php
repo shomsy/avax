@@ -26,7 +26,7 @@ final readonly class HttpConfiguration
         private string $baseUrl = 'http://localhost',
         private bool $trustProxyHeaders = false,
         private array $trustedProxies = [],
-        private int  $maxRequestBodyBytes = 1048576,
+        private int $maxRequestBodyBytes = 1048576,
         private string $defaultLocale = 'en',
         private array $router = [],
         private array $middleware = [],

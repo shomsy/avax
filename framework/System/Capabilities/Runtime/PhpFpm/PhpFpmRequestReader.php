@@ -10,27 +10,27 @@ final readonly class PhpFpmRequestReader
 {
     /**
      * @param array<string, string> $server
-     * @param array<string, mixed> $query
-     * @param array<string, mixed> $parsedBody
+     * @param array<string, mixed>  $query
+     * @param array<string, mixed>  $parsedBody
      */
     public function read(
         array $server,
         array $query = [],
         array $parsedBody = [],
-        string $body = null,
+        ?string $body = null,
     ) : RuntimeRequest
     {
-        $method     = $server['REQUEST_METHOD'] ?? 'GET';
-        $uri        = $server['REQUEST_URI']    ?? '/';
+        $method  = $server['REQUEST_METHOD'] ?? 'GET';
+        $uri     = $server['REQUEST_URI'] ?? '/';
         $attributes = ['query' => $query, 'parsedBody' => $parsedBody];
-        $headers    = [];
+        $headers = [];
 
         foreach ($server as $key => $value) {
             if (! str_starts_with(haystack: $key, needle: 'HTTP_')) {
                 continue;
             }
 
-            $headerName             = str_replace('_', '-', substr($key, 5));
+            $headerName = str_replace('_', '-', substr($key, 5));
             $headers[$headerName][] = $value;
         }
 

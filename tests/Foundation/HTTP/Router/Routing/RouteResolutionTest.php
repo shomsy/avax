@@ -44,7 +44,7 @@ final class RouteResolutionTest extends TestCase
         ];
 
         $request = new Request(serverParams: [], uri: UriBuilder::createFromString(uri: 'https://example.com/users/123'));
-        $result  = $this->matcher->match(routes: $routes, request: $request);
+        $result = $this->matcher->match(routes: $routes, request: $request);
 
         $this->assertNotNull(actual: $result);
         [$route, $matches] = $result;
@@ -74,7 +74,7 @@ final class RouteResolutionTest extends TestCase
         ];
 
         $request = new Request(serverParams: [], uri: UriBuilder::createFromString(uri: 'https://example.com/files/a/b/c'));
-        $result  = $this->matcher->match(routes: $routes, request: $request);
+        $result = $this->matcher->match(routes: $routes, request: $request);
 
         $this->assertNotNull(actual: $result);
         [$route, $matches] = $result;
@@ -85,6 +85,6 @@ final class RouteResolutionTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->matcher = new RouteMatcher(logger: new NullLogger());
+        $this->matcher = new RouteMatcher(logger: new NullLogger);
     }
 }

@@ -128,8 +128,8 @@ final class HttpClientProvider
      * Create a client with strict timeouts.
      */
     public static function withStrictTimeouts(
-        string $baseUrl = null,
-        int    $timeoutMs = 3000,
+        ?string $baseUrl = null,
+        int     $timeoutMs = 3000,
     ) : HttpClient
     {
         $options = new RequestOptions(
@@ -147,11 +147,9 @@ final class HttpClientProvider
 
     /**
      * Create a client with middleware.
-     *
-     * @param ClientMiddlewareInterface ...$middlewares
      */
     public static function withMiddleware(
-        string $baseUrl = null,
+        ?string $baseUrl = null,
         ClientMiddlewareInterface ...$middlewares,
     ) : HttpClient
     {
@@ -164,18 +162,18 @@ final class HttpClientProvider
     /**
      * Get or create an HTTP client with the given configuration.
      *
-     * @param string|null         $baseUrl Base URL for requests
-     * @param RequestOptions|null $options Default request options
-     * @param HttpTransportInterface|null $transport Custom transport
+     * @param string|null                      $baseUrl     Base URL for requests
+     * @param RequestOptions|null              $options     Default request options
+     * @param HttpTransportInterface|null      $transport   Custom transport
      * @param array<ClientMiddlewareInterface> $middlewares Middleware to apply
-     * @param string|null         $name    Named client identifier (for caching)
+     * @param string|null                      $name        Named client identifier (for caching)
      */
     public function client(
-        string                 $baseUrl = null,
-        RequestOptions         $options = null,
-        HttpTransportInterface $transport = null,
-        array                  $middlewares = [],
-        string                 $name = null,
+        ?string                 $baseUrl = null,
+        ?RequestOptions         $options = null,
+        ?HttpTransportInterface $transport = null,
+        array                   $middlewares = [],
+        ?string                 $name = null,
     ) : HttpClient
     {
         // Use name-based caching if a name is provided
@@ -184,7 +182,7 @@ final class HttpClientProvider
         }
 
         $resolvedOptions = $options ?? $this->resolveOptions();
-        $resolvedTransport = $transport ?? new CurlTransport();
+        $resolvedTransport = $transport ?? new CurlTransport;
 
         $client = new HttpClient(
             baseUrl       : $baseUrl ?? $this->config['base_url'] ?? null,
@@ -205,12 +203,12 @@ final class HttpClientProvider
      */
     private function resolveOptions() : RequestOptions
     {
-        $timeout        = $this->config['timeout'] ?? RequestOptions::DEFAULT_TIMEOUT;
+        $timeout      = $this->config['timeout'] ?? RequestOptions::DEFAULT_TIMEOUT;
         $connectTimeout = $this->config['connect_timeout'] ?? RequestOptions::DEFAULT_CONNECT_TIMEOUT;
-        $verifySsl      = $this->config['verify_ssl'] ?? true;
-        $proxy          = $this->config['proxy'] ?? null;
+        $verifySsl    = $this->config['verify_ssl'] ?? true;
+        $proxy        = $this->config['proxy'] ?? null;
         $followRedirects = $this->config['follow_redirects'] ?? true;
-        $maxRedirects   = $this->config['max_redirects'] ?? 5;
+        $maxRedirects = $this->config['max_redirects'] ?? 5;
 
         $retryPolicy = null;
         if ($this->config['retry_attempts'] ?? 0 > 0) {

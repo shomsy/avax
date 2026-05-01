@@ -15,8 +15,7 @@ final readonly class AcquireCacheStampedeLock
         private CacheLockStore $cacheLockStore,
         private int $waitTimeoutSeconds = 5,
         private int $lockTtlSeconds = 30,
-    ) {
-    }
+    ) {}
 
     public function isLocked(string $key) : bool
     {
@@ -29,7 +28,7 @@ final readonly class AcquireCacheStampedeLock
     {
         $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
         $startTime = hrtime(true);
-        $deadline  = $startTime + ($maxWaitSeconds * 1_000_000_000);
+        $deadline = $startTime + ($maxWaitSeconds * 1_000_000_000);
 
         while (hrtime(true) < $deadline) {
             if ($cacheLock->acquire(key: $key, ttlSeconds: $this->lockTtlSeconds)) {
@@ -51,7 +50,7 @@ final readonly class AcquireCacheStampedeLock
         );
 
         $startTime = hrtime(true);
-        $deadline  = $startTime + ($this->waitTimeoutSeconds * 1_000_000_000);
+        $deadline = $startTime + ($this->waitTimeoutSeconds * 1_000_000_000);
 
         while (hrtime(true) < $deadline) {
             if ($cacheLock->acquire(key: $key, ttlSeconds: $this->lockTtlSeconds)) {

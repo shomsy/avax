@@ -14,7 +14,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigur
  */
 final class CompiledCache
 {
-    private static CompiledCacheContract|null $compiledCacheContract = null;
+    private static ?CompiledCacheContract $compiledCacheContract = null;
 
     public static function use(CompiledCacheContract $compiledCacheContract) : void
     {

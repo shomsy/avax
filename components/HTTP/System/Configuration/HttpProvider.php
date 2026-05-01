@@ -15,7 +15,7 @@ final class HttpProvider implements ComponentProviderInterface
     {
         $registry->single('http', static fn () => new Http(
             $registry->get('router'),
-            new MiddlewarePipeline(), // Should be populated with global middlewares
+            new MiddlewarePipeline, // Should be populated with global middlewares
         ));
     }
 }

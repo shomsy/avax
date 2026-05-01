@@ -25,8 +25,10 @@ use ReflectionUnionType;
 
 final class CacheReadRoutingTest extends TestCase
 {
-    private FrozenClock   $clock;
+    private FrozenClock $clock;
+
     private InMemoryCacheStore $store;
+
     private CacheContract $cache;
 
     public function test_read_method_exists() : void
@@ -77,11 +79,11 @@ final class CacheReadRoutingTest extends TestCase
     public function test_read_signature_accepts_cache_read_target() : void
     {
         $param = (new ReflectionMethod(objectOrMethod: Cache::class, method: 'read'))->getParameters()[0];
-        $type  = $param->getType();
+        $type = $param->getType();
 
         $this->assertInstanceOf(expected: ReflectionUnionType::class, actual: $type);
 
-        $types     = $type->getTypes();
+        $types = $type->getTypes();
         $typeNames = array_map(static fn ($t) => $t->getName(), $types);
 
         $this->assertContains(needle: 'Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget', haystack: $typeNames);
@@ -112,14 +114,14 @@ final class CacheReadRoutingTest extends TestCase
     {
         $this->expectException(exception: CompiledNotConfigured::class);
 
-        CompiledCache::read(name: 'name', build: static fn () => [], sources: new CompiledCacheSources());
+        CompiledCache::read(name: 'name', build: static fn () => [], sources: new CompiledCacheSources);
     }
 
     public function test_compiled_cache_compile_throws_when_not_configured() : void
     {
         $this->expectException(exception: CompiledNotConfigured::class);
 
-        CompiledCache::compile(name: 'name', build: static fn () => [], sources: new CompiledCacheSources());
+        CompiledCache::compile(name: 'name', build: static fn () => [], sources: new CompiledCacheSources);
     }
 
     public function test_cache_read_throws_for_compiled_target_without_provider() : void
@@ -127,7 +129,7 @@ final class CacheReadRoutingTest extends TestCase
         $target = CompiledCacheTarget::artifact(
             name   : 'routes',
             builder: static fn () => [],
-            sources: new CompiledCacheSources(),
+            sources: new CompiledCacheSources,
         );
 
         $this->expectException(exception: CacheNotConfigured::class);
@@ -182,7 +184,7 @@ final class CacheReadRoutingTest extends TestCase
     {
         $this->expectException(exception: CacheReadTargetWasNotSupported::class);
 
-        Cache::read(target: new class () implements CacheReadTarget {
+        Cache::read(target: new class implements CacheReadTarget {
             public function kind() : CacheReadKind
             {
                 return CacheReadKind::RUNTIME;
@@ -205,7 +207,7 @@ final class CacheReadRoutingTest extends TestCase
         Cache::reset();
         CompiledCache::reset();
 
-        $this->clock = new FrozenClock();
+        $this->clock = new FrozenClock;
         $this->store = new InMemoryCacheStore(clock: $this->clock);
         $this->cache = new AvaxCache(store: $this->store, clock: $this->clock);
 

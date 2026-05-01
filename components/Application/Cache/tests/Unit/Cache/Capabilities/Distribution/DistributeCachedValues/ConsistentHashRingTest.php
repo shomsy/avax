@@ -15,7 +15,7 @@ final class ConsistentHashRingTest extends TestCase
 {
     public function test_add_node_increases_count() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
 
         $this->assertEquals(expected: 0, actual: $consistentHashRing->nodeCount());
         $this->assertTrue(condition: $consistentHashRing->isEmpty());
@@ -28,7 +28,7 @@ final class ConsistentHashRingTest extends TestCase
 
     public function test_remove_node_decreases_count() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
 
         $cacheNode = CacheNode::create(id: 'node_a');
         $consistentHashRing->addNode(node: $cacheNode);
@@ -43,7 +43,7 @@ final class ConsistentHashRingTest extends TestCase
 
     public function test_same_key_routes_to_same_node() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_c'));
@@ -64,7 +64,7 @@ final class ConsistentHashRingTest extends TestCase
 
     public function test_different_keys_distribute_across_nodes() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -76,11 +76,11 @@ final class ConsistentHashRingTest extends TestCase
         $distribution = [];
 
         foreach ($keys as $keyStr) {
-            $key  = CacheKey::create(key: $keyStr);
+            $key = CacheKey::create(key: $keyStr);
             $node = $consistentHashRing->getNodeForKey(key: $key);
 
             if ($node instanceof CacheNode) {
-                $nodeId                = $node->id->toString();
+                $nodeId = $node->id->toString();
                 $distribution[$nodeId] = ($distribution[$nodeId] ?? 0) + 1;
             }
         }
@@ -90,17 +90,17 @@ final class ConsistentHashRingTest extends TestCase
 
     public function test_empty_ring_returns_null() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
 
         $cacheKey = CacheKey::create(key: 'any_key');
-        $node     = $consistentHashRing->getNodeForKey(key: $cacheKey);
+        $node               = $consistentHashRing->getNodeForKey(key: $cacheKey);
 
         $this->assertNull(actual: $node);
     }
 
     public function test_get_node_for_partition() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -111,7 +111,7 @@ final class ConsistentHashRingTest extends TestCase
 
     public function test_node_removal_affects_routing() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -128,7 +128,7 @@ final class ConsistentHashRingTest extends TestCase
 
     public function test_add_node_chain_returns_self() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
 
         $result = $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
@@ -137,7 +137,7 @@ final class ConsistentHashRingTest extends TestCase
 
     public function test_remove_node_chain_returns_self() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
         $result = $consistentHashRing->removeNode(nodeId: CacheNodeId::from(id: 'node_a'));
@@ -147,13 +147,13 @@ final class ConsistentHashRingTest extends TestCase
 
     public function test_healthy_nodes_only_selected() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a', status: CacheNodeStatus::HEALTHY));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b', status: CacheNodeStatus::UNHEALTHY));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_c', status: CacheNodeStatus::HEALTHY));
 
         $cacheKey = CacheKey::create(key: 'test_key');
-        $node     = $consistentHashRing->getNodeForKey(key: $cacheKey);
+        $node               = $consistentHashRing->getNodeForKey(key: $cacheKey);
 
         $this->assertNotNull(actual: $node);
         $this->assertEquals(expected: 'node_a', actual: $node->id->toString());

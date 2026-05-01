@@ -35,7 +35,7 @@ final class FileSessionStore implements SessionStoreInterface
 
     public function write(string $id, array $data) : bool
     {
-        $file      = $this->filePath(sessionId: $id);
+        $file = $this->filePath(sessionId: $id);
         $directory = dirname(path: $file);
 
         if (! is_dir(filename: $directory)) {

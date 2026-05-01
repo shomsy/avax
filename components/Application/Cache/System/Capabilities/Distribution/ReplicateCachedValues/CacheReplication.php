@@ -24,12 +24,11 @@ final class CacheReplication
     private bool $promoted = false;
 
     public function __construct(
-        private readonly CacheStore           $cacheStore,
+        private readonly CacheStore $cacheStore,
         /** @var list<CacheStore> */
-        private readonly array                $replicas,
+        private readonly array      $replicas,
         private readonly PrimaryReplicaPolicy $primaryReplicaPolicy,
-    ) {
-    }
+    ) {}
 
     /**
      * Sync a specific key from primary to replicas.
@@ -51,7 +50,7 @@ final class CacheReplication
         }
 
         // Read from primary
-        $systemClock = new SystemClock();
+        $systemClock = new SystemClock;
         $readResult = $this->cacheStore->read(
             new CacheKey($key),
             $systemClock,
@@ -95,7 +94,7 @@ final class CacheReplication
      */
     public function read(string $key) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        $systemClock = new SystemClock();
+        $systemClock = new SystemClock;
         $cacheKey = new CacheKey($key);
 
         // If we should read from replica on miss from primary
@@ -130,6 +129,7 @@ final class CacheReplication
      * @param int $replicaIndex Index of the replica to promote
      *
      * @return PromotionResult Result of the promotion
+     *
      * @throws InvalidArgumentException if the replica index is invalid
      */
     public function promoteReplica(int $replicaIndex = 0) : PromotionResult
@@ -156,7 +156,7 @@ final class CacheReplication
     /**
      * Write a value to the primary store.
      */
-    public function write(string $key, mixed $value, int $ttl = null) : void
+    public function write(string $key, mixed $value, ?int $ttl = null): void
     {
         $storedCacheRecord = StoredCacheRecord::create($value, $ttl);
         $this->cacheStore->write(
@@ -176,10 +176,9 @@ final class CacheReplication
      */
     public static function create(
         CacheStore $cacheStore,
-        array                $replicas,
-        PrimaryReplicaPolicy $policy = null,
-    ) : self
-    {
+        array      $replicas,
+        ?PrimaryReplicaPolicy $policy = null,
+    ) : self {
         return new self(
             primary : $cacheStore,
             replicas: $replicas,
@@ -198,7 +197,7 @@ final class CacheReplication
      *
      * @return ReplicationResult Result of the replication operation
      */
-    public function replicate(string $key, mixed $value, int $ttl = null) : ReplicationResult
+    public function replicate(string $key, mixed $value, ?int $ttl = null) : ReplicationResult
     {
         // Always write to primary first
         $primarySuccess = $this->writeToPrimary($key, $value, $ttl);
@@ -215,7 +214,7 @@ final class CacheReplication
         $replicaResults = [];
 
         foreach ($this->replicas as $index => $replica) {
-            $result           = $this->writeToReplica($replica, $key, $value, $ttl, $index);
+            $result = $this->writeToReplica($replica, $key, $value, $ttl, $index);
             $replicaResults[] = $result;
         }
 
@@ -230,7 +229,7 @@ final class CacheReplication
     /**
      * Write to the primary store.
      */
-    private function writeToPrimary(string $key, mixed $value, int|null $ttl) : bool
+    private function writeToPrimary(string $key, mixed $value, ?int $ttl): bool
     {
         try {
             $record = StoredCacheRecord::create($value, $ttl);
@@ -248,7 +247,7 @@ final class CacheReplication
     /**
      * Write to a replica store.
      */
-    private function writeToReplica(CacheStore $cacheStore, string $key, mixed $value, int|null $ttl, int $index) : ReplicaWriteResult
+    private function writeToReplica(CacheStore $cacheStore, string $key, mixed $value, ?int $ttl, int $index) : ReplicaWriteResult
     {
         try {
             $record = StoredCacheRecord::create($value, $ttl);
@@ -276,7 +275,7 @@ final class CacheReplication
     /**
      * Get the primary store.
      */
-    public function getPrimary() : CacheStore
+    public function getPrimary(): CacheStore
     {
         return $this->cacheStore;
     }
@@ -286,7 +285,7 @@ final class CacheReplication
      *
      * @return list<CacheStore>
      */
-    public function getReplicas() : array
+    public function getReplicas(): array
     {
         return $this->replicas;
     }
@@ -294,7 +293,7 @@ final class CacheReplication
     /**
      * Check if a replica has been promoted.
      */
-    public function isPromoted() : bool
+    public function isPromoted(): bool
     {
         return $this->promoted;
     }
@@ -310,7 +309,7 @@ final class CacheReplication
     /**
      * Get the number of replicas.
      */
-    public function getReplicaCount() : int
+    public function getReplicaCount(): int
     {
         return count($this->replicas);
     }

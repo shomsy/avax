@@ -6,10 +6,9 @@ declare(strict_types=1);
  * Check for duplicate owners.
  * Ensures the same class name is not defined in multiple components as a real class.
  */
-
-$rootDir          = dirname(__DIR__, 2);
+$rootDir       = dirname(__DIR__, 2);
 $componentsDir = $rootDir . '/components';
-$errors           = [];
+$errors        = [];
 
 if (! is_dir($componentsDir)) {
     exit(0);
@@ -24,8 +23,8 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path         = $file->getRealPath();
-    $relativePath = str_replace($rootDir . '/', '', $path);
+    $path                     = $file->getRealPath();
+    $relativePath             = str_replace($rootDir . '/', '', $path);
 
     // Ignore vendor, tests, tooling
     if (str_contains($relativePath, 'vendor/') || str_contains($relativePath, 'tests/')) {

@@ -9,13 +9,16 @@ use Avax\Components\ResourceGovernor\System\Capabilities\Memory\MemorySnapshot;
 
 final class ResourceGovernor
 {
-    private static MemoryBudget|null $budget = null;
+    private static ?MemoryBudget $budget = null;
+
     /**
      * @var list<MemorySnapshot>
      */
-    private static array $snapshots        = [];
-    private static int   $requestCount     = 0;
-    private static int   $totalMemoryStart = 0;
+    private static array $snapshots = [];
+
+    private static int $requestCount = 0;
+
+    private static int $totalMemoryStart = 0;
 
     /**
      * @param array{worker_memory?: string, request_memory?: string} $config
@@ -37,7 +40,7 @@ final class ResourceGovernor
     public static function onRequestEnd() : void
     {
         $endMemory = memory_get_usage(true);
-        $delta     = $endMemory - self::$totalMemoryStart;
+        $delta = $endMemory - self::$totalMemoryStart;
 
         self::$snapshots[] = new MemorySnapshot(
             requestNumber: self::$requestCount,
@@ -93,7 +96,7 @@ final class ResourceGovernor
     public static function isNearLimit(float $threshold = 0.8) : bool
     {
         $current = self::workerMemory();
-        $limit   = self::workerLimit();
+        $limit = self::workerLimit();
 
         if ($limit === 0) {
             return false;
@@ -118,9 +121,9 @@ final class ResourceGovernor
 final readonly class ResourceReport
 {
     public function __construct(
-        public int  $requestCount,
-        public int  $workerMemory,
-        public int  $workerLimit,
+        public int $requestCount,
+        public int $workerMemory,
+        public int $workerLimit,
         public bool $nearLimit,
         public float $trend,
     ) {}
@@ -132,10 +135,10 @@ final readonly class ResourceReport
     public function toArray() : array
     {
         return [
-            'request_count'        => $this->requestCount,
-            'worker_memory_mb'     => $this->workerMemory / 1024 / 1024,
+            'request_count'    => $this->requestCount,
+            'worker_memory_mb' => $this->workerMemory / 1024 / 1024,
             'worker_limit_mb' => $this->workerLimit / 1024 / 1024,
-            'near_limit'           => $this->nearLimit,
+            'near_limit'       => $this->nearLimit,
             'trend_mb_per_request' => $this->trend / 1024 / 1024,
         ];
     }

@@ -142,15 +142,15 @@ class HttpMethodCompletenessTest extends TestCase
     public function enum_case_values_are_correct() : void
     {
         $expectedCases = [
-            'GET'     => HttpMethod::GET,
-            'POST'    => HttpMethod::POST,
-            'PUT'     => HttpMethod::PUT,
-            'DELETE'  => HttpMethod::DELETE,
-            'HEAD'    => HttpMethod::HEAD,
+            'GET'    => HttpMethod::GET,
+            'POST'   => HttpMethod::POST,
+            'PUT'    => HttpMethod::PUT,
+            'DELETE' => HttpMethod::DELETE,
+            'HEAD'   => HttpMethod::HEAD,
             'CONNECT' => HttpMethod::CONNECT,
             'OPTIONS' => HttpMethod::OPTIONS,
-            'TRACE'   => HttpMethod::TRACE,
-            'PATCH'   => HttpMethod::PATCH,
+            'TRACE'  => HttpMethod::TRACE,
+            'PATCH'  => HttpMethod::PATCH,
         ];
 
         foreach ($expectedCases as $value => $case) {

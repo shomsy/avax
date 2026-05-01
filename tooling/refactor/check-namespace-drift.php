@@ -78,7 +78,7 @@ final class CheckNamespaceDrift
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckNamespaceDrift();
+    $checker = new CheckNamespaceDrift;
     $result = $checker->check();
 
     echo $result['status'] . "\n";

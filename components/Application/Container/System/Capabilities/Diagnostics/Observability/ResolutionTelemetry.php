@@ -9,9 +9,7 @@ namespace Avax\Components\Application\Container\System\Capabilities\Diagnostics\
  */
 final readonly class ResolutionTelemetry
 {
-    public function __construct(private ResolutionMetrics $resolutionMetrics = new ResolutionMetrics(), private ResolutionTimeline $resolutionTimeline = new ResolutionTimeline())
-    {
-    }
+    public function __construct(private ResolutionMetrics $resolutionMetrics = new ResolutionMetrics, private ResolutionTimeline $resolutionTimeline = new ResolutionTimeline) {}
 
     /**
      * Returns the metrics sink for container events.

@@ -19,16 +19,16 @@ final class InvocationExecutorTest extends TestCase
     public function test_parameter_resolution_uses_parent_context() : void
     {
         $parentContext = new KernelContext(serviceId: 'root');
-        $container     = $this->createMock(ContainerRuntimeInterface::class);
+        $container = $this->createMock(ContainerRuntimeInterface::class);
 
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
             ->with($this->callback(callback: static fn (KernelContext $context) : bool => $context->parent === $parentContext && $context->serviceId === stdClass::class))
-            ->willReturn(value: new stdClass());
+            ->willReturn(value: new stdClass);
 
         $executor = new InvocationExecutor(
             container: $container,
-            resolver : new DependencyResolver(),
+            resolver : new DependencyResolver,
         );
 
         $result = $executor->execute(
@@ -44,21 +44,21 @@ final class InvocationExecutorTest extends TestCase
     public function test_class_at_method_uses_container_for_resolution() : void
     {
         $parentContext = new KernelContext(serviceId: 'custom');
-        $container     = $this->createMock(ContainerRuntimeInterface::class);
+        $container = $this->createMock(ContainerRuntimeInterface::class);
 
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'get')
             ->with(InvocationTarget::class)
-            ->willReturn(value: new InvocationTarget());
+            ->willReturn(value: new InvocationTarget);
 
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
             ->with($this->callback(callback: static fn (KernelContext $context) : bool => $context->parent?->parent === $parentContext || $context->parent === $parentContext))
-            ->willReturn(value: new stdClass());
+            ->willReturn(value: new stdClass);
 
         $executor = new InvocationExecutor(
             container: $container,
-            resolver : new DependencyResolver(),
+            resolver : new DependencyResolver,
         );
 
         $result = $executor->execute(

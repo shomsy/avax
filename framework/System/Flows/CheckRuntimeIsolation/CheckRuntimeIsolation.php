@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\RuntimeIsolation\RuntimeIsolationGuard;
 final readonly class CheckRuntimeIsolation
 {
     public function __construct(
-        private RuntimeIsolationGuard $guard = new RuntimeIsolationGuard(),
+        private RuntimeIsolationGuard $guard = new RuntimeIsolationGuard,
     ) {}
 
     /**
@@ -17,7 +17,7 @@ final readonly class CheckRuntimeIsolation
      *
      * @return array<string, list<string>>
      */
-    public function check(array $files) : array
+    public function check(array $files): array
     {
         $violations = [];
 

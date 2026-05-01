@@ -34,7 +34,7 @@ final readonly class RegistrationMetadata
     /** @var list<string> */
     public array $modes;
 
-    public string|null $overrideSource;
+    public ?string $overrideSource;
 
     public string $reason;
 
@@ -65,63 +65,63 @@ final readonly class RegistrationMetadata
      */
     public function __construct(
         string $unitId,
-        string $ownerSlice = null,
-        string $category = null,
-        string $visibility = null,
-        array  $profiles = null,
-        array  $flags = null,
-        array  $tenants = null,
-        array  $regions = null,
-        array  $modes = null,
-        string $overrideSource = null,
-        string $reason = null,
-        string $intent = null,
-        string $provenance = null,
-        bool   $exported = null,
-        array  $imports = null,
-        string $concept = null,
-        bool   $fallback = null,
-        bool   $ownerLocked = null,
-        bool   $categoryLocked = false,
+        ?string $ownerSlice = null,
+        ?string $category = null,
+        ?string $visibility = null,
+        ?array  $profiles = null,
+        ?array  $flags = null,
+        ?array  $tenants = null,
+        ?array  $regions = null,
+        ?array  $modes = null,
+        ?string $overrideSource = null,
+        ?string $reason = null,
+        ?string $intent = null,
+        ?string $provenance = null,
+        ?bool   $exported = null,
+        ?array  $imports = null,
+        ?string $concept = null,
+        ?bool   $fallback = null,
+        ?bool   $ownerLocked = null,
+        bool    $categoryLocked = false,
     )
     {
-        $ownerSlice  ??= 'default';
-        $category    ??= RegistrationCategory::CONFIGURATION;
-        $visibility  ??= RegistrationVisibility::PUBLIC;
-        $profiles    ??= [];
-        $flags       ??= [];
-        $tenants     ??= [];
-        $regions     ??= [];
-        $modes       ??= [];
-        $reason      ??= 'registered service';
-        $intent      ??= 'standard';
-        $provenance  ??= 'manual registration';
-        $exported    ??= false;
-        $imports     ??= [];
-        $concept     ??= '';
-        $fallback    ??= false;
+        $ownerSlice        ??= 'default';
+        $category          ??= RegistrationCategory::CONFIGURATION;
+        $visibility        ??= RegistrationVisibility::PUBLIC;
+        $profiles          ??= [];
+        $flags             ??= [];
+        $tenants           ??= [];
+        $regions           ??= [];
+        $modes             ??= [];
+        $reason            ??= 'registered service';
+        $intent            ??= 'standard';
+        $provenance        ??= 'manual registration';
+        $exported          ??= false;
+        $imports           ??= [];
+        $concept           ??= '';
+        $fallback          ??= false;
         $ownerLocked ??= false;
-        $this->unitId         = $unitId;
-        $this->ownerSlice     = self::normalizeSlice(slice: $ownerSlice);
-        $this->category       = RegistrationCategory::normalize(category: $category);
-        $this->visibility     = RegistrationVisibility::normalize(visibility: $visibility);
-        $this->profiles       = self::stringList(values: $profiles);
-        $this->flags          = self::stringList(values: $flags);
-        $this->tenants        = self::stringList(values: $tenants);
-        $this->regions        = self::stringList(values: $regions);
-        $this->modes          = self::stringList(values: $modes);
+        $this->unitId      = $unitId;
+        $this->ownerSlice  = self::normalizeSlice(slice: $ownerSlice);
+        $this->category    = RegistrationCategory::normalize(category: $category);
+        $this->visibility  = RegistrationVisibility::normalize(visibility: $visibility);
+        $this->profiles    = self::stringList(values: $profiles);
+        $this->flags       = self::stringList(values: $flags);
+        $this->tenants     = self::stringList(values: $tenants);
+        $this->regions     = self::stringList(values: $regions);
+        $this->modes       = self::stringList(values: $modes);
         $this->overrideSource = self::normalizeNullable(value: $overrideSource);
-        $this->reason         = self::normalizeText(value: $reason, fallback: 'registered service');
-        $this->intent         = self::normalizeText(value: $intent, fallback: 'standard');
-        $this->provenance     = self::normalizeText(value: $provenance, fallback: 'manual registration');
-        $this->exported       = $exported;
-        $this->imports        = self::stringList(values: $imports);
-        $this->concept        = self::normalizeText(
+        $this->reason      = self::normalizeText(value: $reason, fallback: 'registered service');
+        $this->intent      = self::normalizeText(value: $intent, fallback: 'standard');
+        $this->provenance  = self::normalizeText(value: $provenance, fallback: 'manual registration');
+        $this->exported    = $exported;
+        $this->imports     = self::stringList(values: $imports);
+        $this->concept     = self::normalizeText(
             value   : $concept,
             fallback: self::derivedConcept(unitId: $unitId),
         );
-        $this->fallback       = $fallback;
-        $this->ownerLocked    = $ownerLocked;
+        $this->fallback    = $fallback;
+        $this->ownerLocked = $ownerLocked;
         $this->categoryLocked = $categoryLocked;
     }
 
@@ -138,8 +138,6 @@ final readonly class RegistrationMetadata
     }
 
     /**
-     * @param mixed $values
-     *
      * @return list<string>
      */
     private static function stringList(mixed $values) : array
@@ -169,7 +167,7 @@ final readonly class RegistrationMetadata
         return $items;
     }
 
-    private static function normalizeNullable(string|null $value) : string|null
+    private static function normalizeNullable(?string $value) : ?string
     {
         if (! is_string(value: $value)) {
             return null;
@@ -183,7 +181,7 @@ final readonly class RegistrationMetadata
     private static function derivedConcept(string $unitId) : string
     {
         $normalized = str_replace(search: ['\\', '/', '@', ':'], replace: '.', subject: $unitId);
-        $segments   = explode(separator: '.', string: $normalized)
+        $segments = explode(separator: '.', string: $normalized)
                 |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $segment) : bool => $segment !== ''))
                 |> array_values(...);
         $last = $segments !== [] ? $segments[array_key_last(array: $segments)] : $unitId;
@@ -307,7 +305,7 @@ final readonly class RegistrationMetadata
         return $this->copy(overrides: ['modes' => $modes]);
     }
 
-    public function withOverrideSource(string|null $overrideSource) : self
+    public function withOverrideSource(?string $overrideSource) : self
     {
         return $this->copy(overrides: ['overrideSource' => $overrideSource]);
     }
@@ -459,24 +457,24 @@ final readonly class RegistrationMetadata
     public function toArray() : array
     {
         return [
-            'unitId'         => $this->unitId,
-            'ownerSlice'     => $this->ownerSlice,
-            'category'       => $this->category,
-            'visibility'     => $this->visibility,
-            'profiles'       => $this->profiles,
-            'flags'          => $this->flags,
-            'tenants'        => $this->tenants,
-            'regions'        => $this->regions,
-            'modes'          => $this->modes,
+            'unitId'      => $this->unitId,
+            'ownerSlice'  => $this->ownerSlice,
+            'category'    => $this->category,
+            'visibility'  => $this->visibility,
+            'profiles'    => $this->profiles,
+            'flags'       => $this->flags,
+            'tenants'     => $this->tenants,
+            'regions'     => $this->regions,
+            'modes'       => $this->modes,
             'overrideSource' => $this->overrideSource,
-            'reason'         => $this->reason,
-            'intent'         => $this->intent,
-            'provenance'     => $this->provenance,
-            'exported'       => $this->exported,
-            'imports'        => $this->imports,
-            'concept'        => $this->concept,
-            'fallback'       => $this->fallback,
-            'ownerLocked'    => $this->ownerLocked,
+            'reason'      => $this->reason,
+            'intent'      => $this->intent,
+            'provenance'  => $this->provenance,
+            'exported'    => $this->exported,
+            'imports'     => $this->imports,
+            'concept'     => $this->concept,
+            'fallback'    => $this->fallback,
+            'ownerLocked' => $this->ownerLocked,
             'categoryLocked' => $this->categoryLocked,
         ];
     }

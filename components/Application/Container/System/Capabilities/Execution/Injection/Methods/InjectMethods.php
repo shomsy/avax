@@ -19,9 +19,7 @@ final class InjectMethods
     /** @var array<string, Closure(object, array) : mixed> */
     private array $invokers = [];
 
-    public function __construct(private readonly ResolveCallArguments $resolveCallArguments)
-    {
-    }
+    public function __construct(private readonly ResolveCallArguments $resolveCallArguments) {}
 
     /**
      * @param array<string, mixed> $overrides
@@ -29,11 +27,11 @@ final class InjectMethods
      * @throws ContainerException
      */
     public function inject(
-        object            $target,
+        object         $target,
         DependencyBlueprint $dependencyBlueprint,
-        array             $overrides,
+        array          $overrides,
         ResolveDependency $resolveDependency,
-        ResolveRequest    $resolveRequest,
+        ResolveRequest $resolveRequest,
     ) : void
     {
         foreach ($dependencyBlueprint->injectableMethods as $method) {

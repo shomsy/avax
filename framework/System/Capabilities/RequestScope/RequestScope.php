@@ -13,9 +13,7 @@ final class RequestScope implements RequestScopeInterface
 
     private bool $open = true;
 
-    public function __construct(private readonly RequestScopeId $id)
-    {
-    }
+    public function __construct(private readonly RequestScopeId $id) {}
 
     public function id() : RequestScopeId
     {
@@ -63,7 +61,7 @@ final class RequestScope implements RequestScopeInterface
     public function close() : void
     {
         $this->guardOpen();
-        $this->open   = false;
+        $this->open = false;
         $this->values = [];
     }
 

@@ -28,7 +28,7 @@ final class PhpFpmRuntimeContractTest extends TestCase
         $response = $runtime->handleGlobals(
             server: [
                 'REQUEST_METHOD' => 'GET',
-                'REQUEST_URI'    => '/php-fpm',
+                'REQUEST_URI' => '/php-fpm',
             ],
         );
 

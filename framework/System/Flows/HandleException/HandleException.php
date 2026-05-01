@@ -15,7 +15,7 @@ final class HandleException
         $classification = $this->classifyFrameworkFailure($e);
 
         return match ($classification) {
-            'http'  => $this->renderHttpFailure($e),
+            'http' => $this->renderHttpFailure($e),
             'console' => $this->renderConsoleFailure($e),
             default => $this->reportFrameworkFailure($e),
         };

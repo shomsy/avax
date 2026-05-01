@@ -11,12 +11,13 @@ use components\Filesystem\Files\ReadFileLastModifiedAt;
 class ReadFileLastModifiedAtTest extends TestCase
 {
     private LocalDisk $disk;
+
     private string $testFile;
 
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
+        $this->disk = new LocalDisk;
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/mtime_test.txt';
     }
 
@@ -26,14 +27,14 @@ class ReadFileLastModifiedAtTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteReturnsNullForNonExistentFile() : void
+    public function test_execute_returns_null_for_non_existent_file() : void
     {
         $result = new ReadFileLastModifiedAt(disk: $this->disk)->execute(path: '/ne postoji.txt');
 
         self::assertNull($result);
     }
 
-    public function testExecuteReturnsTimestampForExistingFile() : void
+    public function test_execute_returns_timestamp_for_existing_file() : void
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
 

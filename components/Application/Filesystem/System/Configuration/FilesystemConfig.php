@@ -23,7 +23,7 @@ readonly class FilesystemConfig
         );
     }
 
-    public function disk(string $name) : array|null
+    public function disk(string $name) : ?array
     {
         return $this->disks[$name] ?? null;
     }

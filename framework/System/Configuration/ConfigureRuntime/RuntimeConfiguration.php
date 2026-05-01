@@ -20,6 +20,7 @@ use RuntimeException;
 final class RuntimeConfiguration
 {
     private string $adapter = 'php-fpm';
+
     /**
      * @var array<string, mixed>
      */
@@ -58,12 +59,12 @@ final class RuntimeConfiguration
     public function createRuntime() : object
     {
         return match ($this->adapter) {
-            'php-fpm'    => new PhpFpmRuntime(httpKernel: $this->httpKernel()),
-            'cli'        => new CliRuntime(consoleKernel: $this->consoleKernel()),
+            'php-fpm'   => new PhpFpmRuntime(httpKernel: $this->httpKernel()),
+            'cli'       => new CliRuntime(consoleKernel: $this->consoleKernel()),
             'roadrunner' => new RoadRunnerRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'frankenphp' => new FrankenPhpRuntime(receiver: $this->receiver(), sender: $this->sender()),
-            'swoole'     => new SwooleRuntime(receiver: $this->receiver(), sender: $this->sender()),
-            'workerman'  => new WorkermanRuntime(receiver: $this->receiver(), sender: $this->sender()),
+            'swoole'    => new SwooleRuntime(receiver: $this->receiver(), sender: $this->sender()),
+            'workerman' => new WorkermanRuntime(receiver: $this->receiver(), sender: $this->sender()),
             default => throw new RuntimeException("Unknown adapter: {$this->adapter}"),
         };
     }
@@ -105,7 +106,7 @@ final class RuntimeConfiguration
             return Closure::fromCallable($receiver);
         }
 
-        return static fn () : WorkerRequest|null => null;
+        return static fn () : ?WorkerRequest => null;
     }
 
     /**

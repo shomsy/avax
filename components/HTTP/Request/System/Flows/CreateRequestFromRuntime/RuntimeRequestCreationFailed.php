@@ -6,6 +6,4 @@ namespace Avax\Components\HTTP\Request\System\Flows\CreateRequestFromRuntime;
 
 use Avax\Components\HTTP\Request\System\Foundation\Failure\RequestFailure;
 
-final class RuntimeRequestCreationFailed extends RequestFailure
-{
-}
+final class RuntimeRequestCreationFailed extends RequestFailure {}

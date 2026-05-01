@@ -18,12 +18,12 @@ final readonly class CompiledCacheArtifact
         public CompiledCacheName $compiledCacheName,
         public CompiledCachePath $compiledCachePath,
         public Timestamp $timestamp,
-        public string    $sourceFingerprint,
-        public mixed     $payload = null,
+        public string $sourceFingerprint,
+        public mixed  $payload = null,
     ) {
         $this->compiledCacheName = $compiledCacheName;
         $this->compiledCachePath = $compiledCachePath;
-        $this->timestamp         = $timestamp;
+        $this->timestamp = $timestamp;
     }
 
     public static function create(

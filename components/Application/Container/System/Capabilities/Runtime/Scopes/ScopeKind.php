@@ -23,10 +23,10 @@ final class ScopeKind
     {
         return match (self::normalize(kind: $kind)) {
             self::OPERATION => 1,
-            self::REQUEST   => 2,
-            self::JOB       => 3,
-            self::TENANT    => 4,
-            default         => 0,
+            self::REQUEST => 2,
+            self::JOB     => 3,
+            self::TENANT  => 4,
+            default       => 0,
         };
     }
 
@@ -38,7 +38,7 @@ final class ScopeKind
             self::REQUEST,
             self::JOB,
             self::TENANT => trim(string: $kind),
-            default      => self::OPERATION,
+            default => self::OPERATION,
         };
     }
 }

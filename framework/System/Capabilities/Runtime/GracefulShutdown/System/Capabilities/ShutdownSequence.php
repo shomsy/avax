@@ -13,7 +13,9 @@ final class ShutdownSequence
      * @var list<Closure>
      */
     private static array $callbacks = [];
+
     private static bool $draining = false;
+
     private static bool $executed = false;
 
     public static function register(Closure $callback) : void
@@ -56,7 +58,7 @@ final class ShutdownSequence
     {
         echo "[2/5] Waiting for in-flight requests (max {$maxSeconds}s)...\n";
 
-        $timeout  = time() + $maxSeconds;
+        $timeout = time() + $maxSeconds;
         $inFlight = self::countInFlightRequests();
 
         while ( $inFlight > 0 && time() < $timeout ) {

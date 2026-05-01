@@ -19,9 +19,9 @@ final class InMemoryCacheStore implements CacheStore
     private array $records = [];
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock(),
-        private readonly int   $maxEntries = 1000,
-        private readonly ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
+        private readonly Clock                           $clock = new SystemClock,
+        private readonly int                             $maxEntries = 1000,
+        private readonly ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement,
     ) {}
 
     #[Override]
@@ -45,7 +45,7 @@ final class InMemoryCacheStore implements CacheStore
             $this->chooseCachedValueForReplacement->recordAccess(key: $fullKey);
         }
 
-        $cachedValueLifecycle    = $record->lifecycle->withAccessed(clock: $clock);
+        $cachedValueLifecycle = $record->lifecycle->withAccessed(clock: $clock);
         $this->records[$fullKey] = new StoredCacheRecord(
             value         : $record->value,
             lifecycle     : $cachedValueLifecycle,

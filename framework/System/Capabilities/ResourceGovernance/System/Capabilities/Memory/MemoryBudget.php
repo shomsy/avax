@@ -21,13 +21,13 @@ final class MemoryBudget
 
     private static function parseSize(string $size) : int
     {
-        $unit  = strtoupper(substr($size, -1));
+        $unit = strtoupper(substr($size, -1));
         $value = (int) substr($size, 0, -1);
 
         return match ($unit) {
-            'K'     => $value * 1024,
-            'M'     => $value * 1024 * 1024,
-            'G'     => $value * 1024 * 1024 * 1024,
+            'K' => $value * 1024,
+            'M' => $value * 1024 * 1024,
+            'G' => $value * 1024 * 1024 * 1024,
             default => (int) $size,
         };
     }
@@ -47,7 +47,7 @@ final readonly class MemorySnapshot
     public function toArray() : array
     {
         return [
-            'request_number'   => $this->requestNumber,
+            'request_number' => $this->requestNumber,
             'memory_used_mb' => $this->memoryUsed / 1024 / 1024,
             'worker_memory_mb' => $this->workerMemory / 1024 / 1024,
         ];

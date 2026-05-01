@@ -9,17 +9,20 @@ namespace Avax\Framework\System\Capabilities\ConfigExplanation;
  */
 final readonly class ConfigSource
 {
-    public const SOURCE_FILE     = 'file';
-    public const SOURCE_ENV      = 'env';
+    public const SOURCE_FILE = 'file';
+
+    public const SOURCE_ENV = 'env';
+
     public const SOURCE_OVERRIDE = 'override';
-    public const SOURCE_DEFAULT  = 'default';
+
+    public const SOURCE_DEFAULT = 'default';
 
     public function __construct(
         public string $key,
         public string $source,
-        public mixed  $value,
-        public string|null $envVar = null,
-        public string|null $filePath = null,
+        public mixed   $value,
+        public ?string $envVar = null,
+        public ?string $filePath = null,
     ) {}
 
     public function isFromEnv() : bool

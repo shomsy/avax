@@ -12,7 +12,7 @@ final class RedisSessionStore implements SessionStoreInterface
     /** @var array<string, array<string, mixed>> */
     private array $fallback = [];
 
-    private Redis|null $redis = null;
+    private ?Redis $redis = null;
 
     private string $prefix;
 
@@ -92,7 +92,7 @@ final class RedisSessionStore implements SessionStoreInterface
         }
 
         try {
-            $redis = new Redis();
+            $redis = new Redis;
             $redis->connect(
                 host   : $this->config['host'] ?? '127.0.0.1',
                 port   : $this->config['port'] ?? 6379,

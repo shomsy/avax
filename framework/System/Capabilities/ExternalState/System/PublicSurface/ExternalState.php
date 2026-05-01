@@ -24,10 +24,13 @@ interface StateAdapter
 
 final class ExternalState
 {
-    private static StateAdapter|null $session   = null;
-    private static StateAdapter|null $cache     = null;
-    private static StateAdapter|null $lock      = null;
-    private static StateAdapter|null $rateLimit = null;
+    private static ?StateAdapter $session = null;
+
+    private static ?StateAdapter $cache = null;
+
+    private static ?StateAdapter $lock = null;
+
+    private static ?StateAdapter $rateLimit = null;
 
     public static function session() : StateAdapter
     {
@@ -46,7 +49,7 @@ final class ExternalState
             return new RedisStateAdapter($url);
         }
 
-        return new MemoryStateAdapter();
+        return new MemoryStateAdapter;
     }
 
     public static function cache() : StateAdapter
@@ -66,7 +69,7 @@ final class ExternalState
             return new RedisStateAdapter($url);
         }
 
-        return new MemoryStateAdapter();
+        return new MemoryStateAdapter;
     }
 
     public static function lock() : StateAdapter
@@ -86,7 +89,7 @@ final class ExternalState
             return new RedisStateAdapter($url);
         }
 
-        return new MemoryStateAdapter();
+        return new MemoryStateAdapter;
     }
 
     public static function rateLimit() : StateAdapter
@@ -106,7 +109,7 @@ final class ExternalState
             return new RedisStateAdapter($url);
         }
 
-        return new MemoryStateAdapter();
+        return new MemoryStateAdapter;
     }
 
     public static function setSession(StateAdapter $adapter) : void
@@ -129,7 +132,7 @@ final class ExternalState
         );
     }
 
-    private static function adapterType(StateAdapter|null $adapter) : string
+    private static function adapterType(?StateAdapter $adapter) : string
     {
         if ($adapter instanceof RedisStateAdapter) {
             return 'Redis';
@@ -158,9 +161,9 @@ final readonly class StateAudit
     public function toArray() : array
     {
         return [
-            'session'    => $this->session,
-            'cache'      => $this->cache,
-            'lock'       => $this->lock,
+            'session' => $this->session,
+            'cache'   => $this->cache,
+            'lock'    => $this->lock,
             'rate_limit' => $this->rateLimit,
         ];
     }

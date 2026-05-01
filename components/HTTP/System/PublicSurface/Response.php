@@ -10,8 +10,7 @@ final class Response
         private int $statusCode = 200,
         private array $headers = [],
         private string $body = '',
-    ) {
-    }
+    ) {}
 
     public function statusCode() : int
     {

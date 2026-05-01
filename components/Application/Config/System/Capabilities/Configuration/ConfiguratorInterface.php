@@ -34,9 +34,9 @@ interface ConfiguratorInterface
      * hard-coded configuration keys and enhancing code consistency. If the key does not exist,
      * a default value can be returned.
      *
-     * @param string $key     The configuration key to retrieve.
-     * @param mixed  $default A default value to return if the key does not exist.
-     *                        Use meaningful defaults relevant to the configuration context.
+     * @param string $key       The configuration key to retrieve.
+     * @param mixed  $default   A default value to return if the key does not exist.
+     *                          Use meaningful defaults relevant to the configuration context.
      *
      * @return mixed The configuration value, or the default if the key is missing.
      *
@@ -54,7 +54,7 @@ interface ConfiguratorInterface
      *
      * @return bool True if the key exists in the configuration, false otherwise.
      */
-    public function has(string $key) : bool;
+    public function has(string $key): bool;
 
     /**
      * Returns all configuration settings as a collection.
@@ -64,7 +64,7 @@ interface ConfiguratorInterface
      *
      * @return Collection The complete set of configuration data.
      */
-    public function all() : Collection;
+    public function all(): Collection;
 
     /**
      * Refreshes the configuration data by reloading from files and updating the cache.
@@ -74,5 +74,5 @@ interface ConfiguratorInterface
      *
      * @return Collection The refreshed configuration data.
      */
-    public function refresh() : Collection;
+    public function refresh(): Collection;
 }

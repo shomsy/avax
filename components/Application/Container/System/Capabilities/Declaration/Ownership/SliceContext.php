@@ -18,7 +18,7 @@ final class SliceContext
      *
      * @return array<string, mixed>
      */
-    public static function with(array $context, string $slice) : array
+    public static function with(array $context, string $slice): array
     {
         $normalized = self::normalize(slice: $slice);
         if ($normalized === '') {
@@ -47,7 +47,7 @@ final class SliceContext
         return is_string(value: $slice) ? self::normalize(slice: $slice) : '';
     }
 
-    public static function isRoot(string $slice) : bool
+    public static function isRoot(string $slice): bool
     {
         $normalized = self::normalize(slice: $slice);
 

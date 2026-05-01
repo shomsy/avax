@@ -22,10 +22,10 @@ final class SagaTest extends TestCase
 {
     // ==================== Saga DSL Tests ====================
 
-    public function testDefineSagaWithMultipleSteps() : void
+    public function test_define_saga_with_multiple_steps() : void
     {
-        $orderCreated     = false;
-        $paymentCharged   = false;
+        $orderCreated   = false;
+        $paymentCharged = false;
         $confirmationSent = false;
 
         $saga = Saga::define('order-processing')
@@ -57,7 +57,7 @@ final class SagaTest extends TestCase
         $this->assertSame('send-confirmation', $result->completedSteps[2]);
     }
 
-    public function testSagaExecutesStepsInOrder() : void
+    public function test_saga_executes_steps_in_order() : void
     {
         $executionOrder = [];
 
@@ -83,7 +83,7 @@ final class SagaTest extends TestCase
         $this->assertSame(['first', 'second', 'third'], $executionOrder);
     }
 
-    public function testSagaPassesContextBetweenSteps() : void
+    public function test_saga_passes_context_between_steps() : void
     {
         $saga = Saga::define('context-flow')
             ->step('step-one', static fn (array $ctx) => ['value1' => 'from-step-one'])
@@ -97,9 +97,9 @@ final class SagaTest extends TestCase
 
     // ==================== Compensation Tests ====================
 
-    public function testCompensationRunsOnFailure() : void
+    public function test_compensation_runs_on_failure() : void
     {
-        $orderCreated  = false;
+        $orderCreated = false;
         $orderRefunded = false;
         $paymentFailed = false;
 
@@ -136,7 +136,7 @@ final class SagaTest extends TestCase
         $this->assertSame('Payment gateway unavailable', $result->getFailureReason());
     }
 
-    public function testCompensationRunsInReverseOrder() : void
+    public function test_compensation_runs_in_reverse_order() : void
     {
         $compensationOrder = [];
 
@@ -176,7 +176,7 @@ final class SagaTest extends TestCase
         $this->assertSame(['compensate-c', 'compensate-b', 'compensate-a'], $compensationOrder);
     }
 
-    public function testExplicitCompensation() : void
+    public function test_explicit_compensation() : void
     {
         $compensated = [];
 
@@ -207,7 +207,7 @@ final class SagaTest extends TestCase
         $this->assertSame(['inventory', 'order'], $compensated);
     }
 
-    public function testCompensationWithoutHandler() : void
+    public function test_compensation_without_handler() : void
     {
         $saga = Saga::define('no-compensation-handler')
             ->step('step-without-compensation', static fn () => [])
@@ -221,7 +221,7 @@ final class SagaTest extends TestCase
         $this->assertFalse($result->isSuccessful());
     }
 
-    public function testFailMethod() : void
+    public function test_fail_method() : void
     {
         $saga = Saga::define('fail-test')
             ->step('step-one', static fn () => []);
@@ -237,9 +237,9 @@ final class SagaTest extends TestCase
 
     // ==================== Resume Tests ====================
 
-    public function testResumeFromStoredState() : void
+    public function test_resume_from_stored_state() : void
     {
-        $store    = new InMemorySagaStore();
+        $store = new InMemorySagaStore;
         $workflow = new Workflow($store);
 
         $executionCount = 0;
@@ -268,9 +268,9 @@ final class SagaTest extends TestCase
         $this->assertSame($sagaId, $stored->getId());
     }
 
-    public function testWorkflowStartAndResume() : void
+    public function test_workflow_start_and_resume() : void
     {
-        $store    = new InMemorySagaStore();
+        $store = new InMemorySagaStore;
         $workflow = new Workflow($store);
 
         $saga = Saga::define('workflow-test')
@@ -286,9 +286,9 @@ final class SagaTest extends TestCase
         $this->assertTrue($result->isSuccessful());
     }
 
-    public function testWorkflowCancel() : void
+    public function test_workflow_cancel() : void
     {
-        $store       = new InMemorySagaStore();
+        $store = new InMemorySagaStore;
         $compensated = false;
 
         $saga = Saga::define('cancellable-saga')
@@ -309,14 +309,14 @@ final class SagaTest extends TestCase
 
         // Cancel the saga
         $workflow = new Workflow($store);
-        $result   = $workflow->cancel($sagaId);
+        $result = $workflow->cancel($sagaId);
 
         $this->assertTrue($compensated);
     }
 
-    public function testResumeNotFoundSaga() : void
+    public function test_resume_not_found_saga() : void
     {
-        $workflow = new Workflow(new InMemorySagaStore());
+        $workflow = new Workflow(new InMemorySagaStore);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Saga with ID "nonexistent" not found');
@@ -326,7 +326,7 @@ final class SagaTest extends TestCase
 
     // ==================== Idempotency Tests ====================
 
-    public function testIdempotencyKeyGeneration() : void
+    public function test_idempotency_key_generation() : void
     {
         $key1 = IdempotencyKey::generate('saga-1', 'step-a', '0');
         $key2 = IdempotencyKey::generate('saga-1', 'step-a', '0');
@@ -336,9 +336,9 @@ final class SagaTest extends TestCase
         $this->assertNotSame($key1->toString(), $key3->toString());
     }
 
-    public function testIdempotencyStorePreventsDuplicateExecution() : void
+    public function test_idempotency_store_prevents_duplicate_execution() : void
     {
-        $store = new IdempotencyStore();
+        $store = new IdempotencyStore;
         $key   = IdempotencyKey::generate('saga-1', 'step-a', '0');
 
         $this->assertFalse($store->hasExecuted($key));
@@ -349,10 +349,10 @@ final class SagaTest extends TestCase
         $this->assertSame(['result' => 'success'], $store->getResult($key));
     }
 
-    public function testStepRunnerIdempotency() : void
+    public function test_step_runner_idempotency() : void
     {
         $executionCount = 0;
-        $step           = new SagaStep(
+        $step = new SagaStep(
             name  : 'counting-step',
             action: static function () use (&$executionCount) {
                 $executionCount++;
@@ -361,7 +361,7 @@ final class SagaTest extends TestCase
             },
         );
 
-        $runner = new StepRunner();
+        $runner = new StepRunner;
         $key    = IdempotencyKey::generate('saga-1', 'counting-step', '0');
 
         $result1 = $runner->execute($step, [], $key);
@@ -375,14 +375,14 @@ final class SagaTest extends TestCase
 
     // ==================== StepRunner Tests ====================
 
-    public function testStepRunnerExecutesStep() : void
+    public function test_step_runner_executes_step() : void
     {
         $step = new SagaStep(
             name  : 'test-step',
             action: static fn (array $ctx) => ['processed' => true, 'input' => $ctx['input'] ?? null],
         );
 
-        $runner = new StepRunner();
+        $runner = new StepRunner;
         $key    = IdempotencyKey::generate('saga-1', 'test-step', '0');
 
         $result = $runner->execute($step, ['input' => 'data'], $key);
@@ -391,7 +391,7 @@ final class SagaTest extends TestCase
         $this->assertSame('data', $result['input']);
     }
 
-    public function testStepRunnerThrowsOnFailure() : void
+    public function test_step_runner_throws_on_failure() : void
     {
         $step = new SagaStep(
             name  : 'failing-step',
@@ -401,7 +401,7 @@ final class SagaTest extends TestCase
         );
 
         $runner = new StepRunner(retryPolicy: RetryPolicy::none());
-        $key    = IdempotencyKey::generate('saga-1', 'failing-step', '0');
+        $key  = IdempotencyKey::generate('saga-1', 'failing-step', '0');
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Step failed');
@@ -411,7 +411,7 @@ final class SagaTest extends TestCase
 
     // ==================== RetryPolicy Tests ====================
 
-    public function testRetryPolicyExponentialBackoff() : void
+    public function test_retry_policy_exponential_backoff() : void
     {
         $policy = RetryPolicy::exponential(maxAttempts: 3, baseBackoffMs: 100);
 
@@ -423,7 +423,7 @@ final class SagaTest extends TestCase
         $this->assertTrue($policy->canRetry(2));
     }
 
-    public function testRetryPolicyLinearBackoff() : void
+    public function test_retry_policy_linear_backoff() : void
     {
         $policy = RetryPolicy::linear(maxAttempts: 3, backoffMs: 100);
 
@@ -432,7 +432,7 @@ final class SagaTest extends TestCase
         $this->assertSame(300, $policy->getDelayForAttempt(3));
     }
 
-    public function testRetryPolicyNone() : void
+    public function test_retry_policy_none() : void
     {
         $policy = RetryPolicy::none();
 
@@ -442,7 +442,7 @@ final class SagaTest extends TestCase
 
     // ==================== CompensationExecutor Tests ====================
 
-    public function testCompensationExecutorReverseOrder() : void
+    public function test_compensation_executor_reverse_order() : void
     {
         $compensated = [];
 
@@ -458,14 +458,14 @@ final class SagaTest extends TestCase
             }),
         ];
 
-        $executor = new CompensationExecutor();
+        $executor = new CompensationExecutor;
         $result   = $executor->execute($steps, ['a', 'b', 'c'], []);
 
         $this->assertTrue($result->success);
         $this->assertSame(['c', 'b', 'a'], $compensated);
     }
 
-    public function testCompensationExecutorHandlesPartialCompensation() : void
+    public function test_compensation_executor_handles_partial_compensation() : void
     {
         $compensated = [];
 
@@ -481,7 +481,7 @@ final class SagaTest extends TestCase
             }),
         ];
 
-        $executor = new CompensationExecutor();
+        $executor = new CompensationExecutor;
         $result   = $executor->execute($steps, ['a', 'b', 'c'], []);
 
         $this->assertFalse($result->success);
@@ -490,13 +490,13 @@ final class SagaTest extends TestCase
         $this->assertStringContainsString('Compensation failed', $result->failureReason);
     }
 
-    public function testCompensationExecutorWithEmptyCompletedSteps() : void
+    public function test_compensation_executor_with_empty_completed_steps() : void
     {
         $steps = [
             new SagaStep('a', static fn () => [], static fn () => null),
         ];
 
-        $executor = new CompensationExecutor();
+        $executor = new CompensationExecutor;
         $result   = $executor->execute($steps, [], []);
 
         $this->assertTrue($result->success);
@@ -505,7 +505,7 @@ final class SagaTest extends TestCase
 
     // ==================== SagaState Tests ====================
 
-    public function testSagaStateEnum() : void
+    public function test_saga_state_enum() : void
     {
         $this->assertSame('running', SagaState::Running->value);
         $this->assertSame('completed', SagaState::Completed->value);
@@ -516,9 +516,9 @@ final class SagaTest extends TestCase
 
     // ==================== SagaStore Tests ====================
 
-    public function testInMemorySagaStore() : void
+    public function test_in_memory_saga_store() : void
     {
-        $store = new InMemorySagaStore();
+        $store = new InMemorySagaStore;
 
         $saga = Saga::define('test-saga')
             ->step('step-one', static fn () => []);
@@ -533,9 +533,9 @@ final class SagaTest extends TestCase
         $this->assertNull($notFound);
     }
 
-    public function testInMemorySagaStoreUpdateStatus() : void
+    public function test_in_memory_saga_store_update_status() : void
     {
-        $store = new InMemorySagaStore();
+        $store = new InMemorySagaStore;
 
         $saga = Saga::define('test-saga')
             ->step('step-one', static fn () => []);
@@ -549,9 +549,9 @@ final class SagaTest extends TestCase
         $this->assertSame(SagaState::Completed, $found->getStatus());
     }
 
-    public function testInMemorySagaStoreDelete() : void
+    public function test_in_memory_saga_store_delete() : void
     {
-        $store = new InMemorySagaStore();
+        $store = new InMemorySagaStore;
 
         $saga = Saga::define('test-saga')
             ->step('step-one', static fn () => []);
@@ -565,7 +565,7 @@ final class SagaTest extends TestCase
 
     // ==================== SagaResult Tests ====================
 
-    public function testSagaResultGetStepResult() : void
+    public function test_saga_result_get_step_result() : void
     {
         $result = new SagaResult(
             success       : true,
@@ -580,7 +580,7 @@ final class SagaTest extends TestCase
         $this->assertNull($result->getStepResult('nonexistent'));
     }
 
-    public function testSagaResultIsSuccessful() : void
+    public function test_saga_result_is_successful() : void
     {
         $successResult = new SagaResult(
             success       : true,
@@ -606,7 +606,7 @@ final class SagaTest extends TestCase
 
     // ==================== SagaStep Tests ====================
 
-    public function testSagaStepExecute() : void
+    public function test_saga_step_execute() : void
     {
         $step = new SagaStep(
             name  : 'test-step',
@@ -617,7 +617,7 @@ final class SagaTest extends TestCase
         $this->assertSame(['result' => 10], $result);
     }
 
-    public function testSagaStepCompensate() : void
+    public function test_saga_step_compensate() : void
     {
         $compensated = false;
 
@@ -633,7 +633,7 @@ final class SagaTest extends TestCase
         $this->assertTrue($compensated);
     }
 
-    public function testSagaStepWithoutCompensation() : void
+    public function test_saga_step_without_compensation() : void
     {
         $step = new SagaStep(
             name  : 'test-step',
@@ -647,9 +647,9 @@ final class SagaTest extends TestCase
 
     // ==================== Workflow Tests ====================
 
-    public function testWorkflowStart() : void
+    public function test_workflow_start() : void
     {
-        $store    = new InMemorySagaStore();
+        $store = new InMemorySagaStore;
         $workflow = new Workflow($store);
 
         // Define saga and save it to store first
@@ -665,9 +665,9 @@ final class SagaTest extends TestCase
         $this->assertTrue($result->isSuccessful());
     }
 
-    public function testWorkflowWithCustomStore() : void
+    public function test_workflow_with_custom_store() : void
     {
-        $store    = new InMemorySagaStore();
+        $store = new InMemorySagaStore;
         $workflow = new Workflow($store);
 
         $this->assertSame($store, $workflow->store());
@@ -675,7 +675,7 @@ final class SagaTest extends TestCase
 
     // ==================== Complex Integration Test ====================
 
-    public function testFullSagaLifecycleWithCompensation() : void
+    public function test_full_saga_lifecycle_with_compensation() : void
     {
         $events = [];
 

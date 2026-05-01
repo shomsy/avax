@@ -50,7 +50,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
         return $store->read(key: $cacheKey, clock: $clock);
     }
 
-    public function getNodeStore(CacheNodeId $cacheNodeId) : CacheStore|null
+    public function getNodeStore(CacheNodeId $cacheNodeId) : ?CacheStore
     {
         return $this->nodeStores[$cacheNodeId->toString()] ?? null;
     }
@@ -71,7 +71,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
         }
     }
 
-    private function resolveNodeStore(CacheNode $cacheNode) : CacheStore|null
+    private function resolveNodeStore(CacheNode $cacheNode) : ?CacheStore
     {
         return $this->nodeStores[$cacheNode->id->toString()] ?? null;
     }

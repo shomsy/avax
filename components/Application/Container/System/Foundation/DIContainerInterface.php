@@ -21,7 +21,7 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 /**
  * Stable public surface for the container component.
  */
-interface ContainerInterface extends PsrContainerInterface, DependencyRegistryContract
+interface ContainerInterface extends DependencyRegistryContract, PsrContainerInterface
 {
     /**
      * Builds one object with optional constructor overrides.
@@ -144,7 +144,6 @@ interface ContainerInterface extends PsrContainerInterface, DependencyRegistryCo
 
     /**
      * @param list<string> $serviceIds
-     *
      * @return array<string, mixed>
      */
     public function debugVisibilityViolations(array $serviceIds = []) : array;
@@ -184,45 +183,45 @@ interface ContainerInterface extends PsrContainerInterface, DependencyRegistryCo
      *
      * @throws ContainerException
      */
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void;
+    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void;
 
     /**
      * Closes the current scope frame.
      *
      * @throws ContainerException
      */
-    public function closeScope(string $kind = null) : void;
+    public function closeScope(?string $kind = null): void;
 
     /**
      * @param list<string> $serviceIds
      *
      * @throws ContainerException
      */
-    public function compileContainer(array $serviceIds = []) : void;
+    public function compileContainer(array $serviceIds = []): void;
 
     /**
      * @param list<string> $serviceIds
      *
      * @throws ContainerException
      */
-    public function warmCompiled(array $serviceIds = []) : void;
+    public function warmCompiled(array $serviceIds = []): void;
 
     /**
      * Removes the current compiled artifact.
      */
-    public function flushCompiled() : void;
+    public function flushCompiled(): void;
 
     /**
      * @param list<string> $serviceIds
      *
      * @throws ContainerException
      */
-    public function rebuildCompiled(array $serviceIds = []) : void;
+    public function rebuildCompiled(array $serviceIds = []): void;
 
     /**
      * @param list<string> $serviceIds
      */
-    public function compileReport(array $serviceIds = []) : CompileReport|null;
+    public function compileReport(array $serviceIds = []) : ?CompileReport;
 
     /**
      * Returns the current runtime state report.
@@ -232,27 +231,27 @@ interface ContainerInterface extends PsrContainerInterface, DependencyRegistryCo
     /**
      * Reports whether one alias exists.
      */
-    public function hasAlias(string $alias) : bool;
+    public function hasAlias(string $alias): bool;
 
     /**
      * Reports whether one service resolves through deferred ownership.
      */
-    public function isDeferred(string $id) : bool;
+    public function isDeferred(string $id): bool;
 
     /**
      * Reports whether one service has been marked lazy.
      */
-    public function isLazy(string $id) : bool;
+    public function isLazy(string $id): bool;
 
     /**
      * Reports whether one service is present in the compiled artifact.
      */
-    public function isCompiled(string $id) : bool;
+    public function isCompiled(string $id): bool;
 
     /**
      * Reports whether the compiled runtime is attached or an artifact is available to attach.
      */
-    public function isWarmedUp() : bool;
+    public function isWarmedUp(): bool;
 
     /**
      * Returns the runtime scope boundary.
@@ -325,10 +324,10 @@ interface ContainerInterface extends PsrContainerInterface, DependencyRegistryCo
      *
      * @param array<string, mixed> $context
      */
-    public function forContext(array $context) : self;
+    public function forContext(array $context): self;
 
     /**
      * Returns one slice-aware view over the same container runtime.
      */
-    public function forSlice(string $slice) : self;
+    public function forSlice(string $slice): self;
 }

@@ -24,7 +24,7 @@ class ChangePathPermissionsTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteSetsPermissions() : void
+    public function test_execute_sets_permissions() : void
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
 
@@ -33,7 +33,7 @@ class ChangePathPermissionsTest extends TestCase
         self::assertTrue(condition: $result);
     }
 
-    public function testExecuteThrowsExceptionForNonExistentPath() : void
+    public function test_execute_throws_exception_for_non_existent_path() : void
     {
         $this->expectException(exception: RuntimeException::class);
         $this->expectExceptionMessage(message: 'Path does not exist:');
@@ -41,7 +41,7 @@ class ChangePathPermissionsTest extends TestCase
         new ChangePathPermissions()->execute(path: '/ne postoji put', permissions: 0o644);
     }
 
-    public function testExecuteReturnsFalseForFailure() : void
+    public function test_execute_returns_false_for_failure() : void
     {
         if (posix_getuid() === 0) {
             $this->markTestSkipped(reason: 'Cannot test permission failure as root');

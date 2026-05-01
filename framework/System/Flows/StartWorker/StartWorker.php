@@ -10,8 +10,7 @@ final class StartWorker
 {
     public function __construct(
         private readonly RuntimeContext $context,
-    ) {
-    }
+    ) {}
 
     public function start(callable $bootstrap) : void
     {

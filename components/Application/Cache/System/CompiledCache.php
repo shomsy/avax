@@ -12,9 +12,9 @@ use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfigur
 
 final class CompiledCache
 {
-    private static CompiledCacheContract|null $compiledCacheContract = null;
+    private static ?CompiledCacheContract $compiledCacheContract = null;
 
-    private static string|null $defaultDirectory = null;
+    private static ?string $defaultDirectory = null;
 
     public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed
     {
@@ -24,10 +24,10 @@ final class CompiledCache
     private static function instance() : CompiledCacheContract
     {
         if (! self::$compiledCacheContract instanceof CompiledCacheContract) {
-            $directory = self::$defaultDirectory ?? sys_get_temp_dir() . '/compiled_cache';
+            $directory          = self::$defaultDirectory ?? sys_get_temp_dir() . '/compiled_cache';
 
             $config = CompiledCacheConfiguration::inDirectory($directory);
-            $buildCompiledCache = new BuildCompiledCache();
+            $buildCompiledCache = new BuildCompiledCache;
 
             self::$compiledCacheContract = $buildCompiledCache->fromConfiguration(configuration: $config);
         }

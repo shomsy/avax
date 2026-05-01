@@ -12,9 +12,6 @@ use Avax\Components\Application\Config\Service\Config;
 if (! function_exists('config')) {
     /**
      * Retrieve a configuration value or the entire configuration instance.
-     *
-     * @param mixed|null $default
-     *
      */
     function config(string $key, mixed $default = null) : mixed
     {
@@ -39,8 +36,6 @@ if (! function_exists('base_path')) {
 if (! function_exists('storage_path')) {
     /**
      * Resolves the storage path.
-     *
-     *
      */
     function storage_path(string $path = '') : string
     {

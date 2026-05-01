@@ -17,7 +17,7 @@ final class PooledLifetimeSequence
     public static int $disposed = 0;
 }
 
-final class ReusablePooledService implements ResettableInterface, DisposableInterface
+final class ReusablePooledService implements DisposableInterface, ResettableInterface
 {
     public int $id;
 
@@ -58,7 +58,7 @@ $container->bind(abstract: ReusablePooledService::class, concrete: ReusablePoole
 $container->bind(abstract: UnsafePooledService::class, concrete: UnsafePooledService::class)
     ->pooled(maxSize: 1);
 
-$issues    = $container->validate(serviceIds: [ReusablePooledService::class, UnsafePooledService::class]);
+$issues = $container->validate(serviceIds: [ReusablePooledService::class, UnsafePooledService::class]);
 $issueText = implode(separator: "\n", array: $issues);
 
 assertTrue(
@@ -67,7 +67,7 @@ assertTrue(
 );
 
 $container->openScope();
-$first     = $container->get(id: ReusablePooledService::class);
+$first = $container->get(id: ReusablePooledService::class);
 $sameScope = $container->get(id: ReusablePooledService::class);
 assertSame(expected: $first, actual: $sameScope, message: 'Pooled services should reuse the checked-out instance inside one scope.');
 $container->closeScope();

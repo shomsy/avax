@@ -21,14 +21,14 @@ use LogicException;
 final readonly class AsyncReadFile
 {
     /**
-     * @param string               $path    Absolute or relative file path to read
-     * @param array<string, mixed> $options Read operation options (encoding, offset, length, etc.)
+     * @param string                     $path                  Absolute or relative file path to read
+     * @param array<string, mixed>       $options               Read operation options (encoding, offset, length, etc.)
      * @param AsyncOperationPromise|null $asyncOperationPromise The promise associated with this operation (null until scheduled)
      */
     public function __construct(
         public string $path,
-        public array  $options = [],
-        public AsyncOperationPromise|null $asyncOperationPromise = null,
+        public array                  $options = [],
+        public ?AsyncOperationPromise $asyncOperationPromise = null,
     ) {}
 
     /**
@@ -51,7 +51,7 @@ final readonly class AsyncReadFile
     public static function withPromise(
         string $path,
         AsyncOperationPromise $asyncOperationPromise,
-        array  $options = [],
+        array $options = [],
     ) : self
     {
         return new self($path, $options, $asyncOperationPromise);

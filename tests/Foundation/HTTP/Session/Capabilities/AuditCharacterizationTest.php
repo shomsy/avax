@@ -12,7 +12,7 @@ final class AuditCharacterizationTest extends TestCase
 {
     public function test_audit_records_to_psr_logger() : void
     {
-        $logger = new class () implements LoggerInterface {
+        $logger = new class implements LoggerInterface {
             public array $calls = [];
 
             public function emergency($message, array $context = []) : void

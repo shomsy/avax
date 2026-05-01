@@ -8,10 +8,10 @@ use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
 
 $router = static function (RouteBuilder $routes) : void {
     $routes->get('/', static fn () => [
-        'name'    => 'Avax',
+        'name' => 'Avax',
         'version' => '1.0.0',
         'message' => 'Welcome to Avax Framework',
-        'docs'    => '/api/docs',
+        'docs' => '/api/docs',
     ]);
 
     $routes->get('/health', static fn () => Monitoring::health()->toArray());

@@ -9,9 +9,7 @@ require_once __DIR__ . '/BenchmarkPeerAdapter.php';
  */
 final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapter
 {
-    public function __construct(private string $peerName, private string $path)
-    {
-    }
+    public function __construct(private string $peerName, private string $path) {}
 
     #[Override]
     public function name() : string
@@ -48,7 +46,7 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
         $results = $decoded['results'];
 
         return [
-            'meta'    => $meta,
+            'meta' => $meta,
             'results' => $results,
         ];
     }

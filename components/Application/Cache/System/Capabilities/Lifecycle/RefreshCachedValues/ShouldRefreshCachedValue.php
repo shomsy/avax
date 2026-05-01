@@ -12,22 +12,22 @@ final readonly class ShouldRefreshCachedValue
     public function __construct(
         private Clock $clock,
         private RefreshPolicy $refreshPolicy = RefreshPolicy::DO_NOT_REFRESH,
-        private int   $refreshAheadWindowSeconds = 60,
-        private int   $staleThresholdSeconds = 300,
+        private int $refreshAheadWindowSeconds = 60,
+        private int $staleThresholdSeconds = 300,
     ) {}
 
-    public function shouldRefresh(CachedValueLifecycle|null $lifecycle) : bool
+    public function shouldRefresh(?CachedValueLifecycle $lifecycle) : bool
     {
         return match ($this->refreshPolicy) {
-            RefreshPolicy::DO_NOT_REFRESH      => false,
-            RefreshPolicy::REFRESH_ON_READ     => $this->shouldRefreshOnRead(lifecycle: $lifecycle),
-            RefreshPolicy::REFRESH_AHEAD       => $this->shouldRefreshAhead(lifecycle: $lifecycle),
-            RefreshPolicy::REFRESH_WHEN_STALE  => $this->shouldRefreshWhenStale(lifecycle: $lifecycle),
+            RefreshPolicy::DO_NOT_REFRESH     => false,
+            RefreshPolicy::REFRESH_ON_READ    => $this->shouldRefreshOnRead(lifecycle: $lifecycle),
+            RefreshPolicy::REFRESH_AHEAD      => $this->shouldRefreshAhead(lifecycle: $lifecycle),
+            RefreshPolicy::REFRESH_WHEN_STALE => $this->shouldRefreshWhenStale(lifecycle: $lifecycle),
             RefreshPolicy::REFRESH_AFTER_WRITE => true,
         };
     }
 
-    private function shouldRefreshOnRead(CachedValueLifecycle|null $lifecycle) : bool
+    private function shouldRefreshOnRead(?CachedValueLifecycle $lifecycle) : bool
     {
         if (! $lifecycle instanceof CachedValueLifecycle) {
             return true;
@@ -36,7 +36,7 @@ final readonly class ShouldRefreshCachedValue
         return $lifecycle->isExpired(clock: $this->clock);
     }
 
-    private function shouldRefreshAhead(CachedValueLifecycle|null $lifecycle) : bool
+    private function shouldRefreshAhead(?CachedValueLifecycle $lifecycle) : bool
     {
         if (! $lifecycle instanceof CachedValueLifecycle) {
             return true;
@@ -47,7 +47,7 @@ final readonly class ShouldRefreshCachedValue
         return $ttl <= $this->refreshAheadWindowSeconds;
     }
 
-    private function shouldRefreshWhenStale(CachedValueLifecycle|null $lifecycle) : bool
+    private function shouldRefreshWhenStale(?CachedValueLifecycle $lifecycle) : bool
     {
         if (! $lifecycle instanceof CachedValueLifecycle) {
             return true;

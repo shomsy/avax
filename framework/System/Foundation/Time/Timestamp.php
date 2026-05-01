@@ -10,8 +10,7 @@ final readonly class Timestamp
 {
     public function __construct(
         private DateTimeImmutable $value,
-    ) {
-    }
+    ) {}
 
     public static function now(Clock $clock) : self
     {

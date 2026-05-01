@@ -6,11 +6,11 @@ use Avax\Components\Application\Container\DependencyInjection\Capability\Prototy
 use Avax\Logging\LoggerFactory;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'           => LoggerFactory::class,
+                                                'class'              => LoggerFactory::class,
                                                 'constructor'        => null,
                                                 'injectedProperties' => [
                                                 ],
-                                                'injectedMethods' => [
+                                                'injectedMethods'    => [
                                                 ],
-                                                'isInstantiable'  => true,
+                                                'isInstantiable'     => true,
                                             ]);

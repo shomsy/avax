@@ -43,6 +43,7 @@ final class WorkerPool
 {
     /** @var list<WorkerProcess> */
     private array $workers = [];
+
     private bool $running = false;
 
     /**
@@ -115,9 +116,9 @@ final class WorkerPool
 
     public function status() : WorkerStatus
     {
-        $running     = 0;
-        $idle        = 0;
-        $totalTasks  = 0;
+        $running    = 0;
+        $idle       = 0;
+        $totalTasks = 0;
         $totalMemory = 0;
 
         foreach ($this->workers as $worker) {
@@ -129,7 +130,7 @@ final class WorkerPool
                 $idle++;
             }
 
-            $totalTasks  += $worker->taskCount();
+            $totalTasks += $worker->taskCount();
             $totalMemory += $worker->memoryUsage();
         }
 
@@ -159,10 +160,10 @@ final readonly class WorkerStatus
     public function toArray() : array
     {
         return [
-            'total'           => $this->total,
-            'running'         => $this->running,
-            'idle'            => $this->idle,
-            'total_tasks'     => $this->totalTasks,
+            'total'       => $this->total,
+            'running'     => $this->running,
+            'idle'        => $this->idle,
+            'total_tasks' => $this->totalTasks,
             'total_memory_mb' => $this->totalMemory,
         ];
     }

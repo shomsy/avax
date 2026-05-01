@@ -24,7 +24,7 @@ final readonly class RandomJitter
         }
 
         $jitterRange = (int) ($ttlInSeconds * $this->jitterPercentage);
-        $jitter      = random_int(min: -$jitterRange, max: $jitterRange);
+        $jitter = random_int(min: -$jitterRange, max: $jitterRange);
 
         return max(1, $ttlInSeconds + $jitter);
     }
@@ -39,7 +39,7 @@ final readonly class RandomJitter
         }
 
         $jitterRange = (int) ($ttlInMilliseconds * $this->jitterPercentage);
-        $jitter      = random_int(min: -$jitterRange, max: $jitterRange);
+        $jitter = random_int(min: -$jitterRange, max: $jitterRange);
 
         return max(1, $ttlInMilliseconds + $jitter);
     }

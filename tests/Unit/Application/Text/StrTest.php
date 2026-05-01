@@ -139,7 +139,7 @@ final class StrTest extends TestCase
     #[Test]
     public function excerpt_creates_word_boundary_excerpt() : void
     {
-        $text    = 'The quick brown fox jumps over the lazy dog';
+        $text = 'The quick brown fox jumps over the lazy dog';
         $excerpt = Str::excerpt($text, 15);
 
         $this->assertLessThanOrEqual(expected: 18, actual: strlen($excerpt)); // 15 + '...'
@@ -164,7 +164,7 @@ final class StrTest extends TestCase
     #[Test]
     public function random_generates_different_strings() : void
     {
-        $first  = Str::random(32);
+        $first = Str::random(32);
         $second = Str::random(32);
         $this->assertNotEquals(expected: $first, actual: $second);
     }

@@ -14,9 +14,9 @@ final class ScopeManagerTest extends TestCase
 {
     public function test_scope_manager_stores_singletons_when_no_scope_is_active() : void
     {
-        $registry = new ScopeRegistry();
+        $registry = new ScopeRegistry;
         $manager  = new ScopeManager(registry: $registry);
-        $service  = new stdClass();
+        $service  = new stdClass;
 
         $manager->set(abstract: 'service', instance: $service);
 
@@ -26,10 +26,10 @@ final class ScopeManagerTest extends TestCase
 
     public function test_begin_and_end_scope_isolate_scoped_instances() : void
     {
-        $registry  = new ScopeRegistry();
+        $registry  = new ScopeRegistry;
         $manager   = new ScopeManager(registry: $registry);
-        $singleton = new stdClass();
-        $scoped    = new stdClass();
+        $singleton = new stdClass;
+        $scoped    = new stdClass;
 
         $manager->set(abstract: 'service', instance: $singleton);
 
@@ -45,7 +45,7 @@ final class ScopeManagerTest extends TestCase
 
     public function test_end_scope_without_active_scope_throws() : void
     {
-        $manager = new ScopeManager(registry: new ScopeRegistry());
+        $manager = new ScopeManager(registry: new ScopeRegistry);
 
         $this->expectException(exception: RuntimeException::class);
         $manager->endScope();
@@ -53,12 +53,12 @@ final class ScopeManagerTest extends TestCase
 
     public function test_terminate_clears_registry_state() : void
     {
-        $registry = new ScopeRegistry();
+        $registry = new ScopeRegistry;
         $manager  = new ScopeManager(registry: $registry);
 
-        $manager->set(abstract: 'service', instance: new stdClass());
+        $manager->set(abstract: 'service', instance: new stdClass);
         $manager->beginScope();
-        $manager->set(abstract: 'scoped', instance: new stdClass());
+        $manager->set(abstract: 'scoped', instance: new stdClass);
         $manager->terminate();
 
         $this->assertFalse(condition: $registry->has(abstract: 'service'));

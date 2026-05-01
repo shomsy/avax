@@ -8,9 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveC
 
 final readonly class MetricsSink
 {
-    public function __construct(private MetricsBackend $metricsBackend, private string|null $prefix = 'cache')
-    {
-    }
+    public function __construct(private MetricsBackend $metricsBackend, private ?string $prefix = 'cache') {}
 
     public function recordHit() : void
     {

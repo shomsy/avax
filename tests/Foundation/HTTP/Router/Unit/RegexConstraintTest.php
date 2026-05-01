@@ -22,6 +22,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
+     *
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
@@ -44,6 +45,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
+     *
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
@@ -67,6 +69,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function rejects_invalid_regex_patterns() : void
@@ -88,6 +91,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function handles_regex_compilation_errors() : void
@@ -110,6 +114,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
+     *
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
@@ -133,6 +138,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
+     *
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
@@ -155,6 +161,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
+     *
      * @throws InvalidConstraintException
      * @throws ReservedRouteNameException
      */
@@ -174,8 +181,8 @@ class RegexConstraintTest extends TestCase
         $request->method('getAttribute')
             ->willReturnCallback(callback: static function ($attr) {
                 return match ($attr) {
-                    'id'    => '123',
-                    'slug'  => 'hello-world',
+                    'id'   => '123',
+                    'slug' => 'hello-world',
                     default => null
                 };
             });
@@ -187,6 +194,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function fails_on_first_invalid_constraint() : void
@@ -211,6 +219,6 @@ class RegexConstraintTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->validator = new RouteConstraintValidator();
+        $this->validator = new RouteConstraintValidator;
     }
 }

@@ -12,16 +12,14 @@ use ReflectionException;
  */
 final readonly class ExportGraph
 {
-    public function __construct(private ResolveDependency $resolveDependency)
-    {
-    }
+    public function __construct(private ResolveDependency $resolveDependency) {}
 
     /**
      * @param array<string, mixed> $context
      *
      * @throws ReflectionException
      */
-    public function debugGraph(string $id = null, array $context = []) : array
+    public function debugGraph(?string $id = null, array $context = []) : array
     {
         $id ??= '';
         if ($context === []) {
@@ -34,11 +32,11 @@ final readonly class ExportGraph
     /**
      * @param array<string, mixed> $context
      */
-    public function export(string $format = null, string $kind = null, string $id = null, array $context = []) : string
+    public function export(?string $format = null, ?string $kind = null, ?string $id = null, array $context = []) : string
     {
         $format ??= 'json';
-        $kind   ??= 'dependency';
-        $id     ??= '';
+        $kind ??= 'dependency';
+        $id ??= '';
         if ($context === []) {
             return $this->resolveDependency->exportGraph(format: $format, kind: $kind, id: $id);
         }
@@ -54,10 +52,10 @@ final readonly class ExportGraph
     /**
      * @param array<string, mixed> $context
      */
-    public function diff(string $format = null, string $id = null, array $context = []) : string
+    public function diff(?string $format = null, ?string $id = null, array $context = []) : string
     {
         $format ??= 'json';
-        $id     ??= '';
+        $id ??= '';
         if ($context === []) {
             return $this->resolveDependency->diffGraph(format: $format, id: $id);
         }
@@ -69,9 +67,10 @@ final readonly class ExportGraph
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function why(string $id, array $context = []) : array
+    public function why(string $id, array $context = []): array
     {
         if ($context === []) {
             return $this->resolveDependency->why(id: $id);
@@ -84,9 +83,10 @@ final readonly class ExportGraph
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function whoUses(string $id, array $context = []) : array
+    public function whoUses(string $id, array $context = []): array
     {
         if ($context === []) {
             return $this->resolveDependency->whoUses(id: $id);
@@ -96,12 +96,13 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param array<string, mixed>  $context
      *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function whatBreaksIf(string $id, array $context = []) : array
+    public function whatBreaksIf(string $id, array $context = []): array
     {
         if ($context === []) {
             return $this->resolveDependency->whatBreaksIf(id: $id);
@@ -111,12 +112,13 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param array<string, mixed>  $context
      *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function showOwner(string $id, array $context = []) : array
+    public function showOwner(string $id, array $context = []): array
     {
         if ($context === []) {
             return $this->resolveDependency->showOwner(id: $id);
@@ -126,11 +128,10 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function showSlice(string $slice = null, array $context = []) : array
+    public function showSlice(?string $slice = null, array $context = []): array
     {
         $slice ??= '';
         if ($context === []) {

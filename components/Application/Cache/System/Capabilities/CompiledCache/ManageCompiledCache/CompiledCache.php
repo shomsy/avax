@@ -27,10 +27,10 @@ interface CompiledCache
     /**
      * Delete one compiled artifact.
      */
-    public function clear(string $name) : void;
+    public function clear(string $name): void;
 
     /**
      * Delete all compiled artifacts.
      */
-    public function clearAll() : void;
+    public function clearAll(): void;
 }

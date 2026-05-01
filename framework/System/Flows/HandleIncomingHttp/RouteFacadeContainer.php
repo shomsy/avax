@@ -12,9 +12,7 @@ final readonly class RouteFacadeContainer implements ContainerInterface
     /**
      * @param array<string, mixed> $services
      */
-    public function __construct(private array $services = [])
-    {
-    }
+    public function __construct(private array $services = []) {}
 
     public function get(string $id) : mixed
     {

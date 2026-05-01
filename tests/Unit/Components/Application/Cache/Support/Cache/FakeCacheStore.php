@@ -19,9 +19,9 @@ final class FakeCacheStore implements CacheStore
 
     private Clock $clock;
 
-    public function __construct(Clock $clock = null)
+    public function __construct(?Clock $clock = null)
     {
-        $this->clock = $clock ?? new SystemClock();
+        $this->clock = $clock ?? new SystemClock;
     }
 
     public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing

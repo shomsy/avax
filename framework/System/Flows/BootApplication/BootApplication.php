@@ -11,9 +11,8 @@ use Throwable;
 final readonly class BootApplication
 {
     public function __construct(
-        private BuildApplicationState $buildApplicationState = new BuildApplicationState(),
-    ) {
-    }
+        private BuildApplicationState $buildApplicationState = new BuildApplicationState,
+    ) {}
 
     public function boot(ApplicationBuilder $builder) : Runtime
     {

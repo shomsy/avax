@@ -37,11 +37,11 @@ final readonly class CacheStoreConfiguration
     public function build() : CacheStore
     {
         return match ($this->type) {
-            'memory' => new InMemoryCacheStore(),
+            'memory' => new InMemoryCacheStore,
             'file'   => new FileCacheStore(
                 basePath: $this->options['base_path'] ?? sys_get_temp_dir() . '/avax_cache',
             ),
-            default => throw new InvalidArgumentException(message: 'Unknown store type: ' . $this->type),
+            default  => throw new InvalidArgumentException(message: 'Unknown store type: ' . $this->type),
         };
     }
 }

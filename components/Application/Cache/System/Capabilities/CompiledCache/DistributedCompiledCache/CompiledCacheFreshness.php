@@ -19,15 +19,15 @@ final class CompiledCacheFreshness
     private array $statusCache = [];
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock(),
+        private readonly Clock $clock = new SystemClock,
     ) {}
 
     /**
      * Create a new freshness checker.
      */
-    public static function create(Clock $clock = null) : self
+    public static function create(?Clock $clock = null) : self
     {
-        return new self(clock: $clock ?? new SystemClock());
+        return new self(clock: $clock ?? new SystemClock);
     }
 
     /**
@@ -37,7 +37,7 @@ final class CompiledCacheFreshness
      *
      * @return array<string, FreshnessStatus> Keyed by entry name
      */
-    public function checkAll(array $entries) : array
+    public function checkAll(array $entries): array
     {
         $results = [];
 
@@ -65,7 +65,7 @@ final class CompiledCacheFreshness
             }
         }
 
-        $freshnessStatus              = $this->doCheck($compiledCacheManifestEntry);
+        $freshnessStatus = $this->doCheck($compiledCacheManifestEntry);
         $this->statusCache[$cacheKey] = $freshnessStatus;
 
         return $freshnessStatus;
@@ -158,7 +158,7 @@ final class CompiledCacheFreshness
      *
      * @param list<string> $sourceFiles
      */
-    private function getSourceFilesMtime(array $sourceFiles) : int
+    private function getSourceFilesMtime(array $sourceFiles): int
     {
         $maxMtime = 0;
 
@@ -182,7 +182,7 @@ final class CompiledCacheFreshness
      *
      * @return list<string>
      */
-    private function getMissingSourceFiles(array $sourceFiles) : array
+    private function getMissingSourceFiles(array $sourceFiles): array
     {
         $missing = [];
 
@@ -198,14 +198,14 @@ final class CompiledCacheFreshness
     /**
      * Calculate a fingerprint for a set of source files.
      *
-     * @param list<string> $sourceFiles
+     * @param list<string>  $sourceFiles
      */
-    private function calculateFingerprint(array $sourceFiles) : string
+    private function calculateFingerprint(array $sourceFiles): string
     {
         $hashParts = [];
 
         foreach ($sourceFiles as $sourceFile) {
-            $hashParts[] = file_exists($sourceFile) ? $sourceFile . ':' . filemtime($sourceFile) : $sourceFile . ':missing';
+            $hashParts[] = file_exists($sourceFile) ? $sourceFile . ':' . filemtime($sourceFile) : $sourceFile.':missing';
         }
 
         return hash('sha256', implode('|', $hashParts));
@@ -225,7 +225,7 @@ final class CompiledCacheFreshness
             compiledFileMtime: $compiledCacheManifestEntry->compiledFileExists() ? $compiledCacheManifestEntry->getCompiledFileMtime() : 0,
         );
 
-        $cacheKey                     = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;
+        $cacheKey = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;
         $this->statusCache[$cacheKey] = $freshnessStatus;
 
         return $freshnessStatus;
@@ -245,7 +245,7 @@ final class CompiledCacheFreshness
             compiledFileMtime: $compiledCacheManifestEntry->compiledFileExists() ? $compiledCacheManifestEntry->getCompiledFileMtime() : 0,
         );
 
-        $cacheKey                     = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;
+        $cacheKey = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;
         $this->statusCache[$cacheKey] = $freshnessStatus;
 
         return $freshnessStatus;
@@ -258,7 +258,7 @@ final class CompiledCacheFreshness
      *
      * @return list<CompiledCacheManifestEntry>
      */
-    public function getEntriesNeedingRebuild(array $entries) : array
+    public function getEntriesNeedingRebuild(array $entries): array
     {
         $needsRebuild = [];
 
@@ -274,7 +274,7 @@ final class CompiledCacheFreshness
     /**
      * Check if an entry needs recompilation.
      */
-    public function needsRebuild(CompiledCacheManifestEntry $compiledCacheManifestEntry) : bool
+    public function needsRebuild(CompiledCacheManifestEntry $compiledCacheManifestEntry): bool
     {
         return ! $this->check($compiledCacheManifestEntry)->isFresh;
     }
@@ -282,7 +282,7 @@ final class CompiledCacheFreshness
     /**
      * Clear the freshness status cache.
      */
-    public function clearCache() : void
+    public function clearCache(): void
     {
         $this->statusCache = [];
     }
@@ -290,12 +290,12 @@ final class CompiledCacheFreshness
     /**
      * Clear the cache for a specific entry.
      */
-    public function clearEntryCache(string $entryName) : void
+    public function clearEntryCache(string $entryName): void
     {
         $keysToRemove = [];
 
         foreach (array_keys($this->statusCache) as $key) {
-            if (str_starts_with($key, $entryName . ':')) {
+            if (str_starts_with($key, $entryName.':')) {
                 $keysToRemove[] = $key;
             }
         }

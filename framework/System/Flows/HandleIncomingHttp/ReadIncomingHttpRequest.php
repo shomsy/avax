@@ -33,21 +33,21 @@ final class ReadIncomingHttpRequest
 {
     private PrepareRequest $prepareRequest;
 
-    public function __construct(private readonly ResponseStreamFactory $responseStreamFactory = new ResponseStreamFactory())
+    public function __construct(private readonly ResponseStreamFactory $responseStreamFactory = new ResponseStreamFactory)
     {
-        $trustedProxyPolicy = new TrustedProxyPolicy();
+        $trustedProxyPolicy = new TrustedProxyPolicy;
 
         $this->prepareRequest = new PrepareRequest(
             bodyParser        : new ParseBodyByContentType(
-                jsonParser: new ParseJsonBody(),
-                formParser: new ParseFormBody(),
+                                    jsonParser: new ParseJsonBody,
+                                    formParser: new ParseFormBody,
             ),
-            protocolNormalizer: new NormalizeProtocolVersion(),
-            filesNormalizer   : new NormalizeUploadedFiles(),
+            protocolNormalizer: new NormalizeProtocolVersion,
+            filesNormalizer   : new NormalizeUploadedFiles,
             trustedProxyPolicy: $trustedProxyPolicy,
             clientResolver    : new ResolveClientAddress(
                 proxyPolicy     : $trustedProxyPolicy,
-                forwardedParser : new ParseForwardedAddresses(),
+                forwardedParser : new ParseForwardedAddresses,
             ),
         );
     }
@@ -69,9 +69,9 @@ final class ReadIncomingHttpRequest
             requestHeaders : new RequestHeaders(headersInput: $request->headers()),
             serverParams   : $this->buildServerParams(uri: $uri, request: $request),
             explicitTarget : null,
-            cookies        : new RequestCookies(),
+            cookies        : new RequestCookies,
             queryParams    : $queryParams,
-            uploadedFiles  : new UploadedFiles(),
+            uploadedFiles  : new UploadedFiles,
             parsedBody     : new ParsedBody(data: $parsedBody),
             attributes     : new RequestAttributes(attributes: $request->attributes()),
             session        : null,
@@ -82,8 +82,8 @@ final class ReadIncomingHttpRequest
             setup: new ServerInit(
                 state     : $requestState,
                 preparer  : $this->prepareRequest,
-                sanitizer : new InputSanitizer(),
-                mapper    : new MapRequestedInputsToDto(),
+                sanitizer : new InputSanitizer,
+                mapper    : new MapRequestedInputsToDto,
             ),
         );
     }
@@ -109,8 +109,8 @@ final class ReadIncomingHttpRequest
         $contentType = $this->headerLine(headers: $headers, name: 'Content-Type');
 
         return (new ParseBodyByContentType(
-            jsonParser: new ParseJsonBody(),
-            formParser: new ParseFormBody(),
+            jsonParser: new ParseJsonBody,
+            formParser: new ParseFormBody,
         ))->execute(
             contentType: $contentType,
             content    : $body,
@@ -127,9 +127,10 @@ final class ReadIncomingHttpRequest
 
     /**
      * @param array<string, list<string>> $headers
+     *
      * @return array<string, mixed>
      */
-    private function buildServerParams(UriInterface $uri, RuntimeRequest $request) : array
+    private function buildServerParams(UriInterface $uri, RuntimeRequest $request): array
     {
         $serverParams = [
             'REQUEST_METHOD' => $request->method(),

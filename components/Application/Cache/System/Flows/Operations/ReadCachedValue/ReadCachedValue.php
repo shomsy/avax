@@ -15,8 +15,8 @@ final readonly class ReadCachedValue
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private Clock      $clock,
-        private CacheMetrics|null $cacheMetrics = null,
+        private Clock         $clock,
+        private ?CacheMetrics $cacheMetrics = null,
     ) {}
 
     public function read(CacheKey $cacheKey, mixed $default = null) : mixed

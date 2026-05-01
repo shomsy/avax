@@ -15,7 +15,7 @@ final class ResolveInstanceStepTest extends TestCase
 {
     public function test_step_delegates_to_engine_and_sets_instance() : void
     {
-        $expectedInstance = new stdClass();
+        $expectedInstance = new stdClass;
         $expectedInstance->test = 'value';
 
         $engine = $this->createMock(EngineInterface::class);
@@ -24,7 +24,7 @@ final class ResolveInstanceStepTest extends TestCase
             ->with($this->isInstanceOf(className: KernelContext::class))
             ->willReturn(value: $expectedInstance);
 
-        $step    = new ResolveInstanceStep(engine: $engine);
+        $step = new ResolveInstanceStep(engine: $engine);
         $context = new KernelContext(serviceId: 'test-service');
 
         $step(context: $context);
@@ -40,7 +40,7 @@ final class ResolveInstanceStepTest extends TestCase
             ->method(constraint: 'resolve')
             ->willThrowException(exception: new RuntimeException(message: 'Engine failed'));
 
-        $step    = new ResolveInstanceStep(engine: $engine);
+        $step = new ResolveInstanceStep(engine: $engine);
         $context = new KernelContext(serviceId: 'test-service');
 
         $this->expectException(exception: RuntimeException::class);

@@ -10,8 +10,8 @@ final class WorkerSharedService {}
 
 final class WorkerScopedService {}
 
-$cacheDir  = sys_get_temp_dir() . '/container-worker-lifecycle-' . uniqid();
-$version   = 'worker-lifecycle';
+$cacheDir = sys_get_temp_dir() . '/container-worker-lifecycle-' . uniqid();
+$version  = 'worker-lifecycle';
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,

@@ -30,5 +30,4 @@ final readonly class CacheLock
     {
         return $this->cacheLockStore->isAcquired(key: $key);
     }
-
 }

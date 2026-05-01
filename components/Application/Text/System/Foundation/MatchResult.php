@@ -12,14 +12,12 @@ final readonly class MatchResult
     /**
      * @param array<int|string, string> $matches
      */
-    public function __construct(public bool $matched, public array $matches)
-    {
-    }
+    public function __construct(public bool $matched, public array $matches) {}
 
     /**
      * Get named group value or null if not found.
      */
-    public function group(string $name) : string|null
+    public function group(string $name) : ?string
     {
         return $this->matches[$name] ?? null;
     }
@@ -35,7 +33,7 @@ final readonly class MatchResult
     /**
      * Get full match (index 0).
      */
-    public function fullMatch() : string|null
+    public function fullMatch() : ?string
     {
         return $this->matches[0] ?? null;
     }

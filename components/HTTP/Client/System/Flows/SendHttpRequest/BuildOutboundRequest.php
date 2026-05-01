@@ -25,7 +25,7 @@ final class BuildOutboundRequest
      */
     public function build(OutboundRequest $request) : Request
     {
-        $body    = $this->normalizeBody($request->body);
+        $body = $this->normalizeBody($request->body);
         $headers = $this->prepareHeaders($request);
 
         return new Request(
@@ -69,7 +69,7 @@ final class BuildOutboundRequest
      *
      * @return array<string, string>
      */
-    private function prepareHeaders(OutboundRequest $request) : array
+    private function prepareHeaders(OutboundRequest $request): array
     {
         $headers = $request->headers;
 

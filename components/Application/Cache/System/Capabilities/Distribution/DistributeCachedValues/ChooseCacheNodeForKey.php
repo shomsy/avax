@@ -12,12 +12,12 @@ final readonly class ChooseCacheNodeForKey
         private ConsistentHashRing $consistentHashRing,
     ) {}
 
-    public function choose(CacheKey $cacheKey) : CacheNode|null
+    public function choose(CacheKey $cacheKey) : ?CacheNode
     {
         return $this->consistentHashRing->getNodeForKey(key: $cacheKey);
     }
 
-    public function chooseForPartition(int $partitionIndex) : CacheNode|null
+    public function chooseForPartition(int $partitionIndex) : ?CacheNode
     {
         return $this->consistentHashRing->getNodeForPartition(partitionIndex: $partitionIndex);
     }

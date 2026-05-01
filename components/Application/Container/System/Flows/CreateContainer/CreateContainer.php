@@ -10,6 +10,6 @@ final class CreateContainer
 {
     public function create() : Container
     {
-        return new Container();
+        return new Container;
     }
 }

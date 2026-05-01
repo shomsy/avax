@@ -21,7 +21,7 @@ use RuntimeException;
  */
 class Container
 {
-    private static DIContainerInterface|null $container = null;
+    private static ?DIContainerInterface $container = null;
 
     public static function setContainer(DIContainerInterface $container) : void
     {

@@ -8,11 +8,11 @@ use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\DI\ContainerInterface;
 
-$reflection  = new ReflectionClass(objectOrClass: RegisterDependency::class);
+$reflection = new ReflectionClass(objectOrClass: RegisterDependency::class);
 $constructor = $reflection->getMethod(name: '__construct');
-$dependsOn   = $reflection->getMethod(name: 'dependsOn');
-$register    = $reflection->getMethod(name: 'register');
-$boot        = $reflection->getMethod(name: 'boot');
+$dependsOn  = $reflection->getMethod(name: 'dependsOn');
+$register   = $reflection->getMethod(name: 'register');
+$boot       = $reflection->getMethod(name: 'boot');
 
 assertSame(expected: 1, actual: $constructor->getNumberOfParameters(), message: 'Provider contract should require the container boundary.');
 assertSame(expected: ContainerInterface::class, actual: $constructor->getParameters()[0]->getType()?->getName(), message: 'Provider contract should depend on ContainerInterface.');

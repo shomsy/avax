@@ -24,7 +24,7 @@ final readonly class CacheNamespace implements Stringable
     private function validate(string $name) : void
     {
         $normalized = trim($name);
-        $length     = strlen($normalized);
+        $length = strlen($normalized);
 
         if ($length === 0) {
             throw new InvalidArgumentException(message: 'Namespace cannot be empty');

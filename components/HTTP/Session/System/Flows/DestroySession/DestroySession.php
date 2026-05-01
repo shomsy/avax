@@ -10,8 +10,7 @@ final readonly class DestroySession
 {
     public function __construct(
         private SessionScope $scope,
-    ) {
-    }
+    ) {}
 
     public function execute() : void
     {

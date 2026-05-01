@@ -15,13 +15,13 @@ final readonly class NodeHealthRecord
     public CacheNodeStatus $cacheNodeStatus;
 
     public function __construct(
-        public string         $nodeId,
+        public string     $nodeId,
         public CacheNodeStatus $cacheNodeStatus,
-        public Timestamp      $lastCheck,
-        public int            $consecutiveFailures,
-        public int            $consecutiveSuccesses,
-        public Timestamp|null $lastFailure,
-        public Timestamp|null $lastSuccess,
+        public Timestamp  $lastCheck,
+        public int        $consecutiveFailures,
+        public int        $consecutiveSuccesses,
+        public ?Timestamp $lastFailure,
+        public ?Timestamp $lastSuccess,
     )
     {
         $this->cacheNodeStatus = $cacheNodeStatus;
@@ -70,13 +70,13 @@ final readonly class NodeHealthRecord
     public function toArray() : array
     {
         return [
-            'nodeId'               => $this->nodeId,
+            'nodeId'              => $this->nodeId,
             'status' => $this->cacheNodeStatus->value,
-            'lastCheck'            => $this->lastCheck->seconds,
-            'consecutiveFailures'  => $this->consecutiveFailures,
+            'lastCheck'           => $this->lastCheck->seconds,
+            'consecutiveFailures' => $this->consecutiveFailures,
             'consecutiveSuccesses' => $this->consecutiveSuccesses,
-            'lastFailure'          => $this->lastFailure?->seconds,
-            'lastSuccess'          => $this->lastSuccess?->seconds,
+            'lastFailure'         => $this->lastFailure?->seconds,
+            'lastSuccess'         => $this->lastSuccess?->seconds,
         ];
     }
 }

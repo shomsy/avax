@@ -13,9 +13,6 @@ use Avax\Components\Application\Text\Text;
 if (! function_exists('text')) {
     /**
      * Create Text instance from string.
-     *
-     *
-     * @return Text
      */
     function text(string $value) : Text
     {
@@ -26,11 +23,8 @@ if (! function_exists('text')) {
 if (! function_exists('t')) {
     /**
      * Create Text instance from nullable string.
-     *
-     *
-     * @return Text
      */
-    function t(string|null $value, string $default = '') : Text
+    function t(?string $value, string $default = '') : Text
     {
         return Text::fromNullable($value, $default);
     }
@@ -39,8 +33,6 @@ if (! function_exists('t')) {
 if (! function_exists('pipe')) {
     /**
      * Functional pipe for string transformations.
-     *
-     *
      */
     function pipe(string $value, callable $fn) : string
     {
@@ -51,8 +43,6 @@ if (! function_exists('pipe')) {
 if (! function_exists('trimmed')) {
     /**
      * Trim whitespace from string.
-     *
-     *
      */
     function trimmed(string $value) : string
     {
@@ -63,8 +53,6 @@ if (! function_exists('trimmed')) {
 if (! function_exists('slug')) {
     /**
      * Create URL slug from string.
-     *
-     *
      */
     function slug(string $value, string $separator = '-') : string
     {
@@ -75,8 +63,6 @@ if (! function_exists('slug')) {
 if (! function_exists('camel')) {
     /**
      * Convert to camelCase.
-     *
-     *
      */
     function camel(string $value) : string
     {
@@ -87,8 +73,6 @@ if (! function_exists('camel')) {
 if (! function_exists('snake')) {
     /**
      * Convert to snake_case.
-     *
-     *
      */
     function snake(string $value) : string
     {
@@ -99,8 +83,6 @@ if (! function_exists('snake')) {
 if (! function_exists('limit')) {
     /**
      * Limit string length with suffix.
-     *
-     *
      */
     function limit(string $value, int $max, string $suffix = '…') : string
     {
@@ -111,8 +93,6 @@ if (! function_exists('limit')) {
 if (! function_exists('before')) {
     /**
      * Get text before delimiter.
-     *
-     *
      */
     function before(string $value, string $needle) : string
     {
@@ -123,8 +103,6 @@ if (! function_exists('before')) {
 if (! function_exists('after')) {
     /**
      * Get text after delimiter.
-     *
-     *
      */
     function after(string $value, string $needle) : string
     {
@@ -135,8 +113,6 @@ if (! function_exists('after')) {
 if (! function_exists('between')) {
     /**
      * Get text between delimiters.
-     *
-     *
      */
     function between(string $value, string $left, string $right) : string
     {
@@ -147,8 +123,6 @@ if (! function_exists('between')) {
 if (! function_exists('ensure_prefix')) {
     /**
      * Ensure string starts with prefix.
-     *
-     *
      */
     function ensure_prefix(string $value, string $prefix) : string
     {
@@ -159,8 +133,6 @@ if (! function_exists('ensure_prefix')) {
 if (! function_exists('ensure_suffix')) {
     /**
      * Ensure string ends with suffix.
-     *
-     *
      */
     function ensure_suffix(string $value, string $suffix) : string
     {
@@ -171,9 +143,6 @@ if (! function_exists('ensure_suffix')) {
 if (! function_exists('rx')) {
     /**
      * Create Pattern instance.
-     *
-     *
-     * @return Pattern
      */
     function rx(string $pattern, string $flags = '') : Pattern
     {
@@ -184,8 +153,6 @@ if (! function_exists('rx')) {
 if (! function_exists('rx_test')) {
     /**
      * Test regex pattern against string.
-     *
-     *
      */
     function rx_test(string $pattern, string $subject, string $flags = '') : bool
     {
@@ -196,8 +163,6 @@ if (! function_exists('rx_test')) {
 if (! function_exists('rx_match')) {
     /**
      * Match regex pattern against string.
-     *
-     *
      */
     function rx_match(string $pattern, string $subject, string $flags = '') : MatchResult
     {
@@ -208,8 +173,6 @@ if (! function_exists('rx_match')) {
 if (! function_exists('rx_replace')) {
     /**
      * Replace with regex pattern.
-     *
-     *
      */
     function rx_replace(string $pattern, string $replacement, string $subject, string $flags = '') : string
     {
@@ -220,8 +183,6 @@ if (! function_exists('rx_replace')) {
 if (! function_exists('rx_replace_callback')) {
     /**
      * Replace with regex pattern using callback.
-     *
-     *
      */
     function rx_replace_callback(string $pattern, string $subject, callable $fn, string $flags = '') : string
     {
@@ -232,8 +193,6 @@ if (! function_exists('rx_replace_callback')) {
 if (! function_exists('rx_split')) {
     /**
      * Split string by regex pattern.
-     *
-     *
      */
     function rx_split(string $pattern, string $subject, string $flags = '') : array
     {
@@ -244,8 +203,6 @@ if (! function_exists('rx_split')) {
 if (! function_exists('preview_text')) {
     /**
      * Shortens the given text for preview purposes.
-     *
-     *
      */
     function preview_text(string $text, int $limit = 80) : string
     {

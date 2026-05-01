@@ -6,9 +6,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 final readonly class CheckCompiledCacheIsFresh
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest)
-    {
-    }
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest) {}
 
     public function requiresRebuild(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources) : bool
     {

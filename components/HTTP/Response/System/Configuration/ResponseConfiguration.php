@@ -23,7 +23,7 @@ final readonly class ResponseConfiguration
         private string $charset = 'utf-8',
         private string $defaultContentType = 'text/html',
         private array $defaultHeaders = [],
-        private bool  $compress = false,
+        private bool $compress = false,
         private string $protocolVersion = '1.1',
     ) {}
 

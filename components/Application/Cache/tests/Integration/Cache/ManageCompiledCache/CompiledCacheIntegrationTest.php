@@ -11,9 +11,7 @@ use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfigur
 use Override;
 use PHPUnit\Framework\TestCase;
 
-final class UserController
-{
-}
+final class UserController {}
 
 final class CompiledCacheIntegrationTest extends TestCase
 {
@@ -25,7 +23,7 @@ final class CompiledCacheIntegrationTest extends TestCase
     {
         $name    = 'routes';
         $builder = static fn () : array => [
-            'GET /users'  => ['controller' => UserController::class, 'method' => 'index'],
+            'GET /users' => ['controller' => UserController::class, 'method' => 'index'],
             'POST /users' => ['controller' => UserController::class, 'method' => 'store'],
         ];
 
@@ -51,7 +49,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         $sourceFile = $this->tmpDir . '/source.php';
         file_put_contents($sourceFile, '<?php return ["version" => 1];');
 
-        $name    = 'config';
+        $name = 'config';
         $builder = static fn () => require $sourceFile;
 
         $compiledCacheSources = CompiledCacheSources::fromPaths($sourceFile);
@@ -72,11 +70,11 @@ final class CompiledCacheIntegrationTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->tmpDir = sys_get_temp_dir() . '/compiled_integration_' . uniqid();
+        $this->tmpDir       = sys_get_temp_dir() . '/compiled_integration_' . uniqid();
         mkdir($this->tmpDir);
 
         $compiledCacheConfiguration = CompiledCacheConfiguration::inDirectory($this->tmpDir);
-        $buildCompiledCache         = new BuildCompiledCache();
+        $buildCompiledCache = new BuildCompiledCache;
 
         $this->compiledCacheContract = $buildCompiledCache->fromConfiguration($compiledCacheConfiguration);
     }

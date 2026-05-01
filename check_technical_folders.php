@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$directories      = ['components', 'framework'];
+$directories = ['components', 'framework'];
 $technicalFolders = [
     'contracts', 'interfaces', 'exceptions', 'exception', 'enums', 'traits', 'types', 'abstracts', 'base',
 ];

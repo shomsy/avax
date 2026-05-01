@@ -35,7 +35,7 @@ final class ResponseHeadersTest extends TestCase
 
     public function test_set_cookie_header_appends_cookie_lines() : void
     {
-        $response = new SetCookieHeader()(
+        $response = new SetCookieHeader(
             response: Response::empty(),
             cookie  : new ResponseCookie(name: 'session', value: 'abc'),
         );

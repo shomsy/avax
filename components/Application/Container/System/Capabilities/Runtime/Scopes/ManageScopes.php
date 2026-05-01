@@ -13,9 +13,7 @@ use Override;
  */
 final readonly class ManageScopes implements ScopeInterface
 {
-    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ResolutionMetrics|null $resolutionMetrics = null)
-    {
-    }
+    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances, private ?ResolutionMetrics $resolutionMetrics = null) {}
 
     /**
      * Stores one shared instance.
@@ -64,7 +62,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Closes the current scope layer.
      */
     #[Override]
-    public function closeScope(string $kind = null) : void
+    public function closeScope(?string $kind = null) : void
     {
         $frame = $this->scopeStore->close(kind: $kind);
         foreach ($frame['pooled'] as $serviceId => $options) {
@@ -153,12 +151,12 @@ final readonly class ManageScopes implements ScopeInterface
         $snapshot = $this->scopeStore->snapshot();
 
         return [
-            'shared'          => $this->dependencyPool->snapshot(),
-            'scoped'          => $snapshot['scoped'],
-            'pooled'          => $snapshot['pooled'],
+            'shared'      => $this->dependencyPool->snapshot(),
+            'scoped'      => $snapshot['scoped'],
+            'pooled'      => $snapshot['pooled'],
             'pooledAvailable' => $this->dependencyPool->pooledSnapshot(),
-            'pooledStats'     => $this->dependencyPool->pooledStats(),
-            'frames'          => $snapshot['frames'],
+            'pooledStats' => $this->dependencyPool->pooledStats(),
+            'frames'      => $snapshot['frames'],
         ];
     }
 
@@ -210,9 +208,9 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function setScoped(
         string $abstract,
-        mixed  $instance,
-        string $kind = null,
-        bool   $disposable = false,
+        mixed   $instance,
+        ?string $kind = null,
+        bool    $disposable = false,
     ) : void
     {
         $kind ??= ScopeKind::ANY;
@@ -235,15 +233,15 @@ final readonly class ManageScopes implements ScopeInterface
     public function checkoutPooled(
         string $abstract,
         string $kind,
-        int  $maxSize,
-        bool $resetBeforeReuse = null,
+        int   $maxSize,
+        ?bool $resetBeforeReuse = null,
         bool $disposable = false,
     ) : array
     {
         $resetBeforeReuse ??= true;
         if ($this->scopeStore->hasPooledFor(abstract: $abstract, kind: $kind)) {
             return [
-                'hit'      => true,
+                'hit' => true,
                 'instance' => $this->scopeStore->getFor(abstract: $abstract, kind: $kind),
             ];
         }
@@ -280,7 +278,7 @@ final readonly class ManageScopes implements ScopeInterface
         mixed $instance,
         string $kind,
         int   $maxSize,
-        bool  $resetBeforeReuse = null,
+        ?bool $resetBeforeReuse = null,
         bool  $disposable = false,
     ) : void
     {

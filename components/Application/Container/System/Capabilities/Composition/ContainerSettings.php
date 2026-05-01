@@ -12,9 +12,7 @@ final class ContainerSettings
     /**
      * @param array<string, mixed> $items
      */
-    public function __construct(private array $items = [])
-    {
-    }
+    public function __construct(private array $items = []) {}
 
     public function set(string $key, mixed $value) : void
     {
@@ -23,7 +21,7 @@ final class ContainerSettings
         }
 
         $segments = explode(separator: '.', string: $key);
-        $target   = &$this->items;
+        $target = &$this->items;
 
         foreach ($segments as $segment) {
             if (! isset($target[$segment]) || ! is_array(value: $target[$segment])) {
@@ -61,7 +59,7 @@ final class ContainerSettings
         }
 
         $segments = explode(separator: '.', string: $key);
-        $value    = $this->items;
+        $value = $this->items;
 
         foreach ($segments as $segment) {
             if (! is_array(value: $value) || ! array_key_exists(key: $segment, array: $value)) {
@@ -81,7 +79,7 @@ final class ContainerSettings
         }
 
         $segments = explode(separator: '.', string: $key);
-        $value    = $this->items;
+        $value = $this->items;
 
         foreach ($segments as $segment) {
             if (! is_array(value: $value) || ! array_key_exists(key: $segment, array: $value)) {

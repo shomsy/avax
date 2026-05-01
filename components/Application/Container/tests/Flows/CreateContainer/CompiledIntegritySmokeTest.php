@@ -22,9 +22,9 @@ final class IntegrityTarget
     public function __construct(public IntegrityDependency $integrityDependency) {}
 }
 
-$productionCache   = sys_get_temp_dir() . '/container-integrity-prod-' . uniqid();
+$productionCache       = sys_get_temp_dir() . '/container-integrity-prod-' . uniqid();
 $productionVersion = 'compiled-integrity-production';
-$productionConfig  = CreateContainerConfig::create(
+$productionConfig      = CreateContainerConfig::create(
     cacheDir    : $productionCache,
     cacheVersion: $productionVersion,
     compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
@@ -74,9 +74,9 @@ assertTrue(
     message  : 'Corrupted production metadata should also be quarantined.',
 );
 
-$developmentCache   = sys_get_temp_dir() . '/container-integrity-dev-' . uniqid();
+$developmentCache    = sys_get_temp_dir() . '/container-integrity-dev-' . uniqid();
 $developmentVersion = 'compiled-integrity-development';
-$developmentConfig  = CreateContainerConfig::create(
+$developmentConfig   = CreateContainerConfig::create(
     cacheDir    : $developmentCache,
     cacheVersion: $developmentVersion,
     compileMode : CreateContainerConfig::COMPILE_MODE_DEV,

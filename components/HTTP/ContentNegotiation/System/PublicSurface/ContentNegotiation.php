@@ -49,10 +49,10 @@ final readonly class ContentNegotiation
     public static function formatFor(string $mime) : ContentFormatter
     {
         return match ($mime) {
-            'application/json', 'application/json-api' => new JsonFormatter(),
-            'application/xml', 'text/xml'              => new XmlFormatter(),
-            'text/csv'                                 => new CsvFormatter(),
-            default                                    => new JsonFormatter(),
+            'application/json', 'application/json-api' => new JsonFormatter,
+            'application/xml', 'text/xml'              => new XmlFormatter,
+            'text/csv'                                 => new CsvFormatter,
+            default                                    => new JsonFormatter,
         };
     }
 }

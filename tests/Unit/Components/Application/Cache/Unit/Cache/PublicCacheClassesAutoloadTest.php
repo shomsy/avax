@@ -50,7 +50,7 @@ final class PublicCacheClassesAutoloadTest extends TestCase
 
     public function test_avax_cache_implements_cache_contract() : void
     {
-        $avaxCache  = new ReflectionClass(objectOrClass: AvaxCache::class);
+        $avaxCache = new ReflectionClass(objectOrClass: AvaxCache::class);
         $interfaces = $avaxCache->getInterfaceNames();
 
         self::assertContains(needle: CacheContract::class, haystack: $interfaces, message: 'AvaxCache should implement CacheContract');

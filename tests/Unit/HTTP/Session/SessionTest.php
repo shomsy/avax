@@ -16,6 +16,7 @@ use ReflectionClass;
 final class SessionTest extends TestCase
 {
     private ArraySessionStore $store;
+
     private SessionScope $scope;
 
     #[Test]
@@ -43,7 +44,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function session_returns_default_for_missing_key() : void
     {
-        $reflection  = new ReflectionClass($this->scope);
+        $reflection = new ReflectionClass($this->scope);
         $startedProp = $reflection->getProperty('started');
         $startedProp->setValue($this->scope, true);
         $idProp = $reflection->getProperty('id');
@@ -55,7 +56,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function session_has_returns_true_for_existing_key() : void
     {
-        $reflection  = new ReflectionClass($this->scope);
+        $reflection = new ReflectionClass($this->scope);
         $startedProp = $reflection->getProperty('started');
         $startedProp->setValue($this->scope, true);
         $idProp = $reflection->getProperty('id');
@@ -68,7 +69,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function session_has_returns_false_for_missing_key() : void
     {
-        $reflection  = new ReflectionClass($this->scope);
+        $reflection = new ReflectionClass($this->scope);
         $startedProp = $reflection->getProperty('started');
         $startedProp->setValue($this->scope, true);
         $idProp = $reflection->getProperty('id');
@@ -80,7 +81,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function session_forget_removes_key() : void
     {
-        $reflection  = new ReflectionClass($this->scope);
+        $reflection = new ReflectionClass($this->scope);
         $startedProp = $reflection->getProperty('started');
         $startedProp->setValue($this->scope, true);
         $idProp = $reflection->getProperty('id');
@@ -96,7 +97,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function session_clear_removes_all_keys() : void
     {
-        $reflection  = new ReflectionClass($this->scope);
+        $reflection = new ReflectionClass($this->scope);
         $startedProp = $reflection->getProperty('started');
         $startedProp->setValue($this->scope, true);
         $idProp = $reflection->getProperty('id');
@@ -112,7 +113,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function session_all_returns_all_data() : void
     {
-        $reflection  = new ReflectionClass($this->scope);
+        $reflection = new ReflectionClass($this->scope);
         $startedProp = $reflection->getProperty('started');
         $startedProp->setValue($this->scope, true);
         $idProp = $reflection->getProperty('id');
@@ -129,7 +130,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function session_destroy_clears_data() : void
     {
-        $reflection  = new ReflectionClass($this->scope);
+        $reflection = new ReflectionClass($this->scope);
         $startedProp = $reflection->getProperty('started');
         $startedProp->setValue($this->scope, true);
         $idProp = $reflection->getProperty('id');
@@ -151,7 +152,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function array_session_store_persists_data() : void
     {
-        $store     = new ArraySessionStore();
+        $store = new ArraySessionStore;
         $sessionId = 'session-123';
 
         $store->write($sessionId, ['user' => 'John', 'role' => 'admin']);
@@ -164,7 +165,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function array_session_store_returns_empty_for_missing_session() : void
     {
-        $store = new ArraySessionStore();
+        $store = new ArraySessionStore;
         $data  = $store->read('nonexistent');
 
         $this->assertEmpty($data);
@@ -173,7 +174,7 @@ final class SessionTest extends TestCase
     #[Test]
     public function array_session_store_destroy_removes_session() : void
     {
-        $store     = new ArraySessionStore();
+        $store = new ArraySessionStore;
         $sessionId = 'session-123';
 
         $store->write($sessionId, ['key' => 'value']);
@@ -187,7 +188,7 @@ final class SessionTest extends TestCase
     public function flash_data_is_stored_in_session() : void
     {
         // Test the flash concept using scope directly
-        $reflection  = new ReflectionClass($this->scope);
+        $reflection = new ReflectionClass($this->scope);
         $startedProp = $reflection->getProperty('started');
         $startedProp->setValue($this->scope, true);
         $idProp = $reflection->getProperty('id');
@@ -201,7 +202,7 @@ final class SessionTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->store = new ArraySessionStore();
+        $this->store = new ArraySessionStore;
         $this->scope = new SessionScope(store: $this->store);
     }
 }

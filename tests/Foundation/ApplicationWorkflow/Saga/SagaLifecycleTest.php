@@ -14,16 +14,16 @@ use RuntimeException;
 
 final class SagaLifecycleTest extends TestCase
 {
-    public function testStartSagaCreatesStateEventAndIdempotentResult() : void
+    public function test_start_saga_creates_state_event_and_idempotent_result() : void
     {
-        $saga       = Saga::inMemory();
+        $saga    = Saga::inMemory();
         $definition = $this->definition();
-        $command    = new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-123');
+        $command = new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-123');
 
-        $first  = $saga->start()->start(definition: $definition, command: $command);
+        $first = $saga->start()->start(definition: $definition, command: $command);
         $second = $saga->start()->start(definition: $definition, command: $command);
 
-        $state  = $saga->state()->read(instanceId: $first->id);
+        $state = $saga->state()->read(instanceId: $first->id);
         $events = $saga->state()->readEvents(instanceId: $first->id);
 
         $this->assertSame($first->id, $second->id);
@@ -31,20 +31,20 @@ final class SagaLifecycleTest extends TestCase
         $this->assertSame('saga.started', $events[0]->type);
     }
 
-    public function testRunSagaStepRecordsTransitionUntilCompletion() : void
+    public function test_run_saga_step_records_transition_until_completion() : void
     {
-        $saga       = Saga::inMemory();
+        $saga     = Saga::inMemory();
         $definition = $this->definition();
-        $instance   = $saga->start()->start(
+        $instance = $saga->start()->start(
             definition: $definition,
             command   : new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-456'),
         );
 
-        $firstStep  = $saga->runStep()->run(definition: $definition, instanceId: $instance->id);
+        $firstStep = $saga->runStep()->run(definition: $definition, instanceId: $instance->id);
         $secondStep = $saga->runStep()->run(definition: $definition, instanceId: $instance->id);
 
         $completion = $saga->complete()->complete(instanceId: $instance->id);
-        $timeline   = $saga->inspect()->timeline(instanceId: $instance->id);
+        $timeline  = $saga->inspect()->timeline(instanceId: $instance->id);
 
         $this->assertSame('charge_card', $firstStep->state->currentStepName);
         $this->assertSame('completed', $secondStep->state->status);
@@ -52,7 +52,7 @@ final class SagaLifecycleTest extends TestCase
         $this->assertCount(4, $timeline->events);
     }
 
-    public function testFailedStepRecordsFailureStateAndEventBeforeThrowing() : void
+    public function test_failed_step_records_failure_state_and_event_before_throwing() : void
     {
         $saga       = Saga::inMemory();
         $definition = new SagaDefinition(
@@ -74,7 +74,7 @@ final class SagaLifecycleTest extends TestCase
             $saga->runStep()->run(definition: $definition, instanceId: $instance->id);
             $this->fail(message: 'Expected saga step failure.');
         } catch (SagaStepFailure) {
-            $state    = $saga->state()->read(instanceId: $instance->id);
+            $state = $saga->state()->read(instanceId: $instance->id);
             $failures = $saga->inspect()->traceFailure(instanceId: $instance->id);
 
             $this->assertSame('failed', $state->status);

@@ -11,10 +11,10 @@ final class ResponseStreamFactoryTest extends TestCase
 {
     public function test_factory_creates_streams_from_string_resource_and_file() : void
     {
-        $factory = new ResponseStreamFactory();
+        $factory  = new ResponseStreamFactory;
 
         $stringStream = $factory->createStreamFromString(content: 'alpha');
-        $resource     = fopen(filename: 'php://temp', mode: 'r+');
+        $resource = fopen(filename: 'php://temp', mode: 'r+');
         fwrite(stream: $resource, data: 'beta');
         rewind(stream: $resource);
         $resourceStream = $factory->createStreamFromResource(resource: $resource);

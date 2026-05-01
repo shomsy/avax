@@ -10,8 +10,7 @@ final class ShutdownRuntime
 {
     public function __construct(
         private readonly RuntimeContext $context,
-    ) {
-    }
+    ) {}
 
     public function shutdown() : void
     {
@@ -20,11 +19,7 @@ final class ShutdownRuntime
         $this->closeRuntimeResources();
     }
 
-    private function flushTerminableWork() : void
-    {
-    }
+    private function flushTerminableWork() : void {}
 
-    private function closeRuntimeResources() : void
-    {
-    }
+    private function closeRuntimeResources() : void {}
 }

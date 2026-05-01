@@ -43,12 +43,12 @@ interface AsyncOperationPromise
     /**
      * Check if the promise has been resolved successfully.
      */
-    public function isResolved() : bool;
+    public function isResolved(): bool;
 
     /**
      * Check if the promise has been rejected with an error.
      */
-    public function isRejected() : bool;
+    public function isRejected(): bool;
 
     /**
      * Block and retrieve the final result of the operation.
@@ -61,5 +61,5 @@ interface AsyncOperationPromise
      *
      * @throws Throwable If the operation was rejected
      */
-    public function getResult() : mixed;
+    public function getResult(): mixed;
 }

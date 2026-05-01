@@ -8,9 +8,7 @@ use Override;
 
 final readonly class SoftThenRefreshInvalidation implements InvalidationStrategy
 {
-    public function __construct(private bool $allowSoft = true, private int $staleRefreshWindowSeconds = 300)
-    {
-    }
+    public function __construct(private bool $allowSoft = true, private int $staleRefreshWindowSeconds = 300) {}
 
     #[Override]
     public function shouldInvalidate(string $key, string $reason, array $context = []) : bool

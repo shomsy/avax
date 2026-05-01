@@ -21,7 +21,7 @@ final readonly class GracefulShutdown
 
     public static function sequence() : ShutdownSequence
     {
-        return new ShutdownSequence();
+        return new ShutdownSequence;
     }
 
     public static function onShutdown(Closure $callback) : void

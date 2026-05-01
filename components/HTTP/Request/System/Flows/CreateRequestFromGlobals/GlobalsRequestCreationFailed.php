@@ -6,6 +6,4 @@ namespace Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals;
 
 use Avax\Components\HTTP\Request\System\Foundation\Failure\RequestFailure;
 
-final class GlobalsRequestCreationFailed extends RequestFailure
-{
-}
+final class GlobalsRequestCreationFailed extends RequestFailure {}

@@ -16,7 +16,7 @@ final readonly class ValidateDto
 {
     public function execute(object $dto) : ValidationResult
     {
-        $validationResult = new ValidationResult();
+        $validationResult = new ValidationResult;
         $reflectionClass  = new ReflectionClass($dto);
 
         foreach ($reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
@@ -29,18 +29,18 @@ final readonly class ValidateDto
     private function validateProperty(ReflectionProperty $reflectionProperty, object $dto, ValidationResult $validationResult) : void
     {
         $propertyName = $reflectionProperty->getName();
-        $value        = $reflectionProperty->isInitialized($dto) ? $reflectionProperty->getValue($dto) : null;
+        $value = $reflectionProperty->isInitialized($dto) ? $reflectionProperty->getValue($dto) : null;
 
         foreach ($reflectionProperty->getAttributes() as $attribute) {
             $instance = $attribute->newInstance();
 
             match (true) {
-                $instance instanceof Required           => $this->handleRequired($value, $propertyName, $instance->message, $validationResult),
-                $instance instanceof Email              => $this->handleEmail((string) ($value ?? ''), $propertyName, $instance->message, $validationResult),
-                $instance instanceof MinLength          => $this->handleMinLength($value, $propertyName, $instance, $validationResult),
-                $instance instanceof Min                => $this->handleMin($value, $propertyName, $instance, $validationResult),
+                $instance instanceof Required  => $this->handleRequired($value, $propertyName, $instance->message, $validationResult),
+                $instance instanceof Email     => $this->handleEmail((string) ($value ?? ''), $propertyName, $instance->message, $validationResult),
+                $instance instanceof MinLength => $this->handleMinLength($value, $propertyName, $instance, $validationResult),
+                $instance instanceof Min       => $this->handleMin($value, $propertyName, $instance, $validationResult),
                 $instance instanceof PasswordComplexity => $this->handlePasswordComplexity((string) ($value ?? ''), $propertyName, $instance->message, $validationResult),
-                default                                 => null
+                default                        => null
             };
         }
     }

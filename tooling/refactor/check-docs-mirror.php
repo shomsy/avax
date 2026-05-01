@@ -58,7 +58,7 @@ final class CheckDocsMirror
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckDocsMirror();
+    $checker = new CheckDocsMirror;
     $result = $checker->check();
 
     echo $result['status'] . "\n";

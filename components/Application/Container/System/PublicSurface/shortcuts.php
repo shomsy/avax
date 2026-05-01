@@ -13,12 +13,8 @@ use Avax\Components\Application\Container\System\PublicSurface\ContainerFacade;
 if (! function_exists('appInstance')) {
     /**
      * Get or set the global container instance.
-     *
-     * @param DIContainerInterface|null $instance
-     *
-     * @return DIContainerInterface|null
      */
-    function appInstance(DIContainerInterface $instance = null) : DIContainerInterface|null
+    function appInstance(?DIContainerInterface $instance = null) : ?DIContainerInterface
     {
         static $container = null;
 
@@ -35,10 +31,8 @@ if (! function_exists('appInstance')) {
 if (! function_exists('app')) {
     /**
      * Get the container or resolve a service.
-     *
-     *
      */
-    function app(string $abstract = null) : mixed
+    function app(?string $abstract = null) : mixed
     {
         $container = appInstance();
 
@@ -53,8 +47,6 @@ if (! function_exists('app')) {
 if (! function_exists('make')) {
     /**
      * Build a service from the container.
-     *
-     *
      */
     function make(string $abstract, array $parameters = []) : object
     {
@@ -65,8 +57,6 @@ if (! function_exists('make')) {
 if (! function_exists('bind')) {
     /**
      * Bind a service to the container.
-     *
-     * @param mixed|null $concrete
      */
     function bind(string $abstract, mixed $concrete = null, bool $shared = false) : void
     {
@@ -77,8 +67,6 @@ if (! function_exists('bind')) {
 if (! function_exists('singleton')) {
     /**
      * Register a singleton in the container.
-     *
-     * @param mixed|null $concrete
      */
     function singleton(string $abstract, mixed $concrete = null) : void
     {
@@ -89,8 +77,6 @@ if (! function_exists('singleton')) {
 if (! function_exists('resolve')) {
     /**
      * Resolve a service from the container.
-     *
-     *
      */
     function resolve(string $abstract, array $parameters = []) : object
     {

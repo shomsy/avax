@@ -8,7 +8,7 @@ use Closure;
 
 final class Pipeline
 {
-    private static HookRegistry|null $hookRegistry = null;
+    private static ?HookRegistry $hookRegistry = null;
 
     public static function beforeRoute(Closure $handler) : void
     {
@@ -18,7 +18,7 @@ final class Pipeline
     private static function registry() : HookRegistry
     {
         if (! self::$hookRegistry instanceof HookRegistry) {
-            self::$hookRegistry = new HookRegistry();
+            self::$hookRegistry = new HookRegistry;
         }
 
         return self::$hookRegistry;
@@ -87,7 +87,7 @@ final class HookRegistry
     public function execute(string $hook, mixed $data = null) : mixed
     {
         $handlers = $this->hooks[$hook] ?? [];
-        $result   = $data;
+        $result = $data;
 
         foreach ($handlers as $handler) {
             $result = $handler($result);

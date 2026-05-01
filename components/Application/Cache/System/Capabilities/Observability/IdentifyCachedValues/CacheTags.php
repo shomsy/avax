@@ -31,7 +31,7 @@ final readonly class CacheTags implements Stringable
 
     public static function empty() : self
     {
-        return new self();
+        return new self;
     }
 
     public function add(CacheTag $cacheTag) : self

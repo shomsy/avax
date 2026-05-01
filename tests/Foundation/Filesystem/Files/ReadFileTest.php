@@ -12,12 +12,13 @@ use Avax\Tests\TestCase;
 class ReadFileTest extends TestCase
 {
     private LocalDisk $disk;
+
     private string $testFile;
 
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
+        $this->disk = new LocalDisk;
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/read_test.txt';
     }
 
@@ -27,7 +28,7 @@ class ReadFileTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteReturnsFileContents() : void
+    public function test_execute_returns_file_contents() : void
     {
         file_put_contents(filename: $this->testFile, data: "test content\n");
 
@@ -36,7 +37,7 @@ class ReadFileTest extends TestCase
         self::assertSame("test content\n", $result);
     }
 
-    public function testExecuteThrowsExceptionForNonExistentFile() : void
+    public function test_execute_throws_exception_for_non_existent_file() : void
     {
         $this->expectException(exception: FileNotFound::class);
         $this->expectExceptionMessage(message: 'File not found:');
@@ -44,7 +45,7 @@ class ReadFileTest extends TestCase
         new ReadFile(disk: $this->disk)->execute(path: '/nonexistent/file.txt');
     }
 
-    public function testExecuteThrowsExceptionForUnreadableFile() : void
+    public function test_execute_throws_exception_for_unreadable_file() : void
     {
         if (posix_getuid() === 0) {
             $this->markTestSkipped(reason: 'Cannot test unreadable files as root');

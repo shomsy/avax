@@ -18,7 +18,7 @@ abstract class BaseFacade implements FacadeInterface
     /** @var array<string, mixed> Cached resolved instances */
     protected static array $resolvedInstances = [];
 
-    protected static ContainerInterface|null $container = null;
+    protected static ?ContainerInterface $container = null;
 
     public static function __callStatic(string $method, array $args) : mixed
     {
@@ -56,13 +56,13 @@ abstract class BaseFacade implements FacadeInterface
     /**
      * Replace the facade's resolved instance with a fake.
      */
-    public static function fake(callable|object $callback = null) : mixed
+    public static function fake(callable|object|null $callback = null) : mixed
     {
         if ($callback === null) {
             $callback = static fn () : null => null;
         }
 
-        $instance                                               = is_callable($callback) && ! is_object($callback) ? $callback() : $callback;
+        $instance = is_callable($callback) && ! is_object($callback) ? $callback() : $callback;
         static::$resolvedInstances[static::getFacadeAccessor()] = $instance;
 
         return $instance;

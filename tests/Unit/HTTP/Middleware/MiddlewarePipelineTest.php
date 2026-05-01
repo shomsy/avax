@@ -16,7 +16,7 @@ final class MiddlewarePipelineTest extends TestCase
     #[Test]
     public function middleware_stack_pushes_and_retrieves_middleware() : void
     {
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareStack;
 
         $middleware1 = static fn ($request, $next) => $next($request);
 
@@ -34,7 +34,7 @@ final class MiddlewarePipelineTest extends TestCase
     #[Test]
     public function middleware_stack_returns_empty_array_initially() : void
     {
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareStack;
         $this->assertEmpty($stack->all());
     }
 
@@ -45,7 +45,7 @@ final class MiddlewarePipelineTest extends TestCase
 
         $middleware1 = static function ($request, $next) use (&$executionOrder) {
             $executionOrder[] = 'before-1';
-            $response         = $next($request);
+            $response = $next($request);
             $executionOrder[] = 'after-1';
 
             return $response;
@@ -53,13 +53,13 @@ final class MiddlewarePipelineTest extends TestCase
 
         $middleware2 = static function ($request, $next) use (&$executionOrder) {
             $executionOrder[] = 'before-2';
-            $response         = $next($request);
+            $response = $next($request);
             $executionOrder[] = 'after-2';
 
             return $response;
         };
 
-        $stack = new MiddlewareStack();
+        $stack    = new MiddlewareStack;
         $stack->push($middleware1);
         $stack->push($middleware2);
 
@@ -71,11 +71,11 @@ final class MiddlewarePipelineTest extends TestCase
         };
 
         $middlewares = $stack->all();
-        $pipeline    = $coreHandler;
+        $pipeline = $coreHandler;
 
         // Build pipeline from inside out
         foreach (array_reverse($middlewares) as $middleware) {
-            $next     = $pipeline;
+            $next = $pipeline;
             $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
@@ -105,7 +105,7 @@ final class MiddlewarePipelineTest extends TestCase
             return $next($request);
         };
 
-        $stack = new MiddlewareStack();
+        $stack    = new MiddlewareStack;
         $stack->push($blockingMiddleware);
         $stack->push($normalMiddleware);
 
@@ -116,10 +116,10 @@ final class MiddlewarePipelineTest extends TestCase
         };
 
         $middlewares = $stack->all();
-        $pipeline    = $coreHandler;
+        $pipeline = $coreHandler;
 
         foreach (array_reverse($middlewares) as $middleware) {
-            $next     = $pipeline;
+            $next = $pipeline;
             $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
@@ -140,7 +140,7 @@ final class MiddlewarePipelineTest extends TestCase
             return $next($request);
         };
 
-        $stack = new MiddlewareStack();
+        $stack    = new MiddlewareStack;
         $stack->push($modifierMiddleware);
 
         $coreHandler = static function ($request) use (&$modifiedRequest) {
@@ -150,10 +150,10 @@ final class MiddlewarePipelineTest extends TestCase
         };
 
         $middlewares = $stack->all();
-        $pipeline    = $coreHandler;
+        $pipeline = $coreHandler;
 
         foreach (array_reverse($middlewares) as $middleware) {
-            $next     = $pipeline;
+            $next = $pipeline;
             $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
@@ -166,22 +166,22 @@ final class MiddlewarePipelineTest extends TestCase
     public function middleware_can_modify_response() : void
     {
         $headerMiddleware = static function ($request, $next) {
-            $response              = $next($request);
+            $response = $next($request);
             $response['headers'][] = 'X-Custom-Header';
 
             return $response;
         };
 
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareStack;
         $stack->push($headerMiddleware);
 
-        $coreHandler  = static fn ($request) => ['body' => 'Hello', 'headers' => []];
+        $coreHandler = static fn ($request) => ['body' => 'Hello', 'headers' => []];
 
         $middlewares = $stack->all();
         $pipeline    = $coreHandler;
 
         foreach (array_reverse($middlewares) as $middleware) {
-            $next     = $pipeline;
+            $next = $pipeline;
             $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
@@ -193,15 +193,15 @@ final class MiddlewarePipelineTest extends TestCase
     #[Test]
     public function empty_stack_executes_core_handler_directly() : void
     {
-        $stack = new MiddlewareStack();
+        $stack = new MiddlewareStack;
 
-        $coreHandler  = static fn ($request) => "handled: {$request}";
+        $coreHandler = static fn ($request) => "handled: {$request}";
 
         $middlewares = $stack->all();
         $pipeline    = $coreHandler;
 
         foreach (array_reverse($middlewares) as $middleware) {
-            $next     = $pipeline;
+            $next = $pipeline;
             $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
@@ -213,13 +213,13 @@ final class MiddlewarePipelineTest extends TestCase
     #[Test]
     public function multiple_middleware_layers_stack_correctly() : void
     {
-        $stack = new MiddlewareStack();
+        $stack    = new MiddlewareStack;
 
         // Add 5 middleware
         for ($i = 1; $i <= 5; $i++) {
             $stack->push(static function ($request, $next) use ($i) {
-                $request['layer'][]  = "enter-{$i}";
-                $response            = $next($request);
+                $request['layer'][] = "enter-{$i}";
+                $response           = $next($request);
                 $response['layer'][] = "exit-{$i}";
 
                 return $response;
@@ -233,10 +233,10 @@ final class MiddlewarePipelineTest extends TestCase
         };
 
         $middlewares = $stack->all();
-        $pipeline    = $coreHandler;
+        $pipeline = $coreHandler;
 
         foreach (array_reverse($middlewares) as $middleware) {
-            $next     = $pipeline;
+            $next = $pipeline;
             $pipeline = static fn ($request) => $middleware($request, $next);
         }
 

@@ -13,8 +13,10 @@ use Avax\Components\HTTP\Session\System\Capabilities\Storage\SessionStoreInterfa
 final class SessionScope
 {
     private bool $started = false;
-    private string $id   = '';
-    private array  $data = [];
+
+    private string $id = '';
+
+    private array $data = [];
 
     public function __construct(
         private readonly SessionStoreInterface $store,
@@ -32,7 +34,7 @@ final class SessionScope
             }
         }
 
-        $this->id   = session_id() ?: '';
+        $this->id = session_id() ?: '';
         $this->data = $this->store->read($this->id);
         $this->started = true;
 

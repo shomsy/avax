@@ -40,7 +40,7 @@ final readonly class DatabaseSessionStore implements SessionStoreInterface
     public function write(string $id, array $data) : bool
     {
         $payload = json_encode($data, JSON_THROW_ON_ERROR);
-        $stmt    = $this->pdo->prepare("REPLACE INTO {$this->table} (id, payload, last_activity) VALUES (?, ?, ?)");
+        $stmt = $this->pdo->prepare("REPLACE INTO {$this->table} (id, payload, last_activity) VALUES (?, ?, ?)");
         $stmt->execute([$id, $payload, time()]);
 
         return true;

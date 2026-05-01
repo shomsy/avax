@@ -26,8 +26,8 @@ $cache = new AvaxCache(
 Cache::use(cache: $cache);
 
 $cache->set(key: 'user:42', value: [
-    'id'    => 42,
-    'name'  => 'John Doe',
+    'id'   => 42,
+    'name' => 'John Doe',
     'email' => 'john@example.com',
 ],          ttl: 3600);
 
@@ -36,8 +36,8 @@ $result = Cache::get(key: 'user:42');
 print_r($result);
 
 $result = Cache::remember(key: 'user:99', ttl: 3600, loader: static fn () : array => [
-    'id'    => 99,
-    'name'  => 'Jane Doe',
+    'id'   => 99,
+    'name' => 'Jane Doe',
     'email' => 'jane@example.com',
 ]);
 

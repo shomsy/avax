@@ -36,9 +36,9 @@ final class RuntimeSafetyFeatureTest extends TestCase
     public function request_a_state_does_not_leak_into_request_b_after_reset() : void
     {
         // Build the core runtime components directly
-        $scopeStore = new RequestScopeStore();
-        $context    = new RuntimeContext();
-        $registry   = new StateResetRegistry();
+        $scopeStore = new RequestScopeStore;
+        $context    = new RuntimeContext;
+        $registry   = new StateResetRegistry;
         $registry->register(name: 'request-scopes', state: $scopeStore);
         $registry->register(name: 'runtime-context', state: $context);
 
@@ -112,9 +112,9 @@ final class RuntimeSafetyFeatureTest extends TestCase
     #[Test]
     public function runtime_context_is_cleared_between_requests() : void
     {
-        $scopeStore = new RequestScopeStore();
-        $context    = new RuntimeContext();
-        $registry   = new StateResetRegistry();
+        $scopeStore = new RequestScopeStore;
+        $context    = new RuntimeContext;
+        $registry   = new StateResetRegistry;
         $registry->register(name: 'request-scopes', state: $scopeStore);
         $registry->register(name: 'runtime-context', state: $context);
 
@@ -148,9 +148,9 @@ final class RuntimeSafetyFeatureTest extends TestCase
     #[Test]
     public function multiple_sequential_requests_remain_isolated() : void
     {
-        $scopeStore = new RequestScopeStore();
-        $context    = new RuntimeContext();
-        $registry   = new StateResetRegistry();
+        $scopeStore = new RequestScopeStore;
+        $context    = new RuntimeContext;
+        $registry   = new StateResetRegistry;
         $registry->register(name: 'request-scopes', state: $scopeStore);
         $registry->register(name: 'runtime-context', state: $context);
 
@@ -191,10 +191,10 @@ final class RuntimeSafetyFeatureTest extends TestCase
     #[Test]
     public function state_reset_registry_resets_all_registered_components() : void
     {
-        $registry = new StateResetRegistry();
+        $registry = new StateResetRegistry;
 
         // Create a mock resettable that tracks reset calls
-        $mockResettable = new class () implements ResettableState {
+        $mockResettable = new class implements ResettableState {
             public int $resetCount = 0;
 
             public function resetState() : void
@@ -222,7 +222,7 @@ final class RuntimeSafetyFeatureTest extends TestCase
     #[Test]
     public function request_scope_store_resets_properly() : void
     {
-        $store = new RequestScopeStore();
+        $store = new RequestScopeStore;
 
         // Open and populate a scope
         $scope = $store->open();
@@ -255,7 +255,7 @@ final class RuntimeSafetyFeatureTest extends TestCase
     #[Test]
     public function runtime_safety_detects_transaction_leaks() : void
     {
-        $registry = new StateResetRegistry();
+        $registry = new StateResetRegistry;
         $safety   = new RuntimeSafety(
             stateResetRegistry: $registry,
         );

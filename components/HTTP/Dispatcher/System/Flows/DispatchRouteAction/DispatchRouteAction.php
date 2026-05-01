@@ -27,9 +27,9 @@ final readonly class DispatchRouteAction
     {
         return match (true) {
             is_callable($action) => $this->dispatchCallable($action, $request),
-            is_array($action)    => $this->dispatchControllerAndMethod($action, $request),
-            is_string($action)   => $this->dispatchInvokableController($action, $request),
-            default              => throw new InvalidArgumentException('Invalid route action provided.')
+            is_array($action)  => $this->dispatchControllerAndMethod($action, $request),
+            is_string($action) => $this->dispatchInvokableController($action, $request),
+            default            => throw new InvalidArgumentException('Invalid route action provided.')
         };
     }
 

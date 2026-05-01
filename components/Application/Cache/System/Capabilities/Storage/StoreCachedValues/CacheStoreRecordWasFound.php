@@ -17,10 +17,10 @@ final readonly class CacheStoreRecordWasFound
     public function __construct(
         public CacheKey $cacheKey,
         public StoredCacheRecord $storedCacheRecord,
-        public Clock    $clock,
+        public Clock $clock,
     )
     {
-        $this->cacheKey          = $cacheKey;
+        $this->cacheKey = $cacheKey;
         $this->storedCacheRecord = $storedCacheRecord;
     }
 

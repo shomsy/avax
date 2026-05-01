@@ -18,9 +18,7 @@ use Throwable;
 
 final readonly class HandleIncomingHttp
 {
-    public function __construct(private ResponseFactory $responseFactory = new ResponseFactory())
-    {
-    }
+    public function __construct(private ResponseFactory $responseFactory = new ResponseFactory) {}
 
     /**
      * @throws RandomException
@@ -94,9 +92,9 @@ final readonly class HandleIncomingHttp
 
         $normalizedBody = match (true) {
             $value instanceof Stringable => (string) $value,
-            is_scalar(value: $value)     => (string) $value,
-            $value === null              => '',
-            default                      => '',
+            is_scalar(value: $value) => (string) $value,
+            $value === null          => '',
+            default                  => '',
         };
 
         return RuntimeResponse::fromPsrResponse(

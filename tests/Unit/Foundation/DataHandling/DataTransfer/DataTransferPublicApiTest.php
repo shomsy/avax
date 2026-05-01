@@ -21,8 +21,8 @@ final class DataTransferPublicApiTest extends TestCase
         // Arrange
         $input = [
             'user_name' => 'Mila',
-            'role'      => 'admin',
-            'address'   => ['city' => 'Belgrade'],
+            'role'    => 'admin',
+            'address' => ['city' => 'Belgrade'],
             'addresses' => [
                 ['city' => 'Novi Sad'],
             ],
@@ -64,7 +64,7 @@ final class DataTransferPublicApiTest extends TestCase
     {
         // Arrange
         $input = [
-            'city'    => 'Belgrade',
+            'city' => 'Belgrade',
             'unknown' => 'value',
         ];
 
@@ -99,7 +99,7 @@ final class DataTransferPublicApiTest extends TestCase
     {
         // Arrange
         $input = [
-            'count'  => '0',
+            'count' => '0',
             'active' => 'false',
         ];
 
@@ -142,7 +142,7 @@ final class DataTransferPublicApiTest extends TestCase
 enum UnitRole: string
 {
     case Admin = 'admin';
-    case User  = 'user';
+    case User = 'user';
 }
 
 final readonly class UnitAddressData
@@ -170,15 +170,15 @@ final readonly class UnitProfileData
      */
     public function __construct(
         #[MapFrom(name: 'user_name')]
-        public string          $name,
-        public UnitRole        $role,
+        public string   $name,
+        public UnitRole $role,
         #[SensitiveParameter]
         public UnitAddressData $address,
         #[SensitiveParameter]
         #[ListOf(class: UnitAddressData::class)]
-        public array           $addresses,
+        public array    $addresses,
         #[SensitiveParameter]
         #[Hidden]
-        public string          $secret,
+        public string   $secret,
     ) {}
 }

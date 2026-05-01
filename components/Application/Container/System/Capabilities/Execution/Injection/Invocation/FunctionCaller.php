@@ -20,14 +20,12 @@ use Throwable;
  */
 final class FunctionCaller
 {
-    private ResolveDependency|null $resolveDependency = null;
+    private ?ResolveDependency $resolveDependency = null;
 
     /** @var array<string, ResolvePlan> */
     private array $plans = [];
 
-    public function __construct(private readonly ResolveCallArguments $resolveCallArguments)
-    {
-    }
+    public function __construct(private readonly ResolveCallArguments $resolveCallArguments) {}
 
     /**
      * Attaches the runtime resolver used for argument resolution.
@@ -47,8 +45,8 @@ final class FunctionCaller
      */
     public function call(
         callable|string $target,
-        array          $parameters = null,
-        ResolveRequest $resolveRequest = null,
+        ?array          $parameters = null,
+        ?ResolveRequest $resolveRequest = null,
     ) : mixed
     {
         $parameters ??= [];
@@ -56,9 +54,9 @@ final class FunctionCaller
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
         }
 
-        $normalized                 = $this->normalizeTarget(target: $target, request: $resolveRequest);
+        $normalized = $this->normalizeTarget(target: $target, request: $resolveRequest);
         $reflectionFunctionAbstract = $this->reflect(target: $normalized);
-        $arguments                  = $this->resolveCallArguments->resolvePlan(
+        $arguments  = $this->resolveCallArguments->resolvePlan(
             plan     : $this->planFor(reflection: $reflectionFunctionAbstract),
             overrides: $parameters,
             resolver : $this->resolveDependency,
@@ -87,7 +85,7 @@ final class FunctionCaller
      * @throws Throwable
      * @throws Throwable
      */
-    private function normalizeTarget(callable|string $target, ResolveRequest $resolveRequest = null) : callable|string|array
+    private function normalizeTarget(callable|string $target, ?ResolveRequest $resolveRequest = null) : callable|string|array
     {
         $context = $resolveRequest?->context ?? [];
 

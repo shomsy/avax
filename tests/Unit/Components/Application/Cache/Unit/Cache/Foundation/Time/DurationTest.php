@@ -57,7 +57,7 @@ final class DurationTest extends TestCase
 
     public function test_is_zero() : void
     {
-        $zero    = Duration::ofSeconds(seconds: 0);
+        $zero = Duration::ofSeconds(seconds: 0);
         $nonZero = Duration::ofSeconds(seconds: 1);
 
         $this->assertTrue(condition: $zero->isZero());
@@ -67,7 +67,7 @@ final class DurationTest extends TestCase
     public function test_is_positive() : void
     {
         $positive = Duration::ofSeconds(seconds: 1);
-        $zero     = Duration::ofSeconds(seconds: 0);
+        $zero = Duration::ofSeconds(seconds: 0);
 
         $this->assertTrue(condition: $positive->isPositive());
         $this->assertFalse(condition: $zero->isPositive());
@@ -76,7 +76,7 @@ final class DurationTest extends TestCase
     public function test_multiplies_duration() : void
     {
         $duration = Duration::ofSeconds(seconds: 10);
-        $result   = $duration->multiply(factor: 3);
+        $result = $duration->multiply(factor: 3);
 
         $this->assertSame(expected: 30, actual: $result->toSeconds());
     }

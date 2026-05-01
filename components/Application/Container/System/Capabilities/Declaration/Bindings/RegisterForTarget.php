@@ -12,7 +12,9 @@ use LogicException;
 final class RegisterForTarget
 {
     private string $needs = '';
+
     private readonly string $consumer;
+
     private readonly DependencyRegistry $registry;
 
     public function __construct(

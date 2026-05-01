@@ -30,7 +30,7 @@ final class TimestampTest extends TestCase
     public function test_adds_duration() : void
     {
         $timestamp = Timestamp::fromUnixTime(timestamp: 100);
-        $duration  = Duration::ofSeconds(seconds: 50);
+        $duration = Duration::ofSeconds(seconds: 50);
 
         $result = $timestamp->add(duration: $duration);
 
@@ -40,7 +40,7 @@ final class TimestampTest extends TestCase
     public function test_subtracts_duration() : void
     {
         $timestamp = Timestamp::fromUnixTime(timestamp: 100);
-        $duration  = Duration::ofSeconds(seconds: 30);
+        $duration = Duration::ofSeconds(seconds: 30);
 
         $result = $timestamp->subtract(duration: $duration);
 

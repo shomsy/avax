@@ -28,11 +28,9 @@ use Avax\Tests\TestCase;
  */
 class RequestCharacterizationTest extends TestCase
 {
-    /**
-     */
-    public function test_getRequestTarget_returns_path_and_query() : void
+    public function test_get_request_target_returns_path_and_query() : void
     {
-        $uri     = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=active');
+        $uri = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=active');
         $request = new ServerRequest(
             body           : new RequestBody(stream: new ResponseStreamFactory()->createEmptyStream()),
             method: 'GET',
@@ -52,9 +50,9 @@ class RequestCharacterizationTest extends TestCase
         $this->assertSame(expected: '/api/users?status=active', actual: $request->requestTarget);
     }
 
-    public function test_withHeader_replaces_existing_header_preserves_immutability() : void
+    public function test_with_header_replaces_existing_header_preserves_immutability() : void
     {
-        $request    = $this->createBlankRequest();
+        $request = $this->createBlankRequest();
         $newRequest = $request->withHeader(name: 'X-Custom', value: 'Alpha');
 
         $this->assertNotSame(expected: $request, actual: $newRequest);
@@ -67,11 +65,6 @@ class RequestCharacterizationTest extends TestCase
         $this->assertSame(expected: ['Beta'], actual: $replacedRequest->getHeader(name: 'X-Custom'));
     }
 
-    /**
-     * @param array $serverParams
-     *
-     * @return ServerRequest
-     */
     private function createBlankRequest(array $serverParams = []) : ServerRequest
     {
         return new ServerRequest(
@@ -91,72 +84,72 @@ class RequestCharacterizationTest extends TestCase
         );
     }
 
-    public function test_withAddedHeader_appends_new_value() : void
+    public function test_with_added_header_appends_new_value() : void
     {
-        $request    = $this->createBlankRequest()->withHeader(name: 'X-Custom', value: 'Alpha');
+        $request = $this->createBlankRequest()->withHeader(name: 'X-Custom', value: 'Alpha');
         $newRequest = $request->withAddedHeader(name: 'X-Custom', value: 'Beta');
 
         $this->assertSame(expected: ['Alpha', 'Beta'], actual: $newRequest->getHeader(name: 'X-Custom'));
     }
 
-    public function test_withoutHeader_removes_header() : void
+    public function test_without_header_removes_header() : void
     {
-        $request    = $this->createBlankRequest()->withHeader(name: 'X-Custom', value: 'Alpha');
+        $request = $this->createBlankRequest()->withHeader(name: 'X-Custom', value: 'Alpha');
         $newRequest = $request->withoutHeader(name: 'X-Custom');
 
         $this->assertFalse(condition: $newRequest->hasHeader(name: 'X-Custom'));
     }
 
-    public function test_withUri_updates_host_header_when_preserve_host_false() : void
+    public function test_with_uri_updates_host_header_when_preserve_host_false() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = UriBuilder::createFromString(uri: 'https://new-host.com/api');
+        $newUri = UriBuilder::createFromString(uri: 'https://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: false);
 
         $this->assertSame(expected: ['new-host.com'], actual: $newRequest->getHeader(name: 'Host'));
     }
 
-    public function test_withUri_preserves_host_header_when_preserve_host_true() : void
+    public function test_with_uri_preserves_host_header_when_preserve_host_true() : void
     {
         $request = $this->createBlankRequest()->withHeader(name: 'Host', value: 'old-host.com');
-        $newUri  = UriBuilder::createFromString(uri: 'https://new-host.com/api');
+        $newUri = UriBuilder::createFromString(uri: 'https://new-host.com/api');
 
         $newRequest = $request->withUri(uri: $newUri, preserveHost: true);
 
         $this->assertSame(expected: ['old-host.com'], actual: $newRequest->getHeader(name: 'Host'));
     }
 
-    public function test_withQueryParams_replaces_query_params() : void
+    public function test_with_query_params_replaces_query_params() : void
     {
-        $request    = $this->createBlankRequest();
+        $request = $this->createBlankRequest();
         $newRequest = $request->withQueryParams(query: ['search' => 'test']);
 
         $this->assertSame(expected: [], actual: $request->queryParams);
         $this->assertSame(expected: ['search' => 'test'], actual: $newRequest->queryParams);
     }
 
-    public function test_withCookieParams_replaces_cookie_params() : void
+    public function test_with_cookie_params_replaces_cookie_params() : void
     {
-        $request    = $this->createBlankRequest();
+        $request = $this->createBlankRequest();
         $newRequest = $request->withCookieParams(cookies: ['session_id' => '12345']);
 
         $this->assertSame(expected: [], actual: $request->getCookieParams());
         $this->assertSame(expected: ['session_id' => '12345'], actual: $newRequest->getCookieParams());
     }
 
-    public function test_withParsedBody_replaces_parsed_body() : void
+    public function test_with_parsed_body_replaces_parsed_body() : void
     {
-        $request    = $this->createBlankRequest();
+        $request = $this->createBlankRequest();
         $newRequest = $request->withParsedBody(data: ['name' => 'John']);
 
         $this->assertSame(expected: [], actual: $request->getParsedBody());
         $this->assertSame(expected: ['name' => 'John'], actual: $newRequest->getParsedBody());
     }
 
-    public function test_withAttribute_and_withoutAttribute() : void
+    public function test_with_attribute_and_without_attribute() : void
     {
-        $request    = $this->createBlankRequest();
+        $request = $this->createBlankRequest();
         $newRequest = $request->withAttribute(name: 'userId', value: 42);
 
         $this->assertNull(actual: $request->getAttribute(name: 'userId'));
@@ -166,10 +159,10 @@ class RequestCharacterizationTest extends TestCase
         $this->assertNull(actual: $removedRequest->getAttribute(name: 'userId'));
     }
 
-    public function test_getServerParams_returns_raw_server_array() : void
+    public function test_get_server_params_returns_raw_server_array() : void
     {
         $serverParams = ['REQUEST_METHOD' => 'POST', 'HTTP_HOST' => 'example.com'];
-        $request      = $this->createBlankRequest(serverParams: $serverParams);
+        $request = $this->createBlankRequest(serverParams: $serverParams);
 
         $this->assertSame(expected: $serverParams, actual: $request->serverParams);
     }

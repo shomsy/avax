@@ -14,8 +14,7 @@ final readonly class HttpKernel implements HttpKernelInterface
     public function __construct(
         private RuntimeInterface $runtime,
         private HandleIncomingHttp $handleIncomingHttp,
-    ) {
-    }
+    ) {}
 
     public function handle(RuntimeRequest $request) : RuntimeResponse
     {

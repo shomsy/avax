@@ -11,14 +11,12 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Resolve
  */
 final readonly class CloseScope
 {
-    public function __construct(private ResolveDependency $resolveDependency)
-    {
-    }
+    public function __construct(private ResolveDependency $resolveDependency) {}
 
     /**
      * Closes the current scope frame.
      */
-    public function close(string $kind = null) : void
+    public function close(?string $kind = null) : void
     {
         $this->resolveDependency->closeScope(kind: $kind);
     }

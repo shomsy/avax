@@ -6,7 +6,7 @@ $baseDir = realpath(__DIR__);
 $testDir = $baseDir . '/tests';
 
 if (! is_dir($testDir)) {
-    die("❌ Test directory not found!\n");
+    exit("❌ Test directory not found!\n");
 }
 
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($testDir));
@@ -16,12 +16,12 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path     = realpath($file->getPathname());
-    $content  = file_get_contents($path);
+    $path    = realpath($file->getPathname());
+    $content = file_get_contents($path);
     $original = $content;
 
     // 1. Precise Relative Path calculation
-    $dir          = dirname($path);
+    $dir = dirname($path);
     $relativePath = ltrim(str_replace($testDir, '', $dir), DIRECTORY_SEPARATOR);
 
     $expectedNamespace = 'Avax\\Tests';

@@ -24,8 +24,8 @@ final class HotPathInlinerSmokeTest extends CompiledContainer
     }
 }
 
-$inliner  = new HotPathInliner();
-$compiled = new InlineSmokeCompiled();
+$inliner  = new HotPathInliner;
+$compiled = new InlineSmokeCompiled;
 $resolver = makeTestContainer()->get(id: ResolveDependency::class);
 
 assertTrue(condition: ! $inliner->isAttached(), message: 'HotPathInliner should start detached.');

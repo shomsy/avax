@@ -6,11 +6,10 @@ declare(strict_types=1);
  * Check for docs mirror.
  * Ensures that components/ structure is mirrored in docs/components/ without obsolete namespaces.
  */
-
-$rootDir  = dirname(__DIR__, 2);
+$rootDir       = dirname(__DIR__, 2);
 $componentsDir = $rootDir . '/components';
-$docsDir  = $rootDir . '/docs/components';
-$errors   = [];
+$docsDir       = $rootDir . '/docs/components';
+$errors        = [];
 
 if (! is_dir($componentsDir) || ! is_dir($docsDir)) {
     exit(0);

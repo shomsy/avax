@@ -11,6 +11,6 @@ final class NormalizeResponseBody
 {
     public function normalize(mixed $content) : StreamInterface
     {
-        return Utils::streamFor((string)$content);
+        return Utils::streamFor((string) $content);
     }
 }

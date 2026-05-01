@@ -9,9 +9,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class AtomicCompiledCacheWrite
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private Clock $clock = new SystemClock())
-    {
-    }
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private Clock $clock = new SystemClock) {}
 
     public function write(
         CompiledCacheName $compiledCacheName,

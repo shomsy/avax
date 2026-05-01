@@ -45,7 +45,7 @@ final class CheckForbiddenFolders
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckForbiddenFolders();
+    $checker = new CheckForbiddenFolders;
     $result = $checker->check();
 
     echo $result['status'] . "\n";

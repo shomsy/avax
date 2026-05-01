@@ -14,7 +14,7 @@ final class BaseRegisterDependencyContractTest extends TestCase
     public function test_provider_contract_depends_on_public_container_interface() : void
     {
         $constructor = new ReflectionMethod(objectOrMethod: RegisterDependency::class, method: '__construct');
-        $parameter   = $constructor->getParameters()[0];
+        $parameter = $constructor->getParameters()[0];
 
         $this->assertSame(
             expected: ContainerInterface::class,

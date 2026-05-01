@@ -11,7 +11,7 @@ use Avax\Framework\System\Capabilities\ConfigValidation\ConfigValidator;
 final readonly class ValidateConfig
 {
     public function __construct(
-        private ConfigValidator $validator = new ConfigValidator(),
+        private ConfigValidator $validator = new ConfigValidator,
     ) {}
 
     /**
@@ -25,7 +25,7 @@ final readonly class ValidateConfig
             return 0;
         }
 
-        $errorCount   = 0;
+        $errorCount = 0;
         $warningCount = 0;
 
         foreach ($violations as $violation) {
@@ -67,7 +67,7 @@ final readonly class ValidateConfig
      *
      * @return list<ConfigSchemaViolation>
      */
-    public function validate(array $config) : array
+    public function validate(array $config): array
     {
         return $this->validator->validateAll($config);
     }

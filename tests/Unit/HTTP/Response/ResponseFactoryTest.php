@@ -183,17 +183,17 @@ final class ResponsesTest extends TestCase
     {
         $data = [
             'user' => [
-                'name'  => 'John',
+                'name' => 'John',
                 'roles' => ['admin', 'editor'],
             ],
             'meta' => [
-                'page'  => 1,
+                'page' => 1,
                 'total' => 100,
             ],
         ];
 
         $response = $this->factory->json(data: $data);
-        $body     = json_decode((string) $response->getBody(), associative: true);
+        $body = json_decode((string) $response->getBody(), associative: true);
 
         $this->assertEquals('John', $body['user']['name']);
         $this->assertContains('admin', $body['user']['roles']);
@@ -202,6 +202,6 @@ final class ResponsesTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->factory = new Responses();
+        $this->factory = new Responses;
     }
 }

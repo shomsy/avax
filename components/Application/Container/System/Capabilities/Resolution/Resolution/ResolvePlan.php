@@ -20,9 +20,7 @@ final readonly class ResolvePlan
      *     allowsNull: bool
      * }> $parameters
      */
-    public function __construct(public array $parameters = [])
-    {
-    }
+    public function __construct(public array $parameters = []) {}
 
     public static function __set_state(array $state) : self
     {

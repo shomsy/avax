@@ -13,8 +13,7 @@ final class DetectUnhealthyCacheNode
         private array $failureHistory = [],
         /** @var array<string, int> */
         private array $successCount = [],
-    ) {
-    }
+    ) {}
 
     public function recordFailure(CacheNodeId $cacheNodeId) : CacheNodeStatus
     {
@@ -25,7 +24,7 @@ final class DetectUnhealthyCacheNode
         }
 
         $this->failureHistory[$nodeIdStr][] = true;
-        $this->successCount[$nodeIdStr]     = 0;
+        $this->successCount[$nodeIdStr] = 0;
 
         if (count($this->failureHistory[$nodeIdStr]) >= $this->failureThreshold) {
             return CacheNodeStatus::UNHEALTHY;

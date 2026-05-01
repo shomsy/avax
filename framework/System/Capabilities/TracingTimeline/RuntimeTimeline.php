@@ -16,8 +16,9 @@ final class RuntimeTimeline
      */
     private array $events = [];
 
-    private bool       $isFinished = false;
-    private float|null $endMS      = null;
+    private bool $isFinished = false;
+
+    private ?float $endMS = null;
 
     public function __construct()
     {
@@ -27,7 +28,7 @@ final class RuntimeTimeline
     /**
      * Start timing a named operation.
      */
-    public function begin(string $name, string $category = null) : TraceSpan
+    public function begin(string $name, ?string $category = null) : TraceSpan
     {
         return new TraceSpan(
             name    : $name,
@@ -47,9 +48,9 @@ final class RuntimeTimeline
      */
     public function record(
         string $name,
-        float  $durationMS = null,
-        string $category = null,
-        array  $metadata = [],
+        ?float  $durationMS = null,
+        ?string $category = null,
+        array   $metadata = [],
     ) : void
     {
         $timestamp = microtime(true) * 1000;
@@ -65,7 +66,7 @@ final class RuntimeTimeline
 
     public function finish() : void
     {
-        $this->endMS      = microtime(true) * 1000;
+        $this->endMS = microtime(true) * 1000;
         $this->isFinished = true;
 
         $this->record(
@@ -134,13 +135,13 @@ final class RuntimeTimeline
     {
         return [
             'duration_ms' => $this->durationMS(),
-            'events'      => array_map(
+            'events' => array_map(
                 static fn (RuntimeEvent $e) : array => [
-                    'name'         => $e->name,
+                    'name'        => $e->name,
                     'timestamp_ms' => round($e->timestampMS, 2),
-                    'duration_ms'  => $e->durationMS !== null ? round($e->durationMS, 2) : null,
-                    'category'     => $e->category,
-                    'metadata'     => $e->metadata,
+                    'duration_ms' => $e->durationMS !== null ? round($e->durationMS, 2) : null,
+                    'category'    => $e->category,
+                    'metadata'    => $e->metadata,
                 ],
                 $this->events,
             ),

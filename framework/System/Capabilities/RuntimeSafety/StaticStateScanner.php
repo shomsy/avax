@@ -37,7 +37,7 @@ final class StaticStateScanner
             }
 
             $classFindings = $this->scanClass($className);
-            $findings      = [...$findings, ...$classFindings];
+            $findings = [...$findings, ...$classFindings];
         }
 
         foreach (get_declared_traits() as $traitName) {
@@ -50,7 +50,7 @@ final class StaticStateScanner
             }
 
             $traitFindings = $this->scanTrait($traitName);
-            $findings      = [...$findings, ...$traitFindings];
+            $findings = [...$findings, ...$traitFindings];
         }
 
         return $findings;
@@ -61,7 +61,7 @@ final class StaticStateScanner
      *
      * @return list<RuntimeSafetyFinding>
      */
-    private function scanClass(string $className) : array
+    private function scanClass(string $className): array
     {
         $findings = [];
 
@@ -102,10 +102,9 @@ final class StaticStateScanner
 
     /**
      * @param class-string $traitName
-     *
      * @return list<RuntimeSafetyFinding>
      */
-    private function scanTrait(string $traitName) : array
+    private function scanTrait(string $traitName): array
     {
         $findings = [];
 
@@ -139,6 +138,6 @@ final class StaticStateScanner
         $file  = $class->getFileName();
         $line  = $class->getStartLine();
 
-        return ($file !== false ? $file : $class->getName()) . ':' . $line;
+        return ($file !== false ? $file : $class->getName()) . ':'.$line;
     }
 }

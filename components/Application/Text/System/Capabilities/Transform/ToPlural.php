@@ -18,8 +18,8 @@ final class ToPlural
 
         $irregular = [
             'person' => 'people', 'man' => 'men', 'woman' => 'women',
-            'child'  => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
-            'goose'  => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
+            'child' => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
+            'goose' => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
         ];
 
         $lower = strtolower($value);

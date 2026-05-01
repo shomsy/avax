@@ -11,12 +11,13 @@ use Avax\Tests\TestCase;
 class WriteFileTest extends TestCase
 {
     private LocalDisk $disk;
+
     private string $testFile;
 
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
+        $this->disk = new LocalDisk;
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/write_test.txt';
     }
 
@@ -26,7 +27,7 @@ class WriteFileTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteCreatesFile() : void
+    public function test_execute_creates_file() : void
     {
         $result = new WriteFile(disk: $this->disk)->execute(path: $this->testFile, content: 'test');
 
@@ -34,7 +35,7 @@ class WriteFileTest extends TestCase
         self::assertFileExists(filename: $this->testFile);
     }
 
-    public function testExecuteCreatesParentDirectory() : void
+    public function test_execute_creates_parent_directory() : void
     {
         $file = '/home/shomsy/projects/components/tests/fixtures/Filesystem/subdir/nested/test.txt';
 
@@ -49,7 +50,7 @@ class WriteFileTest extends TestCase
         self::assertFileExists(filename: $file);
     }
 
-    public function testExecuteAddsNewlineAutomatically() : void
+    public function test_execute_adds_newline_automatically() : void
     {
         new WriteFile(disk: $this->disk)->execute(path: $this->testFile, content: 'test');
 

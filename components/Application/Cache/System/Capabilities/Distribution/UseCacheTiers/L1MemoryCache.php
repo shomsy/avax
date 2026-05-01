@@ -12,7 +12,7 @@ final class L1MemoryCache
 {
     public static function withCapacity(Clock $clock, int $maxSize) : TieredCache
     {
-        $cacheTier          = CacheTier::l1(maxSize: $maxSize);
+        $cacheTier = CacheTier::l1(maxSize: $maxSize);
         $inMemoryCacheStore = self::create(clock: $clock);
 
         $tieredCache = new TieredCache($clock, $cacheTier);
@@ -21,8 +21,8 @@ final class L1MemoryCache
         return $tieredCache;
     }
 
-    public static function create(Clock $clock = null) : InMemoryCacheStore
+    public static function create(?Clock $clock = null) : InMemoryCacheStore
     {
-        return new InMemoryCacheStore(clock: $clock ?? new SystemClock());
+        return new InMemoryCacheStore(clock: $clock ?? new SystemClock);
     }
 }

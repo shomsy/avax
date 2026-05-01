@@ -56,7 +56,7 @@ final class DependencyRegistration
 
     public string $poolScopeKind = ScopeKind::OPERATION;
 
-    public string|null $group = null;
+    public ?string $group = null;
 
     public int $groupOrder = 0;
 
@@ -67,6 +67,7 @@ final class DependencyRegistration
     public array $arguments = [];
 
     public RegistrationMetadata $metadata;
+
     public readonly string $abstract;
 
     public function __construct(
@@ -82,16 +83,16 @@ final class DependencyRegistration
      */
     public static function __set_state(array $array) : self
     {
-        $registration                       = new self(abstract: $array['abstract']);
+        $registration                = new self(abstract: $array['abstract']);
         $registration->concrete = $array['concrete'] ?? null;
         $registration->lifetime = $array['lifetime'] ?? TransientLifetime::NAME;
         $registration->deferred = $array['deferred'] ?? false;
         $registration->warm = $array['warm'] ?? false;
         $registration->lazy = $array['lazy'] ?? false;
-        $registration->disposable           = $array['disposable'] ?? false;
-        $registration->poolSize             = max(1, (int) ($array['poolSize'] ?? 8));
+        $registration->disposable    = $array['disposable'] ?? false;
+        $registration->poolSize      = max(1, (int) ($array['poolSize'] ?? 8));
         $registration->poolResetBeforeReuse = (bool) ($array['poolResetBeforeReuse'] ?? true);
-        $registration->poolScopeKind        = ScopeKind::normalize(
+        $registration->poolScopeKind = ScopeKind::normalize(
             kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION),
         );
         $registration->group = is_string(value: $array['group'] ?? null) ? $array['group'] : null;
@@ -166,8 +167,6 @@ final class DependencyRegistration
     }
 
     /**
-     * @param mixed $values
-     *
      * @return list<string>
      */
     private function stringList(mixed $values) : array
@@ -396,18 +395,18 @@ final class DependencyRegistration
     }
 
     public function pooled(
-        int    $maxSize = null,
-        string $scopeKind = null,
-        bool   $resetBeforeReuse = true,
+        ?int    $maxSize = null,
+        ?string $scopeKind = null,
+        bool    $resetBeforeReuse = true,
     ) : self
     {
-        $maxSize   ??= 8;
+        $maxSize             ??= 8;
         $scopeKind ??= ScopeKind::OPERATION;
-        $this->lifetime             = PooledLifetime::NAME;
-        $this->poolSize             = max(1, $maxSize);
-        $this->poolScopeKind        = ScopeKind::normalize(kind: $scopeKind);
+        $this->lifetime      = PooledLifetime::NAME;
+        $this->poolSize      = max(1, $maxSize);
+        $this->poolScopeKind = ScopeKind::normalize(kind: $scopeKind);
         $this->poolResetBeforeReuse = $resetBeforeReuse;
-        $this->warm                 = false;
+        $this->warm          = false;
 
         return $this;
     }
@@ -421,8 +420,8 @@ final class DependencyRegistration
 
     public function group(string $group, int $order = 0) : self
     {
-        $normalized       = trim(string: $group);
-        $this->group      = $normalized !== '' ? $normalized : null;
+        $normalized  = trim(string: $group);
+        $this->group = $normalized !== '' ? $normalized : null;
         $this->groupOrder = $order;
 
         return $this;

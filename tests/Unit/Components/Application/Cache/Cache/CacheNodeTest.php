@@ -104,35 +104,35 @@ final class CacheNodeTest extends TestCase
 
     // --- virtualNodeCount() ---
 
-    public function test_virtualNodeCount_with_default_weight() : void
+    public function test_virtual_node_count_with_default_weight() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234);
 
         $this->assertSame(150, $node->virtualNodeCount());
     }
 
-    public function test_virtualNodeCount_with_custom_weight() : void
+    public function test_virtual_node_count_with_custom_weight() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234, weight: 200);
 
         $this->assertSame(300, $node->virtualNodeCount());
     }
 
-    public function test_virtualNodeCount_with_half_weight() : void
+    public function test_virtual_node_count_with_half_weight() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234, weight: 50);
 
         $this->assertSame(75, $node->virtualNodeCount());
     }
 
-    public function test_virtualNodeCount_with_explicit_count() : void
+    public function test_virtual_node_count_with_explicit_count() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234, virtualNodeCount: 500);
 
         $this->assertSame(500, $node->virtualNodeCount());
     }
 
-    public function test_virtualNodeCount_explicit_overrides_weight() : void
+    public function test_virtual_node_count_explicit_overrides_weight() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234, weight: 200, virtualNodeCount: 100);
 
@@ -141,7 +141,7 @@ final class CacheNodeTest extends TestCase
 
     // --- withStatus() immutability ---
 
-    public function test_withStatus_returns_new_instance() : void
+    public function test_with_status_returns_new_instance() : void
     {
         $original = new CacheNode(id: 'node', host: 'host', port: 1234);
         $modified = $original->withStatus(CacheNodeStatus::UNHEALTHY);
@@ -151,7 +151,7 @@ final class CacheNodeTest extends TestCase
         $this->assertSame(CacheNodeStatus::UNHEALTHY, $modified->status);
     }
 
-    public function test_withStatus_preserves_other_properties() : void
+    public function test_with_status_preserves_other_properties() : void
     {
         $original = new CacheNode(id: 'preserved', host: '10.0.0.1', port: 6380, weight: 200);
         $modified = $original->withStatus(CacheNodeStatus::MAINTENANCE);
@@ -165,7 +165,7 @@ final class CacheNodeTest extends TestCase
 
     // --- withWeight() immutability ---
 
-    public function test_withWeight_returns_new_instance() : void
+    public function test_with_weight_returns_new_instance() : void
     {
         $original = new CacheNode(id: 'node', host: 'host', port: 1234, weight: 100);
         $modified = $original->withWeight(300);
@@ -175,7 +175,7 @@ final class CacheNodeTest extends TestCase
         $this->assertSame(300, $modified->weight);
     }
 
-    public function test_withWeight_preserves_other_properties() : void
+    public function test_with_weight_preserves_other_properties() : void
     {
         $original = new CacheNode(id: 'preserved', host: '10.0.0.1', port: 6380, weight: 100, status: CacheNodeStatus::DRAINING);
         $modified = $original->withWeight(250);
@@ -189,7 +189,7 @@ final class CacheNodeTest extends TestCase
 
     // --- toArray() serialization ---
 
-    public function test_toArray_serialization() : void
+    public function test_to_array_serialization() : void
     {
         $node = new CacheNode(
             id    : 'serialize-test',
@@ -212,7 +212,7 @@ final class CacheNodeTest extends TestCase
 
     // --- fromArray() deserialization roundtrip ---
 
-    public function test_fromArray_deserialization_roundtrip() : void
+    public function test_from_array_deserialization_roundtrip() : void
     {
         $original = new CacheNode(
             id              : 'roundtrip-node',
@@ -223,7 +223,7 @@ final class CacheNodeTest extends TestCase
             virtualNodeCount: 300,
         );
 
-        $array    = $original->toArray();
+        $array = $original->toArray();
         $restored = CacheNode::fromArray($array);
 
         $this->assertSame($original->id, $restored->id);
@@ -234,10 +234,10 @@ final class CacheNodeTest extends TestCase
         $this->assertSame($original->virtualNodeCount(), $restored->virtualNodeCount());
     }
 
-    public function test_fromArray_with_defaults() : void
+    public function test_from_array_with_defaults() : void
     {
         $data = [
-            'id'   => 'default-node',
+            'id' => 'default-node',
             'host' => 'localhost',
             'port' => 6379,
         ];
@@ -253,7 +253,7 @@ final class CacheNodeTest extends TestCase
 
     // --- __toString() ---
 
-    public function test_toString_returns_formatted_string() : void
+    public function test_to_string_returns_formatted_string() : void
     {
         $node = new CacheNode(id: 'test-node', host: '127.0.0.1', port: 6379);
 
@@ -265,7 +265,7 @@ final class CacheNodeTest extends TestCase
 
     // --- connectionString() ---
 
-    public function test_connectionString() : void
+    public function test_connection_string() : void
     {
         $node = new CacheNode(id: 'conn-node', host: 'redis.example.com', port: 6380);
 
@@ -274,28 +274,28 @@ final class CacheNodeTest extends TestCase
 
     // --- isAvailable() ---
 
-    public function test_isAvailable_for_healthy_node() : void
+    public function test_is_available_for_healthy_node() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234, status: CacheNodeStatus::HEALTHY);
 
         $this->assertTrue($node->isAvailable());
     }
 
-    public function test_isAvailable_for_unhealthy_node() : void
+    public function test_is_available_for_unhealthy_node() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234, status: CacheNodeStatus::UNHEALTHY);
 
         $this->assertFalse($node->isAvailable());
     }
 
-    public function test_isAvailable_for_draining_node() : void
+    public function test_is_available_for_draining_node() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234, status: CacheNodeStatus::DRAINING);
 
         $this->assertFalse($node->isAvailable());
     }
 
-    public function test_isAvailable_for_maintenance_node() : void
+    public function test_is_available_for_maintenance_node() : void
     {
         $node = new CacheNode(id: 'node', host: 'host', port: 1234, status: CacheNodeStatus::MAINTENANCE);
 
@@ -304,7 +304,7 @@ final class CacheNodeTest extends TestCase
 
     // --- CacheNodeStatus enum ---
 
-    public function test_cacheNodeStatus_values() : void
+    public function test_cache_node_status_values() : void
     {
         $this->assertSame('healthy', CacheNodeStatus::HEALTHY->value);
         $this->assertSame('unhealthy', CacheNodeStatus::UNHEALTHY->value);
@@ -312,7 +312,7 @@ final class CacheNodeTest extends TestCase
         $this->assertSame('maintenance', CacheNodeStatus::MAINTENANCE->value);
     }
 
-    public function test_cacheNodeStatus_isAvailable() : void
+    public function test_cache_node_status_is_available() : void
     {
         $this->assertTrue(CacheNodeStatus::HEALTHY->isAvailable());
         $this->assertFalse(CacheNodeStatus::UNHEALTHY->isAvailable());
@@ -325,7 +325,7 @@ final class CacheNodeTest extends TestCase
     public function test_node_with_very_long_id() : void
     {
         $longId = str_repeat('a', 255);
-        $node   = new CacheNode(id: $longId, host: 'host', port: 1234);
+        $node = new CacheNode(id: $longId, host: 'host', port: 1234);
 
         $this->assertSame($longId, $node->id);
     }
@@ -352,7 +352,7 @@ final class CacheNodeTest extends TestCase
         // CacheNode is a readonly class - once created, it cannot be modified
         $node = new CacheNode(id: 'immutable-node', host: 'host', port: 1234, weight: 500);
 
-        $id     = $node->id;
+        $id = $node->id;
         $weight = $node->weight;
 
         $this->assertSame('immutable-node', $id);

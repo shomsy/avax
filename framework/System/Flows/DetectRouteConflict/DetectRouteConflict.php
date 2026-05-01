@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\RouteIntelligence\RouteConflict;
 final readonly class DetectRouteConflict
 {
     public function __construct(
-        private RouteAnalyzer $analyzer = new RouteAnalyzer(),
+        private RouteAnalyzer $analyzer = new RouteAnalyzer,
     ) {}
 
     /**

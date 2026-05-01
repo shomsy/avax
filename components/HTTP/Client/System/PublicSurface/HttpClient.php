@@ -11,7 +11,7 @@ use Avax\Components\HTTP\Client\System\Capabilities\Http\CurlClient;
 final readonly class HttpClient
 {
     public function __construct(
-        private CurlClient $client = new CurlClient(),
+        private CurlClient $client = new CurlClient,
     ) {}
 
     public function get(string $url, array $headers = [], array $options = []) : ClientResponse
@@ -21,7 +21,7 @@ final readonly class HttpClient
 
     public function post(string $url, mixed $data = null, array $headers = [], array $options = []) : ClientResponse
     {
-        $body = is_array($data) ? json_encode($data) : (string)$data;
+        $body = is_array($data) ? json_encode($data) : (string) $data;
         if (is_array($data) && ! isset($headers['Content-Type'])) {
             $headers['Content-Type'] = 'application/json';
         }

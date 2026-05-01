@@ -23,7 +23,7 @@ final class DiagnosticsSchemaConsumer
 
 /**
  * @param array<string, mixed> $payload
- * @param list<string> $requiredKeys
+ * @param list<string>         $requiredKeys
  */
 function assertSchemaKeys(array $payload, array $requiredKeys, string $label) : void
 {
@@ -32,7 +32,7 @@ function assertSchemaKeys(array $payload, array $requiredKeys, string $label) : 
     }
 }
 
-$cacheDir  = sys_get_temp_dir() . '/container-diagnostics-schema-' . uniqid();
+$cacheDir = sys_get_temp_dir() . '/container-diagnostics-schema-' . uniqid();
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir       : $cacheDir,
     cacheVersion   : 'diagnostics-schema',

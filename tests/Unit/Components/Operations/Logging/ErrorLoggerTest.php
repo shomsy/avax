@@ -25,7 +25,7 @@ final class ErrorLoggerTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function emergencyLevel() : void
+    public function emergency_level() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -37,7 +37,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function alertLevel() : void
+    public function alert_level() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -49,7 +49,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function criticalLevel() : void
+    public function critical_level() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -61,7 +61,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function errorLevel() : void
+    public function error_level() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -73,7 +73,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function warningLevel() : void
+    public function warning_level() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -85,7 +85,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function noticeLevel() : void
+    public function notice_level() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -97,7 +97,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function debugLevel() : void
+    public function debug_level() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -109,7 +109,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function infoLevel() : void
+    public function info_level() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -125,7 +125,7 @@ final class ErrorLoggerTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function psr3LogMethod() : void
+    public function psr3_log_method() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -137,7 +137,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function psr3LogMethodWithInvalidLevelThrowsException() : void
+    public function psr3_log_method_with_invalid_level_throws_exception() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $logger = new ErrorLogger($writer);
@@ -150,20 +150,20 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function psr3LogMethodWithStringableMessage() : void
+    public function psr3_log_method_with_stringable_message() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
             ->method('write')
             ->with(self::callback(static fn (string $content) => str_contains($content, 'Stringable message')));
 
-        $logger     = new ErrorLogger($writer);
+        $logger = new ErrorLogger($writer);
         $stringable = new StringableObject('Stringable message');
         $logger->log(LogLevel::INFO, $stringable);
     }
 
     #[Test]
-    public function psr3LogMethodWithEmptyContext() : void
+    public function psr3_log_method_with_empty_context() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -179,10 +179,10 @@ final class ErrorLoggerTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function structuredContextMerging() : void
+    public function structured_context_merging() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -190,8 +190,8 @@ final class ErrorLoggerTest extends TestCase
 
         $logger = new ErrorLogger($writer);
         $logger->error('Context test', [
-            'user_id'    => 123,
-            'action'     => 'login',
+            'user_id' => 123,
+            'action'  => 'login',
             'ip_address' => '192.168.1.1',
         ]);
 
@@ -203,10 +203,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function contextWithNestedArrays() : void
+    public function context_with_nested_arrays() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -216,7 +216,7 @@ final class ErrorLoggerTest extends TestCase
         $logger->warning('Nested context', [
             'request' => [
                 'method' => 'POST',
-                'uri'    => '/api/users',
+                'uri' => '/api/users',
             ],
             'metadata' => [
                 'version' => '1.0',
@@ -233,10 +233,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function contextWithNumericValues() : void
+    public function context_with_numeric_values() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -244,8 +244,8 @@ final class ErrorLoggerTest extends TestCase
 
         $logger = new ErrorLogger($writer);
         $logger->info('Numeric context', [
-            'count'    => 42,
-            'ratio'    => 3.14,
+            'count' => 42,
+            'ratio' => 3.14,
             'negative' => -100,
         ]);
 
@@ -255,10 +255,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function contextWithBooleanValues() : void
+    public function context_with_boolean_values() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -266,7 +266,7 @@ final class ErrorLoggerTest extends TestCase
 
         $logger = new ErrorLogger($writer);
         $logger->info('Boolean context', [
-            'enabled'  => true,
+            'enabled' => true,
             'disabled' => false,
         ]);
 
@@ -275,10 +275,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function contextWithNullValues() : void
+    public function context_with_null_values() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -287,7 +287,7 @@ final class ErrorLoggerTest extends TestCase
         $logger = new ErrorLogger($writer);
         $logger->info('Null context', [
             'value' => null,
-            'name'  => null,
+            'name' => null,
         ]);
 
         self::assertStringContainsString('null', $writtenContent);
@@ -298,10 +298,10 @@ final class ErrorLoggerTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function exceptionLoggingWithTrace() : void
+    public function exception_logging_with_trace() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -331,10 +331,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function exceptionLoggingIncludesFileAndLine() : void
+    public function exception_logging_includes_file_and_line() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -350,10 +350,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function exceptionLoggingLimitsTraceToTenFrames() : void
+    public function exception_logging_limits_trace_to_ten_frames() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -395,9 +395,9 @@ final class ErrorLoggerTest extends TestCase
         }
 
         // Find matching closing brace
-        $depth    = 0;
+        $depth   = 0;
         $inString = false;
-        $escaped  = false;
+        $escaped = false;
 
         for ($i = $bracePos; $i < strlen($content); $i++) {
             $char = $content[$i];
@@ -436,10 +436,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function exceptionLoggingWithPhpErrorException() : void
+    public function exception_logging_with_php_error_exception() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -459,10 +459,10 @@ final class ErrorLoggerTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function exceptionLoggingWithNestedException() : void
+    public function exception_logging_with_nested_exception() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -470,7 +470,7 @@ final class ErrorLoggerTest extends TestCase
 
         $logger = new ErrorLogger($writer);
 
-        $previous  = new LogicException('Previous exception');
+        $previous = new LogicException('Previous exception');
         $exception = new RuntimeException('Current exception', 0, $previous);
         $logger->error('Chain', ['exception' => $exception]);
 
@@ -478,10 +478,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function correlationIdEnrichment() : void
+    public function correlation_id_enrichment() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -490,7 +490,7 @@ final class ErrorLoggerTest extends TestCase
         $logger = new ErrorLogger($writer);
         $logger->error('Request failed', [
             'correlation_id' => 'corr-abc-123',
-            'endpoint'       => '/api/data',
+            'endpoint' => '/api/data',
         ]);
 
         self::assertStringContainsString('corr-abc-123', $writtenContent);
@@ -502,10 +502,10 @@ final class ErrorLoggerTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function correlationIdWithException() : void
+    public function correlation_id_with_exception() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -515,7 +515,7 @@ final class ErrorLoggerTest extends TestCase
 
         $exception = new RuntimeException('Test');
         $logger->critical('Correlated error', [
-            'exception'      => $exception,
+            'exception' => $exception,
             'correlation_id' => 'corr-xyz-789',
         ]);
 
@@ -524,10 +524,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function traceIdEnrichment() : void
+    public function trace_id_enrichment() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -535,7 +535,7 @@ final class ErrorLoggerTest extends TestCase
 
         $logger = new ErrorLogger($writer);
         $logger->warning('Slow query', [
-            'trace_id'   => 'trace-def-456',
+            'trace_id' => 'trace-def-456',
             'query_time' => 2.5,
         ]);
 
@@ -548,10 +548,10 @@ final class ErrorLoggerTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function bothCorrelationAndTraceIds() : void
+    public function both_correlation_and_trace_ids() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -560,7 +560,7 @@ final class ErrorLoggerTest extends TestCase
         $logger = new ErrorLogger($writer);
         $logger->error('Full tracing', [
             'correlation_id' => 'corr-full',
-            'trace_id'       => 'trace-full',
+            'trace_id' => 'trace-full',
         ]);
 
         self::assertStringContainsString('corr-full', $writtenContent);
@@ -568,10 +568,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function secretRedactionInContext() : void
+    public function secret_redaction_in_context() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -594,10 +594,10 @@ final class ErrorLoggerTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function tokenInContextIsLogged() : void
+    public function token_in_context_is_logged() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -605,7 +605,7 @@ final class ErrorLoggerTest extends TestCase
 
         $logger = new ErrorLogger($writer);
         $logger->warning('API call failed', [
-            'token'    => 'Bearer abc123',
+            'token' => 'Bearer abc123',
             'endpoint' => '/api/v1/users',
         ]);
 
@@ -614,7 +614,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function emptyMessage() : void
+    public function empty_message() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -626,7 +626,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function veryLongMessage() : void
+    public function very_long_message() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::once())
@@ -637,10 +637,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function unicodeMessage() : void
+    public function unicode_message() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -654,10 +654,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function messageWithSpecialCharacters() : void
+    public function message_with_special_characters() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -670,10 +670,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function contextWithJsonUnencodableData() : void
+    public function context_with_json_unencodable_data() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -691,10 +691,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function timestampFormat() : void
+    public function timestamp_format() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -708,10 +708,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function logEntryFormat() : void
+    public function log_entry_format() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -725,7 +725,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function writerIsCalledExactlyOnce() : void
+    public function writer_is_called_exactly_once() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::exactly(1))
@@ -736,7 +736,7 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function multipleLogCallsResultInMultipleWrites() : void
+    public function multiple_log_calls_result_in_multiple_writes() : void
     {
         $writer = $this->createMock(LogWriterInterface::class);
         $writer->expects(self::exactly(3))
@@ -749,27 +749,27 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function stringableObjectAsMessage() : void
+    public function stringable_object_as_message() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
             });
 
         $logger = new ErrorLogger($writer);
-        $obj    = new StringableObject('Object message');
+        $obj = new StringableObject('Object message');
         $logger->warning($obj);
 
         self::assertStringContainsString('Object message', $writtenContent);
     }
 
     #[Test]
-    public function contextWithArrayOfStrings() : void
+    public function context_with_array_of_strings() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -786,10 +786,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function contextWithDeeplyNestedArray() : void
+    public function context_with_deeply_nested_array() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -813,10 +813,10 @@ final class ErrorLoggerTest extends TestCase
     }
 
     #[Test]
-    public function logWithExceptionAndAdditionalContext() : void
+    public function log_with_exception_and_additional_context() : void
     {
         $writtenContent = '';
-        $writer         = $this->createMock(LogWriterInterface::class);
+        $writer = $this->createMock(LogWriterInterface::class);
         $writer->method('write')
             ->willReturnCallback(static function (string $content) use (&$writtenContent) : void {
                 $writtenContent = $content;
@@ -826,9 +826,9 @@ final class ErrorLoggerTest extends TestCase
 
         $exception = new RuntimeException('Test');
         $logger->error('Mixed context', [
-            'exception'      => $exception,
+            'exception'  => $exception,
             'correlation_id' => 'corr-mixed',
-            'request_id'     => 'req-123',
+            'request_id' => 'req-123',
         ]);
 
         self::assertStringContainsString('RuntimeException', $writtenContent);

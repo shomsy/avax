@@ -28,7 +28,7 @@ final readonly class ClientResponse
      * @param array<string, mixed>        $context        Additional response context
      */
     public function __construct(
-        public int   $statusCode = 200,
+        public int     $statusCode = 200,
         public array $headers = [],
         public string $body = '',
         public string $reasonPhrase = 'OK',
@@ -36,8 +36,8 @@ final readonly class ClientResponse
         public float $transferTimeMs = 0.0,
         public float $connectTimeMs = 0.0,
         public float $totalTimeMs = 0.0,
-        public int   $redirectCount = 0,
-        public string|null $effectiveUrl = null,
+        public int     $redirectCount = 0,
+        public ?string $effectiveUrl = null,
         public array $context = [],
     ) {}
 
@@ -74,24 +74,24 @@ final readonly class ClientResponse
     private static function defaultReasonPhrase(int $statusCode) : string
     {
         return match ($statusCode) {
-            200     => 'OK',
-            201     => 'Created',
-            204     => 'No Content',
-            301     => 'Moved Permanently',
-            302     => 'Found',
-            304     => 'Not Modified',
-            400     => 'Bad Request',
-            401     => 'Unauthorized',
-            403     => 'Forbidden',
-            404     => 'Not Found',
-            405     => 'Method Not Allowed',
-            408     => 'Request Timeout',
-            422     => 'Unprocessable Entity',
-            429     => 'Too Many Requests',
-            500     => 'Internal Server Error',
-            502     => 'Bad Gateway',
-            503     => 'Service Unavailable',
-            504     => 'Gateway Timeout',
+            200 => 'OK',
+            201 => 'Created',
+            204 => 'No Content',
+            301 => 'Moved Permanently',
+            302 => 'Found',
+            304 => 'Not Modified',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            408 => 'Request Timeout',
+            422 => 'Unprocessable Entity',
+            429 => 'Too Many Requests',
+            500 => 'Internal Server Error',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout',
             default => "Status {$statusCode}",
         };
     }
@@ -139,7 +139,7 @@ final readonly class ClientResponse
     /**
      * Get the response content type.
      */
-    public function getContentType() : string|null
+    public function getContentType() : ?string
     {
         $contentType = $this->getHeaderLine('Content-Type');
         if ($contentType === '') {
@@ -195,9 +195,9 @@ final readonly class ClientResponse
      *
      * @param string|null $format Force a specific format ('json', 'xml', 'text')
      */
-    public function decoded(string $format = null) : mixed
+    public function decoded(?string $format = null) : mixed
     {
-        $decoder = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
 
         return $decoder->decode($this, $format);
     }

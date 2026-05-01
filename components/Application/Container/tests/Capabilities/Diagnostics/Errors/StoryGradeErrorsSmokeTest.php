@@ -14,9 +14,7 @@ final class StoryInternalService implements StoryInternalContract {}
 
 final class StoryFlowEntry
 {
-    public function __construct(public StoryInternalContract $storyInternalContract)
-    {
-    }
+    public function __construct(public StoryInternalContract $storyInternalContract) {}
 }
 
 final class StoryFlowLocalService {}
@@ -25,9 +23,7 @@ final class RequestOnlyStoryService {}
 
 final class StoryRuntimeInputConsumer
 {
-    public function __construct(#[SensitiveParameter] #[RuntimeInput(name: 'token')] public string $token)
-    {
-    }
+    public function __construct(#[SensitiveParameter] #[RuntimeInput(name: 'token')] public string $token) {}
 }
 
 final class StoryLocatorDrift

@@ -24,7 +24,7 @@ final readonly class Cache
         return $this->cacheContract->get($key, $default);
     }
 
-    public function set(string $key, mixed $value, int|DateInterval $ttl = null) : bool
+    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
         return $this->cacheContract->set($key, $value, $ttl);
     }

@@ -18,16 +18,16 @@ final readonly class WarmCache
     public function __construct(
         private CacheStore $cacheStore,
         private Clock    $clock,
-        private CacheTtl $cacheTtl = new CacheTtl(),
+        private CacheTtl $cacheTtl = new CacheTtl,
     ) {}
 
-    public function warm(iterable $entries, int|DateInterval $ttl = null) : int
+    public function warm(iterable $entries, int|DateInterval|null $ttl = null) : int
     {
         $count = 0;
 
         foreach ($entries as $key => $loader) {
             $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
-            $value    = is_callable($loader) ? $loader() : $loader;
+            $value = is_callable($loader) ? $loader() : $loader;
 
             $expiresAt = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock)
                 ?? $this->clock->now()->add(

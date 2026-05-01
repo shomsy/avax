@@ -25,11 +25,11 @@ final class InjectProperties
      * @throws Throwable
      */
     public function inject(
-        object            $target,
+        object         $target,
         DependencyBlueprint $dependencyBlueprint,
-        array             $overrides,
+        array          $overrides,
         ResolveDependency $resolveDependency,
-        ResolveRequest    $resolveRequest,
+        ResolveRequest $resolveRequest,
     ) : void
     {
         foreach ($dependencyBlueprint->injectableProperties as $property) {

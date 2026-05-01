@@ -107,7 +107,7 @@ class RequestRegressionTest extends TestCase
     public function test_request_must_not_depend_on_trait_assembly_logic() : void
     {
         $reflection = new ReflectionClass(objectOrClass: Request::class);
-        $traits     = $reflection->getTraitNames();
+        $traits = $reflection->getTraitNames();
 
         // The new ServerRequest should not be a junkyard of Traits.
         $this->assertEmpty(actual: $traits, message: 'ServerRequest object must strictly avoid using traits for core behavior.');

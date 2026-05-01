@@ -20,18 +20,18 @@ final class ResponseDecoder
      * Decode a response body based on the specified or detected format.
      *
      * @param ClientResponse $response The response to decode
-     * @param string|null $format Force a specific format ('json', 'xml', 'text')
+     * @param string|null    $format   Force a specific format ('json', 'xml', 'text')
      *
      * @throws InvalidHttpResponse if decoding fails
      */
-    public function decode(ClientResponse $response, string $format = null) : mixed
+    public function decode(ClientResponse $response, ?string $format = null) : mixed
     {
         $format ??= $this->detectFormat($response);
 
         return match ($format) {
-            'json'  => $this->decodeJson($response),
-            'xml'   => $this->decodeXml($response),
-            'text'  => $response->body,
+            'json' => $this->decodeJson($response),
+            'xml'  => $this->decodeXml($response),
+            'text' => $response->body,
             default => throw new InvalidHttpResponse(
                 message   : "Unsupported response format: {$format}",
                 statusCode: $response->statusCode,
@@ -50,10 +50,10 @@ final class ResponseDecoder
 
         return match (true) {
             str_contains($contentType, 'json') => 'json',
-            str_contains($contentType, 'xml')  => 'xml',
+            str_contains($contentType, 'xml') => 'xml',
             str_contains($contentType, 'text') => 'text',
             str_contains($contentType, 'html') => 'text',
-            default                            => 'text',
+            default                           => 'text',
         };
     }
 
@@ -61,7 +61,7 @@ final class ResponseDecoder
      * Decode JSON response body.
      *
      * @param ClientResponse $response The response to decode
-     * @param bool $assoc When true, return associative array
+     * @param bool           $assoc    When true, return associative array
      *
      * @throws InvalidHttpResponse if JSON is invalid
      */

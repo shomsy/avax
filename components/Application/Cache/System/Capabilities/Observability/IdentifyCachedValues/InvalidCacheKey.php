@@ -10,9 +10,9 @@ use Throwable;
 final class InvalidCacheKey extends InvalidArgumentException
 {
     public function __construct(
-        string    $message,
-        public readonly string|null $key = null,
-        Throwable $throwable = null,
+        string                  $message,
+        public readonly ?string $key = null,
+        ?Throwable              $throwable = null,
     )
     {
         parent::__construct(message: $message, code: 0, previous: $throwable);

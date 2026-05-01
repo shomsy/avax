@@ -45,7 +45,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
 
     private function makeRecord(mixed $value, int $ttlSeconds) : StoredCacheRecord
     {
-        $now       = $this->clock->now();
+        $now = $this->clock->now();
         $expiresAt = $now->add(duration: Duration::ofSeconds(seconds: $ttlSeconds));
 
         $lifecycle = CachedValueLifecycle::create(
@@ -65,7 +65,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $store = new InMemoryCacheStore(
             clock            : $this->clock,
             maxEntries       : 3,
-            replacementPolicy: new LeastRecentlyUsedReplacement(),
+            replacementPolicy: new LeastRecentlyUsedReplacement,
         );
 
         $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
@@ -89,7 +89,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $store = new InMemoryCacheStore(
             clock            : $this->clock,
             maxEntries       : 3,
-            replacementPolicy: new FirstInFirstOutReplacement(),
+            replacementPolicy: new FirstInFirstOutReplacement,
         );
 
         $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
@@ -134,7 +134,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $store = new InMemoryCacheStore(
             clock            : $this->clock,
             maxEntries       : 2,
-            replacementPolicy: new NoReplacement(),
+            replacementPolicy: new NoReplacement,
         );
 
         $store->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));

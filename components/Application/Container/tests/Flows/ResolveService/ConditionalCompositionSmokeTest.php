@@ -53,7 +53,7 @@ $active->singleton(abstract: ConditionalGateway::class, concrete: ActiveConditio
     ->because(reason: 'regional payments gateway');
 
 $activeDescription = $active->describeService(id: ConditionalGateway::class);
-$activeGraph       = $active->debugGraph();
+$activeGraph  = $active->debugGraph();
 
 assertTrue(condition: $active->has(id: ConditionalGateway::class), message: 'Active conditional registrations should remain resolvable.');
 assertSame(expected: 'active', actual: $active->get(id: ConditionalGateway::class)->name(), message: 'Active conditional registrations should resolve normally.');
@@ -131,7 +131,7 @@ $override->singleton(abstract: ConditionalGateway::class, concrete: OverrideCond
     ->because(reason: 'test override')
     ->concept(concept: 'payments.gateway');
 
-$overrideDebug  = $override->debugGraph(id: ConditionalGateway::class);
+$overrideDebug = $override->debugGraph(id: ConditionalGateway::class);
 $overrideIssues = implode(separator: "\n", array: $override->validate(serviceIds: [ConditionalGateway::class]));
 
 assertTrue(condition: $overrideDebug['overrides'] !== [], message: 'Graph diagnostics should expose override history for rebound abstracts.');

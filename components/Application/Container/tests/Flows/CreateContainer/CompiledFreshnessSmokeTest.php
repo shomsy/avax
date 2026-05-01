@@ -49,8 +49,8 @@ $compiled->compileContainer(serviceIds: [FreshnessConsumer::class, FreshnessDepe
 $reloaded = makeTestContainer(config: $config);
 $reloaded->singleton(abstract: FreshnessDependencyContract::class, concrete: FreshnessDependencyV2::class);
 
-$report   = $reloaded->compileReport(serviceIds: [FreshnessConsumer::class, FreshnessDependencyContract::class]);
-$debug    = $reloaded->debugService(id: FreshnessDependencyContract::class);
+$report = $reloaded->compileReport(serviceIds: [FreshnessConsumer::class, FreshnessDependencyContract::class]);
+$debug  = $reloaded->debugService(id: FreshnessDependencyContract::class);
 $resolved = $reloaded->get(id: FreshnessConsumer::class);
 
 assertTrue(condition: $report !== null, message: 'Freshness checks should still expose compile reports.');

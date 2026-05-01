@@ -16,8 +16,8 @@ foreach ($directories as $dir) {
             continue;
         }
 
-        $path  = $file->getPathname();
-        $code  = file_get_contents($path);
+        $path = $file->getPathname();
+        $code = file_get_contents($path);
         $tokens = token_get_all($code);
 
         $declarations = [];

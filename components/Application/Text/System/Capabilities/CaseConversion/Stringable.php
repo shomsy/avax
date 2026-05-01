@@ -11,9 +11,7 @@ use Override;
  */
 final readonly class Stringable implements \Stringable
 {
-    public function __construct(private string $value = '')
-    {
-    }
+    public function __construct(private string $value = '') {}
 
     public static function of(string $value) : self
     {
@@ -147,7 +145,7 @@ final readonly class Stringable implements \Stringable
         return new self(rtrim($this->value, $characters));
     }
 
-    public function substr(int $start, int $length = null) : self
+    public function substr(int $start, ?int $length = null) : self
     {
         return new self(
             $length !== null

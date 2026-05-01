@@ -41,7 +41,7 @@ $reloaded = makeTestContainer(config: CreateContainerConfig::create(
 ));
 $reloaded->singleton(abstract: CompatibilityDependency::class, concrete: CompatibilityDependency::class);
 
-$report   = $reloaded->compileReport(serviceIds: [CompatibilityTarget::class]);
+$report = $reloaded->compileReport(serviceIds: [CompatibilityTarget::class]);
 $resolved = $reloaded->get(id: CompatibilityTarget::class);
 
 assertTrue(condition: $report !== null, message: 'Compile reports should still exist for incompatible artifacts.');

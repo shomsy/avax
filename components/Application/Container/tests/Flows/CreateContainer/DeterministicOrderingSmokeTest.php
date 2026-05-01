@@ -36,8 +36,7 @@ final class OrderingProviderGamma implements RegisterDependency
 
 final class OrderingTaggedA {}
 
-final class OrderingTaggedB {
-}
+final class OrderingTaggedB {}
 
 final class OrderingTaggedC {}
 
@@ -56,8 +55,7 @@ final class OrderingSecondDecorator
     public function __construct(public OrderingFirstDecorator $orderingFirstDecorator) {}
 }
 
-final class OrderingArtifactDependency {
-}
+final class OrderingArtifactDependency {}
 
 final class OrderingArtifactService
 {
@@ -90,7 +88,7 @@ assertSame(
     message : 'Provider boot order must stay deterministic and dependency-aware.',
 );
 
-$registry = new DependencyRegistry();
+$registry = new DependencyRegistry;
 $registry->bind(abstract: OrderingTaggedC::class, concrete: OrderingTaggedC::class)->tag(tags: 'ordered');
 $registry->bind(abstract: OrderingTaggedA::class, concrete: OrderingTaggedA::class)->tag(tags: 'ordered');
 $registry->bind(abstract: OrderingTaggedB::class, concrete: OrderingTaggedB::class)->tag(tags: 'ordered');

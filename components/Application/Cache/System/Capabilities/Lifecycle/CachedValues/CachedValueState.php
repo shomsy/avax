@@ -6,20 +6,20 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\Cached
 
 enum CachedValueState: string
 {
-    case ACTIVE        = 'active';
+    case ACTIVE      = 'active';
     case EXPIRING_SOON = 'expiring_soon';
-    case EXPIRED       = 'expired';
-    case STALE         = 'stale';
-    case INVALIDATED   = 'invalidated';
-    case EVICTED       = 'evicted';
-    case MISSING       = 'missing';
+    case EXPIRED     = 'expired';
+    case STALE       = 'stale';
+    case INVALIDATED = 'invalidated';
+    case EVICTED     = 'evicted';
+    case MISSING     = 'missing';
     case STORE_FAILURE = 'store_failure';
 
     public function isUsable() : bool
     {
         return match ($this) {
             self::ACTIVE, self::EXPIRING_SOON, self::STALE => true,
-            default                                        => false,
+            default => false,
         };
     }
 
@@ -27,7 +27,7 @@ enum CachedValueState: string
     {
         return match ($this) {
             self::ACTIVE, self::EXPIRING_SOON, self::STALE => true,
-            default                                        => false,
+            default => false,
         };
     }
 
@@ -35,7 +35,7 @@ enum CachedValueState: string
     {
         return match ($this) {
             self::MISSING, self::EXPIRED, self::INVALIDATED, self::EVICTED => true,
-            default                                                        => false,
+            default => false,
         };
     }
 }

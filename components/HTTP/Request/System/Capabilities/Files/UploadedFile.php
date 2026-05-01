@@ -12,10 +12,10 @@ final class UploadedFile implements UploadedFileInterface
 {
     public function __construct(
         private string $file,
-        private int|null $size,
+        private ?int    $size,
         private int $error,
-        private string|null $clientFilename = null,
-        private string|null $clientMediaType = null,
+        private ?string $clientFilename = null,
+        private ?string $clientMediaType = null,
         private bool $moved = false,
     ) {}
 
@@ -31,7 +31,7 @@ final class UploadedFile implements UploadedFileInterface
         }
     }
 
-    public function getSize() : int|null
+    public function getSize() : ?int
     {
         return $this->size;
     }
@@ -41,12 +41,12 @@ final class UploadedFile implements UploadedFileInterface
         return $this->error;
     }
 
-    public function getClientFilename() : string|null
+    public function getClientFilename() : ?string
     {
         return $this->clientFilename;
     }
 
-    public function getClientMediaType() : string|null
+    public function getClientMediaType() : ?string
     {
         return $this->clientMediaType;
     }

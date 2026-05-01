@@ -28,7 +28,7 @@ class KernelContractTest extends TestCase
         $kernel = $this->createMock(Kernel::class);
 
         // When: We call handle with a PSR-7 request
-        $request  = $this->createMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
 
         $kernel->expects(invocationRule: $this->once())

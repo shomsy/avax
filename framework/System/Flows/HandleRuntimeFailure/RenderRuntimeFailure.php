@@ -109,7 +109,7 @@ final readonly class RenderRuntimeFailure
     private const CLI_PRODUCTION_TEMPLATE = "[ERROR] Internal Server Error. Error ID: %s\n";
 
     private const CLI_DEVELOPMENT_TEMPLATE
-        = <<<TXT
+        = <<<'TXT'
             ========================================
               RUNTIME ERROR
             ========================================
@@ -124,8 +124,8 @@ final readonly class RenderRuntimeFailure
 
     public function __construct(
         private string $environment = 'production',
-        private string|null $correlationId = null,
-        private string|null $traceId = null,
+        private ?string $correlationId = null,
+        private ?string $traceId = null,
     ) {}
 
     /**
@@ -151,12 +151,12 @@ final readonly class RenderRuntimeFailure
     {
         if ($this->isDevelopment()) {
             $traceOutput = '';
-            $index       = 1;
+            $index = 1;
 
             foreach ($throwable->getTrace() as $frame) {
                 $file = $frame['file'] ?? '[internal]';
                 $line = $frame['line'] ?? 0;
-                $class    = $frame['class'] ?? '';
+                $class = $frame['class'] ?? '';
                 $type = $frame['type'] ?? '';
                 $function = $frame['function'];
 
@@ -218,13 +218,13 @@ final readonly class RenderRuntimeFailure
     private function renderDevelopmentPage(Throwable $throwable) : string
     {
         $traceHtml = '';
-        $index     = 1;
+        $index = 1;
 
         foreach ($throwable->getTrace() as $frame) {
-            $file     = htmlspecialchars($frame['file'] ?? '[internal]', ENT_QUOTES, 'UTF-8');
-            $line     = (int) ($frame['line'] ?? 0);
-            $class    = htmlspecialchars($frame['class'] ?? '', ENT_QUOTES, 'UTF-8');
-            $type     = htmlspecialchars($frame['type'] ?? '', ENT_QUOTES, 'UTF-8');
+            $file  = htmlspecialchars($frame['file'] ?? '[internal]', ENT_QUOTES, 'UTF-8');
+            $line  = (int) ($frame['line'] ?? 0);
+            $class = htmlspecialchars($frame['class'] ?? '', ENT_QUOTES, 'UTF-8');
+            $type  = htmlspecialchars($frame['type'] ?? '', ENT_QUOTES, 'UTF-8');
             $function = htmlspecialchars($frame['function'], ENT_QUOTES, 'UTF-8');
 
             $traceHtml .= sprintf(

@@ -14,9 +14,9 @@ use Throwable;
 final class ValidationException extends RuntimeException
 {
     public function __construct(
-        string    $message,
-        int       $code = 422,
-        Throwable $throwable = null,
+        string     $message,
+        int        $code = 422,
+        ?Throwable $throwable = null,
         private readonly array $metadata = [],
     )
     {
@@ -38,8 +38,8 @@ final class ValidationException extends RuntimeException
     {
         return [
             'message' => $this->getMessage(),
-            'code'    => $this->getCode(),
-            'errors'  => $this->getErrors(),
+            'code'   => $this->getCode(),
+            'errors' => $this->getErrors(),
         ];
     }
 

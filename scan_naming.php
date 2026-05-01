@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-$directories        = ['components', 'framework'];
-$forbiddenWords     = [
+$directories    = ['components', 'framework'];
+$forbiddenWords = [
     'manager', 'service', 'helper', 'util', 'common', 'shared', 'core', 'support',
 ];
 $suspiciousSuffixes = [

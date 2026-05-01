@@ -12,7 +12,7 @@ readonly class CompiledCacheTarget implements CacheReadTarget
 {
     public function __construct(
         public string $name,
-        public mixed  $builder,
+        public mixed $builder,
         public CompiledCacheSources $compiledCacheSources,
     )
     {
@@ -22,7 +22,7 @@ readonly class CompiledCacheTarget implements CacheReadTarget
     }
 
     public static function artifact(
-        string   $name,
+        string $name,
         callable $builder,
         CompiledCacheSources $compiledCacheSources,
     ) : self

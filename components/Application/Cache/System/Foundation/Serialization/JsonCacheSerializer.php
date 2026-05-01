@@ -14,7 +14,7 @@ final readonly class JsonCacheSerializer implements CacheSerializer
 
     private const ENCODING_OPTIONS = JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRESERVE_ZERO_FRACTION;
 
-    public function __construct(private Clock $clock = new SystemClock()) {}
+    public function __construct(private Clock $clock = new SystemClock) {}
 
     #[Override]
     public function serialize(mixed $value) : SerializedCachePayload

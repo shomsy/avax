@@ -18,7 +18,7 @@ final readonly class DeflateCompressor implements CacheCompressor
     public function compress(string $data) : CompressedCachePayload
     {
         $originalSize = strlen($data);
-        $compressed   = zlib_encode($data, encoding: ZLIB_ENCODING_DEFLATE, level: self::LEVEL);
+        $compressed = zlib_encode($data, encoding: ZLIB_ENCODING_DEFLATE, level: self::LEVEL);
 
         if ($compressed === false) {
             throw new RuntimeException(message: 'Failed to compress data using deflate');

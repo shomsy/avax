@@ -27,19 +27,19 @@ final readonly class RecordedHttpResponse
     public function __construct(
         public string $urlPattern,
         public string $method = '*',
-        public int   $statusCode = 200,
+        public int        $statusCode = 200,
         public array $headers = [],
         public string $body = '',
         public float $delayMs = 0.0,
-        public bool  $useRegex = false,
-        public Throwable|null $exception = null,
+        public bool       $useRegex = false,
+        public ?Throwable $exception = null,
     ) {}
 
     /**
      * Create a successful response recording.
      *
-     * @param string $url URL to match
-     * @param string $body Response body
+     * @param string                $url     URL to match
+     * @param string                $body    Response body
      * @param array<string, string> $headers Headers to include
      */
     public static function ok(
@@ -82,8 +82,8 @@ final readonly class RecordedHttpResponse
     /**
      * Create an error response recording.
      *
-     * @param string $url    URL to match
-     * @param int    $status HTTP status code
+     * @param string $url     URL to match
+     * @param int    $status  HTTP status code
      * @param string $message Error message in body
      */
     public static function error(
@@ -103,7 +103,7 @@ final readonly class RecordedHttpResponse
     /**
      * Create a response recording that throws an exception.
      *
-     * @param string $url URL to match
+     * @param string    $url       URL to match
      * @param Throwable $exception Exception to throw
      */
     public static function throws(string $url, Throwable $exception) : self
@@ -133,7 +133,7 @@ final readonly class RecordedHttpResponse
     /**
      * Check if this recorded response matches the given request.
      *
-     * @param string $url The request URL
+     * @param string $url    The request URL
      * @param string $method The request HTTP method
      */
     public function matches(string $url, string $method = 'GET') : bool

@@ -29,7 +29,7 @@ final class RuntimeStateTest extends TestCase
     public function it_marks_as_booted_and_increments_boot_count(): void
     {
         $state = new RuntimeState(runtimeName: 'avax');
-        $bootedAt = new DateTimeImmutable();
+        $bootedAt = new DateTimeImmutable;
 
         $state->markBooted(bootedAt: $bootedAt);
 
@@ -43,7 +43,7 @@ final class RuntimeStateTest extends TestCase
     public function it_increments_boot_count_on_each_boot(): void
     {
         $state = new RuntimeState(runtimeName: 'avax');
-        $bootedAt = new DateTimeImmutable();
+        $bootedAt = new DateTimeImmutable;
 
         $state->markBooted(bootedAt: $bootedAt);
         $state->markBooted(bootedAt: $bootedAt);
@@ -55,9 +55,9 @@ final class RuntimeStateTest extends TestCase
     #[Test]
     public function it_marks_shutdown_and_clears_booted_state(): void
     {
-        $state    = new RuntimeState(runtimeName: 'avax');
-        $bootedAt = new DateTimeImmutable();
-        $shutdownAt = new DateTimeImmutable();
+        $state      = new RuntimeState(runtimeName: 'avax');
+        $bootedAt   = new DateTimeImmutable;
+        $shutdownAt = new DateTimeImmutable;
 
         $state->markBooted(bootedAt: $bootedAt);
         $state->markShutdown(shutdownAt: $shutdownAt);
@@ -70,10 +70,10 @@ final class RuntimeStateTest extends TestCase
     #[Test]
     public function it_resets_booted_at_when_boot_called_after_shutdown(): void
     {
-        $state     = new RuntimeState(runtimeName: 'avax');
+        $state    = new RuntimeState(runtimeName: 'avax');
         $firstBoot = new DateTimeImmutable('2026-01-01 10:00:00');
         $secondBoot = new DateTimeImmutable('2026-01-01 12:00:00');
-        $shutdown  = new DateTimeImmutable('2026-01-01 11:00:00');
+        $shutdown = new DateTimeImmutable('2026-01-01 11:00:00');
 
         $state->markBooted(bootedAt: $firstBoot);
         $state->markShutdown(shutdownAt: $shutdown);

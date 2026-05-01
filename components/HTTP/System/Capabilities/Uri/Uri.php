@@ -12,11 +12,11 @@ final readonly class Uri implements Stringable
         private string $scheme = '',
         private string $host = '',
         private string $path = '/',
-        private int|null $port = null,
+        private ?int    $port = null,
         private string $query = '',
         private string $fragment = '',
         private string $user = '',
-        private string|null $password = null,
+        private ?string $password = null,
     ) {}
 
     public function getScheme() : string
@@ -34,7 +34,7 @@ final readonly class Uri implements Stringable
         return $this->path;
     }
 
-    public function getPort() : int|null
+    public function getPort() : ?int
     {
         return $this->port;
     }

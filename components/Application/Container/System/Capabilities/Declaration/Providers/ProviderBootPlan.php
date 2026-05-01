@@ -13,10 +13,11 @@ use LogicException;
 final readonly class ProviderBootPlan
 {
     public array $dependencies;
+
     public array $order;
 
     /**
-     * @param list<class-string<RegisterDependency>> $order
+     * @param list<class-string<RegisterDependency>>                                          $order
      * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
      */
     private function __construct(
@@ -24,7 +25,7 @@ final readonly class ProviderBootPlan
         array $dependencies,
     )
     {
-        $this->order        = $order;
+        $this->order = $order;
         $this->dependencies = $dependencies;
     }
 
@@ -45,7 +46,7 @@ final readonly class ProviderBootPlan
         }
 
         $ordered = [];
-        $state   = [];
+        $state = [];
 
         foreach (array_keys(array: $instances) as $class) {
             self::visit(
@@ -65,9 +66,9 @@ final readonly class ProviderBootPlan
 
     /**
      * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
-     * @param list<class-string<RegisterDependency>>          $ordered
-     * @param array<class-string<RegisterDependency>, string> $state
-     * @param list<class-string<RegisterDependency>>          $stack
+     * @param list<class-string<RegisterDependency>>                                          $ordered
+     * @param array<class-string<RegisterDependency>, string>                                 $state
+     * @param list<class-string<RegisterDependency>>                                          $stack
      */
     private static function visit(
         string $class,
@@ -91,7 +92,7 @@ final readonly class ProviderBootPlan
         }
 
         $state[$class] = 'visiting';
-        $stack[]       = $class;
+        $stack[] = $class;
 
         foreach ($dependencies[$class] ?? [] as $dependencyClass) {
             if (! isset($dependencies[$dependencyClass])) {
@@ -108,7 +109,7 @@ final readonly class ProviderBootPlan
         }
 
         $state[$class] = 'done';
-        $ordered[]     = $class;
+        $ordered[] = $class;
     }
 
     /**
@@ -116,7 +117,7 @@ final readonly class ProviderBootPlan
      *
      * @return list<RegisterDependency>
      */
-    public function orderedInstances(array $instances) : array
+    public function orderedInstances(array $instances): array
     {
         $ordered = [];
 
@@ -134,11 +135,11 @@ final readonly class ProviderBootPlan
     /**
      * @return array<string, mixed>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'order'         => $this->order,
-            'dependencies'  => $this->dependencies,
+            'order'        => $this->order,
+            'dependencies' => $this->dependencies,
             'providerCount' => count(value: $this->order),
         ];
     }

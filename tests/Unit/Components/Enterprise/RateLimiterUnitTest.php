@@ -94,7 +94,7 @@ final class RateLimiterUnitTest extends TestCase
 
     public function test_middleware_returns_429_when_limit_is_exhausted() : void
     {
-        $limiter    = new RedisRateLimiter(config: ['driver' => 'array']);
+        $limiter = new RedisRateLimiter(config: ['driver' => 'array']);
         $middleware = new RateLimitMiddleware(
             limiter: $limiter,
             config : ['max_attempts' => 1],
@@ -114,7 +114,7 @@ final class RateLimiterUnitTest extends TestCase
             config : ['max_attempts' => 1, 'key_by' => ['user']],
         );
 
-        $first  = (new ServerRequest(method: 'GET', uri: '/user'))->withAttribute(attribute: 'user_id', value: 1);
+        $first = (new ServerRequest(method: 'GET', uri: '/user'))->withAttribute(attribute: 'user_id', value: 1);
         $second = (new ServerRequest(method: 'GET', uri: '/user'))->withAttribute(attribute: 'user_id', value: 2);
 
         $middleware->handle(request: $first, next: static fn () : Response => new Response(status: 200));

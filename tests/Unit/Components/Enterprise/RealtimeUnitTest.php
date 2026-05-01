@@ -28,7 +28,7 @@ final class RealtimeUnitTest extends TestCase
 
     public function test_connection_pool_counts_connections() : void
     {
-        $pool = new ConnectionPool();
+        $pool = new ConnectionPool;
 
         $pool->add(connection: new Connection(sender: static fn () => null, id: 'one'));
 
@@ -37,7 +37,7 @@ final class RealtimeUnitTest extends TestCase
 
     public function test_connection_pool_removes_connections() : void
     {
-        $pool       = new ConnectionPool();
+        $pool = new ConnectionPool;
         $connection = new Connection(sender: static fn () => null, id: 'gone');
         $pool->add(connection: $connection);
 
@@ -49,7 +49,7 @@ final class RealtimeUnitTest extends TestCase
     public function test_channel_manager_broadcasts_to_subscribers() : void
     {
         $messages   = [];
-        $manager    = new ChannelManager();
+        $manager    = new ChannelManager;
         $connection = new Connection(sender: static function (mixed $message) use (&$messages) : void {
             $messages[] = $message;
         });
@@ -63,7 +63,7 @@ final class RealtimeUnitTest extends TestCase
 
     public function test_channel_manager_unsubscribes_connections() : void
     {
-        $manager    = new ChannelManager();
+        $manager = new ChannelManager;
         $connection = new Connection(sender: static fn () => null);
 
         $manager->subscribe(connection: $connection, channel: 'orders');

@@ -11,10 +11,9 @@ final readonly class CliRuntime
 {
     public function __construct(
         private ConsoleKernelInterface $consoleKernel,
-        private CliInputReader $inputReader = new CliInputReader(),
-        private CliOutputWriter $outputWriter = new CliOutputWriter(),
-    ) {
-    }
+        private CliInputReader  $inputReader = new CliInputReader,
+        private CliOutputWriter $outputWriter = new CliOutputWriter,
+    ) {}
 
     /**
      * @param list<string> $argv

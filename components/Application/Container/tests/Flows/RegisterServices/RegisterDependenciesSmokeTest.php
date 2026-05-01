@@ -49,7 +49,7 @@ final class ExtensibleMessage
 
 final class MessageDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
     {
         assertInstanceOf(expectedClass: ExtensibleMessage::class, value: $instance, message: 'Decorator contract should receive the resolved service instance.');
         $message        = $instance;
@@ -90,13 +90,13 @@ $container->extend(
         return null;
     },
 );
-$container->decorate(abstract: ExtensibleMessage::class, decorator: new MessageDecorator());
+$container->decorate(abstract: ExtensibleMessage::class, decorator: new MessageDecorator);
 
-$default            = $container->get(id: NeedsDefaultLogger::class);
-$special            = $container->get(id: NeedsSpecialLogger::class);
-$aliased            = $container->get(id: 'register.logger');
-$message            = $container->get(id: ExtensibleMessage::class);
-$tagged             = $container->tagged(tag: 'logger');
+$default = $container->get(id: NeedsDefaultLogger::class);
+$special = $container->get(id: NeedsSpecialLogger::class);
+$aliased = $container->get(id: 'register.logger');
+$message = $container->get(id: ExtensibleMessage::class);
+$tagged  = $container->tagged(tag: 'logger');
 $messageDescription = $container->describeService(id: ExtensibleMessage::class);
 
 assertSame(expected: 'default', actual: $default->logger->channel(), message: 'Default registration should remain default.');

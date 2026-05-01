@@ -79,7 +79,7 @@ final class StateLeakDetector
      */
     private function detectStaticMutation() : array
     {
-        $findings        = [];
+        $findings = [];
         $declaredClasses = get_declared_classes();
 
         foreach ($declaredClasses as $className) {
@@ -174,8 +174,8 @@ final class StateLeakDetector
     private function propertyLocation(ReflectionProperty $property) : string
     {
         $class = $property->getDeclaringClass();
-        $file  = $class->getFileName();
-        $line  = $class->getStartLine();
+        $file = $class->getFileName();
+        $line = $class->getStartLine();
 
         return ($file !== false ? $file : $class->getName()) . ':' . $line;
     }

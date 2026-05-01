@@ -157,7 +157,7 @@ final class PortTest extends TestCase
     public function test_it_distinguishes_http_from_https_defaults() : void
     {
         // Arrange & Act
-        $httpPort  = new Port(port: 80, scheme: new Scheme(scheme: 'http'));
+        $httpPort = new Port(port: 80, scheme: new Scheme(scheme: 'http'));
         $httpsPort = new Port(port: 80, scheme: new Scheme(scheme: 'https'));
 
         // Assert

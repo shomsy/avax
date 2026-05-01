@@ -10,11 +10,12 @@ use Redis;
 final class RedisStateAdapter implements StateAdapter
 {
     private Redis $redis;
+
     private string $prefix;
 
     public function __construct(string $url)
     {
-        $this->redis = new Redis();
+        $this->redis = new Redis;
         $this->redis->connect('127.0.0.1', 6379);
         $this->prefix = 'avax:';
     }
@@ -64,6 +65,7 @@ final class MemoryStateAdapter implements StateAdapter
 {
     /** @var array<string, mixed> */
     private array $store = [];
+
     /** @var array<string, int> */
     private array $ttls = [];
 
@@ -103,8 +105,8 @@ final class MemoryStateAdapter implements StateAdapter
 
     public function increment(string $key, int $value = 1) : int
     {
-        $current           = (int) ($this->store[$key] ?? 0);
-        $new               = $current + $value;
+        $current = (int) ($this->store[$key] ?? 0);
+        $new     = $current + $value;
         $this->store[$key] = $new;
 
         return $new;

@@ -11,10 +11,12 @@ use components\Filesystem\Filesystem;
 final class FilesystemTest extends TestCase
 {
     private LocalDisk $disk;
-    private Filesystem $filesystem;
-    private string    $testDir;
 
-    public function testPutGetExistsAndDeleteRoundTrip() : void
+    private Filesystem $filesystem;
+
+    private string $testDir;
+
+    public function test_put_get_exists_and_delete_round_trip() : void
     {
         $path = $this->testDir . '/round_trip.txt';
 
@@ -28,7 +30,7 @@ final class FilesystemTest extends TestCase
         self::assertFalse($this->filesystem->exists(path: $path));
     }
 
-    public function testEnsureDirectoryIsWritableCreatesMissingDirectory() : void
+    public function test_ensure_directory_is_writable_creates_missing_directory() : void
     {
         $path = $this->testDir . '/nested/writable';
 
@@ -37,7 +39,7 @@ final class FilesystemTest extends TestCase
         self::assertTrue($this->filesystem->isWritable(path: $path));
     }
 
-    public function testCopyMoveListFilesAndLastModified() : void
+    public function test_copy_move_list_files_and_last_modified() : void
     {
         $source = $this->testDir . '/source.txt';
         $copy   = $this->testDir . '/copy.txt';
@@ -60,9 +62,9 @@ final class FilesystemTest extends TestCase
     {
         parent::setUp();
 
-        $this->disk       = new LocalDisk();
+        $this->disk    = new LocalDisk;
         $this->filesystem = new Filesystem(disk: $this->disk);
-        $this->testDir    = '/home/shomsy/projects/components/tests/fixtures/Filesystem/facade_test';
+        $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/facade_test';
 
         @mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
     }

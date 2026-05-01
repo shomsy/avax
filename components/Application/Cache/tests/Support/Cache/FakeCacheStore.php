@@ -18,9 +18,7 @@ final class FakeCacheStore implements CacheStore
     /** @var array<string, StoredCacheRecord> */
     private array $records = [];
 
-    public function __construct(private readonly Clock $clock = new SystemClock())
-    {
-    }
+    public function __construct(private readonly Clock $clock = new SystemClock) {}
 
     #[Override]
     public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing

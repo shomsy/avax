@@ -16,7 +16,7 @@ final readonly class CacheLifecyclePolicy implements DecideCachedValueState
 
     #[Override]
     public function decide(
-        CachedValueLifecycle|null $lifecycle,
+        ?CachedValueLifecycle $lifecycle,
         Clock $clock,
         bool $wasExplicitlyInvalidated = false,
         bool $wasEvicted = false,

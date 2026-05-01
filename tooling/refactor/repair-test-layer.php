@@ -19,6 +19,7 @@ declare(strict_types=1);
 final class RepairTestLayer
 {
     private string $root;
+
     private bool $apply;
 
     /** @var array<string, string> */
@@ -32,7 +33,7 @@ final class RepairTestLayer
 
     public function __construct(array $argv)
     {
-        $this->root  = getcwd() ?: throw new RuntimeException('Cannot resolve working directory.');
+        $this->root = getcwd() ?: throw new RuntimeException('Cannot resolve working directory.');
         $this->apply = in_array('--apply', $argv, true);
 
         $this->defineNamespaceRewrites();
@@ -41,32 +42,32 @@ final class RepairTestLayer
     private function defineNamespaceRewrites() : void
     {
         $componentMoves = [
-            'FeatureFlags'         => 'Application\\FeatureFlags',
-            'Pipeline'             => 'Application\\Pipeline',
-            'ApiVersioning'        => 'HTTP\\ApiVersioning',
-            'AfterResponse'        => 'HTTP\\AfterResponse',
-            'ContentNegotiation'   => 'HTTP\\ContentNegotiation',
-            'Concurrency'          => 'Operations\\Concurrency',
-            'Realtime'             => 'Operations\\Realtime',
-            'MessageBus'           => 'Operations\\MessageBus',
-            'Idempotency'          => 'Operations\\Resilience\\System\\Capabilities\\Idempotency',
-            'Fallback'             => 'Operations\\Resilience\\System\\Capabilities\\Fallback',
-            'TaskDispatch'         => 'Operations\\Queue\\System\\Capabilities\\TaskDispatch',
-            'Orchestration'        => 'Operations\\ApplicationWorkflow\\System\\Capabilities\\Orchestration',
-            'Security'             => 'Security\\System',
-            'Secrets'              => 'Security\\Secrets',
-            'Policy'               => 'Identity\\Access\\System\\Capabilities\\Policy',
-            'Tenancy'              => 'Identity\\Tenancy',
-            'JwtAuth'              => 'Identity\\Tokens\\System\\Capabilities\\JwtAuth',
-            'HealthCheck'          => 'Operations\\Observability\\System\\Capabilities\\HealthCheck',
-            'ScalingReadiness'     => 'DeveloperTools\\Diagnostics\\System\\Capabilities\\ScalingReadiness',
-            'ServiceMap'           => 'Application\\Container\\System\\Capabilities\\ServiceMap',
-            'QueryGovernance'      => 'DataStack\\Database\\System\\Capabilities\\QueryGovernance',
-            'ContractTesting'      => 'DeveloperTools\\Testing\\System\\Capabilities\\ContractTesting',
+            'FeatureFlags'       => 'Application\\FeatureFlags',
+            'Pipeline'           => 'Application\\Pipeline',
+            'ApiVersioning'      => 'HTTP\\ApiVersioning',
+            'AfterResponse'      => 'HTTP\\AfterResponse',
+            'ContentNegotiation' => 'HTTP\\ContentNegotiation',
+            'Concurrency'        => 'Operations\\Concurrency',
+            'Realtime'           => 'Operations\\Realtime',
+            'MessageBus'         => 'Operations\\MessageBus',
+            'Idempotency'        => 'Operations\\Resilience\\System\\Capabilities\\Idempotency',
+            'Fallback'           => 'Operations\\Resilience\\System\\Capabilities\\Fallback',
+            'TaskDispatch'       => 'Operations\\Queue\\System\\Capabilities\\TaskDispatch',
+            'Orchestration'      => 'Operations\\ApplicationWorkflow\\System\\Capabilities\\Orchestration',
+            'Security'           => 'Security\\System',
+            'Secrets'            => 'Security\\Secrets',
+            'Policy'             => 'Identity\\Access\\System\\Capabilities\\Policy',
+            'Tenancy'            => 'Identity\\Tenancy',
+            'JwtAuth'            => 'Identity\\Tokens\\System\\Capabilities\\JwtAuth',
+            'HealthCheck'        => 'Operations\\Observability\\System\\Capabilities\\HealthCheck',
+            'ScalingReadiness'   => 'DeveloperTools\\Diagnostics\\System\\Capabilities\\ScalingReadiness',
+            'ServiceMap'         => 'Application\\Container\\System\\Capabilities\\ServiceMap',
+            'QueryGovernance'    => 'DataStack\\Database\\System\\Capabilities\\QueryGovernance',
+            'ContractTesting'    => 'DeveloperTools\\Testing\\System\\Capabilities\\ContractTesting',
             'EnvironmentAwareness' => 'Application\\Config\\System\\Capabilities\\EnvironmentAwareness',
-            'Resilience'           => 'Operations\\Resilience',
-            'Scheduler'            => 'Operations\\Scheduler',
-            'Tasks'                => 'Operations\\Tasks',
+            'Resilience'         => 'Operations\\Resilience',
+            'Scheduler'          => 'Operations\\Scheduler',
+            'Tasks'              => 'Operations\\Tasks',
         ];
 
         foreach ($componentMoves as $old => $new) {
@@ -148,7 +149,7 @@ final class RepairTestLayer
                 continue;
             }
 
-            $operation          = 'REWRITE ' . $this->relative($file);
+            $operation = 'REWRITE ' . $this->relative($file);
             $this->operations[] = $operation;
 
             echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
@@ -219,12 +220,12 @@ final class RepairTestLayer
         $original = $content;
 
         $fixes = [
-            '/Avax\\\\Components\\\\HTTP\\\\Router\\\\Router;/'     => 'Avax\\Components\\HTTP\\Router\\Router;',
+            '/Avax\\\\Components\\\\HTTP\\\\Router\\\\Router;/'   => 'Avax\\Components\\HTTP\\Router\\Router;',
             '/Avax\\\\Components\\\\HTTP\\\\Response\\\\Response;/' => 'Avax\\Components\\HTTP\\Response\\Response;',
-            '/Avax\\\\Components\\\\HTTP\\\\Session\\\\Session;/'   => 'Avax\\Components\\HTTP\\Session\\Session;',
-            '/Avax\\\\Components\\\\Container\\\\Container;/'       => 'Avax\\Components\\Application\\Container\\Container;',
-            '/Avax\\\\Components\\\\Cache\\\\Cache;/'               => 'Avax\\Components\\Application\\Cache\\Cache;',
-            '/Avax\\\\Components\\\\Config\\\\Config;/'             => 'Avax\\Components\\Application\\Config\\Config;',
+            '/Avax\\\\Components\\\\HTTP\\\\Session\\\\Session;/' => 'Avax\\Components\\HTTP\\Session\\Session;',
+            '/Avax\\\\Components\\\\Container\\\\Container;/'     => 'Avax\\Components\\Application\\Container\\Container;',
+            '/Avax\\\\Components\\\\Cache\\\\Cache;/'             => 'Avax\\Components\\Application\\Cache\\Cache;',
+            '/Avax\\\\Components\\\\Config\\\\Config;/'           => 'Avax\\Components\\Application\\Config\\Config;',
         ];
 
         foreach ($fixes as $pattern => $replacement) {
@@ -235,7 +236,7 @@ final class RepairTestLayer
             return;
         }
 
-        $operation          = 'FIX ' . $this->relative($file);
+        $operation = 'FIX ' . $this->relative($file);
         $this->operations[] = $operation;
 
         echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
@@ -247,7 +248,7 @@ final class RepairTestLayer
 
     private function writeReport() : void
     {
-        $report    = $this->path('Code-Review-And-ToDo/component-taxonomy/test-layer-repair-report.md');
+        $report = $this->path('Code-Review-And-ToDo/component-taxonomy/test-layer-repair-report.md');
         $directory = dirname($report);
 
         if (! is_dir($directory)) {

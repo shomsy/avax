@@ -206,7 +206,7 @@ class DomainAwareMatcherTest extends TestCase
     {
         $routes = [
             'GET' => [
-                '/api'      => new RouteDefinition(
+                '/api' => new RouteDefinition(
                     method: 'GET',
                     path  : '/api',
                     action: 'ApiController@index',
@@ -251,6 +251,6 @@ class DomainAwareMatcherTest extends TestCase
     protected function setUp() : void
     {
         $this->baseMatcher = $this->createMock(RouteMatcher::class);
-        $this->matcher     = new DomainAwareMatcher(baseMatcher: $this->baseMatcher);
+        $this->matcher = new DomainAwareMatcher(baseMatcher: $this->baseMatcher);
     }
 }

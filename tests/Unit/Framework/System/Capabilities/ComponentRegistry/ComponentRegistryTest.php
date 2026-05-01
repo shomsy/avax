@@ -20,7 +20,7 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_is_empty_when_created(): void
     {
-        $registry = new ComponentRegistry();
+        $registry = new ComponentRegistry;
 
         self::assertFalse($registry->has(name: 'any'));
         self::assertSame([], $registry->all());
@@ -30,7 +30,7 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_registers_component_definition(): void
     {
-        $registry = new ComponentRegistry();
+        $registry = new ComponentRegistry;
 
         $registry->register(
             definition: new ComponentDefinition(
@@ -47,7 +47,7 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_throws_when_registering_duplicate_component(): void
     {
-        $registry = new ComponentRegistry();
+        $registry = new ComponentRegistry;
 
         $registry->register(
             definition: new ComponentDefinition(name: 'cache'),
@@ -64,7 +64,7 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_stores_provider_class_in_definition(): void
     {
-        $registry = new ComponentRegistry();
+        $registry = new ComponentRegistry;
 
         $registry->register(
             definition: new ComponentDefinition(
@@ -80,17 +80,15 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_can_register_and_boot_provider(): void
     {
-        $registry = new ComponentRegistry();
+        $registry = new ComponentRegistry;
 
-        $provider = new class () implements ComponentProviderInterface {
+        $provider = new class implements ComponentProviderInterface {
             public static function name(): string
             {
                 return 'test';
             }
 
-            public function boot(RuntimeInterface $runtime): void
-            {
-            }
+            public function boot(RuntimeInterface $runtime) : void {}
         };
 
         $registry->registerProvider(provider: $provider);
@@ -101,13 +99,11 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_boots_all_registered_providers(): void
     {
-        $registry = new ComponentRegistry();
+        $registry = new ComponentRegistry;
         $booted = [];
 
-        $provider = new class ($booted) implements ComponentProviderInterface {
-            public function __construct(private array &$booted)
-            {
-            }
+        $provider = new class($booted) implements ComponentProviderInterface {
+            public function __construct(private array &$booted) {}
 
             public static function name(): string
             {
@@ -131,7 +127,7 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_returns_component_definition(): void
     {
-        $registry = new ComponentRegistry();
+        $registry = new ComponentRegistry;
 
         $registry->register(
             definition: new ComponentDefinition(

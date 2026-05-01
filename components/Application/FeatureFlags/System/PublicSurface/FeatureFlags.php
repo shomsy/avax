@@ -17,7 +17,7 @@ interface FlagStoreInterface
 
 final class FeatureFlags
 {
-    private static FlagStoreInterface|null $flagStore = null;
+    private static ?FlagStoreInterface $flagStore = null;
 
     public static function setStore(FlagStoreInterface $flagStore) : void
     {
@@ -32,7 +32,7 @@ final class FeatureFlags
     private static function store() : FlagStoreInterface
     {
         if (! self::$flagStore instanceof FlagStoreInterface) {
-            self::$flagStore = new InMemoryFlagStore();
+            self::$flagStore = new InMemoryFlagStore;
         }
 
         return self::$flagStore;

@@ -11,8 +11,6 @@ use Avax\Components\HTTP\Context\System\PublicSurface\HttpContext;
 if (! function_exists('context')) {
     /**
      * Get the HTTP context instance.
-     *
-     * @return HttpContext
      */
     function context() : HttpContext
     {
@@ -23,11 +21,6 @@ if (! function_exists('context')) {
 if (! function_exists('server')) {
     /**
      * Get a value from $_SERVER.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     *
-     * @return mixed
      */
     function server(string $key, mixed $default = null) : mixed
     {
@@ -38,11 +31,6 @@ if (! function_exists('server')) {
 if (! function_exists('env')) {
     /**
      * Get an environment variable value.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     *
-     * @return mixed
      */
     function env(string $key, mixed $default = null) : mixed
     {
@@ -53,11 +41,11 @@ if (! function_exists('env')) {
         }
 
         return match (strtolower((string) $value)) {
-            'true', '(true)'   => true,
+            'true', '(true)' => true,
             'false', '(false)' => false,
-            'null', '(null)'   => null,
+            'null', '(null)' => null,
             'empty', '(empty)' => '',
-            default            => $value,
+            default          => $value,
         };
     }
 }

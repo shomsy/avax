@@ -6,6 +6,4 @@ namespace Avax\Framework\System\Flows\BootApplication;
 
 use Avax\Framework\System\Foundation\Failure\FrameworkBootFailed;
 
-final class ApplicationBootFailed extends FrameworkBootFailed
-{
-}
+final class ApplicationBootFailed extends FrameworkBootFailed {}

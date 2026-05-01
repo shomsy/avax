@@ -41,7 +41,7 @@ final class PoolingService implements PoolingContract
 
 final class PoolingDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
     {
         assertInstanceOf(expectedClass: PoolingService::class, value: $instance, message: 'Pooling decorators should receive the resolved singleton instance.');
         $instance->decorated = true;
@@ -94,12 +94,12 @@ final readonly class DeferredPoolingProvider implements RegisterDeferredDependen
 $container = makeTestContainer();
 $container->singleton(abstract: PoolingContract::class, concrete: PoolingService::class);
 $container->alias(alias: 'pooling.alias', abstract: PoolingContract::class);
-$container->decorate(abstract: PoolingContract::class, decorator: new PoolingDecorator());
+$container->decorate(abstract: PoolingContract::class, decorator: new PoolingDecorator);
 $container->bootProviders(providers: [DeferredPoolingProvider::class]);
 
-$first          = $container->get(id: PoolingContract::class);
-$aliased        = $container->get(id: 'pooling.alias');
-$deferredFirst  = $container->get(id: DeferredPoolingContract::class);
+$first         = $container->get(id: PoolingContract::class);
+$aliased       = $container->get(id: 'pooling.alias');
+$deferredFirst = $container->get(id: DeferredPoolingContract::class);
 $deferredSecond = $container->get(id: DeferredPoolingContract::class);
 
 assertSame(expected: $first, actual: $aliased, message: 'Aliased singleton resolution should reuse the same pooled instance.');
@@ -108,8 +108,8 @@ assertSame(expected: $deferredFirst, actual: $deferredSecond, message: 'Deferred
 
 $container->reset();
 
-$afterReset         = $container->get(id: PoolingContract::class);
-$afterResetAlias    = $container->get(id: 'pooling.alias');
+$afterReset      = $container->get(id: PoolingContract::class);
+$afterResetAlias = $container->get(id: 'pooling.alias');
 $afterResetDeferred = $container->get(id: DeferredPoolingContract::class);
 
 assertNotSame(expected: $first, actual: $afterReset, message: 'Reset should clear shared pooled instances so singletons rebuild cleanly.');

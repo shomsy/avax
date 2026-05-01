@@ -7,11 +7,10 @@ namespace Avax\Framework\System\Capabilities\Runtime;
 final readonly class RuntimeResult
 {
     private function __construct(
-        private RuntimeResponse|null $response,
+        private ?RuntimeResponse $response,
         private int $exitCode,
         private string $output,
-    ) {
-    }
+    ) {}
 
     public static function fromResponse(RuntimeResponse $response) : self
     {
@@ -31,7 +30,7 @@ final readonly class RuntimeResult
         );
     }
 
-    public function response() : RuntimeResponse|null
+    public function response() : ?RuntimeResponse
     {
         return $this->response;
     }

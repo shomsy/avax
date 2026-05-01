@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
 final readonly class RunDoctor
 {
     public function __construct(
-        private RuntimeSafety $runtimeSafety = new RuntimeSafety(),
+        private RuntimeSafety $runtimeSafety = new RuntimeSafety,
     ) {}
 
     public function handle(bool $workerMode = false) : int
@@ -31,14 +31,14 @@ final readonly class RunDoctor
         }
 
         $criticalCount = 0;
-        $warningCount  = 0;
-        $infoCount     = 0;
+        $warningCount = 0;
+        $infoCount = 0;
 
         foreach ($findings as $finding) {
             match ($finding->severity) {
                 RuntimeSafetyFinding::SEVERITY_CRITICAL => $criticalCount++,
-                RuntimeSafetyFinding::SEVERITY_WARNING  => $warningCount++,
-                default                                 => $infoCount++,
+                RuntimeSafetyFinding::SEVERITY_WARNING => $warningCount++,
+                default                                => $infoCount++,
             };
         }
 
@@ -75,8 +75,8 @@ final readonly class RunDoctor
     {
         $color = match ($finding->severity) {
             RuntimeSafetyFinding::SEVERITY_CRITICAL => '31',
-            RuntimeSafetyFinding::SEVERITY_WARNING  => '33',
-            default                                 => '36',
+            RuntimeSafetyFinding::SEVERITY_WARNING => '33',
+            default                                => '36',
         };
 
         echo sprintf(

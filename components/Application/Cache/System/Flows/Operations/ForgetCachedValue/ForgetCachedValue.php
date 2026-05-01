@@ -13,7 +13,7 @@ final readonly class ForgetCachedValue
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private CacheMetrics|null $cacheMetrics = null,
+        private ?CacheMetrics $cacheMetrics = null,
     ) {}
 
     public function forgetMany(iterable $keys) : int

@@ -24,21 +24,21 @@ class PathIsWritableTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteReturnsTrueForWritableDirectory() : void
+    public function test_execute_returns_true_for_writable_directory() : void
     {
         $result = new PathIsWritable()->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
     }
 
-    public function testExecuteReturnsFalseForNonExistentPath() : void
+    public function test_execute_returns_false_for_non_existent_path() : void
     {
         $result = new PathIsWritable()->execute(path: '/ne postoji put');
 
         self::assertFalse(condition: $result);
     }
 
-    public function testExecuteReturnsFalseForUnwritablePath() : void
+    public function test_execute_returns_false_for_unwritable_path() : void
     {
         if (posix_getuid() === 0) {
             $this->markTestSkipped(reason: 'Cannot test unwritable paths as root');

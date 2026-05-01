@@ -11,9 +11,7 @@ use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRuntimeInterface;
 
 final readonly class RuntimeKernel implements RuntimeKernelInterface
 {
-    public function __construct(private RuntimeInterface $runtime)
-    {
-    }
+    public function __construct(private RuntimeInterface $runtime) {}
 
     public function state() : RuntimeState
     {

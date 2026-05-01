@@ -14,7 +14,7 @@ final class ReadWriteFlowTest extends TestCase
 {
     private function createScope() : SessionScope
     {
-        return new SessionScope(new ArraySessionStore());
+        return new SessionScope(new ArraySessionStore);
     }
 
     public function test_read_value_from_scope() : void

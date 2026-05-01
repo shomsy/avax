@@ -10,7 +10,7 @@ final class CacheCapacityWasExceeded extends RuntimeException
 {
     public function __construct(
         public readonly int $capacity,
-        int $currentCount = null,
+        ?int $currentCount = null,
     )
     {
         parent::__construct(message: sprintf(

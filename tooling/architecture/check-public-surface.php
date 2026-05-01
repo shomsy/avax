@@ -6,10 +6,9 @@ declare(strict_types=1);
  * Check for business logic in PublicSurface.
  * Ensures classes in System/PublicSurface are thin and delegate behavior.
  */
-
 $rootDir = dirname(__DIR__, 2);
 $componentsDir = $rootDir . '/components';
-$errors  = [];
+$errors = [];
 
 if (! is_dir($componentsDir)) {
     exit(0);

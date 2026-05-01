@@ -26,9 +26,9 @@ $container->singleton(abstract: DeferredRegularService::class, concrete: Deferre
 $container->defer(abstract: DeferredWorkerService::class, concrete: DeferredWorkerService::class);
 $container->warmCompiled();
 
-$regular             = $container->get(id: DeferredRegularService::class);
-$deferred            = $container->get(id: DeferredWorkerService::class);
-$regularDescription  = $container->describeService(id: DeferredRegularService::class);
+$regular            = $container->get(id: DeferredRegularService::class);
+$deferred           = $container->get(id: DeferredWorkerService::class);
+$regularDescription = $container->describeService(id: DeferredRegularService::class);
 $deferredDescription = $container->describeService(id: DeferredWorkerService::class);
 
 assertSame(expected: 'regular', actual: $regular->id(), message: 'Regular services should still resolve after warmup.');

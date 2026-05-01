@@ -15,8 +15,7 @@ final readonly class OpenHttpRequestScope
     public function __construct(
         private RequestScopeStore $requestScopes,
         private RuntimeContext $runtimeContext,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws RandomException

@@ -17,6 +17,7 @@ use Throwable;
 final readonly class BuildService
 {
     private ResolveDependencies $dependencies;
+
     private CreateDependencyBlueprint $blueprints;
 
     public function __construct(
@@ -24,7 +25,7 @@ final readonly class BuildService
         ResolveDependencies $dependencies,
     )
     {
-        $this->blueprints   = $blueprints;
+        $this->blueprints = $blueprints;
         $this->dependencies = $dependencies;
     }
 
@@ -34,15 +35,15 @@ final readonly class BuildService
      * @throws ContainerException
      */
     public function build(
-        string         $class,
+        string          $class,
         ResolveDependency $resolver,
-        array          $overrides = null,
-        ResolveRequest $request = null,
+        ?array          $overrides = null,
+        ?ResolveRequest $request = null,
     ) : object
     {
         $overrides ??= [];
         $serviceId = $request?->serviceId ?? $class;
-        $path      = $request?->getPath() ?? $serviceId;
+        $path = $request?->getPath() ?? $serviceId;
 
         try {
             $blueprint = $this->blueprints->createFor(class: $class);

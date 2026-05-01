@@ -12,6 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 final class RequestSessionBridgeTest extends TestCase
 {
     private RequestSessionBridge $bridge;
+
     private MockObject&SessionInterface $session;
 
     public function test_session_returns_session_instance() : void
@@ -107,6 +108,6 @@ final class RequestSessionBridgeTest extends TestCase
     protected function setUp() : void
     {
         $this->session = $this->createMock(SessionInterface::class);
-        $this->bridge  = new RequestSessionBridge($this->session);
+        $this->bridge = new RequestSessionBridge($this->session);
     }
 }

@@ -101,8 +101,7 @@ function peerThresholdFor(string $scenario, array $thresholds) : array
 
 /**
  * @param array<string, array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}> $artifacts
- * @param array<string, array<string, float>> $thresholds
- *
+ * @param array<string, array<string, float>>                                                            $thresholds
  * @return array<string, mixed>
  */
 function peerMatrixPayload(array $artifacts, array $thresholds) : array
@@ -132,19 +131,19 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
             array   : $artifacts,
         ),
         'parityIssues' => [],
-        'regressions'  => [],
-        'comparisons'  => [],
+        'regressions'   => [],
+        'comparisons'   => [],
     ];
 
     foreach ($peers as $peerName) {
-        $peer                    = $artifacts[$peerName];
+        $peer = $artifacts[$peerName];
         $payload['parityIssues'] = array_merge(
             $payload['parityIssues'],
             parityIssuesFor(peerName: $peerName, current: $current, peer: $peer),
         );
 
         $scenarios = benchmarkScenariosForArtifact(artifact: $current);
-        $peerRows  = [];
+        $peerRows = [];
 
         foreach ($scenarios as $scenario) {
             $currentRow = $current['results'][$scenario];
@@ -198,10 +197,10 @@ foreach ($argv as $argument) {
     }
 }
 
-$targets   = peerTargets(arguments: array_slice(array: $argv, offset: 1));
+$targets = peerTargets(arguments: array_slice(array: $argv, offset: 1));
 $artifacts = [];
 foreach ($targets as $name => $path) {
-    $adapter                     = new ArtifactBenchmarkPeerAdapter(peerName: $name, path: $path);
+    $adapter = new ArtifactBenchmarkPeerAdapter(peerName: $name, path: $path);
     $artifacts[$adapter->name()] = $adapter->load();
 }
 

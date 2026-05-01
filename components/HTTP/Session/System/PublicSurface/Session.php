@@ -14,15 +14,16 @@ use Psr\Log\LoggerInterface;
 
 final class Session implements SessionInterface
 {
-    private SessionRecord|null $record = null;
+    private ?SessionRecord $record = null;
+
     private SessionTransaction $transaction;
 
     public function __construct(
-        private readonly SessionScope  $scope,
-        private readonly SessionMetadata|null $metadata = null,
+        private readonly SessionScope     $scope,
+        private readonly ?SessionMetadata $metadata = null,
         private readonly ?SessionAudit $audit = null,
-        private readonly SessionEventBus|null $events = null,
-        private readonly LoggerInterface|null $logger = null,
+        private readonly ?SessionEventBus $events = null,
+        private readonly ?LoggerInterface $logger = null,
     )
     {
         $this->transaction = new SessionTransaction($this->scope);
@@ -69,7 +70,7 @@ final class Session implements SessionInterface
 
     private function createNewRecord() : void
     {
-        $now          = new DateTimeImmutable();
+        $now = new DateTimeImmutable;
         $this->record = new SessionRecord(
             sessionId        : bin2hex(random_bytes(16)),
             createdAt        : $now,
@@ -88,7 +89,7 @@ final class Session implements SessionInterface
             return;
         }
 
-        $now          = new DateTimeImmutable();
+        $now = new DateTimeImmutable;
         $this->record = new SessionRecord(
             ...((array) $this->record),
             lastSeenAt   : $now,
@@ -190,7 +191,7 @@ final class Session implements SessionInterface
 
     public function flash(string $key, mixed $value) : void
     {
-        $flashes       = $this->get('_flash_next', []);
+        $flashes = $this->get('_flash_next', []);
         $flashes[$key] = $value;
         $this->put('_flash_next', $flashes);
     }
@@ -216,6 +217,6 @@ final class Session implements SessionInterface
 
     public function events() : SessionEventBus
     {
-        return $this->events ?? new SessionEventBus();
+        return $this->events ?? new SessionEventBus;
     }
 }

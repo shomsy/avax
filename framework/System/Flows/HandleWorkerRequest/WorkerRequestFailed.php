@@ -6,6 +6,4 @@ namespace Avax\Framework\System\Flows\HandleWorkerRequest;
 
 use RuntimeException;
 
-final class WorkerRequestFailed extends RuntimeException
-{
-}
+final class WorkerRequestFailed extends RuntimeException {}

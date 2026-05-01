@@ -8,7 +8,7 @@ final readonly class SessionCookieSettings
 {
     public function __construct(
         public string $name = 'SID',
-        public int  $lifetime = 0,
+        public int $lifetime = 0,
         public string $path = '/',
         public string $domain = '',
         public bool $secure = false,

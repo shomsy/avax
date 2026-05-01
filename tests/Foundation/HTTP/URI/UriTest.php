@@ -41,7 +41,7 @@ final class UriTest extends TestCase
     {
         // Arrange
         $httpsUri = 'https://example.com:443/api';
-        $httpUri  = 'http://example.com:80/api';
+        $httpUri = 'http://example.com:80/api';
 
         // Act & Assert
         $https = Uri::fromString(uri: $httpsUri);
@@ -216,7 +216,7 @@ final class UriTest extends TestCase
 
     // ========== IMMUTABILITY: with* methods return new instances ==========
 
-    public function test_it_returns_new_instance_when_withScheme_called() : void
+    public function test_it_returns_new_instance_when_with_scheme_called() : void
     {
         // Arrange
         $originalUri = Uri::fromString(uri: 'http://example.com');
@@ -230,7 +230,7 @@ final class UriTest extends TestCase
         self::assertSame(expected: 'https', actual: $newUri->getScheme());
     }
 
-    public function test_it_returns_new_instance_when_withHost_called() : void
+    public function test_it_returns_new_instance_when_with_host_called() : void
     {
         // Arrange
         $originalUri = Uri::fromString(uri: 'https://example.com');
@@ -244,7 +244,7 @@ final class UriTest extends TestCase
         self::assertSame(expected: 'new.com', actual: $newUri->getHost());
     }
 
-    public function test_it_returns_new_instance_when_withPath_called() : void
+    public function test_it_returns_new_instance_when_with_path_called() : void
     {
         // Arrange
         $originalUri = Uri::fromString(uri: 'https://example.com/old');
@@ -258,7 +258,7 @@ final class UriTest extends TestCase
         self::assertSame(expected: '/new', actual: $newUri->getPath());
     }
 
-    public function test_it_returns_new_instance_when_withQuery_called() : void
+    public function test_it_returns_new_instance_when_with_query_called() : void
     {
         // Arrange
         $originalUri = Uri::fromString(uri: 'https://example.com?old=value');
@@ -272,7 +272,7 @@ final class UriTest extends TestCase
         self::assertSame(expected: 'new=value', actual: $newUri->getQuery());
     }
 
-    public function test_it_returns_new_instance_when_withFragment_called() : void
+    public function test_it_returns_new_instance_when_with_fragment_called() : void
     {
         // Arrange
         $originalUri = Uri::fromString(uri: 'https://example.com#old');
@@ -314,7 +314,7 @@ final class UriTest extends TestCase
         Uri::fromString(uri: 'invalid://example.com');
     }
 
-    public function test_it_throws_when_withScheme_given_invalid_scheme() : void
+    public function test_it_throws_when_with_scheme_given_invalid_scheme() : void
     {
         // Arrange
         $uri = Uri::fromString(uri: 'https://example.com');
@@ -333,7 +333,7 @@ final class UriTest extends TestCase
         Uri::fromString(uri: 'https://invalid..host');
     }
 
-    public function test_it_throws_when_withHost_given_empty_string() : void
+    public function test_it_throws_when_with_host_given_empty_string() : void
     {
         // Arrange
         $uri = Uri::fromString(uri: 'https://example.com');
@@ -461,7 +461,7 @@ final class UriTest extends TestCase
         self::assertInstanceOf(expected: UriInterface::class, actual: $uri);
     }
 
-    public function test_it_supports_psr7_withUserInfo_method() : void
+    public function test_it_supports_psr7_with_user_info_method() : void
     {
         // Arrange
         $uri = Uri::fromString(uri: 'https://example.com');
@@ -474,7 +474,7 @@ final class UriTest extends TestCase
         self::assertSame(expected: 'https://admin:secret@example.com/', actual: (string) $newUri);
     }
 
-    public function test_it_supports_psr7_withPort_method() : void
+    public function test_it_supports_psr7_with_port_method() : void
     {
         // Arrange
         $uri = Uri::fromString(uri: 'https://example.com');
@@ -520,7 +520,7 @@ final class UriTest extends TestCase
         $uriString = 'https://user:pass@example.com/old';
 
         // Act
-        $uri    = Uri::fromString(uri: $uriString);
+        $uri = Uri::fromString(uri: $uriString);
         $newUri = $uri->withPath(path: '/new');
 
         // Assert

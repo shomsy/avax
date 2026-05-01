@@ -22,7 +22,7 @@ cd "${REPO_ROOT}"
 TMP_FILE=$(mktemp)
 echo "$STAGED_FILES" > "$TMP_FILE"
 
-php avax validate --staged-files-file="${TMP_FILE}" --format=text 2>&1
+php -d output_buffering=0 "${REPO_ROOT}/framework/System/Capabilities/PreCommit/PreCommitValidator.php" --staged-files-file="${TMP_FILE}" --format=text 2>&1
 VALIDATION_RESULT=$?
 
 rm -f "${TMP_FILE}"

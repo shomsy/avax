@@ -13,6 +13,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Validators\HowToRulesValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\LegacyCodeValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\NamingConventionValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\PhpSyntaxValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\ScriptRunnerValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\SecurityValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\TodoCommentValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\ToolingIntegrationValidator;
@@ -79,7 +80,8 @@ class PreCommitValidator
             ->add(new LegacyCodeValidator())
             ->add(new DeprecatedCodeValidator())
             ->add(new TodoCommentValidator())
-            ->add(new ToolingIntegrationValidator());
+            ->add(new ToolingIntegrationValidator())
+            ->add(new ScriptRunnerValidator());
     }
 
     public function run(): int
@@ -99,6 +101,7 @@ class PreCommitValidator
 
         echo "🔍 Running pre-commit validation...\n";
         echo "   Files to validate: " . count($context['staged_files']) . "\n\n";
+        fwrite(STDERR, "DEBUG: Got here with " . count($context['staged_files']) . " files\n");
 
         $result = $this->chain->validate($context);
         $this->report->addResult($result);
@@ -199,14 +202,26 @@ class PreCommitValidator
             $data = $this->report->toArray();
             $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
             if ($json === false) {
-                echo "JSON encoding failed: " . json_last_error_msg() . "\n";
-                echo var_export($data, true) . "\n";
+                fwrite(STDERR, "JSON encoding failed: " . json_last_error_msg() . "\n");
+                fwrite(STDERR, var_export($data, true) . "\n");
             } else {
                 echo $json . "\n";
             }
         } else {
             echo $this->report->getSummaryText();
         }
+
+        // Force output flush
+        if (ob_get_level() > 0) {
+            ob_flush();
+        }
+        flush();
+    }
+}
+
+else {
+    echo $this->report->getSummaryText();
+}
     }
 
     private function printHelp(): void
@@ -235,7 +250,8 @@ class PreCommitValidator
         echo "  6. Legacy Code Validator\n";
         echo "  7. Deprecated Code Validator\n";
         echo "  8. TODO Comment Validator\n";
-        echo "  9. Tooling Integration Validator\n\n";
+        echo "  9. Tooling Integration Validator\n";
+        echo " 10. Script Runner Validator\n\n";
         echo "Reports: .agents/reports/validation/\n";
         echo "TODO items: .agents/management/TODO.md\n";
     }

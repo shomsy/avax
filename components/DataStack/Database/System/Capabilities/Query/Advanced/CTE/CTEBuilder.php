@@ -43,6 +43,7 @@ final class CTEBuilder
                 $definitions[] = sprintf('%s AS (%s)', $name, $this->buildCTE(query: $cte['query']));
             }
         }
+
         if ($definitions === []) {
             return '';
         }

@@ -22,16 +22,10 @@ use function sprintf;
 final class BuildDataQuery
 {
     /**
-     * @var array<string, class-string>
-     */
-    private array $entityRegistry = [];
-
-    /**
      * @param array<string, class-string> $entityRegistry
      */
-    public function __construct(array $entityRegistry = [])
+    public function __construct(private array $entityRegistry = [])
     {
-        $this->entityRegistry = $entityRegistry;
     }
 
     /**
@@ -46,17 +40,17 @@ final class BuildDataQuery
      * @throws InvalidArgumentException
      */
     public function build(
-        string $entityType = null,
+        ?string $entityType = null,
         array $conditions = [],
         array $orderBy = [],
-        int    $limit = null,
-        int    $offset = null,
+        ?int    $limit = null,
+        ?int    $offset = null,
         array $joins = [],
         array $select = ['*'],
     ): DataQuery {
         $resolvedEntityType = $this->resolveEntityType($entityType);
 
-        $query = new DataQuery(
+        return new DataQuery(
             entityType: $resolvedEntityType,
             conditions: $this->validateConditions($conditions),
             orderBy   : $this->validateOrderBy($orderBy),
@@ -65,8 +59,6 @@ final class BuildDataQuery
             joins     : $joins,
             select    : $select,
         );
-
-        return $query;
     }
 
     /**
@@ -189,16 +181,16 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    public function buildFrom(DataQuery $query): DataQuery
+    public function buildFrom(DataQuery $dataQuery) : DataQuery
     {
         return new DataQuery(
-            entityType: $this->resolveEntityType($query->entityType),
-            conditions: $this->validateConditions($query->conditions),
-            orderBy   : $this->validateOrderBy($query->orderBy),
-            limit     : $this->validateLimit($query->limit),
-            offset    : $this->validateOffset($query->offset),
-            joins     : $query->joins,
-            select    : $query->select,
+            entityType: $this->resolveEntityType($dataQuery->entityType),
+            conditions: $this->validateConditions($dataQuery->conditions),
+            orderBy   : $this->validateOrderBy($dataQuery->orderBy),
+            limit     : $this->validateLimit($dataQuery->limit),
+            offset    : $this->validateOffset($dataQuery->offset),
+            joins     : $dataQuery->joins,
+            select    : $dataQuery->select,
         );
     }
 

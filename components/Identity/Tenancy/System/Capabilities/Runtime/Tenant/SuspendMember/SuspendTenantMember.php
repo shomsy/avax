@@ -7,6 +7,7 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\Su
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Model\Tenant;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMember;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberRole;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberState;
@@ -17,17 +18,17 @@ final readonly class SuspendTenantMember
 {
     public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(SuspendTenantMemberData $data): TenantMember
+    public function execute(SuspendTenantMemberData $suspendTenantMemberData) : TenantMember
     {
-        $tenant = $this->tenantStore->findTenantBySlug(slug: $data->tenantSlug);
+        $tenant = $this->tenantStore->findTenantBySlug(slug: $suspendTenantMemberData->tenantSlug);
 
-        if ($tenant === null) {
-            throw TenantFailed::tenantNotFound(tenantSlug: $data->tenantSlug);
+        if (! $tenant instanceof Tenant) {
+            throw TenantFailed::tenantNotFound(tenantSlug: $suspendTenantMemberData->tenantSlug);
         }
 
-        $member = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $data->userId);
+        $member = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $suspendTenantMemberData->userId);
 
-        if ($member === null) {
+        if (! $member instanceof TenantMember) {
             throw TenantFailed::memberNotFound();
         }
 
@@ -35,14 +36,14 @@ final readonly class SuspendTenantMember
             throw TenantFailed::ownerCannotBeRemoved();
         }
 
-        $suspended = new TenantMember(
+        $tenantMember = new TenantMember(
             tenantId: $member->tenantId,
             userId  : $member->userId,
             role    : $member->role,
             state   : TenantMemberState::SUSPENDED,
             joinedAt: $member->joinedAt,
         );
-        $this->tenantStore->saveMember(member: $suspended);
+        $this->tenantStore->saveMember(member: $tenantMember);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.tenant.member.suspended',
             occurredAt: $this->clock->now(),
@@ -53,6 +54,6 @@ final readonly class SuspendTenantMember
             ],
         ));
 
-        return $suspended;
+        return $tenantMember;
     }
 }

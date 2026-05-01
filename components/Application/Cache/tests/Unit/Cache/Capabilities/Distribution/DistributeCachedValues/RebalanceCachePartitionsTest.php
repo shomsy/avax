@@ -17,7 +17,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
-        $rebalanceCachePartitions = new RebalanceCachePartitions(ring: $consistentHashRing, partitionCount: 256);
+        $rebalanceCachePartitions = new RebalanceCachePartitions(partitionCount: 256, ring: $consistentHashRing);
 
         $moves = $rebalanceCachePartitions->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -30,7 +30,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
-        $rebalanceCachePartitions = new RebalanceCachePartitions(ring: $consistentHashRing, partitionCount: 256);
+        $rebalanceCachePartitions = new RebalanceCachePartitions(partitionCount: 256, ring: $consistentHashRing);
 
         $moves = $rebalanceCachePartitions->removeNode(nodeId: CacheNodeId::from(id: 'node_a'));
 
@@ -43,7 +43,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
-        $rebalanceCachePartitions = new RebalanceCachePartitions(ring: $consistentHashRing, partitionCount: 256);
+        $rebalanceCachePartitions = new RebalanceCachePartitions(partitionCount: 256, ring: $consistentHashRing);
 
         $distribution = $rebalanceCachePartitions->rebalance();
 
@@ -57,7 +57,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_c'));
 
-        $rebalanceCachePartitions = new RebalanceCachePartitions(ring: $consistentHashRing, partitionCount: 256);
+        $rebalanceCachePartitions = new RebalanceCachePartitions(partitionCount: 256, ring: $consistentHashRing);
 
         $moves = $rebalanceCachePartitions->addNode(node: CacheNode::create(id: 'node_d'));
 
@@ -74,7 +74,7 @@ final class RebalanceCachePartitionsTest extends TestCase
     {
         $consistentHashRing = new ConsistentHashRing();
 
-        $rebalanceCachePartitions = new RebalanceCachePartitions(ring: $consistentHashRing, partitionCount: 256);
+        $rebalanceCachePartitions = new RebalanceCachePartitions(partitionCount: 256, ring: $consistentHashRing);
 
         $distribution = $rebalanceCachePartitions->rebalance();
 

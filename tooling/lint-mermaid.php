@@ -42,7 +42,7 @@ $missingFiles = [];
 
 foreach ($files as $filePath) {
     if (containsMermaidBlock(filePath: $filePath)) {
-        echo "PASS: {$filePath}\n";
+        echo sprintf('PASS: %s%s', $filePath, PHP_EOL);
 
         continue;
     }
@@ -52,7 +52,7 @@ foreach ($files as $filePath) {
 }
 
 echo "\n=== Summary ===\n";
-echo "Total files: {$totalFiles}\n";
+echo sprintf('Total files: %d%s', $totalFiles, PHP_EOL);
 echo 'Missing mermaid: ' . count(value: $missingFiles) . "\n";
 
 if ($missingFiles !== []) {
@@ -114,7 +114,7 @@ function containsMermaidBlock(string $filePath): bool
     $content = file_get_contents(filename: $filePath);
 
     if ($content === false) {
-        throw new RuntimeException(message: "Unable to read file: {$filePath}");
+        throw new RuntimeException(message: 'Unable to read file: ' . $filePath);
     }
 
     return preg_match(pattern: '/```mermaid\b/i', subject: $content) === 1;
@@ -122,7 +122,7 @@ function containsMermaidBlock(string $filePath): bool
 
 function shouldSkip(string $relativePath): bool
 {
-    return array_any(array: EXCLUDED_PATH_PREFIXES, callback: static fn ($prefix) => str_starts_with(haystack: $relativePath, needle: $prefix));
+    return array_any(array: EXCLUDED_PATH_PREFIXES, callback: static fn ($prefix) : bool => str_starts_with(haystack: $relativePath, needle: (string) $prefix));
 
 }
 

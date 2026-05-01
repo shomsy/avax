@@ -34,16 +34,16 @@ final readonly class Avax implements AvaxInterface
     ) {
     }
 
-    public static function boot(ApplicationBuilder $builder): self
+    public static function boot(ApplicationBuilder $applicationBuilder) : self
     {
-        $runtime = (new BootApplication(
+        $runtime = new BootApplication(
             buildApplicationState: new BuildApplicationState(),
-        ))->boot(builder: $builder);
+        )->boot(builder: $applicationBuilder);
 
         return new self(
             runtime              : $runtime,
             httpKernel           : new HttpKernel(runtime: $runtime, handleIncomingHttp: new HandleIncomingHttp()),
-            consoleKernel        : new ConsoleKernel(runtime: $runtime, runConsoleCommand: new RunConsoleCommand($runtime)),
+            consoleKernel        : new ConsoleKernel(runConsoleCommand: new RunConsoleCommand($runtime), runtime: $runtime),
             runtimeKernel        : new RuntimeKernel(runtime: $runtime),
             resetApplicationState: new ResetApplicationState(),
         );

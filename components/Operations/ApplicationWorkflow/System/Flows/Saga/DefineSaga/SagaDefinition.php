@@ -29,19 +29,11 @@ enum SagaStartCondition: string
 
 final readonly class SagaDefinition implements IteratorAggregate
 {
-    public string $name;
-
-    public string $type;
-
     public array $steps;
 
     public array $stepOrder;
 
-    public ?TenantBoundary $tenantBoundary;
-
     public SagaStartCondition $startCondition;
-
-    public ?string $startTrigger;
 
     public int $timeoutSeconds;
 
@@ -51,54 +43,41 @@ final readonly class SagaDefinition implements IteratorAggregate
 
     public bool $allowRemoteCompensation;
 
-    public ?string $description;
-
     public SagaStatus $status;
 
-    public ?DateTimeImmutable $createdAt;
-
-    public ?DateTimeImmutable $updatedAt;
-
     private function __construct(
-        string $name,
-        string $type,
-        array              $steps = null,
-        array              $stepOrder = null,
-        TenantBoundary     $tenantBoundary = null,
-        SagaStartCondition $startCondition = null,
-        string             $startTrigger = null,
-        int                $timeoutSeconds = null,
-        int                $maxDurationSeconds = null,
-        bool               $allowConcurrent = null,
-        bool               $allowRemoteCompensation = null,
-        string             $description = null,
-        SagaStatus         $status = null,
-        DateTimeImmutable  $createdAt = null,
-        DateTimeImmutable  $updatedAt = null,
+        public string             $name,
+        public string             $type,
+        ?array                    $steps = null,
+        ?array                    $stepOrder = null,
+        public ?TenantBoundary    $tenantBoundary = null,
+        ?SagaStartCondition       $sagaStartCondition = null,
+        public ?string            $startTrigger = null,
+        ?int                      $timeoutSeconds = null,
+        ?int                      $maxDurationSeconds = null,
+        ?bool                     $allowConcurrent = null,
+        ?bool                     $allowRemoteCompensation = null,
+        public ?string            $description = null,
+        ?SagaStatus               $sagaStatus = null,
+        public ?DateTimeImmutable $createdAt = null,
+        public ?DateTimeImmutable $updatedAt = null,
     ) {
         $steps                    ??= [];
         $stepOrder                ??= [];
-        $startCondition           ??= SagaStartCondition::MANUAL;
+        $sagaStartCondition ??= SagaStartCondition::MANUAL;
         $timeoutSeconds           ??= 3600;
         $maxDurationSeconds       ??= 86400;
         $allowConcurrent          ??= false;
         $allowRemoteCompensation ??= false;
-        $status                   ??= SagaStatus::DRAFT;
-        $this->name               = $name;
-        $this->type               = $type;
+        $sagaStatus ??= SagaStatus::DRAFT;
         $this->steps              = $steps;
         $this->stepOrder          = $stepOrder;
-        $this->tenantBoundary     = $tenantBoundary;
-        $this->startCondition     = $startCondition;
-        $this->startTrigger       = $startTrigger;
+        $this->startCondition = $sagaStartCondition;
         $this->timeoutSeconds     = $timeoutSeconds;
         $this->maxDurationSeconds = $maxDurationSeconds;
         $this->allowConcurrent    = $allowConcurrent;
         $this->allowRemoteCompensation = $allowRemoteCompensation;
-        $this->description        = $description;
-        $this->status             = $status;
-        $this->createdAt          = $createdAt;
-        $this->updatedAt          = $updatedAt;
+        $this->status = $sagaStatus;
     }
 
     public static function linear(string $name, array $options = []): self
@@ -108,15 +87,15 @@ final readonly class SagaDefinition implements IteratorAggregate
 
     public static function create(
         string $name,
-        string $type = null,
+        ?string $type = null,
         array $options = [],
     ): self {
         $type ??= 'long_running_process';
-        if (empty(trim($name))) {
+        if (in_array(trim($name), ['', '0'], true)) {
             throw new InvalidArgumentException(message: 'Saga name cannot be empty.');
         }
 
-        if (empty(trim($type))) {
+        if (in_array(trim($type), ['', '0'], true)) {
             throw new InvalidArgumentException(message: 'Saga type cannot be empty.');
         }
 
@@ -128,16 +107,16 @@ final readonly class SagaDefinition implements IteratorAggregate
             tenantBoundary         : isset($options['tenant'])
                                          ? TenantBoundary::create(id: $options['tenant'])
                                          : null,
-            startCondition         : SagaStartCondition::from(value: $options['start_condition'] ?? 'manual'),
             startTrigger           : $options['start_trigger'] ?? null,
             timeoutSeconds         : $options['timeout'] ?? 3600,
             maxDurationSeconds     : $options['max_duration'] ?? 86400,
             allowConcurrent        : $options['concurrent'] ?? false,
             allowRemoteCompensation: $options['remote_compensation'] ?? false,
             description            : $options['description'] ?? null,
-            status                 : SagaStatus::DRAFT,
             createdAt              : new DateTimeImmutable(),
             updatedAt              : new DateTimeImmutable(),
+            startCondition         : SagaStartCondition::from(value: $options['start_condition'] ?? 'manual'),
+            status                 : SagaStatus::DRAFT,
         );
     }
 
@@ -156,14 +135,14 @@ final readonly class SagaDefinition implements IteratorAggregate
         return $result;
     }
 
-    public function withStep(SagaStepDefinition $step): self
+    public function withStep(SagaStepDefinition $sagaStepDefinition) : self
     {
         $steps = $this->steps;
-        $steps[$step->name] = $step;
+        $steps[$sagaStepDefinition->name] = $sagaStepDefinition;
 
         $stepOrder = $this->stepOrder;
-        if (! in_array($step->name, $stepOrder, true)) {
-            $stepOrder[] = $step->name;
+        if (! in_array($sagaStepDefinition->name, $stepOrder, true)) {
+            $stepOrder[] = $sagaStepDefinition->name;
         }
 
         return new self(
@@ -172,16 +151,16 @@ final readonly class SagaDefinition implements IteratorAggregate
             steps                  : $steps,
             stepOrder              : $stepOrder,
             tenantBoundary         : $this->tenantBoundary,
-            startCondition         : $this->startCondition,
             startTrigger           : $this->startTrigger,
             timeoutSeconds         : $this->timeoutSeconds,
             maxDurationSeconds     : $this->maxDurationSeconds,
             allowConcurrent        : $this->allowConcurrent,
             allowRemoteCompensation: $this->allowRemoteCompensation,
             description            : $this->description,
-            status                 : SagaStatus::DRAFT,
             createdAt              : $this->createdAt,
             updatedAt              : new DateTimeImmutable(),
+            startCondition         : $this->startCondition,
+            status                 : SagaStatus::DRAFT,
         );
     }
 

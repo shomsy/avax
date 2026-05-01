@@ -16,62 +16,62 @@ final class RuntimeRequestTest extends TestCase
     #[Test]
     public function it_normalizes_method_and_uri(): void
     {
-        $request = new RuntimeRequest(method: '  get  ', uri: '  /test  ');
+        $runtimeRequest = new RuntimeRequest(method: '  get  ', uri: '  /test  ');
 
-        self::assertSame('GET', $request->method());
-        self::assertSame('/test', $request->uri());
+        self::assertSame('GET', $runtimeRequest->method());
+        self::assertSame('/test', $runtimeRequest->uri());
     }
 
     #[Test]
     public function it_stores_headers_and_body(): void
     {
-        $request = new RuntimeRequest(
+        $runtimeRequest = new RuntimeRequest(
             method: 'POST',
             uri: '/api/test',
             headers: ['Content-Type' => ['application/json']],
             body: '{"key":"value"}',
         );
 
-        self::assertSame('POST', $request->method());
-        self::assertSame('/api/test', $request->uri());
-        self::assertSame(['Content-Type' => ['application/json']], $request->headers());
-        self::assertSame('{"key":"value"}', $request->body());
+        self::assertSame('POST', $runtimeRequest->method());
+        self::assertSame('/api/test', $runtimeRequest->uri());
+        self::assertSame(['Content-Type' => ['application/json']], $runtimeRequest->headers());
+        self::assertSame('{"key":"value"}', $runtimeRequest->body());
     }
 
     #[Test]
     public function it_stores_attributes(): void
     {
-        $request = new RuntimeRequest(
+        $runtimeRequest = new RuntimeRequest(
             method: 'GET',
             uri: '/test',
             attributes: ['user_id' => 123, 'role' => 'admin'],
         );
 
-        self::assertSame(['user_id' => 123, 'role' => 'admin'], $request->attributes());
+        self::assertSame(['user_id' => 123, 'role' => 'admin'], $runtimeRequest->attributes());
     }
 
     #[Test]
     public function it_returns_empty_headers_by_default(): void
     {
-        $request = new RuntimeRequest(method: 'GET', uri: '/test');
+        $runtimeRequest = new RuntimeRequest(method: 'GET', uri: '/test');
 
-        self::assertSame([], $request->headers());
+        self::assertSame([], $runtimeRequest->headers());
     }
 
     #[Test]
     public function it_returns_null_body_by_default(): void
     {
-        $request = new RuntimeRequest(method: 'GET', uri: '/test');
+        $runtimeRequest = new RuntimeRequest(method: 'GET', uri: '/test');
 
-        self::assertNull($request->body());
+        self::assertNull($runtimeRequest->body());
     }
 
     #[Test]
     public function it_returns_empty_attributes_by_default(): void
     {
-        $request = new RuntimeRequest(method: 'GET', uri: '/test');
+        $runtimeRequest = new RuntimeRequest(method: 'GET', uri: '/test');
 
-        self::assertSame([], $request->attributes());
+        self::assertSame([], $runtimeRequest->attributes());
     }
 
     #[Test]
@@ -95,7 +95,7 @@ final class RuntimeRequestTest extends TestCase
     #[Test]
     public function it_handles_multiple_header_values(): void
     {
-        $request = new RuntimeRequest(
+        $runtimeRequest = new RuntimeRequest(
             method: 'GET',
             uri: '/test',
             headers: [
@@ -104,7 +104,7 @@ final class RuntimeRequestTest extends TestCase
             ],
         );
 
-        self::assertSame(['text/html', 'application/json'], $request->headers()['Accept']);
-        self::assertSame(['no-cache', 'no-store'], $request->headers()['Cache-Control']);
+        self::assertSame(['text/html', 'application/json'], $runtimeRequest->headers()['Accept']);
+        self::assertSame(['no-cache', 'no-store'], $runtimeRequest->headers()['Cache-Control']);
     }
 }

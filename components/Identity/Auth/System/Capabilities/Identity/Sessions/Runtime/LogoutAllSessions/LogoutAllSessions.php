@@ -11,6 +11,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryUnavailable;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
@@ -38,14 +39,14 @@ final readonly class LogoutAllSessions
      */
     public function execute(): void
     {
-        $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $user                  = $authenticationContext->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
-        if ($this->sessionRegistry === null) {
+        if (! $this->sessionRegistry instanceof SessionRegistryInterface) {
             throw SessionRegistryUnavailable::forSessionManagementFlow();
         }
 
@@ -54,7 +55,7 @@ final readonly class LogoutAllSessions
 
         $this->sessionRegistry->revokeForUser(userId: $userId, revokedAt: $now, reason: 'logout_all');
         $this->refreshTokenStore?->revokeUser(userId: $userId);
-        $this->identity->clear(context: $context);
+        $this->identity->clear(context: $authenticationContext);
         $this->currentAuthentication->clear();
 
         $this->auditLog->record(event: new AuditEvent(

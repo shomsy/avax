@@ -6,7 +6,7 @@ namespace Avax\Framework\System\Capabilities\RuntimeIsolation;
 
 final readonly class RuntimeIsolationGuard
 {
-    private const RUNTIME_MARKERS
+    private const array RUNTIME_MARKERS
         = [
             'Swoole\\',
             'RoadRunner\\',

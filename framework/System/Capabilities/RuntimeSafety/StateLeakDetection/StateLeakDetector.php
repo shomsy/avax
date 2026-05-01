@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\RuntimeSafety\StateLeakDetection;
 
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
-use Closure;
 use ReflectionClass;
 use ReflectionObject;
 use ReflectionProperty;
@@ -59,8 +58,8 @@ final class StateLeakDetector
     {
         $findings = [];
 
-        foreach ($this->leakChecks as $name => $check) {
-            $results = $check();
+        foreach ($this->leakChecks as $leakCheck) {
+            $results = $leakCheck();
 
             if (is_array($results)) {
                 $findings = [...$findings, ...$results];
@@ -82,27 +81,26 @@ final class StateLeakDetector
         $findings = [];
         $declaredClasses = get_declared_classes();
 
-        foreach ($declaredClasses as $className) {
-            if (! str_starts_with($className, 'Avax\\')) {
+        foreach ($declaredClasses as $declaredClass) {
+            if (! str_starts_with($declaredClass, 'Avax\\')) {
                 continue;
             }
 
-            if (! class_exists($className)) {
+            if (! class_exists($declaredClass)) {
                 continue;
             }
 
-            /** @var class-string $className */
-            $reflection = new ReflectionClass($className);
+            $reflection = new ReflectionClass($declaredClass);
 
             foreach ($reflection->getProperties(ReflectionProperty::IS_STATIC) as $property) {
                 if (! $property->isReadOnly() && ! $property->hasDefaultValue()) {
                     $findings[] = new RuntimeSafetyFinding(
                         category   : 'state_leak',
                         severity   : RuntimeSafetyFinding::SEVERITY_WARNING,
-                        component  : $className,
+                        component  : $declaredClass,
                         message    : sprintf(
                                          'Class %s has mutable static property $%s that may leak between requests',
-                                         $className,
+                                         $declaredClass,
                                          $property->getName(),
                                      ),
                         remediation: sprintf(
@@ -136,7 +134,7 @@ final class StateLeakDetector
 
             if (method_exists($container, 'getSharedInstances')) {
                 /** @var array<string, object> $sharedInstances */
-                $sharedInstances = Closure::fromCallable([$container, 'getSharedInstances'])();
+                $sharedInstances = $container->getSharedInstances(...)();
 
                 foreach ($sharedInstances as $abstract => $instance) {
                     $reflection = new ReflectionObject($instance);
@@ -171,12 +169,12 @@ final class StateLeakDetector
         return $findings;
     }
 
-    private function propertyLocation(ReflectionProperty $property) : string
+    private function propertyLocation(ReflectionProperty $reflectionProperty) : string
     {
-        $class = $property->getDeclaringClass();
-        $file = $class->getFileName();
-        $line = $class->getStartLine();
+        $reflectionClass = $reflectionProperty->getDeclaringClass();
+        $file            = $reflectionClass->getFileName();
+        $line            = $reflectionClass->getStartLine();
 
-        return ($file !== false ? $file : $class->getName()) . ':' . $line;
+        return ($file !== false ? $file : $reflectionClass->getName()) . ':' . $line;
     }
 }

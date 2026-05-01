@@ -34,7 +34,7 @@ final class DependencyGraph
     {
         $cycles = [];
 
-        foreach ($this->nodes as $dependency => $node) {
+        foreach (array_keys($this->nodes) as $dependency) {
             $path = [];
             $visited = [];
 
@@ -84,7 +84,7 @@ final class DependencyGraph
         $orphans = [];
 
         foreach ($this->nodes as $node) {
-            if (empty($node->dependsOn) && empty($this->dependents($node->name))) {
+            if ($node->dependsOn === [] && $this->dependents($node->name) === []) {
                 $orphans[] = $node->name;
             }
         }
@@ -114,7 +114,7 @@ final class DependencyGraph
 
         foreach ($this->nodes as $node) {
             foreach ($node->dependsOn as $dep) {
-                $lines[] = "    {$node->name} --> {$dep}";
+                $lines[] = sprintf('    %s --> %s', $node->name, $dep);
             }
         }
 

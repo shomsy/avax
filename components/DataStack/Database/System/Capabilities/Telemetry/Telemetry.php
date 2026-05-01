@@ -16,7 +16,7 @@ final readonly class Telemetry
     public function __construct(
         private EventBus $eventBus,
         private ?Config $config = null,
-        private ExecutionScope $scope = new ExecutionScope(correlationId: 'database'),
+        private ExecutionScope $executionScope = new ExecutionScope(correlationId: 'database'),
     ) {}
 
     public function eventBus(): EventBus
@@ -31,6 +31,6 @@ final readonly class Telemetry
 
     public function scope(): ExecutionScope
     {
-        return $this->scope;
+        return $this->executionScope;
     }
 }

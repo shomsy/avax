@@ -27,9 +27,9 @@ use SensitiveParameter;
 final readonly class OpenIDConnect
 {
     public function __construct(
-        private ?ReadOidcProviderMetadata $readProviderMetadata,
-        private ?ReadOidcJsonWebKeySet $readJsonWebKeySet,
-        private ?ReadOidcUserInfo $readUserInfo,
+        private ?ReadOidcProviderMetadata $readOidcProviderMetadata,
+        private ?ReadOidcJsonWebKeySet    $readOidcJsonWebKeySet,
+        private ?ReadOidcUserInfo         $readOidcUserInfo,
         private ?PushAuthorizationRequest $pushAuthorizationRequest,
         private ?Logout $logout,
         private ?BuildJarmResponse $buildJarmResponse,
@@ -37,24 +37,24 @@ final readonly class OpenIDConnect
 
     public function isConfigured(): bool
     {
-        return $this->readProviderMetadata !== null
-            && $this->readJsonWebKeySet !== null
-            && $this->readUserInfo !== null;
+        return $this->readOidcProviderMetadata instanceof ReadOidcProviderMetadata
+            && $this->readOidcJsonWebKeySet instanceof ReadOidcJsonWebKeySet
+            && $this->readOidcUserInfo instanceof ReadOidcUserInfo;
     }
 
     public function supportsPushedAuthorizationRequests(): bool
     {
-        return $this->pushAuthorizationRequest !== null;
+        return $this->pushAuthorizationRequest instanceof PushAuthorizationRequest;
     }
 
     public function supportsLogout(): bool
     {
-        return $this->logout !== null;
+        return $this->logout instanceof Logout;
     }
 
     public function supportsJarmResponse(): bool
     {
-        return $this->buildJarmResponse !== null;
+        return $this->buildJarmResponse instanceof BuildJarmResponse;
     }
 
     public function readProviderMetadata(): OidcProviderMetadata
@@ -64,7 +64,7 @@ final readonly class OpenIDConnect
 
     private function readProviderMetadataOrFail(): ReadOidcProviderMetadata
     {
-        return $this->readProviderMetadata ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_provider_metadata');
+        return $this->readOidcProviderMetadata ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_provider_metadata');
     }
 
     public function readJsonWebKeySet(): OidcJsonWebKeySet
@@ -74,7 +74,7 @@ final readonly class OpenIDConnect
 
     private function readJsonWebKeySetOrFail(): ReadOidcJsonWebKeySet
     {
-        return $this->readJsonWebKeySet ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_json_web_key_set');
+        return $this->readOidcJsonWebKeySet ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_json_web_key_set');
     }
 
     public function readUserInfo(#[SensitiveParameter] string $accessToken): OidcUserInfo
@@ -84,16 +84,16 @@ final readonly class OpenIDConnect
 
     private function readUserInfoOrFail(): ReadOidcUserInfo
     {
-        return $this->readUserInfo ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_user_info');
+        return $this->readOidcUserInfo ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'read_user_info');
     }
 
     /**
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function pushAuthorizationRequest(PushAuthorizationRequestData $data): PushedAuthorizationRequest
+    public function pushAuthorizationRequest(PushAuthorizationRequestData $pushAuthorizationRequestData) : PushedAuthorizationRequest
     {
-        return $this->pushAuthorizationRequestOrFail()->execute(data: $data);
+        return $this->pushAuthorizationRequestOrFail()->execute(data: $pushAuthorizationRequestData);
     }
 
     private function pushAuthorizationRequestOrFail(): PushAuthorizationRequest
@@ -101,9 +101,9 @@ final readonly class OpenIDConnect
         return $this->pushAuthorizationRequest ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'push_authorization_request');
     }
 
-    public function logout(LogoutData $data): LogoutResult
+    public function logout(LogoutData $logoutData) : LogoutResult
     {
-        return $this->logoutOrFail()->execute(data: $data);
+        return $this->logoutOrFail()->execute(data: $logoutData);
     }
 
     private function logoutOrFail(): Logout
@@ -115,9 +115,9 @@ final readonly class OpenIDConnect
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function buildJarmResponse(BuildJarmResponseData $data): JarmResponse
+    public function buildJarmResponse(BuildJarmResponseData $buildJarmResponseData) : JarmResponse
     {
-        return $this->buildJarmResponseOrFail()->execute(data: $data);
+        return $this->buildJarmResponseOrFail()->execute(data: $buildJarmResponseData);
     }
 
     private function buildJarmResponseOrFail(): BuildJarmResponse

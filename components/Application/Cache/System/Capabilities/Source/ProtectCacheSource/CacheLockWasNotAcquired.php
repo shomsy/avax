@@ -27,8 +27,8 @@ final class CacheLockWasNotAcquired extends RuntimeException
                 $cacheKey->fullKey(),
                 $timeoutSeconds,
             ),
-            key           : $cacheKey,
             timeoutSeconds: $timeoutSeconds,
+            key           : $cacheKey,
         );
     }
 }

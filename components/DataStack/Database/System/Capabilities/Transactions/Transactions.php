@@ -15,8 +15,6 @@ use Throwable;
  */
 final class Transactions
 {
-    private readonly DatabaseConnection $connection;
-
     /**
      * @var int Current nesting depth (0 = no active transaction)
      */
@@ -42,9 +40,8 @@ final class Transactions
      */
     private array $rollbackCallbacks = [];
 
-    public function __construct(DatabaseConnection $connection)
+    public function __construct(private readonly DatabaseConnection $databaseConnection)
     {
-        $this->connection = $connection;
     }
 
     /**
@@ -60,8 +57,8 @@ final class Transactions
      */
     public function transactionWithRetry(
         Closure $callback,
-        IsolationLevel $isolationLevel = null,
-        RetryPolicy $retryPolicy = null,
+        ?IsolationLevel $isolationLevel = null,
+        ?RetryPolicy    $retryPolicy = null,
     ): mixed
     {
         $policy  = $retryPolicy ?? RetryPolicy::forDeadlocks();
@@ -80,7 +77,7 @@ final class Transactions
                 }
 
                 $delayUs = $policy->getDelayMs($attempt - 1) * 1000;
-                usleep((int) $delayUs);
+                usleep($delayUs);
             }
         }
 
@@ -100,7 +97,7 @@ final class Transactions
      *
      * @throws Throwable Re-throws the original exception after rollback
      */
-    public function transaction(Closure $callback, IsolationLevel $isolationLevel = null): mixed
+    public function transaction(Closure $callback, ?IsolationLevel $isolationLevel = null) : mixed
     {
         $this->begin($isolationLevel);
 
@@ -109,16 +106,16 @@ final class Transactions
             $this->commit();
 
             return $result;
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             try {
                 $this->rollback();
             } catch (Throwable $rollbackError) {
                 // If rollback fails, we still throw the original exception
                 // but log the rollback failure
-                error_log("Rollback failed: {$rollbackError->getMessage()}");
+                error_log('Rollback failed: ' . $rollbackError->getMessage());
             }
 
-            throw $e;
+            throw $throwable;
         }
     }
 
@@ -127,18 +124,18 @@ final class Transactions
      *
      * @throws RuntimeException If a transaction is already active at the root level
      */
-    public function begin(IsolationLevel $isolationLevel = null): void
+    public function begin(?IsolationLevel $isolationLevel = null) : void
     {
         if ($this->depth === 0) {
-            $this->connection->beginTransaction();
+            $this->databaseConnection->beginTransaction();
             $this->active = true;
 
-            if ($isolationLevel !== null) {
-                $this->connection->exec($isolationLevel->toSql());
+            if ($isolationLevel instanceof IsolationLevel) {
+                $this->databaseConnection->exec($isolationLevel->toSql());
             }
         } else {
             $savepointName = $this->generateSavepointName();
-            $this->connection->exec("SAVEPOINT {$savepointName}");
+            $this->databaseConnection->exec('SAVEPOINT ' . $savepointName);
             $this->savepoints[] = $savepointName;
         }
 
@@ -165,12 +162,12 @@ final class Transactions
         }
 
         if ($this->depth === 1) {
-            $this->connection->commit();
+            $this->databaseConnection->commit();
             $this->active = false;
             $this->executeCommitCallbacks();
         } else {
             $savepointName = array_pop($this->savepoints);
-            $this->connection->exec("RELEASE SAVEPOINT {$savepointName}");
+            $this->databaseConnection->exec('RELEASE SAVEPOINT ' . $savepointName);
         }
 
         $this->depth--;
@@ -181,11 +178,11 @@ final class Transactions
      */
     private function executeCommitCallbacks(): void
     {
-        foreach ($this->commitCallbacks as $callback) {
+        foreach ($this->commitCallbacks as $commitCallback) {
             try {
-                $callback();
+                $commitCallback();
             } catch (Throwable $e) {
-                error_log("After-commit callback failed: {$e->getMessage()}");
+                error_log('After-commit callback failed: ' . $e->getMessage());
             }
         }
 
@@ -204,12 +201,12 @@ final class Transactions
         }
 
         if ($this->depth === 1) {
-            $this->connection->rollBack();
+            $this->databaseConnection->rollBack();
             $this->active = false;
             $this->executeRollbackCallbacks();
         } else {
             $savepointName = array_pop($this->savepoints);
-            $this->connection->exec("ROLLBACK TO SAVEPOINT {$savepointName}");
+            $this->databaseConnection->exec('ROLLBACK TO SAVEPOINT ' . $savepointName);
         }
 
         $this->depth--;
@@ -220,11 +217,11 @@ final class Transactions
      */
     private function executeRollbackCallbacks(): void
     {
-        foreach ($this->rollbackCallbacks as $callback) {
+        foreach ($this->rollbackCallbacks as $rollbackCallback) {
             try {
-                $callback();
+                $rollbackCallback();
             } catch (Throwable $e) {
-                error_log("After-rollback callback failed: {$e->getMessage()}");
+                error_log('After-rollback callback failed: ' . $e->getMessage());
             }
         }
 
@@ -269,7 +266,7 @@ final class Transactions
      */
     public function currentSavepoint(): ?string
     {
-        return empty($this->savepoints) ? null : end($this->savepoints);
+        return $this->savepoints === [] ? null : end($this->savepoints);
     }
 
     /**

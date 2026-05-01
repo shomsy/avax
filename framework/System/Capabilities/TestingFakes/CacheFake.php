@@ -38,7 +38,7 @@ final class CacheFake
         return $this->store[$key] ?? $default;
     }
 
-    public function set(string $key, mixed $value, int $ttl = null): void
+    public function set(string $key, mixed $value, ?int $ttl = null) : void
     {
         $this->setCalls[]  = ['key' => $key, 'value' => $value, 'ttl' => $ttl];
         $this->store[$key] = $value;
@@ -78,8 +78,8 @@ final class CacheFake
 
     public function assertSet(string $key, mixed $value = null): self
     {
-        foreach ($this->setCalls as $call) {
-            if ($call['key'] === $key && ($value === null || $call['value'] === $value)) {
+        foreach ($this->setCalls as $setCall) {
+            if ($setCall['key'] === $key && ($value === null || $setCall['value'] === $value)) {
                 return $this;
             }
         }

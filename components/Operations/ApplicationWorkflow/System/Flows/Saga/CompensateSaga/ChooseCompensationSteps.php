@@ -21,12 +21,12 @@ final readonly class ChooseCompensationSteps
      *
      * @return array<int, SagaStepDefinition>
      */
-    public function choose(SagaInstance $saga, SagaDefinition $definition): array
+    public function choose(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : array
     {
-        $this->validateSagaInstance(saga: $saga);
+        $this->validateSagaInstance(saga: $sagaInstance);
 
-        $completedSteps = $saga->completedSteps;
-        if (empty($completedSteps)) {
+        $completedSteps = $sagaInstance->completedSteps;
+        if ($completedSteps === []) {
             return [];
         }
 
@@ -35,10 +35,10 @@ final readonly class ChooseCompensationSteps
         // Reverse the order of completed steps for compensation (LIFO)
         $reversedCompletedSteps = array_reverse($completedSteps);
 
-        foreach ($reversedCompletedSteps as $stepName) {
-            $stepDef = $definition->getStep(name: $stepName);
+        foreach ($reversedCompletedSteps as $reversedCompletedStep) {
+            $stepDef = $sagaDefinition->getStep(name: $reversedCompletedStep);
 
-            if ($stepDef !== null && $stepDef->hasCompensation()) {
+            if ($stepDef instanceof SagaStepDefinition && $stepDef->hasCompensation()) {
                 $compensationSteps[] = $stepDef;
             }
         }
@@ -46,15 +46,15 @@ final readonly class ChooseCompensationSteps
         return $compensationSteps;
     }
 
-    private function validateSagaInstance(SagaInstance $saga): void
+    private function validateSagaInstance(SagaInstance $sagaInstance) : void
     {
-        if (empty($saga->id)) {
+        if ($sagaInstance->id === '' || $sagaInstance->id === '0') {
             throw new InvalidArgumentException(message: 'Saga instance ID cannot be empty.');
         }
 
-        if ($saga->status === SagaInstanceStatus::PENDING) {
+        if ($sagaInstance->status === SagaInstanceStatus::PENDING) {
             throw new InvalidArgumentException(
-                message: sprintf('Cannot choose compensation steps for pending saga %s.', $saga->id),
+                message: sprintf('Cannot choose compensation steps for pending saga %s.', $sagaInstance->id),
             );
         }
     }

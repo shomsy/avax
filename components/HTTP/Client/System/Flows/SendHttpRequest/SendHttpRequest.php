@@ -38,22 +38,23 @@ final readonly class SendHttpRequest
     /**
      * Execute an outbound HTTP request.
      *
-     * @param OutboundRequest $request The outbound request to execute
+     * @param OutboundRequest $outboundRequest The outbound request to execute
+     *
      * @return ClientResponse The HTTP response
      *
      * @throws HttpRequestFailed if the request fails and retries are exhausted
      * @throws HttpTimeout if the request times out
      */
-    public function execute(OutboundRequest $request) : ClientResponse
+    public function execute(OutboundRequest $outboundRequest) : ClientResponse
     {
         try {
-            return $this->transport->send($request);
-        } catch (Throwable $e) {
+            return $this->transport->send($outboundRequest);
+        } catch (Throwable $throwable) {
             return $this->handleFailure->handle(
-                request      : $request,
-                retryCallback: fn (OutboundRequest $req) => $this->transport->send($req),
-                exception    : $e,
-                options      : $request->options,
+                retryCallback: fn (OutboundRequest $outboundRequest) : ClientResponse => $this->transport->send($outboundRequest),
+                request      : $outboundRequest,
+                exception    : $throwable,
+                options      : $outboundRequest->options,
             );
         }
     }

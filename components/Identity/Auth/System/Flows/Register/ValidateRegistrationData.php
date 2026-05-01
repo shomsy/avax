@@ -13,13 +13,13 @@ final readonly class ValidateRegistrationData
     /**
      * @throws RegistrationFailed
      */
-    public function execute(RegistrationData $data): void
+    public function execute(RegistrationData $registrationData) : void
     {
-        if (empty($data->email) || empty($data->password)) {
+        if ($registrationData->email === '' || $registrationData->email === '0' || ($registrationData->password === '' || $registrationData->password === '0')) {
             throw new RegistrationFailed('Email and password are required');
         }
 
-        if (strlen($data->password) < 8) {
+        if (strlen($registrationData->password) < 8) {
             throw new RegistrationFailed('Password must be at least 8 characters');
         }
     }

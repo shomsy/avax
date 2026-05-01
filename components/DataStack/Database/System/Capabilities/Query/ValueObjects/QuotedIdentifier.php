@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects;
 
+use Stringable;
+
 /**
  * Immutable value object representing a pre-quoted SQL identifier.
  *
  * @see /docs/Foundation/Database/DSL/QueryStates.md
  */
-final readonly class QuotedIdentifier
+final readonly class QuotedIdentifier implements Stringable
 {
-    public string $value;
-
     /**
      * @param string $value The pre-sanitized and dialect-aware quoted identifier technical string.
      */
-    public function __construct(string $value)
+    public function __construct(public string $value)
     {
-        $this->value = $value;
     }
 
     /**

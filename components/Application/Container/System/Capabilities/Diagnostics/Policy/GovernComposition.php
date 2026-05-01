@@ -32,17 +32,17 @@ final readonly class GovernComposition
     public function report(
         array $graph,
         array $dependents,
-        DependencyRegistry $registrations,
-        CreateDependencyBlueprint $blueprints,
-        ResolutionPolicy $policy,
+        DependencyRegistry        $dependencyRegistry,
+        CreateDependencyBlueprint $createDependencyBlueprint,
+        ResolutionPolicy          $resolutionPolicy,
         string $environment = '',
     ): array {
-        $activePolicy = $policy->forEnvironment(environment: $environment);
-        $findings     = (new CheckCompositionPolicies())->check(
+        $activePolicy = $resolutionPolicy->forEnvironment(environment: $environment);
+        $findings     = new CheckCompositionPolicies()->check(
             graph        : $graph,
             dependents   : $dependents,
-            registrations: $registrations,
-            blueprints   : $blueprints,
+            registrations: $dependencyRegistry,
+            blueprints   : $createDependencyBlueprint,
             policy       : $activePolicy,
         );
 
@@ -52,9 +52,9 @@ final readonly class GovernComposition
         ];
         $blocked = false;
 
-        foreach ($findings as $serviceFindings) {
-            foreach ($serviceFindings as $finding) {
-                $severity = strtolower(string: trim(string: (string) ($finding['severity'] ?? 'warn')));
+        foreach ($findings as $finding) {
+            foreach ($finding as $serviceFinding) {
+                $severity = strtolower(string: trim(string: (string) ($serviceFinding['severity'] ?? 'warn')));
                 if (! isset($summary[$severity])) {
                     continue;
                 }

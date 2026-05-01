@@ -8,32 +8,32 @@ use Avax\Components\Security\Secrets\System\Capabilities\Encryption\SecretEncryp
 
 final readonly class EncryptedSecretStore implements SecretStore
 {
-    private SecretEncrypter $encrypter;
+    private SecretEncrypter $secretEncrypter;
 
     public function __construct(
-        private SecretStore $inner,
+        private SecretStore $secretStore,
         string $encryptionKey,
     ) {
-        $this->encrypter = new SecretEncrypter(encryptionKey: $encryptionKey);
+        $this->secretEncrypter = new SecretEncrypter(encryptionKey: $encryptionKey);
     }
 
     public function get(string $key): string
     {
-        return $this->encrypter->decrypt($this->inner->get($key));
+        return $this->secretEncrypter->decrypt($this->secretStore->get($key));
     }
 
     public function set(string $key, string $value): void
     {
-        $this->inner->set($key, $this->encrypter->encrypt($value));
+        $this->secretStore->set($key, $this->secretEncrypter->encrypt($value));
     }
 
     public function has(string $key): bool
     {
-        return $this->inner->has($key);
+        return $this->secretStore->has($key);
     }
 
     public function forget(string $key): void
     {
-        $this->inner->forget($key);
+        $this->secretStore->forget($key);
     }
 }

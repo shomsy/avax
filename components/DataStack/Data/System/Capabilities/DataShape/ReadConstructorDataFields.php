@@ -16,15 +16,15 @@ use ReflectionException;
 final readonly class ReadConstructorDataFields
 {
     /**
-     * @param ReflectionClass<object> $class
+     * @param ReflectionClass<object> $reflectionClass
      *
      * @return array<string, DataField>
      *
      * @throws ReflectionException
      */
-    public function read(ReflectionClass $class, DataTransferConfig $config): array
+    public function read(ReflectionClass $reflectionClass, DataTransferConfig $dataTransferConfig) : array
     {
-        $constructor = $class->getConstructor();
+        $constructor = $reflectionClass->getConstructor();
 
         if ($constructor === null) {
             return [];
@@ -32,7 +32,7 @@ final readonly class ReadConstructorDataFields
 
         // Special case for legacy DTOs that might have a base constructor we want to ignore
         if (
-            is_a(object_or_class: $class->getName(), class: LegacyAbstractDTO::class, allow_string: true)
+            is_a(object_or_class: $reflectionClass->getName(), class: LegacyAbstractDTO::class, allow_string: true)
             && $constructor->getDeclaringClass()->getName() === LegacyAbstractDTO::class
         ) {
             return [];
@@ -40,32 +40,32 @@ final readonly class ReadConstructorDataFields
 
         $fields = [];
 
-        foreach ($constructor->getParameters() as $parameter) {
+        foreach ($constructor->getParameters() as $reflectionParameter) {
             $property = null;
 
-            if ($parameter->isPromoted() && $class->hasProperty(name: $parameter->getName())) {
-                $property = $class->getProperty(name: $parameter->getName());
+            if ($reflectionParameter->isPromoted() && $reflectionClass->hasProperty(name: $reflectionParameter->getName())) {
+                $property = $reflectionClass->getProperty(name: $reflectionParameter->getName());
             }
 
-            $attributes = new ReadDataFieldAttributes()->read(property: $property, parameter: $parameter);
+            $attributes = new ReadDataFieldAttributes()->read(property: $property, parameter: $reflectionParameter);
             $inputName  = new ReadMappedInputName()->read(
-                fieldName : $parameter->getName(),
+                fieldName : $reflectionParameter->getName(),
                 attributes: $attributes,
-                config    : $config,
+                config    : $dataTransferConfig,
             );
 
-            $fields[$parameter->getName()] = new DataField(
-                name              : $parameter->getName(),
+            $fields[$reflectionParameter->getName()] = new DataField(
+                name              : $reflectionParameter->getName(),
                 inputName         : $inputName->value,
-                type              : DataFieldType::fromReflectionType(type: $parameter->getType()),
                 attributes        : $attributes,
                 isConstructorField: true,
-                isPromotedProperty: $parameter->isPromoted(),
+                isPromotedProperty: $reflectionParameter->isPromoted(),
                 isPublicProperty  : $property?->isPublic() ?? false,
-                hasDefaultValue   : $parameter->isDefaultValueAvailable(),
-                defaultValue      : $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
+                hasDefaultValue   : $reflectionParameter->isDefaultValueAvailable(),
+                defaultValue      : $reflectionParameter->isDefaultValueAvailable() ? $reflectionParameter->getDefaultValue() : null,
+                type              : DataFieldType::fromReflectionType(type: $reflectionParameter->getType()),
                 property          : $property,
-                parameter         : $parameter,
+                parameter         : $reflectionParameter,
             );
         }
 

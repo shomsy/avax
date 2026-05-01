@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Security\System\Capabilities\Configuration;
 
+use stdClass;
+
 /**
  * SecurityConfigurationStore - Persistence for security settings.
  */
 final readonly class SecurityConfigurationStore
 {
-    public function read(string $tenantId): object
+    public function read() : stdClass
     {
         return (object) [
             'mfa_required' => true,

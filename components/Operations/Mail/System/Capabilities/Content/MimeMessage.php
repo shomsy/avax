@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Mail\System\Capabilities\Content;
 
-final class MimeMessage
+final readonly class MimeMessage
 {
     public function __construct(
-        public readonly string $from,
-        public readonly string $to,
-        public readonly string $subject,
-        public readonly string $body,
-        public readonly string $contentType = 'text/plain',
-        public readonly array $headers = [],
-        public readonly array $attachments = [],
-        public readonly ?string $replyTo = null,
-        public readonly ?string $cc = null,
-        public readonly ?string $bcc = null,
+        public string  $from,
+        public string  $to,
+        public string  $subject,
+        public string  $body,
+        public string  $contentType = 'text/plain',
+        public array   $headers = [],
+        public array   $attachments = [],
+        public ?string $replyTo = null,
+        public ?string $cc = null,
+        public ?string $bcc = null,
     ) {}
 
     public function withReplyTo(string $replyTo): self
@@ -109,21 +109,21 @@ final class MimeMessage
     public function toRaw(): string
     {
         $lines = [];
-        $lines[] = "From: {$this->from}";
-        $lines[] = "To: {$this->to}";
-        $lines[] = "Subject: {$this->subject}";
-        $lines[] = "Content-Type: {$this->contentType}; charset=UTF-8";
+        $lines[] = 'From: ' . $this->from;
+        $lines[] = 'To: ' . $this->to;
+        $lines[] = 'Subject: ' . $this->subject;
+        $lines[] = sprintf('Content-Type: %s; charset=UTF-8', $this->contentType);
 
         if ($this->replyTo !== null) {
-            $lines[] = "Reply-To: {$this->replyTo}";
+            $lines[] = 'Reply-To: ' . $this->replyTo;
         }
 
         if ($this->cc !== null) {
-            $lines[] = "Cc: {$this->cc}";
+            $lines[] = 'Cc: ' . $this->cc;
         }
 
         foreach ($this->headers as $name => $value) {
-            $lines[] = "$name: $value";
+            $lines[] = sprintf('%s: %s', $name, $value);
         }
 
         $lines[] = '';

@@ -6,6 +6,7 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\Cr
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
@@ -24,35 +25,35 @@ final readonly class CreateTenant
     /**
      * @throws RandomException
      */
-    public function execute(CreateTenantData $data): Tenant
+    public function execute(CreateTenantData $createTenantData) : Tenant
     {
-        $slug = strtolower(string: trim(string: $data->slug));
+        $slug = strtolower(string: trim(string: $createTenantData->slug));
 
         if ($slug === '') {
             throw TenantFailed::tenantNotFound(tenantSlug: '');
         }
 
-        if ($this->tenantStore->findTenantBySlug(slug: $slug) !== null) {
+        if ($this->tenantStore->findTenantBySlug(slug: $slug) instanceof Tenant) {
             throw TenantFailed::tenantSlugTaken(tenantSlug: $slug);
         }
 
-        $owner = $this->userSource->findById(id: new UserId(value: $data->ownerUserId));
+        $owner = $this->userSource->findById(id: new UserId(value: $createTenantData->ownerUserId));
 
-        if ($owner === null) {
-            throw TenantFailed::userNotFound(userId: $data->ownerUserId);
+        if (! $owner instanceof User) {
+            throw TenantFailed::userNotFound(userId: $createTenantData->ownerUserId);
         }
 
         $tenant = new Tenant(
             tenantId   : 'tenant_' . bin2hex(string: random_bytes(length: 12)),
             slug       : $slug,
-            name       : trim(string: $data->name),
-            ownerUserId: $data->ownerUserId,
+            name       : trim(string: $createTenantData->name),
+            ownerUserId: $createTenantData->ownerUserId,
             createdAt  : $this->clock->now(),
         );
         $this->tenantStore->saveTenant(tenant: $tenant);
         $this->tenantStore->saveMember(member: new TenantMember(
             tenantId: $tenant->tenantId,
-            userId  : $data->ownerUserId,
+            userId  : $createTenantData->ownerUserId,
             role    : TenantMemberRole::OWNER,
             state   : TenantMemberState::ACTIVE,
             joinedAt: $tenant->createdAt,

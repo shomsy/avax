@@ -52,7 +52,7 @@ final class ListenerRegistry
 
     public function hasListeners(string $event) : bool
     {
-        return isset($this->listeners[$event]) && ! empty($this->listeners[$event]);
+        return isset($this->listeners[$event]) && (isset($this->listeners[$event]) && $this->listeners[$event] !== []);
     }
 
     public function listenerCount(string $event) : int
@@ -61,6 +61,6 @@ final class ListenerRegistry
             return 0;
         }
 
-        return array_sum(array_map('count', $this->listeners[$event]));
+        return array_sum(array_map(count(...), $this->listeners[$event]));
     }
 }

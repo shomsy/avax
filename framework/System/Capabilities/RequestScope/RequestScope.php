@@ -13,11 +13,11 @@ final class RequestScope implements RequestScopeInterface
 
     private bool $open = true;
 
-    public function __construct(private readonly RequestScopeId $id) {}
+    public function __construct(private readonly RequestScopeId $requestScopeId) {}
 
     public function id() : RequestScopeId
     {
-        return $this->id;
+        return $this->requestScopeId;
     }
 
     public function isOpen() : bool

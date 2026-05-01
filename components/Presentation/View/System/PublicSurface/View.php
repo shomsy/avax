@@ -10,22 +10,22 @@ use Avax\Components\Presentation\View\System\Flows\RenderView\RenderView;
 final readonly class View implements ViewInterface
 {
     public function __construct(
-        private TemplateEngineInterface $engine,
-        private RenderView $renderFlow,
+        private TemplateEngineInterface $templateEngine,
+        private RenderView              $renderView,
     ) {}
 
     public function render(string $view, array $data = []): string
     {
-        return $this->renderFlow->handle($view, $data);
+        return $this->renderView->handle($view, $data);
     }
 
     public function exists(string $view): bool
     {
-        return $this->engine->exists($view);
+        return $this->templateEngine->exists($view);
     }
 
     public function share(string $key, mixed $value): void
     {
-        $this->engine->share($key, $value);
+        $this->templateEngine->share($key, $value);
     }
 }

@@ -23,6 +23,6 @@ final readonly class CallFunction
      */
     public function call(callable|string $target, array $parameters = []): mixed
     {
-        return $this->resolveDependency->call(callable: $target, parameters: $parameters);
+        return $this->resolveDependency->call(parameters: $parameters, callable: $target);
     }
 }

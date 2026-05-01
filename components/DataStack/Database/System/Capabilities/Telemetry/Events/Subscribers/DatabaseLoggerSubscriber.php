@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface;
  */
 final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private LoggerInterface $logger, private Config $config) {}
+    public function __construct(private LoggerInterface $logger) {}
 
     public function getSubscribedEvents(): array
     {
@@ -26,16 +26,16 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
     /**
      * Handle the QueryExecuted event.
      *
-     * @param QueryExecuted $event The event containing query execution details.
+     * @param QueryExecuted $queryExecuted The event containing query execution details.
      */
-    public function handleQueryExecuted(QueryExecuted $event): void
+    public function handleQueryExecuted(QueryExecuted $queryExecuted) : void
     {
         $this->logger->info(message: 'Query executed', context: [
-            'sql'        => $event->sql,
-            'bindings'   => $event->bindings,
-            'duration_ms' => $event->timeMs,
-            'connection' => $event->connectionName,
-            'trace_id'   => $event->correlationId,
+            'sql'         => $queryExecuted->sql,
+            'bindings'    => $queryExecuted->bindings,
+            'duration_ms' => $queryExecuted->timeMs,
+            'connection'  => $queryExecuted->connectionName,
+            'trace_id'    => $queryExecuted->correlationId,
         ]);
     }
 }

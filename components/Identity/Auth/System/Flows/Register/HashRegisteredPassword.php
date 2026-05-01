@@ -13,11 +13,11 @@ use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\Passwor
 final readonly class HashRegisteredPassword
 {
     public function __construct(
-        private PasswordHasher $hasher,
+        private PasswordHasher $passwordHasher,
     ) {}
 
     public function execute(string $password): string
     {
-        return $this->hasher->hash($password);
+        return $this->passwordHasher->hash($password);
     }
 }

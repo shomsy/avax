@@ -11,40 +11,39 @@ final readonly class ContractTesting
 {
     public static function verify(): ContractVerificationReport
     {
-        $verifier = new ContractVerifier();
+        $contractVerifier = new ContractVerifier();
 
-        return $verifier->verify();
+        return $contractVerifier->verify();
     }
 
     public static function verifyComponent(string $componentClass): ComponentContractResult
     {
-        $verifier = new ContractVerifier();
+        $contractVerifier = new ContractVerifier();
 
-        return $verifier->verifyComponent($componentClass);
+        return $contractVerifier->verifyComponent($componentClass);
     }
 
     public static function breakingChanges(string $sinceVersion): BreakingChangesReport
     {
-        $detector = new BreakingChangeDetector();
+        $breakingChangeDetector = new BreakingChangeDetector();
 
-        return $detector->detect($sinceVersion);
+        return $breakingChangeDetector->detect($sinceVersion);
     }
 
     public static function registerContract(string $componentClass, array $contract): void
     {
-        $verifier = new ContractVerifier();
-        $verifier->registerContract($componentClass, $contract);
+        $contractVerifier = new ContractVerifier();
+        $contractVerifier->registerContract($componentClass, $contract);
     }
 }
 
 final readonly class ContractVerificationReport
 {
-    /** @var list<ComponentContractResult> */
-    public array $results;
-
-    public function __construct(array $results = [])
+    public function __construct(
+        /** @var list<ComponentContractResult> */
+        public array $results = []
+    )
     {
-        $this->results = $results;
     }
 
     public function toArray(): array
@@ -52,7 +51,7 @@ final readonly class ContractVerificationReport
         return [
             'passed' => $this->passed(),
             'results' => array_map(
-                static fn (ComponentContractResult $r) => $r->toArray(),
+                static fn (ComponentContractResult $componentContractResult) : array => $componentContractResult->toArray(),
                 $this->results,
             ),
         ];
@@ -60,13 +59,7 @@ final readonly class ContractVerificationReport
 
     public function passed(): bool
     {
-        foreach ($this->results as $result) {
-            if (! $result->passed) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->results, fn ($result) => $result->passed);
     }
 }
 
@@ -101,7 +94,7 @@ final readonly class BreakingChangesReport
         return [
             'has_breaking' => $this->hasBreaking(),
             'changes' => array_map(
-                static fn ($c) => is_array($c) ? $c : (array) $c,
+                static fn ($c) : array => is_array($c) ? $c : (array) $c,
                 $this->changes,
             ),
         ];
@@ -109,6 +102,6 @@ final readonly class BreakingChangesReport
 
     public function hasBreaking(): bool
     {
-        return count($this->changes) > 0;
+        return $this->changes !== [];
     }
 }

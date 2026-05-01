@@ -44,8 +44,8 @@ final readonly class PDOExecutor implements ExecutorInterface
                 sql           : $sql,
                 bindings      : $bindings,
                 start         : $start,
-                scope         : $executionScope,
                 redactBindings: $this->shouldRedactBindings(),
+                scope         : $executionScope,
             );
 
             return $results;
@@ -84,8 +84,8 @@ final readonly class PDOExecutor implements ExecutorInterface
                 sql           : $sql,
                 bindings      : $bindings,
                 start         : $start,
-                scope         : $executionScope,
                 redactBindings: $this->shouldRedactBindings(),
+                scope         : $executionScope,
             );
 
             return new ExecutionResult(
@@ -122,10 +122,10 @@ final readonly class PDOExecutor implements ExecutorInterface
 
         $this->eventBus->dispatch(event: new QueryExecuted(
             sql           : $sql,
-            bindings      : $bindings,
             timeMs        : (microtime(as_float: true) - $start) * 1000,
             connectionName: $this->connectionName,
             correlationId : $correlationId,
+            bindings      : $bindings,
             redactBindings: $redactBindings,
         ));
     }

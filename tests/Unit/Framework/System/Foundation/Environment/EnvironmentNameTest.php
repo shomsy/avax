@@ -16,25 +16,25 @@ final class EnvironmentNameTest extends TestCase
     #[Test]
     public function it_accepts_valid_environment_name(): void
     {
-        $env = new EnvironmentName(value: 'production');
+        $environmentName = new EnvironmentName(value: 'production');
 
-        self::assertSame('production', $env->toString());
+        self::assertSame('production', $environmentName->toString());
     }
 
     #[Test]
     public function it_accepts_case_insensitive_names(): void
     {
-        $env = new EnvironmentName(value: '  STAGING  ');
+        $environmentName = new EnvironmentName(value: '  STAGING  ');
 
-        self::assertSame('STAGING', $env->toString());
+        self::assertSame('STAGING', $environmentName->toString());
     }
 
     #[Test]
     public function it_normalizes_environment_name(): void
     {
-        $env = new EnvironmentName(value: '  local  ');
+        $environmentName = new EnvironmentName(value: '  local  ');
 
-        self::assertSame('local', $env->toString());
+        self::assertSame('local', $environmentName->toString());
     }
 
     #[Test]

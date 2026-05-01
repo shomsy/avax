@@ -9,10 +9,10 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class ReadTenantSecurityChangeRequest
 {
-    public function __construct(private TenantSecurityChangeRequestStoreInterface $changeRequestStore) {}
+    public function __construct(private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) {}
 
     public function execute(string $changeId): ?TenantSecurityChangeRequest
     {
-        return $this->changeRequestStore->find(changeId: $changeId);
+        return $this->tenantSecurityChangeRequestStore->find(changeId: $changeId);
     }
 }

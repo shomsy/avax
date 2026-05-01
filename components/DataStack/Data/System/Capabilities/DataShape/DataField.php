@@ -47,13 +47,7 @@ final readonly class DataField
 
     public function hasAttribute(string $attributeClass): bool
     {
-        foreach ($this->attributes as $attribute) {
-            if ($attribute instanceof $attributeClass) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->attributes, fn ($attribute) : bool => $attribute instanceof $attributeClass);
     }
 
     public function isHidden(): bool

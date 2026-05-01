@@ -9,15 +9,15 @@ namespace Avax\Framework\System\Capabilities\TracingTimeline;
  */
 final class Tracing
 {
-    private ?RuntimeTimeline $currentTimeline = null;
+    private ?RuntimeTimeline $runtimeTimeline = null;
 
     public function start() : RuntimeTimeline
     {
-        $this->currentTimeline = new RuntimeTimeline();
+        $this->runtimeTimeline = new RuntimeTimeline();
 
-        $this->currentTimeline->record(name: 'request.received');
+        $this->runtimeTimeline->record(name: 'request.received');
 
-        return $this->currentTimeline;
+        return $this->runtimeTimeline;
     }
 
     /**
@@ -25,12 +25,12 @@ final class Tracing
      */
     public function record(
         string $name,
-        float  $durationMS = null,
-        string $category = null,
+        ?float  $durationMS = null,
+        ?string $category = null,
         array  $metadata = [],
     ) : void
     {
-        $this->currentTimeline?->record(
+        $this->runtimeTimeline?->record(
             name      : $name,
             durationMS: $durationMS,
             category  : $category,
@@ -40,12 +40,12 @@ final class Tracing
 
     public function timeline() : ?RuntimeTimeline
     {
-        return $this->currentTimeline;
+        return $this->runtimeTimeline;
     }
 
-    public function begin(string $name, string $category = null) : TraceSpan
+    public function begin(string $name, ?string $category = null) : TraceSpan
     {
-        return $this->currentTimeline?->begin(
+        return $this->runtimeTimeline?->begin(
             name    : $name,
             category: $category,
         ) ?? new TraceSpan(name: $name, category: $category);
@@ -53,11 +53,11 @@ final class Tracing
 
     public function finish() : void
     {
-        $this->currentTimeline?->finish();
+        $this->runtimeTimeline?->finish();
     }
 
     public function export() : string
     {
-        return $this->currentTimeline?->exportText() ?? 'No active timeline';
+        return $this->runtimeTimeline?->exportText() ?? 'No active timeline';
     }
 }

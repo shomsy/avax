@@ -9,21 +9,21 @@ use Avax\Components\HTTP\Response\System\Flows\CreateJsonResponse\CreateJsonResp
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Exception;
 
-final class CatchUnhandledExceptions
+final readonly class CatchUnhandledExceptions
 {
     public function __construct(
-        private ReportExceptionToLogger $logger,
-        private CreateJsonResponse $responseFactory,
+        private ReportExceptionToLogger $reportExceptionToLogger,
+        private CreateJsonResponse      $createJsonResponse,
     ) {
     }
 
-    public function handle(Exception $e, RequestInterface $request): ResponseInterface
+    public function handle(Exception $exception, RequestInterface $request) : ResponseInterface
     {
-        $this->logger->report($e, $request);
+        $this->reportExceptionToLogger->report($exception, $request);
 
-        return $this->responseFactory->execute([
+        return $this->createJsonResponse->execute([
                                                    'error'   => 'Internal Server Error',
-                                                   'message' => $e->getMessage(),
+                                                   'message' => $exception->getMessage(),
         ], 500);
     }
 }

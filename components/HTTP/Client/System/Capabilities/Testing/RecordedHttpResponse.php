@@ -52,8 +52,8 @@ final readonly class RecordedHttpResponse
             urlPattern: $url,
             method    : '*',
             statusCode: 200,
-            body      : $body,
             headers   : $headers,
+            body      : $body,
         );
     }
 
@@ -74,8 +74,8 @@ final readonly class RecordedHttpResponse
             urlPattern: $url,
             method    : '*',
             statusCode: $status,
-            body      : json_encode($data, JSON_THROW_ON_ERROR),
             headers   : ['Content-Type' => 'application/json'],
+            body      : json_encode($data, JSON_THROW_ON_ERROR),
         );
     }
 
@@ -104,14 +104,14 @@ final readonly class RecordedHttpResponse
      * Create a response recording that throws an exception.
      *
      * @param string $url URL to match
-     * @param Throwable $exception Exception to throw
+     * @param Throwable $throwable Exception to throw
      */
-    public static function throws(string $url, Throwable $exception) : self
+    public static function throws(string $url, Throwable $throwable) : self
     {
         return new self(
             urlPattern: $url,
             method    : '*',
-            exception : $exception,
+            exception : $throwable,
         );
     }
 

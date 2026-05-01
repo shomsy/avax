@@ -9,9 +9,9 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
     /** @var array<string, FederationConnection> */
     private array $connections = [];
 
-    public function save(FederationConnection $connection): void
+    public function save(FederationConnection $federationConnection) : void
     {
-        $this->connections[$connection->connectionId] = $connection;
+        $this->connections[$federationConnection->connectionId] = $federationConnection;
     }
 
     public function find(string $connectionId): ?FederationConnection

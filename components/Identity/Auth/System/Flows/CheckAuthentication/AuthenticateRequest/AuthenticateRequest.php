@@ -12,6 +12,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\ResolvedToken;
 use DateTimeImmutable;
 use SensitiveParameter;
 
@@ -33,16 +34,16 @@ final readonly class AuthenticateRequest
         private ?JwtIdentityInterface $jwtIdentity = null,
     ) {}
 
-    public function execute(AuthenticationRequest $request): AuthenticationContext
+    public function execute(AuthenticationRequest $authenticationRequest) : AuthenticationContext
     {
-        [$sessionUser, $sessionId, $sessionMfaVerifiedAt, $sessionPhishingResistant] = $this->resolveSessionUser(request: $request);
-        $resolvedToken = $request->bearerToken !== null
-            ? $this->jwtIdentity?->resolve(token: $request->bearerToken)
+        [$sessionUser, $sessionId, $sessionMfaVerifiedAt, $sessionPhishingResistant] = $this->resolveSessionUser(request: $authenticationRequest);
+        $resolvedToken = $authenticationRequest->bearerToken !== null
+            ? $this->jwtIdentity?->resolve(token: $authenticationRequest->bearerToken)
             : null;
 
         if (
             $sessionUser !== null
-            && $resolvedToken !== null
+            && $resolvedToken instanceof ResolvedToken
             && $sessionUser->getId()->value !== $resolvedToken->user->getId()->value
         ) {
             $context = AuthenticationContext::guest(reason: 'credential_conflict');
@@ -51,8 +52,8 @@ final readonly class AuthenticateRequest
                 name      : 'auth.ingress.conflict',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'ip_address' => $request->ipAddress,
-                    'user_agent' => $request->userAgent,
+                                'ip_address' => $authenticationRequest->ipAddress,
+                                'user_agent' => $authenticationRequest->userAgent,
                 ],
             ));
 
@@ -61,16 +62,16 @@ final readonly class AuthenticateRequest
             return $context;
         }
 
-        if ($sessionUser !== null && $resolvedToken !== null) {
+        if ($sessionUser !== null && $resolvedToken instanceof ResolvedToken) {
             $context = AuthenticationContext::authenticated(
-                user                : $this->projectAuthenticatedUser->fromUser(user: $sessionUser),
-                mode                : AuthenticationMode::HYBRID,
                 sessionId           : $sessionId,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
                 refreshTokenFamilyId: $resolvedToken->familyId,
                 mfaVerifiedAt       : $this->latestMfaMoment(left: $sessionMfaVerifiedAt, right: $resolvedToken->mfaVerifiedAt),
                 phishingResistant   : $sessionPhishingResistant || $resolvedToken->phishingResistant,
+                user                : $this->projectAuthenticatedUser->fromUser(user: $sessionUser),
+                mode                : AuthenticationMode::HYBRID,
             );
 
             $this->currentAuthentication->store(context: $context);
@@ -80,11 +81,11 @@ final readonly class AuthenticateRequest
 
         if ($sessionUser !== null) {
             $context = AuthenticationContext::authenticated(
-                user             : $this->projectAuthenticatedUser->fromUser(user: $sessionUser),
-                mode             : AuthenticationMode::SESSION,
                 sessionId        : $sessionId,
                 mfaVerifiedAt    : $sessionMfaVerifiedAt,
                 phishingResistant: $sessionPhishingResistant,
+                user             : $this->projectAuthenticatedUser->fromUser(user: $sessionUser),
+                mode             : AuthenticationMode::SESSION,
             );
 
             $this->currentAuthentication->store(context: $context);
@@ -92,15 +93,15 @@ final readonly class AuthenticateRequest
             return $context;
         }
 
-        if ($resolvedToken !== null) {
+        if ($resolvedToken instanceof ResolvedToken) {
             $context = AuthenticationContext::authenticated(
-                user                : $this->projectAuthenticatedUser->fromUser(user: $resolvedToken->user),
-                mode                : AuthenticationMode::TOKEN,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
                 refreshTokenFamilyId: $resolvedToken->familyId,
                 mfaVerifiedAt       : $resolvedToken->mfaVerifiedAt,
                 phishingResistant   : $resolvedToken->phishingResistant,
+                user                : $this->projectAuthenticatedUser->fromUser(user: $resolvedToken->user),
+                mode                : AuthenticationMode::TOKEN,
             );
 
             $this->currentAuthentication->store(context: $context);
@@ -117,9 +118,9 @@ final readonly class AuthenticateRequest
     /**
      * @return array{0: User|null, 1: string|null, 2: DateTimeImmutable|null, 3: bool}
      */
-    private function resolveSessionUser(AuthenticationRequest $request): array
+    private function resolveSessionUser(AuthenticationRequest $authenticationRequest) : array
     {
-        if (! $request->allowSession || $this->sessionIdentity === null) {
+        if (! $authenticationRequest->allowSession || ! $this->sessionIdentity instanceof SessionIdentityInterface) {
             return [null, null, null, false];
         }
 
@@ -131,7 +132,7 @@ final readonly class AuthenticateRequest
 
         $user = $this->userSource->findById(id: new UserId(value: $userId));
 
-        if ($user === null || ! $user->isActive()) {
+        if (! $user instanceof User || ! $user->isActive()) {
             return [null, null, null, false];
         }
 
@@ -147,11 +148,11 @@ final readonly class AuthenticateRequest
         ?DateTimeImmutable $left,
         ?DateTimeImmutable $right,
     ): ?DateTimeImmutable {
-        if ($left === null) {
+        if (! $left instanceof DateTimeImmutable) {
             return $right;
         }
 
-        if ($right === null) {
+        if (! $right instanceof DateTimeImmutable) {
             return $left;
         }
 

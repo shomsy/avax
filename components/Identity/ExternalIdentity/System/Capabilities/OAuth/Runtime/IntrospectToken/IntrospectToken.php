@@ -8,14 +8,17 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClient;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\OAuthTokenExchangeFailed;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\ResolvedToken;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\ResolvedWorkloadToken;
 use SensitiveParameter;
 
 final readonly class IntrospectToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
+        private OAuthClientRegistryInterface $oAuthClientRegistry,
         #[SensitiveParameter]
         private JwtIdentityInterface $jwtIdentity,
         private AuditLogInterface $auditLog,
@@ -25,17 +28,17 @@ final readonly class IntrospectToken
     /**
      * @throws OAuthTokenExchangeFailed
      */
-    public function execute(IntrospectTokenData $data): TokenIntrospection
+    public function execute(IntrospectTokenData $introspectTokenData) : TokenIntrospection
     {
-        $client = $this->clientRegistry->find(clientId: $data->clientId);
+        $client = $this->oAuthClientRegistry->find(clientId: $introspectTokenData->clientId);
 
-        if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
+        if (! $client instanceof OAuthClient || ! $this->oAuthClientRegistry->verifySecret(clientId: $introspectTokenData->clientId, plainTextSecret: $introspectTokenData->clientSecret)) {
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
-        $resolved = $this->jwtIdentity->resolve(token: $data->token);
+        $resolved = $this->jwtIdentity->resolve(token: $introspectTokenData->token);
 
-        if ($resolved !== null && $resolved->clientId === $data->clientId) {
+        if ($resolved instanceof ResolvedToken && $resolved->clientId === $introspectTokenData->clientId) {
             $result = new TokenIntrospection(
                 active           : true,
                 clientId         : $resolved->clientId,
@@ -48,12 +51,12 @@ final readonly class IntrospectToken
             );
         } else {
             $workload = $this->jwtIdentity->resolveWorkloadToken(
-                token           : $data->token,
-                expectedAudience: $data->expectedAudience,
-                expectedIssuer  : $data->expectedIssuer,
+                token           : $introspectTokenData->token,
+                expectedAudience: $introspectTokenData->expectedAudience,
+                expectedIssuer  : $introspectTokenData->expectedIssuer,
             );
 
-            if ($workload === null || $workload->clientId !== $data->clientId) {
+            if (! $workload instanceof ResolvedWorkloadToken || $workload->clientId !== $introspectTokenData->clientId) {
                 $result = TokenIntrospection::inactive();
             } else {
                 $result = new TokenIntrospection(
@@ -74,7 +77,7 @@ final readonly class IntrospectToken
             name      : 'auth.oauth.token.introspected',
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $data->clientId,
+                            'client_id' => $introspectTokenData->clientId,
                 'active' => $result->active ? 1 : 0,
             ],
         ));

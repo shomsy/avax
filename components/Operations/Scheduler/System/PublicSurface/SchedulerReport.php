@@ -6,12 +6,11 @@ namespace Avax\Components\Operations\Scheduler\System\PublicSurface;
 
 final class SchedulerReport
 {
-    /** @var list<array{task: string, status: string, duration_ms: float}> */
-    public array $executed;
-
-    public function __construct(array $executed = [])
+    public function __construct(
+        /** @var list<array{task: string, status: string, duration_ms: float}> */
+        public array $executed = []
+    )
     {
-        $this->executed = $executed;
     }
 
     public function addExecuted(string $task, string $status, float $duration): void

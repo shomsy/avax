@@ -15,51 +15,51 @@ use Avax\Components\DataStack\Database\System\Capabilities\ORM\Repositories\Enti
 final readonly class Entities
 {
     public function __construct(
-        private EntitiesCapability $entities,
+        private EntitiesCapability $entitiesCapability,
     ) {}
 
     public function metadata(string $entityClass): EntityMetadata
     {
-        return $this->entities->metadata($entityClass);
+        return $this->entitiesCapability->metadata($entityClass);
     }
 
-    public function find(string $entityClass, mixed $id, string $connectionName = null) : ?object
+    public function find(string $entityClass, mixed $id, ?string $connectionName = null) : ?object
     {
-        return $this->entities->find($entityClass, $id, $connectionName);
+        return $this->entitiesCapability->find($entityClass, $id, $connectionName);
     }
 
     public function persist(object $entity): void
     {
-        $this->entities->persist($entity);
+        $this->entitiesCapability->persist($entity);
     }
 
     public function remove(object $entity): void
     {
-        $this->entities->remove($entity);
+        $this->entitiesCapability->remove($entity);
     }
 
-    public function flush(string $connectionName = null) : void
+    public function flush(?string $connectionName = null) : void
     {
-        $this->entities->flush($connectionName);
+        $this->entitiesCapability->flush($connectionName);
     }
 
     public function clear(): void
     {
-        $this->entities->clear();
+        $this->entitiesCapability->clear();
     }
 
-    public function refresh(object $entity, string $connectionName = null) : object
+    public function refresh(object $entity, ?string $connectionName = null) : object
     {
-        return $this->entities->refresh($entity, $connectionName);
+        return $this->entitiesCapability->refresh($entity, $connectionName);
     }
 
     public function repository(string $entityClass): EntityRepository
     {
-        return $this->entities->repository($entityClass);
+        return $this->entitiesCapability->repository($entityClass);
     }
 
-    public function transactional(callable $callback, string $connectionName = null) : mixed
+    public function transactional(callable $callback, ?string $connectionName = null) : mixed
     {
-        return $this->entities->transactional($callback, $connectionName);
+        return $this->entitiesCapability->transactional($callback, $connectionName);
     }
 }

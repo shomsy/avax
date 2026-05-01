@@ -17,33 +17,33 @@ final class MailMessage
         'attachments' => [],
     ];
 
-    public function from(string $address, string $name = null) : self
+    public function from(string $address, ?string $name = null) : self
     {
-        $formatted = $name !== null ? "{$name} <{$address}>" : $address;
+        $formatted = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
         $this->data['from'] = $formatted;
 
         return $this;
     }
 
-    public function to(string $address, string $name = null) : self
+    public function to(string $address, ?string $name = null) : self
     {
-        $formatted = $name !== null ? "{$name} <{$address}>" : $address;
+        $formatted = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
         $this->data['to'][] = $formatted;
 
         return $this;
     }
 
-    public function cc(string $address, string $name = null) : self
+    public function cc(string $address, ?string $name = null) : self
     {
-        $formatted = $name !== null ? "{$name} <{$address}>" : $address;
+        $formatted = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
         $this->data['cc'][] = $formatted;
 
         return $this;
     }
 
-    public function bcc(string $address, string $name = null) : self
+    public function bcc(string $address, ?string $name = null) : self
     {
-        $formatted = $name !== null ? "{$name} <{$address}>" : $address;
+        $formatted = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
         $this->data['bcc'][] = $formatted;
 
         return $this;
@@ -70,7 +70,7 @@ final class MailMessage
         return $this;
     }
 
-    public function attach(string $path, string $name = null) : self
+    public function attach(string $path, ?string $name = null) : self
     {
         $this->data['attachments'][] = ['path' => $path, 'name' => $name ?? basename($path)];
 

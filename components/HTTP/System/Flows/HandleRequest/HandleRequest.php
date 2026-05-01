@@ -9,11 +9,11 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\System\PublicSurface\HttpInterface;
 use Exception;
 
-final class HandleRequest
+final readonly class HandleRequest
 {
     public function __construct(
         private HttpInterface $http,
-        private CatchUnhandledExceptions $exceptionHandler,
+        private CatchUnhandledExceptions $catchUnhandledExceptions,
     ) {
     }
 
@@ -21,8 +21,8 @@ final class HandleRequest
     {
         try {
             return $this->http->handle($request);
-        } catch (Exception $e) {
-            return $this->exceptionHandler->handle($e, $request);
+        } catch (Exception $exception) {
+            return $this->catchUnhandledExceptions->handle($exception, $request);
         }
     }
 }

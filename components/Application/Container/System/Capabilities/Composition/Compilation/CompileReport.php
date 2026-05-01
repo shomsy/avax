@@ -14,72 +14,6 @@ final readonly class CompileReport implements JsonSerializable
 {
     public const int SCHEMA_VERSION = 2;
 
-    public ?ArtifactMetadata $metadata;
-
-    public array $pruning;
-
-    public array $statistics;
-
-    public array $invalidationReasons;
-
-    public array $compatibilityIssues;
-
-    public array $validationIssues;
-
-    public array $invalidatedServices;
-
-    public array $changedServices;
-
-    public array $entries;
-
-    public array $lifetimePlanSummary;
-
-    public int $providerBootPlanSize;
-
-    public int $decorationMapSize;
-
-    public int $aliasMapSize;
-
-    public int $tagIndexSize;
-
-    public int $lazyServicesCount;
-
-    public int $deferredServicesCount;
-
-    public int $invalidatedServicesCount;
-
-    public int $reusedServicesCount;
-
-    public int $compiledServicesCount;
-
-    public int $totalServices;
-
-    public bool $checksumValid;
-
-    public string $fingerprint;
-
-    public string $environment;
-
-    public string $pruneMode;
-
-    public string $executionMode;
-
-    public string $compileMode;
-
-    public string $cacheVersion;
-
-    public string $metadataPath;
-
-    public string $path;
-
-    public array $warnings;
-
-    public string $freshnessState;
-
-    public bool $compatible;
-
-    public bool $available;
-
     /**
      * @param list<string> $entries
      * @param list<string> $changedServices
@@ -88,74 +22,7 @@ final readonly class CompileReport implements JsonSerializable
      * @param list<string> $invalidationReasons
      * @param array<string, int> $statistics
      */
-    public function __construct(
-        bool $available,
-        bool $compatible,
-        string $freshnessState,
-        array $warnings,
-        string $path,
-        string $metadataPath,
-        string $cacheVersion,
-        string $compileMode,
-        string $executionMode,
-        string $pruneMode,
-        string $environment,
-        string $fingerprint,
-        bool $checksumValid,
-        int $totalServices,
-        int $compiledServicesCount,
-        int $reusedServicesCount,
-        int $invalidatedServicesCount,
-        int $deferredServicesCount,
-        int $lazyServicesCount,
-        int $tagIndexSize,
-        int $aliasMapSize,
-        int $decorationMapSize,
-        int $providerBootPlanSize,
-        array $lifetimePlanSummary,
-        array $entries,
-        array $changedServices,
-        array $invalidatedServices,
-        array $validationIssues,
-        array $compatibilityIssues,
-        array $invalidationReasons,
-        array $statistics,
-        array $pruning,
-        ArtifactMetadata $metadata = null,
-    ) {
-        $this->available                = $available;
-        $this->compatible               = $compatible;
-        $this->freshnessState           = $freshnessState;
-        $this->warnings                 = $warnings;
-        $this->path                     = $path;
-        $this->metadataPath             = $metadataPath;
-        $this->cacheVersion             = $cacheVersion;
-        $this->compileMode              = $compileMode;
-        $this->executionMode            = $executionMode;
-        $this->pruneMode                = $pruneMode;
-        $this->environment              = $environment;
-        $this->fingerprint              = $fingerprint;
-        $this->checksumValid            = $checksumValid;
-        $this->totalServices            = $totalServices;
-        $this->compiledServicesCount    = $compiledServicesCount;
-        $this->reusedServicesCount      = $reusedServicesCount;
-        $this->invalidatedServicesCount = $invalidatedServicesCount;
-        $this->deferredServicesCount    = $deferredServicesCount;
-        $this->lazyServicesCount        = $lazyServicesCount;
-        $this->tagIndexSize             = $tagIndexSize;
-        $this->aliasMapSize             = $aliasMapSize;
-        $this->decorationMapSize        = $decorationMapSize;
-        $this->providerBootPlanSize     = $providerBootPlanSize;
-        $this->lifetimePlanSummary      = $lifetimePlanSummary;
-        $this->entries                  = $entries;
-        $this->changedServices          = $changedServices;
-        $this->invalidatedServices      = $invalidatedServices;
-        $this->validationIssues         = $validationIssues;
-        $this->compatibilityIssues      = $compatibilityIssues;
-        $this->invalidationReasons      = $invalidationReasons;
-        $this->statistics               = $statistics;
-        $this->pruning                  = $pruning;
-        $this->metadata                 = $metadata;
+    public function __construct(public bool $available, public bool $compatible, public string $freshnessState, public array $warnings, public string $path, public string $metadataPath, public string $cacheVersion, public string $compileMode, public string $executionMode, public string $pruneMode, public string $environment, public string $fingerprint, public bool $checksumValid, public int $totalServices, public int $compiledServicesCount, public int $reusedServicesCount, public int $invalidatedServicesCount, public int $deferredServicesCount, public int $lazyServicesCount, public int $tagIndexSize, public int $aliasMapSize, public int $decorationMapSize, public int $providerBootPlanSize, public array $lifetimePlanSummary, public array $entries, public array $changedServices, public array $invalidatedServices, public array $validationIssues, public array $compatibilityIssues, public array $invalidationReasons, public array $statistics, public array $pruning, public ?ArtifactMetadata $metadata = null) {
     }
 
     public function jsonSerialize(): array
@@ -210,7 +77,7 @@ final readonly class CompileReport implements JsonSerializable
     public function toJson(): string
     {
         try {
-            return (string) json_encode(value: $this, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            return json_encode(value: $this, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return '{}';
         }

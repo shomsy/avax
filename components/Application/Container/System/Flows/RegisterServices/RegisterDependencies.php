@@ -16,13 +16,8 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Resolve
  */
 final readonly class RegisterDependencies implements DependencyRegistryContract
 {
-    private ResolveDependency $resolver;
-
-    public function __construct(
-        ResolveDependency $resolver,
-    )
+    public function __construct(private ResolveDependency $resolveDependency)
     {
-        $this->resolver = $resolver;
     }
 
     public function alias(string $alias, string $abstract) : void
@@ -32,7 +27,7 @@ final readonly class RegisterDependencies implements DependencyRegistryContract
 
     private function registrations() : DependencyRegistry
     {
-        return $this->resolver->registrations();
+        return $this->resolveDependency->registrations();
     }
 
     public function bind(string $abstract, mixed $concrete = null) : DependencyRegistration
@@ -80,6 +75,6 @@ final readonly class RegisterDependencies implements DependencyRegistryContract
 
     public function instance(string $abstract, object $instance) : void
     {
-        $this->resolver->instance(abstract: $abstract, instance: $instance);
+        $this->resolveDependency->instance(abstract: $abstract, instance: $instance);
     }
 }

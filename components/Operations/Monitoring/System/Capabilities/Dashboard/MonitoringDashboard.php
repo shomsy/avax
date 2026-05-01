@@ -10,15 +10,15 @@ use Avax\Components\Operations\Monitoring\System\Capabilities\Metrics\MetricsReg
 final readonly class MonitoringDashboard
 {
     public function __construct(
-        private MetricsRegistry $metrics,
-        private HealthReport $health,
+        private MetricsRegistry $metricsRegistry,
+        private HealthReport    $healthReport,
     ) {}
 
     public function data(): array
     {
         return [
-            'health'  => $this->health->toArray(),
-            'metrics' => $this->metrics->snapshot(),
+            'health'  => $this->healthReport->toArray(),
+            'metrics' => $this->metricsRegistry->snapshot(),
             'generated_at' => date(format: DATE_ATOM),
         ];
     }

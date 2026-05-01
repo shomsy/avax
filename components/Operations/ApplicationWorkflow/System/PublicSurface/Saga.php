@@ -25,51 +25,42 @@ use Throwable;
  */
 final class Saga
 {
-    private string $name;
-
     /**
      * @var array<SagaStep>
      */
-    private array $steps;
+    private array $steps = [];
 
-    private string $id;
+    private readonly string $id;
 
-    private SagaState $status;
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $context;
+    private SagaState $sagaState = SagaState::Running;
 
     /**
      * @var array<string, mixed>
      */
-    private array $stepResults;
+    private array $context = [];
+
+    /**
+     * @var array<string, mixed>
+     */
+    private array $stepResults = [];
 
     /**
      * @var array<int, string>
      */
-    private array $completedSteps;
+    private array $completedSteps = [];
 
-    private ?string $failureReason;
+    private ?string $failureReason = null;
 
-    private SagaStoreInterface $store;
+    private SagaStoreInterface $sagaStore;
 
     private StepRunner $stepRunner;
 
     private CompensationExecutor $compensationExecutor;
 
-    private function __construct(string $name)
+    private function __construct(private readonly string $name)
     {
-        $this->name                 = $name;
         $this->id                   = $this->generateId();
-        $this->status               = SagaState::Running;
-        $this->steps                = [];
-        $this->context              = [];
-        $this->stepResults          = [];
-        $this->completedSteps       = [];
-        $this->failureReason        = null;
-        $this->store                = new InMemorySagaStore();
+        $this->sagaStore = new InMemorySagaStore();
         $this->stepRunner           = new StepRunner();
         $this->compensationExecutor = new CompensationExecutor();
     }
@@ -98,14 +89,9 @@ final class Saga
     /**
      * Create a saga from an existing store (for resuming).
      */
-    public static function fromStore(SagaStoreInterface $store, string $sagaId): ?self
+    public static function fromStore(SagaStoreInterface $sagaStore, string $sagaId) : ?self
     {
-        $saga = $store->findById($sagaId);
-        if ($saga === null) {
-            return null;
-        }
-
-        return $saga;
+        return $sagaStore->findById($sagaId);
     }
 
     /**
@@ -115,7 +101,7 @@ final class Saga
      * @param Closure      $action       The action to execute
      * @param Closure|null $compensation The compensation to run on failure
      */
-    public function step(string $name, Closure $action, Closure $compensation = null) : self
+    public function step(string $name, Closure $action, ?Closure $compensation = null) : self
     {
         $this->steps[] = new SagaStep(
             name        : $name,
@@ -131,9 +117,9 @@ final class Saga
      */
     public function fail(string $reason): SagaResult
     {
-        $this->status = SagaState::Failed;
+        $this->sagaState = SagaState::Failed;
         $this->failureReason = $reason;
-        $this->store->save($this);
+        $this->sagaStore->save($this);
 
         return new SagaResult(
             success       : false,
@@ -150,30 +136,30 @@ final class Saga
      */
     public function compensate(): SagaResult
     {
-        $this->status = SagaState::Compensating;
+        $this->sagaState = SagaState::Compensating;
 
-        $result = $this->compensationExecutor->execute(
+        $compensationResult = $this->compensationExecutor->execute(
             steps         : $this->steps,
             completedSteps: $this->completedSteps,
             context       : $this->context,
         );
 
-        if ($result->success) {
-            $this->status = SagaState::Compensated;
+        if ($compensationResult->success) {
+            $this->sagaState = SagaState::Compensated;
         } else {
-            $this->status = SagaState::Failed;
-            $this->failureReason = $result->failureReason;
+            $this->sagaState     = SagaState::Failed;
+            $this->failureReason = $compensationResult->failureReason;
         }
 
-        $this->store->save($this);
+        $this->sagaStore->save($this);
 
         return new SagaResult(
-            success       : $result->success,
+            success       : $compensationResult->success,
             sagaId        : $this->id,
             data          : $this->context,
             completedSteps: $this->completedSteps,
             stepResults   : $this->stepResults,
-            failureReason : $result->failureReason,
+            failureReason : $compensationResult->failureReason,
         );
     }
 
@@ -193,9 +179,9 @@ final class Saga
                 $idempotencyKey = IdempotencyKey::generate($this->id, $step->name, (string) $index);
 
                 $result = $this->stepRunner->execute(
-                    step          : $step,
                     context       : $this->context,
                     idempotencyKey: $idempotencyKey,
+                    step          : $step,
                 );
 
                 $this->stepResults[$step->name] = $result;
@@ -207,8 +193,8 @@ final class Saga
                 }
             }
 
-            $this->status = SagaState::Completed;
-            $this->store->save($this);
+            $this->sagaState = SagaState::Completed;
+            $this->sagaStore->save($this);
 
             return new SagaResult(
                 success       : true,
@@ -217,18 +203,18 @@ final class Saga
                 completedSteps: $this->completedSteps,
                 stepResults   : $this->stepResults,
             );
-        } catch (Throwable $e) {
-            return $this->handleFailure($e);
+        } catch (Throwable $throwable) {
+            return $this->handleFailure($throwable);
         }
     }
 
     /**
      * Handle a failure during saga execution.
      */
-    private function handleFailure(Throwable $e): SagaResult
+    private function handleFailure(Throwable $throwable) : SagaResult
     {
-        $this->status = SagaState::Failed;
-        $this->failureReason = $e->getMessage();
+        $this->sagaState     = SagaState::Failed;
+        $this->failureReason = $throwable->getMessage();
 
         // Run compensation for completed steps in reverse order
         $compensationResult = $this->compensationExecutor->execute(
@@ -238,10 +224,10 @@ final class Saga
         );
 
         if ($compensationResult->success) {
-            $this->status = SagaState::Compensated;
+            $this->sagaState = SagaState::Compensated;
         }
 
-        $this->store->save($this);
+        $this->sagaStore->save($this);
 
         return new SagaResult(
             success       : false,
@@ -249,7 +235,7 @@ final class Saga
             data          : $this->context,
             completedSteps: $this->completedSteps,
             stepResults   : $this->stepResults,
-            failureReason : $e->getMessage(),
+            failureReason : $throwable->getMessage(),
         );
     }
 
@@ -266,15 +252,15 @@ final class Saga
      */
     public function getStatus(): SagaState
     {
-        return $this->status;
+        return $this->sagaState;
     }
 
     /**
      * Set the saga status (used by store).
      */
-    public function setStatus(SagaState $status): void
+    public function setStatus(SagaState $sagaState) : void
     {
-        $this->status = $status;
+        $this->sagaState = $sagaState;
     }
 
     /**
@@ -336,9 +322,9 @@ final class Saga
     /**
      * Set the store for this saga.
      */
-    public function withStore(SagaStoreInterface $store): self
+    public function withStore(SagaStoreInterface $sagaStore) : self
     {
-        $this->store                = $store;
+        $this->sagaStore = $sagaStore;
         $this->stepRunner           = new StepRunner();
         $this->compensationExecutor = new CompensationExecutor();
 

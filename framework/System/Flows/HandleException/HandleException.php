@@ -10,52 +10,52 @@ use Throwable;
 
 final class HandleException
 {
-    public function handle(Throwable $e): RuntimeResponse
+    public function handle(Throwable $throwable) : RuntimeResponse
     {
-        $classification = $this->classifyFrameworkFailure($e);
+        $classification = $this->classifyFrameworkFailure($throwable);
 
         return match ($classification) {
-            'http'    => $this->renderHttpFailure($e),
-            'console' => $this->renderConsoleFailure($e),
-            default   => $this->reportFrameworkFailure($e),
+            'http'    => $this->renderHttpFailure($throwable),
+            'console' => $this->renderConsoleFailure($throwable),
+            default   => $this->reportFrameworkFailure($throwable),
         };
     }
 
-    private function classifyFrameworkFailure(Throwable $e): string
+    private function classifyFrameworkFailure(Throwable $throwable) : string
     {
-        if ($e instanceof BadMethodCallException) {
+        if ($throwable instanceof BadMethodCallException) {
             return 'http';
         }
 
         return 'console';
     }
 
-    private function renderHttpFailure(Throwable $e): RuntimeResponse
+    private function renderHttpFailure(Throwable $throwable) : RuntimeResponse
     {
         return new RuntimeResponse(
             statusCode: 500,
             headers: ['Content-Type' => 'text/plain'],
-            body: $e->getMessage(),
+            body      : $throwable->getMessage(),
         );
     }
 
-    private function renderConsoleFailure(Throwable $e): RuntimeResponse
+    private function renderConsoleFailure(Throwable $throwable) : RuntimeResponse
     {
         return new RuntimeResponse(
             statusCode: 0,
             headers: [],
-            body: $e->getMessage(),
+            body      : $throwable->getMessage(),
         );
     }
 
-    private function reportFrameworkFailure(Throwable $e): RuntimeResponse
+    private function reportFrameworkFailure(Throwable $throwable) : RuntimeResponse
     {
-        error_log($e->getMessage());
+        error_log($throwable->getMessage());
 
         return new RuntimeResponse(
             statusCode: 1,
             headers: [],
-            body: $e->getMessage(),
+            body      : $throwable->getMessage(),
         );
     }
 }

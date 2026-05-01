@@ -13,17 +13,17 @@ final class QueueWorker
     private bool $shouldStop = false;
 
     public function __construct(
-        private QueueDriverInterface $driver,
-        private int $sleep = 3,
-        private int $maxTries = 3,
+        private readonly QueueDriverInterface $queueDriver,
+        private readonly int                  $sleep = 3,
+        private readonly int                  $maxTries = 3,
     ) {}
 
     public function daemon(string $queue = 'default'): void
     {
         while (! $this->shouldStop) {
-            $job = $this->driver->pop($queue);
+            $job = $this->queueDriver->pop($queue);
 
-            if ($job !== null) {
+            if ($job instanceof Job) {
                 $this->process($job);
             } else {
                 sleep($this->sleep);
@@ -43,7 +43,7 @@ final class QueueWorker
                 $instance->handle();
                 $job->delete();
             }
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             if ($job->attempts() >= $this->maxTries) {
                 $job->delete();
             } else {

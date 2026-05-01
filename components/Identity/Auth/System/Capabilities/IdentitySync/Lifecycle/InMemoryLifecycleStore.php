@@ -11,9 +11,9 @@ final class InMemoryLifecycleStore implements LifecycleStoreInterface
     /** @var array<int, LifecycleRecord> */
     private array $records = [];
 
-    public function save(LifecycleRecord $record): void
+    public function save(LifecycleRecord $lifecycleRecord) : void
     {
-        $this->records[$record->userId] = $record;
+        $this->records[$lifecycleRecord->userId] = $lifecycleRecord;
     }
 
     public function find(UserId $userId): ?LifecycleRecord

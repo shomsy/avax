@@ -19,35 +19,35 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
 
     public function __construct(private readonly Redis $redis, private readonly int $ttlSeconds = 86400) {}
 
-    public function save(SessionRecord $record): void
+    public function save(SessionRecord $sessionRecord) : void
     {
-        $this->track(record: $record);
+        $this->track(record: $sessionRecord);
     }
 
-    public function track(SessionRecord $record): void
+    public function track(SessionRecord $sessionRecord) : void
     {
-        $key = self::KEY_PREFIX . $record->sessionId;
+        $key = self::KEY_PREFIX . $sessionRecord->sessionId;
 
         $this->redis->hMset(
             key      : $key,
             fieldvals: [
-                           'session_id'         => $record->sessionId,
-                           'user_id'            => $record->userId->value,
-                           'created_at'         => $record->createdAt->format(format: DateTimeInterface::ATOM),
-                           'last_seen_at'       => $record->lastSeenAt->format(format: DateTimeInterface::ATOM),
-                           'idle_expires_at'    => $record->idleExpiresAt->format(format: DateTimeInterface::ATOM),
-                'absolute_expires_at' => $record->absoluteExpiresAt->format(format: DateTimeInterface::ATOM),
-                           'ip_created'         => $record->ipCreated ?? '',
-                           'user_agent_created' => $record->userAgentCreated ?? '',
-                           'revoked_at'         => $record->revokedAt?->format(format: DateTimeInterface::ATOM) ?? '',
-                           'revoke_reason'      => $record->revokeReason ?? '',
+                           'session_id'          => $sessionRecord->sessionId,
+                           'user_id'             => $sessionRecord->userId->value,
+                           'created_at'          => $sessionRecord->createdAt->format(format: DateTimeInterface::ATOM),
+                           'last_seen_at'        => $sessionRecord->lastSeenAt->format(format: DateTimeInterface::ATOM),
+                           'idle_expires_at'     => $sessionRecord->idleExpiresAt->format(format: DateTimeInterface::ATOM),
+                           'absolute_expires_at' => $sessionRecord->absoluteExpiresAt->format(format: DateTimeInterface::ATOM),
+                           'ip_created'          => $sessionRecord->ipCreated ?? '',
+                           'user_agent_created'  => $sessionRecord->userAgentCreated ?? '',
+                           'revoked_at'          => $sessionRecord->revokedAt?->format(format: DateTimeInterface::ATOM) ?? '',
+                           'revoke_reason'       => $sessionRecord->revokeReason ?? '',
             ],
         );
 
         $this->redis->expire(key: $key, timeout: $this->ttlSeconds);
 
-        $userKey = self::USER_KEY_PREFIX . $record->userId->value;
-        $this->redis->sAdd(key: $userKey, value: $record->sessionId);
+        $userKey = self::USER_KEY_PREFIX . $sessionRecord->userId->value;
+        $this->redis->sAdd(key: $userKey, value: $sessionRecord->sessionId);
     }
 
     public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason): void
@@ -75,7 +75,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
 
             $record = $this->find(sessionId: $sessionId);
 
-            if ($record !== null) {
+            if ($record instanceof SessionRecord) {
                 $records[] = $record;
             }
         }
@@ -145,12 +145,12 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
     {
         $removed = 0;
 
-        foreach ($this->redis->keys(pattern: self::KEY_PREFIX . '*') as $key) {
-            if ($key === '') {
+        foreach ($this->redis->keys(pattern: self::KEY_PREFIX . '*') as $redi) {
+            if ($redi === '') {
                 continue;
             }
 
-            $data = $this->redis->hGetAll(key: $key);
+            $data = $this->redis->hGetAll(key: $redi);
 
             if ($data === []) {
                 continue;
@@ -162,7 +162,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
                 continue;
             }
 
-            $this->redis->del(key: $key);
+            $this->redis->del(key: $redi);
 
             $userId = $data['user_id'] ?? null;
             $sessionId = $data['session_id'] ?? null;

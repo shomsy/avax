@@ -39,6 +39,6 @@ final readonly class RouteInfo
 
     public function fingerprint() : string
     {
-        return "{$this->method}:{$this->pattern}";
+        return sprintf('%s:%s', $this->method, $this->pattern);
     }
 }

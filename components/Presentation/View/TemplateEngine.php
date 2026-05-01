@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Avax\Components\Presentation\View;
 
 use Avax\Components\Application\Container\Core\Exceptions\FoundationContainerException;
+use Avax\Components\HTTP\Context\System\PublicSurface\HttpContextInterface;
 use eftec\bladeone\BladeOne;
 use Override;
 use Psr\Container\ContainerExceptionInterface;
@@ -80,7 +81,7 @@ class TemplateEngine extends BladeOne
     public function getBaseUrl(): string
     {
         $context = function_exists(function: 'http_context') ? http_context() : null;
-        if ($context !== null) {
+        if ($context instanceof HttpContextInterface) {
             return $context->baseUrl();
         }
 
@@ -114,7 +115,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'datetime',
-            handler: static fn ($expression): string => sprintf(
+            handler: static fn (string $expression) : string => sprintf(
                 "<?php echo (new DateTime(%s))->format('Y-m-d H:i:s'); ?>",
                 $expression,
             ),
@@ -131,7 +132,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'ifenv',
-            handler: static fn ($expression): string => sprintf(
+            handler: static fn (string $expression) : string => sprintf(
                 "<?php if (config('cashback.env') === %s): ?>",
                 $expression,
             ),
@@ -152,7 +153,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'markdown',
-            handler: static fn ($expression): string => sprintf(
+            handler: static fn (string $expression) : string => sprintf(
                 '<?php echo (new Parsedown())->text(%s); ?>',
                 $expression,
             ),
@@ -169,7 +170,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'route',
-            handler: static fn ($expression): string => sprintf('<?php echo route(%s); ?>', $expression),
+            handler: static fn (string $expression) : string => sprintf('<?php echo route(%s); ?>', $expression),
         );
     }
 
@@ -196,11 +197,11 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'dump',
-            handler: static fn ($expression): string => sprintf('<?php var_dump(%s); ?>', $expression),
+            handler: static fn (string $expression) : string => sprintf('<?php var_dump(%s); ?>', $expression),
         );
         $this->directive(
             name   : 'dd',
-            handler: static fn ($expression): string => sprintf('<?php die(var_dump(%s)); ?>', $expression),
+            handler: static fn (string $expression) : string => sprintf('<?php die(var_dump(%s)); ?>', $expression),
         );
     }
 
@@ -251,7 +252,7 @@ class TemplateEngine extends BladeOne
         $this->directive(
             name   : 'method',
             handler: static fn (
-                $expression,
+                string $expression,
             ): string => sprintf(
                 "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . %s . '\">'; ?>",
                 $expression,
@@ -268,7 +269,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'checked',
-            handler: static fn ($expression): string => sprintf("<?php echo %s ? 'checked' : ''; ?>", $expression),
+            handler: static fn (string $expression) : string => sprintf("<?php echo %s ? 'checked' : ''; ?>", $expression),
         );
     }
 
@@ -281,7 +282,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'selected',
-            handler: static fn ($expression): string => sprintf("<?php echo %s ? 'selected' : ''; ?>", $expression),
+            handler: static fn (string $expression) : string => sprintf("<?php echo %s ? 'selected' : ''; ?>", $expression),
         );
     }
 }

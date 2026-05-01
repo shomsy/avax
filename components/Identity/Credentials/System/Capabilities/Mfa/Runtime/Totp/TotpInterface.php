@@ -19,6 +19,6 @@ interface TotpInterface
         string $secret,
         string $code,
         DateTimeImmutable $moment,
-        int $lastAcceptedTimeStep = null,
+        ?int $lastAcceptedTimeStep = null,
     ): TotpVerification;
 }

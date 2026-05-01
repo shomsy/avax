@@ -19,7 +19,7 @@ final readonly class HealthReport
         return [
             'status' => $this->status,
             'checks' => array_map(
-                callback: static fn (HealthCheckResult $result): array => $result->toArray(),
+                callback: static fn (HealthCheckResult $healthCheckResult) : array => $healthCheckResult->toArray(),
                 array   : $this->checks,
             ),
         ];

@@ -71,12 +71,6 @@ final class StagePipeline
 
     public function hasHooks(string $stage) : bool
     {
-        foreach ($this->hooks as $hook) {
-            if ($hook->name === $stage) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->hooks, fn ($hook) : bool => $hook->name === $stage);
     }
 }

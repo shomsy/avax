@@ -7,16 +7,16 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 interface FederationRuntimeInterface
 {
     public function startLogin(
-        FederationConnection $connection,
+        FederationConnection $federationConnection,
         string $redirectUri,
-        string $state = null,
+        ?string              $state = null,
     ): StartedFederatedLogin;
 
     /**
      * @param array<string, mixed> $payload
      */
     public function completeLogin(
-        FederationConnection $connection,
+        FederationConnection $federationConnection,
         array $payload,
     ): FederatedIdentity;
 }

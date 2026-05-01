@@ -12,12 +12,12 @@ final class LogTransport implements MailTransport
     /** @var list<array<string, string>> */
     private array $messages = [];
 
-    public function send(MimeMessage $message, Envelope $envelope): TransportResult
+    public function send(MimeMessage $mimeMessage, Envelope $envelope) : TransportResult
     {
         $this->messages[] = [
             'from' => $envelope->from,
-            'to'   => $message->to,
-            'subject' => $message->subject,
+            'to'      => $mimeMessage->to,
+            'subject' => $mimeMessage->subject,
         ];
 
         return new TransportResult(

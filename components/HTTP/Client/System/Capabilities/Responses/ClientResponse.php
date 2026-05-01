@@ -92,7 +92,7 @@ final readonly class ClientResponse
             502     => 'Bad Gateway',
             503     => 'Service Unavailable',
             504     => 'Gateway Timeout',
-            default => "Status {$statusCode}",
+            default => 'Status ' . $statusCode,
         };
     }
 
@@ -117,7 +117,11 @@ final readonly class ClientResponse
      */
     public function hasError(): bool
     {
-        return $this->isClientError() || $this->isServerError();
+        if ($this->isClientError()) {
+            return true;
+        }
+
+        return $this->isServerError();
     }
 
     /**
@@ -195,11 +199,11 @@ final readonly class ClientResponse
      *
      * @param string|null $format Force a specific format ('json', 'xml', 'text')
      */
-    public function decoded(string $format = null): mixed
+    public function decoded(?string $format = null) : mixed
     {
-        $decoder = new ResponseDecoder();
+        $responseDecoder = new ResponseDecoder();
 
-        return $decoder->decode($this, $format);
+        return $responseDecoder->decode($this, $format);
     }
 
     /**

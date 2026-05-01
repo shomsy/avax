@@ -12,9 +12,9 @@ final class AfterResponseQueue
     /** @var list<AfterResponseTask> */
     private array $tasks = [];
 
-    public function enqueue(AfterResponseTask $task): void
+    public function enqueue(AfterResponseTask $afterResponseTask) : void
     {
-        $this->tasks[] = $task;
+        $this->tasks[] = $afterResponseTask;
     }
 
     public function execute(): void
@@ -30,7 +30,7 @@ final class AfterResponseQueue
 
     public function isEmpty(): bool
     {
-        return empty($this->tasks);
+        return $this->tasks === [];
     }
 
     public function count(): int
@@ -41,11 +41,8 @@ final class AfterResponseQueue
 
 final readonly class AfterResponseTask
 {
-    private Closure $task;
-
-    public function __construct(Closure $task)
+    public function __construct(private Closure $task)
     {
-        $this->task = $task;
     }
 
     public function execute(): void

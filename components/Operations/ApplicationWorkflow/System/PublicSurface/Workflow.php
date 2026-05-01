@@ -16,35 +16,35 @@ use Throwable;
  *
  * Provides high-level operations for starting, resuming, and canceling sagas.
  */
-final class Workflow
+final readonly class Workflow
 {
-    private SagaStoreInterface $store;
+    private SagaStoreInterface $sagaStore;
 
-    public function __construct(SagaStoreInterface $store = null)
+    public function __construct(?SagaStoreInterface $sagaStore = null)
     {
-        $this->store = $store ?? new InMemorySagaStore();
+        $this->sagaStore = $sagaStore ?? new InMemorySagaStore();
     }
 
     /**
      * Run a saga definition (legacy compatibility method).
      */
-    public function runSaga(SagaDefinition $definition): void
+    public function runSaga(SagaDefinition $sagaDefinition) : void
     {
         $completed = [];
 
         try {
-            foreach ($definition->getSteps() as $step) {
+            foreach ($sagaDefinition->getSteps() as $step) {
                 ($step->action)();
                 $completed[] = $step;
             }
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             foreach (array_reverse($completed) as $step) {
                 if ($step->compensation) {
                     ($step->compensation)();
                 }
             }
 
-            throw $e;
+            throw $throwable;
         }
     }
 
@@ -58,10 +58,10 @@ final class Workflow
      */
     public function start(string $sagaName, mixed $context = []): SagaResult
     {
-        $saga = Saga::define($sagaName)->withStore($this->store);
+        $saga = Saga::define($sagaName)->withStore($this->sagaStore);
 
         // Store the saga so it can be resumed later
-        $this->store->save($saga);
+        $this->sagaStore->save($saga);
 
         return $saga->execute($context);
     }
@@ -77,19 +77,19 @@ final class Workflow
      */
     public function resume(string $sagaId): SagaResult
     {
-        $saga = $this->store->findById($sagaId);
+        $saga = $this->sagaStore->findById($sagaId);
 
-        if ($saga === null) {
+        if (! $saga instanceof Saga) {
             throw new RuntimeException(
                 sprintf('Saga with ID "%s" not found', $sagaId),
             );
         }
 
         // Only running or failed sagas can be resumed
-        $status = $saga->getStatus();
-        if ($status !== SagaState::Running && $status !== SagaState::Failed) {
+        $sagaState = $saga->getStatus();
+        if ($sagaState !== SagaState::Running && $sagaState !== SagaState::Failed) {
             throw new RuntimeException(
-                sprintf('Cannot resume saga in "%s" state', $status->value),
+                sprintf('Cannot resume saga in "%s" state', $sagaState->value),
             );
         }
 
@@ -108,9 +108,9 @@ final class Workflow
      */
     public function cancel(string $sagaId): SagaResult
     {
-        $saga = $this->store->findById($sagaId);
+        $saga = $this->sagaStore->findById($sagaId);
 
-        if ($saga === null) {
+        if (! $saga instanceof Saga) {
             throw new RuntimeException(
                 sprintf('Saga with ID "%s" not found', $sagaId),
             );
@@ -124,6 +124,6 @@ final class Workflow
      */
     public function store(): SagaStoreInterface
     {
-        return $this->store;
+        return $this->sagaStore;
     }
 }

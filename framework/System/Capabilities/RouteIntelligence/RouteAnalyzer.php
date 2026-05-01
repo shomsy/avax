@@ -39,9 +39,9 @@ final class RouteAnalyzer
         }
 
         if (is_array($handler) && count($handler) === 2) {
-            $class = is_object($handler[0]) ? get_class($handler[0]) : $handler[0];
+            $class = is_object($handler[0]) ? $handler[0]::class : $handler[0];
 
-            return "{$class}::{$handler[1]}";
+            return sprintf('%s::%s', $class, $handler[1]);
         }
 
         if (is_callable($handler)) {
@@ -80,7 +80,7 @@ final class RouteAnalyzer
 
                 $conflict = $this->checkConflict($routeA, $routeB);
 
-                if ($conflict !== null) {
+                if ($conflict instanceof RouteConflict) {
                     $conflicts[] = $conflict;
                 }
             }
@@ -205,25 +205,25 @@ final class RouteAnalyzer
     {
         $unreachable = [];
 
-        foreach ($this->routes as $early) {
+        foreach ($this->routes as $route) {
             foreach ($this->routes as $late) {
-                if ($early->fingerprint() === $late->fingerprint()) {
+                if ($route->fingerprint() === $late->fingerprint()) {
                     continue;
                 }
 
-                if ($early->method !== $late->method) {
+                if ($route->method !== $late->method) {
                     continue;
                 }
 
-                if ($this->isShadowed($early, $late)) {
+                if ($this->isShadowed($route, $late)) {
                     $unreachable[] = new RouteConflict(
                         type  : RouteConflict::CONFLICT_SHADOW,
-                        routeA: $early,
+                        routeA: $route,
                         routeB: $late,
                         reason: sprintf(
                                     "Route '%s %s' shadows '%s %s'",
-                                    $early->method,
-                                    $early->pattern,
+                                    $route->method,
+                                    $route->pattern,
                                     $late->method,
                                     $late->pattern,
                                 ),
@@ -240,7 +240,7 @@ final class RouteAnalyzer
         $specificParams = $specific->parameters();
         $generalParams = $general->parameters();
 
-        if (count($specificParams) === 0 && count($generalParams) > 0) {
+        if ($specificParams === [] && $generalParams !== []) {
             $patternParts1 = explode('/', $specific->pattern);
             $patternParts2 = explode('/', $general->pattern);
 

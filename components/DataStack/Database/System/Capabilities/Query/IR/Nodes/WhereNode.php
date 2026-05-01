@@ -6,14 +6,14 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class WhereNode
+final readonly class WhereNode
 {
     public function __construct(
-        public readonly string $column,
-        public readonly ComparisonOperator $operator,
-        public readonly mixed $value,
-        public readonly string $boolean = 'AND',
-        public readonly ?string $connector = null,
+        public string             $column,
+        public ComparisonOperator $operator,
+        public mixed              $value,
+        public string             $boolean = 'AND',
+        public ?string            $connector = null,
     ) {}
 
     public function getSql(GrammarInterface $grammar): string
@@ -23,20 +23,20 @@ final class WhereNode
         $boolean = strtoupper(string: $this->boolean);
 
         if ($this->operator === ComparisonOperator::IS_NULL || $this->operator === ComparisonOperator::IS_NOT_NULL) {
-            return "{$boolean} {$column} {$operator}";
+            return sprintf('%s %s %s', $boolean, $column, $operator);
         }
 
         if ($this->operator === ComparisonOperator::IN || $this->operator === ComparisonOperator::NOT_IN) {
             $values = is_array(value: $this->value) ? $this->value : [$this->value];
             $placeholders = implode(separator: ', ', array: array_fill(start_index: 0, count: count(value: $values), value: '?'));
 
-            return "{$boolean} {$column} {$operator} ({$placeholders})";
+            return sprintf('%s %s %s (%s)', $boolean, $column, $operator, $placeholders);
         }
 
         if ($this->operator === ComparisonOperator::BETWEEN) {
-            return "{$boolean} {$column} BETWEEN ? AND ?";
+            return sprintf('%s %s BETWEEN ? AND ?', $boolean, $column);
         }
 
-        return "{$boolean} {$column} {$operator} ?";
+        return sprintf('%s %s %s ?', $boolean, $column, $operator);
     }
 }

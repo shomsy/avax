@@ -13,9 +13,9 @@ use Closure;
 
 final class Realtime
 {
-    private static ?ConnectionPool $pool = null;
+    private static ?ConnectionPool $connectionPool = null;
 
-    private static ?ChannelManager $channels = null;
+    private static ?ChannelManager $channelManager = null;
 
     public static function connect(Closure $sender) : Connection
     {
@@ -27,11 +27,11 @@ final class Realtime
 
     private static function pool() : ConnectionPool
     {
-        if (self::$pool === null) {
-            self::$pool = new ConnectionPool();
+        if (! self::$connectionPool instanceof ConnectionPool) {
+            self::$connectionPool = new ConnectionPool();
         }
 
-        return self::$pool;
+        return self::$connectionPool;
     }
 
     public static function channel(string $name) : Channel
@@ -41,11 +41,11 @@ final class Realtime
 
     private static function channels() : ChannelManager
     {
-        if (self::$channels === null) {
-            self::$channels = new ChannelManager();
+        if (! self::$channelManager instanceof ChannelManager) {
+            self::$channelManager = new ChannelManager();
         }
 
-        return self::$channels;
+        return self::$channelManager;
     }
 
     public static function broadcast(string $channel, mixed $message) : int

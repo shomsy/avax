@@ -6,8 +6,10 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\TenantSec
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnection;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\TenantSecurity\TenantSecurityFailed;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityChangeRequest;
@@ -20,68 +22,68 @@ use Random\RandomException;
 
 final readonly class BeginTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private ?FederationConnectionStoreInterface $federationConnectionStore, private ?ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private ?FederationConnectionStoreInterface $federationConnectionStore, private ?ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws TenantSecurityFailed
      * @throws RandomException
      */
-    public function execute(BeginTenantSecurityChangeData $data): TenantSecurityChangeRequest
+    public function execute(BeginTenantSecurityChangeData $beginTenantSecurityChangeData) : TenantSecurityChangeRequest
     {
-        $this->assertKnownReferences(after: $data->after);
+        $this->assertKnownReferences(after: $beginTenantSecurityChangeData->after);
 
-        $before = $this->configurationStore->find(tenantSlug: $data->tenantSlug);
-        $after = new TenantSecurityConfiguration(
-            tenantSlug            : $data->tenantSlug,
-            federationConnectionId: $data->after->federationConnectionId,
-            scimDirectoryId       : $data->after->scimDirectoryId,
-            verifiedDomains       : $data->after->verifiedDomains,
-            groupRoleMap          : $data->after->groupRoleMap,
-            policyProfile         : $data->after->policyProfile,
-            rolloutVersion        : $before !== null ? $before->rolloutVersion + 1 : $data->after->rolloutVersion,
+        $before                      = $this->tenantSecurityConfigurationStore->find(tenantSlug: $beginTenantSecurityChangeData->tenantSlug);
+        $tenantSecurityConfiguration = new TenantSecurityConfiguration(
+            tenantSlug            : $beginTenantSecurityChangeData->tenantSlug,
+            federationConnectionId: $beginTenantSecurityChangeData->after->federationConnectionId,
+            scimDirectoryId       : $beginTenantSecurityChangeData->after->scimDirectoryId,
+            verifiedDomains       : $beginTenantSecurityChangeData->after->verifiedDomains,
+            groupRoleMap          : $beginTenantSecurityChangeData->after->groupRoleMap,
+            policyProfile         : $beginTenantSecurityChangeData->after->policyProfile,
+            rolloutVersion        : $before instanceof TenantSecurityConfiguration ? $before->rolloutVersion + 1 : $beginTenantSecurityChangeData->after->rolloutVersion,
         );
-        $changeRequest = new TenantSecurityChangeRequest(
+        $tenantSecurityChangeRequest = new TenantSecurityChangeRequest(
             changeId   : 'tenant_change_' . bin2hex(string: random_bytes(length: 12)),
-            tenantSlug : $data->tenantSlug,
-            requestedBy: trim(string: $data->requestedBy),
-            reason     : trim(string: $data->reason),
+            tenantSlug : $beginTenantSecurityChangeData->tenantSlug,
+            requestedBy: trim(string: $beginTenantSecurityChangeData->requestedBy),
+            reason     : trim(string: $beginTenantSecurityChangeData->reason),
             before     : $before,
-            after      : $after,
-            diff       : $this->diff(before: $before, after: $after),
+            after      : $tenantSecurityConfiguration,
+            diff       : $this->diff(before: $before, after: $tenantSecurityConfiguration),
             status     : TenantSecurityChangeRequestStatus::PENDING_APPROVAL,
             requestedAt: $this->clock->now(),
         );
 
-        $this->changeRequestStore->save(changeRequest: $changeRequest);
+        $this->tenantSecurityChangeRequestStore->save(changeRequest: $tenantSecurityChangeRequest);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.tenant_security.change.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                            'change_id' => $changeRequest->changeId,
-                            'tenant'    => $changeRequest->tenantSlug,
-                'requested_by' => $changeRequest->requestedBy,
-                            'diff'      => $this->encodeDiff(value: $changeRequest->diff),
+                            'change_id'    => $tenantSecurityChangeRequest->changeId,
+                            'tenant'       => $tenantSecurityChangeRequest->tenantSlug,
+                            'requested_by' => $tenantSecurityChangeRequest->requestedBy,
+                            'diff'         => $this->encodeDiff(value: $tenantSecurityChangeRequest->diff),
             ],
         ));
 
-        return $changeRequest;
+        return $tenantSecurityChangeRequest;
     }
 
     /**
      * @throws TenantSecurityFailed
      */
-    private function assertKnownReferences(TenantSecurityConfiguration $after): void
+    private function assertKnownReferences(TenantSecurityConfiguration $tenantSecurityConfiguration) : void
     {
         if (
-            $after->federationConnectionId !== null
-            && $this->federationConnectionStore?->find(connectionId: $after->federationConnectionId) === null
+            $tenantSecurityConfiguration->federationConnectionId !== null
+            && ! $this->federationConnectionStore?->find(connectionId: $tenantSecurityConfiguration->federationConnectionId) instanceof FederationConnection
         ) {
             throw TenantSecurityFailed::unknownFederationConnection();
         }
 
         if (
-            $after->scimDirectoryId !== null
-            && $this->scimDirectoryStore?->find(directoryId: $after->scimDirectoryId) === null
+            $tenantSecurityConfiguration->scimDirectoryId !== null
+            && ! $this->scimDirectoryStore?->find(directoryId: $tenantSecurityConfiguration->scimDirectoryId) instanceof ScimDirectory
         ) {
             throw TenantSecurityFailed::unknownScimDirectory();
         }
@@ -114,19 +116,19 @@ final readonly class BeginTenantSecurityChange
     /**
      * @return array<string, string>
      */
-    private function snapshot(?TenantSecurityConfiguration $configuration): array
+    private function snapshot(?TenantSecurityConfiguration $tenantSecurityConfiguration) : array
     {
-        if ($configuration === null) {
+        if (! $tenantSecurityConfiguration instanceof TenantSecurityConfiguration) {
             return [];
         }
 
         return [
-            'federation_connection_id' => (string) $configuration->federationConnectionId,
-            'scim_directory_id' => (string) $configuration->scimDirectoryId,
-            'verified_domains'  => implode(separator: ',', array: $configuration->verifiedDomains),
-            'group_role_map'    => $this->encodeDiff(value: $configuration->groupRoleMap),
-            'policy_profile'    => $configuration->policyProfile,
-            'rollout_version'   => (string) $configuration->rolloutVersion,
+            'federation_connection_id' => (string) $tenantSecurityConfiguration->federationConnectionId,
+            'scim_directory_id'        => (string) $tenantSecurityConfiguration->scimDirectoryId,
+            'verified_domains'         => implode(separator: ',', array: $tenantSecurityConfiguration->verifiedDomains),
+            'group_role_map'           => $this->encodeDiff(value: $tenantSecurityConfiguration->groupRoleMap),
+            'policy_profile'           => $tenantSecurityConfiguration->policyProfile,
+            'rollout_version'          => (string) $tenantSecurityConfiguration->rolloutVersion,
         ];
     }
 

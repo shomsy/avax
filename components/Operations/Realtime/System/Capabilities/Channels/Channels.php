@@ -30,7 +30,7 @@ final class Channels
     {
         $connectionId = $connection instanceof Connection ? $connection->id : $connection;
 
-        foreach ($this->channels as $channel => $connections) {
+        foreach (array_keys($this->channels) as $channel) {
             unset($this->channels[$channel][$connectionId]);
         }
     }

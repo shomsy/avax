@@ -8,7 +8,7 @@ final class QueryNode
 {
     private array $select = [];
 
-    private ?FromNode $from = null;
+    private ?FromNode $fromNode = null;
 
     private array $joins = [];
 
@@ -33,23 +33,23 @@ final class QueryNode
         return $this;
     }
 
-    public function from(string $table, string $alias = null) : self
+    public function from(string $table, ?string $alias = null) : self
     {
-        $this->from = new FromNode(table: $table, alias: $alias);
+        $this->fromNode = new FromNode(table: $table, alias: $alias);
 
         return $this;
     }
 
-    public function join(JoinNode $join): self
+    public function join(JoinNode $joinNode) : self
     {
-        $this->joins[] = $join;
+        $this->joins[] = $joinNode;
 
         return $this;
     }
 
-    public function where(WhereNode $where): self
+    public function where(WhereNode $whereNode) : self
     {
-        $this->wheres[] = $where;
+        $this->wheres[] = $whereNode;
 
         return $this;
     }
@@ -89,9 +89,9 @@ final class QueryNode
         return $this;
     }
 
-    public function withCTE(CTENode $cte): self
+    public function withCTE(CTENode $cteNode) : self
     {
-        $this->ctes[] = $cte;
+        $this->ctes[] = $cteNode;
 
         return $this;
     }
@@ -103,7 +103,7 @@ final class QueryNode
 
     public function getFrom(): ?FromNode
     {
-        return $this->from;
+        return $this->fromNode;
     }
 
     public function getJoins(): array

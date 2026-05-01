@@ -12,16 +12,16 @@ use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry a
 final readonly class Telemetry
 {
     public function __construct(
-        private TelemetryCapability $telemetry,
+        private TelemetryCapability $telemetryCapability,
     ) {}
 
     public function profile(callable $callback, string $label = 'database_operation'): mixed
     {
-        return $this->telemetry->profile($callback, $label);
+        return $this->telemetryCapability->profile($callback, $label);
     }
 
     public function history(): array
     {
-        return $this->telemetry->history();
+        return $this->telemetryCapability->history();
     }
 }

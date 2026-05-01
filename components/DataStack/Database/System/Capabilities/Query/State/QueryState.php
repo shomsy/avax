@@ -22,10 +22,6 @@ final readonly class QueryState
 
     public array $values;
 
-    public ?int $offset;
-
-    public ?int $limit;
-
     public array $orders;
 
     public array $havings;
@@ -36,15 +32,11 @@ final readonly class QueryState
 
     public array $joins;
 
-    public ?string $from;
-
     public array $columns;
 
     public array $ctes;
 
     public array $windows;
-
-    private BindingBag $bindings;
 
     /**
      * @param string[]                         $columns       The list of technical column identifiers or expressions
@@ -73,25 +65,25 @@ final readonly class QueryState
      *                                                        projected.
      * @param array                            $ctes          Common Table Expressions (WITH clauses).
      * @param array                            $windows       Window Function definitions (OVER clauses).
-     * @param BindingBag                       $bindings      The immutable container for secure, parameterized query
+     * @param BindingBag $bindingBag                          The immutable container for secure, parameterized query
      *                                                        tokens.
      */
     public function __construct(
-        array      $columns = null,
-        string     $from = null,
-        array      $joins = null,
-        array      $wheres = null,
-        array      $groups = null,
-        array      $havings = null,
-        array      $orders = null,
-        int        $limit = null,
-        int        $offset = null,
-        array      $values = null,
-        array      $updateColumns = null,
-        bool       $distinct = null,
-        array      $ctes = null,
-        array      $windows = null,
-        BindingBag $bindings = new BindingBag(),
+        ?array             $columns = null,
+        public ?string     $from = null,
+        ?array             $joins = null,
+        ?array             $wheres = null,
+        ?array             $groups = null,
+        ?array             $havings = null,
+        ?array             $orders = null,
+        public ?int        $limit = null,
+        public ?int        $offset = null,
+        ?array             $values = null,
+        ?array             $updateColumns = null,
+        ?bool              $distinct = null,
+        ?array             $ctes = null,
+        ?array             $windows = null,
+        private BindingBag $bindingBag = new BindingBag(),
     ) {
         $columns        ??= ['*'];
         $joins          ??= [];
@@ -103,20 +95,16 @@ final readonly class QueryState
         $updateColumns ??= [];
         $distinct       ??= false;
         $this->columns  = $columns;
-        $this->from     = $from;
         $this->joins    = $joins;
         $this->wheres   = $wheres;
         $this->groups   = $groups;
         $this->havings  = $havings;
         $this->orders   = $orders;
-        $this->limit    = $limit;
-        $this->offset   = $offset;
         $this->values   = $values;
         $this->updateColumns = $updateColumns;
         $this->distinct = $distinct;
         $this->ctes     = $ctes ?? [];
         $this->windows  = $windows ?? [];
-        $this->bindings = $bindings;
     }
 
     /**
@@ -234,14 +222,14 @@ final readonly class QueryState
      * Appends a new structural node defining a relationship with another
      * data source to the existing joins collection.
      *
-     * @param JoinNode $join The structural node abstraction defining the join relationship.
+     * @param JoinNode $joinNode The structural node abstraction defining the join relationship.
      *
      * @return self A fresh QueryState instance with the added relationship.
      */
-    public function addJoin(JoinNode $join): self
+    public function addJoin(JoinNode $joinNode) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'joins' => [...$this->joins, $join]],
+            ...[...get_object_vars(object: $this), 'joins' => [...$this->joins, $joinNode]],
         );
     }
 
@@ -318,21 +306,21 @@ final readonly class QueryState
      * Appends a sorting abstraction to the collection, defining the final
      * chronological or alphabetic sequence of the retrieved data.
      *
-     * @param OrderNode $order The structural abstraction defining the sorting logic.
+     * @param OrderNode $orderNode The structural abstraction defining the sorting logic.
      *
      * @return self A fresh QueryState instance with the applied sorting.
      */
-    public function addOrder(OrderNode $order): self
+    public function addOrder(OrderNode $orderNode) : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'orders' => [...$this->orders, $order]],
+            ...[...get_object_vars(object: $this), 'orders' => [...$this->orders, $orderNode]],
         );
     }
 
     public function withCte(string $name, mixed $query, bool $recursive = false): self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'ctes' => [...$this->ctes, compact('name', 'query', 'recursive')]],
+            ...[...get_object_vars(object: $this), 'ctes' => [...$this->ctes, ['name' => $name, 'query' => $query, 'recursive' => $recursive]]],
         );
     }
 
@@ -351,7 +339,7 @@ final readonly class QueryState
     public function addBinding(mixed $value): self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => $this->bindings->with(value: $value)],
+            ...[...get_object_vars(object: $this), 'bindings' => $this->bindingBag->with(value: $value)],
         );
     }
 
@@ -369,7 +357,7 @@ final readonly class QueryState
     public function mergeBindings(array $values): self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => $this->bindings->merge(parameters: $values)],
+            ...[...get_object_vars(object: $this), 'bindings' => $this->bindingBag->merge(parameters: $values)],
         );
     }
 
@@ -396,6 +384,6 @@ final readonly class QueryState
      */
     public function getBindings(): array
     {
-        return $this->bindings->all();
+        return $this->bindingBag->all();
     }
 }

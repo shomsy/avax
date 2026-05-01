@@ -20,7 +20,7 @@ use SensitiveParameter;
 final readonly class DeprovisionUser
 {
     public function __construct(
-        private ProvisionableUserSourceInterface $userSource,
+        private ProvisionableUserSourceInterface $provisionableUserSource,
         private RequireAdminElevation $requireAdminElevation,
         private AuditLogInterface $auditLog,
         private Clock $clock,
@@ -29,19 +29,20 @@ final readonly class DeprovisionUser
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         private ?AdminElevationStoreInterface $adminElevationStore = null,
-        private ?LifecycleOrchestrator $lifecycle = null,
+        private ?LifecycleOrchestrator           $lifecycleOrchestrator = null,
     ) {}
 
     public function execute(int $userId): void
     {
         $this->requireAdminElevation->execute();
         $id = new UserId(value: $userId);
-        $this->lifecycle?->deprovision(userId: $id, source: LifecycleSource::ADMIN, reason: 'admin_deprovisioned');
-        if ($this->lifecycle === null) {
-            $this->userSource->replaceRoles(id: $id, roles: []);
-            $this->userSource->replacePermissions(id: $id, permissions: []);
-            $this->userSource->deactivate(id: $id);
+        $this->lifecycleOrchestrator?->deprovision(userId: $id, source: LifecycleSource::ADMIN, reason: 'admin_deprovisioned');
+        if (! $this->lifecycleOrchestrator instanceof LifecycleOrchestrator) {
+            $this->provisionableUserSource->replaceRoles(roles: [], id: $id);
+            $this->provisionableUserSource->replacePermissions(permissions: [], id: $id);
+            $this->provisionableUserSource->deactivate(id: $id);
         }
+
         $this->sessionRegistry?->revokeForUser(userId: $id, revokedAt: $this->clock->now(), reason: 'deprovisioned');
         $this->refreshTokenStore?->revokeUser(userId: $id);
         $this->adminElevationStore?->revokeUser(userId: $userId);

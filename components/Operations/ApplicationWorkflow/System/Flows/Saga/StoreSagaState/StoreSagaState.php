@@ -19,27 +19,21 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
 
     private array $data;
 
-    private ?string $currentStep;
-
     private int $currentStepIndex;
 
-    private array $stepResults;
-
     public function __construct(
-        array  $events = null,
-        array  $data = null,
-        string $currentStep = null,
-        int    $currentStepIndex = null,
-        array $stepResults = [],
+        ?array          $events = null,
+        ?array          $data = null,
+        private ?string $currentStep = null,
+        ?int            $currentStepIndex = null,
+        private array   $stepResults = [],
     ) {
         $events            ??= [];
         $data              ??= [];
         $currentStepIndex ??= 0;
         $this->events      = $events;
         $this->data        = $data;
-        $this->currentStep = $currentStep;
         $this->currentStepIndex = $currentStepIndex;
-        $this->stepResults = $stepResults;
     }
 
     public static function empty(array $initialData = []): self
@@ -50,25 +44,25 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
         );
     }
 
-    public static function fromInstance(SagaInstance $instance): self
+    public static function fromInstance(SagaInstance $sagaInstance) : self
     {
         return new self(
             events          : [],
-            data            : $instance->data,
-            currentStep     : $instance->currentStepName,
-            currentStepIndex: $instance->currentStepIndex,
-            stepResults     : $instance->stepResults,
+            data            : $sagaInstance->data,
+            currentStep     : $sagaInstance->currentStepName,
+            currentStepIndex: $sagaInstance->currentStepIndex,
+            stepResults     : $sagaInstance->stepResults,
         );
     }
 
-    public function appendEvent(SagaEvent $event): self
+    public function appendEvent(SagaEvent $sagaEvent) : self
     {
         $events = $this->events;
-        $events[] = $event;
+        $events[] = $sagaEvent;
 
         $data = $this->data;
-        if ($event->type === 'step_completed' && isset($event->payload['data'])) {
-            $data = array_merge($data, $event->payload['data']);
+        if ($sagaEvent->type === 'step_completed' && isset($sagaEvent->payload['data'])) {
+            $data = array_merge($data, $sagaEvent->payload['data']);
         }
 
         return new self(
@@ -145,37 +139,19 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
 
 final readonly class SagaEvent
 {
-    public string $id;
-
-    public string $type;
-
-    public string $sagaId;
-
-    public string $sagaName;
-
-    public ?string $stepName;
-
     public array $payload;
 
-    public DateTimeImmutable $occurredAt;
-
     private function __construct(
-        string $id,
-        string $type,
-        string $sagaId,
-        string $sagaName,
-        ?string $stepName,
+        public string            $id,
+        public string            $type,
+        public string            $sagaId,
+        public string            $sagaName,
+        public ?string           $stepName,
         ?array $payload,
-        DateTimeImmutable $occurredAt,
+        public DateTimeImmutable $occurredAt,
     ) {
         $payload ??= [];
-        $this->id = $id;
-        $this->type = $type;
-        $this->sagaId = $sagaId;
-        $this->sagaName = $sagaName;
-        $this->stepName = $stepName;
         $this->payload = $payload;
-        $this->occurredAt = $occurredAt;
     }
 
     public static function started(
@@ -190,8 +166,8 @@ final readonly class SagaEvent
         string $sagaId,
         string $sagaName,
         string $type,
-        array  $payload = null,
-        string $stepName = null,
+        ?array  $payload = null,
+        ?string $stepName = null,
     ): self {
         $payload ??= [];
 
@@ -263,11 +239,8 @@ final readonly class SagaEvent
 
 final readonly class StoreSagaState
 {
-    private array $stores;
-
-    public function __construct(array $stores = [])
+    public function __construct(private array $stores = [])
     {
-        $this->stores = $stores;
     }
 
     public static function inMemory(): self
@@ -275,10 +248,10 @@ final readonly class StoreSagaState
         return new self(stores: ['default' => []]);
     }
 
-    public function save(SagaInstance $instance): void
+    public function save(SagaInstance $sagaInstance) : void
     {
         $store                = $this->getStore(name: 'default');
-        $store[$instance->id] = $instance;
+        $store[$sagaInstance->id] = $sagaInstance;
         $this->stores['default'] = $store;
     }
 
@@ -294,22 +267,23 @@ final readonly class StoreSagaState
         return $store[$id] ?? null;
     }
 
-    public function appendEvent(string $sagaId, SagaEvent $event): void
+    public function appendEvent(string $sagaId, SagaEvent $sagaEvent) : void
     {
-        $key = "events_{$sagaId}";
+        $key = 'events_' . $sagaId;
         $store = $this->getStore(name: $key);
 
         if (! isset($store['events'])) {
             $store['events'] = [];
         }
-        $store['events'][] = $event;
+
+        $store['events'][] = $sagaEvent;
 
         $this->stores[$key] = $store;
     }
 
     public function getEvents(string $sagaId): array
     {
-        $key = "events_{$sagaId}";
+        $key = 'events_' . $sagaId;
         $store = $this->getStore(name: $key);
 
         return $store['events'] ?? [];

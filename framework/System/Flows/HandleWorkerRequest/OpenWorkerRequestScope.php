@@ -6,10 +6,10 @@ namespace Avax\Framework\System\Flows\HandleWorkerRequest;
 
 use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
 
-final class OpenWorkerRequestScope
+final readonly class OpenWorkerRequestScope
 {
     public function __construct(
-        private readonly RequestScope $requestScope,
+        private RequestScope $requestScope,
     ) {}
 
     public function open() : void

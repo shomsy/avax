@@ -20,14 +20,14 @@ final class Diagnostics
         return self::$traceId ??= TraceId::generate();
     }
 
-    public static function setCorrelationId(CorrelationId $id): void
+    public static function setCorrelationId(CorrelationId $correlationId) : void
     {
-        self::$correlationId = $id;
+        self::$correlationId = $correlationId;
     }
 
-    public static function setTraceId(TraceId $id): void
+    public static function setTraceId(TraceId $traceId) : void
     {
-        self::$traceId = $id;
+        self::$traceId = $traceId;
     }
 
     public static function clear(): void

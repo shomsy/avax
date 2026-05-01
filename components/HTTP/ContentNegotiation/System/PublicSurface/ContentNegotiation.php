@@ -127,14 +127,14 @@ final class CsvFormatter implements ContentFormatter
         $output = fopen('php://temp', 'r+');
 
         if (isset($data[0]) && is_array($data[0])) {
-            fputcsv($output, array_keys($data[0]));
+            fputcsv($output, array_keys($data[0]), escape: '\\');
 
             foreach ($data as $row) {
-                fputcsv($output, $row);
+                fputcsv($output, $row, escape: '\\');
             }
         } else {
-            fputcsv($output, array_keys($data));
-            fputcsv($output, array_values($data));
+            fputcsv($output, array_keys($data), escape: '\\');
+            fputcsv($output, array_values($data), escape: '\\');
         }
 
         rewind($output);

@@ -11,7 +11,7 @@ use Avax\Components\HTTP\Client\System\Capabilities\Http\CurlClient;
 final readonly class HttpClient
 {
     public function __construct(
-        private CurlClient $client = new CurlClient(),
+        private CurlClient $curlClient = new CurlClient(),
     ) {
     }
 
@@ -30,8 +30,8 @@ final readonly class HttpClient
         return $this->send(new ClientRequest('POST', $url, $headers, $body, $options));
     }
 
-    public function send(ClientRequest $request): ClientResponse
+    public function send(ClientRequest $clientRequest) : ClientResponse
     {
-        return $this->client->send($request);
+        return $this->curlClient->send($clientRequest);
     }
 }

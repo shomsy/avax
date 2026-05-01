@@ -10,7 +10,7 @@ use stdClass;
 
 final readonly class ConvertDataObjectToStdClass
 {
-    public function __construct(private ?DataTransferConfig $config = null) {}
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
 
     /**
      * @throws JsonException
@@ -18,7 +18,7 @@ final readonly class ConvertDataObjectToStdClass
     public function convert(object $object): stdClass
     {
         return json_decode(
-            json       : new ConvertDataObjectToJson(config: $this->config)->convert(object: $object),
+            json       : new ConvertDataObjectToJson(config: $this->dataTransferConfig)->convert(object: $object),
             associative: false,
             depth      : 512,
             flags      : JSON_THROW_ON_ERROR,

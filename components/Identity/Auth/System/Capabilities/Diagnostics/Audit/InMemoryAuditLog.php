@@ -12,9 +12,9 @@ final class InMemoryAuditLog implements DrainAuditLogInterface
     /** @var list<AuditEvent> */
     private array $events = [];
 
-    public function record(AuditEvent $event): void
+    public function record(AuditEvent $auditEvent) : void
     {
-        $this->events[] = $event;
+        $this->events[] = $auditEvent;
     }
 
     /**

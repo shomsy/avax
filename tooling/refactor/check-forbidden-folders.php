@@ -26,7 +26,7 @@ final class CheckForbiddenFolders
         $this->checkNoForbiddenFoldersAtRoot();
 
         return [
-            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'status' => $this->errors === [] ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
         ];
     }
@@ -35,10 +35,10 @@ final class CheckForbiddenFolders
     {
         $basePath = dirname(__DIR__, 2);
 
-        foreach ($this->forbiddenFolders as $folder) {
-            $path = $basePath . '/' . $folder;
+        foreach ($this->forbiddenFolders as $forbiddenFolder) {
+            $path = $basePath . '/' . $forbiddenFolder;
             if (is_dir($path)) {
-                $this->errors[] = "Forbidden folder at repo root: {$folder}/";
+                $this->errors[] = sprintf('Forbidden folder at repo root: %s/', $forbiddenFolder);
             }
         }
     }

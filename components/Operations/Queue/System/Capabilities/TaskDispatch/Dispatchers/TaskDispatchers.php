@@ -33,22 +33,19 @@ final class AsyncDispatcher
     private function enqueue(object $task): void
     {
         $class = $task::class;
-        echo "Queued task: {$class}\n";
+        echo sprintf('Queued task: %s%s', $class, PHP_EOL);
     }
 }
 
-final class DeferredDispatcher
+final readonly class DeferredDispatcher
 {
-    private DateInterval $delay;
-
-    public function __construct(DateInterval $delay)
+    public function __construct(private DateInterval $dateInterval)
     {
-        $this->delay = $delay;
     }
 
     public function dispatch(object $task): void
     {
-        $ms = (int) (($this->delay->i * 60 + $this->delay->s) * 1000);
+        $ms = (int) (($this->dateInterval->i * 60 + $this->dateInterval->s) * 1000);
 
         if ($ms === 0) {
             $this->executeNow($task);
@@ -64,7 +61,7 @@ final class DeferredDispatcher
 
     private function executeNow(object $task): void
     {
-        (new SyncDispatcher())->dispatch($task);
+        new SyncDispatcher()->dispatch($task);
     }
 
     private function executeLater(object $task, int $delayMs): void

@@ -28,7 +28,7 @@ final readonly class ChainCacheStore implements CacheStore
     public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         foreach ($this->stores as $store) {
-            $result = $store->read(key: $cacheKey, clock: $clock);
+            $result = $store->read(clock: $clock, key: $cacheKey);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 $this->propagateToLowerTiers(key: $cacheKey, record: $result->record);
@@ -66,13 +66,7 @@ final readonly class ChainCacheStore implements CacheStore
     #[Override]
     public function exists(CacheKey $cacheKey): bool
     {
-        foreach ($this->stores as $store) {
-            if ($store->exists(key: $cacheKey)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->stores, fn ($store) => $store->exists(key: $cacheKey));
     }
 
     #[Override]

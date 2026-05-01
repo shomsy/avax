@@ -9,25 +9,25 @@ namespace Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\Authent
  */
 final class CurrentAuthentication
 {
-    private AuthenticationContext $context;
+    private AuthenticationContext $authenticationContext;
 
     public function __construct()
     {
-        $this->context = AuthenticationContext::guest();
+        $this->authenticationContext = AuthenticationContext::guest();
     }
 
-    public function store(AuthenticationContext $context): void
+    public function store(AuthenticationContext $authenticationContext) : void
     {
-        $this->context = $context;
+        $this->authenticationContext = $authenticationContext;
     }
 
     public function read(): AuthenticationContext
     {
-        return $this->context;
+        return $this->authenticationContext;
     }
 
     public function clear(): void
     {
-        $this->context = AuthenticationContext::guest();
+        $this->authenticationContext = AuthenticationContext::guest();
     }
 }

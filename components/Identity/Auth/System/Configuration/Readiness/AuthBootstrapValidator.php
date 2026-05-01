@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Auth\System\Configuration\Readiness;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
@@ -20,7 +22,7 @@ final readonly class AuthBootstrapValidator
     public static function validate(
         ?UserSourceInterface $userSource,
         ?IdentityInterface $identity,
-        AuthCapabilityRequests $requests,
+        AuthCapabilityRequests $authCapabilityRequests,
         #[SensitiveParameter]
         ?SessionRegistryInterface $sessionRegistry,
         #[SensitiveParameter]
@@ -30,26 +32,26 @@ final readonly class AuthBootstrapValidator
         ?OidcProviderInterface $oidcProvider,
         string $buildPath = 'AuthBuilder::ready()',
     ): void {
-        if ($userSource === null) {
+        if (! $userSource instanceof UserSourceInterface) {
             throw ConfigurationException::missingUserSource(buildPath: $buildPath);
         }
 
-        if ($identity === null) {
+        if (! $identity instanceof IdentityInterface) {
             throw ConfigurationException::missingIdentity(buildPath: $buildPath);
         }
 
-        if ($identity->sessionIdentity() === null && $identity->jwtIdentity() === null) {
+        if (! $identity->sessionIdentity() instanceof SessionIdentityInterface && ! $identity->jwtIdentity() instanceof JwtIdentityInterface) {
             throw ConfigurationException::missingIdentityBackend(
                 buildPath: $buildPath,
                 hint     : 'Use withIdentity() or withIdentityBackends() to provide a session and/or JWT backend.',
             );
         }
 
-        if ($requests->enterpriseMode() && $sessionRegistry === null) {
+        if ($authCapabilityRequests->enterpriseMode() && ! $sessionRegistry instanceof SessionRegistryInterface) {
             throw ConfigurationException::enterpriseSessionRegistryRequired(buildPath: $buildPath);
         }
 
-        if ($requests->passkey() && $passkeyRuntime === null) {
+        if ($authCapabilityRequests->passkey() && ! $passkeyRuntime instanceof PasskeyRuntimeInterface) {
             throw ConfigurationException::missingCapabilityDependency(
                 capability : 'passkey',
                 requirement: 'runtime',
@@ -59,7 +61,7 @@ final readonly class AuthBootstrapValidator
             );
         }
 
-        if ($requests->oidcRequestObjects() && $oidcProvider === null) {
+        if ($authCapabilityRequests->oidcRequestObjects() && ! $oidcProvider instanceof OidcProviderInterface) {
             throw ConfigurationException::missingCapabilityDependency(
                 capability : 'oidc',
                 requirement: 'provider',
@@ -69,7 +71,7 @@ final readonly class AuthBootstrapValidator
             );
         }
 
-        if ($requests->oauth() && $identity->jwtIdentity() === null) {
+        if ($authCapabilityRequests->oauth() && ! $identity->jwtIdentity() instanceof JwtIdentityInterface) {
             throw ConfigurationException::missingCapabilityDependency(
                 capability : 'oauth',
                 requirement: 'jwt_identity',
@@ -79,7 +81,7 @@ final readonly class AuthBootstrapValidator
             );
         }
 
-        if ($requests->oauth() && $refreshTokenStore === null) {
+        if ($authCapabilityRequests->oauth() && ! $refreshTokenStore instanceof RefreshTokenStoreInterface) {
             throw ConfigurationException::missingCapabilityDependency(
                 capability : 'oauth',
                 requirement: 'refresh_token_store',
@@ -89,7 +91,7 @@ final readonly class AuthBootstrapValidator
             );
         }
 
-        if ($requests->federation() && $federationRuntime === null) {
+        if ($authCapabilityRequests->federation() && ! $federationRuntime instanceof FederationRuntimeInterface) {
             throw ConfigurationException::missingCapabilityDependency(
                 capability : 'federation',
                 requirement: 'runtime',
@@ -99,7 +101,7 @@ final readonly class AuthBootstrapValidator
             );
         }
 
-        if ($requests->scim() && ! $userSource instanceof ProvisionableUserSourceInterface) {
+        if ($authCapabilityRequests->scim() && ! $userSource instanceof ProvisionableUserSourceInterface) {
             throw ConfigurationException::missingCapabilityDependency(
                 capability : 'scim',
                 requirement: 'provisionable_user_source',

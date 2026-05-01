@@ -203,13 +203,7 @@ final class Str
     {
         $needles = is_array($needles) ? $needles : [$needles];
 
-        foreach ($needles as $needle) {
-            if (str_starts_with($haystack, (string) $needle)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($needles, fn ($needle) : bool => str_starts_with($haystack, (string) $needle));
     }
 
     /**
@@ -219,13 +213,7 @@ final class Str
     {
         $needles = is_array($needles) ? $needles : [$needles];
 
-        foreach ($needles as $needle) {
-            if (str_ends_with($haystack, (string) $needle)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($needles, fn ($needle) : bool => str_ends_with($haystack, (string) $needle));
     }
 
     /**

@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Builder;
 
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAdvancedMutations;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAdvancedQueries;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAggregates;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasConditions;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasControlStructures;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasGroups;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasJoins;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasOrders;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\Macroable;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\InvalidCriteriaException;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
@@ -23,16 +33,16 @@ use Throwable;
  */
 class QueryBuilder
 {
-    use Concerns\HasAdvancedMutations;
-    use Concerns\HasAdvancedQueries;
-    use Concerns\HasAggregates;
-    use Concerns\HasConditions;
-    use Concerns\HasControlStructures;
-    use Concerns\HasGroups;
-    use Concerns\HasJoins;
-    use Concerns\HasOrders;
-    use Concerns\HasSoftDeletes;
-    use Concerns\Macroable;
+    use HasAdvancedMutations;
+    use HasAdvancedQueries;
+    use HasAggregates;
+    use HasConditions;
+    use HasControlStructures;
+    use HasGroups;
+    use HasJoins;
+    use HasOrders;
+    use HasSoftDeletes;
+    use Macroable;
 
     /** @var QueryState The internal "memory" of all the blocks (table, filters, columns) we've added so far. */
     public QueryState $state {
@@ -40,10 +50,6 @@ class QueryBuilder
             return $this->state;
         }
     }
-
-    protected QueryOrchestrator $orchestrator;
-
-    protected readonly GrammarInterface $grammar;
 
     /**
      * Set up the builder with its two "helpers".
@@ -56,17 +62,15 @@ class QueryBuilder
      * @throws ReflectionException
      */
     public function __construct(
-        GrammarInterface $grammar,
-        QueryOrchestrator $orchestrator,
+        protected readonly GrammarInterface $grammar,
+        protected QueryOrchestrator         $orchestrator,
     ) {
-        $this->grammar = $grammar;
-        $this->orchestrator = $orchestrator;
         $this->state   = new QueryState();
 
         // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
         if (property_exists(object_or_class: $this, property: 'tableName')) {
-            $ref = new ReflectionClass(objectOrClass: $this);
-            $tableName = $ref->getProperty(name: 'tableName')->getValue(object: $this);
+            $reflectionClass = new ReflectionClass(objectOrClass: $this);
+            $tableName       = $reflectionClass->getProperty(name: 'tableName')->getValue(object: $this);
 
             if (is_string(value: $tableName) && $tableName !== '') {
                 $this->state = $this->state->withFrom(table: $tableName);
@@ -213,7 +217,7 @@ class QueryBuilder
         }
 
         return clone (object: $this, withProperties: [
-            'state' => $this->state->withColumns(columns: array_merge($this->state->columns ?: [], $expressions)),
+            'state' => $this->state->withColumns(columns: array_merge($this->state->columns, $expressions)),
         ]);
     }
 
@@ -267,7 +271,7 @@ class QueryBuilder
         $sql = $instance->grammar->compileSelect(state: $instance->limit(limit: 1)->state);
         $result = $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());
 
-        return ! empty($result);
+        return $result !== [];
     }
 
     /**
@@ -357,16 +361,16 @@ class QueryBuilder
             'state' => $this->state->withValues(values: $values),
         ]);
         $sql   = $clone->grammar->compileInsert(state: $clone->state);
-        $result = $clone->orchestrator->execute(
+        $executionResult = $clone->orchestrator->execute(
             sql     : $sql,
             bindings: $clone->extractMutationBindings(values: $values),
         );
 
-        if (! $result->isSuccessful()) {
+        if (! $executionResult->isSuccessful()) {
             throw new RuntimeException(message: 'Insert failed before an identifier could be resolved.');
         }
 
-        $lastInsertId = $result->getLastInsertId();
+        $lastInsertId = $executionResult->getLastInsertId();
 
         if ($lastInsertId === null) {
             throw new RuntimeException(message: 'Insert succeeded but no generated identifier was returned by the driver.');
@@ -394,6 +398,7 @@ class QueryBuilder
 
         $instance        = $instance->withSoftDeleteFilter();
         $instance->state = $instance->state->withValues(values: $values);
+
         $sql             = $instance->grammar->compileUpdate(state: $instance->state);
 
         return $instance->orchestrator->execute(
@@ -448,6 +453,7 @@ class QueryBuilder
 
                 continue;
             }
+
             $pluck[] = $result[$value];
         }
 
@@ -484,7 +490,7 @@ class QueryBuilder
     public function select(string ...$columns): self
     {
         return clone (object: $this, withProperties: [
-            'state' => $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns),
+            'state' => $this->state->withColumns(columns: $columns === [] ? ['*'] : $columns),
         ]);
     }
 
@@ -516,7 +522,7 @@ class QueryBuilder
         $instance = clone $this;
         $result   = $instance->limit(limit: 1)->get();
 
-        if (empty($result)) {
+        if ($result === []) {
             return $default;
         }
 
@@ -558,7 +564,8 @@ class QueryBuilder
     public function count(string $column = '*') : int
     {
         $instance        = clone $this;
-        $instance->state = $instance->state->withColumns(columns: ["COUNT({$column}) as aggregate"]);
+        $instance->state = $instance->state->withColumns(columns: [sprintf('COUNT(%s) as aggregate', $column)]);
+
         $result          = $instance->first();
 
         return (int) ($result['aggregate'] ?? 0);

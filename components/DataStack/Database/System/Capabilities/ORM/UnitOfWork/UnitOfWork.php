@@ -54,7 +54,6 @@ final class UnitOfWork
     private function readProperty(object $entity, string $property): mixed
     {
         $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
-        $reflectionProperty->setAccessible(accessible: true);
 
         return $reflectionProperty->getValue(object: $entity);
     }

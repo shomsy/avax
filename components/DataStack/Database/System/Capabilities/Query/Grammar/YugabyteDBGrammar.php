@@ -14,19 +14,19 @@ use Override;
 final class YugabyteDBGrammar extends PostgreSQLGrammar
 {
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        return parent::compileUpsert(state: $state, uniqueBy: $uniqueBy, update: $update);
+        return parent::compileUpsert(uniqueBy: $uniqueBy, update: $update, state: $queryState);
     }
 
     public function createTableDistributed(string $table, string $strategy = 'REPLICAS 3'): string
     {
-        return "CREATE TABLE {$table} WITH (format_version = 2.0, tablets = {$strategy})";
+        return sprintf('CREATE TABLE %s WITH (format_version = 2.0, tablets = %s)', $table, $strategy);
     }
 
     public function createIndexDistributed(string $index, string $table, string $columns): string
     {
-        return "CREATE INDEX {$index} ON {$table} ({$columns})";
+        return sprintf('CREATE INDEX %s ON %s (%s)', $index, $table, $columns);
 
     }
 
@@ -34,16 +34,16 @@ final class YugabyteDBGrammar extends PostgreSQLGrammar
     {
         $keyList = implode(separator: ', ', array: $keys);
 
-        return "SPLIT AT ({$keyList})";
+        return sprintf('SPLIT AT (%s)', $keyList);
     }
 
     public function moveTablet(string $table, string $fromTs, string $toTs): string
     {
-        return "ALTER TABLE {$table} MOVE TO TSERVER {$toTs}";
+        return sprintf('ALTER TABLE %s MOVE TO TSERVER %s', $table, $toTs);
     }
 
     public function setFollowers(string $table, int $count): string
     {
-        return "ALTER TABLE {$table} SET (default_replication_factor = {$count})";
+        return sprintf('ALTER TABLE %s SET (default_replication_factor = %d)', $table, $count);
     }
 }

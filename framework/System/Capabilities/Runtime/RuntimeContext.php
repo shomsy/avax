@@ -10,58 +10,58 @@ use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
 
 final class RuntimeContext implements ResettableState
 {
-    private ?RuntimeRequest $currentRequest = null;
+    private ?RuntimeRequest $runtimeRequest = null;
 
-    private ?RequestScopeId $currentScopeId = null;
+    private ?RequestScopeId $requestScopeId = null;
 
-    private ?RuntimeResult $lastResult = null;
+    private ?RuntimeResult $runtimeResult = null;
 
     public function hasActiveRequest() : bool
     {
-        return $this->currentRequest !== null;
+        return $this->runtimeRequest instanceof RuntimeRequest;
     }
 
-    public function startRequest(RequestScopeId $scopeId, RuntimeRequest $request) : void
+    public function startRequest(RequestScopeId $requestScopeId, RuntimeRequest $runtimeRequest) : void
     {
         if ($this->hasActiveRequest()) {
             throw new FrameworkMisconfigured(message: 'Runtime context already has an active request.');
         }
 
-        $this->currentScopeId = $scopeId;
-        $this->currentRequest = $request;
+        $this->requestScopeId = $requestScopeId;
+        $this->runtimeRequest = $runtimeRequest;
     }
 
-    public function finishRequest(RuntimeResult $result) : void
+    public function finishRequest(RuntimeResult $runtimeResult) : void
     {
-        $this->lastResult = $result;
-        $this->currentRequest = null;
-        $this->currentScopeId = null;
+        $this->runtimeResult  = $runtimeResult;
+        $this->runtimeRequest = null;
+        $this->requestScopeId = null;
     }
 
-    public function recordResult(RuntimeResult $result) : void
+    public function recordResult(RuntimeResult $runtimeResult) : void
     {
-        $this->lastResult = $result;
+        $this->runtimeResult = $runtimeResult;
     }
 
     public function currentRequest() : ?RuntimeRequest
     {
-        return $this->currentRequest;
+        return $this->runtimeRequest;
     }
 
     public function currentScopeId() : ?RequestScopeId
     {
-        return $this->currentScopeId;
+        return $this->requestScopeId;
     }
 
     public function lastResult() : ?RuntimeResult
     {
-        return $this->lastResult;
+        return $this->runtimeResult;
     }
 
     public function resetState() : void
     {
-        $this->currentRequest = null;
-        $this->currentScopeId = null;
-        $this->lastResult = null;
+        $this->runtimeRequest = null;
+        $this->requestScopeId = null;
+        $this->runtimeResult  = null;
     }
 }

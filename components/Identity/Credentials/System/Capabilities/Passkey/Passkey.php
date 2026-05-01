@@ -34,7 +34,7 @@ final readonly class Passkey
         private ?BeginPasskeyAuthentication $beginPasskeyAuthentication,
         #[SensitiveParameter]
         private ?CompletePasskeyAuthentication $completePasskeyAuthentication,
-        private ?ListPasskeys $readPasskeys,
+        private ?ListPasskeys $listPasskeys,
         private ?RenamePasskey $renamePasskey,
         #[SensitiveParameter]
         private ?RevokePasskey $revokePasskey,
@@ -42,13 +42,13 @@ final readonly class Passkey
 
     public function isConfigured(): bool
     {
-        return $this->beginPasskeyRegistration !== null
-            && $this->completePasskeyRegistration !== null
-            && $this->beginPasskeyAuthentication !== null
-            && $this->completePasskeyAuthentication !== null
-            && $this->readPasskeys !== null
-            && $this->renamePasskey !== null
-            && $this->revokePasskey !== null;
+        return $this->beginPasskeyRegistration instanceof BeginPasskeyRegistration
+            && $this->completePasskeyRegistration instanceof CompletePasskeyRegistration
+            && $this->beginPasskeyAuthentication instanceof BeginPasskeyAuthentication
+            && $this->completePasskeyAuthentication instanceof CompletePasskeyAuthentication
+            && $this->listPasskeys instanceof ListPasskeys
+            && $this->renamePasskey instanceof RenamePasskey
+            && $this->revokePasskey instanceof RevokePasskey;
     }
 
     /**
@@ -66,9 +66,9 @@ final readonly class Passkey
         return $this->beginPasskeyRegistration ?? throw PasskeyOperationFailed::runtimeNotConfigured();
     }
 
-    public function completePasskeyRegistration(CompletePasskeyRegistrationData $data): PasskeyCredential
+    public function completePasskeyRegistration(CompletePasskeyRegistrationData $completePasskeyRegistrationData) : PasskeyCredential
     {
-        return $this->completePasskeyRegistrationOrFail()->execute(data: $data);
+        return $this->completePasskeyRegistrationOrFail()->execute(data: $completePasskeyRegistrationData);
     }
 
     private function completePasskeyRegistrationOrFail(): CompletePasskeyRegistration
@@ -80,9 +80,9 @@ final readonly class Passkey
      * @throws RandomException
      * @throws DateMalformedStringException
      */
-    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $data): PasskeyAuthenticationChallenge
+    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $beginPasskeyAuthenticationData) : PasskeyAuthenticationChallenge
     {
-        return $this->beginPasskeyAuthenticationOrFail()->execute(data: $data);
+        return $this->beginPasskeyAuthenticationOrFail()->execute(data: $beginPasskeyAuthenticationData);
     }
 
     private function beginPasskeyAuthenticationOrFail(): BeginPasskeyAuthentication
@@ -90,9 +90,9 @@ final readonly class Passkey
         return $this->beginPasskeyAuthentication ?? throw PasskeyOperationFailed::runtimeNotConfigured();
     }
 
-    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $data): AuthenticationResult
+    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData) : AuthenticationResult
     {
-        return $this->completePasskeyAuthenticationOrFail()->execute(data: $data);
+        return $this->completePasskeyAuthenticationOrFail()->execute(data: $completePasskeyAuthenticationData);
     }
 
     private function completePasskeyAuthenticationOrFail(): CompletePasskeyAuthentication
@@ -110,12 +110,12 @@ final readonly class Passkey
 
     private function readPasskeysOrFail(): ListPasskeys
     {
-        return $this->readPasskeys ?? throw PasskeyOperationFailed::runtimeNotConfigured();
+        return $this->listPasskeys ?? throw PasskeyOperationFailed::runtimeNotConfigured();
     }
 
-    public function renamePasskey(RenamePasskeyData $data): PasskeyCredential
+    public function renamePasskey(RenamePasskeyData $renamePasskeyData) : PasskeyCredential
     {
-        return $this->renamePasskeyOrFail()->execute(data: $data);
+        return $this->renamePasskeyOrFail()->execute(data: $renamePasskeyData);
     }
 
     private function renamePasskeyOrFail(): RenamePasskey

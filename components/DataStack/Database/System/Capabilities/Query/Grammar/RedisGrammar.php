@@ -14,11 +14,11 @@ use Override;
 final class RedisGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileSelect(QueryState $state): string
+    public function compileSelect(QueryState $queryState) : string
     {
-        $key = $this->wrap(value: $state->from);
+        $key = $this->wrap(value: $queryState->from);
 
-        return "GET {$key}";
+        return 'GET ' . $key;
     }
 
     #[Override]
@@ -32,102 +32,102 @@ final class RedisGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileInsert(QueryState $state): string
+    public function compileInsert(QueryState $queryState) : string
     {
-        $key = $this->wrap(value: $state->from);
-        $value = json_encode(value: $state->values);
+        $key   = $this->wrap(value: $queryState->from);
+        $value = json_encode(value: $queryState->values);
 
-        return "SET {$key} {$value}";
+        return sprintf('SET %s %s', $key, $value);
     }
 
     #[Override]
-    public function compileUpdate(QueryState $state): string
+    public function compileUpdate(QueryState $queryState) : string
     {
-        $key = $this->wrap(value: $state->from);
-        $value = json_encode(value: $state->values);
+        $key   = $this->wrap(value: $queryState->from);
+        $value = json_encode(value: $queryState->values);
 
-        return "SET {$key} {$value}";
+        return sprintf('SET %s %s', $key, $value);
     }
 
     #[Override]
-    public function compileDelete(QueryState $state): string
+    public function compileDelete(QueryState $queryState) : string
     {
-        $key = $this->wrap(value: $state->from);
+        $key = $this->wrap(value: $queryState->from);
 
-        return "DEL {$key}";
+        return 'DEL ' . $key;
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $key = $this->wrap(value: $state->from);
-        $value = json_encode(value: $state->values);
+        $key   = $this->wrap(value: $queryState->from);
+        $value = json_encode(value: $queryState->values);
 
-        return "SET {$key} {$value}";
+        return sprintf('SET %s %s', $key, $value);
     }
 
     public function compileHashSet(string $key, array $fieldValues): string
     {
         $pairs = [];
         foreach ($fieldValues as $field => $value) {
-            $pairs[] = "{$field} {$value}";
+            $pairs[] = sprintf('%s %s', $field, $value);
         }
 
-        return "HSET {$key} " . implode(separator: ' ', array: $pairs);
+        return sprintf('HSET %s ', $key) . implode(separator: ' ', array: $pairs);
     }
 
-    public function compileHashGet(string $key, string $field = null) : string
+    public function compileHashGet(string $key, ?string $field = null) : string
     {
         if ($field === null) {
-            return "HGETALL {$key}";
+            return 'HGETALL ' . $key;
         }
 
-        return "HGET {$key} {$field}";
+        return sprintf('HGET %s %s', $key, $field);
     }
 
     public function compileListPush(string $key, string $value): string
     {
-        return "RPUSH {$key} {$value}";
+        return sprintf('RPUSH %s %s', $key, $value);
     }
 
     public function compileListPop(string $key): string
     {
-        return "LPOP {$key}";
+        return 'LPOP ' . $key;
     }
 
     public function compileSetAdd(string $key, string ...$members): string
     {
-        return "SADD {$key} " . implode(separator: ' ', array: $members);
+        return sprintf('SADD %s ', $key) . implode(separator: ' ', array: $members);
     }
 
     public function compileSetMembers(string $key): string
     {
-        return "SMEMBERS {$key}";
+        return 'SMEMBERS ' . $key;
     }
 
     public function compileSortedSet(string $key, array $scores): string
     {
         $pairs = [];
         foreach ($scores as $member => $score) {
-            $pairs[] = "{$score} {$member}";
+            $pairs[] = sprintf('%s %s', $score, $member);
         }
 
-        return "ZADD {$key} " . implode(separator: ' ', array: $pairs);
+        return sprintf('ZADD %s ', $key) . implode(separator: ' ', array: $pairs);
     }
 
     public function compileSortedSetRange(string $key, int $start, int $stop): string
     {
-        return "ZRANGE {$key} {$start} {$stop}";
+        return sprintf('ZRANGE %s %d %d', $key, $start, $stop);
     }
 
     public function compileExpire(string $key, int $seconds): string
     {
-        return "EXPIRE {$key} {$seconds}";
+        return sprintf('EXPIRE %s %d', $key, $seconds);
     }
 
     public function compileTtl(string $key): string
     {
-        return "TTL {$key}";
+        return 'TTL ' . $key;
     }
 
     #[Override]

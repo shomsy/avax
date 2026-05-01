@@ -94,7 +94,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_records_hits() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink       = new MetricsSink(backend: $prometheusBackend, prefix: 'cache');
+        $metricsSink = new MetricsSink(prefix: 'cache', backend: $prometheusBackend);
 
         $metricsSink->recordHit();
 
@@ -104,7 +104,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_records_latency() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink       = new MetricsSink(backend: $prometheusBackend, prefix: 'cache');
+        $metricsSink = new MetricsSink(prefix: 'cache', backend: $prometheusBackend);
 
         $metricsSink->recordLatency(microseconds: 5000);
 
@@ -114,7 +114,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_records_all_metrics() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink       = new MetricsSink(backend: $prometheusBackend, prefix: 'cache');
+        $metricsSink = new MetricsSink(prefix: 'cache', backend: $prometheusBackend);
 
         $metricsSink->recordHit();
         $metricsSink->recordMiss();
@@ -136,7 +136,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_records_cache_metrics() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink       = new MetricsSink(backend: $prometheusBackend, prefix: 'cache');
+        $metricsSink = new MetricsSink(prefix: 'cache', backend: $prometheusBackend);
 
         new FrozenClock(timestamp: Timestamp::now());
         $cacheMetrics = new CacheMetrics();
@@ -153,7 +153,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_flush() : void
     {
         $statsDBackend = new StatsDBackend();
-        $metricsSink   = new MetricsSink(backend: $statsDBackend, prefix: 'cache');
+        $metricsSink = new MetricsSink(prefix: 'cache', backend: $statsDBackend);
 
         $metricsSink->recordHit();
         $metricsSink->recordWrite();

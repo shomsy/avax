@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry\OpenTelemetry;
 
-final class QuerySpan
+final readonly class QuerySpan
 {
     public function __construct(
-        public readonly string $query,
-        public readonly array $bindings = [],
-        public readonly float $startTime = 0.0,
-        public readonly float $endTime = 0.0,
-        public readonly ?string $connection = null,
-        public readonly ?int $rows = null,
-        public readonly ?string $error = null,
+        public string  $query,
+        public array   $bindings = [],
+        public float   $startTime = 0.0,
+        public float   $endTime = 0.0,
+        public ?string $connection = null,
+        public ?int    $rows = null,
+        public ?string $error = null,
     ) {}
 
     public function isSlow(int $thresholdMs = 1000): bool
@@ -43,6 +43,6 @@ final class QuerySpan
     {
         $normalized = preg_replace(pattern: '/\?/', replacement: ':param', subject: $this->query);
 
-        return md5(string: $normalized);
+        return md5(string: (string) $normalized);
     }
 }

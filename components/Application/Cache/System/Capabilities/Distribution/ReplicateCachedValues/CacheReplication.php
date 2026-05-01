@@ -181,8 +181,8 @@ final class CacheReplication
         ?PrimaryReplicaPolicy $primaryReplicaPolicy = null,
     ): self {
         return new self(
-            primary : $cacheStore,
             replicas: $replicas,
+            primary : $cacheStore,
             policy  : $primaryReplicaPolicy ?? PrimaryReplicaPolicy::default(),
         );
     }

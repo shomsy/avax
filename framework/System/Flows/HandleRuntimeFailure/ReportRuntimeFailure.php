@@ -17,7 +17,7 @@ use function Sentry\captureException;
 final readonly class ReportRuntimeFailure
 {
     public function __construct(
-        private ?Logging $logger = null,
+        private ?Logging $logging = null,
         private ?string $correlationId = null,
         private ?string $traceId = null,
     ) {}
@@ -29,14 +29,14 @@ final readonly class ReportRuntimeFailure
     {
         $context = $this->buildContext($throwable);
 
-        if ($this->logger !== null) {
-            $this->logger->critical(
+        if ($this->logging instanceof Logging) {
+            $this->logging->critical(
                 message: $this->buildLogMessage($throwable),
                 context: $context,
             );
         }
 
-        $this->reportToExternalTrackers($throwable, $context);
+        $this->reportToExternalTrackers($throwable);
     }
 
     /**
@@ -163,7 +163,7 @@ final readonly class ReportRuntimeFailure
         );
 
         if ($this->correlationId !== null) {
-            $message .= " [correlation_id: {$this->correlationId}]";
+            $message .= sprintf(' [correlation_id: %s]', $this->correlationId);
         }
 
         return $message;
@@ -171,10 +171,8 @@ final readonly class ReportRuntimeFailure
 
     /**
      * Report to external error tracking services (e.g., Sentry).
-     *
-     * @param array<string, mixed> $context
      */
-    private function reportToExternalTrackers(Throwable $throwable, array $context) : void
+    private function reportToExternalTrackers(Throwable $throwable) : void
     {
         // Integration point for external error trackers like Sentry.
         // Example:

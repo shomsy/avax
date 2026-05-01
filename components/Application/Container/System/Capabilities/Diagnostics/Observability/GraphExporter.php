@@ -333,7 +333,7 @@ final class GraphExporter
     private function toJson(array $artifact): string
     {
         try {
-            return (string) json_encode(value: $artifact, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            return json_encode(value: $artifact, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return '{}';
         }

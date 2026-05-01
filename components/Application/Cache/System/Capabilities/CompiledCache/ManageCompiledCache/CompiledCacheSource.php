@@ -42,7 +42,6 @@ final readonly class CompiledCacheSource
         return new self(
             path    : $path,
             mtime   : $stat !== false ? $stat['mtime'] : filemtime($path),
-            checksum: null,
         );
     }
 

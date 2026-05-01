@@ -7,16 +7,16 @@ namespace Avax\Components\Operations\Queue\System\Capabilities\Job;
 use RuntimeException;
 use Throwable;
 
-final class JobDefinition
+final readonly class JobDefinition
 {
     public function __construct(
-        public readonly string $handler,
-        public readonly array $payload = [],
-        public readonly ?string $queue = null,
-        public readonly int $maxAttempts = 3,
-        public readonly int $timeout = 60,
-        public readonly int $retryDelay = 0,
-        public readonly ?string $correlationId = null,
+        public string  $handler,
+        public array   $payload = [],
+        public ?string $queue = null,
+        public int     $maxAttempts = 3,
+        public int     $timeout = 60,
+        public int     $retryDelay = 0,
+        public ?string $correlationId = null,
     ) {
     }
 
@@ -130,7 +130,7 @@ abstract class JobHandler
 {
     abstract public function handle(array $payload): mixed;
 
-    public function failed(Throwable $error, array $payload): void
+    public function failed(Throwable $throwable, array $payload) : void
     {
     }
 }
@@ -147,7 +147,7 @@ final class JobRegistry
     public function resolve(string $name): callable
     {
         if (! isset($this->handlers[$name])) {
-            throw new RuntimeException("No handler registered for job: $name");
+            throw new RuntimeException('No handler registered for job: ' . $name);
         }
 
         return $this->handlers[$name];

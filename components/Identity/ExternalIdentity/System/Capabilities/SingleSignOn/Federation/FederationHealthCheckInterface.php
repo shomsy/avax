@@ -6,5 +6,5 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 
 interface FederationHealthCheckInterface
 {
-    public function checkHealth(FederationConnection $connection): FederationConnectionHealth;
+    public function checkHealth(FederationConnection $federationConnection) : FederationConnectionHealth;
 }

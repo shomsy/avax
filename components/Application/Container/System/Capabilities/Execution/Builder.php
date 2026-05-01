@@ -16,16 +16,7 @@ use Throwable;
  */
 final readonly class BuildService
 {
-    private ResolveDependencies $dependencies;
-
-    private CreateDependencyBlueprint $blueprints;
-
-    public function __construct(
-        CreateDependencyBlueprint $blueprints,
-        ResolveDependencies $dependencies,
-    ) {
-        $this->blueprints   = $blueprints;
-        $this->dependencies = $dependencies;
+    public function __construct(private CreateDependencyBlueprint $createDependencyBlueprint, private ResolveDependencies $resolveDependencies) {
     }
 
     /**
@@ -35,46 +26,43 @@ final readonly class BuildService
      */
     public function build(
         string $class,
-        ResolveDependency $resolver,
-        array $overrides = null,
-        ResolveRequest $request = null,
+        ResolveDependency $resolveDependency,
+        ?array            $overrides = null,
+        ?ResolveRequest   $resolveRequest = null,
     ): object {
         $overrides ??= [];
-        $serviceId = $request?->serviceId ?? $class;
-        $path      = $request?->getPath() ?? $serviceId;
+        $serviceId = $resolveRequest?->serviceId ?? $class;
+        $path = $resolveRequest?->getPath() ?? $serviceId;
 
         try {
-            $blueprint = $this->blueprints->createFor(class: $class);
+            $blueprint = $this->createDependencyBlueprint->createFor(class: $class);
             if (! $blueprint->instantiable) {
                 throw new ContainerException(
-                    message: "Class [{$class}] is not instantiable for service [{$serviceId}]. "
-                             . "Dependency path [{$path}]. "
+                    message: sprintf('Class [%s] is not instantiable for service [%s]. ', $class, $serviceId)
+                             . sprintf('Dependency path [%s]. ', $path)
                              . 'Likely fix: bind an instantiable concrete class or replace the abstract target.',
                 );
             }
 
             $arguments = $blueprint->constructor !== null
-                ? $this->dependencies->resolvePlan(
-                    plan     : $blueprint->constructor,
+                ? $this->resolveDependencies->resolvePlan(
                     overrides: $overrides,
-                    resolver : $resolver,
-                    request  : $request,
+                    plan     : $blueprint->constructor,
+                    resolver : $resolveDependency,
+                    request  : $resolveRequest,
                 )
                 : [];
 
             return new $class(...$arguments);
-        } catch (Throwable $exception) {
-            if ($exception instanceof ContainerException) {
-                throw $exception;
+        } catch (Throwable $throwable) {
+            if ($throwable instanceof ContainerException) {
+                throw $throwable;
             }
 
-            throw new ContainerException(
-                message : "Failed to build service [{$serviceId}] with class [{$class}]. "
-                          . "Dependency path [{$path}]. "
-                          . "Failure: {$exception->getMessage()}. "
-                          . 'Likely fix: fix the constructor graph, provide missing runtime input, or replace the concrete class.',
-                previous: $exception,
-            );
+            throw new ContainerException(message: sprintf('Failed to build service [%s] with class [%s]. ', $serviceId, $class)
+                                                  . sprintf('Dependency path [%s]. ', $path)
+                                                  . sprintf('Failure: %s. ', $throwable->getMessage())
+                                                  . 'Likely fix: fix the constructor graph, provide missing runtime input, or replace the concrete class.', code: $throwable->getCode(), previous: $throwable);
         }
     }
 }

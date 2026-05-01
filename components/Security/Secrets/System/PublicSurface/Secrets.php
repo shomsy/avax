@@ -9,7 +9,7 @@ use Avax\Components\Security\Secrets\System\Capabilities\Stores\SecretStore;
 
 final class Secrets
 {
-    private static SecretStore $store;
+    private static SecretStore $secretStore;
 
     public static function has(string $key): bool
     {
@@ -18,11 +18,11 @@ final class Secrets
 
     private static function store(): SecretStore
     {
-        if (! isset(self::$store)) {
-            self::$store = new InMemorySecretStore();
+        if (! isset(self::$secretStore)) {
+            self::$secretStore = new InMemorySecretStore();
         }
 
-        return self::$store;
+        return self::$secretStore;
     }
 
     public static function forget(string $key): void

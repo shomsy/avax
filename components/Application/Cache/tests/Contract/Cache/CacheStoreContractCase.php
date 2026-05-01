@@ -24,7 +24,7 @@ abstract class CacheStoreContractCase extends TestCase
         $cacheStore = $this->createStore(clock: $clock);
         $cacheKey   = CacheKey::create(key: 'nonexistent-key');
 
-        $result = $cacheStore->read(key: $cacheKey, clock: $clock);
+        $result = $cacheStore->read(clock: $clock, key: $cacheKey);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
     }
@@ -53,7 +53,7 @@ abstract class CacheStoreContractCase extends TestCase
         );
 
         $cacheStore->write(key: $cacheKey, record: $storedCacheRecord);
-        $result = $cacheStore->read(key: $cacheKey, clock: $clock);
+        $result = $cacheStore->read(clock: $clock, key: $cacheKey);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
         $this->assertSame(expected: $value, actual: $result->value());
@@ -75,7 +75,7 @@ abstract class CacheStoreContractCase extends TestCase
         );
 
         $cacheStore->write(key: $cacheKey, record: $storedCacheRecord);
-        $result = $cacheStore->read(key: $cacheKey, clock: $clock);
+        $result = $cacheStore->read(clock: $clock, key: $cacheKey);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
         $this->assertNull(actual: $result->value());
@@ -99,7 +99,7 @@ abstract class CacheStoreContractCase extends TestCase
 
         $cacheStore->write(key: $cacheKey, record: $storedCacheRecord);
         $clock->moveForward(duration: Duration::ofSeconds(seconds: 2));
-        $result = $cacheStore->read(key: $cacheKey, clock: $clock);
+        $result = $cacheStore->read(clock: $clock, key: $cacheKey);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
     }
@@ -123,7 +123,7 @@ abstract class CacheStoreContractCase extends TestCase
         $cacheStore->write(key: $cacheKey, record: $storedCacheRecord);
         $cacheStore->forget(key: $cacheKey);
 
-        $result = $cacheStore->read(key: $cacheKey, clock: $clock);
+        $result = $cacheStore->read(clock: $clock, key: $cacheKey);
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
     }

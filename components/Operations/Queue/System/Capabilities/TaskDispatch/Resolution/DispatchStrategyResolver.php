@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Resolution;
 
-final class DispatchStrategyResolver
+final readonly class DispatchStrategyResolver
 {
-    private string $defaultStrategy;
-
-    public function __construct(string $defaultStrategy = 'sync')
+    public function __construct(private string $defaultStrategy = 'sync')
     {
-        $this->defaultStrategy = $defaultStrategy;
     }
 
-    public function resolve(object $task): string
+    public function resolve() : string
     {
-        $class = $task::class;
-        $config = $this->loadTaskConfig($class);
-
+        $config = $this->loadTaskConfig();
         if ($config['strategy'] ?? '') {
             return $config['strategy'];
         }
@@ -25,7 +20,7 @@ final class DispatchStrategyResolver
         return $this->defaultStrategy;
     }
 
-    private function loadTaskConfig(string $class): array
+    private function loadTaskConfig() : array
     {
         return [];
     }

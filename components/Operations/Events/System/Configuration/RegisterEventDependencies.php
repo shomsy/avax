@@ -9,8 +9,8 @@ use Avax\Components\Operations\Events\System\PublicSurface\Events;
 
 final class RegisterEventDependencies
 {
-    public static function register(EventDispatcherInterface $dispatcher) : void
+    public static function register(EventDispatcherInterface $eventDispatcher) : void
     {
-        Events::setDispatcher($dispatcher);
+        Events::setDispatcher($eventDispatcher);
     }
 }

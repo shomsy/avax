@@ -66,7 +66,7 @@ final class ShutdownSequence
             $newCount = self::countInFlightRequests();
 
             if ($newCount < $inFlight) {
-                echo "  Requests remaining: {$newCount}\n";
+                echo sprintf('  Requests remaining: %d%s', $newCount, PHP_EOL);
             }
 
             $inFlight = $newCount;

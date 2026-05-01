@@ -4,29 +4,32 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\RuntimeSafety;
 
+use Avax\Framework\System\Capabilities\RuntimeSafety\ResetVerification\ResetVerifier;
+use Avax\Framework\System\Capabilities\RuntimeSafety\StateLeakDetection\StateLeakDetector;
+
 /**
  * Runtime safety manager for long-lived runtimes.
  *
  * Coordinates state leak detection, static state scanning,
  * reset verification, and request scope enforcement.
  */
-final class RuntimeSafety
+final readonly class RuntimeSafety
 {
-    private StateLeakDetection\StateLeakDetector $leakDetector;
+    private StateLeakDetector $stateLeakDetector;
 
-    private StaticStateScanner $staticScanner;
+    private StaticStateScanner $staticStateScanner;
 
-    private ResetVerification\ResetVerifier $resetVerifier;
+    private ResetVerifier $resetVerifier;
 
     public function __construct(
-        StateLeakDetection\StateLeakDetector $leakDetector = null,
-        StaticStateScanner                   $staticScanner = null,
-        ResetVerification\ResetVerifier      $resetVerifier = null,
+        ?StateLeakDetector  $stateLeakDetector = null,
+        ?StaticStateScanner $staticStateScanner = null,
+        ?ResetVerifier      $resetVerifier = null,
     )
     {
-        $this->leakDetector  = $leakDetector ?? new StateLeakDetection\StateLeakDetector();
-        $this->staticScanner = $staticScanner ?? new StaticStateScanner();
-        $this->resetVerifier = $resetVerifier ?? new ResetVerification\ResetVerifier();
+        $this->stateLeakDetector  = $stateLeakDetector ?? new StateLeakDetector();
+        $this->staticStateScanner = $staticStateScanner ?? new StaticStateScanner();
+        $this->resetVerifier      = $resetVerifier ?? new ResetVerifier();
     }
 
     /**
@@ -36,13 +39,7 @@ final class RuntimeSafety
     {
         $findings = $this->inspect();
 
-        foreach ($findings as $finding) {
-            if ($finding->severity === RuntimeSafetyFinding::SEVERITY_CRITICAL) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($findings, fn ($finding) : bool => $finding->severity !== RuntimeSafetyFinding::SEVERITY_CRITICAL);
     }
 
     /**
@@ -54,24 +51,23 @@ final class RuntimeSafety
     {
         $findings = [];
 
-        $findings = [...$findings, ...$this->leakDetector->detect()];
-        $findings = [...$findings, ...$this->staticScanner->scan()];
-        $findings = [...$findings, ...$this->resetVerifier->verify()];
+        $findings = [...$findings, ...$this->stateLeakDetector->detect()];
+        $findings = [...$findings, ...$this->staticStateScanner->scan()];
 
-        return $findings;
+        return [...$findings, ...$this->resetVerifier->verify()];
     }
 
-    public function leakDetector() : StateLeakDetection\StateLeakDetector
+    public function leakDetector() : StateLeakDetector
     {
-        return $this->leakDetector;
+        return $this->stateLeakDetector;
     }
 
     public function staticScanner() : StaticStateScanner
     {
-        return $this->staticScanner;
+        return $this->staticStateScanner;
     }
 
-    public function resetVerifier() : ResetVerification\ResetVerifier
+    public function resetVerifier() : ResetVerifier
     {
         return $this->resetVerifier;
     }

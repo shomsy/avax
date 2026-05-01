@@ -152,7 +152,7 @@ final readonly class SlowPersistenceStatistics
      */
     public static function fromReports(array $reports): self
     {
-        if (empty($reports)) {
+        if ($reports === []) {
             return new self();
         }
 
@@ -238,11 +238,6 @@ final readonly class SlowPersistenceStatistics
 final class SlowPersistenceQueryDetector
 {
     /**
-     * @var float Threshold in milliseconds for what constitutes a "slow" operation
-     */
-    private float $thresholdMs;
-
-    /**
      * @var list<SlowPersistenceReport> The slow operation log
      */
     private array $slowOperations = [];
@@ -258,11 +253,6 @@ final class SlowPersistenceQueryDetector
     private array $typeTotals = [];
 
     /**
-     * @var int Maximum number of reports to retain (0 = unlimited)
-     */
-    private int $maxEntries;
-
-    /**
      * @var int Total operations recorded (including fast ones)
      */
     private int $totalOperations = 0;
@@ -273,11 +263,15 @@ final class SlowPersistenceQueryDetector
     private float $totalTimeMs = 0.0;
 
     public function __construct(
-        float $thresholdMs = 100.0,
-        int $maxEntries = 0,
+        /**
+         * @var float Threshold in milliseconds for what constitutes a "slow" operation
+         */
+        private float        $thresholdMs = 100.0,
+        /**
+         * @var int Maximum number of reports to retain (0 = unlimited)
+         */
+        private readonly int $maxEntries = 0
     ) {
-        $this->thresholdMs = $thresholdMs;
-        $this->maxEntries = $maxEntries;
     }
 
     /**
@@ -330,7 +324,7 @@ final class SlowPersistenceQueryDetector
             return false;
         }
 
-        $report = SlowPersistenceReport::create(
+        $slowPersistenceReport = SlowPersistenceReport::create(
             operation  : $operation,
             type       : $type,
             durationMs : $durationMs,
@@ -338,7 +332,7 @@ final class SlowPersistenceQueryDetector
             context    : $context,
         );
 
-        $this->addReport($report);
+        $this->addReport($slowPersistenceReport);
 
         return true;
     }
@@ -346,12 +340,12 @@ final class SlowPersistenceQueryDetector
     /**
      * Adds a slow persistence report directly.
      */
-    public function addReport(SlowPersistenceReport $report): void
+    public function addReport(SlowPersistenceReport $slowPersistenceReport) : void
     {
-        $this->slowOperations[] = $report;
+        $this->slowOperations[] = $slowPersistenceReport;
 
-        $this->fingerprintCounts[$report->fingerprint]
-            = ($this->fingerprintCounts[$report->fingerprint] ?? 0) + 1;
+        $this->fingerprintCounts[$slowPersistenceReport->fingerprint]
+            = ($this->fingerprintCounts[$slowPersistenceReport->fingerprint] ?? 0) + 1;
 
         // Enforce max entries
         if ($this->maxEntries > 0 && count($this->slowOperations) > $this->maxEntries) {
@@ -378,7 +372,7 @@ final class SlowPersistenceQueryDetector
     {
         return array_values(array_filter(
             $this->slowOperations,
-            static fn (SlowPersistenceReport $r): bool => $r->type === $type,
+                                static fn (SlowPersistenceReport $slowPersistenceReport) : bool => $slowPersistenceReport->type === $type,
         ));
     }
 
@@ -391,7 +385,7 @@ final class SlowPersistenceQueryDetector
     {
         return array_values(array_filter(
             $this->slowOperations,
-            static fn (SlowPersistenceReport $r): bool => $r->operation === $operation,
+                                static fn (SlowPersistenceReport $slowPersistenceReport) : bool => $slowPersistenceReport->operation === $operation,
         ));
     }
 
@@ -404,7 +398,7 @@ final class SlowPersistenceQueryDetector
     {
         return array_values(array_filter(
             $this->slowOperations,
-            static fn (SlowPersistenceReport $r): bool => $r->severityLabel() === $severity,
+                                static fn (SlowPersistenceReport $slowPersistenceReport) : bool => $slowPersistenceReport->severityLabel() === $severity,
         ));
     }
 

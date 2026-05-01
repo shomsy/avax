@@ -14,12 +14,12 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Muta
  */
 final readonly class Arrhae
 {
-    private MutationGuard $guard;
+    private MutationGuard $mutationGuard;
 
     public function __construct(
         private array $items = [],
     ) {
-        $this->guard = new MutationGuard();
+        $this->mutationGuard = new MutationGuard();
     }
 
     public static function from(iterable $items): static
@@ -98,7 +98,7 @@ final readonly class Arrhae
 
     private function assertNotLocked(): void
     {
-        $this->guard->assertMutable();
+        $this->mutationGuard->assertMutable();
     }
 
     private function setDotNotation(array &$items, string $key, mixed $value): void
@@ -204,13 +204,13 @@ final readonly class Arrhae
 
     public function isLocked(): bool
     {
-        return $this->guard->isLocked();
+        return $this->mutationGuard->isLocked();
     }
 
     public function lock(): static
     {
         $clone = new self(items: $this->items);
-        $clone->guard->lock();
+        $clone->mutationGuard->lock();
 
         return $clone;
     }

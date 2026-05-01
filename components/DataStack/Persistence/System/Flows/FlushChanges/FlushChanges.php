@@ -6,10 +6,10 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\FlushChanges;
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\UnitOfWork\UnitOfWork;
 
-final class FlushChanges
+final readonly class FlushChanges
 {
     public function __construct(
-        private readonly UnitOfWork $unitOfWork,
+        private UnitOfWork $unitOfWork,
     ) {}
 
     public function flush(): void

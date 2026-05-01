@@ -63,13 +63,7 @@ final readonly class MiddlewareConfiguration
      */
     public function shouldSkipPath(string $path): bool
     {
-        foreach ($this->skipPaths as $skipPattern) {
-            if ($this->matchesPattern($skipPattern, $path)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->skipPaths, fn (string $skipPattern) : bool => $this->matchesPattern($skipPattern, $path));
     }
 
     /**

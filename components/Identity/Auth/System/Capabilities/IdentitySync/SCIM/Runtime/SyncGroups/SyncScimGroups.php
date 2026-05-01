@@ -4,28 +4,31 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups;
 
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUser;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUserData;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ScimProvisioningResult;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentity;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
 use Random\RandomException;
 
 final readonly class SyncScimGroups
 {
-    public function __construct(private ScimDirectoryStoreInterface $directoryStore, private ScimProvisionedIdentityStoreInterface $identityStore, private UserSourceInterface $userSource, private ProvisionScimUser $provisionScimUser) {}
+    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore, private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private UserSourceInterface $userSource, private ProvisionScimUser $provisionScimUser) {}
 
     /**
      * @throws RandomException
      */
-    public function execute(SyncScimGroupsData $data): ScimProvisioningResult
+    public function execute(SyncScimGroupsData $syncScimGroupsData) : ScimProvisioningResult
     {
-        $directory = $this->directoryStore->find(directoryId: $data->directoryId);
+        $directory = $this->scimDirectoryStore->find(directoryId: $syncScimGroupsData->directoryId);
 
-        if ($directory === null) {
+        if (! $directory instanceof ScimDirectory) {
             throw ScimFailed::unknownDirectory();
         }
 
@@ -33,26 +36,26 @@ final readonly class SyncScimGroups
             throw ScimFailed::serviceUnavailable();
         }
 
-        $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
+        $identity = $this->scimProvisionedIdentityStore->find(directoryId: $directory->directoryId, externalId: $syncScimGroupsData->externalId);
 
-        if ($identity === null) {
+        if (! $identity instanceof ScimProvisionedIdentity) {
             throw ScimFailed::unknownProvisionedIdentity();
         }
 
         $user = $this->userSource->findById(id: $identity->userId);
 
-        if ($user === null) {
+        if (! $user instanceof User) {
             throw ScimFailed::unknownProvisionedIdentity();
         }
 
         return $this->provisionScimUser->execute(data: new ProvisionScimUserData(
-            directoryId   : $data->directoryId,
-            directoryToken: $data->directoryToken,
-            externalId    : $data->externalId,
+                                                           directoryId   : $syncScimGroupsData->directoryId,
+                                                           directoryToken: $syncScimGroupsData->directoryToken,
+                                                           externalId    : $syncScimGroupsData->externalId,
             email         : $user->getEmail()->value,
             username      : $user->getUsername(),
-            groups        : $data->groups,
-            state         : $data->state,
+                                                           groups        : $syncScimGroupsData->groups,
+                                                           state         : $syncScimGroupsData->state,
         ));
     }
 }

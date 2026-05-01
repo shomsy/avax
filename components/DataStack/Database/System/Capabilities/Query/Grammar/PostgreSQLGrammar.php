@@ -20,12 +20,12 @@ use Override;
 final class PostgreSQLGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $sql = $this->compileInsert(state: $state);
+        $sql = $this->compileInsert(state: $queryState);
 
         $conflictColumns = array_map(
-            callback: fn ($col) => $this->wrap(value: $col),
+            callback: fn ($col) : string => $this->wrap(value: $col),
             array   : $uniqueBy,
         );
         $conflictClause = implode(separator: ', ', array: $conflictColumns);
@@ -37,7 +37,7 @@ final class PostgreSQLGrammar extends BaseGrammar
 
         $updateClause = implode(separator: ', ', array: $updates);
 
-        return "{$sql} ON CONFLICT ({$conflictClause}) DO UPDATE SET {$updateClause}";
+        return sprintf('%s ON CONFLICT (%s) DO UPDATE SET %s', $sql, $conflictClause, $updateClause);
     }
 
     #[Override]
@@ -55,13 +55,14 @@ final class PostgreSQLGrammar extends BaseGrammar
 
         if (str_contains(haystack: $value, needle: '.')) {
             return explode(separator: '.', string: $value)
-                    |> (fn ($x) => array_map(callback: fn ($segment) => $this->wrapSegment(segment: $segment), array: $x))
-                    |> (static fn ($x) => implode(separator: '.', array: $x));
+                    |> (fn ($x) : array => array_map(callback: fn (string $segment) : string => $this->wrapSegment(segment: $segment), array: $x))
+                    |> (static fn ($x) : string => implode(separator: '.', array: $x));
         }
 
         return $this->wrapSegment(segment: $value);
     }
 
+    #[Override]
     protected function wrapSegment(string $segment): string
     {
         if ($segment === '*' || $segment === '') {
@@ -91,23 +92,23 @@ final class PostgreSQLGrammar extends BaseGrammar
 
     public function compileReturning(array $columns): string
     {
-        if (empty($columns)) {
+        if ($columns === []) {
             return '';
         }
 
-        $cols = array_map(callback: fn ($col) => $this->wrap(value: $col), array: $columns);
+        $cols = array_map(callback: fn ($col) : string => $this->wrap(value: $col), array: $columns);
 
         return 'RETURNING ' . implode(separator: ', ', array: $cols);
     }
 
-    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, ?string $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
         $sql = $function . '(';
 
         if ($partitionBy !== '') {
             $partitionColumns = implode(separator: ', ', array: array_map(
-                callback: fn ($col) => $this->wrap(value: $col),
+                callback: fn ($col) : string => $this->wrap(value: $col),
                 array   : explode(separator: ',', string: $partitionBy),
             ));
             $sql .= 'PARTITION BY ' . $partitionColumns;
@@ -117,56 +118,52 @@ final class PostgreSQLGrammar extends BaseGrammar
             $sql .= ' ORDER BY ' . $orderBy;
         }
 
-        $sql .= ')';
-
-        return $sql;
+        return $sql . ')';
     }
 
     public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery): string
     {
-        $sql = "WITH RECURSIVE {$name} AS (";
+        $sql = sprintf('WITH RECURSIVE %s AS (', $name);
 
-        $sql .= $initialQuery . ' UNION ALL ' . $recursiveQuery . ')';
-
-        return $sql;
+        return $sql . ($initialQuery . ' UNION ALL ' . $recursiveQuery . ')');
     }
 
     public function compileAdvisoryLock(string $lockId): string
     {
-        return "SELECT pg_advisory_lock({$lockId})";
+        return sprintf('SELECT pg_advisory_lock(%s)', $lockId);
     }
 
     public function compileAdvisoryUnlock(string $lockId): string
     {
-        return "SELECT pg_advisory_unlock({$lockId})";
+        return sprintf('SELECT pg_advisory_unlock(%s)', $lockId);
     }
 
     public function compileJsonbExtractPath(string $column, string $path): string
     {
-        return "{$this->wrap(value: $column)}->>'{$path}'";
+        return sprintf("%s->>'%s'", $this->wrap(value: $column), $path);
     }
 
     public function compileJsonbContains(string $column, string $value): string
     {
-        return "{$this->wrap(value: $column)} @> '{$value}'";
+        return sprintf("%s @> '%s'", $this->wrap(value: $column), $value);
     }
 
     public function compileJsonbContainedBy(string $column, string $value): string
     {
-        return "{$this->wrap(value: $column)} <@ '{$value}'";
+        return sprintf("%s <@ '%s'", $this->wrap(value: $column), $value);
     }
 
     public function compileArrayContains(string $column, array $values): string
     {
         $valueList = '{' . implode(separator: ',', array: $values) . '}';
 
-        return "{$this->wrap(value: $column)} @> '{$valueList}'";
+        return sprintf("%s @> '%s'", $this->wrap(value: $column), $valueList);
     }
 
     public function compileArrayOverlap(string $column, array $values): string
     {
         $valueList = '{' . implode(separator: ',', array: $values) . '}';
 
-        return "{$this->wrap(value: $column)} && '{$valueList}'";
+        return sprintf("%s && '%s'", $this->wrap(value: $column), $valueList);
     }
 }

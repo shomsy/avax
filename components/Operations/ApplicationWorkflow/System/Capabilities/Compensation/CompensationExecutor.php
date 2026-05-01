@@ -39,7 +39,7 @@ final class CompensationExecutor
         array $completedSteps,
         mixed $context,
     ): CompensationResult {
-        if (empty($completedSteps)) {
+        if ($completedSteps === []) {
             return new CompensationResult(
                 success         : true,
                 compensatedSteps: [],
@@ -88,7 +88,7 @@ final class CompensationExecutor
         }
 
         return new CompensationResult(
-            success         : empty($failed),
+            success         : $failed === [],
             compensatedSteps: $compensated,
             failedSteps     : $failed,
             failureReason   : $failureReason,

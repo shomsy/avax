@@ -12,11 +12,11 @@ final readonly class AppendSagaEvent
     /**
      * @param array<string, list<SagaEvent>> $events
      */
-    public function append(array &$events, SagaEvent $event): SagaEvent
+    public function append(array &$events, SagaEvent $sagaEvent) : SagaEvent
     {
-        $events[$event->instanceId] ??= [];
-        $events[$event->instanceId][] = $event;
+        $events[$sagaEvent->instanceId]   ??= [];
+        $events[$sagaEvent->instanceId][] = $sagaEvent;
 
-        return $event;
+        return $sagaEvent;
     }
 }

@@ -116,7 +116,7 @@ final readonly class MigrateCommand
         return [
             'status' => 'success',
             'ran'    => $ran,
-            'pending' => array_diff(array_map('basename', $migrations), $ran),
+            'pending' => array_diff(array_map(basename(...), $migrations), $ran),
         ];
     }
 

@@ -25,7 +25,7 @@ final class ExecuteDataQuery
     /**
      * @param callable(DataQueryPlan) : array<array<string, mixed>>|null $executor
      */
-    public function __construct(callable $executor = null)
+    public function __construct(?callable $executor = null)
     {
         $this->executor = $executor;
     }
@@ -33,22 +33,22 @@ final class ExecuteDataQuery
     /**
      * Executes the query plan and returns the result.
      */
-    public function execute(DataQueryPlan $plan): QueryResult
+    public function execute(DataQueryPlan $dataQueryPlan) : QueryResult
     {
         $startTime = $this->currentTimeMs();
 
-        $rows = $this->executeQuery($plan);
+        $rows = $this->executeQuery($dataQueryPlan);
 
         $endTime = $this->currentTimeMs();
         $tookMs = $endTime - $startTime;
 
-        $fingerprint = QueryFingerprint::fromQuery($plan->sql ?? '');
+        $queryFingerprint = QueryFingerprint::fromQuery($dataQueryPlan->sql ?? '');
 
         return new QueryResult(
             rows       : $rows,
             count      : count($rows),
             tookMs     : $tookMs,
-            fingerprint: $fingerprint,
+            fingerprint: $queryFingerprint,
         );
     }
 
@@ -65,10 +65,10 @@ final class ExecuteDataQuery
      *
      * @return array<array<string, mixed>>
      */
-    private function executeQuery(DataQueryPlan $plan): array
+    private function executeQuery(DataQueryPlan $dataQueryPlan) : array
     {
         if ($this->executor !== null) {
-            return ($this->executor)($plan);
+            return ($this->executor)($dataQueryPlan);
         }
 
         // Default implementation: return empty result set

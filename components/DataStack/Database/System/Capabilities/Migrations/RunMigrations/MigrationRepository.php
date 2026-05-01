@@ -17,13 +17,7 @@ final class MigrationRepository
 {
     private string $table = 'migrations';
 
-    private readonly Schema $schema;
-
-    public function __construct(
-        private readonly QueryBuilder $queryBuilder,
-        Schema $schema,
-    ) {
-        $this->schema = $schema;
+    public function __construct(private readonly QueryBuilder $queryBuilder, private readonly Schema $schema) {
     }
 
     /**

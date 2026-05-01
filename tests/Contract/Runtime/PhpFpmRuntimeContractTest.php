@@ -13,7 +13,7 @@ final class PhpFpmRuntimeContractTest extends TestCase
 {
     public function test_it_handles_one_php_fpm_style_request_without_leaking_scope(): void
     {
-        $application = Avax::boot(
+        $avax = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
                 ->withHttpHandler(
                     httpHandler: static function ($request, $runtime): string {
@@ -24,7 +24,7 @@ final class PhpFpmRuntimeContractTest extends TestCase
                 ),
         );
 
-        $runtime  = new PhpFpmRuntime(httpKernel: $application->http());
+        new PhpFpmRuntime(httpKernel: $avax->http());
         $response = $runtime->handleGlobals(
             server: [
                 'REQUEST_METHOD' => 'GET',
@@ -34,7 +34,7 @@ final class PhpFpmRuntimeContractTest extends TestCase
 
         self::assertSame(200, $response->statusCode());
         self::assertSame('handled /php-fpm', $response->body());
-        self::assertFalse($application->requestScopes()->hasCurrent());
+        self::assertFalse($avax->requestScopes()->hasCurrent());
     }
 
     private function projectRoot(): string

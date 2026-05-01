@@ -61,7 +61,7 @@ class EventFake
     {
         Assert::assertTrue(
             $this->hasDispatched($event),
-            "The expected [{$event}] event was not dispatched.",
+            sprintf('The expected [%s] event was not dispatched.', $event),
         );
     }
 
@@ -70,7 +70,7 @@ class EventFake
      */
     public function hasDispatched(string $event): bool
     {
-        return isset($this->dispatched[$event]) && ! empty($this->dispatched[$event]);
+        return isset($this->dispatched[$event]) && (isset($this->dispatched[$event]) && $this->dispatched[$event] !== []);
     }
 
     /**
@@ -80,7 +80,7 @@ class EventFake
     {
         Assert::assertFalse(
             $this->hasDispatched($event),
-            "The unexpected [{$event}] event was dispatched.",
+            sprintf('The unexpected [%s] event was dispatched.', $event),
         );
     }
 
@@ -94,7 +94,7 @@ class EventFake
         Assert::assertSame(
             $times,
             $count,
-            "The [{$event}] event was dispatched {$count} times instead of {$times} times.",
+            sprintf('The [%s] event was dispatched %d times instead of %d times.', $event, $count, $times),
         );
     }
 
@@ -113,7 +113,7 @@ class EventFake
     {
         Assert::assertTrue(
             $this->hasDispatchedWith($event, $expectedData),
-            "The [{$event}] event was not dispatched with the expected data.",
+            sprintf('The [%s] event was not dispatched with the expected data.', $event),
         );
     }
 

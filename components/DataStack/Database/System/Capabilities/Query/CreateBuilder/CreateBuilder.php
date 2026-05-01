@@ -35,9 +35,9 @@ final readonly class CreateBuilder
         $connection = $this->connections->connection(name: $connectionName);
         $queryOrchestrator = new QueryOrchestrator(
             executor: new PDOExecutor(
-                connection    : $connection,
                 eventBus      : $this->eventBus,
                 connectionName: $connection->getName(),
+                connection    : $connection,
             ),
             scope   : $this->executionScope,
         );

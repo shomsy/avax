@@ -34,31 +34,22 @@ final class ScopedOwnershipState {}
 
 final class BillingFlowUsesGateway
 {
-    public OwnershipGateway $gateway;
-
-    public function __construct(OwnershipGateway $gateway)
+    public function __construct(public OwnershipGateway $gateway)
     {
-        $this->gateway = $gateway;
     }
 }
 
 final class BillingFlowUsesInternalAudit
 {
-    public InternalAuditTrail $audit;
-
-    public function __construct(InternalAuditTrail $audit)
+    public function __construct(public InternalAuditTrail $audit)
     {
-        $this->audit = $audit;
     }
 }
 
 final class SharedOwnershipFacade
 {
-    public ScopedOwnershipState $state;
-
-    public function __construct(ScopedOwnershipState $state)
+    public function __construct(public ScopedOwnershipState $state)
     {
-        $this->state = $state;
     }
 }
 

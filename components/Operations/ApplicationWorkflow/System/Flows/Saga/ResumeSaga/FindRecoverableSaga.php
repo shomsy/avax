@@ -13,7 +13,7 @@ final readonly class FindRecoverableSaga
 {
     public function __construct(private object $store) {}
 
-    public function find(string $tenantId = null, int $limit = 100) : array
+    public function find(?string $tenantId = null, int $limit = 100) : array
     {
         $recoverable = [];
         $allSagas = $this->store->all();
@@ -41,11 +41,8 @@ final readonly class FindRecoverableSaga
         }
 
         $currentStep = $data['current_step_name'] ?? null;
-        if ($currentStep === null) {
-            return false;
-        }
 
-        return true;
+        return $currentStep !== null;
     }
 }
 
@@ -81,7 +78,6 @@ final readonly class RebuildSagaState
                     break;
 
                 case 'step_failed':
-                    break 2;
 
                 case 'saga_completed':
                 case 'saga_compensated':
@@ -102,17 +98,17 @@ final readonly class RebuildSagaState
 final readonly class ContinueSagaAfterFailure
 {
     public function continue(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         array $definition,
     ): array {
-        if ($instance->status !== SagaInstanceStatus::FAILED) {
+        if ($sagaInstance->status !== SagaInstanceStatus::FAILED) {
             throw new SagaRecoveryFailure(message: 'Saga is not in failed state.');
         }
 
         $definitionSteps = $definition['steps'] ?? [];
         $stepOrder       = $definition['stepOrder'] ?? [];
 
-        $currentIndex = $instance->currentStepIndex;
+        $currentIndex = $sagaInstance->currentStepIndex;
         if ($currentIndex >= count($stepOrder)) {
             throw new SagaRecoveryFailure(message: 'No more steps to retry.');
         }
@@ -136,16 +132,16 @@ final readonly class ContinueSagaAfterFailure
 
 final readonly class MarkSagaAsUnrecoverable
 {
-    public function __construct(private object $store, private object $inspect) {}
+    public function __construct(private object $inspect) {}
 
     public function mark(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         string $reason,
     ): void {
         $this->inspect->record(
             SagaRuntimeEvent::create(
-                sagaId  : $instance->id,
-                sagaName: $instance->definitionName,
+                sagaId  : $sagaInstance->id,
+                sagaName: $sagaInstance->definitionName,
                 type    : 'saga_unrecoverable',
                 payload : ['reason' => $reason],
             ),

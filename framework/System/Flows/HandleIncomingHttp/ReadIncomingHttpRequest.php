@@ -29,11 +29,11 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
 
-final class ReadIncomingHttpRequest
+final readonly class ReadIncomingHttpRequest
 {
     private PrepareRequest $prepareRequest;
 
-    public function __construct(private readonly ResponseStreamFactory $responseStreamFactory = new ResponseStreamFactory())
+    public function __construct(private ResponseStreamFactory $responseStreamFactory = new ResponseStreamFactory())
     {
         $trustedProxyPolicy = new TrustedProxyPolicy();
 
@@ -52,28 +52,28 @@ final class ReadIncomingHttpRequest
         );
     }
 
-    public function read(RuntimeRequest $request) : ServerRequest
+    public function read(RuntimeRequest $runtimeRequest) : ServerRequest
     {
-        $uri          = new Uri(uri: $this->normalizeUri(uri: $request->uri()));
-        $body         = $request->body() ?? '';
+        $uri          = new Uri(uri: $this->normalizeUri(uri: $runtimeRequest->uri()));
+        $body         = $runtimeRequest->body() ?? '';
         $queryParams  = $this->parseQueryParams(uri: $uri);
-        $parsedBody   = $this->parseBody(headers: $request->headers(), body: $body);
+        $parsedBody   = $this->parseBody(headers: $runtimeRequest->headers(), body: $body);
         $requestState = RequestInit::fromResolvedParts(
             body           : new RequestBody(
                 stream: $body === ''
                     ? $this->responseStreamFactory->createEmptyStream()
                     : $this->responseStreamFactory->createStreamFromString(content: $body),
             ),
-            method         : $request->method(),
+            method         : $runtimeRequest->method(),
             uri            : $uri,
-            requestHeaders : new RequestHeaders(headersInput: $request->headers()),
-            serverParams   : $this->buildServerParams(uri: $uri, request: $request),
+            requestHeaders : new RequestHeaders(headersInput: $runtimeRequest->headers()),
+            serverParams   : $this->buildServerParams(uri: $uri, request: $runtimeRequest),
             explicitTarget : null,
             cookies        : new RequestCookies(),
             queryParams    : $queryParams,
             uploadedFiles  : new UploadedFiles(),
             parsedBody     : new ParsedBody(data: $parsedBody),
-            attributes     : new RequestAttributes(attributes: $request->attributes()),
+            attributes     : new RequestAttributes(attributes: $runtimeRequest->attributes()),
             session        : null,
             protocolVersion: '1.1',
         );
@@ -108,10 +108,10 @@ final class ReadIncomingHttpRequest
     {
         $contentType = $this->headerLine(headers: $headers, name: 'Content-Type');
 
-        return (new ParseBodyByContentType(
+        return new ParseBodyByContentType(
             jsonParser: new ParseJsonBody(),
             formParser: new ParseFormBody(),
-        ))->execute(
+        )->execute(
             contentType: $contentType,
             content    : $body,
         );
@@ -129,10 +129,10 @@ final class ReadIncomingHttpRequest
      * @param array<string, list<string>> $headers
      * @return array<string, mixed>
      */
-    private function buildServerParams(UriInterface $uri, RuntimeRequest $request): array
+    private function buildServerParams(UriInterface $uri, RuntimeRequest $runtimeRequest) : array
     {
         $serverParams = [
-            'REQUEST_METHOD' => $request->method(),
+            'REQUEST_METHOD' => $runtimeRequest->method(),
             'REQUEST_URI'    => $uri->getPath() . ($uri->getQuery() === '' ? '' : '?' . $uri->getQuery()),
             'HTTP_HOST'      => $uri->getHost() === '' ? 'localhost' : $uri->getHost(),
         ];
@@ -141,7 +141,7 @@ final class ReadIncomingHttpRequest
             $serverParams['HTTPS'] = 'on';
         }
 
-        foreach ($request->headers() as $name => $values) {
+        foreach ($runtimeRequest->headers() as $name => $values) {
             $serverKey = strtoupper(string: str_replace(search: '-', replace: '_', subject: $name));
 
             if ($serverKey === 'CONTENT_TYPE' || $serverKey === 'CONTENT_LENGTH') {

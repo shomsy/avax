@@ -35,8 +35,8 @@ final readonly class CompileCache
         $buildCompiledPhpPayload = new BuildCompiledPhpPayload();
         $phpPayload              = $buildCompiledPhpPayload->build(payload: $payload);
 
-        $atomicCompiledCacheWrite = new AtomicCompiledCacheWrite(directory: $this->compiledCacheDirectory, clock: $this->clock);
-        $compiledCacheArtifact    = $atomicCompiledCacheWrite->write(name: $compiledCacheName, payload: $phpPayload);
+        $atomicCompiledCacheWrite = new AtomicCompiledCacheWrite(clock: $this->clock, directory: $this->compiledCacheDirectory);
+        $compiledCacheArtifact    = $atomicCompiledCacheWrite->write(payload: $phpPayload, name: $compiledCacheName);
 
         $fingerprint = $compiledCacheSources->fingerprint();
 

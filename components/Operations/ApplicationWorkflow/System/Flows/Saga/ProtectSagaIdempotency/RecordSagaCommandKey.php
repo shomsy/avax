@@ -6,39 +6,39 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Prote
 
 final readonly class DetectDuplicateSagaCommand
 {
-    public function __construct(private ProtectSagaIdempotency $idempotency) {}
+    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency) {}
 
     public function detect(string $key): ?SagaCommandResult
     {
-        return $this->idempotency->check(key: $key);
+        return $this->protectSagaIdempotency->check(key: $key);
     }
 
     public function exists(string $key): bool
     {
-        return $this->idempotency->exists(key: $key);
+        return $this->protectSagaIdempotency->exists(key: $key);
     }
 }
 
 final readonly class RecordSagaCommandKey
 {
-    public function __construct(private ProtectSagaIdempotency $idempotency) {}
+    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency) {}
 
     public function recordSuccess(string $key, string $sagaId, array $output = []): void
     {
-        $this->idempotency->record(
+        $this->protectSagaIdempotency->record(
             key   : $key,
             result: SagaCommandResult::success(sagaId: $sagaId, output: $output),
         );
     }
 
-    public function record(string $key, SagaCommandResult $result): void
+    public function record(string $key, SagaCommandResult $sagaCommandResult) : void
     {
-        $this->idempotency->record(key: $key, result: $result);
+        $this->protectSagaIdempotency->record(key: $key, result: $sagaCommandResult);
     }
 
     public function recordFailure(string $key, string $sagaId, string $error): void
     {
-        $this->idempotency->record(
+        $this->protectSagaIdempotency->record(
             key   : $key,
             result: SagaCommandResult::failure(sagaId: $sagaId, error: $error),
         );
@@ -47,7 +47,7 @@ final readonly class RecordSagaCommandKey
 
 final readonly class ReadPreviousSagaCommandResult
 {
-    public function __construct(private ProtectSagaIdempotency $idempotency) {}
+    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency) {}
 
     public function maybeReplay(string $key): ?array
     {
@@ -58,6 +58,6 @@ final readonly class ReadPreviousSagaCommandResult
 
     public function read(string $key): ?SagaCommandResult
     {
-        return $this->idempotency->check(key: $key);
+        return $this->protectSagaIdempotency->check(key: $key);
     }
 }

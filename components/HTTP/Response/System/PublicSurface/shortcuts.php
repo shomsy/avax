@@ -15,7 +15,7 @@ if (! function_exists('response')) {
      */
     function response(string $content = '', int $status = 200, array $headers = []) : ResponseInterface
     {
-        return (new ResponseFactory())->create($status, $headers, $content);
+        return new ResponseFactory()->create($status, $headers, $content);
     }
 }
 
@@ -25,7 +25,7 @@ if (! function_exists('json_response')) {
      */
     function json_response(mixed $data, int $status = 200, array $headers = []) : ResponseInterface
     {
-        return (new ResponseFactory())->json($data, $status, $headers);
+        return new ResponseFactory()->json($data, $status, $headers);
     }
 }
 
@@ -35,6 +35,6 @@ if (! function_exists('abort')) {
      */
     function abort(int $code, string $message = '') : never
     {
-        throw new RuntimeException("HTTP {$code}: " . ($message ?: 'Error'), $code);
+        throw new RuntimeException(sprintf('HTTP %d: ', $code) . ($message ?: 'Error'), $code);
     }
 }

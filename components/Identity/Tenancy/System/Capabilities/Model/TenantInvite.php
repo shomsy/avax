@@ -25,6 +25,6 @@ final readonly class TenantInvite
 
     public function isAccepted(): bool
     {
-        return $this->acceptedAt !== null;
+        return $this->acceptedAt instanceof DateTimeImmutable;
     }
 }

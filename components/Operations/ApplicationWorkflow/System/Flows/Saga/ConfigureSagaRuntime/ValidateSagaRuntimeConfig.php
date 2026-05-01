@@ -9,13 +9,13 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Confi
  */
 final readonly class ValidateSagaRuntimeConfig
 {
-    public function validate(SagaRuntimeConfig $config): void
+    public function validate(SagaRuntimeConfig $sagaRuntimeConfig) : void
     {
-        if ($config->store === null) {
+        if ($sagaRuntimeConfig->store === null) {
             throw SagaRuntimeConfigurationFailure::missingSagaStore();
         }
 
-        if ($config->stepRunner === null) {
+        if ($sagaRuntimeConfig->stepRunner === null) {
             throw SagaRuntimeConfigurationFailure::missingSagaStepRunner();
         }
     }

@@ -82,9 +82,9 @@ final class BootHttpKernel
     private function validateEnvironment(): void
     {
         $requiredExtensions = ['mbstring', 'json', 'pcre'];
-        foreach ($requiredExtensions as $ext) {
-            if (! extension_loaded($ext)) {
-                throw new RuntimeException("Required PHP extension '{$ext}' is not loaded");
+        foreach ($requiredExtensions as $requiredExtension) {
+            if (! extension_loaded($requiredExtension)) {
+                throw new RuntimeException(sprintf("Required PHP extension '%s' is not loaded", $requiredExtension));
             }
         }
     }
@@ -94,8 +94,8 @@ final class BootHttpKernel
      */
     private function runBootCallbacks(): void
     {
-        foreach ($this->bootCallbacks as $callback) {
-            $callback();
+        foreach ($this->bootCallbacks as $bootCallback) {
+            $bootCallback();
         }
     }
 

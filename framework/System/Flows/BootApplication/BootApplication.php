@@ -15,10 +15,10 @@ final readonly class BootApplication
     ) {
     }
 
-    public function boot(ApplicationBuilder $builder): Runtime
+    public function boot(ApplicationBuilder $applicationBuilder) : Runtime
     {
         try {
-            return $this->buildApplicationState->build(builder: $builder);
+            return $this->buildApplicationState->build(builder: $applicationBuilder);
         } catch (Throwable $throwable) {
             throw ApplicationBootFailed::fromThrowable(throwable: $throwable);
         }

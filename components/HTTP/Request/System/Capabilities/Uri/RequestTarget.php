@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Uri;
 
-final class RequestTarget
+final readonly class RequestTarget
 {
     public function __construct(
         private string $target,

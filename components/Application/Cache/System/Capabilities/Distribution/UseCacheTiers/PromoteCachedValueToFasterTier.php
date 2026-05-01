@@ -24,7 +24,7 @@ final readonly class PromoteCachedValueToFasterTier
                     continue;
                 }
 
-                $result = $store->read(key: $cacheKey, clock: $this->clock);
+                $result = $store->read(clock: $this->clock, key: $cacheKey);
 
                 if ($result instanceof CacheStoreRecordWasFound) {
                     $storedCacheRecord = $result->record;

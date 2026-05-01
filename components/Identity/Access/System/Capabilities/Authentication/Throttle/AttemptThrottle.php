@@ -15,9 +15,9 @@ final readonly class AttemptThrottle
     private int $maxAttempts;
 
     public function __construct(
-        private AttemptThrottleStoreInterface $store,
+        private AttemptThrottleStoreInterface $attemptThrottleStore,
         private Clock $clock,
-        int $maxAttempts = null,
+        ?int                                  $maxAttempts = null,
         private int $decaySeconds = 900,
     ) {
         $maxAttempts ??= 5;
@@ -36,16 +36,16 @@ final readonly class AttemptThrottle
      */
     public function check(string $key): void
     {
-        $attempts = $this->store->get(key: $key);
+        $attempts = $this->attemptThrottleStore->get(key: $key);
 
         if ($attempts < $this->maxAttempts) {
             return;
         }
 
-        $elapsed = $this->clock->now()->getTimestamp() - $this->store->getLastAttemptTime(key: $key);
+        $elapsed = $this->clock->now()->getTimestamp() - $this->attemptThrottleStore->getLastAttemptTime(key: $key);
 
         if ($elapsed >= $this->decaySeconds) {
-            $this->store->reset(key: $key);
+            $this->attemptThrottleStore->reset(key: $key);
 
             return;
         }
@@ -55,11 +55,11 @@ final readonly class AttemptThrottle
 
     public function reset(string $key): void
     {
-        $this->store->reset(key: $key);
+        $this->attemptThrottleStore->reset(key: $key);
     }
 
     public function recordAttempt(string $key): void
     {
-        $this->store->increment(key: $key, timestamp: $this->clock->now()->getTimestamp());
+        $this->attemptThrottleStore->increment(key: $key, timestamp: $this->clock->now()->getTimestamp());
     }
 }

@@ -44,7 +44,7 @@ final readonly class TaskRunner
     private function runAllFibers(array $tasks): array
     {
         $fibers = array_map(
-            static fn (callable $task) => new Fiber($task),
+            static fn (callable $task) : Fiber => new Fiber($task),
             $tasks,
         );
 
@@ -76,13 +76,7 @@ final readonly class TaskRunner
      */
     private function hasActiveFibers(array $fibers): bool
     {
-        foreach ($fibers as $fiber) {
-            if (! $fiber->isTerminated()) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($fibers, fn ($fiber) : bool => ! $fiber->isTerminated());
     }
 
     /**

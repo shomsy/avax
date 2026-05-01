@@ -19,10 +19,10 @@ final readonly class SagaRuntimeConfig
         public ?Closure $eventRecorder = null,
     ) {}
 
-    public function withStore(StoreSagaState $store): self
+    public function withStore(StoreSagaState $storeSagaState) : self
     {
         return new self(
-            store        : $store,
+            store        : $storeSagaState,
             stepRunner   : $this->stepRunner,
             messageBus   : $this->messageBus,
             eventRecorder: $this->eventRecorder,

@@ -13,13 +13,8 @@ use Throwable;
 
 final readonly class ResolveCallArguments
 {
-    private ResolveDependencies $dependencies;
-
-    public function __construct(
-        ResolveDependencies $dependencies,
-    )
+    public function __construct(private ResolveDependencies $resolveDependencies)
     {
-        $this->dependencies = $dependencies;
     }
 
     /**
@@ -29,15 +24,15 @@ final readonly class ResolveCallArguments
     public function resolve(
         array          $parameters,
         array          $overrides,
-        ResolveDependency $resolver,
-        ResolveRequest $request = null,
+        ResolveDependency $resolveDependency,
+        ?ResolveRequest   $resolveRequest = null,
     ) : array
     {
         return $this->resolvePlan(
-            plan     : $this->createPlan(parameters: $parameters),
             overrides: $overrides,
-            resolver : $resolver,
-            request  : $request,
+            plan     : $this->createPlan(parameters: $parameters),
+            resolver : $resolveDependency,
+            request  : $resolveRequest,
         );
     }
 
@@ -48,16 +43,16 @@ final readonly class ResolveCallArguments
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan    $plan,
+        ResolvePlan       $resolvePlan,
         array $overrides,
-        ResolveDependency $resolver,
-        ResolveRequest $request = null,
+        ResolveDependency $resolveDependency,
+        ?ResolveRequest   $resolveRequest = null,
     ): array {
-        return $this->dependencies->resolvePlan(
-            plan     : $plan,
+        return $this->resolveDependencies->resolvePlan(
             overrides: $overrides,
-            resolver : $resolver,
-            request  : $request,
+            plan     : $resolvePlan,
+            resolver : $resolveDependency,
+            request  : $resolveRequest,
         );
     }
 
@@ -66,6 +61,6 @@ final readonly class ResolveCallArguments
      */
     public function createPlan(array $parameters): ResolvePlan
     {
-        return $this->dependencies->createPlan(parameters: $parameters);
+        return $this->resolveDependencies->createPlan(parameters: $parameters);
     }
 }

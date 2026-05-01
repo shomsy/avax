@@ -599,7 +599,7 @@ final class Blueprint
      */
     public function enum(string $name, array $values): ColumnDefinition
     {
-        $quoted = array_map(callback: static fn ($v): string => sprintf("'%s'", $v), array: $values);
+        $quoted = array_map(callback: static fn (string $v) : string => sprintf("'%s'", $v), array: $values);
 
         return $this->addColumn(type: 'ENUM(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
@@ -614,7 +614,7 @@ final class Blueprint
      */
     public function set(string $name, array $values): ColumnDefinition
     {
-        $quoted = array_map(callback: static fn ($v): string => sprintf("'%s'", $v), array: $values);
+        $quoted = array_map(callback: static fn (string $v) : string => sprintf("'%s'", $v), array: $values);
 
         return $this->addColumn(type: 'SET(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
@@ -850,7 +850,7 @@ final class Blueprint
     {
         $columnSQLRenderer = new ColumnSQLRenderer();
         $columns           = array_map(
-            callback: static fn (ColumnDefinition $columnDefinition): string => $columnSQLRenderer->render(column: $columnDefinition, grammar: $grammar),
+            callback: static fn (ColumnDefinition $columnDefinition) : string => $columnSQLRenderer->render(grammar: $grammar, column: $columnDefinition),
             array   : $this->columns,
         );
 
@@ -873,7 +873,7 @@ final class Blueprint
         // Handle new columns (ADD)
         foreach ($this->columns as $column) {
             // noinspection SqlNoDataSourceInspection
-            $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $columnSQLRenderer->render(column: $column, grammar: $grammar);
+            $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $columnSQLRenderer->render(grammar: $grammar, column: $column);
         }
 
         // Handle commands (DROP, RENAME)

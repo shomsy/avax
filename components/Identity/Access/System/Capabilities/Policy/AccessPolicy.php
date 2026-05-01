@@ -22,9 +22,9 @@ final readonly class AccessPolicy
         public ?UserRole $requiredRole = null,
         public ?UserPermission $requiredPermission = null,
         public ?int $resourceOwnerUserId = null,
-        bool $freshMfa = null,
-        bool $adminElevation = null,
-        bool $phishingResistantRequired = null,
+        ?bool $freshMfa = null,
+        ?bool $adminElevation = null,
+        ?bool $phishingResistantRequired = null,
         public ?int $freshMfaMaxAgeSeconds = null,
         public ?IdentityPolicy $identityPolicy = null,
     ) {
@@ -37,26 +37,26 @@ final readonly class AccessPolicy
     }
 
     public static function admin(
-        UserPermission $requiredPermission = null,
-        int            $resourceOwnerUserId = null,
+        ?UserPermission $userPermission = null,
+        ?int            $resourceOwnerUserId = null,
     ): self {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::admin(),
-            requiredRole       : UserRole::ADMIN,
-            requiredPermission : $requiredPermission,
             resourceOwnerUserId: $resourceOwnerUserId,
+            requiredRole       : UserRole::ADMIN,
+            requiredPermission : $userPermission,
         );
     }
 
     public static function forIdentityPolicy(
         IdentityPolicy $identityPolicy,
-        UserRole       $requiredRole = null,
-        UserPermission $requiredPermission = null,
-        int            $resourceOwnerUserId = null,
+        ?UserRole       $userRole = null,
+        ?UserPermission $userPermission = null,
+        ?int            $resourceOwnerUserId = null,
     ): self {
         return new self(
-            requiredRole             : $requiredRole,
-            requiredPermission       : $requiredPermission,
+            requiredRole             : $userRole,
+            requiredPermission       : $userPermission,
             resourceOwnerUserId      : $resourceOwnerUserId,
             freshMfa                 : $identityPolicy->freshMfaMaxAgeSeconds !== null,
             adminElevation           : $identityPolicy->adminElevationRequired,
@@ -67,14 +67,14 @@ final readonly class AccessPolicy
     }
 
     public static function tenantAdmin(
-        UserPermission $requiredPermission = null,
-        int            $resourceOwnerUserId = null,
+        ?UserPermission $userPermission = null,
+        ?int            $resourceOwnerUserId = null,
     ): self {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::tenantAdmin(),
-            requiredRole       : UserRole::ADMIN,
-            requiredPermission : $requiredPermission,
             resourceOwnerUserId: $resourceOwnerUserId,
+            requiredRole       : UserRole::ADMIN,
+            requiredPermission : $userPermission,
         );
     }
 }

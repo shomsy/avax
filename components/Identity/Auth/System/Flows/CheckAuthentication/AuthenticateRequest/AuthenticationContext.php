@@ -15,8 +15,8 @@ final readonly class AuthenticationContext
 {
     public function __construct(
         private bool $authenticated,
-        private AuthenticationMode $mode,
-        private ?AuthenticatedUser $user = null,
+        private AuthenticationMode $authenticationMode,
+        private ?AuthenticatedUser $authenticatedUser = null,
         private ?string $reason = null,
         #[SensitiveParameter]
         private ?string $sessionId = null,
@@ -31,44 +31,42 @@ final readonly class AuthenticationContext
         private ?DateTimeImmutable $mfaVerifiedAt = null,
         private bool $phishingResistant = false,
     ) {
-        if ($this->authenticated && $this->user === null) {
+        if ($this->authenticated && ! $this->authenticatedUser instanceof AuthenticatedUser) {
             throw new InvalidArgumentException(message: 'Authenticated context requires a user.');
         }
 
-        if (! $this->authenticated && $this->mode !== AuthenticationMode::NONE) {
+        if (! $this->authenticated && $this->authenticationMode !== AuthenticationMode::NONE) {
             throw new InvalidArgumentException(message: 'Guest context must use AuthenticationMode::NONE.');
         }
     }
 
-    public static function guest(string $reason = null) : self
+    public static function guest(?string $reason = null) : self
     {
         return new self(
             authenticated: false,
-            mode         : AuthenticationMode::NONE,
             reason       : $reason,
+            mode         : AuthenticationMode::NONE,
         );
     }
 
     public static function authenticated(
-        AuthenticatedUser $user,
-        AuthenticationMode $mode,
+        AuthenticatedUser  $authenticatedUser,
+        AuthenticationMode $authenticationMode,
         #[SensitiveParameter]
-        string            $sessionId = null,
+        ?string            $sessionId = null,
         #[SensitiveParameter]
-        string            $accessTokenId = null,
+        ?string            $accessTokenId = null,
         #[SensitiveParameter]
-        DateTimeImmutable $accessTokenExpiresAt = null,
+        ?DateTimeImmutable $accessTokenExpiresAt = null,
         #[SensitiveParameter]
-        string            $refreshTokenId = null,
+        ?string            $refreshTokenId = null,
         #[SensitiveParameter]
-        string            $refreshTokenFamilyId = null,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        ?string            $refreshTokenFamilyId = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): self {
         return new self(
             authenticated       : true,
-            mode                : $mode,
-            user                : $user,
             sessionId           : $sessionId,
             accessTokenId       : $accessTokenId,
             accessTokenExpiresAt: $accessTokenExpiresAt,
@@ -76,6 +74,8 @@ final readonly class AuthenticationContext
             refreshTokenFamilyId: $refreshTokenFamilyId,
             mfaVerifiedAt       : $mfaVerifiedAt,
             phishingResistant   : $phishingResistant,
+            mode                : $authenticationMode,
+            user                : $authenticatedUser,
         );
     }
 
@@ -86,12 +86,12 @@ final readonly class AuthenticationContext
 
     public function mode(): AuthenticationMode
     {
-        return $this->mode;
+        return $this->authenticationMode;
     }
 
     public function user(): ?AuthenticatedUser
     {
-        return $this->user;
+        return $this->authenticatedUser;
     }
 
     public function reason(): ?string

@@ -20,8 +20,8 @@ use Throwable;
 final readonly class Encryption
 {
     public function __construct(
-        private EncryptValue $encryptFlow,
-        private DecryptValue $decryptFlow,
+        private EncryptValue $encryptValue,
+        private DecryptValue $decryptValue,
         private KeyResolver $keyResolver,
     ) {}
 
@@ -34,9 +34,9 @@ final readonly class Encryption
      */
     public function encrypt(mixed $value): string
     {
-        $payload = $this->encryptFlow->execute($value);
+        $encryptedPayload = $this->encryptValue->execute($value);
 
-        return $payload->serialize();
+        return $encryptedPayload->serialize();
     }
 
     /**
@@ -50,14 +50,12 @@ final readonly class Encryption
      */
     public function decrypt(string $serialized): mixed
     {
-        $plaintext = $this->decryptFlow->execute($serialized);
+        $plaintext = $this->decryptValue->execute($serialized);
 
         // Try JSON decode first (primary format)
         try {
-            $decoded = json_decode($plaintext, true, 512, JSON_THROW_ON_ERROR);
-
-            return $decoded;
-        } catch (Throwable $e) {
+            return json_decode($plaintext, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Throwable) {
             // If JSON fails, try unserialize for backward compatibility
             try {
                 $unserialized = unserialize($plaintext, ['allowed_classes' => false]);
@@ -76,12 +74,12 @@ final readonly class Encryption
     /**
      * Rotate encryption keys by adding a new key and setting it as current.
      *
-     * @param EncryptionKey $newKey The new encryption key to use for future encryptions
+     * @param EncryptionKey $encryptionKey The new encryption key to use for future encryptions
      */
-    public function rotateKeys(EncryptionKey $newKey): void
+    public function rotateKeys(EncryptionKey $encryptionKey) : void
     {
-        $this->keyResolver->addKey($newKey);
-        $this->keyResolver->setCurrentVersion($newKey->version());
+        $this->keyResolver->addKey($encryptionKey);
+        $this->keyResolver->setCurrentVersion($encryptionKey->version());
     }
 
     /**

@@ -18,7 +18,7 @@ final readonly class ConvertPhpErrorToThrowable
     /**
      * Map of PHP error constants to their human-readable names.
      */
-    private const ERROR_NAMES
+    private const array ERROR_NAMES
         = [
             E_ERROR             => 'E_ERROR',
             E_WARNING           => 'E_WARNING',
@@ -40,7 +40,7 @@ final readonly class ConvertPhpErrorToThrowable
     /**
      * Error types that should always be converted to exceptions.
      */
-    private const FATAL_ERRORS
+    private const array FATAL_ERRORS
         = [
             E_ERROR,
             E_PARSE,
@@ -73,11 +73,11 @@ final readonly class ConvertPhpErrorToThrowable
      */
     public function convert(int $severity, string $message, string $file, int $line): Throwable
     {
-        $errorName = self::ERROR_NAMES[$severity] ?? "E_UNKNOWN({$severity})";
+        $errorName = self::ERROR_NAMES[$severity] ?? sprintf('E_UNKNOWN(%d)', $severity);
 
         if (in_array($severity, self::FATAL_ERRORS, true)) {
             throw new PhpErrorException(
-                message  : "[{$errorName}] {$message}",
+                message  : sprintf('[%s] %s', $errorName, $message),
                 severity : $severity,
                 errorName: $errorName,
                 errorFile: $file,
@@ -86,7 +86,7 @@ final readonly class ConvertPhpErrorToThrowable
         }
 
         throw new ErrorException(
-            message : "[{$errorName}] {$message}",
+            message : sprintf('[%s] %s', $errorName, $message),
             code    : 0,
             severity: $severity,
             filename: $file,

@@ -27,13 +27,13 @@ final readonly class Timestamp
         return $this->value->format(format: 'Y-m-d H:i:s');
     }
 
-    public function isBefore(Timestamp $other) : bool
+    public function isBefore(Timestamp $timestamp) : bool
     {
-        return $this->value < $other->value;
+        return $this->value < $timestamp->value;
     }
 
-    public function isAfter(Timestamp $other) : bool
+    public function isAfter(Timestamp $timestamp) : bool
     {
-        return $this->value > $other->value;
+        return $this->value > $timestamp->value;
     }
 }

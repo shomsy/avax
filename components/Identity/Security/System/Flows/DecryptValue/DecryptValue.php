@@ -6,6 +6,7 @@ namespace Avax\Components\Identity\Security\System\Flows\DecryptValue;
 
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptedPayload;
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncrypterInterface;
+use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptionKey;
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\KeyResolver;
 use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed;
 use function is_string;
@@ -39,7 +40,7 @@ final readonly class DecryptValue
 
         $key = $this->keyResolver->getKeyByVersion($payload->keyVersion());
 
-        if ($key === null) {
+        if (! $key instanceof EncryptionKey) {
             throw new DecryptionFailed(
                 sprintf('No encryption key found for version "%s"', $payload->keyVersion()),
             );

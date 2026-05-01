@@ -28,44 +28,32 @@ final class BloomFilter
     private array $bits;
 
     /**
-     * @var int Number of bits in the array
-     */
-    private readonly int $bitCount;
-
-    /**
-     * @var int Number of hash functions to apply
-     */
-    private readonly int $hashCount;
-
-    /**
      * @var int Number of items added to the filter
      */
     private int $itemCount = 0;
 
     /**
-     * @var float Expected false positive rate (0.0 to 1.0)
-     */
-    private readonly float $falsePositiveRate;
-
-    /**
-     * @var int Expected number of items to be stored
-     */
-    private readonly int $expectedItems;
-
-    /**
      * Private constructor. Use factory methods to create instances.
      */
     private function __construct(
-        int $bitCount,
-        int $hashCount,
-        float $falsePositiveRate,
-        int $expectedItems,
+        /**
+         * @var int Number of bits in the array
+         */
+        private readonly int   $bitCount,
+        /**
+         * @var int Number of hash functions to apply
+         */
+        private readonly int   $hashCount,
+        /**
+         * @var float Expected false positive rate (0.0 to 1.0)
+         */
+        private readonly float $falsePositiveRate,
+        /**
+         * @var int Expected number of items to be stored
+         */
+        private readonly int   $expectedItems,
     ) {
-        $this->bitCount      = $bitCount;
-        $this->hashCount     = $hashCount;
-        $this->falsePositiveRate = $falsePositiveRate;
-        $this->expectedItems = $expectedItems;
-        $this->bits          = array_fill(0, $bitCount, false);
+        $this->bits = array_fill(0, $this->bitCount, false);
     }
 
     /**
@@ -189,13 +177,7 @@ final class BloomFilter
      */
     public function mightContain(string $item): bool
     {
-        foreach ($this->getHashIndices($item) as $index) {
-            if (! $this->bits[$index]) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->getHashIndices($item), fn ($index) => $this->bits[$index]);
     }
 
     /**

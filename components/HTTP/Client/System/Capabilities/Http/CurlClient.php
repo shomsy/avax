@@ -8,28 +8,29 @@ use RuntimeException;
 
 final class CurlClient
 {
-    public function send(ClientRequest $request): ClientResponse
+    public function send(ClientRequest $clientRequest) : ClientResponse
     {
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, $request->url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($request->method));
+        curl_setopt($ch, CURLOPT_URL, $clientRequest->url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($clientRequest->method));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
         $headers = [];
-        foreach ($request->headers as $name => $value) {
-            $headers[] = "{$name}: {$value}";
+        foreach ($clientRequest->headers as $name => $value) {
+            $headers[] = sprintf('%s: %s', $name, $value);
         }
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        if ($request->body !== null) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $request->body);
+        if ($clientRequest->body !== null) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $clientRequest->body);
         }
 
         // Options
-        if (isset($request->options['timeout'])) {
-            curl_setopt($ch, CURLOPT_TIMEOUT, $request->options['timeout']);
+        if (isset($clientRequest->options['timeout'])) {
+            curl_setopt($ch, CURLOPT_TIMEOUT, $clientRequest->options['timeout']);
         }
 
         $response = curl_exec($ch);
@@ -38,7 +39,7 @@ final class CurlClient
             $error = curl_error($ch);
             curl_close($ch);
 
-            throw new RuntimeException("HTTP Request failed: {$error}");
+            throw new RuntimeException('HTTP Request failed: ' . $error);
         }
 
         $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);

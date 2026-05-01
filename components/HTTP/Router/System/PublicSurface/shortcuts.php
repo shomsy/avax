@@ -44,10 +44,10 @@ if (! function_exists('url')) {
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
         $path = ltrim($path, '/');
 
-        if (! empty($parameters)) {
+        if ($parameters !== []) {
             $path .= '?' . http_build_query($parameters);
         }
 
-        return "{$scheme}://{$host}/{$path}";
+        return sprintf('%s://%s/%s', $scheme, $host, $path);
     }
 }

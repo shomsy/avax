@@ -13,9 +13,9 @@ final readonly class RetryOperation
 {
     public function retry(Closure $operation, int $attempts = 3, int $backoffMs = 200) : RetryResult
     {
-        return (new RetryExecutor(
+        return new RetryExecutor(
             operation: $operation,
             options  : new RetryOptions(attempts: $attempts, backoffMs: $backoffMs),
-        ))->execute();
+        )->execute();
     }
 }

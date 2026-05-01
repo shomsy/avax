@@ -17,13 +17,13 @@ final readonly class ReadScimGroups
     {
         $groups = [];
 
-        foreach ($this->readScimUsers->execute(directoryId: $directoryId) as $user) {
-            foreach ($user->groups as $group) {
+        foreach ($this->readScimUsers->execute(directoryId: $directoryId) as $scimUserProjection) {
+            foreach ($scimUserProjection->groups as $group) {
                 $groups[$group]['members'][] = new ScimGroupMember(
-                    externalId: $user->externalId,
-                    userId    : $user->userId,
-                    username  : $user->username,
-                    email     : $user->email,
+                    externalId: $scimUserProjection->externalId,
+                    userId    : $scimUserProjection->userId,
+                    username  : $scimUserProjection->username,
+                    email     : $scimUserProjection->email,
                 );
             }
         }

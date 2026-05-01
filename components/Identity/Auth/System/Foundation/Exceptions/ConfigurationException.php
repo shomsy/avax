@@ -18,7 +18,7 @@ final class ConfigurationException extends AuthException
         private readonly string $errorCode = 'auth.configuration.invalid',
         private readonly array $context = [],
         int $code = 0,
-        Throwable $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct(message: $message, code: $code, previous: $previous);
     }
@@ -26,7 +26,7 @@ final class ConfigurationException extends AuthException
     public static function missingUserSource(string $buildPath = 'AuthBuilder::ready()'): self
     {
         return new self(
-            message  : "{$buildPath} requires a user source. Call forUser() before ready().",
+            message  : $buildPath . ' requires a user source. Call forUser() before ready().',
             errorCode: 'auth.configuration.user_source_missing',
             context  : [
                 'build_path' => $buildPath,
@@ -38,7 +38,7 @@ final class ConfigurationException extends AuthException
     public static function missingIdentity(string $buildPath = 'AuthBuilder::ready()'): self
     {
         return new self(
-            message  : "{$buildPath} requires an identity coordinator. Call withIdentity() or withIdentityBackends() before ready().",
+            message  : $buildPath . ' requires an identity coordinator. Call withIdentity() or withIdentityBackends() before ready().',
             errorCode: 'auth.configuration.identity_missing',
             context  : [
                 'build_path' => $buildPath,
@@ -48,13 +48,13 @@ final class ConfigurationException extends AuthException
     }
 
     public static function missingIdentityBackend(
-        string $buildPath = null,
+        ?string $buildPath = null,
         string $hint = 'Provide at least one session or JWT backend.',
     ): self {
         $buildPath ??= 'AuthBuilder::ready()';
 
         return new self(
-            message  : "{$buildPath} requires at least one identity backend (session or JWT). {$hint}",
+            message  : sprintf('%s requires at least one identity backend (session or JWT). %s', $buildPath, $hint),
             errorCode: 'auth.configuration.identity_backend_missing',
             context  : [
                 'build_path' => $buildPath,
@@ -66,7 +66,7 @@ final class ConfigurationException extends AuthException
     public static function enterpriseSessionRegistryRequired(string $buildPath = 'AuthBuilder::ready()'): self
     {
         return new self(
-            message  : "{$buildPath} cannot enable [enterprise_mode] because [session_registry] is missing. Use withSessionRegistry() to provide a SQL or Redis session registry.",
+            message  : $buildPath . ' cannot enable [enterprise_mode] because [session_registry] is missing. Use withSessionRegistry() to provide a SQL or Redis session registry.',
             errorCode: 'auth.configuration.dependency_missing',
             context  : [
                            'build_path' => $buildPath,
@@ -85,7 +85,7 @@ final class ConfigurationException extends AuthException
         string $cause,
     ): self {
         return new self(
-            message  : "{$buildPath} cannot enable [{$capability}] because [{$requirement}] is missing. {$cause} Provide {$option} or remove the capability-specific configuration.",
+            message  : sprintf('%s cannot enable [%s] because [%s] is missing. %s Provide %s or remove the capability-specific configuration.', $buildPath, $capability, $requirement, $cause, $option),
             errorCode: 'auth.configuration.dependency_missing',
             context  : [
                            'build_path' => $buildPath,

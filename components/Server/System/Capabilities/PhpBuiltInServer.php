@@ -28,8 +28,8 @@ final class PhpBuiltInServer
         }
 
         echo "🚀 Starting development server...\n";
-        echo "   URL: http://{$host}:{$port}\n";
-        echo "   Router: {$router}\n";
+        echo sprintf('   URL: http://%s:%d%s', $host, $port, PHP_EOL);
+        echo sprintf('   Router: %s%s', $router, PHP_EOL);
         echo "   Press Ctrl+C to stop\n\n";
 
         passthru($command);
@@ -76,10 +76,10 @@ echo "<p>Create routes/web.php to get started.</p>";
     private static function startBackground(string $command, int $port): void
     {
         if (self::isPortInUse($port)) {
-            throw new RuntimeException("Port {$port} is already in use");
+            throw new RuntimeException(sprintf('Port %d is already in use', $port));
         }
 
-        $logFile = sys_get_temp_dir() . '/avax-server-' . $port . '.log';
+        sys_get_temp_dir();
 
         $pipes = [];
         $process = proc_open($command, $descriptorSpec = [], $pipes);
@@ -121,7 +121,7 @@ echo "<p>Create routes/web.php to get started.</p>";
             escapeshellarg($routerFile),
         );
 
-        echo "🚀 Server starting at http://{$host}:{$port}\n";
+        echo sprintf('🚀 Server starting at http://%s:%s%s', $host, $port, PHP_EOL);
         passthru($command);
 
         return true;
@@ -153,10 +153,10 @@ echo "<p>Create routes/web.php to get started.</p>";
         if (PHP_OS_FAMILY === 'Windows') {
             exec('taskkill /F /IM php.exe /FI "WINDOWTITLE like%AvaX%"');
         } else {
-            exec("pkill -f 'php -S {$port}'");
+            exec(sprintf("pkill -f 'php -S %d'", $port));
         }
 
-        echo "✅ Server stopped on port {$port}\n";
+        echo sprintf('✅ Server stopped on port %d%s', $port, PHP_EOL);
 
         return true;
     }

@@ -19,9 +19,9 @@ final readonly class Provisioning
 
     public function isConfigured(): bool
     {
-        return $this->suspendUser !== null
-            && $this->reactivateUser !== null
-            && $this->deprovisionUser !== null;
+        return $this->suspendUser instanceof SuspendUser
+            && $this->reactivateUser instanceof ReactivateUser
+            && $this->deprovisionUser instanceof DeprovisionUser;
     }
 
     public function suspendUser(int $userId): void

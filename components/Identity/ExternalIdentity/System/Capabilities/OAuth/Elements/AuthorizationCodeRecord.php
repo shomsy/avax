@@ -41,6 +41,6 @@ final readonly class AuthorizationCodeRecord
 
     public function wasUsed(): bool
     {
-        return $this->usedAt !== null;
+        return $this->usedAt instanceof DateTimeImmutable;
     }
 }

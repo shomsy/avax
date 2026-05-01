@@ -9,17 +9,17 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\DrainAud
 
 final readonly class ExportAuditEvents
 {
-    public function __construct(private DrainAuditLogInterface $auditLog, private AuditExporterInterface $exporter) {}
+    public function __construct(private DrainAuditLogInterface $drainAuditLog, private AuditExporterInterface $auditExporter) {}
 
     public function execute(): int
     {
-        $events = $this->auditLog->drain();
+        $events = $this->drainAuditLog->drain();
 
         if ($events === []) {
             return 0;
         }
 
-        $this->exporter->export(events: $events);
+        $this->auditExporter->export(events: $events);
 
         return count(value: $events);
     }

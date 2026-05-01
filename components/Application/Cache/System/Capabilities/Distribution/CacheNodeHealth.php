@@ -39,12 +39,12 @@ final class CacheNodeHealth
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
                 nodeId              : $nodeId,
-                status              : $cacheNode->status,
                 lastCheck           : $now,
                 consecutiveFailures : 0,
                 consecutiveSuccesses: 0,
                 lastFailure         : null,
                 lastSuccess         : $now,
+                status              : $cacheNode->status,
             );
 
             return $this->records[$nodeId];
@@ -67,12 +67,12 @@ final class CacheNodeHealth
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
                 nodeId              : $nodeId,
-                status              : CacheNodeStatus::HEALTHY,
                 lastCheck           : $now,
                 consecutiveFailures : 0,
                 consecutiveSuccesses: 1,
                 lastFailure         : null,
                 lastSuccess         : $now,
+                status              : CacheNodeStatus::HEALTHY,
             );
 
             return $this->records[$nodeId];
@@ -89,12 +89,12 @@ final class CacheNodeHealth
 
         $this->records[$nodeId] = new NodeHealthRecord(
             nodeId              : $nodeId,
-            status              : $newStatus,
             lastCheck           : $now,
             consecutiveFailures : 0,
             consecutiveSuccesses: $newSuccesses,
             lastFailure         : $record->lastFailure,
             lastSuccess         : $now,
+            status              : $newStatus,
         );
 
         return $this->records[$nodeId];
@@ -111,12 +111,12 @@ final class CacheNodeHealth
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
                 nodeId              : $nodeId,
-                status              : CacheNodeStatus::UNHEALTHY,
                 lastCheck           : $now,
                 consecutiveFailures : 1,
                 consecutiveSuccesses: 0,
                 lastFailure         : $now,
                 lastSuccess         : null,
+                status              : CacheNodeStatus::UNHEALTHY,
             );
 
             return $this->records[$nodeId];
@@ -133,12 +133,12 @@ final class CacheNodeHealth
 
         $this->records[$nodeId] = new NodeHealthRecord(
             nodeId              : $nodeId,
-            status              : $newStatus,
             lastCheck           : $now,
             consecutiveFailures : $newFailures,
             consecutiveSuccesses: 0,
             lastFailure         : $now,
             lastSuccess         : $record->lastSuccess,
+            status              : $newStatus,
         );
 
         return $this->records[$nodeId];

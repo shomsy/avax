@@ -13,7 +13,7 @@ use DateInterval;
 
 final class TaskDispatch
 {
-    private static DispatchStrategyResolver $resolver;
+    private static DispatchStrategyResolver $dispatchStrategyResolver;
 
     public static function dispatch(object $task): void
     {
@@ -30,29 +30,29 @@ final class TaskDispatch
 
     private static function resolver(): DispatchStrategyResolver
     {
-        if (! isset(self::$resolver)) {
-            self::$resolver = new DispatchStrategyResolver();
+        if (! isset(self::$dispatchStrategyResolver)) {
+            self::$dispatchStrategyResolver = new DispatchStrategyResolver();
         }
 
-        return self::$resolver;
+        return self::$dispatchStrategyResolver;
     }
 
     public static function sync(object $task): void
     {
-        $dispatcher = new SyncDispatcher();
-        $dispatcher->dispatch($task);
+        $syncDispatcher = new SyncDispatcher();
+        $syncDispatcher->dispatch($task);
     }
 
     public static function async(object $task): void
     {
-        $dispatcher = new AsyncDispatcher();
-        $dispatcher->dispatch($task);
+        $asyncDispatcher = new AsyncDispatcher();
+        $asyncDispatcher->dispatch($task);
     }
 
-    public static function later(object $task, DateInterval $delay): void
+    public static function later(object $task, DateInterval $dateInterval) : void
     {
-        $dispatcher = new DeferredDispatcher($delay);
-        $dispatcher->dispatch($task);
+        $deferredDispatcher = new DeferredDispatcher($dateInterval);
+        $deferredDispatcher->dispatch($task);
     }
 
     public static function afterResponse(object $task): void
@@ -68,14 +68,13 @@ final class TaskDispatch
 
 final class TaskBatch
 {
-    /** @var list<object> */
-    private array $tasks;
-
     private ?Closure $then = null;
 
-    public function __construct(array $tasks)
+    public function __construct(
+        /** @var list<object> */
+        private readonly array $tasks
+    )
     {
-        $this->tasks = $tasks;
     }
 
     public function then(Closure $callback): self
@@ -91,7 +90,7 @@ final class TaskBatch
             TaskDispatch::dispatch($task);
         }
 
-        if ($this->then) {
+        if ($this->then instanceof Closure) {
             ($this->then)();
         }
     }

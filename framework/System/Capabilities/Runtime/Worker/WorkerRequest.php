@@ -11,7 +11,7 @@ final readonly class WorkerRequest
 {
     public function __construct(
         private string $id,
-        private RuntimeRequest $request,
+        private RuntimeRequest $runtimeRequest,
     ) {
         if (trim(string: $this->id) === '') {
             throw new FrameworkMisconfigured(message: 'Worker request id cannot be empty.');
@@ -25,6 +25,6 @@ final readonly class WorkerRequest
 
     public function request() : RuntimeRequest
     {
-        return $this->request;
+        return $this->runtimeRequest;
     }
 }

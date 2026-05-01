@@ -12,20 +12,20 @@ use InvalidArgumentException;
 final readonly class OAuthTokenEndpointAuthMethodPolicy
 {
     public function resolve(
-        OAuthClientType $type,
-        OAuthTokenEndpointAuthMethod $requested = null,
-        OAuthTokenEndpointAuthMethod $current = null,
+        OAuthClientType               $oAuthClientType,
+        ?OAuthTokenEndpointAuthMethod $requested = null,
+        ?OAuthTokenEndpointAuthMethod $current = null,
         bool $workloadIdentity = false,
     ): OAuthTokenEndpointAuthMethod {
-        $default = $this->defaultForType(type: $type);
-        $method = $requested ?? $current ?? $default;
+        $oAuthTokenEndpointAuthMethod = $this->defaultForType(type: $oAuthClientType);
+        $method                       = $requested ?? $current ?? $oAuthTokenEndpointAuthMethod;
 
-        if ($requested === null && $current !== null && ! $this->isCompatible(type: $type, method: $current, workloadIdentity: $workloadIdentity)) {
-            $method = $default;
+        if (! $requested instanceof OAuthTokenEndpointAuthMethod && $current instanceof OAuthTokenEndpointAuthMethod && ! $this->isCompatible(workloadIdentity: $workloadIdentity, type: $oAuthClientType, method: $current)) {
+            $method = $oAuthTokenEndpointAuthMethod;
         }
 
-        if (! $this->isCompatible(type: $type, method: $method, workloadIdentity: $workloadIdentity)) {
-            throw new InvalidArgumentException(message: match ($type) {
+        if (! $this->isCompatible(workloadIdentity: $workloadIdentity, type: $oAuthClientType, method: $method)) {
+            throw new InvalidArgumentException(message: match ($oAuthClientType) {
                 OAuthClientType::PUBLIC => 'Public clients must use token endpoint auth method "none".',
                 OAuthClientType::CONFIDENTIAL => 'Confidential clients require a token endpoint auth method.',
             });
@@ -34,22 +34,22 @@ final readonly class OAuthTokenEndpointAuthMethodPolicy
         return $method;
     }
 
-    private function defaultForType(OAuthClientType $type): OAuthTokenEndpointAuthMethod
+    private function defaultForType(OAuthClientType $oAuthClientType) : OAuthTokenEndpointAuthMethod
     {
-        return $type === OAuthClientType::PUBLIC
+        return $oAuthClientType === OAuthClientType::PUBLIC
             ? OAuthTokenEndpointAuthMethod::NONE
             : OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC;
     }
 
     private function isCompatible(
-        OAuthClientType $type,
-        OAuthTokenEndpointAuthMethod $method,
+        OAuthClientType              $oAuthClientType,
+        OAuthTokenEndpointAuthMethod $oAuthTokenEndpointAuthMethod,
         bool $workloadIdentity,
     ): bool {
-        if ($type === OAuthClientType::PUBLIC) {
-            return $method === OAuthTokenEndpointAuthMethod::NONE;
+        if ($oAuthClientType === OAuthClientType::PUBLIC) {
+            return $oAuthTokenEndpointAuthMethod === OAuthTokenEndpointAuthMethod::NONE;
         }
 
-        return $method !== OAuthTokenEndpointAuthMethod::NONE;
+        return $oAuthTokenEndpointAuthMethod !== OAuthTokenEndpointAuthMethod::NONE;
     }
 }

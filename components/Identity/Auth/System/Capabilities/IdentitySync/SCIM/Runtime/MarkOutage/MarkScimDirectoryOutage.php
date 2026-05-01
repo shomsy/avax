@@ -13,28 +13,28 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class MarkScimDirectoryOutage
 {
-    public function __construct(private ScimDirectoryStoreInterface $directoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(MarkScimDirectoryOutageData $data): ScimDirectory
+    public function execute(MarkScimDirectoryOutageData $markScimDirectoryOutageData) : ScimDirectory
     {
-        $directory = $this->directoryStore->find(directoryId: $data->directoryId);
+        $directory = $this->scimDirectoryStore->find(directoryId: $markScimDirectoryOutageData->directoryId);
 
-        if ($directory === null) {
+        if (! $directory instanceof ScimDirectory) {
             throw ScimFailed::unknownDirectory();
         }
 
-        $marked = $directory->markOutage(startedAt: $this->clock->now(), reason: $data->reason);
-        $this->directoryStore->save(directory: $marked);
+        $scimDirectory = $directory->markOutage(startedAt: $this->clock->now(), reason: $markScimDirectoryOutageData->reason);
+        $this->scimDirectoryStore->save(directory: $scimDirectory);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.directory.outage_marked',
             occurredAt: $this->clock->now(),
             context   : [
-                'directory_id' => $marked->directoryId,
-                'tenant' => $marked->tenantSlug,
-                'reason' => $marked->outageReason,
+                            'directory_id' => $scimDirectory->directoryId,
+                            'tenant'       => $scimDirectory->tenantSlug,
+                            'reason'       => $scimDirectory->outageReason,
             ],
         ));
 
-        return $marked;
+        return $scimDirectory;
     }
 }

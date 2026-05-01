@@ -16,22 +16,22 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class RollbackTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws TenantSecurityFailed
      */
     public function execute(string $changeId): TenantSecurityConfiguration
     {
-        $changeRequest = $this->changeRequestStore->find(changeId: $changeId);
+        $changeRequest = $this->tenantSecurityChangeRequestStore->find(changeId: $changeId);
 
-        if ($changeRequest === null) {
+        if (! $changeRequest instanceof TenantSecurityChangeRequest) {
             throw TenantSecurityFailed::unknownChangeRequest();
         }
 
         $rollback = $changeRequest->before ?? new TenantSecurityConfiguration(tenantSlug: $changeRequest->tenantSlug);
-        $this->configurationStore->save(configuration: $rollback);
-        $rolledBack = new TenantSecurityChangeRequest(
+        $this->tenantSecurityConfigurationStore->save(configuration: $rollback);
+        $tenantSecurityChangeRequest = new TenantSecurityChangeRequest(
             changeId    : $changeRequest->changeId,
             tenantSlug  : $changeRequest->tenantSlug,
             requestedBy : $changeRequest->requestedBy,
@@ -46,13 +46,13 @@ final readonly class RollbackTenantSecurityChange
             appliedAt   : $changeRequest->appliedAt,
             rolledBackAt: $this->clock->now(),
         );
-        $this->changeRequestStore->save(changeRequest: $rolledBack);
+        $this->tenantSecurityChangeRequestStore->save(changeRequest: $tenantSecurityChangeRequest);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.tenant_security.change.rolled_back',
             occurredAt: $this->clock->now(),
             context   : [
-                'change_id' => $rolledBack->changeId,
-                'tenant' => $rolledBack->tenantSlug,
+                            'change_id' => $tenantSecurityChangeRequest->changeId,
+                            'tenant'    => $tenantSecurityChangeRequest->tenantSlug,
             ],
         ));
 

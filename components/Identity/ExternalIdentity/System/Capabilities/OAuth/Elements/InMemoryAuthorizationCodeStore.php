@@ -29,13 +29,13 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         string $redirectUri,
         array $scopes,
         DateTimeImmutable $expiresAt,
-        string            $state = null,
-        string            $nonce = null,
+        ?string            $state = null,
+        ?string            $nonce = null,
         #[SensitiveParameter]
-        string            $codeChallenge = null,
+        ?string            $codeChallenge = null,
         #[SensitiveParameter]
-        PkceMethod        $codeChallengeMethod = null,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        ?PkceMethod        $pkceMethod = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): IssuedAuthorizationCode {
         $plainCode = bin2hex(string: random_bytes(length: 32));
@@ -50,7 +50,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             expiresAt          : $expiresAt,
             nonce              : $nonce,
             codeChallenge      : $codeChallenge,
-            codeChallengeMethod: $codeChallengeMethod,
+            codeChallengeMethod: $pkceMethod,
             mfaVerifiedAt      : $mfaVerifiedAt,
             phishingResistant  : $phishingResistant,
         );

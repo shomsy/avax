@@ -40,8 +40,8 @@ final class CreateRequestFromGlobals
     {
         $headers = [];
         foreach ($_SERVER as $key => $value) {
-            if (str_starts_with($key, 'HTTP_')) {
-                $name           = substr($key, 5);
+            if (str_starts_with((string) $key, 'HTTP_')) {
+                $name = substr((string) $key, 5);
                 $headers[$name] = $value;
             }
         }

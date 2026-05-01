@@ -20,20 +20,20 @@ final readonly class ArgumentResolver
     ) {
     }
 
-    public function resolve(ReflectionMethod $reflection, ServerRequestInterface $request): array
+    public function resolve(ReflectionMethod $reflectionMethod, ServerRequestInterface $serverRequest) : array
     {
         $arguments = [];
 
-        foreach ($reflection->getParameters() as $param) {
-            $paramName = $param->getName();
-            $paramType = $param->getType();
+        foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
+            $paramName = $reflectionParameter->getName();
+            $paramType = $reflectionParameter->getType();
 
             // 1. Resolve typed objects (ServerRequestInterface, DTOs, Services)
             if ($paramType instanceof ReflectionNamedType && ! $paramType->isBuiltin()) {
                 $typeName = $paramType->getName();
 
                 if (is_a($typeName, ServerRequestInterface::class, true)) {
-                    $arguments[] = $request;
+                    $arguments[] = $serverRequest;
 
                     continue;
                 }
@@ -50,7 +50,7 @@ final readonly class ArgumentResolver
             }
 
             // 2. Resolve from Request Attributes (e.g., path parameters from Router)
-            $attributeValue = $request->getAttribute($paramName);
+            $attributeValue = $serverRequest->getAttribute($paramName);
             if ($attributeValue !== null) {
                 $arguments[] = $attributeValue;
 
@@ -58,8 +58,8 @@ final readonly class ArgumentResolver
             }
 
             // 3. Fallback to default value
-            if ($param->isDefaultValueAvailable()) {
-                $arguments[] = $param->getDefaultValue();
+            if ($reflectionParameter->isDefaultValueAvailable()) {
+                $arguments[] = $reflectionParameter->getDefaultValue();
 
                 continue;
             }
@@ -68,8 +68,8 @@ final readonly class ArgumentResolver
                 sprintf(
                     'Unable to resolve parameter "%s" for method "%s" in "%s"',
                     $paramName,
-                    $reflection->getName(),
-                    $reflection->getDeclaringClass()->getName(),
+                    $reflectionMethod->getName(),
+                    $reflectionMethod->getDeclaringClass()->getName(),
                 ),
             );
         }

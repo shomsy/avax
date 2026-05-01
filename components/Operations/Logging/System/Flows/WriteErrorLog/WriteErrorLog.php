@@ -19,8 +19,8 @@ use Throwable;
 final readonly class WriteErrorLog
 {
     public function __construct(
-        private Logging $logger,
-        private SecretRedactor $redactor = new SecretRedactor(),
+        private Logging        $logging,
+        private SecretRedactor $secretRedactor = new SecretRedactor(),
         private ?string        $correlationId = null,
         private ?string        $traceId = null,
     ) {}
@@ -33,16 +33,16 @@ final readonly class WriteErrorLog
      *
      * @return array<string, mixed> The structured log record that was written
      */
-    public function writeException(string $level, Throwable $exception, array $additionalContext = []): array
+    public function writeException(string $level, Throwable $throwable, array $additionalContext = []) : array
     {
         $context = array_merge($additionalContext, [
-            'exception' => $this->buildExceptionData($exception),
+            'exception' => $this->buildExceptionData($throwable),
         ]);
 
         $message = sprintf(
             '%s: %s',
-            $exception::class,
-            $exception->getMessage(),
+            $throwable::class,
+            $throwable->getMessage(),
         );
 
         return $this->write($level, $message, $context);
@@ -53,19 +53,19 @@ final readonly class WriteErrorLog
      *
      * @return array<string, mixed>
      */
-    private function buildExceptionData(Throwable $exception): array
+    private function buildExceptionData(Throwable $throwable) : array
     {
         $data = [
-            'class'   => $exception::class,
-            'message' => $exception->getMessage(),
-            'code'    => $exception->getCode(),
-            'file'    => $exception->getFile(),
-            'line'    => $exception->getLine(),
-            'trace'   => $this->buildTrace($exception),
+            'class'   => $throwable::class,
+            'message' => $throwable->getMessage(),
+            'code'    => $throwable->getCode(),
+            'file'    => $throwable->getFile(),
+            'line'    => $throwable->getLine(),
+            'trace'   => $this->buildTrace($throwable),
         ];
 
-        if ($exception->getPrevious() !== null) {
-            $data['previous'] = $this->buildExceptionData($exception->getPrevious());
+        if ($throwable->getPrevious() instanceof Throwable) {
+            $data['previous'] = $this->buildExceptionData($throwable->getPrevious());
         }
 
         return $data;
@@ -76,11 +76,11 @@ final readonly class WriteErrorLog
      *
      * @return list<array{file: string, line: int, class: string|null, type: string|null, function: string}>
      */
-    private function buildTrace(Throwable $exception): array
+    private function buildTrace(Throwable $throwable) : array
     {
         $trace = [];
 
-        foreach ($exception->getTrace() as $frame) {
+        foreach ($throwable->getTrace() as $frame) {
             $trace[] = [
                 'file'  => $frame['file'] ?? '[internal]',
                 'line'  => $frame['line'] ?? 0,
@@ -108,7 +108,7 @@ final readonly class WriteErrorLog
         $record = $this->buildRecord($level, $message, $context);
         $record = $this->redactRecord($record);
 
-        $this->logger->log(
+        $this->logging->log(
             $record['level'],
             $record['message'],
             $record['context'],
@@ -230,8 +230,8 @@ final readonly class WriteErrorLog
      */
     private function redactRecord(array $record): array
     {
-        $record['context'] = $this->redactor->redactArray($record['context']);
-        $record['message'] = $this->redactor->redactString($record['message']);
+        $record['context'] = $this->secretRedactor->redactArray($record['context']);
+        $record['message'] = $this->secretRedactor->redactString($record['message']);
 
         return $record;
     }

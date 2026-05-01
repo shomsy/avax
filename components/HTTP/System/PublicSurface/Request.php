@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\PublicSurface;
 
-final class Request
+final readonly class Request
 {
     public function __construct(
-        public readonly array $server,
-        public readonly array $get,
-        public readonly array $post,
-        public readonly array $files,
+        public array $server,
+        public array $get,
+        public array $post,
+        public array $files,
     ) {}
 
     public function method() : string

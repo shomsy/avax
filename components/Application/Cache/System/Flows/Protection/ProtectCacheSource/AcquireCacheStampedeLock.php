@@ -63,8 +63,8 @@ final readonly class AcquireCacheStampedeLock
 
         throw new CacheLockWasNotAcquired(
             message       : sprintf('Lock for key "%s" could not be acquired after %d seconds', $key, $this->waitTimeoutSeconds),
-            key           : CacheKey::create(key: $key),
             timeoutSeconds: $this->waitTimeoutSeconds,
+            key           : CacheKey::create(key: $key),
         );
     }
 }

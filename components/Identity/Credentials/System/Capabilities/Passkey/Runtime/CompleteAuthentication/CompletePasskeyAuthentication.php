@@ -7,6 +7,7 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runti
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
@@ -15,7 +16,9 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyChallengeRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyChallengeStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyCredentialStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyRuntimeInterface;
 use SensitiveParameter;
@@ -23,10 +26,10 @@ use SensitiveParameter;
 final readonly class CompletePasskeyAuthentication
 {
     public function __construct(
-        private PasskeyRuntimeInterface $runtime,
-        private PasskeyChallengeStoreInterface $challengeStore,
+        private PasskeyRuntimeInterface         $passkeyRuntime,
+        private PasskeyChallengeStoreInterface  $passkeyChallengeStore,
         #[SensitiveParameter]
-        private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyCredentialStoreInterface $passkeyCredentialStore,
         private UserSourceInterface $userSource,
         private IdentityInterface $identity,
         private ProjectAuthenticatedUser $projectAuthenticatedUser,
@@ -40,11 +43,11 @@ final readonly class CompletePasskeyAuthentication
     /**
      * @throws PasskeyOperationFailed
      */
-    public function execute(CompletePasskeyAuthenticationData $data): AuthenticationResult
+    public function execute(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData) : AuthenticationResult
     {
-        $challenge = $this->challengeStore->find(challengeId: $data->challengeId);
+        $challenge = $this->passkeyChallengeStore->find(challengeId: $completePasskeyAuthenticationData->challengeId);
 
-        if ($challenge === null) {
+        if (! $challenge instanceof PasskeyChallengeRecord) {
             throw PasskeyOperationFailed::notFound();
         }
 
@@ -53,70 +56,70 @@ final readonly class CompletePasskeyAuthentication
         }
 
         if ($challenge->isExpiredAt(moment: $this->clock->now())) {
-            $this->challengeStore->forget(challengeId: $data->challengeId);
+            $this->passkeyChallengeStore->forget(challengeId: $completePasskeyAuthenticationData->challengeId);
 
             throw PasskeyOperationFailed::expired();
         }
 
         $knownCredentials = $challenge->userId !== null
-            ? $this->credentialStore->forUser(userId: $challenge->userId)
+            ? $this->passkeyCredentialStore->forUser(userId: $challenge->userId)
             : [];
-        $verified = $this->runtime->completeAuthentication(
+        $verifiedPasskeyAuthentication = $this->passkeyRuntime->completeAuthentication(
             rpId            : $this->rpId,
             challenge       : $challenge->challenge,
-            response        : $data->response,
+            response        : $completePasskeyAuthenticationData->response,
             knownCredentials: $knownCredentials,
         );
-        $credential = $this->credentialStore->find(credentialId: $verified->credentialId);
+        $credential = $this->passkeyCredentialStore->find(credentialId: $verifiedPasskeyAuthentication->credentialId);
 
-        if ($credential === null || $credential->isRevoked()) {
+        if (! $credential instanceof PasskeyCredential || $credential->isRevoked()) {
             throw PasskeyOperationFailed::notFound();
         }
 
-        $user = $this->userSource->findById(id: new UserId(value: $verified->userId));
+        $user = $this->userSource->findById(id: new UserId(value: $verifiedPasskeyAuthentication->userId));
 
-        if ($user === null || ! $user->isActive()) {
+        if (! $user instanceof User || ! $user->isActive()) {
             throw PasskeyOperationFailed::notFound();
         }
 
-        $issued = $this->identity->issue(
+        $issuedAuthentication  = $this->identity->issue(
             user             : $user,
             mfaVerifiedAt    : $this->clock->now(),
             phishingResistant: true,
         );
-        $context = AuthenticationContext::authenticated(
-            user                : $this->projectAuthenticatedUser->fromUser(user: $user),
-            mode                : $issued->mode,
-            sessionId           : $issued->sessionId,
-            accessTokenId       : $issued->accessToken?->tokenId,
-            accessTokenExpiresAt: $issued->accessToken?->expiresAt,
-            refreshTokenId      : $issued->refreshToken?->tokenId,
+        $authenticationContext = AuthenticationContext::authenticated(
+            sessionId           : $issuedAuthentication->sessionId,
+            accessTokenId       : $issuedAuthentication->accessToken?->tokenId,
+            accessTokenExpiresAt: $issuedAuthentication->accessToken?->expiresAt,
+            refreshTokenId      : $issuedAuthentication->refreshToken?->tokenId,
             mfaVerifiedAt       : $this->clock->now(),
             phishingResistant   : true,
+            user                : $this->projectAuthenticatedUser->fromUser(user: $user),
+            mode                : $issuedAuthentication->mode,
         );
 
-        $this->currentAuthentication->store(context: $context);
+        $this->currentAuthentication->store(context: $authenticationContext);
         $this->identity->sessionIdentity()?->captureCurrentSession(
-            ipAddress: $data->ipAddress,
-            userAgent: $data->userAgent,
+            ipAddress: $completePasskeyAuthenticationData->ipAddress,
+            userAgent: $completePasskeyAuthenticationData->userAgent,
         );
-        $this->credentialStore->touch(credentialId: $credential->credentialId, usedAt: $this->clock->now());
-        $this->challengeStore->markUsed(challengeId: $data->challengeId, usedAt: $this->clock->now());
+        $this->passkeyCredentialStore->touch(credentialId: $credential->credentialId, usedAt: $this->clock->now());
+        $this->passkeyChallengeStore->markUsed(challengeId: $completePasskeyAuthenticationData->challengeId, usedAt: $this->clock->now());
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.passkey.authentication.succeeded',
             occurredAt: $this->clock->now(),
             context   : [
                             'user_id'    => $user->getId()->value,
                 'credential_id' => $credential->credentialId,
-                            'ip_address' => $data->ipAddress,
-                            'user_agent' => $data->userAgent,
+                            'ip_address' => $completePasskeyAuthenticationData->ipAddress,
+                            'user_agent' => $completePasskeyAuthenticationData->userAgent,
             ],
         ));
 
         return AuthenticationResult::success(
-            context     : $context,
-            accessToken : $issued->accessToken?->token,
-            refreshToken: $issued->refreshToken?->token,
+            accessToken : $issuedAuthentication->accessToken?->token,
+            refreshToken: $issuedAuthentication->refreshToken?->token,
+            context     : $authenticationContext,
         );
     }
 }

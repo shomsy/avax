@@ -8,6 +8,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClient;
@@ -30,14 +31,14 @@ final readonly class BackChannelLogout
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         private ?OidcProviderInterface $oidcProvider = null,
-        private ?OAuthClientRegistryInterface $clientRegistry = null,
+        private ?OAuthClientRegistryInterface $oAuthClientRegistry = null,
     ) {}
 
-    public function execute(BackChannelLogoutData $data): LogoutResult
+    public function execute(BackChannelLogoutData $backChannelLogoutData) : LogoutResult
     {
-        $context   = $this->currentAuthentication->read();
+        $authenticationContext = $this->currentAuthentication->read();
         $now       = $this->clock->now();
-        $claims    = $this->oidcProvider?->resolveJwt(jwt: $data->logoutToken);
+        $claims                = $this->oidcProvider?->resolveJwt(jwt: $backChannelLogoutData->logoutToken);
         $sessionId = is_string(value: $claims['sid'] ?? null) ? trim(string: $claims['sid']) : null;
         $events    = $claims['events'] ?? null;
         $backChannelEvent = 'https://schemas.openid.net/event/backchannel-logout';
@@ -51,13 +52,13 @@ final readonly class BackChannelLogout
             $this->sessionRegistry?->revoke(sessionId: $sessionId, revokedAt: $now, reason: 'oidc_back_channel_logout');
         }
 
-        if ($context->refreshTokenFamilyId() !== null) {
-            $this->refreshTokenStore?->revokeFamily(familyId: $context->refreshTokenFamilyId());
+        if ($authenticationContext->refreshTokenFamilyId() !== null) {
+            $this->refreshTokenStore?->revokeFamily(familyId: $authenticationContext->refreshTokenFamilyId());
         }
 
-        $user = $context->user();
+        $user = $authenticationContext->user();
 
-        if ($user !== null) {
+        if ($user instanceof AuthenticatedUser) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.oidc.back_channel_logout.succeeded',
                 occurredAt: $now,
@@ -72,8 +73,8 @@ final readonly class BackChannelLogout
             ));
         }
 
-        if ($user !== null) {
-            $this->identity->clear(context: $context);
+        if ($user instanceof AuthenticatedUser) {
+            $this->identity->clear(context: $authenticationContext);
         }
 
         $this->currentAuthentication->clear();
@@ -89,7 +90,7 @@ final readonly class BackChannelLogout
      */
     private function resolveClientFromClaims(?array $claims): ?OAuthClient
     {
-        if ($claims === null || $this->clientRegistry === null) {
+        if ($claims === null || ! $this->oAuthClientRegistry instanceof OAuthClientRegistryInterface) {
             return null;
         }
 
@@ -100,6 +101,6 @@ final readonly class BackChannelLogout
             return null;
         }
 
-        return $this->clientRegistry->find(clientId: $clientId);
+        return $this->oAuthClientRegistry->find(clientId: $clientId);
     }
 }

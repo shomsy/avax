@@ -20,7 +20,7 @@ use Throwable;
 final readonly class ErrorLogger implements LoggerInterface
 {
     public function __construct(
-        private LogWriterInterface $writer,
+        private LogWriterInterface $logWriter,
     ) {
     }
 
@@ -35,7 +35,7 @@ final readonly class ErrorLogger implements LoggerInterface
             throw new InvalidArgumentException('Log level must be a string.');
         }
 
-        $timestamp = (new DateTimeImmutable('now', new DateTimeZone('Europe/Belgrade')))
+        $timestamp = new DateTimeImmutable('now', new DateTimeZone('Europe/Belgrade'))
             ->format('Y-m-d H:i:s');
 
         $entry = sprintf(
@@ -46,12 +46,12 @@ final readonly class ErrorLogger implements LoggerInterface
             $this->formatContext($context),
         );
 
-        $this->writer->write($entry);
+        $this->logWriter->write($entry);
     }
 
     private function formatContext(array $context): string
     {
-        if (empty($context)) {
+        if ($context === []) {
             return '';
         }
 

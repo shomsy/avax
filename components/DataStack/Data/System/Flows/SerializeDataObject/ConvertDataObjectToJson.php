@@ -9,17 +9,17 @@ use JsonException;
 
 final readonly class ConvertDataObjectToJson
 {
-    public function __construct(private ?DataTransferConfig $config = null) {}
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
 
     /**
      * @throws JsonException
      */
-    public function convert(object $object, int $flags = null, int $depth = 512) : string
+    public function convert(object $object, ?int $flags = null, int $depth = 512) : string
     {
         $flags ??= 0;
 
         return json_encode(
-            value: new ConvertDataObjectToArray(config: $this->config)->convert(object: $object),
+            value: new ConvertDataObjectToArray(config: $this->dataTransferConfig)->convert(object: $object),
             flags: $flags | JSON_THROW_ON_ERROR,
             depth: $depth,
         );

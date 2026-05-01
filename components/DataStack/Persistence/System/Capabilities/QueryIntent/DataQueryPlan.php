@@ -32,7 +32,7 @@ final readonly class DataQueryPlan
         $parts = [];
 
         if ($this->sql !== null) {
-            $parts[] = "SQL: {$this->sql}";
+            $parts[] = 'SQL: ' . $this->sql;
         }
 
         if ($this->bindings !== []) {
@@ -40,7 +40,7 @@ final readonly class DataQueryPlan
         }
 
         if ($this->estimatedCost !== null) {
-            $parts[] = "Estimated Cost: {$this->estimatedCost}";
+            $parts[] = 'Estimated Cost: ' . $this->estimatedCost;
         }
 
         if ($this->indexesUsed !== []) {

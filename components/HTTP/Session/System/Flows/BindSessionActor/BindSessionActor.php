@@ -14,11 +14,11 @@ final readonly class BindSessionActor
     ) {
     }
 
-    public function handle(SessionActor $actor): void
+    public function handle(SessionActor $sessionActor) : void
     {
         $this->session->put('_actor', [
-            'id'   => $actor->id,
-            'data' => $actor->data,
+            'id'   => $sessionActor->id,
+            'data' => $sessionActor->data,
         ]);
 
         $this->session->regenerate(); // Prevent session fixation on login

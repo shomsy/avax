@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Headers;
 
-final class HeaderName
+final readonly class HeaderName
 {
     private string $name;
 

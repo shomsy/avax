@@ -224,7 +224,7 @@ final class AuthBuilder
 
     private ?IdentityInterface $identity = null;
 
-    private ?LoginRateLimit $rateLimit = null;
+    private ?LoginRateLimit $loginRateLimit = null;
 
     private ?PasswordHasher $passwordHasher = null;
 
@@ -234,7 +234,7 @@ final class AuthBuilder
 
     private ?string $auditCorrelationId = null;
 
-    private ?EmailVerificationStateStoreInterface $emailVerificationState = null;
+    private ?EmailVerificationStateStoreInterface $emailVerificationStateStore = null;
 
     private ?MfaStoreInterface $mfaStore = null;
 
@@ -250,7 +250,7 @@ final class AuthBuilder
 
     private ?TotpInterface $totp = null;
 
-    private ?LimitMfaAttempts $mfaAttemptLimit = null;
+    private ?LimitMfaAttempts $limitMfaAttempts = null;
 
     private ?AttemptThrottle $passwordResetThrottle = null;
 
@@ -262,7 +262,7 @@ final class AuthBuilder
 
     private ?SessionRegistryInterface $sessionRegistry = null;
 
-    private ?OAuthClientRegistryInterface $oauthClientRegistry = null;
+    private ?OAuthClientRegistryInterface $oAuthClientRegistry = null;
 
     private ?AuthorizationCodeStoreInterface $authorizationCodeStore = null;
 
@@ -270,7 +270,7 @@ final class AuthBuilder
 
     private ?AdminElevationStoreInterface $adminElevationStore = null;
 
-    private ?DeterministicRiskEngine $riskEngine = null;
+    private ?DeterministicRiskEngine $deterministicRiskEngine = null;
 
     private ?PasskeyRuntimeInterface $passkeyRuntime = null;
 
@@ -342,9 +342,9 @@ final class AuthBuilder
 
     public function withIdentityBackends(
         #[SensitiveParameter]
-        SessionIdentityInterface $sessionIdentity = null,
+        ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        JwtIdentityInterface     $jwtIdentity = null,
+        ?JwtIdentityInterface     $jwtIdentity = null,
     ): self {
         $this->identity = Identity::fromBackends(
             sessionIdentity: $sessionIdentity,
@@ -357,9 +357,9 @@ final class AuthBuilder
     /**
      * Enable rate limiting for login.
      */
-    public function protectFromBruteForce(LoginRateLimit $rateLimit): self
+    public function protectFromBruteForce(LoginRateLimit $loginRateLimit) : self
     {
-        $this->rateLimit = $rateLimit;
+        $this->loginRateLimit = $loginRateLimit;
 
         return $this;
     }
@@ -398,9 +398,9 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withEmailVerificationState(#[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState): self
+    public function withEmailVerificationState(#[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationStateStore) : self
     {
-        $this->emailVerificationState = $emailVerificationState;
+        $this->emailVerificationStateStore = $emailVerificationStateStore;
 
         return $this;
     }
@@ -454,23 +454,23 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $passwordResetThrottle): self
+    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $attemptThrottle) : self
     {
-        $this->passwordResetThrottle = $passwordResetThrottle;
+        $this->passwordResetThrottle = $attemptThrottle;
 
         return $this;
     }
 
-    public function withMfaRecoveryThrottle(AttemptThrottle $mfaRecoveryThrottle): self
+    public function withMfaRecoveryThrottle(AttemptThrottle $attemptThrottle) : self
     {
-        $this->mfaRecoveryThrottle = $mfaRecoveryThrottle;
+        $this->mfaRecoveryThrottle = $attemptThrottle;
 
         return $this;
     }
 
-    public function withScimThrottle(AttemptThrottle $scimThrottle): self
+    public function withScimThrottle(AttemptThrottle $attemptThrottle) : self
     {
-        $this->scimThrottle = $scimThrottle;
+        $this->scimThrottle = $attemptThrottle;
 
         return $this;
     }
@@ -491,7 +491,7 @@ final class AuthBuilder
 
     public function withOAuthClientRegistry(#[SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry): self
     {
-        $this->oauthClientRegistry = $oauthClientRegistry;
+        $this->oAuthClientRegistry = $oauthClientRegistry;
 
         return $this;
     }
@@ -517,9 +517,9 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withRiskEngine(DeterministicRiskEngine $riskEngine): self
+    public function withRiskEngine(DeterministicRiskEngine $deterministicRiskEngine) : self
     {
-        $this->riskEngine = $riskEngine;
+        $this->deterministicRiskEngine = $deterministicRiskEngine;
 
         return $this;
     }
@@ -630,9 +630,9 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit): self
+    public function withMfaAttemptLimit(LimitMfaAttempts $limitMfaAttempts) : self
     {
-        $this->mfaAttemptLimit = $mfaAttemptLimit;
+        $this->limitMfaAttempts = $limitMfaAttempts;
 
         return $this;
     }
@@ -652,12 +652,12 @@ final class AuthBuilder
         AuthBootstrapValidator::validate(
             userSource       : $this->userSource,
             identity         : $this->identity,
-            requests         : $this->capabilityRequests(),
             sessionRegistry  : $this->sessionRegistry,
             refreshTokenStore: $this->refreshTokenStore,
             passkeyRuntime   : $this->passkeyRuntime,
             federationRuntime: $this->federationRuntime,
             oidcProvider     : $this->oidcProvider,
+            requests         : $this->capabilityRequests(),
         );
 
         $identity       = $this->identity;
@@ -666,19 +666,20 @@ final class AuthBuilder
 
         if ($this->auditCorrelationId !== null) {
             $auditLog = new CorrelatingAuditLog(
-                inner        : $auditLog,
                 correlationId: $this->auditCorrelationId,
+                inner        : $auditLog,
             );
         }
+
         $clock                            = $this->clock ?? new Clock();
-        $oauthClientRegistry              = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry(passwordHasher: $passwordHasher);
+        $oauthClientRegistry = $this->oAuthClientRegistry ?? new InMemoryOAuthClientRegistry(passwordHasher: $passwordHasher);
         $authorizationCodeStore           = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
         $lifecycleStore                   = $this->lifecycleStore ?? new InMemoryLifecycleStore();
         $adminElevationStore              = $this->adminElevationStore ?? new InMemoryAdminElevationStore();
-        $riskEngine                       = $this->riskEngine ?? new DeterministicRiskEngine(
+        $riskEngine = $this->deterministicRiskEngine ?? new DeterministicRiskEngine(
+            clock            : $clock,
             knownEnvironments: new InMemoryKnownAuthenticationEnvironmentStore(),
             signals          : new InMemoryRiskSignalStore(),
-            clock            : $clock,
         );
         $passkeyCredentialStore           = $this->passkeyCredentialStore ?? new InMemoryPasskeyCredentialStore();
         $passkeyChallengeStore            = $this->passkeyChallengeStore ?? new InMemoryPasskeyChallengeStore();
@@ -688,35 +689,35 @@ final class AuthBuilder
         $passwordResetStore               = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore           = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
         $emailChangeStore                 = $this->emailChangeStore ?? new InMemoryEmailChangeStore();
-        $emailVerificationState           = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
+        $emailVerificationState = $this->emailVerificationStateStore ?? new InMemoryEmailVerificationStateStore();
         $mfaStore                         = $this->mfaStore ?? new InMemoryMfaStore();
         $mfaChallengeStore                = $this->mfaChallengeStore ?? new InMemoryMfaChallengeStore();
         $totp                             = $this->totp ?? new Totp();
-        $mfaAttemptLimit                  = $this->mfaAttemptLimit ?? new LimitMfaAttempts(
-            storage: new InMemoryAttemptLimitStorage(),
+        $mfaAttemptLimit = $this->limitMfaAttempts ?? new LimitMfaAttempts(
             clock  : $clock,
+            storage: new InMemoryAttemptLimitStorage(),
         );
         $passwordResetThrottle = $this->passwordResetThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore(),
             clock       : $clock,
             maxAttempts : 5,
             decaySeconds: 900,
+            store       : new InMemoryAttemptThrottleStore(),
         );
         $mfaRecoveryThrottle = $this->mfaRecoveryThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore(),
             clock       : $clock,
             maxAttempts : 3,
             decaySeconds: 1800,
+            store       : new InMemoryAttemptThrottleStore(),
         );
         $scimThrottle = $this->scimThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore(),
             clock       : $clock,
             maxAttempts : 60,
             decaySeconds: 60,
+            store       : new InMemoryAttemptThrottleStore(),
         );
         $projectAuthenticatedUser = new ProjectAuthenticatedUser(
-            emailVerificationState: $emailVerificationState,
             mfaStore              : $mfaStore,
+            emailVerificationState: $emailVerificationState,
         );
         $currentAuthentication            = new CurrentAuthentication();
         $requireFreshMfa                  = new RequireFreshMfa(
@@ -735,19 +736,19 @@ final class AuthBuilder
         );
         $startMfaChallenge = new StartMfaChallenge(
             currentAuthentication: $currentAuthentication,
-            mfaStore             : $mfaStore,
-            challengeStore       : $mfaChallengeStore,
             auditLog             : $auditLog,
             clock                : $clock,
+            mfaStore             : $mfaStore,
+            challengeStore       : $mfaChallengeStore,
         );
         $authenticateRequest = new AuthenticateRequest(
             currentAuthentication   : $currentAuthentication,
             projectAuthenticatedUser: $projectAuthenticatedUser,
             userSource              : $this->userSource,
             auditLog                : $auditLog,
+            clock                   : $clock,
             sessionIdentity         : $identity->sessionIdentity(),
             jwtIdentity             : $identity->jwtIdentity(),
-            clock                   : $clock,
         );
         $readCurrentUser = new ReadCurrentUser(
             currentAuthentication: $currentAuthentication,
@@ -755,63 +756,63 @@ final class AuthBuilder
         $checkAuthentication = new CheckAuthentication(
             currentAuthentication: $currentAuthentication,
         );
-        $registerOAuthClient = new RegisterClient(
-            clientRegistry: $oauthClientRegistry,
+        $registerClient = new RegisterClient(
             auditLog      : $auditLog,
             clock         : $clock,
-        );
-        $approveOAuthClientRegistration = new ApproveClientRegistration(
             clientRegistry: $oauthClientRegistry,
+        );
+        $approveClientRegistration = new ApproveClientRegistration(
             auditLog      : $auditLog,
             clock         : $clock,
-        );
-        $updateOAuthClient = new UpdateClient(
             clientRegistry: $oauthClientRegistry,
+        );
+        $updateClient = new UpdateClient(
             auditLog      : $auditLog,
             clock         : $clock,
-        );
-        $disableOAuthClient = new DisableClient(
             clientRegistry: $oauthClientRegistry,
+        );
+        $disableClient = new DisableClient(
             auditLog      : $auditLog,
             clock         : $clock,
-        );
-        $rotateOAuthClientSecret = new RotateClientSecret(
             clientRegistry: $oauthClientRegistry,
+        );
+        $rotateClientSecret = new RotateClientSecret(
             auditLog      : $auditLog,
             clock         : $clock,
+            clientRegistry: $oauthClientRegistry,
         );
-        $readOAuthClients = new ReadClients(
+        $readClients = new ReadClients(
             clientRegistry: $oauthClientRegistry,
         );
         $readWorkloadIdentities = new ReadWorkloadIdentities(
             clientRegistry: $oauthClientRegistry,
         );
-        $readOidcProviderMetadata = $this->oidcProvider !== null
+        $readOidcProviderMetadata = $this->oidcProvider instanceof OidcProviderInterface
             ? new ReadOidcProviderMetadata(oidcProvider: $this->oidcProvider)
             : null;
-        $readOidcJsonWebKeySet = $this->oidcProvider !== null
+        $readOidcJsonWebKeySet = $this->oidcProvider instanceof OidcProviderInterface
             ? new ReadOidcJsonWebKeySet(oidcProvider: $this->oidcProvider)
             : null;
         $jwtIdentity                      = $identity->jwtIdentity();
-        $readOidcUserInfo = $jwtIdentity !== null && $this->oidcProvider !== null
+        $readOidcUserInfo = $jwtIdentity instanceof JwtIdentityInterface && $this->oidcProvider instanceof OidcProviderInterface
             ? new ReadOidcUserInfo(jwtIdentity: $jwtIdentity, oidcProvider: $this->oidcProvider)
             : null;
-        $oidcRequestObjectStore = $this->oidcProvider !== null
+        $oidcRequestObjectStore = $this->oidcProvider instanceof OidcProviderInterface
             ? ($this->oidcRequestObjectStore ?? new InMemoryOidcRequestObjectStore())
             : null;
-        $pushOidcAuthorizationRequest = $oidcRequestObjectStore !== null
+        $pushOidcAuthorizationRequest = $oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface
             ? new PushAuthorizationRequest(
-                requestObjectStore: $oidcRequestObjectStore,
                 auditLog          : $auditLog,
                 clock             : $clock,
-                clientRegistry    : $oauthClientRegistry,
                 oidcProvider      : $this->oidcProvider,
+                requestObjectStore: $oidcRequestObjectStore,
+                clientRegistry    : $oauthClientRegistry,
             )
             : null;
-        $validateRequestObject = $oidcRequestObjectStore !== null
+        $validateRequestObject = $oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface
             ? new ValidateRequestObject(requestObjectStore: $oidcRequestObjectStore, clientRegistry: $oauthClientRegistry)
             : null;
-        $oidcLogout = $this->oidcProvider !== null
+        $oidcLogout = $this->oidcProvider instanceof OidcProviderInterface
             ? new OidcLogout(
                 frontChannelLogout: new FrontChannelLogout(
                     currentAuthentication: $currentAuthentication,
@@ -835,26 +836,26 @@ final class AuthBuilder
                 ),
             )
             : null;
-        $buildOidcJarmResponse = $this->oidcProvider !== null
+        $buildOidcJarmResponse = $this->oidcProvider instanceof OidcProviderInterface
             ? new BuildJarmResponse(
                 oidcProvider: $this->oidcProvider,
                 clock       : $clock,
             )
             : null;
-        $authorizeOAuthCode = new AuthorizeCode(
+        $authorizeCode = new AuthorizeCode(
             currentAuthentication : $currentAuthentication,
             userSource            : $this->userSource,
-            clientRegistry        : $oauthClientRegistry,
-            codeStore             : $authorizationCodeStore,
             auditLog              : $auditLog,
             clock                 : $clock,
             oidcProvider          : $this->oidcProvider,
+            clientRegistry        : $oauthClientRegistry,
+            codeStore             : $authorizationCodeStore,
             requestObjectValidator: $validateRequestObject,
         );
         $requireAdminElevation = new RequireAdminElevation(
             currentAuthentication: $currentAuthentication,
-            elevationStore       : $adminElevationStore,
             clock                : $clock,
+            elevationStore       : $adminElevationStore,
         );
         $requireAuthentication = new RequireAuthentication(
             currentAuthentication: $currentAuthentication,
@@ -889,12 +890,12 @@ final class AuthBuilder
         $provisionableUserSource = $this->userSource instanceof ProvisionableUserSourceInterface
             ? $this->userSource
             : null;
-        $lifecycle = $provisionableUserSource !== null
+        $lifecycle = $provisionableUserSource instanceof ProvisionableUserSourceInterface
             ? new LifecycleOrchestrator(
-                userSource: $provisionableUserSource,
-                store     : $lifecycleStore,
                 auditLog  : $auditLog,
                 clock     : $clock,
+                userSource: $provisionableUserSource,
+                store     : $lifecycleStore,
             )
             : null;
         $scimDirectoryStore               = $this->scimDirectoryStore ?? new InMemoryScimDirectoryStore(passwordHasher: $passwordHasher);
@@ -904,29 +905,29 @@ final class AuthBuilder
         $tenantSecurityChangeRequestStore = $this->tenantSecurityChangeRequestStore ?? new InMemoryTenantSecurityChangeRequestStore();
         $readTenantSecurityConfiguration  = new ReadTenantSecurityConfiguration(configurationStore: $tenantSecurityConfigurationStore);
         $beginTenantSecurityChange        = new BeginTenantSecurityChange(
-            configurationStore       : $tenantSecurityConfigurationStore,
-            changeRequestStore       : $tenantSecurityChangeRequestStore,
             federationConnectionStore: $federationConnectionStore,
             scimDirectoryStore       : $scimDirectoryStore,
             auditLog                 : $auditLog,
             clock                    : $clock,
+            configurationStore       : $tenantSecurityConfigurationStore,
+            changeRequestStore       : $tenantSecurityChangeRequestStore,
         );
         $approveTenantSecurityChange = new ApproveTenantSecurityChange(
-            changeRequestStore: $tenantSecurityChangeRequestStore,
             auditLog          : $auditLog,
             clock             : $clock,
+            changeRequestStore: $tenantSecurityChangeRequestStore,
         );
         $applyTenantSecurityChange = new ApplyTenantSecurityChange(
-            configurationStore: $tenantSecurityConfigurationStore,
-            changeRequestStore: $tenantSecurityChangeRequestStore,
             auditLog          : $auditLog,
             clock             : $clock,
+            configurationStore: $tenantSecurityConfigurationStore,
+            changeRequestStore: $tenantSecurityChangeRequestStore,
         );
         $rollbackTenantSecurityChange = new RollbackTenantSecurityChange(
-            configurationStore: $tenantSecurityConfigurationStore,
-            changeRequestStore: $tenantSecurityChangeRequestStore,
             auditLog          : $auditLog,
             clock             : $clock,
+            configurationStore: $tenantSecurityConfigurationStore,
+            changeRequestStore: $tenantSecurityChangeRequestStore,
         );
         $readTenantSecurityChangeRequest  = new ReadTenantSecurityChangeRequest(changeRequestStore: $tenantSecurityChangeRequestStore);
         $readTenantSecurityChangeRequests = new ReadTenantSecurityChangeRequests(changeRequestStore: $tenantSecurityChangeRequestStore);
@@ -964,44 +965,44 @@ final class AuthBuilder
             auditLog   : $auditLog,
             clock      : $clock,
         );
-        $capabilityReadiness = AuthCapabilityReadiness::from(
+        $authCapabilityReadiness = AuthCapabilityReadiness::from(
             jwtIdentity            : $jwtIdentity,
             refreshTokenStore      : $this->refreshTokenStore,
             passkeyRuntime         : $this->passkeyRuntime,
             federationRuntime      : $this->federationRuntime,
             provisionableUserSource: $provisionableUserSource,
         );
-        $provisionScimUser = $capabilityReadiness->scim()
+        $provisionScimUser = $authCapabilityReadiness->scim()
             ? new ProvisionScimUser(
-                userSource     : $provisionableUserSource,
-                directoryStore : $scimDirectoryStore,
-                identityStore  : $scimProvisionedIdentityStore,
                 passwordHasher : $passwordHasher,
                 idGenerator    : $this->idGenerator ?? new IdGenerator(),
                 auditLog       : $auditLog,
                 clock          : $clock,
-                lifecycle      : $lifecycle,
                 attemptThrottle: $scimThrottle,
+                userSource     : $provisionableUserSource,
+                directoryStore : $scimDirectoryStore,
+                identityStore  : $scimProvisionedIdentityStore,
+                lifecycle      : $lifecycle,
             )
             : null;
-        $readScimUsers = $capabilityReadiness->scim()
+        $readScimUsers = $authCapabilityReadiness->scim()
             ? new ReadScimUsers(
-                identityStore: $scimProvisionedIdentityStore,
                 userSource   : $this->userSource,
+                identityStore: $scimProvisionedIdentityStore,
             )
             : null;
-        $readScimGroups = $capabilityReadiness->scim() && $readScimUsers !== null
+        $readScimGroups = $authCapabilityReadiness->scim() && $readScimUsers instanceof ReadScimUsers
             ? new ReadScimGroups(readScimUsers: $readScimUsers)
             : null;
-        $runScimBulk = $capabilityReadiness->scim() && $provisionScimUser !== null
+        $runScimBulk = $authCapabilityReadiness->scim() && $provisionScimUser instanceof ProvisionScimUser
             ? new RunScimBulk(
                 provisionScimUser: $provisionScimUser,
                 deleteScimUser   : new DeleteScimUser(
+                                       auditLog: $auditLog,
+                                       clock   : $clock,
                     userSource    : $provisionableUserSource,
                     directoryStore: $scimDirectoryStore,
                     identityStore : $scimProvisionedIdentityStore,
-                    auditLog      : $auditLog,
-                    clock         : $clock,
                     lifecycle     : $lifecycle,
                 ),
             )
@@ -1019,16 +1020,16 @@ final class AuthBuilder
 
         $authentication = new Authentication(
             login                : new Login(
+                                       identity : $identity,
                 userSource              : $this->userSource,
                 passwordHasher          : $passwordHasher,
-                identity                : $identity,
                 projectAuthenticatedUser: $projectAuthenticatedUser,
                 currentAuthentication   : $currentAuthentication,
                 auditLog                : $auditLog,
                 mfaStore                : $mfaStore,
                 startMfaChallenge       : $startMfaChallenge,
                 clock                   : $clock,
-                rateLimit               : $this->rateLimit,
+                                       rateLimit: $this->loginRateLimit,
                 riskEngine              : $riskEngine,
             ),
             logout               : new Logout(
@@ -1051,7 +1052,7 @@ final class AuthBuilder
             ),
         );
 
-        $session = new Sessions(
+        $sessions = new Sessions(
             logoutAllSessions : new LogoutAllSessions(
                 identity             : $identity,
                 currentAuthentication: $currentAuthentication,
@@ -1085,8 +1086,8 @@ final class AuthBuilder
                 sessionRegistry      : $this->sessionRegistry,
                 mfaChallengeStore    : $mfaChallengeStore,
                 refreshTokenStore    : $this->refreshTokenStore,
-                rateLimit            : $this->rateLimit,
                 requireFreshMfa      : $requireFreshMfa,
+                rateLimit            : $this->loginRateLimit,
             ),
             beginEmailChange  : new BeginEmailChange(
                 currentAuthentication: $currentAuthentication,
@@ -1097,11 +1098,9 @@ final class AuthBuilder
                 auditLog             : $auditLog,
                 clock                : $clock,
             ),
-            confirmEmailChange: $provisionableUserSource !== null
+            confirmEmailChange: $provisionableUserSource instanceof ProvisionableUserSourceInterface
                                     ? new ConfirmEmailChange(
-                                        userSource            : $provisionableUserSource,
                                         emailChangeStore      : $emailChangeStore,
-                                        emailVerificationState: $emailVerificationState,
                                         auditLog              : $auditLog,
                                         clock                 : $clock,
                                         currentAuthentication : $currentAuthentication,
@@ -1109,6 +1108,8 @@ final class AuthBuilder
                                         sessionRegistry       : $this->sessionRegistry,
                                         mfaChallengeStore     : $mfaChallengeStore,
                                         refreshTokenStore     : $this->refreshTokenStore,
+                                        userSource            : $provisionableUserSource,
+                                        emailVerificationState: $emailVerificationState,
                                     )
                                     : null,
             register          : new Register(
@@ -1118,8 +1119,8 @@ final class AuthBuilder
                 projectAuthenticatedUser : $projectAuthenticatedUser,
                 auditLog                 : $auditLog,
                 clock                    : $clock,
-                emailVerificationRequired: $this->emailVerificationState !== null || $this->emailVerificationStore !== null,
-                rateLimit                : $this->rateLimit,
+                emailVerificationRequired: $this->emailVerificationStateStore instanceof EmailVerificationStateStoreInterface || $this->emailVerificationStore instanceof EmailVerificationStoreInterface,
+                rateLimit                : $this->loginRateLimit,
             ),
         );
 
@@ -1152,9 +1153,9 @@ final class AuthBuilder
             ),
             verifyEmail           : new VerifyEmail(
                 emailVerificationStore: $emailVerificationStore,
-                emailVerificationState: $emailVerificationState,
                 auditLog              : $auditLog,
                 clock                 : $clock,
+                emailVerificationState: $emailVerificationState,
             ),
         );
 
@@ -1183,7 +1184,6 @@ final class AuthBuilder
             ),
             startMfaChallenge    : $startMfaChallenge,
             verifyMfaChallenge   : new VerifyMfaChallenge(
-                challengeStore          : $mfaChallengeStore,
                 mfaStore                : $mfaStore,
                 totp                    : $totp,
                 verifyBackupCode        : $verifyBackupCode,
@@ -1193,6 +1193,7 @@ final class AuthBuilder
                 currentAuthentication   : $currentAuthentication,
                 auditLog                : $auditLog,
                 clock                   : $clock,
+                challengeStore          : $mfaChallengeStore,
                 attemptLimit            : $mfaAttemptLimit,
                 riskEngine              : $riskEngine,
             ),
@@ -1233,28 +1234,14 @@ final class AuthBuilder
         );
 
         $passkey = new Passkey(
-            beginPasskeyRegistration     : $capabilityReadiness->passkey()
+            beginPasskeyRegistration     : $authCapabilityReadiness->passkey()
                                                ? new BeginPasskeyRegistration(
                                                    currentAuthentication: $currentAuthentication,
                                                    requireFreshMfa      : $requireFreshMfa,
-                                                   runtime              : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
-                                                       capability : 'passkey',
-                                                       requirement: 'runtime',
-                                                       buildPath  : 'AuthBuilder::ready()',
-                                                       option     : 'withPasskeyRuntime()',
-                                                       cause      : 'Passkey capability assembly was attempted.',
-                                                   ),
-                                                   credentialStore      : $passkeyCredentialStore,
-                                                   challengeStore       : $passkeyChallengeStore,
                                                    auditLog             : $auditLog,
                                                    clock                : $clock,
                                                    rpId                 : $this->passkeyRpId,
                                                    rpName               : $this->passkeyRpName,
-                                               )
-                                               : null,
-            completePasskeyRegistration  : $capabilityReadiness->passkey()
-                                               ? new CompletePasskeyRegistration(
-                                                   currentAuthentication: $currentAuthentication,
                                                    runtime              : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
                                                        capability : 'passkey',
                                                        requirement: 'runtime',
@@ -1264,14 +1251,31 @@ final class AuthBuilder
                                                    ),
                                                    credentialStore      : $passkeyCredentialStore,
                                                    challengeStore       : $passkeyChallengeStore,
+                                             )
+                                               : null,
+            completePasskeyRegistration  : $authCapabilityReadiness->passkey()
+                                               ? new CompletePasskeyRegistration(
+                                                   currentAuthentication: $currentAuthentication,
                                                    auditLog             : $auditLog,
                                                    clock                : $clock,
                                                    rpId                 : $this->passkeyRpId,
+                                                   runtime              : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                                       capability : 'passkey',
+                                                       requirement: 'runtime',
+                                                       buildPath  : 'AuthBuilder::ready()',
+                                                       option     : 'withPasskeyRuntime()',
+                                                       cause      : 'Passkey capability assembly was attempted.',
+                                                   ),
+                                                   credentialStore      : $passkeyCredentialStore,
+                                                   challengeStore       : $passkeyChallengeStore,
                                                )
                                                : null,
-            beginPasskeyAuthentication   : $capabilityReadiness->passkey()
+            beginPasskeyAuthentication   : $authCapabilityReadiness->passkey()
                                                ? new BeginPasskeyAuthentication(
                                                    userSource     : $this->userSource,
+                                                   auditLog       : $auditLog,
+                                                   clock          : $clock,
+                                                   rpId           : $this->passkeyRpId,
                                                    runtime        : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
                                                        capability : 'passkey',
                                                        requirement: 'runtime',
@@ -1281,22 +1285,10 @@ final class AuthBuilder
                                                    ),
                                                    credentialStore: $passkeyCredentialStore,
                                                    challengeStore : $passkeyChallengeStore,
-                                                   auditLog       : $auditLog,
-                                                   clock          : $clock,
-                                                   rpId           : $this->passkeyRpId,
                                                )
                                                : null,
-            completePasskeyAuthentication: $capabilityReadiness->passkey()
+            completePasskeyAuthentication: $authCapabilityReadiness->passkey()
                                                ? new CompletePasskeyAuthentication(
-                                                   runtime                 : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
-                                                       capability : 'passkey',
-                                                       requirement: 'runtime',
-                                                       buildPath  : 'AuthBuilder::ready()',
-                                                       option     : 'withPasskeyRuntime()',
-                                                       cause      : 'Passkey capability assembly was attempted.',
-                                                   ),
-                                                   challengeStore          : $passkeyChallengeStore,
-                                                   credentialStore         : $passkeyCredentialStore,
                                                    userSource              : $this->userSource,
                                                    identity                : $identity,
                                                    projectAuthenticatedUser: $projectAuthenticatedUser,
@@ -1304,34 +1296,43 @@ final class AuthBuilder
                                                    auditLog                : $auditLog,
                                                    clock                   : $clock,
                                                    rpId                    : $this->passkeyRpId,
+                                                   runtime                 : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'passkey',
+                                                   requirement: 'runtime',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withPasskeyRuntime()',
+                                                   cause      : 'Passkey capability assembly was attempted.',
+                                               ),
+                                                   challengeStore          : $passkeyChallengeStore,
+                                                   credentialStore         : $passkeyCredentialStore,
                                                )
                                                : null,
-            readPasskeys                 : $capabilityReadiness->passkey()
-                                               ? new ListPasskeys(
-                                                   currentAuthentication: $currentAuthentication,
-                                                   credentialStore      : $passkeyCredentialStore,
-                                               )
-                                               : null,
-            renamePasskey                : $capabilityReadiness->passkey()
+            renamePasskey                : $authCapabilityReadiness->passkey()
                                                ? new RenamePasskey(
                                                    currentAuthentication: $currentAuthentication,
                                                    credentialStore      : $passkeyCredentialStore,
                                                )
                                                : null,
-            revokePasskey                : $capabilityReadiness->passkey()
+            revokePasskey                : $authCapabilityReadiness->passkey()
                                                ? new RevokePasskey(
                                                    currentAuthentication: $currentAuthentication,
                                                    requireFreshMfa      : $requireFreshMfa,
-                                                   credentialStore      : $passkeyCredentialStore,
                                                    auditLog             : $auditLog,
                                                    clock                : $clock,
+                                                   credentialStore      : $passkeyCredentialStore,
+                                               )
+                                               : null,
+            readPasskeys                 : $authCapabilityReadiness->passkey()
+                                               ? new ListPasskeys(
+                                                   currentAuthentication: $currentAuthentication,
+                                                   credentialStore      : $passkeyCredentialStore,
                                                )
                                                : null,
         );
 
         $identity = new Identity(
             authentication : $authentication,
-            sessions       : $session,
+            sessions       : $sessions,
             account        : $account,
             recovery       : $recovery,
             verification   : $verification,
@@ -1342,18 +1343,16 @@ final class AuthBuilder
         );
 
         $oauth = new OAuth(
-            registerClient           : $capabilityReadiness->oauth() ? $registerOAuthClient : null,
-            approveClientRegistration: $capabilityReadiness->oauth() ? $approveOAuthClientRegistration : null,
-            updateClient             : $capabilityReadiness->oauth() ? $updateOAuthClient : null,
-            disableClient            : $capabilityReadiness->oauth() ? $disableOAuthClient : null,
-            rotateClientSecret       : $capabilityReadiness->oauth() ? $rotateOAuthClientSecret : null,
-            readClients              : $capabilityReadiness->oauth() ? $readOAuthClients : null,
-            readWorkloadIdentities   : $capabilityReadiness->oauth() ? $readWorkloadIdentities : null,
-            authorizeCode            : $capabilityReadiness->oauth() ? $authorizeOAuthCode : null,
-            exchangeAuthorizationCode: $capabilityReadiness->oauth()
+            registerClient           : $authCapabilityReadiness->oauth() ? $registerClient : null,
+            approveClientRegistration: $authCapabilityReadiness->oauth() ? $approveClientRegistration : null,
+            updateClient             : $authCapabilityReadiness->oauth() ? $updateClient : null,
+            disableClient            : $authCapabilityReadiness->oauth() ? $disableClient : null,
+            rotateClientSecret       : $authCapabilityReadiness->oauth() ? $rotateClientSecret : null,
+            readClients              : $authCapabilityReadiness->oauth() ? $readClients : null,
+            readWorkloadIdentities   : $authCapabilityReadiness->oauth() ? $readWorkloadIdentities : null,
+            authorizeCode            : $authCapabilityReadiness->oauth() ? $authorizeCode : null,
+            exchangeAuthorizationCode: $authCapabilityReadiness->oauth()
                                            ? new ExchangeAuthorizationCode(
-                                               clientRegistry       : $oauthClientRegistry,
-                                               codeStore            : $authorizationCodeStore,
                                                userSource           : $this->userSource,
                                                jwtIdentity          : $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(
                                                    capability : 'oauth',
@@ -1373,19 +1372,20 @@ final class AuthBuilder
                                                clock                : $clock,
                                                currentAuthentication: $currentAuthentication,
                                                oidcProvider         : $this->oidcProvider,
+                                               clientRegistry       : $oauthClientRegistry,
+                                               codeStore            : $authorizationCodeStore,
                                            )
                                            : null,
-            exchangeClientCredentials: $capabilityReadiness->oauth()
+            exchangeClientCredentials: $authCapabilityReadiness->oauth()
                                            ? new ExchangeClientCredentials(
-                                               clientRegistry: $oauthClientRegistry,
                                                jwtIdentity   : $jwtIdentity,
                                                auditLog      : $auditLog,
                                                clock         : $clock,
+                                               clientRegistry: $oauthClientRegistry,
                                            )
                                            : null,
-            exchangeRefreshToken     : $capabilityReadiness->oauth()
+            exchangeRefreshToken     : $authCapabilityReadiness->oauth()
                                            ? new ExchangeRefreshToken(
-                                               clientRegistry   : $oauthClientRegistry,
                                                refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(
                                                    capability : 'oauth',
                                                    requirement: 'refresh_token_store',
@@ -1397,12 +1397,12 @@ final class AuthBuilder
                                                jwtIdentity      : $jwtIdentity,
                                                auditLog         : $auditLog,
                                                clock            : $clock,
+                                               clientRegistry   : $oauthClientRegistry,
                                                riskEngine       : $riskEngine,
                                            )
                                            : null,
-            revokeToken              : $capabilityReadiness->oauth()
+            revokeToken              : $authCapabilityReadiness->oauth()
                                            ? new RevokeToken(
-                                               clientRegistry   : $oauthClientRegistry,
                                                refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(
                                                    capability : 'oauth',
                                                    requirement: 'refresh_token_store',
@@ -1413,97 +1413,45 @@ final class AuthBuilder
                                                jwtIdentity      : $jwtIdentity,
                                                auditLog         : $auditLog,
                                                clock            : $clock,
+                                               clientRegistry   : $oauthClientRegistry,
                                            )
                                            : null,
-            introspectToken          : $capabilityReadiness->oauth()
+            introspectToken          : $authCapabilityReadiness->oauth()
                                            ? new IntrospectToken(
-                                               clientRegistry: $oauthClientRegistry,
                                                jwtIdentity   : $jwtIdentity,
                                                auditLog      : $auditLog,
                                                clock         : $clock,
+                                               clientRegistry: $oauthClientRegistry,
                                            )
                                            : null,
         );
 
-        $oidc = new OpenIDConnect(
-            readProviderMetadata    : $capabilityReadiness->oauth() ? $readOidcProviderMetadata : null,
-            readJsonWebKeySet       : $capabilityReadiness->oauth() ? $readOidcJsonWebKeySet : null,
-            readUserInfo            : $capabilityReadiness->oauth() ? $readOidcUserInfo : null,
-            pushAuthorizationRequest: $capabilityReadiness->oauth() ? $pushOidcAuthorizationRequest : null,
-            logout                  : $capabilityReadiness->oauth() ? $oidcLogout : null,
-            buildJarmResponse       : $capabilityReadiness->oauth() ? $buildOidcJarmResponse : null,
+        $openIDConnect = new OpenIDConnect(
+            pushAuthorizationRequest: $authCapabilityReadiness->oauth() ? $pushOidcAuthorizationRequest : null,
+            logout                  : $authCapabilityReadiness->oauth() ? $oidcLogout : null,
+            buildJarmResponse       : $authCapabilityReadiness->oauth() ? $buildOidcJarmResponse : null,
+            readProviderMetadata    : $authCapabilityReadiness->oauth() ? $readOidcProviderMetadata : null,
+            readJsonWebKeySet       : $authCapabilityReadiness->oauth() ? $readOidcJsonWebKeySet : null,
+            readUserInfo            : $authCapabilityReadiness->oauth() ? $readOidcUserInfo : null,
         );
 
-        $sso = new SingleSignOn(
-            registerConnection      : $capabilityReadiness->federation()
-                                          ? new RegisterFederationConnection(
-                                              connectionStore          : $federationConnectionStore,
-                                              groupRoleMappingValidator: $groupRoleMappingValidator,
-                                              auditLog                 : $auditLog,
-                                              clock                    : $clock,
-                                          )
-                                          : null,
-            readConnections         : $capabilityReadiness->federation()
-                                          ? new ReadFederationConnections(connectionStore: $federationConnectionStore)
-                                          : null,
-            verifyDomain            : $capabilityReadiness->federation()
-                                          ? new VerifyFederationDomain(
-                                              connectionStore: $federationConnectionStore,
-                                              auditLog       : $auditLog,
-                                              clock          : $clock,
-                                          )
-                                          : null,
-            syncMetadata            : $capabilityReadiness->federation() && $this->federationRuntime instanceof FederationMetadataRuntimeInterface
-                                          ? new SyncFederationMetadata(
-                                              connectionStore: $federationConnectionStore,
-                                              runtime        : $this->federationRuntime,
-                                              auditLog       : $auditLog,
-                                              clock          : $clock,
-                                          )
-                                          : null,
-            checkConnectionHealth   : $capabilityReadiness->federation() && $this->federationRuntime instanceof FederationHealthCheckInterface
-                                          ? new CheckFederationConnectionHealth(
-                                              connectionStore: $federationConnectionStore,
-                                              runtime        : $this->federationRuntime,
-                                              auditLog       : $auditLog,
-                                              clock          : $clock,
-                                          )
-                                          : null,
-            evaluateBreakGlassBypass: $capabilityReadiness->federation()
-                                          ? new EvaluateFederationBreakGlassBypass(
-                                              connectionStore: $federationConnectionStore,
-                                              auditLog       : $auditLog,
-                                              clock          : $clock,
-                                          )
-                                          : null,
-            discoverConnection      : $capabilityReadiness->federation()
-                                          ? new DiscoverFederationConnection(connectionStore: $federationConnectionStore)
-                                          : null,
-            startFederatedLogin     : $capabilityReadiness->federation()
+        $singleSignOn = new SingleSignOn(
+            startFederatedLogin     : $authCapabilityReadiness->federation()
                                           ? new StartFederatedLogin(
-                                              connectionStore: $federationConnectionStore,
-                                              runtime        : $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(
-                                                  capability : 'federation',
-                                                  requirement: 'runtime',
-                                                  buildPath  : 'AuthBuilder::ready()',
-                                                  option     : 'withFederationRuntime()',
-                                                  cause      : 'Federation capability assembly was attempted.',
-                                              ),
-                                              auditLog       : $auditLog,
-                                              clock          : $clock,
-                                          )
+                                            auditLog       : $auditLog,
+                                            clock          : $clock,
+                                            connectionStore: $federationConnectionStore,
+                                            runtime        : $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                            capability : 'federation',
+                                            requirement: 'runtime',
+                                            buildPath  : 'AuthBuilder::ready()',
+                                            option     : 'withFederationRuntime()',
+                                            cause      : 'Federation capability assembly was attempted.',
+                                        ),
+                                        )
                                           : null,
-            completeFederatedLogin  : $capabilityReadiness->federation()
+            completeFederatedLogin  : $authCapabilityReadiness->federation()
                                           ? new CompleteFederatedLogin(
-                                              connectionStore         : $federationConnectionStore,
-                                              runtime                 : $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(
-                                                  capability : 'federation',
-                                                  requirement: 'runtime',
-                                                  buildPath  : 'AuthBuilder::ready()',
-                                                  option     : 'withFederationRuntime()',
-                                                  cause      : 'Federation capability assembly was attempted.',
-                                              ),
-                                              linkStore               : $federatedIdentityLinkStore,
                                               userSource              : $this->userSource,
                                               identity                : $identity,
                                               projectAuthenticatedUser: $projectAuthenticatedUser,
@@ -1512,108 +1460,161 @@ final class AuthBuilder
                                               idGenerator             : $this->idGenerator ?? new IdGenerator(),
                                               auditLog                : $auditLog,
                                               clock                   : $clock,
+                                              connectionStore         : $federationConnectionStore,
+                                              runtime                 : $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                              capability : 'federation',
+                                              requirement: 'runtime',
+                                              buildPath  : 'AuthBuilder::ready()',
+                                              option     : 'withFederationRuntime()',
+                                              cause      : 'Federation capability assembly was attempted.',
+                                          ),
+                                              linkStore               : $federatedIdentityLinkStore,
                                               riskEngine              : $riskEngine,
                                               lifecycle               : $lifecycle,
                                           )
+                                          : null,
+            registerConnection      : $authCapabilityReadiness->federation()
+                                          ? new RegisterFederationConnection(
+                                              groupRoleMappingValidator: $groupRoleMappingValidator,
+                                              auditLog                 : $auditLog,
+                                              clock                    : $clock,
+                                              connectionStore          : $federationConnectionStore,
+                                          )
+                                          : null,
+            readConnections         : $authCapabilityReadiness->federation()
+                                          ? new ReadFederationConnections(connectionStore: $federationConnectionStore)
+                                          : null,
+            verifyDomain            : $authCapabilityReadiness->federation()
+                                          ? new VerifyFederationDomain(
+                                              auditLog       : $auditLog,
+                                              clock          : $clock,
+                                              connectionStore: $federationConnectionStore,
+                                          )
+                                          : null,
+            syncMetadata            : $authCapabilityReadiness->federation() && $this->federationRuntime instanceof FederationMetadataRuntimeInterface
+                                          ? new SyncFederationMetadata(
+                                              auditLog       : $auditLog,
+                                              clock          : $clock,
+                                              connectionStore: $federationConnectionStore,
+                                              runtime        : $this->federationRuntime,
+                                          )
+                                          : null,
+            checkConnectionHealth   : $authCapabilityReadiness->federation() && $this->federationRuntime instanceof FederationHealthCheckInterface
+                                          ? new CheckFederationConnectionHealth(
+                                              auditLog       : $auditLog,
+                                              clock          : $clock,
+                                              connectionStore: $federationConnectionStore,
+                                              runtime        : $this->federationRuntime,
+                                          )
+                                          : null,
+            evaluateBreakGlassBypass: $authCapabilityReadiness->federation()
+                                          ? new EvaluateFederationBreakGlassBypass(
+                                              auditLog       : $auditLog,
+                                              clock          : $clock,
+                                              connectionStore: $federationConnectionStore,
+                                          )
+                                          : null,
+            discoverConnection      : $authCapabilityReadiness->federation()
+                                          ? new DiscoverFederationConnection(connectionStore: $federationConnectionStore)
                                           : null,
         );
 
         $externalIdentity = new ExternalIdentity(
             oauth: $oauth,
-            oidc : $oidc,
-            sso  : $sso,
+            oidc : $openIDConnect,
+            sso  : $singleSignOn,
         );
 
         $scim = new SCIM(
-            registerScimDirectory     : $capabilityReadiness->scim()
+            registerScimDirectory     : $authCapabilityReadiness->scim()
                                             ? new RegisterScimDirectory(
-                                                directoryStore           : $scimDirectoryStore,
                                                 passwordHasher           : $passwordHasher,
                                                 groupRoleMappingValidator: new GroupRoleMappingValidator(),
                                                 auditLog                 : $auditLog,
                                                 clock                    : $clock,
+                                                directoryStore           : $scimDirectoryStore,
                                             )
                                             : null,
-            readScimDirectories       : $capabilityReadiness->scim() ? new ReadScimDirectories(directoryStore: $scimDirectoryStore) : null,
-            rotateScimToken           : $capabilityReadiness->scim()
+            readScimDirectories       : $authCapabilityReadiness->scim() ? new ReadScimDirectories(directoryStore: $scimDirectoryStore) : null,
+            rotateScimToken           : $authCapabilityReadiness->scim()
                                             ? new RotateScimToken(
-                                                directoryStore : $scimDirectoryStore,
                                                 passwordHasher : $passwordHasher,
                                                 auditLog       : $auditLog,
                                                 clock          : $clock,
                                                 attemptThrottle: $scimThrottle,
+                                                directoryStore : $scimDirectoryStore,
                                             )
                                             : null,
-            markScimDirectoryOutage   : $capabilityReadiness->scim()
+            markScimDirectoryOutage   : $authCapabilityReadiness->scim()
                                             ? new MarkScimDirectoryOutage(
-                                                directoryStore: $scimDirectoryStore,
                                                 auditLog      : $auditLog,
                                                 clock         : $clock,
+                                                directoryStore: $scimDirectoryStore,
                                             )
                                             : null,
-            recoverScimDirectoryOutage: $capabilityReadiness->scim()
+            recoverScimDirectoryOutage: $authCapabilityReadiness->scim()
                                             ? new RecoverScimDirectoryOutage(
-                                                directoryStore: $scimDirectoryStore,
                                                 auditLog      : $auditLog,
                                                 clock         : $clock,
+                                                directoryStore: $scimDirectoryStore,
                                             )
                                             : null,
             provisionScimUser         : $provisionScimUser,
-            deleteScimUser            : $capabilityReadiness->scim()
+            deleteScimUser            : $authCapabilityReadiness->scim()
                                             ? new DeleteScimUser(
+                                                auditLog       : $auditLog,
+                                                clock          : $clock,
+                                                attemptThrottle: $scimThrottle,
                                                 userSource     : $provisionableUserSource,
                                                 directoryStore : $scimDirectoryStore,
                                                 identityStore  : $scimProvisionedIdentityStore,
-                                                auditLog       : $auditLog,
-                                                clock          : $clock,
                                                 lifecycle      : $lifecycle,
-                                                attemptThrottle: $scimThrottle,
                                             )
                                             : null,
             readScimUsers             : $readScimUsers,
             readScimGroups            : $readScimGroups,
-            syncScimGroups            : $capabilityReadiness->scim() && $provisionScimUser !== null
+            syncScimGroups            : $authCapabilityReadiness->scim() && $provisionScimUser instanceof ProvisionScimUser
                                             ? new SyncScimGroups(
-                                                directoryStore   : $scimDirectoryStore,
-                                                identityStore    : $scimProvisionedIdentityStore,
                                                 userSource       : $this->userSource,
                                                 provisionScimUser: $provisionScimUser,
+                                                directoryStore   : $scimDirectoryStore,
+                                                identityStore    : $scimProvisionedIdentityStore,
                                             )
                                             : null,
             runScimBulk               : $runScimBulk,
         );
 
         $provisioning = new Provisioning(
-            suspendUser    : $provisionableUserSource !== null
+            suspendUser    : $provisionableUserSource instanceof ProvisionableUserSourceInterface
                                  ? new SuspendUser(
-                                     userSource           : $provisionableUserSource,
                                      requireAdminElevation: $requireAdminElevation,
                                      auditLog             : $auditLog,
                                      clock                : $clock,
                                      sessionRegistry      : $this->sessionRegistry,
                                      refreshTokenStore    : $this->refreshTokenStore,
                                      adminElevationStore  : $adminElevationStore,
+                                     userSource           : $provisionableUserSource,
                                      lifecycle            : $lifecycle,
                                  )
                                  : null,
-            reactivateUser : $provisionableUserSource !== null
+            reactivateUser : $provisionableUserSource instanceof ProvisionableUserSourceInterface
                                  ? new ReactivateUser(
-                                     userSource           : $provisionableUserSource,
                                      requireAdminElevation: $requireAdminElevation,
                                      auditLog             : $auditLog,
                                      clock                : $clock,
+                                     userSource           : $provisionableUserSource,
                                      lifecycle            : $lifecycle,
                                  )
                                  : null,
-            deprovisionUser: $provisionableUserSource !== null
+            deprovisionUser: $provisionableUserSource instanceof ProvisionableUserSourceInterface
                                  ? new DeprovisionUser(
-                                     userSource           : $provisionableUserSource,
                                      requireAdminElevation: $requireAdminElevation,
                                      auditLog             : $auditLog,
                                      clock                : $clock,
                                      sessionRegistry      : $this->sessionRegistry,
                                      refreshTokenStore    : $this->refreshTokenStore,
                                      adminElevationStore  : $adminElevationStore,
+                                     userSource           : $provisionableUserSource,
                                      lifecycle            : $lifecycle,
                                  )
                                  : null,
@@ -1664,16 +1665,16 @@ final class AuthBuilder
                 beginAdminElevation  : new BeginAdminElevation(
                     currentAuthentication    : $currentAuthentication,
                     requireFreshMfa          : $requireFreshMfa,
-                    elevationStore           : $adminElevationStore,
                     auditLog                 : $auditLog,
                     clock                    : $clock,
                     phishingResistantRequired: $this->adminPhishingResistantRequired,
+                    elevationStore           : $adminElevationStore,
                 ),
                 endAdminElevation    : new EndAdminElevation(
                     currentAuthentication: $currentAuthentication,
-                    elevationStore       : $adminElevationStore,
                     auditLog             : $auditLog,
                     clock                : $clock,
+                    elevationStore       : $adminElevationStore,
                 ),
                 requireAdminElevation: $requireAdminElevation,
                 assessCurrentRisk    : $assessCurrentRisk,
@@ -1691,17 +1692,17 @@ final class AuthBuilder
     {
         return AuthCapabilityRequests::from(
             enterpriseMode                        : $this->enterpriseMode,
-            oauthClientRegistryConfigured         : $this->oauthClientRegistry !== null,
-            authorizationCodeStoreConfigured      : $this->authorizationCodeStore !== null,
-            oidcProviderConfigured                : $this->oidcProvider !== null,
-            oidcRequestObjectStoreConfigured      : $this->oidcRequestObjectStore !== null,
-            passkeyCredentialStoreConfigured      : $this->passkeyCredentialStore !== null,
-            passkeyChallengeStoreConfigured       : $this->passkeyChallengeStore !== null,
+            oauthClientRegistryConfigured         : $this->oAuthClientRegistry instanceof OAuthClientRegistryInterface,
+            authorizationCodeStoreConfigured      : $this->authorizationCodeStore instanceof AuthorizationCodeStoreInterface,
+            oidcProviderConfigured                : $this->oidcProvider instanceof OidcProviderInterface,
+            oidcRequestObjectStoreConfigured      : $this->oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface,
+            passkeyCredentialStoreConfigured      : $this->passkeyCredentialStore instanceof PasskeyCredentialStoreInterface,
+            passkeyChallengeStoreConfigured       : $this->passkeyChallengeStore instanceof PasskeyChallengeStoreInterface,
             passkeyRelyingPartyCustomized         : $this->passkeyRpId !== 'localhost' || $this->passkeyRpName !== 'Avax Auth',
-            federationConnectionStoreConfigured   : $this->federationConnectionStore !== null,
-            federatedIdentityLinkStoreConfigured  : $this->federatedIdentityLinkStore !== null,
-            scimDirectoryStoreConfigured          : $this->scimDirectoryStore !== null,
-            scimProvisionedIdentityStoreConfigured: $this->scimProvisionedIdentityStore !== null,
+            federationConnectionStoreConfigured   : $this->federationConnectionStore instanceof FederationConnectionStoreInterface,
+            federatedIdentityLinkStoreConfigured  : $this->federatedIdentityLinkStore instanceof FederatedIdentityLinkStoreInterface,
+            scimDirectoryStoreConfigured          : $this->scimDirectoryStore instanceof ScimDirectoryStoreInterface,
+            scimProvisionedIdentityStoreConfigured: $this->scimProvisionedIdentityStore instanceof ScimProvisionedIdentityStoreInterface,
         );
     }
 }

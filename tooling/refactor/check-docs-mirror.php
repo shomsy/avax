@@ -23,7 +23,7 @@ final class CheckDocsMirror
         $this->scanDocsForObsoleteRefs();
 
         return [
-            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'status' => $this->errors === [] ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
         ];
     }
@@ -48,9 +48,9 @@ final class CheckDocsMirror
             }
 
             $content = file_get_contents($file->getPathname());
-            foreach ($this->forbiddenDocRefs as $ref) {
-                if (str_contains($content, $ref)) {
-                    $this->errors[] = $file->getPathname() . ': references obsolete ' . $ref;
+            foreach ($this->forbiddenDocRefs as $forbiddenDocRef) {
+                if (str_contains($content, (string) $forbiddenDocRef)) {
+                    $this->errors[] = $file->getPathname() . ': references obsolete ' . $forbiddenDocRef;
                 }
             }
         }

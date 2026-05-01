@@ -52,7 +52,7 @@ enum RequestOption: string
      */
     public static function isValid(string $name) : bool
     {
-        return self::tryFromName($name) !== null;
+        return self::tryFromName($name) instanceof RequestOption;
     }
 
     /**

@@ -13,14 +13,14 @@ final readonly class ExecuteSagaStep
     public function __construct(private object $stepRunner) {}
 
     public function execute(
-        SagaStepDefinition $step,
+        SagaStepDefinition $sagaStepDefinition,
         array $sagaData,
     ): array {
         $startTime = microtime(true);
 
-        $input = $this->prepareInput(stepInput: $step->input, sagaData: $sagaData);
+        $input = $this->prepareInput(stepInput: $sagaStepDefinition->input, sagaData: $sagaData);
 
-        $result = ($this->stepRunner)($step->component, $input);
+        $result = ($this->stepRunner)($sagaStepDefinition->component, $input);
 
         $duration = (microtime(true) - $startTime) * 1000;
 
@@ -53,7 +53,7 @@ final readonly class LoadSagaInstance
 
     public function load(string $sagaId): ?SagaInstance
     {
-        $data = $this->store->get("saga_{$sagaId}");
+        $data = $this->store->get('saga_' . $sagaId);
         if ($data === null) {
             return null;
         }
@@ -63,7 +63,7 @@ final readonly class LoadSagaInstance
 
     public function exists(string $sagaId): bool
     {
-        return $this->store->get("saga_{$sagaId}") !== null;
+        return $this->store->get('saga_' . $sagaId) !== null;
     }
 }
 
@@ -72,22 +72,22 @@ final readonly class RecordSagaStepCompleted
     public function __construct(private object $store, private object $inspect) {}
 
     public function record(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         string $stepName,
         array $result,
     ): void {
-        $instance = $instance->advanceTo(
+        $sagaInstance = $sagaInstance->advanceTo(
             stepName : $stepName,
-            stepIndex: $instance->currentStepIndex + 1,
+            stepIndex: $sagaInstance->currentStepIndex + 1,
             result   : $result,
         );
 
-        $this->store->set("saga_{$instance->id}", $instance->toArray());
+        $this->store->set('saga_' . $sagaInstance->id, $sagaInstance->toArray());
 
         $this->inspect->record(
             SagaRuntimeEvent::stepCompleted(
-                sagaId  : $instance->id,
-                sagaName: $instance->definitionName,
+                sagaId  : $sagaInstance->id,
+                sagaName: $sagaInstance->definitionName,
                 stepName: $stepName,
                 output  : $result['output'] ?? [],
             ),
@@ -100,18 +100,18 @@ final readonly class RecordSagaStepFailed
     public function __construct(private object $store, private object $inspect) {}
 
     public function record(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         string $stepName,
         string $error,
     ): void {
-        $instance = $instance->fail(error: $error);
+        $sagaInstance = $sagaInstance->fail(error: $error);
 
-        $this->store->set("saga_{$instance->id}", $instance->toArray());
+        $this->store->set('saga_' . $sagaInstance->id, $sagaInstance->toArray());
 
         $this->inspect->record(
             SagaRuntimeEvent::stepFailed(
-                sagaId  : $instance->id,
-                sagaName: $instance->definitionName,
+                sagaId  : $sagaInstance->id,
+                sagaName: $sagaInstance->definitionName,
                 stepName: $stepName,
                 error   : $error,
             ),
@@ -122,20 +122,19 @@ final readonly class RecordSagaStepFailed
 final readonly class ScheduleNextSagaStep
 {
     public function schedule(
-        SagaInstance $current,
-        SagaStepDefinition $nextStep,
+        SagaInstance $sagaInstance,
     ): SagaInstance {
-        return $current;
+        return $sagaInstance;
     }
 }
 
 final readonly class ChooseNextSagaStep
 {
     public function choose(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         array $definition,
     ): ?SagaStepDefinition {
-        $currentIndex = $instance->currentStepIndex;
+        $currentIndex = $sagaInstance->currentStepIndex;
         $nextIndex = $currentIndex + 1;
 
         if ($nextIndex >= count($definition['stepOrder'] ?? [])) {

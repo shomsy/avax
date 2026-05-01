@@ -9,10 +9,10 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class ReadTenantSecurityConfiguration
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore) {}
+    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) {}
 
     public function execute(string $tenantSlug): ?TenantSecurityConfiguration
     {
-        return $this->configurationStore->find(tenantSlug: $tenantSlug);
+        return $this->tenantSecurityConfigurationStore->find(tenantSlug: $tenantSlug);
     }
 }

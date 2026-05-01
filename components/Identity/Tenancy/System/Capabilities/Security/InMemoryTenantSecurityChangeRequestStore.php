@@ -9,9 +9,9 @@ final class InMemoryTenantSecurityChangeRequestStore implements TenantSecurityCh
     /** @var array<string, TenantSecurityChangeRequest> */
     private array $changeRequests = [];
 
-    public function save(TenantSecurityChangeRequest $changeRequest): void
+    public function save(TenantSecurityChangeRequest $tenantSecurityChangeRequest) : void
     {
-        $this->changeRequests[$changeRequest->changeId] = $changeRequest;
+        $this->changeRequests[$tenantSecurityChangeRequest->changeId] = $tenantSecurityChangeRequest;
     }
 
     public function find(string $changeId): ?TenantSecurityChangeRequest
@@ -23,7 +23,7 @@ final class InMemoryTenantSecurityChangeRequestStore implements TenantSecurityCh
     {
         return array_values(array: array_filter(
             array   : $this->changeRequests,
-            callback: static fn (TenantSecurityChangeRequest $changeRequest): bool => $changeRequest->tenantSlug === trim(string: $tenantSlug),
+            callback: static fn (TenantSecurityChangeRequest $tenantSecurityChangeRequest) : bool => $tenantSecurityChangeRequest->tenantSlug === trim(string: $tenantSlug),
         ));
     }
 }

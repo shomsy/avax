@@ -21,26 +21,26 @@ interface OAuthClientRegistryInterface
      */
     public function register(
         string $name,
-        OAuthClientType $type,
+        OAuthClientType               $oAuthClientType,
         array $redirectUris,
-        string                       $tenantSlug = null,
+        ?string                       $tenantSlug = null,
         array $allowedScopes = [],
         array $allowedAudiences = [],
         array $allowedGrantTypes = [],
         array $audienceScopeBoundaries = [],
-        OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod = null,
-        OAuthSenderConstraintType    $requiredSenderConstraint = null,
+        ?OAuthTokenEndpointAuthMethod $oAuthTokenEndpointAuthMethod = null,
+        ?OAuthSenderConstraintType    $oAuthSenderConstraintType = null,
         bool $workloadIdentity = false,
         bool $phishingResistantRequired = false,
         bool $requestObjectSignatureRequired = false,
         bool $frontChannelLogoutSupported = false,
         bool $backChannelLogoutSupported = false,
-        bool                         $approvalRequired = null,
+        ?bool                         $approvalRequired = null,
         #[SensitiveParameter]
-        string                       $requestObjectVerificationKeyPem = null,
+        ?string                       $requestObjectVerificationKeyPem = null,
     ): RegisteredOAuthClient;
 
-    public function replace(OAuthClient $client): void;
+    public function replace(OAuthClient $oAuthClient) : void;
 
     public function deactivate(string $clientId): ?OAuthClient;
 

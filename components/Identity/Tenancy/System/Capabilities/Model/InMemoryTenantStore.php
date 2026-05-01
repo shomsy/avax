@@ -33,9 +33,9 @@ final class InMemoryTenantStore implements TenantStoreInterface
         return array_values(array: $this->tenantsBySlug);
     }
 
-    public function saveMember(TenantMember $member): void
+    public function saveMember(TenantMember $tenantMember) : void
     {
-        $this->members[$this->memberKey(tenantId: $member->tenantId, userId: $member->userId)] = $member;
+        $this->members[$this->memberKey(tenantId: $tenantMember->tenantId, userId: $tenantMember->userId)] = $tenantMember;
     }
 
     private function memberKey(string $tenantId, int $userId): string
@@ -52,7 +52,7 @@ final class InMemoryTenantStore implements TenantStoreInterface
     {
         return array_values(array: array_filter(
             array   : $this->members,
-            callback: static fn (TenantMember $member): bool => $member->tenantId === $tenantId,
+            callback: static fn (TenantMember $tenantMember) : bool => $tenantMember->tenantId === $tenantId,
         ));
     }
 
@@ -61,9 +61,9 @@ final class InMemoryTenantStore implements TenantStoreInterface
         unset($this->members[$this->memberKey(tenantId: $tenantId, userId: $userId)]);
     }
 
-    public function saveInvite(TenantInvite $invite): void
+    public function saveInvite(TenantInvite $tenantInvite) : void
     {
-        $this->invites[$invite->inviteId] = $invite;
+        $this->invites[$tenantInvite->inviteId] = $tenantInvite;
     }
 
     public function findInviteById(string $inviteId): ?TenantInvite

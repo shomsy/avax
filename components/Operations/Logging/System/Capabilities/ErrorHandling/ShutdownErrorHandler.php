@@ -23,7 +23,7 @@ final class ShutdownErrorHandler
 
     public function __construct(
         private readonly HandleRuntimeFailure $handleRuntimeFailure,
-        private readonly Logging $logger,
+        private readonly Logging $logging,
     ) {}
 
     /**
@@ -55,7 +55,7 @@ final class ShutdownErrorHandler
 
         $this->registered = true;
 
-        $this->logger->debug('Shutdown error handler registered');
+        $this->logging->debug('Shutdown error handler registered');
     }
 
     /**
@@ -104,7 +104,7 @@ final class ShutdownErrorHandler
             return;
         }
 
-        $this->logger->critical(
+        $this->logging->critical(
             'Fatal error during shutdown',
             [
                 'error_type' => $this->getErrorTypeName($error['type']),
@@ -118,10 +118,10 @@ final class ShutdownErrorHandler
         // Note: At shutdown, output may have already been partially sent
         try {
             $this->handleRuntimeFailure->handleFatalError($error);
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             // If even the handler fails, ensure we log the original error
-            $this->logger->emergency(
-                'Shutdown error handler failed: ' . $e->getMessage(),
+            $this->logging->emergency(
+                'Shutdown error handler failed: ' . $throwable->getMessage(),
                 ['original_fatal_error' => $error],
             );
         }
@@ -148,7 +148,7 @@ final class ShutdownErrorHandler
             E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
             E_DEPRECATED      => 'E_DEPRECATED',
             E_USER_DEPRECATED => 'E_USER_DEPRECATED',
-            default           => "E_UNKNOWN({$type})",
+            default => sprintf('E_UNKNOWN(%s)', $type),
         };
     }
 }

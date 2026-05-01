@@ -38,10 +38,10 @@ final class DatabaseBuilder
 
     public function ready(): Database
     {
-        $connections = new ReadConnection();
+        $readConnection = new ReadConnection();
 
         return new Database(
-            connections : new Connections($connections),
+            connections : new Connections($readConnection),
             query       : new Query(),
             schema      : new Schema(),
             migrations  : new Migrations(),

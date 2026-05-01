@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\LoadConfiguration;
 
-final class LoadConfiguration
+final readonly class LoadConfiguration
 {
     public function __construct(
-        private readonly ConfigurationRepository $repository,
+        private ConfigurationRepository $configurationRepository,
     ) {}
 
     /**
@@ -15,6 +15,6 @@ final class LoadConfiguration
      */
     public function load(array $config) : void
     {
-        $this->repository->load($config);
+        $this->configurationRepository->load($config);
     }
 }

@@ -24,12 +24,12 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      */
     public function issue(
         User $user,
-        DateTimeImmutable     $issuedAt = null,
+        ?DateTimeImmutable     $issuedAt = null,
         bool $phishingResistant = false,
-        string                $audience = null,
+        ?string                $audience = null,
         array $scopes = [],
-        string                $issuer = null,
-        OAuthSenderConstraint $senderConstraint = null,
+        ?string                $issuer = null,
+        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
     ): IssuedToken;
 
     public function resolve(string $token): ?ResolvedToken;
@@ -41,14 +41,14 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         string $subject,
         string $clientId,
         array $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
-        string                $audience = null,
+        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
+        ?string                $audience = null,
     ): IssuedToken;
 
     public function resolveWorkloadToken(
         string $token,
-        string $expectedAudience = null,
-        string $expectedIssuer = null,
+        ?string $expectedAudience = null,
+        ?string $expectedIssuer = null,
     ): ?ResolvedWorkloadToken;
 
     /**
@@ -56,11 +56,11 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      */
     public function issueRefreshToken(
         User $user,
-        DateTimeImmutable     $issuedAt = null,
+        ?DateTimeImmutable     $issuedAt = null,
         bool $phishingResistant = false,
-        string                $audience = null,
+        ?string                $audience = null,
         array $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
+        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
     ): ?IssuedRefreshToken;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt): void;

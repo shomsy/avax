@@ -6,21 +6,21 @@ namespace Avax\Components\HTTP\Request\System\Flows\ReadRequestInput;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
-final class ReadRequestInput
+final readonly class ReadRequestInput
 {
     public function __construct(
-        private ReadRouteInput $routeReader,
-        private ReadQueryInput $queryReader,
-        private ReadBodyInput $bodyReader,
-        private ReadFileInput $fileReader,
+        private ReadRouteInput $readRouteInput,
+        private ReadQueryInput $readQueryInput,
+        private ReadBodyInput  $readBodyInput,
+        private ReadFileInput  $readFileInput,
     ) {}
 
     public function read(RequestInterface $request, string $key, mixed $default = null) : mixed
     {
-        return $this->routeReader->read($request, $key)
-            ?? $this->queryReader->read($request, $key)
-            ?? $this->bodyReader->read($request, $key)
-            ?? $this->fileReader->read($request, $key)
+        return $this->readRouteInput->read($request, $key)
+            ?? $this->readQueryInput->read($request, $key)
+            ?? $this->readBodyInput->read($request, $key)
+            ?? $this->readFileInput->read($request, $key)
             ?? $default;
     }
 }

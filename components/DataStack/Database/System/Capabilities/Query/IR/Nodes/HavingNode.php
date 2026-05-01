@@ -6,9 +6,9 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class HavingNode
+final readonly class HavingNode
 {
-    public function __construct(public readonly WhereNode $condition) {}
+    public function __construct(public WhereNode $condition) {}
 
     public function getSql(GrammarInterface $grammar): string
     {

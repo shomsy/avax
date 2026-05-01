@@ -21,13 +21,7 @@ final readonly class ReplicationResult
             return false;
         }
 
-        foreach ($this->replicaResults as $replicaResult) {
-            if (! $replicaResult->success) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->replicaResults, fn ($replicaResult) => $replicaResult->success);
     }
 
     /**

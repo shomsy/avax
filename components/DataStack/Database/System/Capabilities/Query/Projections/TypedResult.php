@@ -16,10 +16,10 @@ final class TypedResult
      */
     public static function fromRows(string $className, array $rows): array
     {
-        $mapper = new ResultMapper(className: $className);
+        $resultMapper = new ResultMapper(className: $className);
 
         return array_map(
-            callback: static fn (array $row) => $mapper->map(row: $row),
+            callback: static fn (array $row) : object => $resultMapper->map(row: $row),
             array   : $rows,
         );
     }
@@ -34,12 +34,12 @@ final class TypedResult
      */
     public static function fromRow(string $className, array $row): ?object
     {
-        if (empty($row)) {
+        if ($row === []) {
             return null;
         }
 
-        $mapper = new ResultMapper(className: $className);
+        $resultMapper = new ResultMapper(className: $className);
 
-        return $mapper->map(row: $row);
+        return $resultMapper->map(row: $row);
     }
 }

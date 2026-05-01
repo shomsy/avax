@@ -39,13 +39,13 @@ final readonly class ReadCachedValueFromReplica
 
     private function readFromPrimary(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        return $this->stores[0]->read(key: $cacheKey, clock: $this->clock);
+        return $this->stores[0]->read(clock: $this->clock, key: $cacheKey);
     }
 
     private function readFromClosest(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         foreach ($this->stores as $store) {
-            $result = $store->read(key: $cacheKey, clock: $this->clock);
+            $result = $store->read(clock: $this->clock, key: $cacheKey);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 return $result;
@@ -62,7 +62,7 @@ final readonly class ReadCachedValueFromReplica
 
         foreach ($this->stores as $store) {
             try {
-                $result = $store->read(key: $cacheKey, clock: $this->clock);
+                $result = $store->read(clock: $this->clock, key: $cacheKey);
 
                 if ($result instanceof CacheStoreRecordWasFound) {
                     $results[] = $result;

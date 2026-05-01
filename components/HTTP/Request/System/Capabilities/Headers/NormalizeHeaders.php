@@ -14,6 +14,7 @@ final class NormalizeHeaders
             if (str_starts_with($n, 'HTTP-')) {
                 $n = substr($n, 5);
             }
+
             $norm[$n] = $v;
         }
 

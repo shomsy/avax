@@ -8,11 +8,11 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Configuratio
 
 final readonly class ConvertDataObjectToJsonApi
 {
-    public function __construct(private ?DataTransferConfig $config = null) {}
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
 
     public function convert(object $object, string $type): array
     {
-        $array = new ConvertDataObjectToArray(config: $this->config)->convert(object: $object);
+        $array = new ConvertDataObjectToArray(config: $this->dataTransferConfig)->convert(object: $object);
 
         return [
             'data' => [

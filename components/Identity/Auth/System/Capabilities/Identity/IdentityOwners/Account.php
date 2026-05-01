@@ -39,23 +39,23 @@ final readonly class Account
      * @throws RateLimitException
      * @throws Unauthenticated
      */
-    public function changePassword(ChangePasswordData $data): void
+    public function changePassword(ChangePasswordData $changePasswordData) : void
     {
-        $this->changePassword->execute(data: $data);
+        $this->changePassword->execute(data: $changePasswordData);
     }
 
     /**
      * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
-    public function beginEmailChange(BeginEmailChangeData $data): EmailChangeChallenge
+    public function beginEmailChange(BeginEmailChangeData $beginEmailChangeData) : EmailChangeChallenge
     {
-        return $this->beginEmailChange->execute(data: $data);
+        return $this->beginEmailChange->execute(data: $beginEmailChangeData);
     }
 
-    public function confirmEmailChange(ConfirmEmailChangeData $data): bool
+    public function confirmEmailChange(ConfirmEmailChangeData $confirmEmailChangeData) : bool
     {
-        return $this->confirmEmailChangeOrFail()->execute(data: $data);
+        return $this->confirmEmailChangeOrFail()->execute(data: $confirmEmailChangeData);
     }
 
     private function confirmEmailChangeOrFail(): ConfirmEmailChange
@@ -67,8 +67,8 @@ final readonly class Account
      * @throws RegistrationFailed
      * @throws RateLimitException
      */
-    public function register(RegistrationData $data): RegistrationResult
+    public function register(RegistrationData $registrationData) : RegistrationResult
     {
-        return $this->register->execute(data: $data);
+        return $this->register->execute(data: $registrationData);
     }
 }

@@ -9,11 +9,11 @@ use Avax\Components\Security\Secrets\System\Capabilities\Stores\SecretStore;
 final readonly class ReadSecret
 {
     public function __construct(
-        private SecretStore $store,
+        private SecretStore $secretStore,
     ) {}
 
     public function read(string $key): string
     {
-        return $this->store->get($key);
+        return $this->secretStore->get($key);
     }
 }

@@ -29,7 +29,7 @@ class InvalidHttpResponse extends RuntimeException
         public readonly ?int $statusCode = null,
         public readonly ?string $url = null,
         public readonly mixed $body = null,
-        Throwable $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
     }

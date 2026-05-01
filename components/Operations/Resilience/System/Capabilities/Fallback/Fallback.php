@@ -11,9 +11,9 @@ final class Fallback
 {
     private static array $strategies = [];
 
-    public static function register(string $dependency, FallbackStrategyItem $strategy): void
+    public static function register(string $dependency, FallbackStrategyItem $fallbackStrategyItem) : void
     {
-        self::$strategies[$dependency] = $strategy;
+        self::$strategies[$dependency] = $fallbackStrategyItem;
     }
 
     public static function for(string $dependency): FallbackBuilder
@@ -44,9 +44,9 @@ final class Fallback
     {
         $lastException = null;
 
-        foreach ($fallbacks as $callback) {
+        foreach ($fallbacks as $fallback) {
             try {
-                return $callback();
+                return $fallback();
             } catch (Throwable $e) {
                 $lastException = $e;
             }
@@ -63,15 +63,15 @@ final readonly class FallbackBuilder
     ) {
     }
 
-    public function when(string $exceptionClass): self
+    public function when() : self
     {
         return $this;
     }
 
     public function use(string $fallbackClass): void
     {
-        $strategy = new FallbackStrategyItem($this->dependency, $fallbackClass);
-        Fallback::register($this->dependency, $strategy);
+        $fallbackStrategyItem = new FallbackStrategyItem($this->dependency, $fallbackClass);
+        Fallback::register($this->dependency, $fallbackStrategyItem);
     }
 }
 

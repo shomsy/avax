@@ -19,11 +19,11 @@ use SQLite3;
  */
 final class SQLiteGrammar extends BaseGrammar
 {
-    private bool $supportsReturning;
+    private readonly bool $supportsReturning;
 
-    private bool $supportsWindowFunctions;
+    private readonly bool $supportsWindowFunctions;
 
-    private bool $supportsCTE;
+    private readonly bool $supportsCTE;
 
     public function __construct()
     {
@@ -44,12 +44,12 @@ final class SQLiteGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $sql = $this->compileInsert(state: $state);
+        $sql = $this->compileInsert(state: $queryState);
 
         $conflictColumns = array_map(
-            callback: fn ($col) => $this->wrap(value: $col),
+            callback: fn ($col) : string => $this->wrap(value: $col),
             array   : $uniqueBy,
         );
         $conflictClause = implode(separator: ', ', array: $conflictColumns);
@@ -61,7 +61,7 @@ final class SQLiteGrammar extends BaseGrammar
 
         $updateClause = implode(separator: ', ', array: $updates);
 
-        return "{$sql} ON CONFLICT ({$conflictClause}) DO UPDATE SET {$updateClause}";
+        return sprintf('%s ON CONFLICT (%s) DO UPDATE SET %s', $sql, $conflictClause, $updateClause);
     }
 
     #[Override]
@@ -79,13 +79,14 @@ final class SQLiteGrammar extends BaseGrammar
 
         if (str_contains(haystack: $value, needle: '.')) {
             return explode(separator: '.', string: $value)
-                    |> (fn ($x) => array_map(callback: fn ($segment) => $this->wrapSegment(segment: $segment), array: $x))
-                    |> (static fn ($x) => implode(separator: '.', array: $x));
+                    |> (fn ($x) : array => array_map(callback: fn (string $segment) : string => $this->wrapSegment(segment: $segment), array: $x))
+                    |> (static fn ($x) : string => implode(separator: '.', array: $x));
         }
 
         return $this->wrapSegment(segment: $value);
     }
 
+    #[Override]
     protected function wrapSegment(string $segment): string
     {
         if ($segment === '*' || $segment === '') {
@@ -116,7 +117,7 @@ final class SQLiteGrammar extends BaseGrammar
     #[Override]
     public function compileCreateDatabase(string $name): string
     {
-        return "ATTACH DATABASE '{$name}.db' AS {$this->wrap(value: $name)}";
+        return sprintf("ATTACH DATABASE '%s.db' AS %s", $name, $this->wrap(value: $name));
     }
 
     #[Override]
@@ -127,11 +128,11 @@ final class SQLiteGrammar extends BaseGrammar
 
     public function compileReturning(array $columns): string
     {
-        if (! $this->supportsReturning || empty($columns)) {
+        if (! $this->supportsReturning || $columns === []) {
             return '';
         }
 
-        $cols = array_map(callback: fn ($col) => $this->wrap(value: $col), array: $columns);
+        $cols = array_map(callback: fn ($col) : string => $this->wrap(value: $col), array: $columns);
 
         return 'RETURNING ' . implode(separator: ', ', array: $cols);
     }
@@ -151,7 +152,7 @@ final class SQLiteGrammar extends BaseGrammar
         return $this->supportsReturning;
     }
 
-    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, ?string $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
         if (! $this->supportsWindowFunctions) {
@@ -162,7 +163,7 @@ final class SQLiteGrammar extends BaseGrammar
 
         if ($partitionBy !== '') {
             $partitionColumns = array_map(
-                callback: fn ($col) => $this->wrap(value: $col),
+                callback: fn ($col) : string => $this->wrap(value: $col),
                 array   : explode(separator: ',', string: $partitionBy),
             );
             $sql .= 'PARTITION BY ' . implode(separator: ', ', array: $partitionColumns);
@@ -172,9 +173,7 @@ final class SQLiteGrammar extends BaseGrammar
             $sql .= ' ORDER BY ' . $orderBy;
         }
 
-        $sql .= ')';
-
-        return $sql;
+        return $sql . ')';
     }
 
     public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery): string
@@ -183,11 +182,11 @@ final class SQLiteGrammar extends BaseGrammar
             throw new RuntimeException(message: 'CTE requires SQLite 3.26.0+');
         }
 
-        return "WITH RECURSIVE {$name} AS ({$initialQuery} UNION ALL {$recursiveQuery})";
+        return sprintf('WITH RECURSIVE %s AS (%s UNION ALL %s)', $name, $initialQuery, $recursiveQuery);
     }
 
     public function compileRegexp(string $column, string $pattern): string
     {
-        return "{$this->wrap(value: $column)} REGEXP '{$pattern}'";
+        return sprintf("%s REGEXP '%s'", $this->wrap(value: $column), $pattern);
     }
 }

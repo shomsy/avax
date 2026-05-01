@@ -23,16 +23,16 @@ final class CurlTransport implements HttpTransportInterface
     /**
      * Send an HTTP request using cURL.
      *
-     * @param OutboundRequest $request The outbound request to send
+     * @param OutboundRequest $outboundRequest The outbound request to send
      *
      * @return ClientResponse The HTTP response
      *
      * @throws HttpRequestFailed if the request cannot be completed
      * @throws HttpTimeout if the request times out
      */
-    public function send(OutboundRequest $request): ClientResponse
+    public function send(OutboundRequest $outboundRequest) : ClientResponse
     {
-        $options = $request->options ?? new RequestOptions();
+        $options           = $outboundRequest->options ?? new RequestOptions();
 
         $ch = curl_init();
         if ($ch === false) {
@@ -40,7 +40,7 @@ final class CurlTransport implements HttpTransportInterface
         }
 
         try {
-            $this->configureCurl($ch, $request, $options);
+            $this->configureCurl($ch, $outboundRequest, $options);
 
             $startTime   = microtime(true);
             $rawResponse = curl_exec($ch);
@@ -58,7 +58,7 @@ final class CurlTransport implements HttpTransportInterface
 
             // Handle cURL errors
             if ($rawResponse === false) {
-                $this->handleCurlError($ch, $curlErrno, $curlError, $request);
+                $this->handleCurlError($ch, $curlErrno, $curlError, $outboundRequest);
             }
 
             // Parse the response
@@ -68,7 +68,7 @@ final class CurlTransport implements HttpTransportInterface
 
             $statusCode    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $effectiveUrl  = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL) ?: null;
-            $redirectCount = curl_getinfo($ch, CURLINFO_REDIRECT_COUNT) ?: 0;
+            $redirectCount = curl_getinfo($ch, CURLINFO_REDIRECT_COUNT);
 
             $headers      = $this->parseHeaders($headerStr);
             $reasonPhrase = curl_getinfo($ch, CURLINFO_HTTP_VERSION) !== false
@@ -104,53 +104,54 @@ final class CurlTransport implements HttpTransportInterface
      * Configure cURL options for the request.
      */
     private function configureCurl(
-        CurlHandle $ch,
-        OutboundRequest $request,
-        RequestOptions $options,
+        CurlHandle      $curlHandle,
+        OutboundRequest $outboundRequest,
+        RequestOptions  $requestOptions,
     ): void {
         // Basic options
-        curl_setopt_array($ch, [
-            CURLOPT_URL               => $request->url,
+        curl_setopt_array($curlHandle, [
+            CURLOPT_URL               => $outboundRequest->url,
             CURLOPT_RETURNTRANSFER    => true,
             CURLOPT_HEADER            => true,
-            CURLOPT_FOLLOWLOCATION    => $options->followRedirects,
-            CURLOPT_MAXREDIRS         => $options->maxRedirects,
-            CURLOPT_CONNECTTIMEOUT_MS => $options->connectTimeout,
-            CURLOPT_TIMEOUT_MS        => $options->timeout,
-            CURLOPT_SSL_VERIFYPEER    => $options->verifySsl,
-            CURLOPT_SSL_VERIFYHOST    => $options->verifySsl ? 2 : 0,
-            CURLOPT_CUSTOMREQUEST     => $request->method,
+            CURLOPT_FOLLOWLOCATION    => $requestOptions->followRedirects,
+            CURLOPT_MAXREDIRS         => $requestOptions->maxRedirects,
+            CURLOPT_CONNECTTIMEOUT_MS => $requestOptions->connectTimeout,
+            CURLOPT_TIMEOUT_MS        => $requestOptions->timeout,
+            CURLOPT_SSL_VERIFYPEER    => $requestOptions->verifySsl,
+            CURLOPT_SSL_VERIFYHOST    => $requestOptions->verifySsl ? 2 : 0,
+            CURLOPT_CUSTOMREQUEST     => $outboundRequest->method,
         ]);
 
         // Set headers
-        $headers = $this->buildHeaderArray($request);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $headers = $this->buildHeaderArray($outboundRequest);
+        curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $headers);
 
         // Set body for methods that support it
-        if ($request->body !== null && ! in_array(strtoupper($request->method), ['GET', 'HEAD'], true)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->normalizeBody($request->body));
+        if ($outboundRequest->body !== null && ! in_array(strtoupper($outboundRequest->method), ['GET', 'HEAD'], true)) {
+            curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $this->normalizeBody($outboundRequest->body));
         }
 
         // SSL certificate options
-        if ($options->sslCertPath !== null) {
-            curl_setopt($ch, CURLOPT_SSLCERT, $options->sslCertPath);
+        if ($requestOptions->sslCertPath !== null) {
+            curl_setopt($curlHandle, CURLOPT_SSLCERT, $requestOptions->sslCertPath);
         }
-        if ($options->sslKeyPath !== null) {
-            curl_setopt($ch, CURLOPT_SSLKEY, $options->sslKeyPath);
+
+        if ($requestOptions->sslKeyPath !== null) {
+            curl_setopt($curlHandle, CURLOPT_SSLKEY, $requestOptions->sslKeyPath);
         }
 
         // Proxy options
-        if ($options->proxy !== null) {
-            curl_setopt($ch, CURLOPT_PROXY, $options->proxy);
-            if ($options->proxyAuth !== null) {
-                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $options->proxyAuth);
+        if ($requestOptions->proxy !== null) {
+            curl_setopt($curlHandle, CURLOPT_PROXY, $requestOptions->proxy);
+            if ($requestOptions->proxyAuth !== null) {
+                curl_setopt($curlHandle, CURLOPT_PROXYUSERPWD, $requestOptions->proxyAuth);
             }
         }
 
         // Additional curl options
-        foreach ($options->additional as $key => $value) {
+        foreach ($requestOptions->additional as $key => $value) {
             if (is_int($key)) {
-                curl_setopt($ch, $key, $value);
+                curl_setopt($curlHandle, $key, $value);
             }
         }
     }
@@ -160,11 +161,11 @@ final class CurlTransport implements HttpTransportInterface
      *
      * @return list<string>
      */
-    private function buildHeaderArray(OutboundRequest $request): array
+    private function buildHeaderArray(OutboundRequest $outboundRequest) : array
     {
         $headers = [];
-        foreach ($request->headers as $name => $value) {
-            $headers[] = "{$name}: {$value}";
+        foreach ($outboundRequest->headers as $name => $value) {
+            $headers[] = sprintf('%s: %s', $name, $value);
         }
 
         return $headers;
@@ -197,27 +198,27 @@ final class CurlTransport implements HttpTransportInterface
      * @throws HttpRequestFailed for other errors
      */
     private function handleCurlError(
-        CurlHandle $ch,
+        CurlHandle      $curlHandle,
         int $errno,
         string $error,
-        OutboundRequest $request,
+        OutboundRequest $outboundRequest,
     ): never {
-        $url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL) ?: $request->url;
+        $url = curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL) ?: $outboundRequest->url;
 
         // Timeout errors
         if (in_array($errno, [CURLE_OPERATION_TIMEDOUT, CURLE_COULDNT_CONNECT], true)) {
             throw new HttpTimeout(
-                message  : "HTTP request timed out: {$error}",
-                timeoutMs: $request->options?->timeout ?? RequestOptions::DEFAULT_TIMEOUT,
+                message  : 'HTTP request timed out: ' . $error,
+                timeoutMs: $outboundRequest->options?->timeout ?? RequestOptions::DEFAULT_TIMEOUT,
                 url      : $url,
-                method   : $request->method,
+                method   : $outboundRequest->method,
             );
         }
 
         throw new HttpRequestFailed(
-            message: "cURL error ({$errno}): {$error}",
+            message: sprintf('cURL error (%s): %s', $errno, $error),
             url    : $url,
-            method : $request->method,
+            method : $outboundRequest->method,
             reason : $error,
         );
     }
@@ -234,7 +235,11 @@ final class CurlTransport implements HttpTransportInterface
 
         foreach ($lines as $line) {
             $line = trim($line);
-            if ($line === '' || str_contains($line, 'HTTP/')) {
+            if ($line === '') {
+                continue;
+            }
+
+            if (str_contains($line, 'HTTP/')) {
                 continue;
             }
 
@@ -273,21 +278,21 @@ final class CurlTransport implements HttpTransportInterface
             502     => 'Bad Gateway',
             503     => 'Service Unavailable',
             504     => 'Gateway Timeout',
-            default => "Status {$statusCode}",
+            default => 'Status ' . $statusCode,
         };
     }
 
     /**
      * Build a PSR-7 request from the outbound request.
      */
-    public function buildPsr7Request(OutboundRequest $request): Request
+    public function buildPsr7Request(OutboundRequest $outboundRequest) : Request
     {
-        $body = $this->normalizeBody($request->body);
+        $body = $this->normalizeBody($outboundRequest->body);
 
         return new Request(
-            $request->method,
-            $request->url,
-            $request->headers,
+            $outboundRequest->method,
+            $outboundRequest->url,
+            $outboundRequest->headers,
             $body,
         );
     }

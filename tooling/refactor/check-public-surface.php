@@ -17,7 +17,7 @@ final class CheckPublicSurface
         $this->checkPublicSurfaceClassesAreThin();
 
         return [
-            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'status' => $this->errors === [] ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
         ];
     }

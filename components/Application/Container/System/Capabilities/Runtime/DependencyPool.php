@@ -269,7 +269,7 @@ final class DependencyPool
 
         foreach ($this->pooled as $serviceId => $bucket) {
             $snapshot[$serviceId] = array_map(
-                callback: static fn (mixed $instance): string => get_debug_type($instance),
+                callback: get_debug_type(...),
                 array   : $bucket,
             );
         }

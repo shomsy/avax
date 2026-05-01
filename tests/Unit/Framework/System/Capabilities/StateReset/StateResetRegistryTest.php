@@ -19,11 +19,11 @@ final class StateResetRegistryTest extends TestCase
     #[Test]
     public function it_resets_all_registered_states(): void
     {
-        $registry = new StateResetRegistry();
+        $stateResetRegistry = new StateResetRegistry();
 
         $resetCalled = false;
 
-        $registry->register(
+        $stateResetRegistry->register(
             name: 'state1',
             state: new class ($resetCalled) implements ResettableState {
                       public function __construct(private bool &$resetCalled) {}
@@ -35,23 +35,23 @@ final class StateResetRegistryTest extends TestCase
             },
         );
 
-        $report = $registry->resetAll();
+        $stateResetReport = $stateResetRegistry->resetAll();
 
         self::assertTrue($resetCalled);
-        self::assertTrue($report->wasSuccessful());
-        self::assertSame(['state1'], $report->resetComponents());
-        self::assertSame([], $report->failures());
+        self::assertTrue($stateResetReport->wasSuccessful());
+        self::assertSame(['state1'], $stateResetReport->resetComponents());
+        self::assertSame([], $stateResetReport->failures());
     }
 
     #[Test]
     public function it_resets_multiple_registered_states(): void
     {
-        $registry = new StateResetRegistry();
+        $stateResetRegistry = new StateResetRegistry();
 
         $called1 = false;
         $called2 = false;
 
-        $registry->register(
+        $stateResetRegistry->register(
             name: 'state1',
             state: new class ($called1) implements ResettableState {
                       public function __construct(private bool &$called) {}
@@ -63,7 +63,7 @@ final class StateResetRegistryTest extends TestCase
             },
         );
 
-        $registry->register(
+        $stateResetRegistry->register(
             name: 'state2',
             state: new class ($called2) implements ResettableState {
                       public function __construct(private bool &$called) {}
@@ -75,20 +75,20 @@ final class StateResetRegistryTest extends TestCase
             },
         );
 
-        $report = $registry->resetAll();
+        $stateResetReport = $stateResetRegistry->resetAll();
 
         self::assertTrue($called1);
         self::assertTrue($called2);
-        self::assertTrue($report->wasSuccessful());
-        self::assertCount(2, $report->resetComponents());
+        self::assertTrue($stateResetReport->wasSuccessful());
+        self::assertCount(2, $stateResetReport->resetComponents());
     }
 
     #[Test]
     public function it_reports_failures_when_state_reset_throws(): void
     {
-        $registry = new StateResetRegistry();
+        $stateResetRegistry = new StateResetRegistry();
 
-        $registry->register(
+        $stateResetRegistry->register(
             name: 'failing',
             state: new class () implements ResettableState {
                 public function resetState(): void
@@ -98,23 +98,23 @@ final class StateResetRegistryTest extends TestCase
             },
         );
 
-        $report = $registry->resetAll();
+        $stateResetReport = $stateResetRegistry->resetAll();
 
-        self::assertFalse($report->wasSuccessful());
-        self::assertSame([], $report->resetComponents());
-        self::assertCount(1, $report->failures());
-        self::assertArrayHasKey('failing', $report->failures());
-        self::assertInstanceOf(RuntimeException::class, $report->failures()['failing']);
+        self::assertFalse($stateResetReport->wasSuccessful());
+        self::assertSame([], $stateResetReport->resetComponents());
+        self::assertCount(1, $stateResetReport->failures());
+        self::assertArrayHasKey('failing', $stateResetReport->failures());
+        self::assertInstanceOf(RuntimeException::class, $stateResetReport->failures()['failing']);
     }
 
     #[Test]
     public function it_continues_reset_after_one_state_fails(): void
     {
-        $registry = new StateResetRegistry();
+        $stateResetRegistry = new StateResetRegistry();
 
         $afterCalled = false;
 
-        $registry->register(
+        $stateResetRegistry->register(
             name: 'failing',
             state: new class () implements ResettableState {
                 public function resetState(): void
@@ -124,7 +124,7 @@ final class StateResetRegistryTest extends TestCase
             },
         );
 
-        $registry->register(
+        $stateResetRegistry->register(
             name: 'success',
             state: new class ($afterCalled) implements ResettableState {
                       public function __construct(private bool &$afterCalled) {}
@@ -136,23 +136,23 @@ final class StateResetRegistryTest extends TestCase
             },
         );
 
-        $report = $registry->resetAll();
+        $stateResetReport = $stateResetRegistry->resetAll();
 
         self::assertTrue($afterCalled);
-        self::assertFalse($report->wasSuccessful());
-        self::assertContains('success', $report->resetComponents());
-        self::assertArrayHasKey('failing', $report->failures());
+        self::assertFalse($stateResetReport->wasSuccessful());
+        self::assertContains('success', $stateResetReport->resetComponents());
+        self::assertArrayHasKey('failing', $stateResetReport->failures());
     }
 
     #[Test]
     public function it_returns_empty_report_when_nothing_registered(): void
     {
-        $registry = new StateResetRegistry();
+        $stateResetRegistry = new StateResetRegistry();
 
-        $report = $registry->resetAll();
+        $stateResetReport = $stateResetRegistry->resetAll();
 
-        self::assertTrue($report->wasSuccessful());
-        self::assertSame([], $report->resetComponents());
-        self::assertSame([], $report->failures());
+        self::assertTrue($stateResetReport->wasSuccessful());
+        self::assertSame([], $stateResetReport->resetComponents());
+        self::assertSame([], $stateResetReport->failures());
     }
 }

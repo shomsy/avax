@@ -40,7 +40,7 @@ final class RedisQueue
         $jobId = uniqid(prefix: 'job_', more_entropy: true);
         $job['id'] = $jobId;
 
-        if ($this->redis === null) {
+        if (! $this->redis instanceof Redis) {
             return Queue::push(job: static fn (): null => null, data: $job, queue: $queue);
         }
 
@@ -56,7 +56,7 @@ final class RedisQueue
 
     public function pop(string $queue, int $timeout = 0): ?array
     {
-        if ($this->redis === null) {
+        if (! $this->redis instanceof Redis) {
             return Queue::pop(queue: $queue);
         }
 
@@ -64,7 +64,7 @@ final class RedisQueue
             ? $this->redis->blPop($this->key(queue: $queue), $timeout)
             : $this->redis->lPop($this->key(queue: $queue));
 
-        if ($payload === false || $payload === null || $payload === []) {
+        if (in_array($payload, [false, null, []], true)) {
             return null;
         }
 
@@ -75,7 +75,7 @@ final class RedisQueue
 
     public function size(string $queue): int
     {
-        if ($this->redis === null) {
+        if (! $this->redis instanceof Redis) {
             return Queue::size(queue: $queue);
         }
 

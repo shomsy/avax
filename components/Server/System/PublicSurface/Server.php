@@ -20,7 +20,7 @@ final readonly class Server
         };
 
         if (! file_exists($routerFile)) {
-            return ServerResult::error("Router file not found: {$routerFile}");
+            return ServerResult::error('Router file not found: ' . $routerFile);
         }
 
         $started = PhpBuiltInServer::start(
@@ -37,7 +37,7 @@ final readonly class Server
             );
         }
 
-        return ServerResult::error("Failed to start server on {$host}:{$port}");
+        return ServerResult::error(sprintf('Failed to start server on %s:%d', $host, $port));
     }
 
     public static function findRouterFile(): string
@@ -92,7 +92,7 @@ final class ServerResult
     ): self {
         return new self(
             success: true,
-            message: "Server started at http://{$host}:{$port}",
+            message: sprintf('Server started at http://%s:%d', $host, $port),
             host   : $host,
             port   : $port,
             router : $router,
@@ -115,7 +115,7 @@ final class ServerResult
             'host'   => $this->host,
             'port'   => $this->port,
             'router' => $this->router,
-            'url'    => $this->success ? "http://{$this->host}:{$this->port}" : null,
+            'url' => $this->success ? sprintf('http://%s:%d', $this->host, $this->port) : null,
         ];
     }
 }

@@ -16,19 +16,7 @@ final readonly class CacheHealthStatus
 {
     public Timestamp $timestamp;
 
-    public function __construct(
-        public bool $connected,
-        public int $latency,
-        public float $memoryUsage,
-        public float $hitRate,
-        public Timestamp $timestamp,
-        public ?string $error = null,
-        public int $memoryLimit = 0,
-        public int $keyCount = 0,
-        public int $connectionCount = 0,
-        public string $version = '',
-    ) {
-        $this->timestamp = $timestamp;
+    public function __construct(public bool $connected, public int $latency, public float $memoryUsage, public float $hitRate, public Timestamp $timestamp, public ?string $error = null, public int $memoryLimit = 0, public int $keyCount = 0, public int $connectionCount = 0, public string $version = '') {
     }
 
     /**
@@ -50,12 +38,12 @@ final readonly class CacheHealthStatus
             latency        : $latency,
             memoryUsage    : $memoryUsage,
             hitRate        : $hitRate,
-            lastCheck      : $lastCheck ?? $timestamp ?? Timestamp::now(),
             error          : null,
             memoryLimit    : $memoryLimit,
             keyCount       : $keyCount,
             connectionCount: $connectionCount,
             version        : $version,
+            lastCheck      : $lastCheck ?? $timestamp ?? Timestamp::now(),
         );
     }
 
@@ -75,8 +63,8 @@ final readonly class CacheHealthStatus
             latency    : $latency,
             memoryUsage: $memoryUsage,
             hitRate    : $hitRate,
-            lastCheck  : $lastCheck ?? $timestamp ?? Timestamp::now(),
             error      : $error,
+            lastCheck  : $lastCheck ?? $timestamp ?? Timestamp::now(),
         );
     }
 
@@ -100,12 +88,12 @@ final readonly class CacheHealthStatus
             latency    : $latency,
             memoryUsage: $memoryUsage,
             hitRate    : $hitRate,
-            lastCheck  : $lastCheck ?? $timestamp ?? Timestamp::now(),
             error      : $error,
             memoryLimit: $memoryLimit,
             keyCount   : $keyCount,
             connectionCount: $connectionCount,
             version: $version,
+            lastCheck: $lastCheck ?? $timestamp ?? Timestamp::now(),
         );
     }
 

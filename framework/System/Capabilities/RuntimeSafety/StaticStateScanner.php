@@ -64,13 +64,13 @@ final class StaticStateScanner
     {
         $findings = [];
 
-        $reflection = new ReflectionClass($className);
+        $reflectionClass = new ReflectionClass($className);
 
-        $staticProperties = $reflection->getProperties(ReflectionProperty::IS_STATIC);
-        $hasResetHook     = $reflection->implementsInterface(ResettableState::class);
+        $staticProperties = $reflectionClass->getProperties(ReflectionProperty::IS_STATIC);
+        $hasResetHook     = $reflectionClass->implementsInterface(ResettableState::class);
 
-        foreach ($staticProperties as $property) {
-            if ($property->isReadOnly()) {
+        foreach ($staticProperties as $staticProperty) {
+            if ($staticProperty->isReadOnly()) {
                 continue;
             }
 
@@ -85,14 +85,14 @@ final class StaticStateScanner
                 message    : sprintf(
                                  'Class %s has mutable static property $%s without reset hook',
                                  $className,
-                                 $property->getName(),
+                                 $staticProperty->getName(),
                              ),
                 remediation: sprintf(
                                  'Implement ResettableState on %s or make $%s readonly',
                                  $className,
-                                 $property->getName(),
+                                 $staticProperty->getName(),
                              ),
-                location   : $this->propertyLocation(property: $property),
+                location   : $this->propertyLocation(property: $staticProperty),
             );
         }
 
@@ -107,10 +107,10 @@ final class StaticStateScanner
     {
         $findings = [];
 
-        $reflection = new ReflectionClass($traitName);
+        $reflectionClass = new ReflectionClass($traitName);
 
-        foreach ($reflection->getProperties(ReflectionProperty::IS_STATIC) as $property) {
-            if ($property->isReadOnly()) {
+        foreach ($reflectionClass->getProperties(ReflectionProperty::IS_STATIC) as $reflectionProperty) {
+            if ($reflectionProperty->isReadOnly()) {
                 continue;
             }
 
@@ -121,22 +121,22 @@ final class StaticStateScanner
                 message    : sprintf(
                                  'Trait %s introduces mutable static state via $%s',
                                  $traitName,
-                                 $property->getName(),
+                                 $reflectionProperty->getName(),
                              ),
                 remediation: 'Avoid static state in traits or ensure consumers implement ResettableState',
-                location   : $this->propertyLocation(property: $property),
+                location   : $this->propertyLocation(property: $reflectionProperty),
             );
         }
 
         return $findings;
     }
 
-    private function propertyLocation(ReflectionProperty $property) : string
+    private function propertyLocation(ReflectionProperty $reflectionProperty) : string
     {
-        $class = $property->getDeclaringClass();
-        $file  = $class->getFileName();
-        $line  = $class->getStartLine();
+        $reflectionClass = $reflectionProperty->getDeclaringClass();
+        $file            = $reflectionClass->getFileName();
+        $line            = $reflectionClass->getStartLine();
 
-        return ($file !== false ? $file : $class->getName()) . ':' . $line;
+        return ($file !== false ? $file : $reflectionClass->getName()) . ':' . $line;
     }
 }

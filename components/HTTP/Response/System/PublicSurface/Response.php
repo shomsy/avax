@@ -10,17 +10,18 @@ use Psr\Http\Message\StreamInterface;
 
 final class Response implements ResponseInterface
 {
-    private ResponseData $data;
+    private ResponseData $responseData;
 
-    public function __construct(int $statusCode = 200, array $headers = [], StreamInterface $body = null, string $reasonPhrase = '', string $protocolVersion = '1.1')
+    public function __construct(int $statusCode = 200, array $headers = [], ?StreamInterface $stream = null, string $reasonPhrase = '', string $protocolVersion = '1.1')
     {
-        if ($body === null) {
-            $body = Utils::streamFor('');
+        if (! $stream instanceof StreamInterface) {
+            $stream = Utils::streamFor('');
         }
-        $this->data = new ResponseData(
+
+        $this->responseData = new ResponseData(
             statusCode     : $statusCode,
             headers        : $headers,
-            body           : $body,
+            body           : $stream,
             reasonPhrase   : $reasonPhrase,
             protocolVersion: $protocolVersion,
         );
@@ -28,30 +29,30 @@ final class Response implements ResponseInterface
 
     public function getProtocolVersion() : string
     {
-        return $this->data->protocolVersion;
+        return $this->responseData->protocolVersion;
     }
 
     public function withProtocolVersion($version) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withProtocolVersion($version);
+        $clone->responseData = $this->responseData->withProtocolVersion($version);
 
         return $clone;
     }
 
     public function getHeaders() : array
     {
-        return $this->data->headers;
+        return $this->responseData->headers;
     }
 
     public function hasHeader($name) : bool
     {
-        return isset($this->data->headers[strtolower($name)]);
+        return isset($this->responseData->headers[strtolower($name)]);
     }
 
     public function getHeader($name) : array
     {
-        return $this->data->headers[strtolower($name)] ?? [];
+        return $this->responseData->headers[strtolower($name)] ?? [];
     }
 
     public function getHeaderLine($name) : string
@@ -62,7 +63,7 @@ final class Response implements ResponseInterface
     public function withHeader($name, $value) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withHeader($name, is_array($value) ? $value : [$value]);
+        $clone->responseData = $this->responseData->withHeader($name, is_array($value) ? $value : [$value]);
 
         return $clone;
     }
@@ -75,39 +76,39 @@ final class Response implements ResponseInterface
     public function withoutHeader($name) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withoutHeader($name);
+        $clone->responseData = $this->responseData->withoutHeader($name);
 
         return $clone;
     }
 
     public function getBody() : StreamInterface
     {
-        return $this->data->body;
+        return $this->responseData->body;
     }
 
     public function withBody(StreamInterface $body) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withBody($body);
+        $clone->responseData = $this->responseData->withBody($body);
 
         return $clone;
     }
 
     public function getStatusCode() : int
     {
-        return $this->data->statusCode;
+        return $this->responseData->statusCode;
     }
 
     public function withStatus($code, $reasonPhrase = '') : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withStatus($code, $reasonPhrase);
+        $clone->responseData = $this->responseData->withStatus($code, $reasonPhrase);
 
         return $clone;
     }
 
     public function getReasonPhrase() : string
     {
-        return $this->data->reasonPhrase;
+        return $this->responseData->reasonPhrase;
     }
 }

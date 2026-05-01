@@ -36,17 +36,17 @@ final class ProjectPathTest extends TestCase
     #[Test]
     public function it_normalizes_path_and_removes_trailing_slash(): void
     {
-        $path = new ProjectPath(value: $this->tempDir . '/');
+        $projectPath = new ProjectPath(value: $this->tempDir . '/');
 
-        self::assertSame($this->tempDir, $path->toString());
+        self::assertSame($this->tempDir, $projectPath->toString());
     }
 
     #[Test]
     public function it_trims_whitespace(): void
     {
-        $path = new ProjectPath(value: '  ' . $this->tempDir . '  ');
+        $projectPath = new ProjectPath(value: '  ' . $this->tempDir . '  ');
 
-        self::assertSame($this->tempDir, $path->toString());
+        self::assertSame($this->tempDir, $projectPath->toString());
     }
 
     #[Test]
@@ -70,9 +70,9 @@ final class ProjectPathTest extends TestCase
     #[Test]
     public function it_joins_relative_paths(): void
     {
-        $path = new ProjectPath(value: $this->tempDir);
+        $projectPath = new ProjectPath(value: $this->tempDir);
 
-        $joined = $path->join(relativePath: 'storage/framework/cache');
+        $joined = $projectPath->join(relativePath: 'storage/framework/cache');
 
         self::assertSame($this->tempDir . '/storage/framework/cache', $joined);
     }
@@ -80,9 +80,9 @@ final class ProjectPathTest extends TestCase
     #[Test]
     public function it_joins_absolute_path_from_root(): void
     {
-        $path = new ProjectPath(value: $this->tempDir);
+        $projectPath = new ProjectPath(value: $this->tempDir);
 
-        $joined = $path->join(relativePath: '/var/run');
+        $joined = $projectPath->join(relativePath: '/var/run');
 
         self::assertSame('/var/run', $joined);
     }

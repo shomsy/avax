@@ -18,10 +18,10 @@ use ReflectionProperty;
  * Recovered from Database/ORM/Hydration/Hydrator and placed under
  * Persistence ownership per ADR-0012.
  */
-final class ReflectionHydrator implements HydratorInterface
+final readonly class ReflectionHydrator implements HydratorInterface
 {
     public function __construct(
-        private readonly IdentityMap $identityMap,
+        private IdentityMap $identityMap,
     ) {}
 
     public function hydrateAll(string $entityClass, array $rows): array
@@ -46,7 +46,7 @@ final class ReflectionHydrator implements HydratorInterface
         }
 
         // Create new instance without constructor
-        $entity = (new ReflectionClass(objectOrClass: $entityClass))->newInstanceWithoutConstructor();
+        $entity = new ReflectionClass(objectOrClass: $entityClass)->newInstanceWithoutConstructor();
 
         // Map row columns to object properties
         foreach ($row as $column => $value) {
@@ -57,7 +57,6 @@ final class ReflectionHydrator implements HydratorInterface
             }
 
             $property = new ReflectionProperty(class: $entityClass, property: $propertyName);
-            $property->setAccessible(accessible: true);
             $property->setValue(objectOrValue: $entity, value: $value);
         }
 

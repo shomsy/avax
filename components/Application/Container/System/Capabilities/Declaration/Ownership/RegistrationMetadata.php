@@ -11,8 +11,6 @@ use LogicException;
  */
 final readonly class RegistrationMetadata
 {
-    public string $unitId;
-
     public string $ownerSlice;
 
     public string $category;
@@ -53,8 +51,6 @@ final readonly class RegistrationMetadata
 
     public bool $ownerLocked;
 
-    public bool $categoryLocked;
-
     /**
      * @param list<string> $profiles
      * @param list<string> $flags
@@ -64,25 +60,25 @@ final readonly class RegistrationMetadata
      * @param list<string> $imports
      */
     public function __construct(
-        string $unitId,
-        string $ownerSlice = null,
-        string $category = null,
-        string $visibility = null,
-        array  $profiles = null,
-        array  $flags = null,
-        array  $tenants = null,
-        array  $regions = null,
-        array  $modes = null,
-        string $overrideSource = null,
-        string $reason = null,
-        string $intent = null,
-        string $provenance = null,
-        bool   $exported = null,
-        array  $imports = null,
-        string $concept = null,
-        bool   $fallback = null,
-        bool   $ownerLocked = null,
-        bool   $categoryLocked = false,
+        public string $unitId,
+        ?string       $ownerSlice = null,
+        ?string       $category = null,
+        ?string       $visibility = null,
+        ?array        $profiles = null,
+        ?array        $flags = null,
+        ?array        $tenants = null,
+        ?array        $regions = null,
+        ?array        $modes = null,
+        ?string       $overrideSource = null,
+        ?string       $reason = null,
+        ?string       $intent = null,
+        ?string       $provenance = null,
+        ?bool         $exported = null,
+        ?array        $imports = null,
+        ?string       $concept = null,
+        ?bool         $fallback = null,
+        ?bool         $ownerLocked = null,
+        public bool   $categoryLocked = false,
     )
     {
         $ownerSlice        ??= 'default';
@@ -101,8 +97,7 @@ final readonly class RegistrationMetadata
         $concept           ??= '';
         $fallback          ??= false;
         $ownerLocked ??= false;
-        $this->unitId      = $unitId;
-        $this->ownerSlice  = self::normalizeSlice(slice: $ownerSlice);
+        $this->ownerSlice = $this->normalizeSlice(slice: $ownerSlice);
         $this->category    = RegistrationCategory::normalize(category: $category);
         $this->visibility  = RegistrationVisibility::normalize(visibility: $visibility);
         $this->profiles    = self::stringList(values: $profiles);
@@ -110,27 +105,23 @@ final readonly class RegistrationMetadata
         $this->tenants     = self::stringList(values: $tenants);
         $this->regions     = self::stringList(values: $regions);
         $this->modes       = self::stringList(values: $modes);
-        $this->overrideSource = self::normalizeNullable(value: $overrideSource);
-        $this->reason      = self::normalizeText(value: $reason, fallback: 'registered service');
-        $this->intent      = self::normalizeText(value: $intent, fallback: 'standard');
-        $this->provenance  = self::normalizeText(value: $provenance, fallback: 'manual registration');
+        $this->overrideSource = $this->normalizeNullable(value: $overrideSource);
+        $this->reason = $this->normalizeText(value: $reason, fallback: 'registered service');
+        $this->intent = $this->normalizeText(value: $intent, fallback: 'standard');
+        $this->provenance = $this->normalizeText(value: $provenance, fallback: 'manual registration');
         $this->exported    = $exported;
         $this->imports     = self::stringList(values: $imports);
-        $this->concept     = self::normalizeText(
-            value   : $concept,
-            fallback: self::derivedConcept(unitId: $unitId),
-        );
+        $this->concept = $this->normalizeText(value: $concept, fallback: $this->derivedConcept(unitId: $this->unitId));
         $this->fallback    = $fallback;
         $this->ownerLocked = $ownerLocked;
-        $this->categoryLocked = $categoryLocked;
     }
 
-    private static function normalizeSlice(string $slice) : string
+    private function normalizeSlice(string $slice) : string
     {
-        return self::normalizeText(value: $slice, fallback: 'default');
+        return $this->normalizeText(value: $slice, fallback: 'default');
     }
 
-    private static function normalizeText(string $value, string $fallback) : string
+    private function normalizeText(string $value, string $fallback) : string
     {
         $normalized = trim(string: $value);
 
@@ -167,7 +158,7 @@ final readonly class RegistrationMetadata
         return $items;
     }
 
-    private static function normalizeNullable(?string $value) : ?string
+    private function normalizeNullable(?string $value) : ?string
     {
         if (! is_string(value: $value)) {
             return null;
@@ -178,15 +169,15 @@ final readonly class RegistrationMetadata
         return $normalized !== '' ? $normalized : null;
     }
 
-    private static function derivedConcept(string $unitId) : string
+    private function derivedConcept(string $unitId) : string
     {
         $normalized = str_replace(search: ['\\', '/', '@', ':'], replace: '.', subject: $unitId);
         $segments = explode(separator: '.', string: $normalized)
-                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $segment) : bool => $segment !== ''))
+                |> (static fn ($x) : array => array_filter(array: $x, callback: static fn (string $segment) : bool => $segment !== ''))
                 |> array_values(...);
         $last = $segments !== [] ? $segments[array_key_last(array: $segments)] : $unitId;
 
-        return strtolower(string: trim(string: $last)) ?: strtolower(string: $unitId);
+        return strtolower(string: trim(string: (string) $last)) ?: strtolower(string: $unitId);
     }
 
     public static function for(string $unitId) : self
@@ -372,7 +363,7 @@ final readonly class RegistrationMetadata
         $normalized = RegistrationCategory::normalize(category: $category);
         if ($this->categoryLocked && $normalized !== $this->category) {
             throw new LogicException(
-                message: "Registration category is locked to [{$this->category}] and cannot move to [{$normalized}].",
+                message: sprintf('Registration category is locked to [%s] and cannot move to [%s].', $this->category, $normalized),
             );
         }
 
@@ -381,10 +372,10 @@ final readonly class RegistrationMetadata
 
     public function withOwnerSlice(string $ownerSlice) : self
     {
-        $normalized = self::normalizeSlice(slice: $ownerSlice);
+        $normalized = $this->normalizeSlice(slice: $ownerSlice);
         if ($this->ownerLocked && $normalized !== $this->ownerSlice) {
             throw new LogicException(
-                message: "Registration ownership is locked to [{$this->ownerSlice}] and cannot move to [{$normalized}].",
+                message: sprintf('Registration ownership is locked to [%s] and cannot move to [%s].', $this->ownerSlice, $normalized),
             );
         }
 
@@ -418,13 +409,7 @@ final readonly class RegistrationMetadata
             return true;
         }
 
-        foreach ($this->flags as $flag) {
-            if (! in_array(needle: $flag, haystack: $activeFlags, strict: true)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->flags, fn ($flag) : bool => in_array(needle: $flag, haystack: $activeFlags, strict: true));
     }
 
     public function supportsTenant(string $tenant) : bool

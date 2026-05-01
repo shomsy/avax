@@ -20,7 +20,7 @@ final class PhpErrorException extends FrameworkFailure
         private readonly string $errorName,
         private readonly string $errorFile = '',
         private readonly int $errorLine = 0,
-        Throwable $previous = null,
+        ?Throwable $previous = null,
     )
     {
         parent::__construct($message, 0, $previous);

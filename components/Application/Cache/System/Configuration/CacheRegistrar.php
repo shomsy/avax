@@ -58,7 +58,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
         $this->container->singleton(abstract: CacheContract::class, concrete: static fn ($app) => $app->get(id: CacheRegistry::class)->default());
 
         if ($this->compiledCacheDirectory !== null) {
-            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: fn (): CompiledCacheContract => (new BuildCompiledCache())->inDirectory(directory: $this->compiledCacheDirectory));
+            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: fn () : CompiledCacheContract => new BuildCompiledCache()->inDirectory(directory: $this->compiledCacheDirectory));
         }
 
         Cache::use(cache: $this->container->get(id: CacheContract::class));

@@ -36,9 +36,9 @@ final readonly class MigrationRunner
                     migration: $migration,
                     method   : 'up',
                     name     : $name,
-                    builder  : $builder,
                     batch    : $batch,
                     checksum : $checksum,
+                    builder  : $builder,
                 );
             }
         } catch (Throwable $throwable) {

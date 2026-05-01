@@ -9,7 +9,7 @@ use Closure;
 /**
  * Represents a timed span in the trace timeline.
  */
-final class TraceSpan
+final readonly class TraceSpan
 {
     private float $startMS;
 
@@ -17,12 +17,11 @@ final class TraceSpan
 
     public function __construct(
         private string $name,
-        private ?string $category = null,
-        Closure $onFinish = null,
+        ?Closure $onFinish = null,
     )
     {
         $this->startMS = microtime(true) * 1000;
-        $this->onFinish = $onFinish ?? static fn () => null;
+        $this->onFinish = $onFinish ?? static fn () : null => null;
     }
 
     public function end() : float

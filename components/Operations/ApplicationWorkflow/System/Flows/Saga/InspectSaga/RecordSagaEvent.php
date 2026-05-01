@@ -12,10 +12,10 @@ final readonly class RecordSagaEvent
     /**
      * @param list<SagaRuntimeEvent> $events
      */
-    public function record(array &$events, SagaRuntimeEvent $event): SagaRuntimeEvent
+    public function record(array &$events, SagaRuntimeEvent $sagaRuntimeEvent) : SagaRuntimeEvent
     {
-        $events[] = $event;
+        $events[] = $sagaRuntimeEvent;
 
-        return $event;
+        return $sagaRuntimeEvent;
     }
 }

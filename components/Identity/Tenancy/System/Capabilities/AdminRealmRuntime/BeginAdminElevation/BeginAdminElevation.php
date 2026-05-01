@@ -8,6 +8,7 @@ use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Un
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
@@ -25,7 +26,7 @@ final readonly class BeginAdminElevation
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
         private RequireFreshMfa $requireFreshMfa,
-        private AdminElevationStoreInterface $elevationStore,
+        private AdminElevationStoreInterface $adminElevationStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
         private bool $phishingResistantRequired = false,
@@ -38,10 +39,10 @@ final readonly class BeginAdminElevation
      */
     public function execute(): AdminElevation
     {
-        $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $user                  = $authenticationContext->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw AdminElevationFailed::unauthenticated();
         }
 
@@ -49,20 +50,20 @@ final readonly class BeginAdminElevation
             throw AdminElevationFailed::forbidden();
         }
 
-        if ($this->phishingResistantRequired && ! $context->isPhishingResistant()) {
+        if ($this->phishingResistantRequired && ! $authenticationContext->isPhishingResistant()) {
             throw AdminElevationFailed::phishingResistantRequired();
         }
 
         $this->requireFreshMfa->execute();
 
-        $bindingId = $this->bindingId(context: $context);
+        $bindingId = $this->bindingId(context: $authenticationContext);
 
         if ($bindingId === null) {
             throw AdminElevationFailed::missingBinding();
         }
 
         $expiresAt = $this->clock->now()->modify(modifier: '+15 minutes');
-        $this->elevationStore->start(record: new AdminElevationRecord(
+        $this->adminElevationStore->start(record: new AdminElevationRecord(
             userId   : $user->id,
             bindingId: $bindingId,
             expiresAt: $expiresAt,
@@ -83,10 +84,10 @@ final readonly class BeginAdminElevation
         );
     }
 
-    private function bindingId(AuthenticationContext $context): ?string
+    private function bindingId(AuthenticationContext $authenticationContext) : ?string
     {
-        return $context->sessionId()
-            ?? $context->accessTokenId()
+        return $authenticationContext->sessionId()
+            ?? $authenticationContext->accessTokenId()
             ?? null;
     }
 }

@@ -68,17 +68,15 @@ final readonly class DeadlockReport
         }
 
         $summary = "Deadlock Detected ({$this->type})\n";
-        $summary .= "Error Code: {$this->errorCode}\n";
-        $summary .= "Message: {$this->message}\n";
+        $summary .= sprintf('Error Code: %s%s', $this->errorCode, PHP_EOL);
+        $summary .= sprintf('Message: %s%s', $this->message, PHP_EOL);
 
-        if (! empty($this->affectedTables)) {
+        if ($this->affectedTables !== []) {
             $summary .= 'Affected Tables: ' . implode(', ', $this->affectedTables);
             $summary .= "\n";
         }
 
-        $summary .= "Suggestion: {$this->suggestion}";
-
-        return $summary;
+        return $summary . ('Suggestion: ' . $this->suggestion);
     }
 }
 
@@ -91,17 +89,12 @@ final readonly class DeadlockReport
  *
  * Uses wait-for graph concepts conceptually to explain deadlock cycles.
  */
-final class DeadlockDetector
+final readonly class DeadlockDetector
 {
-    /**
-     * @var list<string> Known SQLSTATE codes that indicate deadlocks
-     */
-    private const SQLSTATE_DEADLOCKS = ['40001', '40P01', '40001'];
-
     /**
      * @var list<string> Known error message patterns that indicate deadlocks
      */
-    private const DEADLOCK_PATTERNS
+    private const array DEADLOCK_PATTERNS
         = [
             'deadlock',
             'serialization failure',
@@ -114,11 +107,11 @@ final class DeadlockDetector
     /**
      * @var DeadlockDetectorConfig Configuration for this detector
      */
-    private DeadlockDetectorConfig $config;
+    private DeadlockDetectorConfig $deadlockDetectorConfig;
 
-    public function __construct(DeadlockDetectorConfig $config = null)
+    public function __construct(?DeadlockDetectorConfig $deadlockDetectorConfig = null)
     {
-        $this->config = $config ?? new DeadlockDetectorConfig();
+        $this->deadlockDetectorConfig = $deadlockDetectorConfig ?? new DeadlockDetectorConfig();
     }
 
     /**
@@ -126,17 +119,17 @@ final class DeadlockDetector
      *
      * @return DeadlockReport Analysis result
      */
-    public function analyze(Throwable $exception): DeadlockReport
+    public function analyze(Throwable $throwable) : DeadlockReport
     {
-        $message  = strtolower($exception->getMessage());
-        $errorCode = (string) $exception->getCode();
-        $sqlState = $this->extractSqlState($exception);
+        $message   = strtolower($throwable->getMessage());
+        $errorCode = (string) $throwable->getCode();
+        $sqlState  = $this->extractSqlState($throwable);
 
         // Check SQLSTATE codes first
         if ($this->isDeadlockSqlState($sqlState)) {
             return DeadlockReport::deadlock(
                 type          : 'sqlstate_deadlock',
-                message       : $exception->getMessage(),
+                message       : $throwable->getMessage(),
                 errorCode     : $sqlState,
                 suggestion    : $this->getSuggestionForSqlState($sqlState),
                 affectedTables: $this->extractAffectedTables($message),
@@ -147,7 +140,7 @@ final class DeadlockDetector
         if ($this->isDeadlockErrorCode($errorCode)) {
             return DeadlockReport::deadlock(
                 type          : 'error_code_deadlock',
-                message       : $exception->getMessage(),
+                message       : $throwable->getMessage(),
                 errorCode     : $errorCode,
                 suggestion    : 'Retry the transaction with exponential backoff',
                 affectedTables: $this->extractAffectedTables($message),
@@ -159,7 +152,7 @@ final class DeadlockDetector
             if (str_contains($message, $pattern)) {
                 return DeadlockReport::deadlock(
                     type          : 'message_pattern_deadlock',
-                    message       : $exception->getMessage(),
+                    message       : $throwable->getMessage(),
                     errorCode     : $errorCode,
                     suggestion    : $this->getSuggestionForPattern($pattern),
                     affectedTables: $this->extractAffectedTables($message),
@@ -173,9 +166,9 @@ final class DeadlockDetector
     /**
      * Quick check if an exception is a deadlock.
      */
-    public function isDeadlock(Throwable $exception): bool
+    public function isDeadlock(Throwable $throwable) : bool
     {
-        return $this->analyze($exception)->isDeadlock;
+        return $this->analyze($throwable)->isDeadlock;
     }
 
     /**
@@ -195,7 +188,7 @@ final class DeadlockDetector
 
         return array_values(array_filter(
             $reports,
-            static fn (DeadlockReport $report): bool => $report->isDeadlock,
+                                static fn (DeadlockReport $deadlockReport) : bool => $deadlockReport->isDeadlock,
         ));
     }
 
@@ -211,12 +204,12 @@ final class DeadlockDetector
         $tables = [];
 
         // Pattern: table `name` or table 'name' or table name
-        if (preg_match_all("/table\s+[`'\"']?([a-zA-Z_][a-zA-Z0-9_]*)[`'\"']?/", $message, $matches)) {
+        if (preg_match_all("/table\\s+[`'\"']?([a-zA-Z_]\\w*)[`'\"']?/", $message, $matches)) {
             $tables = array_merge($tables, $matches[1]);
         }
 
         // Pattern: on `table_name`
-        if (preg_match_all("/on\s+[`'\"']?([a-zA-Z_][a-zA-Z0-9_]*)[`'\"']?/", $message, $matches)) {
+        if (preg_match_all("/on\\s+[`'\"']?([a-zA-Z_]\\w*)[`'\"']?/", $message, $matches)) {
             $tables = array_merge($tables, $matches[1]);
         }
 
@@ -226,13 +219,13 @@ final class DeadlockDetector
     /**
      * Extracts the SQLSTATE from a PDOException.
      */
-    private function extractSqlState(Throwable $exception): string
+    private function extractSqlState(Throwable $throwable) : string
     {
-        if (! $exception instanceof PDOException) {
+        if (! $throwable instanceof PDOException) {
             return '';
         }
 
-        return $exception->getCode();
+        return $throwable->getCode();
     }
 
     /**
@@ -244,7 +237,7 @@ final class DeadlockDetector
             return false;
         }
 
-        return in_array($sqlState, $this->config->deadlockSqlStates, true);
+        return in_array($sqlState, $this->deadlockDetectorConfig->deadlockSqlStates, true);
     }
 
     /**
@@ -256,7 +249,7 @@ final class DeadlockDetector
             return false;
         }
 
-        return in_array($errorCode, $this->config->deadlockErrorCodes, true);
+        return in_array($errorCode, $this->deadlockDetectorConfig->deadlockErrorCodes, true);
     }
 
     /**

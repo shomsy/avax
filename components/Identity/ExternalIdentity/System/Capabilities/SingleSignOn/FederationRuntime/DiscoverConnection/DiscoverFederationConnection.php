@@ -10,7 +10,7 @@ use SensitiveParameter;
 
 final readonly class DiscoverFederationConnection
 {
-    public function __construct(private FederationConnectionStoreInterface $connectionStore) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore) {}
 
     public function execute(#[SensitiveParameter] string $email): ?FederationConnection
     {
@@ -21,7 +21,7 @@ final readonly class DiscoverFederationConnection
             return null;
         }
 
-        $connection = $this->connectionStore->findByDomain(domain: $domain);
+        $connection = $this->federationConnectionStore->findByDomain(domain: $domain);
 
         return $connection?->isDomainVerified() === true ? $connection : null;
     }

@@ -30,7 +30,7 @@ final readonly class MfaMethodRecord
         public string $secret,
         public DateTimeImmutable $enabledAt,
         #[SensitiveParameter]
-        array $backupCodes = null,
+        ?array $backupCodes = null,
         public ?int $lastAcceptedTimeStep = null,
     ) {
         $backupCodes ??= [];

@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ConfigureSagaRuntime;
 
 use RuntimeException;
-use Throwable;
 
 final readonly class RegisterSagaStore
 {
     public function register(string $type, array $config): object
     {
         return match ($type) {
-            'memory' => $this->createInMemoryStore(config: $config),
+            'memory' => $this->createInMemoryStore(),
             'database' => $this->createDatabaseStore(config: $config),
             'redis'  => $this->createRedisStore(config: $config),
             default  => throw new SagaRuntimeConfigurationFailure(
@@ -21,7 +20,7 @@ final readonly class RegisterSagaStore
         };
     }
 
-    private function createInMemoryStore(array $config): object
+    private function createInMemoryStore() : object
     {
         return new class () {
             public array $data = [];
@@ -51,8 +50,6 @@ final readonly class RegisterSagaStore
     private function createDatabaseStore(array $config): object
     {
         return new class ($config) {
-            public function __construct(private array $config) {}
-
             public function get(string $key): ?array
             {
                 return null;
@@ -72,8 +69,6 @@ final readonly class RegisterSagaStore
     private function createRedisStore(array $config): object
     {
         return new class ($config) {
-            public function __construct(private array $config) {}
-
             public function get(string $key): ?array
             {
                 return null;
@@ -114,7 +109,7 @@ final readonly class RegisterSagaMessageBus
     public function register(string $type, array $config): object
     {
         return match ($type) {
-            'memory' => $this->createInMemoryBus(config: $config),
+            'memory' => $this->createInMemoryBus(),
             'async' => $this->createAsyncBus(config: $config),
             default => throw new SagaRuntimeConfigurationFailure(
                 message: sprintf('Unknown message bus type: %s', $type),
@@ -122,7 +117,7 @@ final readonly class RegisterSagaMessageBus
         };
     }
 
-    private function createInMemoryBus(array $config): object
+    private function createInMemoryBus() : object
     {
         return new class () {
             public array $published = [];
@@ -139,8 +134,6 @@ final readonly class RegisterSagaMessageBus
     private function createAsyncBus(array $config): object
     {
         return new class ($config) {
-            public function __construct(private array $config) {}
-
             public function publish(string $topic, array $message) : void {}
 
             public function subscribe(string $topic, callable $handler) : void {}
@@ -151,7 +144,7 @@ final readonly class RegisterSagaMessageBus
 final readonly class ValidateSagaRuntimeConfig
 {
     public function __construct(
-        private SagaRuntimeConfig $config,
+        private SagaRuntimeConfig $sagaRuntimeConfig,
         private array $errors = [],
     ) {
         $this->validate();
@@ -159,22 +152,22 @@ final readonly class ValidateSagaRuntimeConfig
 
     private function validate(): void
     {
-        if (empty($this->config->storeType)) {
+        if ($this->sagaRuntimeConfig->storeType === '' || $this->sagaRuntimeConfig->storeType === '0') {
             $this->errors[] = 'Store type is required.';
         }
 
-        if ($this->config->timeoutSeconds !== null && $this->config->timeoutSeconds <= 0) {
+        if ($this->sagaRuntimeConfig->timeoutSeconds !== null && $this->sagaRuntimeConfig->timeoutSeconds <= 0) {
             $this->errors[] = 'Timeout must be positive.';
         }
 
-        if ($this->config->maxRetries !== null && $this->config->maxRetries < 0) {
+        if ($this->sagaRuntimeConfig->maxRetries !== null && $this->sagaRuntimeConfig->maxRetries < 0) {
             $this->errors[] = 'Max retries must be non-negative.';
         }
     }
 
     public function isValid(): bool
     {
-        return empty($this->errors);
+        return $this->errors === [];
     }
 
     public function getErrors(): array
@@ -185,8 +178,4 @@ final readonly class ValidateSagaRuntimeConfig
 
 final class SagaRuntimeConfigurationFailure extends RuntimeException
 {
-    public function __construct(string $message = '', int $code = 0, Throwable $previous = null)
-    {
-        parent::__construct(message: $message, code: $code, previous: $previous);
-    }
 }

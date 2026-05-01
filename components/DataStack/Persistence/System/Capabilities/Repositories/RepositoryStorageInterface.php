@@ -32,9 +32,9 @@ interface RepositoryStorageInterface
     public function findBy(
         string $entityClass,
         array $criteria,
-        array $orderBy = null,
-        int   $limit = null,
-        int   $offset = null,
+        ?array $orderBy = null,
+        ?int   $limit = null,
+        ?int   $offset = null,
     ): array;
 
     /**

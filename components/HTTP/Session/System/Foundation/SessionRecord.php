@@ -25,7 +25,7 @@ final readonly class SessionRecord
     {
         $now = new DateTimeImmutable();
 
-        return $this->revokedAt !== null
+        return $this->revokedAt instanceof DateTimeImmutable
             || $this->idleExpiresAt <= $now
             || $this->absoluteExpiresAt <= $now;
     }

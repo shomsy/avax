@@ -7,8 +7,10 @@ namespace Avax\Components\Identity\Auth\System\Flows\ChangeEmail;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
@@ -37,36 +39,36 @@ final readonly class BeginEmailChange
      * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
-    public function execute(BeginEmailChangeData $data): EmailChangeChallenge
+    public function execute(BeginEmailChangeData $beginEmailChangeData) : EmailChangeChallenge
     {
-        $context = $this->currentAuthentication->read();
-        $actor = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $actor                 = $authenticationContext->user();
 
-        if ($actor === null) {
+        if (! $actor instanceof AuthenticatedUser) {
             throw EmailChangeFailed::unauthenticated();
         }
 
         $user = $this->userSource->findById(id: new UserId(value: $actor->id));
 
-        if ($user === null || ! $user->isActive()) {
+        if (! $user instanceof User || ! $user->isActive()) {
             throw EmailChangeFailed::unauthenticated();
         }
 
-        $newEmail = strtolower(string: trim(string: $data->newEmail));
+        $newEmail = strtolower(string: trim(string: $beginEmailChangeData->newEmail));
 
         if ($newEmail === '' || $newEmail === strtolower(string: $user->getEmail()->value)) {
             throw EmailChangeFailed::invalidEmail();
         }
 
-        if (! $this->passwordHasher->verify(password: $data->currentPassword, hash: $user->getPasswordHash())) {
+        if (! $this->passwordHasher->verify(password: $beginEmailChangeData->currentPassword, hash: $user->getPasswordHash())) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.email_change.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
                                 'user_id' => $user->getId()->value,
                                 'reason'  => 'invalid_password',
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
+                                'ip_address' => $beginEmailChangeData->ipAddress,
+                                'user_agent' => $beginEmailChangeData->userAgent,
                 ],
             ));
 
@@ -78,10 +80,10 @@ final readonly class BeginEmailChange
         }
 
         $this->requireFreshMfa->execute();
-        $challenge = $this->emailChangeStore->issue(
+        $emailChangeChallenge = $this->emailChangeStore->issue(
             userId   : $user->getId(),
             newEmail : $newEmail,
-            expiresAt: $this->clock->now()->modify(modifier: "+$this->expiresAfterSeconds seconds"),
+            expiresAt: $this->clock->now()->modify(modifier: sprintf('+%d seconds', $this->expiresAfterSeconds)),
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -90,11 +92,11 @@ final readonly class BeginEmailChange
             context   : [
                             'user_id'   => $user->getId()->value,
                             'new_email' => $newEmail,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $beginEmailChangeData->ipAddress,
+                            'user_agent' => $beginEmailChangeData->userAgent,
             ],
         ));
 
-        return $challenge;
+        return $emailChangeChallenge;
     }
 }

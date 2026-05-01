@@ -10,16 +10,16 @@ final class ExternalIdentityCapabilityUnavailable extends LogicException
 {
     public static function oauth(string $operation): self
     {
-        return new self(message: "OAuth operation [{$operation}] is not configured.");
+        return new self(message: sprintf('OAuth operation [%s] is not configured.', $operation));
     }
 
     public static function oidc(string $operation): self
     {
-        return new self(message: "OpenID Connect operation [{$operation}] is not configured.");
+        return new self(message: sprintf('OpenID Connect operation [%s] is not configured.', $operation));
     }
 
     public static function sso(string $operation): self
     {
-        return new self(message: "Federation operation [{$operation}] is not configured.");
+        return new self(message: sprintf('Federation operation [%s] is not configured.', $operation));
     }
 }

@@ -29,7 +29,7 @@ final class UnitOfWork implements UnitOfWorkInterface
 
     public function __construct(
         private readonly IdentityMap $identityMap,
-        private readonly EntityPersisterInterface $persister,
+        private readonly EntityPersisterInterface $entityPersister,
     ) {}
 
     public function persist(object $entity): void
@@ -39,7 +39,7 @@ final class UnitOfWork implements UnitOfWorkInterface
         // If it was previously scheduled for removal, cancel the removal
         unset($this->removed[$objectId]);
 
-        $identifier = $this->persister->extractIdentifier($entity);
+        $identifier = $this->entityPersister->extractIdentifier($entity);
 
         if ($identifier === null) {
             // New entity (no ID yet)
@@ -61,20 +61,20 @@ final class UnitOfWork implements UnitOfWorkInterface
             return true; // No snapshot, assume dirty
         }
 
-        $currentData = $this->persister->extractData($entity);
+        $currentData = $this->entityPersister->extractData($entity);
 
         return $currentData !== $this->snapshots[$objectId];
     }
 
-    public function flush(string $connectionName = null) : void
+    public function flush(?string $connectionName = null) : void
     {
         // Process inserts
         foreach ($this->new as $objectId => $entity) {
-            $this->persister->insert(entity: $entity, connectionName: $connectionName);
+            $this->entityPersister->insert(entity: $entity, connectionName: $connectionName);
             unset($this->new[$objectId]);
 
             // After insert, register in identity map
-            $identifier = $this->persister->extractIdentifier($entity);
+            $identifier = $this->entityPersister->extractIdentifier($entity);
 
             if ($identifier !== null) {
                 $this->identityMap->put(
@@ -88,17 +88,18 @@ final class UnitOfWork implements UnitOfWorkInterface
         // Process updates
         foreach ($this->dirty as $objectId => $entity) {
             if ($this->isDirty($entity)) {
-                $this->persister->update(entity: $entity, connectionName: $connectionName);
+                $this->entityPersister->update(entity: $entity, connectionName: $connectionName);
                 $this->registerClean($entity);
             }
+
             unset($this->dirty[$objectId]);
         }
 
         // Process deletions
         foreach ($this->removed as $objectId => $entity) {
-            $identifier = $this->persister->extractIdentifier($entity);
+            $identifier = $this->entityPersister->extractIdentifier($entity);
 
-            $this->persister->delete(entity: $entity, connectionName: $connectionName);
+            $this->entityPersister->delete(entity: $entity, connectionName: $connectionName);
             unset($this->removed[$objectId]);
 
             if ($identifier !== null) {
@@ -113,7 +114,7 @@ final class UnitOfWork implements UnitOfWorkInterface
     public function registerClean(object $entity): void
     {
         $objectId = spl_object_id($entity);
-        $this->snapshots[$objectId] = $this->persister->extractData($entity);
+        $this->snapshots[$objectId] = $this->entityPersister->extractData($entity);
     }
 
     public function remove(object $entity): void

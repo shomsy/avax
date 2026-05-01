@@ -9,9 +9,9 @@ final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdent
     /** @var array<string, ScimProvisionedIdentity> */
     private array $identities = [];
 
-    public function save(ScimProvisionedIdentity $identity): void
+    public function save(ScimProvisionedIdentity $scimProvisionedIdentity) : void
     {
-        $this->identities[$this->key(directoryId: $identity->directoryId, externalId: $identity->externalId)] = $identity;
+        $this->identities[$this->key(directoryId: $scimProvisionedIdentity->directoryId, externalId: $scimProvisionedIdentity->externalId)] = $scimProvisionedIdentity;
     }
 
     private function key(string $directoryId, string $externalId): string
@@ -28,7 +28,7 @@ final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdent
     {
         return array_values(array: array_filter(
             array   : $this->identities,
-            callback: static fn (ScimProvisionedIdentity $identity): bool => $identity->directoryId === $directoryId,
+            callback: static fn (ScimProvisionedIdentity $scimProvisionedIdentity) : bool => $scimProvisionedIdentity->directoryId === $directoryId,
         ));
     }
 

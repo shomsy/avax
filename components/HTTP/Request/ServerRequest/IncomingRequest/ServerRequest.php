@@ -20,23 +20,11 @@ use RuntimeException;
  */
 class ServerRequest implements RequestInterface, ServerRequestInterface
 {
-    private array $serverParams;
-
-    private array $cookieParams = [];
-
-    private array $queryParams = [];
-
-    private array $uploadedFiles = [];
-
-    private ?array $parsedBody = null;
-
     private array $attributes = [];
-
-    private string $protocolVersion = '1.1';
 
     private array $headers = [];
 
-    private StreamInterface $body;
+    private StreamInterface $stream;
 
     private ?UriInterface $uri = null;
 
@@ -45,26 +33,20 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private string $method = 'GET';
 
     public function __construct(
-        array               $serverParams = [],
-        array               $cookieParams = [],
-        array               $queryParams = [],
-        array               $uploadedFiles = [],
-        array               $parsedBody = null,
+        private array            $serverParams = [],
+        private array            $cookieParams = [],
+        private array            $queryParams = [],
+        private array            $uploadedFiles = [],
+        private ?array           $parsedBody = null,
         string              $method = 'GET',
-        UriInterface|string $uri = null,
-        string              $protocolVersion = '1.1',
+        UriInterface|string|null $uri = null,
+        private string           $protocolVersion = '1.1',
         array               $headers = [],
-        StreamInterface     $body = null,
+        ?StreamInterface         $stream = null,
     )
     {
-        $this->serverParams  = $serverParams;
-        $this->cookieParams  = $cookieParams;
-        $this->queryParams   = $queryParams;
-        $this->uploadedFiles = $uploadedFiles;
-        $this->parsedBody    = $parsedBody;
         $this->method        = strtoupper($method);
-        $this->protocolVersion = $protocolVersion;
-        $this->body          = $body ?? Utils::streamFor('');
+        $this->stream = $stream ?? Utils::streamFor('');
         $this->headers       = $this->normalizeHeaders($headers);
 
         if ($uri !== null) {
@@ -86,7 +68,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     {
         $parts = parse_url($uri);
 
-        return new class ($parts['scheme'] ?? '', $parts['host'] ?? '', $parts['port'] ?? null, $parts['path'] ?? '', $parts['query'] ?? '', $parts['fragment'] ?? '', $parts['user'] ?? '') implements UriInterface {
+        return new readonly class ($parts['scheme'] ?? '', $parts['host'] ?? '', $parts['port'] ?? null, $parts['path'] ?? '', $parts['query'] ?? '', $parts['fragment'] ?? '', $parts['user'] ?? '') implements UriInterface {
             public function __construct(
                 private string $scheme,
                 private string $host,
@@ -183,6 +165,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 if ($this->query !== '') {
                     $uri .= '?' . $this->query;
                 }
+
                 if ($this->fragment !== '') {
                     $uri .= '#' . $this->fragment;
                 }
@@ -222,9 +205,8 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private static function createUploadedFile(array $file) : UploadedFileInterface
     {
         if (! isset($file['tmp_name'])) {
-            return new class ($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
+            return new readonly class ($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
                 public function __construct(
-                    private string $tmpName,
                     private int $size,
                     private int $error,
                     private string $clientFilename,
@@ -263,7 +245,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
             };
         }
 
-        return new class ($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
+        return new readonly class ($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
             public function __construct(
                 private string $tmpName,
                 private int $size,
@@ -366,17 +348,17 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function getBody() : StreamInterface
     {
-        if ($this->body instanceof StreamInterface) {
-            return $this->body;
+        if ($this->stream instanceof StreamInterface) {
+            return $this->stream;
         }
 
-        return Utils::streamFor($this->body ?? '');
+        return Utils::streamFor($this->stream ?? '');
     }
 
     public function withBody(StreamInterface $body) : self
     {
         $new = clone $this;
-        $new->body = $body;
+        $new->stream = $body;
 
         return $new;
     }

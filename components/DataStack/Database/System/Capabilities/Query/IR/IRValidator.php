@@ -39,13 +39,13 @@ final class IRValidator
         }
 
         foreach ($queryNode->getOrders() as $order) {
-            if (! in_array(needle: strtoupper(string: $order->direction), haystack: ['ASC', 'DESC'], strict: true)) {
+            if (! in_array(needle: strtoupper(string: (string) $order->direction), haystack: ['ASC', 'DESC'], strict: true)) {
                 $errors[] = sprintf('Invalid order direction [%s] for column [%s].', $order->direction, $order->column);
             }
         }
 
         foreach ($queryNode->getWheres() as $where) {
-            if (! in_array(needle: strtoupper(string: $where->boolean), haystack: ['AND', 'OR'], strict: true)) {
+            if (! in_array(needle: strtoupper(string: (string) $where->boolean), haystack: ['AND', 'OR'], strict: true)) {
                 $errors[] = sprintf('Invalid boolean connector [%s] for column [%s].', $where->boolean, $where->column);
             }
         }

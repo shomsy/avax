@@ -15,23 +15,23 @@ interface TaskDriverInterface
 {
     public function dispatch(object $task): void;
 
-    public function dispatchlater(object $task, DateInterval $delay): void;
+    public function dispatchlater(object $task, DateInterval $dateInterval) : void;
 }
 
 final class TaskBus
 {
     private array $handlers = [];
 
-    private SyncDriver $driver;
+    private readonly SyncDriver $syncDriver;
 
     public function __construct()
     {
-        $this->driver = new SyncDriver();
+        $this->syncDriver = new SyncDriver();
     }
 
-    public function register(string $taskClass, TaskHandlerInterface $handler): void
+    public function register(string $taskClass, TaskHandlerInterface $taskHandler) : void
     {
-        $this->handlers[$taskClass] = $handler;
+        $this->handlers[$taskClass] = $taskHandler;
     }
 
     public function dispatch(object $task): void
@@ -44,20 +44,20 @@ final class TaskBus
             return;
         }
 
-        $this->driver->dispatch($task);
+        $this->syncDriver->dispatch($task);
     }
 
-    public function dispatchlater(object $task, DateInterval $delay): void
+    public function dispatchlater(object $task, DateInterval $dateInterval) : void
     {
-        $this->driver->dispatchlater($task, $delay);
+        $this->syncDriver->dispatchlater($task, $dateInterval);
     }
 }
 
 final readonly class SyncDriver implements TaskDriverInterface
 {
-    public function dispatchlater(object $task, DateInterval $delay): void
+    public function dispatchlater(object $task, DateInterval $dateInterval) : void
     {
-        $ms = (int) (($delay->i * 60 + $delay->s) * 1000);
+        $ms = (int) (($dateInterval->i * 60 + $dateInterval->s) * 1000);
 
         $this->schedule($task, $ms);
     }
@@ -70,8 +70,6 @@ final readonly class SyncDriver implements TaskDriverInterface
 
     public function dispatch(object $task): void
     {
-        $class = $task::class;
-
         if (method_exists($task, '__invoke')) {
             ($task)();
         }

@@ -21,8 +21,8 @@ final readonly class RegisterFederationConnectionData
         public string $name,
         public FederationProvider $provider,
         public string $domain,
-        bool  $ssoOnly = null,
-        array $groupRoleMap = null,
+        ?bool  $ssoOnly = null,
+        ?array $groupRoleMap = null,
         public ?string $metadataUrl = null,
         public bool $breakGlassAllowed = false,
     ) {

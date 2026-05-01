@@ -37,8 +37,8 @@ final class InjectMethods
     ): void {
         foreach ($dependencyBlueprint->injectableMethods as $method) {
             $arguments = $this->resolveCallArguments->resolvePlan(
-                plan     : $method['plan'],
                 overrides: $overrides,
+                plan     : $method['plan'],
                 resolver : $resolveDependency,
                 request  : $resolveRequest,
             );

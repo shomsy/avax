@@ -8,12 +8,12 @@ final class SpanBuilder
 {
     public function build(
         string $query,
-        array  $bindings = null,
-        string $connection = null,
-        int    $rows = null,
-        string $error = null,
-        float  $startTime = null,
-        float  $endTime = null,
+        ?array  $bindings = null,
+        ?string $connection = null,
+        ?int    $rows = null,
+        ?string $error = null,
+        ?float  $startTime = null,
+        ?float  $endTime = null,
     ): QuerySpan {
         $bindings ??= [];
         $startTime ??= microtime(as_float: true);

@@ -13,24 +13,24 @@ use Throwable;
 
 final class JwtAuth
 {
-    private static JwtSigner $signer;
+    private static JwtSigner $jwtSigner;
 
-    private static TokenVerifier $verifier;
+    private static TokenVerifier $tokenVerifier;
 
-    private static TokenBlacklist $blacklist;
+    private static TokenBlacklist $tokenBlacklist;
 
     public static function configure(string $secret, string $algo = 'HS256'): void
     {
-        self::$signer    = new JwtSigner($secret, $algo);
-        self::$verifier  = new TokenVerifier(self::$signer);
-        self::$blacklist = new TokenBlacklist();
+        self::$jwtSigner      = new JwtSigner($secret, $algo);
+        self::$tokenVerifier  = new TokenVerifier(self::$jwtSigner);
+        self::$tokenBlacklist = new TokenBlacklist();
     }
 
     public static function verify(string $token): AccessToken
     {
         $verifier = self::verifier();
 
-        if (self::$blacklist->isRevoked($token)) {
+        if (self::$tokenBlacklist->isRevoked($token)) {
             throw new RuntimeException('Token has been revoked');
         }
 
@@ -39,16 +39,16 @@ final class JwtAuth
 
     private static function verifier(): TokenVerifier
     {
-        return self::$verifier ?? self::signer();
+        return self::$tokenVerifier ?? self::signer();
     }
 
     private static function signer(): JwtSigner
     {
-        if (! isset(self::$signer)) {
+        if (! isset(self::$jwtSigner)) {
             throw new RuntimeException('JwtAuth not configured. Call JwtAuth::configure() first.');
         }
 
-        return self::$signer;
+        return self::$jwtSigner;
     }
 
     public static function refresh(string $refreshToken): TokenPair
@@ -64,7 +64,7 @@ final class JwtAuth
             throw new RuntimeException('Refresh token has expired');
         }
 
-        self::$blacklist->revoke($refreshToken);
+        self::$tokenBlacklist->revoke($refreshToken);
 
         $user = ['id' => $payload['sub']];
 
@@ -73,7 +73,7 @@ final class JwtAuth
 
     public static function revoke(string $token): void
     {
-        self::$blacklist->revoke($token);
+        self::$tokenBlacklist->revoke($token);
     }
 
     public static function issue(array $user, array $scopes = []): TokenPair
@@ -118,7 +118,7 @@ final class JwtAuth
             $payload = $verifier->verifyPayload($token);
 
             return [
-                'active' => ! self::$blacklist->isRevoked($token),
+                'active' => ! self::$tokenBlacklist->isRevoked($token),
                 'scope' => implode(' ', $payload['scopes'] ?? []),
                 'sub'   => $payload['sub'] ?? null,
                 'exp'   => $payload['exp'] ?? null,

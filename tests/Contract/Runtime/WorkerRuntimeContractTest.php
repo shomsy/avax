@@ -37,18 +37,18 @@ final class WorkerRuntimeContractTest extends TestCase
         /** @var list<WorkerResponse> $responses */
         $responses = [];
 
-        $application = Avax::boot(
+        $avax            = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
                 ->withHttpHandler(
-                    httpHandler: static function (RuntimeRequest $request, $runtime): string {
+                    httpHandler: static function (RuntimeRequest $runtimeRequest, $runtime) : string {
                         $scope = $runtime->requestScopes()->current();
                         $previous = $scope->read(key: 'uri');
-                        $scope->write(key: 'uri', value: $request->uri());
+                        $scope->write(key: 'uri', value: $runtimeRequest->uri());
 
                         return sprintf(
                             'current=%s previous=%s',
-                            $request->uri(),
-                            $previous === null ? 'none' : $previous,
+                            $runtimeRequest->uri(),
+                            $previous ?? 'none',
                         );
                     },
                 ),
@@ -56,18 +56,18 @@ final class WorkerRuntimeContractTest extends TestCase
 
         /** @var WorkerRuntimeInterface $workerRuntime */
         $workerRuntime = $factory($requests, $responses);
-        $lifecycle   = $application->runtime()->runWorker(workerRuntime: $workerRuntime);
+        $workerLifecycle = $avax->runtime()->runWorker(workerRuntime: $workerRuntime);
 
         self::assertCount(2, $responses);
         self::assertArrayHasKey(0, $responses);
         self::assertArrayHasKey(1, $responses);
         self::assertSame('current=/first previous=none', $responses[0]->response()->body());
         self::assertSame('current=/second previous=none', $responses[1]->response()->body());
-        self::assertSame(['first', 'second'], $lifecycle->handledRequestIds());
-        self::assertFalse($application->requestScopes()->hasCurrent());
-        self::assertNull($application->context()->lastResult());
-        self::assertFalse($application->state()->isBooted());
-        self::assertNotNull($application->state()->shutdownAt());
+        self::assertSame(['first', 'second'], $workerLifecycle->handledRequestIds());
+        self::assertFalse($avax->requestScopes()->hasCurrent());
+        self::assertNull($avax->context()->lastResult());
+        self::assertFalse($avax->state()->isBooted());
+        self::assertNotNull($avax->state()->shutdownAt());
     }
 
     /**
@@ -80,8 +80,8 @@ final class WorkerRuntimeContractTest extends TestCase
                 receiver: static function () use (&$requests): WorkerRequest|null {
                     return array_shift($requests);
                 },
-                sender: static function (WorkerResponse $response) use (&$responses): void {
-                    $responses[] = $response;
+                sender  : static function (WorkerResponse $workerResponse) use (&$responses) : void {
+                    $responses[] = $workerResponse;
                 },
             );
 

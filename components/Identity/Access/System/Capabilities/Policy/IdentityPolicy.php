@@ -34,12 +34,12 @@ final readonly class IdentityPolicy
         public int $absoluteTimeoutSeconds,
         public ?int $freshMfaMaxAgeSeconds,
         public RecoveryPath $recoveryPath,
-        bool $phishingResistantRequired = null,
-        bool $adminElevationRequired = null,
-        bool $senderConstrainedTokensRequired = null,
-        bool $denyByDefault = null,
-        bool $resourceChecksRequired = null,
-        bool $separationOfDutiesRequired = null,
+        ?bool $phishingResistantRequired = null,
+        ?bool $adminElevationRequired = null,
+        ?bool $senderConstrainedTokensRequired = null,
+        ?bool $denyByDefault = null,
+        ?bool $resourceChecksRequired = null,
+        ?bool $separationOfDutiesRequired = null,
         public bool $privilegedApprovalRequired = false,
     ) {
         $phishingResistantRequired        ??= false;
@@ -56,13 +56,13 @@ final readonly class IdentityPolicy
         $this->separationOfDutiesRequired = $separationOfDutiesRequired;
     }
 
-    public function allowsFactor(AuthenticationFactor $factor): bool
+    public function allowsFactor(AuthenticationFactor $authenticationFactor) : bool
     {
-        return in_array(needle: $factor, haystack: $this->allowedFactors, strict: true);
+        return in_array(needle: $authenticationFactor, haystack: $this->allowedFactors, strict: true);
     }
 
-    public function requiresFactor(AuthenticationFactor $factor): bool
+    public function requiresFactor(AuthenticationFactor $authenticationFactor) : bool
     {
-        return in_array(needle: $factor, haystack: $this->requiredFactors, strict: true);
+        return in_array(needle: $authenticationFactor, haystack: $this->requiredFactors, strict: true);
     }
 }

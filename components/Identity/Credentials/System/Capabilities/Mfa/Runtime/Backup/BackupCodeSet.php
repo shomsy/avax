@@ -29,7 +29,7 @@ final readonly class BackupCodeSet
     public function values(): array
     {
         return array_map(
-            callback: static fn (#[SensitiveParameter] BackupCode $code): string => $code->value(),
+            callback: static fn (#[SensitiveParameter] BackupCode $backupCode) : string => $backupCode->value(),
             array   : $this->codes,
         );
     }
@@ -41,7 +41,7 @@ final readonly class BackupCodeSet
     {
         return [
             'codes' => array_map(
-                callback: static fn (#[SensitiveParameter] BackupCode $code): string => $code->masked(),
+                callback: static fn (#[SensitiveParameter] BackupCode $backupCode) : string => $backupCode->masked(),
                 array   : $this->codes,
             ),
             'generatedAt' => $this->generatedAt,

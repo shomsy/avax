@@ -20,7 +20,7 @@ use SensitiveParameter;
 final readonly class SuspendUser
 {
     public function __construct(
-        private ProvisionableUserSourceInterface $userSource,
+        private ProvisionableUserSourceInterface $provisionableUserSource,
         private RequireAdminElevation $requireAdminElevation,
         private AuditLogInterface $auditLog,
         private Clock $clock,
@@ -29,17 +29,18 @@ final readonly class SuspendUser
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         private ?AdminElevationStoreInterface $adminElevationStore = null,
-        private ?LifecycleOrchestrator $lifecycle = null,
+        private ?LifecycleOrchestrator           $lifecycleOrchestrator = null,
     ) {}
 
     public function execute(int $userId): void
     {
         $this->requireAdminElevation->execute();
         $id = new UserId(value: $userId);
-        $this->lifecycle?->suspend(userId: $id, source: LifecycleSource::ADMIN, reason: 'admin_suspended');
-        if ($this->lifecycle === null) {
-            $this->userSource->deactivate(id: $id);
+        $this->lifecycleOrchestrator?->suspend(userId: $id, source: LifecycleSource::ADMIN, reason: 'admin_suspended');
+        if (! $this->lifecycleOrchestrator instanceof LifecycleOrchestrator) {
+            $this->provisionableUserSource->deactivate(id: $id);
         }
+
         $this->sessionRegistry?->revokeForUser(userId: $id, revokedAt: $this->clock->now(), reason: 'suspended');
         $this->refreshTokenStore?->revokeUser(userId: $id);
         $this->adminElevationStore?->revokeUser(userId: $userId);

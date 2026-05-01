@@ -31,7 +31,7 @@ final readonly class RepairDivergedReplica
         foreach ($this->stores[$referenceReplicaIndex] ?? [] as $key => $record) {
             $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
 
-            if ($this->repair(key: $cacheKey, referenceReplicaIndex: $referenceReplicaIndex)) {
+            if ($this->repair(referenceReplicaIndex: $referenceReplicaIndex, key: $cacheKey)) {
                 $repaired++;
             }
         }
@@ -46,7 +46,7 @@ final readonly class RepairDivergedReplica
         }
 
         $referenceStore = $this->stores[$referenceReplicaIndex];
-        $referenceResult = $referenceStore->read(key: $cacheKey, clock: $this->clock);
+        $referenceResult = $referenceStore->read(clock: $this->clock, key: $cacheKey);
 
         if (! $referenceResult instanceof CacheStoreRecordWasFound) {
             return false;
@@ -61,7 +61,7 @@ final readonly class RepairDivergedReplica
             }
 
             try {
-                $result = $store->read(key: $cacheKey, clock: $this->clock);
+                $result = $store->read(clock: $this->clock, key: $cacheKey);
 
                 if ($result instanceof CacheStoreRecordWasMissing) {
                     $store->write(key: $cacheKey, record: $referenceRecord);

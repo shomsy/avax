@@ -14,11 +14,11 @@ use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\Passwor
 final readonly class VerifyPassword
 {
     public function __construct(
-        private PasswordHasher $hasher,
+        private PasswordHasher $passwordHasher,
     ) {}
 
     public function execute(User $user, string $password): bool
     {
-        return $this->hasher->verify($password, $user->passwordHash);
+        return $this->passwordHasher->verify($password, $user->passwordHash);
     }
 }

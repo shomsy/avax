@@ -12,9 +12,9 @@ final class SessionBuilder
 {
     public function build() : Session
     {
-        $store = new NativeSessionStore();
-        $scope = new SessionScope($store);
+        $nativeSessionStore = new NativeSessionStore();
+        $sessionScope       = new SessionScope($nativeSessionStore);
 
-        return new Session($scope);
+        return new Session($sessionScope);
     }
 }

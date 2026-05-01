@@ -58,8 +58,8 @@ final class FunctionCaller
         $normalized                 = $this->normalizeTarget(target: $target, request: $resolveRequest);
         $reflectionFunctionAbstract = $this->reflect(target: $normalized);
         $arguments                  = $this->resolveCallArguments->resolvePlan(
-            plan     : $this->planFor(reflection: $reflectionFunctionAbstract),
             overrides: $parameters,
+            plan     : $this->planFor(reflection: $reflectionFunctionAbstract),
             resolver : $this->resolveDependency,
             request  : $resolveRequest ?? new ResolveRequest(serviceId: $this->nameOf(reflection: $reflectionFunctionAbstract)),
         );
@@ -122,7 +122,7 @@ final class FunctionCaller
         }
 
         if (is_array(value: $target) && is_string(value: $target[0]) && class_exists(class: $target[0])) {
-            $reflection = new ReflectionMethod(objectOrMethod: $target[0], method: (string) $target[1]);
+            $reflection = new ReflectionMethod(objectOrMethod: $target[0], method: $target[1]);
             if (! $reflection->isStatic()) {
                 return [
                     $context !== []

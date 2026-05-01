@@ -30,10 +30,10 @@ final readonly class AuthCapabilityReadiness
         ?ProvisionableUserSourceInterface $provisionableUserSource,
     ): self {
         return new self(
-            oauth     : $jwtIdentity !== null && $refreshTokenStore !== null,
-            passkey   : $passkeyRuntime !== null,
-            federation: $federationRuntime !== null,
-            scim      : $provisionableUserSource !== null,
+            oauth     : $jwtIdentity instanceof JwtIdentityInterface && $refreshTokenStore instanceof RefreshTokenStoreInterface,
+            passkey   : $passkeyRuntime instanceof PasskeyRuntimeInterface,
+            federation: $federationRuntime instanceof FederationRuntimeInterface,
+            scim      : $provisionableUserSource instanceof ProvisionableUserSourceInterface,
         );
     }
 

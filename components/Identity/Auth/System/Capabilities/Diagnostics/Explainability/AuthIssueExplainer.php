@@ -10,15 +10,15 @@ final readonly class AuthIssueExplainer
 {
     public function explainAccessDenied(
         string $resource,
-        string $requiredPermission = null,
-        string $tenant = null,
-        string $resourceTenant = null,
+        ?string $requiredPermission = null,
+        ?string $tenant = null,
+        ?string $resourceTenant = null,
     ): AuthIssueExplanation {
         $resourceName = trim(string: $resource) !== '' ? trim(string: $resource) : 'resource';
 
         return new AuthIssueExplanation(
             code      : 'access_denied',
-            message   : "Access denied to {$resourceName}.",
+            message   : sprintf('Access denied to %s.', $resourceName),
             meaning   : 'The identity is authenticated, but the current authorization policy did not allow this action.',
             resolution: [
                 'Verify the required role or permission is assigned to the identity.',
@@ -36,15 +36,15 @@ final readonly class AuthIssueExplainer
 
     public function explainStepUpRequired(
         string $action,
-        bool $phishingResistantRequired = null,
-        int  $freshAfterSeconds = null,
+        ?bool $phishingResistantRequired = null,
+        ?int  $freshAfterSeconds = null,
     ): AuthIssueExplanation {
         $phishingResistantRequired ??= false;
         $actionName = trim(string: $action) !== '' ? trim(string: $action) : 'sensitive_action';
 
         return new AuthIssueExplanation(
             code      : 'step_up_required',
-            message   : "Step-up authentication is required for {$actionName}.",
+            message   : sprintf('Step-up authentication is required for %s.', $actionName),
             meaning   : $phishingResistantRequired
                             ? 'The current session is not strong enough because this action requires a phishing-resistant authenticator.'
                             : 'The current session is authenticated, but the action requires fresh MFA proof.',
@@ -65,13 +65,13 @@ final readonly class AuthIssueExplainer
 
     public function explainSenderConstraintFailure(
         string $reason,
-        string $requiredConstraint = null,
+        ?string $requiredConstraint = null,
     ): AuthIssueExplanation {
         $normalizedReason = trim(string: $reason) !== '' ? trim(string: $reason) : 'unknown_reason';
 
         return new AuthIssueExplanation(
             code      : 'sender_constraint_failed',
-            message   : "Sender-constraint validation failed: {$normalizedReason}.",
+            message   : sprintf('Sender-constraint validation failed: %s.', $normalizedReason),
             meaning   : 'The proof presented with the token did not satisfy the DPoP or mTLS binding expected by the token posture.',
             resolution: [
                 'Regenerate the DPoP proof or reconfigure the client certificate before retrying.',
@@ -85,7 +85,7 @@ final readonly class AuthIssueExplainer
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] string $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] ?string $sessionId = null) : AuthIssueExplanation
     {
         $normalizedStatus = strtoupper(string: trim(string: $status));
         $meaning = match ($normalizedStatus) {
@@ -97,7 +97,7 @@ final readonly class AuthIssueExplainer
 
         return new AuthIssueExplanation(
             code      : 'session_revocation_status',
-            message   : "Session revocation status: {$normalizedStatus}.",
+            message   : sprintf('Session revocation status: %s.', $normalizedStatus),
             meaning   : $meaning,
             resolution: [
                 'Review the tracked session registry and refresh-token family state for the identity.',
@@ -111,7 +111,7 @@ final readonly class AuthIssueExplainer
         );
     }
 
-    public function explainTrustedDeviceDecision(string $deviceId = null) : AuthIssueExplanation
+    public function explainTrustedDeviceDecision(?string $deviceId = null) : AuthIssueExplanation
     {
         return new AuthIssueExplanation(
             code      : 'trusted_device_not_supported',

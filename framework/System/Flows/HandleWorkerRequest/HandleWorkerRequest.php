@@ -8,11 +8,11 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Throwable;
 
-final class HandleWorkerRequest
+final readonly class HandleWorkerRequest
 {
     public function __construct(
-        private readonly RuntimeContext $context,
-        private readonly RequestScope $requestScope,
+        private RuntimeContext $runtimeContext,
+        private RequestScope   $requestScope,
     ) {
     }
 
@@ -26,10 +26,10 @@ final class HandleWorkerRequest
             $this->closeWorkerRequestScope();
 
             return $response;
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             $this->closeWorkerRequestScope();
 
-            throw $e;
+            throw $throwable;
         }
     }
 
@@ -40,7 +40,7 @@ final class HandleWorkerRequest
 
     private function runWorkerRequest(object $request): object
     {
-        return $this->context->getRuntime()->handleRequest($request);
+        return $this->runtimeContext->getRuntime()->handleRequest($request);
     }
 
     private function closeWorkerRequestScope(): void

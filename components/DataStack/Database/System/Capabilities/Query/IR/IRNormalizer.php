@@ -27,7 +27,7 @@ final class IRNormalizer
             'from'   => $queryNode->getFrom()?->table,
             'joins'  => array_map(
                 callback: static fn ($join): array => [
-                    'type' => strtoupper(string: $join->type),
+                    'type' => strtoupper(string: (string) $join->type),
                     'table' => $join->table,
                     'alias' => $join->alias,
                 ],
@@ -37,7 +37,7 @@ final class IRNormalizer
                 callback: static fn ($where): array => [
                     'column'  => $where->column,
                     'operator' => $where->operator->value,
-                    'boolean' => strtoupper(string: $where->boolean),
+                    'boolean' => strtoupper(string: (string) $where->boolean),
                 ],
                 array   : $queryNode->getWheres(),
             ),
@@ -45,7 +45,7 @@ final class IRNormalizer
             'orders' => array_map(
                 callback: static fn ($order): array => [
                     'column' => $order->column,
-                    'direction' => strtoupper(string: $order->direction),
+                    'direction' => strtoupper(string: (string) $order->direction),
                     'nulls'  => $order->nulls,
                 ],
                 array   : $queryNode->getOrders(),

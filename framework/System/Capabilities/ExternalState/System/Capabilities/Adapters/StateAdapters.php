@@ -7,16 +7,17 @@ namespace Avax\Components\ExternalState\System\Capabilities\Adapters;
 use Avax\Components\ExternalState\System\PublicSurface\StateAdapter;
 use Redis;
 
-final class RedisStateAdapter implements StateAdapter
+final readonly class RedisStateAdapter implements StateAdapter
 {
     private Redis $redis;
 
     private string $prefix;
 
-    public function __construct(string $url)
+    public function __construct()
     {
         $this->redis = new Redis();
         $this->redis->connect('127.0.0.1', 6379);
+
         $this->prefix = 'avax:';
     }
 
@@ -71,12 +72,10 @@ final class MemoryStateAdapter implements StateAdapter
 
     public function get(string $key) : mixed
     {
-        if (isset($this->ttls[$key])) {
-            if ($this->ttls[$key] < time()) {
-                unset($this->store[$key], $this->ttls[$key]);
+        if (isset($this->ttls[$key]) && $this->ttls[$key] < time()) {
+            unset($this->store[$key], $this->ttls[$key]);
 
-                return null;
-            }
+            return null;
         }
 
         return $this->store[$key] ?? null;

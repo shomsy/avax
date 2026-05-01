@@ -24,8 +24,8 @@ final readonly class SerializedCachePayload implements Stringable
         return new self(
             data     : $data,
             format   : $format,
-            createdAt: $clock->now(),
             checksum : $checksum,
+            createdAt: $clock->now(),
         );
     }
 

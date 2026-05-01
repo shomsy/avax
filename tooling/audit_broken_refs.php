@@ -1,6 +1,32 @@
 <?php
 
 declare(strict_types=1);
+
+use PhpParser\Node;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\Instanceof_;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\IntersectionType;
+use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\NullableType;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Catch_;
+use PhpParser\Node\Stmt\ClassLike;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Function_;
+use PhpParser\Node\Stmt\GroupUse;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\UnionType;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
+use PhpParser\ParserFactory;
+
 // Custom autoloader for PHP-Parser v5 only, avoiding project's vendor/autoload.php
 spl_autoload_register(function ($class): void {
     $prefix  = 'PhpParser\\';
@@ -9,6 +35,7 @@ spl_autoload_register(function ($class): void {
     if (strncmp($prefix, $class, $len) !== 0) {
         return;
     }
+
     $relativeClass = substr($class, $len);
     $file          = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
     if (file_exists($file)) {
@@ -16,28 +43,28 @@ spl_autoload_register(function ($class): void {
     }
 });
 
-use PhpParser\Node;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
-use PhpParser\ParserFactory;
-
 $baseDir = __DIR__;
-$parser  = (new ParserFactory())->createForNewestSupportedVersion();
+$parser = new ParserFactory()->createForNewestSupportedVersion();
 
 $phpFiles = [];
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir)) as $file) {
-    if (! $file->isFile() || $file->getExtension() !== 'php') {
+    if (! $file->isFile()) {
         continue;
     }
+
+    if ($file->getExtension() !== 'php') {
+        continue;
+    }
+
     $path = $file->getPathname();
-    if (str_contains($path, '/vendor/')) {
+    if (str_contains((string) $path, '/vendor/')) {
         continue;
     }
-    if (str_contains($path, '/audit_broken_refs.php')) {
+
+    if (str_contains((string) $path, '/audit_broken_refs.php')) {
         continue;
     }
+
     $phpFiles[] = $path;
 }
 
@@ -45,33 +72,35 @@ $defined    = [];
 $references = [];
 $total      = count($phpFiles);
 
-echo "PASS 1: Parsing $total files for definitions...\n";
+echo "PASS 1: Parsing {$total} files for definitions...\n";
 
 foreach ($phpFiles as $idx => $path) {
     if (($idx + 1) % 500 === 0) {
-        echo '  ' . ($idx + 1) . " / $total\n";
+        echo '  ' . ($idx + 1) . sprintf(' / %d%s', $total, PHP_EOL);
     }
 
     try {
         $stmts = $parser->parse(file_get_contents($path));
-    } catch (Exception $e) {
+    } catch (Exception) {
         continue;
     }
+
     if (! $stmts) {
         continue;
     }
+
     $ns = '';
     foreach ($stmts as $stmt) {
-        if ($stmt instanceof Stmt\Namespace_) {
-            $ns = $stmt->name ? $stmt->name->toString() : '';
+        if ($stmt instanceof Namespace_) {
+            $ns = $stmt->name instanceof Name ? $stmt->name->toString() : '';
             foreach ($stmt->stmts as $inner) {
-                if ($inner instanceof Stmt\ClassLike && isset($inner->name)) {
-                    $fqn           = $ns ? $ns . '\\' . $inner->name->toString() : $inner->name->toString();
+                if ($inner instanceof ClassLike && isset($inner->name)) {
+                    $fqn = $ns !== '' && $ns !== '0' ? $ns . '\\' . $inner->name->toString() : $inner->name->toString();
                     $defined[$fqn] = $path;
                 }
             }
-        } elseif ($stmt instanceof Stmt\ClassLike && isset($stmt->name)) {
-            $fqn           = $ns ? $ns . '\\' . $stmt->name->toString() : $stmt->name->toString();
+        } elseif ($stmt instanceof ClassLike && isset($stmt->name)) {
+            $fqn = $ns !== '' && $ns !== '0' ? $ns . '\\' . $stmt->name->toString() : $stmt->name->toString();
             $defined[$fqn] = $path;
         }
     }
@@ -79,13 +108,14 @@ foreach ($phpFiles as $idx => $path) {
 
 echo 'PASS 1 done. Defined: ' . count($defined) . "\n";
 
-function resolveName(Node\Name $name, string $ns, array $uses): string
+function resolveName(Name $name, string $ns, array $uses) : string
 {
     // PHP-Parser v5: name->name is the string representation
     $nameStr = $name->name;
-    if ($name instanceof Node\Name\FullyQualified) {
+    if ($name instanceof FullyQualified) {
         return $nameStr;
     }
+
     $parts = explode('\\', $nameStr);
     $first = $parts[0];
     if (isset($uses[$first])) {
@@ -94,12 +124,12 @@ function resolveName(Node\Name $name, string $ns, array $uses): string
         return implode('\\', $parts);
     }
 
-    return $ns ? $ns . '\\' . $nameStr : $nameStr;
+    return $ns !== '' && $ns !== '0' ? $ns . '\\' . $nameStr : $nameStr;
 }
 
 function isBuiltin(string $name): bool
 {
-    return in_array(strtolower($name), ['self', 'static', 'parent', 'true', 'false', 'null', 'array', 'callable', 'int', 'float', 'string', 'bool', 'object', 'mixed', 'iterable', 'void', 'never']);
+    return in_array(strtolower($name), ['self', 'static', 'parent', 'true', 'false', 'null', 'array', 'callable', 'int', 'float', 'string', 'bool', 'object', 'mixed', 'iterable', 'void', 'never'], true);
 }
 
 function addRef(string $fqn, string $file, string $ctx, int $line, array &$references, array $defined): void
@@ -108,34 +138,39 @@ function addRef(string $fqn, string $file, string $ctx, int $line, array &$refer
     if ($fqn === '' || isBuiltin($fqn)) {
         return;
     }
+
     if (str_starts_with($fqn, 'Psr\\')) {
         return;
     }
+
     if (isset($defined[$fqn])) {
         return;
     }
+
     if (! str_contains($fqn, '\\')) {
         $globals = ['arrayiterator', 'runtimeexception', 'invalidargumentexception', 'logicexception', 'exception', 'throwable', 'datetime', 'datetimeimmutable', 'dateinterval', 'closure', 'generator', 'arrayobject', 'splfileinfo', 'splfileobject', 'countable', 'iterator', 'iteratoraggregate', 'arrayaccess', 'serializable', 'jsonserializable', 'traversable', 'seekableiterator', 'recursiveiterator', 'pdostatement', 'pdoexception', 'reflectionclass', 'reflectionfunction', 'reflectionmethod', 'reflectionproperty', 'reflectionparameter', 'reflector', 'phpunit_framework_testcase', 'testcase'];
-        if (in_array(strtolower($fqn), $globals)) {
+        if (in_array(strtolower($fqn), $globals, true)) {
             return;
         }
     }
+
     $references[$fqn][] = ['file' => $file, 'context' => $ctx, 'line' => $line];
 }
 
-function processType(?Node $type, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined): void
+function processType(?Node $node, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined) : void
 {
-    if (! $type) {
+    if (! $node instanceof Node) {
         return;
     }
-    if ($type instanceof Node\Name) {
-        addRef(resolveName($type, $ns, $uses), $file, $ctx, $line, $references, $defined);
-    } elseif ($type instanceof Node\UnionType || $type instanceof Node\IntersectionType) {
-        foreach ($type->types as $t) {
+
+    if ($node instanceof Name) {
+        addRef(resolveName($node, $ns, $uses), $file, $ctx, $line, $references, $defined);
+    } elseif ($node instanceof UnionType || $node instanceof IntersectionType) {
+        foreach ($node->types as $t) {
             processType($t, $ns, $uses, $file, $ctx, $line, $references, $defined);
         }
-    } elseif ($type instanceof Node\NullableType) {
-        processType($type->type, $ns, $uses, $file, $ctx, $line, $references, $defined);
+    } elseif ($node instanceof NullableType) {
+        processType($node->type, $ns, $uses, $file, $ctx, $line, $references, $defined);
     }
 }
 
@@ -145,34 +180,28 @@ class RefVisitor extends NodeVisitorAbstract
 
     private array $uses = [];
 
-    private string $file;
-
-    private array $defined;
-
     private array $references;
 
-    public function __construct(string $file, array $defined, array &$references)
+    public function __construct(private readonly string $file, private readonly array $defined, array &$references)
     {
-        $this->file       = $file;
-        $this->defined    = $defined;
         $this->references = &$references;
     }
 
     public function enterNode(Node $node): ?int
     {
-        if ($node instanceof Stmt\Namespace_) {
-            $this->ns   = $node->name ? $node->name->toString() : '';
+        if ($node instanceof Namespace_) {
+            $this->ns = $node->name instanceof Name ? $node->name->toString() : '';
             $this->uses = [];
-        } elseif ($node instanceof Stmt\Use_) {
-            if ($node->type === Stmt\Use_::TYPE_NORMAL) {
+        } elseif ($node instanceof Use_) {
+            if ($node->type === Use_::TYPE_NORMAL) {
                 foreach ($node->uses as $use) {
                     $alias              = $use->getAlias()->toString();
                     $this->uses[$alias] = $use->name->toString();
                     $this->add($use->name->toString(), 'use-statement', $node->getStartLine());
                 }
             }
-        } elseif ($node instanceof Stmt\GroupUse) {
-            if ($node->type === Stmt\Use_::TYPE_NORMAL) {
+        } elseif ($node instanceof GroupUse) {
+            if ($node->type === Use_::TYPE_NORMAL) {
                 $prefix = $node->prefix->toString();
                 foreach ($node->uses as $use) {
                     $fqn                = $prefix . '\\' . $use->name->toString();
@@ -181,80 +210,85 @@ class RefVisitor extends NodeVisitorAbstract
                     $this->add($fqn, 'use-statement', $node->getStartLine());
                 }
             }
-        } elseif ($node instanceof Stmt\ClassLike) {
+        } elseif ($node instanceof ClassLike) {
             // Implements (classes and enums)
-            if (isset($node->implements)) {
+            if (property_exists($node, 'implements') && $node->implements !== null) {
                 foreach ($node->implements as $impl) {
                     $this->add($this->resolve($impl), 'implements', $node->getStartLine());
                 }
             }
+
             // Extends (classes and interfaces - in v5 both use 'extends')
-            if (isset($node->extends) && $node->extends) {
+            if (property_exists($node, 'extends') && $node->extends !== null && $node->extends) {
                 $ext = $node->extends;
-                if ($ext instanceof Node\Name) {
+                if ($ext instanceof Name) {
                     $this->add($this->resolve($ext), 'extends', $node->getStartLine());
                 } elseif (is_array($ext)) {
                     foreach ($ext as $e) {
-                        if ($e instanceof Node\Name) {
+                        if ($e instanceof Name) {
                             $this->add($this->resolve($e), 'extends', $node->getStartLine());
                         }
                     }
                 }
             }
+
             foreach ($node->attrGroups as $ag) {
                 foreach ($ag->attrs as $attr) {
                     $this->add($this->resolve($attr->name), 'attribute', $attr->getStartLine());
                 }
             }
-        } elseif ($node instanceof Stmt\Function_ || $node instanceof Stmt\ClassMethod) {
+        } elseif ($node instanceof Function_ || $node instanceof ClassMethod) {
             foreach ($node->params as $param) {
-                $ctx = ($node instanceof Stmt\ClassMethod && $node->name->toString() === '__construct') ? 'constructor-param' : 'param-type';
+                $ctx = ($node instanceof ClassMethod && $node->name->toString() === '__construct') ? 'constructor-param' : 'param-type';
                 $this->processType($param->type, $ctx, $param->getStartLine());
-                if ($param->default instanceof Expr\ClassConstFetch && $param->default->class instanceof Node\Name) {
+                if ($param->default instanceof ClassConstFetch && $param->default->class instanceof Name) {
                     $this->add($this->resolve($param->default->class), 'class-const-fetch', $param->default->getStartLine());
                 }
-                if ($param->default instanceof Expr\New_ && $param->default->class instanceof Node\Name) {
+
+                if ($param->default instanceof New_ && $param->default->class instanceof Name) {
                     $this->add($this->resolve($param->default->class), 'new', $param->default->getStartLine());
                 }
             }
+
             $this->processType($node->returnType, 'return-type', $node->getStartLine());
             foreach ($node->attrGroups as $ag) {
                 foreach ($ag->attrs as $attr) {
                     $this->add($this->resolve($attr->name), 'attribute', $attr->getStartLine());
                 }
             }
-        } elseif ($node instanceof Stmt\Property) {
+        } elseif ($node instanceof Property) {
             foreach ($node->props as $prop) {
                 $this->processType($node->type, 'property-type', $prop->getStartLine());
             }
+
             foreach ($node->attrGroups as $ag) {
                 foreach ($ag->attrs as $attr) {
                     $this->add($this->resolve($attr->name), 'attribute', $attr->getStartLine());
                 }
             }
-        } elseif ($node instanceof Stmt\Catch_) {
+        } elseif ($node instanceof Catch_) {
             foreach ($node->types as $t) {
                 $this->add($this->resolve($t), 'catch', $node->getStartLine());
             }
-        } elseif ($node instanceof Expr\Instanceof_) {
-            if ($node->class instanceof Node\Name) {
+        } elseif ($node instanceof Instanceof_) {
+            if ($node->class instanceof Name) {
                 $this->add($this->resolve($node->class), 'instanceof', $node->getStartLine());
             }
-        } elseif ($node instanceof Expr\New_) {
-            if ($node->class instanceof Node\Name) {
+        } elseif ($node instanceof New_) {
+            if ($node->class instanceof Name) {
                 $this->add($this->resolve($node->class), 'new', $node->getStartLine());
             }
-        } elseif ($node instanceof Expr\StaticCall) {
-            if ($node->class instanceof Node\Name) {
+        } elseif ($node instanceof StaticCall) {
+            if ($node->class instanceof Name) {
                 $this->add($this->resolve($node->class), 'static-call', $node->getStartLine());
             }
-        } elseif ($node instanceof Expr\ClassConstFetch) {
-            if ($node->class instanceof Node\Name) {
+        } elseif ($node instanceof ClassConstFetch) {
+            if ($node->class instanceof Name) {
                 $this->add($this->resolve($node->class), 'class-const-fetch', $node->getStartLine());
             }
-        } elseif ($node instanceof Stmt\Expression && $node->expr instanceof Expr\FuncCall && $node->expr->name instanceof Node\Name && $node->expr->name->toLowerString() === 'class_alias') {
+        } elseif ($node instanceof Expression && $node->expr instanceof FuncCall && $node->expr->name instanceof Name && $node->expr->name->toLowerString() === 'class_alias') {
             $args = $node->expr->getArgs();
-            if (count($args) >= 2 && $args[0]->value instanceof Node\Scalar\String_) {
+            if (count($args) >= 2 && $args[0]->value instanceof String_) {
                 $this->add($args[0]->value->value, 'class_alias target', $node->getStartLine());
             }
         }
@@ -267,32 +301,34 @@ class RefVisitor extends NodeVisitorAbstract
         addRef($fqn, $this->file, $ctx, $line, $this->references, $this->defined);
     }
 
-    private function resolve(Node\Name $name): string
+    private function resolve(Name $name) : string
     {
         return resolveName($name, $this->ns, $this->uses);
     }
 
-    private function processType(?Node $type, string $ctx, int $line): void
+    private function processType(?Node $node, string $ctx, int $line) : void
     {
-        processType($type, $this->ns, $this->uses, $this->file, $ctx, $line, $this->references, $this->defined);
+        processType($node, $this->ns, $this->uses, $this->file, $ctx, $line, $this->references, $this->defined);
     }
 }
 
-echo "PASS 2: Parsing $total files for references...\n";
+echo "PASS 2: Parsing {$total} files for references...\n";
 
 foreach ($phpFiles as $idx => $path) {
     if (($idx + 1) % 500 === 0) {
-        echo '  ' . ($idx + 1) . " / $total\n";
+        echo '  ' . ($idx + 1) . sprintf(' / %d%s', $total, PHP_EOL);
     }
 
     try {
         $stmts = $parser->parse(file_get_contents($path));
-    } catch (Exception $e) {
+    } catch (Exception) {
         continue;
     }
+
     if (! $stmts) {
         continue;
     }
+
     $traverser = new NodeTraverser();
     $traverser->addVisitor(new RefVisitor($path, $defined, $references));
     $traverser->traverse($stmts);
@@ -303,7 +339,8 @@ $compatPath = $baseDir . '/components/compat.php';
 if (file_exists($compatPath)) {
     $src = file_get_contents($compatPath);
     if (preg_match_all('/[\'"]([^\'"]+)[\'"]\s*=>\s*[\'"]([^\'"]+)[\'"]/', $src, $m)) {
-        for ($k = 0; $k < count($m[1]); $k++) {
+        $counter = count($m[1]);
+        for ($k = 0; $k < $counter; $k++) {
             $target = trim($m[2][$k], '\\');
             if (! isset($defined[$target])) {
                 addRef($target, $compatPath, 'class_alias target', 0, $references, $defined);
@@ -316,36 +353,34 @@ if (file_exists($compatPath)) {
 foreach ($references as $fqn => $refs) {
     $seen = [];
     $uniq = [];
-    foreach ($refs as $r) {
-        $k = $r['file'] . '|' . $r['context'] . '|' . $r['line'];
+    foreach ($refs as $ref) {
+        $k          = $ref['file'] . '|' . $ref['context'] . '|' . $ref['line'];
         if (! isset($seen[$k])) {
             $seen[$k] = true;
-            $uniq[]   = $r;
+            $uniq[] = $ref;
         }
     }
+
     $references[$fqn] = $uniq;
 }
+
 ksort($references);
 
 echo "\n=== BROKEN REFERENCES AUDIT REPORT ===\n\n";
 $severityCounts = ['CRITICAL' => 0, 'MINOR' => 0];
 foreach ($references as $fqn => $refs) {
-    $isCritical = false;
-    foreach ($refs as $r) {
-        if (in_array($r['context'], ['extends', 'implements', 'class_alias target', 'catch', 'constructor-param', 'new'])) {
-            $isCritical = true;
+    $isCritical = array_any($refs, fn ($r) : bool => in_array($r['context'], ['extends', 'implements', 'class_alias target', 'catch', 'constructor-param', 'new']));
 
-            break;
-        }
-    }
     $severity = $isCritical ? 'CRITICAL' : 'MINOR';
     $severityCounts[$severity]++;
-    echo "MISSING: $fqn  [$severity]\n";
-    foreach ($refs as $r) {
-        echo "  - {$r['file']}:{$r['line']}  ({$r['context']})\n";
+    echo "MISSING: {$fqn}  [{$severity}]\n";
+    foreach ($refs as $ref) {
+        echo "  - {$ref['file']}:{$ref['line']}  ({$ref['context']})\n";
     }
+
     echo "\n";
 }
+
 echo "=== SUMMARY ===\n";
 echo 'Defined: ' . count($defined) . "\n";
 echo 'Missing: ' . count($references) . "\n";

@@ -15,9 +15,9 @@ final readonly class Concurrency
      */
     public static function race(array $tasks): mixed
     {
-        $runner = new TaskRunner();
+        $taskRunner = new TaskRunner();
 
-        return $runner->race($tasks);
+        return $taskRunner->race($tasks);
     }
 
     /**
@@ -27,7 +27,7 @@ final readonly class Concurrency
      *
      * @return list<mixed>
      */
-    public static function run(array $tasks, int $maxConcurrent = 3): array
+    public static function run(array $tasks) : array
     {
         return self::all($tasks);
     }
@@ -41,8 +41,8 @@ final readonly class Concurrency
      */
     public static function all(array $tasks) : array
     {
-        $runner = new TaskRunner();
+        $taskRunner = new TaskRunner();
 
-        return $runner->runAll($tasks);
+        return $taskRunner->runAll($tasks);
     }
 }

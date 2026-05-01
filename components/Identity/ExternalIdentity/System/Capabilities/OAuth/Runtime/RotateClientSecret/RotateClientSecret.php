@@ -13,13 +13,13 @@ use RuntimeException;
 
 final readonly class RotateClientSecret
 {
-    public function __construct(private OAuthClientRegistryInterface $clientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     public function execute(string $clientId): RegisteredOAuthClient
     {
-        $registered = $this->clientRegistry->rotateSecret(clientId: $clientId);
+        $registered = $this->oAuthClientRegistry->rotateSecret(clientId: $clientId);
 
-        if ($registered === null) {
+        if (! $registered instanceof RegisteredOAuthClient) {
             throw new RuntimeException(message: 'OAuth client was not found.');
         }
 

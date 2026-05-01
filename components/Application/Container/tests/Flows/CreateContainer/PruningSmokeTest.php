@@ -10,11 +10,8 @@ final class PrunedDependency {}
 
 final class PrunedFlowEntry
 {
-    public PrunedDependency $dependency;
-
-    public function __construct(PrunedDependency $dependency)
+    public function __construct(public PrunedDependency $dependency)
     {
-        $this->dependency = $dependency;
     }
 }
 
@@ -68,7 +65,7 @@ assertTrue(
 assertSame(expected: false, actual: $container->has(id: DeadPrunableService::class), message: 'Pruned private flow services should still stay outside the top-level surface.');
 assertSame(expected: true, actual: $deadSlice->has(id: DeadPrunableService::class), message: 'Pruning must not mutate canonical authored slice visibility.');
 array_column(array: $deadSliceView['visible'] ?? [], column_key: 'serviceId')
-    |> (static fn ($x) => in_array(needle: DeadPrunableService::class, haystack: $x, strict: true))
-    |> (static fn ($x) => assertTrue(condition: $x, message: 'Slice views should still expose authored services even when pruning omits them from the artifact.'));
+    |> (static fn ($x) : bool => in_array(needle: DeadPrunableService::class, haystack: $x, strict: true))
+    |> (static fn (bool $x) => assertTrue(condition: $x, message: 'Slice views should still expose authored services even when pruning omits them from the artifact.'));
 
 echo basename(path: __FILE__) . " ok\n";

@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\ComponentManifest\ComponentManifest;
 final readonly class ListComponents
 {
     public function __construct(
-        private ComponentDiscovery $discovery = new ComponentDiscovery(),
+        private ComponentDiscovery $componentDiscovery = new ComponentDiscovery(),
     ) {}
 
     /**
@@ -18,7 +18,7 @@ final readonly class ListComponents
      */
     public static function printTable(array $manifests) : void
     {
-        if (empty($manifests)) {
+        if ($manifests === []) {
             echo "No components registered.\n";
 
             return;
@@ -56,7 +56,7 @@ final readonly class ListComponents
      */
     public function search(array $searchPaths) : self
     {
-        $this->discovery->discover($searchPaths);
+        $this->componentDiscovery->discover($searchPaths);
 
         return $this;
     }
@@ -66,6 +66,6 @@ final readonly class ListComponents
      */
     public function list() : array
     {
-        return $this->discovery->all();
+        return $this->componentDiscovery->all();
     }
 }

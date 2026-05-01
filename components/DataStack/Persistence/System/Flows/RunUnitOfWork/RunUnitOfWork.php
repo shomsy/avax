@@ -23,10 +23,10 @@ final readonly class RunUnitOfWork
             $this->unitOfWork->flush();
 
             return $result;
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             $this->unitOfWork->clear();
 
-            throw $e;
+            throw $throwable;
         }
     }
 }

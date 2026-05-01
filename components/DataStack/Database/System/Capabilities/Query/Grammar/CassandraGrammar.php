@@ -14,25 +14,25 @@ use RuntimeException;
 final class CassandraGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileSelect(QueryState $state): string
+    public function compileSelect(QueryState $queryState) : string
     {
-        parent::compileSelect(state: $state);
+        parent::compileSelect(state: $queryState);
 
-        $columns = implode(separator: ', ', array: ($state->columns ?: ['*']));
-        $table = $this->wrap(value: $state->from);
+        $columns = implode(separator: ', ', array: ($queryState->columns ?: ['*']));
+        $table   = $this->wrap(value: $queryState->from);
 
-        $sql = "SELECT {$columns} FROM {$table}";
+        $sql = sprintf('SELECT %s FROM %s', $columns, $table);
 
-        if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
+        if ($queryState->wheres !== []) {
+            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $queryState);
         }
 
-        if (! empty($state->orders)) {
-            $sql .= ' ORDER BY ' . $this->compileCassandraOrder(state: $state);
+        if ($queryState->orders !== []) {
+            $sql .= ' ORDER BY ' . $this->compileCassandraOrder(state: $queryState);
         }
 
-        if ($state->limit) {
-            $sql .= ' LIMIT ' . $state->limit;
+        if ($queryState->limit) {
+            $sql .= ' LIMIT ' . $queryState->limit;
         }
 
         return $sql;
@@ -46,118 +46,118 @@ final class CassandraGrammar extends BaseGrammar
         return (string) $value;
     }
 
-    private function compileCassandraWhere(QueryState $state): string
+    private function compileCassandraWhere(QueryState $queryState) : string
     {
         $conditions = [];
-        foreach ($state->wheres as $where) {
+        foreach ($queryState->wheres as $where) {
             $col = $where->column;
             $op = $where->operator;
-            $val = is_string(value: $where->value) ? "'{$where->value}'" : $where->value;
+            $val = is_string(value: $where->value) ? sprintf("'%s'", $where->value) : $where->value;
 
-            $conditions[] = "{$col} {$op} {$val}";
+            $conditions[] = sprintf('%s %s %s', $col, $op, $val);
         }
 
         return implode(separator: ' AND ', array: $conditions);
     }
 
-    private function compileCassandraOrder(QueryState $state): string
+    private function compileCassandraOrder(QueryState $queryState) : string
     {
         $orders = [];
-        foreach ($state->orders as $order) {
-            $orders[] = "{$order->column} {$order->direction}";
+        foreach ($queryState->orders as $order) {
+            $orders[] = sprintf('%s %s', $order->column, $order->direction);
         }
 
         return implode(separator: ', ', array: $orders);
     }
 
     #[Override]
-    public function compileUpdate(QueryState $state): string
+    public function compileUpdate(QueryState $queryState) : string
     {
-        parent::compileUpdate(state: $state);
+        parent::compileUpdate(state: $queryState);
 
-        $table = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $queryState->from);
 
         $sets = [];
-        foreach ($state->values as $col => $val) {
-            $sets[] = "{$col} = {$val}";
+        foreach ($queryState->values as $col => $val) {
+            $sets[] = sprintf('%s = %s', $col, $val);
         }
 
-        $sql = "UPDATE {$table} SET " . implode(separator: ', ', array: $sets);
+        $sql = sprintf('UPDATE %s SET ', $table) . implode(separator: ', ', array: $sets);
 
-        if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
+        if ($queryState->wheres !== []) {
+            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $queryState);
         }
 
         return $sql;
     }
 
     #[Override]
-    public function compileDelete(QueryState $state): string
+    public function compileDelete(QueryState $queryState) : string
     {
-        parent::compileDelete(state: $state);
+        parent::compileDelete(state: $queryState);
 
-        $table = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $queryState->from);
 
-        $sql = "DELETE FROM {$table}";
+        $sql = 'DELETE FROM ' . $table;
 
-        if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
+        if ($queryState->wheres !== []) {
+            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $queryState);
         }
 
         return $sql;
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
         try {
-            parent::compileUpsert(state: $state, uniqueBy: $uniqueBy, update: $update);
+            parent::compileUpsert(uniqueBy: $uniqueBy, update: $update, state: $queryState);
         } catch (RuntimeException) {
         }
 
-        return $this->compileInsert(state: $state);
+        return $this->compileInsert(state: $queryState);
     }
 
     #[Override]
-    public function compileInsert(QueryState $state): string
+    public function compileInsert(QueryState $queryState) : string
     {
-        parent::compileInsert(state: $state);
+        parent::compileInsert(state: $queryState);
 
-        $table  = $this->wrap(value: $state->from);
-        $columns = implode(separator: ', ', array: array_keys(array: $state->values));
+        $table   = $this->wrap(value: $queryState->from);
+        $columns = implode(separator: ', ', array: array_keys(array: $queryState->values));
         $values = implode(separator: ', ', array: array_map(
-            callback: static fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
-            array   : $state->values,
+            callback: static fn ($v) => is_string(value: $v) ? sprintf("'%s'", $v) : $v,
+            array   : $queryState->values,
         ));
 
-        return "INSERT INTO {$table} ({$columns}) VALUES ({$values})";
+        return sprintf('INSERT INTO %s (%s) VALUES (%s)', $table, $columns, $values);
     }
 
     public function compileBatch(array $statements): string
     {
         $stmts = implode(separator: '; ', array: $statements);
 
-        return "BEGIN BATCH {$stmts} APPLY BATCH";
+        return sprintf('BEGIN BATCH %s APPLY BATCH', $stmts);
     }
 
     public function compileCounterIncrement(string $column, int $amount): string
     {
-        return "{$column} = {$column} + {$amount}";
+        return sprintf('%s = %s + %d', $column, $column, $amount);
     }
 
     public function compileTTL(int $seconds): string
     {
-        return "USING TTL {$seconds}";
+        return 'USING TTL ' . $seconds;
     }
 
     public function compileTimestamp(int $timestamp): string
     {
-        return "USING TIMESTAMP {$timestamp}";
+        return 'USING TIMESTAMP ' . $timestamp;
     }
 
     #[Override]
     public function compileTruncate(string $table): string
     {
-        return "TRUNCATE {$this->wrap(value: $table)}";
+        return 'TRUNCATE ' . $this->wrap(value: $table);
     }
 }

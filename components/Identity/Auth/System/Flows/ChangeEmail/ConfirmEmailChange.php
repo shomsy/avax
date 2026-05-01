@@ -8,7 +8,9 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStateStoreInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
@@ -19,11 +21,11 @@ use SensitiveParameter;
 final readonly class ConfirmEmailChange
 {
     public function __construct(
-        private ProvisionableUserSourceInterface $userSource,
+        private ProvisionableUserSourceInterface     $provisionableUserSource,
         #[SensitiveParameter]
         private EmailChangeStoreInterface $emailChangeStore,
         #[SensitiveParameter]
-        private EmailVerificationStateStoreInterface $emailVerificationState,
+        private EmailVerificationStateStoreInterface $emailVerificationStateStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
         #[SensitiveParameter]
@@ -39,41 +41,41 @@ final readonly class ConfirmEmailChange
     /**
      * @throws EmailChangeFailed
      */
-    public function execute(ConfirmEmailChangeData $data): bool
+    public function execute(ConfirmEmailChangeData $confirmEmailChangeData) : bool
     {
-        $context = $this->currentAuthentication->read();
-        $record = $this->emailChangeStore->consume(token: $data->token, now: $this->clock->now());
+        $authenticationContext = $this->currentAuthentication->read();
+        $record                = $this->emailChangeStore->consume(token: $confirmEmailChangeData->token, now: $this->clock->now());
 
-        if ($record === null) {
+        if (! $record instanceof EmailChangeRecord) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.email_change.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
                                 'reason' => 'invalid_token',
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
+                                'ip_address' => $confirmEmailChangeData->ipAddress,
+                                'user_agent' => $confirmEmailChangeData->userAgent,
                 ],
             ));
 
             throw EmailChangeFailed::invalidToken();
         }
 
-        $existingUser = $this->userSource->findByEmail(email: $record->newEmail);
+        $existingUser = $this->provisionableUserSource->findByEmail(email: $record->newEmail);
 
-        if ($existingUser !== null && ! $existingUser->getId()->equals(other: $record->userId)) {
+        if ($existingUser instanceof User && ! $existingUser->getId()->equals(other: $record->userId)) {
             throw EmailChangeFailed::emailInUse();
         }
 
-        $this->userSource->updateEmail(id: $record->userId, email: $record->newEmail);
-        $this->emailVerificationState->markVerified(userId: $record->userId);
+        $this->provisionableUserSource->updateEmail(email: $record->newEmail, id: $record->userId);
+        $this->emailVerificationStateStore->markVerified(userId: $record->userId);
         $this->sessionRegistry?->revokeForUser(userId: $record->userId, revokedAt: $this->clock->now(), reason: 'email_change');
         $this->mfaChallengeStore?->forgetForUser(userId: $record->userId);
         $this->refreshTokenStore?->revokeUser(userId: $record->userId);
 
-        $currentUser = $context->user();
+        $currentUser = $authenticationContext->user();
 
-        if ($currentUser !== null && $currentUser->id === $record->userId->value) {
-            $this->identity->clear(context: $context);
+        if ($currentUser instanceof AuthenticatedUser && $currentUser->id === $record->userId->value) {
+            $this->identity->clear(context: $authenticationContext);
             $this->currentAuthentication->clear();
         }
 
@@ -83,8 +85,8 @@ final readonly class ConfirmEmailChange
             context   : [
                             'user_id'   => $record->userId->value,
                             'new_email' => $record->newEmail,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $confirmEmailChangeData->ipAddress,
+                            'user_agent' => $confirmEmailChangeData->userAgent,
             ],
         ));
 

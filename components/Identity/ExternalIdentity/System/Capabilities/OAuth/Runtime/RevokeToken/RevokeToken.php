@@ -8,15 +8,19 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClient;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\OAuthTokenExchangeFailed;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\RefreshTokenRecord;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\ResolvedToken;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\ResolvedWorkloadToken;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use SensitiveParameter;
 
 final readonly class RevokeToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
+        private OAuthClientRegistryInterface $oAuthClientRegistry,
         #[SensitiveParameter]
         private RefreshTokenStoreInterface $refreshTokenStore,
         #[SensitiveParameter]
@@ -28,36 +32,36 @@ final readonly class RevokeToken
     /**
      * @throws OAuthTokenExchangeFailed
      */
-    public function execute(RevokeTokenData $data): void
+    public function execute(RevokeTokenData $revokeTokenData) : void
     {
-        $client = $this->clientRegistry->find(clientId: $data->clientId);
+        $client = $this->oAuthClientRegistry->find(clientId: $revokeTokenData->clientId);
 
-        if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
+        if (! $client instanceof OAuthClient || ! $this->oAuthClientRegistry->verifySecret(clientId: $revokeTokenData->clientId, plainTextSecret: $revokeTokenData->clientSecret)) {
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
         $revoked = false;
 
-        if ($data->tokenTypeHint !== 'access_token') {
-            $refreshRecord = $this->refreshTokenStore->find(plainToken: $data->token);
+        if ($revokeTokenData->tokenTypeHint !== 'access_token') {
+            $refreshRecord = $this->refreshTokenStore->find(plainToken: $revokeTokenData->token);
 
-            if ($refreshRecord !== null && $refreshRecord->clientId === $data->clientId) {
+            if ($refreshRecord instanceof RefreshTokenRecord && $refreshRecord->clientId === $revokeTokenData->clientId) {
                 $this->refreshTokenStore->revokeFamily(familyId: $refreshRecord->familyId);
                 $revoked = true;
             }
         }
 
-        if ($data->tokenTypeHint !== 'refresh_token') {
-            $access = $this->jwtIdentity->resolve(token: $data->token);
+        if ($revokeTokenData->tokenTypeHint !== 'refresh_token') {
+            $access = $this->jwtIdentity->resolve(token: $revokeTokenData->token);
 
-            if ($access !== null && $access->clientId === $data->clientId) {
+            if ($access instanceof ResolvedToken && $access->clientId === $revokeTokenData->clientId) {
                 $this->jwtIdentity->revoke(tokenId: $access->tokenId, expiresAt: $access->expiresAt);
                 $revoked = true;
             }
 
-            $workload = $this->jwtIdentity->resolveWorkloadToken(token: $data->token);
+            $workload = $this->jwtIdentity->resolveWorkloadToken(token: $revokeTokenData->token);
 
-            if ($workload !== null && $workload->clientId === $data->clientId) {
+            if ($workload instanceof ResolvedWorkloadToken && $workload->clientId === $revokeTokenData->clientId) {
                 $this->jwtIdentity->revoke(tokenId: $workload->tokenId, expiresAt: $workload->expiresAt);
                 $revoked = true;
             }
@@ -67,11 +71,11 @@ final readonly class RevokeToken
             name      : 'auth.oauth.token.revoked',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'  => $data->clientId,
-                'token_type_hint' => $data->tokenTypeHint,
+                            'client_id'       => $revokeTokenData->clientId,
+                            'token_type_hint' => $revokeTokenData->tokenTypeHint,
                             'revoked'    => $revoked ? 1 : 0,
-                            'ip_address' => $data->ipAddress,
-                            'user_agent' => $data->userAgent,
+                            'ip_address'      => $revokeTokenData->ipAddress,
+                            'user_agent'      => $revokeTokenData->userAgent,
             ],
         ));
     }

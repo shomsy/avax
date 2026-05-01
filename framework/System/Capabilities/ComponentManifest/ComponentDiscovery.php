@@ -11,14 +11,14 @@ final class ComponentDiscovery
      */
     private array $components = [];
 
-    public function discover(string $path): self
+    public function discover() : self
     {
         return $this;
     }
 
-    public function register(ComponentManifest $manifest): void
+    public function register(ComponentManifest $componentManifest) : void
     {
-        $this->components[$manifest->name] = $manifest;
+        $this->components[$componentManifest->name] = $componentManifest;
     }
 
     public function get(string $name): ?ComponentManifest

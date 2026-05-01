@@ -25,11 +25,8 @@ final class SliceInternalAudit {}
 
 final class SliceBillingEntry
 {
-    public SlicePaymentGateway $gateway;
-
-    public function __construct(SlicePaymentGateway $gateway)
+    public function __construct(public SlicePaymentGateway $gateway)
     {
-        $this->gateway = $gateway;
     }
 }
 
@@ -112,19 +109,19 @@ assertSame(expected: 'flow.billing', actual: $billingGraph['sliceView']['slice']
 assertSame(expected: 'flow.billing', actual: $globalBillingGraph['sliceView']['slice'] ?? null, message: 'Global graph diagnostics should be able to pivot into one slice view.');
 assertSame(expected: 'flow.billing', actual: $billingSlice['slice'] ?? null, message: 'debugSlice() should expose the active slice manifest.');
 array_column(array: $billingGraph['sliceView']['visible'] ?? [], column_key: 'serviceId')
-    |> (static fn ($x) => in_array(needle: SliceBillingEntry::class, haystack: $x, strict: true))
-    |> (static fn ($x) => assertTrue(condition: $x, message: 'Slice graph diagnostics should list visible services.'));
+    |> (static fn ($x) : bool => in_array(needle: SliceBillingEntry::class, haystack: $x, strict: true))
+    |> (static fn (bool $x) => assertTrue(condition: $x, message: 'Slice graph diagnostics should list visible services.'));
 array_column(array: $billingSlice['visible'] ?? [], column_key: 'serviceId')
-    |> (static fn ($x) => in_array(needle: SlicePaymentGateway::class, haystack: $x, strict: true))
-    |> (static fn ($x) => assertTrue(condition: $x, message: 'Slice diagnostics should expose imported shared exports.'));
+    |> (static fn ($x) : bool => in_array(needle: SlicePaymentGateway::class, haystack: $x, strict: true))
+    |> (static fn (bool $x) => assertTrue(condition: $x, message: 'Slice diagnostics should expose imported shared exports.'));
 array_column(array: $billingGraph['hiddenServices'] ?? [], column_key: 'serviceId')
-    |> (static fn ($x) => in_array(needle: SliceInternalAudit::class, haystack: $x, strict: true))
-    |> (static fn ($x) => assertTrue(condition: $x, message: 'Slice graph diagnostics should list hidden services with reasons.'));
+    |> (static fn ($x) : bool => in_array(needle: SliceInternalAudit::class, haystack: $x, strict: true))
+    |> (static fn (bool $x) => assertTrue(condition: $x, message: 'Slice graph diagnostics should list hidden services with reasons.'));
 assertSame(expected: ['capability.payments'], actual: array_column(array: $billingImports['imports'] ?? [], column_key: 'slice'), message: 'debugImports() should expose imported slice manifests.');
 assertSame(expected: [SlicePaymentGateway::class], actual: array_column(array: $paymentsExports['exports'] ?? [], column_key: 'serviceId'), message: 'debugExports() should expose explicitly exported units.');
 array_column(array: $violations['violations'] ?? [], column_key: 'dependencyId')
-    |> (static fn ($x) => in_array(needle: SliceInternalAudit::class, haystack: $x, strict: true))
-    |> (static fn ($x) => assertTrue(condition: $x, message: 'debugVisibilityViolations() should report blocked slice access attempts.'));
+    |> (static fn ($x) : bool => in_array(needle: SliceInternalAudit::class, haystack: $x, strict: true))
+    |> (static fn (bool $x) => assertTrue(condition: $x, message: 'debugVisibilityViolations() should report blocked slice access attempts.'));
 assertSame(expected: 'flow.billing', actual: $billingGovernance['sliceView']['slice'] ?? null, message: 'Slice governance diagnostics should expose the active slice view.');
 assertSame(expected: 'flow.billing', actual: $billingArchitecture['sliceView']['slice'] ?? null, message: 'Slice architecture diagnostics should expose the active slice view.');
 assertSame(expected: false, actual: $billingServiceGraph['viewAccess']['allowed'] ?? true, message: 'Per-service slice graph diagnostics should explain blocked access.');

@@ -11,18 +11,15 @@ use Avax\Components\Operations\Mail\System\PublicSurface\SendResult;
 
 final class SendMail
 {
-    private MailTransport $transport;
-
     private array $queue = [];
 
-    public function __construct(MailTransport $transport)
+    public function __construct(private readonly MailTransport $mailTransport)
     {
-        $this->transport = $transport;
     }
 
-    public function queue(MimeMessage $message, Envelope $envelope): void
+    public function queue(MimeMessage $mimeMessage, Envelope $envelope) : void
     {
-        $this->queue[] = ['message' => $message, 'envelope' => $envelope];
+        $this->queue[] = ['message' => $mimeMessage, 'envelope' => $envelope];
     }
 
     public function flush(): array
@@ -38,15 +35,15 @@ final class SendMail
         return $results;
     }
 
-    public function send(MimeMessage $message, Envelope $envelope): SendResult
+    public function send(MimeMessage $mimeMessage, Envelope $envelope) : SendResult
     {
-        $result = $this->transport->send($message, $envelope);
+        $transportResult = $this->mailTransport->send($mimeMessage, $envelope);
 
-        if ($result->success) {
-            return SendResult::success($result->messageId ?? '');
+        if ($transportResult->success) {
+            return SendResult::success($transportResult->messageId ?? '');
         }
 
-        return SendResult::failure($result->error ?? 'Unknown error');
+        return SendResult::failure($transportResult->error ?? 'Unknown error');
     }
 
     public function queuedCount(): int

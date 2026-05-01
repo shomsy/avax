@@ -86,25 +86,23 @@ final readonly class RetryPolicy
     /**
      * Determines if the given exception should trigger a retry.
      *
-     * @param Throwable $exception The exception to check
+     * @param Throwable $throwable The exception to check
      * @param int       $attempt   The current attempt number (1-based, before retry)
      */
-    public function shouldRetry(Throwable $exception, int $attempt): bool
+    public function shouldRetry(Throwable $throwable, int $attempt) : bool
     {
         if ($attempt >= $this->maxAttempts) {
             return false;
         }
 
-        if (! empty($this->retryOn)) {
-            foreach ($this->retryOn as $exceptionClass) {
-                if ($exception instanceof $exceptionClass) {
-                    return true;
-                }
+        foreach ($this->retryOn as $exceptionClass) {
+            if ($throwable instanceof $exceptionClass) {
+                return true;
             }
         }
 
-        if (! empty($this->errorCodes) && $exception instanceof PDOException) {
-            $code = (string) $exception->getCode();
+        if ($this->errorCodes !== [] && $throwable instanceof PDOException) {
+            $code = (string) $throwable->getCode();
             foreach ($this->errorCodes as $errorCode) {
                 if ($code === $errorCode) {
                     return true;
@@ -112,7 +110,7 @@ final readonly class RetryPolicy
             }
         }
 
-        $message = strtolower($exception->getMessage());
+        $message = strtolower($throwable->getMessage());
 
         if (str_contains($message, 'deadlock')) {
             return true;
@@ -138,11 +136,7 @@ final readonly class RetryPolicy
             return true;
         }
 
-        if (str_contains($message, 'try restarting transaction')) {
-            return true;
-        }
-
-        return false;
+        return str_contains($message, 'try restarting transaction');
     }
 
     /**
@@ -156,7 +150,7 @@ final readonly class RetryPolicy
      */
     public function getDelayMs(int $attempt): int
     {
-        $delay = (int) ($this->baseDelayMs * pow($this->multiplier, $attempt));
+        $delay = (int) ($this->baseDelayMs * $this->multiplier ** $attempt);
 
         return min($delay, $this->maxDelayMs);
     }
@@ -166,7 +160,7 @@ final readonly class RetryPolicy
      */
     public function hasRetryCriteria(): bool
     {
-        return ! empty($this->retryOn) || ! empty($this->errorCodes);
+        return $this->retryOn !== [] || $this->errorCodes !== [];
     }
 
     /**

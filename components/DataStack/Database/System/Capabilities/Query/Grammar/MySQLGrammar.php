@@ -46,14 +46,14 @@ final class MySQLGrammar extends BaseGrammar
      * insert this row. But if you find someone with the same ID already
      * there, just update these specific columns instead."
      *
-     * @param QueryState $state    The instructions of what to insert.
+     * @param QueryState $queryState The instructions of what to insert.
      * @param array      $uniqueBy Ignored in MySQL (MySQL figures this out from your DB keys).
      * @param array      $update   The list of columns to change if a conflict happens.
      */
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $sql = $this->compileInsert(state: $state);
+        $sql = $this->compileInsert(state: $queryState);
         $sql .= ' ON DUPLICATE KEY UPDATE ';
 
         $updates = [];
@@ -96,7 +96,7 @@ final class MySQLGrammar extends BaseGrammar
             return implode(
                 separator: '.',
                 array    : array_map(
-                    callback: fn ($segment) => $this->wrapSegment(segment: $segment),
+                               callback: fn (string $segment) : string => $this->wrapSegment(segment: $segment),
                     array   : $segments,
                 ),
             );

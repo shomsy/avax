@@ -33,20 +33,20 @@ final readonly class Saga
 
     public static function inMemory(): self
     {
-        $store       = new StoreSagaState();
-        $idempotency = new ProtectSagaIdempotency();
-        $inspect     = new InspectSaga();
+        $storeSagaState         = new StoreSagaState();
+        $protectSagaIdempotency = new ProtectSagaIdempotency();
+        $inspectSaga            = new InspectSaga();
 
         return new self(
             defineSaga            : new DefineSaga(),
-            startSaga             : new StartSaga(storeSagaState: $store, protectSagaIdempotency: $idempotency, inspectSaga: $inspect),
-            runSagaStep           : new RunSagaStep(storeSagaState: $store, inspectSaga: $inspect),
-            completeSaga          : new CompleteSaga(storeSagaState: $store, inspectSaga: $inspect),
-            compensateSaga        : new CompensateSaga(storeSagaState: $store, inspectSaga: $inspect),
-            resumeSaga            : new ResumeSaga(storeSagaState: $store),
-            protectSagaIdempotency: $idempotency,
-            storeSagaState        : $store,
-            inspectSaga           : $inspect,
+            startSaga             : new StartSaga(storeSagaState: $storeSagaState, protectSagaIdempotency: $protectSagaIdempotency, inspectSaga: $inspectSaga),
+            runSagaStep           : new RunSagaStep(storeSagaState: $storeSagaState, inspectSaga: $inspectSaga),
+            completeSaga          : new CompleteSaga(storeSagaState: $storeSagaState, inspectSaga: $inspectSaga),
+            compensateSaga        : new CompensateSaga(storeSagaState: $storeSagaState, inspectSaga: $inspectSaga),
+            resumeSaga            : new ResumeSaga(storeSagaState: $storeSagaState),
+            protectSagaIdempotency: $protectSagaIdempotency,
+            storeSagaState        : $storeSagaState,
+            inspectSaga           : $inspectSaga,
         );
     }
 

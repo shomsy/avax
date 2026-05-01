@@ -48,7 +48,7 @@ final class CheckComponentSuiteStructure
         $this->checkEachSuiteHasSystemRoot();
 
         return [
-            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'status' => $this->errors === [] ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
         ];
     }
@@ -65,7 +65,15 @@ final class CheckComponentSuiteStructure
 
         $items = scandir($componentsPath);
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..' || $item === '.idea') {
+            if ($item === '.') {
+                continue;
+            }
+
+            if ($item === '..') {
+                continue;
+            }
+
+            if ($item === '.idea') {
                 continue;
             }
 
@@ -75,16 +83,28 @@ final class CheckComponentSuiteStructure
             }
 
             // Allow known bridges and helper folders
-            if (in_array($item, $this->allowedSuites, true) || in_array($item, $this->allowedBridges, true) || in_array($item, $this->helperFolders, true) || in_array($item, $this->allowedExperimental, true)) {
+            if (in_array($item, $this->allowedSuites, true)) {
                 continue;
             }
 
-            $this->errors[] = "Forbidden item at components/{$item}";
+            if (in_array($item, $this->allowedBridges, true)) {
+                continue;
+            }
+
+            if (in_array($item, $this->helperFolders, true)) {
+                continue;
+            }
+
+            if (in_array($item, $this->allowedExperimental, true)) {
+                continue;
+            }
+
+            $this->errors[] = 'Forbidden item at components/' . $item;
         }
 
-        foreach ($this->allowedSuites as $suite) {
-            if (! is_dir($componentsPath . '/' . $suite)) {
-                $this->errors[] = "Missing required suite: components/{$suite}";
+        foreach ($this->allowedSuites as $allowedSuite) {
+            if (! is_dir($componentsPath . '/' . $allowedSuite)) {
+                $this->errors[] = 'Missing required suite: components/' . $allowedSuite;
             }
         }
     }
@@ -119,7 +139,7 @@ final class CheckComponentSuiteStructure
 
                 $systemPath = $componentPath . '/System';
                 if (! is_dir($systemPath)) {
-                    $this->errors[] = "components/{$suite}/{$component} missing System/ root";
+                    $this->errors[] = sprintf('components/%s/%s missing System/ root', $suite, $component);
                 }
             }
         }

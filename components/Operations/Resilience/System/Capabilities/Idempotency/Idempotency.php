@@ -9,7 +9,7 @@ use Closure;
 
 final class Idempotency
 {
-    private static IdempotencyStore $store;
+    private static IdempotencyStore $idempotencyStore;
 
     public static function check(string $key): bool
     {
@@ -18,11 +18,11 @@ final class Idempotency
 
     private static function store(): IdempotencyStore
     {
-        if (! isset(self::$store)) {
-            self::$store = new InMemoryIdempotencyStore();
+        if (! isset(self::$idempotencyStore)) {
+            self::$idempotencyStore = new InMemoryIdempotencyStore();
         }
 
-        return self::$store;
+        return self::$idempotencyStore;
     }
 
     public static function record(string $key, array $response): void
@@ -54,13 +54,10 @@ final class Idempotency
     }
 }
 
-final class IdempotencyMiddleware
+final readonly class IdempotencyMiddleware
 {
-    private string $headerName;
-
-    public function __construct(string $headerName = 'Idempotency-Key')
+    public function __construct(private string $headerName = 'Idempotency-Key')
     {
-        $this->headerName = $headerName;
     }
 
     public function handle(object $request, Closure $next): mixed

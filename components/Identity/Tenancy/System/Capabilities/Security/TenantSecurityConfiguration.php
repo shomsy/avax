@@ -22,9 +22,9 @@ final readonly class TenantSecurityConfiguration
         public string $tenantSlug,
         public ?string $federationConnectionId = null,
         public ?string $scimDirectoryId = null,
-        array  $verifiedDomains = null,
-        array  $groupRoleMap = null,
-        string $policyProfile = null,
+        ?array  $verifiedDomains = null,
+        ?array  $groupRoleMap = null,
+        ?string $policyProfile = null,
         public int $rolloutVersion = 1,
     ) {
         $verifiedDomains ??= [];

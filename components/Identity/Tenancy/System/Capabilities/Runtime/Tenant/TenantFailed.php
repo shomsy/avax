@@ -10,17 +10,17 @@ final class TenantFailed extends RuntimeException
 {
     public static function tenantNotFound(string $tenantSlug): self
     {
-        return new self(message: "Tenant [{$tenantSlug}] was not found.");
+        return new self(message: sprintf('Tenant [%s] was not found.', $tenantSlug));
     }
 
     public static function tenantSlugTaken(string $tenantSlug): self
     {
-        return new self(message: "Tenant slug [{$tenantSlug}] is already taken.");
+        return new self(message: sprintf('Tenant slug [%s] is already taken.', $tenantSlug));
     }
 
     public static function userNotFound(int $userId): self
     {
-        return new self(message: "Tenant user [{$userId}] was not found.");
+        return new self(message: sprintf('Tenant user [%d] was not found.', $userId));
     }
 
     public static function inviteNotFound(): self

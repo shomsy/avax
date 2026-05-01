@@ -13,19 +13,19 @@ final readonly class RunHttpRoute
 {
     public function __construct(private ControllerDispatcher $controllerDispatcher) {}
 
-    public function run(MatchedHttpRoute $matchedRoute) : ResponseInterface
+    public function run(MatchedHttpRoute $matchedHttpRoute) : ResponseInterface
     {
         return $this->controllerDispatcher->dispatch(
-            action  : $matchedRoute->route()->action,
-            request : $matchedRoute->request(),
+            action : $matchedHttpRoute->route()->action,
+            request: $matchedHttpRoute->request(),
         );
     }
 
-    public function runFallback(Closure|array|string $fallback, ServerRequest $request) : ResponseInterface
+    public function runFallback(Closure|array|string $fallback, ServerRequest $serverRequest) : ResponseInterface
     {
         return $this->controllerDispatcher->dispatch(
             action  : $fallback,
-            request : $request,
+            request : $serverRequest,
         );
     }
 }

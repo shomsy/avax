@@ -80,16 +80,7 @@ final readonly class LazySequence implements IteratorAggregate
         $count = 0;
 
         foreach (($this->factory)() as $item) {
-            $keep = true;
-
-            foreach ($this->filters as $filter) {
-                if (! $filter($item)) {
-                    $keep = false;
-
-                    break;
-                }
-            }
-
+            $keep = array_all($this->filters, fn ($filter) => $filter($item));
             if (! $keep) {
                 continue;
             }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 final class FreezeRecoveredComponentsTaxonomy
 {
-    private string $root;
+    private readonly string $root;
 
-    private bool $apply;
+    private readonly bool $apply;
 
     /** @var list<array{from: string, to: string, reason: string}> */
     private array $moves = [];
@@ -157,7 +157,7 @@ final class FreezeRecoveredComponentsTaxonomy
     {
         foreach (['components', 'framework'] as $required) {
             if (! is_dir($this->path($required))) {
-                throw new RuntimeException("Run from AvaX repo root. Missing {$required}/");
+                throw new RuntimeException(sprintf('Run from AvaX repo root. Missing %s/', $required));
             }
         }
     }
@@ -202,13 +202,13 @@ final class FreezeRecoveredComponentsTaxonomy
     {
         if (is_file($from)) {
             if (is_dir($to)) {
-                $this->conflicts[] = "File would overwrite directory: {$this->relative($from)} -> {$this->relative($to)}";
+                $this->conflicts[] = sprintf('File would overwrite directory: %s -> %s', $this->relative($from), $this->relative($to));
 
                 return;
             }
 
             if (is_file($to) && ! $this->sameFile($from, $to)) {
-                $this->conflicts[] = "Different target file exists: {$this->relative($from)} -> {$this->relative($to)}";
+                $this->conflicts[] = sprintf('Different target file exists: %s -> %s', $this->relative($from), $this->relative($to));
             }
 
             return;
@@ -219,7 +219,7 @@ final class FreezeRecoveredComponentsTaxonomy
         }
 
         if (is_file($to)) {
-            $this->conflicts[] = "Directory would overwrite file: {$this->relative($from)} -> {$this->relative($to)}";
+            $this->conflicts[] = sprintf('Directory would overwrite file: %s -> %s', $this->relative($from), $this->relative($to));
 
             return;
         }
@@ -313,7 +313,7 @@ final class FreezeRecoveredComponentsTaxonomy
         echo '❌ Conflicts found. Nothing was moved.' . PHP_EOL;
 
         foreach ($this->conflicts as $conflict) {
-            echo " - {$conflict}" . PHP_EOL;
+            echo ' - ' . $conflict . PHP_EOL;
         }
 
         echo PHP_EOL;
@@ -395,7 +395,7 @@ final class FreezeRecoveredComponentsTaxonomy
                 return;
             }
 
-            throw new RuntimeException("Refusing to overwrite different file: {$this->relative($to)}");
+            throw new RuntimeException('Refusing to overwrite different file: ' . $this->relative($to));
         }
 
         rename($from, $to);
@@ -455,7 +455,7 @@ final class FreezeRecoveredComponentsTaxonomy
             }
         }
 
-        echo PHP_EOL . "Namespace rewrite candidates: {$changed}" . PHP_EOL;
+        echo PHP_EOL . ('Namespace rewrite candidates: ' . $changed) . PHP_EOL;
     }
 
     private function phpFiles(string $path): Generator
@@ -501,7 +501,7 @@ final class FreezeRecoveredComponentsTaxonomy
 
         if (! str_contains($content, "'Security'")) {
             $updated = preg_replace(
-                "/private array \\$allowedSuites = \\[\n(?:.*'DeveloperTools',\n?)/",
+                "/private array \\{$allowedSuites} = \\[\n(?:.*'DeveloperTools',\n?)/",
                 "$1        'Security',\n",
                 $updated,
             );
@@ -511,9 +511,9 @@ final class FreezeRecoveredComponentsTaxonomy
 
         if (! str_contains($content, "'WorkerManagement'")) {
             $updated = preg_replace(
-                "/private array \\$helperFolders = \\[\n(?:.*'Security',\n?)/",
+                "/private array \\{$helperFolders} = \\[\n(?:.*'Security',\n?)/",
                 '$1        ' . $newHelpers . ",\n",
-                $updated,
+                (string) $updated,
             );
         }
 
@@ -527,8 +527,8 @@ final class FreezeRecoveredComponentsTaxonomy
 }
 
 try {
-    exit((new FreezeRecoveredComponentsTaxonomy($argv))->run());
-} catch (Throwable $exception) {
-    fwrite(STDERR, 'ERROR: ' . $exception->getMessage() . PHP_EOL);
+    exit(new FreezeRecoveredComponentsTaxonomy($argv)->run());
+} catch (Throwable $throwable) {
+    fwrite(STDERR, 'ERROR: ' . $throwable->getMessage() . PHP_EOL);
     exit(1);
 }

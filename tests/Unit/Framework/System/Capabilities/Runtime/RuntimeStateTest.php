@@ -16,72 +16,72 @@ final class RuntimeStateTest extends TestCase
     #[Test]
     public function it_is_not_booted_when_created(): void
     {
-        $state = new RuntimeState(runtimeName: 'test');
+        $runtimeState = new RuntimeState(runtimeName: 'test');
 
-        self::assertFalse($state->isBooted());
-        self::assertSame(0, $state->bootCount());
-        self::assertNull($state->bootedAt());
-        self::assertNull($state->shutdownAt());
-        self::assertSame('test', $state->runtimeName());
+        self::assertFalse($runtimeState->isBooted());
+        self::assertSame(0, $runtimeState->bootCount());
+        self::assertNull($runtimeState->bootedAt());
+        self::assertNull($runtimeState->shutdownAt());
+        self::assertSame('test', $runtimeState->runtimeName());
     }
 
     #[Test]
     public function it_marks_as_booted_and_increments_boot_count(): void
     {
-        $state    = new RuntimeState(runtimeName: 'avax');
+        $runtimeState = new RuntimeState(runtimeName: 'avax');
         $bootedAt = new DateTimeImmutable();
 
-        $state->markBooted(bootedAt: $bootedAt);
+        $runtimeState->markBooted(bootedAt: $bootedAt);
 
-        self::assertTrue($state->isBooted());
-        self::assertSame(1, $state->bootCount());
-        self::assertSame($bootedAt, $state->bootedAt());
-        self::assertNull($state->shutdownAt());
+        self::assertTrue($runtimeState->isBooted());
+        self::assertSame(1, $runtimeState->bootCount());
+        self::assertSame($bootedAt, $runtimeState->bootedAt());
+        self::assertNull($runtimeState->shutdownAt());
     }
 
     #[Test]
     public function it_increments_boot_count_on_each_boot(): void
     {
-        $state    = new RuntimeState(runtimeName: 'avax');
+        $runtimeState = new RuntimeState(runtimeName: 'avax');
         $bootedAt = new DateTimeImmutable();
 
-        $state->markBooted(bootedAt: $bootedAt);
-        $state->markBooted(bootedAt: $bootedAt);
-        $state->markBooted(bootedAt: $bootedAt);
+        $runtimeState->markBooted(bootedAt: $bootedAt);
+        $runtimeState->markBooted(bootedAt: $bootedAt);
+        $runtimeState->markBooted(bootedAt: $bootedAt);
 
-        self::assertSame(3, $state->bootCount());
+        self::assertSame(3, $runtimeState->bootCount());
     }
 
     #[Test]
     public function it_marks_shutdown_and_clears_booted_state(): void
     {
-        $state      = new RuntimeState(runtimeName: 'avax');
+        $runtimeState = new RuntimeState(runtimeName: 'avax');
         $bootedAt = new DateTimeImmutable();
         $shutdownAt = new DateTimeImmutable();
 
-        $state->markBooted(bootedAt: $bootedAt);
-        $state->markShutdown(shutdownAt: $shutdownAt);
+        $runtimeState->markBooted(bootedAt: $bootedAt);
+        $runtimeState->markShutdown(shutdownAt: $shutdownAt);
 
-        self::assertFalse($state->isBooted());
-        self::assertSame($shutdownAt, $state->shutdownAt());
-        self::assertNull($state->bootedAt());
+        self::assertFalse($runtimeState->isBooted());
+        self::assertSame($shutdownAt, $runtimeState->shutdownAt());
+        self::assertNull($runtimeState->bootedAt());
     }
 
     #[Test]
     public function it_resets_booted_at_when_boot_called_after_shutdown(): void
     {
-        $state     = new RuntimeState(runtimeName: 'avax');
+        $runtimeState = new RuntimeState(runtimeName: 'avax');
         $firstBoot = new DateTimeImmutable('2026-01-01 10:00:00');
         $secondBoot = new DateTimeImmutable('2026-01-01 12:00:00');
         $shutdown  = new DateTimeImmutable('2026-01-01 11:00:00');
 
-        $state->markBooted(bootedAt: $firstBoot);
-        $state->markShutdown(shutdownAt: $shutdown);
-        $state->markBooted(bootedAt: $secondBoot);
+        $runtimeState->markBooted(bootedAt: $firstBoot);
+        $runtimeState->markShutdown(shutdownAt: $shutdown);
+        $runtimeState->markBooted(bootedAt: $secondBoot);
 
-        self::assertTrue($state->isBooted());
-        self::assertSame($secondBoot, $state->bootedAt());
-        self::assertNull($state->shutdownAt());
-        self::assertSame(2, $state->bootCount());
+        self::assertTrue($runtimeState->isBooted());
+        self::assertSame($secondBoot, $runtimeState->bootedAt());
+        self::assertNull($runtimeState->shutdownAt());
+        self::assertSame(2, $runtimeState->bootCount());
     }
 }

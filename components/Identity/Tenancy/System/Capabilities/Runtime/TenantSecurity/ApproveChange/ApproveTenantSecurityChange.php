@@ -14,20 +14,20 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class ApproveTenantSecurityChange
 {
-    public function __construct(private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws TenantSecurityFailed
      */
     public function execute(string $changeId, string $approvedBy): TenantSecurityChangeRequest
     {
-        $changeRequest = $this->changeRequestStore->find(changeId: $changeId);
+        $changeRequest = $this->tenantSecurityChangeRequestStore->find(changeId: $changeId);
 
-        if ($changeRequest === null) {
+        if (! $changeRequest instanceof TenantSecurityChangeRequest) {
             throw TenantSecurityFailed::unknownChangeRequest();
         }
 
-        $approved = new TenantSecurityChangeRequest(
+        $tenantSecurityChangeRequest = new TenantSecurityChangeRequest(
             changeId    : $changeRequest->changeId,
             tenantSlug  : $changeRequest->tenantSlug,
             requestedBy : $changeRequest->requestedBy,
@@ -43,17 +43,17 @@ final readonly class ApproveTenantSecurityChange
             rolledBackAt: $changeRequest->rolledBackAt,
         );
 
-        $this->changeRequestStore->save(changeRequest: $approved);
+        $this->tenantSecurityChangeRequestStore->save(changeRequest: $tenantSecurityChangeRequest);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.tenant_security.change.approved',
             occurredAt: $this->clock->now(),
             context   : [
-                            'change_id' => $approved->changeId,
-                            'tenant'    => $approved->tenantSlug,
-                'approved_by' => $approved->approvedBy,
+                            'change_id'   => $tenantSecurityChangeRequest->changeId,
+                            'tenant'      => $tenantSecurityChangeRequest->tenantSlug,
+                            'approved_by' => $tenantSecurityChangeRequest->approvedBy,
             ],
         ));
 
-        return $approved;
+        return $tenantSecurityChangeRequest;
     }
 }

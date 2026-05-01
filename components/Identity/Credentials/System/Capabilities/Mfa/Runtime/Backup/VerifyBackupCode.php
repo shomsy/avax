@@ -8,6 +8,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records\MfaMethodRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use SensitiveParameter;
@@ -29,7 +30,7 @@ final readonly class VerifyBackupCode
     {
         $method = $this->mfaStore->findMethod(userId: $userId);
 
-        if ($method === null) {
+        if (! $method instanceof MfaMethodRecord) {
             return false;
         }
 

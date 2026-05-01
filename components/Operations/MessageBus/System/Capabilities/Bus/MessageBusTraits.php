@@ -29,23 +29,23 @@ final class CommandBus
         $class = $command::class;
 
         if (! isset($this->handlers[$class])) {
-            throw new RuntimeException("No handler registered for command: {$class}");
+            throw new RuntimeException('No handler registered for command: ' . $class);
         }
 
         $handler = $this->handlers[$class];
-        $pipeline = $this->buildPipeline($command, $handler);
+        $pipeline = $this->buildPipeline($handler);
 
         return $pipeline($command);
     }
 
-    private function buildPipeline(Command $command, object $handler): Closure
+    private function buildPipeline(object $handler) : Closure
     {
         $middlewares = array_reverse($this->middleware);
-        $final = fn (Command $cmd) => $this->execute($handler, $cmd);
+        $final = fn (Command $command) : mixed => $this->execute($handler, $command);
 
         foreach ($middlewares as $middleware) {
             $next = $final;
-            $final = static fn (Command $cmd) => $middleware->process($cmd, $next);
+            $final = static fn (Command $command) => $middleware->process($command, $next);
         }
 
         return $final;
@@ -78,7 +78,7 @@ final class QueryBus
         $class = $query::class;
 
         if (! isset($this->handlers[$class])) {
-            throw new RuntimeException("No handler registered for query: {$class}");
+            throw new RuntimeException('No handler registered for query: ' . $class);
         }
 
         $handler = $this->handlers[$class];

@@ -15,7 +15,7 @@ final readonly class MatchTextFuzzily
     {
         return array_values(array_filter(
             $this->items,
-            static function ($item) use ($query, $threshold, $key): bool {
+                                static function (array $item) use ($query, $threshold, $key) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
                 if (! is_string($target)) {
                     return false;

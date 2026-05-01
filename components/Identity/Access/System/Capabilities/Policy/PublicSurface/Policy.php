@@ -9,7 +9,7 @@ use Avax\Components\Identity\Access\System\Capabilities\Policy\System\Capabiliti
 
 final class Policy
 {
-    private static PolicyEvaluator $evaluator;
+    private static PolicyEvaluator $policyEvaluator;
 
     private static array $definitions = [];
 
@@ -40,16 +40,16 @@ final class Policy
 
     private static function evaluator(): PolicyEvaluator
     {
-        if (! isset(self::$evaluator)) {
-            self::$evaluator = new PolicyEvaluator();
+        if (! isset(self::$policyEvaluator)) {
+            self::$policyEvaluator = new PolicyEvaluator();
         }
 
-        return self::$evaluator;
+        return self::$policyEvaluator;
     }
 
-    public static function register(PolicyRule $rule): void
+    public static function register(PolicyRule $policyRule) : void
     {
-        self::evaluator()->register($rule);
+        self::evaluator()->register($policyRule);
     }
 
     public static function explain(string $action, object $resource, array $context = []): DecisionExplanation
@@ -65,12 +65,12 @@ final readonly class PolicyDecision
         public ?string $reason = null,
     ) {}
 
-    public static function allow(string $reason = null) : self
+    public static function allow(?string $reason = null) : self
     {
         return new self(true, $reason);
     }
 
-    public static function deny(string $reason = null) : self
+    public static function deny(?string $reason = null) : self
     {
         return new self(false, $reason);
     }
@@ -78,14 +78,11 @@ final readonly class PolicyDecision
 
 final readonly class DecisionExplanation
 {
-    /** @var list<string> */
-    public array $reasons;
-
     public function __construct(
         public bool $allowed,
-        array $reasons = [],
+        /** @var list<string> */
+        public array $reasons = []
     ) {
-        $this->reasons = $reasons;
     }
 
     public function toString(): string

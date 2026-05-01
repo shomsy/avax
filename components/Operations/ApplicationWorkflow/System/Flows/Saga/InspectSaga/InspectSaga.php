@@ -14,11 +14,8 @@ use Traversable;
 
 final class InspectSaga implements Countable, IteratorAggregate
 {
-    private array $events;
-
-    public function __construct(array $events = [])
+    public function __construct(private array $events = [])
     {
-        $this->events = $events;
     }
 
     public static function inMemory(): self
@@ -26,9 +23,9 @@ final class InspectSaga implements Countable, IteratorAggregate
         return new self(events: []);
     }
 
-    public function record(SagaRuntimeEvent $event): void
+    public function record(SagaRuntimeEvent $sagaRuntimeEvent) : void
     {
-        $this->events[] = $event;
+        $this->events[] = $sagaRuntimeEvent;
     }
 
     public function buildReport(string $sagaId): SagaReport
@@ -37,9 +34,9 @@ final class InspectSaga implements Countable, IteratorAggregate
         $timeline = SagaTimeline::fromEvents(sagaId: $sagaId, events: $events);
 
         return new SagaReport(
+            events     : $events,
             sagaId     : $sagaId,
             timeline   : $timeline,
-            events     : $events,
             generatedAt: new DateTimeImmutable(),
         );
     }
@@ -48,7 +45,7 @@ final class InspectSaga implements Countable, IteratorAggregate
     {
         return array_filter(
             $this->events,
-            static fn ($e) => $e->sagaId === $sagaId,
+            static fn ($e) : bool => $e->sagaId === $sagaId,
         );
     }
 
@@ -86,36 +83,7 @@ final class InspectSaga implements Countable, IteratorAggregate
 
 final readonly class SagaRuntimeEvent
 {
-    public string $id;
-
-    public string $sagaId;
-
-    public string $sagaName;
-
-    public string $type;
-
-    public ?string $stepName;
-
-    public array $payload;
-
-    public DateTimeImmutable $occurredAt;
-
-    private function __construct(
-        string $id,
-        string $sagaId,
-        string $sagaName,
-        string $type,
-        ?string $stepName,
-        array $payload,
-        DateTimeImmutable $occurredAt,
-    ) {
-        $this->id       = $id;
-        $this->sagaId   = $sagaId;
-        $this->sagaName = $sagaName;
-        $this->type     = $type;
-        $this->stepName = $stepName;
-        $this->payload  = $payload;
-        $this->occurredAt = $occurredAt;
+    private function __construct(public string $id, public string $sagaId, public string $sagaName, public string $type, public ?string $stepName, public array $payload, public DateTimeImmutable $occurredAt) {
     }
 
     public static function started(string $sagaId, string $sagaName): self
@@ -127,19 +95,19 @@ final readonly class SagaRuntimeEvent
         string $sagaId,
         string $sagaName,
         string $type,
-        array  $payload = null,
-        string $stepName = null,
+        ?array  $payload = null,
+        ?string $stepName = null,
     ): self {
         $payload ??= [];
 
         return new self(
+            type      : $type,
+            payload   : $payload,
+            occurredAt: new DateTimeImmutable(),
             id        : self::generateId(),
             sagaId    : $sagaId,
             sagaName  : $sagaName,
-            type      : $type,
             stepName  : $stepName,
-            payload   : $payload,
-            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -195,36 +163,7 @@ final readonly class SagaRuntimeEvent
 
 final readonly class SagaTimeline
 {
-    public string $sagaId;
-
-    public array $events;
-
-    public array $steps;
-
-    public ?string $startedAt;
-
-    public ?string $completedAt;
-
-    public ?float $durationMs;
-
-    public ?string $finalStatus;
-
-    private function __construct(
-        string $sagaId,
-        array $events,
-        array $steps,
-        ?string $startedAt,
-        ?string $completedAt,
-        ?float $durationMs,
-        ?string $finalStatus,
-    ) {
-        $this->sagaId     = $sagaId;
-        $this->events     = $events;
-        $this->steps      = $steps;
-        $this->startedAt  = $startedAt;
-        $this->completedAt = $completedAt;
-        $this->durationMs = $durationMs;
-        $this->finalStatus = $finalStatus;
+    private function __construct(public string $sagaId, public array $events, public array $steps, public ?string $startedAt, public ?string $completedAt, public ?float $durationMs, public ?string $finalStatus) {
     }
 
     /**
@@ -265,8 +204,8 @@ final readonly class SagaTimeline
         }
 
         return new self(
-            sagaId     : $sagaId,
             events     : $events,
+            sagaId     : $sagaId,
             steps      : $steps,
             startedAt  : $startedAt,
             completedAt: $completedAt,
@@ -290,24 +229,7 @@ final readonly class SagaTimeline
 
 final readonly class SagaReport
 {
-    public string $sagaId;
-
-    public SagaTimeline $timeline;
-
-    public array $events;
-
-    public DateTimeImmutable $generatedAt;
-
-    public function __construct(
-        string $sagaId,
-        SagaTimeline $timeline,
-        array $events,
-        DateTimeImmutable $generatedAt,
-    ) {
-        $this->sagaId   = $sagaId;
-        $this->timeline = $timeline;
-        $this->events   = $events;
-        $this->generatedAt = $generatedAt;
+    public function __construct(public string $sagaId, public SagaTimeline $timeline, public array $events, public DateTimeImmutable $generatedAt) {
     }
 
     public function toArray(): array

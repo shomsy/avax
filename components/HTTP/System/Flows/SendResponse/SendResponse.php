@@ -15,11 +15,11 @@ final class SendResponse
         $reason = $response->getReasonPhrase();
 
         $protocol = $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1';
-        header("{$protocol} {$status} {$reason}");
+        header(sprintf('%s %s %s', $protocol, $status, $reason));
 
-        foreach ($response->getHeaders() as $name => $values) {
-            foreach ($values as $value) {
-                header("{$name}: {$value}", true);
+        foreach ($response->getHeaders() as $name => $header) {
+            foreach ($header as $value) {
+                header(sprintf('%s: %s', $name, $value), true);
             }
         }
 

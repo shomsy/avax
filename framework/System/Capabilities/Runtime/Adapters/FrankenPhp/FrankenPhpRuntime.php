@@ -33,9 +33,9 @@ final readonly class FrankenPhpRuntime implements WorkerRuntimeInterface
         return ($this->receiver)();
     }
 
-    public function send(WorkerResponse $response): void
+    public function send(WorkerResponse $workerResponse) : void
     {
-        ($this->sender)($response);
+        ($this->sender)($workerResponse);
     }
 
     public function run(): void

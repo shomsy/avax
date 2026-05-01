@@ -20,7 +20,7 @@ final readonly class RunDoctor
 
         $findings = $this->runtimeSafety->inspect();
 
-        if (empty($findings)) {
+        if ($findings === []) {
             echo "\033[32mNo runtime safety issues detected.\033[0m\n";
 
             if ($workerMode) {
@@ -71,9 +71,9 @@ final readonly class RunDoctor
         return $criticalCount > 0 ? 1 : 0;
     }
 
-    private function printFinding(RuntimeSafetyFinding $finding) : void
+    private function printFinding(RuntimeSafetyFinding $runtimeSafetyFinding) : void
     {
-        $color = match ($finding->severity) {
+        $color = match ($runtimeSafetyFinding->severity) {
             RuntimeSafetyFinding::SEVERITY_CRITICAL => '31',
             RuntimeSafetyFinding::SEVERITY_WARNING => '33',
             default                                => '36',
@@ -82,18 +82,18 @@ final readonly class RunDoctor
         echo sprintf(
             "\033[%sm[%s] %s\033[0m\n",
             $color,
-            strtoupper($finding->severity),
-            $finding->message,
+            strtoupper($runtimeSafetyFinding->severity),
+            $runtimeSafetyFinding->message,
         );
 
-        echo sprintf("  Component: %s\n", $finding->component);
+        echo sprintf("  Component: %s\n", $runtimeSafetyFinding->component);
 
-        if ($finding->location !== null) {
-            echo sprintf("  Location: %s\n", $finding->location);
+        if ($runtimeSafetyFinding->location !== null) {
+            echo sprintf("  Location: %s\n", $runtimeSafetyFinding->location);
         }
 
-        if ($finding->remediation !== null) {
-            echo sprintf("  Fix: %s\n", $finding->remediation);
+        if ($runtimeSafetyFinding->remediation !== null) {
+            echo sprintf("  Fix: %s\n", $runtimeSafetyFinding->remediation);
         }
 
         echo "\n";

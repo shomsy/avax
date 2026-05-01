@@ -64,7 +64,7 @@ final class RedisCacheStore implements CacheStore
             return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        $decoded = json_decode($data, associative: true);
+        $decoded = json_decode((string) $data, associative: true);
 
         if ($decoded === null) {
             return new CacheStoreRecordWasMissing(key: $cacheKey);
@@ -91,7 +91,7 @@ final class RedisCacheStore implements CacheStore
             lifecycle: $cachedValueLifecycle,
         );
 
-        return new CacheStoreRecordWasFound(key: $cacheKey, record: $storedCacheRecord, clock: $clock);
+        return new CacheStoreRecordWasFound(clock: $clock, key: $cacheKey, record: $storedCacheRecord);
     }
 
     private function ensureConnected() : void
@@ -205,7 +205,7 @@ final class RedisCacheStore implements CacheStore
                 break;
             }
 
-            if (! empty($keys)) {
+            if ($keys !== [] && $keys !== false) {
                 $this->redis->del($keys);
             }
 

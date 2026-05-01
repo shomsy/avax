@@ -24,7 +24,7 @@ final readonly class ReadCachedValue
         $startTime = hrtime(true);
 
         try {
-            $result = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
+            $result = $this->cacheStore->read(clock: $this->clock, key: $cacheKey);
 
             if ($result instanceof CacheStoreRecordWasMissing) {
                 $this->recordLatency(startTime: $startTime);

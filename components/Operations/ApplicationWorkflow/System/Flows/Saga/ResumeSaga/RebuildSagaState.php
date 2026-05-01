@@ -13,7 +13,7 @@ final readonly class RebuildSagaState
 
     public function rebuild(array $storedState, array $events): array
     {
-        if (! empty($storedState)) {
+        if ($storedState !== []) {
             return $storedState;
         }
 

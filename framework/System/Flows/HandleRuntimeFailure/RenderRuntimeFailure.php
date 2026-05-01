@@ -14,7 +14,7 @@ use Throwable;
  */
 final readonly class RenderRuntimeFailure
 {
-    private const DEVELOPMENT_TEMPLATE
+    private const string DEVELOPMENT_TEMPLATE
         = <<<'HTML'
             <!DOCTYPE html>
             <html lang="en">
@@ -77,7 +77,7 @@ final readonly class RenderRuntimeFailure
             </html>
             HTML;
 
-    private const PRODUCTION_TEMPLATE
+    private const string PRODUCTION_TEMPLATE
         = <<<'HTML'
             <!DOCTYPE html>
             <html lang="en">
@@ -106,9 +106,9 @@ final readonly class RenderRuntimeFailure
             </html>
             HTML;
 
-    private const CLI_PRODUCTION_TEMPLATE = "[ERROR] Internal Server Error. Error ID: %s\n";
+    private const string CLI_PRODUCTION_TEMPLATE = "[ERROR] Internal Server Error. Error ID: %s\n";
 
-    private const CLI_DEVELOPMENT_TEMPLATE
+    private const string CLI_DEVELOPMENT_TEMPLATE
         = <<<'TXT'
             ========================================
               RUNTIME ERROR

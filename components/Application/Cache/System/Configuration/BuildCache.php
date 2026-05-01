@@ -34,8 +34,8 @@ final readonly class BuildCache
         $metrics = $cacheConfiguration->enableMetrics ? new CacheMetrics() : null;
 
         return new AvaxCache(
-            store      : $cacheStore,
             clock      : $this->clock,
+            store      : $cacheStore,
             metrics    : $metrics,
             stalePolicy: $cacheConfiguration->staleValuePolicy,
         );

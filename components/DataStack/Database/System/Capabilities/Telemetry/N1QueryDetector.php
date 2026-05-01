@@ -24,6 +24,7 @@ final class N1QueryDetector
         if (! isset($this->tableAccessLog[$table])) {
             $this->tableAccessLog[$table] = 0;
         }
+
         $this->tableAccessLog[$table]++;
     }
 
@@ -54,7 +55,7 @@ final class N1QueryDetector
                     'type'       => 'N+1',
                     'table'      => $table,
                     'query_count' => $count,
-                    'suggestion' => "Use eager loading or DataLoader for {$table}",
+                    'suggestion' => 'Use eager loading or DataLoader for ' . $table,
                 ];
             }
         }

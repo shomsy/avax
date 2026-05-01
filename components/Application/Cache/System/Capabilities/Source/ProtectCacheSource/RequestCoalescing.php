@@ -35,7 +35,7 @@ final readonly class RequestCoalescing
 
         usleep($this->cacheLockTimeout->inMilliseconds() * 1000);
 
-        return $this->execute(key: $cacheKey, loader: $loader, onStale: $onStale);
+        return $this->execute(loader: $loader, onStale: $onStale, key: $cacheKey);
     }
 
     public function tryAcquireLock(CacheKey $cacheKey) : bool

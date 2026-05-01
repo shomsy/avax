@@ -18,40 +18,7 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final readonly class RuntimeAssembly
 {
-    public ResolveDependency $resolver;
-
-    public CompileContainer $compiler;
-
-    public ResolutionPolicy $policy;
-
-    public FunctionCaller $caller;
-
-    public ManageScopes $scopes;
-
-    public DependencyPool $servicePool;
-
-    public ScopeStore $scopeStore;
-
-    public DependencyRegistry $registrations;
-
-    public function __construct(
-        DependencyRegistry $registrations,
-        ScopeStore   $scopeStore,
-        DependencyPool $servicePool,
-        ManageScopes $scopes,
-        FunctionCaller $caller,
-        ResolutionPolicy $policy,
-        CompileContainer $compiler,
-        ResolveDependency $resolver,
-    )
+    public function __construct(public DependencyRegistry $registrations, public ScopeStore $scopeStore, public DependencyPool $servicePool, public ManageScopes $scopes, public FunctionCaller $caller, public ResolutionPolicy $policy, public CompileContainer $compiler, public ResolveDependency $resolver)
     {
-        $this->registrations = $registrations;
-        $this->scopeStore = $scopeStore;
-        $this->servicePool = $servicePool;
-        $this->scopes = $scopes;
-        $this->caller = $caller;
-        $this->policy = $policy;
-        $this->compiler = $compiler;
-        $this->resolver = $resolver;
     }
 }

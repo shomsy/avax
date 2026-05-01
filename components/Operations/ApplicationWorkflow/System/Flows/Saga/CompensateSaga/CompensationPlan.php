@@ -16,8 +16,8 @@ final readonly class CompensationPlan
     public static function create(string $sagaType, array $steps): self
     {
         return new self(
-            sagaType : $sagaType,
             steps    : $steps,
+            sagaType : $sagaType,
             parallel : false,
             timeoutMs: 30000,
         );

@@ -68,13 +68,10 @@ final class DependencyRegistration
 
     public RegistrationMetadata $metadata;
 
-    public readonly string $abstract;
-
     public function __construct(
-        string $abstract,
+        public readonly string $abstract,
     ) {
-        $this->abstract = $abstract;
-        $this->metadata = RegistrationMetadata::for(unitId: $abstract);
+        $this->metadata = RegistrationMetadata::for(unitId: $this->abstract);
     }
 
     /**
@@ -98,6 +95,7 @@ final class DependencyRegistration
         $registration->groupOrder = (int) ($array['groupOrder'] ?? 0);
         $registration->tags       = $array['tags']      ?? [];
         $registration->arguments  = $array['arguments'] ?? [];
+
         $metadata                 = $array['metadata']  ?? null;
         if ($metadata instanceof RegistrationMetadata) {
             $registration->metadata = $metadata;
@@ -174,7 +172,7 @@ final class DependencyRegistration
             callback: static fn (mixed $value): string => is_string(value: $value) ? trim(string: $value) : '',
             array   : (array) $values,
         )
-                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $value): bool => $value !== ''))
+                |> (static fn ($x) : array => array_filter(array: $x, callback: static fn (string $value) : bool => $value !== ''))
                 |> array_values(...);
 
         $items = array_values(array: array_unique(array: $items));
@@ -394,8 +392,8 @@ final class DependencyRegistration
     }
 
     public function pooled(
-        int $maxSize = null,
-        string $scopeKind = null,
+        ?int    $maxSize = null,
+        ?string $scopeKind = null,
         bool $resetBeforeReuse = true,
     ): self {
         $maxSize   ??= 8;

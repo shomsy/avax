@@ -23,9 +23,9 @@ final class ResetVerifier
     /**
      * Register a component that should reset between requests.
      */
-    public function register(string $name, ResettableState $component) : self
+    public function register(string $name, ResettableState $resettableState) : self
     {
-        $this->registeredComponents[$name] = $component;
+        $this->registeredComponents[$name] = $resettableState;
 
         return $this;
     }
@@ -42,7 +42,7 @@ final class ResetVerifier
         foreach ($this->registeredComponents as $name => $component) {
             $finding = $this->verifyComponent($name, $component);
 
-            if ($finding !== null) {
+            if ($finding instanceof RuntimeSafetyFinding) {
                 $findings[] = $finding;
             }
         }
@@ -62,13 +62,13 @@ final class ResetVerifier
     /**
      * Verify a single component resets cleanly.
      */
-    private function verifyComponent(string $name, ResettableState $component) : ?RuntimeSafetyFinding
+    private function verifyComponent(string $name, ResettableState $resettableState) : ?RuntimeSafetyFinding
     {
         try {
-            $component->resetState();
+            $resettableState->resetState();
 
             return null;
-        } catch (Throwable $exception) {
+        } catch (Throwable $throwable) {
             return new RuntimeSafetyFinding(
                 category   : 'reset_failure',
                 severity   : RuntimeSafetyFinding::SEVERITY_CRITICAL,
@@ -76,7 +76,7 @@ final class ResetVerifier
                 message    : sprintf(
                                  'Component %s failed to reset: %s',
                                  $name,
-                                 $exception->getMessage(),
+                                 $throwable->getMessage(),
                              ),
                 remediation: 'Fix resetState() implementation to handle all edge cases',
             );
@@ -108,7 +108,7 @@ final class ResetVerifier
                 continue;
             }
 
-            $className = get_class($instance);
+            $className = $instance::class;
 
             if (! $this->hasRequestLocalState($instance)) {
                 continue;
@@ -138,10 +138,10 @@ final class ResetVerifier
      */
     private function hasRequestLocalState(object $instance) : bool
     {
-        $reflection = new ReflectionObject($instance);
+        $reflectionObject = new ReflectionObject($instance);
 
-        foreach ($reflection->getProperties() as $property) {
-            $name = strtolower($property->getName());
+        foreach ($reflectionObject->getProperties() as $reflectionProperty) {
+            $name = strtolower($reflectionProperty->getName());
 
             if (str_contains($name, 'request') || str_contains($name, 'session') || str_contains($name, 'input') || str_contains($name, 'response') || str_contains($name, 'context')
             ) {

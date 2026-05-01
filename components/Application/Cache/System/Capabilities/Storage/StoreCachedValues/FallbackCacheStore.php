@@ -21,7 +21,7 @@ final readonly class FallbackCacheStore implements CacheStore
     public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         try {
-            $result = $this->primary->read(key: $cacheKey, clock: $clock);
+            $result = $this->primary->read(clock: $clock, key: $cacheKey);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 return $result;
@@ -30,7 +30,7 @@ final readonly class FallbackCacheStore implements CacheStore
         }
 
         try {
-            $result = $this->fallback->read(key: $cacheKey, clock: $clock);
+            $result = $this->fallback->read(clock: $clock, key: $cacheKey);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 $this->primary->write(key: $cacheKey, record: $result->record);

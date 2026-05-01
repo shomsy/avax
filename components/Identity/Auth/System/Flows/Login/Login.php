@@ -14,9 +14,9 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 final readonly class Login
 {
     public function __construct(
-        private FindUserByCredentials $findUser,
+        private FindUserByCredentials     $findUserByCredentials,
         private VerifyPassword $verifyPassword,
-        private StartAuthenticatedSession $startSession,
+        private StartAuthenticatedSession $startAuthenticatedSession,
         private Identity $identity,
     ) {}
 
@@ -25,15 +25,15 @@ final readonly class Login
      */
     public function execute(Credentials $credentials): AuthenticationResult
     {
-        $user = $this->findUser->execute($credentials->email);
+        $user = $this->findUserByCredentials->execute($credentials->email);
 
         if (! $user || ! $this->verifyPassword->execute($user, $credentials->password)) {
             throw new AuthenticationFailed('Invalid credentials');
         }
 
-        $issued = $this->identity->issue($user);
-        $this->startSession->execute($issued);
+        $issuedAuthentication = $this->identity->issue($user);
+        $this->startAuthenticatedSession->execute($issuedAuthentication);
 
-        return new AuthenticationResult($user, $issued);
+        return new AuthenticationResult($user, $issuedAuthentication);
     }
 }

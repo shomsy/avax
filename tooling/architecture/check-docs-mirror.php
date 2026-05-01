@@ -34,11 +34,12 @@ if (is_dir($rootDir . '/docs/Foundation/DataHandling')) {
     $errors[] = 'Obsolete docs folder found: docs/Foundation/DataHandling. Please move to docs/components/Data.';
 }
 
-if (! empty($errors)) {
+if ($errors !== []) {
     echo "Docs mirror checks failed:\n";
     foreach ($errors as $error) {
-        echo "- {$error}\n";
+        echo sprintf('- %s%s', $error, PHP_EOL);
     }
+
     exit(1);
 }
 

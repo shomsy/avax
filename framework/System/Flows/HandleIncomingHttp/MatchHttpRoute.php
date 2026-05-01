@@ -13,20 +13,20 @@ use components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedExceptio
 use components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Psr\Log\NullLogger;
 
-final class MatchHttpRoute
+final readonly class MatchHttpRoute
 {
     private RouteMatcher $routeMatcher;
 
-    public function __construct(RouteMatcher $routeMatcher = null)
+    public function __construct(?RouteMatcher $routeMatcher = null)
     {
         $this->routeMatcher = $routeMatcher ?? new RouteMatcher(logger: new NullLogger());
     }
 
-    public function match(RegisteredHttpRoutes $routes, ServerRequest $request) : MatchedHttpRoute
+    public function match(RegisteredHttpRoutes $registeredHttpRoutes, ServerRequest $serverRequest) : MatchedHttpRoute
     {
         [$resolvedRequest, $route, $matches] = $this->resolveMatch(
-            routes  : $routes,
-            request : $request,
+            routes : $registeredHttpRoutes,
+            request: $serverRequest,
         );
 
         $parameters = $this->extractParameters(matches: $matches);
@@ -44,21 +44,21 @@ final class MatchHttpRoute
     /**
      * @return array{0: ServerRequest, 1: RouteDefinition, 2: array<string, string>}
      */
-    private function resolveMatch(RegisteredHttpRoutes $routes, ServerRequest $request) : array
+    private function resolveMatch(RegisteredHttpRoutes $registeredHttpRoutes, ServerRequest $serverRequest) : array
     {
         $matchedRoute = $this->routeMatcher->match(
-            routes  : $routes->routesByMethod(),
-            request : $request,
+            routes : $registeredHttpRoutes->routesByMethod(),
+            request: $serverRequest,
         );
 
         if ($matchedRoute !== null) {
-            return [$request, $matchedRoute[0], $matchedRoute[1]];
+            return [$serverRequest, $matchedRoute[0], $matchedRoute[1]];
         }
 
-        if ($request->getMethod() === 'HEAD') {
-            $getRequest = $request->withMethod(method: 'GET');
+        if ($serverRequest->getMethod() === 'HEAD') {
+            $getRequest   = $serverRequest->withMethod(method: 'GET');
             $matchedRoute = $this->routeMatcher->match(
-                routes  : $routes->routesByMethod(),
+                routes  : $registeredHttpRoutes->routesByMethod(),
                 request : $getRequest,
             );
 
@@ -68,36 +68,36 @@ final class MatchHttpRoute
         }
 
         $allowedMethods = $this->allowedMethodsFor(
-            routes  : $routes,
-            request : $request,
+            routes : $registeredHttpRoutes,
+            request: $serverRequest,
         );
 
         if ($allowedMethods !== []) {
             throw MethodNotAllowedException::for(
-                method         : $request->getMethod(),
-                path           : $request->getUri()->getPath(),
+                method         : $serverRequest->getMethod(),
+                path           : $serverRequest->getUri()->getPath(),
                 allowedMethods : $allowedMethods,
             );
         }
 
         throw RouteNotFoundException::for(
-            method : $request->getMethod(),
-            path   : $request->getUri()->getPath(),
+            method: $serverRequest->getMethod(),
+            path  : $serverRequest->getUri()->getPath(),
         );
     }
 
     /**
      * @return array<int, string>
      */
-    private function allowedMethodsFor(RegisteredHttpRoutes $routes, ServerRequest $request) : array
+    private function allowedMethodsFor(RegisteredHttpRoutes $registeredHttpRoutes, ServerRequest $serverRequest) : array
     {
         $allowedMethods = [];
-        $path = $request->getUri()->getPath();
-        $host = $request->getUri()->getHost();
+        $path = $serverRequest->getUri()->getPath();
+        $host = $serverRequest->getUri()->getHost();
 
-        foreach ($routes->routesByMethod() as $method => $routeDefinitions) {
-            foreach ($routeDefinitions as $route) {
-                if (! $this->matchesPathAndDomain(route: $route, path: $path, host: $host)) {
+        foreach ($registeredHttpRoutes->routesByMethod() as $method => $routeDefinitions) {
+            foreach ($routeDefinitions as $routeDefinition) {
+                if (! $this->matchesPathAndDomain(path: $path, host: $host, route: $routeDefinition)) {
                     continue;
                 }
 
@@ -113,17 +113,17 @@ final class MatchHttpRoute
         return $allowedMethods;
     }
 
-    private function matchesPathAndDomain(RouteDefinition $route, string $path, string $host) : bool
+    private function matchesPathAndDomain(RouteDefinition $routeDefinition, string $path, string $host) : bool
     {
-        if ($route->domain !== null) {
-            $compiledDomain = DomainPatternCompiler::compile(pattern: $route->domain);
+        if ($routeDefinition->domain !== null) {
+            $compiledDomain = DomainPatternCompiler::compile(pattern: $routeDefinition->domain);
 
             if (! DomainPatternCompiler::match(host: $host, compiled: $compiledDomain)) {
                 return false;
             }
         }
 
-        return preg_match(pattern: $route->compiledPathRegex, subject: $path) === 1;
+        return preg_match(pattern: $routeDefinition->compiledPathRegex, subject: $path) === 1;
     }
 
     /**
@@ -135,7 +135,11 @@ final class MatchHttpRoute
         $parameters = [];
 
         foreach ($matches as $key => $value) {
-            if (is_int(value: $key) || ! is_string(value: $value)) {
+            if (is_int(value: $key)) {
+                continue;
+            }
+
+            if (! is_string(value: $value)) {
                 continue;
             }
 

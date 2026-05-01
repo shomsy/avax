@@ -71,12 +71,12 @@ final readonly class NPlusOneQueryReport
     public function summary(): string
     {
         $summary = "N+1 Query Detected:\n";
-        $summary .= "  Pattern: {$this->pattern->pattern()}\n";
-        $summary .= "  Count: {$this->count}\n";
+        $summary .= sprintf('  Pattern: %s%s', $this->pattern->pattern(), PHP_EOL);
+        $summary .= sprintf('  Count: %d%s', $this->count, PHP_EOL);
         $summary .= "  Time Span: {$this->timeSpanMs}ms\n";
 
         if ($this->suggestion !== null) {
-            $summary .= "  Suggestion: {$this->suggestion}\n";
+            $summary .= sprintf('  Suggestion: %s%s', $this->suggestion, PHP_EOL);
         }
 
         return $summary;

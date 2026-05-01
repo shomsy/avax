@@ -12,12 +12,12 @@ foreach ($it as $file) {
     $content = file_get_contents($path);
     $changed = false;
 
-    if (str_contains($path, '/System/PublicSurface/')) {
+    if (str_contains((string) $path, '/System/PublicSurface/')) {
         $newNs = 'Avax\\Components\\ApplicationWorkflow\\System\\PublicSurface';
         $oldNses = ['namespace components\ApplicationWorkflow;', 'namespace Avax\ApplicationWorkflow;'];
-        foreach ($oldNses as $old) {
-            if (str_contains($content, $old)) {
-                $content = str_replace($old, "namespace {$newNs};", $content);
+        foreach ($oldNses as $oldNse) {
+            if (str_contains($content, $oldNse)) {
+                $content = str_replace($oldNse, sprintf('namespace %s;', $newNs), $content);
                 $changed = true;
             }
         }
@@ -29,12 +29,12 @@ foreach ($it as $file) {
                 $changed = true;
             }
         }
-    } elseif (str_contains($path, '/System/Capabilities/Saga/')) {
+    } elseif (str_contains((string) $path, '/System/Capabilities/Saga/')) {
         $newNs = 'Avax\\Components\\ApplicationWorkflow\\System\\Capabilities\\Saga';
         $oldNses = ['namespace components\ApplicationWorkflow\Saga;', 'namespace Avax\ApplicationWorkflow\Saga;'];
-        foreach ($oldNses as $old) {
-            if (str_contains($content, $old)) {
-                $content = str_replace($old, "namespace {$newNs};", $content);
+        foreach ($oldNses as $oldNse) {
+            if (str_contains($content, (string) $oldNse)) {
+                $content = str_replace($oldNse, sprintf('namespace %s;', $newNs), $content);
                 $changed = true;
             }
         }
@@ -46,13 +46,13 @@ foreach ($it as $file) {
                 $changed = true;
             }
         }
-    } elseif (preg_match('#/System/Flows/Saga/([^/]+)/#', $path, $m)) {
+    } elseif (preg_match('#/System/Flows/Saga/([^/]+)/#', (string) $path, $m)) {
         $group = $m[1];
-        $newNs = "Avax\\Components\\ApplicationWorkflow\\System\\Flows\\Saga\\{$group}";
-        $old1 = "namespace Avax\ApplicationWorkflow\Saga\\{$group};";
-        $old2 = "namespace components\ApplicationWorkflow\Saga\\{$group};";
+        $newNs = 'Avax\Components\ApplicationWorkflow\System\Flows\Saga\\' . $group;
+        $old1 = sprintf('namespace Avax\ApplicationWorkflow\Saga\%s;', $group);
+        $old2 = sprintf('namespace components\ApplicationWorkflow\Saga\%s;', $group);
         if (str_contains($content, $old1) || str_contains($content, $old2)) {
-            $content = str_replace([$old1, $old2], "namespace {$newNs};", $content);
+            $content = str_replace([$old1, $old2], sprintf('namespace %s;', $newNs), $content);
             $changed = true;
         }
         $useOld = ['use Avax\ApplicationWorkflow\Saga\\', 'use components\ApplicationWorkflow\Saga\\'];
@@ -67,7 +67,7 @@ foreach ($it as $file) {
 
     if ($changed) {
         file_put_contents($path, $content);
-        $rel = substr($path, strpos($path, 'components/'));
-        echo "Updated: $rel\n";
+        $rel = substr((string) $path, strpos((string) $path, 'components/'));
+        echo sprintf('Updated: %s%s', $rel, PHP_EOL);
     }
 }

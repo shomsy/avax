@@ -12,16 +12,7 @@ final readonly class CacheOperation implements Stringable
 {
     public CacheKey $cacheKey;
 
-    public function __construct(
-        public string $operation,
-        public CacheKey $cacheKey,
-        public float $timestamp,
-        public ?int $ttlSeconds = null,
-        public ?int $durationMicroseconds = null,
-        public ?string $storeName = null,
-        public ?string $tier = null,
-    ) {
-        $this->cacheKey = $cacheKey;
+    public function __construct(public string $operation, public CacheKey $cacheKey, public float $timestamp, public ?int $ttlSeconds = null, public ?int $durationMicroseconds = null, public ?string $storeName = null, public ?string $tier = null) {
     }
 
     public static function read(
@@ -32,10 +23,10 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation           : 'read',
-            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
             storeName           : $storeName,
+            key                 : $cacheKey,
         );
     }
 
@@ -48,11 +39,11 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation           : 'write',
-            key                 : $cacheKey,
             timestamp           : $timestamp,
             ttlSeconds          : $ttlSeconds,
             durationMicroseconds: $durationMicroseconds,
             storeName           : $storeName,
+            key                 : $cacheKey,
         );
     }
 
@@ -64,10 +55,10 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation           : 'delete',
-            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
             storeName           : $storeName,
+            key                 : $cacheKey,
         );
     }
 
@@ -79,10 +70,10 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation           : 'hit',
-            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
             storeName           : $storeName,
+            key                 : $cacheKey,
         );
     }
 
@@ -94,10 +85,10 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation           : 'miss',
-            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
             storeName           : $storeName,
+            key                 : $cacheKey,
         );
     }
 
@@ -109,9 +100,9 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation: 'eviction',
-            key      : $cacheKey,
             timestamp: $timestamp,
             storeName: $storeName,
+            key      : $cacheKey,
         );
     }
 
@@ -123,9 +114,9 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation: 'invalidation',
-            key      : $cacheKey,
             timestamp: $timestamp,
             storeName: $storeName,
+            key      : $cacheKey,
         );
     }
 
@@ -137,10 +128,10 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation           : 'refresh',
-            key                 : $cacheKey,
             timestamp           : $timestamp,
             durationMicroseconds: $durationMicroseconds,
             storeName           : $storeName,
+            key                 : $cacheKey,
         );
     }
 
@@ -152,9 +143,9 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation: 'source_failure',
-            key      : $cacheKey,
             timestamp: $timestamp,
             storeName: $storeName,
+            key      : $cacheKey,
         );
     }
 
@@ -166,9 +157,9 @@ final readonly class CacheOperation implements Stringable
     ): self {
         return new self(
             operation: 'store_failure',
-            key      : $cacheKey,
             timestamp: $timestamp,
             storeName: $storeName,
+            key      : $cacheKey,
         );
     }
 

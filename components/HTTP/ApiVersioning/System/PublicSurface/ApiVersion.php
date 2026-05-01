@@ -11,7 +11,7 @@ use Psr\Http\Message\RequestInterface;
 
 final class ApiVersion
 {
-    private static VersionRegistry $registry;
+    private static VersionRegistry $versionRegistry;
 
     public static function resolve(RequestInterface $request): ApiVersionResolved
     {
@@ -25,11 +25,11 @@ final class ApiVersion
 
     private static function registry(): VersionRegistry
     {
-        if (! isset(self::$registry)) {
-            self::$registry = new VersionRegistry();
+        if (! isset(self::$versionRegistry)) {
+            self::$versionRegistry = new VersionRegistry();
         }
 
-        return self::$registry;
+        return self::$versionRegistry;
     }
 
     public static function deprecated(int $version, DateTimeInterface $sunset): void

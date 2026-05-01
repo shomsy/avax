@@ -10,26 +10,23 @@ use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
 use Avax\Components\Operations\Queue\System\PublicSurface\JobResult;
 use Throwable;
 
-final class ProcessJob
+final readonly class ProcessJob
 {
-    private JobRegistry $registry;
-
-    public function __construct(JobRegistry $registry)
+    public function __construct(private JobRegistry $jobRegistry)
     {
-        $this->registry = $registry;
     }
 
-    public function processAll(QueueBroker $broker, string $queue = 'default') : array
+    public function processAll(QueueBroker $queueBroker, string $queue = 'default') : array
     {
-        return $this->processQueue($queue, $broker, 100);
+        return $this->processQueue($queue, $queueBroker, 100);
     }
 
-    public function processQueue(string $queue, QueueBroker $broker, int $limit = 10) : array
+    public function processQueue(string $queue, QueueBroker $queueBroker, int $limit = 10) : array
     {
         $results = [];
 
         for ($i = 0; $i < $limit; $i++) {
-            $jobData = $broker->pop($queue);
+            $jobData = $queueBroker->pop($queue);
 
             if ($jobData === null) {
                 break;
@@ -37,43 +34,43 @@ final class ProcessJob
 
             $executeAt = $jobData['executeAt'] ?? null;
             if ($executeAt !== null && $executeAt > time()) {
-                $broker->push($queue, $jobData);
+                $queueBroker->push($queue, $jobData);
 
                 break;
             }
 
-            $results[] = $this->process($jobData, $broker);
+            $results[] = $this->process($jobData, $queueBroker);
         }
 
         return $results;
     }
 
-    public function process(array $jobData, QueueBroker $broker) : JobResult
+    public function process(array $jobData, QueueBroker $queueBroker) : JobResult
     {
-        $job        = JobDefinition::fromArray($jobData);
+        $jobDefinition                = JobDefinition::fromArray($jobData);
         $attempts = ($jobData['attempts'] ?? 0) + 1;
 
-        if ($attempts > $job->maxAttempts) {
-            $broker->remove($job->queue ?? 'default', $jobData['id']);
+        if ($attempts > $jobDefinition->maxAttempts) {
+            $queueBroker->remove($jobDefinition->queue ?? 'default', $jobData['id']);
 
             return JobResult::failure('Max attempts exceeded', $attempts);
         }
 
         try {
-            $handler = $this->registry->resolve($job->handler);
-            $result = $handler($job->payload);
+            $handler = $this->jobRegistry->resolve($jobDefinition->handler);
+            $result  = $handler($jobDefinition->payload);
 
-            $broker->remove($job->queue ?? 'default', $jobData['id']);
+            $queueBroker->remove($jobDefinition->queue ?? 'default', $jobData['id']);
 
             return JobResult::success($result, $attempts);
-        } catch (Throwable $e) {
-            if ($job->retryDelay > 0 && $attempts < $job->maxAttempts) {
+        } catch (Throwable $throwable) {
+            if ($jobDefinition->retryDelay > 0 && $attempts < $jobDefinition->maxAttempts) {
                 $jobData['attempts'] = $attempts;
-                $jobData['executeAt'] = time() + $job->retryDelay;
-                $broker->push($job->queue ?? 'default', $jobData);
+                $jobData['executeAt'] = time() + $jobDefinition->retryDelay;
+                $queueBroker->push($jobDefinition->queue ?? 'default', $jobData);
             }
 
-            return JobResult::failure($e->getMessage(), $attempts);
+            return JobResult::failure($throwable->getMessage(), $attempts);
         }
     }
 }

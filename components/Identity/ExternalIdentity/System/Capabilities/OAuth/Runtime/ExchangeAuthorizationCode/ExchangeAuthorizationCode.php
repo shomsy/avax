@@ -7,13 +7,18 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Ru
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\AuthorizationCodeRecord;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\AuthorizationCodeStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClient;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthGrantType;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\PkceMethod;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\OAuthTokenExchangeFailed;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\OAuthTokenGrant;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcProviderInterface;
@@ -24,9 +29,9 @@ use SensitiveParameter;
 final readonly class ExchangeAuthorizationCode
 {
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
+        private OAuthClientRegistryInterface    $oAuthClientRegistry,
         #[SensitiveParameter]
-        private AuthorizationCodeStoreInterface $codeStore,
+        private AuthorizationCodeStoreInterface $authorizationCodeStore,
         private UserSourceInterface $userSource,
         #[SensitiveParameter]
         private JwtIdentityInterface $jwtIdentity,
@@ -43,74 +48,68 @@ final readonly class ExchangeAuthorizationCode
      * @throws OAuthTokenExchangeFailed
      * @throws DateMalformedStringException
      */
-    public function execute(ExchangeAuthorizationCodeData $data): OAuthTokenGrant
+    public function execute(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData) : OAuthTokenGrant
     {
         $now = $this->clock->now();
-        $client = $this->clientRegistry->find(clientId: $data->clientId);
+        $client = $this->oAuthClientRegistry->find(clientId: $exchangeAuthorizationCodeData->clientId);
 
-        if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
-            $this->recordFailure(data: $data, reason: 'client_authentication_failed');
+        if (! $client instanceof OAuthClient || ! $this->oAuthClientRegistry->verifySecret(clientId: $exchangeAuthorizationCodeData->clientId, plainTextSecret: $exchangeAuthorizationCodeData->clientSecret)) {
+            $this->recordFailure(reason: 'client_authentication_failed', data: $exchangeAuthorizationCodeData);
 
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
         if (! $client->allowsGrantType(grantType: OAuthGrantType::AUTHORIZATION_CODE)) {
-            $this->recordFailure(data: $data, reason: 'grant_type_not_allowed');
+            $this->recordFailure(reason: 'grant_type_not_allowed', data: $exchangeAuthorizationCodeData);
 
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
-        $record = $this->codeStore->find(plainCode: $data->code);
+        $record = $this->authorizationCodeStore->find(plainCode: $exchangeAuthorizationCodeData->code);
 
-        if ($record === null) {
-            $this->recordFailure(data: $data, reason: 'grant_not_found');
+        if (! $record instanceof AuthorizationCodeRecord) {
+            $this->recordFailure(reason: 'grant_not_found', data: $exchangeAuthorizationCodeData);
 
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
         if ($record->wasUsed()) {
-            $this->recordFailure(data: $data, reason: 'grant_reused', suspicious: true);
+            $this->recordFailure(reason: 'grant_reused', suspicious: true, data: $exchangeAuthorizationCodeData);
 
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
-        if ($record->isExpiredAt(moment: $now) || $record->clientId !== $data->clientId) {
-            $this->recordFailure(data: $data, reason: 'grant_expired_or_mismatch');
+        if ($record->isExpiredAt(moment: $now) || $record->clientId !== $exchangeAuthorizationCodeData->clientId) {
+            $this->recordFailure(reason: 'grant_expired_or_mismatch', data: $exchangeAuthorizationCodeData);
 
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
-        if ($record->redirectUri !== $data->redirectUri) {
-            $this->recordFailure(data: $data, reason: 'redirect_uri_mismatch');
+        if ($record->redirectUri !== $exchangeAuthorizationCodeData->redirectUri) {
+            $this->recordFailure(reason: 'redirect_uri_mismatch', data: $exchangeAuthorizationCodeData);
 
             throw OAuthTokenExchangeFailed::invalidRedirectUri();
         }
 
-        if ($client->requiredSenderConstraint !== null) {
-            if (
-                $data->senderConstraint === null
-                || $data->senderConstraint->type !== $client->requiredSenderConstraint
-            ) {
-                $this->recordFailure(data: $data, reason: 'sender_constraint_missing_or_wrong_type');
-
-                throw OAuthTokenExchangeFailed::invalidSenderConstraint();
-            }
+        if ($client->requiredSenderConstraint instanceof OAuthSenderConstraintType && (! $exchangeAuthorizationCodeData->senderConstraint instanceof OAuthSenderConstraint || $exchangeAuthorizationCodeData->senderConstraint->type !== $client->requiredSenderConstraint)) {
+            $this->recordFailure(reason: 'sender_constraint_missing_or_wrong_type', data: $exchangeAuthorizationCodeData);
+            throw OAuthTokenExchangeFailed::invalidSenderConstraint();
         }
 
         if ($record->codeChallenge !== null) {
-            if ($record->codeChallengeMethod !== PkceMethod::S256 || $data->codeVerifier === null) {
-                $this->recordFailure(data: $data, reason: 'pkce_verifier_missing');
+            if ($record->codeChallengeMethod !== PkceMethod::S256 || $exchangeAuthorizationCodeData->codeVerifier === null) {
+                $this->recordFailure(reason: 'pkce_verifier_missing', data: $exchangeAuthorizationCodeData);
 
                 throw OAuthTokenExchangeFailed::invalidVerifier();
             }
 
             $expectedChallenge = rtrim(
-                string    : strtr(base64_encode(string: hash(algo: 'sha256', data: $data->codeVerifier, binary: true)), '+/', '-_'),
+                string    : strtr(base64_encode(string: hash(algo: 'sha256', data: $exchangeAuthorizationCodeData->codeVerifier, binary: true)), '+/', '-_'),
                 characters: '=',
             );
 
             if (! hash_equals(known_string: $record->codeChallenge, user_string: $expectedChallenge)) {
-                $this->recordFailure(data: $data, reason: 'pkce_verifier_mismatch');
+                $this->recordFailure(reason: 'pkce_verifier_mismatch', data: $exchangeAuthorizationCodeData);
 
                 throw OAuthTokenExchangeFailed::invalidVerifier();
             }
@@ -118,37 +117,37 @@ final readonly class ExchangeAuthorizationCode
 
         $user = $this->userSource->findById(id: $record->userId);
 
-        if ($user === null || ! $user->isActive()) {
-            $this->recordFailure(data: $data, reason: 'user_not_active');
+        if (! $user instanceof User || ! $user->isActive()) {
+            $this->recordFailure(reason: 'user_not_active', data: $exchangeAuthorizationCodeData);
 
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
-        $this->codeStore->markUsed(codeId: $record->codeId, usedAt: $now);
+        $this->authorizationCodeStore->markUsed(codeId: $record->codeId, usedAt: $now);
 
-        $refreshToken = $this->refreshTokenStore->issue(
+        $issuedRefreshToken = $this->refreshTokenStore->issue(
             userId           : $user->getId(),
             expiresAt        : $now->modify(modifier: '+30 days'),
             mfaVerifiedAt    : $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId         : $client->clientId,
             scopes           : $record->scopes,
-            senderConstraint : $data->senderConstraint,
+            senderConstraint : $exchangeAuthorizationCodeData->senderConstraint,
         );
-        $accessToken = $this->jwtIdentity->issue(
+        $issuedToken        = $this->jwtIdentity->issue(
             user                : $user,
-            mfaVerifiedAt       : $record->mfaVerifiedAt,
             phishingResistant   : $record->phishingResistant,
-            clientId            : $client->clientId,
             scopes              : $record->scopes,
-            senderConstraint    : $data->senderConstraint,
-            refreshTokenFamilyId: $refreshToken->familyId,
+            mfaVerifiedAt       : $record->mfaVerifiedAt,
+            clientId            : $client->clientId,
+            senderConstraint    : $exchangeAuthorizationCodeData->senderConstraint,
+            refreshTokenFamilyId: $issuedRefreshToken->familyId,
         );
         $idToken = null;
 
         if (in_array(needle: 'openid', haystack: $record->scopes, strict: true)) {
-            if ($this->oidcProvider === null) {
-                $this->recordFailure(data: $data, reason: 'oidc_provider_not_configured');
+            if (! $this->oidcProvider instanceof OidcProviderInterface) {
+                $this->recordFailure(reason: 'oidc_provider_not_configured', data: $exchangeAuthorizationCodeData);
 
                 throw OAuthTokenExchangeFailed::invalidGrant();
             }
@@ -172,26 +171,26 @@ final readonly class ExchangeAuthorizationCode
                             'user_id'   => $user->getId()->value,
                             'code_id'   => $record->codeId,
                             'scope'     => implode(separator: ' ', array: $record->scopes),
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $exchangeAuthorizationCodeData->ipAddress,
+                            'user_agent' => $exchangeAuthorizationCodeData->userAgent,
             ],
         ));
 
         return new OAuthTokenGrant(
-            accessToken         : $accessToken->token,
-            accessTokenExpiresAt: $accessToken->expiresAt,
-            refreshToken        : $refreshToken->token,
+            accessToken         : $issuedToken->token,
+            accessTokenExpiresAt: $issuedToken->expiresAt,
+            refreshToken        : $issuedRefreshToken->token,
             idToken             : $idToken,
             clientId            : $client->clientId,
             userId              : $user->getId()->value,
             scopes              : $record->scopes,
-            tokenType           : $data->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
-            senderConstraint    : $data->senderConstraint,
+            tokenType           : $exchangeAuthorizationCodeData->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
+            senderConstraint    : $exchangeAuthorizationCodeData->senderConstraint,
         );
     }
 
     private function recordFailure(
-        ExchangeAuthorizationCodeData $data,
+        ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData,
         string $reason,
         bool $suspicious = false,
     ): void {
@@ -203,11 +202,11 @@ final readonly class ExchangeAuthorizationCode
             name      : $name,
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'  => $data->clientId,
-                'redirect_uri' => $data->redirectUri,
+                            'client_id'    => $exchangeAuthorizationCodeData->clientId,
+                            'redirect_uri' => $exchangeAuthorizationCodeData->redirectUri,
                             'reason'     => $reason,
-                            'ip_address' => $data->ipAddress,
-                            'user_agent' => $data->userAgent,
+                            'ip_address'   => $exchangeAuthorizationCodeData->ipAddress,
+                            'user_agent'   => $exchangeAuthorizationCodeData->userAgent,
             ],
         ));
     }

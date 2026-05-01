@@ -18,17 +18,17 @@ use Psr\Log\LoggerInterface;
 
 final class SessionProvider implements ComponentProviderInterface
 {
-    public function register(ComponentRegistry $registry) : void
+    public function register(ComponentRegistry $componentRegistry) : void
     {
-        $registry->singleton(SessionStoreInterface::class, NativeSessionStore::class);
-        $registry->singleton(SessionScope::class, static fn ($container) => new SessionScope($container->get(SessionStoreInterface::class)));
-        $registry->singleton(SessionInterface::class, static fn ($container) => new Session(
+        $componentRegistry->singleton(SessionStoreInterface::class, NativeSessionStore::class);
+        $componentRegistry->singleton(SessionScope::class, static fn ($container) : SessionScope => new SessionScope($container->get(SessionStoreInterface::class)));
+        $componentRegistry->singleton(SessionInterface::class, static fn ($container) : Session => new Session(
+            logger  : $container->has(LoggerInterface::class) ? $container->get(LoggerInterface::class) : null,
             scope   : $container->get(SessionScope::class),
             metadata: $container->has(SessionMetadata::class) ? $container->get(SessionMetadata::class) : null,
             audit   : $container->has(SessionAudit::class) ? $container->get(SessionAudit::class) : null,
             events  : $container->has(SessionEventBus::class) ? $container->get(SessionEventBus::class) : null,
-            logger  : $container->has(LoggerInterface::class) ? $container->get(LoggerInterface::class) : null,
         ));
-        $registry->alias(Session::class, SessionInterface::class);
+        $componentRegistry->alias(Session::class, SessionInterface::class);
     }
 }

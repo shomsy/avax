@@ -20,43 +20,43 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_is_empty_when_created(): void
     {
-        $registry = new ComponentRegistry();
+        $componentRegistry = new ComponentRegistry();
 
-        self::assertFalse($registry->has(name: 'any'));
-        self::assertSame([], $registry->all());
-        self::assertSame([], $registry->names());
+        self::assertFalse($componentRegistry->has(name: 'any'));
+        self::assertSame([], $componentRegistry->all());
+        self::assertSame([], $componentRegistry->names());
     }
 
     #[Test]
     public function it_registers_component_definition(): void
     {
-        $registry = new ComponentRegistry();
+        $componentRegistry = new ComponentRegistry();
 
-        $registry->register(
+        $componentRegistry->register(
             definition: new ComponentDefinition(
                 name         : 'cache',
                 providerClass: 'CacheProvider',
             ),
         );
 
-        self::assertTrue($registry->has(name: 'cache'));
-        self::assertCount(1, $registry->all());
-        self::assertSame(['cache'], $registry->names());
+        self::assertTrue($componentRegistry->has(name: 'cache'));
+        self::assertCount(1, $componentRegistry->all());
+        self::assertSame(['cache'], $componentRegistry->names());
     }
 
     #[Test]
     public function it_throws_when_registering_duplicate_component(): void
     {
-        $registry = new ComponentRegistry();
+        $componentRegistry = new ComponentRegistry();
 
-        $registry->register(
+        $componentRegistry->register(
             definition: new ComponentDefinition(name: 'cache'),
         );
 
         $this->expectException(FrameworkMisconfigured::class);
         $this->expectExceptionMessage('Component "cache" is already registered.');
 
-        $registry->register(
+        $componentRegistry->register(
             definition: new ComponentDefinition(name: 'cache'),
         );
     }
@@ -64,23 +64,23 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_stores_provider_class_in_definition(): void
     {
-        $registry = new ComponentRegistry();
+        $componentRegistry = new ComponentRegistry();
 
-        $registry->register(
+        $componentRegistry->register(
             definition: new ComponentDefinition(
                 name         : 'events',
                 providerClass: 'EventsProvider',
             ),
         );
 
-        $definitions = $registry->all();
+        $definitions = $componentRegistry->all();
         self::assertSame('EventsProvider', $definitions[0]->providerClass());
     }
 
     #[Test]
     public function it_can_register_and_boot_provider(): void
     {
-        $registry = new ComponentRegistry();
+        $componentRegistry = new ComponentRegistry();
 
         $provider = new class () implements ComponentProviderInterface {
             public static function name(): string
@@ -93,15 +93,15 @@ final class ComponentRegistryTest extends TestCase
             }
         };
 
-        $registry->registerProvider(provider: $provider);
+        $componentRegistry->registerProvider(provider: $provider);
 
-        self::assertTrue($registry->has(name: 'test'));
+        self::assertTrue($componentRegistry->has(name: 'test'));
     }
 
     #[Test]
     public function it_boots_all_registered_providers(): void
     {
-        $registry = new ComponentRegistry();
+        $componentRegistry = new ComponentRegistry();
         $booted   = [];
 
         $provider = new class ($booted) implements ComponentProviderInterface {
@@ -120,10 +120,10 @@ final class ComponentRegistryTest extends TestCase
             }
         };
 
-        $registry->registerProvider(provider: $provider);
+        $componentRegistry->registerProvider(provider: $provider);
 
         $runtime = $this->createMock(RuntimeInterface::class);
-        $registry->boot(runtime: $runtime);
+        $componentRegistry->boot(runtime: $runtime);
 
         self::assertCount(1, $booted);
     }
@@ -131,16 +131,16 @@ final class ComponentRegistryTest extends TestCase
     #[Test]
     public function it_returns_component_definition(): void
     {
-        $registry = new ComponentRegistry();
+        $componentRegistry = new ComponentRegistry();
 
-        $registry->register(
+        $componentRegistry->register(
             definition: new ComponentDefinition(
                 name         : 'router',
                 providerClass: 'RouterProvider',
             ),
         );
 
-        $all = $registry->all();
+        $all = $componentRegistry->all();
 
         self::assertCount(1, $all);
         self::assertInstanceOf(ComponentDefinition::class, $all[0]);

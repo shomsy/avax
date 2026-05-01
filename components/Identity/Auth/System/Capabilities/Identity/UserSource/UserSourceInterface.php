@@ -15,13 +15,13 @@ interface UserSourceInterface
 {
     public function findByCredentials(Credentials $credentials): ?User;
 
-    public function findById(UserId $id): ?User;
+    public function findById(UserId $userId) : ?User;
 
     public function findByEmail(string $email): ?User;
 
     public function create(User $user): User;
 
-    public function updatePassword(UserId $id, string $passwordHash): void;
+    public function updatePassword(UserId $userId, string $passwordHash) : void;
 
     public function emailExists(string $email): bool;
 

@@ -94,14 +94,14 @@ final readonly class OutboundRequest
     /**
      * Create a new instance with different options.
      */
-    public function withOptions(RequestOptions $options) : self
+    public function withOptions(RequestOptions $requestOptions) : self
     {
         return new self(
             method : $this->method,
             url    : $this->url,
             body   : $this->body,
             headers: $this->headers,
-            options: $options,
+            options: $requestOptions,
             context: $this->context,
         );
     }

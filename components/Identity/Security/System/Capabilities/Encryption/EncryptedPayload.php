@@ -14,9 +14,9 @@ use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed
  */
 final readonly class EncryptedPayload
 {
-    private const SEPARATOR = ':';
+    private const string SEPARATOR = ':';
 
-    private const VERSION_PREFIX = 'v1';
+    private const string VERSION_PREFIX = 'v1';
 
     public function __construct(
         private string $cipherText,

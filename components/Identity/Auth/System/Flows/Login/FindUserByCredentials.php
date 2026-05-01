@@ -14,11 +14,11 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSo
 final readonly class FindUserByCredentials
 {
     public function __construct(
-        private UserSource $source,
+        private UserSource $userSource,
     ) {}
 
     public function execute(string $email): ?User
     {
-        return $this->source->findByEmail($email);
+        return $this->userSource->findByEmail($email);
     }
 }

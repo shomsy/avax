@@ -55,9 +55,9 @@ final readonly class Security
     /**
      * @throws RandomException
      */
-    public function beginChange(BeginTenantSecurityChangeData $data): TenantSecurityChangeRequest
+    public function beginChange(BeginTenantSecurityChangeData $beginTenantSecurityChangeData) : TenantSecurityChangeRequest
     {
-        return $this->beginTenantSecurityChange->execute(data: $data);
+        return $this->beginTenantSecurityChange->execute(data: $beginTenantSecurityChangeData);
     }
 
     public function approveChange(string $changeId, string $approvedBy): TenantSecurityChangeRequest

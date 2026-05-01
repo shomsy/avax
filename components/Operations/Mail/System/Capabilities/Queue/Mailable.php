@@ -43,7 +43,7 @@ final class Mailable
 
     public function from(string $address, string $name = ''): self
     {
-        $this->from = $name !== '' ? "{$name} <{$address}>" : $address;
+        $this->from = $name !== '' ? sprintf('%s <%s>', $name, $address) : $address;
 
         return $this;
     }

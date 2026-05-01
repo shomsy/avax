@@ -8,21 +8,21 @@ use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentDefinition;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 
-final class ComponentRegistration
+final readonly class ComponentRegistration
 {
     public function __construct(
-        private readonly ComponentRegistry $registry,
+        private ComponentRegistry $componentRegistry,
     ) {
     }
 
-    public function register(ComponentDefinition $definition): void
+    public function register(ComponentDefinition $componentDefinition) : void
     {
-        $this->registry->register(definition: $definition);
+        $this->componentRegistry->register(definition: $componentDefinition);
     }
 
-    public function registerProvider(ComponentProviderInterface $provider): void
+    public function registerProvider(ComponentProviderInterface $componentProvider) : void
     {
-        $this->registry->registerProvider(provider: $provider);
+        $this->componentRegistry->registerProvider(provider: $componentProvider);
     }
 
     /**
@@ -30,6 +30,6 @@ final class ComponentRegistration
      */
     public function getRegistered(): array
     {
-        return $this->registry->all();
+        return $this->componentRegistry->all();
     }
 }

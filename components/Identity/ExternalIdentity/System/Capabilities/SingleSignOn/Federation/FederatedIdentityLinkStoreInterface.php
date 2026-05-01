@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 
 interface FederatedIdentityLinkStoreInterface
 {
-    public function save(FederatedIdentityLink $link): void;
+    public function save(FederatedIdentityLink $federatedIdentityLink) : void;
 
     public function find(string $connectionId, string $subject): ?FederatedIdentityLink;
 }

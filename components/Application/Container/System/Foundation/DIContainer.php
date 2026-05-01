@@ -39,7 +39,7 @@ use Throwable;
  */
 final readonly class Container implements ContainerInterface
 {
-    public function __construct(private ResolveDependency $resolver)
+    public function __construct(private ResolveDependency $resolveDependency)
     {
     }
 
@@ -53,12 +53,12 @@ final readonly class Container implements ContainerInterface
 
     private function resolveService(): ResolveService
     {
-        return new ResolveService(resolver: $this->resolver);
+        return new ResolveService(resolver: $this->resolveDependency);
     }
 
     public function has(string $id): bool
     {
-        return $this->resolver->has(id: $id);
+        return $this->resolveDependency->has(id: $id);
     }
 
     public function factory(string $abstract): Closure
@@ -87,7 +87,7 @@ final readonly class Container implements ContainerInterface
 
     private function callFunction(): CallFunction
     {
-        return new CallFunction(resolver: $this->resolver);
+        return new CallFunction(resolver: $this->resolveDependency);
     }
 
     /**
@@ -95,17 +95,17 @@ final readonly class Container implements ContainerInterface
      */
     public function injectInto(object $target): object
     {
-        return $this->resolver->injectInto(target: $target);
+        return $this->resolveDependency->injectInto(target: $target);
     }
 
     public function flush(): void
     {
-        $this->resolver->flush();
+        $this->resolveDependency->flush();
     }
 
     public function reset(): void
     {
-        $this->resolver->reset();
+        $this->resolveDependency->reset();
     }
 
     public function instance(string $abstract, object $instance): void
@@ -115,7 +115,7 @@ final readonly class Container implements ContainerInterface
 
     private function registerServices(): RegisterDependencies
     {
-        return new RegisterDependencies(resolver: $this->resolver);
+        return new RegisterDependencies(resolver: $this->resolveDependency);
     }
 
     /**
@@ -140,7 +140,7 @@ final readonly class Container implements ContainerInterface
 
     private function validateComposition(): ValidateComposition
     {
-        return new ValidateComposition(resolver: $this->resolver);
+        return new ValidateComposition(resolver: $this->resolveDependency);
     }
 
     /**
@@ -155,7 +155,7 @@ final readonly class Container implements ContainerInterface
 
     private function explainService(): ExplainService
     {
-        return new ExplainService(resolver: $this->resolver);
+        return new ExplainService(resolver: $this->resolveDependency);
     }
 
     /**
@@ -190,7 +190,7 @@ final readonly class Container implements ContainerInterface
 
     private function exportGraphFlow(): ExportGraph
     {
-        return new ExportGraph(resolver: $this->resolver);
+        return new ExportGraph(resolver: $this->resolveDependency);
     }
 
     public function debugGovernance(string $id = ''): array
@@ -270,7 +270,7 @@ final readonly class Container implements ContainerInterface
 
     public function env(string $key, mixed $default = null): mixed
     {
-        return $this->resolver->env(key: $key, default: $default);
+        return $this->resolveDependency->env(key: $key, default: $default);
     }
 
     public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void
@@ -280,17 +280,17 @@ final readonly class Container implements ContainerInterface
 
     private function openScopeFlow(): OpenScope
     {
-        return new OpenScope(resolver: $this->resolver);
+        return new OpenScope(resolver: $this->resolveDependency);
     }
 
-    public function closeScope(string $kind = null): void
+    public function closeScope(?string $kind = null) : void
     {
         $this->closeScopeFlow()->close(kind: $kind);
     }
 
     private function closeScopeFlow(): CloseScope
     {
-        return new CloseScope(resolver: $this->resolver);
+        return new CloseScope(resolver: $this->resolveDependency);
     }
 
     /**
@@ -298,7 +298,7 @@ final readonly class Container implements ContainerInterface
      */
     public function compileContainer(array $serviceIds = []): void
     {
-        $this->resolver->compileContainer(serviceIds: $serviceIds);
+        $this->resolveDependency->compileContainer(serviceIds: $serviceIds);
     }
 
     /**
@@ -306,12 +306,12 @@ final readonly class Container implements ContainerInterface
      */
     public function warmCompiled(array $serviceIds = []): void
     {
-        $this->resolver->warmCompiled(serviceIds: $serviceIds);
+        $this->resolveDependency->warmCompiled(serviceIds: $serviceIds);
     }
 
     public function flushCompiled(): void
     {
-        $this->resolver->flushCompiled();
+        $this->resolveDependency->flushCompiled();
     }
 
     /**
@@ -320,42 +320,42 @@ final readonly class Container implements ContainerInterface
      */
     public function rebuildCompiled(array $serviceIds = []): void
     {
-        $this->resolver->rebuildCompiled(serviceIds: $serviceIds);
+        $this->resolveDependency->rebuildCompiled(serviceIds: $serviceIds);
     }
 
     public function compileReport(array $serviceIds = []): ?CompileReport
     {
-        return $this->resolver->compileReport(serviceIds: $serviceIds);
+        return $this->resolveDependency->compileReport(serviceIds: $serviceIds);
     }
 
     public function runtimeReport(): RuntimeReport
     {
-        return $this->resolver->runtimeReport();
+        return $this->resolveDependency->runtimeReport();
     }
 
     public function hasAlias(string $alias): bool
     {
-        return $this->resolver->hasAlias(alias: $alias);
+        return $this->resolveDependency->hasAlias(alias: $alias);
     }
 
     public function isDeferred(string $id): bool
     {
-        return $this->resolver->isDeferred(id: $id);
+        return $this->resolveDependency->isDeferred(id: $id);
     }
 
     public function isLazy(string $id): bool
     {
-        return $this->resolver->isLazy(id: $id);
+        return $this->resolveDependency->isLazy(id: $id);
     }
 
     public function isCompiled(string $id): bool
     {
-        return $this->resolver->isCompiled(id: $id);
+        return $this->resolveDependency->isCompiled(id: $id);
     }
 
     public function isWarmedUp(): bool
     {
-        return $this->resolver->isWarmedUp();
+        return $this->resolveDependency->isWarmedUp();
     }
 
     /**
@@ -363,9 +363,9 @@ final readonly class Container implements ContainerInterface
      */
     public function canInject(object $target): bool
     {
-        $report = $this->inspectInjection(target: $target);
+        $injectionReport = $this->inspectInjection(target: $target);
 
-        return ! empty($report->injectedProperties) || ! empty($report->injectedMethods);
+        return $injectionReport->injectedProperties !== [] || $injectionReport->injectedMethods !== [];
     }
 
     /**
@@ -373,17 +373,17 @@ final readonly class Container implements ContainerInterface
      */
     public function inspectInjection(object $target): InjectionReport
     {
-        return $this->resolver->inspectInjection(target: $target);
+        return $this->resolveDependency->inspectInjection(target: $target);
     }
 
     public function scopes(): ScopeInterface
     {
-        return $this->resolver->scopes();
+        return $this->resolveDependency->scopes();
     }
 
     public function exportMetrics(): string
     {
-        return $this->resolver->exportMetrics();
+        return $this->resolveDependency->exportMetrics();
     }
 
     public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = ''): string
@@ -478,7 +478,7 @@ final readonly class Container implements ContainerInterface
      */
     public function tagged(string $tag): array
     {
-        return $this->resolver->tagged(tag: $tag);
+        return $this->resolveDependency->tagged(tag: $tag);
     }
 
     /**
@@ -486,12 +486,12 @@ final readonly class Container implements ContainerInterface
      */
     public function grouped(string $group): array
     {
-        return $this->resolver->grouped(group: $group);
+        return $this->resolveDependency->grouped(group: $group);
     }
 
     public function lazy(string $abstract): LazyProxy
     {
-        return $this->resolver->lazy(abstract: $abstract);
+        return $this->resolveDependency->lazy(abstract: $abstract);
     }
 
     public function defer(string $abstract, mixed $concrete = null): DependencyRegistration
@@ -505,13 +505,13 @@ final readonly class Container implements ContainerInterface
             return $this;
         }
 
-        return new ContextContainer(base: $this, resolver: $this->resolver, context: $context);
+        return new ContextContainer(base: $this, resolver: $this->resolveDependency, context: $context);
     }
 
     public function forSlice(string $slice): ContainerInterface
     {
         if (SliceContext::isRoot(slice: $slice)) {
-            return new RootCompositionView(base: $this, resolver: $this->resolver, context: []);
+            return new RootCompositionView(context: [], base: $this, resolver: $this->resolveDependency);
         }
 
         $context = SliceContext::with(context: [], slice: $slice);
@@ -528,11 +528,11 @@ final readonly class Container implements ContainerInterface
     private function sliceView(array $context): ContainerInterface
     {
         return match (SliceContext::category(slice: SliceContext::from(context: $context))) {
-            'flow'          => new FlowSliceView(base: $this, resolver: $this->resolver, context: $context),
-            'capability'    => new CapabilitySliceView(base: $this, resolver: $this->resolver, context: $context),
-            'configuration' => new ConfigurationSliceView(base: $this, resolver: $this->resolver, context: $context),
-            'foundation'    => new FoundationSliceView(base: $this, resolver: $this->resolver, context: $context),
-            default         => new ContextContainer(base: $this, resolver: $this->resolver, context: $context),
+            'flow'          => new FlowSliceView(context: $context, base: $this, resolver: $this->resolveDependency),
+            'capability'    => new CapabilitySliceView(context: $context, base: $this, resolver: $this->resolveDependency),
+            'configuration' => new ConfigurationSliceView(context: $context, base: $this, resolver: $this->resolveDependency),
+            'foundation'    => new FoundationSliceView(context: $context, base: $this, resolver: $this->resolveDependency),
+            default         => new ContextContainer(base: $this, resolver: $this->resolveDependency, context: $context),
         };
     }
 }

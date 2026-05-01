@@ -33,25 +33,25 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function request_scoped_services_reset_properly() : void
     {
-        $store = new RequestScopeStore();
+        $requestScopeStore = new RequestScopeStore();
 
         // Request 1: open scope, write service data
-        $scope1 = $store->open();
-        $scope1->write(key: 'db_connection', value: 'primary-conn-1');
-        $scope1->write(key: 'query_builder', value: ['table' => 'users', 'limit' => 10]);
-        $scope1->write(key: 'service_container_scope', value: 'scope-1-id');
+        $requestScope = $requestScopeStore->open();
+        $requestScope->write(key: 'db_connection', value: 'primary-conn-1');
+        $requestScope->write(key: 'query_builder', value: ['table' => 'users', 'limit' => 10]);
+        $requestScope->write(key: 'service_container_scope', value: 'scope-1-id');
 
-        self::assertSame('primary-conn-1', $scope1->read(key: 'db_connection'));
-        self::assertSame('scope-1-id', $scope1->read(key: 'service_container_scope'));
+        self::assertSame('primary-conn-1', $requestScope->read(key: 'db_connection'));
+        self::assertSame('scope-1-id', $requestScope->read(key: 'service_container_scope'));
 
         // Close scope (simulates end of request)
-        $scope1->close();
+        $requestScope->close();
 
         // Verify scope is closed
-        self::assertFalse($scope1->isOpen());
+        self::assertFalse($requestScope->isOpen());
 
         // Request 2: open new scope
-        $scope2 = $store->open();
+        $scope2 = $requestScopeStore->open();
 
         // All request-1 data must be gone
         self::assertNull(
@@ -77,15 +77,16 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function session_state_is_request_bound() : void
     {
-        $store = new ArraySessionStore();
+        $arraySessionStore = new ArraySessionStore();
 
         // --- Session A (Request A) ---
-        $scopeA = new SessionScope(store: $store);
+        $scopeA             = new SessionScope(store: $arraySessionStore);
 
         // Manually set started state (avoiding native session_start in tests)
         $reflectionA = new ReflectionClass($scopeA);
-        $startedPropA = $reflectionA->getProperty('started');
-        $startedPropA->setValue($scopeA, true);
+        $reflectionProperty = $reflectionA->getProperty('started');
+        $reflectionProperty->setValue($scopeA, true);
+
         $idPropA = $reflectionA->getProperty('id');
         $idPropA->setValue($scopeA, 'session-request-a');
 
@@ -105,12 +106,13 @@ final class RequestScopeIsolationFeatureTest extends TestCase
         self::assertSame('', $scopeA->id());
 
         // --- Session B (Request B) ---
-        $scopeB = new SessionScope(store: $store);
+        $scopeB = new SessionScope(store: $arraySessionStore);
 
         // Manually start session B
         $reflectionB = new ReflectionClass($scopeB);
         $startedPropB = $reflectionB->getProperty('started');
         $startedPropB->setValue($scopeB, true);
+
         $idPropB = $reflectionB->getProperty('id');
         $idPropB->setValue($scopeB, 'session-request-b');
 
@@ -141,47 +143,47 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function auth_current_user_resets_between_requests() : void
     {
-        $context    = new RuntimeContext();
-        $scopeStore = new RequestScopeStore();
-        $registry   = new StateResetRegistry();
-        $registry->register(name: 'request-scopes', state: $scopeStore);
-        $registry->register(name: 'runtime-context', state: $context);
+        $runtimeContext     = new RuntimeContext();
+        $requestScopeStore  = new RequestScopeStore();
+        $stateResetRegistry = new StateResetRegistry();
+        $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
+        $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
 
         // --- Request A: authenticated as admin ---
         $requestA = new RuntimeRequest(method: 'GET', uri: '/admin/dashboard');
 
         $openA = new OpenHttpRequestScope(
-            requestScopes : $scopeStore,
-            runtimeContext: $context,
+            runtimeContext: $runtimeContext,
+            requestScopes : $requestScopeStore,
         );
         $openA->open(request: $requestA);
 
         // Simulate auth context in request scope
-        $scopeA = $scopeStore->current();
-        $scopeA->write(key: 'auth_user_id', value: 1);
-        $scopeA->write(key: 'auth_user_name', value: 'admin');
-        $scopeA->write(key: 'auth_user_role', value: 'administrator');
-        $scopeA->write(key: 'auth_authenticated', value: true);
+        $requestScope = $requestScopeStore->current();
+        $requestScope->write(key: 'auth_user_id', value: 1);
+        $requestScope->write(key: 'auth_user_name', value: 'admin');
+        $requestScope->write(key: 'auth_user_role', value: 'administrator');
+        $requestScope->write(key: 'auth_authenticated', value: true);
 
-        self::assertTrue($scopeA->read(key: 'auth_authenticated'));
-        self::assertSame('admin', $scopeA->read(key: 'auth_user_name'));
+        self::assertTrue($requestScope->read(key: 'auth_authenticated'));
+        self::assertSame('admin', $requestScope->read(key: 'auth_user_name'));
 
-        $closeA = new CloseHttpRequestScope(requestScopes: $scopeStore);
+        $closeA = new CloseHttpRequestScope(requestScopes: $requestScopeStore);
         $closeA->close();
 
         // Reset state
-        $registry->resetAll();
+        $stateResetRegistry->resetAll();
 
         // --- Request B: unauthenticated user ---
         $requestB = new RuntimeRequest(method: 'GET', uri: '/public/home');
 
         $openB = new OpenHttpRequestScope(
-            requestScopes : $scopeStore,
-            runtimeContext: $context,
+            runtimeContext: $runtimeContext,
+            requestScopes : $requestScopeStore,
         );
         $openB->open(request: $requestB);
 
-        $scopeB = $scopeStore->current();
+        $scopeB = $requestScopeStore->current();
 
         // Auth context from Request A must NOT persist
         self::assertNull(
@@ -201,30 +203,30 @@ final class RequestScopeIsolationFeatureTest extends TestCase
             'Auth authenticated flag from request A must not leak into request B',
         );
 
-        $closeB = new CloseHttpRequestScope(requestScopes: $scopeStore);
+        $closeB = new CloseHttpRequestScope(requestScopes: $requestScopeStore);
         $closeB->close();
     }
 
     #[Test]
     public function request_scope_id_is_unique_per_request() : void
     {
-        $store = new RequestScopeStore();
+        $requestScopeStore = new RequestScopeStore();
 
-        $scope1 = $store->open();
-        $id1   = $scope1->id();
+        $requestScope = $requestScopeStore->open();
+        $id1          = $requestScope->id();
 
-        $scope1->close();
-        $store->resetState();
+        $requestScope->close();
+        $requestScopeStore->resetState();
 
-        $scope2 = $store->open();
-        $id2   = $scope2->id();
+        $scope2         = $requestScopeStore->open();
+        $requestScopeId = $scope2->id();
 
         $scope2->close();
 
         // Each request should get a unique scope ID
         self::assertNotSame(
             $id1->toString(),
-            $id2->toString(),
+            $requestScopeId->toString(),
             'Each request must receive a unique scope ID',
         );
     }
@@ -232,22 +234,22 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function closed_scope_throws_on_access() : void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
-        $scope->write(key: 'data', value: 'sensitive');
-        $scope->close();
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope->write(key: 'data', value: 'sensitive');
+        $requestScope->close();
 
         $this->expectException(RequestScopeAlreadyClosed::class);
-        $scope->read(key: 'data');
+        $requestScope->read(key: 'data');
     }
 
     #[Test]
     public function request_scope_operations_throw_when_no_scope_open() : void
     {
-        $store = new RequestScopeStore();
+        $requestScopeStore = new RequestScopeStore();
 
         // Without opening a scope, operations should fail
         $this->expectException(RequestScopeNotOpen::class);
-        $store->current();
+        $requestScopeStore->current();
     }
 
     #[Test]
@@ -255,11 +257,11 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     {
         // Simulates what happens in a worker-loop runtime where
         // requests are handled sequentially in the same process
-        $context    = new RuntimeContext();
-        $scopeStore = new RequestScopeStore();
-        $registry   = new StateResetRegistry();
-        $registry->register(name: 'request-scopes', state: $scopeStore);
-        $registry->register(name: 'runtime-context', state: $context);
+        $runtimeContext     = new RuntimeContext();
+        $requestScopeStore  = new RequestScopeStore();
+        $stateResetRegistry = new StateResetRegistry();
+        $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
+        $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
 
         $requests = [
             ['uri' => '/api/users/1', 'user_id' => 1, 'role' => 'viewer'],
@@ -272,12 +274,12 @@ final class RequestScopeIsolationFeatureTest extends TestCase
             $request = new RuntimeRequest(method: 'GET', uri: $requestData['uri']);
 
             $open = new OpenHttpRequestScope(
-                requestScopes : $scopeStore,
-                runtimeContext: $context,
+                runtimeContext: $runtimeContext,
+                requestScopes : $requestScopeStore,
             );
             $open->open(request: $request);
 
-            $scope = $scopeStore->current();
+            $scope = $requestScopeStore->current();
 
             // Write request-specific data
             $scope->write(key: 'current_user_id', value: $requestData['user_id']);
@@ -288,31 +290,31 @@ final class RequestScopeIsolationFeatureTest extends TestCase
             self::assertSame(
                 $requestData['user_id'],
                 $scope->read(key: 'current_user_id'),
-                "User ID mismatch for {$requestData['uri']}",
+                'User ID mismatch for ' . $requestData['uri'],
             );
             self::assertSame(
                 $requestData['role'],
                 $scope->read(key: 'current_role'),
-                "Role mismatch for {$requestData['uri']}",
+                'Role mismatch for ' . $requestData['uri'],
             );
             self::assertSame(
                 $requestData['uri'],
                 $scope->read(key: 'request_uri'),
-                "URI mismatch for {$requestData['uri']}",
+                'URI mismatch for ' . $requestData['uri'],
             );
 
             // Close and reset (simulating worker loop behavior)
-            $close = new CloseHttpRequestScope(requestScopes: $scopeStore);
+            $close = new CloseHttpRequestScope(requestScopes: $requestScopeStore);
             $close->close();
-            $registry->resetAll();
+            $stateResetRegistry->resetAll();
 
             // Verify clean state
             self::assertFalse(
-                $scopeStore->hasCurrent(),
+                $requestScopeStore->hasCurrent(),
                 'Scope store should not have current scope after reset',
             );
             self::assertNull(
-                $context->lastResult(),
+                $runtimeContext->lastResult(),
                 'Context should not have last result after reset',
             );
         }
@@ -321,21 +323,21 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     #[Test]
     public function state_reset_registry_tracks_component_count() : void
     {
-        $registry = new StateResetRegistry();
+        $stateResetRegistry = new StateResetRegistry();
 
         // The framework registers at least these components
-        $registry->register(name: 'request-scopes', state: new RequestScopeStore());
-        $registry->register(name: 'runtime-context', state: new RuntimeContext());
+        $stateResetRegistry->register(name: 'request-scopes', state: new RequestScopeStore());
+        $stateResetRegistry->register(name: 'runtime-context', state: new RuntimeContext());
 
-        $report = $registry->resetAll();
+        $stateResetReport = $stateResetRegistry->resetAll();
 
         self::assertCount(
             2,
-            $report->resetComponents(),
+            $stateResetReport->resetComponents(),
             'Both registered components should be reset',
         );
         self::assertEmpty(
-            $report->failures(),
+            $stateResetReport->failures(),
             'No failures should occur during reset',
         );
     }

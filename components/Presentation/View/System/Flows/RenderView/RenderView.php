@@ -9,11 +9,11 @@ use Avax\Components\Presentation\View\System\Capabilities\Engines\TemplateEngine
 final readonly class RenderView
 {
     public function __construct(
-        private TemplateEngineInterface $engine,
+        private TemplateEngineInterface $templateEngine,
     ) {}
 
     public function handle(string $view, array $data = []): string
     {
-        return $this->engine->render($view, $data);
+        return $this->templateEngine->render($view, $data);
     }
 }

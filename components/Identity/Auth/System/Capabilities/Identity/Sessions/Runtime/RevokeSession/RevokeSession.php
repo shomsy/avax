@@ -8,9 +8,11 @@ use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Un
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryUnavailable;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
@@ -35,28 +37,28 @@ final readonly class RevokeSession
      */
     public function execute(#[SensitiveParameter] string $sessionId): void
     {
-        $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $user                  = $authenticationContext->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
-        if ($this->sessionRegistry === null) {
+        if (! $this->sessionRegistry instanceof SessionRegistryInterface) {
             throw SessionRegistryUnavailable::forSessionManagementFlow();
         }
 
         $record = $this->sessionRegistry->find(sessionId: $sessionId);
 
-        if ($record === null || ! $record->userId->equals(other: new UserId(value: $user->id))) {
+        if (! $record instanceof SessionRecord || ! $record->userId->equals(other: new UserId(value: $user->id))) {
             return;
         }
 
         $now = $this->clock->now();
         $this->sessionRegistry->revoke(sessionId: $sessionId, revokedAt: $now, reason: 'user_revoke');
 
-        if ($context->sessionId() === $sessionId) {
-            $this->identity->clear(context: $context);
+        if ($authenticationContext->sessionId() === $sessionId) {
+            $this->identity->clear(context: $authenticationContext);
             $this->currentAuthentication->clear();
 
         }

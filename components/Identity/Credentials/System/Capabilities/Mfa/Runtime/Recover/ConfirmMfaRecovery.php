@@ -8,9 +8,11 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\MfaRecoveryFailed;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records\MfaRecoveryRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
@@ -38,12 +40,12 @@ final readonly class ConfirmMfaRecovery
     /**
      * @throws MfaRecoveryFailed
      */
-    public function execute(ConfirmMfaRecoveryData $data): void
+    public function execute(ConfirmMfaRecoveryData $confirmMfaRecoveryData) : void
     {
-        $tokenHash = $this->hash(token: $data->token);
+        $tokenHash = $this->hash(token: $confirmMfaRecoveryData->token);
         $record = $this->mfaStore->findRecovery(tokenHash: $tokenHash);
 
-        if ($record === null) {
+        if (! $record instanceof MfaRecoveryRecord) {
             throw MfaRecoveryFailed::invalidToken();
         }
 
@@ -57,13 +59,14 @@ final readonly class ConfirmMfaRecovery
 
         $this->mfaStore->disable(userId: $record->userId);
         $this->mfaStore->forgetRecovery(tokenHash: $tokenHash);
+
         $this->mfaChallengeStore->forgetForUser(userId: $record->userId);
         $this->sessionRegistry?->revokeForUser(userId: $record->userId, revokedAt: $now, reason: 'mfa_recovery');
         $this->refreshTokenStore?->revokeUser(userId: $record->userId);
 
         $context = $this->currentAuthentication?->read();
 
-        if ($context !== null && $context->user()?->id === $record->userId->value) {
+        if ($context instanceof AuthenticationContext && $context->user()?->id === $record->userId->value) {
             $this->identity?->clear(context: $context);
             $this->currentAuthentication->clear();
         }
@@ -73,8 +76,8 @@ final readonly class ConfirmMfaRecovery
             occurredAt: $now,
             context   : [
                             'user_id' => $record->userId->value,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $confirmMfaRecoveryData->ipAddress,
+                            'user_agent' => $confirmMfaRecoveryData->userAgent,
             ],
         ));
         $this->auditLog->record(event: new AuditEvent(

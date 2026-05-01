@@ -23,7 +23,7 @@ final class WarmCacheTest extends TestCase
 
     public function test_warm_with_callable_loaders() : void
     {
-        $warmCache = new WarmCache(store: $this->inMemoryCacheStore, clock: $this->frozenClock);
+        $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         $entries = [
             'user:1' => static fn () : string => 'User One',
@@ -34,14 +34,14 @@ final class WarmCacheTest extends TestCase
         $count = $warmCache->warm(entries: $entries);
 
         $this->assertEquals(expected: 3, actual: $count);
-        $this->assertEquals(expected: 'User One', actual: $this->inMemoryCacheStore->read(key: CacheKey::create(key: 'user:1'), clock: $this->frozenClock)->record->value);
-        $this->assertEquals(expected: 'User Two', actual: $this->inMemoryCacheStore->read(key: CacheKey::create(key: 'user:2'), clock: $this->frozenClock)->record->value);
-        $this->assertEquals(expected: 'User Three', actual: $this->inMemoryCacheStore->read(key: CacheKey::create(key: 'user:3'), clock: $this->frozenClock)->record->value);
+        $this->assertEquals(expected: 'User One', actual: $this->inMemoryCacheStore->read(clock: $this->frozenClock, key: CacheKey::create(key: 'user:1'))->record->value);
+        $this->assertEquals(expected: 'User Two', actual: $this->inMemoryCacheStore->read(clock: $this->frozenClock, key: CacheKey::create(key: 'user:2'))->record->value);
+        $this->assertEquals(expected: 'User Three', actual: $this->inMemoryCacheStore->read(clock: $this->frozenClock, key: CacheKey::create(key: 'user:3'))->record->value);
     }
 
     public function test_warm_with_static_values() : void
     {
-        $warmCache = new WarmCache(store: $this->inMemoryCacheStore, clock: $this->frozenClock);
+        $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         $entries = [
             'config:theme' => 'dark',
@@ -51,12 +51,12 @@ final class WarmCacheTest extends TestCase
         $count = $warmCache->warm(entries: $entries);
 
         $this->assertEquals(expected: 2, actual: $count);
-        $this->assertEquals(expected: 'dark', actual: $this->inMemoryCacheStore->read(key: CacheKey::create(key: 'config:theme'), clock: $this->frozenClock)->record->value);
+        $this->assertEquals(expected: 'dark', actual: $this->inMemoryCacheStore->read(clock: $this->frozenClock, key: CacheKey::create(key: 'config:theme'))->record->value);
     }
 
     public function test_warm_with_custom_ttl() : void
     {
-        $warmCache = new WarmCache(store: $this->inMemoryCacheStore, clock: $this->frozenClock);
+        $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         $entries = [
             'key_1' => 'value_1',
@@ -69,7 +69,7 @@ final class WarmCacheTest extends TestCase
 
     public function test_warm_returns_correct_count() : void
     {
-        $warmCache = new WarmCache(store: $this->inMemoryCacheStore, clock: $this->frozenClock);
+        $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         $entries = [
             'key_1' => static fn () : string => 'value_1',
@@ -95,7 +95,7 @@ final class WarmCacheTest extends TestCase
                        ),
         ));
 
-        $warmCache = new WarmCache(store: $this->inMemoryCacheStore, clock: $this->frozenClock);
+        $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         $entries = [
             'existing' => static fn () : string => 'new_value',
@@ -103,7 +103,7 @@ final class WarmCacheTest extends TestCase
 
         $warmCache->warm(entries: $entries);
 
-        $result = $this->inMemoryCacheStore->read(key: CacheKey::create(key: 'existing'), clock: $this->frozenClock);
+        $result = $this->inMemoryCacheStore->read(clock: $this->frozenClock, key: CacheKey::create(key: 'existing'));
 
         $this->assertEquals(expected: 'new_value', actual: $result->record->value);
     }

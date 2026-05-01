@@ -12,7 +12,7 @@ interface WorkerRuntimeInterface
 
     public function receive() : ?WorkerRequest;
 
-    public function send(WorkerResponse $response) : void;
+    public function send(WorkerResponse $workerResponse) : void;
 
     public function run() : void;
 

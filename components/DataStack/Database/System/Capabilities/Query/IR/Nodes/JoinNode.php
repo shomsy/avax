@@ -6,14 +6,14 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class JoinNode
+final readonly class JoinNode
 {
     public function __construct(
-        public readonly string $type,
-        public readonly string $table,
-        public readonly ?string $alias = null,
-        public readonly ?WhereNode $on = null,
-        public readonly ?string $using = null,
+        public string     $type,
+        public string     $table,
+        public ?string    $alias = null,
+        public ?WhereNode $on = null,
+        public ?string    $using = null,
     ) {}
 
     public function getSql(GrammarInterface $grammar): string
@@ -25,11 +25,11 @@ final class JoinNode
             $table .= ' AS ' . $grammar->wrap(value: $this->alias);
         }
 
-        $sql = "{$type} JOIN {$table}";
+        $sql = sprintf('%s JOIN %s', $type, $table);
 
         if ($this->using !== null) {
             $sql .= ' USING (' . $grammar->wrap(value: $this->using) . ')';
-        } elseif ($this->on !== null) {
+        } elseif ($this->on instanceof WhereNode) {
             $sql .= ' ON ' . $this->on->getSql(grammar: $grammar);
         }
 

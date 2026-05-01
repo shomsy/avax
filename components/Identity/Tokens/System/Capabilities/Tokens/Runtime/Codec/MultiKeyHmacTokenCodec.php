@@ -15,25 +15,25 @@ final readonly class MultiKeyHmacTokenCodec implements TokenCodecInterface
      * @param list<TokenCodecInterface> $verificationCodecs
      */
     public function __construct(
-        private TokenCodecInterface $primaryCodec,
+        private TokenCodecInterface $tokenCodec,
         private array $verificationCodecs = [],
     ) {}
 
     public function encode(array $claims): string
     {
-        return $this->primaryCodec->encode(claims: $claims);
+        return $this->tokenCodec->encode(claims: $claims);
     }
 
     public function decode(#[SensitiveParameter] string $token): ?array
     {
-        $decoded = $this->primaryCodec->decode(token: $token);
+        $decoded = $this->tokenCodec->decode(token: $token);
 
         if ($decoded !== null) {
             return $decoded;
         }
 
-        foreach ($this->verificationCodecs as $codec) {
-            $decoded = $codec->decode(token: $token);
+        foreach ($this->verificationCodecs as $verificationCodec) {
+            $decoded = $verificationCodec->decode(token: $token);
 
             if ($decoded !== null) {
                 return $decoded;

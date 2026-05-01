@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\ComponentManifest\ComponentDiscovery;
 final readonly class DiscoverComponents
 {
     public function __construct(
-        private ComponentDiscovery $discovery = new ComponentDiscovery(),
+        private ComponentDiscovery $componentDiscovery = new ComponentDiscovery(),
     ) {
     }
 
@@ -20,7 +20,7 @@ final readonly class DiscoverComponents
     {
         echo "\033[33mComponent Discovery Report\033[0m\n\n";
 
-        if (empty($manifests)) {
+        if ($manifests === []) {
             echo "No component manifests found.\n";
 
             return 0;
@@ -28,15 +28,15 @@ final readonly class DiscoverComponents
 
         echo sprintf("Found: %d component(s)\n\n", count($manifests));
 
-        foreach ($missingDeps as $missing) {
-            echo sprintf("\033[31m[MISSING] %s\033[0m\n", $missing);
+        foreach ($missingDeps as $missingDep) {
+            echo sprintf("\033[31m[MISSING] %s\033[0m\n", $missingDep);
         }
 
-        if (empty($missingDeps)) {
+        if ($missingDeps === []) {
             echo "\033[32mAll dependencies satisfied.\033[0m\n";
         }
 
-        return empty($missingDeps) ? 0 : 1;
+        return $missingDeps === [] ? 0 : 1;
     }
 
     /**
@@ -44,7 +44,7 @@ final readonly class DiscoverComponents
      */
     public function search(array $searchPaths): self
     {
-        $this->discovery->discover($searchPaths);
+        $this->componentDiscovery->discover($searchPaths);
 
         return $this;
     }
@@ -54,6 +54,6 @@ final readonly class DiscoverComponents
      */
     public function detectMissingDeps(): array
     {
-        return $this->discovery->detectMissingDependencies();
+        return $this->componentDiscovery->detectMissingDependencies();
     }
 }

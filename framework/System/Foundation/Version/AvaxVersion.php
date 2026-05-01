@@ -6,15 +6,15 @@ namespace Avax\Framework\System\Foundation\Version;
 
 final class AvaxVersion
 {
-    public const MAJOR = 1;
+    public const int MAJOR = 1;
 
-    public const MINOR = 0;
+    public const int MINOR = 0;
 
-    public const PATCH = 0;
+    public const int PATCH = 0;
 
-    public const VERSION = '1.0.0';
+    public const string VERSION = '1.0.0';
 
-    public const NAME = 'Avax Runtime-Agnostic Framework';
+    public const string NAME = 'Avax Runtime-Agnostic Framework';
 
     public static function version(): string
     {

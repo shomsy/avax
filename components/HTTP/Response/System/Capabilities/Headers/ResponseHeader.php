@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Response\System\Capabilities\Headers;
 
-final class ResponseHeader
+final readonly class ResponseHeader
 {
     public function __construct(
         private string $name,

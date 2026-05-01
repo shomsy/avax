@@ -16,10 +16,10 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
         array $claims,
         DateTimeImmutable $expiresAt,
         bool $signatureVerified = false,
-        string $signingAlgorithm = null,
-        string $signingClientId = null,
+        ?string $signingAlgorithm = null,
+        ?string $signingClientId = null,
     ): OidcRequestObject {
-        $object = new OidcRequestObject(
+        $oidcRequestObject = new OidcRequestObject(
             requestUri       : $requestUri,
             claims           : $claims,
             createdAt        : new DateTimeImmutable(),
@@ -29,16 +29,16 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
             signingClientId  : $signingClientId,
         );
 
-        $this->objects[$requestUri] = $object;
+        $this->objects[$requestUri] = $oidcRequestObject;
 
-        return $object;
+        return $oidcRequestObject;
     }
 
     public function consume(string $requestUri): ?OidcRequestObject
     {
         $object = $this->find(requestUri: $requestUri);
 
-        if ($object === null) {
+        if (! $object instanceof OidcRequestObject) {
             return null;
         }
 

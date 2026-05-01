@@ -12,26 +12,14 @@ use Closure;
  * Provides multiple conflict resolution strategies that can be
  * selected based on application requirements.
  */
-final class ConflictResolution
+final readonly class ConflictResolution
 {
-    /**
-     * @var string Strategy name
-     */
-    private readonly string $name;
-
-    /**
-     * @var Closure The resolution function
-     */
-    private readonly Closure $resolver;
-
     /**
      * @param Closure $resolver Function(mixed $a, mixed $b, array $context) : mixed
      * @param string  $name     Strategy name
      */
-    private function __construct(Closure $resolver, string $name)
+    private function __construct(private Closure $resolver, private string $name)
     {
-        $this->resolver = $resolver;
-        $this->name = $name;
     }
 
     /**

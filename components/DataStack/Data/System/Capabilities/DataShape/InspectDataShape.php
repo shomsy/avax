@@ -9,8 +9,8 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Configuratio
 final readonly class InspectDataShape
 {
     public function __construct(
-        private ?DataTransferConfig $config = null,
-        private CacheDataShape $cache = new CacheDataShape(),
+        private ?DataTransferConfig $dataTransferConfig = null,
+        private CacheDataShape      $cacheDataShape = new CacheDataShape(),
     ) {}
 
     /**
@@ -18,10 +18,10 @@ final readonly class InspectDataShape
      */
     public function inspect(string $class): DataShape
     {
-        $config   = $this->config ?? DataTransferConfig::default();
+        $config = $this->dataTransferConfig ?? DataTransferConfig::default();
         $cacheKey = $class . ':' . spl_object_id(object: $config);
 
-        return $this->cache->remember(
+        return $this->cacheDataShape->remember(
             key    : $cacheKey,
             builder: static fn (): DataShape => new ReadClassDataShape()->read(class: $class, config: $config),
         );

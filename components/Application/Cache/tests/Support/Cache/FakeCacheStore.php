@@ -39,7 +39,7 @@ final class FakeCacheStore implements CacheStore
             return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        return new CacheStoreRecordWasFound(key: $cacheKey, record: $record, clock: $clock);
+        return new CacheStoreRecordWasFound(clock: $clock, key: $cacheKey, record: $record);
     }
 
     #[Override]
@@ -89,12 +89,6 @@ final class FakeCacheStore implements CacheStore
 
     public function containsValue(mixed $value): bool
     {
-        foreach ($this->records as $record) {
-            if ($record->value === $value) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->records, fn ($record) : bool => $record->value === $value);
     }
 }

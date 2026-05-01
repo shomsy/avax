@@ -12,16 +12,16 @@ final readonly class CleanupExpiredPasswordResets
 {
     public function __construct(
         #[SensitiveParameter]
-        private ?PruneExpiredPasswordResetsInterface $passwordResetStore,
+        private ?PruneExpiredPasswordResetsInterface $pruneExpiredPasswordResets,
         private Clock $clock,
     ) {}
 
     public function execute(): int
     {
-        if ($this->passwordResetStore === null) {
+        if (! $this->pruneExpiredPasswordResets instanceof PruneExpiredPasswordResetsInterface) {
             return 0;
         }
 
-        return $this->passwordResetStore->pruneExpired(now: $this->clock->now());
+        return $this->pruneExpiredPasswordResets->pruneExpired(now: $this->clock->now());
     }
 }

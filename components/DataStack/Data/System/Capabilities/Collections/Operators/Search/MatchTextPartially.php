@@ -15,7 +15,7 @@ final readonly class MatchTextPartially
     {
         return array_values(array_filter(
             $this->items,
-            static function ($item) use ($query, $key, $caseSensitive): bool {
+                                static function (array $item) use ($query, $key, $caseSensitive) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
                 if (! is_string($target)) {
                     return false;

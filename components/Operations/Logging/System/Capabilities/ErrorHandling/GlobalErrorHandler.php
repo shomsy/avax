@@ -27,17 +27,17 @@ final class GlobalErrorHandler
     /**
      * @var callable|null Previous exception handler to delegate to
      */
-    private $previousExceptionHandler = null;
+    private $previousExceptionHandler;
 
     /**
      * @var callable|null Previous error handler to delegate to for suppressed errors
      */
-    private $previousErrorHandler = null;
+    private $previousErrorHandler;
 
     public function __construct(
         private readonly HandleRuntimeFailure $handleRuntimeFailure,
         private readonly ShutdownErrorHandler $shutdownErrorHandler,
-        private readonly Logging $logger,
+        private readonly Logging $logging,
     ) {}
 
     /**
@@ -64,7 +64,7 @@ final class GlobalErrorHandler
     public function register(): void
     {
         if ($this->registered) {
-            $this->logger->warning('GlobalErrorHandler::register called but handlers are already registered');
+            $this->logging->warning('GlobalErrorHandler::register called but handlers are already registered');
 
             return;
         }
@@ -76,7 +76,7 @@ final class GlobalErrorHandler
 
         $this->registered = true;
 
-        $this->logger->info('Global error handlers registered');
+        $this->logging->info('Global error handlers registered');
     }
 
     /**
@@ -95,7 +95,7 @@ final class GlobalErrorHandler
 
         $this->registered = false;
 
-        $this->logger->info('Global error handlers unregistered');
+        $this->logging->info('Global error handlers unregistered');
     }
 
     /**
@@ -119,7 +119,7 @@ final class GlobalErrorHandler
     /**
      * Handle uncaught exceptions.
      */
-    public function handleException(Throwable $throwable): void
+    public function handleException(Throwable $throwable) : never
     {
         $this->handleRuntimeFailure->handleException($throwable);
     }
@@ -142,10 +142,10 @@ final class GlobalErrorHandler
 
         try {
             $this->handleRuntimeFailure->handle($severity, $message, $file, $line);
-        } catch (Throwable $handlerException) {
+        } catch (Throwable $throwable) {
             // If the handler itself fails, log and exit
-            $this->logger->critical(
-                'Error handler failed: ' . $handlerException->getMessage(),
+            $this->logging->critical(
+                'Error handler failed: ' . $throwable->getMessage(),
                 [
                     'original_error' => [
                         'severity' => $severity,
@@ -153,7 +153,7 @@ final class GlobalErrorHandler
                         'file'    => $file,
                         'line'    => $line,
                     ],
-                    'handler_exception' => $handlerException->getMessage(),
+                    'handler_exception' => $throwable->getMessage(),
                 ],
             );
 

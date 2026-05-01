@@ -13,32 +13,32 @@ use Throwable;
 
 final class Monitoring
 {
-    private static ?MetricsRegistry $metrics = null;
+    private static ?MetricsRegistry $metricsRegistry = null;
 
     public static function dashboard(): array
     {
-        return (new MonitoringDashboard(
+        return new MonitoringDashboard(
             metrics: self::metrics(),
             health : self::health(),
-        ))->data();
+        )->data();
     }
 
     public static function metrics(): MetricsRegistry
     {
-        if (self::$metrics === null) {
-            self::$metrics = new MetricsRegistry();
+        if (! self::$metricsRegistry instanceof MetricsRegistry) {
+            self::$metricsRegistry = new MetricsRegistry();
         }
 
-        return self::$metrics;
+        return self::$metricsRegistry;
     }
 
     public static function health(array $checks = []): HealthReport
     {
-        return (new HealthEndpoint())->report(checks: $checks);
+        return new HealthEndpoint()->report(checks: $checks);
     }
 
     public static function report(Throwable $throwable): void
     {
-        (new SentryReporter())->capture(throwable: $throwable);
+        new SentryReporter()->capture(throwable: $throwable);
     }
 }

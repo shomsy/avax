@@ -14,7 +14,7 @@ final class SessionTransaction
     private bool $active = false;
 
     public function __construct(
-        private readonly SessionScope $scope,
+        private readonly SessionScope $sessionScope,
     ) {}
 
     public function begin() : void
@@ -23,7 +23,7 @@ final class SessionTransaction
             throw new RuntimeException('Transaction already active');
         }
 
-        $this->backup = $this->scope->all();
+        $this->backup = $this->sessionScope->all();
         $this->active = true;
     }
 
@@ -43,10 +43,10 @@ final class SessionTransaction
             throw new RuntimeException('No active transaction');
         }
 
-        $this->scope->clear();
+        $this->sessionScope->clear();
 
         foreach ($this->backup as $key => $value) {
-            $this->scope->set($key, $value);
+            $this->sessionScope->set($key, $value);
         }
 
         $this->backup = null;

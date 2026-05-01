@@ -147,7 +147,7 @@ abstract class Repository
                 $query->where(column: $column, operator: '=', value: $value);
             }
 
-            if ($orderBy !== null && $orderBy !== '' && $orderBy !== '0') {
+            if (! in_array($orderBy, [null, '', '0'], true)) {
                 $query->orderBy(column: $orderBy, direction: $direction ?? 'ASC');
             }
 
@@ -161,7 +161,7 @@ abstract class Repository
 
             $results = $query->get();
 
-            return array_map(callback: [$this, 'mapToEntity'], array: $results);
+            return array_map(callback: $this->mapToEntity(...), array: $results);
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to find entities by conditions.', context: [
                 'conditions' => $conditions,

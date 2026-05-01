@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, 2) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 
 final class DeferredRegularService
 {

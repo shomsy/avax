@@ -55,9 +55,9 @@ final readonly class Mfa
      * @throws Unauthenticated
      * @throws RandomException
      */
-    public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $data): BackupCodeSet
+    public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $confirmMfaEnrollmentData) : BackupCodeSet
     {
-        return $this->confirmMfaEnrollment->execute(data: $data);
+        return $this->confirmMfaEnrollment->execute(data: $confirmMfaEnrollmentData);
     }
 
     /**
@@ -78,9 +78,9 @@ final readonly class Mfa
         return $this->startMfaChallenge->execute();
     }
 
-    public function verifyMfaChallenge(VerifyMfaChallengeData $data): AuthenticationResult
+    public function verifyMfaChallenge(VerifyMfaChallengeData $verifyMfaChallengeData) : AuthenticationResult
     {
-        return $this->verifyMfaChallenge->execute(data: $data);
+        return $this->verifyMfaChallenge->execute(data: $verifyMfaChallengeData);
     }
 
     /**
@@ -104,13 +104,13 @@ final readonly class Mfa
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function beginMfaRecovery(BeginMfaRecoveryData $data): MfaRecoveryChallenge
+    public function beginMfaRecovery(BeginMfaRecoveryData $beginMfaRecoveryData) : MfaRecoveryChallenge
     {
-        return $this->startMfaRecovery->execute(data: $data);
+        return $this->startMfaRecovery->execute(data: $beginMfaRecoveryData);
     }
 
-    public function confirmMfaRecovery(ConfirmMfaRecoveryData $data): void
+    public function confirmMfaRecovery(ConfirmMfaRecoveryData $confirmMfaRecoveryData) : void
     {
-        $this->confirmMfaRecovery->execute(data: $data);
+        $this->confirmMfaRecovery->execute(data: $confirmMfaRecoveryData);
     }
 }

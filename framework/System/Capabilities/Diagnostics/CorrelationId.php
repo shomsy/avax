@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Diagnostics;
 
-final class CorrelationId
+final readonly class CorrelationId
 {
     public function __construct(
-        public readonly string $value,
+        public string $value,
     ) {
     }
 

@@ -15,7 +15,8 @@ use RecursiveIteratorIterator;
  */
 final class MigrateDataLayerToPersistence
 {
-    private const MIGRATIONS = [
+    private const array MIGRATIONS
+        = [
         'Avax\DataLayer\AccessPersistentData\AccessPersistentData' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
         'Avax\DataLayer\AccessPersistentData\PersistentDataFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
         'Avax\DataLayer\AccessPersistentData\PersistentDataRequest' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
@@ -50,6 +51,7 @@ final class MigrateDataLayerToPersistence
             if (! $file->isFile()) {
                 continue;
             }
+
             if ($file->getExtension() !== 'php') {
                 continue;
             }
@@ -88,26 +90,26 @@ final class MigrateDataLayerToPersistence
     }
 }
 
-if (php_sapi_name() === 'cli') {
+if (PHP_SAPI === 'cli') {
     $migrator = new MigrateDataLayerToPersistence();
     $results  = $migrator->migrate('components');
 
     echo "DataLayer -> Persistence Migration\n";
     echo "======================================\n\n";
-    echo "Files changed: {$results['changed']}\n";
+    echo sprintf('Files changed: %s%s', $results['changed'], PHP_EOL);
     echo "Errors: {$results['errors']}\n\n";
 
     if ($results['changed'] > 0) {
         echo "Modified files:\n";
         foreach ($results['files'] as $file) {
-            echo "  - $file\n";
+            echo sprintf('  - %s%s', $file, PHP_EOL);
         }
     }
 
     if ($results['errors'] > 0) {
         echo "\nErrors:\n";
         foreach ($results['error_details'] as $error) {
-            echo "  - $error\n";
+            echo sprintf('  - %s%s', $error, PHP_EOL);
         }
     }
 

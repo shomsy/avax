@@ -20,9 +20,9 @@ final readonly class RecordSagaStepCompleted
     {
         return $storeSagaState->appendEvent(event: new SagaEvent(
                                                        id: 'saga-event-' . bin2hex(string: random_bytes(length: 8)),
-            instanceId   : $instanceId,
             type         : 'saga.step.completed',
             payload      : ['step' => $stepName],
+                                                       instanceId: $instanceId,
             correlationId: $correlationId,
         ));
     }

@@ -51,13 +51,7 @@ final readonly class CacheTags implements Stringable
 
     public function hasAny(self $other): bool
     {
-        foreach ($this->tags as $tag) {
-            if ($other->has(tag: $tag)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->tags, fn (CacheTag $cacheTag) : bool => $other->has(tag: $cacheTag));
     }
 
     public function has(CacheTag $cacheTag): bool
@@ -67,13 +61,7 @@ final readonly class CacheTags implements Stringable
 
     public function hasAll(self $other): bool
     {
-        foreach ($other->tags as $tag) {
-            if (! $this->has(tag: $tag)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($other->tags, fn (CacheTag $cacheTag) : bool => $this->has(tag: $cacheTag));
     }
 
     public function isEmpty(): bool

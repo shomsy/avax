@@ -80,6 +80,6 @@ final readonly class BoundaryAudit
 
     public function isCompliant() : bool
     {
-        return empty($this->statefulViolations);
+        return $this->statefulViolations === [];
     }
 }

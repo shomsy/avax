@@ -10,9 +10,9 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinit
 
 final class MatchRoute
 {
-    public function execute(RouteCollection $routes, RequestInterface $request): ?RouteDefinition
+    public function execute(RouteCollection $routeCollection, RequestInterface $request) : ?RouteDefinition
     {
-        foreach ($routes->all() as $route) {
+        foreach ($routeCollection->all() as $route) {
             if ($route->method()->toString() !== $request->getMethod()) {
                 continue;
             }

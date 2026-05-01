@@ -12,26 +12,26 @@ use Psr\Http\Message\ServerRequestInterface;
 final readonly class RateLimitMiddleware
 {
     public function __construct(
-        private RedisRateLimiter $limiter = new RedisRateLimiter(),
-        private ResponseFactory  $responses = new ResponseFactory(),
+        private RedisRateLimiter $redisRateLimiter = new RedisRateLimiter(),
+        private ResponseFactory  $responseFactory = new ResponseFactory(),
         private array            $config = [],
     ) {}
 
-    public function process(ServerRequestInterface $request, object $handler) : ResponseInterface
+    public function process(ServerRequestInterface $serverRequest, object $handler) : ResponseInterface
     {
         return $this->handle(
-            request: $request,
-            next   : static fn (ServerRequestInterface $nextRequest) : ResponseInterface => $handler->handle($nextRequest),
+            next   : static fn (ServerRequestInterface $serverRequest) : ResponseInterface => $handler->handle($serverRequest),
+            request: $serverRequest,
         );
     }
 
-    public function handle(ServerRequestInterface $request, Closure $next) : ResponseInterface
+    public function handle(ServerRequestInterface $serverRequest, Closure $next) : ResponseInterface
     {
-        $decision = $this->decision(request: $request);
+        $decision = $this->decision(request: $serverRequest);
 
         if (! $decision->allowed) {
             return $this->withRateLimitHeaders(
-                response: $this->responses->json(
+                response: $this->responseFactory->json(
                             data      : [
                                             'message'     => 'Too Many Requests',
                                             'retry_after' => $decision->retryAfter,
@@ -43,29 +43,29 @@ final readonly class RateLimitMiddleware
         }
 
         return $this->withRateLimitHeaders(
-            response: $next($request),
+            response: $next($serverRequest),
             decision: $decision,
         );
     }
 
-    private function decision(ServerRequestInterface $request) : RateLimitDecision
+    private function decision(ServerRequestInterface $serverRequest) : RateLimitDecision
     {
-        return (new RateLimiter(limiter: $this->limiter))->attempt(
-            key         : $this->keyFor(request: $request),
+        return new RateLimiter(limiter: $this->redisRateLimiter)->attempt(
+            key         : $this->keyFor(request: $serverRequest),
             maxAttempts : $this->config['max_attempts'] ?? 60,
             decaySeconds: $this->config['decay_seconds'] ?? 60,
         );
     }
 
-    private function keyFor(ServerRequestInterface $request) : string
+    private function keyFor(ServerRequestInterface $serverRequest) : string
     {
-        $server = $request->getServerParams();
+        $server = $serverRequest->getServerParams();
         $parts = [];
 
         foreach ($this->config['key_by'] ?? ['ip', 'path'] as $segment) {
             $parts[] = match ($segment) {
-                'user' => (string) ($request->getAttribute('user_id') ?? 'guest'),
-                'path' => $request->getUri()->getPath(),
+                'user' => (string) ($serverRequest->getAttribute('user_id') ?? 'guest'),
+                'path' => $serverRequest->getUri()->getPath(),
                 default => (string) ($server['REMOTE_ADDR'] ?? '0.0.0.0'),
             };
         }
@@ -73,9 +73,9 @@ final readonly class RateLimitMiddleware
         return implode(':', $parts);
     }
 
-    private function withRateLimitHeaders(ResponseInterface $response, RateLimitDecision $decision) : ResponseInterface
+    private function withRateLimitHeaders(ResponseInterface $response, RateLimitDecision $rateLimitDecision) : ResponseInterface
     {
-        foreach ($decision->headers() as $name => $value) {
+        foreach ($rateLimitDecision->headers() as $name => $value) {
             $response = $response->withHeader($name, $value);
         }
 

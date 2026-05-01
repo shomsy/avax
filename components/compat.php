@@ -2,17 +2,48 @@
 
 declare(strict_types=1);
 
+use Avax\Application\Config\Config;
+use Avax\Application\Filesystem\Filesystem;
+use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Database\System\Capabilities\Connections\Connections;
+use Avax\Database\System\Capabilities\Connections\Pools\ConnectionPool;
+use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
+use Avax\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
+use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
+use Avax\Database\System\Capabilities\ORM\Attributes\Column;
+use Avax\Database\System\Capabilities\ORM\Attributes\Entity;
+use Avax\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
+use Avax\Database\System\Capabilities\ORM\Attributes\Id;
+use Avax\Database\System\Capabilities\ORM\Attributes\Table;
+use Avax\Database\System\Capabilities\ORM\Repositories\EntityRepository;
+use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Database\System\Capabilities\Query\Exceptions\QueryException;
+use Avax\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
+use Avax\DataHandling\DataTransfer\Capabilities\ValueConversion\ValueCasterInterface;
+use Avax\DataHandling\DataTransfer\Capabilities\ValueConversion\ValueConversionContext;
+use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Avax\HTTP\AppKernel;
+use Avax\HTTP\Context\HttpContext;
+use Avax\HTTP\HttpKernel;
+use Avax\HTTP\ResolveRouteFromHttpRequest;
+use Avax\HTTP\Router\Router;
+use Avax\HTTP\Router\RouterInterface;
+use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Session\Session;
+use Avax\Presentation\View\View;
+
 $classAliases = [
     'Avax\\DataHandling\\DataTransfer\\DataTransfer'                                        => 'Avax\\DataFoundation\\DataTransfer\\DataTransfer',
     'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\CastWith'                  => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\Attributes\\CastWith',
     'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\Hidden'                    => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\Attributes\\Hidden',
     'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\ListOf'                    => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\Attributes\\ListOf',
     'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\MapFrom'                   => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\Attributes\\MapFrom',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\ValueConversion\\ValueCasterInterface' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Capabilities\\ValueConversion\\ValueCasterInterface',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\ValueConversion\\ValueConversionContext' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Capabilities\\ValueConversion\\ValueConversionContext',
+    ValueCasterInterface::class                                   => \Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueCasterInterface::class,
+    ValueConversionContext::class                                 => \Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueConversionContext::class,
     'Avax\\DataHandling\\DataTransfer\\InspectDataShape\\DataField'                         => 'Avax\\Components\\Data\\System\\Capabilities\\DataShape\\DataField',
-    'Avax\\DataHandling\\ObjectHandling\\DTO\\AbstractDTO'                                  => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Foundation\\AbstractDTO',
-    'Avax\\DataFoundation\\ObjectHandling\\DTO\\AbstractDTO'                                => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Foundation\\AbstractDTO',
+    AbstractDTO::class                                            => \Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO::class,
+    \Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO::class    => \Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO::class,
     'Avax\\DataFoundation\\Collection'                                                      => 'Avax\\Components\\Data\\System\\Capabilities\\Collections\\Collection',
     'Avax\\DataFoundation\\Arrhae'                                                          => 'Avax\\Components\\Data\\System\\Capabilities\\Collections\\Arrhae',
     'Avax\\DataFoundation\\Collections\\Map\\Map'                                           => 'Avax\\Components\\Data\\System\\Capabilities\\Collections\\Map\\Map',
@@ -63,9 +94,9 @@ $classAliases = [
 
     // Router compat aliases - only core interfaces exist at new location
     // Other Router aliases removed: old component structure was replaced by HTTP/Router suite
-    'Avax\\HTTP\\Router\\Router'                                      => 'Avax\\Components\\HTTP\\Router\\System\\PublicSurface\\Router',
-    'Avax\\HTTP\\Router\\RouterInterface'                             => 'Avax\\Components\\HTTP\\Router\\System\\PublicSurface\\RouterInterface',
-    'Avax\\HTTP\\Router\\RouterRuntimeInterface' => 'Avax\\Components\\HTTP\\Router\\System\\PublicSurface\\RouterRuntimeInterface',
+    Router::class                                                 => \Avax\Components\HTTP\Router\System\PublicSurface\Router::class,
+    RouterInterface::class                                        => \Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface::class,
+    RouterRuntimeInterface::class                                 => \Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface::class,
 
     'Avax\\Database\\Database'                                                                  => 'Avax\\Components\\DataStack\\Database\\Database',
     'Avax\\Database\\EntityManager'                                                             => 'Avax\\Components\\DataStack\\Database\\EntityManager',
@@ -74,22 +105,22 @@ $classAliases = [
     'Avax\\Database\\Schema'                                                                    => 'Avax\\Components\\DataStack\\Database\\Schema',
     'Avax\\Database\\Telemetry'                                                                 => 'Avax\\Components\\DataStack\\Database\\Telemetry',
     'Avax\\Database\\Transactions'                                                              => 'Avax\\Components\\DataStack\\Database\\Transactions',
-    'Avax\\Database\\System\\Capabilities\\Connections\\Connections'                            => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Connections\\Connections',
-    'Avax\\Database\\System\\Capabilities\\Connections\\Pools\\ConnectionPool'                  => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Connections\\Pools\\ConnectionPool',
-    'Avax\\Database\\System\\Capabilities\\Migrations\\Design\\Column\\DSL\\ColumnDefinition'   => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Migrations\\Design\\Column\\DSL\\ColumnDefinition',
-    'Avax\\Database\\System\\Capabilities\\Migrations\\Design\\Column\\Render\\ColumnSQLRenderer' => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Migrations\\Design\\Column\\Render\\ColumnSQLRenderer',
-    'Avax\\Database\\System\\Capabilities\\Migrations\\Design\\Table\\Blueprint'                => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Migrations\\Design\\Table\\Blueprint',
-    'Avax\\Database\\System\\Capabilities\\ORM\\Attributes\\Column'                             => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\ORM\\Attributes\\Column',
-    'Avax\\Database\\System\\Capabilities\\ORM\\Attributes\\Entity'                             => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\ORM\\Attributes\\Entity',
-    'Avax\\Database\\System\\Capabilities\\ORM\\Attributes\\GeneratedValue'                     => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\ORM\\Attributes\\GeneratedValue',
-    'Avax\\Database\\System\\Capabilities\\ORM\\Attributes\\Id'                                 => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\ORM\\Attributes\\Id',
-    'Avax\\Database\\System\\Capabilities\\ORM\\Attributes\\Table'                              => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\ORM\\Attributes\\Table',
-    'Avax\\Database\\System\\Capabilities\\ORM\\Repositories\\EntityRepository'                 => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\ORM\\Repositories\\EntityRepository',
-    'Avax\\Database\\System\\Capabilities\\Query\\Builder\\QueryBuilder'                        => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Query\\Builder\\QueryBuilder',
-    'Avax\\Database\\System\\Capabilities\\Query\\Exceptions\\QueryException'                   => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Query\\Exceptions\\QueryException',
-    'Avax\\Database\\System\\Capabilities\\Query\\Grammar\\MySQLGrammar'                        => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Query\\Grammar\\MySQLGrammar',
-    'Avax\\Database\\System\\Capabilities\\Transactions\\Exceptions\\TransactionException'      => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\Transactions\\Exceptions\\TransactionException',
-    'Avax\\Tests\\Foundation\\Database\\Unit\\Attributes\\Column'                               => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\ORM\\Attributes\\Column',
+    Connections::class                                            => \Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections::class,
+    ConnectionPool::class                                         => \Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPool::class,
+    ColumnDefinition::class                                       => \Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition::class,
+    ColumnSQLRenderer::class                                      => \Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer::class,
+    Blueprint::class                                              => \Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Table\Blueprint::class,
+    Column::class                                                 => \Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Column::class,
+    Entity::class                                                 => \Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Entity::class,
+    GeneratedValue::class                                         => \Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\GeneratedValue::class,
+    Id::class                                                     => \Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Id::class,
+    Table::class                                                  => \Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Table::class,
+    EntityRepository::class                                       => \Avax\Components\DataStack\Database\System\Capabilities\ORM\Repositories\EntityRepository::class,
+    QueryBuilder::class                                           => \Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder::class,
+    QueryException::class                                         => \Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\QueryException::class,
+    MySQLGrammar::class                                           => \Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar::class,
+    TransactionException::class                                   => \Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException::class,
+    \Avax\Tests\Foundation\Database\Unit\Attributes\Column::class => \Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Column::class,
     'Avax\\HTTP\\Request\\ServerRequest\\IncomingRequest\\ServerRequest'                        => 'Avax\\Components\\Request\\System\\PublicSurface\\ServerRequest',
     'Avax\\HTTP\\Request\\ServerRequest\\IncomingRequest\\RequestInit'                          => 'Avax\\Components\\Request\\System\\Capabilities\\RequestInit',
     'Avax\\HTTP\\Request\\ServerRequest\\IncomingRequest\\ServerInit'                           => 'Avax\\Components\\Request\\System\\Capabilities\\ServerInit',
@@ -107,9 +138,9 @@ $classAliases = [
     'Avax\\Cache\\Cache'                                                                        => 'Avax\\Components\\Cache\\System\\PublicSurface\\Cache',
     'Avax\\Config\\Architecture\\DDD\\AppPath'                                                  => 'Avax\\Components\\Config\\System\\Capabilities\\Architecture\\AppPath',
     'Avax\\DumpDebugger\\DumpDebugger'                                                          => 'Avax\\Components\\DumpDebugger\\System\\PublicSurface\\Dump',
-    'Avax\\HTTP\\HttpKernel'                                                                    => 'Avax\\Components\\HTTP\\System\\Capabilities\\Kernel\\HttpKernel',
-    'Avax\\HTTP\\AppKernel'                                                                     => 'Avax\\Components\\HTTP\\System\\Capabilities\\Kernel\\AppKernel',
-    'Avax\\HTTP\\ResolveRouteFromHttpRequest'                                                   => 'Avax\\Components\\HTTP\\System\\Flows\\Routing\\ResolveRouteFromHttpRequest',
+    HttpKernel::class                                             => \Avax\Components\HTTP\System\Capabilities\Kernel\HttpKernel::class,
+    AppKernel::class                                              => \Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel::class,
+    ResolveRouteFromHttpRequest::class                            => \Avax\Components\HTTP\System\Flows\Routing\ResolveRouteFromHttpRequest::class,
     'Avax\\HTTP\\Response\\Response'                                                            => 'Avax\\Components\\Response\\System\\PublicSurface\\Response',
     'Avax\\HTTP\\Response\\ResponseEmitter'                                                     => 'Avax\\Components\\Response\\System\\Capabilities\\ResponseEmitter',
     'Avax\\HTTP\\Response\\Capabilities\\Message\\ResponseMessage'                              => 'Avax\\Components\\Response\\System\\Capabilities\\Message\\ResponseMessage',
@@ -121,17 +152,21 @@ $classAliases = [
     'Avax\\HTTP\\Response\\Flows\\BuildResponse\\BuildResponse'                                 => 'Avax\\Components\\Response\\System\\Flows\\BuildResponse\\BuildResponse',
     'Avax\\HTTP\\Response\\Flows\\EmitResponse\\EmitResponse'                                   => 'Avax\\Components\\Response\\System\\Flows\\EmitResponse\\EmitResponse',
     'Avax\\HTTP\\RouterBootstrapper'                                                            => 'Avax\\Components\\HTTP\\System\\Configuration\\RouterBootstrapper',
-    'Avax\\HTTP\\Session\\Session'                                                              => 'Avax\\Components\\HTTP\\Session\\System\\PublicSurface\\Session',
-    'Avax\\HTTP\\Context\\HttpContext'                                                          => 'Avax\\Components\\HTTP\\Context\\System\\PublicSurface\\HttpContext',
-    'Avax\\Presentation\\View\\View'                                                            => 'Avax\\Components\\Presentation\\View\\System\\PublicSurface\\View',
-    'Avax\\Application\\Filesystem\\Filesystem'                                                 => 'Avax\\Components\\Application\\Filesystem\\System\\PublicSurface\\Filesystem',
-    'Avax\\Application\\Config\\Config'                                                         => 'Avax\\Components\\Application\\Config\\System\\PublicSurface\\Config',
-    'Avax\\Components\\Application\\Container\\System\\ContainerInterface'                      => 'Avax\\Components\\Application\\Container\\System\\PublicSurface\\ContainerInterface',
-    'Avax\\Components\\Container\\ContainerInterface'                                           => 'Avax\\Components\\Application\\Container\\System\\PublicSurface\\ContainerInterface',
+    Session::class                                                => \Avax\Components\HTTP\Session\System\PublicSurface\Session::class,
+    HttpContext::class                                            => \Avax\Components\HTTP\Context\System\PublicSurface\HttpContext::class,
+    View::class                                                   => \Avax\Components\Presentation\View\System\PublicSurface\View::class,
+    Filesystem::class                                             => \Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem::class,
+    Config::class                                                 => \Avax\Components\Application\Config\System\PublicSurface\Config::class,
+    ContainerInterface::class                                     => \Avax\Components\Application\Container\System\PublicSurface\ContainerInterface::class,
+    \Avax\Components\Container\ContainerInterface::class          => \Avax\Components\Application\Container\System\PublicSurface\ContainerInterface::class,
 ];
 
 foreach ($classAliases as $alias => $target) {
-    if (class_exists($alias, false) || interface_exists($alias, false)) {
+    if (class_exists($alias, false)) {
+        continue;
+    }
+
+    if (interface_exists($alias, false)) {
         continue;
     }
 

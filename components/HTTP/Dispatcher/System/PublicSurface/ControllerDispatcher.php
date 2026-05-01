@@ -16,12 +16,12 @@ use Psr\Http\Message\ServerRequestInterface;
 final readonly class ControllerDispatcher
 {
     public function __construct(
-        private DispatchRouteAction $dispatchFlow,
+        private DispatchRouteAction $dispatchRouteAction,
     ) {
     }
 
-    public function dispatch(callable|array|string $action, ServerRequestInterface $request): ResponseInterface
+    public function dispatch(callable|array|string $action, ServerRequestInterface $serverRequest) : ResponseInterface
     {
-        return $this->dispatchFlow->execute($action, $request);
+        return $this->dispatchRouteAction->execute($action, $serverRequest);
     }
 }

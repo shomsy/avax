@@ -25,6 +25,7 @@ final class Diagnostics
         foreach ($data as $item) {
             var_dump($item);
         }
+
         exit(1);
     }
 }

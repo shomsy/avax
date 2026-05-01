@@ -5,37 +5,38 @@ declare(strict_types=1);
 namespace Avax\Components\WorkerManager\System\PublicSurface;
 
 use Avax\Components\WorkerManager\System\Capabilities\Workers\WorkerProcess;
+use Stringable;
 
 final readonly class Workers
 {
-    public function __construct(private WorkerPool $pool) {}
+    public function __construct(private WorkerPool $workerPool) {}
 
     /**
      * @param array{max_memory?: int} $options
      */
     public function start(int $processes = 1, array $options = []) : void
     {
-        $this->pool->start($processes, $options);
+        $this->workerPool->start($processes, $options);
     }
 
     public function stop() : void
     {
-        $this->pool->stop();
+        $this->workerPool->stop();
     }
 
     public function restart(bool $graceful = true) : void
     {
-        $this->pool->restart($graceful);
+        $this->workerPool->restart($graceful);
     }
 
     public function status() : WorkerStatus
     {
-        return $this->pool->status();
+        return $this->workerPool->status();
     }
 
     public function drain() : void
     {
-        $this->pool->drain();
+        $this->workerPool->drain();
     }
 }
 
@@ -144,7 +145,7 @@ final class WorkerPool
     }
 }
 
-final readonly class WorkerStatus
+final readonly class WorkerStatus implements Stringable
 {
     public function __construct(
         public int $total,
@@ -170,6 +171,6 @@ final readonly class WorkerStatus
 
     public function __toString() : string
     {
-        return "Workers: {$this->total} total, {$this->running} running, {$this->idle} idle, {$this->totalTasks} tasks, {$this->totalMemory}MB";
+        return sprintf('Workers: %d total, %d running, %d idle, %d tasks, %dMB', $this->total, $this->running, $this->idle, $this->totalTasks, $this->totalMemory);
     }
 }

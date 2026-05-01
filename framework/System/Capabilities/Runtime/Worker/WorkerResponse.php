@@ -10,14 +10,14 @@ final readonly class WorkerResponse
 {
     public function __construct(
         private string $requestId,
-        private RuntimeResponse $response,
+        private RuntimeResponse $runtimeResponse,
     ) {}
 
-    public static function fromRuntimeResponse(string $requestId, RuntimeResponse $response) : self
+    public static function fromRuntimeResponse(string $requestId, RuntimeResponse $runtimeResponse) : self
     {
         return new self(
             requestId: $requestId,
-            response : $response,
+            response : $runtimeResponse,
         );
     }
 
@@ -28,6 +28,6 @@ final readonly class WorkerResponse
 
     public function response() : RuntimeResponse
     {
-        return $this->response;
+        return $this->runtimeResponse;
     }
 }

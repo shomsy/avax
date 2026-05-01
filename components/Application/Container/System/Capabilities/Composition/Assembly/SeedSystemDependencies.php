@@ -29,33 +29,33 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 final class SeedSystemDependencies
 {
     public function seed(
-        RuntimeAssembly $runtime,
-        ObservabilityAssembly $observability,
+        RuntimeAssembly       $runtimeAssembly,
+        ObservabilityAssembly $observabilityAssembly,
         Container $container,
-        CreateContainerConfig $config,
-        ResolutionTelemetry $telemetry,
+        CreateContainerConfig $createContainerConfig,
+        ResolutionTelemetry   $resolutionTelemetry,
     ) : void
     {
-        $settings = new ContainerSettings(items: $config->settings);
-        $registrations = $runtime->registrations;
+        $containerSettings = new ContainerSettings(items: $createContainerConfig->settings);
+        $registrations     = $runtimeAssembly->registrations;
 
         $registrations->bootstrapInstance(abstract: PsrContainerInterface::class, instance: $container);
         $registrations->bootstrapInstance(abstract: ContainerInterface::class, instance: $container);
         $registrations->bootstrapInstance(abstract: Container::class, instance: $container);
-        $registrations->bootstrapInstance(abstract: ResolveDependency::class, instance: $runtime->resolver);
+        $registrations->bootstrapInstance(abstract: ResolveDependency::class, instance: $runtimeAssembly->resolver);
         $registrations->bootstrapInstance(abstract: DependencyRegistryContract::class, instance: $registrations);
-        $registrations->bootstrapInstance(abstract: ScopeInterface::class, instance: $runtime->scopes);
-        $registrations->bootstrapInstance(abstract: ManageScopes::class, instance: $runtime->scopes);
-        $registrations->bootstrapInstance(abstract: ScopeStore::class, instance: $runtime->scopeStore);
-        $registrations->bootstrapInstance(abstract: DependencyPool::class, instance: $runtime->servicePool);
+        $registrations->bootstrapInstance(abstract: ScopeInterface::class, instance: $runtimeAssembly->scopes);
+        $registrations->bootstrapInstance(abstract: ManageScopes::class, instance: $runtimeAssembly->scopes);
+        $registrations->bootstrapInstance(abstract: ScopeStore::class, instance: $runtimeAssembly->scopeStore);
+        $registrations->bootstrapInstance(abstract: DependencyPool::class, instance: $runtimeAssembly->servicePool);
         $registrations->bootstrapInstance(abstract: DependencyRegistry::class, instance: $registrations);
-        $registrations->bootstrapInstance(abstract: CreateContainerConfig::class, instance: $config);
-        $registrations->bootstrapInstance(abstract: ContainerSettings::class, instance: $settings);
-        $registrations->bootstrapInstance(abstract: ResolutionPolicy::class, instance: $runtime->policy);
-        $registrations->bootstrapInstance(abstract: FunctionCaller::class, instance: $runtime->caller);
-        $registrations->bootstrapInstance(abstract: ResolutionMetrics::class, instance: $observability->metrics);
-        $registrations->bootstrapInstance(abstract: ResolutionTimeline::class, instance: $observability->timeline);
-        $registrations->bootstrapInstance(abstract: ResolutionTelemetry::class, instance: $telemetry);
-        $registrations->bootstrapInstance(abstract: Clock::class, instance: $observability->clock);
+        $registrations->bootstrapInstance(abstract: CreateContainerConfig::class, instance: $createContainerConfig);
+        $registrations->bootstrapInstance(abstract: ContainerSettings::class, instance: $containerSettings);
+        $registrations->bootstrapInstance(abstract: ResolutionPolicy::class, instance: $runtimeAssembly->policy);
+        $registrations->bootstrapInstance(abstract: FunctionCaller::class, instance: $runtimeAssembly->caller);
+        $registrations->bootstrapInstance(abstract: ResolutionMetrics::class, instance: $observabilityAssembly->metrics);
+        $registrations->bootstrapInstance(abstract: ResolutionTimeline::class, instance: $observabilityAssembly->timeline);
+        $registrations->bootstrapInstance(abstract: ResolutionTelemetry::class, instance: $resolutionTelemetry);
+        $registrations->bootstrapInstance(abstract: Clock::class, instance: $observabilityAssembly->clock);
     }
 }

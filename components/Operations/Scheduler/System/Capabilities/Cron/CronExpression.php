@@ -11,16 +11,16 @@ final readonly class CronExpression
 {
     public static function matches(string $expression): bool
     {
-        $cron = new CronLib($expression);
+        $cronExpression = new CronLib($expression);
 
-        return $cron->isDue();
+        return $cronExpression->isDue();
     }
 
     public static function nextRun(string $expression): DateTimeImmutable
     {
-        $cron = new CronLib($expression);
+        $cronExpression = new CronLib($expression);
 
-        return $cron->getNextRunDate();
+        return $cronExpression->getNextRunDate();
     }
 
     public static function isValid(string $expression): bool

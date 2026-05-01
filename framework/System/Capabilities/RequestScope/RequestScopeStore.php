@@ -10,25 +10,25 @@ use Random\RandomException;
 
 final class RequestScopeStore implements ResettableState
 {
-    private ?RequestScope $currentScope = null;
+    private ?RequestScope $requestScope = null;
 
     /**
      * @throws RandomException
      */
     public function open() : RequestScope
     {
-        if ($this->currentScope !== null && $this->currentScope->isOpen()) {
+        if ($this->requestScope instanceof RequestScope && $this->requestScope->isOpen()) {
             throw new FrameworkMisconfigured(message: 'Cannot open a new request scope while another scope is active.');
         }
 
-        $this->currentScope = new RequestScope(id: RequestScopeId::generate());
+        $this->requestScope = new RequestScope(id: RequestScopeId::generate());
 
-        return $this->currentScope;
+        return $this->requestScope;
     }
 
     public function hasCurrent() : bool
     {
-        return $this->currentScope !== null && $this->currentScope->isOpen();
+        return $this->requestScope instanceof RequestScope && $this->requestScope->isOpen();
     }
 
     public function current() : RequestScope
@@ -37,21 +37,21 @@ final class RequestScopeStore implements ResettableState
             throw new RequestScopeNotOpen(message: 'No request scope is currently open.');
         }
 
-        return $this->currentScope ?? throw new RequestScopeNotOpen(message: 'No request scope is currently open.');
+        return $this->requestScope ?? throw new RequestScopeNotOpen(message: 'No request scope is currently open.');
     }
 
     public function closeCurrent() : void
     {
         $this->current()->close();
-        $this->currentScope = null;
+        $this->requestScope = null;
     }
 
     public function resetState() : void
     {
         if ($this->hasCurrent()) {
-            $this->currentScope?->close();
+            $this->requestScope?->close();
         }
 
-        $this->currentScope = null;
+        $this->requestScope = null;
     }
 }

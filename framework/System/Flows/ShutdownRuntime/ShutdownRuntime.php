@@ -6,12 +6,8 @@ namespace Avax\Framework\System\Flows\ShutdownRuntime;
 
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 
-final class ShutdownRuntime
+final readonly class ShutdownRuntime
 {
-    public function __construct(
-        private readonly RuntimeContext $context,
-    ) {}
-
     public function shutdown() : void
     {
         $this->flushTerminableWork();

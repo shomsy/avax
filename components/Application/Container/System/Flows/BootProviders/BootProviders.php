@@ -19,12 +19,7 @@ use Throwable;
  */
 final readonly class BootProviders
 {
-    private ContainerInterface $container;
-
-    public function __construct(
-        ContainerInterface $container,
-    ) {
-        $this->container = $container;
+    public function __construct(private ContainerInterface $container) {
     }
 
     /**
@@ -36,14 +31,14 @@ final readonly class BootProviders
     public function boot(array $providers): void
     {
         $instances      = $this->resolveProviders(providers: $providers);
-        $plan           = ProviderBootPlan::build(instances: $instances);
-        $ordered        = $plan->orderedInstances(instances: $instances);
-        $eagerProviders = $this->eagerProviderClasses(plan: $plan, instances: $instances);
+        $providerBootPlan = ProviderBootPlan::build(instances: $instances);
+        $ordered = $providerBootPlan->orderedInstances(instances: $instances);
+        $eagerProviders = $this->eagerProviderClasses(instances: $instances, plan: $providerBootPlan);
         $metrics        = $this->metrics();
         $resolver       = $this->resolver();
 
         $metrics?->increment(name: 'container_provider_plan_total');
-        $metrics?->increment(name: 'container_provider_plan_entries_total', by: count(value: $plan->order));
+        $metrics?->increment(name: 'container_provider_plan_entries_total', by: count(value: $providerBootPlan->order));
 
         foreach ($ordered as $provider) {
             if (! in_array(needle: $provider::class, haystack: $eagerProviders, strict: true)) {
@@ -117,7 +112,7 @@ final readonly class BootProviders
     {
         if (is_string(value: $provider)) {
             if (! class_exists(class: $provider)) {
-                throw new InvalidArgumentException(message: "Provider class [{$provider}] does not exist.");
+                throw new InvalidArgumentException(message: sprintf('Provider class [%s] does not exist.', $provider));
             }
 
             $instance = $this->container->make(abstract: $provider);
@@ -136,7 +131,7 @@ final readonly class BootProviders
      * @param array<class-string<RegisterDependency>, RegisterDependency> $instances
      * @return list<class-string<RegisterDependency>>
      */
-    private function eagerProviderClasses(ProviderBootPlan $plan, array $instances): array
+    private function eagerProviderClasses(ProviderBootPlan $providerBootPlan, array $instances) : array
     {
         $eager = [];
 
@@ -148,7 +143,7 @@ final readonly class BootProviders
             $eager[$class] = true;
             $this->markDependenciesAsEager(
                 class       : $class,
-                dependencies: $plan->dependencies,
+                dependencies: $providerBootPlan->dependencies,
                 eager       : $eager,
             );
         }
@@ -159,10 +154,10 @@ final readonly class BootProviders
         return $classes;
     }
 
-    private function isDeferredProvider(RegisterDependency $provider): bool
+    private function isDeferredProvider(RegisterDependency $registerDependency) : bool
     {
-        return $provider instanceof RegisterDeferredDependency
-            && $provider->deferred();
+        return $registerDependency instanceof RegisterDeferredDependency
+            && $registerDependency->deferred();
     }
 
     /**
@@ -218,13 +213,13 @@ final readonly class BootProviders
      *
      * @return list<string>
      */
-    private function providedServices(RegisterDependency $provider): array
+    private function providedServices(RegisterDependency $registerDependency) : array
     {
-        if (! $provider instanceof RegisterDeferredDependency) {
+        if (! $registerDependency instanceof RegisterDeferredDependency) {
             return [];
         }
 
-        $services = $provider->provides();
+        $services = $registerDependency->provides();
         sort(array: $services);
 
         return array_values(array: array_unique(array: $services));

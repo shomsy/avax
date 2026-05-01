@@ -8,6 +8,6 @@ final class Logger
 {
     public function log(string $level, string $message): void
     {
-        error_log("[{$level}] {$message}");
+        error_log(sprintf('[%s] %s', $level, $message));
     }
 }

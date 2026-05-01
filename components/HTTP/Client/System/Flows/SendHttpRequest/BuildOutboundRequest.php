@@ -19,18 +19,18 @@ final class BuildOutboundRequest
     /**
      * Build a PSR-7 request from an OutboundRequest.
      *
-     * @param OutboundRequest $request The outbound request
+     * @param OutboundRequest $outboundRequest The outbound request
      *
      * @return Request The PSR-7 request
      */
-    public function build(OutboundRequest $request): Request
+    public function build(OutboundRequest $outboundRequest) : Request
     {
-        $body    = $this->normalizeBody($request->body);
-        $headers = $this->prepareHeaders($request);
+        $body    = $this->normalizeBody($outboundRequest->body);
+        $headers = $this->prepareHeaders($outboundRequest);
 
         return new Request(
-            $request->method,
-            $request->url,
+            $outboundRequest->method,
+            $outboundRequest->url,
             $headers,
             $body,
         );
@@ -69,14 +69,14 @@ final class BuildOutboundRequest
      *
      * @return array<string, string>
      */
-    private function prepareHeaders(OutboundRequest $request): array
+    private function prepareHeaders(OutboundRequest $outboundRequest) : array
     {
-        $headers = $request->headers;
+        $headers = $outboundRequest->headers;
 
         // Auto-add Content-Type for JSON bodies
         if (
-            $request->body !== null
-            && is_array($request->body)
+            $outboundRequest->body !== null
+            && is_array($outboundRequest->body)
             && ! isset($headers['Content-Type'])
         ) {
             $headers['Content-Type'] = 'application/json';

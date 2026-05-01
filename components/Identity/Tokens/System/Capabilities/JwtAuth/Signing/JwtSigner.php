@@ -6,16 +6,10 @@ namespace Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Cap
 
 use Firebase\JWT\JWT;
 
-final class JwtSigner
+final readonly class JwtSigner
 {
-    private string $secret;
-
-    private string $algo;
-
-    public function __construct(string $secret, string $algo = 'HS256')
+    public function __construct(private string $secret, private string $algo = 'HS256')
     {
-        $this->secret = $secret;
-        $this->algo = $algo;
     }
 
     public function sign(array $payload): string

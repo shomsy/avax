@@ -9,11 +9,11 @@ namespace Avax\Framework\System\Capabilities\RuntimeSafety;
  */
 final readonly class RuntimeSafetyFinding
 {
-    public const SEVERITY_CRITICAL = 'critical';
+    public const string SEVERITY_CRITICAL = 'critical';
 
-    public const SEVERITY_WARNING = 'warning';
+    public const string SEVERITY_WARNING = 'warning';
 
-    public const SEVERITY_INFO = 'info';
+    public const string SEVERITY_INFO = 'info';
 
     public function __construct(
         public string $category,

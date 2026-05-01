@@ -8,6 +8,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClient;
@@ -30,17 +31,17 @@ final readonly class FrontChannelLogout
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         private ?OidcProviderInterface $oidcProvider = null,
-        private ?OAuthClientRegistryInterface $clientRegistry = null,
+        private ?OAuthClientRegistryInterface $oAuthClientRegistry = null,
     ) {}
 
-    public function execute(FrontChannelLogoutData $data): LogoutResult
+    public function execute(FrontChannelLogoutData $frontChannelLogoutData) : LogoutResult
     {
-        $context = $this->currentAuthentication->read();
+        $authenticationContext = $this->currentAuthentication->read();
         $now     = $this->clock->now();
-        $sessionId = $data->sessionId ?? $context->sessionId();
+        $sessionId             = $frontChannelLogoutData->sessionId ?? $authenticationContext->sessionId();
 
-        if ($sessionId === null && $data->idTokenHint !== null && $this->oidcProvider !== null) {
-            $claims = $this->oidcProvider->resolveIdToken(idToken: $data->idTokenHint);
+        if ($sessionId === null && $frontChannelLogoutData->idTokenHint !== null && $this->oidcProvider instanceof OidcProviderInterface) {
+            $claims = $this->oidcProvider->resolveIdToken(idToken: $frontChannelLogoutData->idTokenHint);
             $sessionId = is_string(value: $claims['sid'] ?? null) ? trim(string: $claims['sid']) : null;
         }
 
@@ -48,22 +49,22 @@ final readonly class FrontChannelLogout
             $this->sessionRegistry?->revoke(sessionId: $sessionId, revokedAt: $now, reason: 'oidc_front_channel_logout');
         }
 
-        $client = $this->resolveClientFromIdTokenHint(idTokenHint: $data->idTokenHint);
+        $client = $this->resolveClientFromIdTokenHint(idTokenHint: $frontChannelLogoutData->idTokenHint);
 
-        if ($context->refreshTokenFamilyId() !== null) {
-            $this->refreshTokenStore?->revokeFamily(familyId: $context->refreshTokenFamilyId());
+        if ($authenticationContext->refreshTokenFamilyId() !== null) {
+            $this->refreshTokenStore?->revokeFamily(familyId: $authenticationContext->refreshTokenFamilyId());
         }
 
-        $user = $context->user();
+        $user = $authenticationContext->user();
 
-        if ($user !== null) {
+        if ($user instanceof AuthenticatedUser) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.oidc.front_channel_logout.succeeded',
                 occurredAt: $now,
                 context   : [
                                 'user_id'                       => $user->id,
                                 'session_id'                    => $sessionId,
-                                'state'                         => $data->state,
+                                'state' => $frontChannelLogoutData->state,
                                 'client_id'                     => $client?->clientId,
                     'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
                                 'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
@@ -71,8 +72,8 @@ final readonly class FrontChannelLogout
             ));
         }
 
-        if ($user !== null) {
-            $this->identity->clear(context: $context);
+        if ($user instanceof AuthenticatedUser) {
+            $this->identity->clear(context: $authenticationContext);
         }
 
         $this->currentAuthentication->clear();
@@ -80,14 +81,14 @@ final readonly class FrontChannelLogout
         return new LogoutResult(
             revoked              : $sessionId !== null,
             sessionId            : $sessionId,
-            postLogoutRedirectUri: $data->postLogoutRedirectUri,
-            state                : $data->state,
+            postLogoutRedirectUri: $frontChannelLogoutData->postLogoutRedirectUri,
+            state                : $frontChannelLogoutData->state,
         );
     }
 
     private function resolveClientFromIdTokenHint(#[SensitiveParameter] ?string $idTokenHint): ?OAuthClient
     {
-        if ($idTokenHint === null || trim(string: $idTokenHint) === '' || $this->oidcProvider === null || $this->clientRegistry === null) {
+        if ($idTokenHint === null || trim(string: $idTokenHint) === '' || ! $this->oidcProvider instanceof OidcProviderInterface || ! $this->oAuthClientRegistry instanceof OAuthClientRegistryInterface) {
             return null;
         }
 
@@ -97,6 +98,6 @@ final readonly class FrontChannelLogout
             return null;
         }
 
-        return $this->clientRegistry->find(clientId: trim(string: $claims['aud']));
+        return $this->oAuthClientRegistry->find(clientId: trim(string: $claims['aud']));
     }
 }

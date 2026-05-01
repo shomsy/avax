@@ -13,24 +13,24 @@ use Throwable;
 final readonly class DetectSagaCompletion
 {
     public function isComplete(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         array $definition,
     ): bool {
-        if ($instance->currentStepName === null) {
+        if ($sagaInstance->currentStepName === null) {
             return true;
         }
 
-        $currentStep = $instance->currentStepIndex;
+        $currentStep = $sagaInstance->currentStepIndex;
         $totalSteps = count($definition['stepOrder'] ?? []);
 
         return $currentStep >= $totalSteps - 1;
     }
 
     public function getNextStep(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         array $definition,
     ): ?string {
-        $nextIndex = $instance->currentStepIndex + 1;
+        $nextIndex = $sagaInstance->currentStepIndex + 1;
         $stepOrder = $definition['stepOrder'] ?? [];
 
         if ($nextIndex >= count($stepOrder)) {
@@ -41,12 +41,12 @@ final readonly class DetectSagaCompletion
     }
 
     public function remainingSteps(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         array $definition,
     ): int {
         $total = count($definition['stepOrder'] ?? []);
 
-        return max(0, $total - $instance->currentStepIndex - 1);
+        return max(0, $total - $sagaInstance->currentStepIndex - 1);
     }
 }
 
@@ -54,10 +54,10 @@ final readonly class RecordSagaCompleted
 {
     public function __construct(private object $store, private object $inspect) {}
 
-    public function record(SagaInstance $instance): void
+    public function record(SagaInstance $sagaInstance) : void
     {
-        $completed = $instance->complete();
-        $this->store->set("saga_{$completed->id}", $completed->toArray());
+        $completed = $sagaInstance->complete();
+        $this->store->set('saga_' . $completed->id, $completed->toArray());
 
         $this->inspect->record(
             SagaRuntimeEvent::completed(
@@ -72,25 +72,25 @@ final readonly class PublishSagaCompleted
 {
     public function __construct(private object $messageBus) {}
 
-    public function publish(SagaInstance $instance): void
+    public function publish(SagaInstance $sagaInstance) : void
     {
-        $topic = sprintf('saga.%s.completed', $instance->definitionName);
+        $topic = sprintf('saga.%s.completed', $sagaInstance->definitionName);
 
         $this->messageBus->publish($topic, [
-            'saga_id'        => $instance->id,
-            'definition_name' => $instance->definitionName,
-            'final_data'     => $instance->data,
-            'completed_steps' => $instance->completedSteps,
-            'correlation_id' => $instance->correlationId,
-            'tenant_id'      => $instance->tenantId,
-            'completed_at'   => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
+            'saga_id'         => $sagaInstance->id,
+            'definition_name' => $sagaInstance->definitionName,
+            'final_data'      => $sagaInstance->data,
+            'completed_steps' => $sagaInstance->completedSteps,
+            'correlation_id'  => $sagaInstance->correlationId,
+            'tenant_id'       => $sagaInstance->tenantId,
+            'completed_at'    => $sagaInstance->completedAt?->format(format: DateTimeInterface::ISO8601),
         ]);
     }
 }
 
 final class SagaCompletionFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga completion failed.', Throwable $previous = null)
+    public function __construct(string $message = 'Saga completion failed.', ?Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

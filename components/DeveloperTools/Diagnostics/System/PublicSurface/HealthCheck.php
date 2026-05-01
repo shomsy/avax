@@ -32,8 +32,8 @@ final readonly class HealthCheck
     {
         try {
             return new CheckResult(status: 'up', latencyMs: 0.0);
-        } catch (Exception $e) {
-            return new CheckResult(status: 'down', error: $e->getMessage());
+        } catch (Exception $exception) {
+            return new CheckResult(status: 'down', error: $exception->getMessage());
         }
     }
 
@@ -41,22 +41,19 @@ final readonly class HealthCheck
     {
         try {
             return new CheckResult(status: 'up', latencyMs: 0.0);
-        } catch (Exception $e) {
-            return new CheckResult(status: 'down', error: $e->getMessage());
+        } catch (Exception $exception) {
+            return new CheckResult(status: 'down', error: $exception->getMessage());
         }
     }
 }
 
 final readonly class HealthReport
 {
-    /** @var array<string, CheckResult> */
-    public array $checks;
-
     public function __construct(
         public string $status,
-        array $checks = [],
+        /** @var array<string, CheckResult> */
+        public array $checks = []
     ) {
-        $this->checks = $checks;
     }
 
     public function toArray(): array
@@ -64,7 +61,7 @@ final readonly class HealthReport
         return [
             'status' => $this->status,
             'checks' => array_map(
-                static fn (CheckResult $c) => $c->toArray(),
+                static fn (CheckResult $checkResult) : array => $checkResult->toArray(),
                 $this->checks,
             ),
         ];

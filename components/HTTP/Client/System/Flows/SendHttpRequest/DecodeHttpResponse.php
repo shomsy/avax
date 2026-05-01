@@ -40,7 +40,7 @@ final class DecodeHttpResponse
         float $connectTimeMs = 0.0,
         float $totalTimeMs = 0.0,
         int $redirectCount = 0,
-        string $effectiveUrl = null,
+        ?string $effectiveUrl = null,
     ): ClientResponse {
         // Normalize headers to array of arrays
         $normalizedHeaders = [];
@@ -86,7 +86,7 @@ final class DecodeHttpResponse
             502     => 'Bad Gateway',
             503     => 'Service Unavailable',
             504     => 'Gateway Timeout',
-            default => "Status {$statusCode}",
+            default => 'Status ' . $statusCode,
         };
     }
 }

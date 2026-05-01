@@ -12,8 +12,8 @@ final readonly class DetectDuplicateSagaCommand
     /**
      * @param array<string, SagaCommandResult> $results
      */
-    public function detect(array $results, SagaCommandKey $key): bool
+    public function detect(array $results, SagaCommandKey $sagaCommandKey) : bool
     {
-        return array_key_exists(key: $key->value, array: $results);
+        return array_key_exists(key: $sagaCommandKey->value, array: $results);
     }
 }

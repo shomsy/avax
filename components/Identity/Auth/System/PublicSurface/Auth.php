@@ -48,14 +48,14 @@ final readonly class Auth implements AuthInterface
         return ! $this->check();
     }
 
-    public function register(RegistrationData $data): RegistrationResult
+    public function register(RegistrationData $registrationData) : RegistrationResult
     {
-        return $this->identity->account()->register($data);
+        return $this->identity->account()->register($registrationData);
     }
 
-    public function changePassword(ChangePasswordData $data): void
+    public function changePassword(ChangePasswordData $changePasswordData) : void
     {
-        $this->identity->account()->changePassword($data);
+        $this->identity->account()->changePassword($changePasswordData);
     }
 
     public function logoutAllSessions(): void

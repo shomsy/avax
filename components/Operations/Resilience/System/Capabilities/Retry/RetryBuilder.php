@@ -8,13 +8,13 @@ use Closure;
 
 final class RetryBuilder
 {
-    private RetryOptions $options;
+    private RetryOptions $retryOptions;
 
     public function __construct(
         private readonly Closure $operation,
     )
     {
-        $this->options = new RetryOptions(
+        $this->retryOptions = new RetryOptions(
             attempts : 3,
             backoffMs: 200,
         );
@@ -22,22 +22,22 @@ final class RetryBuilder
 
     public function times(int $attempts) : self
     {
-        $this->options = $this->options->withAttempts($attempts);
+        $this->retryOptions = $this->retryOptions->withAttempts($attempts);
 
         return $this;
     }
 
     public function backoff(int $milliseconds) : self
     {
-        $this->options = $this->options->withBackoff($milliseconds);
+        $this->retryOptions = $this->retryOptions->withBackoff($milliseconds);
 
         return $this;
     }
 
     public function run() : RetryResult
     {
-        $executor = new RetryExecutor($this->operation, $this->options);
+        $retryExecutor = new RetryExecutor($this->operation, $this->retryOptions);
 
-        return $executor->execute();
+        return $retryExecutor->execute();
     }
 }

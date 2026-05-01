@@ -24,13 +24,13 @@ final readonly class Recovery
     /**
      * @throws DateMalformedStringException
      */
-    public function beginPasswordReset(BeginPasswordResetData $data): PasswordResetChallenge
+    public function beginPasswordReset(BeginPasswordResetData $beginPasswordResetData) : PasswordResetChallenge
     {
-        return $this->beginPasswordReset->execute(data: $data);
+        return $this->beginPasswordReset->execute(data: $beginPasswordResetData);
     }
 
-    public function resetPassword(ResetPasswordData $data): bool
+    public function resetPassword(ResetPasswordData $resetPasswordData) : bool
     {
-        return $this->resetPassword->execute(data: $data);
+        return $this->resetPassword->execute(data: $resetPasswordData);
     }
 }

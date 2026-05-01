@@ -22,7 +22,7 @@ final class ContractVerifier
     {
         $results = [];
 
-        foreach ($this->contracts as $component => $contract) {
+        foreach (array_keys($this->contracts) as $component) {
             $results[] = $this->verifyComponent($component);
         }
 
@@ -56,14 +56,13 @@ final class ContractVerifier
             component: $componentClass,
             passed   : true,
             checks   : $checks,
-            error    : null,
         );
     }
 }
 
 final class BreakingChangeDetector
 {
-    public function detect(string $sinceVersion): BreakingChangesReport
+    public function detect() : BreakingChangesReport
     {
         return new BreakingChangesReport([]);
     }

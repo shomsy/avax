@@ -14,14 +14,14 @@ final readonly class CreateSagaCorrelationId
     /**
      * @throws RandomException
      */
-    public function create(SagaStartCommand $command): SagaCorrelationId
+    public function create(SagaStartCommand $sagaStartCommand) : SagaCorrelationId
     {
-        if ($command->correlationId !== null && $command->correlationId !== '') {
-            return new SagaCorrelationId(value: $command->correlationId);
+        if ($sagaStartCommand->correlationId !== null && $sagaStartCommand->correlationId !== '') {
+            return new SagaCorrelationId(value: $sagaStartCommand->correlationId);
         }
 
-        if ($command->commandKey !== null && $command->commandKey !== '') {
-            return new SagaCorrelationId(value: 'saga-correlation-' . hash(algo: 'xxh128', data: $command->definitionName . ':' . $command->commandKey));
+        if ($sagaStartCommand->commandKey !== null && $sagaStartCommand->commandKey !== '') {
+            return new SagaCorrelationId(value: 'saga-correlation-' . hash(algo: 'xxh128', data: $sagaStartCommand->definitionName . ':' . $sagaStartCommand->commandKey));
         }
 
         return new SagaCorrelationId(value: 'saga-correlation-' . bin2hex(string: random_bytes(length: 8)));

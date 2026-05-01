@@ -24,14 +24,11 @@ final class DetectNPlusOneQuery
      */
     private array $reports = [];
 
-    private int $threshold;
-
     /**
      * @param int $threshold Number of same-pattern queries to trigger detection (default: 20)
      */
-    public function __construct(int $threshold = 20)
+    public function __construct(private int $threshold = 20)
     {
-        $this->threshold = $threshold;
     }
 
     /**
@@ -40,11 +37,11 @@ final class DetectNPlusOneQuery
      * @param string     $query     The SQL query string
      * @param float|null $timestamp Optional timestamp in milliseconds
      */
-    public function record(string $query, float $timestamp = null) : void
+    public function record(string $query, ?float $timestamp = null) : void
     {
         $timestamp ??= microtime(true) * 1000;
-        $fingerprint = QueryFingerprint::fromQuery($query);
-        $hash = $fingerprint->hash;
+        $queryFingerprint = QueryFingerprint::fromQuery($query);
+        $hash = $queryFingerprint->hash;
 
         if (! isset($this->queryPatterns[$hash])) {
             $this->queryPatterns[$hash] = [
@@ -52,7 +49,7 @@ final class DetectNPlusOneQuery
                 'queries'  => [],
                 'firstSeen' => $timestamp,
                 'lastSeen' => $timestamp,
-                'pattern'  => $fingerprint,
+                'pattern' => $queryFingerprint,
             ];
         }
 
@@ -82,7 +79,7 @@ final class DetectNPlusOneQuery
         $data = $this->queryPatterns[$hash];
         $timeSpan = $data['lastSeen'] - $data['firstSeen'];
 
-        $report = new NPlusOneQueryReport(
+        $nPlusOneQueryReport = new NPlusOneQueryReport(
             pattern      : $data['pattern'],
             count        : $data['count'],
             timeSpanMs   : $timeSpan,
@@ -90,7 +87,7 @@ final class DetectNPlusOneQuery
             suggestion   : $this->generateSuggestion($data['pattern']->pattern()),
         );
 
-        $this->reports[$hash] = $report;
+        $this->reports[$hash] = $nPlusOneQueryReport;
     }
 
     /**
@@ -136,7 +133,7 @@ final class DetectNPlusOneQuery
         $data = $this->queryPatterns[$hash];
         $timeSpan = $data['lastSeen'] - $data['firstSeen'];
 
-        $report = new NPlusOneQueryReport(
+        $nPlusOneQueryReport = new NPlusOneQueryReport(
             pattern      : $data['pattern'],
             count        : $data['count'],
             timeSpanMs   : $timeSpan,
@@ -144,7 +141,7 @@ final class DetectNPlusOneQuery
             suggestion   : isset($this->reports[$hash]) ? $this->reports[$hash]->suggestion : $this->generateSuggestion($data['pattern']->pattern()),
         );
 
-        $this->reports[$hash] = $report;
+        $this->reports[$hash] = $nPlusOneQueryReport;
     }
 
     /**

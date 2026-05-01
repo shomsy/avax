@@ -31,7 +31,7 @@ final readonly class MailQueue
     {
         $config = function_exists(function: 'config') ? (config(key: 'mail', default: []) ?? []) : [];
 
-        return (new SmtpMailer(config: $config))->send(mailable: $mailable);
+        return new SmtpMailer(config: $config)->send(mailable: $mailable);
     }
 
     public static function queuedCount(): int

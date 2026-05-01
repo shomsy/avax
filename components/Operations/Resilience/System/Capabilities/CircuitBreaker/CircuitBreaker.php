@@ -9,7 +9,7 @@ use Throwable;
 
 final class CircuitBreaker
 {
-    private CircuitBreakerState $state = CircuitBreakerState::Closed;
+    private CircuitBreakerState $circuitBreakerState = CircuitBreakerState::Closed;
 
     private int $failures = 0;
 
@@ -55,11 +55,11 @@ final class CircuitBreaker
 
     public function state(): CircuitBreakerState
     {
-        if ($this->state === CircuitBreakerState::Open && $this->cooldownExpired()) {
-            $this->state = CircuitBreakerState::HalfOpen;
+        if ($this->circuitBreakerState === CircuitBreakerState::Open && $this->cooldownExpired()) {
+            $this->circuitBreakerState = CircuitBreakerState::HalfOpen;
         }
 
-        return $this->state;
+        return $this->circuitBreakerState;
     }
 
     private function cooldownExpired(): bool
@@ -71,7 +71,7 @@ final class CircuitBreaker
     {
         $this->failures = 0;
         $this->openedAt = null;
-        $this->state    = CircuitBreakerState::Closed;
+        $this->circuitBreakerState = CircuitBreakerState::Closed;
     }
 
     private function recordFailure(): void
@@ -79,7 +79,7 @@ final class CircuitBreaker
         $this->failures++;
 
         if ($this->failures >= $this->failureThreshold) {
-            $this->state    = CircuitBreakerState::Open;
+            $this->circuitBreakerState = CircuitBreakerState::Open;
             $this->openedAt = time();
         }
     }

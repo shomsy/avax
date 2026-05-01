@@ -33,7 +33,7 @@ final class UriBuilder implements Stringable
         $parts = parse_url($uri);
 
         if ($parts === false) {
-            throw new InvalidArgumentException("Invalid URI: {$uri}");
+            throw new InvalidArgumentException('Invalid URI: ' . $uri);
         }
 
         $builder           = new self();
@@ -124,7 +124,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withUserInfo(string $user, string $password = null) : self
+    public function withUserInfo(string $user, ?string $password = null) : self
     {
         $clone       = clone $this;
         $clone->user = $user;
@@ -165,6 +165,7 @@ final class UriBuilder implements Stringable
             if ($this->password !== null) {
                 $uri .= ':' . $this->password;
             }
+
             $uri .= '@';
         }
 

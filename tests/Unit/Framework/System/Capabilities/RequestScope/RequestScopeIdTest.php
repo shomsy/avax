@@ -16,17 +16,17 @@ final class RequestScopeIdTest extends TestCase
     #[Test]
     public function it_accepts_valid_id_value(): void
     {
-        $id = new RequestScopeId(value: 'abc123def456');
+        $requestScopeId = new RequestScopeId(value: 'abc123def456');
 
-        self::assertSame('abc123def456', $id->toString());
+        self::assertSame('abc123def456', $requestScopeId->toString());
     }
 
     #[Test]
     public function it_trims_whitespace(): void
     {
-        $id = new RequestScopeId(value: '  trimmed  ');
+        $requestScopeId = new RequestScopeId(value: '  trimmed  ');
 
-        self::assertSame('trimmed', $id->toString());
+        self::assertSame('trimmed', $requestScopeId->toString());
     }
 
     #[Test]
@@ -41,18 +41,18 @@ final class RequestScopeIdTest extends TestCase
     #[Test]
     public function it_generates_unique_random_ids(): void
     {
-        $id1 = RequestScopeId::generate();
+        $requestScopeId = RequestScopeId::generate();
         $id2 = RequestScopeId::generate();
 
-        self::assertNotSame($id1->toString(), $id2->toString());
+        self::assertNotSame($requestScopeId->toString(), $id2->toString());
     }
 
     #[Test]
     public function it_generates_32_character_hex_id(): void
     {
-        $id = RequestScopeId::generate();
+        $requestScopeId = RequestScopeId::generate();
 
-        self::assertSame(32, strlen($id->toString()));
-        self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $id->toString());
+        self::assertSame(32, strlen($requestScopeId->toString()));
+        self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $requestScopeId->toString());
     }
 }

@@ -14,16 +14,7 @@ final readonly class CompiledCacheArtifact
 
     public Timestamp $timestamp;
 
-    public function __construct(
-        public CompiledCacheName $compiledCacheName,
-        public CompiledCachePath $compiledCachePath,
-        public Timestamp $timestamp,
-        public string $sourceFingerprint,
-        public mixed $payload = null,
-    ) {
-        $this->compiledCacheName = $compiledCacheName;
-        $this->compiledCachePath = $compiledCachePath;
-        $this->timestamp         = $timestamp;
+    public function __construct(public CompiledCacheName $compiledCacheName, public CompiledCachePath $compiledCachePath, public Timestamp $timestamp, public string $sourceFingerprint, public mixed $payload = null) {
     }
 
     public static function create(
@@ -33,10 +24,10 @@ final readonly class CompiledCacheArtifact
         string $sourceFingerprint,
     ): self {
         return new self(
+            sourceFingerprint: $sourceFingerprint,
             name             : new CompiledCacheName(name: $name),
             path             : new CompiledCachePath(path: $path),
             createdAt        : Timestamp::fromUnixTime(timestamp: $createdAt),
-            sourceFingerprint: $sourceFingerprint,
         );
     }
 

@@ -8,7 +8,7 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements
 
 final readonly class ReadWorkloadIdentities
 {
-    public function __construct(private OAuthClientRegistryInterface $clientRegistry) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry) {}
 
     /**
      * @return list<WorkloadIdentityProfile>
@@ -17,19 +17,19 @@ final readonly class ReadWorkloadIdentities
     {
         $profiles = [];
 
-        foreach ($this->clientRegistry->all() as $client) {
-            if (! $client->workloadIdentity) {
+        foreach ($this->oAuthClientRegistry->all() as $oAuthClient) {
+            if (! $oAuthClient->workloadIdentity) {
                 continue;
             }
 
             $profiles[] = new WorkloadIdentityProfile(
-                clientId                 : $client->clientId,
-                name                     : $client->name,
-                allowedScopes            : $client->allowedScopes,
-                allowedAudiences         : $client->allowedAudiences,
-                audienceScopeBoundaries  : $client->audienceScopeBoundaries,
-                requiredSenderConstraint : $client->requiredSenderConstraint,
-                phishingResistantRequired: $client->phishingResistantRequired,
+                clientId                 : $oAuthClient->clientId,
+                name                     : $oAuthClient->name,
+                allowedScopes            : $oAuthClient->allowedScopes,
+                allowedAudiences         : $oAuthClient->allowedAudiences,
+                audienceScopeBoundaries  : $oAuthClient->audienceScopeBoundaries,
+                requiredSenderConstraint : $oAuthClient->requiredSenderConstraint,
+                phishingResistantRequired: $oAuthClient->phishingResistantRequired,
             );
         }
 

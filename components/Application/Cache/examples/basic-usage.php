@@ -19,8 +19,8 @@ $store = new InMemoryCacheStore(
 );
 
 $cache = new AvaxCache(
-    store: $store,
     clock: $clock,
+    store: $store,
 );
 
 Cache::use(cache: $cache);

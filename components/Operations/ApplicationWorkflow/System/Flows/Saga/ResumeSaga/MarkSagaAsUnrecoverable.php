@@ -17,7 +17,7 @@ enum SagaRecoveryAction: string
 final readonly class MarkSagaAsUnrecoverable
 {
     public function __construct(
-        private SagaRecoveryAction $action,
+        private SagaRecoveryAction $sagaRecoveryAction,
     ) {}
 
     public function describeResponsibility(): string
@@ -27,7 +27,7 @@ final readonly class MarkSagaAsUnrecoverable
 
     public function mark(array $sagaData, array $failureReasons): SagaRecoveryResult
     {
-        if (empty($failureReasons)) {
+        if ($failureReasons === []) {
             throw new InvalidArgumentException(message: 'Failure reasons cannot be empty.');
         }
 
@@ -36,7 +36,7 @@ final readonly class MarkSagaAsUnrecoverable
         return new SagaRecoveryResult(
             sagaId     : $sagaData['id'],
             recoverable: ! $shouldAbandon,
-            action     : $shouldAbandon ? SagaRecoveryAction::ABANDON : $this->action,
+            action     : $shouldAbandon ? SagaRecoveryAction::ABANDON : $this->sagaRecoveryAction,
             reason     : implode('; ', $failureReasons),
         );
     }
@@ -47,7 +47,7 @@ final readonly class MarkSagaAsUnrecoverable
         $retryCount = 0;
 
         foreach ($reasons as $reason) {
-            if (str_contains($reason, 'max_retries')) {
+            if (str_contains((string) $reason, 'max_retries')) {
                 $retryCount++;
             }
         }
@@ -57,7 +57,7 @@ final readonly class MarkSagaAsUnrecoverable
 
     public function toMetadata(): array
     {
-        return ['recovery_action' => $this->action->value];
+        return ['recovery_action' => $this->sagaRecoveryAction->value];
     }
 }
 

@@ -6,24 +6,24 @@ namespace Avax\Components\DataStack\Database\System\Flows\RunDatabaseMigration;
 
 use Avax\Components\DataStack\Database\System\Capabilities\MigrationRunner;
 
-final class RunDatabaseMigration
+final readonly class RunDatabaseMigration
 {
     public function __construct(
-        private MigrationRunner $runner,
+        private MigrationRunner $migrationRunner,
     ) {}
 
     public function execute(): void
     {
-        $this->runner->run();
+        $this->migrationRunner->run();
     }
 
     public function rollback(): void
     {
-        $this->runner->rollback();
+        $this->migrationRunner->rollback();
     }
 
     public function reset(): void
     {
-        $this->runner->reset();
+        $this->migrationRunner->reset();
     }
 }

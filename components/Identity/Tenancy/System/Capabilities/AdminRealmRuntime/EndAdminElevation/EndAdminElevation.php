@@ -6,6 +6,7 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
@@ -18,7 +19,7 @@ final readonly class EndAdminElevation
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-        private AdminElevationStoreInterface $elevationStore,
+        private AdminElevationStoreInterface $adminElevationStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
     ) {}
@@ -28,15 +29,15 @@ final readonly class EndAdminElevation
      */
     public function execute(): void
     {
-        $context = $this->currentAuthentication->read();
-        $user    = $context->user();
-        $bindingId = $this->bindingId(context: $context);
+        $authenticationContext = $this->currentAuthentication->read();
+        $user                  = $authenticationContext->user();
+        $bindingId             = $this->bindingId(context: $authenticationContext);
 
-        if ($user === null || $bindingId === null) {
+        if (! $user instanceof AuthenticatedUser || $bindingId === null) {
             throw AdminElevationFailed::notElevated();
         }
 
-        $this->elevationStore->revoke(bindingId: $bindingId);
+        $this->adminElevationStore->revoke(bindingId: $bindingId);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.admin.elevation.ended',
             occurredAt: $this->clock->now(),
@@ -47,10 +48,10 @@ final readonly class EndAdminElevation
         ));
     }
 
-    private function bindingId(AuthenticationContext $context): ?string
+    private function bindingId(AuthenticationContext $authenticationContext) : ?string
     {
-        return $context->sessionId()
-            ?? $context->accessTokenId()
+        return $authenticationContext->sessionId()
+            ?? $authenticationContext->accessTokenId()
             ?? null;
     }
 }

@@ -84,8 +84,8 @@ final class RegisterCacheDependenciesTest extends TestCase
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock);
 
         $this->cacheContract = new AvaxCache(
-            store: $this->inMemoryCacheStore,
             clock: $this->frozenClock,
+            store: $this->inMemoryCacheStore,
         );
     }
 

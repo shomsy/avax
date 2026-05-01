@@ -18,9 +18,9 @@ declare(strict_types=1);
  */
 final class RepairTestLayer
 {
-    private string $root;
+    private readonly string $root;
 
-    private bool $apply;
+    private readonly bool $apply;
 
     /** @var array<string, string> */
     private array $namespaceRewrites = [];
@@ -71,7 +71,7 @@ final class RepairTestLayer
         ];
 
         foreach ($componentMoves as $old => $new) {
-            $this->namespaceRewrites["Avax\\Components\\{$old}"] = "Avax\\Components\\{$new}";
+            $this->namespaceRewrites['Avax\Components\\' . $old] = 'Avax\Components\\' . $new;
         }
     }
 
@@ -161,7 +161,7 @@ final class RepairTestLayer
             $changed++;
         }
 
-        echo PHP_EOL . "Test namespace rewrites: {$changed}" . PHP_EOL;
+        echo PHP_EOL . ('Test namespace rewrites: ' . $changed) . PHP_EOL;
     }
 
     private function phpFiles(string $path) : Generator
@@ -285,8 +285,8 @@ final class RepairTestLayer
 }
 
 try {
-    exit((new RepairTestLayer($argv))->run());
-} catch (Throwable $exception) {
-    fwrite(STDERR, 'ERROR: ' . $exception->getMessage() . PHP_EOL);
+    exit(new RepairTestLayer($argv)->run());
+} catch (Throwable $throwable) {
+    fwrite(STDERR, 'ERROR: ' . $throwable->getMessage() . PHP_EOL);
     exit(1);
 }

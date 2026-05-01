@@ -6,12 +6,12 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class OrderByNode
+final readonly class OrderByNode
 {
     public function __construct(
-        public readonly string $column,
-        public readonly string $direction = 'ASC',
-        public readonly ?int $nulls = null,
+        public string $column,
+        public string $direction = 'ASC',
+        public ?int   $nulls = null,
     ) {}
 
     public function getSql(GrammarInterface $grammar): string
@@ -19,11 +19,11 @@ final class OrderByNode
         $column = $grammar->wrap(value: $this->column);
         $direction = strtoupper(string: $this->direction);
 
-        $sql = "{$column} {$direction}";
+        $sql     = sprintf('%s %s', $column, $direction);
 
         if ($this->nulls !== null) {
             $nulls = $this->nulls === 1 ? 'FIRST' : 'LAST';
-            $sql .= " NULLS {$nulls}";
+            $sql .= ' NULLS ' . $nulls;
         }
 
         return $sql;

@@ -6,10 +6,13 @@ namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwar
 
 final class EnvironmentDetector
 {
-    private const ENV_LOCAL      = 'local';
-    private const ENV_STAGING    = 'staging';
-    private const ENV_PRODUCTION = 'production';
-    private const ENV_TESTING    = 'testing';
+    private const string ENV_LOCAL = 'local';
+
+    private const string ENV_STAGING = 'staging';
+
+    private const string ENV_PRODUCTION = 'production';
+
+    private const string ENV_TESTING = 'testing';
 
     public function detect() : string
     {
@@ -40,7 +43,7 @@ final class EnvironmentDetector
             return 'swoole';
         }
 
-        if (php_sapi_name() === 'cli') {
+        if (PHP_SAPI === 'cli') {
             return 'cli';
         }
 

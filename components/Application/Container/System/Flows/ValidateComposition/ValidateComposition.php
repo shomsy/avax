@@ -12,7 +12,7 @@ use ReflectionException;
  */
 final readonly class ValidateComposition
 {
-    public function __construct(private ResolveDependency $serviceResolver)
+    public function __construct(private ResolveDependency $resolveDependency)
     {
     }
 
@@ -27,9 +27,9 @@ final readonly class ValidateComposition
     {
         $serviceIds ??= [];
         if ($context === []) {
-            return $this->serviceResolver->validate(serviceIds: $serviceIds);
+            return $this->resolveDependency->validate(serviceIds: $serviceIds);
         }
 
-        return $this->serviceResolver->validateInContext(serviceIds: $serviceIds, context: $context);
+        return $this->resolveDependency->validateInContext(serviceIds: $serviceIds, context: $context);
     }
 }

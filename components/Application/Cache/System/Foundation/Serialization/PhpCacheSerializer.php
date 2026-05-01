@@ -27,23 +27,23 @@ final readonly class PhpCacheSerializer implements CacheSerializer
     }
 
     #[Override]
-    public function unserialize(SerializedCachePayload $payload) : mixed
+    public function unserialize(SerializedCachePayload $serializedCachePayload) : mixed
     {
-        if (! $this->canUnserialize(payload: $payload)) {
+        if (! $this->canUnserialize(payload: $serializedCachePayload)) {
             throw new CachePayloadCouldNotBeSerialized(
-                message: sprintf('Cannot unserialize payload with format "%s"', $payload->format),
+                message: sprintf('Cannot unserialize payload with format "%s"', $serializedCachePayload->format),
             );
         }
 
-        if (! $payload->verify()) {
+        if (! $serializedCachePayload->verify()) {
             throw new CachePayloadCouldNotBeSerialized(
                 message: 'Payload checksum verification failed',
             );
         }
 
-        $result = unserialize($payload->data, ['allowed_classes' => true]);
+        $result = unserialize($serializedCachePayload->data, ['allowed_classes' => true]);
 
-        if ($result === false && $payload->data !== 'b:0;') {
+        if ($result === false && $serializedCachePayload->data !== 'b:0;') {
             throw new CachePayloadCouldNotBeSerialized(
                 message: 'Failed to unserialize payload data',
             );
@@ -52,9 +52,9 @@ final readonly class PhpCacheSerializer implements CacheSerializer
         return $result;
     }
 
-    public function canUnserialize(SerializedCachePayload $payload) : bool
+    public function canUnserialize(SerializedCachePayload $serializedCachePayload) : bool
     {
-        return $payload->format === self::FORMAT;
+        return $serializedCachePayload->format === self::FORMAT;
     }
 
     #[Override]

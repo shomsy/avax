@@ -17,12 +17,12 @@ final readonly class FreshnessStatus
         public string    $entryName,
         public bool      $isFresh,
         public string    $reason,
-        public Timestamp $checkedAt,
+        public Timestamp $timestamp,
         public int       $sourceFilesMtime,
         public int|false $compiledFileMtime,
     )
     {
-        $this->timestamp = $checkedAt;
+        $this->timestamp = $timestamp;
     }
 
     /**
@@ -46,7 +46,7 @@ final readonly class FreshnessStatus
             'entryName'         => $this->entryName,
             'isFresh'           => $this->isFresh,
             'reason'            => $this->reason,
-            'checkedAt' => $this->checkedAt->seconds,
+            'checkedAt' => $this->timestamp->seconds,
             'sourceFilesMtime'  => $this->sourceFilesMtime,
             'compiledFileMtime' => $this->compiledFileMtime,
             'isStale'           => $this->isStale(),
@@ -80,6 +80,6 @@ final readonly class FreshnessStatus
             return 0;
         }
 
-        return $this->checkedAt->seconds - $this->compiledFileMtime;
+        return $this->timestamp->seconds - $this->compiledFileMtime;
     }
 }

@@ -47,7 +47,7 @@ final class HotPathInliner
      */
     public function isAttached() : bool
     {
-        return $this->compiledContainer !== null;
+        return $this->compiledContainer instanceof CompiledContainer;
     }
 
     /**
@@ -55,7 +55,7 @@ final class HotPathInliner
      */
     public function state(string|null $serviceId = null) : array
     {
-        $attached = $this->compiledContainer !== null;
+        $attached = $this->compiledContainer instanceof CompiledContainer;
         $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiledContainer->has(serviceId: $serviceId);
 
         return [
@@ -85,9 +85,9 @@ final class HotPathInliner
      *
      * @throws ContainerException
      */
-    public function resolve(string $serviceId, ResolveDependency $serviceResolver, ResolveRequest $resolveRequest) : mixed
+    public function resolve(string $serviceId, ResolveDependency $resolveDependency, ResolveRequest $resolveRequest) : mixed
     {
-        if ($this->compiledContainer === null) {
+        if (! $this->compiledContainer instanceof CompiledContainer) {
             throw new ContainerException(message: 'HotPathInliner has no compiled runtime attached.');
         }
 
@@ -98,6 +98,6 @@ final class HotPathInliner
 
         $call = $this->calls[$method] ??= Closure::fromCallable(callback: [$this->compiledContainer, $method]);
 
-        return $call($serviceResolver, $resolveRequest, $resolveRequest->overrides);
+        return $call($resolveDependency, $resolveRequest, $resolveRequest->overrides);
     }
 }

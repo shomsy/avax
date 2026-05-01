@@ -52,7 +52,7 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(
                 message: 'Failed to find one entity by conditions.',
-                context: compact('conditions', 'exception'),
+                context: ['conditions' => $conditions, 'exception' => $exception],
             );
 
             throw $exception;
@@ -137,8 +137,8 @@ abstract class Repository
         array  $conditions,
         string|null $orderBy = null,
         string|null $direction = null,
-        int    $limit = null,
-        int    $offset = null,
+        ?int $limit = null,
+        ?int $offset = null,
     ) : array
     {
         try {

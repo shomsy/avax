@@ -11,9 +11,9 @@ final class LoaderRegistry
     /** @var array<string, DataLoaderInterface> */
     private array $loaders = [];
 
-    public function register(string $relation, DataLoaderInterface $loader) : self
+    public function register(string $relation, DataLoaderInterface $dataLoader) : self
     {
-        $this->loaders[$relation] = $loader;
+        $this->loaders[$relation] = $dataLoader;
 
         return $this;
     }
@@ -21,7 +21,7 @@ final class LoaderRegistry
     public function get(string $relation) : DataLoaderInterface
     {
         return $this->loaders[$relation]
-            ?? throw new RuntimeException(message: "No DataLoader registered for relation: {$relation}");
+            ?? throw new RuntimeException(message: 'No DataLoader registered for relation: ' . $relation);
     }
 
     public function has(string $relation) : bool

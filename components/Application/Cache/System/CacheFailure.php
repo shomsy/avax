@@ -25,17 +25,13 @@ final class CacheFailure extends RuntimeException
 
     public const int CODE_VALIDATION_FAILED = 1008;
 
-    private readonly int $failureCode;
-
     public function __construct(
         string     $message,
-        int        $code = 0,
-        ?Throwable $previous = null,
+        private readonly int $failureCode = 0,
+        ?Throwable           $throwable = null,
     )
     {
-        $this->failureCode = $code;
-
-        parent::__construct(message: $message, code: 0, previous: $previous);
+        parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 
     public static function storeUnavailable(string $storeName, Throwable|null $throwable = null) : self

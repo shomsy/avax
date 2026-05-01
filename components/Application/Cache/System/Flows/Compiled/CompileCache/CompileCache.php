@@ -19,24 +19,14 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class CompileCache
 {
-    private CompiledCacheDirectory $compiledCacheDirectory;
-
-    private CompiledCacheManifest $compiledCacheManifest;
-
-    public function __construct(
-        CompiledCacheDirectory $directory,
-        CompiledCacheManifest  $manifest,
-        private Clock                  $clock = new SystemClock(),
-    )
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest, private Clock $clock = new SystemClock())
     {
-        $this->compiledCacheDirectory = $directory;
-        $this->compiledCacheManifest  = $manifest;
     }
 
     public function compile(
         string               $name,
         callable             $build,
-        CompiledCacheSources $sources,
+        CompiledCacheSources $compiledCacheSources,
     ) : CompiledCacheArtifact
     {
         $compiledCacheName = new CompiledCacheName(name: $name);
@@ -49,7 +39,7 @@ final readonly class CompileCache
         $atomicCompiledCacheWrite = new AtomicCompiledCacheWrite(directory: $this->compiledCacheDirectory, clock: $this->clock);
         $compiledCacheArtifact    = $atomicCompiledCacheWrite->write(name: $compiledCacheName, payload: $phpPayload);
 
-        $fingerprint                = $sources->fingerprint();
+        $fingerprint = $compiledCacheSources->fingerprint();
 
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
         $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);

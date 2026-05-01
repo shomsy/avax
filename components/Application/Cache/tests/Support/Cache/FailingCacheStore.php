@@ -32,11 +32,11 @@ final class FailingCacheStore implements CacheStore
     }
 
     #[Override]
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $this->maybeFail();
 
-        return new CacheStoreRecordWasMissing(key: $key);
+        return new CacheStoreRecordWasMissing(key: $cacheKey);
     }
 
     /**
@@ -50,13 +50,13 @@ final class FailingCacheStore implements CacheStore
     }
 
     #[Override]
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         $this->maybeFail();
     }
 
     #[Override]
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $cacheKey) : void
     {
         $this->maybeFail();
     }
@@ -68,7 +68,7 @@ final class FailingCacheStore implements CacheStore
     }
 
     #[Override]
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $cacheKey) : bool
     {
         $this->maybeFail();
 

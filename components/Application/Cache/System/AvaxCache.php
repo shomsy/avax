@@ -30,12 +30,6 @@ use Traversable;
 
 final class AvaxCache implements CacheContract
 {
-    private readonly CacheStore $cacheStore;
-
-    private readonly Clock $clock;
-
-    private readonly CacheMetrics|null $cacheMetrics;
-
     private readonly CacheTtl $cacheTtl;
 
     private readonly DecideStaleValueCanBeServed $decideStaleValueCanBeServed;
@@ -47,9 +41,9 @@ final class AvaxCache implements CacheContract
     private bool $stampedeProtectionEnabled;
 
     public function __construct(
-        CacheStore            $store,
-        Clock                 $clock = new SystemClock(),
-        CacheMetrics|null     $metrics = null,
+        private readonly CacheStore        $cacheStore,
+        private readonly Clock             $clock = new SystemClock(),
+        private readonly CacheMetrics|null $cacheMetrics = null,
         StaleValuePolicy|null $stalePolicy = null,
         RefreshPolicy|null    $refreshPolicy = null,
         CacheLockStore|null   $cacheLockStore = null,
@@ -59,9 +53,6 @@ final class AvaxCache implements CacheContract
         private readonly int  $refreshAheadWindowSeconds = 60,
     )
     {
-        $this->cacheStore                  = $store;
-        $this->clock                       = $clock;
-        $this->cacheMetrics                = $metrics;
         $this->cacheTtl                    = new CacheTtl(clock: $this->clock);
         $this->decideStaleValueCanBeServed = new DecideStaleValueCanBeServed(
             staleValuePolicy: $stalePolicy ?? StaleValuePolicy::DO_NOT_SERVE_STALE,
@@ -125,14 +116,14 @@ final class AvaxCache implements CacheContract
         return $this->loadWithStampedeProtection(key: $key, ttl: $ttl, loader: $loader);
     }
 
-    private function shouldRefreshValue(CachedValueLifecycle $lifecycle) : bool
+    private function shouldRefreshValue(CachedValueLifecycle $cachedValueLifecycle) : bool
     {
-        return $this->shouldRefreshCachedValue->shouldRefresh(lifecycle: $lifecycle);
+        return $this->shouldRefreshCachedValue->shouldRefresh(lifecycle: $cachedValueLifecycle);
     }
 
     private function loadWithStampedeProtection(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
     {
-        if ($this->stampedeProtectionEnabled && $this->acquireCacheStampedeLock !== null) {
+        if ($this->stampedeProtectionEnabled && $this->acquireCacheStampedeLock instanceof AcquireCacheStampedeLock) {
             return $this->protectedLoad(key: $key, ttl: $ttl, loader: $loader);
         }
 
@@ -226,7 +217,7 @@ final class AvaxCache implements CacheContract
         string $operation,
     ) : void
     {
-        if ($this->cacheMetrics === null) {
+        if (! $this->cacheMetrics instanceof CacheMetrics) {
             return;
         }
 

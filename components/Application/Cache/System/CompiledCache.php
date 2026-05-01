@@ -16,14 +16,14 @@ final class CompiledCache
 
     private static string|null $defaultDirectory = null;
 
-    public static function read(string $name, callable $build, CompiledCacheSources $sources) : mixed
+    public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed
     {
-        return self::instance()->read(name: $name, build: $build, sources: $sources);
+        return self::instance()->read(name: $name, build: $build, sources: $compiledCacheSources);
     }
 
     private static function instance() : CompiledCacheContract
     {
-        if (self::$compiledCacheContract === null) {
+        if (! self::$compiledCacheContract instanceof CompiledCacheContract) {
             $directory = self::$defaultDirectory ?? sys_get_temp_dir() . '/compiled_cache';
 
             $config  = CompiledCacheConfiguration::inDirectory($directory);
@@ -35,9 +35,9 @@ final class CompiledCache
         return self::$compiledCacheContract;
     }
 
-    public static function compile(string $name, callable $build, CompiledCacheSources $sources) : CompiledCacheArtifact
+    public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : CompiledCacheArtifact
     {
-        return self::instance()->compile(name: $name, build: $build, sources: $sources);
+        return self::instance()->compile(name: $name, build: $build, sources: $compiledCacheSources);
     }
 
     public static function clear(string $name) : void

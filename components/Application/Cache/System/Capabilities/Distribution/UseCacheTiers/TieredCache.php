@@ -39,11 +39,11 @@ final class TieredCache implements CacheStore
         }
     }
 
-    public function registerTier(CacheTier $tier, CacheStore $store) : self
+    public function registerTier(CacheTier $cacheTier, CacheStore $cacheStore) : self
     {
-        $key                         = $tier->cacheTierName->value;
-        $this->tierDefinitions[$key] = $tier;
-        $this->tiers[$key]           = $store;
+        $key                         = $cacheTier->cacheTierName->value;
+        $this->tierDefinitions[$key] = $cacheTier;
+        $this->tiers[$key]           = $cacheStore;
 
         return $this;
     }
@@ -62,7 +62,7 @@ final class TieredCache implements CacheStore
     }
 
     #[Override]
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $this->rewindTiers();
 
@@ -83,10 +83,10 @@ final class TieredCache implements CacheStore
                 continue;
             }
 
-            $result = $store->read(key: $key, clock: $clock);
+            $result = $store->read(key: $cacheKey, clock: $clock);
 
             if ($result instanceof CacheStoreRecordWasFound) {
-                $this->promoteToFasterTier(key: $key, record: $result->record);
+                $this->promoteToFasterTier(key: $cacheKey, record: $result->record);
 
                 return $result;
             }
@@ -94,7 +94,7 @@ final class TieredCache implements CacheStore
             $this->advanceTier();
         }
 
-        return new CacheStoreRecordWasMissing(key: $key);
+        return new CacheStoreRecordWasMissing(key: $cacheKey);
     }
 
     private function rewindTiers() : void
@@ -117,7 +117,7 @@ final class TieredCache implements CacheStore
         return $this->tiers[$tierName] ?? null;
     }
 
-    private function promoteToFasterTier(CacheKey $key, StoredCacheRecord $record) : void
+    private function promoteToFasterTier(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         $currentTierName = $this->getCurrentTierName();
 
@@ -135,21 +135,24 @@ final class TieredCache implements CacheStore
             if (! $tier->isFasterThan(other: $currentTier)) {
                 continue;
             }
+
             if ($this->tiers[$tierName] === null) {
                 continue;
             }
-            if ($this->tiers[$tierName]->exists(key: $key)) {
+
+            if ($this->tiers[$tierName]->exists(key: $cacheKey)) {
                 continue;
             }
-            $this->tiers[$tierName]->write(key: $key, record: $record);
+
+            $this->tiers[$tierName]->write(key: $cacheKey, record: $storedCacheRecord);
         }
     }
 
     #[Override]
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $cacheKey) : bool
     {
         foreach ($this->tiers as $tier) {
-            if ($tier !== null && $tier->exists(key: $key)) {
+            if ($tier !== null && $tier->exists(key: $cacheKey)) {
                 return true;
             }
         }
@@ -158,13 +161,13 @@ final class TieredCache implements CacheStore
     }
 
     #[Override]
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         foreach ($this->tiers as $tierName => $store) {
             if ($store !== null) {
                 $tier = $this->tierDefinitions[$tierName];
                 if ($tier->canStore(currentSize: $this->getTierSize(tierName: $tierName))) {
-                    $store->write(key: $key, record: $record);
+                    $store->write(key: $cacheKey, record: $storedCacheRecord);
                 }
             }
         }
@@ -182,11 +185,11 @@ final class TieredCache implements CacheStore
     }
 
     #[Override]
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $cacheKey) : void
     {
         foreach ($this->tiers as $tier) {
             if ($tier !== null) {
-                $tier->forget(key: $key);
+                $tier->forget(key: $cacheKey);
             }
         }
     }
@@ -201,8 +204,8 @@ final class TieredCache implements CacheStore
         }
     }
 
-    public function getTier(CacheTierName $name) : CacheStore|null
+    public function getTier(CacheTierName $cacheTierName) : CacheStore|null
     {
-        return $this->tiers[$name->value] ?? null;
+        return $this->tiers[$cacheTierName->value] ?? null;
     }
 }

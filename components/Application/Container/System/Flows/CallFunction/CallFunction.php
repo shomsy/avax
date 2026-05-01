@@ -12,7 +12,7 @@ use ReflectionException;
  */
 final readonly class CallFunction
 {
-    public function __construct(private ResolveDependency $serviceResolver)
+    public function __construct(private ResolveDependency $resolveDependency)
     {
     }
 
@@ -22,6 +22,6 @@ final readonly class CallFunction
      */
     public function call(callable|string $target, array $parameters = []) : mixed
     {
-        return $this->serviceResolver->call(callable: $target, parameters: $parameters);
+        return $this->resolveDependency->call(callable: $target, parameters: $parameters);
     }
 }

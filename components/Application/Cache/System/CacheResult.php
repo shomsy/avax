@@ -13,14 +13,14 @@ class CacheResult
     public readonly CacheKey|null $cacheKey;
 
     public function __construct(
-        public readonly CacheResultState $state,
+        public readonly CacheResultState $cacheResultState,
         public readonly mixed            $value,
-        public readonly CacheKey|null    $key = null,
+        public readonly CacheKey|null    $cacheKey = null,
         public readonly string|null      $message = null,
     )
     {
-        $this->cacheResultState = $state;
-        $this->cacheKey         = $key;
+        $this->cacheResultState = $cacheResultState;
+        $this->cacheKey         = $cacheKey;
     }
 
     public static function hit(mixed $value, CacheKey|null $cacheKey = null) : self

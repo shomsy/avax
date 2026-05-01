@@ -13,7 +13,7 @@ use Override;
  */
 final readonly class ManageScopes implements ScopeInterface
 {
-    public function __construct(private ScopeStore $scopeStore, private DependencyPool $servicePool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ResolutionMetrics|null $resolutionMetrics = null)
+    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ResolutionMetrics|null $resolutionMetrics = null)
     {
     }
 
@@ -23,7 +23,7 @@ final readonly class ManageScopes implements ScopeInterface
     #[Override]
     public function instance(string $abstract, mixed $instance) : void
     {
-        $this->servicePool->set(abstract: $abstract, instance: $instance);
+        $this->dependencyPool->set(abstract: $abstract, instance: $instance);
     }
 
     /**
@@ -71,7 +71,7 @@ final readonly class ManageScopes implements ScopeInterface
             $instance = $frame['items'][$serviceId] ?? null;
             unset($frame['items'][$serviceId], $frame['disposable'][$serviceId]);
 
-            $released = $this->servicePool->releasePooled(
+            $released = $this->dependencyPool->releasePooled(
                 abstract        : $serviceId,
                 instance        : $instance,
                 maxSize         : $options['maxSize'],
@@ -100,10 +100,10 @@ final readonly class ManageScopes implements ScopeInterface
     #[Override]
     public function terminate() : void
     {
-        $shared = $this->servicePool->drain();
+        $shared = $this->dependencyPool->drain();
         $this->disposeInstances?->disposeMany(instances: $shared['items'], disposable: $shared['disposable']);
 
-        $pooled = $this->servicePool->drainPooled();
+        $pooled = $this->dependencyPool->drainPooled();
         foreach ($pooled['items'] as $serviceId => $bucket) {
             $options = $pooled['options'][$serviceId] ?? [
                 'disposable' => false,
@@ -153,18 +153,18 @@ final readonly class ManageScopes implements ScopeInterface
         $snapshot = $this->scopeStore->snapshot();
 
         return [
-            'shared'          => $this->servicePool->snapshot(),
+            'shared'          => $this->dependencyPool->snapshot(),
             'scoped'          => $snapshot['scoped'],
             'pooled'          => $snapshot['pooled'],
-            'pooledAvailable' => $this->servicePool->pooledSnapshot(),
-            'pooledStats'     => $this->servicePool->pooledStats(),
+            'pooledAvailable' => $this->dependencyPool->pooledSnapshot(),
+            'pooledStats'     => $this->dependencyPool->pooledStats(),
             'frames'          => $snapshot['frames'],
         ];
     }
 
     public function hasShared(string $abstract) : bool
     {
-        return $this->servicePool->has(abstract: $abstract);
+        return $this->dependencyPool->has(abstract: $abstract);
     }
 
     /**
@@ -177,12 +177,12 @@ final readonly class ManageScopes implements ScopeInterface
             return true;
         }
 
-        return (bool) $this->servicePool->has(abstract: $abstract);
+        return (bool) $this->dependencyPool->has(abstract: $abstract);
     }
 
     public function getShared(string $abstract) : mixed
     {
-        return $this->servicePool->get(abstract: $abstract);
+        return $this->dependencyPool->get(abstract: $abstract);
     }
 
     /**
@@ -195,7 +195,7 @@ final readonly class ManageScopes implements ScopeInterface
             return $this->scopeStore->get(abstract: $abstract);
         }
 
-        return $this->servicePool->get(abstract: $abstract);
+        return $this->dependencyPool->get(abstract: $abstract);
     }
 
     public function hasScoped(string $abstract, string $kind = ScopeKind::ANY) : bool
@@ -226,7 +226,7 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function setShared(string $abstract, mixed $instance, bool $disposable = false) : void
     {
-        $this->servicePool->set(abstract: $abstract, instance: $instance, disposable: $disposable);
+        $this->dependencyPool->set(abstract: $abstract, instance: $instance, disposable: $disposable);
     }
 
     /**
@@ -248,7 +248,7 @@ final readonly class ManageScopes implements ScopeInterface
             ];
         }
 
-        $checkedOut = $this->servicePool->checkoutPooled(abstract: $abstract);
+        $checkedOut = $this->dependencyPool->checkoutPooled(abstract: $abstract);
         if (! ($checkedOut['hit'] ?? false)) {
             return $checkedOut;
         }

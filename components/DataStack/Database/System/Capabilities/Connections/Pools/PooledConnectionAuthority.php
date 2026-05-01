@@ -76,7 +76,7 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      */
     private function resolveBorrowed() : DatabaseConnection
     {
-        if ($this->databaseConnection === null) {
+        if (! $this->databaseConnection instanceof DatabaseConnection) {
             $this->databaseConnection = $this->connectionPool->acquire();
         }
 

@@ -17,16 +17,16 @@ use DateInterval;
  */
 final class Cache
 {
-    private static CacheContract|null $default = null;
+    private static CacheContract|null $cacheContract = null;
 
-    public static function use(CacheContract $cache) : void
+    public static function use(CacheContract $cacheContract) : void
     {
-        self::$default = $cache;
+        self::$cacheContract = $cacheContract;
     }
 
     public static function reset() : void
     {
-        self::$default = null;
+        self::$cacheContract = null;
     }
 
     public static function put(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
@@ -41,11 +41,11 @@ final class Cache
 
     private static function default() : CacheContract
     {
-        if (self::$default === null) {
+        if (self::$cacheContract === null) {
             throw new NotConfigured();
         }
 
-        return self::$default;
+        return self::$cacheContract;
     }
 
     public static function remember(string $key, int|DateInterval|null $ttl, callable $loader) : mixed

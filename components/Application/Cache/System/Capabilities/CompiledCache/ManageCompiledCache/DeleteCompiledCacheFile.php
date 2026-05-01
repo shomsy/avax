@@ -6,29 +6,24 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 final readonly class DeleteCompiledCacheFile
 {
-    private CompiledCacheDirectory $compiledCacheDirectory;
-
-    public function __construct(
-        CompiledCacheDirectory $directory,
-    )
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory)
     {
-        $this->compiledCacheDirectory = $directory;
     }
 
-    public function delete(CompiledCacheName $name) : void
+    public function delete(CompiledCacheName $compiledCacheName) : void
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $name);
+        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
         if (file_exists($compiledCachePath->toString())) {
             unlink($compiledCachePath->toString());
         }
     }
 
-    public function deleteIfExists(CompiledCacheName $name) : bool
+    public function deleteIfExists(CompiledCacheName $compiledCacheName) : bool
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $name);
+        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
 
         if (! file_exists($compiledCachePath->toString())) {
             return false;

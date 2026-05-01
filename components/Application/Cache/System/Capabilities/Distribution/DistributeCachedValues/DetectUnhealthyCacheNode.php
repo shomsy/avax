@@ -17,9 +17,9 @@ final class DetectUnhealthyCacheNode
     {
     }
 
-    public function recordFailure(CacheNodeId $nodeId) : CacheNodeStatus
+    public function recordFailure(CacheNodeId $cacheNodeId) : CacheNodeStatus
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (! isset($this->failureHistory[$nodeIdStr])) {
             $this->failureHistory[$nodeIdStr] = [];
@@ -35,9 +35,9 @@ final class DetectUnhealthyCacheNode
         return CacheNodeStatus::HEALTHY;
     }
 
-    public function recordSuccess(CacheNodeId $nodeId) : CacheNodeStatus
+    public function recordSuccess(CacheNodeId $cacheNodeId) : CacheNodeStatus
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (! isset($this->successCount[$nodeIdStr])) {
             $this->successCount[$nodeIdStr] = 0;
@@ -60,9 +60,9 @@ final class DetectUnhealthyCacheNode
         return CacheNodeStatus::UNHEALTHY;
     }
 
-    public function getStatus(CacheNodeId $nodeId) : CacheNodeStatus
+    public function getStatus(CacheNodeId $cacheNodeId) : CacheNodeStatus
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (isset($this->failureHistory[$nodeIdStr]) && count($this->failureHistory[$nodeIdStr]) >= $this->failureThreshold) {
             return CacheNodeStatus::UNHEALTHY;

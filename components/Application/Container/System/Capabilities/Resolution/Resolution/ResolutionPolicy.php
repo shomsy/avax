@@ -20,6 +20,7 @@ final readonly class ResolutionPolicy
     public const string FAIL_MODE_OPEN = 'open';
 
     public const string FAIL_MODE_CLOSED = 'closed';
+
     public string $failMode;
 
     public string $profile;

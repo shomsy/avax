@@ -121,15 +121,12 @@ final class QueryTimeline
      */
     private float $startTime;
 
-    /**
+    public function __construct(/**
      * @var int Maximum number of entries to keep (0 = unlimited)
      */
-    private int $maxEntries;
-
-    public function __construct(int $maxEntries = 0)
+        private readonly int $maxEntries = 0)
     {
         $this->startTime  = microtime(true);
-        $this->maxEntries = $maxEntries;
     }
 
     /**
@@ -145,7 +142,7 @@ final class QueryTimeline
         string|null $error = null,
     ) : QueryEntry
     {
-        $entry = new QueryEntry(
+        $queryEntry = new QueryEntry(
             sql         : $sql,
             bindings    : $bindings,
             timestamp   : microtime(true),
@@ -156,22 +153,22 @@ final class QueryTimeline
             error       : $error,
         );
 
-        $this->entries[] = $entry;
+        $this->entries[] = $queryEntry;
 
         // Enforce max entries limit
         if ($this->maxEntries > 0 && count($this->entries) > $this->maxEntries) {
             array_shift($this->entries);
         }
 
-        return $entry;
+        return $queryEntry;
     }
 
     /**
      * Records a query entry directly from a QueryEntry object.
      */
-    public function add(QueryEntry $entry) : self
+    public function add(QueryEntry $queryEntry) : self
     {
-        $this->entries[] = $entry;
+        $this->entries[] = $queryEntry;
 
         if ($this->maxEntries > 0 && count($this->entries) > $this->maxEntries) {
             array_shift($this->entries);
@@ -199,7 +196,7 @@ final class QueryTimeline
     {
         return array_values(array_filter(
                                 $this->entries,
-                                static fn (QueryEntry $entry) : bool => strtoupper($entry->getType()) === strtoupper($type),
+                                static fn (QueryEntry $queryEntry) : bool => strtoupper($queryEntry->getType()) === strtoupper($type),
                             ));
     }
 
@@ -212,7 +209,7 @@ final class QueryTimeline
     {
         return array_values(array_filter(
                                 $this->entries,
-                                static fn (QueryEntry $entry) : bool => $entry->hasError(),
+                                static fn (QueryEntry $queryEntry) : bool => $queryEntry->hasError(),
                             ));
     }
 
@@ -225,7 +222,7 @@ final class QueryTimeline
     {
         return array_values(array_filter(
                                 $this->entries,
-                                static fn (QueryEntry $entry) : bool => $entry->connection === $connection,
+                                static fn (QueryEntry $queryEntry) : bool => $queryEntry->connection === $connection,
                             ));
     }
 
@@ -242,7 +239,7 @@ final class QueryTimeline
      */
     public function averageDurationMs() : float
     {
-        if (empty($this->entries)) {
+        if ($this->entries === []) {
             return 0.0;
         }
 
@@ -255,7 +252,7 @@ final class QueryTimeline
     public function totalDurationMs() : float
     {
         return array_sum(array_map(
-                             static fn (QueryEntry $entry) : float => $entry->durationMs,
+                             static fn (QueryEntry $queryEntry) : float => $queryEntry->durationMs,
                              $this->entries,
                          ));
     }
@@ -265,12 +262,12 @@ final class QueryTimeline
      */
     public function maxDurationMs() : float
     {
-        if (empty($this->entries)) {
+        if ($this->entries === []) {
             return 0.0;
         }
 
         return max(array_map(
-                       static fn (QueryEntry $entry) : float => $entry->durationMs,
+                       static fn (QueryEntry $queryEntry) : float => $queryEntry->durationMs,
                        $this->entries,
                    ));
     }
@@ -280,7 +277,7 @@ final class QueryTimeline
      */
     public function slowest() : QueryEntry|null
     {
-        if (empty($this->entries)) {
+        if ($this->entries === []) {
             return null;
         }
 

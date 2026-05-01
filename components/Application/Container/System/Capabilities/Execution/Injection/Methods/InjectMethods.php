@@ -30,21 +30,21 @@ final class InjectMethods
      */
     public function inject(
         object           $target,
-        DependencyBlueprint $serviceBlueprint,
+        DependencyBlueprint $dependencyBlueprint,
         array            $overrides,
-        ResolveDependency   $serviceResolver,
+        ResolveDependency   $resolveDependency,
         ResolveRequest   $resolveRequest,
     ) : void
     {
-        foreach ($serviceBlueprint->injectableMethods as $method) {
+        foreach ($dependencyBlueprint->injectableMethods as $method) {
             $arguments = $this->resolveCallArguments->resolvePlan(
                 plan     : $method['plan'],
                 overrides: $overrides,
-                resolver : $serviceResolver,
+                resolver : $resolveDependency,
                 request  : $resolveRequest,
             );
 
-            ($this->invokerFor(class: $serviceBlueprint->class, method: $method['name']))($target, $arguments);
+            ($this->invokerFor(class: $dependencyBlueprint->class, method: $method['name']))($target, $arguments);
         }
     }
 

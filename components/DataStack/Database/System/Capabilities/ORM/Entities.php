@@ -17,9 +17,9 @@ readonly class Entities
 {
     public function __construct(
         Query                   $query,
-        AttributeMetadataReader $metadataReader,
+        AttributeMetadataReader $attributeMetadataReader,
         Hydrator                $hydrator,
-        private EntityPersister $persister,
+        private EntityPersister $entityPersister,
     ) {}
 
     /**
@@ -27,7 +27,7 @@ readonly class Entities
      */
     public function find(string $entityClass, mixed $id, string|null $connection = null) : object|null
     {
-        return $this->persister->find(entityClass: $entityClass, id: $id, connectionName: $connection);
+        return $this->entityPersister->find(entityClass: $entityClass, id: $id, connectionName: $connection);
     }
 
     /**
@@ -41,12 +41,12 @@ readonly class Entities
         array  $criteria,
         string|null $orderBy = null,
         string|null $direction = null,
-        int    $limit = null,
-        int    $offset = null,
+        ?int $limit = null,
+        ?int $offset = null,
         string|null $connection = null,
     ) : array
     {
-        return $this->persister->findBy(
+        return $this->entityPersister->findBy(
             entityClass   : $entityClass,
             criteria      : $criteria,
             orderBy       : $orderBy,
@@ -62,7 +62,7 @@ readonly class Entities
      */
     public function insert(object $entity, string|null $connection = null) : void
     {
-        $this->persister->insert(entity: $entity, connectionName: $connection);
+        $this->entityPersister->insert(entity: $entity, connectionName: $connection);
     }
 
     /**
@@ -70,7 +70,7 @@ readonly class Entities
      */
     public function update(object $entity, string|null $connection = null) : void
     {
-        $this->persister->update(entity: $entity, connectionName: $connection);
+        $this->entityPersister->update(entity: $entity, connectionName: $connection);
     }
 
     /**
@@ -78,7 +78,7 @@ readonly class Entities
      */
     public function delete(object $entity, string|null $connection = null) : void
     {
-        $this->persister->delete(entity: $entity, connectionName: $connection);
+        $this->entityPersister->delete(entity: $entity, connectionName: $connection);
     }
 
     /**
@@ -86,6 +86,6 @@ readonly class Entities
      */
     public function refresh(object $entity, string|null $connection = null) : object
     {
-        return $this->persister->refresh(entity: $entity, connectionName: $connection);
+        return $this->entityPersister->refresh(entity: $entity, connectionName: $connection);
     }
 }

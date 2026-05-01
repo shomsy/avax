@@ -25,15 +25,15 @@ final class ConsistentHashRing
         private readonly int $virtualNodes = self::VIRTUAL_NODES,
     ) {}
 
-    public function addNode(CacheNode $node) : self
+    public function addNode(CacheNode $cacheNode) : self
     {
-        $this->nodes[$node->id->toString()]         = $node;
-        $this->nodePositions[$node->id->toString()] = [];
+        $this->nodes[$cacheNode->id->toString()]         = $cacheNode;
+        $this->nodePositions[$cacheNode->id->toString()] = [];
 
         for ($i = 0; $i < $this->virtualNodes; $i++) {
-            $position                                     = $this->hash(value: sprintf('%s:%d', $node->id->toString(), $i));
-            $this->ring[$position]                        = $node;
-            $this->nodePositions[$node->id->toString()][] = $position;
+            $position                                          = $this->hash(value: sprintf('%s:%d', $cacheNode->id->toString(), $i));
+            $this->ring[$position]                             = $cacheNode;
+            $this->nodePositions[$cacheNode->id->toString()][] = $position;
         }
 
         $this->sortRing();
@@ -51,9 +51,9 @@ final class ConsistentHashRing
         ksort($this->ring, SORT_NUMERIC);
     }
 
-    public function removeNode(CacheNodeId $nodeId) : self
+    public function removeNode(CacheNodeId $cacheNodeId) : self
     {
-        $nodeIdStr = $nodeId->toString();
+        $nodeIdStr = $cacheNodeId->toString();
 
         if (! isset($this->nodes[$nodeIdStr])) {
             return $this;
@@ -79,13 +79,13 @@ final class ConsistentHashRing
         );
     }
 
-    public function getNodeForKey(CacheKey $key) : CacheNode|null
+    public function getNodeForKey(CacheKey $cacheKey) : CacheNode|null
     {
         if ($this->ring === []) {
             return null;
         }
 
-        $keyHash = $this->hash(value: $key->fullKey());
+        $keyHash = $this->hash(value: $cacheKey->fullKey());
 
         $closestNode     = null;
         $closestPosition = null;
@@ -94,9 +94,11 @@ final class ConsistentHashRing
             if ($position < $keyHash) {
                 continue;
             }
+
             if ($closestNode !== null && $position >= $closestPosition) {
                 continue;
             }
+
             $closestNode     = $node;
             $closestPosition = $position;
         }

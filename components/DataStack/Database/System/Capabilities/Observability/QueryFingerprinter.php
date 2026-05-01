@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Observability;
 
+use Override;
+use Stringable;
+
 /**
  * A fingerprint representing a normalized query pattern.
  *
  * Readonly value object that groups similar queries by replacing
  * literal values with placeholders.
  */
-final readonly class QueryFingerprintEntry
+final readonly class QueryFingerprintEntry implements Stringable
 {
     public function __construct(
         public string $pattern,
@@ -23,7 +26,7 @@ final readonly class QueryFingerprintEntry
      */
     public function matches(string $query) : bool
     {
-        $self = new self(
+        new self(
             pattern      : $this->pattern,
             hash         : $this->hash,
             originalQuery: $query,
@@ -35,6 +38,7 @@ final readonly class QueryFingerprintEntry
     /**
      * Returns a string representation.
      */
+    #[Override]
     public function __toString() : string
     {
         return $this->pattern;
@@ -52,32 +56,19 @@ final readonly class QueryFingerprintEntry
  * - Normalizing whitespace
  * - Lowercasing SQL keywords
  */
-final class QueryFingerprinter
+final readonly class QueryFingerprinter
 {
-    /**
-     * @var bool Whether to lowercase the entire query
-     */
-    private bool $lowercase;
-
-    /**
-     * @var bool Whether to normalize table/column names with numbers
-     */
-    private bool $normalizeIdentifiers;
-
-    /**
-     * @var bool Whether to include the original query in the fingerprint entry
-     */
-    private bool $includeOriginal;
-
     public function __construct(
-        bool $lowercase = false,
-        bool $normalizeIdentifiers = false,
-        bool $includeOriginal = false,
+        /**
+         * @var bool Whether to lowercase the entire query
+         */
+        private bool $lowercase = false,
+        /**
+         * @var bool Whether to include the original query in the fingerprint entry
+         */
+        private bool $includeOriginal = false
     )
     {
-        $this->lowercase            = $lowercase;
-        $this->normalizeIdentifiers = $normalizeIdentifiers;
-        $this->includeOriginal      = $includeOriginal;
     }
 
     /**
@@ -122,7 +113,7 @@ final class QueryFingerprinter
 
         // Optionally lowercase
         if ($this->lowercase) {
-            $normalized = strtolower($normalized);
+            return strtolower($normalized);
         }
 
         return $normalized;
@@ -154,9 +145,8 @@ final class QueryFingerprinter
 
         // Normalize whitespace
         $normalized = preg_replace('/\s+/', ' ', $normalized) ?? $normalized;
-        $normalized = trim($normalized);
 
-        return $normalized;
+        return trim($normalized);
     }
 
     /**

@@ -23,9 +23,9 @@ final readonly class InvalidateCachedValue
         $this->invalidate(key: $cacheKey, reason: InvalidationReason::EXPLICIT);
     }
 
-    public function invalidate(CacheKey $key, InvalidationReason $reason = InvalidationReason::EXPLICIT) : void
+    public function invalidate(CacheKey $cacheKey) : void
     {
-        $this->cacheStore->forget(key: $key);
+        $this->cacheStore->forget(key: $cacheKey);
 
         $this->cacheMetrics?->recordInvalidation();
     }

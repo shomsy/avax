@@ -25,12 +25,12 @@ final readonly class CheckCacheCapacity
         );
     }
 
-    public function getCurrentEntryCount(CacheStore|null $store = null) : int
+    public function getCurrentEntryCount() : int
     {
         return 0;
     }
 
-    public function getCurrentSizeBytes(CacheStore|null $store = null) : int
+    public function getCurrentSizeBytes() : int
     {
         return 0;
     }

@@ -11,7 +11,7 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Resolve
  */
 final readonly class CloseScope
 {
-    public function __construct(private ResolveDependency $serviceResolver)
+    public function __construct(private ResolveDependency $resolveDependency)
     {
     }
 
@@ -20,6 +20,6 @@ final readonly class CloseScope
      */
     public function close(string|null $kind = null) : void
     {
-        $this->serviceResolver->closeScope(kind: $kind);
+        $this->resolveDependency->closeScope(kind: $kind);
     }
 }

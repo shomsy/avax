@@ -17,10 +17,10 @@ final readonly class FallbackCacheStore implements CacheStore
     ) {}
 
     #[Override]
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         try {
-            $result = $this->primary->read(key: $key, clock: $clock);
+            $result = $this->primary->read(key: $cacheKey, clock: $clock);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 return $result;
@@ -29,38 +29,38 @@ final readonly class FallbackCacheStore implements CacheStore
         }
 
         try {
-            $result = $this->fallback->read(key: $key, clock: $clock);
+            $result = $this->fallback->read(key: $cacheKey, clock: $clock);
 
             if ($result instanceof CacheStoreRecordWasFound) {
-                $this->primary->write(key: $key, record: $result->record);
+                $this->primary->write(key: $cacheKey, record: $result->record);
             }
 
             return $result;
         } catch (Throwable) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
     }
 
     #[Override]
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         try {
-            $this->primary->write(key: $key, record: $record);
+            $this->primary->write(key: $cacheKey, record: $storedCacheRecord);
         } catch (Throwable) {
-            $this->fallback->write(key: $key, record: $record);
+            $this->fallback->write(key: $cacheKey, record: $storedCacheRecord);
         }
     }
 
     #[Override]
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $cacheKey) : void
     {
         try {
-            $this->primary->forget(key: $key);
+            $this->primary->forget(key: $cacheKey);
         } catch (Throwable) {
         }
 
         try {
-            $this->fallback->forget(key: $key);
+            $this->fallback->forget(key: $cacheKey);
         } catch (Throwable) {
         }
     }
@@ -80,12 +80,12 @@ final readonly class FallbackCacheStore implements CacheStore
     }
 
     #[Override]
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $cacheKey) : bool
     {
         try {
-            return $this->primary->exists(key: $key);
+            return $this->primary->exists(key: $cacheKey);
         } catch (Throwable) {
-            return $this->fallback->exists(key: $key);
+            return $this->fallback->exists(key: $cacheKey);
         }
     }
 }

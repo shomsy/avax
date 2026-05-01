@@ -69,7 +69,7 @@ final readonly class DataField
             return $attribute->class;
         }
 
-        if ($this->reflectionProperty !== null) {
+        if ($this->reflectionProperty instanceof ReflectionProperty) {
             $doc = $this->reflectionProperty->getDocComment();
 
             if (is_string(value: $doc) && preg_match(pattern: '/@var\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)\[]/', subject: $doc, matches: $matches) === 1) {

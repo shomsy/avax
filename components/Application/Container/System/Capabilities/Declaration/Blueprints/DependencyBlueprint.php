@@ -13,6 +13,7 @@ final readonly class DependencyBlueprint
     public array $injectableMethods;
 
     public array $injectableProperties;
+
     public bool  $instantiable;
 
     /**

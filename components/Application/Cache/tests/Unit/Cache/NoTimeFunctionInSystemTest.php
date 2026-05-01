@@ -27,9 +27,11 @@ final class NoTimeFunctionInSystemTest extends TestCase
             if ($file->isDir()) {
                 continue;
             }
+
             if ($file->getExtension() !== 'php') {
                 continue;
             }
+
             $content = file_get_contents($file->getPathname());
 
             if (preg_match('/\btime\(\)/', $content)) {

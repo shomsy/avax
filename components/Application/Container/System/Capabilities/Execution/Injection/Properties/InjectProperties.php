@@ -26,21 +26,21 @@ final class InjectProperties
      */
     public function inject(
         object           $target,
-        DependencyBlueprint $serviceBlueprint,
+        DependencyBlueprint $dependencyBlueprint,
         array            $overrides,
-        ResolveDependency   $serviceResolver,
+        ResolveDependency   $resolveDependency,
         ResolveRequest   $resolveRequest,
     ) : void
     {
-        foreach ($serviceBlueprint->injectableProperties as $property) {
+        foreach ($dependencyBlueprint->injectableProperties as $property) {
             $name = $property['name'];
 
             if ($property['readonly']) {
-                throw new ContainerException(message: sprintf('Cannot inject readonly property [%s] on [%s].', $name, $serviceBlueprint->class));
+                throw new ContainerException(message: sprintf('Cannot inject readonly property [%s] on [%s].', $name, $dependencyBlueprint->class));
             }
 
             if (array_key_exists(key: $name, array: $overrides)) {
-                ($this->writerFor(class: $serviceBlueprint->class, property: $name))($target, $overrides[$name]);
+                ($this->writerFor(class: $dependencyBlueprint->class, property: $name))($target, $overrides[$name]);
 
                 continue;
             }
@@ -50,9 +50,9 @@ final class InjectProperties
                 continue;
             }
 
-            ($this->writerFor(class: $serviceBlueprint->class, property: $name))(
+            ($this->writerFor(class: $dependencyBlueprint->class, property: $name))(
                 $target,
-                $serviceResolver->resolveRequest(request: $resolveRequest->child(serviceId: $serviceId))
+                $resolveDependency->resolveRequest(request: $resolveRequest->child(serviceId: $serviceId))
             );
         }
     }

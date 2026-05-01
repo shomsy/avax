@@ -22,11 +22,11 @@ final readonly class CacheNode implements Stringable
         public string $host,
         public int $port,
         public int             $weight = 100,
-        public CacheNodeStatus $status = CacheNodeStatus::HEALTHY,
+        public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
         public int|null        $virtualNodeCount = null,
     )
     {
-        $this->cacheNodeStatus = $status;
+        $this->cacheNodeStatus = $cacheNodeStatus;
     }
 
     /**

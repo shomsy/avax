@@ -32,6 +32,7 @@ final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValue
         return $this->frequencyTracker->getLeastFrequent(keys: array_keys($entries));
     }
 
+    #[Override]
     public function recordAccess(string $key) : void
     {
         $this->frequencyTracker->recordAccess(key: $key);
@@ -42,11 +43,13 @@ final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValue
         return $this->frequencyTracker->getFrequency(key: $key);
     }
 
+    #[Override]
     public function removeKey(string $key) : void
     {
         $this->frequencyTracker->remove(key: $key);
     }
 
+    #[Override]
     public function reset() : void
     {
         $this->frequencyTracker->reset();

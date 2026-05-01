@@ -55,6 +55,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
                 rejection: new InvalidArgumentException('File path cannot be empty'),
             );
         }
+
         $offset = $options['offset'] ?? 0;
         $length = $options['length'] ?? null;
 
@@ -350,9 +351,11 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
             if ($entry === '.') {
                 continue;
             }
+
             if ($entry === '..') {
                 continue;
             }
+
             if (! $includeHidden && str_starts_with($entry, '.')) {
                 continue;
             }
@@ -428,7 +431,7 @@ final class SyncOperationPromise implements AsyncOperationPromise
     #[Override]
     public function catch(callable $onRejected) : AsyncOperationPromise
     {
-        if ($this->isRejected && $this->throwable !== null) {
+        if ($this->isRejected && $this->throwable instanceof Throwable) {
             try {
                 $newResult = $onRejected($this->throwable);
 
@@ -457,7 +460,7 @@ final class SyncOperationPromise implements AsyncOperationPromise
     #[Override]
     public function getResult() : mixed
     {
-        if ($this->isRejected && $this->throwable !== null) {
+        if ($this->isRejected && $this->throwable instanceof Throwable) {
             throw $this->throwable;
         }
 

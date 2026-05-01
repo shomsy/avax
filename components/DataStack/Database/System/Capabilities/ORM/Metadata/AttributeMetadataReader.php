@@ -36,32 +36,32 @@ final class AttributeMetadataReader
      */
     private function read(string $entityClass) : EntityMetadata
     {
-        $reflection = new ReflectionClass(objectOrClass: $entityClass);
+        $reflectionClass = new ReflectionClass(objectOrClass: $entityClass);
 
-        $entityAttribute = $reflection->getAttributes(name: Entity::class)[0] ?? null;
+        $entityAttribute = $reflectionClass->getAttributes(name: Entity::class)[0] ?? null;
         if ($entityAttribute === null) {
             throw new RuntimeException(message: sprintf('Entity class %s must declare #[Entity].', $entityClass));
         }
 
-        $tableAttribute = $reflection->getAttributes(name: Table::class)[0] ?? null;
+        $tableAttribute = $reflectionClass->getAttributes(name: Table::class)[0] ?? null;
         $table          = $tableAttribute !== null
             ? $tableAttribute->newInstance()->name
-            : strtolower(string: $reflection->getShortName()) . 's';
+            : strtolower(string: $reflectionClass->getShortName()) . 's';
 
         $entity    = $entityAttribute->newInstance();
         $fields    = [];
         $relations = [];
 
-        foreach ($reflection->getProperties() as $property) {
-            $columnAttribute    = $property->getAttributes(name: Column::class)[0]         ?? null;
-            $idAttribute        = $property->getAttributes(name: Id::class)[0]             ?? null;
-            $generatedAttribute = $property->getAttributes(name: GeneratedValue::class)[0] ?? null;
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            $columnAttribute    = $reflectionProperty->getAttributes(name: Column::class)[0] ?? null;
+            $idAttribute        = $reflectionProperty->getAttributes(name: Id::class)[0] ?? null;
+            $generatedAttribute = $reflectionProperty->getAttributes(name: GeneratedValue::class)[0] ?? null;
 
             if ($columnAttribute !== null || $idAttribute !== null) {
-                $column                       = $columnAttribute?->newInstance() ?? new Column(name: $property->getName());
-                $fields[$property->getName()] = new FieldMetadata(
-                    property : $property->getName(),
-                    column   : $column->name ?? $property->getName(),
+                $column                                 = $columnAttribute?->newInstance() ?? new Column(name: $reflectionProperty->getName());
+                $fields[$reflectionProperty->getName()] = new FieldMetadata(
+                    property : $reflectionProperty->getName(),
+                    column   : $column->name ?? $reflectionProperty->getName(),
                     type     : $column->type,
                     id       : $idAttribute        !== null,
                     generated: $generatedAttribute !== null,
@@ -69,11 +69,11 @@ final class AttributeMetadataReader
                 );
             }
 
-            $joinColumn = $property->getAttributes(name: JoinColumn::class)[0] ?? null;
-            $relation   = $property->getAttributes(name: ManyToOne::class)[0]
-                ?? $property->getAttributes(name: OneToMany::class)[0]
-                ?? $property->getAttributes(name: OneToOne::class)[0]
-                ?? $property->getAttributes(name: ManyToMany::class)[0]
+            $joinColumn = $reflectionProperty->getAttributes(name: JoinColumn::class)[0] ?? null;
+            $relation   = $reflectionProperty->getAttributes(name: ManyToOne::class)[0]
+                ?? $reflectionProperty->getAttributes(name: OneToMany::class)[0]
+                ?? $reflectionProperty->getAttributes(name: OneToOne::class)[0]
+                ?? $reflectionProperty->getAttributes(name: ManyToMany::class)[0]
                 ?? null;
 
             if ($relation === null) {
@@ -88,8 +88,8 @@ final class AttributeMetadataReader
                 default                        => RelationKind::ManyToMany,
             };
 
-            $relations[$property->getName()] = new RelationMetadata(
-                property        : $property->getName(),
+            $relations[$reflectionProperty->getName()] = new RelationMetadata(
+                property        : $reflectionProperty->getName(),
                 kind            : $kind,
                 targetEntity    : $instance->targetEntity,
                 mappedBy        : $instance->mappedBy                               ?? null,

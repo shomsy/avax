@@ -9,17 +9,9 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Rep
  */
 final readonly class ReplicationResult
 {
-    public PrimaryReplicaPolicy $primaryReplicaPolicy;
-
     /** @param list<ReplicaWriteResult> $replicaResults */
-    public function __construct(
-        public string        $key,
-        public bool          $primarySuccess,
-        public array         $replicaResults,
-        PrimaryReplicaPolicy $policy,
-    )
+    public function __construct(public string $key, public bool $primarySuccess, public array $replicaResults, public PrimaryReplicaPolicy $primaryReplicaPolicy)
     {
-        $this->primaryReplicaPolicy = $policy;
     }
 
     /**

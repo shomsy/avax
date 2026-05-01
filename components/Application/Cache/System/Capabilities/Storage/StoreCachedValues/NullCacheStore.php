@@ -11,22 +11,22 @@ use Override;
 final class NullCacheStore implements CacheStore
 {
     #[Override]
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        return new CacheStoreRecordWasMissing(key: $key);
+        return new CacheStoreRecordWasMissing(key: $cacheKey);
     }
 
     #[Override]
-    public function write(CacheKey $key, StoredCacheRecord $record) : void {}
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void {}
 
     #[Override]
-    public function forget(CacheKey $key) : void {}
+    public function forget(CacheKey $cacheKey) : void {}
 
     #[Override]
     public function clear() : void {}
 
     #[Override]
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $cacheKey) : bool
     {
         return false;
     }

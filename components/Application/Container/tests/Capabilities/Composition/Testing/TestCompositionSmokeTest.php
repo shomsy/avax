@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\Testing\TestComposition;
 
@@ -13,6 +13,7 @@ interface TestingClockContract
 
 final class RealTestingClock implements TestingClockContract
 {
+    #[Override]
     public function now() : string
     {
         return 'real';
@@ -21,6 +22,7 @@ final class RealTestingClock implements TestingClockContract
 
 final class FakeTestingClock implements TestingClockContract
 {
+    #[Override]
     public function now() : string
     {
         return 'fake';
@@ -29,11 +31,8 @@ final class FakeTestingClock implements TestingClockContract
 
 final class LoginFlowEntry
 {
-    public TestingClockContract $clock;
-
-    public function __construct(TestingClockContract $clock)
+    public function __construct(public TestingClockContract $testingClockContract)
     {
-        $this->clock = $clock;
     }
 }
 

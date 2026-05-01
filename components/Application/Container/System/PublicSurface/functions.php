@@ -13,7 +13,7 @@ if (! function_exists('appInstance')) {
     {
         static $container = null;
 
-        if ($instance !== null) {
+        if ($instance instanceof DIContainerInterface) {
             $container = $instance;
             Container::setContainer($instance);
         }

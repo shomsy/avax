@@ -46,7 +46,7 @@ final class ResolveDependency
         $abstract = $this->bindingRegistry->resolveAlias($abstract);
 
         // 1. Check if already resolved (singleton/instance)
-        if ($instance = $this->bindingRegistry->getInstance($abstract)) {
+        if (($instance = $this->bindingRegistry->getInstance($abstract)) !== null) {
             return $instance;
         }
 

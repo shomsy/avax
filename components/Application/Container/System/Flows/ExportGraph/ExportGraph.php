@@ -12,7 +12,7 @@ use ReflectionException;
  */
 final readonly class ExportGraph
 {
-    public function __construct(private ResolveDependency $serviceResolver)
+    public function __construct(private ResolveDependency $resolveDependency)
     {
     }
 
@@ -25,10 +25,10 @@ final readonly class ExportGraph
     {
         $id ??= '';
         if ($context === []) {
-            return $this->serviceResolver->debugGraph(id: $id);
+            return $this->resolveDependency->debugGraph(id: $id);
         }
 
-        return $this->serviceResolver->debugGraphInContext(id: $id, context: $context);
+        return $this->resolveDependency->debugGraphInContext(id: $id, context: $context);
     }
 
     /**
@@ -40,10 +40,10 @@ final readonly class ExportGraph
         $kind   ??= 'dependency';
         $id     ??= '';
         if ($context === []) {
-            return $this->serviceResolver->exportGraph(format: $format, kind: $kind, id: $id);
+            return $this->resolveDependency->exportGraph(format: $format, kind: $kind, id: $id);
         }
 
-        return $this->serviceResolver->exportGraphInContext(
+        return $this->resolveDependency->exportGraphInContext(
             format : $format,
             kind   : $kind,
             id     : $id,
@@ -59,10 +59,10 @@ final readonly class ExportGraph
         $format ??= 'json';
         $id     ??= '';
         if ($context === []) {
-            return $this->serviceResolver->diffGraph(format: $format, id: $id);
+            return $this->resolveDependency->diffGraph(format: $format, id: $id);
         }
 
-        return $this->serviceResolver->diffGraphInContext(format: $format, id: $id, context: $context);
+        return $this->resolveDependency->diffGraphInContext(format: $format, id: $id, context: $context);
     }
 
     /**
@@ -74,10 +74,10 @@ final readonly class ExportGraph
     public function why(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->why(id: $id);
+            return $this->resolveDependency->why(id: $id);
         }
 
-        return $this->serviceResolver->whyInContext(id: $id, context: $context);
+        return $this->resolveDependency->whyInContext(id: $id, context: $context);
     }
 
     /**
@@ -89,10 +89,10 @@ final readonly class ExportGraph
     public function whoUses(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->whoUses(id: $id);
+            return $this->resolveDependency->whoUses(id: $id);
         }
 
-        return $this->serviceResolver->whoUsesInContext(id: $id, context: $context);
+        return $this->resolveDependency->whoUsesInContext(id: $id, context: $context);
     }
 
     /**
@@ -104,10 +104,10 @@ final readonly class ExportGraph
     public function whatBreaksIf(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->whatBreaksIf(id: $id);
+            return $this->resolveDependency->whatBreaksIf(id: $id);
         }
 
-        return $this->serviceResolver->whatBreaksIfInContext(id: $id, context: $context);
+        return $this->resolveDependency->whatBreaksIfInContext(id: $id, context: $context);
     }
 
     /**
@@ -119,10 +119,10 @@ final readonly class ExportGraph
     public function showOwner(string $id, array $context = []) : array
     {
         if ($context === []) {
-            return $this->serviceResolver->showOwner(id: $id);
+            return $this->resolveDependency->showOwner(id: $id);
         }
 
-        return $this->serviceResolver->showOwnerInContext(id: $id, context: $context);
+        return $this->resolveDependency->showOwnerInContext(id: $id, context: $context);
     }
 
     /**
@@ -134,9 +134,9 @@ final readonly class ExportGraph
     {
         $slice ??= '';
         if ($context === []) {
-            return $this->serviceResolver->debugSlice(slice: $slice);
+            return $this->resolveDependency->debugSlice(slice: $slice);
         }
 
-        return $this->serviceResolver->debugSliceInContext(slice: $slice, context: $context);
+        return $this->resolveDependency->debugSliceInContext(slice: $slice, context: $context);
     }
 }

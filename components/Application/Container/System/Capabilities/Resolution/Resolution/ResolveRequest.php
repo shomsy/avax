@@ -10,6 +10,7 @@ namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
 final readonly class ResolveRequest
 {
     public bool  $manualInjection;
+
     public array $context;
 
     public array $overrides;

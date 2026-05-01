@@ -18,47 +18,47 @@ use Traversable;
 final readonly class DistributedCacheStore implements CacheStore, IteratorAggregate
 {
     public function __construct(
-        private ConsistentHashRing $ring,
+        private ConsistentHashRing $consistentHashRing,
         private Clock              $clock,
         private array              $nodeStores = [],
     ) {}
 
-    public function registerNodeStore(CacheNodeId $nodeId, CacheStore $store) : self
+    public function registerNodeStore(CacheNodeId $cacheNodeId, CacheStore $cacheStore) : self
     {
         return new self(
-            ring      : $this->ring,
+            ring      : $this->consistentHashRing,
             clock     : $this->clock,
-            nodeStores: array_merge($this->nodeStores, [$nodeId->toString() => $store]),
+            nodeStores: array_merge($this->nodeStores, [$cacheNodeId->toString() => $cacheStore]),
         );
     }
 
     #[Override]
-    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        $node = $this->ring->getNodeForKey(key: $key);
+        $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
 
         if ($node === null) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
         $store = $this->getNodeStore(nodeId: $node->id);
 
         if (! $store instanceof CacheStore) {
-            return new CacheStoreRecordWasMissing(key: $key);
+            return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        return $store->read(key: $key, clock: $clock);
+        return $store->read(key: $cacheKey, clock: $clock);
     }
 
-    public function getNodeStore(CacheNodeId $nodeId) : CacheStore|null
+    public function getNodeStore(CacheNodeId $cacheNodeId) : CacheStore|null
     {
-        return $this->nodeStores[$nodeId->toString()] ?? null;
+        return $this->nodeStores[$cacheNodeId->toString()] ?? null;
     }
 
     #[Override]
-    public function write(CacheKey $key, StoredCacheRecord $record) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
-        $node = $this->ring->getNodeForKey(key: $key);
+        $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
 
         if ($node === null) {
             return;
@@ -67,19 +67,19 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
         $store = $this->resolveNodeStore(node: $node);
 
         if ($store instanceof CacheStore) {
-            $store->write(key: $key, record: $record);
+            $store->write(key: $cacheKey, record: $storedCacheRecord);
         }
     }
 
-    private function resolveNodeStore(CacheNode $node) : CacheStore|null
+    private function resolveNodeStore(CacheNode $cacheNode) : CacheStore|null
     {
-        return $this->nodeStores[$node->id->toString()] ?? null;
+        return $this->nodeStores[$cacheNode->id->toString()] ?? null;
     }
 
     #[Override]
-    public function forget(CacheKey $key) : void
+    public function forget(CacheKey $cacheKey) : void
     {
-        $node = $this->ring->getNodeForKey(key: $key);
+        $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
 
         if ($node === null) {
             return;
@@ -88,7 +88,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
         $store = $this->resolveNodeStore(node: $node);
 
         if ($store instanceof CacheStore) {
-            $store->forget(key: $key);
+            $store->forget(key: $cacheKey);
         }
     }
 
@@ -101,9 +101,9 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     }
 
     #[Override]
-    public function exists(CacheKey $key) : bool
+    public function exists(CacheKey $cacheKey) : bool
     {
-        $node = $this->ring->getNodeForKey(key: $key);
+        $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
 
         if ($node === null) {
             return false;
@@ -115,7 +115,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
             return false;
         }
 
-        return $store->exists(key: $key);
+        return $store->exists(key: $cacheKey);
     }
 
     #[Override]
@@ -126,11 +126,11 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
 
     public function nodeCount() : int
     {
-        return $this->ring->nodeCount();
+        return $this->consistentHashRing->nodeCount();
     }
 
-    public function hasNodeStore(CacheNodeId $nodeId) : bool
+    public function hasNodeStore(CacheNodeId $cacheNodeId) : bool
     {
-        return isset($this->nodeStores[$nodeId->toString()]);
+        return isset($this->nodeStores[$cacheNodeId->toString()]);
     }
 }

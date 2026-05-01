@@ -29,21 +29,21 @@ final readonly class JsonCacheSerializer implements CacheSerializer
     }
 
     #[Override]
-    public function unserialize(SerializedCachePayload $payload) : mixed
+    public function unserialize(SerializedCachePayload $serializedCachePayload) : mixed
     {
-        if (! $this->canUnserialize(payload: $payload)) {
+        if (! $this->canUnserialize(payload: $serializedCachePayload)) {
             throw new CachePayloadCouldNotBeSerialized(
-                message: sprintf('Cannot unserialize payload with format "%s"', $payload->format),
+                message: sprintf('Cannot unserialize payload with format "%s"', $serializedCachePayload->format),
             );
         }
 
-        if (! $payload->verify()) {
+        if (! $serializedCachePayload->verify()) {
             throw new CachePayloadCouldNotBeSerialized(
                 message: 'Payload checksum verification failed',
             );
         }
 
-        $result = json_decode(json: $payload->data, associative: false, depth: 512);
+        $result = json_decode(json: $serializedCachePayload->data, associative: false, depth: 512);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new CachePayloadCouldNotBeSerialized(
@@ -54,9 +54,9 @@ final readonly class JsonCacheSerializer implements CacheSerializer
         return $result;
     }
 
-    public function canUnserialize(SerializedCachePayload $payload) : bool
+    public function canUnserialize(SerializedCachePayload $serializedCachePayload) : bool
     {
-        return $payload->format === self::FORMAT;
+        return $serializedCachePayload->format === self::FORMAT;
     }
 
     #[Override]

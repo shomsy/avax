@@ -15,18 +15,18 @@ final readonly class RuntimeResult
     public static function fromResponse(RuntimeResponse $runtimeResponse) : self
     {
         return new self(
+            runtimeResponse: $runtimeResponse,
             exitCode: 0,
             output  : $runtimeResponse->body(),
-            response: $runtimeResponse,
         );
     }
 
     public static function fromConsoleOutput(string $output, int $exitCode = 0) : self
     {
         return new self(
+            runtimeResponse: null,
             exitCode: $exitCode,
             output  : $output,
-            response: null,
         );
     }
 

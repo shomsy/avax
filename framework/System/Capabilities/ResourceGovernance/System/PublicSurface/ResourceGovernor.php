@@ -91,7 +91,7 @@ final class ResourceGovernor
 
     public static function workerLimit() : int
     {
-        return self::$memoryBudget?->workerLimit ?? 0;
+        return self::$memoryBudget->workerLimit ?? 0;
     }
 
     public static function isNearLimit(float $threshold = 0.8) : bool

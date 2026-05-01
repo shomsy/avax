@@ -13,10 +13,14 @@ final readonly class RedisStateAdapter implements StateAdapter
 
     private string $prefix;
 
-    public function __construct()
+    public function __construct(string $url = '127.0.0.1:6379')
     {
+        $parsed = parse_url($url);
+        $host   = $parsed['host'] ?? '127.0.0.1';
+        $port   = $parsed['port'] ?? 6379;
+
         $this->redis = new Redis();
-        $this->redis->connect('127.0.0.1', 6379);
+        $this->redis->connect($host, $port);
 
         $this->prefix = 'avax:';
     }

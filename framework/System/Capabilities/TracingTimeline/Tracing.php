@@ -48,7 +48,7 @@ final class Tracing
         return $this->runtimeTimeline?->begin(
             name    : $name,
             category: $category,
-        ) ?? new TraceSpan(name: $name, category: $category);
+        ) ?? new TraceSpan(name: $name);
     }
 
     public function finish() : void

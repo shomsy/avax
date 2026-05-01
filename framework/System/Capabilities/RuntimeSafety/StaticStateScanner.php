@@ -92,7 +92,7 @@ final class StaticStateScanner
                                  $className,
                                  $staticProperty->getName(),
                              ),
-                location   : $this->propertyLocation(property: $staticProperty),
+                location   : $this->propertyLocation(reflectionProperty: $staticProperty),
             );
         }
 
@@ -124,7 +124,7 @@ final class StaticStateScanner
                                  $reflectionProperty->getName(),
                              ),
                 remediation: 'Avoid static state in traits or ensure consumers implement ResettableState',
-                location   : $this->propertyLocation(property: $reflectionProperty),
+                location   : $this->propertyLocation(reflectionProperty: $reflectionProperty),
             );
         }
 

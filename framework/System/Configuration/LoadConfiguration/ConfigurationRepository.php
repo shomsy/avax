@@ -11,20 +11,20 @@ final class ConfigurationRepository
      */
     private array $config = [];
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, ?string $default = null) : ?string
     {
         $keys    = explode('.', $key);
         $current = $this->config;
 
         foreach ($keys as $k) {
-            if (! isset($current[$k])) {
+            if (! is_array($current) || ! array_key_exists($k, $current)) {
                 return $default;
             }
 
             $current = $current[$k];
         }
 
-        return $current;
+        return is_string($current) ? $current : ($current === null ? null : (is_scalar($current) ? (string) $current : $default));
     }
 
     public function set(string $key, mixed $value): void

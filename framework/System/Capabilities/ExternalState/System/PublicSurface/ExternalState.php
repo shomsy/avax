@@ -125,10 +125,10 @@ final class ExternalState
     public static function audit(): StateAudit
     {
         return new StateAudit(
-            session  : self::adapterType(adapter: self::session()),
-            cache    : self::adapterType(adapter: self::cache()),
-            lock     : self::adapterType(adapter: self::lock()),
-            rateLimit: self::adapterType(adapter: self::rateLimit()),
+            session  : self::adapterType(stateAdapter: self::session()),
+            cache    : self::adapterType(stateAdapter: self::cache()),
+            lock     : self::adapterType(stateAdapter: self::lock()),
+            rateLimit: self::adapterType(stateAdapter: self::rateLimit()),
         );
     }
 

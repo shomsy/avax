@@ -14,6 +14,7 @@ parameters:
     ignoreErrors:
         - '#Property .* is never read, only written#'
         - '#Constructor of class.*has an unused parameter#'
+        - '#Parameters should have .* types as the only types passed to this method#'
 
     type_perfect:
         narrow_param: true

@@ -27,12 +27,6 @@ final class RunExternalToolingScripts
             'go'     => ['command' => 'go run', 'extension' => '.go', 'timeout' => 60],
             'nodejs' => ['command' => 'node', 'extension' => '.js', 'timeout' => 30],
         ];
-    private PreCommitConfig $config;
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * @param array<string, mixed> $context
@@ -93,7 +87,7 @@ final class RunExternalToolingScripts
             $pathname  = $file->getPathname();
             $extension = $file->getExtension();
 
-            $executorType = $this->matchExtension($extension, $pathname);
+            $executorType = $this->matchExtension($extension);
             if ($executorType === null) {
                 continue;
             }
@@ -115,7 +109,7 @@ final class RunExternalToolingScripts
         return $scripts;
     }
 
-    private function matchExtension(string $extension, string $pathname) : ?string
+    private function matchExtension(string $extension) : ?string
     {
         foreach (self::$scriptExecutors as $type => $config) {
             $ext = ltrim($config['extension'], '.');
@@ -131,13 +125,7 @@ final class RunExternalToolingScripts
     {
         $skipPatterns = ['/^_/', '/\.bak$/', '/^README/', '/^TODO/', '/\.md$/'];
 
-        foreach ($skipPatterns as $pattern) {
-            if (preg_match($pattern, $scriptName)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($skipPatterns, fn ($pattern) : int|false => preg_match($pattern, $scriptName));
     }
 
     /**
@@ -155,7 +143,7 @@ final class RunExternalToolingScripts
             return [
                 'passed'   => false,
                 'severity' => PreCommitIssue::SEVERITY_ERROR,
-                'message'  => "Unknown script type: {$scriptType}",
+                'message' => 'Unknown script type: ' . $scriptType,
             ];
         }
 
@@ -178,8 +166,8 @@ final class RunExternalToolingScripts
             : PreCommitIssue::SEVERITY_INFO;
 
         $message = $passed
-            ? "Script {$scriptName} passed"
-            : "Script {$scriptName} failed: " . substr($outputText, 0, 150);
+            ? sprintf('Script %s passed', $scriptName)
+            : sprintf('Script %s failed: ', $scriptName) . substr($outputText, 0, 150);
 
         return [
             'passed'   => $passed || ! $hasError,

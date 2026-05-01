@@ -167,10 +167,18 @@ function loadExternalPrefixes(string $baseDir) : array
         $loaded = require $autoloadClassmap;
         if (is_array($loaded)) {
             foreach (array_keys($loaded) as $className) {
-                if (! is_string($className) || $className === '' || str_starts_with($className, 'Avax\\') || str_starts_with($className, 'components\\')) {
+                if (! is_string($className)) {
                     continue;
                 }
-
+                if ($className === '') {
+                    continue;
+                }
+                if (str_starts_with((string) $className, 'Avax\\')) {
+                    continue;
+                }
+                if (str_starts_with((string) $className, 'components\\')) {
+                    continue;
+                }
                 $parts = explode('\\', $className);
                 if (count($parts) > 1) {
                     $prefixes[] = $parts[0] . '\\';
@@ -207,8 +215,8 @@ function addRef(string $fqn, string $file, string $ctx, int $line, array &$refer
         return;
     }
 
-    foreach ($externalPrefixes as $prefix) {
-        if (str_starts_with($fqn, $prefix)) {
+    foreach ($externalPrefixes as $externalPrefix) {
+        if (str_starts_with($fqn, $externalPrefix)) {
             return;
         }
     }

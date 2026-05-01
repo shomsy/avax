@@ -15,8 +15,6 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class DetectLegacyCode
 {
-    private PreCommitConfig $config;
-
     /** @var array<string> */
     private array $legacyFolders
         = [
@@ -33,11 +31,6 @@ final class DetectLegacyCode
             '# Legacy code' => 'contains legacy marker',
             '@legacy'       => 'has @legacy annotation',
         ];
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * @param array<string, mixed> $context
@@ -57,13 +50,13 @@ final class DetectLegacyCode
             }
 
             // Check for legacy folder patterns in path
-            foreach ($this->legacyFolders as $folder) {
-                if (str_contains($filePath, '/' . $folder . '/') ||
-                    str_contains($filePath, '/' . $folder . '\\')) {
+            foreach ($this->legacyFolders as $legacyFolder) {
+                if (str_contains($filePath, '/' . $legacyFolder . '/') ||
+                    str_contains($filePath, '/' . $legacyFolder . '\\')) {
                     $issues[] = new PreCommitIssue(
                         'DetectLegacyCode',
                         PreCommitIssue::SEVERITY_WARNING,
-                        "File is in legacy folder '{$folder}'",
+                        sprintf("File is in legacy folder '%s'", $legacyFolder),
                         $file,
                         null,
                         'LEGACY_FOLDER'
@@ -72,22 +65,24 @@ final class DetectLegacyCode
             }
 
             // Check content for legacy patterns
-            if (preg_match('/\.(php|js|ts|py|go|sh)$/', $file)) {
+            if (preg_match('/\.(php|js|ts|py|go|sh)$/', (string) $file)) {
                 $content = file_get_contents($filePath);
                 if ($content !== false) {
                     foreach ($this->legacyPatterns as $pattern => $description) {
-                        if (stripos($content, $pattern) !== false) {
-                            if (! $this->isInComment($content, $pattern)) {
-                                $issues[] = new PreCommitIssue(
-                                    'DetectLegacyCode',
-                                    PreCommitIssue::SEVERITY_WARNING,
-                                    "File contains legacy pattern: {$description}",
-                                    $file,
-                                    null,
-                                    'LEGACY_PATTERN'
-                                );
-                            }
+                        if (stripos($content, $pattern) === false) {
+                            continue;
                         }
+                        if ($this->isInComment($content, $pattern)) {
+                            continue;
+                        }
+                        $issues[] = new PreCommitIssue(
+                            'DetectLegacyCode',
+                            PreCommitIssue::SEVERITY_WARNING,
+                            'File contains legacy pattern: ' . $description,
+                            $file,
+                            null,
+                            'LEGACY_PATTERN'
+                        );
                     }
                 }
             }
@@ -96,11 +91,11 @@ final class DetectLegacyCode
             $checkFolders = ['shriomove', '.shriomove', 'tmp', 'Temp'];
             foreach ($checkFolders as $checkFolder) {
                 $folderPath = $basePath . '/' . $checkFolder;
-                if (is_dir($folderPath) && str_starts_with($file, $checkFolder . '/')) {
+                if (is_dir($folderPath) && str_starts_with((string) $file, $checkFolder . '/')) {
                     $issues[] = new PreCommitIssue(
                         'DetectLegacyCode',
                         PreCommitIssue::SEVERITY_WARNING,
-                        "File in temporary folder '{$checkFolder}'",
+                        sprintf("File in temporary folder '%s'", $checkFolder),
                         $file,
                         null,
                         'LEGACY_TEMP_FOLDER'
@@ -110,13 +105,13 @@ final class DetectLegacyCode
         }
 
         // Check for global legacy folders
-        foreach ($this->legacyFolders as $folder) {
-            $folderPath = $basePath . '/components/' . $folder;
+        foreach ($this->legacyFolders as $legacyFolder) {
+            $folderPath = $basePath . '/components/' . $legacyFolder;
             if (is_dir($folderPath)) {
                 $issues[] = new PreCommitIssue(
                     'DetectLegacyCode',
                     PreCommitIssue::SEVERITY_WARNING,
-                    "Legacy folder exists: components/{$folder}",
+                    'Legacy folder exists: components/' . $legacyFolder,
                     null,
                     null,
                     'LEGACY_FOLDER_EXISTS'

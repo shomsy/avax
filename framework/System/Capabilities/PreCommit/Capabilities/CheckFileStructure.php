@@ -14,19 +14,12 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class CheckFileStructure
 {
-    private PreCommitConfig $config;
-
     /** @var array<string> */
     private array $forbiddenTopLevel
         = [
             'Services', 'Helpers', 'Utils', 'Common', 'Shared',
             'Managers', 'Core', 'Misc', 'Generic',
         ];
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * @param array<string, mixed> $context
@@ -58,7 +51,7 @@ final class CheckFileStructure
                         $issues[] = new PreCommitIssue(
                             'CheckFileStructure',
                             PreCommitIssue::SEVERITY_ERROR,
-                            "Forbidden top-level folder '{$forbidden}' in path. Use Flows/, Capabilities/, or specific domain folders.",
+                            sprintf("Forbidden top-level folder '%s' in path. Use Flows/, Capabilities/, or specific domain folders.", $forbidden),
                             $file,
                             null,
                             'STRUCTURE_TOPLEVEL'
@@ -73,7 +66,7 @@ final class CheckFileStructure
                 $issues[] = new PreCommitIssue(
                     'CheckFileStructure',
                     PreCommitIssue::SEVERITY_WARNING,
-                    "Deep nesting (depth {$depth}) in {$file}. Consider flattening.",
+                    sprintf('Deep nesting (depth %d) in %s. Consider flattening.', $depth, $file),
                     $file,
                     null,
                     'STRUCTURE_DEPTH'

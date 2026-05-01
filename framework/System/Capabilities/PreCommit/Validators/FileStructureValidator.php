@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\PreCommit\Validators;
 
 use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
+use Override;
 
 /**
  * File Structure Validator
@@ -75,12 +76,12 @@ class FileStructureValidator extends BaseValidator
                 $topFolder = $pathParts[0];
                 
                 // Check for forbidden top-level folders
-                foreach ($this->forbiddenTopLevelFolders as $forbidden) {
-                    if (strcasecmp($topFolder, $forbidden) === 0) {
+                foreach ($this->forbiddenTopLevelFolders as $forbiddenTopLevelFolder) {
+                    if (strcasecmp($topFolder, $forbiddenTopLevelFolder) === 0) {
                         $allPassed = false;
                         $messages[] = sprintf(
                             "Forbidden top-level folder '%s' (generic/bucket folder) in %s. Use Flows/, Capabilities/, or specific domain folders instead.",
-                            $forbidden,
+                            $forbiddenTopLevelFolder,
                             $file
                         );
                     }
@@ -92,7 +93,6 @@ class FileStructureValidator extends BaseValidator
                     $thirdLevel = $pathParts[2];
                     
                     $structureResult = $this->validateStructureNaming(
-                        $topFolder,
                         $secondLevel,
                         $thirdLevel,
                         $file
@@ -113,14 +113,14 @@ class FileStructureValidator extends BaseValidator
             }
 
             // Check folder vs file naming
-            $namingResult = $this->checkFolderFileNaming($pathParts, $file);
+            $namingResult = $this->checkFolderFileNaming($pathParts);
             if (!$namingResult->isPassed()) {
                 $allPassed = false;
                 $messages = array_merge($messages, $namingResult->getMessages());
             }
         }
 
-        $result = new ValidationResult(
+        $validationResult = new ValidationResult(
             $allPassed,
             $messages,
             $allPassed ? 'info' : 'error',
@@ -129,14 +129,13 @@ class FileStructureValidator extends BaseValidator
             'FILE_STRUCTURE_006'
         );
 
-        return $this->combineWithNext($context, $result);
+        return $this->combineWithNext($context, $validationResult);
     }
 
     /**
      * Validate structure naming conventions
      */
     private function validateStructureNaming(
-        string $topFolder,
         string $secondLevel,
         string $thirdLevel,
         string $file
@@ -153,25 +152,23 @@ class FileStructureValidator extends BaseValidator
             // Flow slices should have action-oriented names
             if ($categoryType === 'flow' || $categoryType === 'capability') {
                 // Third level should be PascalCase and descriptive
-                if (!preg_match('/^[A-Z][a-zA-Z0-9]*$/', $thirdLevel)) {
-                    if (strlen($thirdLevel) >= 3) {
-                        $messages[] = sprintf(
-                            "Folder '%s' in %s should use PascalCase for %s slices",
-                            $thirdLevel,
-                            $file,
-                            $categoryType
-                        );
-                        $allPassed = false;
-                    }
+                if (! preg_match('/^[A-Z][a-zA-Z0-9]*$/', $thirdLevel) && strlen($thirdLevel) >= 3) {
+                    $messages[] = sprintf(
+                        "Folder '%s' in %s should use PascalCase for %s slices",
+                        $thirdLevel,
+                        $file,
+                        $categoryType
+                    );
+                    $allPassed  = false;
                 }
 
                 // Check for generic names in flow/capability slices
                 $genericIndicators = ['Base', 'Abstract', 'Default', 'Common', 'General'];
-                foreach ($genericIndicators as $indicator) {
-                    if (strpos($thirdLevel, $indicator) !== false) {
+                foreach ($genericIndicators as $genericIndicator) {
+                    if (str_contains($thirdLevel, $genericIndicator)) {
                         $messages[] = sprintf(
                             "Generic name '%s' in %s is discouraged for %s slices",
-                            $indicator,
+                            $genericIndicator,
                             $file,
                             $categoryType
                         );
@@ -235,22 +232,18 @@ class FileStructureValidator extends BaseValidator
      *
      * @param list<string> $pathParts
      */
-    private function checkFolderFileNaming(array $pathParts, string $file): ValidationResult
+    private function checkFolderFileNaming(array $pathParts) : ValidationResult
     {
-        $messages = [];
-        
         if (count($pathParts) < 2) {
             return ValidationResult::pass();
         }
-
-        $lastPart = $pathParts[count($pathParts) - 1];
         $parentFolder = $pathParts[count($pathParts) - 2] ?? '';
 
         // If file is in a Flow or Capability folder, it should relate to that flow/capability
-        if (in_array($parentFolder, ['Flow', 'Flows', 'Capabilities', 'Capability'])) {
+        if (in_array($parentFolder, ['Flow', 'Flows', 'Capabilities', 'Capability'], true)) {
             // Check naming consistency (simplified check)
             $grandParent = $pathParts[count($pathParts) - 3] ?? '';
-            
+
             // File in Flow folder should ideally relate to flow name
             // This is a soft check - mainly for awareness
         }
@@ -290,14 +283,15 @@ class FileStructureValidator extends BaseValidator
     {
         $systemRoot = rtrim($systemRoot, '/') . '/';
         $filePath = ltrim($filePath, '/');
-        
-        if (strpos($filePath, $systemRoot) === 0) {
+
+        if (str_starts_with($filePath, $systemRoot)) {
             return substr($filePath, strlen($systemRoot));
         }
 
         return $filePath;
     }
 
+    #[Override]
     public function supports(array $context): bool
     {
         return !empty($context['staged_files'] ?? []);

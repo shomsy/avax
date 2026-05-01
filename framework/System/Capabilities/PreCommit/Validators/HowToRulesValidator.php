@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\PreCommit\Validators;
 
 use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
+use Override;
 
 /**
  * How-To Rules Validator
@@ -14,7 +15,8 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
  */
 class HowToRulesValidator extends BaseValidator
 {
-    private string $howToDir;
+    private readonly string $howToDir;
+
     /** @var array<string, array{file: string, forbidden_patterns: list<string>, required_patterns: list<string>}> */
     private array $rules = [];
 
@@ -50,7 +52,7 @@ class HowToRulesValidator extends BaseValidator
         }
 
         $fileName = basename($filePath, '.md');
-        
+
         // Extract forbidden patterns from how-to files
         $forbiddenPatterns = [];
         $requiredPatterns = [];
@@ -61,7 +63,7 @@ class HowToRulesValidator extends BaseValidator
                 // Extract words in backticks or code blocks
                 preg_match_all('/`([^`]+)`/', $section, $codeMatches);
                 foreach ($codeMatches[1] as $code) {
-                    if (!empty(trim($code))) {
+                    if (! in_array(trim($code), ['', '0'], true)) {
                         $forbiddenPatterns[] = $code;
                     }
                 }
@@ -74,7 +76,7 @@ class HowToRulesValidator extends BaseValidator
                 $names = preg_split('/[,\s]+/', $match) ?: [];
                 foreach ($names as $name) {
                     $name = trim($name);
-                    if (!empty($name)) {
+                    if ($name !== '' && $name !== '0') {
                         $forbiddenPatterns[] = $name;
                     }
                 }
@@ -93,7 +95,7 @@ class HowToRulesValidator extends BaseValidator
      */
     public function validate(array $context): ValidationResult
     {
-        if (empty($this->rules)) {
+        if ($this->rules === []) {
             return $this->passToNext($context);
         }
 
@@ -153,7 +155,7 @@ class HowToRulesValidator extends BaseValidator
             }
         }
 
-        $result = new ValidationResult(
+        $validationResult = new ValidationResult(
             $allPassed,
             $messages,
             $allPassed ? 'info' : 'warning',
@@ -162,7 +164,7 @@ class HowToRulesValidator extends BaseValidator
             'HOWTO_RULES_003'
         );
 
-        return $this->combineWithNext($context, $result);
+        return $this->combineWithNext($context, $validationResult);
     }
 
     /**
@@ -195,16 +197,13 @@ class HowToRulesValidator extends BaseValidator
         if (str_ends_with(strtolower($filePath), '.php')) {
             $fileLines  = file($filePath) ?: [];
             $firstLines = implode('\n', array_slice($fileLines, 0, 10));
-            if (strpos($firstLines, 'declare(strict_types=1)') === false && 
-                strpos($firstLines, 'declare(strict_types=1);') === false) {
-                // Check if it's a class file (has class keyword)
-                if (strpos($content, 'class ') !== false || strpos($content, 'interface ') !== false) {
-                    $allPassed = false;
-                    $messages[] = sprintf(
-                        "Missing 'declare(strict_types=1)' in PHP file %s",
-                        $relativePath
-                    );
-                }
+            // Check if it's a class file (has class keyword)
+            if (! str_contains($firstLines, 'declare(strict_types=1)') && ! str_contains($firstLines, 'declare(strict_types=1);') && (str_contains($content, 'class ') || str_contains($content, 'interface '))) {
+                $allPassed  = false;
+                $messages[] = sprintf(
+                    "Missing 'declare(strict_types=1)' in PHP file %s",
+                    $relativePath
+                );
             }
         }
 
@@ -246,16 +245,14 @@ class HowToRulesValidator extends BaseValidator
         if ($lastLineComment !== false && ($lastNewline === false || $lastLineComment > $lastNewline)) {
             return true;
         }
-        if ($lastHashComment !== false && ($lastNewline === false || $lastHashComment > $lastNewline)) {
-            return true;
-        }
 
-        return false;
+        return $lastHashComment !== false && ($lastNewline === false || $lastHashComment > $lastNewline);
     }
 
     /**
      * @param array<string, mixed> $context
      */
+    #[Override]
     public function supports(array $context): bool
     {
         return !empty($context['staged_files'] ?? []);

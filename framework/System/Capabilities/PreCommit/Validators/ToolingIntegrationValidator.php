@@ -26,14 +26,14 @@ class ToolingIntegrationValidator extends BaseValidator
 
         foreach ($files as $file) {
             // Check tooling directory files follow .sh extension
-            if (str_starts_with($file, 'tooling/') && preg_match('/\.(php|sh)$/', $file)) {
+            if (str_starts_with((string) $file, 'tooling/') && preg_match('/\.(php|sh)$/', (string) $file)) {
                 $filePath = $basePath . '/' . $file;
                 if (! file_exists($filePath)) {
                     continue;
                 }
 
                 // Shell scripts should have proper shebang
-                if (str_ends_with($file, '.sh')) {
+                if (str_ends_with((string) $file, '.sh')) {
                     $content = file_get_contents($filePath);
                     if ($content !== false && ! str_starts_with(trim($content), '#!/')) {
                         $messages[] = sprintf(
@@ -46,9 +46,9 @@ class ToolingIntegrationValidator extends BaseValidator
         }
 
         return new ValidationResult(
-            empty($messages),
+            $messages === [],
             $messages,
-            empty($messages) ? 'info' : 'warning',
+            $messages === [] ? 'info' : 'warning',
             null,
             null,
             'TOOLING_INTEGRATION_013'

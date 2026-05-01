@@ -12,9 +12,10 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitResult;
  * Writes validation reports to files.
  * Saves reports to Code-Review-And-ToDo/pre-commit/
  */
-final class PreCommitReportWriter
+final readonly class PreCommitReportWriter
 {
     private string $reportPath;
+
     private string $todoPath;
 
     public function __construct(?string $reportPath = null, ?string $todoPath = null)
@@ -25,13 +26,13 @@ final class PreCommitReportWriter
         $this->todoPath   = $todoPath ?? $basePath . '/Code-Review-And-ToDo/pre-commit/pre-commit-todo.md';
     }
 
-    public function writeReport(PreCommitResult $result) : bool
+    public function writeReport(PreCommitResult $preCommitResult) : bool
     {
         $timestamp = date('Y-m-d_His');
-        $filename  = "pre-commit-report-{$timestamp}.json";
+        $filename = sprintf('pre-commit-report-%s.json', $timestamp);
         $filepath  = $this->reportPath . '/' . $filename;
 
-        $data = $result->toArray();
+        $data = $preCommitResult->toArray();
         $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
         if ($json === false) {
@@ -51,18 +52,18 @@ final class PreCommitReportWriter
         @copy($filepath, $latestPath);
 
         // Write markdown report
-        $this->writeMarkdownReport($result);
+        $this->writeMarkdownReport($preCommitResult);
 
         return true;
     }
 
-    public function writeMarkdownReport(PreCommitResult $result) : bool
+    public function writeMarkdownReport(PreCommitResult $preCommitResult) : bool
     {
         $timestamp = date('Y-m-d_His');
-        $filename  = "pre-commit-report-{$timestamp}.md";
+        $filename = sprintf('pre-commit-report-%s.md', $timestamp);
         $filepath  = $this->reportPath . '/' . $filename;
 
-        $content = $this->generateMarkdown($result);
+        $content = $this->generateMarkdown($preCommitResult);
 
         if (! is_dir($this->reportPath) && ! mkdir($this->reportPath, 0755, true)) {
             return false;
@@ -71,96 +72,105 @@ final class PreCommitReportWriter
         return file_put_contents($filepath, $content) !== false;
     }
 
-    private function generateMarkdown(PreCommitResult $result) : string
+    private function generateMarkdown(PreCommitResult $preCommitResult) : string
     {
-        $status = $result->determineStatus();
+        $status  = $preCommitResult->determineStatus();
 
         $content = "# Pre-Commit Discipline Report\n\n";
         $content .= "**Status:** " . strtoupper($status) . "\n";
-        $content .= "**Timestamp:** " . $result->getTimestamp() . "\n";
-        $content .= "**Duration:** " . number_format($result->getExecutionTime(), 4) . "s\n\n";
+        $content .= "**Timestamp:** " . $preCommitResult->getTimestamp() . "\n";
+        $content .= "**Duration:** " . number_format($preCommitResult->getExecutionTime(), 4) . "s\n\n";
 
         $content .= "## Summary\n\n";
         $content .= "| Severity | Count |\n";
         $content .= "|----------|-------|\n";
-        $content .= "| Critical | " . $result->getCriticalCount() . " |\n";
-        $content .= "| Errors | " . $result->getErrorCount() . " |\n";
-        $content .= "| Warnings | " . $result->getWarningCount() . " |\n";
-        $content .= "| Info | " . $result->getInfoCount() . " |\n";
-        $content .= "| Passed Checks | " . count($result->getPassedChecks()) . " |\n\n";
+        $content .= "| Critical | " . $preCommitResult->getCriticalCount() . " |\n";
+        $content .= "| Errors | " . $preCommitResult->getErrorCount() . " |\n";
+        $content .= "| Warnings | " . $preCommitResult->getWarningCount() . " |\n";
+        $content .= "| Info | " . $preCommitResult->getInfoCount() . " |\n";
+        $content .= "| Passed Checks | " . count($preCommitResult->getPassedChecks()) . " |\n\n";
 
-        $critical = $result->getCriticalIssues();
-        if (! empty($critical)) {
+        $critical = $preCommitResult->getCriticalIssues();
+        if ($critical !== []) {
             $content .= "## Critical Issues (Block Commit)\n\n";
             foreach ($critical as $issue) {
                 $content .= "- **" . $issue->getCheckName() . "**: " . $issue->getMessage();
                 if ($issue->getFile()) {
                     $content .= " (`" . $issue->getLocation() . "`";
                 }
+
                 $content .= ")\n";
             }
+
             $content .= "\n";
         }
 
-        $errors = $result->getErrorIssues();
-        if (! empty($errors)) {
+        $errors = $preCommitResult->getErrorIssues();
+        if ($errors !== []) {
             $content .= "## Errors (Block Commit)\n\n";
-            foreach ($errors as $issue) {
-                $content .= "- **" . $issue->getCheckName() . "**: " . $issue->getMessage();
-                if ($issue->getFile()) {
-                    $content .= " (`" . $issue->getLocation() . "`)";
+            foreach ($errors as $error) {
+                $content .= "- **" . $error->getCheckName() . "**: " . $error->getMessage();
+                if ($error->getFile()) {
+                    $content .= " (`" . $error->getLocation() . "`)";
                 }
+
                 $content .= "\n";
             }
+
             $content .= "\n";
         }
 
-        $warnings = $result->getWarningIssues();
-        if (! empty($warnings)) {
+        $warnings = $preCommitResult->getWarningIssues();
+        if ($warnings !== []) {
             $content .= "## Warnings (Allow with Warning)\n\n";
-            foreach ($warnings as $issue) {
-                $content .= "- **" . $issue->getCheckName() . "**: " . $issue->getMessage();
-                if ($issue->getFile()) {
-                    $content .= " (`" . $issue->getLocation() . "`)";
+            foreach ($warnings as $warning) {
+                $content .= "- **" . $warning->getCheckName() . "**: " . $warning->getMessage();
+                if ($warning->getFile()) {
+                    $content .= " (`" . $warning->getLocation() . "`)";
                 }
+
                 $content .= "\n";
             }
+
             $content .= "\n";
         }
 
-        $deleteCandidates = $result->getDeleteCandidates();
-        if (! empty($deleteCandidates)) {
+        $deleteCandidates = $preCommitResult->getDeleteCandidates();
+        if ($deleteCandidates !== []) {
             $content .= "## Delete Candidates (Requires Review)\n\n";
             $content .= "| File | Classification | Reason |\n";
             $content .= "|------|--------------|-------|\n";
-            foreach ($deleteCandidates as $issue) {
-                $content .= "| " . ($issue->getFile() ?? 'unknown');
-                $content .= " | " . $issue->getDeleteClassification();
-                $content .= " | " . $issue->getMessage() . " |\n";
+            foreach ($deleteCandidates as $deleteCandidate) {
+                $content .= "| " . ($deleteCandidate->getFile() ?? 'unknown');
+                $content .= " | " . $deleteCandidate->getDeleteClassification();
+                $content .= " | " . $deleteCandidate->getMessage() . " |\n";
             }
+
             $content .= "\n";
         }
 
-        $autoFixCandidates = $result->getAutoFixCandidates();
-        if (! empty($autoFixCandidates)) {
+        $autoFixCandidates = $preCommitResult->getAutoFixCandidates();
+        if ($autoFixCandidates !== []) {
             $content .= "## Auto-Fix Candidates\n\n";
-            foreach ($autoFixCandidates as $issue) {
-                $content .= "- **" . $issue->getCheckName() . "**: " . $issue->getMessage() . "\n";
+            foreach ($autoFixCandidates as $autoFixCandidate) {
+                $content .= "- **" . $autoFixCandidate->getCheckName() . "**: " . $autoFixCandidate->getMessage() . "\n";
             }
+
             $content .= "\n";
         }
 
-        $passedChecks = $result->getPassedChecks();
-        if (! empty($passedChecks)) {
+        $passedChecks = $preCommitResult->getPassedChecks();
+        if ($passedChecks !== []) {
             $content .= "## Passed Checks\n\n";
-            foreach ($passedChecks as $check) {
-                $content .= "- ✅ " . $check . "\n";
+            foreach ($passedChecks as $passedCheck) {
+                $content .= "- ✅ " . $passedCheck . "\n";
             }
+
             $content .= "\n";
         }
 
         $content .= "---\n";
-        if ($result->canCommit()) {
+        if ($preCommitResult->canCommit()) {
             $content .= "\n✅ **Commit can proceed.**\n";
         } else {
             $content .= "\n🚫 **COMMIT BLOCKED - Fix critical issues first.**\n";
@@ -169,11 +179,11 @@ final class PreCommitReportWriter
         return $content;
     }
 
-    public function writeTodo(PreCommitResult $result) : bool
+    public function writeTodo(PreCommitResult $preCommitResult) : bool
     {
-        $lines = $result->getTodoLines();
+        $lines  = $preCommitResult->getTodoLines();
 
-        if (empty($lines)) {
+        if ($lines === []) {
             return true;
         }
 
@@ -182,13 +192,13 @@ final class PreCommitReportWriter
         }
 
         $header = "# Pre-Commit TODO\n\n";
-        $header .= "Generated: " . $result->getTimestamp() . "\n\n";
+        $header .= "Generated: " . $preCommitResult->getTimestamp() . "\n\n";
         $header .= "## Summary\n";
-        $header .= "- Critical: " . $result->getCriticalCount() . "\n";
-        $header .= "- Errors: " . $result->getErrorCount() . "\n";
-        $header .= "- Warnings: " . $result->getWarningCount() . "\n";
-        $header .= "- Auto-fix candidates: " . count($result->getAutoFixCandidates()) . "\n";
-        $header .= "- Delete candidates: " . count($result->getDeleteCandidates()) . "\n\n";
+        $header .= "- Critical: " . $preCommitResult->getCriticalCount() . "\n";
+        $header .= "- Errors: " . $preCommitResult->getErrorCount() . "\n";
+        $header .= "- Warnings: " . $preCommitResult->getWarningCount() . "\n";
+        $header .= "- Auto-fix candidates: " . count($preCommitResult->getAutoFixCandidates()) . "\n";
+        $header .= "- Delete candidates: " . count($preCommitResult->getDeleteCandidates()) . "\n\n";
         $header .= "## Tasks\n\n";
 
         $content = $header . implode("\n", $lines) . "\n";
@@ -221,7 +231,7 @@ final class PreCommitReportWriter
             return [];
         }
 
-        usort($files, fn ($a, $b) => filemtime($b) - filemtime($a));
+        usort($files, fn ($a, $b) : int => filemtime($b) - filemtime($a));
 
         return $files;
     }

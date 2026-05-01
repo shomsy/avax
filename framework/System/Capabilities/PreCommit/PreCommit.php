@@ -33,32 +33,33 @@ use Throwable;
  * 4. Report fourth
  * 5. Commit decision last
  */
-final class PreCommit
+final readonly class PreCommit
 {
-    private PreCommitConfig       $config;
-    private PreCommitResult       $result;
-    private PreCommitReportWriter $reportWriter;
+    private PreCommitConfig $preCommitConfig;
+
+    private PreCommitResult $preCommitResult;
+
+    private PreCommitReportWriter $preCommitReportWriter;
+
     /** @var list<string> */
     private array                 $files;
-    private bool                  $touchedOnly;
 
     /**
      * @param list<string>|null $files
      */
     public function __construct(
-        ?PreCommitConfig $config = null,
+        ?PreCommitConfig $preCommitConfig = null,
         ?array           $files = null,
-        bool             $touchedOnly = true
+        private bool     $touchedOnly = true
     )
     {
-        $this->config       = $config ?? new PreCommitConfig();
-        $this->result       = new PreCommitResult();
-        $this->reportWriter = new PreCommitReportWriter(
-            $this->config->getReportPath(),
-            $this->config->getTodoPath()
+        $this->preCommitConfig       = $preCommitConfig ?? new PreCommitConfig();
+        $this->preCommitResult       = new PreCommitResult();
+        $this->preCommitReportWriter = new PreCommitReportWriter(
+            $this->preCommitConfig->getReportPath(),
+            $this->preCommitConfig->getTodoPath()
         );
         $this->files        = $files ?? [];
-        $this->touchedOnly  = $touchedOnly;
     }
 
     /**
@@ -75,16 +76,16 @@ final class PreCommit
         $this->runChecks($context);
 
         // Determine final status
-        $this->result->setExecutionTime(microtime(true) - $startTime);
-        $this->result->canCommit();
+        $this->preCommitResult->setExecutionTime(microtime(true) - $startTime);
+        $this->preCommitResult->canCommit();
 
         // Save reports if not dry-run
-        if (! $this->config->isDryRun()) {
-            $this->reportWriter->writeReport($this->result);
-            $this->reportWriter->writeTodo($this->result);
+        if (! $this->preCommitConfig->isDryRun()) {
+            $this->preCommitReportWriter->writeReport($this->preCommitResult);
+            $this->preCommitReportWriter->writeTodo($this->preCommitResult);
         }
 
-        return $this->result;
+        return $this->preCommitResult;
     }
 
     /**
@@ -98,8 +99,8 @@ final class PreCommit
 
         // If no files provided, detect from git
         $files = $this->files;
-        if (empty($files)) {
-            $files = $this->detectStagedFiles($basePath);
+        if ($files === []) {
+            $files = $this->detectStagedFiles();
         }
 
         return [
@@ -107,9 +108,9 @@ final class PreCommit
             'base_path'    => $basePath,
             'system_root'  => $this->detectSystemRoot($basePath),
             'touched_only' => $this->touchedOnly,
-            'config'       => $this->config,
+            'config'     => $this->preCommitConfig,
             'timestamp'    => date('c'),
-            'git_branch'   => $this->getGitBranch($basePath),
+            'git_branch' => $this->getGitBranch(),
         ];
     }
 
@@ -118,41 +119,35 @@ final class PreCommit
      *
      * @return list<string>
      */
-    private function detectStagedFiles(string $basePath) : array
+    private function detectStagedFiles() : array
     {
-        $gitBin = $this->findGitBinary($basePath);
-
+        $gitBin = $this->findGitBinary();
         if ($this->touchedOnly) {
-            exec("{$gitBin} diff --cached --name-only --diff-filter=ACM 2>/dev/null", $output, $returnVar);
+            exec($gitBin . ' diff --cached --name-only --diff-filter=ACM 2>/dev/null', $output, $returnVar);
         } else {
-            exec("{$gitBin} diff --name-only 2>/dev/null", $output, $returnVar);
+            exec($gitBin . ' diff --name-only 2>/dev/null', $output, $returnVar);
         }
-
-        if ($returnVar !== 0 || empty($output)) {
+        if ($returnVar !== 0 || $output === []) {
             return [];
         }
-
         return array_values(array_filter($output));
     }
 
     /**
      * Find git binary
      */
-    private function findGitBinary(string $basePath) : string
+    private function findGitBinary() : string
     {
         $locations = ['/usr/bin/git', '/usr/local/bin/git', '/bin/git', 'git'];
-
-        foreach ($locations as $loc) {
-            if (is_executable($loc)) {
-                return $loc;
+        foreach ($locations as $location) {
+            if (is_executable($location)) {
+                return $location;
             }
         }
-
         exec('command -v git 2>/dev/null', $output, $returnVar);
-        if ($returnVar === 0 && ! empty($output)) {
+        if ($returnVar === 0 && $output !== []) {
             return trim($output[0]);
         }
-
         return 'git';
     }
 
@@ -176,11 +171,10 @@ final class PreCommit
     /**
      * Get current git branch
      */
-    private function getGitBranch(string $basePath) : string
+    private function getGitBranch() : string
     {
-        $gitBin = $this->findGitBinary($basePath);
-        exec("{$gitBin} rev-parse --abbrev-ref HEAD 2>/dev/null", $output, $returnVar);
-
+        $gitBin = $this->findGitBinary();
+        exec($gitBin . ' rev-parse --abbrev-ref HEAD 2>/dev/null', $output, $returnVar);
         return $returnVar === 0 ? ($output[0] ?? 'unknown') : 'unknown';
     }
 
@@ -213,24 +207,24 @@ final class PreCommit
         ];
 
         foreach ($checks as $checkName => $checkClass) {
-            if (! $this->config->isCheckEnabled($checkName)) {
+            if (! $this->preCommitConfig->isCheckEnabled($checkName)) {
                 continue;
             }
 
             try {
-                $check  = new $checkClass($this->config);
+                $check = new $checkClass($this->preCommitConfig);
                 $issues = $check->run($context);
 
-                if (empty($issues)) {
-                    $this->result->addPassedCheck($checkName);
+                if ($issues === []) {
+                    $this->preCommitResult->addPassedCheck($checkName);
                 } else {
                     foreach ($issues as $issue) {
-                        $this->result->addIssue($issue);
+                        $this->preCommitResult->addIssue($issue);
                     }
                 }
             } catch (Throwable $e) {
                 // Log error but continue with other checks
-                $this->result->addIssue(new PreCommitIssue(
+                $this->preCommitResult->addIssue(new PreCommitIssue(
                                             $checkName,
                                             PreCommitIssue::SEVERITY_ERROR,
                                             "Check failed: " . $e->getMessage(),
@@ -244,16 +238,16 @@ final class PreCommit
 
     public function getResult() : PreCommitResult
     {
-        return $this->result;
+        return $this->preCommitResult;
     }
 
     public function getReportWriter() : PreCommitReportWriter
     {
-        return $this->reportWriter;
+        return $this->preCommitReportWriter;
     }
 
     public function getConfig() : PreCommitConfig
     {
-        return $this->config;
+        return $this->preCommitConfig;
     }
 }

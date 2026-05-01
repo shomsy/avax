@@ -25,7 +25,7 @@ class DeprecatedCodeValidator extends BaseValidator
         $messages = [];
 
         foreach ($files as $file) {
-            if (! str_ends_with(strtolower($file), '.php')) {
+            if (! str_ends_with(strtolower((string) $file), '.php')) {
                 continue;
             }
 
@@ -56,9 +56,9 @@ class DeprecatedCodeValidator extends BaseValidator
         }
 
         return new ValidationResult(
-            empty($messages),
+            $messages === [],
             $messages,
-            empty($messages) ? 'info' : 'warning',
+            $messages === [] ? 'info' : 'warning',
             null,
             null,
             'DEPRECATED_CODE_011'

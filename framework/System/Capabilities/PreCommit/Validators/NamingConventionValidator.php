@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\PreCommit\Validators;
 
 use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
+use Override;
 
 /**
  * Naming Convention Validator
@@ -25,25 +26,6 @@ class NamingConventionValidator extends BaseValidator
         'ServiceManager', 'CommonUtils', 'SharedService',
         'CoreStuff', 'DataHelpers', 'BaseHandler', 'MiscFunctions',
         'GenericProcessor', 'SharedThings', 'InternalHelpers'
-    ];
-
-    /** @var array<string> */
-    private array $flowIndicators = [
-        'Login', 'Register', 'Checkout', 'CreateInvoice', 'ProcessRefund',
-        'ChangePassword', 'ReadCurrentUser', 'PublishArticle', 'SyncCatalog',
-        'CreateOrder', 'UpdateOrder', 'DeleteOrder', 'SubmitForm', 'ExportData',
-        'ImportData', 'SendNotification', 'GenerateReport', 'ApproveRequest',
-        'RejectRequest', 'Activate', 'Deactivate', 'Archive', 'Restore',
-        'Upload', 'Download', 'Search', 'Filter', 'Sort', 'Paginate'
-    ];
-
-    /** @var array<string> */
-    private array $capabilityIndicators = [
-        'Access', 'Identity', 'User', 'PasswordHashing', 'Notification',
-        'Payment', 'Search', 'Storage', 'Messaging', 'Routing',
-        'Authorization', 'Authentication', 'Validation', 'Encryption',
-        'Cache', 'Logging', 'Monitoring', 'Configuration', 'Email',
-        'Sms', 'File', 'Image', 'Document', 'Template'
     ];
 
     public function __construct()
@@ -74,21 +56,21 @@ class NamingConventionValidator extends BaseValidator
             $fileName = basename($filePath);
 
             // Check for forbidden names in path
-            foreach ($this->forbiddenNames as $forbidden) {
-                if (stripos($dirPath, '/' . $forbidden . '/') !== false ||
-                    stripos($dirPath, '/src/' . $forbidden) !== false ||
-                    stripos($fileName, $forbidden) !== false) {
+            foreach ($this->forbiddenNames as $forbiddenName) {
+                if (stripos($dirPath, '/' . $forbiddenName . '/') !== false ||
+                    stripos($dirPath, '/src/' . $forbiddenName) !== false ||
+                    stripos($fileName, $forbiddenName) !== false) {
                     $allPassed = false;
                     $messages[] = sprintf(
                         "Forbidden name '%s' detected in path: %s",
-                        $forbidden,
+                        $forbiddenName,
                         $file
                     );
                 }
             }
 
             // Check PHP class naming (if PHP file)
-            if (str_ends_with(strtolower($file), '.php')) {
+            if (str_ends_with(strtolower((string) $file), '.php')) {
                 $phpResult = $this->checkPhpClassNaming($filePath, $file);
                 if (!$phpResult->isPassed()) {
                     $allPassed = false;
@@ -97,7 +79,7 @@ class NamingConventionValidator extends BaseValidator
             }
         }
 
-        $result = new ValidationResult(
+        $validationResult = new ValidationResult(
             $allPassed,
             $messages,
             $allPassed ? 'info' : 'error',
@@ -106,7 +88,7 @@ class NamingConventionValidator extends BaseValidator
             'NAMING_CONVENTION_001'
         );
 
-        return $this->combineWithNext($context, $result);
+        return $this->combineWithNext($context, $validationResult);
     }
 
     /**
@@ -127,19 +109,20 @@ class NamingConventionValidator extends BaseValidator
 
         while ($i < count($tokens)) {
             $token = $tokens[$i];
-            
+
             if (is_array($token)) {
                 if ($token[0] === T_NAMESPACE) {
                     $i += 2; // Skip namespace keyword and whitespace
                     $nsTokens = [];
-                    while (isset($tokens[$i]) && is_array($tokens[$i]) && 
-                           in_array($tokens[$i][0], [T_STRING, T_NS_SEPARATOR])) {
+                    while ( isset($tokens[$i]) && is_array($tokens[$i]) &&
+                        in_array($tokens[$i][0], [T_STRING, T_NS_SEPARATOR], true) ) {
                         $nsTokens[] = $tokens[$i][1];
                         $i++;
                     }
+
                     $namespace = implode('', $nsTokens);
                 }
-                
+
                 if ($token[0] === T_CLASS) {
                     // Find the class name
                     $j = $i + 1;
@@ -147,48 +130,50 @@ class NamingConventionValidator extends BaseValidator
                            $tokens[$j][0] === T_WHITESPACE) {
                         $j++;
                     }
+
                     if (isset($tokens[$j]) && is_array($tokens[$j]) && 
                         $tokens[$j][0] === T_STRING) {
                         $classes[] = $tokens[$j][1];
                     }
                 }
             }
+
             $i++;
         }
 
         $messages = [];
         $allPassed = true;
 
-        foreach ($classes as $className) {
+        foreach ($classes as $class) {
             // Check for PascalCase
-            if (!preg_match('/^[A-Z][a-zA-Z0-9]*$/', $className)) {
+            if (! preg_match('/^[A-Z][a-zA-Z0-9]*$/', $class)) {
                 $allPassed = false;
                 $messages[] = sprintf(
                     "Class '%s' in %s must use PascalCase",
-                    $className,
+                    $class,
                     $relativePath
                 );
             }
 
             // Check for forbidden names
-            foreach ($this->forbiddenNames as $forbidden) {
-                if (stripos($className, $forbidden) !== false) {
+            foreach ($this->forbiddenNames as $forbiddenName) {
+                if (stripos($class, $forbiddenName) !== false) {
                     $allPassed = false;
                     $messages[] = sprintf(
                         "Class '%s' contains forbidden name '%s' in %s",
-                        $className,
-                        $forbidden,
+                        $class,
+                        $forbiddenName,
                         $relativePath
                     );
                 }
             }
 
             // Check for descriptive naming
-            if (strlen($className) < 3 && !in_array($className, ['Id', 'Ip', 'Io', 'Db'])) {
+            if (strlen($class) < 3 && ! in_array($class, ['Id', 'Ip', 'Io', 'Db'], true)) {
                 $allPassed = false;
                 $messages[] = sprintf(
                     "Class name '%s' in %s is too short to be descriptive",
-                    $className,
+                    $class,
                     $relativePath
                 );
             }
@@ -204,6 +189,7 @@ class NamingConventionValidator extends BaseValidator
         );
     }
 
+    #[Override]
     public function supports(array $context): bool
     {
         return !empty($context['staged_files'] ?? []);

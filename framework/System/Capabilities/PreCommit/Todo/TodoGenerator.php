@@ -9,7 +9,7 @@ namespace Avax\Framework\System\Capabilities\PreCommit\Todo;
  * 
  * Creates todo tasks from validation failures.
  */
-final class TodoGenerator
+final readonly class TodoGenerator
 {
     private string $todoFile;
 
@@ -25,7 +25,7 @@ final class TodoGenerator
      */
     public function generate(array $failures, string $reportId): void
     {
-        if (empty($failures)) {
+        if ($failures === []) {
             return;
         }
 
@@ -48,7 +48,7 @@ final class TodoGenerator
         foreach ($failures as $failure) {
             $file = $failure['file'] ?? 'general';
             $line = $failure['line'] ?? '';
-            $location = $file . ($line ? ":{$line}" : '');
+            $location = $file . ($line ? ':' . $line : '');
             $messages = is_array($failure['messages']) ? $failure['messages'] : [$failure['messages']];
             $severity = $failure['severity'];
             $ruleCode = $failure['rule_code'] ?? 'UNKNOWN';
@@ -56,7 +56,7 @@ final class TodoGenerator
             $priority = $this->mapSeverityToPriority($severity);
 
             foreach ($messages as $message) {
-                $tasks[] = "- [ ] [{$date}] [{$priority}] [{$ruleCode}] Fix: {$message} - Location: {$location} - Ref: {$reportId}";
+                $tasks[] = sprintf('- [ ] [%s] [%s] [%s] Fix: %s - Location: %s - Ref: %s', $date, $priority, $ruleCode, $message, $location, $reportId);
             }
         }
 
@@ -70,7 +70,7 @@ final class TodoGenerator
      */
     private function appendTasks(array $tasks): void
     {
-        if (empty($tasks)) {
+        if ($tasks === []) {
             return;
         }
 

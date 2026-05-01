@@ -11,45 +11,40 @@ namespace Avax\Framework\System\Capabilities\PreCommit\Models;
  */
 final class PreCommitIssue
 {
-    public const SEVERITY_CRITICAL = 'critical';
-    public const SEVERITY_ERROR    = 'error';
-    public const SEVERITY_WARNING  = 'warning';
-    public const SEVERITY_INFO     = 'info';
+    public const string SEVERITY_CRITICAL = 'critical';
 
-    public const DELETE_SAFE            = 'safe_to_delete';
-    public const DELETE_PROBABLY_SAFE   = 'probably_safe_but_requires_review';
-    public const DELETE_UNSAFE          = 'unsafe_to_delete';
-    public const DELETE_KEEP_PUBLIC_API = 'keep_because_public_api';
-    public const DELETE_KEEP_COMPAT     = 'keep_because_compatibility_contract';
-    public const DELETE_KEEP_REFERENCED = 'keep_because_referenced';
+    public const string SEVERITY_ERROR = 'error';
 
-    private string  $checkName;
-    private string  $severity;
-    private string  $message;
-    private string|null $file;
-    private int|null    $line;
-    private string  $ruleCode;
+    public const string SEVERITY_WARNING = 'warning';
+
+    public const string SEVERITY_INFO = 'info';
+
+    public const string DELETE_SAFE = 'safe_to_delete';
+
+    public const string DELETE_PROBABLY_SAFE = 'probably_safe_but_requires_review';
+
+    public const string DELETE_UNSAFE = 'unsafe_to_delete';
+
+    public const string DELETE_KEEP_PUBLIC_API = 'keep_because_public_api';
+
+    public const string DELETE_KEEP_COMPAT = 'keep_because_compatibility_contract';
+
+    public const string DELETE_KEEP_REFERENCED = 'keep_because_referenced';
     /** @var array<string, mixed> */
-    private array   $metadata;
+    private array $metadata = [];
+
     private string  $deleteClassification;
 
     public function __construct(
-        string  $checkName,
-        string  $severity,
-        string  $message,
-        string|null $file = null,
-        int|null    $line = null,
-        string  $ruleCode = '',
+        private string      $checkName,
+        private string      $severity,
+        private string      $message,
+        private string|null $file = null,
+        private int|null    $line = null,
+        private string      $ruleCode = '',
         string|null $deleteClassification = null
     )
     {
-        $this->checkName            = $checkName;
-        $this->severity             = $severity;
-        $this->message              = $message;
-        $this->file                 = $file;
-        $this->line                 = $line;
-        $this->ruleCode             = $ruleCode;
-        $this->metadata             = [];
         $this->deleteClassification = $deleteClassification ?? self::DELETE_UNSAFE;
     }
 

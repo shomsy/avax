@@ -12,26 +12,27 @@ namespace Avax\Framework\System\Capabilities\PreCommit;
  */
 final class ValidationReport
 {
-    private string $timestamp;
+    private readonly string $timestamp;
+
     /** @var list<ValidationResult> */
-    private array $results;
+    private array $results = [];
+
     private string $reportId;
+
     /** @var array<string, mixed> */
-    private array $metadata;
-    private float $executionTime;
+    private array $metadata = [];
+
+    private float $executionTime = 0.0;
 
     public function __construct()
     {
         $this->timestamp = date('c');
-        $this->results = [];
         $this->reportId = uniqid('val-', true);
-        $this->metadata = [];
-        $this->executionTime = 0.0;
     }
 
-    public function addResult(ValidationResult $result): void
+    public function addResult(ValidationResult $validationResult) : void
     {
-        $this->results[] = $result;
+        $this->results[] = $validationResult;
     }
 
     /**
@@ -47,7 +48,7 @@ final class ValidationReport
     {
         return array_values(array_filter(
                                 $this->results,
-                                static fn (ValidationResult $result) : bool => $result->isFailed()
+                                static fn (ValidationResult $validationResult) : bool => $validationResult->isFailed()
                             ));
     }
 
@@ -56,13 +57,13 @@ final class ValidationReport
     {
         return array_values(array_filter(
                                 $this->results,
-                                static fn (ValidationResult $result) : bool => $result->isPassed()
+                                static fn (ValidationResult $validationResult) : bool => $validationResult->isPassed()
                             ));
     }
 
     public function isAllPassed(): bool
     {
-        return count($this->getFailedResults()) === 0;
+        return $this->getFailedResults() === [];
     }
 
     public function getTotalCount(): int
@@ -134,16 +135,14 @@ final class ValidationReport
                 'all_passed' => $this->isAllPassed(),
             ],
             'metadata' => $this->metadata,
-            'results' => array_map(function (ValidationResult $r) {
-                return [
-                    'passed' => $r->isPassed(),
-                    'severity' => $r->getSeverity(),
-                    'messages' => $r->getMessages(),
-                    'file' => $r->getFile(),
-                    'line' => $r->getLine(),
-                    'rule_code' => $r->getRuleCode(),
-                ];
-            }, $this->results),
+            'results' => array_map(fn (ValidationResult $r) => [
+                'passed'    => $r->isPassed(),
+                'severity'  => $r->getSeverity(),
+                'messages'  => $r->getMessages(),
+                'file'      => $r->getFile(),
+                'line'      => $r->getLine(),
+                'rule_code' => $r->getRuleCode(),
+            ], $this->results),
         ];
     }
 
@@ -156,10 +155,12 @@ final class ValidationReport
         if ($data === false) {
             return false;
         }
+
         $dir = dirname($outputPath);
         if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
             return false;
         }
+
         return file_put_contents($outputPath, $data) !== false;
     }
 
@@ -172,17 +173,18 @@ final class ValidationReport
         $output .= "═══════════════════════════════════════════════════════════════\n";
         $output .= "  PRE-COMMIT VALIDATION REPORT\n";
         $output .= "═══════════════════════════════════════════════════════════════\n";
-        $output .= "  Report ID : {$this->reportId}\n";
-        $output .= "  Timestamp : {$this->timestamp}\n";
+        $output .= sprintf('  Report ID : %s%s', $this->reportId, PHP_EOL);
+        $output .= sprintf('  Timestamp : %s%s', $this->timestamp, PHP_EOL);
         $output .= "  Duration  : " . number_format($this->executionTime, 4) . "s\n";
         $output .= "───────────────────────────────────────────────────────────────\n";
         $output .= "  Results   : {$this->getPassedCount()}/{$this->getTotalCount()} passed\n";
         if ($this->getFailedCount() > 0) {
             $output .= "  Failed    : {$this->getFailedCount()} ❌\n";
         }
+
         $output .= "───────────────────────────────────────────────────────────────\n";
 
-        foreach ($this->results as $idx => $result) {
+        foreach ($this->results as $result) {
             $status = $result->isPassed() ? '✅' : '❌';
             $severity = strtoupper($result->getSeverity());
             $output .= sprintf("  %s [%s] %s\n", $status, $severity, implode('; ', $result->getMessages()));
@@ -194,8 +196,7 @@ final class ValidationReport
         } else {
             $output .= "  ❌ VALIDATION FAILED\n";
         }
-        $output .= "═══════════════════════════════════════════════════════════════\n\n";
 
-        return $output;
+        return $output . "═══════════════════════════════════════════════════════════════\n\n";
     }
 }

@@ -18,8 +18,6 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class CheckNamingConventions
 {
-    private PreCommitConfig $config;
-
     /** @var list<string> */
     private array $forbiddenNames
         = [
@@ -27,11 +25,6 @@ final class CheckNamingConventions
             'Managers', 'Core', 'Support', 'Misc', 'Stuff',
             'Base', 'Generic', 'Manager', 'Helper', 'Util',
         ];
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * @param array<string, mixed> $context
@@ -58,13 +51,13 @@ final class CheckNamingConventions
             $dirPath  = dirname($filePath);
             $fileName = basename($filePath);
 
-            foreach ($this->forbiddenNames as $forbidden) {
-                if (stripos($dirPath, '/' . $forbidden . '/') !== false ||
-                    stripos($fileName, $forbidden) !== false) {
+            foreach ($this->forbiddenNames as $forbiddenName) {
+                if (stripos($dirPath, '/' . $forbiddenName . '/') !== false ||
+                    stripos($fileName, $forbiddenName) !== false) {
                     $issues[] = new PreCommitIssue(
                         'CheckNamingConventions',
                         PreCommitIssue::SEVERITY_ERROR,
-                        "Forbidden name '{$forbidden}' in path",
+                        sprintf("Forbidden name '%s' in path", $forbiddenName),
                         $file,
                         null,
                         'NAMING_FORBIDDEN'
@@ -122,6 +115,7 @@ final class CheckNamingConventions
 
                     $i++;
                 }
+
                 continue;
             }
 
@@ -137,13 +131,13 @@ final class CheckNamingConventions
             }
         }
 
-        foreach ($classes as $className) {
+        foreach ($classes as $class) {
             // Check for PascalCase
-            if (! preg_match('/^[A-Z][a-zA-Z0-9]*$/', $className)) {
+            if (! preg_match('/^[A-Z][a-zA-Z0-9]*$/', $class)) {
                 $issues[] = new PreCommitIssue(
                     'CheckNamingConventions',
                     PreCommitIssue::SEVERITY_ERROR,
-                    "Class '{$className}' must use PascalCase",
+                    sprintf("Class '%s' must use PascalCase", $class),
                     $relativePath,
                     null,
                     'NAMING_PASCAL'
@@ -151,12 +145,12 @@ final class CheckNamingConventions
             }
 
             // Check for forbidden names
-            foreach ($this->forbiddenNames as $forbidden) {
-                if (stripos($className, $forbidden) !== false) {
+            foreach ($this->forbiddenNames as $forbiddenName) {
+                if (stripos($class, $forbiddenName) !== false) {
                     $issues[] = new PreCommitIssue(
                         'CheckNamingConventions',
                         PreCommitIssue::SEVERITY_ERROR,
-                        "Class '{$className}' contains forbidden name '{$forbidden}'",
+                        sprintf("Class '%s' contains forbidden name '%s'", $class, $forbiddenName),
                         $relativePath,
                         null,
                         'NAMING_FORBIDDEN_CLASS'

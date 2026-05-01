@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\PreCommit\Validators;
 
 use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
+use Override;
 
 /**
  * PHP Syntax Validator
@@ -31,7 +32,7 @@ class PhpSyntaxValidator extends BaseValidator
         $allPassed = true;
 
         foreach ($files as $file) {
-            if (!str_ends_with(strtolower($file), '.php')) {
+            if (! str_ends_with(strtolower((string) $file), '.php')) {
                 continue;
             }
 
@@ -48,7 +49,7 @@ class PhpSyntaxValidator extends BaseValidator
             }
 
             // Check for modern PHP standards
-            $modernResult = $this->checkModernPhp($filePath, $file, $context['base_path'] ?? '');
+            $modernResult = $this->checkModernPhp($filePath, $file);
             if (!$modernResult->isPassed()) {
                 // Don't fail on modern PHP (warning only)
                 $messages = array_merge($messages, $modernResult->getMessages());
@@ -56,7 +57,7 @@ class PhpSyntaxValidator extends BaseValidator
         }
 
         $severity = $allPassed ? 'info' : 'error';
-        $result = new ValidationResult(
+        $validationResult = new ValidationResult(
             $allPassed,
             $messages,
             $severity,
@@ -65,7 +66,7 @@ class PhpSyntaxValidator extends BaseValidator
             'PHP_SYNTAX_005'
         );
 
-        return $this->combineWithNext($context, $result);
+        return $this->combineWithNext($context, $validationResult);
     }
 
     /**
@@ -93,7 +94,7 @@ class PhpSyntaxValidator extends BaseValidator
     /**
      * Check for modern PHP 8.x features usage
      */
-    private function checkModernPhp(string $filePath, string $relativePath, string $basePath): ValidationResult
+    private function checkModernPhp(string $filePath, string $relativePath) : ValidationResult
     {
         $content = file_get_contents($filePath);
         if ($content === false) {
@@ -108,8 +109,9 @@ class PhpSyntaxValidator extends BaseValidator
         $hasEnums = false;
         $hasAttributes = false;
         $usesModernSyntax = false;
+        $counter = count($tokens);
 
-        for ($i = 0; $i < count($tokens); $i++) {
+        for ($i = 0; $i < $counter; $i++) {
             $token = $tokens[$i];
 
             if (!is_array($token)) {
@@ -119,6 +121,7 @@ class PhpSyntaxValidator extends BaseValidator
                     $hasConstructorPromotion = true;
                     $usesModernSyntax = true;
                 }
+
                 continue;
             }
 
@@ -159,14 +162,16 @@ class PhpSyntaxValidator extends BaseValidator
         );
     }
 
+    #[Override]
     public function supports(array $context): bool
     {
         $files = $context['staged_files'] ?? [];
         foreach ($files as $file) {
-            if (str_ends_with(strtolower($file), '.php')) {
+            if (str_ends_with(strtolower((string) $file), '.php')) {
                 return true;
             }
         }
+
         return false;
     }
 }

@@ -12,9 +12,10 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationReport;
  * 
  * Manages persistence of validation reports.
  */
-final class ReportStorage
+final readonly class ReportStorage
 {
     private string $reportDir;
+
     private string $todoFile;
 
     public function __construct(?string $reportDir = null, ?string $todoFile = null)
@@ -24,41 +25,41 @@ final class ReportStorage
         $this->todoFile = $todoFile ?? $basePath . '/.agents/management/TODO.md';
     }
 
-    public function save(ValidationReport $report, bool $saveTodo = true): bool
+    public function save(ValidationReport $validationReport, bool $saveTodo = true) : bool
     {
         $timestamp = date('Y-m-d_His');
-        $filename = "validation-{$timestamp}-{$report->getReportId()}.json";
+        $filename = sprintf('validation-%s-%s.json', $timestamp, $validationReport->getReportId());
         $filepath = $this->reportDir . '/' . $filename;
 
-        if (!$report->saveToFile($filepath)) {
+        if (! $validationReport->saveToFile($filepath)) {
             return false;
         }
 
         $latestPath = $this->reportDir . '/latest.json';
         @copy($filepath, $latestPath);
 
-        if ($saveTodo && $report->getFailedCount() > 0) {
-            $this->generateTodo($report);
+        if ($saveTodo && $validationReport->getFailedCount() > 0) {
+            $this->generateTodo($validationReport);
         }
 
         return true;
     }
 
-    private function generateTodo(ValidationReport $report): void
+    private function generateTodo(ValidationReport $validationReport) : void
     {
         $failures = [];
-        foreach ($report->getFailedResults() as $result) {
+        foreach ($validationReport->getFailedResults() as $validationResult) {
             $failures[] = [
-                'messages' => $result->getMessages(),
-                'severity' => $result->getSeverity(),
-                'file' => $result->getFile(),
-                'line' => $result->getLine(),
-                'rule_code' => $result->getRuleCode(),
+                'messages'  => $validationResult->getMessages(),
+                'severity'  => $validationResult->getSeverity(),
+                'file'      => $validationResult->getFile(),
+                'line'      => $validationResult->getLine(),
+                'rule_code' => $validationResult->getRuleCode(),
             ];
         }
 
-        $generator = new TodoGenerator($this->todoFile);
-        $generator->generate($failures, $report->getReportId());
+        $todoGenerator = new TodoGenerator($this->todoFile);
+        $todoGenerator->generate($failures, $validationReport->getReportId());
     }
 
     /** @return array<string, mixed>|null */
@@ -87,9 +88,7 @@ final class ReportStorage
             return [];
         }
 
-        usort($files, function ($a, $b) {
-            return filemtime($b) - filemtime($a);
-        });
+        usort($files, fn ($a, $b) => filemtime($b) - filemtime($a));
 
         return $files;
     }

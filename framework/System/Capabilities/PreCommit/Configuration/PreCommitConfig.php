@@ -15,20 +15,25 @@ final class PreCommitConfig
     private array $enabledChecks;
 
     /** @var array<string, string> */
-    private array $severityOverrides;
+    private array $severityOverrides = [];
 
     /** @var list<string> */
-    private array $blockingChecks;
+    private readonly array $blockingChecks;
 
     /** @var list<string> */
-    private array $warningChecks;
+    private readonly array $warningChecks;
 
-    private string $reportPath;
-    private string $todoPath;
-    private string $toolingPath;
-    private bool   $dryRun;
-    private bool   $autoFix;
-    private bool   $installHook;
+    private readonly string $reportPath;
+
+    private readonly string $todoPath;
+
+    private readonly string $toolingPath;
+
+    private bool $dryRun = true;
+
+    private bool $autoFix = false;
+
+    private bool $installHook = false;
 
     /**
      * @param list<string>|null $enabledChecks
@@ -76,15 +81,9 @@ final class PreCommitConfig
             'DetectTodoComments',
         ];
 
-        $this->severityOverrides = [];
-
         $this->reportPath  = $reportPath ?? $basePath . '/Code-Review-And-ToDo/pre-commit';
         $this->todoPath    = $todoPath ?? $basePath . '/Code-Review-And-ToDo/pre-commit/pre-commit-todo.md';
         $this->toolingPath = $toolingPath ?? $basePath . '/tooling';
-
-        $this->dryRun      = true;
-        $this->autoFix     = false;
-        $this->installHook = false;
     }
 
     public function isCheckEnabled(string $checkName) : bool

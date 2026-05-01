@@ -12,31 +12,20 @@ namespace Avax\Framework\System\Capabilities\PreCommit;
  */
 final class ValidationResult
 {
-    private bool $passed;
-    /** @var list<string> */
-    private array $messages;
     private string      $severity;
-    private string|null $file;
-    private int|null    $line;
-    private string|null $ruleCode;
 
     /**
      * @param list<string> $messages
      */
     public function __construct(
-        bool $passed,
-        array $messages = [],
+        private bool        $passed,
+        private array       $messages = [],
         string|null $severity = 'info',
-        string|null $file = null,
-        int|null    $line = null,
-        string|null $ruleCode = null
+        private string|null $file = null,
+        private int|null    $line = null,
+        private string|null $ruleCode = null
     ) {
-        $this->passed = $passed;
-        $this->messages = $messages;
         $this->severity = $severity ?? 'info';
-        $this->file = $file;
-        $this->line = $line;
-        $this->ruleCode = $ruleCode;
     }
 
     public function isPassed(): bool
@@ -99,15 +88,11 @@ final class ValidationResult
      */
     public function combine(self $other): self
     {
-        $combined = new self(
+        return new self(
             $this->passed && $other->passed,
             array_merge($this->messages, $other->getMessages()),
-            $this->getWorstSeverity($other),
-            null,
-            null,
-            null
+            $this->getWorstSeverity($other)
         );
-        return $combined;
     }
 
     private function getWorstSeverity(self $other): string
@@ -115,9 +100,8 @@ final class ValidationResult
         $severityLevels = ['info' => 0, 'warning' => 1, 'error' => 2, 'critical' => 3];
         $current = $severityLevels[$this->severity] ?? 0;
         $otherLevel = $severityLevels[$other->severity] ?? 0;
-        $worstCode = $current >= $otherLevel ? $this->severity : $other->severity;
 
-        return $worstCode;
+        return $current >= $otherLevel ? $this->severity : $other->severity;
     }
 
     /**
@@ -125,7 +109,7 @@ final class ValidationResult
      */
     public static function pass(string $message = ''): self
     {
-        return new self(true, $message ? [$message] : [], 'info');
+        return new self(true, $message !== '' && $message !== '0' ? [$message] : [], 'info');
     }
 
     public static function fail(string $message, string|null $severity = 'error', string|null $file = null, int|null $line = null, string|null $ruleCode = null) : self

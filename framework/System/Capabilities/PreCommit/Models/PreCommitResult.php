@@ -11,34 +11,37 @@ namespace Avax\Framework\System\Capabilities\PreCommit\Models;
  */
 final class PreCommitResult
 {
-    public const STATUS_PASSED  = 'passed';
-    public const STATUS_BLOCKED = 'blocked';
-    public const STATUS_WARNING = 'warning';
-    public const STATUS_INFO    = 'info';
+    public const string STATUS_PASSED = 'passed';
 
-    private string $status;
-    private string $timestamp;
+    public const string STATUS_BLOCKED = 'blocked';
+
+    public const string STATUS_WARNING = 'warning';
+
+    public const string STATUS_INFO = 'info';
+
+    private string $status = self::STATUS_PASSED;
+
+    private readonly string $timestamp;
+
     /** @var list<PreCommitIssue> */
-    private array  $issues;
+    private array $issues = [];
+
     /** @var list<string> */
-    private array  $passedChecks;
-    private float  $executionTime;
+    private array $passedChecks = [];
+
+    private float $executionTime = 0.0;
+
     /** @var array<string, mixed> */
-    private array  $metadata;
+    private array $metadata = [];
 
     public function __construct()
     {
-        $this->status        = self::STATUS_PASSED;
         $this->timestamp     = date('c');
-        $this->issues        = [];
-        $this->passedChecks  = [];
-        $this->executionTime = 0.0;
-        $this->metadata      = [];
     }
 
-    public function addIssue(PreCommitIssue $issue) : void
+    public function addIssue(PreCommitIssue $preCommitIssue) : void
     {
-        $this->issues[] = $issue;
+        $this->issues[] = $preCommitIssue;
     }
 
     public function addPassedCheck(string $checkName) : void
@@ -100,15 +103,15 @@ final class PreCommitResult
 
     public function determineStatus() : string
     {
-        if (! empty($this->getCriticalIssues()) || ! empty($this->getErrorIssues())) {
+        if ($this->getCriticalIssues() !== [] || $this->getErrorIssues() !== []) {
             return self::STATUS_BLOCKED;
         }
 
-        if (! empty($this->getWarningIssues())) {
+        if ($this->getWarningIssues() !== []) {
             return self::STATUS_WARNING;
         }
 
-        if (! empty($this->getInfoIssues())) {
+        if ($this->getInfoIssues() !== []) {
             return self::STATUS_INFO;
         }
 
@@ -122,7 +125,7 @@ final class PreCommitResult
     {
         return array_values(array_filter(
             $this->issues,
-                                static fn (PreCommitIssue $issue) : bool => $issue->getSeverity() === PreCommitIssue::SEVERITY_CRITICAL
+                                static fn (PreCommitIssue $preCommitIssue) : bool => $preCommitIssue->getSeverity() === PreCommitIssue::SEVERITY_CRITICAL
                             ));
     }
 
@@ -133,7 +136,7 @@ final class PreCommitResult
     {
         return array_values(array_filter(
             $this->issues,
-                                static fn (PreCommitIssue $issue) : bool => $issue->getSeverity() === PreCommitIssue::SEVERITY_ERROR
+                                static fn (PreCommitIssue $preCommitIssue) : bool => $preCommitIssue->getSeverity() === PreCommitIssue::SEVERITY_ERROR
                             ));
     }
 
@@ -144,7 +147,7 @@ final class PreCommitResult
     {
         return array_values(array_filter(
             $this->issues,
-                                static fn (PreCommitIssue $issue) : bool => $issue->getSeverity() === PreCommitIssue::SEVERITY_WARNING
+                                static fn (PreCommitIssue $preCommitIssue) : bool => $preCommitIssue->getSeverity() === PreCommitIssue::SEVERITY_WARNING
                             ));
     }
 
@@ -155,7 +158,7 @@ final class PreCommitResult
     {
         return array_values(array_filter(
             $this->issues,
-                                static fn (PreCommitIssue $issue) : bool => $issue->getSeverity() === PreCommitIssue::SEVERITY_INFO
+                                static fn (PreCommitIssue $preCommitIssue) : bool => $preCommitIssue->getSeverity() === PreCommitIssue::SEVERITY_INFO
                             ));
     }
 
@@ -187,7 +190,7 @@ final class PreCommitResult
                 'manual_review_candidates' => count($this->getManualReviewCandidates()),
             ],
             'issues'                 => array_map(
-                static fn (PreCommitIssue $issue) : array => $issue->toArray(),
+                static fn (PreCommitIssue $preCommitIssue) : array => $preCommitIssue->toArray(),
                 $this->issues
             ),
             'passed_checks'          => $this->passedChecks,
@@ -227,7 +230,7 @@ final class PreCommitResult
     {
         return array_values(array_filter(
             $this->issues,
-                                static fn (PreCommitIssue $issue) : bool => $issue->canDelete()
+                                static fn (PreCommitIssue $preCommitIssue) : bool => $preCommitIssue->canDelete()
                             ));
     }
 
@@ -238,7 +241,7 @@ final class PreCommitResult
     {
         return array_values(array_filter(
             $this->issues,
-                                static fn (PreCommitIssue $issue) : bool => $issue->canAutoFix()
+                                static fn (PreCommitIssue $preCommitIssue) : bool => $preCommitIssue->canAutoFix()
                             ));
     }
 
@@ -249,7 +252,7 @@ final class PreCommitResult
     {
         return array_values(array_filter(
             $this->issues,
-                                static fn (PreCommitIssue $issue) : bool => $issue->requiresReview()
+                                static fn (PreCommitIssue $preCommitIssue) : bool => $preCommitIssue->requiresReview()
                             ));
     }
 
@@ -268,8 +271,8 @@ final class PreCommitResult
         $output .= "═══════════════════════════════════════════════════════════════\n";
         $output .= "  PRE-COMMIT DISCIPLINE REPORT\n";
         $output .= "═══════════════════════════════════════════════════════════════════════\n";
-        $output .= "  Status   : {$statusIcon} " . strtoupper($status) . "\n";
-        $output .= "  Timestamp: {$this->timestamp}\n";
+        $output .= sprintf('  Status   : %s ', $statusIcon) . strtoupper($status) . "\n";
+        $output .= sprintf('  Timestamp: %s%s', $this->timestamp, PHP_EOL);
         $output .= "  Duration : " . number_format($this->executionTime, 4) . "s\n";
         $output .= "───────────────────────────────────────────────────────────────\n";
         $output .= "  Summary :\n";
@@ -280,72 +283,79 @@ final class PreCommitResult
         $output .= "    Passed : " . count($this->passedChecks) . "\n";
         $output .= "───────────────────────────────────────────────────────────────\n";
 
-        if (! empty($this->getCriticalIssues())) {
+        if ($this->getCriticalIssues() !== []) {
             $output .= "  CRITICAL ISSUES (Block Commit):\n";
             foreach ($this->getCriticalIssues() as $issue) {
                 $output .= "    🚫 " . $issue->getMessage();
                 if ($issue->getFile()) {
                     $output .= " (" . $issue->getLocation() . ")";
                 }
+
                 $output .= "\n";
             }
+
             $output .= "\n";
         }
 
-        if (! empty($this->getErrorIssues())) {
+        if ($this->getErrorIssues() !== []) {
             $output .= "  ERRORS (Block Commit):\n";
             foreach ($this->getErrorIssues() as $issue) {
                 $output .= "    ❌ " . $issue->getMessage();
                 if ($issue->getFile()) {
                     $output .= " (" . $issue->getLocation() . ")";
                 }
+
                 $output .= "\n";
             }
+
             $output .= "\n";
         }
 
-        if (! empty($this->getWarningIssues())) {
+        if ($this->getWarningIssues() !== []) {
             $output .= "  WARNINGS (Allow with Warning):\n";
             foreach ($this->getWarningIssues() as $issue) {
                 $output .= "    ⚠️ " . $issue->getMessage();
                 if ($issue->getFile()) {
                     $output .= " (" . $issue->getLocation() . ")";
                 }
+
                 $output .= "\n";
             }
+
             $output .= "\n";
         }
 
-        if (! empty($this->getInfoIssues())) {
+        if ($this->getInfoIssues() !== []) {
             $output .= "  INFO:\n";
             foreach ($this->getInfoIssues() as $issue) {
                 $output .= "    ℹ️ " . $issue->getMessage() . "\n";
             }
+
             $output .= "\n";
         }
 
-        if (! empty($this->getDeleteCandidates())) {
+        if ($this->getDeleteCandidates() !== []) {
             $output .= "  DELETE CANDIDATES (Requires Review):\n";
             foreach ($this->getDeleteCandidates() as $issue) {
                 $output .= "    🗑️ " . $issue->getMessage();
                 $output .= " [" . $issue->getDeleteClassification() . "]";
                 $output .= "\n";
             }
+
             $output .= "\n";
         }
 
         $output .= "═══════════════════════════════════════════════════════════════\n";
         if ($this->canCommit()) {
             $output .= "  Commit can proceed.\n";
-            if (! empty($this->getWarningIssues())) {
+            if ($this->getWarningIssues() !== []) {
                 $output .= "  Note: " . count($this->getWarningIssues()) . " warnings found.\n";
             }
         } else {
             $output .= "  🚫 COMMIT BLOCKED - Fix critical issues first.\n";
         }
-        $output .= "═══════════════════════════════════════════════════════════════\n";
 
-        return $output;
+        return $output . "═══════════════════════════════════════════════════════════════\n";
     }
 
     public function canCommit() : bool

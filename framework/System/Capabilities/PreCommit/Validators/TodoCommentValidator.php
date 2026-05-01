@@ -25,7 +25,7 @@ class TodoCommentValidator extends BaseValidator
         $messages = [];
 
         foreach ($files as $file) {
-            if (! str_ends_with(strtolower($file), '.php')) {
+            if (! str_ends_with(strtolower((string) $file), '.php')) {
                 continue;
             }
 
@@ -40,24 +40,19 @@ class TodoCommentValidator extends BaseValidator
             }
 
             // Check for TODO/FIXME/NOTE/HACK comments (excluding our own .agents dir)
-            if (stripos($content, 'TODO') !== false ||
-                stripos($content, 'FIXME') !== false ||
-                stripos($content, 'NOTE:') !== false ||
-                stripos($content, 'HACK') !== false) {
-                // Don't flag if in .agents directory or test files
-                if (strpos($file, '.agents') === false && strpos($file, '/tests/') === false) {
-                    $messages[] = sprintf(
-                        "TODO/FIXME/NOTE/HACK comment found in %s",
-                        $file
-                    );
-                }
+            // Don't flag if in .agents directory or test files
+            if ((stripos($content, 'TODO') !== false || stripos($content, 'FIXME') !== false || stripos($content, 'NOTE:') !== false || stripos($content, 'HACK') !== false) && (! str_contains((string) $file, '.agents') && ! str_contains((string) $file, '/tests/'))) {
+                $messages[] = sprintf(
+                    "TODO/FIXME/NOTE/HACK comment found in %s",
+                    $file
+                );
             }
         }
 
         return new ValidationResult(
-            empty($messages),
+            $messages === [],
             $messages,
-            empty($messages) ? 'info' : 'warning',
+            $messages === [] ? 'info' : 'warning',
             null,
             null,
             'TODO_COMMENT_012'

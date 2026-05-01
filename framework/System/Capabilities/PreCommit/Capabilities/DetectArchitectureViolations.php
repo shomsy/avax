@@ -15,8 +15,6 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class DetectArchitectureViolations
 {
-    private PreCommitConfig $config;
-
     /** @var array<string, string> */
     private array $scripts
         = [
@@ -24,11 +22,6 @@ final class DetectArchitectureViolations
             'check-public-surface'    => 'CheckPublicSurface',
             'check-namespace-drift'   => 'CheckNamespaceDrift',
         ];
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * @param array<string, mixed> $context
@@ -62,7 +55,7 @@ final class DetectArchitectureViolations
                 $issues[] = new PreCommitIssue(
                     'DetectArchitectureViolations',
                     PreCommitIssue::SEVERITY_ERROR,
-                    "Architecture check '{$checkName}' failed: " . substr($outputText, 0, 200),
+                    sprintf("Architecture check '%s' failed: ", $checkName) . substr($outputText, 0, 200),
                     null,
                     null,
                     'ARCH_' . strtoupper(substr($scriptName, 6))

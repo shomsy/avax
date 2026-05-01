@@ -258,7 +258,7 @@ final class SlowQueryDetector
         }
 
         $fingerprint = '';
-        if ($this->queryFingerprinter !== null) {
+        if ($this->queryFingerprinter instanceof QueryFingerprinter) {
             $fingerprint = $this->queryFingerprinter->fingerprint($sql)->hash;
         }
 

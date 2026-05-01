@@ -35,7 +35,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
     )
     {
         // Initialize WeakMap if not already set
-        self::$weakMap ??= new WeakMap();
+        self::$weakMap ??= new WeakMap;
         // Load configuration, either from cache or fresh data
         $this->initializeConfiguration();
     }
@@ -115,7 +115,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      * @throws RuntimeException if the configuration key does not exist and no default is provided.
      */
     #[Override]
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         // Access the base data from the collection
         $items = $this->configuration->all();
@@ -149,7 +149,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      * @return bool Returns true if the key exists, false otherwise.
      */
     #[Override]
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return $this->configuration->contains(value: $key);
     }
@@ -163,7 +163,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      * @return Collection The newly loaded configuration data.
      */
     #[Override]
-    public function refresh() : Collection
+    public function refresh(): Collection
     {
         return $this->configuration = $this->loadFreshConfigAndCache();
     }

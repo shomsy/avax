@@ -11,9 +11,10 @@ use Avax\Tests\TestCase;
 final class EnsureDirectoryIsWritableTest extends TestCase
 {
     private LocalDisk $disk;
+
     private string $testDir;
 
-    public function testExecuteCreatesDirectoryWhenMissing() : void
+    public function test_execute_creates_directory_when_missing() : void
     {
         $result = new EnsureDirectoryIsWritable(disk: $this->disk)->execute(path: $this->testDir);
 
@@ -22,7 +23,7 @@ final class EnsureDirectoryIsWritableTest extends TestCase
         self::assertTrue(is_writable(filename: $this->testDir));
     }
 
-    public function testExecuteRepairsPermissionsWhenDirectoryExists() : void
+    public function test_execute_repairs_permissions_when_directory_exists() : void
     {
         if (posix_getuid() === 0) {
             $this->markTestSkipped(reason: 'Cannot validate writability transitions as root');
@@ -39,7 +40,7 @@ final class EnsureDirectoryIsWritableTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk    = new LocalDisk();
+        $this->disk = new LocalDisk;
         $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/ensure_writable_test';
     }
 

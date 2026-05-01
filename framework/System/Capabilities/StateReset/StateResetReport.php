@@ -9,14 +9,13 @@ use Throwable;
 final readonly class StateResetReport
 {
     /**
-     * @param list<string> $resetComponents
+     * @param list<string>             $resetComponents
      * @param array<string, Throwable> $failures
      */
     public function __construct(
         private array $resetComponents,
         private array $failures = [],
-    ) {
-    }
+    ) {}
 
     /**
      * @return list<string>

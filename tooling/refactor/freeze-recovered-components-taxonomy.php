@@ -5,6 +5,7 @@ declare(strict_types=1);
 final class FreezeRecoveredComponentsTaxonomy
 {
     private string $root;
+
     private bool $apply;
 
     /** @var list<array{from: string, to: string, reason: string}> */
@@ -21,7 +22,7 @@ final class FreezeRecoveredComponentsTaxonomy
 
     public function __construct(array $argv)
     {
-        $this->root  = getcwd() ?: throw new RuntimeException('Cannot resolve working directory.');
+        $this->root = getcwd() ?: throw new RuntimeException('Cannot resolve working directory.');
         $this->apply = in_array('--apply', $argv, true);
 
         $this->defineMoves();
@@ -79,31 +80,31 @@ final class FreezeRecoveredComponentsTaxonomy
     private function defineNamespaceRewrites() : void
     {
         $this->namespaceRewrites = [
-            'Avax\\Components\\FeatureFlags'         => 'Avax\\Components\\Application\\FeatureFlags',
-            'Avax\\Components\\Pipeline'             => 'Avax\\Components\\Application\\Pipeline',
-            'Avax\\Components\\ApiVersioning'        => 'Avax\\Components\\HTTP\\ApiVersioning',
-            'Avax\\Components\\AfterResponse'        => 'Avax\\Components\\HTTP\\AfterResponse',
-            'Avax\\Components\\ContentNegotiation'   => 'Avax\\Components\\HTTP\\ContentNegotiation',
-            'Avax\\Components\\Resilience'           => 'Avax\\Components\\Operations\\Resilience',
-            'Avax\\Components\\Concurrency'          => 'Avax\\Components\\Operations\\Concurrency',
-            'Avax\\Components\\Tasks'                => 'Avax\\Components\\Operations\\Tasks',
-            'Avax\\Components\\Scheduler'            => 'Avax\\Components\\Operations\\Scheduler',
-            'Avax\\Components\\Realtime'             => 'Avax\\Components\\Operations\\Realtime',
-            'Avax\\Components\\MessageBus'           => 'Avax\\Components\\Operations\\MessageBus',
-            'Avax\\Components\\Idempotency'          => 'Avax\\Components\\Operations\\Resilience\\System\\Capabilities\\Idempotency',
-            'Avax\\Components\\Fallback'             => 'Avax\\Components\\Operations\\Resilience\\System\\Capabilities\\Fallback',
-            'Avax\\Components\\TaskDispatch'         => 'Avax\\Components\\Operations\\Queue\\System\\Capabilities\\TaskDispatch',
-            'Avax\\Components\\Orchestration'        => 'Avax\\Components\\Operations\\ApplicationWorkflow\\System\\Capabilities\\Orchestration',
-            'Avax\\Components\\Security'             => 'Avax\\Components\\Security\\System',
-            'Avax\\Components\\Secrets'              => 'Avax\\Components\\Security\\Secrets',
-            'Avax\\Components\\Policy'               => 'Avax\\Components\\Identity\\Access\\System\\Capabilities\\Policy',
-            'Avax\\Components\\Tenancy'              => 'Avax\\Components\\Identity\\Tenancy',
-            'Avax\\Components\\JwtAuth'              => 'Avax\\Components\\Identity\\Tokens\\System\\Capabilities\\JwtAuth',
-            'Avax\\Components\\HealthCheck'          => 'Avax\\Components\\Operations\\Observability\\System\\Capabilities\\HealthCheck',
-            'Avax\\Components\\ScalingReadiness'     => 'Avax\\Components\\DeveloperTools\\Diagnostics\\System\\Capabilities\\ScalingReadiness',
-            'Avax\\Components\\ServiceMap'           => 'Avax\\Components\\Application\\Container\\System\\Capabilities\\ServiceMap',
-            'Avax\\Components\\QueryGovernance'      => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\QueryGovernance',
-            'Avax\\Components\\ContractTesting'      => 'Avax\\Components\\DeveloperTools\\Testing\\System\\Capabilities\\ContractTesting',
+            'Avax\\Components\\FeatureFlags'       => 'Avax\\Components\\Application\\FeatureFlags',
+            'Avax\\Components\\Pipeline'           => 'Avax\\Components\\Application\\Pipeline',
+            'Avax\\Components\\ApiVersioning'      => 'Avax\\Components\\HTTP\\ApiVersioning',
+            'Avax\\Components\\AfterResponse'      => 'Avax\\Components\\HTTP\\AfterResponse',
+            'Avax\\Components\\ContentNegotiation' => 'Avax\\Components\\HTTP\\ContentNegotiation',
+            'Avax\\Components\\Resilience'         => 'Avax\\Components\\Operations\\Resilience',
+            'Avax\\Components\\Concurrency'        => 'Avax\\Components\\Operations\\Concurrency',
+            'Avax\\Components\\Tasks'              => 'Avax\\Components\\Operations\\Tasks',
+            'Avax\\Components\\Scheduler'          => 'Avax\\Components\\Operations\\Scheduler',
+            'Avax\\Components\\Realtime'           => 'Avax\\Components\\Operations\\Realtime',
+            'Avax\\Components\\MessageBus'         => 'Avax\\Components\\Operations\\MessageBus',
+            'Avax\\Components\\Idempotency'        => 'Avax\\Components\\Operations\\Resilience\\System\\Capabilities\\Idempotency',
+            'Avax\\Components\\Fallback'           => 'Avax\\Components\\Operations\\Resilience\\System\\Capabilities\\Fallback',
+            'Avax\\Components\\TaskDispatch'       => 'Avax\\Components\\Operations\\Queue\\System\\Capabilities\\TaskDispatch',
+            'Avax\\Components\\Orchestration'      => 'Avax\\Components\\Operations\\ApplicationWorkflow\\System\\Capabilities\\Orchestration',
+            'Avax\\Components\\Security'           => 'Avax\\Components\\Security\\System',
+            'Avax\\Components\\Secrets'            => 'Avax\\Components\\Security\\Secrets',
+            'Avax\\Components\\Policy'             => 'Avax\\Components\\Identity\\Access\\System\\Capabilities\\Policy',
+            'Avax\\Components\\Tenancy'            => 'Avax\\Components\\Identity\\Tenancy',
+            'Avax\\Components\\JwtAuth'            => 'Avax\\Components\\Identity\\Tokens\\System\\Capabilities\\JwtAuth',
+            'Avax\\Components\\HealthCheck'        => 'Avax\\Components\\Operations\\Observability\\System\\Capabilities\\HealthCheck',
+            'Avax\\Components\\ScalingReadiness'   => 'Avax\\Components\\DeveloperTools\\Diagnostics\\System\\Capabilities\\ScalingReadiness',
+            'Avax\\Components\\ServiceMap'         => 'Avax\\Components\\Application\\Container\\System\\Capabilities\\ServiceMap',
+            'Avax\\Components\\QueryGovernance'    => 'Avax\\Components\\DataStack\\Database\\System\\Capabilities\\QueryGovernance',
+            'Avax\\Components\\ContractTesting'    => 'Avax\\Components\\DeveloperTools\\Testing\\System\\Capabilities\\ContractTesting',
             'Avax\\Components\\EnvironmentAwareness' => 'Avax\\Components\\Application\\Config\\System\\Capabilities\\EnvironmentAwareness',
         ];
 
@@ -178,7 +179,7 @@ final class FreezeRecoveredComponentsTaxonomy
     {
         foreach ($this->moves as $move) {
             $from = $this->path($move['from']);
-            $to   = $this->path($move['to']);
+            $to = $this->path($move['to']);
 
             if (! is_dir($from) && ! is_file($from)) {
                 continue;
@@ -256,7 +257,7 @@ final class FreezeRecoveredComponentsTaxonomy
 
     private function writeReport(string $status) : void
     {
-        $report    = $this->path('Code-Review-And-ToDo/component-taxonomy/recovered-components-taxonomy-report.md');
+        $report = $this->path('Code-Review-And-ToDo/component-taxonomy/recovered-components-taxonomy-report.md');
         $directory = dirname($report);
 
         if (! is_dir($directory)) {
@@ -441,7 +442,7 @@ final class FreezeRecoveredComponentsTaxonomy
                     continue;
                 }
 
-                $operation          = 'REWRITE `' . $this->relative($file) . '`';
+                $operation = 'REWRITE `' . $this->relative($file) . '`';
                 $this->operations[] = $operation;
 
                 echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
@@ -517,7 +518,7 @@ final class FreezeRecoveredComponentsTaxonomy
         }
 
         if ($updated !== $content) {
-            $operation          = 'UPDATE checker config';
+            $operation = 'UPDATE checker config';
             $this->operations[] = $operation;
             echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
             file_put_contents($checkerFile, $updated);

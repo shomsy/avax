@@ -36,7 +36,7 @@ final class ResolveDependency
         }
 
         $reflectionFunctionAbstract = $this->getCallReflector($callback);
-        $dependencies               = $this->resolveDependencies($reflectionFunctionAbstract->getParameters(), $parameters);
+        $dependencies = $this->resolveDependencies($reflectionFunctionAbstract->getParameters(), $parameters);
 
         return call_user_func_array($callback, $dependencies);
     }
@@ -58,7 +58,7 @@ final class ResolveDependency
         $this->resolving[$abstract] = true;
 
         try {
-            $binding  = $this->bindingRegistry->getBinding($abstract);
+            $binding = $this->bindingRegistry->getBinding($abstract);
             $concrete = $binding['concrete'] ?? $abstract;
 
             // 3. Resolve concrete
@@ -95,8 +95,8 @@ final class ResolveDependency
 
         $constructor = $reflectionClass->getConstructor();
 
-        if (null === $constructor) {
-            return new $concrete();
+        if ($constructor === null) {
+            return new $concrete;
         }
 
         $dependencies = $this->resolveDependencies($constructor->getParameters(), $parameters);

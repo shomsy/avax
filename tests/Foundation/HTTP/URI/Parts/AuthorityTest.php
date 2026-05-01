@@ -24,9 +24,9 @@ final class AuthorityTest extends TestCase
     public function test_it_renders_authority_with_all_components() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
-        $port      = new Port(port: 8080, scheme: new Scheme(scheme: 'https'));
-        $userInfo  = new UserInfo(user: 'user', password: 'pass');
+        $host     = new Host(host: 'example.com');
+        $port     = new Port(port: 8080, scheme: new Scheme(scheme: 'https'));
+        $userInfo = new UserInfo(user: 'user', password: 'pass');
         $authority = new Authority(host: $host, port: $port, userInfo: $userInfo);
 
         // Act & Assert
@@ -36,8 +36,8 @@ final class AuthorityTest extends TestCase
     public function test_it_renders_authority_with_user_only() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
-        $userInfo  = new UserInfo(user: 'user');
+        $host     = new Host(host: 'example.com');
+        $userInfo = new UserInfo(user: 'user');
         $authority = new Authority(host: $host, port: null, userInfo: $userInfo);
 
         // Act & Assert
@@ -49,7 +49,7 @@ final class AuthorityTest extends TestCase
     public function test_it_renders_authority_with_host_only() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
+        $host = new Host(host: 'example.com');
         $authority = new Authority(host: $host);
 
         // Act & Assert
@@ -59,8 +59,8 @@ final class AuthorityTest extends TestCase
     public function test_it_renders_authority_with_host_and_port() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
-        $port      = new Port(port: 8080, scheme: new Scheme(scheme: 'https'));
+        $host = new Host(host: 'example.com');
+        $port = new Port(port: 8080, scheme: new Scheme(scheme: 'https'));
         $authority = new Authority(host: $host, port: $port);
 
         // Act & Assert
@@ -72,7 +72,7 @@ final class AuthorityTest extends TestCase
         // Arrange
         $host = new Host(host: 'example.com');
         // Creating port with 443 should return null for https default
-        $port      = new Port(port: 443, scheme: new Scheme(scheme: 'https'));
+        $port = new Port(port: 443, scheme: new Scheme(scheme: 'https'));
         $authority = new Authority(host: $host, port: $port);
 
         // Act & Assert
@@ -86,7 +86,7 @@ final class AuthorityTest extends TestCase
     public function test_it_provides_access_to_host() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
+        $host = new Host(host: 'example.com');
         $authority = new Authority(host: $host);
 
         // Act & Assert
@@ -97,8 +97,8 @@ final class AuthorityTest extends TestCase
     public function test_it_provides_access_to_port() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
-        $port      = new Port(port: 8080, scheme: new Scheme(scheme: 'https'));
+        $host = new Host(host: 'example.com');
+        $port = new Port(port: 8080, scheme: new Scheme(scheme: 'https'));
         $authority = new Authority(host: $host, port: $port);
 
         // Act & Assert
@@ -109,7 +109,7 @@ final class AuthorityTest extends TestCase
     public function test_it_returns_null_port_when_none_provided() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
+        $host = new Host(host: 'example.com');
         $authority = new Authority(host: $host);
 
         // Act & Assert
@@ -119,8 +119,8 @@ final class AuthorityTest extends TestCase
     public function test_it_provides_access_to_user_info() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
-        $userInfo  = new UserInfo(user: 'user', password: 'pass');
+        $host     = new Host(host: 'example.com');
+        $userInfo = new UserInfo(user: 'user', password: 'pass');
         $authority = new Authority(host: $host, port: null, userInfo: $userInfo);
 
         // Act & Assert
@@ -131,7 +131,7 @@ final class AuthorityTest extends TestCase
     public function test_it_returns_null_user_info_when_none_provided() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
+        $host = new Host(host: 'example.com');
         $authority = new Authority(host: $host);
 
         // Act & Assert
@@ -177,7 +177,7 @@ final class AuthorityTest extends TestCase
     public function test_it_renders_ipv4_authority() : void
     {
         // Arrange
-        $host      = new Host(host: '192.168.1.1');
+        $host = new Host(host: '192.168.1.1');
         $authority = new Authority(host: $host);
 
         // Act & Assert
@@ -201,7 +201,7 @@ final class AuthorityTest extends TestCase
     public function test_it_handles_subdomain() : void
     {
         // Arrange
-        $host      = new Host(host: 'api.example.com');
+        $host = new Host(host: 'api.example.com');
         $authority = new Authority(host: $host);
 
         // Act & Assert
@@ -211,8 +211,8 @@ final class AuthorityTest extends TestCase
     public function test_it_handles_user_without_password() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
-        $userInfo  = new UserInfo(user: 'admin');
+        $host     = new Host(host: 'example.com');
+        $userInfo = new UserInfo(user: 'admin');
         $authority = new Authority(host: $host, port: null, userInfo: $userInfo);
 
         // Act & Assert
@@ -222,8 +222,8 @@ final class AuthorityTest extends TestCase
     public function test_it_handles_user_with_special_characters() : void
     {
         // Arrange
-        $host      = new Host(host: 'example.com');
-        $userInfo  = new UserInfo(user: 'user@domain', password: 'p@ss');
+        $host     = new Host(host: 'example.com');
+        $userInfo = new UserInfo(user: 'user@domain', password: 'p@ss');
         $authority = new Authority(host: $host, port: null, userInfo: $userInfo);
 
         // Act & Assert

@@ -25,8 +25,8 @@ final class HttpKernel implements HttpInterface
 
     public function __construct(
         private readonly RouterInterface $router,
-        private readonly BootHttpKernel  $boot = new BootHttpKernel(),
-        private readonly TerminateHttpKernel $terminator = new TerminateHttpKernel(),
+        private readonly BootHttpKernel      $boot = new BootHttpKernel,
+        private readonly TerminateHttpKernel $terminator = new TerminateHttpKernel,
     ) {}
 
     /**
@@ -119,7 +119,7 @@ final class HttpKernel implements HttpInterface
      *
      * @return list<MiddlewareInterface>
      */
-    public function middleware() : array
+    public function middleware(): array
     {
         return $this->middleware;
     }
@@ -127,7 +127,7 @@ final class HttpKernel implements HttpInterface
     /**
      * Check if the kernel has been booted.
      */
-    public function isBooted() : bool
+    public function isBooted(): bool
     {
         return $this->booted;
     }

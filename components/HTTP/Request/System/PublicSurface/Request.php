@@ -18,16 +18,16 @@ final class Request implements RequestInterface
     private RequestData $data;
 
     public function __construct(
-        string      $method,
-        RequestUri  $uri,
+        string     $method,
+        RequestUri $uri,
         RequestHeaders $headers,
         RequestBody $body,
         UploadedFiles $files,
-        array       $serverParams = [],
-        array       $cookieParams = [],
-        array       $queryParams = [],
-        array       $attributes = [],
-        string      $protocolVersion = '1.1',
+        array      $serverParams = [],
+        array      $cookieParams = [],
+        array      $queryParams = [],
+        array      $attributes = [],
+        string     $protocolVersion = '1.1',
     )
     {
         $this->data = new RequestData(
@@ -51,7 +51,7 @@ final class Request implements RequestInterface
 
     public function withProtocolVersion($version) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withProtocolVersion($version);
 
         return $clone;
@@ -122,7 +122,7 @@ final class Request implements RequestInterface
 
     public function withMethod($method) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withMethod($method);
 
         return $clone;
@@ -135,7 +135,7 @@ final class Request implements RequestInterface
 
     public function withUri(UriInterface $uri, $preserveHost = false) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withUri($uri);
 
         return $clone;
@@ -153,7 +153,7 @@ final class Request implements RequestInterface
 
     public function withCookieParams(array $cookies) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withCookieParams($cookies);
 
         return $clone;
@@ -166,7 +166,7 @@ final class Request implements RequestInterface
 
     public function withQueryParams(array $query) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withQueryParams($query);
 
         return $clone;
@@ -204,7 +204,7 @@ final class Request implements RequestInterface
 
     public function withAttribute($name, $value) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withAttribute($name, $value);
 
         return $clone;
@@ -212,7 +212,7 @@ final class Request implements RequestInterface
 
     public function withoutAttribute($name) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withoutAttribute($name);
 
         return $clone;

@@ -10,7 +10,7 @@ final readonly class CheckCacheCapacity
 {
     public function __construct(
         private CacheCapacity $cacheCapacity,
-        private EstimateCachedValueSize $estimateCachedValueSize = new EstimateCachedValueSize(),
+        private EstimateCachedValueSize $estimateCachedValueSize = new EstimateCachedValueSize,
     ) {}
 
     public function canStore(CacheStore $cacheStore, mixed $value) : bool

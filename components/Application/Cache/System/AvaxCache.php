@@ -36,24 +36,24 @@ final class AvaxCache implements CacheContract
 
     private readonly ShouldRefreshCachedValue $shouldRefreshCachedValue;
 
-    private AcquireCacheStampedeLock|null $acquireCacheStampedeLock = null;
+    private ?AcquireCacheStampedeLock $acquireCacheStampedeLock = null;
 
     private bool $stampedeProtectionEnabled;
 
     public function __construct(
         private readonly CacheStore $cacheStore,
-        private readonly Clock      $clock = new SystemClock(),
-        private readonly CacheMetrics|null $cacheMetrics = null,
-        StaleValuePolicy            $stalePolicy = null,
-        RefreshPolicy               $refreshPolicy = null,
-        CacheLockStore              $cacheLockStore = null,
-        bool                        $stampedeProtection = false,
-        private readonly int        $lockWaitTimeoutSeconds = 5,
-        private readonly int        $lockTtlSeconds = 30,
-        private readonly int        $refreshAheadWindowSeconds = 60,
+        private readonly Clock         $clock = new SystemClock,
+        private readonly ?CacheMetrics $cacheMetrics = null,
+        ?StaleValuePolicy              $stalePolicy = null,
+        ?RefreshPolicy                 $refreshPolicy = null,
+        ?CacheLockStore                $cacheLockStore = null,
+        bool                           $stampedeProtection = false,
+        private readonly int           $lockWaitTimeoutSeconds = 5,
+        private readonly int           $lockTtlSeconds = 30,
+        private readonly int           $refreshAheadWindowSeconds = 60,
     )
     {
-        $this->cacheTtl                    = new CacheTtl(clock: $this->clock);
+        $this->cacheTtl = new CacheTtl(clock: $this->clock);
         $this->decideStaleValueCanBeServed = new DecideStaleValueCanBeServed(
             staleValuePolicy: $stalePolicy ?? StaleValuePolicy::DO_NOT_SERVE_STALE,
         );
@@ -79,11 +79,11 @@ final class AvaxCache implements CacheContract
     public function remember(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
     {
         $startTime = hrtime(true);
-        $cacheKey  = CacheKey::create(key: $key);
+        $cacheKey = CacheKey::create(key: $key);
         $result = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
 
         if ($result instanceof CacheStoreRecordWasFound) {
-            $record    = $result->record;
+            $record = $result->record;
             $lifecycle = $record->lifecycle;
 
             if ($this->shouldRefreshValue(lifecycle: $lifecycle)) {
@@ -176,14 +176,13 @@ final class AvaxCache implements CacheContract
     /**
      * @throws InvalidArgumentException
      */
-
     #[Override]
-    public function set(string $key, mixed $value, int|DateInterval $ttl = null) : bool
+    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
         $startTime = hrtime(true);
 
         try {
-            $cacheKey  = CacheKey::create(key: $key);
+            $cacheKey = CacheKey::create(key: $key);
             $expiresAt = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock);
 
             $lifecycle = CachedValueLifecycle::create(
@@ -221,16 +220,16 @@ final class AvaxCache implements CacheContract
             return;
         }
 
-        $endTime             = hrtime(true);
+        $endTime = hrtime(true);
         $latencyMicroseconds = (int) (($endTime - $startTime) / 1000);
 
         match ($operation) {
-            'hit'          => $this->cacheMetrics->recordHit(),
-            'miss'         => $this->cacheMetrics->recordMiss(),
-            'write'        => $this->cacheMetrics->recordWrite(),
-            'delete'       => $this->cacheMetrics->recordDelete(),
+            'hit'    => $this->cacheMetrics->recordHit(),
+            'miss'   => $this->cacheMetrics->recordMiss(),
+            'write'  => $this->cacheMetrics->recordWrite(),
+            'delete' => $this->cacheMetrics->recordDelete(),
             'stale_served' => $this->cacheMetrics->recordStaleServed(),
-            default        => null,
+            default  => null,
         };
 
         $this->cacheMetrics->recordLatency(microseconds: $latencyMicroseconds);
@@ -328,7 +327,7 @@ final class AvaxCache implements CacheContract
     }
 
     #[Override]
-    public function setMultiple(iterable $values, int|DateInterval $ttl = null) : bool
+    public function setMultiple(iterable $values, int|DateInterval|null $ttl = null) : bool
     {
         $values = $values instanceof Traversable ? iterator_to_array($values) : $values;
 

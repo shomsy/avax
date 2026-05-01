@@ -17,10 +17,6 @@ final readonly class GovernComposition
     /**
      * @param array<string, list<string>> $graph
      * @param array<string, list<string>> $dependents
-     * @param DependencyRegistry $registrations
-     * @param CreateDependencyBlueprint $blueprints
-     * @param ResolutionPolicy   $policy
-     * @param string             $environment
      *
      * @return array{
      *     schemaVersion: int,
@@ -31,19 +27,19 @@ final readonly class GovernComposition
      *     summary: array{error: int, warn: int},
      *     findings: array<string, list<array{code: string, severity: string, category: string, message: string}>>
      * }
+     *
      * @throws ReflectionException
      */
     public function report(
-        array              $graph,
-        array              $dependents,
+        array            $graph,
+        array            $dependents,
         DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
         ResolutionPolicy $policy,
-        string             $environment = '',
-    ) : array
-    {
+        string           $environment = '',
+    ) : array {
         $activePolicy = $policy->forEnvironment(environment: $environment);
-        $findings = (new CheckCompositionPolicies())->check(
+        $findings     = (new CheckCompositionPolicies)->check(
             graph        : $graph,
             dependents   : $dependents,
             registrations: $registrations,
@@ -53,7 +49,7 @@ final readonly class GovernComposition
 
         $summary = [
             'error' => 0,
-            'warn'  => 0,
+            'warn' => 0,
         ];
         $blocked = false;
 
@@ -84,10 +80,9 @@ final readonly class GovernComposition
 
     /**
      * @param array<string, mixed> $report
-     *
      * @return list<string>
      */
-    public function messages(array $report) : array
+    public function messages(array $report): array
     {
         $messages = [];
 

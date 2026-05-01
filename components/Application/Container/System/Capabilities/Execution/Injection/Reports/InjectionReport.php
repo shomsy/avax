@@ -15,14 +15,14 @@ readonly class InjectionReport
 
     public function __construct(
         public object $target,
-        array       $injectedProperties = null,
-        array       $injectedMethods = null,
+        ?array $injectedProperties = null,
+        ?array $injectedMethods = null,
         public bool $success = true,
     )
     {
         $injectedProperties ??= [];
-        $injectedMethods    ??= [];
+        $injectedMethods ??= [];
         $this->injectedProperties = $injectedProperties;
-        $this->injectedMethods    = $injectedMethods;
+        $this->injectedMethods = $injectedMethods;
     }
 }

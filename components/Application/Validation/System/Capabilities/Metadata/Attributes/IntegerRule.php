@@ -14,8 +14,8 @@ use InvalidArgumentException;
 final readonly class IntegerRule
 {
     public function __construct(
-        private int|null $min = null,
-        private int|null $max = null,
+        private ?int $min = null,
+        private ?int $max = null,
         private string $message = 'Field "{property}" must be a valid integer.',
     ) {}
 

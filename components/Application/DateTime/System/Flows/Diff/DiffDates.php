@@ -88,26 +88,26 @@ final class DiffDates
 
     public function isPast(DateTimeImmutable $date) : bool
     {
-        return $date < new DateTimeImmutable();
+        return $date < new DateTimeImmutable;
     }
 
     public function isFuture(DateTimeImmutable $date) : bool
     {
-        return $date > new DateTimeImmutable();
+        return $date > new DateTimeImmutable;
     }
 
     public function isToday(DateTimeImmutable $date) : bool
     {
-        return $date->format('Y-m-d') === (new DateTimeImmutable())->format('Y-m-d');
+        return $date->format('Y-m-d') === (new DateTimeImmutable)->format('Y-m-d');
     }
 
     public function isTomorrow(DateTimeImmutable $date) : bool
     {
-        return $date->format('Y-m-d') === (new DateTimeImmutable())->modify('+1 day')->format('Y-m-d');
+        return $date->format('Y-m-d') === (new DateTimeImmutable)->modify('+1 day')->format('Y-m-d');
     }
 
     public function isYesterday(DateTimeImmutable $date) : bool
     {
-        return $date->format('Y-m-d') === (new DateTimeImmutable())->modify('-1 day')->format('Y-m-d');
+        return $date->format('Y-m-d') === (new DateTimeImmutable)->modify('-1 day')->format('Y-m-d');
     }
 }

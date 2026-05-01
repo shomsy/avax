@@ -32,15 +32,15 @@ final class AssembleRuntime
 {
     public function assemble(CreateContainerConfig $config, ObservabilityAssembly $observability) : RuntimeAssembly
     {
-        $registrations = new DependencyRegistry();
-        $scopeStore    = new ScopeStore();
-        $servicePool   = new DependencyPool();
+        $registrations = new DependencyRegistry;
+        $scopeStore    = new ScopeStore;
+        $servicePool   = new DependencyPool;
         $scopes        = new ManageScopes(
             store  : $scopeStore,
             pool   : $servicePool,
             metrics: $observability->metrics,
         );
-        $dependencies = new ResolveDependencies();
+        $dependencies  = new ResolveDependencies;
         $blueprints = new CreateDependencyBlueprint(
             cache       : new BlueprintCache(
                               cacheDir    : $config->cacheDir,
@@ -90,7 +90,7 @@ final class AssembleRuntime
                                    dependencies: $dependencies,
                                ),
             blueprints       : $blueprints,
-            injectProperties : new InjectProperties(),
+            injectProperties : new InjectProperties,
             injectMethods    : new InjectMethods(arguments: $callArguments),
             caller           : $caller,
             metrics          : $observability->metrics,
@@ -98,11 +98,11 @@ final class AssembleRuntime
             policy           : $policy,
             compiledRuntime  : new CompiledRuntime(
                                    compiler     : $compiler,
-                                   inliner      : new HotPathInliner(),
+                                   inliner      : new HotPathInliner,
                                    metrics      : $observability->metrics,
                                    executionMode: $config->executionMode,
                                ),
-            deferredProviders: new DeferredProviderRegistry(),
+            deferredProviders: new DeferredProviderRegistry,
             diagnosticsMode  : $config->diagnosticsMode,
             environment      : $config->environment(),
             sliceBoundaryMode: $config->sliceBoundaryMode,

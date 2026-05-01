@@ -21,14 +21,14 @@ final class MigrateDataLayerToPersistence
         'Avax\DataLayer\AccessPersistentData\PersistentDataRequest' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
         'Avax\DataLayer\AccessPersistentData\PersistentDataResult' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
 
-        'Avax\DataLayer\CommitDataChanges\CommitDataChanges'     => 'Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork',
+        'Avax\DataLayer\CommitDataChanges\CommitDataChanges' => 'Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork',
         'Avax\DataLayer\CommitDataChanges\DataTransactionFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
         'Avax\DataLayer\CommitDataChanges\DataTransactionPolicy' => 'Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface',
 
-        'Avax\DataLayer\ConfigureDataLayer\DataLayerConfig'          => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
+        'Avax\DataLayer\ConfigureDataLayer\DataLayerConfig'         => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
         'Avax\DataLayer\ConfigureDataLayer\DataLayerConfigurationFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
         'Avax\DataLayer\ConfigureDataLayer\RegisterDataLayerRuntime' => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
-        'Avax\DataLayer\ConfigureDataLayer\ResolveDataLayerRuntime'  => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
+        'Avax\DataLayer\ConfigureDataLayer\ResolveDataLayerRuntime' => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
 
         'Avax\DataLayer\DataLayer' => 'Avax\Components\Persistence\System\PublicSurface\Persistence',
 
@@ -81,15 +81,15 @@ final class MigrateDataLayerToPersistence
 
         return [
             'changed' => count($changed),
-            'files'   => $changed,
-            'errors'  => count($errors),
+            'files'  => $changed,
+            'errors' => count($errors),
             'error_details' => $errors,
         ];
     }
 }
 
 if (php_sapi_name() === 'cli') {
-    $migrator = new MigrateDataLayerToPersistence();
+    $migrator = new MigrateDataLayerToPersistence;
     $results = $migrator->migrate('components');
 
     echo "DataLayer -> Persistence Migration\n";

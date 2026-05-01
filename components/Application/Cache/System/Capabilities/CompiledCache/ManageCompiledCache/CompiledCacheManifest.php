@@ -12,7 +12,7 @@ final class CompiledCacheManifest
     private array $entries = [];
 
     public function __construct(
-        CompiledCacheManifestEntry $entry = null,
+        ?CompiledCacheManifestEntry $entry = null,
     )
     {
         if ($entry instanceof CompiledCacheManifestEntry) {
@@ -23,7 +23,7 @@ final class CompiledCacheManifest
     public static function load(string $path) : self
     {
         if (! file_exists($path)) {
-            return new self();
+            return new self;
         }
 
         $data = require $path;
@@ -32,7 +32,7 @@ final class CompiledCacheManifest
             throw new RuntimeException(message: 'Invalid manifest file');
         }
 
-        $manifest = new self();
+        $manifest = new self;
 
         foreach ($data as $entryData) {
             $entry = CompiledCacheManifestEntry::fromArray(data: $entryData);
@@ -49,7 +49,7 @@ final class CompiledCacheManifest
 
     public static function empty() : self
     {
-        return new self();
+        return new self;
     }
 
     public function has(string $name) : bool
@@ -73,7 +73,7 @@ final class CompiledCacheManifest
         return $entry->sourceFingerprint === $compiledCacheSources->fingerprint();
     }
 
-    public function get(string $name) : CompiledCacheManifestEntry|null
+    public function get(string $name) : ?CompiledCacheManifestEntry
     {
         return $this->entries[$name] ?? null;
     }

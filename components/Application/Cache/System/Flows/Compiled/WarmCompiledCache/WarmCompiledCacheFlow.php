@@ -14,9 +14,7 @@ final class WarmCompiledCacheFlow
     /** @var array<string, CompiledCacheArtifactDefinition> */
     private array $definitions = [];
 
-    public function __construct(private readonly CompiledCacheDirectory $compiledCacheDirectory, private readonly CompiledCacheManifest $compiledCacheManifest)
-    {
-    }
+    public function __construct(private readonly CompiledCacheDirectory $compiledCacheDirectory, private readonly CompiledCacheManifest $compiledCacheManifest) {}
 
     public static function create(
         CompiledCacheDirectory $compiledCacheDirectory,

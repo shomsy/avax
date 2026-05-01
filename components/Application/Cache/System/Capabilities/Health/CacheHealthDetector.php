@@ -25,7 +25,7 @@ final class CacheHealthDetector
     private array $statusCache = [];
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock(),
+        private readonly Clock $clock = new SystemClock,
         private readonly int $latencyThresholdMs = 100,
         private readonly float $memoryUsageThreshold = 90.0,
         private readonly float $hitRateThreshold = 0.5,
@@ -78,7 +78,7 @@ final class CacheHealthDetector
     /**
      * Get cached health status if still valid.
      */
-    private function getCachedStatus(string $storeId, Timestamp $timestamp) : CacheHealthStatus|null
+    private function getCachedStatus(string $storeId, Timestamp $timestamp) : ?CacheHealthStatus
     {
         if (! isset($this->statusCache[$storeId])) {
             return null;
@@ -101,7 +101,7 @@ final class CacheHealthDetector
      */
     public function checkConnection(CacheStore $cacheStore) : CacheHealthStatus
     {
-        $now       = $this->clock->now();
+        $now = $this->clock->now();
         $startTime = microtime(true);
 
         try {
@@ -144,9 +144,9 @@ final class CacheHealthDetector
      */
     public function checkLatency(CacheStore $cacheStore, int $samples = 5) : CacheHealthStatus
     {
-        $now       = $this->clock->now();
+        $now    = $this->clock->now();
         $latencies = [];
-        $errors    = [];
+        $errors = [];
 
         for ($i = 0; $i < $samples; $i++) {
             $testKey = new CacheKey(
@@ -169,7 +169,7 @@ final class CacheHealthDetector
                 // Delete test
                 $cacheStore->forget($testKey);
 
-                $latency     = (int) ((microtime(true) - $startTime) * 1000);
+                $latency = (int) ((microtime(true) - $startTime) * 1000);
                 $latencies[] = $latency;
             } catch (Throwable $e) {
                 $errors[] = $e->getMessage();
@@ -204,14 +204,14 @@ final class CacheHealthDetector
      * Create a new health detector with default settings.
      */
     public static function create(
-        Clock $clock = null,
-        int   $latencyThresholdMs = 100,
+        ?Clock $clock = null,
+        int    $latencyThresholdMs = 100,
         float $memoryUsageThreshold = 90.0,
         float $hitRateThreshold = 0.5,
     ) : self
     {
         return new self(
-            clock               : $clock ?? new SystemClock(),
+            clock               : $clock ?? new SystemClock,
             latencyThresholdMs  : $latencyThresholdMs,
             memoryUsageThreshold: $memoryUsageThreshold,
             hitRateThreshold    : $hitRateThreshold,
@@ -233,8 +233,8 @@ final class CacheHealthDetector
             $memoryInfo = $this->getMemoryInfo();
 
             $usagePercent = $memoryInfo['usagePercent'];
-            $memoryUsed   = $memoryInfo['used'];
-            $memoryLimit  = $memoryInfo['limit'];
+            $memoryUsed = $memoryInfo['used'];
+            $memoryLimit = $memoryInfo['limit'];
 
             if ($usagePercent > $this->memoryUsageThreshold) {
                 return CacheHealthStatus::degraded(
@@ -275,14 +275,14 @@ final class CacheHealthDetector
      */
     private function getMemoryInfo() : array
     {
-        $used  = memory_get_usage(true);
+        $used = memory_get_usage(true);
         $limit = $this->memoryLimitBytes();
 
         return [
-            'used'         => $used,
-            'limit'        => $limit,
+            'used'     => $used,
+            'limit'    => $limit,
             'usagePercent' => $limit > 0 ? ($used / $limit) * 100 : 0.0,
-            'keyCount'     => 0,
+            'keyCount' => 0,
         ];
     }
 
@@ -337,7 +337,7 @@ final class CacheHealthDetector
      *
      * Override this method in a subclass to support specific cache backends.
      */
-    private function getHitRate() : float|null
+    private function getHitRate() : ?float
     {
         return $this->hitRateThreshold >= 0.0 ? null : 1.0;
     }
@@ -350,13 +350,13 @@ final class CacheHealthDetector
             return 0;
         }
 
-        $unit  = strtolower(substr($memoryLimit, -1));
+        $unit = strtolower(substr($memoryLimit, -1));
         $value = (int) $memoryLimit;
 
         return match ($unit) {
-            'g'     => $value * 1024 * 1024 * 1024,
-            'm'     => $value * 1024 * 1024,
-            'k'     => $value * 1024,
+            'g' => $value * 1024 * 1024 * 1024,
+            'm' => $value * 1024 * 1024,
+            'k' => $value * 1024,
             default => $value,
         };
     }

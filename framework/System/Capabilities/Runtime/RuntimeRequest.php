@@ -17,7 +17,7 @@ final readonly class RuntimeRequest
      */
     private array $headers;
 
-    private string|null $body;
+    private ?string $body;
 
     /**
      * @var array<string, mixed>
@@ -26,17 +26,17 @@ final readonly class RuntimeRequest
 
     /**
      * @param array<string, list<string>> $headers
-     * @param array<string, mixed> $attributes
+     * @param array<string, mixed>        $attributes
      */
     public function __construct(
         string $method,
         string $uri,
         array $headers = [],
-        string $body = null,
+        ?string $body = null,
         array $attributes = [],
     ) {
         $normalizedMethod = strtoupper(string: trim(string: $method));
-        $normalizedUri    = trim(string: $uri);
+        $normalizedUri = trim(string: $uri);
 
         if ($normalizedMethod === '') {
             throw new FrameworkMisconfigured(message: 'Runtime request method cannot be empty.');
@@ -46,10 +46,10 @@ final readonly class RuntimeRequest
             throw new FrameworkMisconfigured(message: 'Runtime request uri cannot be empty.');
         }
 
-        $this->method     = $normalizedMethod;
-        $this->uri        = $normalizedUri;
-        $this->headers    = $headers;
-        $this->body       = $body;
+        $this->method  = $normalizedMethod;
+        $this->uri     = $normalizedUri;
+        $this->headers = $headers;
+        $this->body    = $body;
         $this->attributes = $attributes;
     }
 
@@ -71,7 +71,7 @@ final readonly class RuntimeRequest
         return $this->headers;
     }
 
-    public function body() : string|null
+    public function body() : ?string
     {
         return $this->body;
     }

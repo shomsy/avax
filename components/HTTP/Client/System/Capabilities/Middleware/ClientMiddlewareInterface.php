@@ -23,7 +23,7 @@ interface ClientMiddlewareInterface
     /**
      * Process an HTTP request through this middleware.
      *
-     * @param OutboundRequest $request The outbound request
+     * @param OutboundRequest                           $request The outbound request
      * @param Closure(OutboundRequest) : ClientResponse $handler The next handler in the chain
      *
      * @return ClientResponse The HTTP response

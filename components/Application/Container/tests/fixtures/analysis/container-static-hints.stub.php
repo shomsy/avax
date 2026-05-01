@@ -9,6 +9,7 @@ declare(strict_types=1);
  *               'HintConditionalService'|'HintIdentityService'|'HintPipelineStepA'|'HintPipelineStepB'|'HintRuntimeInputConsumer'
  * @phpstan-type ContainerGroup 'hint.pipeline'
  * @phpstan-type ContainerSlice 'capability.identity'|'flow.hints'
+ *
  * @psalm-type ContainerServiceId =
  *             'HintConditionalService'|'HintIdentityService'|'HintPipelineStepA'|'HintPipelineStepB'|'HintRuntimeInputConsumer'
  * @psalm-type ContainerGroup = 'hint.pipeline'
@@ -17,61 +18,61 @@ declare(strict_types=1);
 return [
     'schemaVersion' => 1,
     'serviceIds'    => [
-            'HintConditionalService',
-            'HintIdentityService',
-            'HintPipelineStepA',
-            'HintPipelineStepB',
-            'HintRuntimeInputConsumer',
-        ],
+        'HintConditionalService',
+        'HintIdentityService',
+        'HintPipelineStepA',
+        'HintPipelineStepB',
+        'HintRuntimeInputConsumer',
+    ],
     'sliceExports'  => [
         'capability.identity' => [
-                    'HintConditionalService',
-                    'HintIdentityService',
-                ],
-        'flow.hints' => [
-                ],
+            'HintConditionalService',
+            'HintIdentityService',
         ],
+        'flow.hints' => [
+        ],
+    ],
     'sliceImports'  => [
         'capability.identity' => [
-                ],
-        'flow.hints' => [
-                    'capability.identity',
-                ],
         ],
+        'flow.hints' => [
+            'capability.identity',
+        ],
+    ],
     'groups'        => [
         'hint.pipeline' => [
-                    'HintPipelineStepA',
-                    'HintPipelineStepB',
-                ],
+            'HintPipelineStepA',
+            'HintPipelineStepB',
         ],
+    ],
     'runtimeInputs' => [
         'HintConditionalService' => [
-                ],
-        'HintIdentityService'    => [
-                ],
-        'HintPipelineStepA'      => [
-                ],
-        'HintPipelineStepB'      => [
-                ],
-        'HintRuntimeInputConsumer' => [
-                    'token',
-                ],
         ],
+        'HintIdentityService'    => [
+        ],
+        'HintPipelineStepA'      => [
+        ],
+        'HintPipelineStepB'      => [
+        ],
+        'HintRuntimeInputConsumer' => [
+            'token',
+        ],
+    ],
     'conditionals'  => [
         'HintConditionalService' => [
             'profiles' => [
-                            'prod',
-                        ],
-            'flags'   => [
-                            'beta',
-                        ],
+                'prod',
+            ],
+            'flags'    => [
+                'beta',
+            ],
             'tenants' => [
-                        ],
+            ],
             'regions' => [
-                        ],
-            'modes'   => [
-                        ],
-                    'fallback' => false,
-                ],
+            ],
+            'modes'    => [
+            ],
+            'fallback' => false,
         ],
+    ],
 ];

@@ -35,6 +35,7 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      * @throws ReservedRouteNameException
      * @throws ReservedRouteNameException
@@ -56,6 +57,7 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      * @throws ReservedRouteNameException
      */
@@ -88,6 +90,7 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function middleware_groups_work_in_bootstrapper() : void
@@ -109,6 +112,7 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReflectionException
      */
     public function route_grouping_preserves_middleware_stack() : void
@@ -164,11 +168,11 @@ class AppKernelIntegrationTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $psr17Factory = new Psr17Factory();
+        $psr17Factory = new Psr17Factory;
 
-        $this->router          = $this->createMock(RouterInterface::class);
-        $routeCollection       = new RouteCollection();
-        $this->dispatcher      = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
+        $this->router     = $this->createMock(RouterInterface::class);
+        $routeCollection  = new RouteCollection;
+        $this->dispatcher = new ControllerDispatcher(container: $this->createMock(ContainerInterface::class));
         $this->responseFactory = new Responses(
             streamFactory: $psr17Factory->createStreamFactory(),
             response     : $psr17Factory->createResponses()->createResponse(),

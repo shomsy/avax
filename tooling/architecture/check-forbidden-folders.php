@@ -6,7 +6,6 @@ declare(strict_types=1);
  * Check for forbidden folders (dumping grounds).
  * Ensures no Core/, Shared/, Helpers/ folders exist, and DataLayer/DataFoundation are empty of real code.
  */
-
 $rootDir = dirname(__DIR__, 2);
 
 $forbiddenFolders = [

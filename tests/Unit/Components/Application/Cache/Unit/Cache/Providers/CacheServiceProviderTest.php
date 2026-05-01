@@ -14,10 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 final class RegisterCacheDependenciesTest extends TestCase
 {
-    private FrozenClock   $clock;
+    private FrozenClock $clock;
+
     private InMemoryCacheStore $defaultStore;
+
     private InMemoryCacheStore $apiStore;
+
     private CacheContract $defaultCache;
+
     private CacheContract $apiCache;
 
     public function test_cache_store_with_name_requires_provider() : void
@@ -77,9 +81,9 @@ final class RegisterCacheDependenciesTest extends TestCase
         Cache::reset();
         CompiledCache::reset();
 
-        $this->clock        = new FrozenClock();
+        $this->clock    = new FrozenClock;
         $this->defaultStore = new InMemoryCacheStore(clock: $this->clock);
-        $this->apiStore     = new InMemoryCacheStore(clock: $this->clock);
+        $this->apiStore = new InMemoryCacheStore(clock: $this->clock);
 
         $this->defaultCache = new AvaxCache(
             store: $this->defaultStore,

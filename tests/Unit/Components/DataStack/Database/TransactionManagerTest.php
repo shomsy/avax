@@ -19,6 +19,7 @@ use RuntimeException;
 final class TestDatabaseConnection implements DatabaseConnection
 {
     public array $calls = [];
+
     public ?PDOException $pendingException = null;
 
     public function getConnection() : PDO
@@ -40,7 +41,7 @@ final class TestDatabaseConnection implements DatabaseConnection
     {
         $this->calls[] = 'beginTransaction';
         if ($this->pendingException !== null) {
-            $ex                     = $this->pendingException;
+            $ex = $this->pendingException;
             $this->pendingException = null;
 
             throw $ex;
@@ -69,7 +70,7 @@ final class TransactionManagerTest extends TestCase
 {
     public function test_begin_starts_transaction() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin();
 
@@ -82,12 +83,12 @@ final class TransactionManagerTest extends TestCase
 
     private function createTestConnection() : TestDatabaseConnection
     {
-        return new TestDatabaseConnection();
+        return new TestDatabaseConnection;
     }
 
     public function test_commit_commits_transaction() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin();
         $manager->commit();
@@ -99,7 +100,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_rollback_rolls_back_transaction() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin();
         $manager->rollback();
@@ -111,7 +112,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_commit_without_active_transaction_throws() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $this->expectException(RuntimeException::class);
@@ -122,7 +123,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_rollback_without_active_transaction_throws() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $this->expectException(RuntimeException::class);
@@ -133,7 +134,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_begin_sets_isolation_level() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin(IsolationLevel::SERIALIZABLE);
 
@@ -145,7 +146,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_initial_state_is_not_active() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $this->assertFalse($manager->isActive());
@@ -157,7 +158,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_nested_begin_creates_savepoint() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin();
         $manager->begin();
@@ -171,7 +172,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_nested_commit_releases_savepoint() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin();
         $manager->begin();
@@ -185,7 +186,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_nested_rollback_rolls_back_to_savepoint() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin();
         $manager->begin();
@@ -199,7 +200,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_deeply_nested_transactions() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin();
         $manager->begin();
@@ -214,7 +215,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_savepoint_name_changes_on_each_nesting() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->begin();
         $this->assertNull($manager->currentSavepoint()); // depth 1, no savepoint
@@ -232,7 +233,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_closure_auto_commits() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $result = $manager->transaction(static fn (TransactionManager $tm) => 'success');
 
@@ -244,7 +245,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_closure_auto_rolls_back_on_exception() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $this->expectException(RuntimeException::class);
@@ -257,7 +258,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_closure_receives_manager_instance() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $manager->transaction(static function (TransactionManager $tm) use ($manager) : void {
@@ -268,7 +269,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_with_isolation_level() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $manager->transaction(static fn () => 'done', IsolationLevel::REPEATABLE_READ);
 
@@ -278,7 +279,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_nested_transaction_closures() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $manager->transaction(static function (TransactionManager $tm) : void {
@@ -293,7 +294,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_with_retry_succeeds_on_second_attempt() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $attempt = 0;
         $manager = new TransactionManager($conn);
 
@@ -325,7 +326,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_with_retry_gives_up_after_max_attempts() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $policy = new RetryPolicy(
@@ -350,7 +351,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_with_retry_uses_default_deadlock_policy() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $result = $manager->transactionWithRetry(static fn () => 'default_policy');
@@ -360,7 +361,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_with_retry_does_not_retry_non_retriable_exception() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $policy = new RetryPolicy(
@@ -388,8 +389,8 @@ final class TransactionManagerTest extends TestCase
 
     public function test_after_commit_callback_executes_on_commit() : void
     {
-        $conn     = $this->createTestConnection();
-        $manager  = new TransactionManager($conn);
+        $conn    = $this->createTestConnection();
+        $manager = new TransactionManager($conn);
         $executed = false;
 
         $manager->afterCommit(static function () use (&$executed) : void {
@@ -404,8 +405,8 @@ final class TransactionManagerTest extends TestCase
 
     public function test_after_commit_callback_does_not_execute_on_rollback() : void
     {
-        $conn     = $this->createTestConnection();
-        $manager  = new TransactionManager($conn);
+        $conn    = $this->createTestConnection();
+        $manager = new TransactionManager($conn);
         $executed = false;
 
         $manager->afterCommit(static function () use (&$executed) : void {
@@ -420,8 +421,8 @@ final class TransactionManagerTest extends TestCase
 
     public function test_after_rollback_callback_executes_on_rollback() : void
     {
-        $conn     = $this->createTestConnection();
-        $manager  = new TransactionManager($conn);
+        $conn    = $this->createTestConnection();
+        $manager = new TransactionManager($conn);
         $executed = false;
 
         $manager->afterRollback(static function () use (&$executed) : void {
@@ -436,8 +437,8 @@ final class TransactionManagerTest extends TestCase
 
     public function test_after_rollback_callback_does_not_execute_on_commit() : void
     {
-        $conn     = $this->createTestConnection();
-        $manager  = new TransactionManager($conn);
+        $conn    = $this->createTestConnection();
+        $manager = new TransactionManager($conn);
         $executed = false;
 
         $manager->afterRollback(static function () use (&$executed) : void {
@@ -452,7 +453,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_multiple_after_commit_callbacks() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
         $results = [];
 
@@ -471,9 +472,9 @@ final class TransactionManagerTest extends TestCase
 
     public function test_callbacks_are_cleared_after_execution() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn  = $this->createTestConnection();
         $manager = new TransactionManager($conn);
-        $count   = 0;
+        $count = 0;
 
         $manager->afterCommit(static function () use (&$count) : void {
             $count++;
@@ -632,7 +633,7 @@ final class TransactionManagerTest extends TestCase
     public function test_retry_policy_should_retry_on_deadlock_message() : void
     {
         $policy = RetryPolicy::forDeadlocks();
-        $ex     = new RuntimeException('Deadlock found when trying to get lock');
+        $ex = new RuntimeException('Deadlock found when trying to get lock');
 
         $this->assertTrue($policy->shouldRetry($ex, 1));
     }
@@ -640,7 +641,7 @@ final class TransactionManagerTest extends TestCase
     public function test_retry_policy_should_retry_on_serialization_failure() : void
     {
         $policy = RetryPolicy::forDeadlocks();
-        $ex     = new RuntimeException('Serialization failure');
+        $ex = new RuntimeException('Serialization failure');
 
         $this->assertTrue($policy->shouldRetry($ex, 1));
     }
@@ -648,7 +649,7 @@ final class TransactionManagerTest extends TestCase
     public function test_retry_policy_should_not_retry_beyond_max_attempts() : void
     {
         $policy = RetryPolicy::forDeadlocks(3);
-        $ex     = new RuntimeException('Deadlock found');
+        $ex = new RuntimeException('Deadlock found');
 
         $this->assertTrue($policy->shouldRetry($ex, 1));
         $this->assertTrue($policy->shouldRetry($ex, 2));
@@ -684,7 +685,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_retry_policy_with_max_attempts() : void
     {
-        $policy    = RetryPolicy::forDeadlocks(5);
+        $policy = RetryPolicy::forDeadlocks(5);
         $newPolicy = $policy->withMaxAttempts(10);
 
         $this->assertSame(5, $policy->maxAttempts);
@@ -694,7 +695,7 @@ final class TransactionManagerTest extends TestCase
     public function test_retry_policy_has_retry_criteria() : void
     {
         $policyWith    = RetryPolicy::forDeadlocks();
-        $policyWithout = new RetryPolicy();
+        $policyWithout = new RetryPolicy;
 
         $this->assertTrue($policyWith->hasRetryCriteria());
         $this->assertFalse($policyWithout->hasRetryCriteria());
@@ -704,7 +705,7 @@ final class TransactionManagerTest extends TestCase
 
     public function test_reset_clears_all_state() : void
     {
-        $conn    = $this->createTestConnection();
+        $conn = $this->createTestConnection();
         $manager = new TransactionManager($conn);
 
         $manager->afterCommit(static function () : void {});
@@ -721,8 +722,8 @@ final class TransactionManagerTest extends TestCase
 
     public function test_transaction_closure_callback_not_executed_on_rollback() : void
     {
-        $conn             = $this->createTestConnection();
-        $manager          = new TransactionManager($conn);
+        $conn    = $this->createTestConnection();
+        $manager = new TransactionManager($conn);
         $callbackExecuted = false;
 
         $manager->afterCommit(static function () use (&$callbackExecuted) : void {

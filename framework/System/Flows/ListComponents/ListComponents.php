@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\ComponentManifest\ComponentManifest;
 final readonly class ListComponents
 {
     public function __construct(
-        private ComponentDiscovery $discovery = new ComponentDiscovery(),
+        private ComponentDiscovery $discovery = new ComponentDiscovery,
     ) {}
 
     /**
@@ -30,8 +30,8 @@ final readonly class ListComponents
         echo str_repeat('=', $width) . "\n";
 
         foreach ($manifests as $manifest) {
-            $provides   = implode(', ', array_slice($manifest->provides, 0, 3));
-            $depends    = implode(', ', $manifest->dependsOn);
+            $provides = implode(', ', array_slice($manifest->provides, 0, 3));
+            $depends  = implode(', ', $manifest->dependsOn);
             $resettable = implode(', ', $manifest->resettable);
 
             if (strlen($provides) > 30) {

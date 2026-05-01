@@ -17,10 +17,10 @@ final readonly class SessionCookieWriter
         $expires = $this->settings->lifetime > 0 ? time() + $this->settings->lifetime : 0;
 
         setcookie($this->settings->name, $sessionId, [
-            'expires'  => $expires,
-            'path'     => $this->settings->path,
-            'domain'   => $this->settings->domain,
-            'secure'   => $this->settings->secure,
+            'expires' => $expires,
+            'path'    => $this->settings->path,
+            'domain'  => $this->settings->domain,
+            'secure'  => $this->settings->secure,
             'httponly' => $this->settings->httpOnly,
             'samesite' => $this->settings->sameSite,
         ]);
@@ -29,10 +29,10 @@ final readonly class SessionCookieWriter
     public function expire() : void
     {
         setcookie($this->settings->name, '', [
-            'expires'  => time() - 3600,
-            'path'     => $this->settings->path,
-            'domain'   => $this->settings->domain,
-            'secure'   => $this->settings->secure,
+            'expires' => time() - 3600,
+            'path'    => $this->settings->path,
+            'domain'  => $this->settings->domain,
+            'secure'  => $this->settings->secure,
             'httponly' => $this->settings->httpOnly,
             'samesite' => $this->settings->sameSite,
         ]);

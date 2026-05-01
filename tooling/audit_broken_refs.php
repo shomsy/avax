@@ -10,7 +10,7 @@ spl_autoload_register(function ($class) : void {
         return;
     }
     $relativeClass = substr($class, $len);
-    $file          = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+    $file    = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
     if (file_exists($file)) {
         require $file;
     }
@@ -24,7 +24,7 @@ use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 
 $baseDir = __DIR__;
-$parser = (new ParserFactory())->createForNewestSupportedVersion();
+$parser = (new ParserFactory)->createForNewestSupportedVersion();
 
 $phpFiles = [];
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir)) as $file) {
@@ -41,9 +41,9 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir))
     $phpFiles[] = $path;
 }
 
-$defined    = [];
+$defined = [];
 $references = [];
-$total      = count($phpFiles);
+$total   = count($phpFiles);
 
 echo "PASS 1: Parsing $total files for definitions...\n";
 
@@ -66,12 +66,12 @@ foreach ($phpFiles as $idx => $path) {
             $ns = $stmt->name ? $stmt->name->toString() : '';
             foreach ($stmt->stmts as $inner) {
                 if ($inner instanceof Stmt\ClassLike && isset($inner->name)) {
-                    $fqn           = $ns ? $ns . '\\' . $inner->name->toString() : $inner->name->toString();
+                    $fqn = $ns ? $ns . '\\' . $inner->name->toString() : $inner->name->toString();
                     $defined[$fqn] = $path;
                 }
             }
         } elseif ($stmt instanceof Stmt\ClassLike && isset($stmt->name)) {
-            $fqn           = $ns ? $ns . '\\' . $stmt->name->toString() : $stmt->name->toString();
+            $fqn = $ns ? $ns . '\\' . $stmt->name->toString() : $stmt->name->toString();
             $defined[$fqn] = $path;
         }
     }
@@ -141,28 +141,32 @@ function processType(?Node $type, string $ns, array $uses, string $file, string 
 
 class RefVisitor extends NodeVisitorAbstract
 {
-    private string $ns   = '';
-    private array  $uses = [];
+    private string $ns = '';
+
+    private array $uses = [];
+
     private string $file;
-    private array  $defined;
-    private array  $references;
+
+    private array $defined;
+
+    private array $references;
 
     public function __construct(string $file, array $defined, array &$references)
     {
-        $this->file       = $file;
-        $this->defined    = $defined;
+        $this->file    = $file;
+        $this->defined = $defined;
         $this->references = &$references;
     }
 
     public function enterNode(Node $node) : ?int
     {
         if ($node instanceof Stmt\Namespace_) {
-            $this->ns   = $node->name ? $node->name->toString() : '';
+            $this->ns = $node->name ? $node->name->toString() : '';
             $this->uses = [];
         } elseif ($node instanceof Stmt\Use_) {
             if ($node->type === Stmt\Use_::TYPE_NORMAL) {
                 foreach ($node->uses as $use) {
-                    $alias              = $use->getAlias()->toString();
+                    $alias = $use->getAlias()->toString();
                     $this->uses[$alias] = $use->name->toString();
                     $this->add($use->name->toString(), 'use-statement', $node->getStartLine());
                 }
@@ -171,8 +175,8 @@ class RefVisitor extends NodeVisitorAbstract
             if ($node->type === Stmt\Use_::TYPE_NORMAL) {
                 $prefix = $node->prefix->toString();
                 foreach ($node->uses as $use) {
-                    $fqn                = $prefix . '\\' . $use->name->toString();
-                    $alias              = $use->getAlias()->toString();
+                    $fqn   = $prefix . '\\' . $use->name->toString();
+                    $alias = $use->getAlias()->toString();
                     $this->uses[$alias] = $fqn;
                     $this->add($fqn, 'use-statement', $node->getStartLine());
                 }
@@ -289,7 +293,7 @@ foreach ($phpFiles as $idx => $path) {
     if (! $stmts) {
         continue;
     }
-    $traverser = new NodeTraverser();
+    $traverser = new NodeTraverser;
     $traverser->addVisitor(new RefVisitor($path, $defined, $references));
     $traverser->traverse($stmts);
 }
@@ -313,10 +317,10 @@ foreach ($references as $fqn => $refs) {
     $seen = [];
     $uniq = [];
     foreach ($refs as $r) {
-        $k = $r['file'] . '|' . $r['context'] . '|' . $r['line'];
+        $k          = $r['file'] . '|' . $r['context'] . '|' . $r['line'];
         if (! isset($seen[$k])) {
             $seen[$k] = true;
-            $uniq[]   = $r;
+            $uniq[] = $r;
         }
     }
     $references[$fqn] = $uniq;

@@ -55,7 +55,7 @@ final class ConfigExplainer
     /**
      * Get the source of a config value.
      */
-    public function getSource(string $key) : ConfigSource|null
+    public function getSource(string $key) : ?ConfigSource
     {
         return $this->sources[$key] ?? null;
     }

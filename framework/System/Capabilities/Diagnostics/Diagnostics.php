@@ -6,8 +6,9 @@ namespace Avax\Framework\System\Capabilities\Diagnostics;
 
 final class Diagnostics
 {
-    private static CorrelationId|null $correlationId = null;
-    private static TraceId|null $traceId = null;
+    private static ?CorrelationId $correlationId = null;
+
+    private static ?TraceId $traceId = null;
 
     public static function correlationId() : CorrelationId
     {

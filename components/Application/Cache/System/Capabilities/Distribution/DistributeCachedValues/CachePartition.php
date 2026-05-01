@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Dis
 final readonly class CachePartition
 {
     public function __construct(
-        public int   $index,
+        public int $index,
         public CacheNodeId $cacheNodeId,
         /** @var array<CacheNodeId> */
         public array $replicaNodeIds = [],

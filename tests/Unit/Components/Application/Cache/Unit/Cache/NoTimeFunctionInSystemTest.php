@@ -31,7 +31,7 @@ final class NoTimeFunctionInSystemTest extends TestCase
             $content = file_get_contents($file->getPathname());
 
             if (preg_match('/\btime\(\)/', $content)) {
-                $relativePath    = str_replace($systemDir . '/', '', $file->getPathname());
+                $relativePath = str_replace($systemDir . '/', '', $file->getPathname());
                 $filesWithTime[] = $relativePath;
             }
         }

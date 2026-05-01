@@ -34,9 +34,9 @@ $container = makeTestContainer();
 $container->bind(abstract: CallArgumentGreeterContract::class, concrete: CallArgumentGreeter::class);
 
 $resolver = $container->get(id: ResolveDependency::class);
-$arguments  = new ResolveCallArguments(dependencies: new ResolveDependencies());
+$arguments = new ResolveCallArguments(dependencies: new ResolveDependencies);
 $reflection = new ReflectionMethod(objectOrMethod: CallArgumentTarget::class, method: 'handle');
-$resolved   = $arguments->resolve(
+$resolved = $arguments->resolve(
     parameters: $reflection->getParameters(),
     overrides : ['name' => 'custom'],
     resolver  : $resolver,

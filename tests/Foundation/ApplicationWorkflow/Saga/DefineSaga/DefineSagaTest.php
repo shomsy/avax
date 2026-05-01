@@ -13,7 +13,7 @@ use components\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
 
 final class DefineSagaTest extends TestCase
 {
-    public function testValidLinearSagaDefinitionPassesValidation() : void
+    public function test_valid_linear_saga_definition_passes_validation() : void
     {
         $definition = new SagaDefinition(
             name         : 'checkout',
@@ -29,7 +29,7 @@ final class DefineSagaTest extends TestCase
         $this->assertSame('checkout', $definition->name);
     }
 
-    public function testDuplicateStepNameFailsBeforeRuntime() : void
+    public function test_duplicate_step_name_fails_before_runtime() : void
     {
         $definition = new SagaDefinition(
             name         : 'checkout',
@@ -46,7 +46,7 @@ final class DefineSagaTest extends TestCase
         new DefineSaga()->validate(definition: $definition);
     }
 
-    public function testUnknownNextStepFailsBeforeRuntime() : void
+    public function test_unknown_next_step_fails_before_runtime() : void
     {
         $definition = new SagaDefinition(
             name         : 'checkout',

@@ -29,7 +29,7 @@ use Stringable;
  * Combines Router, Kernel, and PSR-15 middleware pipeline into
  * a production-ready HTTP application runtime.
  */
-final readonly class AppKernel implements Kernel, HttpInterface
+final readonly class AppKernel implements HttpInterface, Kernel
 {
     private array $middlewareStack;
 
@@ -77,7 +77,7 @@ final readonly class AppKernel implements Kernel, HttpInterface
 
     private function createOfficeIpRestriction() : MiddlewareInterface
     {
-        return new class () extends IpRestrictionMiddleware {
+        return new class extends IpRestrictionMiddleware {
             #[Override]
             protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
             {
@@ -99,13 +99,13 @@ final readonly class AppKernel implements Kernel, HttpInterface
 
     private function createSessionMiddleware() : MiddlewareInterface
     {
-        return new SessionLifecycleMiddleware(new NullSession());
+        return new SessionLifecycleMiddleware(new NullSession);
     }
 
     private function createRequestLogger() : MiddlewareInterface
     {
         return new RequestLoggerMiddleware(
-            new class () implements LoggerInterface {
+            new class implements LoggerInterface {
                 public function emergency(Stringable|string $message, array $context = []) : void
                 {
                     error_log((string) $message);
@@ -157,7 +157,7 @@ final readonly class AppKernel implements Kernel, HttpInterface
     private function createRateLimiter() : MiddlewareInterface
     {
         return new RateLimiterMiddleware(
-            new class () implements RateLimiterInterface {
+            new class implements RateLimiterInterface {
                 public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool
                 {
                     return true;
@@ -177,10 +177,10 @@ final readonly class AppKernel implements Kernel, HttpInterface
 
                 public function clear(string $key) : void {}
             },
-            (new class () {
+            (new class {
                 public function rateLimited(int $retryAfter) : ResponseInterface
                 {
-                    return (new ResponseFactory())->rateLimited($retryAfter);
+                    return (new ResponseFactory)->rateLimited($retryAfter);
                 }
             }),
             'ip',

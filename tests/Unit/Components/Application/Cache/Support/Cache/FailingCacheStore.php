@@ -17,12 +17,14 @@ use RuntimeException;
 final class FailingCacheStore implements CacheStore
 {
     private Clock $clock;
+
     private float $failureRate = 1.0;
+
     private bool $shouldFail = false;
 
-    public function __construct(Clock $clock = null)
+    public function __construct(?Clock $clock = null)
     {
-        $this->clock = $clock ?? new SystemClock();
+        $this->clock = $clock ?? new SystemClock;
     }
 
     public function setFailureRate(float $rate) : void

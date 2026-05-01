@@ -34,9 +34,9 @@ final class FakeCacheStoreForHealth implements CacheStore
 
     private Clock $clock;
 
-    public function __construct(Clock $clock = null)
+    public function __construct(?Clock $clock = null)
     {
-        $this->clock = $clock ?? new SystemClock();
+        $this->clock = $clock ?? new SystemClock;
     }
 
     public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
@@ -110,7 +110,7 @@ final class FakeCacheStoreForHealth implements CacheStore
 
     public function setConnected(bool $connected, string $error = 'Connection refused') : void
     {
-        $this->connected       = $connected;
+        $this->connected = $connected;
         $this->connectionError = $error;
     }
 
@@ -129,7 +129,7 @@ final class CacheHealthDetectorTest extends TestCase
 {
     public function test_detect_returns_healthy_status_for_working_store() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status = $detector->detect($store, 'test-store');
@@ -142,8 +142,8 @@ final class CacheHealthDetectorTest extends TestCase
     // --- detect() returns health status ---
 
     private function createDetector(
-        Clock $clock = null,
-        int   $latencyThresholdMs = 100,
+        ?Clock $clock = null,
+        int    $latencyThresholdMs = 100,
         float $memoryUsageThreshold = 90.0,
         float $hitRateThreshold = 0.5,
     ) : CacheHealthDetector
@@ -158,7 +158,7 @@ final class CacheHealthDetectorTest extends TestCase
 
     public function test_detect_returns_unhealthy_for_disconnected_store() : void
     {
-        $store = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $store->setConnected(false);
 
         $detector = $this->createDetector();
@@ -172,7 +172,7 @@ final class CacheHealthDetectorTest extends TestCase
 
     public function test_detect_caches_status() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status1 = $detector->detect($store, 'cached-store');
@@ -186,8 +186,8 @@ final class CacheHealthDetectorTest extends TestCase
 
     public function test_detect_clears_cached_status_after_ttl() : void
     {
-        $clock    = new FrozenClock(Timestamp::fromUnixTime(1000000));
-        $store    = new FakeCacheStoreForHealth();
+        $clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $store = new FakeCacheStoreForHealth;
         $detector = new CacheHealthDetector(
             clock                : $clock,
             latencyThresholdMs   : 100,
@@ -210,7 +210,7 @@ final class CacheHealthDetectorTest extends TestCase
 
     public function test_detect_uses_store_id_for_caching() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $detector->detect($store, 'store-a');
@@ -225,9 +225,9 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- checkConnection() ---
 
-    public function test_checkConnection_detects_connected_store() : void
+    public function test_check_connection_detects_connected_store() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status = $detector->checkConnection($store);
@@ -236,9 +236,9 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertNull($status->error);
     }
 
-    public function test_checkConnection_detects_disconnected_store() : void
+    public function test_check_connection_detects_disconnected_store() : void
     {
-        $store = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $store->setConnected(false, 'Redis server unavailable');
 
         $detector = $this->createDetector();
@@ -250,9 +250,9 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertStringContainsString('Redis server unavailable', $status->error);
     }
 
-    public function test_checkConnection_measures_latency() : void
+    public function test_check_connection_measures_latency() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status = $detector->checkConnection($store);
@@ -262,9 +262,9 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- checkLatency() ---
 
-    public function test_checkLatency_returns_healthy_for_fast_store() : void
+    public function test_check_latency_returns_healthy_for_fast_store() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector(latencyThresholdMs: 100);
 
         $status = $detector->checkLatency($store);
@@ -272,9 +272,9 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertNull($status->error);
     }
 
-    public function test_checkLatency_returns_degraded_for_slow_store() : void
+    public function test_check_latency_returns_degraded_for_slow_store() : void
     {
-        $store = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $store->setArtificialLatencyMs(200);
 
         $detector = $this->createDetector(latencyThresholdMs: 100);
@@ -285,9 +285,9 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertStringContainsString('High latency detected', $status->error);
     }
 
-    public function test_checkLatency_with_multiple_samples() : void
+    public function test_check_latency_with_multiple_samples() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status = $detector->checkLatency($store, samples: 10);
@@ -295,9 +295,9 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertGreaterThanOrEqual(0, $status->latency);
     }
 
-    public function test_checkLatency_returns_degraded_on_error() : void
+    public function test_check_latency_returns_degraded_on_error() : void
     {
-        $store = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $store->setConnected(false);
 
         $detector = $this->createDetector();
@@ -310,9 +310,9 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- checkMemory() ---
 
-    public function test_checkMemory_returns_healthy_when_store_does_not_support_memory_stats() : void
+    public function test_check_memory_returns_healthy_when_store_does_not_support_memory_stats() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status = $detector->checkMemory($store);
@@ -323,9 +323,9 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- checkHitRate() ---
 
-    public function test_checkHitRate_returns_healthy_when_store_does_not_support_hit_rate() : void
+    public function test_check_hit_rate_returns_healthy_when_store_does_not_support_hit_rate() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status = $detector->checkHitRate($store);
@@ -336,7 +336,7 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- CacheHealthStatus factory methods ---
 
-    public function test_cacheHealthStatus_healthy() : void
+    public function test_cache_health_status_healthy() : void
     {
         $status = CacheHealthStatus::healthy(
             latency        : 10,
@@ -359,7 +359,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertSame('7.0.0', $status->version);
     }
 
-    public function test_cacheHealthStatus_unhealthy() : void
+    public function test_cache_health_status_unhealthy() : void
     {
         $status = CacheHealthStatus::unhealthy(
             error  : 'Connection timeout',
@@ -371,7 +371,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertSame(5000, $status->latency);
     }
 
-    public function test_cacheHealthStatus_degraded() : void
+    public function test_cache_health_status_degraded() : void
     {
         $status = CacheHealthStatus::degraded(
             error  : 'High latency',
@@ -387,7 +387,7 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- isHealthy() / isDegraded() checks ---
 
-    public function test_isHealthy_returns_true_for_healthy_status() : void
+    public function test_is_healthy_returns_true_for_healthy_status() : void
     {
         $status = CacheHealthStatus::healthy(
             latency    : 10,
@@ -398,14 +398,14 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertTrue($status->isHealthy());
     }
 
-    public function test_isHealthy_returns_false_for_unhealthy_status() : void
+    public function test_is_healthy_returns_false_for_unhealthy_status() : void
     {
         $status = CacheHealthStatus::unhealthy(error: 'Down');
 
         $this->assertFalse($status->isHealthy());
     }
 
-    public function test_isHealthy_returns_false_for_degraded_with_high_latency() : void
+    public function test_is_healthy_returns_false_for_degraded_with_high_latency() : void
     {
         $status = CacheHealthStatus::degraded(
             error  : 'Slow',
@@ -415,7 +415,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($status->isHealthy());
     }
 
-    public function test_isHealthy_returns_false_for_degraded_with_high_memory() : void
+    public function test_is_healthy_returns_false_for_degraded_with_high_memory() : void
     {
         $status = new CacheHealthStatus(
             connected  : true,
@@ -428,7 +428,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($status->isHealthy());
     }
 
-    public function test_isHealthy_returns_false_for_degraded_with_low_hitRate() : void
+    public function test_is_healthy_returns_false_for_degraded_with_low_hit_rate() : void
     {
         $status = new CacheHealthStatus(
             connected  : true,
@@ -441,7 +441,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($status->isHealthy());
     }
 
-    public function test_isHealthy_with_custom_thresholds() : void
+    public function test_is_healthy_with_custom_thresholds() : void
     {
         $status = CacheHealthStatus::degraded(
             error  : 'Slow',
@@ -455,7 +455,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($status->isHealthy(maxLatencyMs: 30));
     }
 
-    public function test_isDegraded_returns_true_for_degraded_status() : void
+    public function test_is_degraded_returns_true_for_degraded_status() : void
     {
         $status = CacheHealthStatus::degraded(
             error  : 'High latency',
@@ -465,7 +465,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertTrue($status->isDegraded());
     }
 
-    public function test_isDegraded_returns_false_for_healthy_status() : void
+    public function test_is_degraded_returns_false_for_healthy_status() : void
     {
         $status = CacheHealthStatus::healthy(
             latency    : 10,
@@ -476,14 +476,14 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($status->isDegraded());
     }
 
-    public function test_isDegraded_returns_false_for_unhealthy_status() : void
+    public function test_is_degraded_returns_false_for_unhealthy_status() : void
     {
         $status = CacheHealthStatus::unhealthy(error: 'Down');
 
         $this->assertFalse($status->isDegraded());
     }
 
-    public function test_isDegraded_with_custom_thresholds() : void
+    public function test_is_degraded_with_custom_thresholds() : void
     {
         $status = CacheHealthStatus::healthy(latency: 50);
 
@@ -496,7 +496,7 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- Health status properties ---
 
-    public function test_getHealthLevel() : void
+    public function test_get_health_level() : void
     {
         $healthy = CacheHealthStatus::healthy(latency: 10);
         $this->assertSame('healthy', $healthy->getHealthLevel());
@@ -508,7 +508,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertSame('degraded', $degraded->getHealthLevel());
     }
 
-    public function test_getMemoryUsagePercent() : void
+    public function test_get_memory_usage_percent() : void
     {
         $status = new CacheHealthStatus(
             connected  : true,
@@ -522,14 +522,14 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertSame(50.0, $status->getMemoryUsagePercent());
     }
 
-    public function test_getMemoryUsagePercent_without_limit() : void
+    public function test_get_memory_usage_percent_without_limit() : void
     {
         $status = CacheHealthStatus::healthy(memoryUsage: 75.0);
 
         $this->assertSame(75.0, $status->getMemoryUsagePercent());
     }
 
-    public function test_isMemoryCritical() : void
+    public function test_is_memory_critical() : void
     {
         $critical = new CacheHealthStatus(
             connected  : true,
@@ -546,7 +546,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($notCritical->isMemoryCritical());
     }
 
-    public function test_isMemoryHigh() : void
+    public function test_is_memory_high() : void
     {
         $high = new CacheHealthStatus(
             connected  : true,
@@ -563,7 +563,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($notHigh->isMemoryHigh());
     }
 
-    public function test_isLatencyHigh() : void
+    public function test_is_latency_high() : void
     {
         $status = CacheHealthStatus::healthy(latency: 150);
 
@@ -572,7 +572,7 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($status->isLatencyHigh(thresholdMs: 200));
     }
 
-    public function test_isHitRateLow() : void
+    public function test_is_hit_rate_low() : void
     {
         $status = new CacheHealthStatus(
             connected  : true,
@@ -589,7 +589,7 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- toArray() ---
 
-    public function test_toArray() : void
+    public function test_to_array() : void
     {
         $status = CacheHealthStatus::healthy(
             latency        : 15,
@@ -618,10 +618,10 @@ final class CacheHealthDetectorTest extends TestCase
 
     // --- clearCachedStatus ---
 
-    public function test_clearCachedStatus() : void
+    public function test_clear_cached_status() : void
     {
-        $clock    = new FrozenClock(Timestamp::fromUnixTime(1000000));
-        $store    = new FakeCacheStoreForHealth();
+        $clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector($clock);
 
         $detector->detect($store, 'clearable-store');
@@ -634,10 +634,10 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertFalse($status->connected);
     }
 
-    public function test_clearAllCachedStatuses() : void
+    public function test_clear_all_cached_statuses() : void
     {
-        $clock    = new FrozenClock(Timestamp::fromUnixTime(1000000));
-        $store    = new FakeCacheStoreForHealth();
+        $clock = new FrozenClock(Timestamp::fromUnixTime(1000000));
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector($clock);
 
         $detector->detect($store, 'store-a');
@@ -658,7 +658,7 @@ final class CacheHealthDetectorTest extends TestCase
 
     public function test_detect_with_default_store_id() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status = $detector->detect($store);
@@ -666,9 +666,9 @@ final class CacheHealthDetectorTest extends TestCase
         $this->assertTrue($status->connected);
     }
 
-    public function test_health_status_lastCheck_is_set() : void
+    public function test_health_status_last_check_is_set() : void
     {
-        $store    = new FakeCacheStoreForHealth();
+        $store = new FakeCacheStoreForHealth;
         $detector = $this->createDetector();
 
         $status = $detector->detect($store, 'timestamp-store');

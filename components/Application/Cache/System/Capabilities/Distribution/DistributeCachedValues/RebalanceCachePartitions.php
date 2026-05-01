@@ -45,7 +45,7 @@ final readonly class RebalanceCachePartitions
             if (! isset($old[$partition]) || $old[$partition] !== $nodeId) {
                 $moves[$partition] = [
                     'from' => $old[$partition] ?? null,
-                    'to'   => $nodeId,
+                    'to' => $nodeId,
                 ];
             }
         }

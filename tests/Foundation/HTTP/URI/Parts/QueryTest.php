@@ -19,7 +19,7 @@ final class QueryTest extends TestCase
     public function test_it_creates_empty_query() : void
     {
         // Arrange & Act
-        $query = new Query();
+        $query = new Query;
 
         // Assert
         self::assertSame(expected: '', actual: (string) $query);
@@ -93,7 +93,7 @@ final class QueryTest extends TestCase
     public function test_it_chains_multiple_adds() : void
     {
         // Arrange
-        $query = new Query();
+        $query = new Query;
 
         // Act
         $newQuery = $query
@@ -242,7 +242,7 @@ final class QueryTest extends TestCase
     public function test_it_encodes_rendered_output() : void
     {
         // Arrange & Act
-        $query    = new Query();
+        $query = new Query;
         $newQuery = $query->add(key: 'name', value: 'John Doe');
 
         // Assert

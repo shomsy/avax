@@ -60,7 +60,7 @@ final class CriticalPathTest extends TestCase
     public function test_entity_manager_persists_and_rehydrates_entity() : void
     {
         $entityManager = $this->database->entityManager();
-        $user          = new TestUserEntity(name: 'Bob', email: 'bob@test.com');
+        $user = new TestUserEntity(name: 'Bob', email: 'bob@test.com');
 
         $entityManager->persist(entity: $user);
         $entityManager->flush();
@@ -81,7 +81,7 @@ final class CriticalPathTest extends TestCase
     public function test_entity_manager_resolves_custom_repository() : void
     {
         $entityManager = $this->database->entityManager();
-        $repository    = $entityManager->repository(entityClass: TestUserEntity::class);
+        $repository = $entityManager->repository(entityClass: TestUserEntity::class);
 
         $this->assertInstanceOf(expected: TestUserRepository::class, actual: $repository);
 
@@ -140,7 +140,7 @@ final class TestUserEntity
     #[Id]
     #[GeneratedValue]
     #[Attributes\Column(name: 'id', type: 'integer')]
-    public int|null $id = null;
+    public ?int $id = null;
 
     #[Attributes\Column(name: 'name', type: 'string')]
     public string $name;
@@ -150,7 +150,7 @@ final class TestUserEntity
 
     public function __construct(string $name, #[SensitiveParameter] string $email)
     {
-        $this->name  = $name;
+        $this->name = $name;
         $this->email = $email;
     }
 }
@@ -160,7 +160,7 @@ final class TestUserRepository extends EntityRepository
     /**
      * @throws Throwable
      */
-    public function findByEmail(#[SensitiveParameter] string $email) : TestUserEntity|null
+    public function findByEmail(#[SensitiveParameter] string $email) : ?TestUserEntity
     {
         $entity = $this->findOneBy(criteria: ['email' => $email]);
 

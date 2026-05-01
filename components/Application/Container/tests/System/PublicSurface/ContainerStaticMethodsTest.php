@@ -18,7 +18,7 @@ final class ContainerStaticMethodsTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->container = new DIContainer();
+        $this->container = new DIContainer;
     }
 
     public function test_set_container_initializes() : void
@@ -31,7 +31,7 @@ final class ContainerStaticMethodsTest extends TestCase
     public function test_make_resolves_service() : void
     {
         ContainerStatic::setContainer($this->container);
-        ContainerStatic::singleton(stdClass::class, new stdClass());
+        ContainerStatic::singleton(stdClass::class, new stdClass);
 
         $result = ContainerStatic::make(stdClass::class);
 
@@ -41,7 +41,7 @@ final class ContainerStaticMethodsTest extends TestCase
     public function test_get_resolves_bound() : void
     {
         ContainerStatic::setContainer($this->container);
-        ContainerStatic::bind('test.service', static fn () => new class ( ) {});
+        ContainerStatic::bind('test.service', static fn () => new class {});
 
         $result = ContainerStatic::get('test.service');
 
@@ -103,7 +103,7 @@ final class ContainerStaticMethodsTest extends TestCase
     public function test_instance_registers() : void
     {
         ContainerStatic::setContainer($this->container);
-        $object = new stdClass();
+        $object = new stdClass;
         ContainerStatic::instance('obj', $object);
 
         $this->assertTrue(ContainerStatic::has('obj'));
@@ -140,7 +140,7 @@ final class ContainerStaticMethodsTest extends TestCase
     public function test_scoped_registers() : void
     {
         ContainerStatic::setContainer($this->container);
-        ContainerStatic::scoped('scoped', static fn () => new stdClass());
+        ContainerStatic::scoped('scoped', static fn () => new stdClass);
 
         $this->assertTrue(ContainerStatic::has('scoped'));
     }

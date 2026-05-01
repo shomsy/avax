@@ -10,7 +10,7 @@ use Random\RandomException;
 
 final class RequestScopeStore implements ResettableState
 {
-    private RequestScope|null $currentScope = null;
+    private ?RequestScope $currentScope = null;
 
     /**
      * @throws RandomException

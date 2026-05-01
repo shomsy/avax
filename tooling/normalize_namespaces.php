@@ -12,7 +12,7 @@ foreach ($dirs as $dir) {
     $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
     foreach ($files as $file) {
         if ($file->getExtension() === 'php') {
-            $content    = file_get_contents($file->getPathname());
+            $content = file_get_contents($file->getPathname());
             $newContent = str_replace('DataStack\\', '', $content);
             if ($content !== $newContent) {
                 file_put_contents($file->getPathname(), $newContent);

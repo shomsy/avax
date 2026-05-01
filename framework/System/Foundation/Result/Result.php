@@ -8,7 +8,7 @@ final readonly class Result
 {
     private function __construct(
         private mixed $value,
-        private Failure|null $failure,
+        private ?Failure $failure,
     ) {}
 
     public static function ok(mixed $value = null) : self
@@ -31,7 +31,7 @@ final readonly class Result
         return $this->value;
     }
 
-    public function failure() : Failure|null
+    public function failure() : ?Failure
     {
         return $this->failure;
     }

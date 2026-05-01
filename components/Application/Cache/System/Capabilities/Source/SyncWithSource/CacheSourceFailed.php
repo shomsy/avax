@@ -10,15 +10,15 @@ use Throwable;
 final class CacheSourceFailed extends RuntimeException
 {
     public function __construct(
-        string    $message,
+        string     $message,
         public readonly CacheSourceKey $cacheSourceKey,
-        Throwable $throwable = null,
+        ?Throwable $throwable = null,
     )
     {
         parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 
-    public static function unavailable(string $reason, CacheSourceKey $cacheSourceKey, Throwable $throwable = null) : self
+    public static function unavailable(string $reason, CacheSourceKey $cacheSourceKey, ?Throwable $throwable = null) : self
     {
         return new self(
             message  : sprintf('System source unavailable: %s', $reason),
@@ -27,7 +27,7 @@ final class CacheSourceFailed extends RuntimeException
         );
     }
 
-    public static function timeout(CacheSourceKey $cacheSourceKey, Throwable $throwable = null) : self
+    public static function timeout(CacheSourceKey $cacheSourceKey, ?Throwable $throwable = null) : self
     {
         return new self(
             message  : sprintf('System source timeout for key "%s"', $cacheSourceKey->fullKey()),
@@ -36,7 +36,7 @@ final class CacheSourceFailed extends RuntimeException
         );
     }
 
-    public static function notFound(CacheSourceKey $cacheSourceKey, Throwable $throwable = null) : self
+    public static function notFound(CacheSourceKey $cacheSourceKey, ?Throwable $throwable = null) : self
     {
         return new self(
             message  : sprintf('System source key "%s" not found', $cacheSourceKey->fullKey()),

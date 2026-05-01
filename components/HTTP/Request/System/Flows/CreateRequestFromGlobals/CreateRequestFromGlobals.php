@@ -44,7 +44,7 @@ final class CreateRequestFromGlobals
             $parsedData = match (true) {
                 str_contains($contentType, 'application/json') => $this->jsonParser->parse($rawBody),
                 str_contains($contentType, 'application/x-www-form-urlencoded') => $this->formParser->parse($rawBody),
-                default                                        => $_POST
+                default => $_POST
             };
 
             $body = new RequestBody(new RawBody($rawBody), new ParsedBody($parsedData));

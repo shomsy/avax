@@ -7,8 +7,8 @@ require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
 
-$store  = new ScopeStore();
-$scoped = new ArrayObject();
+$store  = new ScopeStore;
+$scoped = new ArrayObject;
 
 assertThrows(
     expectedClass: ContainerException::class,

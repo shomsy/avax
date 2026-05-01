@@ -15,29 +15,29 @@ $output  = $artifactDir . '/peer-matrix.json';
 
 $baselineArtifact = [
     'meta' => [
-        'php'         => '8.3.0',
-        'sapi'        => 'cli',
-        'timestamp'   => gmdate(format: 'c'),
+        'php'          => '8.3.0',
+        'sapi'         => 'cli',
+        'timestamp'    => gmdate(format: 'c'),
         'dockerImage' => 'php:8.3-cli',
         'phpSettings' => [
-            'memory_limit'       => '-1',
+            'memory_limit'    => '-1',
             'opcache.enable_cli' => '0',
-            'zend.assertions'    => '1',
+            'zend.assertions' => '1',
         ],
-        'suiteVersion'  => '2026-04-08',
-        'buildMarker'   => '',
-        'guard'         => true,
+        'suiteVersion' => '2026-04-08',
+        'buildMarker'  => '',
+        'guard'        => true,
         'scenarioCount' => 2,
-        'scenarios'     => ['cached_get', 'warm_boot'],
+        'scenarios'    => ['cached_get', 'warm_boot'],
     ],
     'results' => [
         'cached_get' => ['time_ms' => 10.0, 'ops_per_s' => 1000.0, 'peak_mb' => 1.0, 'memory_per_op_kb' => 0.1],
-        'warm_boot'  => ['time_ms' => 5.0, 'ops_per_s' => 200.0, 'peak_mb' => 1.0, 'memory_per_op_kb' => 0.2],
+        'warm_boot' => ['time_ms' => 5.0, 'ops_per_s' => 200.0, 'peak_mb' => 1.0, 'memory_per_op_kb' => 0.2],
     ],
 ];
 
-$peerArtifact                                       = $baselineArtifact;
-$peerArtifact['results']['cached_get']['time_ms']   = 12.0;
+$peerArtifact                                     = $baselineArtifact;
+$peerArtifact['results']['cached_get']['time_ms'] = 12.0;
 $peerArtifact['results']['cached_get']['ops_per_s'] = 833.3;
 
 file_put_contents(filename: $current, data: json_encode(value: $baselineArtifact, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);

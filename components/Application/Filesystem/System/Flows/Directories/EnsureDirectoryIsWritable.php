@@ -9,7 +9,8 @@ use Avax\Components\Application\Filesystem\Disks\Disk;
 final class EnsureDirectoryIsWritable
 {
     private const int RETRY_ATTEMPTS = 3;
-    private const int RETRY_DELAY    = 100000;
+
+    private const int RETRY_DELAY = 100000;
 
     public function __construct(private readonly Disk $disk) {}
 

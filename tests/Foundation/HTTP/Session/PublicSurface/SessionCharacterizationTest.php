@@ -11,7 +11,7 @@ final class SessionCharacterizationTest extends TestCase
 {
     public function test_put_get_has_forget_flush_remember_and_terminate() : void
     {
-        $s = new NullSession();
+        $s = new NullSession;
 
         $this->assertFalse($s->has(key: 'foo'));
 
@@ -36,7 +36,7 @@ final class SessionCharacterizationTest extends TestCase
 
     public function test_getid_and_regenerate_is_noop_for_null_session() : void
     {
-        $s = new NullSession();
+        $s = new NullSession;
         $this->assertSame('', $s->getId());
         $s->regenerateId(); // no exception
         $this->assertSame('', $s->getId());

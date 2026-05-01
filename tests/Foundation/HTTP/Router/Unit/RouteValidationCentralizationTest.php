@@ -19,6 +19,7 @@ class RouteValidationCentralizationTest extends TestCase
 {
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function route_definition_validates_constraints_without_suppression() : void
@@ -36,6 +37,7 @@ class RouteValidationCentralizationTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function route_definition_rejects_invalid_regex_patterns() : void
@@ -53,6 +55,7 @@ class RouteValidationCentralizationTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function route_definition_handles_regex_compilation_errors() : void
@@ -70,6 +73,7 @@ class RouteValidationCentralizationTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function route_builder_validates_constraints_without_suppression() : void
@@ -110,6 +114,7 @@ class RouteValidationCentralizationTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function route_builder_where_in_validates_all_constraints() : void
@@ -123,8 +128,8 @@ class RouteValidationCentralizationTest extends TestCase
 
         $route = $builder->build();
         $this->assertEquals(expected: [
-                                          'id' => '\d+',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'slug' => '[a-z0-9-]+',
+                                          'id'   => '\d+',
+                                          'slug' => '[a-z0-9-]+',
                                       ], actual: $route->constraints);
     }
 

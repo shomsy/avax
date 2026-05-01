@@ -38,7 +38,7 @@ final readonly class PrimaryReplicaPolicy
      */
     public static function default() : self
     {
-        return new self();
+        return new self;
     }
 
     /**
@@ -193,7 +193,7 @@ final readonly class PrimaryReplicaPolicy
     public function withReplicationPolicy(ReplicationPolicy $replicationPolicy) : self
     {
         $async = $replicationPolicy === ReplicationPolicy::ASYNCHRONOUS;
-        $sync  = $replicationPolicy !== ReplicationPolicy::ASYNCHRONOUS;
+        $sync = $replicationPolicy !== ReplicationPolicy::ASYNCHRONOUS;
 
         return new self(
             readFromReplicaOnMiss : $this->readFromReplicaOnMiss,
@@ -238,13 +238,13 @@ final readonly class PrimaryReplicaPolicy
     public function toArray() : array
     {
         return [
-            'readFromReplicaOnMiss'  => $this->readFromReplicaOnMiss,
-            'asyncReplication'       => $this->asyncReplication,
-            'syncReplication'        => $this->syncReplication,
-            'failover'               => $this->failover,
-            'replicationPolicy'      => $this->replicationPolicy->value,
+            'readFromReplicaOnMiss' => $this->readFromReplicaOnMiss,
+            'asyncReplication'      => $this->asyncReplication,
+            'syncReplication'       => $this->syncReplication,
+            'failover'              => $this->failover,
+            'replicationPolicy'     => $this->replicationPolicy->value,
             'failoverTimeoutSeconds' => $this->failoverTimeoutSeconds,
-            'maxReplicationRetries'  => $this->maxReplicationRetries,
+            'maxReplicationRetries' => $this->maxReplicationRetries,
         ];
     }
 }

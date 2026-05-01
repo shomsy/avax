@@ -10,7 +10,7 @@ final readonly class ReadFileLastModifiedAt
 {
     public function __construct(private Disk $disk) {}
 
-    public function execute(string $path) : int|null
+    public function execute(string $path) : ?int
     {
         return $this->disk->lastModified(path: $path);
     }

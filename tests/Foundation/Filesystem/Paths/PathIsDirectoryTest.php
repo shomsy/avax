@@ -10,6 +10,7 @@ use components\Filesystem\Paths\PathIsDirectory;
 class PathIsDirectoryTest extends TestCase
 {
     private string $testFile;
+
     private string $testDir;
 
     protected function setUp() : void
@@ -27,7 +28,7 @@ class PathIsDirectoryTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteReturnsFalseForFile() : void
+    public function test_execute_returns_false_for_file() : void
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
 
@@ -36,14 +37,14 @@ class PathIsDirectoryTest extends TestCase
         self::assertFalse(condition: $result);
     }
 
-    public function testExecuteReturnsTrueForDirectory() : void
+    public function test_execute_returns_true_for_directory() : void
     {
         $result = new PathIsDirectory()->execute(path: $this->testDir);
 
         self::assertTrue(condition: $result);
     }
 
-    public function testExecuteReturnsFalseForNonExistentPath() : void
+    public function test_execute_returns_false_for_non_existent_path() : void
     {
         $result = new PathIsDirectory()->execute(path: '/ne postoji put');
 

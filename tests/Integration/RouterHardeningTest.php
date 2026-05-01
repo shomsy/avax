@@ -44,7 +44,7 @@ class RouterHardeningTest extends TestCase
         $this->app = $this->createAppWithRoutes(routesFile: $routes);
 
         // When: Requesting the null-returning route
-        $request  = $this->createRequest(method: 'GET', path: '/null-test');
+        $request = $this->createRequest(method: 'GET', path: '/null-test');
         $response = $this->getRouter()->resolve($request);
 
         // Then: Should return fallback response
@@ -141,13 +141,13 @@ class RouterHardeningTest extends TestCase
      */
     public function stress_test_sequential_route_calls_no_leaks() : void
     {
-        $routes     = ['/', '/health', '/test', '/favicon.ico'];
+        $routes = ['/', '/health', '/test', '/favicon.ico'];
         $iterations = 100;
 
         // Run stress test
         for ($i = 0; $i < $iterations; $i++) {
             foreach ($routes as $route) {
-                $request  = $this->createRequest(method: 'GET', path: $route);
+                $request = $this->createRequest(method: 'GET', path: $route);
                 $response = $this->getRouter()->resolve($request);
 
                 // Basic validation that response is valid
@@ -169,7 +169,7 @@ class RouterHardeningTest extends TestCase
         $routes = ['/', '/health', '/test', '/favicon.ico'];
 
         foreach ($routes as $route) {
-            $request  = $this->createRequest(method: 'GET', path: $route);
+            $request = $this->createRequest(method: 'GET', path: $route);
             $response = $this->getRouter()->resolve($request);
 
             // Validate PSR-7 compliance
@@ -189,7 +189,7 @@ class RouterHardeningTest extends TestCase
     public function route_pipeline_dispatch_returns_valid_response() : void
     {
         // This test validates that RoutePipeline dispatch method works correctly
-        $request  = $this->createRequest(method: 'GET', path: '/health');
+        $request = $this->createRequest(method: 'GET', path: '/health');
         $response = $this->getRouter()->resolve($request);
 
         // Validate the response is properly formed
@@ -204,7 +204,7 @@ class RouterHardeningTest extends TestCase
     public function router_kernel_returns_final_response() : void
     {
         // Test that the full routing pipeline returns a final response
-        $request  = $this->createRequest(method: 'GET', path: '/');
+        $request = $this->createRequest(method: 'GET', path: '/');
         $response = $this->getRouter()->resolve($request);
 
         // Validate final response
@@ -236,7 +236,7 @@ class RouterHardeningTest extends TestCase
     public function middleware_stagechain_reactivation_works() : void
     {
         // Test middleware pipeline reactivation
-        $request  = $this->createRequest(method: 'GET', path: '/health');
+        $request = $this->createRequest(method: 'GET', path: '/health');
         $response = $this->getRouter()->resolve($request);
 
         // If middleware is working, we should get a valid response

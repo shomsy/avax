@@ -15,7 +15,7 @@ class ReadRequestTargetTest extends TestCase
 {
     public function test_reads_request_target_from_uri_path_only() : void
     {
-        $uri    = UriBuilder::createFromString(uri: 'https://example.com/api/users');
+        $uri = UriBuilder::createFromString(uri: 'https://example.com/api/users');
         $target = new ReadRequestTarget(explicitTarget: null, uri: $uri)->resolve();
 
         $this->assertSame(expected: '/api/users', actual: $target);
@@ -23,7 +23,7 @@ class ReadRequestTargetTest extends TestCase
 
     public function test_reads_request_target_from_uri_path_and_query() : void
     {
-        $uri    = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=active');
+        $uri = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=active');
         $target = new ReadRequestTarget(explicitTarget: null, uri: $uri)->resolve();
 
         $this->assertSame(expected: '/api/users?status=active', actual: $target);
@@ -31,7 +31,7 @@ class ReadRequestTargetTest extends TestCase
 
     public function test_keeps_zero_query_value_when_present_if_policy_requires() : void
     {
-        $uri    = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=0');
+        $uri = UriBuilder::createFromString(uri: 'https://example.com/api/users?status=0');
         $target = new ReadRequestTarget(explicitTarget: null, uri: $uri)->resolve();
 
         $this->assertSame(expected: '/api/users?status=0', actual: $target);
@@ -39,7 +39,7 @@ class ReadRequestTargetTest extends TestCase
 
     public function test_does_not_confuse_request_target_with_uri_replacement() : void
     {
-        $uri    = UriBuilder::createFromString(uri: 'https://example.com');
+        $uri = UriBuilder::createFromString(uri: 'https://example.com');
         $target = new ReadRequestTarget(explicitTarget: null, uri: $uri)->resolve();
 
         // Root path is normally '/' in PSR-7 when no path is provided for an HTTP request
@@ -48,7 +48,7 @@ class ReadRequestTargetTest extends TestCase
 
     public function test_custom_request_target_takes_precedence_over_uri() : void
     {
-        $uri    = UriBuilder::createFromString(uri: 'https://example.com/api/users');
+        $uri = UriBuilder::createFromString(uri: 'https://example.com/api/users');
         $target = new ReadRequestTarget(explicitTarget: '/custom-target', uri: $uri)->resolve();
 
         $this->assertSame(expected: '/custom-target', actual: $target);

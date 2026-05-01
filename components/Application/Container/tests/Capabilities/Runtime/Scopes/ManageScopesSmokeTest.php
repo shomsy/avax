@@ -32,7 +32,7 @@ assertThrows(
 
 $fromWithinScope = $container->scopes()->withinScope(
     callback: static function () use ($container) : object {
-        $first  = $container->get(id: ScopedService::class);
+        $first = $container->get(id: ScopedService::class);
         $second = $container->get(id: ScopedService::class);
 
         assertSame(expected: $first, actual: $second, message: 'Scoped services should be reused inside one scope.');

@@ -16,13 +16,14 @@ use stdClass;
 final class ContainerInterfaceTest extends TestCase
 {
     private DIContainer $container;
+
     private Container $publicContainer;
 
     protected function setUp() : void
     {
         parent::setUp();
 
-        $this->container = new DIContainer();
+        $this->container = new DIContainer;
         $this->publicContainer = Container::fromEngine($this->container);
     }
 
@@ -104,7 +105,7 @@ final class ContainerInterfaceTest extends TestCase
 
     public function test_instance_registers_object() : void
     {
-        $object = new stdClass();
+        $object = new stdClass;
         $this->publicContainer->instance('registered.object', $object);
 
         $result = $this->publicContainer->get('registered.object');

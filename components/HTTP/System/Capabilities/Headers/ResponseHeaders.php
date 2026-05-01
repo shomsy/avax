@@ -22,7 +22,7 @@ final class ResponseHeaders
         return $this;
     }
 
-    public function get(string $name) : array|null
+    public function get(string $name) : ?array
     {
         return $this->headers[$name] ?? null;
     }

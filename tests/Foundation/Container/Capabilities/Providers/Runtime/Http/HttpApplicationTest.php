@@ -24,27 +24,27 @@ final class HttpApplicationTest extends TestCase
     {
         $backup = [
             '_SERVER' => $_SERVER ?? [],
-            '_GET'   => $_GET ?? [],
-            '_POST'  => $_POST ?? [],
+            '_GET'  => $_GET ?? [],
+            '_POST' => $_POST ?? [],
             '_COOKIE' => $_COOKIE ?? [],
             '_FILES' => $_FILES ?? [],
         ];
 
         /** @var ResponseInterface|null $response */
         $response = null;
-        $content  = '';
+        $content = '';
 
         try {
             $_SERVER['REQUEST_METHOD'] = 'GET';
-            $_SERVER['REQUEST_URI']    = '/';
-            $_SERVER['HTTP_HOST']      = 'localhost';
-            $_SERVER['SERVER_NAME']    = 'localhost';
-            $_SERVER['SERVER_PORT']    = '80';
-            $_SERVER['QUERY_STRING']   = '';
-            $_GET                      = [];
-            $_POST                     = [];
-            $_COOKIE                   = [];
-            $_FILES                    = [];
+            $_SERVER['REQUEST_URI'] = '/';
+            $_SERVER['HTTP_HOST'] = 'localhost';
+            $_SERVER['SERVER_NAME'] = 'localhost';
+            $_SERVER['SERVER_PORT'] = '80';
+            $_SERVER['QUERY_STRING'] = '';
+            $_GET = [];
+            $_POST = [];
+            $_COOKIE = [];
+            $_FILES = [];
 
             $app = AppFactory::http(
                 providers: [MiddlewareBaseRegisterDependency::class, RouterBaseRegisterDependency::class],
@@ -53,18 +53,18 @@ final class HttpApplicationTest extends TestCase
                 debug    : true,
             );
 
-            $app->getContainer()->instance(abstract: LoggerInterface::class, instance: new NullLogger());
-            $app->getContainer()->instance(abstract: RouterRuntimeInterface::class, instance: new FakeRouter());
+            $app->getContainer()->instance(abstract: LoggerInterface::class, instance: new NullLogger);
+            $app->getContainer()->instance(abstract: RouterRuntimeInterface::class, instance: new FakeRouter);
 
             ob_start();
             $response = $app->run();
-            $content  = (string) ob_get_clean();
+            $content = (string) ob_get_clean();
         } finally {
             $_SERVER = $backup['_SERVER'];
-            $_GET    = $backup['_GET'];
-            $_POST   = $backup['_POST'];
+            $_GET = $backup['_GET'];
+            $_POST = $backup['_POST'];
             $_COOKIE = $backup['_COOKIE'];
-            $_FILES  = $backup['_FILES'];
+            $_FILES = $backup['_FILES'];
         }
 
         $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);

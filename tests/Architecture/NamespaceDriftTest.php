@@ -39,7 +39,7 @@ final class NamespaceDriftTest extends TestCase
      */
     private function findNamespaceDrifts(string $directory, string $expectedNamespacePrefix) : array
     {
-        $drifts   = [];
+        $drifts = [];
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
         );

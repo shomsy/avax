@@ -9,13 +9,20 @@ use RuntimeException;
 
 final class WorkerProcess
 {
-    private int  $pid         = 0;
-    private bool $running     = false;
-    private bool $idle        = true;
-    private int  $taskCount   = 0;
-    private int  $memoryUsage = 0;
-    private int  $maxMemory   = 128;
-    private int  $startTime   = 0;
+    private int $pid = 0;
+
+    private bool $running = false;
+
+    private bool $idle = true;
+
+    private int $taskCount = 0;
+
+    private int $memoryUsage = 0;
+
+    private int $maxMemory = 128;
+
+    private int $startTime = 0;
+
     /**
      * @var array<string, mixed>
      */
@@ -26,7 +33,7 @@ final class WorkerProcess
      */
     public function __construct(array $options = [])
     {
-        $this->options   = $options;
+        $this->options = $options;
         $this->maxMemory = $options['max_memory'] ?? 128;
     }
 
@@ -64,9 +71,9 @@ final class WorkerProcess
         }
 
         $this->pid = $pid;
-        $this->running   = true;
+        $this->running = true;
         $this->startTime = time();
-        $this->idle      = true;
+        $this->idle = true;
     }
 
     public function isRunning() : bool

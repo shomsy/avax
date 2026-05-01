@@ -19,7 +19,7 @@ final class AfterResponse
     private static function queue() : AfterResponseTask\AfterResponseQueue
     {
         if (! isset(self::$queue)) {
-            self::$queue = new AfterResponseTask\AfterResponseQueue();
+            self::$queue = new AfterResponseTask\AfterResponseQueue;
         }
 
         return self::$queue;

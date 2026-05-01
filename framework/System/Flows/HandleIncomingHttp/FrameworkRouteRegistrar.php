@@ -15,9 +15,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
 {
     private Closure|array|string|null $fallback = null;
 
-    public function __construct(private readonly RouteRegistry $routeRegistry = new RouteRegistry())
-    {
-    }
+    public function __construct(private readonly RouteRegistry $routeRegistry = new RouteRegistry) {}
 
     public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
@@ -89,7 +87,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
 
         foreach ($this->routeRegistry->flush() as $builder) {
             $definition = $builder->build();
-            $method     = strtoupper(string: $definition->method);
+            $method = strtoupper(string: $definition->method);
 
             $routesByMethod[$method] ??= [];
             $routesByMethod[$method][] = $definition;

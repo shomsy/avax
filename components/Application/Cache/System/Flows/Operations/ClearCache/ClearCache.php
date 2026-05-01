@@ -12,7 +12,7 @@ final readonly class ClearCache
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private CacheMetrics|null $cacheMetrics = null,
+        private ?CacheMetrics $cacheMetrics = null,
     ) {}
 
     public function clearNamespace() : int

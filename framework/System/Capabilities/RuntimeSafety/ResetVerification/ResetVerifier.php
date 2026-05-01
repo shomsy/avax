@@ -52,7 +52,7 @@ final class ResetVerifier
 
             if (is_object($container) && is_callable([$container, 'getSharedInstances'])) {
                 $containerFindings = $this->verifyContainerShared($container);
-                $findings          = [...$findings, ...$containerFindings];
+                $findings = [...$findings, ...$containerFindings];
             }
         }
 
@@ -62,7 +62,7 @@ final class ResetVerifier
     /**
      * Verify a single component resets cleanly.
      */
-    private function verifyComponent(string $name, ResettableState $component) : RuntimeSafetyFinding|null
+    private function verifyComponent(string $name, ResettableState $component) : ?RuntimeSafetyFinding
     {
         try {
             $component->resetState();

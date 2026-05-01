@@ -26,6 +26,6 @@ final readonly class ControllerResolver
             return $this->container->get($className);
         }
 
-        return new $className();
+        return new $className;
     }
 }

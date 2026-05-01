@@ -998,27 +998,27 @@ final class HttpEnumsTest extends TestCase
         $this->assertSame('text/event-stream', ContentType::EVENT_STREAM->value);
     }
 
-    public function test_content_type_mimeType_returns_value() : void
+    public function test_content_type_mime_type_returns_value() : void
     {
         $this->assertSame('application/json', ContentType::APPLICATION_JSON->mimeType());
         $this->assertSame('text/html', ContentType::TEXT_HTML->mimeType());
         $this->assertSame('image/png', ContentType::IMAGE_PNG->mimeType());
     }
 
-    public function test_content_type_mimeType_with_charset_default() : void
+    public function test_content_type_mime_type_with_charset_default() : void
     {
         $this->assertSame('application/json; charset=utf-8', ContentType::APPLICATION_JSON->mimeTypeWithCharset());
         $this->assertSame('text/html; charset=utf-8', ContentType::TEXT_HTML->mimeTypeWithCharset());
         $this->assertSame('text/plain; charset=utf-8', ContentType::TEXT_PLAIN->mimeTypeWithCharset());
     }
 
-    public function test_content_type_mimeType_with_charset_custom() : void
+    public function test_content_type_mime_type_with_charset_custom() : void
     {
         $this->assertSame('application/json; charset=iso-8859-1', ContentType::APPLICATION_JSON->mimeTypeWithCharset('iso-8859-1'));
         $this->assertSame('text/html; charset=ascii', ContentType::TEXT_HTML->mimeTypeWithCharset('ascii'));
     }
 
-    public function test_content_type_mimeType_with_charset_not_applicable() : void
+    public function test_content_type_mime_type_with_charset_not_applicable() : void
     {
         $this->assertSame('image/png', ContentType::IMAGE_PNG->mimeTypeWithCharset());
         $this->assertSame('application/pdf', ContentType::APPLICATION_PDF->mimeTypeWithCharset());

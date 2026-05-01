@@ -24,13 +24,13 @@ final class RequestBehaviorTest extends TestCase
     }
 
     private function createRequest(
-        array $serverParams = null,
-        array $queryParams = null,
+        ?array $serverParams = null,
+        ?array $queryParams = null,
         array $parsedBody = [],
     ) : Request
     {
         $serverParams ??= [];
-        $queryParams  ??= [];
+        $queryParams ??= [];
         $uri = UriBuilder::createFromString(uri: 'http://localhost/test');
 
         return Request::create(
@@ -176,7 +176,7 @@ final class RequestBehaviorTest extends TestCase
 
     public function test_path_returns_uri_path() : void
     {
-        $uri     = UriBuilder::createFromString(uri: 'https://example.com/test/path?foo=bar');
+        $uri = UriBuilder::createFromString(uri: 'https://example.com/test/path?foo=bar');
         $request = Request::create(
             serverParams: [
                 'REQUEST_METHOD' => 'GET',

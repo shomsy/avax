@@ -12,7 +12,7 @@ final class BootApplicationTest extends TestCase
 {
     public function test_it_boots_runtime_with_request_scope_and_state_reset_registry(): void
     {
-        $runtime = (new BootApplication())->boot(
+        $runtime = (new BootApplication)->boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot()),
         );
 

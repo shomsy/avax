@@ -10,8 +10,7 @@ final class OpenWorkerRequestScope
 {
     public function __construct(
         private readonly RequestScope $requestScope,
-    ) {
-    }
+    ) {}
 
     public function open() : void
     {

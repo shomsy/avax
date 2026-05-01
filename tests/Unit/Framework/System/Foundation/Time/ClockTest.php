@@ -19,7 +19,7 @@ final class ClockTest extends TestCase
     #[Test]
     public function it_implements_clock_interface(): void
     {
-        $clock = new SystemClock();
+        $clock = new SystemClock;
 
         self::assertInstanceOf(Clock::class, $clock);
     }
@@ -27,12 +27,12 @@ final class ClockTest extends TestCase
     #[Test]
     public function it_returns_current_time(): void
     {
-        $clock = new SystemClock();
-        $before = new DateTimeImmutable();
+        $clock  = new SystemClock;
+        $before = new DateTimeImmutable;
 
         $now = $clock->now();
 
-        $after = new DateTimeImmutable();
+        $after = new DateTimeImmutable;
 
         self::assertInstanceOf(DateTimeImmutable::class, $now);
         self::assertGreaterThanOrEqual($before, $now);

@@ -7,18 +7,18 @@ $testDir = __DIR__ . '/tests';
 $replacements = [
     // 1. Classes
     'ResponseFactory' => 'Responses',
-    'EntityManager'   => 'Persistence',
+    'EntityManager'                      => 'Persistence',
 
     // 2. Namespaces & Imports
-    'Avax\HTTP\Response\ResponseFactory'            => 'Avax\Components\HTTP\Response\System\PublicSurface\Responses',
+    'Avax\HTTP\Response\ResponseFactory' => 'Avax\Components\HTTP\Response\System\PublicSurface\Responses',
     'Avax\Components\HTTP\Response\ResponseFactory' => 'Avax\Components\HTTP\Response\System\PublicSurface\Responses',
-    'Avax\Database\EntityManager'                   => 'Avax\Components\DataStack\Persistence\System\PublicSurface\Persistence',
-    'Avax\DataLayer'                                => 'Avax\Components\DataStack\Database',
-    'Avax\DataFoundation'                           => 'Avax\Components\DataStack\Database',
+    'Avax\Database\EntityManager'        => 'Avax\Components\DataStack\Persistence\System\PublicSurface\Persistence',
+    'Avax\DataLayer'                     => 'Avax\Components\DataStack\Database',
+    'Avax\DataFoundation'                => 'Avax\Components\DataStack\Database',
 ];
 
 if (! is_dir($testDir)) {
-    die("❌ Test directory not found!\n");
+    exit("❌ Test directory not found!\n");
 }
 
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($testDir));
@@ -28,8 +28,8 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path     = $file->getPathname();
-    $content  = file_get_contents($path);
+    $path    = $file->getPathname();
+    $content = file_get_contents($path);
     $original = $content;
 
     // Execute string replacements

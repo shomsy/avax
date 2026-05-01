@@ -68,7 +68,7 @@ final class ConfigurationRepository
     private function setDot(string $key, mixed $value) : void
     {
         $array = &$this->items;
-        $keys  = explode('.', $key);
+        $keys = explode('.', $key);
 
         while ( count($keys) > 1 ) {
             $key = array_shift($keys);

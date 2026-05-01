@@ -62,7 +62,7 @@ final class Validator
 
     public static function make(array $data, array $rules, array $messages = []) : ValidationFailure
     {
-        return (new self())
+        return (new self)
             ->setData($data)
             ->setRules($rules)
             ->setMessages($messages)
@@ -72,7 +72,7 @@ final class Validator
     private function getValue(string $field) : mixed
     {
         if (str_contains($field, '.')) {
-            $keys  = explode('.', $field);
+            $keys = explode('.', $field);
             $value = $this->data;
 
             foreach ($keys as $key) {
@@ -92,9 +92,9 @@ final class Validator
     private function applyRule(string $field, mixed $value, string $rule) : void
     {
         // Parse rule and parameters
-        $parts    = explode(':', $rule, 2);
+        $parts  = explode(':', $rule, 2);
         $ruleName = $parts[0];
-        $params   = isset($parts[1]) ? explode(',', $parts[1]) : [];
+        $params = isset($parts[1]) ? explode(',', $parts[1]) : [];
 
         // Skip validation if field is nullable and value is null/empty
         if ($ruleName !== 'required' && $ruleName !== 'nullable' && ($value === null || $value === '')) {
@@ -111,23 +111,23 @@ final class Validator
         }
 
         $result = match ($ruleName) {
-            'required'        => $this->validateRequired($value),
-            'string'          => $this->validateString($value),
-            'integer'         => $this->validateInteger($value),
-            'numeric'         => $this->validateNumeric($value),
-            'email'           => $this->validateEmail($value),
-            'min'             => $this->validateMin($value, (int) ($params[0] ?? 0)),
-            'max'             => $this->validateMax($value, (int) ($params[0] ?? 0)),
-            'between'         => $this->validateBetween($value, (int) ($params[0] ?? 0), (int) ($params[1] ?? 0)),
-            'in'              => $this->validateIn($value, $params),
-            'array'           => $this->validateArray($value),
-            'nullable'        => true,
-            'url'             => $this->validateUrl($value),
-            'uuid'            => $this->validateUuid($value),
-            'date'            => $this->validateDate($value),
+            'required' => $this->validateRequired($value),
+            'string'   => $this->validateString($value),
+            'integer'  => $this->validateInteger($value),
+            'numeric'  => $this->validateNumeric($value),
+            'email'    => $this->validateEmail($value),
+            'min'      => $this->validateMin($value, (int) ($params[0] ?? 0)),
+            'max'      => $this->validateMax($value, (int) ($params[0] ?? 0)),
+            'between'  => $this->validateBetween($value, (int) ($params[0] ?? 0), (int) ($params[1] ?? 0)),
+            'in'       => $this->validateIn($value, $params),
+            'array'    => $this->validateArray($value),
+            'nullable' => true,
+            'url'      => $this->validateUrl($value),
+            'uuid'     => $this->validateUuid($value),
+            'date'     => $this->validateDate($value),
             'bool', 'boolean' => $this->validateBool($value),
-            'regex'           => $this->validateRegex($value, $params[0] ?? ''),
-            default           => true,
+            'regex'    => $this->validateRegex($value, $params[0] ?? ''),
+            default    => true,
         };
 
         if (! $result) {
@@ -268,7 +268,7 @@ final class Validator
 
     private function addError(string $field, string $rule, array $params) : void
     {
-        $message                = $this->getErrorMessage($field, $rule, $params);
+        $message = $this->getErrorMessage($field, $rule, $params);
         $this->errors[$field][] = $message;
     }
 
@@ -278,22 +278,22 @@ final class Validator
         $key = sprintf('%s.%s', $field, $rule);
 
         return $this->messages[$key] ?? match ($rule) {
-            'required'        => sprintf('The %s field is required.', $field),
-            'string'          => sprintf('The %s field must be a string.', $field),
-            'integer'         => sprintf('The %s field must be an integer.', $field),
-            'numeric'         => sprintf('The %s field must be a number.', $field),
-            'email'           => sprintf('The %s field must be a valid email address.', $field),
-            'min'             => sprintf('The %s field must be at least %s.', $field, $params[0]),
-            'max'             => sprintf('The %s field must not exceed %s.', $field, $params[0]),
-            'between'         => sprintf('The %s field must be between %s and %s.', $field, $params[0], $params[1]),
-            'in'              => sprintf('The %s field must be one of: ', $field) . implode(', ', $params),
-            'array'           => sprintf('The %s field must be an array.', $field),
-            'url'             => sprintf('The %s field must be a valid URL.', $field),
-            'uuid'            => sprintf('The %s field must be a valid UUID.', $field),
-            'date'            => sprintf('The %s field must be a valid date.', $field),
+            'required' => sprintf('The %s field is required.', $field),
+            'string'   => sprintf('The %s field must be a string.', $field),
+            'integer'  => sprintf('The %s field must be an integer.', $field),
+            'numeric'  => sprintf('The %s field must be a number.', $field),
+            'email'    => sprintf('The %s field must be a valid email address.', $field),
+            'min'      => sprintf('The %s field must be at least %s.', $field, $params[0]),
+            'max'      => sprintf('The %s field must not exceed %s.', $field, $params[0]),
+            'between'  => sprintf('The %s field must be between %s and %s.', $field, $params[0], $params[1]),
+            'in'       => sprintf('The %s field must be one of: ', $field) . implode(', ', $params),
+            'array'    => sprintf('The %s field must be an array.', $field),
+            'url'      => sprintf('The %s field must be a valid URL.', $field),
+            'uuid'     => sprintf('The %s field must be a valid UUID.', $field),
+            'date'     => sprintf('The %s field must be a valid date.', $field),
             'bool', 'boolean' => sprintf('The %s field must be true or false.', $field),
-            'regex'           => sprintf('The %s field format is invalid.', $field),
-            default           => sprintf('The %s field is invalid.', $field),
+            'regex'    => sprintf('The %s field format is invalid.', $field),
+            default    => sprintf('The %s field is invalid.', $field),
         };
     }
 }
@@ -323,7 +323,7 @@ final readonly class ValidationFailure
         return isset($this->errors[$field]);
     }
 
-    public function getError(string $field) : string|null
+    public function getError(string $field) : ?string
     {
         return $this->errors[$field][0] ?? null;
     }
@@ -340,7 +340,7 @@ final readonly class ValidationFailure
         return $this->errors;
     }
 
-    public function first() : string|null
+    public function first() : ?string
     {
         foreach ($this->errors as $error) {
             return $error[0];

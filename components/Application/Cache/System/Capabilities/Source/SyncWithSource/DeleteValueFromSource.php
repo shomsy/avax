@@ -8,9 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 final readonly class DeleteValueFromSource
 {
-    public function __construct(private CacheSource $cacheSource)
-    {
-    }
+    public function __construct(private CacheSource $cacheSource) {}
 
     public function deleteMany(iterable $keys) : int
     {

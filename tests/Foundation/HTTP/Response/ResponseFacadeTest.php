@@ -15,9 +15,9 @@ final class ResponseFacadeTest extends TestCase
 {
     public function test_json_problem_and_xml_responses_use_specialized_builders() : void
     {
-        $json    = Response::json(data: ['name' => 'Alice'], status: 201);
+        $json = Response::json(data: ['name' => 'Alice'], status: 201);
         $problem = Response::problem(title: 'Validation failed', status: 422, detail: 'Email is required');
-        $xml     = Response::xml(xml: ['name' => 'Alice', 'meta' => ['city' => 'Belgrade']]);
+        $xml  = Response::xml(xml: ['name' => 'Alice', 'meta' => ['city' => 'Belgrade']]);
 
         self::assertSame(201, $json->getStatusCode());
         self::assertSame('application/json', $json->getHeaderLine(name: 'Content-Type'));
@@ -27,8 +27,8 @@ final class ResponseFacadeTest extends TestCase
         self::assertSame(422, $problem->getStatusCode());
         self::assertSame(
             [
-                'type'   => 'about:blank',
-                'title'  => 'Validation failed',
+                'type'  => 'about:blank',
+                'title' => 'Validation failed',
                 'status' => 422,
                 'detail' => 'Email is required',
             ],
@@ -72,7 +72,7 @@ final class ResponseFacadeTest extends TestCase
 
     public function test_no_content_and_not_modified_responses_keep_http_invariants() : void
     {
-        $noContent   = Response::noContent();
+        $noContent = Response::noContent();
         $notModified = Response::notModified(
             etag        : new Etag(value: 'abc123'),
             lastModified: new LastModified(value: new DateTimeImmutable(datetime: '2026-01-01T00:00:00+00:00')),

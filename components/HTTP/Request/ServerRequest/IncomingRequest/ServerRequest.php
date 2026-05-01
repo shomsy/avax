@@ -20,41 +20,52 @@ use RuntimeException;
  */
 class ServerRequest implements RequestInterface, ServerRequestInterface
 {
-    private array         $serverParams;
-    private array         $cookieParams    = [];
-    private array         $queryParams     = [];
-    private array         $uploadedFiles   = [];
-    private array|null    $parsedBody      = null;
-    private array         $attributes      = [];
-    private string        $protocolVersion = '1.1';
-    private array         $headers         = [];
+    private array $serverParams;
+
+    private array $cookieParams = [];
+
+    private array $queryParams = [];
+
+    private array $uploadedFiles = [];
+
+    private ?array $parsedBody = null;
+
+    private array $attributes = [];
+
+    private string $protocolVersion = '1.1';
+
+    private array $headers = [];
+
     private StreamInterface $body;
-    private ?UriInterface $uri             = null;
-    private string|null $requestTarget = null;
-    private string        $method          = 'GET';
+
+    private ?UriInterface $uri = null;
+
+    private ?string $requestTarget = null;
+
+    private string $method = 'GET';
 
     public function __construct(
-        array               $serverParams = [],
-        array               $cookieParams = [],
-        array               $queryParams = [],
-        array               $uploadedFiles = [],
-        array               $parsedBody = null,
-        string              $method = 'GET',
-        UriInterface|string $uri = null,
-        string              $protocolVersion = '1.1',
-        array               $headers = [],
-        StreamInterface     $body = null,
+        array                    $serverParams = [],
+        array                    $cookieParams = [],
+        array                    $queryParams = [],
+        array                    $uploadedFiles = [],
+        ?array                   $parsedBody = null,
+        string                   $method = 'GET',
+        UriInterface|string|null $uri = null,
+        string                   $protocolVersion = '1.1',
+        array                    $headers = [],
+        ?StreamInterface         $body = null,
     )
     {
-        $this->serverParams    = $serverParams;
-        $this->cookieParams    = $cookieParams;
-        $this->queryParams     = $queryParams;
-        $this->uploadedFiles   = $uploadedFiles;
-        $this->parsedBody      = $parsedBody;
-        $this->method          = strtoupper($method);
+        $this->serverParams  = $serverParams;
+        $this->cookieParams  = $cookieParams;
+        $this->queryParams   = $queryParams;
+        $this->uploadedFiles = $uploadedFiles;
+        $this->parsedBody    = $parsedBody;
+        $this->method        = strtoupper($method);
         $this->protocolVersion = $protocolVersion;
-        $this->body            = $body ?? Utils::streamFor('');
-        $this->headers         = $this->normalizeHeaders($headers);
+        $this->body          = $body ?? Utils::streamFor('');
+        $this->headers       = $this->normalizeHeaders($headers);
 
         if ($uri !== null) {
             $this->uri = is_string($uri) ? $this->createUriFromString($uri) : $uri;
@@ -75,19 +86,11 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     {
         $parts = parse_url($uri);
 
-        return new class (
-            $parts['scheme'] ?? '',
-            $parts['host'] ?? '',
-            $parts['port'] ?? null,
-            $parts['path'] ?? '',
-            $parts['query'] ?? '',
-            $parts['fragment'] ?? '',
-                $parts['user'] ?? '',
-        ) implements UriInterface {
+        return new class($parts['scheme'] ?? '', $parts['host'] ?? '', $parts['port'] ?? null, $parts['path'] ?? '', $parts['query'] ?? '', $parts['fragment'] ?? '', $parts['user'] ?? '') implements UriInterface {
             public function __construct(
                 private string $scheme,
                 private string $host,
-                private int|null $port,
+                private ?int $port,
                 private string $path,
                 private string $query,
                 private string $fragment,
@@ -119,7 +122,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 return $this->host;
             }
 
-            public function getPort() : int|null
+            public function getPort() : ?int
             {
                 return $this->port;
             }
@@ -219,7 +222,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private static function createUploadedFile(array $file) : UploadedFileInterface
     {
         if (! isset($file['tmp_name'])) {
-            return new class ($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
+            return new class($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
                 public function __construct(
                     private string $tmpName,
                     private int $size,
@@ -238,7 +241,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                     throw new RuntimeException('Not implemented');
                 }
 
-                public function getSize() : int|null
+                public function getSize() : ?int
                 {
                     return $this->size > 0 ? $this->size : null;
                 }
@@ -248,19 +251,19 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                     return $this->error;
                 }
 
-                public function getClientFilename() : string|null
+                public function getClientFilename() : ?string
                 {
                     return $this->clientFilename !== '' ? $this->clientFilename : null;
                 }
 
-                public function getClientMediaType() : string|null
+                public function getClientMediaType() : ?string
                 {
                     return $this->clientMediaType !== '' ? $this->clientMediaType : null;
                 }
             };
         }
 
-        return new class ($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
+        return new class($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
             public function __construct(
                 private string $tmpName,
                 private int $size,
@@ -279,7 +282,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 move_uploaded_file($this->tmpName, $targetPath);
             }
 
-            public function getSize() : int|null
+            public function getSize() : ?int
             {
                 return $this->size > 0 ? $this->size : null;
             }
@@ -289,12 +292,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 return $this->error;
             }
 
-            public function getClientFilename() : string|null
+            public function getClientFilename() : ?string
             {
                 return $this->clientFilename !== '' ? $this->clientFilename : null;
             }
 
-            public function getClientMediaType() : string|null
+            public function getClientMediaType() : ?string
             {
                 return $this->clientMediaType !== '' ? $this->clientMediaType : null;
             }
@@ -310,7 +313,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withProtocolVersion($version) : self
     {
-        $new                  = clone $this;
+        $new = clone $this;
         $new->protocolVersion = $version;
 
         return $new;
@@ -338,7 +341,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withHeader($name, $value) : self
     {
-        $new          = clone $this;
+        $new = clone $this;
         $new->headers = [$name => is_array($value) ? $value : [$value]];
 
         return $new;
@@ -346,8 +349,8 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withAddedHeader($name, $value) : self
     {
-        $new                 = clone $this;
-        $existing            = $this->getHeader($name);
+        $new      = clone $this;
+        $existing = $this->getHeader($name);
         $new->headers[$name] = array_merge($existing, is_array($value) ? $value : [$value]);
 
         return $new;
@@ -372,7 +375,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withBody(StreamInterface $body) : self
     {
-        $new       = clone $this;
+        $new = clone $this;
         $new->body = $body;
 
         return $new;
@@ -391,7 +394,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withCookieParams(array $cookies) : self
     {
-        $new               = clone $this;
+        $new = clone $this;
         $new->cookieParams = $cookies;
 
         return $new;
@@ -404,7 +407,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withQueryParams(array $query) : self
     {
-        $new              = clone $this;
+        $new = clone $this;
         $new->queryParams = $query;
 
         return $new;
@@ -417,20 +420,20 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withUploadedFiles(array $uploadedFiles) : self
     {
-        $new                = clone $this;
+        $new = clone $this;
         $new->uploadedFiles = $uploadedFiles;
 
         return $new;
     }
 
-    public function getParsedBody() : array|null
+    public function getParsedBody() : ?array
     {
         return $this->parsedBody;
     }
 
     public function withParsedBody($data) : self
     {
-        $new             = clone $this;
+        $new = clone $this;
         $new->parsedBody = $data;
 
         return $new;
@@ -448,7 +451,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withAttribute($name, $value) : self
     {
-        $new                    = clone $this;
+        $new = clone $this;
         $new->attributes[$name] = $value;
 
         return $new;
@@ -469,7 +472,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withRequestTarget($requestTarget) : self
     {
-        $new                = clone $this;
+        $new = clone $this;
         $new->requestTarget = $requestTarget;
 
         return $new;
@@ -482,7 +485,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withMethod($method) : self
     {
-        $new         = clone $this;
+        $new = clone $this;
         $new->method = strtoupper($method);
 
         return $new;
@@ -495,7 +498,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function withUri(UriInterface $uri, $preserveHost = false) : self
     {
-        $new      = clone $this;
+        $new = clone $this;
         $new->uri = $uri;
 
         return $new;
@@ -504,7 +507,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     // RequestInterface (Avax) methods
     public function input(string $key, mixed $default = null) : mixed
     {
-        $body  = $this->parsedBody ?? [];
+        $body = $this->parsedBody ?? [];
         $query = $this->queryParams;
 
         return $body[$key] ?? $query[$key] ?? $default;

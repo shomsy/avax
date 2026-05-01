@@ -19,7 +19,7 @@ class MigrationTest extends TestCase
         $blueprint->string(name: 'email');
         $blueprint->timestamps();
 
-        $sql = $blueprint->toSql(grammar: new MySQLGrammar());
+        $sql = $blueprint->toSql(grammar: new MySQLGrammar);
 
         $this->assertCount(expectedCount: 1, haystack: $sql);
         // noinspection SqlNoDataSourceInspection
@@ -32,12 +32,12 @@ class MigrationTest extends TestCase
 
     public function test_column_renderer_generates_sql() : void
     {
-        $renderer = new ColumnSQLRenderer();
+        $renderer = new ColumnSQLRenderer;
         $column = new ColumnDefinition(name: 'name', type: 'VARCHAR(255)')
             ->nullable()
             ->unique();
 
-        $sql = $renderer->render(column: $column, grammar: new MySQLGrammar());
+        $sql = $renderer->render(column: $column, grammar: new MySQLGrammar);
 
         $this->assertStringContainsString(needle: '`name` VARCHAR(255)', haystack: $sql);
         $this->assertStringContainsString(needle: 'NULL', haystack: $sql);

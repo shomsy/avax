@@ -14,18 +14,16 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 
 final class SourceSyncCoordinator
 {
-    public function __construct(private readonly CacheSource $cacheSource, private readonly CacheStore|null $cacheStore = null, private readonly SourceSyncPolicy $sourceSyncPolicy = SourceSyncPolicy::CACHE_ASIDE, private DeferredSourceWrite|null $deferredSourceWrite = null)
-    {
-    }
+    public function __construct(private readonly CacheSource $cacheSource, private readonly ?CacheStore $cacheStore = null, private readonly SourceSyncPolicy $sourceSyncPolicy = SourceSyncPolicy::CACHE_ASIDE, private ?DeferredSourceWrite $deferredSourceWrite = null) {}
 
     public function write(CacheKey $cacheKey, mixed $value) : void
     {
         match ($this->sourceSyncPolicy) {
             SourceSyncPolicy::WRITE_THROUGH => $this->writeThrough(key: $cacheKey, value: $value),
-            SourceSyncPolicy::WRITE_AROUND  => $this->writeAround(key: $cacheKey, value: $value),
-            SourceSyncPolicy::WRITE_BEHIND  => $this->writeBehind(key: $cacheKey, value: $value),
-            SourceSyncPolicy::CACHE_ASIDE   => $this->cacheAsideWrite(key: $cacheKey, value: $value),
-            SourceSyncPolicy::NO_SYNC       => $this->writeToSourceOnly(),
+            SourceSyncPolicy::WRITE_AROUND => $this->writeAround(key: $cacheKey, value: $value),
+            SourceSyncPolicy::WRITE_BEHIND => $this->writeBehind(key: $cacheKey, value: $value),
+            SourceSyncPolicy::CACHE_ASIDE  => $this->cacheAsideWrite(key: $cacheKey, value: $value),
+            SourceSyncPolicy::NO_SYNC      => $this->writeToSourceOnly(),
         };
     }
 
@@ -76,9 +74,9 @@ final class SourceSyncCoordinator
         match ($this->sourceSyncPolicy) {
             SourceSyncPolicy::WRITE_THROUGH => $this->deleteThrough(key: $cacheKey),
             SourceSyncPolicy::WRITE_AROUND,
-            SourceSyncPolicy::CACHE_ASIDE  => $this->invalidateCache(key: $cacheKey),
+            SourceSyncPolicy::CACHE_ASIDE => $this->invalidateCache(key: $cacheKey),
             SourceSyncPolicy::WRITE_BEHIND => $this->invalidateCache(key: $cacheKey),
-            SourceSyncPolicy::NO_SYNC      => $this->deleteFromSource(key: $cacheKey),
+            SourceSyncPolicy::NO_SYNC     => $this->deleteFromSource(key: $cacheKey),
         };
     }
 

@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\ConfigExplanation\ConfigSource;
 final readonly class ExplainConfig
 {
     public function __construct(
-        private ConfigExplainer $explainer = new ConfigExplainer(),
+        private ConfigExplainer $explainer = new ConfigExplainer,
     ) {}
 
     /**

@@ -15,7 +15,7 @@ use RuntimeException;
  */
 final class Storage
 {
-    private static StorageInterface|null $storage = null;
+    private static ?StorageInterface $storage = null;
 
     public static function setStorage(StorageInterface $storage) : void
     {
@@ -67,7 +67,7 @@ final class Storage
         return self::getStorage()->move($source, $destination);
     }
 
-    public static function lastModified(string $path) : int|null
+    public static function lastModified(string $path) : ?int
     {
         return self::getStorage()->lastModified($path);
     }

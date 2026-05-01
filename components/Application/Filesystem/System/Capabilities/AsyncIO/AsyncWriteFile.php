@@ -21,16 +21,16 @@ use LogicException;
 final readonly class AsyncWriteFile
 {
     /**
-     * @param string               $path     Absolute or relative file path to write
-     * @param string               $contents File contents to write
-     * @param array<string, mixed> $options  Write operation options (permissions, append mode, etc.)
+     * @param string                     $path                  Absolute or relative file path to write
+     * @param string                     $contents              File contents to write
+     * @param array<string, mixed>       $options               Write operation options (permissions, append mode, etc.)
      * @param AsyncOperationPromise|null $asyncOperationPromise The promise associated with this operation (null until scheduled)
      */
     public function __construct(
         public string $path,
         public string $contents,
-        public array  $options = [],
-        public AsyncOperationPromise|null $asyncOperationPromise = null,
+        public array                  $options = [],
+        public ?AsyncOperationPromise $asyncOperationPromise = null,
     ) {}
 
     /**
@@ -54,7 +54,7 @@ final readonly class AsyncWriteFile
         string $path,
         string $contents,
         AsyncOperationPromise $asyncOperationPromise,
-        array  $options = [],
+        array $options = [],
     ) : self
     {
         return new self($path, $contents, $options, $asyncOperationPromise);

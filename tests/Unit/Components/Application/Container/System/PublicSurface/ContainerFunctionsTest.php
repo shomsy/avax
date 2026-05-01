@@ -21,7 +21,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_app_instance_sets_container() : void
     {
-        $new = new DIContainer();
+        $new = new DIContainer;
         appInstance($new);
         $this->assertSame($new, appInstance());
     }
@@ -49,7 +49,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_make_with_parameters() : void
     {
-        $instance = new class ('test') {
+        $instance = new class('test') {
             public function __construct(public string $v) {}
         };
 
@@ -67,7 +67,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_singleton_same_instance() : void
     {
-        singleton('single', static fn () => new stdClass());
+        singleton('single', static fn () => new stdClass);
 
         $i1 = $this->container->make('single');
         $i2 = $this->container->make('single');
@@ -91,7 +91,7 @@ final class ContainerFunctionsTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->container = new DIContainer();
+        $this->container = new DIContainer;
         appInstance($this->container);
     }
 

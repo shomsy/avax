@@ -16,7 +16,7 @@ final class MemcachedCacheStore implements CacheStoreInterface
         private array $config = [],
     )
     {
-        $this->memcached = new Memcached();
+        $this->memcached = new Memcached;
         $this->connect();
     }
 

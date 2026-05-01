@@ -22,7 +22,7 @@ final class PropertyInjectorTest extends TestCase
 
         $injector = new PropertyInjector(container: $container);
         $property = new PropertyPrototype(name: 'foo', type: 'string');
-        $context  = new KernelContext(serviceId: 'root');
+        $context = new KernelContext(serviceId: 'root');
 
         $result = $injector->resolve(
             property  : $property,
@@ -41,11 +41,11 @@ final class PropertyInjectorTest extends TestCase
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
             ->with($this->callback(callback: static fn (KernelContext $context) : bool => $context->serviceId === stdClass::class))
-            ->willReturn(value: new stdClass());
+            ->willReturn(value: new stdClass);
 
         $injector = new PropertyInjector(container: $container);
         $property = new PropertyPrototype(name: 'service', type: stdClass::class);
-        $context  = new KernelContext(serviceId: 'root');
+        $context = new KernelContext(serviceId: 'root');
 
         $result = $injector->resolve(
             property  : $property,
@@ -62,7 +62,7 @@ final class PropertyInjectorTest extends TestCase
     {
         $injector = new PropertyInjector(container: $this->createMock(ContainerInterface::class));
         $property = new PropertyPrototype(name: 'nullable', type: null, allowsNull: true, required: true);
-        $context  = new KernelContext(serviceId: 'root');
+        $context = new KernelContext(serviceId: 'root');
 
         $result = $injector->resolve(
             property  : $property,
@@ -79,7 +79,7 @@ final class PropertyInjectorTest extends TestCase
     {
         $injector = new PropertyInjector(container: $this->createMock(ContainerInterface::class));
         $property = new PropertyPrototype(name: 'required', type: null, allowsNull: false, required: true);
-        $context  = new KernelContext(serviceId: 'root');
+        $context = new KernelContext(serviceId: 'root');
 
         $this->expectException(exception: ResolutionException::class);
 
@@ -95,7 +95,7 @@ final class PropertyInjectorTest extends TestCase
     {
         $injector = new PropertyInjector(container: $this->createMock(ContainerInterface::class));
         $property = new PropertyPrototype(name: 'defaulted', type: null, hasDefault: true);
-        $context  = new KernelContext(serviceId: 'root');
+        $context = new KernelContext(serviceId: 'root');
 
         $result = $injector->resolve(
             property  : $property,

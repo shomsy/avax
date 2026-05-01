@@ -11,5 +11,5 @@ interface ChooseCachedValueForReplacement
     /**
      * @param array<string, CachedValueLifecycle> $entries
      */
-    public function choose(array $entries) : string|null;
+    public function choose(array $entries) : ?string;
 }

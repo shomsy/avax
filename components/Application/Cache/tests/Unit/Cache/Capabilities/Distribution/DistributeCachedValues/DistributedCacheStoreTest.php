@@ -26,7 +26,7 @@ final class DistributedCacheStoreTest extends TestCase
 
     public function test_write_then_read_uses_same_resolved_node() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
@@ -48,7 +48,7 @@ final class DistributedCacheStoreTest extends TestCase
 
     private function makeRecord(string $value) : StoredCacheRecord
     {
-        $now                  = $this->frozenClock->now();
+        $now = $this->frozenClock->now();
         $cachedValueLifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
@@ -60,7 +60,7 @@ final class DistributedCacheStoreTest extends TestCase
 
     public function test_distributed_store_fails_when_node_store_is_missing() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -76,7 +76,7 @@ final class DistributedCacheStoreTest extends TestCase
 
     public function test_forget_removes_from_correct_node() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
@@ -95,7 +95,7 @@ final class DistributedCacheStoreTest extends TestCase
 
     public function test_clear_removes_from_all_nodes() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -117,7 +117,7 @@ final class DistributedCacheStoreTest extends TestCase
 
     public function test_node_count_returns_ring_count() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -128,7 +128,7 @@ final class DistributedCacheStoreTest extends TestCase
 
     public function test_has_node_store_returns_true_when_registered() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);

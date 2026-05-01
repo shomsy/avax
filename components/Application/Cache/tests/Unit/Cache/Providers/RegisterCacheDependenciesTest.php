@@ -80,7 +80,7 @@ final class RegisterCacheDependenciesTest extends TestCase
         Cache::reset();
         CompiledCache::reset();
 
-        $this->frozenClock        = new FrozenClock();
+        $this->frozenClock = new FrozenClock;
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock);
 
         $this->cacheContract = new AvaxCache(

@@ -12,9 +12,7 @@ final class DeferredSourceWrite
     /** @var array<string, array{key: CacheSourceKey, value: mixed}> */
     private array $queue = [];
 
-    public function __construct(private readonly CacheSource $cacheSource)
-    {
-    }
+    public function __construct(private readonly CacheSource $cacheSource) {}
 
     public function queueFromCacheKey(CacheKey $cacheKey, mixed $value) : void
     {

@@ -82,14 +82,14 @@ final class DocumentationMonitoringSecurityPerformanceUnitTest extends TestCase
     {
         Security::audit(event: 'unit.audit', context: ['token' => 'secret']);
         $events = Security::auditEvents();
-        $event  = $events[array_key_last(array: $events)];
+        $event = $events[array_key_last(array: $events)];
 
         self::assertSame(expected: '[redacted]', actual: $event['context']['token']);
     }
 
     public function test_security_headers_are_applied_immutably() : void
     {
-        $formatter = Security::applySecurityHeaders(responseFormatter: new ResponseFormatter());
+        $formatter = Security::applySecurityHeaders(responseFormatter: new ResponseFormatter);
 
         self::assertSame(expected: 'nosniff', actual: $formatter->headers()['X-Content-Type-Options']);
     }
@@ -139,7 +139,7 @@ final class DocumentationMonitoringSecurityPerformanceUnitTest extends TestCase
 
     public function test_route_cache_reads_written_routes() : void
     {
-        $path  = sys_get_temp_dir() . '/avax-routes-' . uniqid() . '.php';
+        $path = sys_get_temp_dir() . '/avax-routes-' . uniqid() . '.php';
         $cache = Performance::routes(path: $path);
 
         $cache->write(routes: [['method' => 'GET', 'path' => '/']]);
@@ -149,7 +149,7 @@ final class DocumentationMonitoringSecurityPerformanceUnitTest extends TestCase
 
     public function test_config_cache_reads_written_config() : void
     {
-        $path  = sys_get_temp_dir() . '/avax-config-' . uniqid() . '.php';
+        $path = sys_get_temp_dir() . '/avax-config-' . uniqid() . '.php';
         $cache = Performance::config(path: $path);
 
         $cache->write(config: ['app' => ['name' => 'Avax']]);
@@ -159,7 +159,7 @@ final class DocumentationMonitoringSecurityPerformanceUnitTest extends TestCase
 
     public function test_config_cache_clear_removes_file() : void
     {
-        $path  = sys_get_temp_dir() . '/avax-config-clear-' . uniqid() . '.php';
+        $path = sys_get_temp_dir() . '/avax-config-clear-' . uniqid() . '.php';
         $cache = Performance::config(path: $path);
         $cache->write(config: ['x' => true]);
 

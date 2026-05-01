@@ -34,16 +34,16 @@ final class TieredCache implements CacheStore
         foreach ($cacheTier as $tier) {
             $key = $tier->cacheTierName->value;
             $this->tierDefinitions[$key] = $tier;
-            $this->tiers[$key]           = null;
-            $this->tierOrder[]           = $key;
+            $this->tiers[$key] = null;
+            $this->tierOrder[] = $key;
         }
     }
 
     public function registerTier(CacheTier $cacheTier, CacheStore $cacheStore) : self
     {
-        $key                         = $cacheTier->cacheTierName->value;
+        $key               = $cacheTier->cacheTierName->value;
         $this->tierDefinitions[$key] = $cacheTier;
-        $this->tiers[$key]           = $cacheStore;
+        $this->tiers[$key] = $cacheStore;
 
         return $this;
     }
@@ -102,7 +102,7 @@ final class TieredCache implements CacheStore
         $this->currentTierIndex = 0;
     }
 
-    private function getCurrentTierName() : string|null
+    private function getCurrentTierName() : ?string
     {
         return $this->tierOrder[$this->currentTierIndex] ?? null;
     }
@@ -112,7 +112,7 @@ final class TieredCache implements CacheStore
         $this->currentTierIndex++;
     }
 
-    private function getStoreForTier(string $tierName) : CacheStore|null
+    private function getStoreForTier(string $tierName) : ?CacheStore
     {
         return $this->tiers[$tierName] ?? null;
     }
@@ -204,7 +204,7 @@ final class TieredCache implements CacheStore
         }
     }
 
-    public function getTier(CacheTierName $cacheTierName) : CacheStore|null
+    public function getTier(CacheTierName $cacheTierName) : ?CacheStore
     {
         return $this->tiers[$cacheTierName->value] ?? null;
     }

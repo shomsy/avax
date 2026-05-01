@@ -11,10 +11,10 @@ use Throwable;
 final class CacheLockWasNotAcquired extends RuntimeException
 {
     public function __construct(
-        string              $message,
+        string     $message,
         public readonly CacheKey $cacheKey,
         public readonly int $timeoutSeconds,
-        Throwable           $throwable = null,
+        ?Throwable $throwable = null,
     )
     {
         parent::__construct(message: $message, code: 0, previous: $throwable);

@@ -12,14 +12,21 @@ use Stringable;
  */
 final class UriBuilder implements Stringable
 {
-    private string   $scheme      = '';
-    private string   $host        = '';
-    private int|null $port        = null;
-    private string   $path        = '';
-    private array    $queryParams = [];
-    private string   $fragment    = '';
-    private string   $user        = '';
-    private string|null $password = null;
+    private string $scheme = '';
+
+    private string $host = '';
+
+    private ?int $port = null;
+
+    private string $path = '';
+
+    private array $queryParams = [];
+
+    private string $fragment = '';
+
+    private string $user = '';
+
+    private ?string $password = null;
 
     public static function createFromString(string $uri) : self
     {
@@ -29,7 +36,7 @@ final class UriBuilder implements Stringable
             throw new InvalidArgumentException("Invalid URI: {$uri}");
         }
 
-        $builder           = new self();
+        $builder = new self;
         $builder->scheme = $parts['scheme'] ?? '';
         $builder->host = $parts['host'] ?? '';
         $builder->path = $parts['path'] ?? '';
@@ -47,7 +54,7 @@ final class UriBuilder implements Stringable
 
     public function withScheme(string $scheme) : self
     {
-        $clone         = clone $this;
+        $clone = clone $this;
         $clone->scheme = $scheme;
 
         return $clone;
@@ -55,15 +62,15 @@ final class UriBuilder implements Stringable
 
     public function withHost(string $host) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->host = $host;
 
         return $clone;
     }
 
-    public function withPort(int|null $port) : self
+    public function withPort(?int $port) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->port = $port;
 
         return $clone;
@@ -71,7 +78,7 @@ final class UriBuilder implements Stringable
 
     public function withPath(string $path) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->path = $path;
 
         return $clone;
@@ -87,7 +94,7 @@ final class UriBuilder implements Stringable
 
     public function withQueryParam(string $key, mixed $value) : self
     {
-        $clone                    = clone $this;
+        $clone = clone $this;
         $clone->queryParams[$key] = $value;
 
         return $clone;
@@ -95,7 +102,7 @@ final class UriBuilder implements Stringable
 
     public function withQueryParams(array $params) : self
     {
-        $clone              = clone $this;
+        $clone = clone $this;
         $clone->queryParams = array_merge($clone->queryParams, $params);
 
         return $clone;
@@ -111,16 +118,16 @@ final class UriBuilder implements Stringable
 
     public function withFragment(string $fragment) : self
     {
-        $clone           = clone $this;
+        $clone = clone $this;
         $clone->fragment = $fragment;
 
         return $clone;
     }
 
-    public function withUserInfo(string $user, string $password = null) : self
+    public function withUserInfo(string $user, ?string $password = null) : self
     {
-        $clone           = clone $this;
-        $clone->user     = $user;
+        $clone       = clone $this;
+        $clone->user = $user;
         $clone->password = $password;
 
         return $clone;

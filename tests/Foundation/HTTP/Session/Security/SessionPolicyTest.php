@@ -16,8 +16,8 @@ final class SessionPolicyTest extends TestCase
         $policy = new IdleTimeoutPolicy(timeout: 1800);
 
         $result = $policy->evaluate(context: [
-                                        'last_activity' => time() - 600,
-                                    ]);
+                                                 'last_activity' => time() - 600,
+                                             ]);
 
         $this->assertTrue($result);
     }
@@ -27,8 +27,8 @@ final class SessionPolicyTest extends TestCase
         $policy = new IdleTimeoutPolicy(timeout: 1800);
 
         $result = $policy->evaluate(context: [
-                                        'last_activity' => time() - 3600,
-                                    ]);
+                                                 'last_activity' => time() - 3600,
+                                             ]);
 
         $this->assertFalse($result);
     }
@@ -38,8 +38,8 @@ final class SessionPolicyTest extends TestCase
         $policy = new AbsoluteLifetimePolicy(lifetime: 86400);
 
         $result = $policy->evaluate(context: [
-                                        'created_at' => time() - 3600,
-                                    ]);
+                                                 'created_at' => time() - 3600,
+                                             ]);
 
         $this->assertTrue($result);
     }
@@ -49,8 +49,8 @@ final class SessionPolicyTest extends TestCase
         $policy = new AbsoluteLifetimePolicy(lifetime: 86400);
 
         $result = $policy->evaluate(context: [
-                                        'created_at' => time() - 172800,
-                                    ]);
+                                                 'created_at' => time() - 172800,
+                                             ]);
 
         $this->assertFalse($result);
     }

@@ -16,7 +16,7 @@ final readonly class ObservabilityAssembly
     public Clock $clock;
 
     public function __construct(
-        Clock                    $clock,
+        Clock $clock,
         public ResolutionMetrics $resolutionMetrics,
         public ResolutionTimeline $resolutionTimeline,
     )

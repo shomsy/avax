@@ -54,38 +54,26 @@ final class SharedDisposableService implements DisposableInterface
     }
 }
 
-final class PlainTransientDependency
-{
-}
+final class PlainTransientDependency {}
 
 final class SharedCapturesTransientService
 {
-    public function __construct(public PlainTransientDependency $plainTransientDependency)
-    {
-    }
+    public function __construct(public PlainTransientDependency $plainTransientDependency) {}
 }
 
 final class SharedCapturesRequestScopedService
 {
-    public function __construct(public RequestScopedDisposableService $requestScopedDisposableService)
-    {
-    }
+    public function __construct(public RequestScopedDisposableService $requestScopedDisposableService) {}
 }
 
-final class InvalidDisposableService
-{
-}
+final class InvalidDisposableService {}
 
-final class InvalidTransientDisposableService implements DisposableInterface
-{
-}
+final class InvalidTransientDisposableService implements DisposableInterface {}
 
-final class JobScopedService
-{
-}
+final class JobScopedService {}
 
-$cacheDir  = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid(prefix: '', more_entropy: true);
-$config    = CreateContainerConfig::create(cacheDir: $cacheDir);
+$cacheDir = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid(prefix: '', more_entropy: true);
+$config   = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer(config: $config);
 
 $container->singleton(abstract: WarmSingletonService::class, concrete: WarmSingletonService::class)->warm();
@@ -148,7 +136,7 @@ assertThrows(
 );
 
 $container->openScope(kind: ScopeKind::REQUEST, scopeId: 'request-1');
-$requestFirst  = $container->get(id: RequestScopedDisposableService::class);
+$requestFirst = $container->get(id: RequestScopedDisposableService::class);
 $requestSecond = $container->get(id: RequestScopedDisposableService::class);
 assertSame(expected: $requestFirst, actual: $requestSecond, message: 'ServerRequest-scoped services should reuse the same instance inside one request scope.');
 $container->closeScope(kind: ScopeKind::REQUEST);
@@ -173,7 +161,7 @@ assertThrows(
 );
 
 $container->openScope(kind: ScopeKind::JOB, scopeId: 'job-1');
-$jobFirst  = $container->get(id: JobScopedService::class);
+$jobFirst = $container->get(id: JobScopedService::class);
 $jobSecond = $container->get(id: JobScopedService::class);
 assertSame(expected: $jobFirst, actual: $jobSecond, message: 'Job-scoped services should reuse the same instance inside one job scope.');
 $container->closeScope(kind: ScopeKind::JOB);

@@ -18,7 +18,7 @@ interface Disk
 
     public function exists(string $path) : bool;
 
-    public function lastModified(string $path) : int|null;
+    public function lastModified(string $path) : ?int;
 
     public function createDirectory(string $path, int $permissions = 0o755) : bool;
 

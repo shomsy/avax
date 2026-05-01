@@ -10,7 +10,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-$clock = new SystemClock();
+$clock = new SystemClock;
 $l1    = new InMemoryCacheStore(clock: $clock);
 
 $cache = new AvaxCache(store: $l1, clock: $clock);

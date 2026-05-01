@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\DataHandling\DataTransfer;
 
+use Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataField;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueConversionContext;
 use Avax\DataHandling\DataTransfer\Capabilities\Attributes\CastWith;
 use Avax\DataHandling\DataTransfer\Capabilities\Attributes\Hidden;
 use Avax\DataHandling\DataTransfer\Capabilities\Attributes\ListOf;
@@ -24,8 +26,8 @@ final class DataTransferRuntimeTest extends TestCase
         // Arrange
         $input = [
             'user_name' => '  Mira  ',
-            'role'      => 'admin',
-            'address'   => ['city' => 'Belgrade'],
+            'role'    => 'admin',
+            'address' => ['city' => 'Belgrade'],
             'addresses' => [
                 ['city' => 'Novi Sad'],
             ],
@@ -51,10 +53,10 @@ final class DataTransferRuntimeTest extends TestCase
         // Arrange
         $profile = DataTransfer::create(class: RuntimeProfileData::class, input: [
             'user_name' => 'Mira',
-            'role'      => 'user',
-            'address'   => ['city' => 'Belgrade'],
+            'role'    => 'user',
+            'address' => ['city' => 'Belgrade'],
             'addresses' => [],
-            'secret'    => 'hashed',
+            'secret'  => 'hashed',
         ]);
 
         // Act
@@ -73,15 +75,15 @@ final class DataTransferRuntimeTest extends TestCase
         // Arrange
         $profile = DataTransfer::create(class: RuntimeProfileData::class, input: [
             'user_name' => 'Mira',
-            'role'      => 'user',
-            'address'   => ['city' => 'Belgrade'],
+            'role'    => 'user',
+            'address' => ['city' => 'Belgrade'],
             'addresses' => [],
-            'secret'    => 'hashed',
+            'secret'  => 'hashed',
         ]);
 
         // Act
-        $json     = DataTransfer::toJson(object: $profile);
-        $jsonApi  = DataTransfer::toJsonApi(object: $profile, type: 'runtime-profile');
+        $json    = DataTransfer::toJson(object: $profile);
+        $jsonApi = DataTransfer::toJsonApi(object: $profile, type: 'runtime-profile');
         $stdClass = DataTransfer::toStdClass(object: $profile);
 
         // Assert
@@ -94,7 +96,7 @@ final class DataTransferRuntimeTest extends TestCase
     {
         // Arrange
         $input = [
-            'city'    => 'Belgrade',
+            'city' => 'Belgrade',
             'unknown' => 'value',
         ];
 
@@ -133,7 +135,7 @@ final class DataTransferRuntimeTest extends TestCase
         // Arrange
         $input = [
             'email' => 'ada@example.com',
-            'name'  => 'Ada',
+            'name' => 'Ada',
         ];
 
         // Act
@@ -152,7 +154,7 @@ final class DataTransferRuntimeTest extends TestCase
         // Arrange
         $input = [
             'email' => 'not-an-email',
-            'name'  => 'A',
+            'name' => 'A',
         ];
 
         // Assert
@@ -167,7 +169,7 @@ final class DataTransferRuntimeTest extends TestCase
         // Arrange
         $input = [
             'email' => 'grace@example.com',
-            'name'  => 'Grace',
+            'name' => 'Grace',
         ];
 
         // Act
@@ -182,7 +184,7 @@ final class DataTransferRuntimeTest extends TestCase
 enum RuntimeRole: string
 {
     case Admin = 'admin';
-    case User  = 'user';
+    case User = 'user';
 }
 
 final readonly class RuntimeAddressData
@@ -198,16 +200,16 @@ final readonly class RuntimeProfileData
     public function __construct(
         #[MapFrom(name: 'user_name')]
         #[CastWith(casterClass: TrimStringCaster::class)]
-        public string             $name,
-        public RuntimeRole        $role,
+        public string      $name,
+        public RuntimeRole $role,
         #[SensitiveParameter]
         public RuntimeAddressData $address,
         #[SensitiveParameter]
         #[ListOf(class: RuntimeAddressData::class)]
-        public array              $addresses,
+        public array       $addresses,
         #[SensitiveParameter]
         #[Hidden]
-        public string             $secret,
+        public string      $secret,
     ) {}
 }
 
@@ -219,7 +221,7 @@ final class RuntimeDocumentedListData
 
 final readonly class TrimStringCaster implements ValueCasterInterface
 {
-    public function cast(mixed $value, \Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataField $field, \Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueConversionContext $context) : mixed
+    public function cast(mixed $value, DataField $field, ValueConversionContext $context) : mixed
     {
         return is_string(value: $value) ? trim(string: $value) : $value;
     }

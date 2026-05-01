@@ -12,13 +12,11 @@ final class RuntimeState
 
     private int $bootCount = 0;
 
-    private DateTimeImmutable|null $bootedAt = null;
+    private ?DateTimeImmutable $bootedAt = null;
 
-    private DateTimeImmutable|null $shutdownAt = null;
+    private ?DateTimeImmutable $shutdownAt = null;
 
-    public function __construct(private readonly string $runtimeName)
-    {
-    }
+    public function __construct(private readonly string $runtimeName) {}
 
     public function runtimeName() : string
     {
@@ -35,12 +33,12 @@ final class RuntimeState
         return $this->bootCount;
     }
 
-    public function bootedAt() : DateTimeImmutable|null
+    public function bootedAt() : ?DateTimeImmutable
     {
         return $this->bootedAt;
     }
 
-    public function shutdownAt() : DateTimeImmutable|null
+    public function shutdownAt() : ?DateTimeImmutable
     {
         return $this->shutdownAt;
     }
@@ -49,13 +47,13 @@ final class RuntimeState
     {
         $this->booted = true;
         $this->bootCount += 1;
-        $this->bootedAt   = $bootedAt;
+        $this->bootedAt = $bootedAt;
         $this->shutdownAt = null;
     }
 
     public function markShutdown(DateTimeImmutable $shutdownAt) : void
     {
-        $this->booted     = false;
+        $this->booted = false;
         $this->shutdownAt = $shutdownAt;
     }
 }

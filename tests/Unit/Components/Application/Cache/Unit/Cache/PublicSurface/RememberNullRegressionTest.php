@@ -14,8 +14,10 @@ use Psr\SimpleCache\InvalidArgumentException;
 final class RememberNullRegressionTest extends TestCase
 {
     private FrozenClock $clock;
+
     private InMemoryCacheStore $store;
-    private AvaxCache   $cache;
+
+    private AvaxCache $cache;
 
     /**
      * @throws InvalidArgumentException

@@ -6,9 +6,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 final readonly class ResolveCompiledCachePath
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory)
-    {
-    }
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory) {}
 
     public function resolveManifestPath() : CompiledCachePath
     {

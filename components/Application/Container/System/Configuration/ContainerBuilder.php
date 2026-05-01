@@ -19,7 +19,7 @@ final class ContainerBuilder
 
     public function build() : Container
     {
-        $container = new Container();
+        $container = new Container;
 
         foreach ($this->bindings as $id => $factory) {
             $container->bind($id, $factory);

@@ -12,13 +12,15 @@ use Avax\Tests\TestCase;
 class MoveFileTest extends TestCase
 {
     private LocalDisk $disk;
+
     private string $sourceFile;
+
     private string $destFile;
 
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk     = new LocalDisk();
+        $this->disk = new LocalDisk;
         $this->sourceFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/move_source.txt';
         $this->destFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/move_dest.txt';
     }
@@ -30,7 +32,7 @@ class MoveFileTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteMovesFile() : void
+    public function test_execute_moves_file() : void
     {
         file_put_contents(filename: $this->sourceFile, data: "content\n");
 
@@ -41,7 +43,7 @@ class MoveFileTest extends TestCase
         self::assertFileExists(filename: $this->destFile);
     }
 
-    public function testExecuteThrowsExceptionForNonExistentSource() : void
+    public function test_execute_throws_exception_for_non_existent_source() : void
     {
         $this->expectException(exception: FileNotFound::class);
 

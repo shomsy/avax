@@ -12,9 +12,9 @@ use Avax\Tests\TestCase;
 
 final class AccessPersistentDataTest extends TestCase
 {
-    public function testRawQueryRequiresNamedParameters() : void
+    public function test_raw_query_requires_named_parameters() : void
     {
-        $dataLayer = DataLayer::fromDatabaseRuntime(databaseRuntime: new FakeDataRuntime());
+        $dataLayer = DataLayer::fromDatabaseRuntime(databaseRuntime: new FakeDataRuntime);
 
         $this->expectException(PersistentDataFailure::class);
         $this->expectExceptionMessage('named parameter');
@@ -22,9 +22,9 @@ final class AccessPersistentDataTest extends TestCase
         $dataLayer->access()->raw(request: new PersistentDataRequest(statement: 'select * from users'));
     }
 
-    public function testRawQueryRejectsPositionalParameters() : void
+    public function test_raw_query_rejects_positional_parameters() : void
     {
-        $dataLayer = DataLayer::fromDatabaseRuntime(databaseRuntime: new FakeDataRuntime());
+        $dataLayer = DataLayer::fromDatabaseRuntime(databaseRuntime: new FakeDataRuntime);
 
         $this->expectException(PersistentDataFailure::class);
         $this->expectExceptionMessage('Positional ? parameters are not accepted');
@@ -35,9 +35,9 @@ final class AccessPersistentDataTest extends TestCase
                                            ));
     }
 
-    public function testReadPathHandsNamedRequestToRuntime() : void
+    public function test_read_path_hands_named_request_to_runtime() : void
     {
-        $runtime   = new FakeDataRuntime();
+        $runtime = new FakeDataRuntime;
         $dataLayer = DataLayer::fromDatabaseRuntime(databaseRuntime: $runtime);
 
         $result = $dataLayer->access()->read(request: new PersistentDataRequest(
@@ -49,9 +49,9 @@ final class AccessPersistentDataTest extends TestCase
         $this->assertSame('select * from users where id = :id', $runtime->lastRequest?->statement);
     }
 
-    public function testTransactionBoundaryIsExplicitlyHandedToRuntime() : void
+    public function test_transaction_boundary_is_explicitly_handed_to_runtime() : void
     {
-        $runtime   = new FakeDataRuntime();
+        $runtime = new FakeDataRuntime;
         $dataLayer = DataLayer::fromDatabaseRuntime(databaseRuntime: $runtime);
 
         $result = $dataLayer->access()->transaction(
@@ -66,9 +66,9 @@ final class AccessPersistentDataTest extends TestCase
 
 final class FakeDataRuntime
 {
-    public PersistentDataRequest|null $lastRequest = null;
+    public ?PersistentDataRequest $lastRequest = null;
 
-    public string|null $lastTransactionConnection = null;
+    public ?string $lastTransactionConnection = null;
 
     public function executeRawDataQuery(PersistentDataRequest $request) : PersistentDataResult
     {
@@ -77,7 +77,7 @@ final class FakeDataRuntime
         return new PersistentDataResult(rows: [['id' => $request->parameters['id'] ?? null]]);
     }
 
-    public function runDataTransaction(callable $callback, string $connectionName = null) : mixed
+    public function runDataTransaction(callable $callback, ?string $connectionName = null) : mixed
     {
         $this->lastTransactionConnection = $connectionName;
 

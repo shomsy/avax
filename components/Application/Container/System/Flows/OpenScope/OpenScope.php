@@ -12,14 +12,12 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final readonly class OpenScope
 {
-    public function __construct(private ResolveDependency $resolveDependency)
-    {
-    }
+    public function __construct(private ResolveDependency $resolveDependency) {}
 
     /**
      * Opens one new scope frame.
      */
-    public function open(string $kind = null, string $scopeId = '') : void
+    public function open(?string $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->resolveDependency->openScope(kind: $kind, scopeId: $scopeId);

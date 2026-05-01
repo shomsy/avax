@@ -10,9 +10,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Rep
 final readonly class ReplicationResult
 {
     /** @param list<ReplicaWriteResult> $replicaResults */
-    public function __construct(public string $key, public bool $primarySuccess, public array $replicaResults, public PrimaryReplicaPolicy $primaryReplicaPolicy)
-    {
-    }
+    public function __construct(public string $key, public bool $primarySuccess, public array $replicaResults, public PrimaryReplicaPolicy $primaryReplicaPolicy) {}
 
     /**
      * Check if replication was fully successful (primary + all replicas).

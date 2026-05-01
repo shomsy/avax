@@ -22,7 +22,7 @@ abstract class CacheStoreContractTest extends TestCase
     {
         $clock = $this->clock();
         $store = $this->createStore(clock: $clock);
-        $key   = CacheKey::create(key: 'nonexistent-key');
+        $key = CacheKey::create(key: 'nonexistent-key');
 
         $result = $store->read(key: $key, clock: $clock);
 
@@ -40,7 +40,7 @@ abstract class CacheStoreContractTest extends TestCase
     {
         $clock = $this->clock();
         $store = $this->createStore(clock: $clock);
-        $key   = CacheKey::create(key: 'test-key');
+        $key = CacheKey::create(key: 'test-key');
         $value = 'test-value';
 
         $record = new StoredCacheRecord(
@@ -63,7 +63,7 @@ abstract class CacheStoreContractTest extends TestCase
     {
         $clock = $this->clock();
         $store = $this->createStore(clock: $clock);
-        $key   = CacheKey::create(key: 'null-key');
+        $key = CacheKey::create(key: 'null-key');
 
         $record = new StoredCacheRecord(
             value    : null,
@@ -85,7 +85,7 @@ abstract class CacheStoreContractTest extends TestCase
     {
         $clock = $this->clock();
         $store = $this->createStore(clock: $clock);
-        $key   = CacheKey::create(key: 'expired-key');
+        $key = CacheKey::create(key: 'expired-key');
         $value = 'test-value';
 
         $record = new StoredCacheRecord(
@@ -108,7 +108,7 @@ abstract class CacheStoreContractTest extends TestCase
     {
         $clock = $this->clock();
         $store = $this->createStore(clock: $clock);
-        $key   = CacheKey::create(key: 'forget-key');
+        $key = CacheKey::create(key: 'forget-key');
         $value = 'test-value';
 
         $record = new StoredCacheRecord(
@@ -156,7 +156,7 @@ abstract class CacheStoreContractTest extends TestCase
     {
         $clock = $this->clock();
         $store = $this->createStore(clock: $clock);
-        $key   = CacheKey::create(key: 'exists-key');
+        $key = CacheKey::create(key: 'exists-key');
 
         $record = new StoredCacheRecord(
             value    : 'test-value',
@@ -176,7 +176,7 @@ abstract class CacheStoreContractTest extends TestCase
     {
         $clock = $this->clock();
         $store = $this->createStore(clock: $clock);
-        $key   = CacheKey::create(key: 'nonexistent-key');
+        $key = CacheKey::create(key: 'nonexistent-key');
 
         $this->assertFalse(condition: $store->exists(key: $key));
     }

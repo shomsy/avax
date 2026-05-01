@@ -27,7 +27,7 @@ final class ResponseBuilder
     /** @var array<string, list<string>> */
     private array $headers = [];
 
-    private string|null $body = null;
+    private ?string $body = null;
 
     private string $protocolVersion = '1.1';
 
@@ -36,8 +36,8 @@ final class ResponseBuilder
      */
     public function withStatus(int $code, string $reasonPhrase = '') : self
     {
-        $self               = clone $this;
-        $self->statusCode   = $code;
+        $self             = clone $this;
+        $self->statusCode = $code;
         $self->reasonPhrase = $reasonPhrase;
 
         return $self;
@@ -49,7 +49,7 @@ final class ResponseBuilder
     public function withHeader(string $name, string $value) : self
     {
         $self = clone $this;
-        $key  = strtolower($name);
+        $key = strtolower($name);
         $self->headers[$key] ??= [];
         $self->headers[$key][] = $value;
 
@@ -63,7 +63,7 @@ final class ResponseBuilder
      */
     public function withHeaders(string $name, array $values) : self
     {
-        $self                             = clone $this;
+        $self = clone $this;
         $self->headers[strtolower($name)] = $values;
 
         return $self;
@@ -74,7 +74,7 @@ final class ResponseBuilder
      */
     public function withBody(string $body) : self
     {
-        $self       = clone $this;
+        $self = clone $this;
         $self->body = $body;
 
         return $self;
@@ -85,7 +85,7 @@ final class ResponseBuilder
      */
     public function withProtocolVersion(string $version) : self
     {
-        $self                  = clone $this;
+        $self = clone $this;
         $self->protocolVersion = $version;
 
         return $self;
@@ -93,16 +93,12 @@ final class ResponseBuilder
 
     /**
      * Convenience: build a JSON response.
-     *
-     * @param mixed $data
-     * @param int $statusCode
-     * @param int $jsonFlags
      */
     public function json(mixed $data, int $statusCode = 200, int $jsonFlags = JSON_THROW_ON_ERROR) : self
     {
-        $self                          = clone $this;
-        $self->statusCode              = $statusCode;
-        $self->body                    = json_encode($data, $jsonFlags);
+        $self             = clone $this;
+        $self->statusCode = $statusCode;
+        $self->body       = json_encode($data, $jsonFlags);
         $self->headers['content-type'] = ['application/json; charset=utf-8'];
 
         return $self;

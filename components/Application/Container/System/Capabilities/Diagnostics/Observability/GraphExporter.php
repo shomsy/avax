@@ -17,10 +17,10 @@ final class GraphExporter
     public function export(array $artifact, string $format = 'json') : string
     {
         return match (strtolower(string: trim(string: $format))) {
-            'mermaid'         => $this->toMermaid(artifact: $artifact),
+            'mermaid' => $this->toMermaid(artifact: $artifact),
             'dot', 'graphviz' => $this->toDot(artifact: $artifact),
-            'html'            => $this->toHtml(artifact: $artifact),
-            default           => $this->toJson(artifact: $artifact),
+            'html'    => $this->toHtml(artifact: $artifact),
+            default   => $this->toJson(artifact: $artifact),
         };
     }
 
@@ -29,7 +29,7 @@ final class GraphExporter
      */
     private function toMermaid(array $artifact) : string
     {
-        $lines   = ['flowchart LR'];
+        $lines = ['flowchart LR'];
         $nodeIds = [];
 
         foreach ($artifact['nodes'] ?? [] as $node) {
@@ -39,8 +39,8 @@ final class GraphExporter
         }
 
         foreach ($artifact['edges'] ?? [] as $edge) {
-            $from  = $this->nodeId(label: (string) ($edge['from'] ?? 'from'), seen: $nodeIds);
-            $to    = $this->nodeId(label: (string) ($edge['to'] ?? 'to'), seen: $nodeIds);
+            $from = $this->nodeId(label: (string) ($edge['from'] ?? 'from'), seen: $nodeIds);
+            $to   = $this->nodeId(label: (string) ($edge['to'] ?? 'to'), seen: $nodeIds);
             $label = trim(string: (string) ($edge['label'] ?? ''));
 
             $lines[] = $label !== ''
@@ -84,8 +84,8 @@ final class GraphExporter
         }
 
         foreach ($artifact['edges'] ?? [] as $edge) {
-            $from  = $this->quote(value: (string) ($edge['from'] ?? 'from'));
-            $to    = $this->quote(value: (string) ($edge['to'] ?? 'to'));
+            $from = $this->quote(value: (string) ($edge['from'] ?? 'from'));
+            $to   = $this->quote(value: (string) ($edge['to'] ?? 'to'));
             $label = trim(string: (string) ($edge['label'] ?? ''));
 
             $lines[] = $label !== ''

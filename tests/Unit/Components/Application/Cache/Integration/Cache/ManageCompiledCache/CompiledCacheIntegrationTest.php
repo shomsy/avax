@@ -20,13 +20,14 @@ final class UserController
 final class CompiledCacheIntegrationTest extends TestCase
 {
     private string $tmpDir;
+
     private CompiledCacheContract $cache;
 
     public function test_it_compiles_reads_and_clears_route_like_artifact() : void
     {
         $name    = 'routes';
         $builder = static fn () => [
-            'GET /users'  => ['controller' => UserController::class, 'method' => 'index'],
+            'GET /users' => ['controller' => UserController::class, 'method' => 'index'],
             'POST /users' => ['controller' => UserController::class, 'method' => 'store'],
         ];
 
@@ -52,7 +53,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         $sourceFile = $this->tmpDir . '/source.php';
         file_put_contents($sourceFile, '<?php return ["version" => 1];');
 
-        $name    = 'config';
+        $name  = 'config';
         $builder = static fn () => require $sourceFile;
 
         $sources = CompiledCacheSources::fromPaths($sourceFile);
@@ -65,7 +66,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         file_put_contents($sourceFile, '<?php return ["version" => 2];');
 
         $builderNew = static fn () => require $sourceFile;
-        $value      = $this->cache->read(name: $name, build: $builderNew, sources: $sources);
+        $value = $this->cache->read(name: $name, build: $builderNew, sources: $sources);
 
         $this->assertSame(expected: 2, actual: $value['version']);
     }
@@ -76,7 +77,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         mkdir($this->tmpDir);
 
         $config  = CompiledCacheConfiguration::inDirectory($this->tmpDir);
-        $builder = new BuildCompiledCache();
+        $builder = new BuildCompiledCache;
 
         $this->cache = $builder->fromConfiguration($config);
     }

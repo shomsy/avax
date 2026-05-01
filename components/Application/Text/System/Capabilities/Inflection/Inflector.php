@@ -13,13 +13,13 @@ final class Inflector
     /** @var array<string, string> Irregular word mappings */
     private array $irregular
         = [
-            'person'     => 'people', 'man' => 'men', 'woman' => 'women',
-            'child'      => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
-            'goose'      => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
-            'datum'      => 'data', 'medium' => 'media', 'analysis' => 'analyses',
-            'basis'      => 'bases', 'crisis' => 'crises', 'diagnosis' => 'diagnoses',
-            'ellipsis'   => 'ellipses', 'hypothesis' => 'hypotheses',
-            'oasis'      => 'oases', 'parenthesis' => 'parentheses',
+            'person'   => 'people', 'man' => 'men', 'woman' => 'women',
+            'child'    => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
+            'goose'    => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
+            'datum'    => 'data', 'medium' => 'media', 'analysis' => 'analyses',
+            'basis'    => 'bases', 'crisis' => 'crises', 'diagnosis' => 'diagnoses',
+            'ellipsis' => 'ellipses', 'hypothesis' => 'hypotheses',
+            'oasis'    => 'oases', 'parenthesis' => 'parentheses',
             'phenomenon' => 'phenomena', 'criterion' => 'criteria',
         ];
 

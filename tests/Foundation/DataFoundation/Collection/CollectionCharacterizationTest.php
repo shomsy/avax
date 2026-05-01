@@ -14,11 +14,10 @@ use RuntimeException;
 final class CollectionCharacterizationTest extends TestCase
 {
     /** READ OPERATIONS */
-
-    public function testAllReturnsItems() : void
+    public function test_all_returns_items() : void
     {
         $items = ['a' => 1, 'b' => 2];
-        $col   = $this->collection(items: $items);
+        $col = $this->collection(items: $items);
 
         $this->assertSame($items, $col->all());
     }
@@ -28,7 +27,7 @@ final class CollectionCharacterizationTest extends TestCase
         return new Collection(items: $items);
     }
 
-    public function testGetReturnsValueByKey() : void
+    public function test_get_returns_value_by_key() : void
     {
         $col = $this->collection(items: ['name' => 'Alice', 'age' => 30]);
 
@@ -36,14 +35,14 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertSame(30, $col->get(key: 'age'));
     }
 
-    public function testGetReturnsDefaultForMissingKey() : void
+    public function test_get_returns_default_for_missing_key() : void
     {
         $col = $this->collection(items: ['name' => 'Alice']);
 
         $this->assertSame('unknown', $col->get(key: 'missing', default: 'unknown'));
     }
 
-    public function testHasReturnsTrueForExistingKey() : void
+    public function test_has_returns_true_for_existing_key() : void
     {
         $col = $this->collection(items: ['name' => 'Alice']);
 
@@ -51,14 +50,14 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertFalse($col->has(key: 'missing'));
     }
 
-    public function testFirstReturnsFirstItem() : void
+    public function test_first_returns_first_item() : void
     {
         $col = $this->collection(items: [1, 2, 3]);
 
         $this->assertSame(1, $col->first());
     }
 
-    public function testLastReturnsLastItem() : void
+    public function test_last_returns_last_item() : void
     {
         $col = $this->collection(items: [1, 2, 3]);
 
@@ -66,8 +65,7 @@ final class CollectionCharacterizationTest extends TestCase
     }
 
     /** FLUENT OPERATIONS */
-
-    public function testMapFluent() : void
+    public function test_map_fluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3]);
         $result = $col->map(callback: static fn (int $n) : int => $n * 2);
@@ -75,7 +73,7 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertSame([2, 4, 6], $result->all());
     }
 
-    public function testFilterFluent() : void
+    public function test_filter_fluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3, 4]);
         $result = $col->filter(callback: static fn (int $n) : bool => $n % 2 === 0);
@@ -83,7 +81,7 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertSame([1 => 2, 3 => 4], $result->all());
     }
 
-    public function testReduceFluent() : void
+    public function test_reduce_fluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3, 4]);
         $result = $col->reduce(callback: static fn (int $carry, int $n) : int => $carry + $n, initial: 0);
@@ -91,7 +89,7 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertSame(10, $result);
     }
 
-    public function testChainOperations() : void
+    public function test_chain_operations() : void
     {
         $col    = $this->collection(items: [1, 2, 3, 4, 5]);
         $result = $col
@@ -103,8 +101,7 @@ final class CollectionCharacterizationTest extends TestCase
     }
 
     /** AGGREGATE OPERATIONS */
-
-    public function testSumAggregate() : void
+    public function test_sum_aggregate() : void
     {
         $col = $this->collection(items: [
                                             ['amount' => 100],
@@ -115,7 +112,7 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertSame(450, $col->sum(key: 'amount'));
     }
 
-    public function testAverageAggregate() : void
+    public function test_average_aggregate() : void
     {
         $col = $this->collection(items: [
                                             ['score' => 80],
@@ -132,7 +129,7 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertGreaterThanOrEqual($expected - $delta, $actual);
     }
 
-    public function testMinMaxAggregate() : void
+    public function test_min_max_aggregate() : void
     {
         $col = $this->collection(items: [
                                             ['score' => 80],
@@ -145,51 +142,49 @@ final class CollectionCharacterizationTest extends TestCase
     }
 
     /** ORDER OPERATIONS */
-
-    public function testSortFluent() : void
+    public function test_sort_fluent() : void
     {
-        $col    = $this->collection(items: [3, 1, 2]);
+        $col = $this->collection(items: [3, 1, 2]);
         $result = $col->sort();
 
         $this->assertSame([1, 2, 3], $result->all());
     }
 
-    public function testReverseFluent() : void
+    public function test_reverse_fluent() : void
     {
-        $col    = $this->collection(items: [1, 2, 3]);
+        $col = $this->collection(items: [1, 2, 3]);
         $result = $col->reverse();
 
         $this->assertSame([3, 2, 1], $result->all());
     }
 
-    public function testShuffleFluent() : void
+    public function test_shuffle_fluent() : void
     {
-        $col    = $this->collection(items: [1, 2, 3, 4, 5]);
+        $col = $this->collection(items: [1, 2, 3, 4, 5]);
         $result = $col->shuffle();
 
         $this->assertCount(5, $result->all());
     }
 
     /** CONVERT OPERATIONS */
-
-    public function testToJsonFluent() : void
+    public function test_to_json_fluent() : void
     {
-        $col  = $this->collection(items: ['name' => 'Alice', 'age' => 30]);
+        $col = $this->collection(items: ['name' => 'Alice', 'age' => 30]);
         $json = $col->toJson();
 
         $decoded = json_decode(json: $json, associative: true);
         $this->assertSame(['name' => 'Alice', 'age' => 30], $decoded);
     }
 
-    public function testToArrayFluent() : void
+    public function test_to_array_fluent() : void
     {
-        $col   = $this->collection(items: ['name' => 'Alice']);
+        $col = $this->collection(items: ['name' => 'Alice']);
         $array = $col->toArray();
 
         $this->assertSame(['name' => 'Alice'], $array);
     }
 
-    public function testPluckFluent() : void
+    public function test_pluck_fluent() : void
     {
         $col = $this->collection(items: [
                                             ['name' => 'Alice', 'age' => 30],
@@ -199,9 +194,9 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertSame(['Alice', 'Bob'], $col->pluck(key: 'name'));
     }
 
-    public function testPullReturnsRemovedValueAndNextCollection() : void
+    public function test_pull_returns_removed_value_and_next_collection() : void
     {
-        $col    = $this->collection(items: ['name' => 'Alice', 'age' => 30]);
+        $col = $this->collection(items: ['name' => 'Alice', 'age' => 30]);
         $result = $col->pull(key: 'name');
 
         $this->assertSame('Alice', $result->first());
@@ -210,43 +205,41 @@ final class CollectionCharacterizationTest extends TestCase
     }
 
     /** LOCK OPERATIONS */
-
-    public function testLockFluent() : void
+    public function test_lock_fluent() : void
     {
-        $col    = $this->collection(items: ['name' => 'Alice']);
+        $col = $this->collection(items: ['name' => 'Alice']);
         $locked = $col->lock();
 
         $this->assertTrue($locked->isLocked());
     }
 
-    public function testImmutableAfterLock() : void
+    public function test_immutable_after_lock() : void
     {
-        $col    = $this->collection(items: ['name' => 'Alice']);
+        $col = $this->collection(items: ['name' => 'Alice']);
         $locked = $col->lock();
 
         $this->expectException(RuntimeException::class);
         $locked->set(key: 'age', value: 30);
     }
 
-    public function testToImmutableFluent() : void
+    public function test_to_immutable_fluent() : void
     {
-        $col       = $this->collection(items: ['name' => 'Alice']);
+        $col = $this->collection(items: ['name' => 'Alice']);
         $immutable = $col->toImmutable();
 
         $this->assertTrue($immutable->isLocked());
     }
 
     /** UTILITY OPERATIONS */
-
-    public function testChunkFluent() : void
+    public function test_chunk_fluent() : void
     {
-        $col    = $this->collection(items: [1, 2, 3, 4, 5]);
+        $col = $this->collection(items: [1, 2, 3, 4, 5]);
         $result = $col->chunk(size: 2);
 
         $this->assertCount(3, $result->all());
     }
 
-    public function testGroupByFluent() : void
+    public function test_group_by_fluent() : void
     {
         $col = $this->collection(items: [
                                             ['category' => 'A', 'name' => 'Alice'],
@@ -259,15 +252,15 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertCount(1, $grouped['B']);
     }
 
-    public function testUniqueFluent() : void
+    public function test_unique_fluent() : void
     {
-        $col    = $this->collection(items: [1, 2, 2, 3, 3, 3]);
+        $col = $this->collection(items: [1, 2, 2, 3, 3, 3]);
         $result = $col->unique();
 
         $this->assertCount(3, $result->all());
     }
 
-    public function testPartitionFluent() : void
+    public function test_partition_fluent() : void
     {
         $col = $this->collection(items: [1, 2, 3, 4]);
         [$evens, $odds] = $col->partition(callback: static fn (int $n) : bool => $n % 2 === 0);
@@ -276,9 +269,9 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertSame([0 => 1, 2 => 3], $odds->all());
     }
 
-    public function testTapFluent() : void
+    public function test_tap_fluent() : void
     {
-        $col    = $this->collection(items: [1, 2, 3]);
+        $col = $this->collection(items: [1, 2, 3]);
         $tapped = null;
 
         $col->tap(callback: static fn ($c) => $tapped = $c->count());
@@ -286,64 +279,62 @@ final class CollectionCharacterizationTest extends TestCase
         $this->assertSame(3, $tapped);
     }
 
-    public function testWhenFluent() : void
+    public function test_when_fluent() : void
     {
-        $col    = $this->collection(items: [1, 2, 3]);
+        $col = $this->collection(items: [1, 2, 3]);
         $result = $col->when(condition: true, callback: static fn ($c) => $c->map(callback: static fn ($n) => $n * 2));
 
         $this->assertSame([2, 4, 6], $result->all());
     }
 
-    public function testUnlessFluent() : void
+    public function test_unless_fluent() : void
     {
-        $col    = $this->collection(items: [1, 2, 3]);
+        $col = $this->collection(items: [1, 2, 3]);
         $result = $col->unless(condition: false, callback: static fn ($c) => $c->map(static fn ($n) => $n * 2));
 
         $this->assertSame([2, 4, 6], $result->all());
     }
 
     /** STATIC FACTORIES */
-
-    public function testMakeStatic() : void
+    public function test_make_static() : void
     {
         $col = Collection::make(items: ['name' => 'Alice']);
 
         $this->assertSame(['name' => 'Alice'], $col->all());
     }
 
-    public function testWrapStatic() : void
+    public function test_wrap_static() : void
     {
         $col = Collection::wrap(value: 'single');
 
         $this->assertSame(['single'], $col->all());
     }
 
-    public function testWrapPreservesCollection() : void
+    public function test_wrap_preserves_collection() : void
     {
         $original = $this->collection(items: ['name' => 'Alice']);
-        $wrapped  = Collection::wrap(value: $original);
+        $wrapped = Collection::wrap(value: $original);
 
         $this->assertSame($original, $wrapped);
     }
 
     /** INTERFACE */
-
-    public function testImplementsIteratorAggregate() : void
+    public function test_implements_iterator_aggregate() : void
     {
-        $col   = $this->collection(items: [1, 2, 3]);
+        $col = $this->collection(items: [1, 2, 3]);
         $items = iterator_to_array(iterator: $col);
 
         $this->assertSame([1, 2, 3], $items);
     }
 
-    public function testImplementsCountable() : void
+    public function test_implements_countable() : void
     {
         $col = $this->collection(items: [1, 2, 3]);
 
         $this->assertSame(3, $col->count());
     }
 
-    public function testImplementsArrayAccess() : void
+    public function test_implements_array_access() : void
     {
         $col = $this->collection(items: ['name' => 'Alice']);
 

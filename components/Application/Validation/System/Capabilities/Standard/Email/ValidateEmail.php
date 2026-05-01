@@ -23,7 +23,7 @@ final readonly class ValidateEmail
      *
      * @return bool True if the email is valid.
      */
-    public function execute(#[SensitiveParameter] string $email) : bool
+    public function execute(#[SensitiveParameter] string $email): bool
     {
         if ($email === '') {
             return false;

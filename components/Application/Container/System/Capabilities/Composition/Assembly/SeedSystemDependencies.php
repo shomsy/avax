@@ -29,14 +29,14 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 final class SeedSystemDependencies
 {
     public function seed(
-        RuntimeAssembly     $runtime,
+        RuntimeAssembly $runtime,
         ObservabilityAssembly $observability,
-        Container           $container,
+        Container       $container,
         CreateContainerConfig $config,
         ResolutionTelemetry $telemetry,
     ) : void
     {
-        $settings      = new ContainerSettings(items: $config->settings);
+        $settings = new ContainerSettings(items: $config->settings);
         $registrations = $runtime->registrations;
 
         $registrations->bootstrapInstance(abstract: PsrContainerInterface::class, instance: $container);

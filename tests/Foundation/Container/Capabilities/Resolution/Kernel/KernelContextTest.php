@@ -13,7 +13,7 @@ final class KernelContextTest extends TestCase
 {
     public function test_child_context_inherits_parent_depth() : void
     {
-        $root  = new KernelContext(serviceId: 'root', depth: 1, debug: true, allowAutowire: false, manualInjection: true, traceId: 't1', overrides: ['a' => 1]);
+        $root = new KernelContext(serviceId: 'root', depth: 1, debug: true, allowAutowire: false, manualInjection: true, traceId: 't1', overrides: ['a' => 1]);
         $child = $root->child(serviceId: 'child', overrides: ['b' => 2]);
 
         $this->assertSame(expected: 2, actual: $child->depth);
@@ -48,18 +48,18 @@ final class KernelContextTest extends TestCase
     public function test_resolved_with_throws_on_double_call() : void
     {
         $ctx = new KernelContext(serviceId: 'S');
-        $ctx->resolvedWith(instance: new stdClass());
+        $ctx->resolvedWith(instance: new stdClass);
 
         $this->expectException(exception: LogicException::class);
-        $ctx->resolvedWith(instance: new stdClass());
+        $ctx->resolvedWith(instance: new stdClass);
     }
 
     public function test_overwrite_with_replaces_instance_without_touching_metadata() : void
     {
         $ctx = new KernelContext(serviceId: 'S', metadata: ['a' => 1]);
-        $ctx->resolvedWith(instance: new stdClass());
+        $ctx->resolvedWith(instance: new stdClass);
 
-        $replacement = new stdClass();
+        $replacement = new stdClass;
         $ctx->overwriteWith(instance: $replacement);
 
         $this->assertSame(expected: $replacement, actual: $ctx->getInstance());

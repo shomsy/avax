@@ -33,23 +33,23 @@ final class HandleRuntimeFailureTest extends TestCase
     public static function fatalErrorProvider() : array
     {
         return [
-            'E_ERROR'         => [E_ERROR, 'E_ERROR'],
-            'E_PARSE'         => [E_PARSE, 'E_PARSE'],
-            'E_CORE_ERROR'    => [E_CORE_ERROR, 'E_CORE_ERROR'],
+            'E_ERROR'      => [E_ERROR, 'E_ERROR'],
+            'E_PARSE'      => [E_PARSE, 'E_PARSE'],
+            'E_CORE_ERROR' => [E_CORE_ERROR, 'E_CORE_ERROR'],
             'E_COMPILE_ERROR' => [E_COMPILE_ERROR, 'E_COMPILE_ERROR'],
-            'E_USER_ERROR'    => [E_USER_ERROR, 'E_USER_ERROR'],
+            'E_USER_ERROR' => [E_USER_ERROR, 'E_USER_ERROR'],
         ];
     }
 
     public static function nonFatalErrorProvider() : array
     {
         return [
-            'E_WARNING'         => [E_WARNING],
-            'E_NOTICE'          => [E_NOTICE],
-            'E_DEPRECATED'      => [E_DEPRECATED],
+            'E_WARNING'      => [E_WARNING],
+            'E_NOTICE'       => [E_NOTICE],
+            'E_DEPRECATED'   => [E_DEPRECATED],
             'E_USER_DEPRECATED' => [E_USER_DEPRECATED],
-            'E_USER_WARNING'    => [E_USER_WARNING],
-            'E_USER_NOTICE'     => [E_USER_NOTICE],
+            'E_USER_WARNING' => [E_USER_WARNING],
+            'E_USER_NOTICE'  => [E_USER_NOTICE],
         ];
     }
 
@@ -57,16 +57,16 @@ final class HandleRuntimeFailureTest extends TestCase
     {
         return [
             'development' => ['development'],
-            'dev'         => ['dev'],
-            'local'       => ['local'],
-            'testing'     => ['testing'],
+            'dev'     => ['dev'],
+            'local'   => ['local'],
+            'testing' => ['testing'],
         ];
     }
 
     #[Test]
-    public function convertEErrorToPhpErrorException() : void
+    public function convert_e_error_to_php_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_ERROR, 'Fatal error occurred', '/path/to/file.php', 42);
@@ -83,9 +83,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertEWarningToErrorException() : void
+    public function convert_e_warning_to_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_WARNING, 'Division by zero', '/path/to/file.php', 10);
@@ -101,9 +101,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertENoticeToErrorException() : void
+    public function convert_e_notice_to_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_NOTICE, 'Undefined variable', '/path/to/file.php', 25);
@@ -117,9 +117,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertEDeprecatedToErrorException() : void
+    public function convert_e_deprecated_to_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_DEPRECATED, 'Function foo() is deprecated', '/path/to/file.php', 55);
@@ -132,9 +132,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertEUserErrorToPhpErrorException() : void
+    public function convert_e_user_error_to_php_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_USER_ERROR, 'User triggered error', '/path/to/file.php', 100);
@@ -147,9 +147,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertEUserWarningToErrorException() : void
+    public function convert_e_user_warning_to_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_USER_WARNING, 'User warning', '/path/to/file.php', 101);
@@ -161,9 +161,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertEUserNoticeToErrorException() : void
+    public function convert_e_user_notice_to_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_USER_NOTICE, 'User notice', '/path/to/file.php', 102);
@@ -175,9 +175,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertEParseToPhpErrorException() : void
+    public function convert_e_parse_to_php_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_PARSE, 'Parse error: syntax error', '/path/to/file.php', 1);
@@ -190,9 +190,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertECoreErrorToPhpErrorException() : void
+    public function convert_e_core_error_to_php_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_CORE_ERROR, 'Core error', '/path/to/file.php', 0);
@@ -204,9 +204,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertECompileErrorToPhpErrorException() : void
+    public function convert_e_compile_error_to_php_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_COMPILE_ERROR, 'Compile error', '/path/to/file.php', 0);
@@ -218,9 +218,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertERecoverableErrorToPhpErrorException() : void
+    public function convert_e_recoverable_error_to_php_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_RECOVERABLE_ERROR, 'Recoverable error', '/path/to/file.php', 77);
@@ -232,9 +232,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertEUnknownErrorToErrorException() : void
+    public function convert_e_unknown_error_to_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             // Use a non-standard error code
@@ -247,9 +247,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertEUserDeprecatedToErrorException() : void
+    public function convert_e_user_deprecated_to_error_exception() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_USER_DEPRECATED, 'User deprecated', '/path/to/file.php', 150);
@@ -262,9 +262,9 @@ final class HandleRuntimeFailureTest extends TestCase
 
     #[DataProvider('fatalErrorProvider')]
     #[Test]
-    public function fatalErrorDetection(int $errorType, string $expectedName) : void
+    public function fatal_error_detection(int $errorType, string $expectedName) : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert($errorType, 'Test message', '/file.php', 1);
@@ -277,9 +277,9 @@ final class HandleRuntimeFailureTest extends TestCase
 
     #[DataProvider('nonFatalErrorProvider')]
     #[Test]
-    public function nonFatalErrorDetection(int $errorType) : void
+    public function non_fatal_error_detection(int $errorType) : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert($errorType, 'Test message', '/file.php', 1);
@@ -290,9 +290,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function fileNameAndLineExtraction() : void
+    public function file_name_and_line_extraction() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_ERROR, 'Test', '/var/www/app/index.php', 123);
@@ -304,15 +304,15 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertFromErrorArrayFatal() : void
+    public function convert_from_error_array_fatal() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         $error = [
-            'type'    => E_ERROR,
+            'type' => E_ERROR,
             'message' => 'Fatal error from shutdown',
-            'file'    => '/path/to/script.php',
-            'line'    => 789,
+            'file' => '/path/to/script.php',
+            'line' => 789,
         ];
 
         try {
@@ -326,15 +326,15 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function convertFromErrorArray() : void
+    public function convert_from_error_array() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         $error = [
-            'type'    => E_WARNING,
+            'type' => E_WARNING,
             'message' => 'Warning from error_get_last()',
-            'file'    => '/path/to/script.php',
-            'line'    => 456,
+            'file' => '/path/to/script.php',
+            'line' => 456,
         ];
 
         try {
@@ -353,9 +353,9 @@ final class HandleRuntimeFailureTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function errorMessageIncludesErrorName() : void
+    public function error_message_includes_error_name() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_WARNING, 'Test warning', '/file.php', 1);
@@ -366,10 +366,10 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportWithLoggerWritesCriticalLog() : void
+    public function report_with_logger_writes_critical_log() : void
     {
         $loggedMessages = [];
-        $logger         = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message, array $context) use (&$loggedMessages) : void {
                 $loggedMessages[] = ['message' => $message, 'context' => $context];
@@ -390,10 +390,10 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportWithContextEnrichment() : void
+    public function report_with_context_enrichment() : void
     {
         $loggedContext = [];
-        $logger        = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
@@ -420,10 +420,10 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportWithCorrelationId() : void
+    public function report_with_correlation_id() : void
     {
         $loggedContext = [];
-        $logger        = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
@@ -444,10 +444,10 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportWithTraceId() : void
+    public function report_with_trace_id() : void
     {
         $loggedContext = [];
-        $logger        = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
@@ -467,10 +467,10 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportWithBothCorrelationAndTraceIds() : void
+    public function report_with_both_correlation_and_trace_ids() : void
     {
         $loggedContext = [];
-        $logger        = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
@@ -490,7 +490,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportWithoutLoggerDoesNotThrow() : void
+    public function report_without_logger_does_not_throw() : void
     {
         $reporter = new ReportRuntimeFailure(
             logger       : null,
@@ -506,10 +506,10 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportIncludesStackTrace() : void
+    public function report_includes_stack_trace() : void
     {
         $loggedContext = [];
-        $logger        = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
@@ -544,10 +544,10 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportLogMessageFormat() : void
+    public function report_log_message_format() : void
     {
         $loggedMessage = '';
-        $logger        = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message, array $context) use (&$loggedMessage) : void {
                 $loggedMessage = $message;
@@ -567,10 +567,10 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function reportLogMessageIncludesCorrelationId() : void
+    public function report_log_message_includes_correlation_id() : void
     {
         $loggedMessage = '';
-        $logger        = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message) use (&$loggedMessage) : void {
                 $loggedMessage = $message;
@@ -593,10 +593,10 @@ final class HandleRuntimeFailureTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function reportWithPhpErrorException() : void
+    public function report_with_php_error_exception() : void
     {
         $loggedContext = [];
-        $logger        = $this->createMock(Logging::class);
+        $logger = $this->createMock(Logging::class);
         $logger->method('critical')
             ->willReturnCallback(static function (string $message, array $context) use (&$loggedContext) : void {
                 $loggedContext = $context;
@@ -622,7 +622,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function developmentModeRendersDetailedHtml() : void
+    public function development_mode_renders_detailed_html() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'development',
@@ -647,7 +647,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function productionModeRendersGenericPage() : void
+    public function production_mode_renders_generic_page() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'production',
@@ -671,7 +671,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function developmentModeIncludesStackTrace() : void
+    public function development_mode_includes_stack_trace() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'development',
@@ -695,7 +695,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function productionModeGeneratesErrorId() : void
+    public function production_mode_generates_error_id() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'production',
@@ -714,7 +714,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function productionModeUsesCorrelationIdAsErrorId() : void
+    public function production_mode_uses_correlation_id_as_error_id() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'production',
@@ -732,7 +732,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function differentStatusCodesForDifferentErrorTypes() : void
+    public function different_status_codes_for_different_error_types() : void
     {
         // All runtime failures currently render as 500
         $renderer = new RenderRuntimeFailure(
@@ -760,7 +760,7 @@ final class HandleRuntimeFailureTest extends TestCase
 
     #[DataProvider('developmentEnvironmentProvider')]
     #[Test]
-    public function developmentEnvironmentVariants(string $env) : void
+    public function development_environment_variants(string $env) : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : $env,
@@ -778,7 +778,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function productionEnvironmentHidesDetails() : void
+    public function production_environment_hides_details() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'production',
@@ -799,7 +799,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function cliDevelopmentModeOutputsToStderr() : void
+    public function cli_development_mode_outputs_to_stderr() : void
     {
         // We can't easily capture STDERR, but we can verify the CLI path is taken
         // by checking PHP_SAPI behavior indirectly
@@ -820,7 +820,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function cliProductionModeOutputsGenericMessage() : void
+    public function cli_production_mode_outputs_generic_message() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'production',
@@ -837,7 +837,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function developmentHtmlEscapesOutput() : void
+    public function development_html_escapes_output() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'development',
@@ -856,7 +856,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function developmentPageContainsTimestamp() : void
+    public function development_page_contains_timestamp() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'development',
@@ -875,7 +875,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function developmentPageContainsCorrelationAndTraceIds() : void
+    public function development_page_contains_correlation_and_trace_ids() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'development',
@@ -894,7 +894,7 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function developmentPageShowsNaForMissingIds() : void
+    public function development_page_shows_na_for_missing_ids() : void
     {
         $renderer = new RenderRuntimeFailure(
             environment  : 'development',
@@ -916,13 +916,13 @@ final class HandleRuntimeFailureTest extends TestCase
     // =========================================================================
 
     #[Test]
-    public function handleConvertsAndReportsAndRendersPhpError() : void
+    public function handle_converts_and_reports_and_renders_php_error() : void
     {
         $reporter = $this->createMock(ReportRuntimeFailure::class);
         $renderer = $this->createConfigurableRenderer('development');
 
         $handler = new HandleRuntimeFailure(
-            convertPhpErrorToThrowable: new ConvertPhpErrorToThrowable(),
+            convertPhpErrorToThrowable: new ConvertPhpErrorToThrowable,
             reportRuntimeFailure      : $reporter,
             renderRuntimeFailure      : $renderer,
         );
@@ -933,7 +933,7 @@ final class HandleRuntimeFailureTest extends TestCase
 
         // handle() calls exit(1), so we need to test in isolation
         // We verify the converter produces the right exception type
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_ERROR, 'Test error', '/file.php', 10);
@@ -952,13 +952,13 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function handleExceptionReportsAndRenders() : void
+    public function handle_exception_reports_and_renders() : void
     {
         $reporter = $this->createMock(ReportRuntimeFailure::class);
         $renderer = $this->createConfigurableRenderer('development');
 
         $handler = new HandleRuntimeFailure(
-            convertPhpErrorToThrowable: new ConvertPhpErrorToThrowable(),
+            convertPhpErrorToThrowable: new ConvertPhpErrorToThrowable,
             reportRuntimeFailure      : $reporter,
             renderRuntimeFailure      : $renderer,
         );
@@ -979,13 +979,13 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function handleFatalErrorConvertsFromErrorArray() : void
+    public function handle_fatal_error_converts_from_error_array() : void
     {
         $reporter = $this->createMock(ReportRuntimeFailure::class);
         $renderer = $this->createConfigurableRenderer('production');
 
         $handler = new HandleRuntimeFailure(
-            convertPhpErrorToThrowable: new ConvertPhpErrorToThrowable(),
+            convertPhpErrorToThrowable: new ConvertPhpErrorToThrowable,
             reportRuntimeFailure      : $reporter,
             renderRuntimeFailure      : $renderer,
         );
@@ -994,10 +994,10 @@ final class HandleRuntimeFailureTest extends TestCase
             ->method('report');
 
         $error = [
-            'type'    => E_ERROR,
+            'type' => E_ERROR,
             'message' => 'Fatal shutdown error',
-            'file'    => '/shutdown.php',
-            'line'    => 999,
+            'file' => '/shutdown.php',
+            'line' => 999,
         ];
 
         // handleFatalError doesn't call exit(), so we can test it directly
@@ -1009,13 +1009,13 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function fullPipelineExecutionWithPhpError() : void
+    public function full_pipeline_execution_with_php_error() : void
     {
         $reporter = $this->createMock(ReportRuntimeFailure::class);
         $renderer = $this->createConfigurableRenderer('development');
 
         $handler = new HandleRuntimeFailure(
-            convertPhpErrorToThrowable: new ConvertPhpErrorToThrowable(),
+            convertPhpErrorToThrowable: new ConvertPhpErrorToThrowable,
             reportRuntimeFailure      : $reporter,
             renderRuntimeFailure      : $renderer,
         );
@@ -1026,7 +1026,7 @@ final class HandleRuntimeFailureTest extends TestCase
                 && str_contains($e->getMessage(), 'Test warning')));
 
         // Test warning path (non-fatal)
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
 
         try {
             $converter->convert(E_WARNING, 'Test warning', '/file.php', 50);
@@ -1046,9 +1046,9 @@ final class HandleRuntimeFailureTest extends TestCase
     }
 
     #[Test]
-    public function handleWithCorrelationAndTraceIds() : void
+    public function handle_with_correlation_and_trace_ids() : void
     {
-        $converter = new ConvertPhpErrorToThrowable();
+        $converter = new ConvertPhpErrorToThrowable;
         $reporter  = $this->createMock(ReportRuntimeFailure::class);
         $renderer  = new RenderRuntimeFailure(
             environment  : 'development',
@@ -1066,10 +1066,10 @@ final class HandleRuntimeFailureTest extends TestCase
             ->method('report');
 
         $error = [
-            'type'    => E_NOTICE,
+            'type' => E_NOTICE,
             'message' => 'Undefined index',
-            'file'    => '/app.php',
-            'line'    => 25,
+            'file' => '/app.php',
+            'line' => 25,
         ];
 
         ob_start();

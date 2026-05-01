@@ -26,7 +26,7 @@ recurse_copy($source, $target);
 echo "Done!\n";
 
 // Also copy scaffolds
-$skeleton      = '/home/shomsy/projects/agent-harness/scaffolds/agents-skeleton';
+$skeleton = '/home/shomsy/projects/agent-harness/scaffolds/agents-skeleton';
 $visibleAgents = '/home/shomsy/projects/avax/.agents';
 if (is_dir($skeleton)) {
     echo "Copying skeleton to $visibleAgents...\n";

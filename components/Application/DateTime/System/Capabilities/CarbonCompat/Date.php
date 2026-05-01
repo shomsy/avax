@@ -20,7 +20,7 @@ class Date extends DateTimeImmutable
     /**
      * Create from a Unix timestamp.
      */
-    public static function fromTimestamp(int $timestamp, DateTimeZone|string $tz = null) : self
+    public static function fromTimestamp(int $timestamp, DateTimeZone|string|null $tz = null) : self
     {
         return self::parse('@' . $timestamp, $tz);
     }
@@ -28,7 +28,7 @@ class Date extends DateTimeImmutable
     /**
      * Create a new Date instance from a string.
      */
-    public static function parse(string $datetime, DateTimeZone|string $tz = null) : self
+    public static function parse(string $datetime, DateTimeZone|string|null $tz = null) : self
     {
         $dateTimeZone = self::resolveTimezone($tz);
 
@@ -57,7 +57,7 @@ class Date extends DateTimeImmutable
     /**
      * Create from year, month, day.
      */
-    public static function create(int $year, int $month = 1, int $day = 1, DateTimeZone|string $tz = null) : self
+    public static function create(int $year, int $month = 1, int $day = 1, DateTimeZone|string|null $tz = null) : self
     {
         return self::parse(sprintf('%d-%d-%d', $year, $month, $day), $tz);
     }
@@ -66,13 +66,13 @@ class Date extends DateTimeImmutable
      * Create from year, month, day, hour, minute, second.
      */
     public static function createFromDateTime(
-        int                 $year,
-        int                 $month = 1,
-        int                 $day = 1,
-        int                 $hour = 0,
-        int                 $minute = 0,
-        int                 $second = 0,
-        DateTimeZone|string $tz = null,
+        int                      $year,
+        int                      $month = 1,
+        int                      $day = 1,
+        int                      $hour = 0,
+        int                      $minute = 0,
+        int                      $second = 0,
+        DateTimeZone|string|null $tz = null,
     ) : self
     {
         return self::parse(sprintf('%d-%d-%d %d:%d:%d', $year, $month, $day, $hour, $minute, $second), $tz);
@@ -81,18 +81,18 @@ class Date extends DateTimeImmutable
     /**
      * Get a human-readable difference (e.g., "2 hours ago", "3 days from now").
      */
-    public function diffForHumans(self|DateTimeImmutable $other = null) : string
+    public function diffForHumans(self|DateTimeImmutable|null $other = null) : string
     {
         $other ??= self::now($this->getTimezone());
 
-        $diff   = $this->diff($other);
+        $diff = $this->diff($other);
         $isPast = $other > $this;
 
         $units = [
-            'year'   => $diff->y,
-            'month'  => $diff->m,
-            'day'    => $diff->d,
-            'hour'   => $diff->h,
+            'year'  => $diff->y,
+            'month' => $diff->m,
+            'day'   => $diff->d,
+            'hour'  => $diff->h,
             'minute' => $diff->i,
             'second' => $diff->s,
         ];
@@ -101,7 +101,7 @@ class Date extends DateTimeImmutable
         foreach ($units as $unit => $value) {
             if ($value > 0) {
                 $suffix = $isPast ? ' ago' : ' from now';
-                $label  = $value === 1 ? $unit : $unit . 's';
+                $label = $value === 1 ? $unit : $unit . 's';
 
                 return sprintf('%d %s%s', $value, $label, $suffix);
             }
@@ -113,7 +113,7 @@ class Date extends DateTimeImmutable
     /**
      * Create a new Date instance for now.
      */
-    public static function now(DateTimeZone|string $tz = null) : self
+    public static function now(DateTimeZone|string|null $tz = null) : self
     {
         $dateTimeZone = self::resolveTimezone($tz);
 

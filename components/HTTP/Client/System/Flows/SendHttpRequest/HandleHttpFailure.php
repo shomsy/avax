@@ -36,18 +36,17 @@ final class HandleHttpFailure
      */
     public function handle(
         OutboundRequest $request,
-        callable       $retryCallback,
-        Throwable      $exception,
-        RequestOptions $options = null,
-    ) : ClientResponse
-    {
+        callable        $retryCallback,
+        Throwable       $exception,
+        ?RequestOptions $options = null,
+    ) : ClientResponse {
         $retryPolicy = $options?->retryPolicy;
 
         if ($retryPolicy === null) {
             $this->rethrow($exception, $request);
         }
 
-        $retryCount    = 0;
+        $retryCount = 0;
         $lastException = $exception;
 
         // Determine if we should retry based on the exception type
@@ -56,7 +55,7 @@ final class HandleHttpFailure
         }
 
         // Attempt retries
-        while ( $retryPolicy->hasRemainingAttempts($retryCount + 1) ) {
+        while ( $retryPolicy->hasRemainingAttempts($retryCount + 1)) {
             $retryCount++;
             $delay = $retryPolicy->delayForAttempt($retryCount);
 
@@ -109,8 +108,7 @@ final class HandleHttpFailure
         Throwable $exception,
         OutboundRequest $request,
         int $retryCount = 0,
-    ) : never
-    {
+    ) : never {
         $message = $exception->getMessage();
 
         if ($retryCount > 0) {
@@ -139,7 +137,7 @@ final class HandleHttpFailure
     /**
      * Determine if an exception should trigger a retry.
      */
-    private function shouldRetry(Throwable $exception, $retryPolicy) : bool
+    private function shouldRetry(Throwable $exception, $retryPolicy): bool
     {
         if ($exception instanceof HttpTimeout) {
             return $retryPolicy->shouldRetryTimeout();

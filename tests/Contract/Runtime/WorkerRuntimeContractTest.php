@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Contract\Runtime;
 
-use function assert;
-
 use Avax\Framework\System\Capabilities\Runtime\Adapters\FrankenPhp\FrankenPhpRuntime;
 use Avax\Framework\System\Capabilities\Runtime\Adapters\RoadRunner\RoadRunnerRuntime;
 use Avax\Framework\System\Capabilities\Runtime\Adapters\Swoole\SwooleRuntime;
@@ -18,6 +16,7 @@ use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
 use Avax\Framework\System\PublicSurface\Avax;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use function assert;
 
 final class WorkerRuntimeContractTest extends TestCase
 {
@@ -42,7 +41,7 @@ final class WorkerRuntimeContractTest extends TestCase
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
                 ->withHttpHandler(
                     httpHandler: static function (RuntimeRequest $request, $runtime): string {
-                        $scope    = $runtime->requestScopes()->current();
+                        $scope = $runtime->requestScopes()->current();
                         $previous = $scope->read(key: 'uri');
                         $scope->write(key: 'uri', value: $request->uri());
 
@@ -57,7 +56,7 @@ final class WorkerRuntimeContractTest extends TestCase
 
         /** @var WorkerRuntimeInterface $workerRuntime */
         $workerRuntime = $factory($requests, $responses);
-        $lifecycle     = $application->runtime()->runWorker(workerRuntime: $workerRuntime);
+        $lifecycle   = $application->runtime()->runWorker(workerRuntime: $workerRuntime);
 
         self::assertCount(2, $responses);
         self::assertArrayHasKey(0, $responses);
@@ -94,8 +93,8 @@ final class WorkerRuntimeContractTest extends TestCase
         return [
             'frankenphp' => [$factory(FrankenPhpRuntime::class)],
             'roadrunner' => [$factory(RoadRunnerRuntime::class)],
-            'swoole'     => [$factory(SwooleRuntime::class)],
-            'workerman'  => [$factory(WorkermanRuntime::class)],
+            'swoole'    => [$factory(SwooleRuntime::class)],
+            'workerman' => [$factory(WorkermanRuntime::class)],
         ];
     }
 

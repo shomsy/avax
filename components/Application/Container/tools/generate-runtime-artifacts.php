@@ -12,7 +12,7 @@ if ($argc < 3) {
 require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
 
 $fixturePath = $argv[1] ?? '';
-$outputDir   = $argv[2] ?? '';
+$outputDir = $argv[2] ?? '';
 
 if (! is_file(filename: $fixturePath)) {
     fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] was not found.\n");

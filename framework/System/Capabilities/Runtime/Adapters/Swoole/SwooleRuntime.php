@@ -15,7 +15,7 @@ final readonly class SwooleRuntime implements WorkerRuntimeInterface
 {
     /**
      * @param Closure(): (WorkerRequest|null) $receiver
-     * @param Closure(WorkerResponse) : void $sender
+     * @param Closure(WorkerResponse) : void  $sender
      */
     public function __construct(
         private Closure $receiver,
@@ -27,7 +27,7 @@ final readonly class SwooleRuntime implements WorkerRuntimeInterface
         return 'swoole';
     }
 
-    public function receive() : WorkerRequest|null
+    public function receive() : ?WorkerRequest
     {
         return ($this->receiver)();
     }

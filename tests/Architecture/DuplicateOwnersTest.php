@@ -43,7 +43,7 @@ final class DuplicateOwnersTest extends TestCase
         }
 
         $definitions = [];
-        $iterator    = new RecursiveIteratorIterator(
+        $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
         );
 
@@ -67,8 +67,8 @@ final class DuplicateOwnersTest extends TestCase
 
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $content, $matches)) {
-                    $name                 = $matches[1];
-                    $relativePath         = str_replace($this->projectRoot . '/', '', $file->getPathname());
+                    $name         = $matches[1];
+                    $relativePath = str_replace($this->projectRoot . '/', '', $file->getPathname());
                     $definitions[$name][] = $relativePath;
                 }
             }
@@ -160,7 +160,7 @@ final class DuplicateOwnersTest extends TestCase
                     if (in_array($name, ['Stringable'], true)) {
                         continue;
                     }
-                    $relativePath         = str_replace($this->projectRoot . '/', '', $file->getPathname());
+                    $relativePath = str_replace($this->projectRoot . '/', '', $file->getPathname());
                     $definitions[$name][] = $relativePath;
                 }
             }

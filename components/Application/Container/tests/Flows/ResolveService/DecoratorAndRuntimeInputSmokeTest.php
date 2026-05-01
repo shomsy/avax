@@ -27,7 +27,7 @@ final class DecoratedService implements DecoratedContract
 
 final class OwnedDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
     {
         assertInstanceOf(expectedClass: DecoratedService::class, value: $instance, message: 'Decorators should receive the resolved concrete instance.');
         $instance->decorated = true;
@@ -38,7 +38,7 @@ final class OwnedDecorator implements DecoratorInterface
 
 final class InvisibleDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
     {
         return $instance;
     }
@@ -46,9 +46,7 @@ final class InvisibleDecorator implements DecoratorInterface
 
 final class RuntimeInputConsumer
 {
-    public function __construct(public DecoratedContract $decoratedContract, #[RuntimeInput(name: 'name')] public string $name)
-    {
-    }
+    public function __construct(public DecoratedContract $decoratedContract, #[RuntimeInput(name: 'name')] public string $name) {}
 }
 
 final class FirstGroupedStep
@@ -101,13 +99,13 @@ $container->singleton(abstract: SecondGroupedStep::class, concrete: SecondGroupe
     ->export()
     ->group(group: 'checkout.steps', order: 10);
 
-$runtimeFactory  = $container->factory(abstract: RuntimeInputConsumer::class);
-$consumer        = $container->make(abstract: RuntimeInputConsumer::class, parameters: ['name' => 'Ada']);
+$runtimeFactory = $container->factory(abstract: RuntimeInputConsumer::class);
+$consumer       = $container->make(abstract: RuntimeInputConsumer::class, parameters: ['name' => 'Ada']);
 $factoryConsumer = $runtimeFactory(['name' => 'Grace']);
-$description     = $container->describeService(id: DecoratedContract::class);
-$grouped         = $container->grouped(group: 'checkout.steps');
-$graph           = $container->debugGraph();
-$groupReport     = $container->debugGroup(group: 'checkout.steps');
+$description    = $container->describeService(id: DecoratedContract::class);
+$grouped        = $container->grouped(group: 'checkout.steps');
+$graph          = $container->debugGraph();
+$groupReport    = $container->debugGroup(group: 'checkout.steps');
 $selectionReport = $container->debugSelection(id: DecoratedContract::class);
 
 assertSame(expected: 'Ada', actual: $consumer->name, message: 'Runtime input should come from explicit caller overrides.');

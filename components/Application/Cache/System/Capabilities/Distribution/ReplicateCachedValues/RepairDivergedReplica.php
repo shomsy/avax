@@ -45,7 +45,7 @@ final readonly class RepairDivergedReplica
             return false;
         }
 
-        $referenceStore  = $this->stores[$referenceReplicaIndex];
+        $referenceStore = $this->stores[$referenceReplicaIndex];
         $referenceResult = $referenceStore->read(key: $cacheKey, clock: $this->clock);
 
         if (! $referenceResult instanceof CacheStoreRecordWasFound) {
@@ -53,7 +53,7 @@ final readonly class RepairDivergedReplica
         }
 
         $referenceRecord = $referenceResult->record;
-        $repaired        = false;
+        $repaired       = false;
 
         foreach ($this->stores as $index => $store) {
             if ($index === $referenceReplicaIndex) {

@@ -271,7 +271,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
 
         $recursive = $options['recursive'] ?? false;
         $includeHidden = $options['includeHidden'] ?? false;
-        $filter    = $options['filter'] ?? null;
+        $filter = $options['filter'] ?? null;
 
         if ($filter !== null && ! is_callable($filter)) {
             return new SyncOperationPromise(
@@ -314,7 +314,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
      */
     private function listDirectoryRecursive(string $path, bool $includeHidden) : array
     {
-        $items   = [];
+        $items = [];
         $entries = array_diff(scandir($path), ['.', '..']);
 
         foreach ($entries as $entry) {
@@ -340,7 +340,7 @@ final class SyncAsyncFilesystemAdapter implements AsyncFilesystemInterface
      */
     private function listDirectorySingle(string $path, bool $includeHidden) : array
     {
-        $items  = [];
+        $items = [];
         $handle = opendir($path);
 
         if ($handle === false) {
@@ -389,15 +389,15 @@ final class SyncOperationPromise implements AsyncOperationPromise
 
     private mixed $result = null;
 
-    private Throwable|null $throwable = null;
+    private ?Throwable $throwable = null;
 
     /**
-     * @param mixed $result The resolved value (if resolved)
+     * @param mixed          $result    The resolved value (if resolved)
      * @param Throwable|null $throwable The rejection exception (if rejected)
      */
     public function __construct(
-        mixed     $result = null,
-        Throwable $throwable = null,
+        mixed      $result = null,
+        ?Throwable $throwable = null,
     )
     {
         if ($throwable instanceof Throwable) {
@@ -407,7 +407,7 @@ final class SyncOperationPromise implements AsyncOperationPromise
         } else {
             $this->isResolved = true;
             $this->isRejected = false;
-            $this->result     = $result;
+            $this->result = $result;
         }
     }
 

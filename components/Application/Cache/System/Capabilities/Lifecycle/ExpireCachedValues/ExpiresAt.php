@@ -12,9 +12,7 @@ use Override;
 
 final readonly class ExpiresAt implements CacheExpiration
 {
-    public function __construct(private Timestamp $timestamp)
-    {
-    }
+    public function __construct(private Timestamp $timestamp) {}
 
     public static function secondsFromNow(int $seconds, Clock $clock) : self
     {
@@ -36,14 +34,14 @@ final readonly class ExpiresAt implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ) : Timestamp|null
+    ) : ?Timestamp
     {
         return $this->timestamp;
     }
 
     #[Override]
     public function isExpired(
-        Timestamp|null $expiresAt,
+        ?Timestamp $expiresAt,
         Clock $clock,
     ) : bool
     {

@@ -39,17 +39,17 @@ final class RouteCacheTest extends TestCase
         mkdir(directory: $routesDir, permissions: 0o777, recursive: true);
         file_put_contents(filename: $routesDir . '/sample.routes.php', data: "<?php // sentinel\n");
 
-        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger());
+        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger);
         $matcher         = $matcherRegistry->get(key: 'domain');
 
         $router = new HttpRequestRouter(
-            constraintValidator: new RouteConstraintValidator(),
+            constraintValidator: new RouteConstraintValidator,
             matcher            : $matcher,
-            logger             : new NullLogger(),
+            logger             : new NullLogger,
         );
         $router->registerRoute(method: 'GET', path: '/closure', action: static fn () => 'x');
 
-        $runtime = new class ($router) implements RouterRuntimeInterface {
+        $runtime = new class($router) implements RouterRuntimeInterface {
             private HttpRequestRouter $router;
 
             public function __construct(HttpRequestRouter $router)
@@ -74,9 +74,9 @@ final class RouteCacheTest extends TestCase
         };
 
         $writer = new RouteCacheLoader(
-            registrar: new RouterRegistrar(registry: new RouteRegistry(), httpRequestRouter: $router),
+            registrar: new RouterRegistrar(registry: new RouteRegistry, httpRequestRouter: $router),
             router   : $runtime,
-            logger   : new NullLogger(),
+            logger   : new NullLogger,
         );
 
         $this->expectException(exception: RuntimeException::class);

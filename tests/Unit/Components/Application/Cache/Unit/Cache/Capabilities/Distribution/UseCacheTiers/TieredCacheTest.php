@@ -58,7 +58,7 @@ final class TieredCacheTest extends TestCase
 
     private function makeRecord(string $value, int $ttlSeconds = 3600) : StoredCacheRecord
     {
-        $now       = $this->clock->now();
+        $now = $this->clock->now();
         $lifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: $ttlSeconds)),

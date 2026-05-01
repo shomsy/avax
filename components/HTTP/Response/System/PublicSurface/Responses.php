@@ -25,8 +25,8 @@ use Stringable;
 final class Responses implements ResponseFactoryInterface
 {
     public function __construct(
-        private StreamFactoryInterface|null $streamFactory = null,
-        private ResponseInterface|null $response = null,
+        private ?StreamFactoryInterface $streamFactory = null,
+        private ?ResponseInterface      $response = null,
     ) {}
 
     public function response(mixed $data, int $status = 200) : ResponseInterface
@@ -40,28 +40,28 @@ final class Responses implements ResponseFactoryInterface
     public function send(mixed $data, int $status = 200) : ResponseInterface
     {
         return match (true) {
-            $data instanceof ResponseInterface                       => $data,
-            is_array(value: $data)                                   => $this->createJsonResponse(data: $data, status: $status),
-            $data instanceof JsonSerializable                        => Response::json(data: $data, status: $status),
+            $data instanceof ResponseInterface                   => $data,
+            is_array(value: $data)                               => $this->createJsonResponse(data: $data, status: $status),
+            $data instanceof JsonSerializable                    => Response::json(data: $data, status: $status),
             is_object(value: $data) && ! $data instanceof Stringable => Response::json(data: (array) $data, status: $status),
-            is_string(value: $data), $data instanceof Stringable     => $this->createTextResponse(content: (string) $data, status: $status),
-            default                                                  => $this->createResponseWithBody(content: (string) ($data ?? ''), status: $status),
+            is_string(value: $data), $data instanceof Stringable => $this->createTextResponse(content: (string) $data, status: $status),
+            default                                              => $this->createResponseWithBody(content: (string) ($data ?? ''), status: $status),
         };
     }
 
     public function createJsonResponse(array $data, int $status = 200) : ResponseInterface
     {
-        return new BuildJsonResponse()(data: $data, status: $status);
+        return new BuildJsonResponse(data: $data, status: $status);
     }
 
     public function createTextResponse(string $content, int $status = 200) : ResponseInterface
     {
-        return new BuildTextResponse()(content: $content, status: $status);
+        return new BuildTextResponse(content: $content, status: $status);
     }
 
     public function createResponseWithBody(string $content, int $status, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
-        return new BuildResponse()(
+        return new BuildResponse(
             status : $status,
             headers: $headers,
             body   : $content,
@@ -75,7 +75,7 @@ final class Responses implements ResponseFactoryInterface
 
     public function createResponse(int $code = 200, string $reasonPhrase = '') : ResponseInterface
     {
-        return new BuildEmptyResponse()(
+        return new BuildEmptyResponse(
             status      : $code,
             reasonPhrase: $reasonPhrase,
         );
@@ -83,11 +83,11 @@ final class Responses implements ResponseFactoryInterface
 
     public function createRedirectResponse(string $url, int $status = 302) : ResponseInterface
     {
-        return new BuildRedirectResponse()(target: $url, status: $status);
+        return new BuildRedirectResponse(target: $url, status: $status);
     }
 
     public function createHtmlResponse(string $html, int $status = 200) : ResponseInterface
     {
-        return new BuildHtmlResponse()(content: $html, status: $status);
+        return new BuildHtmlResponse(content: $html, status: $status);
     }
 }

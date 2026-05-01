@@ -17,25 +17,26 @@ use ReflectionFunction;
  */
 final readonly class DependencyCompiler
 {
-    private MethodEmitter      $emitter;
+    private MethodEmitter $emitter;
+
     private CreateDependencyBlueprint $blueprints;
+
     private DependencyRegistry $registrations;
 
     public function __construct(
         DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
-        MethodEmitter      $emitter = new MethodEmitter(),
+        MethodEmitter $emitter = new MethodEmitter,
     )
     {
         $this->registrations = $registrations;
-        $this->blueprints    = $blueprints;
-        $this->emitter       = $emitter;
+        $this->blueprints = $blueprints;
+        $this->emitter = $emitter;
     }
 
     /**
-     * @param string $serviceId
-     *
      * @return array{serviceId: string, method: string, signature: string, source: string}
+     *
      * @throws ReflectionException
      */
     public function compile(string $serviceId) : array
@@ -54,7 +55,6 @@ final readonly class DependencyCompiler
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * } $description
-     *
      * @return array{serviceId: string, method: string, signature: string, source: string}
      */
     public function compileFromDescription(array $description) : array
@@ -72,9 +72,9 @@ final readonly class DependencyCompiler
 
         return [
             'serviceId' => $description['serviceId'],
-            'method'    => $description['method'],
+            'method' => $description['method'],
             'signature' => $description['signature'],
-            'source'    => $source,
+            'source' => $source,
         ];
     }
 
@@ -89,60 +89,61 @@ final readonly class DependencyCompiler
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * }
+     *
      * @throws ReflectionException
      */
     public function describe(string $serviceId) : array
     {
-        $methodName            = $this->emitter->methodNameFor(serviceId: $serviceId);
-        $registration          = $this->registrations->get(abstract: $serviceId);
-        $candidate             = $this->candidateFor(serviceId: $serviceId, registration: $registration);
+        $methodName   = $this->emitter->methodNameFor(serviceId: $serviceId);
+        $registration = $this->registrations->get(abstract: $serviceId);
+        $candidate    = $this->candidateFor(serviceId: $serviceId, registration: $registration);
         $registrationArguments = $registration?->arguments ?? [];
 
         if (is_string(value: $candidate) && class_exists(class: $candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
-            $blueprint   = $this->blueprints->createFor(class: $candidate);
+            $blueprint = $this->blueprints->createFor(class: $candidate);
             $needsFinish = $blueprint->injectableProperties !== []
                 || $blueprint->injectableMethods !== []
                 || $this->registrations->hasExtenders(abstract: $serviceId);
 
             return [
                 'serviceId' => $serviceId,
-                'method'    => $methodName,
+                'method'      => $methodName,
                 'signature' => sha1(string: serialize(value: [
-                                                                             'serviceId' => $serviceId,
-                                                                             'candidate' => $candidate,
-                                                                             'lifetime'  => $registration?->lifetime,
-                                                                             'deferred'  => $registration?->deferred ?? false,
-                                                                             'arguments' => $registrationArguments,
-                                                                             'blueprint' => $blueprint->fingerprint,
-                                                                             'finish'    => $needsFinish,
-                                                                         ])),
-                'direct'                => true,
-                'class'                 => $candidate,
-                'plan'                  => $blueprint->constructor,
+                                                                 'serviceId' => $serviceId,
+                                                                 'candidate' => $candidate,
+                                                                 'lifetime'  => $registration?->lifetime,
+                                                                 'deferred'  => $registration?->deferred ?? false,
+                                                                 'arguments' => $registrationArguments,
+                                                                 'blueprint' => $blueprint->fingerprint,
+                                                                 'finish'    => $needsFinish,
+                                                             ])),
+                'direct'      => true,
+                'class'       => $candidate,
+                'plan'        => $blueprint->constructor,
                 'registrationArguments' => $registrationArguments,
-                'needsFinish'           => $needsFinish,
+                'needsFinish' => $needsFinish,
             ];
         }
 
         return [
             'serviceId' => $serviceId,
-            'method'    => $methodName,
+            'method'      => $methodName,
             'signature' => sha1(string: serialize(value: [
-                                                                         'serviceId' => $serviceId,
-                                                                         'candidate' => $this->dynamicSignature(candidate: $candidate),
-                                                                         'lifetime'  => $registration?->lifetime,
-                                                                         'deferred'  => $registration?->deferred ?? false,
-                                                                         'arguments' => $registrationArguments,
-                                                                     ])),
-            'direct'                => false,
-            'class'                 => null,
-            'plan'                  => null,
+                                                             'serviceId' => $serviceId,
+                                                             'candidate' => $this->dynamicSignature(candidate: $candidate),
+                                                             'lifetime'  => $registration?->lifetime,
+                                                             'deferred'  => $registration?->deferred ?? false,
+                                                             'arguments' => $registrationArguments,
+                                                         ])),
+            'direct'      => false,
+            'class'       => null,
+            'plan'        => null,
             'registrationArguments' => $registrationArguments,
-            'needsFinish'           => false,
+            'needsFinish' => false,
         ];
     }
 
-    private function candidateFor(string $serviceId, DependencyRegistration|null $registration) : mixed
+    private function candidateFor(string $serviceId, ?DependencyRegistration $registration) : mixed
     {
         if ($registration !== null) {
             return $registration->concrete;

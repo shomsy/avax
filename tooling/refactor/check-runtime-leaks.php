@@ -56,7 +56,7 @@ final class CheckRuntimeLeaks
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckRuntimeLeaks();
+    $checker = new CheckRuntimeLeaks;
     $result = $checker->check();
 
     echo $result['status'] . "\n";

@@ -17,27 +17,27 @@ use Avax\Tests\TestCase;
 
 final class InteropFamilyTest extends TestCase
 {
-    public function testArrayInteropBuildsPublicTypes() : void
+    public function test_array_interop_builds_public_types() : void
     {
         $collection = FromArray::toCollection(items: ['name' => 'Alice']);
-        $list       = FromArray::toDataList(items: ['a', 'b']);
-        $map        = FromArray::toMap(items: ['role' => 'admin']);
+        $list = FromArray::toDataList(items: ['a', 'b']);
+        $map = FromArray::toMap(items: ['role' => 'admin']);
 
         $this->assertSame(['name' => 'Alice'], $collection->all());
         $this->assertSame(['a', 'b'], $list->all());
         $this->assertSame('admin', $map->get(key: 'role'));
     }
 
-    public function testArrayAndIterableConversionReturnsStableShapes() : void
+    public function test_array_and_iterable_conversion_returns_stable_shapes() : void
     {
         $iterable = ToIterable::from(value: ['name' => 'Alice']);
-        $array    = ToArray::from(value: FromIterable::toDataList(items: [1, 2, 3]));
+        $array = ToArray::from(value: FromIterable::toDataList(items: [1, 2, 3]));
 
         $this->assertSame(['name' => 'Alice'], iterator_to_array($iterable, true));
         $this->assertSame([1, 2, 3], $array);
     }
 
-    public function testGeneratorInteropRemainsLazyUntilRead() : void
+    public function test_generator_interop_remains_lazy_until_read() : void
     {
         $calls = 0;
 
@@ -53,7 +53,7 @@ final class InteropFamilyTest extends TestCase
         $this->assertSame(1, $calls);
     }
 
-    public function testJsonInteropRoundTripsArrayBackedValues() : void
+    public function test_json_interop_round_trips_array_backed_values() : void
     {
         $json = ToJson::from(value: ['name' => 'Alice', 'age' => 30]);
 
@@ -62,9 +62,9 @@ final class InteropFamilyTest extends TestCase
         $this->assertSame(30, FromJson::toMap(json: $json)->get(key: 'age'));
     }
 
-    public function testXmlInteropRoundTripsSimpleShapes() : void
+    public function test_xml_interop_round_trips_simple_shapes() : void
     {
-        $xml   = ToXml::from(value: ['name' => 'Alice', 'meta' => ['city' => 'Belgrade']], rootElement: 'user');
+        $xml = ToXml::from(value: ['name' => 'Alice', 'meta' => ['city' => 'Belgrade']], rootElement: 'user');
         $array = FromXml::toArray(xml: $xml);
 
         $this->assertSame('Alice', $array['name']);

@@ -18,7 +18,7 @@ final class GeneratedFixtureEntry
 }
 
 return static function () {
-    $cacheDir  = sys_get_temp_dir() . '/container-generated-fixture-' . uniqid();
+    $cacheDir = sys_get_temp_dir() . '/container-generated-fixture-' . uniqid();
     $container = makeTestContainer(config: CreateContainerConfig::create(
         cacheDir     : $cacheDir,
         cacheVersion : 'generated-fixture',

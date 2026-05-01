@@ -7,7 +7,6 @@ declare(strict_types=1);
  * Ensures all files in components/ follow the Avax\Components\<Component>\System pattern
  * or are explicitly whitelisted (like compat.php).
  */
-
 $componentsDir = __DIR__ . '/../../components';
 $errors        = [];
 

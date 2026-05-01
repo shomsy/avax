@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
 final readonly class VerifyRequestScopeWasClosed
 {
     public function __construct(
-        private RuntimeSafety $runtimeSafety = new RuntimeSafety(),
+        private RuntimeSafety $runtimeSafety = new RuntimeSafety,
     ) {}
 
     /**

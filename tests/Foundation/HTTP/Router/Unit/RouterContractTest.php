@@ -26,6 +26,7 @@ class RouterContractTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function named_route_resolution_works() : void
@@ -60,6 +61,7 @@ class RouterContractTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function parameter_and_default_merge_works() : void
@@ -92,6 +94,7 @@ class RouterContractTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function constraint_failure_throws_expected_exception() : void
@@ -120,6 +123,7 @@ class RouterContractTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function http_method_mismatch_behavior() : void

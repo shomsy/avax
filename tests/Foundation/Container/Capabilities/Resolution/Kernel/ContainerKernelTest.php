@@ -46,7 +46,7 @@ final class ContainerKernelTest extends TestCase
     {
         $this->assertFalse(condition: $this->kernel->has(id: 'non-existent'));
 
-        $definition           = new ServiceDefinition(abstract: 'service');
+        $definition = new ServiceDefinition(abstract: 'service');
         $definition->concrete = stdClass::class;
         $this->definitions->add(definition: $definition);
 
@@ -56,34 +56,34 @@ final class ContainerKernelTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->definitions = new DefinitionStore();
+        $this->definitions = new DefinitionStore;
 
-        $registry = new ScopeRegistry();
+        $registry = new ScopeRegistry;
         $scopes   = new ScopeManager(registry: $registry);
-        $timeline = new ResolutionTimeline();
+        $timeline = new ResolutionTimeline;
 
         $cache    = $this->createMock(PrototypeCache::class);
-        $analyzer = new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer());
+        $analyzer = new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer);
         $factory  = new ServicePrototypeFactory(cache: $cache, analyzer: $analyzer);
 
-        $resolver         = new DependencyResolver();
-        $instantiator     = new Instantiator(prototypes: $factory, resolver: $resolver);
-        $engine           = new ResolutionEngine(
+        $resolver     = new DependencyResolver;
+        $instantiator = new Instantiator(prototypes: $factory, resolver: $resolver);
+        $engine       = new ResolutionEngine(
             resolver    : $resolver,
             instantiator: $instantiator,
             store       : $this->definitions,
             registry    : $registry,
-            metrics     : new CollectMetrics(),
+            metrics     : new CollectMetrics,
         );
         $propertyInjector = new PropertyInjector(container: null);
-        $injector         = new InjectDependencies(
+        $injector     = new InjectDependencies(
             servicePrototypeFactory: $factory,
             propertyInjector       : $propertyInjector,
             methodInjector         : new MethodInjector(
                                          parameterResolver: new ResolveMethodParameters(resolver: $resolver),
                                      ),
         );
-        $invoker          = new InvokeAction(container: null, resolver: $resolver);
+        $invoker      = new InvokeAction(container: null, resolver: $resolver);
 
         $config = new KernelConfig(
             engine          : $engine,
@@ -95,8 +95,8 @@ final class ContainerKernelTest extends TestCase
             autoDefine      : true,
         );
 
-        $this->kernel     = new ContainerKernel(definitions: $this->definitions, config: $config);
-        $container        = new Container(kernel: $this->kernel);
+        $this->kernel = new ContainerKernel(definitions: $this->definitions, config: $config);
+        $container    = new Container(kernel: $this->kernel);
         $runtimeContainer = new RuntimeContainer(container: $container, kernel: $this->kernel);
 
         $engine->setContainer(container: $runtimeContainer);

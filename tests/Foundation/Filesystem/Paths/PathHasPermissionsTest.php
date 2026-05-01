@@ -23,14 +23,14 @@ class PathHasPermissionsTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteReturnsFalseForNonExistentPath() : void
+    public function test_execute_returns_false_for_non_existent_path() : void
     {
         $result = new PathHasPermissions()->execute(path: '/ne postoji put', permissions: 0o755);
 
         self::assertFalse(condition: $result);
     }
 
-    public function testExecuteReturnsTrueForMatchingPermissions() : void
+    public function test_execute_returns_true_for_matching_permissions() : void
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
         chmod(filename: $this->testFile, permissions: 0o644);
@@ -40,7 +40,7 @@ class PathHasPermissionsTest extends TestCase
         self::assertTrue(condition: $result);
     }
 
-    public function testExecuteReturnsFalseForMismatchingPermissions() : void
+    public function test_execute_returns_false_for_mismatching_permissions() : void
     {
         file_put_contents(filename: $this->testFile, data: "sadrzaj\n");
         chmod(filename: $this->testFile, permissions: 0o644);

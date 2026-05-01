@@ -26,9 +26,9 @@ final readonly class FileCacheStore implements CacheStore
     private JsonCacheSerializer $jsonCacheSerializer;
 
     public function __construct(
-        private string      $basePath,
-        private Clock       $clock = new SystemClock(),
-        JsonCacheSerializer $jsonCacheSerializer = null,
+        private string       $basePath,
+        private Clock        $clock = new SystemClock,
+        ?JsonCacheSerializer $jsonCacheSerializer = null,
     )
     {
         $this->jsonCacheSerializer = $jsonCacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);
@@ -55,9 +55,9 @@ final readonly class FileCacheStore implements CacheStore
         $serializedCachePayload = $this->jsonCacheSerializer->serialize(value: $storedCacheRecord->value);
 
         $data = [
-            'value'          => $serializedCachePayload->data,
-            'format'         => $serializedCachePayload->format,
-            'lifecycle'      => $this->serializeLifecycle(lifecycle: $storedCacheRecord->lifecycle),
+            'value'     => $serializedCachePayload->data,
+            'format'    => $serializedCachePayload->format,
+            'lifecycle' => $this->serializeLifecycle(lifecycle: $storedCacheRecord->lifecycle),
             'serializedData' => $storedCacheRecord->serializedData,
         ];
 
@@ -97,7 +97,7 @@ final readonly class FileCacheStore implements CacheStore
     private function getFilePath(CacheKey $cacheKey) : string
     {
         $keyHash = hash('xxh128', $cacheKey->fullKey());
-        $subDir  = substr($keyHash, 0, 2);
+        $subDir = substr($keyHash, 0, 2);
 
         return $this->basePath . '/' . $subDir . '/' . $keyHash . self::FILE_EXTENSION;
     }
@@ -114,12 +114,12 @@ final readonly class FileCacheStore implements CacheStore
     private function serializeLifecycle(CachedValueLifecycle $cachedValueLifecycle) : array
     {
         return [
-            'createdAt'      => $cachedValueLifecycle->createdAt->toUnixTime(),
+            'createdAt'    => $cachedValueLifecycle->createdAt->toUnixTime(),
             'lastAccessedAt' => $cachedValueLifecycle->lastAccessedAt->toUnixTime(),
-            'expiresAt'      => $cachedValueLifecycle->expiresAt->toUnixTime(),
-            'refreshedAt'    => $cachedValueLifecycle->refreshedAt->toUnixTime(),
-            'hitCount'       => $cachedValueLifecycle->hitCount,
-            'refreshCount'   => $cachedValueLifecycle->refreshCount,
+            'expiresAt'    => $cachedValueLifecycle->expiresAt->toUnixTime(),
+            'refreshedAt'  => $cachedValueLifecycle->refreshedAt->toUnixTime(),
+            'hitCount'     => $cachedValueLifecycle->hitCount,
+            'refreshCount' => $cachedValueLifecycle->refreshCount,
         ];
     }
 
@@ -214,7 +214,7 @@ final readonly class FileCacheStore implements CacheStore
             );
 
             $updatedLifecycle = $lifecycle->withAccessed(clock: $clock);
-            $record           = new StoredCacheRecord(
+            $record = new StoredCacheRecord(
                 value         : $record->value,
                 lifecycle     : $updatedLifecycle,
                 serializedData: $record->serializedData,

@@ -23,7 +23,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_app_instance_sets_container() : void
     {
-        $newContainer = new DIContainer();
+        $newContainer = new DIContainer;
 
         appInstance($newContainer);
 
@@ -55,7 +55,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_make_with_parameters() : void
     {
-        $instance = new class () {
+        $instance = new class {
             public string $value;
         };
 
@@ -75,7 +75,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_bind_with_shared_parameter() : void
     {
-        bind('shared.service', static fn () => new stdClass(), shared: true);
+        bind('shared.service', static fn () => new stdClass, shared: true);
 
         $result1 = $this->container->make('shared.service');
         $result2 = $this->container->make('shared.service');
@@ -85,7 +85,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_singleton_registers_single_instance() : void
     {
-        singleton('single', static fn () => new stdClass());
+        singleton('single', static fn () => new stdClass);
 
         $result1 = $this->container->make('single');
         $result2 = $this->container->make('single');
@@ -102,7 +102,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_resolve_with_parameters() : void
     {
-        $instance = new class ('param') {
+        $instance = new class('param') {
             public function __construct(public string $param) {}
         };
 
@@ -115,7 +115,7 @@ final class ContainerFunctionsTest extends TestCase
     {
         parent::setUp();
 
-        $this->container = new DIContainer();
+        $this->container = new DIContainer;
         appInstance($this->container);
     }
 

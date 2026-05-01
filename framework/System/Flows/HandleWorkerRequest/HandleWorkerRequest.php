@@ -13,8 +13,7 @@ final class HandleWorkerRequest
     public function __construct(
         private readonly RuntimeContext $context,
         private readonly RequestScope $requestScope,
-    ) {
-    }
+    ) {}
 
     public function handle(object $request) : object
     {

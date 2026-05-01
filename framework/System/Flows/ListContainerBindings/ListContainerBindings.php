@@ -29,7 +29,7 @@ final readonly class ListContainerBindings
         echo str_repeat('-', $width) . "\n";
 
         foreach ($bindings as $id => $info) {
-            $scope  = $info['scope'] ?? 'singleton';
+            $scope = $info['scope'] ?? 'singleton';
             $shared = ($info['shared'] ?? false) ? 'yes' : 'no';
 
             echo sprintf("%-50s | %-10s | %s\n", $id, $scope, $shared);

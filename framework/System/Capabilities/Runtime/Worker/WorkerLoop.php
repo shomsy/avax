@@ -13,8 +13,8 @@ final class WorkerLoop
     private bool $running = false;
 
     public function __construct(
-        private RuntimeInterface|null $runtime = null,
-        private WorkerRuntimeInterface|null $workerRuntime = null,
+        private ?RuntimeInterface       $runtime = null,
+        private ?WorkerRuntimeInterface $workerRuntime = null,
     ) {}
 
     public function start() : void
@@ -32,13 +32,11 @@ final class WorkerLoop
         $this->running = false;
     }
 
-    public function tick() : void
-    {
-    }
+    public function tick() : void {}
 
     public function run() : WorkerLifecycle
     {
-        $runtime       = $this->runtime;
+        $runtime = $this->runtime;
         $workerRuntime = $this->workerRuntime;
 
         if ($runtime === null || $workerRuntime === null) {
@@ -74,10 +72,10 @@ final class WorkerLoop
     private function runUntilEmpty(
         RuntimeInterface $runtime,
         WorkerRuntimeInterface $workerRuntime,
-        WorkerLifecycle  $lifecycle,
+        WorkerLifecycle $lifecycle,
     ) : void
     {
-        $handleIncomingHttp = new HandleIncomingHttp();
+        $handleIncomingHttp = new HandleIncomingHttp;
 
         while ( ($request = $workerRuntime->receive()) !== null ) {
             $response = $handleIncomingHttp->handle(

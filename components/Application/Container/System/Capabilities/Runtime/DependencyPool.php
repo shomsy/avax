@@ -27,11 +27,11 @@ final class DependencyPool
     /** @var array{hits: int, misses: int, releases: int, overflows: int, unsafe: int} */
     private array $pooledStats
         = [
-            'hits'      => 0,
-            'misses'    => 0,
-            'releases'  => 0,
+            'hits'     => 0,
+            'misses'   => 0,
+            'releases' => 0,
             'overflows' => 0,
-            'unsafe'    => 0,
+            'unsafe'   => 0,
         ];
 
     /**
@@ -55,7 +55,7 @@ final class DependencyPool
      */
     public function set(string $abstract, mixed $instance, bool $disposable = false) : void
     {
-        $this->items[$abstract]      = $instance;
+        $this->items[$abstract] = $instance;
         $this->disposable[$abstract] = $disposable;
     }
 
@@ -74,7 +74,7 @@ final class DependencyPool
     public function drain() : array
     {
         $drained = [
-            'items'      => $this->items,
+            'items' => $this->items,
             'disposable' => $this->disposable,
         ];
 
@@ -88,16 +88,16 @@ final class DependencyPool
      */
     public function flush() : void
     {
-        $this->items         = [];
-        $this->disposable    = [];
-        $this->pooled        = [];
+        $this->items       = [];
+        $this->disposable  = [];
+        $this->pooled      = [];
         $this->pooledOptions = [];
-        $this->pooledStats   = [
-            'hits'      => 0,
-            'misses'    => 0,
-            'releases'  => 0,
+        $this->pooledStats = [
+            'hits'     => 0,
+            'misses'   => 0,
+            'releases' => 0,
             'overflows' => 0,
-            'unsafe'    => 0,
+            'unsafe'   => 0,
         ];
     }
 
@@ -124,12 +124,12 @@ final class DependencyPool
             $this->pooledStats['misses']++;
 
             return [
-                'hit'      => false,
+                'hit' => false,
                 'instance' => null,
             ];
         }
 
-        $instance                = array_pop(array: $bucket);
+        $instance = array_pop(array: $bucket);
         $this->pooled[$abstract] = $bucket;
         if ($bucket === []) {
             unset($this->pooled[$abstract]);
@@ -138,7 +138,7 @@ final class DependencyPool
         $this->pooledStats['hits']++;
 
         return [
-            'hit'      => true,
+            'hit' => true,
             'instance' => $instance,
         ];
     }
@@ -148,17 +148,17 @@ final class DependencyPool
      */
     public function releasePooled(
         string $abstract,
-        mixed  $instance,
-        int    $maxSize,
-        bool   $resetBeforeReuse = null,
-        bool   $disposable = false,
+        mixed $instance,
+        int   $maxSize,
+        ?bool $resetBeforeReuse = null,
+        bool  $disposable = false,
     ) : array
     {
         $resetBeforeReuse ??= true;
         $this->pooledOptions[$abstract] = [
-            'maxSize'          => max(1, $maxSize),
+            'maxSize'    => max(1, $maxSize),
             'resetBeforeReuse' => $resetBeforeReuse,
-            'disposable'       => $disposable,
+            'disposable' => $disposable,
         ];
 
         if (! is_object(value: $instance)) {
@@ -167,8 +167,8 @@ final class DependencyPool
             return [
                 'returned' => false,
                 'overflow' => false,
-                'unsafe'   => true,
-                'reason'   => 'only objects can participate in pooled lifetime reuse',
+                'unsafe' => true,
+                'reason' => 'only objects can participate in pooled lifetime reuse',
             ];
         }
 
@@ -179,8 +179,8 @@ final class DependencyPool
                 return [
                     'returned' => false,
                     'overflow' => false,
-                    'unsafe'   => true,
-                    'reason'   => 'pooled service does not implement ResettableInterface',
+                    'unsafe' => true,
+                    'reason' => 'pooled service does not implement ResettableInterface',
                 ];
             }
 
@@ -192,8 +192,8 @@ final class DependencyPool
                 return [
                     'returned' => false,
                     'overflow' => false,
-                    'unsafe'   => true,
-                    'reason'   => 'pooled service failed during reset()',
+                    'unsafe' => true,
+                    'reason' => 'pooled service failed during reset()',
                 ];
             }
         }
@@ -205,20 +205,20 @@ final class DependencyPool
             return [
                 'returned' => false,
                 'overflow' => true,
-                'unsafe'   => false,
-                'reason'   => 'pooled bucket is already at max size',
+                'unsafe' => false,
+                'reason' => 'pooled bucket is already at max size',
             ];
         }
 
-        $bucket[]                = $instance;
+        $bucket[] = $instance;
         $this->pooled[$abstract] = $bucket;
         $this->pooledStats['releases']++;
 
         return [
             'returned' => true,
             'overflow' => false,
-            'unsafe'   => false,
-            'reason'   => 'pooled service returned to the available bucket',
+            'unsafe' => false,
+            'reason' => 'pooled service returned to the available bucket',
         ];
     }
 
@@ -308,11 +308,11 @@ final class DependencyPool
     public function drainPooled() : array
     {
         $drained = [
-            'items'   => $this->pooled,
+            'items' => $this->pooled,
             'options' => $this->pooledOptions,
         ];
 
-        $this->pooled        = [];
+        $this->pooled = [];
         $this->pooledOptions = [];
 
         return $drained;

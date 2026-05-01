@@ -6,23 +6,23 @@ namespace Avax\Components\Application\Cache\System;
 
 enum CacheResultState: string
 {
-    case HIT           = 'hit';
-    case MISS          = 'miss';
-    case EXPIRED       = 'expired';
-    case STALE         = 'stale';
-    case STORED        = 'stored';
-    case STORE_FAILED  = 'store_failed';
-    case DELETED       = 'deleted';
+    case HIT          = 'hit';
+    case MISS         = 'miss';
+    case EXPIRED      = 'expired';
+    case STALE        = 'stale';
+    case STORED       = 'stored';
+    case STORE_FAILED = 'store_failed';
+    case DELETED      = 'deleted';
     case DELETE_FAILED = 'delete_failed';
-    case CLEARED       = 'cleared';
-    case CLEAR_FAILED  = 'clear_failed';
-    case ERROR         = 'error';
+    case CLEARED      = 'cleared';
+    case CLEAR_FAILED = 'clear_failed';
+    case ERROR        = 'error';
 
     public function isUsable() : bool
     {
         return match ($this) {
             self::HIT, self::STALE, self::EXPIRED => true,
-            default                               => false,
+            default => false,
         };
     }
 
@@ -30,7 +30,7 @@ enum CacheResultState: string
     {
         return match ($this) {
             self::STORED, self::DELETED, self::CLEARED => true,
-            default                                    => false,
+            default => false,
         };
     }
 
@@ -38,7 +38,7 @@ enum CacheResultState: string
     {
         return match ($this) {
             self::STORE_FAILED, self::DELETE_FAILED, self::CLEAR_FAILED, self::ERROR => true,
-            default                                                                  => false,
+            default => false,
         };
     }
 }

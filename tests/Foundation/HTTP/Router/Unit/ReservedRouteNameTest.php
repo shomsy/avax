@@ -15,6 +15,7 @@ class ReservedRouteNameTest extends TestCase
 {
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function allows_normal_route_names() : void
@@ -32,6 +33,7 @@ class ReservedRouteNameTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function allows_empty_route_names() : void
@@ -92,6 +94,7 @@ class ReservedRouteNameTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function allows_similar_but_not_reserved_names() : void

@@ -7,9 +7,9 @@ $testDir = $baseDir . '/tests';
 
 $mappings = [
     'Avax\HTTP\Response\ResponseFactory' => 'Avax\Components\HTTP\Response\System\PublicSurface\Responses',
-    'Avax\HTTP\Response\Responses'       => 'Avax\Components\HTTP\Response\System\PublicSurface\Responses',
-    'Avax\Database\EntityManager'        => 'Avax\Components\DataStack\Persistence\System\PublicSurface\Persistence',
-    'ResponseFactory'                    => 'Responses',
+    'Avax\HTTP\Response\Responses' => 'Avax\Components\HTTP\Response\System\PublicSurface\Responses',
+    'Avax\Database\EntityManager'  => 'Avax\Components\DataStack\Persistence\System\PublicSurface\Persistence',
+    'ResponseFactory'              => 'Responses',
 ];
 
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($testDir));
@@ -19,8 +19,8 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path     = realpath($file->getPathname());
-    $content  = file_get_contents($path);
+    $path    = realpath($file->getPathname());
+    $content = file_get_contents($path);
     $original = $content;
 
     // 1. Class and Namespace replacements
@@ -29,8 +29,8 @@ foreach ($iterator as $file) {
     }
 
     // 2. PSR-4 Namespace normalization
-    $dir               = dirname($path);
-    $relativePath      = ltrim(str_replace($testDir, '', $dir), DIRECTORY_SEPARATOR);
+    $dir          = dirname($path);
+    $relativePath = ltrim(str_replace($testDir, '', $dir), DIRECTORY_SEPARATOR);
     $expectedNamespace = 'Avax\\Tests';
     if ($relativePath !== '') {
         $expectedNamespace .= '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relativePath);

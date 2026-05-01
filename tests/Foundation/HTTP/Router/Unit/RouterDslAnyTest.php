@@ -72,6 +72,7 @@ class RouterDslAnyTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      * @throws ReservedRouteNameException
      */
@@ -122,7 +123,7 @@ class RouterDslAnyTest extends TestCase
     {
         // Create minimal dependencies for testing
         $router          = $this->createMock(HttpRequestRouter::class);
-        $routeCollection = new RouteCollection();
+        $routeCollection = new RouteCollection;
 
         $this->dsl = new RouterDsl(
             registrar           : $this->createMock(RouterRegistrar::class),

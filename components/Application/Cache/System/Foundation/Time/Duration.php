@@ -41,7 +41,7 @@ final readonly class Duration implements Stringable
     public static function ofMilliseconds(int $milliseconds) : self
     {
         $seconds = (int) floor($milliseconds / self::MILLISECONDS_PER_SECOND);
-        $nanos   = ($milliseconds % self::MILLISECONDS_PER_SECOND) * self::NANOSECONDS_PER_MILLISECOND;
+        $nanos = ($milliseconds % self::MILLISECONDS_PER_SECOND) * self::NANOSECONDS_PER_MILLISECOND;
 
         return new self(seconds: $seconds, nanoseconds: $nanos);
     }
@@ -49,16 +49,16 @@ final readonly class Duration implements Stringable
     public static function ofMicroseconds(int $microseconds) : self
     {
         $seconds = (int) floor($microseconds / self::MICROSECONDS_PER_SECOND);
-        $nanos   = ($microseconds % self::MICROSECONDS_PER_SECOND) * self::NANOSECONDS_PER_MICROSECOND;
+        $nanos = ($microseconds % self::MICROSECONDS_PER_SECOND) * self::NANOSECONDS_PER_MICROSECOND;
 
         return new self(seconds: $seconds, nanoseconds: $nanos);
     }
 
     public static function fromDateInterval(DateInterval $dateInterval) : self
     {
-        $days    = $dateInterval->days === false ? $dateInterval->d : $dateInterval->days;
+        $days  = $dateInterval->days === false ? $dateInterval->d : $dateInterval->days;
         $seconds = $dateInterval->s + ($dateInterval->i * 60) + ($dateInterval->h * 3600) + ($days * 86400);
-        $nanos   = (int) round($dateInterval->f * self::NANOSECONDS_PER_SECOND);
+        $nanos = (int) round($dateInterval->f * self::NANOSECONDS_PER_SECOND);
 
         return new self(seconds: $seconds, nanoseconds: $nanos);
     }
@@ -82,7 +82,7 @@ final readonly class Duration implements Stringable
 
     public function toDateInterval() : DateInterval
     {
-        $dateInterval    = new DateInterval(duration: 'P0DT0H0M0S');
+        $dateInterval = new DateInterval(duration: 'P0DT0H0M0S');
         $dateInterval->s = $this->seconds % 60;
         $dateInterval->i = (int) floor($this->seconds / 60) % 60;
         $dateInterval->h = (int) floor($this->seconds / 3600) % 24;
@@ -105,7 +105,7 @@ final readonly class Duration implements Stringable
     public function add(self $other) : self
     {
         $totalSeconds = $this->seconds + $other->seconds;
-        $totalNanos   = $this->nanoseconds + $other->nanoseconds;
+        $totalNanos = $this->nanoseconds + $other->nanoseconds;
 
         if ($totalNanos >= self::NANOSECONDS_PER_SECOND) {
             $totalSeconds++;
@@ -118,7 +118,7 @@ final readonly class Duration implements Stringable
     public function subtract(self $other) : self
     {
         $totalSeconds = $this->seconds - $other->seconds;
-        $totalNanos   = $this->nanoseconds - $other->nanoseconds;
+        $totalNanos = $this->nanoseconds - $other->nanoseconds;
 
         if ($totalNanos < 0) {
             $totalSeconds--;
@@ -134,7 +134,7 @@ final readonly class Duration implements Stringable
 
     public function multiply(int $factor) : self
     {
-        $totalNanos   = $this->nanoseconds * $factor;
+        $totalNanos = $this->nanoseconds * $factor;
         $totalSeconds = ($this->seconds * $factor) + (int) floor($totalNanos / self::NANOSECONDS_PER_SECOND);
         $totalNanos %= self::NANOSECONDS_PER_SECOND;
 

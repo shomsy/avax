@@ -32,7 +32,7 @@ final class CurlTransport implements HttpTransportInterface
      */
     public function send(OutboundRequest $request) : ClientResponse
     {
-        $options = $request->options ?? new RequestOptions();
+        $options = $request->options ?? new RequestOptions;
 
         $ch = curl_init();
         if ($ch === false) {
@@ -70,7 +70,7 @@ final class CurlTransport implements HttpTransportInterface
             $effectiveUrl  = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL) ?: null;
             $redirectCount = curl_getinfo($ch, CURLINFO_REDIRECT_COUNT) ?: 0;
 
-            $headers      = $this->parseHeaders($headerStr);
+            $headers = $this->parseHeaders($headerStr);
             $reasonPhrase = curl_getinfo($ch, CURLINFO_HTTP_VERSION) !== false
                 ? $this->getReasonPhrase($statusCode)
                 : '';
@@ -107,8 +107,7 @@ final class CurlTransport implements HttpTransportInterface
         CurlHandle $ch,
         OutboundRequest $request,
         RequestOptions $options,
-    ) : void
-    {
+    ) : void {
         // Basic options
         curl_setopt_array($ch, [
             CURLOPT_URL               => $request->url,
@@ -161,7 +160,7 @@ final class CurlTransport implements HttpTransportInterface
      *
      * @return list<string>
      */
-    private function buildHeaderArray(OutboundRequest $request) : array
+    private function buildHeaderArray(OutboundRequest $request): array
     {
         $headers = [];
         foreach ($request->headers as $name => $value) {
@@ -198,12 +197,11 @@ final class CurlTransport implements HttpTransportInterface
      * @throws HttpRequestFailed for other errors
      */
     private function handleCurlError(
-        CurlHandle $ch,
-        int    $errno,
+        CurlHandle      $ch,
+        int             $errno,
         string $error,
         OutboundRequest $request,
-    ) : never
-    {
+    ) : never {
         $url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL) ?: $request->url;
 
         // Timeout errors
@@ -229,7 +227,7 @@ final class CurlTransport implements HttpTransportInterface
      *
      * @return array<string, list<string>>
      */
-    private function parseHeaders(string $headerStr) : array
+    private function parseHeaders(string $headerStr): array
     {
         $headers = [];
         $lines   = explode("\r\n", $headerStr);
@@ -242,8 +240,8 @@ final class CurlTransport implements HttpTransportInterface
 
             $parts = explode(':', $line, 2);
             if (count($parts) === 2) {
-                $name             = trim($parts[0]);
-                $value            = trim($parts[1]);
+                $name  = trim($parts[0]);
+                $value = trim($parts[1]);
                 $headers[$name][] = $value;
             }
         }
@@ -257,24 +255,24 @@ final class CurlTransport implements HttpTransportInterface
     private function getReasonPhrase(int $statusCode) : string
     {
         return match ($statusCode) {
-            200     => 'OK',
-            201     => 'Created',
-            204     => 'No Content',
-            301     => 'Moved Permanently',
-            302     => 'Found',
-            304     => 'Not Modified',
-            400     => 'Bad Request',
-            401     => 'Unauthorized',
-            403     => 'Forbidden',
-            404     => 'Not Found',
-            405     => 'Method Not Allowed',
-            408     => 'Request Timeout',
-            422     => 'Unprocessable Entity',
-            429     => 'Too Many Requests',
-            500     => 'Internal Server Error',
-            502     => 'Bad Gateway',
-            503     => 'Service Unavailable',
-            504     => 'Gateway Timeout',
+            200 => 'OK',
+            201 => 'Created',
+            204 => 'No Content',
+            301 => 'Moved Permanently',
+            302 => 'Found',
+            304 => 'Not Modified',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            408 => 'Request Timeout',
+            422 => 'Unprocessable Entity',
+            429 => 'Too Many Requests',
+            500 => 'Internal Server Error',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout',
             default => "Status {$statusCode}",
         };
     }

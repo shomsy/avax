@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 enum CompiledCacheFreshness: string
 {
-    case FRESH   = 'fresh';
-    case STALE   = 'stale';
+    case FRESH = 'fresh';
+    case STALE = 'stale';
     case MISSING = 'missing';
 }

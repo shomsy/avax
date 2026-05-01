@@ -12,16 +12,16 @@ namespace Avax\Components\Application\Config\System\Capabilities\Architecture;
  */
 enum AppPath: string
 {
-    case VIEW_CACHE_PATH  = 'storage/views';
-    case LOGS_PATH        = 'storage/logs/';
-    case CONFIG           = 'Config';
-    case AUTOLOAD_PATH    = 'vendor/autoload.php';
-    case HELPERS_PATH     = 'Foundation/Helpers/helpers.php';
-    case ROUTES_PATH      = 'Presentation/HTTP/routes/';
-    case MIGRATIONS_PATH  = 'Infrastructure/migrations';
-    case DTO_PATH         = 'Application/DTO';
+    case VIEW_CACHE_PATH = 'storage/views';
+    case LOGS_PATH       = 'storage/logs/';
+    case CONFIG          = 'Config';
+    case AUTOLOAD_PATH   = 'vendor/autoload.php';
+    case HELPERS_PATH    = 'Foundation/Helpers/helpers.php';
+    case ROUTES_PATH     = 'Presentation/HTTP/routes/';
+    case MIGRATIONS_PATH = 'Infrastructure/migrations';
+    case DTO_PATH        = 'Application/DTO';
     case ROUTE_CACHE_PATH = 'storage/cache/routes.cache.php';
-    case STUBS_PATH       = 'Infrastructure/Foundation/Database/Migration/Runner/Stubs/';
+    case STUBS_PATH      = 'Infrastructure/Foundation/Database/Migration/Runner/Stubs/';
 
     public function get() : string
     {
@@ -30,11 +30,11 @@ enum AppPath: string
 
     public static function getRoot() : string
     {
-        $currentDir   = __DIR__;
+        $currentDir = __DIR__;
         $composerFile = 'composer.json';
-        $rootDir      = '/';
+        $rootDir    = '/';
 
-        while (! file_exists($currentDir . DIRECTORY_SEPARATOR . $composerFile)) {
+        while ( ! file_exists($currentDir . DIRECTORY_SEPARATOR . $composerFile) ) {
             $currentDir = dirname($currentDir);
             if ($currentDir === $rootDir) {
                 // Fallback for some environments where composer.json might be 2-3 levels up

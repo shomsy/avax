@@ -12,7 +12,7 @@ final class Response implements ResponseInterface
 {
     private ResponseData $data;
 
-    public function __construct(int $statusCode = 200, array $headers = [], StreamInterface $body = null, string $reasonPhrase = '', string $protocolVersion = '1.1')
+    public function __construct(int $statusCode = 200, array $headers = [], ?StreamInterface $body = null, string $reasonPhrase = '', string $protocolVersion = '1.1')
     {
         if ($body === null) {
             $body = Utils::streamFor('');
@@ -33,7 +33,7 @@ final class Response implements ResponseInterface
 
     public function withProtocolVersion($version) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withProtocolVersion($version);
 
         return $clone;
@@ -61,7 +61,7 @@ final class Response implements ResponseInterface
 
     public function withHeader($name, $value) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withHeader($name, is_array($value) ? $value : [$value]);
 
         return $clone;
@@ -74,7 +74,7 @@ final class Response implements ResponseInterface
 
     public function withoutHeader($name) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withoutHeader($name);
 
         return $clone;
@@ -87,7 +87,7 @@ final class Response implements ResponseInterface
 
     public function withBody(StreamInterface $body) : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withBody($body);
 
         return $clone;
@@ -100,7 +100,7 @@ final class Response implements ResponseInterface
 
     public function withStatus($code, $reasonPhrase = '') : self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->data = $this->data->withStatus($code, $reasonPhrase);
 
         return $clone;

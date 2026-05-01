@@ -49,7 +49,7 @@ final class SourceSyncCoordinatorTest extends TestCase
 
     private function makeRecord(string $value) : StoredCacheRecord
     {
-        $now                  = $this->frozenClock->now();
+        $now = $this->frozenClock->now();
         $cachedValueLifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
@@ -131,9 +131,9 @@ final class SourceSyncCoordinatorTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $this->frozenClock     = new FrozenClock(timestamp: Timestamp::now());
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
-        $this->testCacheSource    = new TestCacheSource();
+        $this->testCacheSource = new TestCacheSource;
     }
 }
 

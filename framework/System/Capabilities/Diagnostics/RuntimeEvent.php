@@ -13,6 +13,5 @@ final class RuntimeEvent
         public readonly string $name,
         public readonly float $timestamp,
         public readonly array $data = [],
-    ) {
-    }
+    ) {}
 }

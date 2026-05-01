@@ -42,7 +42,7 @@ final class Environment
     private static function detector() : EnvironmentDetector
     {
         if (! isset(self::$environmentDetector)) {
-            self::$environmentDetector = new EnvironmentDetector();
+            self::$environmentDetector = new EnvironmentDetector;
         }
 
         return self::$environmentDetector;
@@ -68,7 +68,7 @@ final class Environment
         return self::detector()->detectRuntime();
     }
 
-    public static function container() : string|null
+    public static function container() : ?string
     {
         return self::detector()->detectContainer();
     }
@@ -78,11 +78,11 @@ final class Environment
         $env = self::current();
 
         return match ($env) {
-            'local'      => new LocalPolicy(),
-            'staging'    => new StagingPolicy(),
-            'production' => new ProductionPolicy(),
-            'testing'    => new TestingPolicy(),
-            default      => new LocalPolicy(),
+            'local'      => new LocalPolicy,
+            'staging'    => new StagingPolicy,
+            'production' => new ProductionPolicy,
+            'testing'    => new TestingPolicy,
+            default      => new LocalPolicy,
         };
     }
 }

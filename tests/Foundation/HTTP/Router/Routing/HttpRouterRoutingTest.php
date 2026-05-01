@@ -350,13 +350,13 @@ final class HttpRouterRoutingTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger());
+        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger);
         $matcher         = $matcherRegistry->get(key: 'domain');
 
         $this->router = new HttpRequestRouter(
-            constraintValidator: new RouteConstraintValidator(),
+            constraintValidator: new RouteConstraintValidator,
             matcher            : $matcher,
-            logger             : new NullLogger(),
+            logger             : new NullLogger,
         );
     }
 }

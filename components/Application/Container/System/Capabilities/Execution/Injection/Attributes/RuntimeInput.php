@@ -12,7 +12,5 @@ use Attribute;
 #[Attribute(flags: Attribute::TARGET_PARAMETER)]
 final class RuntimeInput
 {
-    public function __construct(public string|null $name = null)
-    {
-    }
+    public function __construct(public ?string $name = null) {}
 }

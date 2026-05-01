@@ -21,18 +21,18 @@ final class CompiledCacheManifest
     /** @var array<string, CompiledCacheManifestEntry> */
     private array $entries = [];
 
-    private string|null $manifestPath = null;
+    private ?string $manifestPath = null;
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock(),
+        private readonly Clock $clock = new SystemClock,
     ) {}
 
     /**
      * Create a new empty manifest.
      */
-    public static function empty(Clock $clock = null) : self
+    public static function empty(?Clock $clock = null) : self
     {
-        return new self(clock: $clock ?? new SystemClock());
+        return new self(clock: $clock ?? new SystemClock);
     }
 
     /**
@@ -40,9 +40,9 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file exists but contains invalid JSON
      */
-    public static function load(string $path, Clock $clock = null) : self
+    public static function load(string $path, ?Clock $clock = null) : self
     {
-        $manifest               = new self(clock: $clock ?? new SystemClock());
+        $manifest = new self(clock: $clock ?? new SystemClock);
         $manifest->manifestPath = $path;
 
         if (! file_exists($path)) {
@@ -66,7 +66,7 @@ final class CompiledCacheManifest
         }
 
         foreach ($data['entries'] ?? [] as $name => $entryData) {
-            $entry                    = CompiledCacheManifestEntry::fromArray($entryData);
+            $entry = CompiledCacheManifestEntry::fromArray($entryData);
             $manifest->entries[$name] = $entry;
         }
 
@@ -78,7 +78,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file cannot be written
      */
-    public function save(string $path = null) : void
+    public function save(?string $path = null) : void
     {
         $savePath = $path ?? $this->manifestPath;
 
@@ -95,9 +95,9 @@ final class CompiledCacheManifest
         }
 
         $data = [
-            'version'     => '1.0',
+            'version' => '1.0',
             'generatedAt' => $this->clock->now()->seconds,
-            'entries'     => array_map(
+            'entries' => array_map(
                 static fn (CompiledCacheManifestEntry $compiledCacheManifestEntry) : array => $compiledCacheManifestEntry->toArray(),
                 $this->entries,
             ),
@@ -126,10 +126,10 @@ final class CompiledCacheManifest
     public function addEntry(
         string $name,
         string $compiledPath,
-        array  $sourceFiles,
-        string $type = null,
-        string $phpVersion = null,
-        string $frameworkVersion = null,
+        array   $sourceFiles,
+        ?string $type = null,
+        ?string $phpVersion = null,
+        ?string $frameworkVersion = null,
     ) : CompiledCacheManifestEntry
     {
         $now = $this->clock->now();
@@ -195,7 +195,7 @@ final class CompiledCacheManifest
     /**
      * Get an entry by name.
      */
-    public function getEntry(string $name) : CompiledCacheManifestEntry|null
+    public function getEntry(string $name) : ?CompiledCacheManifestEntry
     {
         return $this->entries[$name] ?? null;
     }
@@ -295,7 +295,7 @@ final class CompiledCacheManifest
             return false;
         }
 
-        $entry                = $this->entries[$name];
+        $entry = $this->entries[$name];
         $this->entries[$name] = $entry->withUpdatedAt($this->clock->now());
 
         return true;
@@ -304,7 +304,7 @@ final class CompiledCacheManifest
     /**
      * Get the manifest path.
      */
-    public function getManifestPath() : string|null
+    public function getManifestPath() : ?string
     {
         return $this->manifestPath;
     }

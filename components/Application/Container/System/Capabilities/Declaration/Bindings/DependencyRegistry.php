@@ -74,7 +74,7 @@ final class DependencyRegistry implements DependencyRegistryContract
 
     private function aliasChainContains(string $alias, string $target) : bool
     {
-        $seen    = [];
+        $seen        = [];
         $current = $target;
 
         while ( isset($this->aliases[$current]) ) {
@@ -83,7 +83,7 @@ final class DependencyRegistry implements DependencyRegistryContract
             }
 
             $seen[$current] = true;
-            $current        = $this->aliases[$current];
+            $current = $this->aliases[$current];
         }
 
         return $current === $alias;
@@ -91,7 +91,7 @@ final class DependencyRegistry implements DependencyRegistryContract
 
     public function resolveAlias(string $abstract) : string
     {
-        $seen    = [];
+        $seen        = [];
         $current = $abstract;
 
         while ( isset($this->aliases[$current]) ) {
@@ -100,7 +100,7 @@ final class DependencyRegistry implements DependencyRegistryContract
             }
 
             $seen[$current] = true;
-            $current        = $this->aliases[$current];
+            $current = $this->aliases[$current];
         }
 
         return $current;
@@ -142,18 +142,18 @@ final class DependencyRegistry implements DependencyRegistryContract
             'concrete' => is_object(value: $registration->concrete)
                 ? $registration->concrete::class
                 : $registration->concrete,
-            'lifetime'             => $registration->lifetime,
-            'deferred'             => $registration->deferred,
-            'warm'                 => $registration->warm,
-            'lazy'                 => $registration->lazy,
-            'disposable'           => $registration->disposable,
-            'poolSize'             => $registration->poolSize,
+            'lifetime'      => $registration->lifetime,
+            'deferred'      => $registration->deferred,
+            'warm'          => $registration->warm,
+            'lazy'          => $registration->lazy,
+            'disposable'    => $registration->disposable,
+            'poolSize'      => $registration->poolSize,
             'poolResetBeforeReuse' => $registration->poolResetBeforeReuse,
-            'poolScopeKind'        => $registration->poolScopeKind,
-            'group'                => $registration->group,
-            'groupOrder'           => $registration->groupOrder,
-            'tags'                 => $registration->tags,
-            'metadata'             => $registration->metadata->toArray(),
+            'poolScopeKind' => $registration->poolScopeKind,
+            'group'         => $registration->group,
+            'groupOrder'    => $registration->groupOrder,
+            'tags'          => $registration->tags,
+            'metadata'      => $registration->metadata->toArray(),
         ];
     }
 
@@ -190,7 +190,7 @@ final class DependencyRegistry implements DependencyRegistryContract
 
     public function instance(string $abstract, object $instance) : void
     {
-        $registration           = new DependencyRegistration(abstract: $abstract);
+        $registration = new DependencyRegistration(abstract: $abstract);
         $registration->concrete = $instance;
         $registration->lifetime = SingletonLifetime::NAME;
 
@@ -199,7 +199,7 @@ final class DependencyRegistry implements DependencyRegistryContract
 
     public function bootstrapInstance(string $abstract, object $instance) : void
     {
-        $registration           = new DependencyRegistration(abstract: $abstract);
+        $registration = new DependencyRegistration(abstract: $abstract);
         $registration->concrete = $instance;
         $registration->lifetime = SingletonLifetime::NAME;
 
@@ -240,8 +240,8 @@ final class DependencyRegistry implements DependencyRegistryContract
      */
     public function addExtender(string $abstract, Closure $extender, string $descriptor = 'extender') : void
     {
-        $resolved                                 = $this->resolveAlias(abstract: $abstract);
-        $this->extenders[$resolved][]             = $extender;
+        $resolved                     = $this->resolveAlias(abstract: $abstract);
+        $this->extenders[$resolved][] = $extender;
         $this->decorationDescriptors[$resolved][] = $descriptor;
         $this->touch();
     }
@@ -375,7 +375,7 @@ final class DependencyRegistry implements DependencyRegistryContract
 
             $items[] = [
                 'serviceId' => $abstract,
-                'order'     => $registration->groupOrder,
+                'order' => $registration->groupOrder,
             ];
         }
 
@@ -434,7 +434,7 @@ final class DependencyRegistry implements DependencyRegistryContract
         }
 
         return $this->classHierarchyCache[$class] = [
-            'parents'    => class_exists(class: $class) ? array_values(array: class_parents(object_or_class: $class)) : [],
+            'parents' => class_exists(class: $class) ? array_values(array: class_parents(object_or_class: $class)) : [],
             'interfaces' => class_exists(class: $class) || interface_exists(interface: $class)
                 ? array_values(array: class_implements(object_or_class: $class))
                 : [],
@@ -492,12 +492,12 @@ final class DependencyRegistry implements DependencyRegistryContract
         return isset($this->aliases[$alias]);
     }
 
-    public function ownership(string $abstract) : RegistrationMetadata|null
+    public function ownership(string $abstract) : ?RegistrationMetadata
     {
         return $this->get(abstract: $abstract)?->metadata;
     }
 
-    public function get(string $abstract) : DependencyRegistration|null
+    public function get(string $abstract) : ?DependencyRegistration
     {
         $abstract = $this->resolveAlias(abstract: $abstract);
 
@@ -545,7 +545,7 @@ final class DependencyRegistry implements DependencyRegistryContract
     /**
      * @return array<string, mixed>|null
      */
-    public function sliceManifest(string $slice) : array|null
+    public function sliceManifest(string $slice) : ?array
     {
         $normalized = trim(string: $slice);
         if ($normalized === '') {
@@ -564,24 +564,24 @@ final class DependencyRegistry implements DependencyRegistryContract
 
         foreach ($this->all() as $abstract => $registration) {
             $metadata = $registration->metadata;
-            $slice    = $metadata->ownerSlice;
+            $slice = $metadata->ownerSlice;
 
             $manifests[$slice] ??= [
-                'slice'      => $slice,
-                'category'   => $metadata->category,
+                'slice'    => $slice,
+                'category' => $metadata->category,
                 'categories' => [],
-                'services'   => [],
-                'exports'    => [],
-                'public'     => [],
-                'shared'     => [],
-                'private'    => [],
-                'internal'   => [],
-                'imports'    => [],
+                'services' => [],
+                'exports'  => [],
+                'public'   => [],
+                'shared'   => [],
+                'private'  => [],
+                'internal' => [],
+                'imports'  => [],
             ];
 
             $manifests[$slice]['categories'][$metadata->category] = true;
-            $manifests[$slice]['services'][]                      = $abstract;
-            $manifests[$slice]['imports']                         = array_merge(
+            $manifests[$slice]['services'][] = $abstract;
+            $manifests[$slice]['imports'] = array_merge(
                     $manifests[$slice]['imports'],
                     $metadata->imports,
                 )
@@ -605,7 +605,7 @@ final class DependencyRegistry implements DependencyRegistryContract
             $categories = array_keys(array: $manifest['categories']);
             sort(array: $categories);
             $manifests[$slice]['categories'] = $categories;
-            $manifests[$slice]['category']   = count(value: $categories) === 1 ? $categories[0] : 'mixed';
+            $manifests[$slice]['category'] = count(value: $categories) === 1 ? $categories[0] : 'mixed';
         }
 
         ksort(array: $manifests);
@@ -624,16 +624,16 @@ final class DependencyRegistry implements DependencyRegistryContract
     public function sliceView(string $slice) : array
     {
         $manifest = $this->sliceManifest(slice: $slice);
-        $visible  = [];
-        $hidden   = [];
+        $visible = [];
+        $hidden = [];
 
         foreach ($this->all() as $serviceId => $registration) {
             $access = $this->sliceAccessTo(viewerSlice: $slice, serviceId: $serviceId);
-            $row    = [
-                'serviceId'  => $serviceId,
+            $row = [
+                'serviceId' => $serviceId,
                 'ownerSlice' => $registration->metadata->ownerSlice,
                 'visibility' => $registration->metadata->visibility,
-                'reason'     => $access['reason'],
+                'reason'    => $access['reason'],
             ];
 
             if ($access['allowed']) {
@@ -655,11 +655,11 @@ final class DependencyRegistry implements DependencyRegistryContract
         );
 
         return [
-            'slice'    => trim(string: $slice),
-            'exists'   => $manifest !== null,
+            'slice'   => trim(string: $slice),
+            'exists'  => $manifest !== null,
             'manifest' => $manifest,
-            'visible'  => $visible,
-            'hidden'   => $hidden,
+            'visible' => $visible,
+            'hidden'  => $hidden,
         ];
     }
 
@@ -669,40 +669,40 @@ final class DependencyRegistry implements DependencyRegistryContract
     public function sliceAccessTo(string $viewerSlice, string $serviceId) : array
     {
         $normalized = trim(string: $viewerSlice);
-        $manifest   = $this->sliceManifest(slice: $normalized);
+        $manifest = $this->sliceManifest(slice: $normalized);
         $dependency = $this->metadataFor(serviceId: $serviceId);
 
         $viewer = [
-            'slice'    => $normalized,
-            'exists'   => $manifest !== null,
+            'slice'   => $normalized,
+            'exists'  => $manifest !== null,
             'category' => (string) ($manifest['category'] ?? ''),
-            'imports'  => $manifest['imports'] ?? [],
-            'exports'  => $manifest['exports'] ?? [],
+            'imports' => $manifest['imports'] ?? [],
+            'exports' => $manifest['exports'] ?? [],
         ];
 
         if ($manifest === null) {
             return [
-                'allowed'    => false,
-                'reason'     => "slice view [{$normalized}] is not part of the current composition",
-                'viewer'     => $viewer,
+                'allowed' => false,
+                'reason'  => "slice view [{$normalized}] is not part of the current composition",
+                'viewer'  => $viewer,
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         if ($dependency->ownerSlice === $normalized) {
             return [
-                'allowed'    => true,
-                'reason'     => 'service belongs to the active slice view',
-                'viewer'     => $viewer,
+                'allowed' => true,
+                'reason'  => 'service belongs to the active slice view',
+                'viewer'  => $viewer,
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
             return [
-                'allowed'    => true,
-                'reason'     => 'service is part of the public surface',
-                'viewer'     => $viewer,
+                'allowed' => true,
+                'reason'  => 'service is part of the public surface',
+                'viewer'  => $viewer,
                 'dependency' => $dependency->toArray(),
             ];
         }
@@ -713,24 +713,24 @@ final class DependencyRegistry implements DependencyRegistryContract
             && in_array(needle: $dependency->ownerSlice, haystack: $manifest['imports'] ?? [], strict: true)
         ) {
             return [
-                'allowed'    => true,
-                'reason'     => 'service is shared, exported, and imported by the active slice view',
-                'viewer'     => $viewer,
+                'allowed' => true,
+                'reason'  => 'service is shared, exported, and imported by the active slice view',
+                'viewer'  => $viewer,
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         return [
             'allowed' => false,
-            'reason'  => match ($dependency->visibility) {
-                RegistrationVisibility::PRIVATE  => 'private services stay inside their owning slice',
+            'reason' => match ($dependency->visibility) {
+                RegistrationVisibility::PRIVATE => 'private services stay inside their owning slice',
                 RegistrationVisibility::INTERNAL => 'internal services are implementation details of their owning slice',
-                RegistrationVisibility::SHARED   => $dependency->exported
+                RegistrationVisibility::SHARED  => $dependency->exported
                     ? "active slice [{$normalized}] does not import [{$dependency->ownerSlice}]"
                     : 'shared service is not exported by its owning slice',
                 default => 'service is not visible from the active slice view',
             },
-            'viewer'     => $viewer,
+            'viewer' => $viewer,
             'dependency' => $dependency->toArray(),
         ];
     }
@@ -746,7 +746,7 @@ final class DependencyRegistry implements DependencyRegistryContract
         foreach ($this->all() as $abstract => $registration) {
             $metadata                       = $registration->metadata;
             $concepts[$metadata->concept][] = [
-                'serviceId'  => $abstract,
+                'serviceId' => $abstract,
                 'ownerSlice' => $metadata->ownerSlice,
                 'visibility' => $metadata->visibility,
             ];
@@ -766,7 +766,7 @@ final class DependencyRegistry implements DependencyRegistryContract
             );
 
             $duplicates[] = [
-                'concept'  => $concept,
+                'concept' => $concept,
                 'services' => $services,
             ];
         }
@@ -806,32 +806,32 @@ final class DependencyRegistry implements DependencyRegistryContract
      */
     public function accessTo(string $consumerId, string $dependencyId) : array
     {
-        $consumer   = $this->metadataFor(serviceId: $consumerId);
+        $consumer = $this->metadataFor(serviceId: $consumerId);
         $dependency = $this->metadataFor(serviceId: $dependencyId);
 
         if ($consumer->ownerSlice === $dependency->ownerSlice) {
             return [
-                'allowed'    => true,
-                'reason'     => 'consumer and dependency live in the same slice',
-                'consumer'   => $consumer->toArray(),
+                'allowed'  => true,
+                'reason'   => 'consumer and dependency live in the same slice',
+                'consumer' => $consumer->toArray(),
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         if ($dependency->ownerSlice === 'foundation.system') {
             return [
-                'allowed'    => true,
-                'reason'     => 'foundation system services remain injectable infrastructure for the assembled runtime',
-                'consumer'   => $consumer->toArray(),
+                'allowed'  => true,
+                'reason'   => 'foundation system services remain injectable infrastructure for the assembled runtime',
+                'consumer' => $consumer->toArray(),
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
             return [
-                'allowed'    => true,
-                'reason'     => 'dependency is part of the public surface',
-                'consumer'   => $consumer->toArray(),
+                'allowed'  => true,
+                'reason'   => 'dependency is part of the public surface',
+                'consumer' => $consumer->toArray(),
                 'dependency' => $dependency->toArray(),
             ];
         }
@@ -839,45 +839,45 @@ final class DependencyRegistry implements DependencyRegistryContract
         if ($dependency->visibility === RegistrationVisibility::SHARED) {
             if (! $dependency->exported) {
                 return [
-                    'allowed'    => false,
-                    'reason'     => 'shared dependency is not exported by its owning slice',
-                    'consumer'   => $consumer->toArray(),
+                    'allowed'  => false,
+                    'reason'   => 'shared dependency is not exported by its owning slice',
+                    'consumer' => $consumer->toArray(),
                     'dependency' => $dependency->toArray(),
                 ];
             }
 
             if (! in_array(needle: $dependency->ownerSlice, haystack: $consumer->imports, strict: true)) {
                 return [
-                    'allowed'    => false,
-                    'reason'     => "consumer slice [{$consumer->ownerSlice}] does not declare an import for [{$dependency->ownerSlice}]",
-                    'consumer'   => $consumer->toArray(),
+                    'allowed'  => false,
+                    'reason'   => "consumer slice [{$consumer->ownerSlice}] does not declare an import for [{$dependency->ownerSlice}]",
+                    'consumer' => $consumer->toArray(),
                     'dependency' => $dependency->toArray(),
                 ];
             }
 
             return [
-                'allowed'    => true,
-                'reason'     => 'dependency is explicitly exported and the consumer slice imports it',
-                'consumer'   => $consumer->toArray(),
+                'allowed'  => true,
+                'reason'   => 'dependency is explicitly exported and the consumer slice imports it',
+                'consumer' => $consumer->toArray(),
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         return [
             'allowed' => false,
-            'reason'  => match ($dependency->visibility) {
-                RegistrationVisibility::PRIVATE  => 'private dependencies cannot cross slice boundaries',
+            'reason'   => match ($dependency->visibility) {
+                RegistrationVisibility::PRIVATE => 'private dependencies cannot cross slice boundaries',
                 RegistrationVisibility::INTERNAL => 'internal dependencies cannot be used outside their owning slice',
-                default                          => 'dependency is not accessible from the consumer slice',
+                default                         => 'dependency is not accessible from the consumer slice',
             },
-            'consumer'   => $consumer->toArray(),
+            'consumer' => $consumer->toArray(),
             'dependency' => $dependency->toArray(),
         ];
     }
 
     public function allowsAccess(string $consumerId, string $dependencyId) : bool
     {
-        $consumer   = $this->metadataFor(serviceId: $consumerId);
+        $consumer = $this->metadataFor(serviceId: $consumerId);
         $dependency = $this->metadataFor(serviceId: $dependencyId);
 
         if ($consumer->ownerSlice === $dependency->ownerSlice || $dependency->ownerSlice === 'foundation.system' || $dependency->visibility === RegistrationVisibility::PUBLIC) {
@@ -898,8 +898,8 @@ final class DependencyRegistry implements DependencyRegistryContract
 
         if ($dependency->ownerSlice === 'foundation.system') {
             return [
-                'allowed'    => true,
-                'reason'     => 'foundation system services remain available to internal container flows and diagnostics',
+                'allowed' => true,
+                'reason'  => 'foundation system services remain available to internal container flows and diagnostics',
                 'dependency' => $dependency->toArray(),
             ];
         }
@@ -909,44 +909,44 @@ final class DependencyRegistry implements DependencyRegistryContract
             && $dependency->intent === 'entry'
         ) {
             return [
-                'allowed'    => true,
-                'reason'     => 'flow entry owners remain valid top-level entry points even when their internals stay local',
+                'allowed' => true,
+                'reason'  => 'flow entry owners remain valid top-level entry points even when their internals stay local',
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         if ($dependency->ownerSlice === 'default' && $dependency->visibility === RegistrationVisibility::PUBLIC) {
             return [
-                'allowed'    => true,
-                'reason'     => 'service uses the default public registration posture',
+                'allowed' => true,
+                'reason'  => 'service uses the default public registration posture',
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
             return [
-                'allowed'    => true,
-                'reason'     => 'service is part of the public surface',
+                'allowed' => true,
+                'reason'  => 'service is part of the public surface',
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         if ($dependency->visibility === RegistrationVisibility::SHARED && $dependency->exported) {
             return [
-                'allowed'    => true,
-                'reason'     => 'service is shared and explicitly exported',
+                'allowed' => true,
+                'reason'  => 'service is shared and explicitly exported',
                 'dependency' => $dependency->toArray(),
             ];
         }
 
         return [
             'allowed' => false,
-            'reason'  => $dependency->category === RegistrationCategory::FLOW && $dependency->intent !== 'entry'
+            'reason' => $dependency->category === RegistrationCategory::FLOW && $dependency->intent !== 'entry'
                 ? 'flow-local services must be marked entry() before they become top-level surface'
                 : match ($dependency->visibility) {
-                    RegistrationVisibility::PRIVATE  => 'private services are not part of the top-level container surface',
+                    RegistrationVisibility::PRIVATE => 'private services are not part of the top-level container surface',
                     RegistrationVisibility::INTERNAL => 'internal services are implementation details of their owning slice',
-                    default                          => 'shared services must be exported before they become top-level surface',
+                    default                         => 'shared services must be exported before they become top-level surface',
                 },
             'dependency' => $dependency->toArray(),
         ];
@@ -984,14 +984,14 @@ final class DependencyRegistry implements DependencyRegistryContract
             return [];
         }
 
-        $chain   = [$abstract];
-        $seen    = [];
+        $chain       = [$abstract];
+        $seen        = [];
         $current = $abstract;
 
         while ( isset($this->aliases[$current]) && ! isset($seen[$current]) ) {
             $seen[$current] = true;
-            $current        = $this->aliases[$current];
-            $chain[]        = $current;
+            $current = $this->aliases[$current];
+            $chain[] = $current;
         }
 
         return $chain;
@@ -1058,7 +1058,7 @@ final class DependencyRegistry implements DependencyRegistryContract
 
             $index[$registration->group][] = [
                 'serviceId' => $abstract,
-                'order'     => $registration->groupOrder,
+                'order' => $registration->groupOrder,
             ];
         }
 
@@ -1126,13 +1126,13 @@ final class DependencyRegistry implements DependencyRegistryContract
 
     public function flush() : void
     {
-        $this->services              = [];
-        $this->aliases               = [];
-        $this->contextual            = [];
-        $this->wildcardContextual    = [];
-        $this->resolvedCache         = [];
-        $this->classHierarchyCache   = [];
-        $this->extenders             = [];
+        $this->services            = [];
+        $this->aliases             = [];
+        $this->contextual          = [];
+        $this->wildcardContextual  = [];
+        $this->resolvedCache       = [];
+        $this->classHierarchyCache = [];
+        $this->extenders           = [];
         $this->decorationDescriptors = [];
         $this->touch();
     }
@@ -1142,7 +1142,7 @@ final class DependencyRegistry implements DependencyRegistryContract
      */
     public function resetDerivedState() : void
     {
-        $this->resolvedCache       = [];
+        $this->resolvedCache = [];
         $this->classHierarchyCache = [];
     }
 }

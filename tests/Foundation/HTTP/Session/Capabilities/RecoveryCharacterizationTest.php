@@ -15,7 +15,7 @@ final class RecoveryCharacterizationTest extends TestCase
     public function test_backup_restore_and_transaction_commit_and_rollback() : void
     {
         // Fake in-memory store implementing StoreInterface
-        $store = new class () implements StoreInterface {
+        $store = new class implements StoreInterface {
             private array $data = [];
 
             public function get(string $key, mixed $default = null) : mixed
@@ -23,7 +23,7 @@ final class RecoveryCharacterizationTest extends TestCase
                 return $this->data[$key] ?? $default;
             }
 
-            public function put(string $key, mixed $value, int $ttl = null) : void
+            public function put(string $key, mixed $value, ?int $ttl = null) : void
             {
                 $this->data[$key] = $value;
             }
@@ -96,7 +96,7 @@ final class RecoveryCharacterizationTest extends TestCase
 
     public function test_export_and_import_and_invalid_import() : void
     {
-        $store = new class () implements StoreInterface {
+        $store = new class implements StoreInterface {
             private array $data = [];
 
             public function get(string $key, mixed $default = null) : mixed
@@ -104,7 +104,7 @@ final class RecoveryCharacterizationTest extends TestCase
                 return $this->data[$key] ?? $default;
             }
 
-            public function put(string $key, mixed $value, int $ttl = null) : void
+            public function put(string $key, mixed $value, ?int $ttl = null) : void
             {
                 $this->data[$key] = $value;
             }

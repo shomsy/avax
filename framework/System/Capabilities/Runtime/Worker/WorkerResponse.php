@@ -11,8 +11,7 @@ final readonly class WorkerResponse
     public function __construct(
         private string $requestId,
         private RuntimeResponse $response,
-    ) {
-    }
+    ) {}
 
     public static function fromRuntimeResponse(string $requestId, RuntimeResponse $response) : self
     {

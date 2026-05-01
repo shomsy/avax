@@ -29,7 +29,7 @@ final class CheckComponentSuiteStructure
             'DependencyMap',
             'Performance',
             'Server',
-    ];
+        ];
 
     private array $helperFolders = [
         'Code-Review-And-ToDo',
@@ -95,12 +95,12 @@ final class CheckComponentSuiteStructure
 
         // Only check actual component directories, not all folders
         $componentDirs = [
-            'Application'  => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
-            'HTTP'         => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
-            'CLI'          => ['Console'],
-            'DataStack'    => ['Data', 'Database', 'Persistence'],
-            'Identity'     => ['Auth', 'Access', 'Security', 'Tokens'],
-            'Operations'   => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
+            'Application' => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
+            'HTTP'        => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
+            'CLI'         => ['Console'],
+            'DataStack'   => ['Data', 'Database', 'Persistence'],
+            'Identity'    => ['Auth', 'Access', 'Security', 'Tokens'],
+            'Operations'  => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
             'Presentation' => ['View'],
             'DeveloperTools' => ['Diagnostics', 'DumpDebugger'],
         ];
@@ -127,7 +127,7 @@ final class CheckComponentSuiteStructure
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckComponentSuiteStructure();
+    $checker = new CheckComponentSuiteStructure;
     $result = $checker->check();
 
     echo $result['status'] . "\n";

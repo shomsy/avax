@@ -44,7 +44,7 @@ final class RouteBootstrapperTest extends TestCase
      */
     public function test_bootstrap_state_tracking() : void
     {
-        $state = new RouterBootstrapState();
+        $state = new RouterBootstrapState;
 
         $this->assertFalse(condition: $state->booted);
         $this->assertNull(actual: $state->source);

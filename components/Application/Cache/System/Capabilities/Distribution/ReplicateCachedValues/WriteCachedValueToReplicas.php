@@ -37,9 +37,9 @@ final readonly class WriteCachedValueToReplicas
     public function writeAll(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord, ReplicationPolicy $replicationPolicy) : void
     {
         match ($replicationPolicy) {
-            ReplicationPolicy::SYNCHRONOUS  => $this->writeSynchronously(key: $cacheKey, record: $storedCacheRecord),
+            ReplicationPolicy::SYNCHRONOUS => $this->writeSynchronously(key: $cacheKey, record: $storedCacheRecord),
             ReplicationPolicy::ASYNCHRONOUS => $this->writeAsynchronously(key: $cacheKey, record: $storedCacheRecord),
-            ReplicationPolicy::QUORUM       => $this->writeWithQuorum(key: $cacheKey, record: $storedCacheRecord),
+            ReplicationPolicy::QUORUM      => $this->writeWithQuorum(key: $cacheKey, record: $storedCacheRecord),
         };
     }
 

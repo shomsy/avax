@@ -25,12 +25,12 @@ final class ConsistentHashRing
 
     public function addNode(CacheNode $cacheNode) : self
     {
-        $this->nodes[$cacheNode->id->toString()]         = $cacheNode;
+        $this->nodes[$cacheNode->id->toString()] = $cacheNode;
         $this->nodePositions[$cacheNode->id->toString()] = [];
 
         for ($i = 0; $i < $this->virtualNodes; $i++) {
-            $position                                          = $this->hash(value: sprintf('%s:%d', $cacheNode->id->toString(), $i));
-            $this->ring[$position]                             = $cacheNode;
+            $position              = $this->hash(value: sprintf('%s:%d', $cacheNode->id->toString(), $i));
+            $this->ring[$position] = $cacheNode;
             $this->nodePositions[$cacheNode->id->toString()][] = $position;
         }
 
@@ -68,7 +68,7 @@ final class ConsistentHashRing
         return $this;
     }
 
-    public function getNodeForPartition(int $partitionIndex) : CacheNode|null
+    public function getNodeForPartition(int $partitionIndex) : ?CacheNode
     {
         $partitionHash = $this->hash(value: (string) $partitionIndex);
 
@@ -77,7 +77,7 @@ final class ConsistentHashRing
         );
     }
 
-    public function getNodeForKey(CacheKey $cacheKey) : CacheNode|null
+    public function getNodeForKey(CacheKey $cacheKey) : ?CacheNode
     {
         if ($this->ring === []) {
             return null;
@@ -85,7 +85,7 @@ final class ConsistentHashRing
 
         $keyHash = $this->hash(value: $cacheKey->fullKey());
 
-        $closestNode     = null;
+        $closestNode = null;
         $closestPosition = null;
 
         foreach ($this->ring as $position => $node) {
@@ -97,12 +97,12 @@ final class ConsistentHashRing
                 continue;
             }
 
-            $closestNode     = $node;
+            $closestNode = $node;
             $closestPosition = $position;
         }
 
         if ($closestNode === null) {
-            $positions     = array_keys($this->ring);
+            $positions = array_keys($this->ring);
             $firstPosition = reset($positions);
 
             return $this->ring[$firstPosition] ?? null;

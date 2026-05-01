@@ -14,7 +14,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_record_slow_query_returns_true() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = $this->createSpan('SELECT * FROM users', 0.0, 2.0); // 2000ms
+        $span = $this->createSpan('SELECT * FROM users', 0.0, 2.0); // 2000ms
 
         $result = $detector->record($span);
 
@@ -39,7 +39,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_record_fast_query_returns_false() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = $this->createSpan('SELECT * FROM users', 0.0, 0.5); // 500ms
+        $span = $this->createSpan('SELECT * FROM users', 0.0, 0.5); // 500ms
 
         $result = $detector->record($span);
 
@@ -49,7 +49,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_record_query_at_exact_threshold() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = $this->createSpan('SELECT * FROM users', 0.0, 1.0); // 1000ms - NOT slow (> not >=)
+        $span = $this->createSpan('SELECT * FROM users', 0.0, 1.0); // 1000ms - NOT slow (> not >=)
 
         $result = $detector->record($span);
 
@@ -59,7 +59,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_record_query_just_above_threshold() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = $this->createSpan('SELECT * FROM users', 0.0, 1.001); // 1001ms
+        $span = $this->createSpan('SELECT * FROM users', 0.0, 1.001); // 1001ms
 
         $result = $detector->record($span);
 
@@ -68,7 +68,7 @@ final class SlowQueryDetectorTest extends TestCase
 
     public function test_default_threshold_is_1000ms() : void
     {
-        $detector = new SlowQueryDetector();
+        $detector = new SlowQueryDetector;
         $span     = $this->createSpan('SELECT 1', 0.0, 1.5); // 1500ms
 
         $this->assertTrue($detector->record($span));
@@ -77,7 +77,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_custom_threshold() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 500);
-        $span     = $this->createSpan('SELECT 1', 0.0, 0.6); // 600ms
+        $span = $this->createSpan('SELECT 1', 0.0, 0.6); // 600ms
 
         $this->assertTrue($detector->record($span));
     }
@@ -110,7 +110,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_all_returns_query_span_objects() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = $this->createSpan('SELECT 1', 0.0, 2.0);
+        $span = $this->createSpan('SELECT 1', 0.0, 2.0);
         $detector->record($span);
 
         $all = $detector->all();
@@ -176,9 +176,9 @@ final class SlowQueryDetectorTest extends TestCase
         $detector->record($this->createSpan('SLOW1', 0.0, 2.0));
         $detector->record($this->createSpan('SLOW2', 0.0, 4.0));
 
-        $all       = $detector->all();
+        $all = $detector->all();
         $durations = array_map(static fn (QuerySpan $s) => $s->getDurationMs(), $all);
-        $avg       = array_sum($durations) / count($durations);
+        $avg = array_sum($durations) / count($durations);
 
         $this->assertSame(3000.0, $avg);
     }
@@ -190,9 +190,9 @@ final class SlowQueryDetectorTest extends TestCase
         $detector->record($this->createSpan('SLOWEST', 0.0, 5.0));
         $detector->record($this->createSpan('SLOW2', 0.0, 3.0));
 
-        $all       = $detector->all();
+        $all = $detector->all();
         $durations = array_map(static fn (QuerySpan $s) => $s->getDurationMs(), $all);
-        $max       = max($durations);
+        $max = max($durations);
 
         $this->assertSame(5000.0, $max);
     }
@@ -201,7 +201,7 @@ final class SlowQueryDetectorTest extends TestCase
 
     public function test_integration_with_query_timeline() : void
     {
-        $timeline = new QueryTimeline();
+        $timeline = new QueryTimeline;
         $detector = new SlowQueryDetector(thresholdMs: 1000);
 
         $span1 = $this->createSpan('SELECT 1', 0.0, 0.5);
@@ -220,7 +220,7 @@ final class SlowQueryDetectorTest extends TestCase
 
     public function test_timeline_and_detector_consistency() : void
     {
-        $timeline = new QueryTimeline();
+        $timeline = new QueryTimeline;
         $detector = new SlowQueryDetector(thresholdMs: 1000);
 
         $spans = [
@@ -248,7 +248,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_zero_threshold_marks_all_as_slow() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 0);
-        $span     = $this->createSpan('SELECT 1', 0.0, 0.001); // 1ms
+        $span = $this->createSpan('SELECT 1', 0.0, 0.001); // 1ms
 
         $this->assertTrue($detector->record($span));
     }
@@ -256,7 +256,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_high_threshold_marks_none_as_slow() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 10000);
-        $span     = $this->createSpan('SELECT 1', 0.0, 1.0); // 1000ms
+        $span = $this->createSpan('SELECT 1', 0.0, 1.0); // 1000ms
 
         $this->assertFalse($detector->record($span));
     }
@@ -297,7 +297,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_severity_via_duration_ratio() : void
     {
         // Simulating severity classification based on how much over threshold
-        $detector100  = new SlowQueryDetector(thresholdMs: 100);
+        $detector100 = new SlowQueryDetector(thresholdMs: 100);
         $detector1000 = new SlowQueryDetector(thresholdMs: 1000);
 
         $span = $this->createSpan('SELECT 1', 0.0, 1.0); // 1000ms
@@ -355,7 +355,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_zero_duration_query() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = $this->createSpan('SELECT 1', 0.0, 0.0);
+        $span = $this->createSpan('SELECT 1', 0.0, 0.0);
 
         $this->assertFalse($detector->record($span));
     }
@@ -363,7 +363,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_very_slow_query() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = $this->createSpan('SELECT 1', 0.0, 60.0); // 60 seconds
+        $span = $this->createSpan('SELECT 1', 0.0, 60.0); // 60 seconds
 
         $this->assertTrue($detector->record($span));
         $this->assertSame(60000.0, $detector->all()[0]->getDurationMs());
@@ -372,7 +372,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_query_with_bindings() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = new QuerySpan(
+        $span = new QuerySpan(
             query    : 'SELECT * FROM users WHERE id = ?',
             bindings : [42],
             startTime: 0.0,
@@ -388,7 +388,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_query_with_connection() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = new QuerySpan(
+        $span = new QuerySpan(
             query     : 'SELECT 1',
             startTime : 0.0,
             endTime   : 2.0,
@@ -403,7 +403,7 @@ final class SlowQueryDetectorTest extends TestCase
     public function test_query_with_error() : void
     {
         $detector = new SlowQueryDetector(thresholdMs: 1000);
-        $span     = new QuerySpan(
+        $span = new QuerySpan(
             query    : 'SELECT 1',
             startTime: 0.0,
             endTime  : 2.0,

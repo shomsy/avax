@@ -10,7 +10,7 @@ $container = makeTestContainer();
 $container->scoped(abstract: OpenScopedService::class, concrete: OpenScopedService::class);
 
 $container->openScope();
-$first  = $container->get(id: OpenScopedService::class);
+$first = $container->get(id: OpenScopedService::class);
 $second = $container->get(id: OpenScopedService::class);
 $container->closeScope();
 

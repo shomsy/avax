@@ -17,7 +17,7 @@ use DateInterval;
  */
 final class Cache
 {
-    private static CacheContract|null $cacheContract = null;
+    private static ?CacheContract $cacheContract = null;
 
     public static function use(CacheContract $cacheContract) : void
     {
@@ -29,12 +29,12 @@ final class Cache
         self::$cacheContract = null;
     }
 
-    public static function put(string $key, mixed $value, int|DateInterval $ttl = null) : bool
+    public static function put(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
         return self::set(key: $key, value: $value, ttl: $ttl);
     }
 
-    public static function set(string $key, mixed $value, int|DateInterval $ttl = null) : bool
+    public static function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
         return self::default()->set(key: $key, value: $value, ttl: $ttl);
     }
@@ -42,7 +42,7 @@ final class Cache
     private static function default() : CacheContract
     {
         if (! self::$cacheContract instanceof CacheContract) {
-            throw new NotConfigured();
+            throw new NotConfigured;
         }
 
         return self::$cacheContract;
@@ -94,7 +94,7 @@ final class Cache
         return self::default()->get(key: $key, default: $default);
     }
 
-    public static function store(string $name = null) : CacheContract
+    public static function store(?string $name = null) : CacheContract
     {
         if ($name !== null) {
             throw new NotConfigured(message: 'Named store requires RegisterCacheDependencies');

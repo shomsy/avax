@@ -48,7 +48,7 @@ final readonly class ClientMiddlewarePipeline
      *
      * Convenience method that resolves and executes in one call.
      *
-     * @param OutboundRequest $request The outbound request
+     * @param OutboundRequest                           $request      The outbound request
      * @param Closure(OutboundRequest) : ClientResponse $finalHandler The terminal handler
      */
     public function execute(OutboundRequest $request, Closure $finalHandler) : ClientResponse
@@ -87,7 +87,7 @@ final readonly class ClientMiddlewarePipeline
     /**
      * Get the number of middleware in the pipeline.
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->middlewares);
     }
@@ -95,7 +95,7 @@ final readonly class ClientMiddlewarePipeline
     /**
      * Check if the pipeline has any middleware.
      */
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return empty($this->middlewares);
     }

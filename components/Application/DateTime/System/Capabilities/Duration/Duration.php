@@ -6,9 +6,7 @@ namespace Avax\Components\Application\DateTime\System\Capabilities\Duration;
 
 final readonly class Duration
 {
-    private function __construct(private int $totalSeconds)
-    {
-    }
+    private function __construct(private int $totalSeconds) {}
 
     public static function seconds(int $value) : self
     {

@@ -26,15 +26,15 @@ class KernelTest extends TestCase
     public function test_database_configuration_builds_public_surface() : void
     {
         $database = Database::configuration()->usingConfig(config: [
-                                                               'default'     => 'sqlite',
-                                                               'connections' => [
-                                                                   'sqlite' => [
-                                                                       'driver'   => 'sqlite',
-                                                                       'database' => ':memory:',
-                                                                       'prefix'   => '',
-                                                                   ],
-                                                               ],
-                                                           ])->ready();
+                                                                       'default'     => 'sqlite',
+                                                                       'connections' => [
+                                                                           'sqlite' => [
+                                                                               'driver'   => 'sqlite',
+                                                                               'database' => ':memory:',
+                                                                               'prefix'   => '',
+                                                                           ],
+                                                                       ],
+                                                                   ])->ready();
 
         $this->assertInstanceOf(expected: Database::class, actual: $database);
         $this->assertInstanceOf(expected: Connections::class, actual: $database->connections());

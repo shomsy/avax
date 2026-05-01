@@ -56,7 +56,7 @@ final class ResponseFactory
      */
     public function json(mixed $data, int $statusCode = 200, array $headers = []) : ResponseInterface
     {
-        $body    = json_encode($data, JSON_THROW_ON_ERROR);
+        $body = json_encode($data, JSON_THROW_ON_ERROR);
         $headers = array_change_key_case($headers) + ['content-type' => ['application/json']];
 
         return new Response($statusCode, $headers, Utils::streamFor($body));

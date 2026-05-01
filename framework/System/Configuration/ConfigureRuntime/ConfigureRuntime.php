@@ -6,7 +6,5 @@ namespace Avax\Framework\System\Configuration\ConfigureRuntime;
 
 final class ConfigureRuntime
 {
-    public function configure(RuntimeConfiguration $config) : void
-    {
-    }
+    public function configure(RuntimeConfiguration $config) : void {}
 }

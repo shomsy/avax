@@ -27,7 +27,7 @@ final readonly class PipelineHook
     public function __construct(
         public string $name,
         public Closure $handler,
-        public int    $priority = 0,
+        public int $priority = 0,
     ) {}
 }
 
@@ -35,7 +35,7 @@ final readonly class PipelineStage
 {
     public function __construct(
         public string $name,
-        public bool  $stopped = false,
+        public bool $stopped = false,
         public mixed $data = null,
     ) {}
 

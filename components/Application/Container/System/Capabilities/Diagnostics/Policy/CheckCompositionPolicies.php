@@ -32,16 +32,16 @@ final readonly class CheckCompositionPolicies
      * @param array<string, list<string>> $dependents
      *
      * @return array<string, list<array{code: string, severity: string, category: string, message: string}>>
+     *
      * @throws ReflectionException
      */
     public function check(
-        array              $graph,
-        array              $dependents,
+        array            $graph,
+        array            $dependents,
         DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
         ResolutionPolicy $policy,
-    ) : array
-    {
+    ) : array {
         $findings = [];
 
         foreach ($graph as $serviceId => $dependencies) {
@@ -55,7 +55,7 @@ final readonly class CheckCompositionPolicies
             }
 
             if (is_string(value: $candidate) && class_exists(class: $candidate)) {
-                $blueprint        = $blueprints->createFor(class: $candidate);
+                $blueprint = $blueprints->createFor(class: $candidate);
                 $constructorArity = count(value: $blueprint->constructor?->parameters ?? []);
                 if ($constructorArity >= 6) {
                     $findings[$serviceId][] = $this->finding(
@@ -257,8 +257,7 @@ final readonly class CheckCompositionPolicies
         string $severity,
         string $category,
         string $message,
-    ) : array
-    {
+    ) : array {
         return [
             'code'     => $code,
             'severity' => $policy->severityFor(code: $code, defaultSeverity: $severity),

@@ -16,10 +16,10 @@ final readonly class BuildApplicationState
 {
     public function build(ApplicationBuilder $builder) : Runtime
     {
-        $components         = new ComponentRegistry();
-        $requestScopes      = new RequestScopeStore();
-        $runtimeContext     = new RuntimeContext();
-        $stateResetRegistry = new StateResetRegistry();
+        $components         = new ComponentRegistry;
+        $requestScopes      = new RequestScopeStore;
+        $runtimeContext     = new RuntimeContext;
+        $stateResetRegistry = new StateResetRegistry;
         $runtimeState       = new RuntimeState(runtimeName: $builder->runtimeName());
 
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopes);

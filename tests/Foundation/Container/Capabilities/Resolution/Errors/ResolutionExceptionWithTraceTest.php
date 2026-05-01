@@ -13,7 +13,7 @@ final class ResolutionExceptionWithTraceTest extends TestCase
 {
     public function test_carries_trace_and_serializes() : void
     {
-        $trace = (new ResolutionTrace())
+        $trace = (new ResolutionTrace)
             ->record(state: ResolutionState::ContextualLookup, stage: 'contextual', outcome: 'start')
             ->record(state: ResolutionState::ContextualLookup, stage: 'contextual', outcome: 'miss');
 

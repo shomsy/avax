@@ -12,9 +12,9 @@ final class CreateRequestFromGlobals
     public static function execute() : Request
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        $uri    = self::getUri();
+        $uri = self::getUri();
         $headers = self::getHeaders();
-        $body   = self::getBody();
+        $body = self::getBody();
 
         return new Request(
             $method,
@@ -31,7 +31,7 @@ final class CreateRequestFromGlobals
         $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
         $port = $_SERVER['SERVER_PORT'] ?? 80;
         $path = $_SERVER['REQUEST_URI'] ?? '/';
-        $query  = $_SERVER['QUERY_STRING'] ?? '';
+        $query = $_SERVER['QUERY_STRING'] ?? '';
 
         return new Uri($scheme, $host, $port, $path, $query);
     }

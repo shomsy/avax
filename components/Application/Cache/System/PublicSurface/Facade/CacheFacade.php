@@ -15,10 +15,10 @@ readonly class CacheFacade
 {
     public function __construct(
         private CacheRegistry $cacheRegistry,
-        private CompiledCacheContract|null $compiledCacheContract = null,
+        private ?CompiledCacheContract $compiledCacheContract = null,
     ) {}
 
-    public function put(string $key, mixed $value, int|DateInterval $ttl = null) : bool
+    public function put(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
         return $this->set(key: $key, value: $value, ttl: $ttl);
     }
@@ -26,7 +26,7 @@ readonly class CacheFacade
     /**
      * @throws InvalidArgumentException
      */
-    public function set(string $key, mixed $value, int|DateInterval $ttl = null) : bool
+    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
         return $this->cacheRegistry->default()->set(key: $key, value: $value, ttl: $ttl);
     }
@@ -57,7 +57,7 @@ readonly class CacheFacade
         return $this->cacheRegistry->default()->has(key: $key);
     }
 
-    public function store(string $name = null) : CacheContract
+    public function store(?string $name = null) : CacheContract
     {
         if ($name === null) {
             return $this->cacheRegistry->default();

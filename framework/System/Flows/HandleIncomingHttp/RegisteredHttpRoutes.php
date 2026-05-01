@@ -15,8 +15,7 @@ final readonly class RegisteredHttpRoutes
     public function __construct(
         private array $routesByMethod,
         private Closure|array|string|null $fallback = null,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, list<RouteDefinition>>

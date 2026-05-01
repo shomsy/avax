@@ -19,14 +19,14 @@ final class ResolutionPipelineTest extends TestCase
     {
         $context = new KernelContext(serviceId: 'test-service');
 
-        $step1 = new class () implements KernelStep {
+        $step1 = new class implements KernelStep {
             public function __invoke(KernelContext $context) : void
             {
                 $context->setMeta(namespace: 'test', key: 'step1', value: 'executed');
             }
         };
 
-        $step2 = new class () implements KernelStep {
+        $step2 = new class implements KernelStep {
             public function __invoke(KernelContext $context) : void
             {
                 $context->setMeta(namespace: 'test', key: 'step2', value: 'executed');
@@ -61,7 +61,7 @@ final class ResolutionPipelineTest extends TestCase
     {
         $context = new KernelContext(serviceId: 'test-service');
 
-        $failingStep = new class () implements KernelStep {
+        $failingStep = new class implements KernelStep {
             public function __invoke(KernelContext $context) : void
             {
                 throw new RuntimeException(message: 'Step failed');

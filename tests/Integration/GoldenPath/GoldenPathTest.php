@@ -94,7 +94,7 @@ class GoldenPathTest extends TestCase
     public function security_hash_verify() : void
     {
         $password = 'test_password_123';
-        $hashed   = Security::hash($password);
+        $hashed = Security::hash($password);
 
         $this->assertTrue(Security::verify($password, $hashed));
         $this->assertFalse(Security::verify('wrong_password', $hashed));

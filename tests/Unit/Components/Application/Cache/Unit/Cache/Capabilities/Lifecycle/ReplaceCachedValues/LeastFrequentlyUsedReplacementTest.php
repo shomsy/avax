@@ -36,7 +36,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
     private function makeLifecycle(int $createdOffset = 0) : CachedValueLifecycle
     {
-        $now     = $this->clock->now();
+        $now = $this->clock->now();
         $created = $now->add(duration: Duration::ofSeconds(seconds: $createdOffset));
 
         return CachedValueLifecycle::create(

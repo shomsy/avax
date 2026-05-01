@@ -16,9 +16,9 @@ final class CollectDiagnosticsStepTest extends TestCase
     public function test_it_collects_diagnostics_and_stores_in_context() : void
     {
         $serviceId = 'test.service';
-        $traceId   = 'trace-123';
-        $telemetry = new StepTelemetryRecorder();
-        $step      = new CollectDiagnosticsStep(telemetry: $telemetry);
+        $traceId = 'trace-123';
+        $telemetry = new StepTelemetryRecorder;
+        $step = new CollectDiagnosticsStep(telemetry: $telemetry);
 
         $context = new KernelContext(
             serviceId: $serviceId,

@@ -35,14 +35,14 @@ $strict->bind(abstract: ConditionalInternalService::class, concrete: Conditional
     ->asInternal()
     ->profiles(profiles: 'prod');
 
-$relaxedFindings  = $relaxed->debugGraph()['policyFindings'];
-$strictFindings   = $strict->debugGraph()['policyFindings'];
+$relaxedFindings = $relaxed->debugGraph()['policyFindings'];
+$strictFindings  = $strict->debugGraph()['policyFindings'];
 $strictGovernance = $strict->debugGovernance();
 
-$relaxedFlowSeverities        = array_column(array: $relaxedFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
-$strictFlowSeverities         = array_column(array: $strictFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
+$relaxedFlowSeverities       = array_column(array: $relaxedFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
+$strictFlowSeverities        = array_column(array: $strictFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
 $relaxedConditionalSeverities = array_column(array: $relaxedFindings[ConditionalInternalService::class] ?? [], column_key: 'severity', index_key: 'code');
-$strictConditionalSeverities  = array_column(array: $strictFindings[ConditionalInternalService::class] ?? [], column_key: 'severity', index_key: 'code');
+$strictConditionalSeverities = array_column(array: $strictFindings[ConditionalInternalService::class] ?? [], column_key: 'severity', index_key: 'code');
 
 assertSame(expected: 'warn', actual: $relaxedFlowSeverities['POL-006'] ?? null, message: 'Relaxed policy profile should keep POL-006 as a warning.');
 assertSame(expected: 'error', actual: $strictFlowSeverities['POL-006'] ?? null, message: 'Strict policy profile should escalate POL-006 to an error.');

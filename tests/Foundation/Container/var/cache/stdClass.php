@@ -9,7 +9,7 @@ return ServicePrototype::__set_state(array: [
                                                 'constructor'        => null,
                                                 'injectedProperties' => [
                                                 ],
-                                                'injectedMethods' => [
+                                                'injectedMethods'    => [
                                                 ],
-                                                'isInstantiable'  => true,
+                                                'isInstantiable'     => true,
                                             ]);

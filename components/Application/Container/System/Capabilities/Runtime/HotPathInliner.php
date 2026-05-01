@@ -15,7 +15,7 @@ use Closure;
  */
 final class HotPathInliner
 {
-    private CompiledContainer|null $compiledContainer = null;
+    private ?CompiledContainer $compiledContainer = null;
 
     /** @var array<string, Closure(ResolveDependency, ResolveRequest, array) : mixed> */
     private array $calls = [];
@@ -53,21 +53,21 @@ final class HotPathInliner
     /**
      * @return array<string, mixed>
      */
-    public function state(string $serviceId = null) : array
+    public function state(?string $serviceId = null) : array
     {
         $attached = $this->compiledContainer instanceof CompiledContainer;
         $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiledContainer->has(serviceId: $serviceId);
 
         return [
-            'attached'   => $attached,
+            'attached' => $attached,
             'entryCount' => $this->compiledContainer?->entryCount() ?? 0,
             'entryIds' => $this->compiledContainer?->entryIds() ?? [],
-            'hasEntry'   => $hasEntry,
-            'reason'     => match (true) {
-                ! $attached                              => 'no compiled runtime is attached',
+            'hasEntry' => $hasEntry,
+            'reason'   => match (true) {
+                ! $attached => 'no compiled runtime is attached',
                 $serviceId === null || $serviceId === '' => 'compiled runtime is attached',
-                $hasEntry                                => 'compiled entry is attached',
-                default                                  => 'compiled runtime is attached but the requested entry is missing',
+                $hasEntry   => 'compiled entry is attached',
+                default     => 'compiled runtime is attached but the requested entry is missing',
             },
         ];
     }

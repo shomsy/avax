@@ -13,7 +13,7 @@ final class SessionFacadeBehaviorTest extends TestCase
 {
     public function test_session_supports_basic_store_flows() : void
     {
-        $scope   = new SessionScope(new ArraySessionStore());
+        $scope = new SessionScope(new ArraySessionStore);
         $session = new Session($scope);
         $session->start();
 
@@ -29,7 +29,7 @@ final class SessionFacadeBehaviorTest extends TestCase
 
     public function test_regenerate_changes_identifier() : void
     {
-        $scope   = new SessionScope(new ArraySessionStore());
+        $scope = new SessionScope(new ArraySessionStore);
         $session = new Session($scope);
         $session->start();
         $before = $session->id();

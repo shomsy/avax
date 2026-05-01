@@ -128,9 +128,10 @@ final readonly class Container implements ContainerInterface
      * @param list<string> $serviceIds
      *
      * @return list<string>
+     *
      * @throws ReflectionException
      */
-    public function validate(array $serviceIds = []) : array
+    public function validate(array $serviceIds = []): array
     {
         return $this->validateComposition()->validate(serviceIds: $serviceIds);
     }
@@ -141,12 +142,11 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @param string $id
-     *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function describeService(string $id) : array
+    public function describeService(string $id): array
     {
         return $this->explainService()->describe(id: $id);
     }
@@ -157,34 +157,31 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @param string $id
-     *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function debugService(string $id) : array
+    public function debugService(string $id): array
     {
         return $this->explainService()->describe(id: $id);
     }
 
     /**
-     * @param string $id
-     *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function debugPlan(string $id) : array
+    public function debugPlan(string $id): array
     {
         return $this->explainService()->debugPlan(id: $id);
     }
 
     /**
-     * @param string $id
-     *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function debugGraph(string $id = '') : array
+    public function debugGraph(string $id = ''): array
     {
         return $this->exportGraphFlow()->debugGraph(id: $id);
     }
@@ -194,22 +191,22 @@ final readonly class Container implements ContainerInterface
         return new ExportGraph(resolver: $this->resolver);
     }
 
-    public function debugGovernance(string $id = '') : array
+    public function debugGovernance(string $id = ''): array
     {
         return $this->explainService()->debugGovernance(id: $id);
     }
 
-    public function debugArchitecture(string $id = '') : array
+    public function debugArchitecture(string $id = ''): array
     {
         return $this->explainService()->debugArchitecture(id: $id);
     }
 
-    public function debugSlice(string $slice = '') : array
+    public function debugSlice(string $slice = ''): array
     {
         return $this->explainService()->debugSlice(slice: $slice);
     }
 
-    public function debugImports(string $slice = '') : array
+    public function debugImports(string $slice = ''): array
     {
         return $this->explainService()->debugImports(slice: $slice);
     }
@@ -217,23 +214,22 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function debugExports(string $slice = '') : array
+    public function debugExports(string $slice = ''): array
     {
         return $this->explainService()->debugExports(slice: $slice);
     }
 
-    public function debugVisibilityViolations(array $serviceIds = []) : array
+    public function debugVisibilityViolations(array $serviceIds = []): array
     {
         return $this->explainService()->debugVisibilityViolations(serviceIds: $serviceIds);
     }
 
     /**
-     * @param string $tag
-     *
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function debugTags(string $tag) : array
+    public function debugTags(string $tag): array
     {
         return $this->explainService()->debugTags(tag: $tag);
     }
@@ -241,7 +237,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function debugGroup(string $group) : array
+    public function debugGroup(string $group): array
     {
         return $this->explainService()->debugGroup(group: $group);
     }
@@ -249,7 +245,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function debugSelection(string $id) : array
+    public function debugSelection(string $id): array
     {
         return $this->explainService()->debugSelection(id: $id);
     }
@@ -257,7 +253,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @return array<string, string>
      */
-    public function debugAliases() : array
+    public function debugAliases(): array
     {
         return $this->explainService()->debugAliases();
     }
@@ -265,17 +261,17 @@ final readonly class Container implements ContainerInterface
     /**
      * @return array<string, mixed>
      */
-    public function debugScope() : array
+    public function debugScope(): array
     {
         return $this->explainService()->debugScope();
     }
 
-    public function env(string $key, mixed $default = null) : mixed
+    public function env(string $key, mixed $default = null): mixed
     {
         return $this->resolver->env(key: $key, default: $default);
     }
 
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void
+    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void
     {
         $this->openScopeFlow()->open(kind: $kind, scopeId: $scopeId);
     }
@@ -285,7 +281,7 @@ final readonly class Container implements ContainerInterface
         return new OpenScope(resolver: $this->resolver);
     }
 
-    public function closeScope(string $kind = null) : void
+    public function closeScope(?string $kind = null): void
     {
         $this->closeScopeFlow()->close(kind: $kind);
     }
@@ -298,7 +294,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function compileContainer(array $serviceIds = []) : void
+    public function compileContainer(array $serviceIds = []): void
     {
         $this->resolver->compileContainer(serviceIds: $serviceIds);
     }
@@ -306,12 +302,12 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function warmCompiled(array $serviceIds = []) : void
+    public function warmCompiled(array $serviceIds = []): void
     {
         $this->resolver->warmCompiled(serviceIds: $serviceIds);
     }
 
-    public function flushCompiled() : void
+    public function flushCompiled(): void
     {
         $this->resolver->flushCompiled();
     }
@@ -320,12 +316,12 @@ final readonly class Container implements ContainerInterface
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function rebuildCompiled(array $serviceIds = []) : void
+    public function rebuildCompiled(array $serviceIds = []): void
     {
         $this->resolver->rebuildCompiled(serviceIds: $serviceIds);
     }
 
-    public function compileReport(array $serviceIds = []) : CompileReport|null
+    public function compileReport(array $serviceIds = []) : ?CompileReport
     {
         return $this->resolver->compileReport(serviceIds: $serviceIds);
     }
@@ -335,27 +331,27 @@ final readonly class Container implements ContainerInterface
         return $this->resolver->runtimeReport();
     }
 
-    public function hasAlias(string $alias) : bool
+    public function hasAlias(string $alias): bool
     {
         return $this->resolver->hasAlias(alias: $alias);
     }
 
-    public function isDeferred(string $id) : bool
+    public function isDeferred(string $id): bool
     {
         return $this->resolver->isDeferred(id: $id);
     }
 
-    public function isLazy(string $id) : bool
+    public function isLazy(string $id): bool
     {
         return $this->resolver->isLazy(id: $id);
     }
 
-    public function isCompiled(string $id) : bool
+    public function isCompiled(string $id): bool
     {
         return $this->resolver->isCompiled(id: $id);
     }
 
-    public function isWarmedUp() : bool
+    public function isWarmedUp(): bool
     {
         return $this->resolver->isWarmedUp();
     }
@@ -363,7 +359,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function canInject(object $target) : bool
+    public function canInject(object $target): bool
     {
         $report = $this->inspectInjection(target: $target);
 
@@ -401,7 +397,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function why(string $id) : array
+    public function why(string $id): array
     {
         return $this->exportGraphFlow()->why(id: $id);
     }
@@ -409,7 +405,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function whoUses(string $id) : array
+    public function whoUses(string $id): array
     {
         return $this->exportGraphFlow()->whoUses(id: $id);
     }
@@ -417,7 +413,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function whatBreaksIf(string $id) : array
+    public function whatBreaksIf(string $id): array
     {
         return $this->exportGraphFlow()->whatBreaksIf(id: $id);
     }
@@ -425,17 +421,17 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws ReflectionException
      */
-    public function showOwner(string $id) : array
+    public function showOwner(string $id): array
     {
         return $this->exportGraphFlow()->showOwner(id: $id);
     }
 
-    public function showSlice(string $slice = '') : array
+    public function showSlice(string $slice = ''): array
     {
         return $this->exportGraphFlow()->showSlice(slice: $slice);
     }
 
-    public function alias(string $alias, string $abstract) : void
+    public function alias(string $alias, string $abstract): void
     {
         $this->registerServices()->alias(alias: $alias, abstract: $abstract);
     }
@@ -460,17 +456,17 @@ final readonly class Container implements ContainerInterface
         return $this->registerServices()->when(consumer: $consumer);
     }
 
-    public function extend(string $abstract, callable $closure) : void
+    public function extend(string $abstract, callable $closure): void
     {
         $this->registerServices()->extend(abstract: $abstract, closure: $closure);
     }
 
-    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator) : void
+    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator): void
     {
         $this->registerServices()->decorate(abstract: $abstract, decorator: $decorator);
     }
 
-    public function tag(string|array $abstracts, string|array $tags) : void
+    public function tag(string|array $abstracts, string|array $tags): void
     {
         $this->registerServices()->tag(abstracts: $abstracts, tags: $tags);
     }
@@ -478,7 +474,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws Throwable
      */
-    public function tagged(string $tag) : array
+    public function tagged(string $tag): array
     {
         return $this->resolver->tagged(tag: $tag);
     }
@@ -486,7 +482,7 @@ final readonly class Container implements ContainerInterface
     /**
      * @throws Throwable
      */
-    public function grouped(string $group) : array
+    public function grouped(string $group): array
     {
         return $this->resolver->grouped(group: $group);
     }

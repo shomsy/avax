@@ -11,8 +11,7 @@ final readonly class StampedeLockGuard
     public function __construct(
         private CacheLock $cacheLock,
         private string $key,
-    ) {
-    }
+    ) {}
 
     public function release() : void
     {

@@ -41,13 +41,13 @@ final class MethodEmitter
         string $methodName,
         string $serviceId,
         string $class,
-        ResolvePlan|null $plan,
+        ?ResolvePlan $plan,
         array $registrationArguments,
-        bool  $needsFinish,
+        bool         $needsFinish,
     ) : string
     {
-        $className                     = '\\' . ltrim(string: $class, characters: '\\');
-        $arguments                     = $this->emitArguments(plan: $plan, serviceId: $serviceId);
+        $className = '\\' . ltrim(string: $class, characters: '\\');
+        $arguments = $this->emitArguments(plan: $plan, serviceId: $serviceId);
         $compiledRegistrationArguments = $registrationArguments
                 |> serialize(...)
                 |> base64_encode(...)
@@ -65,7 +65,7 @@ final class MethodEmitter
         if ($arguments === []) {
             $body .= PHP_EOL . "        \$instance = new {$className}();" . PHP_EOL;
         } else {
-            $body .= PHP_EOL . "        \$instance = new {$className}(" . PHP_EOL;
+            $body     .= PHP_EOL . "        \$instance = new {$className}(" . PHP_EOL;
 
             foreach ($arguments as $index => $argument) {
                 $suffix = $index === array_key_last(array: $arguments) ? '' : ',';
@@ -90,8 +90,8 @@ final class MethodEmitter
             return $body;
         }
 
-        $body .= <<<PHP
-                return \$instance;
+        $body .= <<<'PHP'
+                return $instance;
             }
             PHP;
 
@@ -101,7 +101,7 @@ final class MethodEmitter
     /**
      * @return list<string>
      */
-    private function emitArguments(ResolvePlan|null $plan, string $serviceId) : array
+    private function emitArguments(?ResolvePlan $plan, string $serviceId) : array
     {
         if ($plan === null || $plan->isEmpty()) {
             return [];

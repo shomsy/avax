@@ -31,7 +31,7 @@ final class ConsistentHashRing
         $virtualNodeCount = $cacheNode->virtualNodeCount();
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
-            $hash              = $this->hash($cacheNode->id . '#' . $i);
+            $hash = $this->hash($cacheNode->id . '#' . $i);
             $this->ring[$hash] = $cacheNode;
         }
 
@@ -49,7 +49,7 @@ final class ConsistentHashRing
             return $this;
         }
 
-        $node             = $this->physicalNodes[$nodeId];
+        $node = $this->physicalNodes[$nodeId];
         $virtualNodeCount = $node->virtualNodeCount();
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
@@ -93,9 +93,10 @@ final class ConsistentHashRing
      * @param positive-int $count Number of nodes to return
      *
      * @return list<CacheNode>
+     *
      * @throws RuntimeException if the ring has fewer nodes than requested
      */
-    public function getNodes(string $key, int $count) : array
+    public function getNodes(string $key, int $count): array
     {
         if ($this->ring === []) {
             throw new RuntimeException('Cannot get nodes: hash ring is empty');
@@ -115,10 +116,10 @@ final class ConsistentHashRing
 
         $hash     = $this->hash($key);
         $selected = [];
-        $seen     = [];
+        $seen = [];
 
         // Walk the ring forward from the key's hash position
-        $ringKeys   = array_keys($this->ring);
+        $ringKeys = array_keys($this->ring);
         $ringLength = count($ringKeys);
 
         // Find starting position
@@ -139,10 +140,10 @@ final class ConsistentHashRing
         }
 
         $position      = $startIndex;
-        $iterations    = 0;
+        $iterations = 0;
         $maxIterations = $ringLength;
 
-        while ( count($selected) < $count && $iterations < $maxIterations ) {
+        while ( count($selected) < $count && $iterations < $maxIterations) {
             $node = $this->ring[$ringKeys[$position]];
 
             if (! isset($seen[$node->id])) {
@@ -162,7 +163,7 @@ final class ConsistentHashRing
      *
      * @return array<string, CacheNode>
      */
-    public function getAllNodes() : array
+    public function getAllNodes(): array
     {
         return $this->physicalNodes;
     }
@@ -170,7 +171,7 @@ final class ConsistentHashRing
     /**
      * Get the total number of virtual nodes on the ring.
      */
-    public function getVirtualNodeCount() : int
+    public function getVirtualNodeCount(): int
     {
         return count($this->ring);
     }
@@ -178,7 +179,7 @@ final class ConsistentHashRing
     /**
      * Get the number of physical nodes on the ring.
      */
-    public function getPhysicalNodeCount() : int
+    public function getPhysicalNodeCount(): int
     {
         return count($this->physicalNodes);
     }
@@ -186,7 +187,7 @@ final class ConsistentHashRing
     /**
      * Check if the ring has any nodes.
      */
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->physicalNodes === [];
     }
@@ -194,13 +195,13 @@ final class ConsistentHashRing
     /**
      * Hash a key using CRC32 combined with additional mixing for better distribution.
      */
-    private function hash(string $key) : int
+    private function hash(string $key): int
     {
         $crc = crc32($key);
 
         // Additional mixing to improve distribution
         $mixed = $crc ^ ($crc >> 16);
-        $mixed = ($mixed * 0x45d9f3b) & 0xFFFFFFFF;
+        $mixed = ($mixed * 0x45D9F3B) & 0xFFFFFFFF;
 
         return ($mixed ^ ($mixed >> 16)) & 0xFFFFFFFF;
     }

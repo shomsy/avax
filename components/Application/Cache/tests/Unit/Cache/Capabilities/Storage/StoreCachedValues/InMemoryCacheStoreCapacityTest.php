@@ -66,7 +66,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $inMemoryCacheStore = new InMemoryCacheStore(
             clock            : $this->frozenClock,
             maxEntries       : 3,
-            replacementPolicy: new LeastRecentlyUsedReplacement(),
+            replacementPolicy: new LeastRecentlyUsedReplacement,
         );
 
         $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
@@ -90,7 +90,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $inMemoryCacheStore = new InMemoryCacheStore(
             clock            : $this->frozenClock,
             maxEntries       : 3,
-            replacementPolicy: new FirstInFirstOutReplacement(),
+            replacementPolicy: new FirstInFirstOutReplacement,
         );
 
         $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
@@ -137,7 +137,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $inMemoryCacheStore = new InMemoryCacheStore(
             clock            : $this->frozenClock,
             maxEntries       : 2,
-            replacementPolicy: new NoReplacement(),
+            replacementPolicy: new NoReplacement,
         );
 
         $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));

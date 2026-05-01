@@ -19,17 +19,17 @@ final readonly class StoreCachedValue
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private Clock      $clock,
-        private CacheMetrics|null $cacheMetrics = null,
-        private CacheTtl   $cacheTtl = new CacheTtl(),
+        private Clock         $clock,
+        private ?CacheMetrics $cacheMetrics = null,
+        private CacheTtl      $cacheTtl = new CacheTtl,
     ) {}
 
-    public function store(CacheKey $cacheKey, mixed $value, int|DateInterval $ttl = null) : bool
+    public function store(CacheKey $cacheKey, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
         $startTime = hrtime(true);
 
         try {
-            $expiresAt     = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock);
+            $expiresAt = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock);
             $defaultExpiry = $expiresAt ?? $this->clock->now()->add(
                 duration: Duration::ofSeconds(seconds: 86400),
             );

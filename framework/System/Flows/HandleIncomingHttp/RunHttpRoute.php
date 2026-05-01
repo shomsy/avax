@@ -11,9 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 
 final readonly class RunHttpRoute
 {
-    public function __construct(private ControllerDispatcher $controllerDispatcher)
-    {
-    }
+    public function __construct(private ControllerDispatcher $controllerDispatcher) {}
 
     public function run(MatchedHttpRoute $matchedRoute) : ResponseInterface
     {

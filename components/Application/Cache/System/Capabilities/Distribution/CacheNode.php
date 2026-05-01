@@ -21,9 +21,9 @@ final readonly class CacheNode implements Stringable
         public string $id,
         public string $host,
         public int $port,
-        public int      $weight = 100,
+        public int  $weight = 100,
         public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
-        public int|null $virtualNodeCount = null,
+        public ?int $virtualNodeCount = null,
     )
     {
         $this->cacheNodeStatus = $cacheNodeStatus;
@@ -35,10 +35,10 @@ final readonly class CacheNode implements Stringable
     public static function create(
         string $id,
         string $host,
-        int    $port,
-        int    $weight = 100,
+        int  $port,
+        int  $weight = 100,
         CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
-        int    $virtualNodeCount = null,
+        ?int $virtualNodeCount = null,
     ) : self
     {
         return new self(
@@ -127,10 +127,10 @@ final readonly class CacheNode implements Stringable
     public function toArray() : array
     {
         return [
-            'id'               => $this->id,
-            'host'             => $this->host,
-            'port'             => $this->port,
-            'weight'           => $this->weight,
+            'id'     => $this->id,
+            'host'   => $this->host,
+            'port'   => $this->port,
+            'weight' => $this->weight,
             'status' => $this->cacheNodeStatus->value,
             'virtualNodeCount' => $this->virtualNodeCount(),
         ];

@@ -16,7 +16,7 @@ use RuntimeException;
 
 final class SemanticValuesTest extends TestCase
 {
-    public function testOptionMapsPresentValue() : void
+    public function test_option_maps_present_value() : void
     {
         $option = Option::some(value: 10)->map(callback: static fn (int $value) : int => $value * 2);
 
@@ -24,7 +24,7 @@ final class SemanticValuesTest extends TestCase
         $this->assertSame(20, $option->unwrap());
     }
 
-    public function testResultMapsSuccessfulValue() : void
+    public function test_result_maps_successful_value() : void
     {
         $result = Result::ok(value: 5)->map(callback: static fn (int $value) : int => $value + 1);
 
@@ -32,7 +32,7 @@ final class SemanticValuesTest extends TestCase
         $this->assertSame(6, $result->unwrap());
     }
 
-    public function testNonEmptyStringPreservesValue() : void
+    public function test_non_empty_string_preserves_value() : void
     {
         $value = new NonEmptyString(value: 'Alice');
 
@@ -40,20 +40,20 @@ final class SemanticValuesTest extends TestCase
         $this->assertSame(5, $value->length());
     }
 
-    public function testPositiveIntRejectsZero() : void
+    public function test_positive_int_rejects_zero() : void
     {
         $this->expectException(RuntimeException::class);
         new PositiveInt(value: 0);
     }
 
-    public function testUuidCanBeGenerated() : void
+    public function test_uuid_can_be_generated() : void
     {
         $uuid = Uuid::generate();
 
         $this->assertNotSame('', $uuid->value());
     }
 
-    public function testMoneyAddsOnlySameCurrency() : void
+    public function test_money_adds_only_same_currency() : void
     {
         $money = new Money(amount: 100, currency: new Currency(code: 'EUR'))
             ->add(other: new Money(amount: 50, currency: new Currency(code: 'EUR')));

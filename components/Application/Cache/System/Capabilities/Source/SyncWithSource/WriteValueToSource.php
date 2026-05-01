@@ -8,9 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 final readonly class WriteValueToSource
 {
-    public function __construct(private CacheSource $cacheSource)
-    {
-    }
+    public function __construct(private CacheSource $cacheSource) {}
 
     public function write(CacheKey $cacheKey, mixed $value) : void
     {

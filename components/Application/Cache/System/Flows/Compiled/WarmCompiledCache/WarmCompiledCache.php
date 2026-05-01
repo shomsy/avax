@@ -12,7 +12,7 @@ final class CompiledCacheArtifactDefinition
     public CompiledCacheSources $sources;
 
     public function __construct(
-        public string  $name,
+        public string $name,
         public Closure $builder,
         public CompiledCacheSources $compiledCacheSources,
     )

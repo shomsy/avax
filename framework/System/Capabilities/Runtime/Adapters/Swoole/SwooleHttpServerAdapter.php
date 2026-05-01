@@ -9,9 +9,7 @@ use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerLoop;
 
 final readonly class SwooleHttpServerAdapter
 {
-    public function __construct(private WorkerLoop $workerLoop)
-    {
-    }
+    public function __construct(private WorkerLoop $workerLoop) {}
 
     public function run() : WorkerLifecycle
     {

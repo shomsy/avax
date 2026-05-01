@@ -10,8 +10,8 @@ final readonly class CompiledCacheSource
 {
     public function __construct(
         public string $path,
-        public int    $mtime,
-        public string|null $checksum = null,
+        public int     $mtime,
+        public ?string $checksum = null,
     )
     {
         $this->validate();

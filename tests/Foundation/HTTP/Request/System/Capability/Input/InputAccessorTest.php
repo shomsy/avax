@@ -119,10 +119,10 @@ final class InputAccessorTest extends TestCase
 
     protected function setUp() : void
     {
-        $queryBag   = new ParameterBag(['foo' => 'query-foo', 'shared' => 'query-shared']);
-        $bodyBag    = new ParameterBag(['bar' => 'body-bar', 'shared' => 'body-shared']);
+        $queryBag = new ParameterBag(['foo' => 'query-foo', 'shared' => 'query-shared']);
+        $bodyBag  = new ParameterBag(['bar' => 'body-bar', 'shared' => 'body-shared']);
         $cookiesBag = new ParameterBag(['session' => 'cookie-session']);
-        $filesBag   = new ParameterBag(['document' => ['name' => 'test.pdf']]);
+        $filesBag = new ParameterBag(['document' => ['name' => 'test.pdf']]);
 
         $this->accessor = new InputAccessor(
             query  : $queryBag,

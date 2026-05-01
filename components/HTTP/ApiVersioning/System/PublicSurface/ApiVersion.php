@@ -26,7 +26,7 @@ final class ApiVersion
     private static function registry() : VersionRegistry
     {
         if (! isset(self::$registry)) {
-            self::$registry = new VersionRegistry();
+            self::$registry = new VersionRegistry;
         }
 
         return self::$registry;
@@ -46,8 +46,8 @@ final class ApiVersion
 final readonly class ApiVersionResolved
 {
     public function __construct(
-        public int  $version,
+        public int                $version,
         public bool $deprecated,
-        public DateTimeInterface|null $sunset = null,
+        public ?DateTimeInterface $sunset = null,
     ) {}
 }

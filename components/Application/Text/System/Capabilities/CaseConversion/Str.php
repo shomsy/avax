@@ -40,13 +40,13 @@ final class Str
         }
 
         $irregular = [
-            'person'     => 'people', 'man' => 'men', 'woman' => 'women',
-            'child'      => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
-            'goose'      => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
-            'datum'      => 'data', 'medium' => 'media', 'analysis' => 'analyses',
-            'basis'      => 'bases', 'crisis' => 'crises', 'diagnosis' => 'diagnoses',
-            'ellipsis'   => 'ellipses', 'hypothesis' => 'hypotheses',
-            'oasis'      => 'oases', 'parenthesis' => 'parentheses',
+            'person'   => 'people', 'man' => 'men', 'woman' => 'women',
+            'child'    => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
+            'goose'    => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
+            'datum'    => 'data', 'medium' => 'media', 'analysis' => 'analyses',
+            'basis'    => 'bases', 'crisis' => 'crises', 'diagnosis' => 'diagnoses',
+            'ellipsis' => 'ellipses', 'hypothesis' => 'hypotheses',
+            'oasis'    => 'oases', 'parenthesis' => 'parentheses',
             'phenomenon' => 'phenomena', 'criterion' => 'criteria',
         ];
 
@@ -82,13 +82,13 @@ final class Str
     public static function singular(string $value) : string
     {
         $irregular = [
-            'people'    => 'person', 'men' => 'man', 'women' => 'woman',
-            'children'  => 'child', 'feet' => 'foot', 'teeth' => 'tooth',
-            'geese'     => 'goose', 'mice' => 'mouse', 'oxen' => 'ox',
-            'data'      => 'datum', 'media' => 'medium', 'analyses' => 'analysis',
-            'bases'     => 'basis', 'crises' => 'crisis', 'diagnoses' => 'diagnosis',
-            'ellipses'  => 'ellipsis', 'hypotheses' => 'hypothesis',
-            'oases'     => 'oasis', 'parentheses' => 'parenthesis',
+            'people'   => 'person', 'men' => 'man', 'women' => 'woman',
+            'children' => 'child', 'feet' => 'foot', 'teeth' => 'tooth',
+            'geese'    => 'goose', 'mice' => 'mouse', 'oxen' => 'ox',
+            'data'     => 'datum', 'media' => 'medium', 'analyses' => 'analysis',
+            'bases'    => 'basis', 'crises' => 'crisis', 'diagnoses' => 'diagnosis',
+            'ellipses' => 'ellipsis', 'hypotheses' => 'hypothesis',
+            'oases'    => 'oasis', 'parentheses' => 'parenthesis',
             'phenomena' => 'phenomenon', 'criteria' => 'criterion',
         ];
 
@@ -264,8 +264,8 @@ final class Str
      */
     public static function random(int $length = 16) : string
     {
-        $chars  = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $max    = strlen($chars) - 1;
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $max   = strlen($chars) - 1;
         $result = '';
 
         for ($i = 0; $i < $length; $i++) {
@@ -281,8 +281,8 @@ final class Str
     public static function uuid() : string
     {
         $data    = random_bytes(16);
-        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
-        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        $data[6] = chr(ord($data[6]) & 0x0F | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3F | 0x80);
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }

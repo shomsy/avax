@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 final readonly class SessionAudit
 {
     public function __construct(
-        private LoggerInterface|null $logger = null,
+        private ?LoggerInterface $logger = null,
     ) {}
 
     public function record(string $event, array $data = []) : void
@@ -19,9 +19,9 @@ final readonly class SessionAudit
         }
 
         $payload = [
-            'event'     => $event,
+            'event' => $event,
             'timestamp' => time(),
-            'data'      => $data,
+            'data'  => $data,
         ];
 
         $this->logger->info(json_encode($payload));

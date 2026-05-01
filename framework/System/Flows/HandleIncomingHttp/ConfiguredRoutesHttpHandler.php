@@ -26,11 +26,11 @@ final readonly class ConfiguredRoutesHttpHandler
 
     public function __construct(private RegisteredHttpRoutes $registeredHttpRoutes)
     {
-        $controllerDispatcher          = new ControllerDispatcher(container: new RouteFacadeContainer());
-        $this->readIncomingHttpRequest = new ReadIncomingHttpRequest();
-        $this->matchHttpRoute          = new MatchHttpRoute();
+        $controllerDispatcher          = new ControllerDispatcher(container: new RouteFacadeContainer);
+        $this->readIncomingHttpRequest = new ReadIncomingHttpRequest;
+        $this->matchHttpRoute          = new MatchHttpRoute;
         $this->runHttpRoute            = new RunHttpRoute(controllerDispatcher: $controllerDispatcher);
-        $this->responseFactory         = new ResponseFactory();
+        $this->responseFactory         = new ResponseFactory;
     }
 
     public static function fromRoutesFile(string $routesFile) : self
@@ -41,7 +41,7 @@ final readonly class ConfiguredRoutesHttpHandler
             );
         }
 
-        $routeRegistrar = new FrameworkRouteRegistrar();
+        $routeRegistrar = new FrameworkRouteRegistrar;
         $services       = [
             RouterInterface::class => $routeRegistrar,
         ];
@@ -50,7 +50,7 @@ final readonly class ConfiguredRoutesHttpHandler
         try {
             $previousContainer = appInstance();
         } catch (RuntimeException) {
-            $previousContainer = new RouteFacadeContainer();
+            $previousContainer = new RouteFacadeContainer;
         }
 
         appInstance(instance: $routeContainer);
@@ -68,7 +68,7 @@ final readonly class ConfiguredRoutesHttpHandler
 
     public static function fromRouteDefinitions(callable $routeDefinitions) : self
     {
-        $routeRegistrar = new FrameworkRouteRegistrar();
+        $routeRegistrar = new FrameworkRouteRegistrar;
         $routeDefinitions($routeRegistrar);
 
         return new self(

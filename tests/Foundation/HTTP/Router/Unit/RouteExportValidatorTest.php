@@ -35,6 +35,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function validates_exportable_array_action_routes() : void
@@ -50,6 +51,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function validates_routes_with_all_exportable_fields() : void
@@ -72,6 +74,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function rejects_closure_action_routes() : void
@@ -91,6 +94,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function rejects_invalid_array_action_routes() : void
@@ -110,6 +114,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function rejects_non_string_middleware() : void
@@ -130,6 +135,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function rejects_non_scalar_defaults() : void
@@ -150,6 +156,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function rejects_non_scalar_attributes() : void
@@ -158,7 +165,7 @@ class RouteExportValidatorTest extends TestCase
             method    : 'GET',
             path      : '/test',
             action    : 'Controller@action',
-            attributes: ['object' => new stdClass()], // Object in attributes
+            attributes: ['object' => new stdClass], // Object in attributes
         );
 
         $this->logger->expects(invocationRule: $this->once())
@@ -170,6 +177,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function rejects_non_string_domain() : void
@@ -190,6 +198,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function filters_exportable_routes() : void
@@ -211,9 +220,9 @@ class RouteExportValidatorTest extends TestCase
         $this->logger->expects(invocationRule: $this->once())->method(constraint: 'warning');
         $this->logger->expects(invocationRule: $this->once())->method(constraint: 'info')
             ->with('Some routes skipped during cache export', [
-                'total_routes'      => 2,
+                'total_routes'   => 2,
                 'exportable_routes' => 1,
-                'skipped_routes'    => 1,
+                'skipped_routes' => 1,
             ]);
 
         $filtered = $this->validator->filterExportable(routes: $routes);
@@ -224,6 +233,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function allows_null_values_in_exportable_fields() : void
@@ -241,6 +251,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
+     *
      * @throws ReservedRouteNameException
      */
     public function allows_nested_scalar_arrays() : void
@@ -259,7 +270,7 @@ class RouteExportValidatorTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->logger    = $this->createMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->validator = new RouteExportValidator(logger: $this->logger);
     }
 }

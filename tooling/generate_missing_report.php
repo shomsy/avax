@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-$avaxTxt              = '/home/shomsy/projects/avax/avax.txt';
+$avaxTxt = '/home/shomsy/projects/avax/avax.txt';
 $currentComponentsDir = '/home/shomsy/projects/avax/components';
 
 if (! file_exists($avaxTxt)) {
-    die("avax.txt not found.\n");
+    exit("avax.txt not found.\n");
 }
 
 $oldComponents = [];
@@ -14,7 +14,7 @@ $handle = fopen($avaxTxt, 'r');
 if ($handle) {
     while ( ($line = fgets($handle)) !== false ) {
         if (str_starts_with($line, '=== components/')) {
-            $path  = trim(substr($line, 15, -4)); // extract path after "=== components/"
+            $path = trim(substr($line, 15, -4)); // extract path after "=== components/"
             $parts = explode('/', $path);
             if (count($parts) >= 1) {
                 $component = $parts[0];
@@ -31,11 +31,11 @@ if ($handle) {
 }
 
 $newComponents = [];
-$dirs          = glob($currentComponentsDir . '/*', GLOB_ONLYDIR);
+$dirs    = glob($currentComponentsDir . '/*', GLOB_ONLYDIR);
 foreach ($dirs as $dir) {
-    $comp                 = basename($dir);
+    $comp    = basename($dir);
     $newComponents[$comp] = [];
-    $subDirs              = glob($dir . '/*', GLOB_ONLYDIR);
+    $subDirs = glob($dir . '/*', GLOB_ONLYDIR);
     foreach ($subDirs as $subDir) {
         $newComponents[$comp][] = basename($subDir);
     }
@@ -48,11 +48,11 @@ $missingSuites = [];
 foreach (array_keys($oldComponents) as $oldComp) {
     if (! isset($newComponents[$oldComp])) {
         // Wait, maybe it was moved inside a suite?
-        $foundInSuite   = false;
+        $foundInSuite = false;
         $foundSuiteName = '';
         foreach ($newComponents as $suite => $subComps) {
             if (in_array($oldComp, $subComps)) {
-                $foundInSuite   = true;
+                $foundInSuite = true;
                 $foundSuiteName = $suite;
 
                 break;

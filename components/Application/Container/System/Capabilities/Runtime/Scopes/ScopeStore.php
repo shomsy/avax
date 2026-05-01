@@ -40,7 +40,7 @@ final class ScopeStore
         return array_key_exists(key: $abstract, array: $this->scopes[$index]['items']);
     }
 
-    private function frameIndex(string $kind) : int|null
+    private function frameIndex(string $kind) : ?int
     {
         if ($this->scopes === []) {
             return null;
@@ -94,16 +94,16 @@ final class ScopeStore
      */
     public function setFor(
         string $abstract,
-        mixed  $instance,
-        string $kind = null,
-        bool   $disposable = false,
+        mixed   $instance,
+        ?string $kind = null,
+        bool    $disposable = false,
     ) : void
     {
         $kind ??= ScopeKind::ANY;
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
             $required = ScopeKind::normalize(kind: $kind);
-            $hint     = $required === ScopeKind::ANY
+            $hint = $required === ScopeKind::ANY
                 ? 'open a scope before resolving this service'
                 : sprintf('open a [%s] scope before resolving this service', $required);
 
@@ -112,7 +112,7 @@ final class ScopeStore
             );
         }
 
-        $this->scopes[$index]['items'][$abstract]      = $instance;
+        $this->scopes[$index]['items'][$abstract] = $instance;
         $this->scopes[$index]['disposable'][$abstract] = $disposable;
         unset($this->scopes[$index]['pooled'][$abstract]);
     }
@@ -120,15 +120,15 @@ final class ScopeStore
     /**
      * Opens one new nested scope.
      */
-    public function open(string $kind = null, string $scopeId = '') : void
+    public function open(?string $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->scopes[] = [
-            'kind'       => ScopeKind::normalize(kind: $kind),
-            'id'         => trim(string: $scopeId),
-            'items'      => [],
+            'kind'   => ScopeKind::normalize(kind: $kind),
+            'id'     => trim(string: $scopeId),
+            'items'  => [],
             'disposable' => [],
-            'pooled'     => [],
+            'pooled' => [],
         ];
     }
 
@@ -142,9 +142,10 @@ final class ScopeStore
      *     disposable: array<string, bool>,
      *     pooled: array<string, array{maxSize: int, resetBeforeReuse: bool, disposable: bool}>
      * }
+     *
      * @throws ContainerException
      */
-    public function close(string $kind = null) : array
+    public function close(?string $kind = null) : array
     {
         if ($this->scopes === []) {
             throw new ContainerException(message: 'Cannot close scope without an active scope.');
@@ -167,7 +168,7 @@ final class ScopeStore
      */
     public function terminate() : array
     {
-        $frames       = $this->scopes;
+        $frames = $this->scopes;
         $this->scopes = [];
 
         return $frames;
@@ -186,7 +187,7 @@ final class ScopeStore
         mixed $instance,
         string $kind,
         int   $maxSize,
-        bool  $resetBeforeReuse = null,
+        ?bool $resetBeforeReuse = null,
         bool  $disposable = false,
     ) : void
     {
@@ -200,12 +201,12 @@ final class ScopeStore
             );
         }
 
-        $this->scopes[$index]['items'][$abstract]      = $instance;
+        $this->scopes[$index]['items'][$abstract]  = $instance;
         $this->scopes[$index]['disposable'][$abstract] = $disposable;
-        $this->scopes[$index]['pooled'][$abstract]     = [
-            'maxSize'          => max(1, $maxSize),
+        $this->scopes[$index]['pooled'][$abstract] = [
+            'maxSize'    => max(1, $maxSize),
             'resetBeforeReuse' => $resetBeforeReuse,
-            'disposable'       => $disposable,
+            'disposable' => $disposable,
         ];
     }
 
@@ -237,9 +238,9 @@ final class ScopeStore
                 sort(array: $pooledServices);
 
                 return [
-                    'kind'           => $frame['kind'],
-                    'id'             => $frame['id'],
-                    'services'       => $services,
+                    'kind'     => $frame['kind'],
+                    'id'       => $frame['id'],
+                    'services' => $services,
                     'pooledServices' => $pooledServices,
                 ];
             },
@@ -263,7 +264,7 @@ final class ScopeStore
                 initial : [],
             ),
             'pooledStats' => [],
-            'frames'      => $frames,
+            'frames' => $frames,
         ];
     }
 }

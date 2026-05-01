@@ -62,7 +62,7 @@ final class CheckPublicSurface
 }
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
-    $checker = new CheckPublicSurface();
+    $checker = new CheckPublicSurface;
     $result = $checker->check();
 
     echo $result['status'] . "\n";

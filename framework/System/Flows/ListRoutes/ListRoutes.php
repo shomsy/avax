@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\RouteIntelligence\RouteInfo;
 final readonly class ListRoutes
 {
     public function __construct(
-        private RouteAnalyzer $analyzer = new RouteAnalyzer(),
+        private RouteAnalyzer $analyzer = new RouteAnalyzer,
     ) {}
 
     /**
@@ -24,9 +24,9 @@ final readonly class ListRoutes
             return;
         }
 
-        $methodWidth     = 7;
-        $patternWidth    = 40;
-        $handlerWidth    = 50;
+        $methodWidth  = 7;
+        $patternWidth = 40;
+        $handlerWidth = 50;
         $middlewareWidth = 30;
 
         $header = sprintf(

@@ -12,7 +12,7 @@ final class ResponsesTest extends TestCase
 {
     public function test_creates_html_response_with_expected_content_type() : void
     {
-        $factory  = $this->factory();
+        $factory = $this->factory();
         $response = $factory->createHtmlResponse(html: '<h1>Hello</h1>', status: 201);
 
         self::assertSame(201, $response->getStatusCode());
@@ -22,12 +22,12 @@ final class ResponsesTest extends TestCase
 
     private function factory() : Responses
     {
-        return new Responses();
+        return new Responses;
     }
 
     public function test_creates_error_response_as_json() : void
     {
-        $factory  = $this->factory();
+        $factory = $this->factory();
         $response = $factory->createErrorResponse(statusCode: 429, message: 'Too Many Requests');
 
         self::assertSame(429, $response->getStatusCode());

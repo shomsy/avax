@@ -11,12 +11,13 @@ use components\Filesystem\Files\AppendToFile;
 class AppendToFileTest extends TestCase
 {
     private LocalDisk $disk;
+
     private string $testFile;
 
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
+        $this->disk = new LocalDisk;
         $this->testFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/append_test.txt';
     }
 
@@ -26,7 +27,7 @@ class AppendToFileTest extends TestCase
         parent::tearDown();
     }
 
-    public function testExecuteAppendsContent() : void
+    public function test_execute_appends_content() : void
     {
         file_put_contents(filename: $this->testFile, data: "line1\n");
 
@@ -37,7 +38,7 @@ class AppendToFileTest extends TestCase
         self::assertStringContainsString('line2', $content);
     }
 
-    public function testExecuteCreatesParentDirectory() : void
+    public function test_execute_creates_parent_directory() : void
     {
         $file = '/home/shomsy/projects/components/tests/fixtures/Filesystem/append_dir/test.txt';
 

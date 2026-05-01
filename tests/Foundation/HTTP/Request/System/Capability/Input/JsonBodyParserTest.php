@@ -35,7 +35,7 @@ final class JsonBodyParserTest extends TestCase
 
     public function test_parse_handles_nested_json() : void
     {
-        $json   = '{"user": {"name": "John", "address": {"city": "NYC"}}}';
+        $json = '{"user": {"name": "John", "address": {"city": "NYC"}}}';
         $result = $this->parser->parse($json);
 
         $this->assertIsArray(actual: $result);
@@ -44,7 +44,7 @@ final class JsonBodyParserTest extends TestCase
 
     public function test_parse_handles_json_array() : void
     {
-        $json   = '[1, 2, 3, "four"]';
+        $json = '[1, 2, 3, "four"]';
         $result = $this->parser->parse($json);
 
         $this->assertSame(expected: [1, 2, 3, 'four'], actual: $result);
@@ -70,6 +70,6 @@ final class JsonBodyParserTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->parser = new JsonBodyParser();
+        $this->parser = new JsonBodyParser;
     }
 }

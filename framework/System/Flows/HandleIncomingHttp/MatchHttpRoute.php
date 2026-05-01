@@ -17,9 +17,9 @@ final class MatchHttpRoute
 {
     private RouteMatcher $routeMatcher;
 
-    public function __construct(RouteMatcher $routeMatcher = null)
+    public function __construct(?RouteMatcher $routeMatcher = null)
     {
-        $this->routeMatcher = $routeMatcher ?? new RouteMatcher(logger: new NullLogger());
+        $this->routeMatcher = $routeMatcher ?? new RouteMatcher(logger: new NullLogger);
     }
 
     public function match(RegisteredHttpRoutes $routes, ServerRequest $request) : MatchedHttpRoute
@@ -56,7 +56,7 @@ final class MatchHttpRoute
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $getRequest   = $request->withMethod(method: 'GET');
+            $getRequest = $request->withMethod(method: 'GET');
             $matchedRoute = $this->routeMatcher->match(
                 routes  : $routes->routesByMethod(),
                 request : $getRequest,
@@ -92,8 +92,8 @@ final class MatchHttpRoute
     private function allowedMethodsFor(RegisteredHttpRoutes $routes, ServerRequest $request) : array
     {
         $allowedMethods = [];
-        $path           = $request->getUri()->getPath();
-        $host           = $request->getUri()->getHost();
+        $path = $request->getUri()->getPath();
+        $host = $request->getUri()->getHost();
 
         foreach ($routes->routesByMethod() as $method => $routeDefinitions) {
             foreach ($routeDefinitions as $route) {
@@ -128,9 +128,10 @@ final class MatchHttpRoute
 
     /**
      * @param array<int|string, mixed> $matches
+     *
      * @return array<string, string>
      */
-    private function extractParameters(array $matches) : array
+    private function extractParameters(array $matches): array
     {
         $parameters = [];
 

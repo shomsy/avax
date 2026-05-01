@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
 
-$tool    = dirname(path: __DIR__, 4) . '/tools/generate-runtime-artifacts.php';
-$fixture = dirname(path: __DIR__, 3) . '/fixtures/generated_runtime_fixture.php';
+$tool      = dirname(path: __DIR__, 4) . '/tools/generate-runtime-artifacts.php';
+$fixture   = dirname(path: __DIR__, 3) . '/fixtures/generated_runtime_fixture.php';
 $outputDir = sys_get_temp_dir() . '/generated-artifacts-smoke-' . uniqid();
 
 mkdir(directory: $outputDir, permissions: 0o777, recursive: true);

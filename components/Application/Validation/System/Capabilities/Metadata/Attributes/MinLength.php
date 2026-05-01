@@ -11,7 +11,7 @@ final readonly class MinLength
 {
     public function __construct(
         public int $length,
-        public string|null $message = null,
+        public ?string $message = null,
     ) {}
 
     public function getMessage(string $property) : string

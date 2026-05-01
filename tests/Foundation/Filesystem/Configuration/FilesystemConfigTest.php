@@ -9,7 +9,7 @@ use Avax\Tests\TestCase;
 
 class FilesystemConfigTest extends TestCase
 {
-    public function testDefaultsCreatesConfig() : void
+    public function test_defaults_creates_config() : void
     {
         $config = FilesystemConfig::defaults();
 
@@ -17,7 +17,7 @@ class FilesystemConfigTest extends TestCase
         self::assertArrayHasKey(key: 'local', array: $config->disks);
     }
 
-    public function testDiskReturnsNullForUnknown() : void
+    public function test_disk_returns_null_for_unknown() : void
     {
         $config = FilesystemConfig::defaults();
 
@@ -26,7 +26,7 @@ class FilesystemConfigTest extends TestCase
         self::assertNull(actual: $result);
     }
 
-    public function testDiskReturnsDiskConfig() : void
+    public function test_disk_returns_disk_config() : void
     {
         $config = FilesystemConfig::defaults();
 
@@ -35,7 +35,7 @@ class FilesystemConfigTest extends TestCase
         self::assertSame(expected: ['driver' => 'local'], actual: $result);
     }
 
-    public function testCustomConfig() : void
+    public function test_custom_config() : void
     {
         $config = new FilesystemConfig(
             default: 's3',

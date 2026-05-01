@@ -13,13 +13,12 @@ final class WorkerLifecycle
      */
     private array $handledRequestIds = [];
 
-    private DateTimeImmutable|null $stoppedAt = null;
+    private ?DateTimeImmutable $stoppedAt = null;
 
     public function __construct(
         private readonly string $runtimeName,
         private readonly DateTimeImmutable $startedAt,
-    ) {
-    }
+    ) {}
 
     public function runtimeName() : string
     {
@@ -31,7 +30,7 @@ final class WorkerLifecycle
         return $this->startedAt;
     }
 
-    public function stoppedAt() : DateTimeImmutable|null
+    public function stoppedAt() : ?DateTimeImmutable
     {
         return $this->stoppedAt;
     }

@@ -11,8 +11,7 @@ final class Request
         public readonly array $get,
         public readonly array $post,
         public readonly array $files,
-    ) {
-    }
+    ) {}
 
     public function method() : string
     {
@@ -24,7 +23,7 @@ final class Request
         return $this->server['REQUEST_URI'] ?? '/';
     }
 
-    public function header(string $name) : string|null
+    public function header(string $name) : ?string
     {
         $key = 'HTTP_' . str_replace('-', '_', strtoupper($name));
 

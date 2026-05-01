@@ -11,7 +11,7 @@ use Exception;
 
 final class ParseDate
 {
-    public function fromString(string $datetime, string $timezone = null) : DateTimeImmutable
+    public function fromString(string $datetime, ?string $timezone = null) : DateTimeImmutable
     {
         $tz = $timezone ?? date_default_timezone_get();
 
@@ -22,9 +22,9 @@ final class ParseDate
         }
     }
 
-    public function fromFormat(string $datetime, string $format, string $timezone = null) : DateTimeImmutable
+    public function fromFormat(string $datetime, string $format, ?string $timezone = null) : DateTimeImmutable
     {
-        $tz   = $timezone ?? date_default_timezone_get();
+        $tz = $timezone ?? date_default_timezone_get();
         $date = DateTimeImmutable::createFromFormat($format, $datetime, new DateTimeZone($tz));
 
         if ($date === false) {
@@ -34,7 +34,7 @@ final class ParseDate
         return $date;
     }
 
-    public function fromTimestamp(int $timestamp, string $timezone = null) : DateTimeImmutable
+    public function fromTimestamp(int $timestamp, ?string $timezone = null) : DateTimeImmutable
     {
         $tz = $timezone ?? date_default_timezone_get();
 
@@ -50,7 +50,7 @@ final class ParseDate
         }
     }
 
-    public function parseRelative(string $relative, string $timezone = null) : DateTimeImmutable
+    public function parseRelative(string $relative, ?string $timezone = null) : DateTimeImmutable
     {
         $tz = $timezone ?? date_default_timezone_get();
 

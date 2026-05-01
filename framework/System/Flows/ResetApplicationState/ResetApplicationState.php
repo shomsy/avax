@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 final class ResetApplicationState
 {
     public function __construct(
-        private StateResetRegistry|null $registry = null,
+        private ?StateResetRegistry $registry = null,
     ) {}
 
     public function reset() : StateResetReport
@@ -26,15 +26,9 @@ final class ResetApplicationState
         return $report;
     }
 
-    private function resetRequestScope() : void
-    {
-    }
+    private function resetRequestScope() : void {}
 
-    private function resetRuntimeContext() : void
-    {
-    }
+    private function resetRuntimeContext() : void {}
 
-    private function resetDiagnosticsContext() : void
-    {
-    }
+    private function resetDiagnosticsContext() : void {}
 }

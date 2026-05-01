@@ -24,15 +24,14 @@ final class ApplicationBuilder
      */
     private array $consoleCommands = [];
 
-    private Closure|null $httpHandler = null;
+    private ?Closure $httpHandler = null;
 
     public function __construct(
         private ProjectPath $projectPath,
         private EnvironmentName $environment,
-        private Clock $clock = new SystemClock(),
+        private Clock $clock = new SystemClock,
         private string $runtimeName = 'avax',
-    ) {
-    }
+    ) {}
 
     public function projectPath() : ProjectPath
     {
@@ -56,7 +55,7 @@ final class ApplicationBuilder
 
     public function withEnvironment(EnvironmentName|string $environment) : self
     {
-        $clone              = clone $this;
+        $clone = clone $this;
         $clone->environment = $environment instanceof EnvironmentName
             ? $environment
             : new EnvironmentName(value: $environment);
@@ -66,7 +65,7 @@ final class ApplicationBuilder
 
     public function withClock(Clock $clock) : self
     {
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->clock = $clock;
 
         return $clone;
@@ -74,7 +73,7 @@ final class ApplicationBuilder
 
     public function withRuntimeName(string $runtimeName) : self
     {
-        $clone              = clone $this;
+        $clone = clone $this;
         $clone->runtimeName = trim(string: $runtimeName);
 
         return $clone;
@@ -82,7 +81,7 @@ final class ApplicationBuilder
 
     public function withHttpHandler(callable $httpHandler) : self
     {
-        $clone              = clone $this;
+        $clone = clone $this;
         $clone->httpHandler = Closure::fromCallable($httpHandler);
 
         return $clone;
@@ -114,7 +113,7 @@ final class ApplicationBuilder
 
     public function registerConsoleCommand(string $name, callable $command) : self
     {
-        $clone                         = clone $this;
+        $clone = clone $this;
         $clone->consoleCommands[$name] = Closure::fromCallable($command);
 
         return $clone;
@@ -122,7 +121,7 @@ final class ApplicationBuilder
 
     public function registerComponentProvider(ComponentProviderInterface $provider) : self
     {
-        $clone                     = clone $this;
+        $clone = clone $this;
         $clone->componentProviders = [...$clone->componentProviders, $provider];
 
         return $clone;
@@ -144,7 +143,7 @@ final class ApplicationBuilder
         return $this->consoleCommands;
     }
 
-    public function httpHandler() : Closure|null
+    public function httpHandler() : ?Closure
     {
         return $this->httpHandler;
     }

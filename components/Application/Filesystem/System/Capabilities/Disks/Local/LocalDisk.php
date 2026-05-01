@@ -84,7 +84,7 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function lastModified(string $path) : int|null
+    public function lastModified(string $path) : ?int
     {
         return file_exists($path) ? (filemtime($path) ?: null) : null;
     }

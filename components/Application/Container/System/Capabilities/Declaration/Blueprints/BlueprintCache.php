@@ -22,18 +22,18 @@ final class BlueprintCache
     private readonly string $cacheDir;
 
     public function __construct(
-        string $cacheDir = null,
-        string $cacheVersion = null,
-        bool   $debug = null,
-        private readonly ResolutionMetrics|null $resolutionMetrics = null,
+        ?string                             $cacheDir = null,
+        ?string                             $cacheVersion = null,
+        ?bool                               $debug = null,
+        private readonly ?ResolutionMetrics $resolutionMetrics = null,
     )
     {
-        $cacheDir     ??= '';
+        $cacheDir       ??= '';
         $cacheVersion ??= 'container-v1';
-        $debug        ??= false;
-        $this->cacheDir     = $cacheDir;
+        $debug          ??= false;
+        $this->cacheDir = $cacheDir;
         $this->cacheVersion = $cacheVersion;
-        $this->debug        = $debug;
+        $this->debug    = $debug;
     }
 
     /**
@@ -47,7 +47,7 @@ final class BlueprintCache
     /**
      * Reads one blueprint from memory or disk cache.
      */
-    public function get(string $class, string $fingerprint = '') : DependencyBlueprint|null
+    public function get(string $class, string $fingerprint = '') : ?DependencyBlueprint
     {
         $cached = $this->items[$class] ?? null;
         if ($cached instanceof DependencyBlueprint) {

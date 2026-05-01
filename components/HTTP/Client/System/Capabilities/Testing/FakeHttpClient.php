@@ -37,7 +37,7 @@ final class FakeHttpClient implements HttpClientInterface
     public function __construct(
         private array $responses = [],
         private array $recordedRequests = [],
-        private string|null $baseUrl = null,
+        private ?string $baseUrl = null,
     ) {}
 
     /**
@@ -45,7 +45,7 @@ final class FakeHttpClient implements HttpClientInterface
      */
     public static function create() : FakeHttpClientBuilder
     {
-        return new FakeHttpClientBuilder();
+        return new FakeHttpClientBuilder;
     }
 
     /**
@@ -53,7 +53,7 @@ final class FakeHttpClient implements HttpClientInterface
      *
      * @param array<string, RecordedHttpResponse> $responses
      */
-    public static function fromResponses(array $responses, string $baseUrl = null) : self
+    public static function fromResponses(array $responses, ?string $baseUrl = null) : self
     {
         return new self(responses: $responses, baseUrl: $baseUrl);
     }
@@ -61,7 +61,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Get the base URL configured for this client.
      */
-    public function getBaseUrl() : string|null
+    public function getBaseUrl() : ?string
     {
         return $this->baseUrl;
     }
@@ -276,7 +276,7 @@ final class FakeHttpClientBuilder
      */
     private array $responses = [];
 
-    private string|null $baseUrl = null;
+    private ?string $baseUrl = null;
 
     private string $pendingMethod = '*';
 
@@ -298,7 +298,7 @@ final class FakeHttpClientBuilder
     public function whenGet(string $url) : self
     {
         $this->pendingMethod = 'GET';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -309,7 +309,7 @@ final class FakeHttpClientBuilder
     public function whenPost(string $url) : self
     {
         $this->pendingMethod = 'POST';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -320,7 +320,7 @@ final class FakeHttpClientBuilder
     public function whenPut(string $url) : self
     {
         $this->pendingMethod = 'PUT';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -331,7 +331,7 @@ final class FakeHttpClientBuilder
     public function whenDelete(string $url) : self
     {
         $this->pendingMethod = 'DELETE';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -342,7 +342,7 @@ final class FakeHttpClientBuilder
     public function whenAny(string $url) : self
     {
         $this->pendingMethod = '*';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -355,7 +355,7 @@ final class FakeHttpClientBuilder
      */
     public function respondWithJson(mixed $data = [], int $status = 200) : self
     {
-        $key                   = "{$this->pendingMethod}:{$this->pendingUrl}";
+        $key = "{$this->pendingMethod}:{$this->pendingUrl}";
         $this->responses[$key] = RecordedHttpResponse::json($this->pendingUrl, $data, $status);
 
         return $this;
@@ -366,7 +366,7 @@ final class FakeHttpClientBuilder
      */
     public function respondWithStatus(int $status = 200, string $body = '') : self
     {
-        $key                   = "{$this->pendingMethod}:{$this->pendingUrl}";
+        $key = "{$this->pendingMethod}:{$this->pendingUrl}";
         $this->responses[$key] = new RecordedHttpResponse(
             urlPattern: $this->pendingUrl,
             method    : $this->pendingMethod,
@@ -382,7 +382,7 @@ final class FakeHttpClientBuilder
      */
     public function respondWith(RecordedHttpResponse $response) : self
     {
-        $key                   = "{$this->pendingMethod}:{$this->pendingUrl}";
+        $key = "{$this->pendingMethod}:{$this->pendingUrl}";
         $this->responses[$key] = $response;
 
         return $this;
@@ -393,7 +393,7 @@ final class FakeHttpClientBuilder
      */
     public function respondWithException(Throwable $exception) : self
     {
-        $key                   = "{$this->pendingMethod}:{$this->pendingUrl}";
+        $key = "{$this->pendingMethod}:{$this->pendingUrl}";
         $this->responses[$key] = RecordedHttpResponse::throws($this->pendingUrl, $exception);
 
         return $this;

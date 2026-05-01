@@ -78,7 +78,7 @@ class CacheManifestIntegrityTest extends TestCase
         ];
 
         $files2 = [
-            '/app/routes/web.php'   => 1640995200,
+            '/app/routes/web.php' => 1640995200,
             '/app/routes/admin.php' => 1640995300, // Different file
         ];
 

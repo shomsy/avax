@@ -9,7 +9,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 final readonly class GenerateJitteredTtl
 {
     public function __construct(
-        private RandomJitter $randomJitter = new RandomJitter(),
+        private RandomJitter $randomJitter = new RandomJitter,
     ) {}
 
     public function forSeconds(int $ttlInSeconds) : int

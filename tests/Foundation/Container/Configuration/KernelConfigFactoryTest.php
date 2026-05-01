@@ -31,11 +31,11 @@ final class KernelConfigFactoryTest extends TestCase
             engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
-            scopes          : new ScopeManager(registry: new ScopeRegistry()),
+            scopes          : new ScopeManager(registry: new ScopeRegistry),
             prototypeFactory: $this->makePrototypeFactory(),
             timeline        : $this->createMock(ResolutionTimeline::class),
-            metrics         : new CollectMetrics(),
-            policy          : new ContainerPolicy(),
+            metrics         : new CollectMetrics,
+            policy          : new ContainerPolicy,
             debug           : true,
         );
 
@@ -46,12 +46,12 @@ final class KernelConfigFactoryTest extends TestCase
 
     private function makeFactory() : KernelConfigFactory
     {
-        return new KernelConfigFactory();
+        return new KernelConfigFactory;
     }
 
     private function makeInjector() : InjectDependencies
     {
-        $resolver = new DependencyResolver();
+        $resolver = new DependencyResolver;
 
         return new InjectDependencies(
             servicePrototypeFactory: $this->makePrototypeFactory(),
@@ -66,13 +66,13 @@ final class KernelConfigFactoryTest extends TestCase
     {
         return new ServicePrototypeFactory(
             cache   : new FilePrototypeCache(directory: sys_get_temp_dir()),
-            analyzer: new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer()),
+            analyzer: new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer),
         );
     }
 
     private function makeInvoker() : InvokeAction
     {
-        return new InvokeAction(container: null, resolver: new DependencyResolver());
+        return new InvokeAction(container: null, resolver: new DependencyResolver);
     }
 
     public function test_debug_false_config() : void
@@ -81,11 +81,11 @@ final class KernelConfigFactoryTest extends TestCase
             engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
-            scopes          : new ScopeManager(registry: new ScopeRegistry()),
+            scopes          : new ScopeManager(registry: new ScopeRegistry),
             prototypeFactory: $this->makePrototypeFactory(),
             timeline        : $this->createMock(ResolutionTimeline::class),
-            metrics         : new CollectMetrics(),
-            policy          : new ContainerPolicy(),
+            metrics         : new CollectMetrics,
+            policy          : new ContainerPolicy,
             debug           : false,
         );
 
@@ -100,11 +100,11 @@ final class KernelConfigFactoryTest extends TestCase
             engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
-            scopes          : new ScopeManager(registry: new ScopeRegistry()),
+            scopes          : new ScopeManager(registry: new ScopeRegistry),
             prototypeFactory: $this->makePrototypeFactory(),
             timeline        : $this->createMock(ResolutionTimeline::class),
-            metrics         : new CollectMetrics(),
-            policy          : new ContainerPolicy(),
+            metrics         : new CollectMetrics,
+            policy          : new ContainerPolicy,
             debug           : false,
             strictMode      : true,
             autoDefine      : false,

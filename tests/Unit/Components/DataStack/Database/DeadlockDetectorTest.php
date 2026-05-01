@@ -16,7 +16,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_detects_deadlock_in_message() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Deadlock found when trying to get lock');
 
         $report = $detector->analyze($ex);
@@ -27,7 +27,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_detects_serialization_failure() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Serialization failure when trying to get lock');
 
         $report = $detector->analyze($ex);
@@ -38,7 +38,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_detects_lock_wait_timeout() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Lock wait timeout exceeded');
 
         $report = $detector->analyze($ex);
@@ -48,7 +48,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_detects_try_restarting_transaction() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Try restarting transaction');
 
         $report = $detector->analyze($ex);
@@ -58,7 +58,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_detects_lock_timeout_expired() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Lock timeout expired for transaction');
 
         $report = $detector->analyze($ex);
@@ -68,7 +68,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_detects_transaction_deadlock() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Transaction deadlock detected');
 
         $report = $detector->analyze($ex);
@@ -78,7 +78,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_non_deadlock_error_returns_not_deadlock() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Syntax error in SQL statement');
 
         $report = $detector->analyze($ex);
@@ -89,7 +89,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_connection_error_is_not_deadlock() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Connection refused by server');
 
         $report = $detector->analyze($ex);
@@ -101,7 +101,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_analyze_with_sqlstate_40001() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         // The DeadlockDetector.extractSqlState returns getCode() directly.
         // When passed as named param 'code' to PDOException, PHP 8.5 stores it as int.
         // The DeadlockDetector casts it to string via (string) in analyze().
@@ -118,7 +118,7 @@ final class DeadlockDetectorTest extends TestCase
     {
         // PostgreSQL's 40P01 can't be tested via PDOException code (must be int),
         // but we verify the detector handles it via message pattern
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('deadlock detected');
 
         $report = $detector->analyze($ex);
@@ -128,7 +128,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_non_pdo_exception_does_not_match_sqlstate() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('40001', 40001);
 
         $report = $detector->analyze($ex);
@@ -142,7 +142,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_extract_affected_tables_from_backtick_pattern() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Deadlock found when trying to get lock on table `users`');
 
         $report = $detector->analyze($ex);
@@ -153,7 +153,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_extract_affected_tables_from_single_quote_pattern() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Deadlock on table \'orders\'');
 
         $report = $detector->analyze($ex);
@@ -163,7 +163,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_extract_affected_tables_from_on_pattern() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Deadlock detected on products table');
 
         $report = $detector->analyze($ex);
@@ -173,7 +173,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_multiple_affected_tables() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Deadlock on table `users` and table `orders`');
 
         $report = $detector->analyze($ex);
@@ -184,7 +184,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_no_tables_in_error_message() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Deadlock found');
 
         $report = $detector->analyze($ex);
@@ -197,9 +197,9 @@ final class DeadlockDetectorTest extends TestCase
     public function test_suggestion_for_40001() : void
     {
         // Test via config with error code since PDOException int code causes type issues
-        $config   = new DeadlockDetectorConfig(deadlockSqlStates: ['40001']);
+        $config = new DeadlockDetectorConfig(deadlockSqlStates: ['40001']);
         $detector = new DeadlockDetector($config);
-        $ex       = new RuntimeException('Serialization failure');
+        $ex     = new RuntimeException('Serialization failure');
 
         $report = $detector->analyze($ex);
 
@@ -209,9 +209,9 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_suggestion_for_40p01_via_config() : void
     {
-        $config   = new DeadlockDetectorConfig(deadlockSqlStates: ['40P01'], deadlockErrorCodes: ['7']);
+        $config = new DeadlockDetectorConfig(deadlockSqlStates: ['40P01'], deadlockErrorCodes: ['7']);
         $detector = new DeadlockDetector($config);
-        $ex       = new RuntimeException(message: 'Error', code: 7);
+        $ex     = new RuntimeException(message: 'Error', code: 7);
 
         $report = $detector->analyze($ex);
 
@@ -221,7 +221,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_suggestion_for_deadlock_pattern() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Deadlock detected');
 
         $report = $detector->analyze($ex);
@@ -231,7 +231,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_suggestion_for_serialization_failure_pattern() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Serialization failure');
 
         $report = $detector->analyze($ex);
@@ -241,7 +241,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_suggestion_for_lock_wait_timeout_pattern() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Lock wait timeout');
 
         $report = $detector->analyze($ex);
@@ -251,7 +251,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_suggestion_for_try_restarting_pattern() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Try restarting transaction');
 
         $report = $detector->analyze($ex);
@@ -264,7 +264,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_syntax_error_not_deadlock() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('SQL syntax error near FROM');
 
         $report = $detector->analyze($ex);
@@ -275,7 +275,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_constraint_violation_not_deadlock() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Unique constraint violation');
 
         $report = $detector->analyze($ex);
@@ -285,7 +285,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_null_pointer_not_deadlock() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Null pointer exception');
 
         $report = $detector->analyze($ex);
@@ -297,7 +297,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_analyze_batch_returns_only_deadlocks() : void
     {
-        $detector   = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $exceptions = [
             new RuntimeException('Deadlock found'),
             new RuntimeException('Syntax error'),
@@ -314,7 +314,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_analyze_batch_empty() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
 
         $reports = $detector->analyzeBatch([]);
 
@@ -323,7 +323,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_analyze_batch_no_deadlocks() : void
     {
-        $detector   = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $exceptions = [
             new RuntimeException('Syntax error'),
             new RuntimeException('Connection timeout'),
@@ -336,7 +336,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_analyze_batch_all_deadlocks() : void
     {
-        $detector   = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $exceptions = [
             new RuntimeException('Deadlock found'),
             new RuntimeException('Serialization failure'),
@@ -351,7 +351,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_default_config() : void
     {
-        $config = new DeadlockDetectorConfig();
+        $config = new DeadlockDetectorConfig;
 
         $this->assertContains('40001', $config->deadlockSqlStates);
         $this->assertContains('40P01', $config->deadlockSqlStates);
@@ -390,7 +390,7 @@ final class DeadlockDetectorTest extends TestCase
         );
 
         $detector = new DeadlockDetector($config);
-        $ex       = new RuntimeException('Error', 1213);
+        $ex = new RuntimeException('Error', 1213);
 
         $report = $detector->analyze($ex);
 
@@ -400,7 +400,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_detector_with_custom_config() : void
     {
-        $config   = DeadlockDetectorConfig::forMySQL();
+        $config = DeadlockDetectorConfig::forMySQL();
         $detector = new DeadlockDetector($config);
 
         $ex = new RuntimeException('Serialization failure');
@@ -414,7 +414,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_is_deadlock_quick_check_true() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Deadlock found');
 
         $this->assertTrue($detector->isDeadlock($ex));
@@ -422,7 +422,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_is_deadlock_quick_check_false() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('Normal error');
 
         $this->assertFalse($detector->isDeadlock($ex));
@@ -478,7 +478,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_deadlock_report_summary_for_not_deadlock() : void
     {
-        $report  = DeadlockReport::notDeadlock();
+        $report = DeadlockReport::notDeadlock();
         $summary = $report->summary();
 
         $this->assertSame('No deadlock detected', $summary);
@@ -502,7 +502,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_case_insensitive_deadlock_detection() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('DEADLOCK FOUND');
 
         $this->assertTrue($detector->isDeadlock($ex));
@@ -510,7 +510,7 @@ final class DeadlockDetectorTest extends TestCase
 
     public function test_mixed_case_deadlock_detection() : void
     {
-        $detector = new DeadlockDetector();
+        $detector = new DeadlockDetector;
         $ex       = new RuntimeException('DeAdLoCk detected');
 
         $this->assertTrue($detector->isDeadlock($ex));

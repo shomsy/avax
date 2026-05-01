@@ -117,13 +117,13 @@ $container->bind(abstract: 'flow.login.clock', concrete: DateTimeImmutable::clas
     ->asPrivate()
     ->concept(concept: 'clock');
 
-$description        = $container->describeService(id: OwnershipGateway::class);
-$graph              = $container->debugGraph(id: BillingFlowUsesGateway::class);
-$fullGraph          = $container->debugGraph();
+$description    = $container->describeService(id: OwnershipGateway::class);
+$graph          = $container->debugGraph(id: BillingFlowUsesGateway::class);
+$fullGraph      = $container->debugGraph();
 $validGatewayIssues = $container->validate(serviceIds: [BillingFlowUsesGateway::class]);
 $invalidAuditIssues = $container->validate(serviceIds: [BillingFlowUsesInternalAudit::class]);
-$lifetimeIssues     = $container->validate(serviceIds: [SharedOwnershipFacade::class]);
-$profileIssues      = $container->validate(serviceIds: [DevOnlyOwnershipProbe::class]);
+$lifetimeIssues = $container->validate(serviceIds: [SharedOwnershipFacade::class]);
+$profileIssues  = $container->validate(serviceIds: [DevOnlyOwnershipProbe::class]);
 
 assertSame(expected: 'capability.payments', actual: $description['ownership']['ownerSlice'] ?? null, message: 'Service descriptions should expose the owner slice.');
 assertSame(expected: 'shared', actual: $description['ownership']['visibility'] ?? null, message: 'Service descriptions should expose visibility.');

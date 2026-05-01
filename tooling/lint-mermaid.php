@@ -10,9 +10,8 @@ declare(strict_types=1);
  *   0 - All how-this-works.md files have Mermaid blocks
  *   1 - One or more files are missing Mermaid blocks
  */
-
-const EXIT_SUCCESS    = 0;
-const EXIT_FAILURE    = 1;
+const EXIT_SUCCESS = 0;
+const EXIT_FAILURE = 1;
 const TARGET_FILENAME = 'how-this-works.md';
 
 /**
@@ -29,7 +28,7 @@ chdir(directory: __DIR__);
 
 echo "=== Mermaid Validation for how-this-works.md ===\n\n";
 
-$files      = findHowThisWorksFiles(rootDirectory: __DIR__);
+$files = findHowThisWorksFiles(rootDirectory: __DIR__);
 $totalFiles = count(value: $files);
 
 if ($totalFiles === 0) {

@@ -19,8 +19,9 @@ interface DeferredProvidedContract
 final class ProviderState
 {
     /** @var list<string> */
-    public static array $events  = [];
-    public string       $message = 'registered';
+    public static array $events = [];
+
+    public string $message = 'registered';
 
     public function __construct(string $message = 'registered')
     {
@@ -54,7 +55,7 @@ final class BaseProvider implements RegisterDependency
      */
     public function boot() : void
     {
-        ProviderState::$events[]                           = 'base-boot';
+        ProviderState::$events[] = 'base-boot';
         $this->app->get(id: ProviderState::class)->message = 'base-booted';
     }
 }
@@ -174,7 +175,7 @@ final class CycleProviderA implements RegisterDependency
 
     public function register() : void
     {
-        $this->app->instance(abstract: 'cycle-a', instance: new stdClass());
+        $this->app->instance(abstract: 'cycle-a', instance: new stdClass);
     }
 
     public function boot() : void {}
@@ -196,14 +197,14 @@ final class CycleProviderB implements RegisterDependency
 
     public function register() : void
     {
-        $this->app->instance(abstract: 'cycle-b', instance: new stdClass());
+        $this->app->instance(abstract: 'cycle-b', instance: new stdClass);
     }
 
     public function boot() : void {}
 }
 
 ProviderState::$events = [];
-$container             = makeTestContainer();
+$container = makeTestContainer();
 
 new BootProviders(container: $container)->boot(providers: [DemoProvider::class]);
 
@@ -224,7 +225,7 @@ assertTrue(
 );
 
 ProviderState::$events = [];
-$deferredContainer     = makeTestContainer();
+$deferredContainer = makeTestContainer();
 
 new BootProviders(container: $deferredContainer)->boot(providers: [DeferredDemoProvider::class]);
 
@@ -250,7 +251,7 @@ assertTrue(
     message  : 'Deferred provider metrics should record lazy provider boots.',
 );
 
-ProviderState::$events     = [];
+ProviderState::$events = [];
 $compiledDeferredContainer = makeTestContainer();
 $compiledDeferredContainer->singleton(abstract: DeferredProviderConsumer::class, concrete: DeferredProviderConsumer::class);
 

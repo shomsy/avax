@@ -38,7 +38,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_creation_with_defaults() : void
     {
-        $request = new OutboundRequest();
+        $request = new OutboundRequest;
 
         $this->assertEquals('GET', $request->method);
         $this->assertEquals('', $request->url);
@@ -72,7 +72,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_with_method_returns_new_instance() : void
     {
-        $opts     = new RequestOptions();
+        $opts = new RequestOptions;
         $original = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
         $modified = $original->withMethod('POST');
 
@@ -85,7 +85,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_with_url_returns_new_instance() : void
     {
-        $opts     = new RequestOptions();
+        $opts = new RequestOptions;
         $original = new OutboundRequest(method: 'GET', url: 'https://example.com/old', options: $opts);
         $modified = $original->withUrl('https://example.com/new');
 
@@ -98,7 +98,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_with_body_returns_new_instance() : void
     {
-        $opts     = new RequestOptions();
+        $opts = new RequestOptions;
         $original = new OutboundRequest(options: $opts);
         $modified = $original->withBody('{"data":"test"}');
 
@@ -110,7 +110,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_with_headers_merges_correctly() : void
     {
-        $opts     = new RequestOptions();
+        $opts = new RequestOptions;
         $original = new OutboundRequest(headers: ['Accept' => 'application/json'], options: $opts);
         $modified = $original->withHeaders(['Content-Type' => 'application/json', 'X-Custom' => 'value']);
 
@@ -119,17 +119,17 @@ final class HttpClientTest extends TestCase
         $this->assertEquals([
                                 'Accept'       => 'application/json',
                                 'Content-Type' => 'application/json',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'X-Custom' => 'value',
+                                'X-Custom'     => 'value',
                             ], $modified->headers);
     }
 
     #[Test]
     public function outbound_request_with_options_returns_new_instance() : void
     {
-        $opts       = new RequestOptions();
-        $original   = new OutboundRequest(options: $opts);
+        $opts     = new RequestOptions;
+        $original = new OutboundRequest(options: $opts);
         $newOptions = new RequestOptions(timeout: 10000);
-        $modified   = $original->withOptions($newOptions);
+        $modified = $original->withOptions($newOptions);
 
         $this->assertNotSame($original, $modified);
         $this->assertEquals(RequestOptions::DEFAULT_TIMEOUT, $original->options->timeout);
@@ -139,7 +139,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_with_context_merges_correctly() : void
     {
-        $opts     = new RequestOptions();
+        $opts = new RequestOptions;
         $original = new OutboundRequest(context: ['key1' => 'value1'], options: $opts);
         $modified = $original->withContext(['key2' => 'value2']);
 
@@ -151,7 +151,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_get_header_returns_value() : void
     {
-        $opts    = new RequestOptions();
+        $opts = new RequestOptions;
         $request = new OutboundRequest(headers: ['Content-Type' => 'application/json', 'X-Request-ID' => 'abc123'], options: $opts);
 
         $this->assertEquals('application/json', $request->getHeader('Content-Type'));
@@ -162,9 +162,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_has_body_returns_correctly() : void
     {
-        $opts                   = new RequestOptions();
-        $requestWithoutBody     = new OutboundRequest(options: $opts);
-        $requestWithBody        = new OutboundRequest(body: 'test body', options: $opts);
+        $opts               = new RequestOptions;
+        $requestWithoutBody = new OutboundRequest(options: $opts);
+        $requestWithBody    = new OutboundRequest(body: 'test body', options: $opts);
         $requestWithEmptyString = new OutboundRequest(body: '', options: $opts);
 
         $this->assertFalse($requestWithoutBody->hasBody());
@@ -175,10 +175,10 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_expects_json_checks_accept_header() : void
     {
-        $opts            = new RequestOptions();
-        $jsonRequest     = new OutboundRequest(headers: ['Accept' => 'application/json'], options: $opts);
-        $plainRequest    = new OutboundRequest(headers: ['Accept' => 'text/html'], options: $opts);
-        $mixedRequest    = new OutboundRequest(headers: ['Accept' => 'text/html, application/json'], options: $opts);
+        $opts         = new RequestOptions;
+        $jsonRequest  = new OutboundRequest(headers: ['Accept' => 'application/json'], options: $opts);
+        $plainRequest = new OutboundRequest(headers: ['Accept' => 'text/html'], options: $opts);
+        $mixedRequest = new OutboundRequest(headers: ['Accept' => 'text/html, application/json'], options: $opts);
         $noAcceptRequest = new OutboundRequest(options: $opts);
 
         $this->assertTrue($jsonRequest->expectsJson());
@@ -190,12 +190,12 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_is_safe_for_get_head_options() : void
     {
-        $opts           = new RequestOptions();
-        $getRequest     = new OutboundRequest(method: 'GET', options: $opts);
-        $headRequest    = new OutboundRequest(method: 'HEAD', options: $opts);
+        $opts          = new RequestOptions;
+        $getRequest    = new OutboundRequest(method: 'GET', options: $opts);
+        $headRequest   = new OutboundRequest(method: 'HEAD', options: $opts);
         $optionsRequest = new OutboundRequest(method: 'OPTIONS', options: $opts);
-        $postRequest    = new OutboundRequest(method: 'POST', options: $opts);
-        $deleteRequest  = new OutboundRequest(method: 'DELETE', options: $opts);
+        $postRequest   = new OutboundRequest(method: 'POST', options: $opts);
+        $deleteRequest = new OutboundRequest(method: 'DELETE', options: $opts);
 
         $this->assertTrue($getRequest->isSafe());
         $this->assertTrue($headRequest->isSafe());
@@ -207,12 +207,12 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_is_idempotent_for_correct_methods() : void
     {
-        $opts          = new RequestOptions();
-        $getRequest    = new OutboundRequest(method: 'GET', options: $opts);
-        $putRequest    = new OutboundRequest(method: 'PUT', options: $opts);
+        $opts         = new RequestOptions;
+        $getRequest   = new OutboundRequest(method: 'GET', options: $opts);
+        $putRequest   = new OutboundRequest(method: 'PUT', options: $opts);
         $deleteRequest = new OutboundRequest(method: 'DELETE', options: $opts);
-        $postRequest   = new OutboundRequest(method: 'POST', options: $opts);
-        $patchRequest  = new OutboundRequest(method: 'PATCH', options: $opts);
+        $postRequest  = new OutboundRequest(method: 'POST', options: $opts);
+        $patchRequest = new OutboundRequest(method: 'PATCH', options: $opts);
 
         $this->assertTrue($getRequest->isIdempotent());
         $this->assertTrue($putRequest->isIdempotent());
@@ -224,7 +224,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_method_case_insensitive_for_safe_check() : void
     {
-        $opts         = new RequestOptions();
+        $opts = new RequestOptions;
         $lowerCaseGet = new OutboundRequest(method: 'get', options: $opts);
         $upperCaseGet = new OutboundRequest(method: 'GET', options: $opts);
 
@@ -235,7 +235,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function outbound_request_immutability_chain() : void
     {
-        $opts     = new RequestOptions();
+        $opts = new RequestOptions;
         $original = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
 
         $step1 = $original->withMethod('POST');
@@ -260,7 +260,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function request_options_default_values() : void
     {
-        $options = new RequestOptions();
+        $options = new RequestOptions;
 
         $this->assertEquals(30_000, $options->timeout);
         $this->assertEquals(10_000, $options->connectTimeout);
@@ -299,7 +299,7 @@ final class HttpClientTest extends TestCase
     public function request_options_with_retry_factory() : void
     {
         $retryPolicy = RetryPolicy::exponential(attempts: 3);
-        $options     = RequestOptions::withRetry($retryPolicy);
+        $options = RequestOptions::withRetry($retryPolicy);
         $this->assertSame($retryPolicy, $options->retryPolicy);
         $this->assertTrue($options->hasRetry());
     }
@@ -331,9 +331,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function request_options_merge_overrides_values() : void
     {
-        $base     = new RequestOptions(timeout: 30_000, verifySsl: true, followRedirects: true);
+        $base   = new RequestOptions(timeout: 30_000, verifySsl: true, followRedirects: true);
         $override = new RequestOptions(timeout: 5000, verifySsl: false, followRedirects: false);
-        $merged   = $base->merge($override);
+        $merged = $base->merge($override);
 
         $this->assertEquals(5000, $merged->timeout);
         $this->assertFalse($merged->verifySsl);
@@ -343,9 +343,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function request_options_merge_preserves_base_values() : void
     {
-        $base     = new RequestOptions(timeout: 30_000, connectTimeout: 15_000, maxRedirects: 10);
+        $base   = new RequestOptions(timeout: 30_000, connectTimeout: 15_000, maxRedirects: 10);
         $override = new RequestOptions(timeout: 5000);
-        $merged   = $base->merge($override);
+        $merged = $base->merge($override);
 
         $this->assertEquals(5000, $merged->timeout);
         $this->assertEquals(15_000, $merged->connectTimeout);
@@ -355,9 +355,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function request_options_merge_handles_nullable_fields() : void
     {
-        $base     = new RequestOptions(proxy: 'http://old-proxy:8080', sslCertPath: '/old/cert.pem');
+        $base   = new RequestOptions(proxy: 'http://old-proxy:8080', sslCertPath: '/old/cert.pem');
         $override = new RequestOptions(proxy: 'http://new-proxy:8080');
-        $merged   = $base->merge($override);
+        $merged = $base->merge($override);
 
         $this->assertEquals('http://new-proxy:8080', $merged->proxy);
         $this->assertEquals('/old/cert.pem', $merged->sslCertPath);
@@ -366,9 +366,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function request_options_merge_combines_additional_array() : void
     {
-        $base     = new RequestOptions(additional: ['key1' => 'value1']);
+        $base   = new RequestOptions(additional: ['key1' => 'value1']);
         $override = new RequestOptions(additional: ['key2' => 'value2']);
-        $merged   = $base->merge($override);
+        $merged = $base->merge($override);
 
         $this->assertEquals(['key1' => 'value1', 'key2' => 'value2'], $merged->additional);
     }
@@ -384,7 +384,7 @@ final class HttpClientTest extends TestCase
     public function request_options_effective_timeout_with_policy() : void
     {
         $timeoutPolicy = TimeoutPolicy::strict(5000);
-        $options       = new RequestOptions(timeout: 30_000, timeoutPolicy: $timeoutPolicy);
+        $options = new RequestOptions(timeout: 30_000, timeoutPolicy: $timeoutPolicy);
         $this->assertEquals(5000, $options->effectiveTimeout());
     }
 
@@ -401,7 +401,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function request_options_has_retry_returns_false_without_policy() : void
     {
-        $options = new RequestOptions();
+        $options = new RequestOptions;
         $this->assertFalse($options->hasRetry());
     }
 
@@ -412,7 +412,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function client_response_creation_with_defaults() : void
     {
-        $response = new ClientResponse();
+        $response = new ClientResponse;
         $this->assertEquals(200, $response->statusCode);
         $this->assertEquals([], $response->headers);
         $this->assertEquals('', $response->body);
@@ -533,7 +533,7 @@ final class HttpClientTest extends TestCase
     {
         $r1 = new ClientResponse(headers: ['Content-Type' => ['application/json; charset=utf-8']]);
         $r2 = new ClientResponse(headers: ['Content-Type' => ['text/html']]);
-        $r3 = new ClientResponse();
+        $r3 = new ClientResponse;
 
         $this->assertEquals('application/json', $r1->getContentType());
         $this->assertEquals('text/html', $r2->getContentType());
@@ -573,7 +573,7 @@ final class HttpClientTest extends TestCase
     public function client_response_json_decode_as_array() : void
     {
         $response = new ClientResponse(body: '{"name":"John","age":30}');
-        $data     = $response->json(assoc: true);
+        $data = $response->json(assoc: true);
         $this->assertIsArray($data);
         $this->assertEquals('John', $data['name']);
         $this->assertEquals(30, $data['age']);
@@ -583,7 +583,7 @@ final class HttpClientTest extends TestCase
     public function client_response_json_decode_as_object() : void
     {
         $response = new ClientResponse(body: '{"name":"John","age":30}');
-        $data     = $response->json(assoc: false);
+        $data = $response->json(assoc: false);
         $this->assertIsObject($data);
         $this->assertEquals('John', $data->name);
         $this->assertEquals(30, $data->age);
@@ -601,7 +601,7 @@ final class HttpClientTest extends TestCase
     public function client_response_get_effective_url_returns_url_or_empty() : void
     {
         $r1 = new ClientResponse(effectiveUrl: 'https://example.com/final');
-        $r2 = new ClientResponse();
+        $r2 = new ClientResponse;
         $this->assertEquals('https://example.com/final', $r1->getEffectiveUrl());
         $this->assertEquals('', $r2->getEffectiveUrl());
     }
@@ -613,9 +613,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_json_by_content_type() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '{"status":"ok","count":5}', headers: ['Content-Type' => ['application/json']]);
-        $result   = $decoder->decode($response);
+        $result  = $decoder->decode($response);
         $this->assertIsArray($result);
         $this->assertEquals('ok', $result['status']);
         $this->assertEquals(5, $result['count']);
@@ -624,18 +624,18 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_json_with_charset() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '{"data":"test"}', headers: ['Content-Type' => ['application/json; charset=utf-8']]);
-        $result   = $decoder->decode($response);
+        $result  = $decoder->decode($response);
         $this->assertEquals(['data' => 'test'], $result);
     }
 
     #[Test]
     public function response_decoder_decode_xml_by_content_type() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '<root><item>test</item></root>', headers: ['Content-Type' => ['application/xml']]);
-        $result   = $decoder->decode($response);
+        $result  = $decoder->decode($response);
         $this->assertInstanceOf(SimpleXMLElement::class, $result);
         $this->assertEquals('test', (string) $result->item);
     }
@@ -643,54 +643,54 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_text_by_content_type() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: 'Plain text response', headers: ['Content-Type' => ['text/plain']]);
-        $result   = $decoder->decode($response);
+        $result  = $decoder->decode($response);
         $this->assertEquals('Plain text response', $result);
     }
 
     #[Test]
     public function response_decoder_decode_html_as_text() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '<html><body>Hello</body></html>', headers: ['Content-Type' => ['text/html']]);
-        $result   = $decoder->decode($response);
+        $result  = $decoder->decode($response);
         $this->assertEquals('<html><body>Hello</body></html>', $result);
     }
 
     #[Test]
     public function response_decoder_decode_unknown_content_type_as_text() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: 'Binary-like content', headers: ['Content-Type' => ['application/octet-stream']]);
-        $result   = $decoder->decode($response);
+        $result  = $decoder->decode($response);
         $this->assertEquals('Binary-like content', $result);
     }
 
     #[Test]
     public function response_decoder_decode_no_content_type_as_text() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: 'No content type specified');
-        $result   = $decoder->decode($response);
+        $result  = $decoder->decode($response);
         $this->assertEquals('No content type specified', $result);
     }
 
     #[Test]
     public function response_decoder_force_json_format() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '{"forced":true}');
-        $result   = $decoder->decode($response, format: 'json');
+        $result  = $decoder->decode($response, format: 'json');
         $this->assertEquals(['forced' => true], $result);
     }
 
     #[Test]
     public function response_decoder_force_xml_format() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '<root><value>123</value></root>');
-        $result   = $decoder->decode($response, format: 'xml');
+        $result  = $decoder->decode($response, format: 'xml');
         $this->assertInstanceOf(SimpleXMLElement::class, $result);
         $this->assertEquals('123', (string) $result->value);
     }
@@ -698,16 +698,16 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_force_text_format() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '{"json":"string"}', headers: ['Content-Type' => ['application/json']]);
-        $result   = $decoder->decode($response, format: 'text');
+        $result  = $decoder->decode($response, format: 'text');
         $this->assertEquals('{"json":"string"}', $result);
     }
 
     #[Test]
     public function response_decoder_unsupported_format_throws() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: 'test', statusCode: 200);
         $this->expectException(InvalidHttpResponse::class);
         $this->expectExceptionMessage('Unsupported response format: yaml');
@@ -717,7 +717,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_json_empty_body_throws() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '');
         $this->expectException(InvalidHttpResponse::class);
         $this->expectExceptionMessage('Empty response body cannot be decoded as JSON');
@@ -727,7 +727,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_json_invalid_json_throws() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '{invalid json}', statusCode: 200);
         $this->expectException(InvalidHttpResponse::class);
         $this->expectExceptionMessage('Failed to decode JSON response');
@@ -737,9 +737,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_json_returns_array() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '{"key":"value"}');
-        $result   = $decoder->decodeJson($response, assoc: true);
+        $result  = $decoder->decodeJson($response, assoc: true);
         $this->assertIsArray($result);
         $this->assertEquals(['key' => 'value'], $result);
     }
@@ -747,9 +747,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_json_returns_object() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '{"key":"value"}');
-        $result   = $decoder->decodeJson($response, assoc: false);
+        $result  = $decoder->decodeJson($response, assoc: false);
         $this->assertIsObject($result);
         $this->assertEquals('value', $result->key);
     }
@@ -757,7 +757,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_xml_empty_body_throws() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '');
         $this->expectException(InvalidHttpResponse::class);
         $this->expectExceptionMessage('Empty response body cannot be decoded as XML');
@@ -767,7 +767,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_xml_invalid_xml_throws() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '<invalid><xml>', statusCode: 200);
         $this->expectException(InvalidHttpResponse::class);
         $this->expectExceptionMessage('Failed to decode XML response');
@@ -777,18 +777,18 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function response_decoder_decode_text_returns_body() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: 'Hello, World!');
-        $result   = $decoder->decodeText($response);
+        $result  = $decoder->decodeText($response);
         $this->assertEquals('Hello, World!', $result);
     }
 
     #[Test]
     public function response_decoder_decode_text_empty_body() : void
     {
-        $decoder  = new ResponseDecoder();
+        $decoder = new ResponseDecoder;
         $response = new ClientResponse(body: '');
-        $result   = $decoder->decodeText($response);
+        $result  = $decoder->decodeText($response);
         $this->assertEquals('', $result);
     }
 
@@ -799,7 +799,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function retry_policy_default_values() : void
     {
-        $policy = new RetryPolicy();
+        $policy = new RetryPolicy;
         $this->assertEquals(3, $policy->attempts);
         $this->assertEquals(1000, $policy->baseDelayMs);
         $this->assertEquals(2.0, $policy->backoffMultiplier);
@@ -908,7 +908,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function retry_policy_should_retry_status() : void
     {
-        $policy = new RetryPolicy();
+        $policy = new RetryPolicy;
         $this->assertTrue($policy->shouldRetryStatus(500));
         $this->assertTrue($policy->shouldRetryStatus(502));
         $this->assertTrue($policy->shouldRetryStatus(503));
@@ -982,7 +982,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function timeout_policy_default_values() : void
     {
-        $policy = new TimeoutPolicy();
+        $policy = new TimeoutPolicy;
         $this->assertEquals(5000, $policy->connectTimeoutMs);
         $this->assertEquals(30000, $policy->transferTimeoutMs);
         $this->assertEquals(30000, $policy->timeoutMs);
@@ -1093,8 +1093,8 @@ final class HttpClientTest extends TestCase
     public function fake_http_client_get_request() : void
     {
         $client = FakeHttpClient::fromResponses([
-                                                      'https://api.example.com/users' => RecordedHttpResponse::json('https://api.example.com/users', ['id' => 1, 'name' => 'John']),
-                                                  ]);
+                                                    'https://api.example.com/users' => RecordedHttpResponse::json('https://api.example.com/users', ['id' => 1, 'name' => 'John']),
+                                                ]);
         $response = $client->get('https://api.example.com/users');
         $this->assertEquals(200, $response->statusCode);
         $this->assertEquals(['id' => 1, 'name' => 'John'], $response->json());
@@ -1104,8 +1104,8 @@ final class HttpClientTest extends TestCase
     public function fake_http_client_post_request() : void
     {
         $client = FakeHttpClient::fromResponses([
-                                                      'https://api.example.com/users' => RecordedHttpResponse::json('https://api.example.com/users', ['id' => 1], 201),
-                                                  ]);
+                                                    'https://api.example.com/users' => RecordedHttpResponse::json('https://api.example.com/users', ['id' => 1], 201),
+                                                ]);
         $response = $client->post('https://api.example.com/users', '{"name":"John"}');
         $this->assertEquals(201, $response->statusCode);
         $this->assertEquals(['id' => 1], $response->json());
@@ -1115,8 +1115,8 @@ final class HttpClientTest extends TestCase
     public function fake_http_client_put_request() : void
     {
         $client = FakeHttpClient::fromResponses([
-                                                      'https://api.example.com/users/1' => RecordedHttpResponse::json('https://api.example.com/users/1', ['id' => 1, 'updated' => true]),
-                                                  ]);
+                                                    'https://api.example.com/users/1' => RecordedHttpResponse::json('https://api.example.com/users/1', ['id' => 1, 'updated' => true]),
+                                                ]);
         $response = $client->put('https://api.example.com/users/1', '{"name":"Updated"}');
         $this->assertEquals(200, $response->statusCode);
         $this->assertTrue($response->json()['updated']);
@@ -1126,8 +1126,8 @@ final class HttpClientTest extends TestCase
     public function fake_http_client_delete_request() : void
     {
         $client = FakeHttpClient::fromResponses([
-                                                      'https://api.example.com/users/1' => RecordedHttpResponse::ok('https://api.example.com/users/1', 'deleted'),
-                                                  ]);
+                                                    'https://api.example.com/users/1' => RecordedHttpResponse::ok('https://api.example.com/users/1', 'deleted'),
+                                                ]);
         $response = $client->delete('https://api.example.com/users/1');
         $this->assertEquals(200, $response->statusCode);
         $this->assertEquals('deleted', $response->body);
@@ -1137,8 +1137,8 @@ final class HttpClientTest extends TestCase
     public function fake_http_client_head_request() : void
     {
         $client = FakeHttpClient::fromResponses([
-                                                      'https://api.example.com/health' => RecordedHttpResponse::ok('https://api.example.com/health'),
-                                                  ]);
+                                                    'https://api.example.com/health' => RecordedHttpResponse::ok('https://api.example.com/health'),
+                                                ]);
         $response = $client->head('https://api.example.com/health');
         $this->assertEquals(200, $response->statusCode);
     }
@@ -1147,8 +1147,8 @@ final class HttpClientTest extends TestCase
     public function fake_http_client_options_request() : void
     {
         $client = FakeHttpClient::fromResponses([
-                                                      'https://api.example.com' => RecordedHttpResponse::ok('https://api.example.com'),
-                                                  ]);
+                                                    'https://api.example.com' => RecordedHttpResponse::ok('https://api.example.com'),
+                                                ]);
         $response = $client->options('https://api.example.com');
         $this->assertEquals(200, $response->statusCode);
     }
@@ -1156,10 +1156,10 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function fake_http_client_send_records_request() : void
     {
-        $opts   = new RequestOptions();
+        $opts   = new RequestOptions;
         $client = FakeHttpClient::fromResponses([
-                                                     'https://api.example.com/test' => RecordedHttpResponse::ok('https://api.example.com/test'),
-                                                 ]);
+                                                    'https://api.example.com/test' => RecordedHttpResponse::ok('https://api.example.com/test'),
+                                                ]);
         $request = new OutboundRequest(method: 'GET', url: 'https://api.example.com/test', options: $opts);
         $client->send($request);
         $this->assertEquals(1, $client->getRequestCount());
@@ -1253,8 +1253,8 @@ final class HttpClientTest extends TestCase
     public function fake_http_client_error_response() : void
     {
         $client = FakeHttpClient::fromResponses([
-                                                      'https://api.example.com/fail' => RecordedHttpResponse::error('https://api.example.com/fail', 500, 'Server Error'),
-                                                  ]);
+                                                    'https://api.example.com/fail' => RecordedHttpResponse::error('https://api.example.com/fail', 500, 'Server Error'),
+                                                ]);
         $response = $client->get('https://api.example.com/fail');
         $this->assertEquals(500, $response->statusCode);
         $this->assertEquals('Server Error', $response->body);
@@ -1264,9 +1264,9 @@ final class HttpClientTest extends TestCase
     public function fake_http_client_exception_response() : void
     {
         $exception = new RuntimeException('Simulated failure');
-        $client    = FakeHttpClient::fromResponses([
-                                                       'https://api.example.com/throw' => RecordedHttpResponse::throws('https://api.example.com/throw', $exception),
-                                                   ]);
+        $client = FakeHttpClient::fromResponses([
+                                                    'https://api.example.com/throw' => RecordedHttpResponse::throws('https://api.example.com/throw', $exception),
+                                                ]);
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Simulated failure');
         $client->get('https://api.example.com/throw');
@@ -1319,7 +1319,7 @@ final class HttpClientTest extends TestCase
             ->whenPost('https://api.example.com/users/create')
             ->respondWithStatus(201)
             ->build();
-        $getResponse  = $client->get('https://api.example.com/users');
+        $getResponse = $client->get('https://api.example.com/users');
         $postResponse = $client->post('https://api.example.com/users/create', '{}');
         $this->assertEquals(200, $getResponse->statusCode);
         $this->assertEquals(201, $postResponse->statusCode);
@@ -1390,7 +1390,7 @@ final class HttpClientTest extends TestCase
     public function recorded_http_response_throws_factory() : void
     {
         $exception = new RuntimeException('Test exception');
-        $response  = RecordedHttpResponse::throws('https://example.com', $exception);
+        $response = RecordedHttpResponse::throws('https://example.com', $exception);
         $this->assertSame($exception, $response->exception);
         $this->assertEquals('*', $response->method);
     }
@@ -1465,14 +1465,14 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function curl_transport_creation() : void
     {
-        $transport = new CurlTransport();
+        $transport = new CurlTransport;
         $this->assertInstanceOf(CurlTransport::class, $transport);
     }
 
     #[Test]
     public function curl_transport_implements_interface() : void
     {
-        $transport = new CurlTransport();
+        $transport = new CurlTransport;
         $this->assertInstanceOf(
             HttpTransportInterface::class,
             $transport,
@@ -1482,8 +1482,8 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function curl_transport_build_psr7_request() : void
     {
-        $opts      = new RequestOptions();
-        $transport = new CurlTransport();
+        $opts      = new RequestOptions;
+        $transport = new CurlTransport;
         $request   = new OutboundRequest(
             method : 'POST',
             url    : 'https://example.com/api',
@@ -1501,9 +1501,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function curl_transport_build_psr7_request_with_null_body() : void
     {
-        $opts        = new RequestOptions();
-        $transport   = new CurlTransport();
-        $request     = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
+        $opts      = new RequestOptions;
+        $transport = new CurlTransport;
+        $request   = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
         $psr7Request = $transport->buildPsr7Request($request);
         $this->assertEquals('GET', $psr7Request->getMethod());
         $this->assertEquals('', (string) $psr7Request->getBody());
@@ -1512,9 +1512,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function curl_transport_build_psr7_request_with_array_body() : void
     {
-        $opts        = new RequestOptions();
-        $transport   = new CurlTransport();
-        $request     = new OutboundRequest(method: 'POST', url: 'https://example.com', body: ['key' => 'value'], options: $opts);
+        $opts      = new RequestOptions;
+        $transport = new CurlTransport;
+        $request   = new OutboundRequest(method: 'POST', url: 'https://example.com', body: ['key' => 'value'], options: $opts);
         $psr7Request = $transport->buildPsr7Request($request);
         $this->assertEquals('{"key":"value"}', (string) $psr7Request->getBody());
     }
@@ -1526,7 +1526,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function middleware_pipeline_empty_creation() : void
     {
-        $pipeline = new ClientMiddlewarePipeline();
+        $pipeline = new ClientMiddlewarePipeline;
         $this->assertEquals([], $pipeline->middlewares);
         $this->assertEquals(0, $pipeline->count());
         $this->assertTrue($pipeline->isEmpty());
@@ -1537,7 +1537,7 @@ final class HttpClientTest extends TestCase
     {
         $middleware1 = $this->createPassThroughMiddleware();
         $middleware2 = $this->createPassThroughMiddleware();
-        $pipeline    = new ClientMiddlewarePipeline([$middleware1, $middleware2]);
+        $pipeline = new ClientMiddlewarePipeline([$middleware1, $middleware2]);
         $this->assertCount(2, $pipeline->middlewares);
         $this->assertEquals(2, $pipeline->count());
         $this->assertFalse($pipeline->isEmpty());
@@ -1545,7 +1545,7 @@ final class HttpClientTest extends TestCase
 
     private function createPassThroughMiddleware() : ClientMiddlewareInterface
     {
-        return new class () implements ClientMiddlewareInterface {
+        return new class implements ClientMiddlewareInterface {
             public function handle(OutboundRequest $request, Closure $handler) : ClientResponse
             {
                 return $handler($request);
@@ -1558,8 +1558,8 @@ final class HttpClientTest extends TestCase
     {
         $middleware1 = $this->createPassThroughMiddleware();
         $middleware2 = $this->createPassThroughMiddleware();
-        $original    = new ClientMiddlewarePipeline([$middleware1]);
-        $modified    = $original->with($middleware2);
+        $original = new ClientMiddlewarePipeline([$middleware1]);
+        $modified = $original->with($middleware2);
         $this->assertNotSame($original, $modified);
         $this->assertCount(1, $original->middlewares);
         $this->assertCount(2, $modified->middlewares);
@@ -1568,9 +1568,9 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function middleware_pipeline_resolve_without_middlewares() : void
     {
-        $pipeline = new ClientMiddlewarePipeline();
-        $opts     = new RequestOptions();
-        $handler = $pipeline->resolve(static fn (OutboundRequest $request) : ClientResponse => new ClientResponse(statusCode: 200, body: 'final'));
+        $pipeline = new ClientMiddlewarePipeline;
+        $opts     = new RequestOptions;
+        $handler  = $pipeline->resolve(static fn (OutboundRequest $request) : ClientResponse => new ClientResponse(statusCode: 200, body: 'final'));
         $request  = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
         $response = $handler($request);
         $this->assertEquals(200, $response->statusCode);
@@ -1580,8 +1580,8 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function middleware_pipeline_execute_without_middlewares() : void
     {
-        $pipeline = new ClientMiddlewarePipeline();
-        $opts     = new RequestOptions();
+        $pipeline = new ClientMiddlewarePipeline;
+        $opts     = new RequestOptions;
         $request  = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
         $response = $pipeline->execute($request, static fn (OutboundRequest $req) : ClientResponse => new ClientResponse(statusCode: 200, body: 'direct'));
         $this->assertEquals(200, $response->statusCode);
@@ -1592,9 +1592,9 @@ final class HttpClientTest extends TestCase
     public function middleware_pipeline_single_middleware_execution() : void
     {
         $middleware = $this->createPassThroughMiddleware();
-        $pipeline   = new ClientMiddlewarePipeline([$middleware]);
-        $opts       = new RequestOptions();
-        $request    = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
+        $pipeline = new ClientMiddlewarePipeline([$middleware]);
+        $opts = new RequestOptions;
+        $request = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
         $response = $pipeline->execute($request, static fn (OutboundRequest $req) : ClientResponse => new ClientResponse(statusCode: 200, body: 'final-handler'));
         $this->assertEquals(200, $response->statusCode);
         $this->assertEquals('final-handler', $response->body);
@@ -1603,14 +1603,14 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function middleware_pipeline_multiple_middlewares_execution_order() : void
     {
-        $order       = [];
+        $order   = [];
         $middleware1 = $this->createTrackingMiddleware('m1', $order);
         $middleware2 = $this->createTrackingMiddleware('m2', $order);
         $middleware3 = $this->createTrackingMiddleware('m3', $order);
 
         $pipeline = new ClientMiddlewarePipeline([$middleware1, $middleware2, $middleware3]);
-        $opts     = new RequestOptions();
-        $request  = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
+        $opts    = new RequestOptions;
+        $request = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
 
         $pipeline->execute($request, static function (OutboundRequest $req) use (&$order) : ClientResponse {
             $order[] = 'handler';
@@ -1635,12 +1635,12 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function middleware_pipeline_middleware_can_modify_request() : void
     {
-        $modifiedRequest  = null;
+        $modifiedRequest = null;
         $headerMiddleware = $this->createHeaderAddingMiddleware();
 
         $pipeline = new ClientMiddlewarePipeline([$headerMiddleware]);
-        $opts     = new RequestOptions();
-        $request  = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
+        $opts            = new RequestOptions;
+        $request         = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
 
         $pipeline->execute($request, static function (OutboundRequest $req) use (&$modifiedRequest) : ClientResponse {
             $modifiedRequest = $req;
@@ -1659,7 +1659,7 @@ final class HttpClientTest extends TestCase
 
     private function createHeaderAddingMiddleware() : ClientMiddlewareInterface
     {
-        return new class () implements ClientMiddlewareInterface {
+        return new class implements ClientMiddlewareInterface {
             public function handle(OutboundRequest $request, Closure $handler) : ClientResponse
             {
                 $modified = $request->withHeaders(['X-Added-By-Middleware' => 'true']);
@@ -1675,8 +1675,8 @@ final class HttpClientTest extends TestCase
         $addHeaderMiddleware = $this->createResponseHeaderMiddleware();
 
         $pipeline = new ClientMiddlewarePipeline([$addHeaderMiddleware]);
-        $opts     = new RequestOptions();
-        $request  = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
+        $opts = new RequestOptions;
+        $request = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
 
         $response = $pipeline->execute($request, static fn (OutboundRequest $req) : ClientResponse => new ClientResponse(statusCode: 200, body: 'original'));
 
@@ -1686,7 +1686,7 @@ final class HttpClientTest extends TestCase
 
     private function createResponseHeaderMiddleware() : ClientMiddlewareInterface
     {
-        return new class () implements ClientMiddlewareInterface {
+        return new class implements ClientMiddlewareInterface {
             public function handle(OutboundRequest $request, Closure $handler) : ClientResponse
             {
                 $response = $handler($request);
@@ -1706,8 +1706,8 @@ final class HttpClientTest extends TestCase
         $authMiddleware = $this->createShortCircuitMiddleware();
 
         $pipeline = new ClientMiddlewarePipeline([$authMiddleware]);
-        $opts     = new RequestOptions();
-        $request  = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
+        $opts = new RequestOptions;
+        $request = new OutboundRequest(method: 'GET', url: 'https://example.com', options: $opts);
 
         $handlerCalled = false;
         $response = $pipeline->execute($request, static function (OutboundRequest $req) use (&$handlerCalled) : ClientResponse {
@@ -1723,7 +1723,7 @@ final class HttpClientTest extends TestCase
 
     private function createShortCircuitMiddleware() : ClientMiddlewareInterface
     {
-        return new class () implements ClientMiddlewareInterface {
+        return new class implements ClientMiddlewareInterface {
             public function handle(OutboundRequest $request, Closure $handler) : ClientResponse
             {
                 return new ClientResponse(statusCode: 401, body: 'Unauthorized');
@@ -1734,7 +1734,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function http_request_failed_exception_defaults() : void
     {
-        $exception = new HttpRequestFailed();
+        $exception = new HttpRequestFailed;
         $this->assertEquals('HTTP request failed', $exception->getMessage());
         $this->assertEquals(0, $exception->getCode());
         $this->assertNull($exception->url);
@@ -1767,7 +1767,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function http_request_failed_exception_chaining() : void
     {
-        $previous  = new RuntimeException('Original error');
+        $previous = new RuntimeException('Original error');
         $exception = new HttpRequestFailed(message: 'Wrapped error', previous: $previous);
         $this->assertSame($previous, $exception->getPrevious());
     }
@@ -1775,14 +1775,14 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function http_request_failed_is_runtime_exception() : void
     {
-        $exception = new HttpRequestFailed();
+        $exception = new HttpRequestFailed;
         $this->assertInstanceOf(RuntimeException::class, $exception);
     }
 
     #[Test]
     public function http_timeout_exception_defaults() : void
     {
-        $exception = new HttpTimeout();
+        $exception = new HttpTimeout;
         $this->assertEquals('HTTP request timed out', $exception->getMessage());
         $this->assertEquals(0.0, $exception->timeoutMs);
         $this->assertEquals('timeout', $exception->reason);
@@ -1807,7 +1807,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function http_timeout_extends_http_request_failed() : void
     {
-        $exception = new HttpTimeout();
+        $exception = new HttpTimeout;
         $this->assertInstanceOf(HttpRequestFailed::class, $exception);
         $this->assertInstanceOf(RuntimeException::class, $exception);
     }
@@ -1815,7 +1815,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function http_timeout_exception_chaining() : void
     {
-        $previous  = new RuntimeException('cURL timeout');
+        $previous = new RuntimeException('cURL timeout');
         $exception = new HttpTimeout(message: 'Request timed out', timeoutMs: 5000.0, previous: $previous);
         $this->assertSame($previous, $exception->getPrevious());
     }
@@ -1827,7 +1827,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function invalid_http_response_exception_defaults() : void
     {
-        $exception = new InvalidHttpResponse();
+        $exception = new InvalidHttpResponse;
         $this->assertEquals('Invalid HTTP response', $exception->getMessage());
         $this->assertEquals(0, $exception->getCode());
         $this->assertNull($exception->statusCode);
@@ -1860,7 +1860,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function invalid_http_response_exception_chaining() : void
     {
-        $previous  = new JsonException('Invalid JSON');
+        $previous = new JsonException('Invalid JSON');
         $exception = new InvalidHttpResponse(message: 'Failed to decode response', statusCode: 200, previous: $previous);
         $this->assertSame($previous, $exception->getPrevious());
     }
@@ -1868,7 +1868,7 @@ final class HttpClientTest extends TestCase
     #[Test]
     public function invalid_http_response_is_runtime_exception() : void
     {
-        $exception = new InvalidHttpResponse();
+        $exception = new InvalidHttpResponse;
         $this->assertInstanceOf(RuntimeException::class, $exception);
     }
 }
@@ -1879,11 +1879,12 @@ final class HttpClientTest extends TestCase
 final class TrackingMiddleware implements ClientMiddlewareInterface
 {
     private string $name;
+
     private array $order;
 
     public function __construct(string $name, array &$order)
     {
-        $this->name  = $name;
+        $this->name = $name;
         $this->order = &$order;
     }
 

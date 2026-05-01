@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 final class WarmCacheTest extends TestCase
 {
     private FrozenClock $clock;
+
     private InMemoryCacheStore $store;
 
     public function test_warm_with_callable_loaders() : void
@@ -43,7 +44,7 @@ final class WarmCacheTest extends TestCase
 
         $entries = [
             'config:theme' => 'dark',
-            'config:lang'  => 'en',
+            'config:lang' => 'en',
         ];
 
         $count = $warmCache->warm(entries: $entries);

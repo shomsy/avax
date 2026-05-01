@@ -16,6 +16,7 @@ use stdClass;
 final class EventDispatcherTest extends TestCase
 {
     private ListenerRegistry $registry;
+
     private EventDispatcher $dispatcher;
 
     #[Test]
@@ -36,14 +37,14 @@ final class EventDispatcherTest extends TestCase
     #[Test]
     public function dispatch_passes_data_to_listener() : void
     {
-        $receivedData  = null;
+        $receivedData         = null;
         $receivedEvent = null;
 
         $this->registry->subscribe(
             event   : 'user.created',
             listener: static function ($event, $data) use (&$receivedEvent, &$receivedData) : void {
                 $receivedEvent = $event;
-                $receivedData  = $data;
+                $receivedData = $data;
             },
         );
 
@@ -79,7 +80,7 @@ final class EventDispatcherTest extends TestCase
     #[Test]
     public function dispatch_with_object_event() : void
     {
-        $event       = new stdClass();
+        $event = new stdClass;
         $event->name = 'TestEvent';
 
         $receivedEvent = null;
@@ -100,7 +101,7 @@ final class EventDispatcherTest extends TestCase
     {
         $callCount = 0;
 
-        $event = new class () {
+        $event = new class {
             public bool $propagationStopped = false;
 
             public function isPropagationStopped() : bool
@@ -174,7 +175,7 @@ final class EventDispatcherTest extends TestCase
     public function dispatch_returns_the_event() : void
     {
         $eventName = 'user.created';
-        $result    = $this->dispatcher->dispatch(event: $eventName);
+        $result = $this->dispatcher->dispatch(event: $eventName);
 
         $this->assertEquals($eventName, $result);
     }
@@ -234,7 +235,7 @@ final class EventDispatcherTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->registry   = new ListenerRegistry();
+        $this->registry = new ListenerRegistry;
         $this->dispatcher = new EventDispatcher(registry: $this->registry);
     }
 }

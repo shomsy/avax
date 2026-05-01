@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\HandleRuntimeFailure;
 
 use Avax\Components\Operations\Logging\System\PublicSurface\Logging;
-
-use function Sentry\captureException;
-
 use Throwable;
+use function Sentry\captureException;
 
 /**
  * Reports runtime failures to the logging system and external error trackers.
@@ -19,9 +17,9 @@ use Throwable;
 final readonly class ReportRuntimeFailure
 {
     public function __construct(
-        private Logging|null $logger = null,
-        private string|null $correlationId = null,
-        private string|null $traceId = null,
+        private ?Logging $logger = null,
+        private ?string  $correlationId = null,
+        private ?string  $traceId = null,
     ) {}
 
     /**
@@ -49,12 +47,12 @@ final readonly class ReportRuntimeFailure
     private function buildContext(Throwable $throwable) : array
     {
         $context = [
-            'exception_class'   => $throwable::class,
+            'exception_class' => $throwable::class,
             'exception_message' => $throwable->getMessage(),
-            'exception_file'    => $throwable->getFile(),
-            'exception_line'    => $throwable->getLine(),
-            'exception_code'    => $throwable->getCode(),
-            'trace'             => $this->formatTrace($throwable),
+            'exception_file'  => $throwable->getFile(),
+            'exception_line'  => $throwable->getLine(),
+            'exception_code'  => $throwable->getCode(),
+            'trace'           => $this->formatTrace($throwable),
         ];
 
         if ($this->correlationId !== null) {
@@ -91,7 +89,7 @@ final readonly class ReportRuntimeFailure
             $trace[] = [
                 'file' => $frame['file'] ?? '[internal]',
                 'line' => $frame['line'] ?? 0,
-                'class'    => $frame['class'] ?? null,
+                'class' => $frame['class'] ?? null,
                 'type' => $frame['type'] ?? null,
                 'function' => $frame['function'],
             ];

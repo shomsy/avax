@@ -13,13 +13,13 @@ final readonly class RandomReplacement implements ChooseCachedValueForReplacemen
      * @throws RandomException
      */
     #[Override]
-    public function choose(array $entries) : string|null
+    public function choose(array $entries) : ?string
     {
         if ($entries === []) {
             return null;
         }
 
-        $keys        = array_keys($entries);
+        $keys = array_keys($entries);
         $randomIndex = random_int(min: 0, max: count($keys) - 1);
 
         return $keys[$randomIndex];

@@ -14,7 +14,7 @@ use Avax\Tests\TestCase;
 
 final class StructureFamilyTest extends TestCase
 {
-    public function testStackPopsLastValue() : void
+    public function test_stack_pops_last_value() : void
     {
         $result = new Stack(items: [1, 2, 3])->pop();
 
@@ -22,7 +22,7 @@ final class StructureFamilyTest extends TestCase
         $this->assertSame([1, 2], $result->second()->all());
     }
 
-    public function testQueueDequeuesFirstValue() : void
+    public function test_queue_dequeues_first_value() : void
     {
         $result = new Queue(items: [1, 2, 3])->dequeue();
 
@@ -30,14 +30,14 @@ final class StructureFamilyTest extends TestCase
         $this->assertSame([2, 3], $result->second()->all());
     }
 
-    public function testDequeWorksOnBothEnds() : void
+    public function test_deque_works_on_both_ends() : void
     {
         $deque = new Deque(items: [2])->pushFront(value: 1)->pushBack(value: 3);
 
         $this->assertSame([1, 2, 3], $deque->all());
     }
 
-    public function testPriorityQueueReturnsHighestPriorityFirst() : void
+    public function test_priority_queue_returns_highest_priority_first() : void
     {
         $result = new PriorityQueue()
             ->push(value: 'low', priority: 1)
@@ -47,14 +47,14 @@ final class StructureFamilyTest extends TestCase
         $this->assertSame('high', $result->first());
     }
 
-    public function testRingBufferDropsOldestValueWhenFull() : void
+    public function test_ring_buffer_drops_oldest_value_when_full() : void
     {
         $buffer = new RingBuffer(capacity: 2, items: [1, 2])->append(value: 3);
 
         $this->assertSame([2, 3], $buffer->all());
     }
 
-    public function testTreeAddsChildrenImmutably() : void
+    public function test_tree_adds_children_immutably() : void
     {
         $tree = new Tree(value: 'root')->addChild(child: new Tree(value: 'leaf'));
 

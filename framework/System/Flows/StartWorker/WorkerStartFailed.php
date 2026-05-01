@@ -6,6 +6,4 @@ namespace Avax\Framework\System\Flows\StartWorker;
 
 use RuntimeException;
 
-final class WorkerStartFailed extends RuntimeException
-{
-}
+final class WorkerStartFailed extends RuntimeException {}

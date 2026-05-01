@@ -11,7 +11,7 @@ final readonly class Min
 {
     public function __construct(
         public int|float $minimum,
-        public string|null $message = null,
+        public ?string $message = null,
     ) {}
 
     public function getMessage(string $property) : string

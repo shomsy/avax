@@ -8,8 +8,7 @@ final class LoadConfiguration
 {
     public function __construct(
         private readonly ConfigurationRepository $repository,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<string, mixed> $config

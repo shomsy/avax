@@ -15,7 +15,7 @@ final class DataTransferResultTest extends TestCase
     public function test_it_returns_created_object_when_result_is_successful() : void
     {
         // Arrange
-        $object = new stdClass();
+        $object = new stdClass;
 
         // Act
         $result = DataTransferResult::success(object: $object);
@@ -58,7 +58,7 @@ final class DataTransferResultTest extends TestCase
     public function test_it_throws_data_transfer_exception_when_failure_reason_is_requested_from_successful_result() : void
     {
         // Arrange
-        $result = DataTransferResult::success(object: new stdClass());
+        $result = DataTransferResult::success(object: new stdClass);
 
         // Assert
         $this->expectException(exception: DataTransferException::class);

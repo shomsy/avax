@@ -17,7 +17,7 @@ final class HttpContextTest extends TestCase
             'GET',
             'https://example.com:8443/demo?x=1',
             [
-                'User-Agent'    => 'TestAgent/1.0',
+                'User-Agent' => 'TestAgent/1.0',
                 'Authorization' => 'Bearer token',
             ],
             null,
@@ -39,11 +39,11 @@ final class HttpContextTest extends TestCase
         self::assertSame(['theme' => 'dark'], $context->cookies());
     }
 
-    private function globals(array $server = null, array $cookies = []) : GlobalsProviderInterface
+    private function globals(?array $server = null, array $cookies = []) : GlobalsProviderInterface
     {
         $server ??= [];
 
-        return new class ($server, $cookies) implements GlobalsProviderInterface {
+        return new class($server, $cookies) implements GlobalsProviderInterface {
             public function __construct(
                 private array $server,
                 private array $cookies,

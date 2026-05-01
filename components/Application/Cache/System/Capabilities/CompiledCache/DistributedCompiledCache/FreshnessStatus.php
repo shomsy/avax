@@ -15,10 +15,10 @@ final readonly class FreshnessStatus
 
     public function __construct(
         public string $entryName,
-        public bool   $isFresh,
+        public bool $isFresh,
         public string $reason,
         public Timestamp $timestamp,
-        public int    $sourceFilesMtime,
+        public int  $sourceFilesMtime,
         public int|false $compiledFileMtime,
     )
     {
@@ -43,15 +43,15 @@ final readonly class FreshnessStatus
     public function toArray() : array
     {
         return [
-            'entryName'         => $this->entryName,
-            'isFresh'           => $this->isFresh,
-            'reason'            => $this->reason,
+            'entryName'        => $this->entryName,
+            'isFresh'          => $this->isFresh,
+            'reason'           => $this->reason,
             'checkedAt' => $this->timestamp->seconds,
-            'sourceFilesMtime'  => $this->sourceFilesMtime,
+            'sourceFilesMtime' => $this->sourceFilesMtime,
             'compiledFileMtime' => $this->compiledFileMtime,
-            'isStale'           => $this->isStale(),
-            'isMissing'         => $this->isMissing(),
-            'compiledFileAge'   => $this->getCompiledFileAge(),
+            'isStale'          => $this->isStale(),
+            'isMissing'        => $this->isMissing(),
+            'compiledFileAge'  => $this->getCompiledFileAge(),
         ];
     }
 

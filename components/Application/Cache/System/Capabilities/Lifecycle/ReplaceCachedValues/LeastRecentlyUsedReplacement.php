@@ -9,13 +9,13 @@ use Override;
 final readonly class LeastRecentlyUsedReplacement implements ChooseCachedValueForReplacement
 {
     #[Override]
-    public function choose(array $entries) : string|null
+    public function choose(array $entries) : ?string
     {
         if ($entries === []) {
             return null;
         }
 
-        $oldest     = null;
+        $oldest         = null;
         $oldestTime = PHP_INT_MAX;
 
         foreach ($entries as $key => $lifecycle) {
@@ -23,7 +23,7 @@ final readonly class LeastRecentlyUsedReplacement implements ChooseCachedValueFo
 
             if ($accessedAt < $oldestTime) {
                 $oldestTime = $accessedAt;
-                $oldest     = $key;
+                $oldest = $key;
             }
         }
 

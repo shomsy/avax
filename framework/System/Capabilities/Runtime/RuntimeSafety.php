@@ -83,12 +83,12 @@ final class RuntimeSafety
      */
     public function reset() : array
     {
-        $reset    = [];
+        $reset = [];
         $failures = [];
 
         // Reset registered states via the registry
         $report = $this->stateResetRegistry->resetAll();
-        $reset  = $report->resetComponents();
+        $reset = $report->resetComponents();
 
         foreach ($report->failures() as $name => $exception) {
             $failures[$name] = $exception->getMessage();
@@ -113,8 +113,8 @@ final class RuntimeSafety
         }
 
         return [
-            'reset'            => $reset,
-            'failures'         => $failures,
+            'reset'    => $reset,
+            'failures' => $failures,
             'transactionLeaks' => $transactionLeaks,
         ];
     }

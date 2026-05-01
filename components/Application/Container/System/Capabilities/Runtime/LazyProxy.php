@@ -20,7 +20,7 @@ final class LazyProxy
         private readonly Closure $factory,
     )
     {
-        self::$instances ??= new WeakMap();
+        self::$instances ??= new WeakMap;
     }
 
     /**
@@ -90,7 +90,7 @@ final class LazyProxy
     {
         return [
             'serviceId' => $this->serviceId,
-            'resolved'  => isset(self::$instances[$this]),
+            'resolved' => isset(self::$instances[$this]),
         ];
     }
 }

@@ -15,7 +15,7 @@ final class RegisterStorage
     public function build() : Storage
     {
         return new Storage(
-            storage: new LocalStorage(),
+            storage: new LocalStorage,
         );
     }
 }

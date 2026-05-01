@@ -13,8 +13,8 @@ final class HttpBuilder
     public function build() : Http
     {
         return new Http(
-            new Router(),
-            new MiddlewarePipeline(),
+            new Router,
+            new MiddlewarePipeline,
         );
     }
 }

@@ -45,7 +45,7 @@ final class EventDrivenInvalidation implements InvalidationStrategy
 
     public function addRule(string $event, string $invalidationReason) : self
     {
-        $new                       = clone $this;
+        $new = clone $this;
         $new->eventMapping[$event] = $invalidationReason;
 
         return $new;

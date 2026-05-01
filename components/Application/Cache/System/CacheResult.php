@@ -10,20 +10,20 @@ class CacheResult
 {
     public readonly CacheResultState $cacheResultState;
 
-    public readonly CacheKey|null $cacheKey;
+    public readonly ?CacheKey $cacheKey;
 
     public function __construct(
         public readonly CacheResultState $cacheResultState,
-        public readonly mixed         $value,
-        public readonly CacheKey|null $cacheKey = null,
-        public readonly string|null   $message = null,
+        public readonly mixed     $value,
+        public readonly ?CacheKey $cacheKey = null,
+        public readonly ?string   $message = null,
     )
     {
         $this->cacheResultState = $cacheResultState;
-        $this->cacheKey         = $cacheKey;
+        $this->cacheKey = $cacheKey;
     }
 
-    public static function hit(mixed $value, CacheKey $cacheKey = null) : self
+    public static function hit(mixed $value, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: CacheResultState::HIT,
@@ -32,7 +32,7 @@ class CacheResult
         );
     }
 
-    public static function miss(CacheKey $cacheKey = null) : self
+    public static function miss(?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: CacheResultState::MISS,
@@ -41,7 +41,7 @@ class CacheResult
         );
     }
 
-    public static function expired(mixed $value, CacheKey $cacheKey = null) : self
+    public static function expired(mixed $value, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: CacheResultState::EXPIRED,
@@ -50,7 +50,7 @@ class CacheResult
         );
     }
 
-    public static function stale(mixed $value, CacheKey $cacheKey = null) : self
+    public static function stale(mixed $value, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: CacheResultState::STALE,
@@ -59,7 +59,7 @@ class CacheResult
         );
     }
 
-    public static function stored(bool $success, CacheKey $cacheKey = null) : self
+    public static function stored(bool $success, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: $success ? CacheResultState::STORED : CacheResultState::STORE_FAILED,
@@ -68,7 +68,7 @@ class CacheResult
         );
     }
 
-    public static function deleted(bool $success, CacheKey $cacheKey = null) : self
+    public static function deleted(bool $success, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state: $success ? CacheResultState::DELETED : CacheResultState::DELETE_FAILED,
@@ -85,7 +85,7 @@ class CacheResult
         );
     }
 
-    public static function error(string $message, CacheKey $cacheKey = null) : self
+    public static function error(string $message, ?CacheKey $cacheKey = null) : self
     {
         return new self(
             state  : CacheResultState::ERROR,

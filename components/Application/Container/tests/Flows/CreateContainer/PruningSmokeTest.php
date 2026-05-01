@@ -20,7 +20,7 @@ final class PrunedFlowEntry
 
 final class DeadPrunableService {}
 
-$cacheDir  = sys_get_temp_dir() . '/container-pruning-smoke-' . uniqid(prefix: '', more_entropy: true);
+$cacheDir = sys_get_temp_dir() . '/container-pruning-smoke-' . uniqid(prefix: '', more_entropy: true);
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: 'pruning-smoke',
@@ -37,8 +37,8 @@ $container->bind(abstract: PrunedFlowEntry::class, concrete: PrunedFlowEntry::cl
 
 $container->compileContainer(serviceIds: [PrunedFlowEntry::class, PrunedDependency::class]);
 
-$report        = $container->compileReport(serviceIds: [PrunedFlowEntry::class]);
-$deadSlice     = $container->forSlice(slice: 'flow.dead');
+$report    = $container->compileReport(serviceIds: [PrunedFlowEntry::class]);
+$deadSlice = $container->forSlice(slice: 'flow.dead');
 $deadSliceView = $deadSlice->debugSlice();
 
 assertTrue(condition: $report !== null, message: 'Strict pruning should still produce a compile report.');

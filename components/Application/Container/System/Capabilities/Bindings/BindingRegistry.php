@@ -33,8 +33,8 @@ final class BindingRegistry
         $abstract                  = $this->resolveAlias($abstract);
         $this->bindings[$abstract] = [
             'concrete' => $concrete ?? $abstract,
-            'shared'   => $shared,
-            'scoped'   => $scoped,
+            'shared' => $shared,
+            'scoped' => $scoped,
         ];
     }
 
@@ -52,7 +52,7 @@ final class BindingRegistry
 
     public function instance(string $abstract, object $instance) : void
     {
-        $abstract                   = $this->resolveAlias($abstract);
+        $abstract = $this->resolveAlias($abstract);
         $this->instances[$abstract] = $instance;
     }
 
@@ -86,7 +86,7 @@ final class BindingRegistry
         return isset($this->bindings[$abstract]) || isset($this->instances[$abstract]);
     }
 
-    public function getBinding(string $abstract) : array|null
+    public function getBinding(string $abstract) : ?array
     {
         $abstract = $this->resolveAlias($abstract);
 
@@ -102,9 +102,9 @@ final class BindingRegistry
 
     public function clear() : void
     {
-        $this->bindings  = [];
-        $this->aliases   = [];
-        $this->tags      = [];
+        $this->bindings = [];
+        $this->aliases  = [];
+        $this->tags     = [];
         $this->instances = [];
     }
 

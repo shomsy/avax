@@ -24,24 +24,23 @@ final class HttpFake
     /**
      * @var array{status: int, body: string, headers: array<string, list<string>>}|null
      */
-    private array|null $defaultResponse = null;
+    private ?array $defaultResponse = null;
 
     /**
      * @param array<string, mixed> $options
      *
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
-    public function get(string $url, array $options = []) : array
+    public function get(string $url, array $options = []): array
     {
         return $this->recordRequest('GET', $url, $options);
     }
 
     /**
      * @param array<string, mixed> $options
-     *
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
-    private function recordRequest(string $method, string $url, array $options) : array
+    private function recordRequest(string $method, string $url, array $options): array
     {
         $this->requests[] = ['method' => $method, 'url' => $url, 'options' => $options];
 
@@ -56,30 +55,27 @@ final class HttpFake
 
     /**
      * @param array<string, mixed> $options
-     *
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
-    public function post(string $url, array $options = []) : array
+    public function post(string $url, array $options = []): array
     {
         return $this->recordRequest('POST', $url, $options);
     }
 
     /**
      * @param array<string, mixed> $options
-     *
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
-    public function put(string $url, array $options = []) : array
+    public function put(string $url, array $options = []): array
     {
         return $this->recordRequest('PUT', $url, $options);
     }
 
     /**
      * @param array<string, mixed> $options
-     *
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
-    public function delete(string $url, array $options = []) : array
+    public function delete(string $url, array $options = []): array
     {
         return $this->recordRequest('DELETE', $url, $options);
     }
@@ -87,11 +83,11 @@ final class HttpFake
     /**
      * @param array<string, list<string>> $headers
      */
-    public function stub(string $method, string $url, int $status = 200, string $body = '', array $headers = []) : self
+    public function stub(string $method, string $url, int $status = 200, string $body = '', array $headers = []): self
     {
         $this->stubs["{$method}:{$url}"] = [
-            'status'  => $status,
-            'body'    => $body,
+            'status' => $status,
+            'body'   => $body,
             'headers' => $headers,
         ];
 
@@ -101,14 +97,14 @@ final class HttpFake
     /**
      * @param array<string, list<string>> $headers
      */
-    public function defaultResponse(int $status = 200, string $body = '', array $headers = []) : self
+    public function defaultResponse(int $status = 200, string $body = '', array $headers = []): self
     {
         $this->defaultResponse = ['status' => $status, 'body' => $body, 'headers' => $headers];
 
         return $this;
     }
 
-    public function assertSent(string $method, string $url = null) : self
+    public function assertSent(string $method, ?string $url = null): self
     {
         $found = false;
 
@@ -135,7 +131,7 @@ final class HttpFake
         return $this;
     }
 
-    public function assertNotSent(string $method, string $url = null) : self
+    public function assertNotSent(string $method, ?string $url = null): self
     {
         foreach ($this->requests as $request) {
             if (strtoupper($request['method']) === strtoupper($method)) {
@@ -154,7 +150,7 @@ final class HttpFake
         return $this;
     }
 
-    public function assertSentCount(int $count) : self
+    public function assertSentCount(int $count): self
     {
         $actual = count($this->requests);
 
@@ -174,15 +170,15 @@ final class HttpFake
     /**
      * @return list<array{method: string, url: string, options: array<string, mixed>}>
      */
-    public function requests() : array
+    public function requests(): array
     {
         return $this->requests;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
-        $this->requests        = [];
-        $this->stubs           = [];
+        $this->requests = [];
+        $this->stubs = [];
         $this->defaultResponse = null;
     }
 }

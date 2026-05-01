@@ -26,7 +26,7 @@ class FileLoader implements ConfigLoader
      * Throws exceptions for unsupported file formats and invalid configurations.
      */
     #[Override]
-    public function loadConfigFile(string $filePath) : array
+    public function loadConfigFile(string $filePath): array
     {
         // Ensure the file exists before attempting to load it.
         $this->ensureFileExists(filePath: $filePath);
@@ -54,7 +54,7 @@ class FileLoader implements ConfigLoader
      *
      * @throws RuntimeException if the file does not exist.
      */
-    private function ensureFileExists(string $filePath) : void
+    private function ensureFileExists(string $filePath): void
     {
         if (! file_exists(filename: $filePath)) {
             throw new RuntimeException(message: 'Configuration file not found: ' . $filePath);
@@ -68,7 +68,7 @@ class FileLoader implements ConfigLoader
      *
      * @return string The file extension.
      */
-    private function getFileExtension(string $filePath) : string
+    private function getFileExtension(string $filePath): string
     {
         return pathinfo(path: $filePath, flags: PATHINFO_EXTENSION);
     }
@@ -82,7 +82,7 @@ class FileLoader implements ConfigLoader
      *
      * Assumes the PHP file returns an array.
      */
-    private function loadPhpFile(string $filePath) : array
+    private function loadPhpFile(string $filePath): array
     {
         return require $filePath;
     }
@@ -96,13 +96,13 @@ class FileLoader implements ConfigLoader
      *
      * @throws RuntimeException if the JSON is invalid.
      */
-    private function loadJsonFile(string $filePath) : array
+    private function loadJsonFile(string $filePath): array
     {
         $config = json_decode(json: file_get_contents(filename: $filePath), associative: true);
 
         // Check for and handle JSON decoding errors.
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException(message: 'Invalid JSON format in file: ' . $filePath);
+            throw new RuntimeException(message: 'Invalid JSON format in file: '.$filePath);
         }
 
         return $config;
@@ -111,15 +111,15 @@ class FileLoader implements ConfigLoader
     /**
      * Ensure the given configuration is an array.
      *
-     * @param mixed $config The loaded configuration data.
+     * @param mixed  $config   The loaded configuration data.
      * @param string $filePath The path to the configuration file.
      *
      * @throws RuntimeException if the configuration is not an array.
      */
-    private function ensureIsArray(mixed $config, string $filePath) : void
+    private function ensureIsArray(mixed $config, string $filePath): void
     {
         if (! is_array(value: $config)) {
-            throw new RuntimeException(message: 'Invalid configuration format in file: ' . $filePath);
+            throw new RuntimeException(message: 'Invalid configuration format in file: '.$filePath);
         }
     }
 }

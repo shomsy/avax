@@ -20,7 +20,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
 {
     private array $namedCaches = [];
 
-    private string|null $compiledCacheDirectory = null;
+    private ?string $compiledCacheDirectory = null;
 
     #[Override]
     public function register() : void
@@ -30,7 +30,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
         }
 
         $this->container->singleton(abstract: CacheRegistry::class, concrete: function () : CacheRegistry {
-            $cacheRegistry = new CacheRegistry();
+            $cacheRegistry = new CacheRegistry;
 
             foreach ($this->namedCaches as $name => $config) {
                 $cacheRegistry->register($name, $this->buildNamedCache(name: $name, config: $config));
@@ -58,7 +58,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
         $this->container->singleton(abstract: CacheContract::class, concrete: static fn ($app) => $app->get(id: CacheRegistry::class)->default());
 
         if ($this->compiledCacheDirectory !== null) {
-            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: fn () : CompiledCacheContract => (new BuildCompiledCache())->inDirectory(directory: $this->compiledCacheDirectory));
+            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: fn () : CompiledCacheContract => (new BuildCompiledCache)->inDirectory(directory: $this->compiledCacheDirectory));
         }
 
         Cache::use(cache: $this->container->get(id: CacheContract::class));
@@ -66,7 +66,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
 
     private function buildNamedCache(string $name, array $config) : CacheContract
     {
-        $buildCache = new BuildCache();
+        $buildCache = new BuildCache;
         $cacheConfiguration = new CacheConfiguration(
             name      : $name,
             defaultTtl: is_int($config['ttl'] ?? null) ? $config['ttl'] : 3600,
@@ -76,7 +76,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
             'in_memory' => $buildCache->inMemory(
                 config: $cacheConfiguration,
             ),
-            'file'  => $buildCache->inDirectory(
+            'file' => $buildCache->inDirectory(
                 directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir() . '/cache_' . $name,
                 config   : $cacheConfiguration,
             ),

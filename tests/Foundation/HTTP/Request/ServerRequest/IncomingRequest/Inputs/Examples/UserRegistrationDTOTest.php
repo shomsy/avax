@@ -10,8 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 final class UserRegistrationDTOTest extends TestCase
 {
-    /**
-     */
     public function test_valid_data_hydrates_successfully(): void
     {
         $dto = new UserRegistrationDTO(data: [
@@ -27,8 +25,6 @@ final class UserRegistrationDTOTest extends TestCase
         $this->assertSame(expected: 25, actual: $dto->age);
     }
 
-    /**
-     */
     public function test_validates_email_format(): void
     {
         $this->expectException(exception: DTOValidationException::class);
@@ -40,8 +36,6 @@ final class UserRegistrationDTOTest extends TestCase
         ]);
     }
 
-    /**
-     */
     public function test_validates_password_min_length(): void
     {
         $this->expectException(exception: DTOValidationException::class);
@@ -53,8 +47,6 @@ final class UserRegistrationDTOTest extends TestCase
         ]);
     }
 
-    /**
-     */
     public function test_validates_password_complexity(): void
     {
         $this->expectException(exception: DTOValidationException::class);
@@ -66,8 +58,6 @@ final class UserRegistrationDTOTest extends TestCase
         ]);
     }
 
-    /**
-     */
     public function test_validates_age_minimum(): void
     {
         $this->expectException(exception: DTOValidationException::class);
@@ -80,8 +70,6 @@ final class UserRegistrationDTOTest extends TestCase
         ]);
     }
 
-    /**
-     */
     public function test_optional_phone_is_nullable(): void
     {
         $dto = new UserRegistrationDTO(data: [
@@ -93,8 +81,6 @@ final class UserRegistrationDTOTest extends TestCase
         $this->assertNull(actual: $dto->phone);
     }
 
-    /**
-     */
     public function test_age_has_default_value(): void
     {
         $dto = new UserRegistrationDTO(data: [
@@ -106,8 +92,6 @@ final class UserRegistrationDTOTest extends TestCase
         $this->assertSame(expected: 18, actual: $dto->age);
     }
 
-    /**
-     */
     public function test_collects_all_validation_errors(): void
     {
         try {

@@ -28,12 +28,12 @@ final class ConfigValidator
      *
      * @return list<ConfigSchemaViolation>
      */
-    public function validateAll(array $allConfig) : array
+    public function validateAll(array $allConfig): array
     {
         $violations = [];
 
         foreach ($this->schemas as $name => $schema) {
-            $section    = $allConfig[$name] ?? [];
+            $section = $allConfig[$name] ?? [];
             $violations = [...$violations, ...$this->validate($name, $section)];
         }
 
@@ -47,7 +47,7 @@ final class ConfigValidator
      *
      * @return list<ConfigSchemaViolation>
      */
-    public function validate(string $schemaName, array $config) : array
+    public function validate(string $schemaName, array $config): array
     {
         if (! isset($this->schemas[$schemaName])) {
             return [new ConfigSchemaViolation(
@@ -108,7 +108,7 @@ final class ConfigValidator
     /**
      * @return list<ConfigSchemaViolation>
      */
-    private function validateType(string $key, mixed $value, ConfigSchemaField $field) : array
+    private function validateType(string $key, mixed $value, ConfigSchemaField $field): array
     {
         $violations = [];
 
@@ -121,7 +121,7 @@ final class ConfigValidator
             ConfigSchemaField::TYPE_ARRAY            => is_array($value),
             ConfigSchemaField::TYPE_URL => is_string($value) && filter_var($value, FILTER_VALIDATE_URL) !== false,
             ConfigSchemaField::TYPE_EMAIL            => is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false,
-            default                                  => true,
+            default => true,
         };
 
         if (! $isValid) {

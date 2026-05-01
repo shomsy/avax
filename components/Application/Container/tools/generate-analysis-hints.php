@@ -12,7 +12,7 @@ if ($argc < 3) {
 require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
 
 $fixturePath = (string) ($argv[1] ?? '');
-$outputDir   = rtrim(string: (string) ($argv[2] ?? ''), characters: '/');
+$outputDir = rtrim(string: (string) ($argv[2] ?? ''), characters: '/');
 
 if (! is_file(filename: $fixturePath)) {
     fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] was not found.\n");
@@ -34,13 +34,13 @@ if (! $loaded instanceof ContainerInterface) {
     exit(1);
 }
 
-$container  = $loaded;
-$graph      = $container->debugGraph();
+$container    = $loaded;
+$graph        = $container->debugGraph();
 $serviceIds = array_keys(array: $graph['graph'] ?? []);
 sort(array: $serviceIds);
 
 $runtimeInputs = [];
-$conditionals  = [];
+$conditionals = [];
 foreach ($serviceIds as $serviceId) {
     $plan                      = $container->debugPlan(id: $serviceId);
     $runtimeInputs[$serviceId] = array_filter(
@@ -69,14 +69,14 @@ foreach ($serviceIds as $serviceId) {
             |> array_values(...);
 
     $description = $container->describeService(id: $serviceId);
-    $conditions  = $description['ownership'] ?? [];
+    $conditions                = $description['ownership'] ?? [];
     if (($description['conditions']['active'] ?? true) === false || ($conditions['profiles'] ?? []) !== [] || ($conditions['flags'] ?? []) !== [] || ($conditions['tenants'] ?? []) !== [] || ($conditions['regions'] ?? []) !== [] || ($conditions['modes'] ?? []) !== []) {
         $conditionals[$serviceId] = [
             'profiles' => $conditions['profiles'] ?? [],
-            'flags'   => $conditions['flags'] ?? [],
+            'flags' => $conditions['flags'] ?? [],
             'tenants' => $conditions['tenants'] ?? [],
             'regions' => $conditions['regions'] ?? [],
-            'modes'   => $conditions['modes'] ?? [],
+            'modes' => $conditions['modes'] ?? [],
             'fallback' => (bool) ($conditions['fallback'] ?? false),
         ];
     }
@@ -84,16 +84,16 @@ foreach ($serviceIds as $serviceId) {
 
 $payload = [
     'schemaVersion' => 1,
-    'serviceIds'    => $serviceIds,
-    'sliceExports'  => array_map(
+    'serviceIds'   => $serviceIds,
+    'sliceExports' => array_map(
         callback: static fn (array $slice) : array => $slice['exports'] ?? [],
         array   : $graph['slices'] ?? [],
     ),
-    'sliceImports'  => array_map(
+    'sliceImports' => array_map(
         callback: static fn (array $slice) : array => $slice['imports'] ?? [],
         array   : $graph['slices'] ?? [],
     ),
-    'groups'        => array_map(
+    'groups'       => array_map(
         callback: static fn (array $items) : array => array_map(
             callback: static fn (array $item) : string => (string) ($item['serviceId'] ?? ''),
             array   : $items,
@@ -101,7 +101,7 @@ $payload = [
         array   : $graph['groups'] ?? [],
     ),
     'runtimeInputs' => $runtimeInputs,
-    'conditionals'  => $conditionals,
+    'conditionals' => $conditionals,
 ];
 
 if (! is_dir(filename: $outputDir) && ! mkdir(directory: $outputDir, permissions: 0o775, recursive: true) && ! is_dir(filename: $outputDir)) {

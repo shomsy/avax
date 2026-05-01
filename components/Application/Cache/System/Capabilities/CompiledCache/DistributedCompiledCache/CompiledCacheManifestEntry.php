@@ -23,15 +23,15 @@ final readonly class CompiledCacheManifestEntry
      * @param string|null  $frameworkVersion Framework version used for compilation
      */
     public function __construct(
-        public string    $name,
-        public string    $compiledPath,
-        public array     $sourceFiles,
-        public string    $fingerprint,
+        public string  $name,
+        public string  $compiledPath,
+        public array   $sourceFiles,
+        public string  $fingerprint,
         public Timestamp $createdAt,
         public Timestamp $updatedAt,
-        public string|null $type = null,
-        public string|null $phpVersion = null,
-        public string|null $frameworkVersion = null,
+        public ?string $type = null,
+        public ?string $phpVersion = null,
+        public ?string $frameworkVersion = null,
     ) {}
 
     /**
@@ -82,14 +82,14 @@ final readonly class CompiledCacheManifestEntry
     public function toArray() : array
     {
         return [
-            'name'             => $this->name,
-            'compiledPath'     => $this->compiledPath,
-            'sourceFiles'      => $this->sourceFiles,
-            'fingerprint'      => $this->fingerprint,
-            'createdAt'        => $this->createdAt->seconds,
-            'updatedAt'        => $this->updatedAt->seconds,
-            'type'             => $this->type,
-            'phpVersion'       => $this->phpVersion,
+            'name'         => $this->name,
+            'compiledPath' => $this->compiledPath,
+            'sourceFiles'  => $this->sourceFiles,
+            'fingerprint'  => $this->fingerprint,
+            'createdAt'    => $this->createdAt->seconds,
+            'updatedAt'    => $this->updatedAt->seconds,
+            'type'         => $this->type,
+            'phpVersion'   => $this->phpVersion,
             'frameworkVersion' => $this->frameworkVersion,
         ];
     }

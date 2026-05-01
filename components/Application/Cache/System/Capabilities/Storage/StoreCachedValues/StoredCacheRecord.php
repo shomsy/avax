@@ -13,10 +13,10 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 final readonly class StoredCacheRecord
 {
     public function __construct(
-        public mixed       $value,
+        public mixed   $value,
         public CachedValueLifecycle $cachedValueLifecycle,
-        public string|null $serializedData = null,
-        public string|null $format = null,
+        public ?string $serializedData = null,
+        public ?string $format = null,
     ) {}
 
     /**
@@ -25,10 +25,10 @@ final readonly class StoredCacheRecord
      * @param mixed    $value The cached value
      * @param int|null $ttl   Time-to-live in seconds (null for no expiration)
      */
-    public static function create(mixed $value, int $ttl = null, Clock $clock = null) : self
+    public static function create(mixed $value, ?int $ttl = null, ?Clock $clock = null) : self
     {
-        $clock ??= new SystemClock();
-        $now       = $clock->now();
+        $clock ??= new SystemClock;
+        $now   = $clock->now();
         $expiresAt = $ttl !== null ? $now->add(Duration::ofSeconds($ttl)) : Timestamp::fromUnixTime(PHP_INT_MAX);
 
         return new self(

@@ -18,21 +18,18 @@ use Throwable;
 final class ResolveDependencies
 {
     /**
-     * @param array $parameters
      * @param array<string, mixed> $overrides
-     * @param ResolveDependency $resolver
-     * @param ResolveRequest|null $request
      *
      * @return array<int, mixed>
+     *
      * @throws Throwable
      */
     public function resolveParameters(
-        array          $parameters,
-        array          $overrides,
+        array             $parameters,
+        array             $overrides,
         ResolveDependency $resolver,
-        ResolveRequest $request = null,
-    ) : array
-    {
+        ?ResolveRequest   $request = null,
+    ) : array {
         return $this->resolvePlan(
             plan     : $this->createPlan(parameters: $parameters),
             overrides: $overrides,
@@ -45,16 +42,16 @@ final class ResolveDependencies
      * @param array<string, mixed> $overrides
      *
      * @return array<int, mixed>
+     *
      * @throws ContainerException
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan $plan,
-        array       $overrides,
+        ResolvePlan       $plan,
+        array $overrides,
         ResolveDependency $resolver,
-        ResolveRequest|null $request,
-    ) : array
-    {
+        ?ResolveRequest   $request,
+    ): array {
         $resolved = [];
 
         foreach ($plan->parameters as $parameter) {
@@ -72,20 +69,16 @@ final class ResolveDependencies
     /**
      * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default:
      *                            string, allowsNull: bool} $parameter
-     * @param array<string, mixed> $overrides
-     * @param ResolveDependency $resolver
-     * @param ResolveRequest|null $request
+     * @param array<string, mixed>  $overrides
      *
-     * @return mixed
      * @throws Throwable
      */
     private function resolveCompiledParameter(
         array $parameter,
         array $overrides,
         ResolveDependency $resolver,
-        ResolveRequest|null $request,
-    ) : mixed
-    {
+        ?ResolveRequest   $request,
+    ): mixed {
         if (array_key_exists(key: $parameter['name'], array: $overrides)) {
             return $overrides[$parameter['name']];
         }
@@ -123,9 +116,9 @@ final class ResolveDependencies
     }
 
     /**
-     * @param list<ReflectionParameter> $parameters
+     * @param list<ReflectionParameter>  $parameters
      */
-    public function createPlan(array $parameters) : ResolvePlan
+    public function createPlan(array $parameters): ResolvePlan
     {
         $compiled = [];
 
@@ -151,7 +144,7 @@ final class ResolveDependencies
     /**
      * Infers one service id from the parameter attribute or object type.
      */
-    private function serviceIdFor(ReflectionParameter $parameter) : string|null
+    private function serviceIdFor(ReflectionParameter $parameter): ?string
     {
         if ($parameter->getAttributes(name: RuntimeInput::class) !== []) {
             return null;
@@ -180,12 +173,12 @@ final class ResolveDependencies
         return null;
     }
 
-    private function sourceFor(ReflectionParameter $parameter) : string
+    private function sourceFor(ReflectionParameter $parameter): string
     {
         return $this->serviceIdFor(parameter: $parameter) !== null ? 'service' : 'runtime';
     }
 
-    private function inputNameFor(ReflectionParameter $parameter) : string
+    private function inputNameFor(ReflectionParameter $parameter): string
     {
         $attributes = $parameter->getAttributes(name: RuntimeInput::class);
         if ($attributes === []) {

@@ -16,7 +16,7 @@ final class CacheClusterTest extends TestCase
 {
     public function test_add_node_registers_healthy_node() : void
     {
-        $cacheCluster = new CacheCluster();
+        $cacheCluster = new CacheCluster;
 
         $cacheCluster->addNode(node: CacheNode::create(id: 'node_a'));
 
@@ -81,7 +81,7 @@ final class CacheClusterTest extends TestCase
 
     public function test_unhealthy_node_not_selected_for_reads() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_b'));
 
@@ -101,7 +101,7 @@ final class CacheClusterTest extends TestCase
 
     public function test_remove_node_reduces_count() : void
     {
-        $cacheCluster = new CacheCluster();
+        $cacheCluster = new CacheCluster;
 
         $cacheCluster->addNode(node: CacheNode::create(id: 'node_a'));
         $cacheCluster->addNode(node: CacheNode::create(id: 'node_b'));
@@ -115,10 +115,10 @@ final class CacheClusterTest extends TestCase
 
     public function test_node_addition_affects_routing() : void
     {
-        $consistentHashRing = new ConsistentHashRing();
+        $consistentHashRing = new ConsistentHashRing;
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
 
-        $cacheCluster = new CacheCluster();
+        $cacheCluster = new CacheCluster;
         $cacheCluster->addNode(node: CacheNode::create(id: 'node_a'));
 
         $nodeBefore = $cacheCluster->getNodeForKey(key: CacheKey::create(key: 'test_key'));

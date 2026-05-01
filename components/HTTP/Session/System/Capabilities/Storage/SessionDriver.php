@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
 final class SessionDriver
 {
-    private static SessionStoreInterface|null $store = null;
+    private static ?SessionStoreInterface $store = null;
 
     public static function setStore(SessionStoreInterface $store) : void
     {
@@ -54,8 +54,8 @@ final class SessionDriver
             'redis'    => new RedisSessionStore(config: $config['redis'] ?? []),
             'database' => isset($config['database']['pdo'])
                 ? new DatabaseSessionStore(pdo: $config['database']['pdo'], table: $config['database']['table'] ?? 'sessions')
-                : new ArraySessionStore(),
-            'array' => new ArraySessionStore(),
+                : new ArraySessionStore,
+            'array'    => new ArraySessionStore,
             default => new FileSessionStore(config: $config['file'] ?? []),
         };
     }

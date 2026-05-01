@@ -8,8 +8,7 @@ final class TraceId
 {
     public function __construct(
         public readonly string $value,
-    ) {
-    }
+    ) {}
 
     public static function generate() : self
     {

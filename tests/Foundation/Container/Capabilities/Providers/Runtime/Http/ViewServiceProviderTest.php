@@ -43,7 +43,7 @@ final class ViewBaseRegisterDependencyTest extends TestCase
             $container
                 ->method('get')
                 ->with('config')
-                ->willReturn(value: new Settings());
+                ->willReturn(value: new Settings);
 
             $provider = new ViewBaseRegisterDependency(app: $container);
             $provider->register();

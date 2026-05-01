@@ -14,13 +14,6 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class CheckPhpSyntax
 {
-    private PreCommitConfig $config;
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * @param array<string, mixed> $context
      *
@@ -33,7 +26,7 @@ final class CheckPhpSyntax
         $basePath = $context['base_path'] ?? getcwd();
 
         foreach ($files as $file) {
-            if (! str_ends_with(strtolower($file), '.php')) {
+            if (! str_ends_with(strtolower((string) $file), '.php')) {
                 continue;
             }
 

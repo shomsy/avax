@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\PreCommit\Validators;
 
 use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
+use Override;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -55,10 +56,10 @@ class ScriptRunnerValidator extends BaseValidator
             ],
         ];
 
-    private string $toolingPath;
+    private readonly string $toolingPath;
+
     /** @var list<string> */
     private array $enabledScripts;
-    private bool  $discoverScripts;
 
     /**
      * @param list<string>|null $enabledScripts Scripts to enable, null for all discovered
@@ -66,13 +67,12 @@ class ScriptRunnerValidator extends BaseValidator
     public function __construct(
         ?string $toolingPath = null,
         ?array  $enabledScripts = null,
-        bool    $discoverScripts = true
+        private bool $discoverScripts = true
     )
     {
         parent::__construct('ScriptRunnerValidator');
         $this->toolingPath     = $toolingPath ?? (getcwd() . '/tooling');
         $this->enabledScripts  = $enabledScripts ?? [];
-        $this->discoverScripts = $discoverScripts;
     }
 
     public function getName() : string
@@ -94,7 +94,7 @@ class ScriptRunnerValidator extends BaseValidator
 
         $scripts = $this->discoverScripts();
 
-        if (empty($scripts)) {
+        if ($scripts === []) {
             $messages[] = "No scripts found in tooling/ directory";
 
             return new ValidationResult(
@@ -138,7 +138,6 @@ class ScriptRunnerValidator extends BaseValidator
     private function discoverScripts() : array
     {
         $scripts    = [];
-        $extensions = array_column(self::$scriptExecutors, 'extension');
 
         // Scan tooling directory recursively
         $iterator = new RecursiveIteratorIterator(
@@ -158,7 +157,7 @@ class ScriptRunnerValidator extends BaseValidator
             $extension = $file->getExtension();
 
             // Check if file extension matches our executors
-            $executorType = $this->matchExtension($extension, $pathname);
+            $executorType = $this->matchExtension($extension);
             if ($executorType === null) {
                 continue;
             }
@@ -166,7 +165,7 @@ class ScriptRunnerValidator extends BaseValidator
             $scriptName = basename($pathname);
 
             // Filter by enabled scripts if specified
-            if (! empty($this->enabledScripts) && ! in_array($scriptName, $this->enabledScripts)) {
+            if ($this->enabledScripts !== [] && ! in_array($scriptName, $this->enabledScripts)) {
                 continue;
             }
 
@@ -188,7 +187,7 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * Match file extension to executor type
      */
-    private function matchExtension(string $extension, string $pathname) : ?string
+    private function matchExtension(string $extension) : ?string
     {
         foreach (self::$scriptExecutors as $type => $config) {
             $ext = ltrim($config['extension'], '.');
@@ -213,13 +212,7 @@ class ScriptRunnerValidator extends BaseValidator
             '/\.md$/',
         ];
 
-        foreach ($skipPatterns as $pattern) {
-            if (preg_match($pattern, $scriptName)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($skipPatterns, fn ($pattern) : int|false => preg_match($pattern, $scriptName));
     }
 
     /**
@@ -235,7 +228,7 @@ class ScriptRunnerValidator extends BaseValidator
 
         if (! isset(self::$scriptExecutors[$scriptType])) {
             return ValidationResult::fail(
-                "Unknown script type: {$scriptType}",
+                'Unknown script type: ' . $scriptType,
                 'error',
                 $scriptName,
                 null,
@@ -295,7 +288,7 @@ class ScriptRunnerValidator extends BaseValidator
 
                 return [
                     'stdout'    => $stdout,
-                    'stderr'    => "Script execution timed out after {$timeout}s",
+                    'stderr' => sprintf('Script execution timed out after %ds', $timeout),
                     'exit_code' => 124,
                 ];
             }
@@ -395,6 +388,7 @@ class ScriptRunnerValidator extends BaseValidator
                         if (strlen($msg) > 100) {
                             $msg = substr($msg, 0, 97) . '...';
                         }
+
                         $messages[] = sprintf("[%s] %s", $scriptName, $msg);
                         $foundLine  = true;
                         break;
@@ -463,6 +457,7 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * @param array<string, mixed> $context
      */
+    #[Override]
     public function supports(array $context) : bool
     {
         return is_dir($this->toolingPath);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\PreCommit\Validators;
 
 use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
+use Override;
 
 /**
  * Legacy Code Validator
@@ -48,20 +49,9 @@ class LegacyCodeValidator extends BaseValidator
             'bootstrap/compat.php',
         ];
 
-    /** @var array<string> */
-    private array $cleanupSuggestions
-        = [
-            'legacy_files_to_delete' => 'files marked for deletion',
-            'shriomove'              => 'temporary move directory',
-            '.shriomove'             => 'hidden temporary move directory',
-        ];
-
-    private ?string $compatPath;
-
-    public function __construct(?string $basePath = null)
+    public function __construct()
     {
         parent::__construct('LegacyCodeValidator');
-        $this->compatPath = $basePath ? $basePath . '/components/compat.php' : null;
     }
 
     public function getName() : string
@@ -91,10 +81,10 @@ class LegacyCodeValidator extends BaseValidator
             }
 
             // Check content for legacy patterns
-            if (preg_match('/\.(php|js|ts|py|go|sh)$/', $file)) {
+            if (preg_match('/\.(php|js|ts|py|go|sh)$/', (string) $file)) {
                 $content = file_get_contents($filePath);
                 if ($content !== false) {
-                    $contentResult = $this->checkLegacyContent($filePath, $file, $content);
+                    $contentResult = $this->checkLegacyContent($file, $content);
                     if (! $contentResult->isPassed()) {
                         $allPassed = false;
                         $messages  = array_merge($messages, $contentResult->getMessages());
@@ -126,7 +116,7 @@ class LegacyCodeValidator extends BaseValidator
             $messages  = array_merge($messages, $cleanupResult->getMessages());
         }
 
-        $result = new ValidationResult(
+        $validationResult = new ValidationResult(
             $allPassed,
             $messages,
             $allPassed ? 'info' : 'warning',
@@ -135,7 +125,7 @@ class LegacyCodeValidator extends BaseValidator
             'LEGACY_CODE_001'
         );
 
-        return $this->combineWithNext($context, $result);
+        return $this->combineWithNext($context, $validationResult);
     }
 
     /**
@@ -146,14 +136,14 @@ class LegacyCodeValidator extends BaseValidator
         $messages  = [];
         $allPassed = true;
 
-        foreach ($this->legacyFolders as $folder) {
-            if (str_contains($filePath, '/' . $folder . '/') ||
-                str_contains($filePath, '/' . $folder . '\\')) {
+        foreach ($this->legacyFolders as $legacyFolder) {
+            if (str_contains($filePath, '/' . $legacyFolder . '/') ||
+                str_contains($filePath, '/' . $legacyFolder . '\\')) {
                 $allPassed  = false;
                 $messages[] = sprintf(
                     "File '%s' is in legacy folder '%s'",
                     $relativePath,
-                    $folder
+                    $legacyFolder
                 );
             }
         }
@@ -171,17 +161,18 @@ class LegacyCodeValidator extends BaseValidator
     /**
      * Check content for legacy patterns
      */
-    private function checkLegacyContent(string $filePath, string $relativePath, string $content) : ValidationResult
+    private function checkLegacyContent(string $relativePath, string $content) : ValidationResult
     {
         $messages  = [];
         $allPassed = true;
 
         foreach ($this->legacyPatterns as $pattern => $description) {
-            if (stripos($content, $pattern) !== false) {
+            if (stripos($content, (string) $pattern) !== false) {
                 // Skip if in comment
                 if ($this->isInComment($content, $pattern)) {
                     continue;
                 }
+
                 $allPassed  = false;
                 $messages[] = sprintf(
                     "File '%s' %s: '%s'",
@@ -311,15 +302,15 @@ class LegacyCodeValidator extends BaseValidator
         // Check for shriomove and other temporary folders
         $foldersToCheck = ['shriomove', '.shriomove', 'tmp', 'Temp', 'temp'];
 
-        foreach ($foldersToCheck as $folder) {
-            $folderPath = $basePath . '/' . $folder;
+        foreach ($foldersToCheck as $folderToCheck) {
+            $folderPath     = $basePath . '/' . $folderToCheck;
             if (is_dir($folderPath)) {
                 $allPassed = false;
                 // Count files in folder
                 $fileCount = count(glob($folderPath . '/*') ?: []);
                 $messages[] = sprintf(
                     "Legacy folder '%s' exists with %d files - consider cleaning up",
-                    $folder,
+                    $folderToCheck,
                     $fileCount
                 );
             }
@@ -377,11 +368,8 @@ class LegacyCodeValidator extends BaseValidator
         if ($lastLineComment !== false && ($lastNewline === false || $lastLineComment > $lastNewline)) {
             return true;
         }
-        if ($lastHashComment !== false && ($lastNewline === false || $lastHashComment > $lastNewline)) {
-            return true;
-        }
 
-        return false;
+        return $lastHashComment !== false && ($lastNewline === false || $lastHashComment > $lastNewline);
     }
 
     /**
@@ -396,6 +384,7 @@ class LegacyCodeValidator extends BaseValidator
         return $this;
     }
 
+    #[Override]
     public function supports(array $context) : bool
     {
         return ! empty($context['staged_files'] ?? []);

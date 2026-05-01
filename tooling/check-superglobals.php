@@ -58,7 +58,7 @@ foreach ($scanRoots as $scanRoot) {
             continue;
         }
 
-        if (strtolower(string: (string) $file->getExtension()) !== 'php') {
+        if (strtolower(string: $file->getExtension()) !== 'php') {
             continue;
         }
 
@@ -78,10 +78,12 @@ foreach ($scanRoots as $scanRoot) {
         }
 
         foreach (token_get_all(code: $content) as $token) {
-            if (! is_array(value: $token) || $token[0] !== T_VARIABLE) {
+            if (! is_array(value: $token)) {
                 continue;
             }
-
+            if ($token[0] !== T_VARIABLE) {
+                continue;
+            }
             foreach ($patterns as $pattern) {
                 if ($token[1] === $pattern) {
                     $violations[] = sprintf('%s:%d uses %s', $relativePath, $token[2], $pattern);

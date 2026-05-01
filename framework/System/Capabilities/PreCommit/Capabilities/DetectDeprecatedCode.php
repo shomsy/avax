@@ -15,19 +15,12 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class DetectDeprecatedCode
 {
-    private PreCommitConfig $config;
-
     /** @var array<string, string> */
     private array $deprecatedPatterns
         = [
             '/\$this->validate\(/'    => 'uses $this->validate() (deprecated)',
             '/\$this->validateAll\(/' => 'uses $this->validateAll() (deprecated)',
         ];
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * @param array<string, mixed> $context
@@ -41,7 +34,7 @@ final class DetectDeprecatedCode
         $basePath = $context['base_path'] ?? getcwd();
 
         foreach ($files as $file) {
-            if (! str_ends_with(strtolower($file), '.php')) {
+            if (! str_ends_with(strtolower((string) $file), '.php')) {
                 continue;
             }
 
@@ -60,7 +53,7 @@ final class DetectDeprecatedCode
                     $issues[] = new PreCommitIssue(
                         'DetectDeprecatedCode',
                         PreCommitIssue::SEVERITY_WARNING,
-                        "Deprecated pattern: {$description}",
+                        'Deprecated pattern: ' . $description,
                         $file,
                         null,
                         'DEPRECATED_PATTERN'

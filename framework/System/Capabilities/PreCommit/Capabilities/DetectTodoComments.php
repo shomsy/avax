@@ -15,13 +15,6 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class DetectTodoComments
 {
-    private PreCommitConfig $config;
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * @param array<string, mixed> $context
      *
@@ -34,7 +27,7 @@ final class DetectTodoComments
         $basePath = $context['base_path'] ?? getcwd();
 
         foreach ($files as $file) {
-            if (! str_ends_with(strtolower($file), '.php')) {
+            if (! str_ends_with(strtolower((string) $file), '.php')) {
                 continue;
             }
 
@@ -49,20 +42,15 @@ final class DetectTodoComments
             }
 
             // Check for TODO/FIXME/NOTE/HACK (excluding our own .agents dir)
-            if (strpos($file, '.agents') === false && strpos($file, '/tests/') === false) {
-                if (stripos($content, 'TODO') !== false ||
-                    stripos($content, 'FIXME') !== false ||
-                    stripos($content, 'NOTE:') !== false ||
-                    stripos($content, 'HACK') !== false) {
-                    $issues[] = new PreCommitIssue(
-                        'DetectTodoComments',
-                        PreCommitIssue::SEVERITY_WARNING,
-                        'File contains TODO/FIXME/NOTE/HACK comments',
-                        $file,
-                        null,
-                        'TODO_COMMENT'
-                    );
-                }
+            if (! str_contains((string) $file, '.agents') && ! str_contains((string) $file, '/tests/') && (stripos($content, 'TODO') !== false || stripos($content, 'FIXME') !== false || stripos($content, 'NOTE:') !== false || stripos($content, 'HACK') !== false)) {
+                $issues[] = new PreCommitIssue(
+                    'DetectTodoComments',
+                    PreCommitIssue::SEVERITY_WARNING,
+                    'File contains TODO/FIXME/NOTE/HACK comments',
+                    $file,
+                    null,
+                    'TODO_COMMENT'
+                );
             }
         }
 

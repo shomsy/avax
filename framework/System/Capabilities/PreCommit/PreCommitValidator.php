@@ -26,9 +26,12 @@ use Avax\Framework\System\Capabilities\PreCommit\Validators\ToolingIntegrationVa
  */
 class PreCommitValidator
 {
-    private ValidationChain $chain;
-    private ValidationReport $report;
-    private ReportStorage $storage;
+    private readonly ValidationChain $validationChain;
+
+    private readonly ValidationReport $validationReport;
+
+    private readonly ReportStorage $reportStorage;
+
     /** @var array<string, mixed> */
     private array $options;
 
@@ -38,9 +41,9 @@ class PreCommitValidator
     public function __construct(array $argv)
     {
         $this->options = $this->parseOptions($argv);
-        $this->report = new ValidationReport();
-        $this->storage = new ReportStorage();
-        $this->chain = new ValidationChain();
+        $this->validationReport = new ValidationReport();
+        $this->reportStorage = new ReportStorage();
+        $this->validationChain = new ValidationChain();
         $this->configureChain();
     }
 
@@ -81,7 +84,7 @@ class PreCommitValidator
 
     private function configureChain(): void
     {
-        $this->chain->add(new NamingConventionValidator())
+        $this->validationChain->add(new NamingConventionValidator())
                    ->add(new HowToRulesValidator())
                    ->add(new PhpSyntaxValidator())
                    ->add(new FileStructureValidator())
@@ -112,14 +115,14 @@ class PreCommitValidator
         echo "   Files to validate: " . count($context['staged_files']) . "\n\n";
         fwrite(STDERR, "DEBUG: Got here with " . count($context['staged_files']) . " files\n");
 
-        $result = $this->chain->validate($context);
-        $this->report->addResult($result);
-        $this->report->addMetadata('context', $context);
-        $this->report->addMetadata('validators', array_map(fn($v) => $v->getName(), $this->chain->getValidators()));
-        $this->report->setExecutionTime(microtime(true) - $startTime);
+        $result = $this->validationChain->validate($context);
+        $this->validationReport->addResult($result);
+        $this->validationReport->addMetadata('context', $context);
+        $this->validationReport->addMetadata('validators', array_map(fn ($v) : string => $v->getName(), $this->validationChain->getValidators()));
+        $this->validationReport->setExecutionTime(microtime(true) - $startTime);
 
         if ($this->options['save-report']) {
-            $this->storage->save($this->report, (bool)$this->options['generate-todo']);
+            $this->reportStorage->save($this->validationReport, (bool) $this->options['generate-todo']);
         }
 
         $this->outputResults();
@@ -141,17 +144,17 @@ class PreCommitValidator
         } elseif (isset($this->options['staged-files-file'])) {
             $content = file_get_contents($this->options['staged-files-file']);
             if ($content !== false) {
-                $files = array_values(array_filter(array_map('trim', explode("\n", $content))));
+                $files = array_values(array_filter(array_map(trim(...), explode("\n", $content))));
             }
         } elseif ($this->options['staged']) {
             $gitBin = $this->findGitBinary();
-            exec("{$gitBin} diff --cached --name-only --diff-filter=ACM 2>/dev/null", $output, $returnVar);
-            if ($returnVar === 0 && !empty($output)) {
+            exec($gitBin . ' diff --cached --name-only --diff-filter=ACM 2>/dev/null', $output, $returnVar);
+            if ($returnVar === 0 && $output !== []) {
                 $files = array_values(array_filter($output));
             }
         } else {
             $gitBin = $this->findGitBinary();
-            exec("{$gitBin} diff --name-only 2>/dev/null", $output, $returnVar);
+            exec($gitBin . ' diff --name-only 2>/dev/null', $output, $returnVar);
             if ($returnVar === 0) {
                 $files = $output;
             }
@@ -169,7 +172,7 @@ class PreCommitValidator
     private function getGitBranch(): string
     {
         $gitBin = $this->findGitBinary();
-        exec("{$gitBin} rev-parse --abbrev-ref HEAD 2>/dev/null", $output, $returnVar);
+        exec($gitBin . ' rev-parse --abbrev-ref HEAD 2>/dev/null', $output, $returnVar);
         return $returnVar === 0 ? ($output[0] ?? 'unknown') : 'unknown';
     }
 
@@ -183,14 +186,14 @@ class PreCommitValidator
             '/usr/bin/git', '/usr/local/bin/git', '/bin/git', '/usr/lib/git-core/git',
         ];
 
-        foreach ($locations as $loc) {
-            if (is_executable($loc)) {
-                return $loc;
+        foreach ($locations as $location) {
+            if (is_executable($location)) {
+                return $location;
             }
         }
 
         exec('command -v git 2>/dev/null', $output, $returnVar);
-        if ($returnVar === 0 && !empty($output)) {
+        if ($returnVar === 0 && $output !== []) {
             return trim($output[0]);
         }
 
@@ -205,13 +208,14 @@ class PreCommitValidator
                 return $basePath . '/' . $candidate;
             }
         }
+
         return $basePath;
     }
 
     private function outputResults(): void
     {
         if ($this->options['format'] === 'json') {
-            $data = $this->report->toArray();
+            $data = $this->validationReport->toArray();
             $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
             if ($json === false) {
                 fwrite(STDERR, "JSON encoding failed: " . json_last_error_msg() . "\n");
@@ -220,13 +224,14 @@ class PreCommitValidator
                 echo $json . "\n";
             }
         } else {
-            echo $this->report->getSummaryText();
+            echo $this->validationReport->getSummaryText();
         }
 
         // Force output flush
         if (ob_get_level() > 0) {
             ob_flush();
         }
+
         flush();
     }
 

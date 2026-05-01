@@ -15,13 +15,11 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class CheckHowToRules
 {
-    private PreCommitConfig $config;
     /** @var array<string, array{file: string, forbidden_patterns: list<string>}> */
     private array $rules = [];
 
-    public function __construct(PreCommitConfig $config)
+    public function __construct()
     {
-        $this->config = $config;
         $this->loadRules();
     }
 
@@ -55,7 +53,7 @@ final class CheckHowToRules
             foreach ($matches[1] as $section) {
                 preg_match_all('/`([^`]+)`/', $section, $codeMatches);
                 foreach ($codeMatches[1] as $code) {
-                    if (! empty(trim($code))) {
+                    if (! in_array(trim($code), ['', '0'], true)) {
                         $forbiddenPatterns[] = $code;
                     }
                 }
@@ -68,7 +66,7 @@ final class CheckHowToRules
                 $names = preg_split('/[,\s]+/', $match) ?: [];
                 foreach ($names as $name) {
                     $name = trim($name);
-                    if (! empty($name)) {
+                    if ($name !== '' && $name !== '0') {
                         $forbiddenPatterns[] = $name;
                     }
                 }
@@ -90,7 +88,7 @@ final class CheckHowToRules
     {
         $issues = [];
 
-        if (empty($this->rules)) {
+        if ($this->rules === []) {
             return $issues;
         }
 
@@ -128,7 +126,7 @@ final class CheckHowToRules
                         $issues[] = new PreCommitIssue(
                             'CheckHowToRules',
                             PreCommitIssue::SEVERITY_ERROR,
-                            "Pattern '{$pattern}' from {$ruleName} violates documented rule",
+                            sprintf("Pattern '%s' from %s violates documented rule", $pattern, $ruleName),
                             $file,
                             null,
                             'HOWTO_RULE_' . strtoupper(substr($ruleName, -3))
@@ -164,10 +162,7 @@ final class CheckHowToRules
         if ($lastLineComment !== false && ($lastNewline === false || $lastLineComment > $lastNewline)) {
             return true;
         }
-        if ($lastHashComment !== false && ($lastNewline === false || $lastHashComment > $lastNewline)) {
-            return true;
-        }
 
-        return false;
+        return $lastHashComment !== false && ($lastNewline === false || $lastHashComment > $lastNewline);
     }
 }

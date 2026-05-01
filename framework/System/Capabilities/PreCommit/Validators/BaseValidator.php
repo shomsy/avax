@@ -14,6 +14,7 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
 abstract class BaseValidator implements ValidatorInterface
 {
     protected ?ValidatorInterface $next = null;
+
     protected string $name;
 
     public function __construct(string $name = '')
@@ -54,9 +55,10 @@ abstract class BaseValidator implements ValidatorInterface
      */
     protected function passToNext(array $context): ValidationResult
     {
-        if ($this->next !== null && $this->next->supports($context)) {
+        if ($this->next instanceof ValidatorInterface && $this->next->supports($context)) {
             return $this->next->validate($context);
         }
+
         return ValidationResult::pass('End of validation chain');
     }
 
@@ -66,12 +68,14 @@ abstract class BaseValidator implements ValidatorInterface
     /**
      * @param array<string, mixed> $context
      */
-    protected function combineWithNext(array $context, ValidationResult $current): ValidationResult
+    protected function combineWithNext(array $context, ValidationResult $validationResult) : ValidationResult
     {
-        if ($this->next !== null && $this->next->supports($context)) {
+        if ($this->next instanceof ValidatorInterface && $this->next->supports($context)) {
             $nextResult = $this->next->validate($context);
-            return $current->combine($nextResult);
+
+            return $validationResult->combine($nextResult);
         }
-        return $current;
+
+        return $validationResult;
     }
 }

@@ -15,13 +15,6 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class DetectLegacyAliases
 {
-    private PreCommitConfig $config;
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * @param array<string, mixed> $context
      *
@@ -34,7 +27,7 @@ final class DetectLegacyAliases
         $basePath = $context['base_path'] ?? getcwd();
 
         foreach ($files as $file) {
-            if (! str_ends_with(strtolower($file), '.php')) {
+            if (! str_ends_with(strtolower((string) $file), '.php')) {
                 continue;
             }
 
@@ -54,7 +47,7 @@ final class DetectLegacyAliases
                     $issues[] = new PreCommitIssue(
                         'DetectLegacyAliases',
                         PreCommitIssue::SEVERITY_WARNING,
-                        "Uses class_alias to '{$alias}' (legacy pattern)",
+                        sprintf("Uses class_alias to '%s' (legacy pattern)", $alias),
                         $file,
                         null,
                         'LEGACY_ALIAS'
@@ -68,7 +61,7 @@ final class DetectLegacyAliases
                     $issues[] = new PreCommitIssue(
                         'DetectLegacyAliases',
                         PreCommitIssue::SEVERITY_WARNING,
-                        "Uses legacy require: {$match}",
+                        'Uses legacy require: ' . $match,
                         $file,
                         null,
                         'LEGACY_REQUIRE'
@@ -86,7 +79,7 @@ final class DetectLegacyAliases
                     $issues[] = new PreCommitIssue(
                         'DetectLegacyAliases',
                         PreCommitIssue::SEVERITY_WARNING,
-                        "compat.php has class_alias to '{$alias}' (should be removed)",
+                        sprintf("compat.php has class_alias to '%s' (should be removed)", $alias),
                         'components/compat.php',
                         null,
                         'LEGACY_COMPAT_ALIAS'

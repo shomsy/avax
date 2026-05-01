@@ -14,8 +14,6 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class CheckForbiddenWords
 {
-    private PreCommitConfig $config;
-
     /** @var array<string> */
     private array $forbiddenWords
         = [
@@ -23,11 +21,6 @@ final class CheckForbiddenWords
             'Managers', 'Core', 'Support', 'Misc', 'Stuff',
             'Base', 'Generic', 'Manager', 'Helper', 'Util',
         ];
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * @param array<string, mixed> $context
@@ -51,14 +44,14 @@ final class CheckForbiddenWords
                 continue;
             }
 
-            foreach ($this->forbiddenWords as $word) {
+            foreach ($this->forbiddenWords as $forbiddenWord) {
                 // Check in class names
-                if (preg_match_all('/class\s+(\w*' . preg_quote($word, '/') . '\w*)/i', $content, $matches)) {
+                if (preg_match_all('/class\s+(\w*' . preg_quote($forbiddenWord, '/') . '\w*)/i', $content, $matches)) {
                     foreach ($matches[1] as $className) {
                         $issues[] = new PreCommitIssue(
                             'CheckForbiddenWords',
                             PreCommitIssue::SEVERITY_ERROR,
-                            "Class name contains forbidden word '{$word}': {$className}",
+                            sprintf("Class name contains forbidden word '%s': %s", $forbiddenWord, $className),
                             $file,
                             null,
                             'FORBIDDEN_WORD_CLASS'
@@ -67,11 +60,11 @@ final class CheckForbiddenWords
                 }
 
                 // Check in folder names in path
-                if (str_contains($file, $word)) {
+                if (str_contains((string) $file, $forbiddenWord)) {
                     $issues[] = new PreCommitIssue(
                         'CheckForbiddenWords',
                         PreCommitIssue::SEVERITY_ERROR,
-                        "Path contains forbidden word '{$word}'",
+                        sprintf("Path contains forbidden word '%s'", $forbiddenWord),
                         $file,
                         null,
                         'FORBIDDEN_WORD_PATH'

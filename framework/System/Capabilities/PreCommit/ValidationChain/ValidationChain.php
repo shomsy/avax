@@ -15,13 +15,11 @@ use Avax\Framework\System\Capabilities\PreCommit\Validators\ValidatorInterface;
 class ValidationChain
 {
     private ?ValidatorInterface $head = null;
+
     private ?ValidatorInterface $tail = null;
+
     /** @var list<ValidatorInterface> */
     private array $validators = [];
-
-    public function __construct()
-    {
-    }
 
     /**
      * Add validator to the chain
@@ -30,7 +28,7 @@ class ValidationChain
     {
         $this->validators[] = $validator;
 
-        if ($this->head === null) {
+        if (! $this->head instanceof ValidatorInterface) {
             $this->head = $validator;
             $this->tail = $validator;
         } else {
@@ -57,7 +55,7 @@ class ValidationChain
      */
     public function validate(array $context): ValidationResult
     {
-        if ($this->head === null) {
+        if (! $this->head instanceof ValidatorInterface) {
             return ValidationResult::pass('No validators configured');
         }
 
@@ -84,6 +82,7 @@ class ValidationChain
                 return $validator;
             }
         }
+
         return null;
     }
 

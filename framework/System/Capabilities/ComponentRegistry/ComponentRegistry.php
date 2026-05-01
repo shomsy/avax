@@ -19,29 +19,29 @@ final class ComponentRegistry
      */
     private array $providers = [];
 
-    public function register(ComponentDefinition $definition) : void
+    public function register(ComponentDefinition $componentDefinition) : void
     {
-        if ($this->has(name: $definition->name())) {
+        if ($this->has(name: $componentDefinition->name())) {
             throw new FrameworkMisconfigured(
-                message: sprintf('Component "%s" is already registered.', $definition->name()),
+                message: sprintf('Component "%s" is already registered.', $componentDefinition->name()),
             );
         }
 
-        $this->definitions[$definition->name()] = $definition;
+        $this->definitions[$componentDefinition->name()] = $componentDefinition;
     }
 
-    public function registerProvider(ComponentProviderInterface $provider) : void
+    public function registerProvider(ComponentProviderInterface $componentProvider) : void
     {
-        $name = $provider::name();
+        $name = $componentProvider::name();
 
         $this->register(
             definition: new ComponentDefinition(
                 name: $name,
-                providerClass: $provider::class,
+                providerClass: $componentProvider::class,
             ),
         );
 
-        $this->providers[$name] = $provider;
+        $this->providers[$name] = $componentProvider;
     }
 
     public function has(string $name): bool

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\PreCommit\Validators;
 
 use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
+use Override;
 
 /**
  * Security Validator
@@ -32,14 +33,6 @@ class SecurityValidator extends BaseValidator
         
         // Database connection strings with credentials
         '/(mysql|pgsql|sqlite|mongodb):\/\/[^\s]+:[^\s]+@[^\s]+/i',
-    ];
-
-    /** @var array<string> */
-    private array $dangerousFunctions = [
-        'eval', 'exec', 'shell_exec', 'system', 'passthru',
-        'popen', 'proc_open', 'assert', 'create_function',
-        'file_get_contents.*http', 'include.*http',
-        'require.*http',
     ];
 
     public function __construct()
@@ -83,7 +76,7 @@ class SecurityValidator extends BaseValidator
             }
 
             // Check for dangerous functions (only in PHP files)
-            if (str_ends_with(strtolower($file), '.php')) {
+            if (str_ends_with(strtolower((string) $file), '.php')) {
                 $securityResult = $this->checkPhpSecurity($content, $file);
                 if (!$securityResult->isPassed()) {
                     $allPassed = false;
@@ -92,7 +85,7 @@ class SecurityValidator extends BaseValidator
             }
         }
 
-        $result = new ValidationResult(
+        $validationResult = new ValidationResult(
             $allPassed,
             $messages,
             $allPassed ? 'info' : 'critical',
@@ -101,7 +94,7 @@ class SecurityValidator extends BaseValidator
             'SECURITY_CHECK_009'
         );
 
-        return $this->combineWithNext($context, $result);
+        return $this->combineWithNext($context, $validationResult);
     }
 
     /**
@@ -110,9 +103,9 @@ class SecurityValidator extends BaseValidator
     private function checkForSecrets(string $content, string $file): ValidationResult
     {
         $messages = [];
-        
-        foreach ($this->secretPatterns as $pattern) {
-            if (preg_match_all($pattern, $content, $matches, PREG_OFFSET_CAPTURE)) {
+
+        foreach ($this->secretPatterns as $secretPattern) {
+            if (preg_match_all($secretPattern, $content, $matches, PREG_OFFSET_CAPTURE)) {
                 foreach ($matches[0] as $match) {
                     $lineNum = substr_count(substr($content, 0, $match[1]), "\n") + 1;
                     $messages[] = sprintf(
@@ -125,7 +118,7 @@ class SecurityValidator extends BaseValidator
             }
         }
 
-        if (!empty($messages)) {
+        if ($messages !== []) {
             return ValidationResult::fail(
                 'Security check failed - potential secrets detected',
                 'critical',
@@ -156,11 +149,9 @@ class SecurityValidator extends BaseValidator
                 $funcName = strtolower($token[1]);
                 // Check for truly dangerous functions, excluding allowed ones
                 $dangerous = ['eval', 'assert', 'create_function'];
-                if (in_array($funcName, $dangerous)) {
-                    // Check if it's in a comment
-                    if (!$this->isTokenInComment($tokens, $token)) {
-                        $foundDangerous[$token[1]] = true;
-                    }
+                // Check if it's in a comment
+                if (in_array($funcName, $dangerous) && ! $this->isTokenInComment($tokens, $token)) {
+                    $foundDangerous[$token[1]] = true;
                 }
             }
         }
@@ -173,7 +164,7 @@ class SecurityValidator extends BaseValidator
             );
         }
 
-        if (!empty($messages)) {
+        if ($messages !== []) {
             return ValidationResult::fail(
                 'Security check failed - dangerous functions detected',
                 'error',
@@ -203,21 +194,22 @@ class SecurityValidator extends BaseValidator
             }
 
             if (is_array($token)) {
-                if ($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT) {
-                    if ($this->tokenContains($token[1], $targetToken[1])) {
-                        return true;
-                    }
+                if (($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT) && $this->tokenContains($token[1], $targetToken[1])) {
+                    return true;
                 }
-                if ($token[0] === T_WHITESPACE && strpos($token[1], "\n") !== false) {
+
+                if ($token[0] === T_WHITESPACE && str_contains($token[1], "\n")) {
                     $inLineComment = false;
                 }
             } else {
                 if ($token === '/*') {
                     $inBlockComment = true;
                 }
+
                 if ($token === '*/') {
                     $inBlockComment = false;
                 }
+
                 if ($token === '//') {
                     $inLineComment = true;
                 }
@@ -229,7 +221,7 @@ class SecurityValidator extends BaseValidator
 
     private function tokenContains(string $haystack, string $needle): bool
     {
-        return strpos($haystack, $needle) !== false;
+        return str_contains($haystack, $needle);
     }
 
     /**
@@ -244,9 +236,10 @@ class SecurityValidator extends BaseValidator
         $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
         $binaryExts = ['png', 'jpg', 'jpeg', 'gif', 'ico', 'pdf', 'zip', 'tar', 'gz', 'exe', 'bin'];
 
-        return !in_array($ext, $binaryExts);
+        return ! in_array($ext, $binaryExts, true);
     }
 
+    #[Override]
     public function supports(array $context): bool
     {
         return !empty($context['staged_files'] ?? []);

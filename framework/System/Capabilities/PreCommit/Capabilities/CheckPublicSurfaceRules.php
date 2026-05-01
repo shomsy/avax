@@ -14,13 +14,6 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  */
 final class CheckPublicSurfaceRules
 {
-    private PreCommitConfig $config;
-
-    public function __construct(PreCommitConfig $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * @param array<string, mixed> $context
      *
@@ -39,12 +32,12 @@ final class CheckPublicSurfaceRules
             }
 
             // Only check files in PublicSurface
-            if (strpos($filePath, '/System/PublicSurface/') === false &&
-                strpos($filePath, '/PublicSurface/') === false) {
+            if (! str_contains($filePath, '/System/PublicSurface/') &&
+                ! str_contains($filePath, '/PublicSurface/')) {
                 continue;
             }
 
-            if (! str_ends_with(strtolower($file), '.php')) {
+            if (! str_ends_with(strtolower((string) $file), '.php')) {
                 continue;
             }
 
@@ -55,12 +48,12 @@ final class CheckPublicSurfaceRules
 
             // Check for business logic patterns (loops)
             $businessPatterns = [' foreach', ' while', ' for(', ' switch(', ' match('];
-            foreach ($businessPatterns as $pattern) {
-                if (str_contains($content, $pattern)) {
+            foreach ($businessPatterns as $businessPattern) {
+                if (str_contains($content, $businessPattern)) {
                     $issues[] = new PreCommitIssue(
                         'CheckPublicSurfaceRules',
                         PreCommitIssue::SEVERITY_ERROR,
-                        "Potential business logic ({$pattern}) in PublicSurface. Should delegate to Flows/Capabilities.",
+                        sprintf('Potential business logic (%s) in PublicSurface. Should delegate to Flows/Capabilities.', $businessPattern),
                         $file,
                         null,
                         'SURFACE_LOGIC'
@@ -74,7 +67,7 @@ final class CheckPublicSurfaceRules
                 $issues[] = new PreCommitIssue(
                     'CheckPublicSurfaceRules',
                     PreCommitIssue::SEVERITY_WARNING,
-                    "PublicSurface file is large ({$lines} lines). May contain business logic.",
+                    sprintf('PublicSurface file is large (%d lines). May contain business logic.', $lines),
                     $file,
                     null,
                     'SURFACE_SIZE'

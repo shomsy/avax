@@ -13,7 +13,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
-use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Random\RandomException;
 use SensitiveParameter;
 

@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Stores;
 
 use Avax\Components\Application\Cache\System\Foundation\CacheStoreInterface;
-use Memcached;
 use Redis;
 use RuntimeException;
-
 
 
 final class RedisCacheStore implements CacheStoreInterface
@@ -48,7 +46,9 @@ final class RedisCacheStore implements CacheStoreInterface
 
     public function forget(string $key) : bool
     {
-        return $this->redis->del($this->prefix . $key) > 0;
+        $deleted = $this->redis->del($this->prefix . $key);
+
+        return is_int($deleted) && $deleted > 0;
     }
 
     public function flush() : bool
@@ -70,7 +70,9 @@ final class RedisCacheStore implements CacheStoreInterface
 
     public function has(string $key) : bool
     {
-        return $this->redis->exists($this->prefix . $key) > 0;
+        $exists = $this->redis->exists($this->prefix . $key);
+
+        return is_int($exists) && $exists > 0;
     }
 
     public function get(string $key) : mixed
@@ -85,10 +87,15 @@ final class RedisCacheStore implements CacheStoreInterface
         $serialized = serialize($value);
 
         if ($ttl > 0) {
-            return $this->redis->setex($this->prefix . $key, $ttl, $serialized);
+            return $this->redis->setex($this->prefix . $key, $ttl, $serialized) === true;
         }
 
-        return $this->redis->set($this->prefix . $key, $serialized);
+        return $this->redis->set($this->prefix . $key, $serialized) === true;
+    }
+
+    public function getRedis() : Redis
+    {
+        return $this->redis;
     }
 
     public function tags(array $tags) : TaggedCache

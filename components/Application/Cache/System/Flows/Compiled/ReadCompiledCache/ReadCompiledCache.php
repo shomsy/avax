@@ -19,34 +19,42 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class ReadCompiledCache
 {
+    private CompiledCacheDirectory $compiledCacheDirectory;
+
+    private CompiledCacheManifest $compiledCacheManifest;
+
     public function __construct(
-        private CompiledCacheDirectory $compiledCacheDirectory,
-        private CompiledCacheManifest  $compiledCacheManifest,
+        CompiledCacheDirectory $directory,
+        CompiledCacheManifest  $manifest,
         private Clock                  $clock = new SystemClock(),
-    ) {}
+    )
+    {
+        $this->compiledCacheDirectory = $directory;
+        $this->compiledCacheManifest  = $manifest;
+    }
 
     public function read(
         string               $name,
         callable             $build,
-        CompiledCacheSources $compiledCacheSources,
+        CompiledCacheSources $sources,
     ) : mixed
     {
         $compiledCacheName = new CompiledCacheName(name: $name);
 
         $checkCompiledCacheIsFresh = new CheckCompiledCacheIsFresh(directory: $this->compiledCacheDirectory, manifest: $this->compiledCacheManifest);
-        $compiledCacheFreshness    = $checkCompiledCacheIsFresh->check(name: $compiledCacheName, sources: $compiledCacheSources);
+        $compiledCacheFreshness = $checkCompiledCacheIsFresh->check(name: $compiledCacheName, sources: $sources);
 
         if ($compiledCacheFreshness === CompiledCacheFreshness::MISSING || $compiledCacheFreshness === CompiledCacheFreshness::STALE) {
-            return $this->rebuild(name: $compiledCacheName, build: $build, sources: $compiledCacheSources);
+            return $this->rebuild(name: $compiledCacheName, build: $build, sources: $sources);
         }
 
         return $this->requireCompiledArtifact(name: $compiledCacheName);
     }
 
     private function rebuild(
-        CompiledCacheName    $compiledCacheName,
+        CompiledCacheName    $name,
         callable             $build,
-        CompiledCacheSources $compiledCacheSources,
+        CompiledCacheSources $sources,
     ) : mixed
     {
         $compileCache = new CompileCache(
@@ -55,24 +63,24 @@ final readonly class ReadCompiledCache
             clock    : $this->clock,
         );
 
-        $compileCache->compile(name: $compiledCacheName->toString(), build: $build, sources: $compiledCacheSources);
+        $compileCache->compile(name: $name->toString(), build: $build, sources: $sources);
 
-        return $this->requireCompiledArtifact(name: $compiledCacheName);
+        return $this->requireCompiledArtifact(name: $name);
     }
 
-    private function requireCompiledArtifact(CompiledCacheName $compiledCacheName) : mixed
+    private function requireCompiledArtifact(CompiledCacheName $name) : mixed
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
+        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(name: $name);
 
         if (! file_exists($compiledCachePath->toString())) {
-            throw new CompiledCacheCouldNotBeRead(name: $compiledCacheName->toString());
+            throw new CompiledCacheCouldNotBeRead(name: $name->toString());
         }
 
         $payload = require $compiledCachePath->toString();
 
         $validator = new ValidateCompiledCachePayload();
-        $validator->validate(name: $compiledCacheName->toString(), payload: $payload);
+        $validator->validate(name: $name->toString(), payload: $payload);
 
         return $payload;
     }

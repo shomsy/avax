@@ -12,7 +12,7 @@ final readonly class CacheVersion implements Stringable
 {
     public function __construct(
         public int $major,
-        public int $minor,
+        public int $minor = 0,
         public int $patch = 0,
     )
     {

@@ -16,34 +16,33 @@ final class User implements UserInterface, Stringable
     public array $permissions;
     /** @var list<UserRole> */
     public array  $roles;
-    public UserId $id {
-        get => $this->_id;
-    }
-    public UserEmail $email {
-        get => $this->_email;
-    }
-    public string $username {
-        get => $this->_username;
-    }
-    public string $passwordHash {
-        get => $this->_passwordHash;
-    }
-    public bool   $isActive {
-        get => $this->_isActive;
-    }
+    public UserId $id;
+
+    public UserEmail $email;
+
+    public string $username;
+
+    public string $passwordHash;
+
+    public bool $isActive;
 
     public function __construct(
-        private UserId    $_id,
+        UserId     $_id,
         #[SensitiveParameter]
-        private UserEmail $_email,
-        private string    $_username,
+        UserEmail  $_email,
+        string     $_username,
         #[SensitiveParameter]
-        private string    $_passwordHash,
-        array             $roles = null,
-        array             $permissions = null,
-        private bool      $_isActive = true,
+        string     $_passwordHash,
+        array|null $roles = null,
+        array|null $permissions = null,
+        bool       $_isActive = true,
     )
     {
+        $this->id           = $_id;
+        $this->email        = $_email;
+        $this->username     = $_username;
+        $this->passwordHash = $_passwordHash;
+        $this->isActive     = $_isActive;
         $this->roles       = array_values(array: $roles ?? []);
         $this->permissions = array_values(array: $permissions ?? []);
     }
@@ -59,8 +58,8 @@ final class User implements UserInterface, Stringable
         string    $username,
         #[SensitiveParameter]
         string    $passwordHash,
-        array     $roles = null,
-        array     $permissions = null,
+        array|null $roles = null,
+        array|null $permissions = null,
         bool      $isActive = true,
     ) : self
     {
@@ -77,21 +76,35 @@ final class User implements UserInterface, Stringable
 
     public function hasRole(UserRole $role) : bool
     {
-        return arrhae(array: $this->roles)->contains(value: $role);
+        foreach ($this->roles as $existingRole) {
+            if ($existingRole === $role) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function hasPermission(UserPermission $permission) : bool
     {
-        return arrhae(array: $this->permissions)
-            ->filter(callback: static fn (mixed $v, UserPermission $p) => $p->equals(other: $permission))
-            ->isNotEmpty();
+        foreach ($this->permissions as $existingPermission) {
+            if ($existingPermission->equals(other: $permission)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function canAccessRole(UserRole $requiredRole) : bool
     {
-        return arrhae(array: $this->roles)
-            ->filter(callback: static fn (mixed $v, UserRole $role) => $role->canAccess(required: $requiredRole))
-            ->isNotEmpty();
+        foreach ($this->roles as $role) {
+            if ($role->canAccess(required: $requiredRole)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getId() : UserId
@@ -116,7 +129,7 @@ final class User implements UserInterface, Stringable
 
     public function isActive() : bool
     {
-        return $this->_isActive;
+        return $this->isActive;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport;
+namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation;
 
 enum FederationProvider: string
 {

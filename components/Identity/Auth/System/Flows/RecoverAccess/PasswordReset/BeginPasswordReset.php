@@ -26,7 +26,7 @@ final readonly class BeginPasswordReset
         private PasswordResetStoreInterface $passwordResetStore,
         private AuditLogInterface           $auditLog,
         private Clock                       $clock,
-        int                                 $expiresAfterSeconds = null,
+        int|null = null,
         private AttemptThrottle|null        $attemptThrottle = null,
     )
     {

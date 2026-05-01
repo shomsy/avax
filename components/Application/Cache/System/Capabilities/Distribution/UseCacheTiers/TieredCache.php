@@ -15,7 +15,7 @@ use Override;
 
 final class TieredCache implements CacheStore
 {
-    /** @var array<string, CacheStore> */
+    /** @var array<string, CacheStore|null> */
     private array $tiers = [];
 
     /** @var array<string, CacheTier> */
@@ -46,6 +46,19 @@ final class TieredCache implements CacheStore
         $this->tiers[$key]           = $store;
 
         return $this;
+    }
+
+    /**
+     * @return array<string, CacheStore|null>
+     */
+    public function stores() : array
+    {
+        return $this->tiers;
+    }
+
+    public function clock() : Clock
+    {
+        return $this->clock;
     }
 
     #[Override]

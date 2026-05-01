@@ -12,9 +12,14 @@ use Override;
 
 final readonly class ExpiresAt implements CacheExpiration
 {
+    private Timestamp $timestamp;
+
     public function __construct(
-        private Timestamp $timestamp,
-    ) {}
+        Timestamp $expiresAt,
+    )
+    {
+        $this->timestamp = $expiresAt;
+    }
 
     public static function secondsFromNow(int $seconds, Clock $clock) : self
     {

@@ -41,6 +41,11 @@ final readonly class ChooseReplicaForRead
         return $replicas;
     }
 
+    public function replicaCount() : ReplicaCount
+    {
+        return $this->replicaCount;
+    }
+
     public function requiresQuorum() : bool
     {
         return $this->replicationPolicy === ReplicationPolicy::QUORUM;

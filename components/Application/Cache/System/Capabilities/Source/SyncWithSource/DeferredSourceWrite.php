@@ -9,31 +9,39 @@ use Throwable;
 
 final class DeferredSourceWrite
 {
-    /** @var array<CacheSourceKey, mixed> */
+    /** @var array<string, array{key: CacheSourceKey, value: mixed}> */
     private array $queue = [];
 
-    public function __construct(
-        private readonly CacheSource $cacheSource,
-    ) {}
+    private readonly CacheSource $cacheSource;
 
-    public function queueFromCacheKey(CacheKey $cacheKey, mixed $value) : void
+    public function __construct(
+        CacheSource $source,
+    )
     {
-        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
+        $this->cacheSource = $source;
+    }
+
+    public function queueFromCacheKey(CacheKey $key, mixed $value) : void
+    {
+        $cacheSourceKey = CacheSourceKey::create(key: $key->fullKey(), namespace: $key->namespace);
         $this->queue(key: $cacheSourceKey, value: $value);
     }
 
-    public function queue(CacheSourceKey $cacheSourceKey) : void
+    public function queue(CacheSourceKey $key, mixed $value) : void
     {
-        $this->queue[$cacheSourceKey->fullKey()] = $cacheSourceKey;
+        $this->queue[$key->fullKey()] = [
+            'key'   => $key,
+            'value' => $value,
+        ];
     }
 
     public function flush() : int
     {
         $count = count($this->queue);
 
-        foreach ($this->queue as $sourceKey) {
+        foreach ($this->queue as $queuedWrite) {
             try {
-                $this->cacheSource->write(key: $sourceKey, value: null);
+                $this->cacheSource->write($queuedWrite['key'], $queuedWrite['value']);
             } catch (Throwable) {
             }
         }

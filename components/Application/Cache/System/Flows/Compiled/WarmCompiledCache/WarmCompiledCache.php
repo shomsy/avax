@@ -9,15 +9,18 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Components\Application\Cache\System\Flows\Compiled\CompileCache\CompileCache;
 use Closure;
-use Throwable;
-
 
 
 final class CompiledCacheArtifactDefinition
 {
+    public CompiledCacheSources $sources;
+
     public function __construct(
         public string               $name,
         public Closure              $builder,
         public CompiledCacheSources $compiledCacheSources,
-    ) {}
+    )
+    {
+        $this->sources = $compiledCacheSources;
+    }
 }

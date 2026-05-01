@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support;
+namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;

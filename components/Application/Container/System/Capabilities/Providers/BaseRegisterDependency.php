@@ -25,6 +25,6 @@ abstract class BaseRegisterDependency
      */
     public function boot() : void
     {
-        // Optional boot logic
+        // Optional boot logic.
     }
 }

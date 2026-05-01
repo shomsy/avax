@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Support;
+namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use DateTimeImmutable;

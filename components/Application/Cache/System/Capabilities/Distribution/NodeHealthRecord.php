@@ -5,26 +5,27 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution;
 
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeStatus;
-use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
-
-
 
 /**
  * Value object representing the health record of a cache node.
  */
 final readonly class NodeHealthRecord
 {
+    public CacheNodeStatus $cacheNodeStatus;
+
     public function __construct(
         public string          $nodeId,
-        public CacheNodeStatus $cacheNodeStatus,
+        public CacheNodeStatus $status,
         public Timestamp       $lastCheck,
         public int             $consecutiveFailures,
         public int             $consecutiveSuccesses,
         public Timestamp|null  $lastFailure,
         public Timestamp|null  $lastSuccess,
-    ) {}
+    )
+    {
+        $this->cacheNodeStatus = $status;
+    }
 
     /**
      * Create a new record with an updated last check time.
@@ -33,7 +34,7 @@ final readonly class NodeHealthRecord
     {
         return new self(
             nodeId              : $this->nodeId,
-            status              : $this->cacheNodeStatus,
+            status              : $this->status,
             lastCheck           : $timestamp,
             consecutiveFailures : $this->consecutiveFailures,
             consecutiveSuccesses: $this->consecutiveSuccesses,
@@ -47,7 +48,7 @@ final readonly class NodeHealthRecord
      */
     public function wasCheckedWithin(int $seconds) : bool
     {
-        $now  = Timestamp::now();
+        $now = Timestamp::now();
         $duration = $now->difference($this->lastCheck);
 
         return $duration->seconds <= $seconds;
@@ -70,7 +71,7 @@ final readonly class NodeHealthRecord
     {
         return [
             'nodeId'               => $this->nodeId,
-            'status' => $this->cacheNodeStatus->value,
+            'status' => $this->status->value,
             'lastCheck'            => $this->lastCheck->seconds,
             'consecutiveFailures'  => $this->consecutiveFailures,
             'consecutiveSuccesses' => $this->consecutiveSuccesses,

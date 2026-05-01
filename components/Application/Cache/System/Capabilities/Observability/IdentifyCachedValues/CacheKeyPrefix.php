@@ -16,11 +16,13 @@ final readonly class CacheKeyPrefix implements Stringable
         public string $separator = ':',
     )
     {
-        $this->prefix = trim($prefix);
+        $normalizedPrefix = trim($prefix);
 
-        if ($this->prefix !== '' && ! str_ends_with($this->prefix, $this->separator)) {
-            $this->prefix .= $this->separator;
+        if ($normalizedPrefix !== '' && ! str_ends_with($normalizedPrefix, $this->separator)) {
+            $normalizedPrefix .= $this->separator;
         }
+
+        $this->prefix = $normalizedPrefix;
     }
 
     public static function fromNamespace(CacheNamespace $cacheNamespace, string $separator = ':') : self

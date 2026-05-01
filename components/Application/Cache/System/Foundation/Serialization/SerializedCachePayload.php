@@ -14,12 +14,17 @@ use Stringable;
 
 final readonly class SerializedCachePayload implements Stringable
 {
+    public Timestamp $timestamp;
+
     public function __construct(
         public string      $data,
         public string      $format,
-        public Timestamp   $timestamp,
+        Timestamp $createdAt,
         public string|null $checksum = null,
-    ) {}
+    )
+    {
+        $this->timestamp = $createdAt;
+    }
 
     public static function create(string $data, string $format, Clock|null $clock = null) : self
     {

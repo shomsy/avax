@@ -112,15 +112,15 @@ final readonly class FileCacheStore implements CacheStore
         }
     }
 
-    private function serializeLifecycle(CachedValueLifecycle $cachedValueLifecycle) : array
+    private function serializeLifecycle(CachedValueLifecycle $lifecycle) : array
     {
         return [
-            'createdAt'      => $cachedValueLifecycle->createdAt->toUnixTime(),
-            'lastAccessedAt' => $cachedValueLifecycle->lastAccessedAt->toUnixTime(),
-            'expiresAt'      => $cachedValueLifecycle->expiresAt->toUnixTime(),
-            'refreshedAt'    => $cachedValueLifecycle->refreshedAt->toUnixTime(),
-            'hitCount'       => $cachedValueLifecycle->hitCount,
-            'refreshCount'   => $cachedValueLifecycle->refreshCount,
+            'createdAt'      => $lifecycle->createdAt->toUnixTime(),
+            'lastAccessedAt' => $lifecycle->lastAccessedAt->toUnixTime(),
+            'expiresAt'      => $lifecycle->expiresAt->toUnixTime(),
+            'refreshedAt'    => $lifecycle->refreshedAt->toUnixTime(),
+            'hitCount'       => $lifecycle->hitCount,
+            'refreshCount'   => $lifecycle->refreshCount,
         ];
     }
 

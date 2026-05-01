@@ -43,19 +43,19 @@ final readonly class WriteCachedValueToReplicas
         };
     }
 
-    private function writeSynchronously(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    private function writeSynchronously(CacheKey $key, StoredCacheRecord $record) : void
     {
         foreach ($this->stores as $store) {
-            $store->write(key: $cacheKey, record: $storedCacheRecord);
+            $store->write(key: $key, record: $record);
         }
     }
 
-    private function writeAsynchronously(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    private function writeAsynchronously(CacheKey $key, StoredCacheRecord $record) : void
     {
-        $this->stores[0]->write(key: $cacheKey, record: $storedCacheRecord);
+        $this->stores[0]->write(key: $key, record: $record);
     }
 
-    private function writeWithQuorum(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    private function writeWithQuorum(CacheKey $key, StoredCacheRecord $record) : void
     {
         $replicaCount = new ReplicaCount(
             primary    : 1,
@@ -66,7 +66,7 @@ final readonly class WriteCachedValueToReplicas
 
         foreach ($this->stores as $store) {
             try {
-                $store->write(key: $cacheKey, record: $storedCacheRecord);
+                $store->write(key: $key, record: $record);
                 $written++;
 
                 if ($written >= $quorumSize) {

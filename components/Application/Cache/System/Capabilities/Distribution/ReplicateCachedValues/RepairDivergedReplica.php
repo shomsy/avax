@@ -39,14 +39,14 @@ final readonly class RepairDivergedReplica
         return $repaired;
     }
 
-    public function repair(CacheKey $cacheKey, int $referenceReplicaIndex = 0) : bool
+    public function repair(CacheKey $key, int $referenceReplicaIndex = 0) : bool
     {
         if (! isset($this->stores[$referenceReplicaIndex])) {
             return false;
         }
 
         $referenceStore  = $this->stores[$referenceReplicaIndex];
-        $referenceResult = $referenceStore->read(key: $cacheKey, clock: $this->clock);
+        $referenceResult = $referenceStore->read(key: $key, clock: $this->clock);
 
         if (! $referenceResult instanceof CacheStoreRecordWasFound) {
             return false;
@@ -61,13 +61,13 @@ final readonly class RepairDivergedReplica
             }
 
             try {
-                $result = $store->read(key: $cacheKey, clock: $this->clock);
+                $result = $store->read(key: $key, clock: $this->clock);
 
                 if ($result instanceof CacheStoreRecordWasMissing) {
-                    $store->write(key: $cacheKey, record: $referenceRecord);
+                    $store->write(key: $key, record: $referenceRecord);
                     $repaired = true;
                 } elseif ($result->record !== $referenceRecord) {
-                    $store->write(key: $cacheKey, record: $referenceRecord);
+                    $store->write(key: $key, record: $referenceRecord);
                     $repaired = true;
                 }
             } catch (Throwable) {

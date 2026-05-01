@@ -24,9 +24,9 @@ final readonly class StoreCachedValue
         private CacheTtl          $cacheTtl = new CacheTtl(),
     ) {}
 
-    public function store(CacheKey $cacheKey, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public function store(CacheKey $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
-        $startTime = hrtime(as_integer: true);
+        $startTime = hrtime(true);
 
         try {
             $expiresAt     = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock);
@@ -45,7 +45,7 @@ final readonly class StoreCachedValue
                 lifecycle: $lifecycle,
             );
 
-            $this->cacheStore->write(key: $cacheKey, record: $storedCacheRecord);
+            $this->cacheStore->write(key: $key, record: $storedCacheRecord);
 
             $this->recordLatency(startTime: $startTime);
             $this->cacheMetrics?->recordWrite();
@@ -64,7 +64,7 @@ final readonly class StoreCachedValue
             return;
         }
 
-        $endTime             = hrtime(as_integer: true);
+        $endTime = hrtime(true);
         $latencyMicroseconds = (int) (($endTime - $startTime) / 1000);
 
         $this->cacheMetrics->recordLatency(microseconds: $latencyMicroseconds);

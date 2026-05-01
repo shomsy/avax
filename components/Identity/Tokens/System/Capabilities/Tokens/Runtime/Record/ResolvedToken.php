@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraint;
 use DateTimeImmutable;
 use SensitiveParameter;
 

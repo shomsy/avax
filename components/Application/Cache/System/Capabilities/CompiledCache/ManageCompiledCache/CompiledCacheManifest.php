@@ -42,9 +42,9 @@ final class CompiledCacheManifest
         return $manifest;
     }
 
-    public function set(CompiledCacheManifestEntry $compiledCacheManifestEntry) : void
+    public function set(CompiledCacheManifestEntry $entry) : void
     {
-        $this->entries[$compiledCacheManifestEntry->name->toString()] = $compiledCacheManifestEntry;
+        $this->entries[$entry->name->toString()] = $entry;
     }
 
     public static function empty() : self
@@ -62,7 +62,7 @@ final class CompiledCacheManifest
         unset($this->entries[$name]);
     }
 
-    public function isFresh(string $name, CompiledCacheSources $compiledCacheSources) : bool
+    public function isFresh(string $name, CompiledCacheSources $sources) : bool
     {
         $entry = $this->get(name: $name);
 
@@ -70,7 +70,7 @@ final class CompiledCacheManifest
             return false;
         }
 
-        return $entry->sourceFingerprint === $compiledCacheSources->fingerprint();
+        return $entry->sourceFingerprint === $sources->fingerprint();
     }
 
     public function get(string $name) : CompiledCacheManifestEntry|null

@@ -19,7 +19,7 @@ final readonly class ClearCache
 
     public function clearNamespace() : int
     {
-        return $this->clear();
+        return $this->clear() ? 1 : 0;
     }
 
     public function clear() : bool

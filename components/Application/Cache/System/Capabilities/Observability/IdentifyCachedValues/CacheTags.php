@@ -61,9 +61,9 @@ final readonly class CacheTags implements Stringable
         return false;
     }
 
-    public function has(CacheTag $cacheTag) : bool
+    public function has(CacheTag $tag) : bool
     {
-        return isset($this->tags[$cacheTag->toString()]);
+        return isset($this->tags[$tag->toString()]);
     }
 
     public function hasAll(self $other) : bool

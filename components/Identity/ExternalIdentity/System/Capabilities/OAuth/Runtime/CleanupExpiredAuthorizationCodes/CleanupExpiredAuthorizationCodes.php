@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\CleanupExpiredAuthorizationCodes;
 
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\PruneExpiredAuthorizationCodesInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\PruneExpiredAuthorizationCodesInterface;
 use SensitiveParameter;
 
 final readonly class CleanupExpiredAuthorizationCodes

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement;
 
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\TrackCachedValueAccess;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Override;
 
-final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValueForReplacement
+final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValueForReplacement, TrackCachedValueAccess
 {
     private FrequencyTracker $frequencyTracker;
 

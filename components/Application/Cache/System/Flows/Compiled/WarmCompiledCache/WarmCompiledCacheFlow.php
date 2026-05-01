@@ -6,26 +6,30 @@ namespace Avax\Components\Application\Cache\System\Flows\Compiled\WarmCompiledCa
 
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheDirectory;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheManifest;
-use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Components\Application\Cache\System\Flows\Compiled\CompileCache\CompileCache;
-use Closure;
 use Throwable;
-
-
 
 final class WarmCompiledCacheFlow
 {
     /** @var array<string, CompiledCacheArtifactDefinition> */
     private array $definitions = [];
 
+    private readonly CompiledCacheDirectory $compiledCacheDirectory;
+
+    private readonly CompiledCacheManifest $compiledCacheManifest;
+
     public function __construct(
-        private readonly CompiledCacheDirectory $compiledCacheDirectory,
-        private readonly CompiledCacheManifest  $compiledCacheManifest,
-    ) {}
+        CompiledCacheDirectory $directory,
+        CompiledCacheManifest  $manifest,
+    )
+    {
+        $this->compiledCacheDirectory = $directory;
+        $this->compiledCacheManifest  = $manifest;
+    }
 
     public static function create(
         CompiledCacheDirectory $compiledCacheDirectory,
-        CompiledCacheManifest  $compiledCacheManifest,
+        CompiledCacheManifest $compiledCacheManifest,
     ) : self
     {
         return new self(directory: $compiledCacheDirectory, manifest: $compiledCacheManifest);
@@ -56,8 +60,8 @@ final class WarmCompiledCacheFlow
                 );
 
                 $results[$definition->name] = ['success' => true, 'artifact' => $artifact];
-            } catch (Throwable $e) {
-                $results[$definition->name] = ['success' => false, 'error' => $e];
+            } catch (Throwable $throwable) {
+                $results[$definition->name] = ['success' => false, 'error' => $throwable];
             }
         }
 

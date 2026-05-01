@@ -16,20 +16,20 @@ final readonly class LoadValueFromSource
     {
         $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
-        if (! $this->cacheSource->exists(key: $cacheSourceKey)) {
+        if (! $this->cacheSource->exists($cacheSourceKey)) {
             throw new CacheSourceFailed(
                 message  : sprintf('Source key "%s" does not exist', $cacheKey->fullKey()),
                 sourceKey: $cacheSourceKey,
             );
         }
 
-        return $this->cacheSource->load(key: $cacheSourceKey);
+        return $this->cacheSource->load($cacheSourceKey);
     }
 
     public function load(CacheKey $cacheKey) : mixed
     {
         $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
-        return $this->cacheSource->load(key: $cacheSourceKey);
+        return $this->cacheSource->load($cacheSourceKey);
     }
 }

@@ -19,12 +19,6 @@ final readonly class PhpCacheSerializer implements CacheSerializer
     {
         $serialized = serialize(value: $value);
 
-        if ($serialized === false) {
-            throw new CachePayloadCouldNotBeSerialized(
-                message: 'Failed to serialize value using PHP serialization',
-            );
-        }
-
         return SerializedCachePayload::create(
             data  : $serialized,
             format: self::FORMAT,
@@ -33,23 +27,23 @@ final readonly class PhpCacheSerializer implements CacheSerializer
     }
 
     #[Override]
-    public function unserialize(SerializedCachePayload $serializedCachePayload) : mixed
+    public function unserialize(SerializedCachePayload $payload) : mixed
     {
-        if (! $this->canUnserialize(payload: $serializedCachePayload)) {
+        if (! $this->canUnserialize(payload: $payload)) {
             throw new CachePayloadCouldNotBeSerialized(
-                message: sprintf('Cannot unserialize payload with format "%s"', $serializedCachePayload->format),
+                message: sprintf('Cannot unserialize payload with format "%s"', $payload->format),
             );
         }
 
-        if (! $serializedCachePayload->verify()) {
+        if (! $payload->verify()) {
             throw new CachePayloadCouldNotBeSerialized(
                 message: 'Payload checksum verification failed',
             );
         }
 
-        $result = unserialize($serializedCachePayload->data, ['allowed_classes' => true]);
+        $result = unserialize($payload->data, ['allowed_classes' => true]);
 
-        if ($result === false && $serializedCachePayload->data !== 'b:0;') {
+        if ($result === false && $payload->data !== 'b:0;') {
             throw new CachePayloadCouldNotBeSerialized(
                 message: 'Failed to unserialize payload data',
             );
@@ -58,9 +52,9 @@ final readonly class PhpCacheSerializer implements CacheSerializer
         return $result;
     }
 
-    public function canUnserialize(SerializedCachePayload $serializedCachePayload) : bool
+    public function canUnserialize(SerializedCachePayload $payload) : bool
     {
-        return $serializedCachePayload->format === self::FORMAT;
+        return $payload->format === self::FORMAT;
     }
 
     #[Override]

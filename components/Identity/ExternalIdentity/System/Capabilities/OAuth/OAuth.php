@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth;
 
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityCapabilityUnavailable;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\IssuedAuthorizationCode;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClient;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\RegisteredOAuthClient;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistration;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistrationData;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\AuthorizeCode\AuthorizeCode;
@@ -30,9 +33,6 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\RotateClientSecret\RotateClientSecret;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\UpdateClient\UpdateClient;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\UpdateClient\UpdateClientData;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\IssuedAuthorizationCode;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\OAuthClient;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\RegisteredOAuthClient;
 use DateMalformedStringException;
 use SensitiveParameter;
 

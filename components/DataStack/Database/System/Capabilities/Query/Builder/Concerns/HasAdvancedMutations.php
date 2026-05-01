@@ -44,7 +44,7 @@ trait HasAdvancedMutations
      *
      * @throws Throwable If the SQL compilation for the specific dialect or physical execution fails.
      */
-    public function upsert(array $values, array|string $uniqueBy, array $update = null): int
+    public function upsert(array $values, array|string $uniqueBy, ?array $update = null) : int
     {
         if ($values === []) {
             return 0;
@@ -90,7 +90,7 @@ trait HasAdvancedMutations
      *
      * @throws Throwable If the resulting SQL update execution fails.
      */
-    public function increment(string $column, int|float $amount = null, array $extra = []): bool
+    public function increment(string $column, int|float|null $amount = null, array $extra = []) : bool
     {
         $amount ??= 1;
         $wrapped = $this->grammar->wrap(value: $column);
@@ -116,7 +116,7 @@ trait HasAdvancedMutations
      *
      * @throws Throwable If the resulting SQL update execution fails.
      */
-    public function decrement(string $column, int|float $amount = null, array $extra = []): bool
+    public function decrement(string $column, int|float|null $amount = null, array $extra = []) : bool
     {
         $amount ??= 1;
         $wrapped = $this->grammar->wrap(value: $column);

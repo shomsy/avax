@@ -436,7 +436,7 @@ class QueryBuilder
      *
      * @throws Throwable
      */
-    public function pluck(string $value, string $key = null): array
+    public function pluck(string $value, ?string $key = null) : array
     {
         $columns = $key ? [$value, $key] : [$value];
         $results = $this->select(...$columns)->get();
@@ -511,7 +511,7 @@ class QueryBuilder
      *
      * @throws Throwable
      */
-    public function first(string|callable $key = null, mixed $default = null): mixed
+    public function first(string|callable|null $key = null, mixed $default = null) : mixed
     {
         $instance = clone $this;
         $result   = $instance->limit(limit: 1)->get();

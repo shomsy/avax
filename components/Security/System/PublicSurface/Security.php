@@ -28,7 +28,7 @@ final class Security
         return CsrfToken::rotate();
     }
 
-    public static function verifyCsrfToken(string $token, string $sessionToken = null) : bool
+    public static function verifyCsrfToken(string $token, ?string $sessionToken = null) : bool
     {
         $valid = CsrfVerifier::verify(token: $token, sessionToken: $sessionToken);
         self::audit(event: $valid ? 'csrf.accepted' : 'csrf.rejected');

@@ -32,14 +32,16 @@ final class ComponentRegistry
 
     public function registerProvider(ComponentProviderInterface $provider) : void
     {
+        $name = $provider::name();
+
         $this->register(
             definition: new ComponentDefinition(
-                name         : $provider->name(),
+                            name: $name,
                 providerClass: $provider::class,
             ),
         );
 
-        $this->providers[$provider->name()] = $provider;
+        $this->providers[$name] = $provider;
     }
 
     public function has(string $name) : bool

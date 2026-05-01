@@ -88,7 +88,7 @@ final readonly class HandleIncomingHttp
 
         if (is_array(value: $value) || $value instanceof JsonSerializable || (is_object(value: $value) && ! $value instanceof Stringable)) {
             return RuntimeResponse::fromPsrResponse(
-                response: $this->responseFactory->send(data: $value),
+                response: $this->responseFactory->json(data: $value),
             );
         }
 
@@ -100,7 +100,7 @@ final readonly class HandleIncomingHttp
         };
 
         return RuntimeResponse::fromPsrResponse(
-            response: $this->responseFactory->send(data: $normalizedBody),
+            response: $this->responseFactory->create(body: $normalizedBody),
         );
     }
 }

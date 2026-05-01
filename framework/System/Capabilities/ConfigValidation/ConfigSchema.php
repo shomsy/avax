@@ -4,36 +4,51 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\ConfigValidation;
 
+/**
+ * Defines the expected shape of a configuration section.
+ */
 final readonly class ConfigSchema
 {
-    private array $fields = [];
-
-    public function field(string $name, string $type = 'mixed') : ConfigSchemaField
-    {
-        $field               = new ConfigSchemaField($name, $type);
-        $this->fields[$name] = $field;
-
-        return $field;
-    }
-
-    public function validate(array $data) : ConfigValidationResult
-    {
-        return new ConfigValidationResult(valid: true, errors: []);
-    }
-}
-
-final readonly class ConfigSchemaField
-{
+    /**
+     * @param array<string, ConfigSchemaField> $fields
+     */
     public function __construct(
         public string $name,
-        public string $type,
+        public array       $fields = [],
+        public string|null $description = null,
     ) {}
-}
 
-final readonly class ConfigValidationResult
-{
-    public function __construct(
-        public bool  $valid,
-        public array $errors = [],
-    ) {}
+    public static function make(string $name) : self
+    {
+        return new self(name: $name);
+    }
+
+    /**
+     * @param list<mixed> $allowed
+     */
+    public function field(
+        string      $name,
+        string      $type = ConfigSchemaField::TYPE_STRING,
+        bool        $required = true,
+        mixed       $default = null,
+        array       $allowed = [],
+        string|null $description = null,
+    ) : self
+    {
+        $fields        = $this->fields;
+        $fields[$name] = new ConfigSchemaField(
+            name       : $name,
+            type       : $type,
+            required   : $required,
+            default    : $default,
+            allowed    : $allowed,
+            description: $description,
+        );
+
+        return new self(
+            name       : $this->name,
+            fields     : $fields,
+            description: $this->description,
+        );
+    }
 }

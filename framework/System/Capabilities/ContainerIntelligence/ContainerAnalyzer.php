@@ -18,11 +18,17 @@ final readonly class ContainerAnalyzer
         return new SafetyAssessment(safe: true, violations: []);
     }
 
+    /**
+     * @return list<string>
+     */
     public function detectScopeViolations() : array
     {
         return [];
     }
 
+    /**
+     * @return list<string>
+     */
     public function getServiceDependencies(string $id) : array
     {
         return [];
@@ -33,11 +39,17 @@ final readonly class ContainerAnalyzer
         return "Service {$id} is available.";
     }
 
+    /**
+     * @return list<string>
+     */
     public function whoUses(string $id) : array
     {
         return [];
     }
 
+    /**
+     * @return list<string>
+     */
     public function whatBreaksIf(string $id) : array
     {
         return [];
@@ -46,6 +58,9 @@ final readonly class ContainerAnalyzer
 
 final readonly class SafetyAssessment
 {
+    /**
+     * @param list<string> $violations
+     */
     public function __construct(
         public bool  $safe,
         public array $violations = [],

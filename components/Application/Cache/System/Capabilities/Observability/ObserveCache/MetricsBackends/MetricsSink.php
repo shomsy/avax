@@ -9,9 +9,14 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveC
 final readonly class MetricsSink
 {
     public function __construct(
-        private MetricsBackend $metricsBackend,
-        private string|null    $prefix = 'cache',
-    ) {}
+        MetricsBackend      $backend,
+        private string|null $prefix = 'cache',
+    )
+    {
+        $this->metricsBackend = $backend;
+    }
+
+    private MetricsBackend $metricsBackend;
 
     public function recordHit() : void
     {
@@ -68,12 +73,12 @@ final readonly class MetricsSink
         $this->metricsBackend->timing(metric: $this->prefix . '.latency', milliseconds: (int) ($microseconds / 1000));
     }
 
-    public function recordMetrics(CacheMetrics $cacheMetrics) : void
+    public function recordMetrics(CacheMetrics $metrics) : void
     {
-        $this->metricsBackend->gauge(metric: $this->prefix . '.hit_rate', value: $cacheMetrics->hitRate());
-        $this->metricsBackend->gauge(metric: $this->prefix . '.miss_rate', value: $cacheMetrics->missRate());
-        $this->metricsBackend->gauge(metric: $this->prefix . '.average_latency_ms', value: $cacheMetrics->averageLatencyMicroseconds() / 1000);
-        $this->metricsBackend->gauge(metric: $this->prefix . '.total_operations', value: (float) $cacheMetrics->totalOperations());
+        $this->metricsBackend->gauge(metric: $this->prefix . '.hit_rate', value: $metrics->hitRate());
+        $this->metricsBackend->gauge(metric: $this->prefix . '.miss_rate', value: $metrics->missRate());
+        $this->metricsBackend->gauge(metric: $this->prefix . '.average_latency_ms', value: $metrics->averageLatencyMicroseconds() / 1000);
+        $this->metricsBackend->gauge(metric: $this->prefix . '.total_operations', value: (float) $metrics->totalOperations());
     }
 
     public function flush() : void

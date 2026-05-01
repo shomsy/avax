@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 
 use Override;
 
-final readonly class RuntimeCacheTarget implements CacheReadTarget
+readonly class RuntimeCacheTarget implements CacheReadTarget
 {
     public function __construct(
         public string $key,

@@ -27,7 +27,7 @@ final class RuntimeSafety
     private array $resetCallbacks = [];
 
     /**
-     * @var list<string>
+     * @var array<string, string>
      */
     private array $activeTransactions = [];
 

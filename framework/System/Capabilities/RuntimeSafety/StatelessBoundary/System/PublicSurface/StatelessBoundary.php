@@ -49,11 +49,17 @@ final class StatelessBoundary
         );
     }
 
+    /**
+     * @return list<string>
+     */
     private static function detectedStatelessRoutes() : array
     {
         return ['/api/*'];
     }
 
+    /**
+     * @return list<string>
+     */
     private static function detectViolations() : array
     {
         return [];
@@ -62,6 +68,10 @@ final class StatelessBoundary
 
 final readonly class BoundaryAudit
 {
+    /**
+     * @param list<string> $statelessRoutes
+     * @param list<string> $statefulViolations
+     */
     public function __construct(
         public string $mode,
         public array  $statelessRoutes,

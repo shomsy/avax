@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotFound;
 
-final class CacheRegistry
+class CacheRegistry
 {
     /** @var array<string, CacheContract> */
     private array $caches = [];

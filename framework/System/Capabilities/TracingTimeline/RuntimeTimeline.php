@@ -42,6 +42,9 @@ final class RuntimeTimeline
         );
     }
 
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function record(
         string      $name,
         float|null  $durationMS = null,
@@ -122,6 +125,10 @@ final class RuntimeTimeline
 
     /**
      * Export timeline as structured array.
+     */
+    /**
+     * @return array{duration_ms: float, events: list<array{name: string, timestamp_ms: float, duration_ms: float|null,
+     *                            category: string|null, metadata: array<string, mixed>}>}
      */
     public function exportArray() : array
     {

@@ -7,15 +7,15 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Dis
 final readonly class RebalanceCachePartitions
 {
     public function __construct(
-        private ConsistentHashRing $consistentHashRing,
+        private ConsistentHashRing $ring,
         private int                $partitionCount = 256,
     ) {}
 
-    public function addNode(CacheNode $cacheNode) : array
+    public function addNode(CacheNode $node) : array
     {
         $oldDistribution = $this->rebalance();
 
-        $this->consistentHashRing->addNode(node: $cacheNode);
+        $this->ring->addNode(node: $node);
 
         $newDistribution = $this->rebalance();
 
@@ -27,7 +27,7 @@ final readonly class RebalanceCachePartitions
         $moves = [];
 
         for ($i = 0; $i < $this->partitionCount; $i++) {
-            $node = $this->consistentHashRing->getNodeForPartition(partitionIndex: $i);
+            $node = $this->ring->getNodeForPartition(partitionIndex: $i);
 
             if ($node !== null) {
                 $moves[$i] = $node->id->toString();
@@ -53,11 +53,11 @@ final readonly class RebalanceCachePartitions
         return $moves;
     }
 
-    public function removeNode(CacheNodeId $cacheNodeId) : array
+    public function removeNode(CacheNodeId $nodeId) : array
     {
         $oldDistribution = $this->rebalance();
 
-        $this->consistentHashRing->removeNode(nodeId: $cacheNodeId);
+        $this->ring->removeNode(nodeId: $nodeId);
 
         $newDistribution = $this->rebalance();
 

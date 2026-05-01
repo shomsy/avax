@@ -24,14 +24,14 @@ interface StateAdapter
 
 final class ExternalState
 {
-    private static StateAdapter $session;
-    private static StateAdapter $cache;
-    private static StateAdapter $lock;
-    private static StateAdapter $rateLimit;
+    private static StateAdapter|null $session   = null;
+    private static StateAdapter|null $cache     = null;
+    private static StateAdapter|null $lock      = null;
+    private static StateAdapter|null $rateLimit = null;
 
     public static function session() : StateAdapter
     {
-        if (! isset(self::$session)) {
+        if (self::$session === null) {
             self::$session = self::defaultSessionAdapter();
         }
 
@@ -51,7 +51,7 @@ final class ExternalState
 
     public static function cache() : StateAdapter
     {
-        if (! isset(self::$cache)) {
+        if (self::$cache === null) {
             self::$cache = self::defaultCacheAdapter();
         }
 
@@ -71,7 +71,7 @@ final class ExternalState
 
     public static function lock() : StateAdapter
     {
-        if (! isset(self::$lock)) {
+        if (self::$lock === null) {
             self::$lock = self::defaultLockAdapter();
         }
 
@@ -91,7 +91,7 @@ final class ExternalState
 
     public static function rateLimit() : StateAdapter
     {
-        if (! isset(self::$rateLimit)) {
+        if (self::$rateLimit === null) {
             self::$rateLimit = self::defaultRateLimitAdapter();
         }
 
@@ -122,10 +122,10 @@ final class ExternalState
     public static function audit() : StateAudit
     {
         return new StateAudit(
-            session  : self::adapterType(self::$session),
-            cache    : self::adapterType(self::$cache),
-            lock     : self::adapterType(self::$lock),
-            rateLimit: self::adapterType(self::$rateLimit),
+            session  : self::adapterType(adapter: self::session()),
+            cache    : self::adapterType(adapter: self::cache()),
+            lock     : self::adapterType(adapter: self::lock()),
+            rateLimit: self::adapterType(adapter: self::rateLimit()),
         );
     }
 
@@ -152,6 +152,9 @@ final readonly class StateAudit
         public string $rateLimit,
     ) {}
 
+    /**
+     * @return array{session: string, cache: string, lock: string, rate_limit: string}
+     */
     public function toArray() : array
     {
         return [

@@ -7,7 +7,6 @@ namespace Avax\Framework\System\Capabilities\RuntimeSafety;
 use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use ReflectionClass;
 use ReflectionProperty;
-use Throwable;
 
 /**
  * Scans for static state that may leak between requests.
@@ -33,12 +32,20 @@ final class StaticStateScanner
                 continue;
             }
 
+            if (! class_exists($className)) {
+                continue;
+            }
+
             $classFindings = $this->scanClass($className);
             $findings      = [...$findings, ...$classFindings];
         }
 
         foreach (get_declared_traits() as $traitName) {
             if (! str_starts_with($traitName, 'Avax\\')) {
+                continue;
+            }
+
+            if (! trait_exists($traitName)) {
                 continue;
             }
 
@@ -50,17 +57,15 @@ final class StaticStateScanner
     }
 
     /**
+     * @param class-string $className
+     *
      * @return list<RuntimeSafetyFinding>
      */
     private function scanClass(string $className) : array
     {
         $findings = [];
 
-        try {
-            $reflection = new ReflectionClass($className);
-        } catch (Throwable) {
-            return [];
-        }
+        $reflection = new ReflectionClass($className);
 
         $staticProperties = $reflection->getProperties(ReflectionProperty::IS_STATIC);
         $hasResetHook     = $reflection->implementsInterface(ResettableState::class);
@@ -88,7 +93,7 @@ final class StaticStateScanner
                                  $className,
                                  $property->getName(),
                              ),
-                location   : $property->getFileName() . ':' . $property->getStartLine(),
+                location   : $this->propertyLocation(property: $property),
             );
         }
 
@@ -96,17 +101,15 @@ final class StaticStateScanner
     }
 
     /**
+     * @param class-string $traitName
+     *
      * @return list<RuntimeSafetyFinding>
      */
     private function scanTrait(string $traitName) : array
     {
         $findings = [];
 
-        try {
-            $reflection = new ReflectionClass($traitName);
-        } catch (Throwable) {
-            return [];
-        }
+        $reflection = new ReflectionClass($traitName);
 
         foreach ($reflection->getProperties(ReflectionProperty::IS_STATIC) as $property) {
             if ($property->isReadOnly()) {
@@ -123,10 +126,19 @@ final class StaticStateScanner
                                  $property->getName(),
                              ),
                 remediation: 'Avoid static state in traits or ensure consumers implement ResettableState',
-                location   : $property->getFileName() . ':' . $property->getStartLine(),
+                location   : $this->propertyLocation(property: $property),
             );
         }
 
         return $findings;
+    }
+
+    private function propertyLocation(ReflectionProperty $property) : string
+    {
+        $class = $property->getDeclaringClass();
+        $file  = $class->getFileName();
+        $line  = $class->getStartLine();
+
+        return ($file !== false ? $file : $class->getName()) . ':' . $line;
     }
 }

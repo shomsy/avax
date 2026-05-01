@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 
-interface CacheReadTarget
+interface CacheReadTarget extends \Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget
 {
-    public function kind() : CacheReadKind;
 }

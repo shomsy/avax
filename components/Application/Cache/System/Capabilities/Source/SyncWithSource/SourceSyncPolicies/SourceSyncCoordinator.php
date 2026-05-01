@@ -12,101 +12,115 @@ use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\
 use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\WriteValueToSource;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 
-final readonly class SourceSyncCoordinator
+final class SourceSyncCoordinator
 {
-    public function __construct(
-        private CacheSource              $cacheSource,
-        private CacheStore|null          $cacheStore = null,
-        private SourceSyncPolicy         $sourceSyncPolicy = SourceSyncPolicy::CACHE_ASIDE,
-        private DeferredSourceWrite|null $deferredSourceWrite = null,
-    ) {}
+    private CacheSource $cacheSource;
 
-    public function write(CacheKey $cacheKey, mixed $value) : void
+    private CacheStore|null $cacheStore;
+
+    private SourceSyncPolicy $sourceSyncPolicy;
+
+    private DeferredSourceWrite|null $deferredSourceWrite;
+
+    public function __construct(
+        CacheSource              $source,
+        CacheStore|null          $cache = null,
+        SourceSyncPolicy         $policy = SourceSyncPolicy::CACHE_ASIDE,
+        DeferredSourceWrite|null $deferredWrite = null,
+    )
+    {
+        $this->cacheSource         = $source;
+        $this->cacheStore          = $cache;
+        $this->sourceSyncPolicy    = $policy;
+        $this->deferredSourceWrite = $deferredWrite;
+    }
+
+    public function write(CacheKey $key, mixed $value) : void
     {
         match ($this->sourceSyncPolicy) {
-            SourceSyncPolicy::WRITE_THROUGH => $this->writeThrough(key: $cacheKey, value: $value),
-            SourceSyncPolicy::WRITE_AROUND  => $this->writeAround(key: $cacheKey, value: $value),
-            SourceSyncPolicy::WRITE_BEHIND  => $this->writeBehind(key: $cacheKey, value: $value),
-            SourceSyncPolicy::CACHE_ASIDE   => $this->cacheAsideWrite(key: $cacheKey, value: $value),
+            SourceSyncPolicy::WRITE_THROUGH => $this->writeThrough(key: $key, value: $value),
+            SourceSyncPolicy::WRITE_AROUND  => $this->writeAround(key: $key, value: $value),
+            SourceSyncPolicy::WRITE_BEHIND  => $this->writeBehind(key: $key, value: $value),
+            SourceSyncPolicy::CACHE_ASIDE   => $this->cacheAsideWrite(key: $key, value: $value),
             SourceSyncPolicy::NO_SYNC       => $this->writeToSourceOnly(),
         };
     }
 
-    private function writeThrough(CacheKey $cacheKey, mixed $value) : void
+    private function writeThrough(CacheKey $key, mixed $value) : void
     {
         $writeValueToSource = new WriteValueToSource(source: $this->cacheSource);
-        $writeValueToSource->write(key: $cacheKey, value: $value);
+        $writeValueToSource->write(key: $key, value: $value);
 
         if ($this->cacheStore !== null) {
-            $this->invalidateCache(key: $cacheKey);
+            $this->invalidateCache(key: $key);
         }
     }
 
-    private function invalidateCache(CacheKey $cacheKey) : void
+    private function invalidateCache(CacheKey $key) : void
     {
-        $this->cacheStore?->forget(key: $cacheKey);
+        $this->cacheStore?->forget(key: $key);
     }
 
-    private function writeAround(CacheKey $cacheKey, mixed $value) : void
+    private function writeAround(CacheKey $key, mixed $value) : void
     {
         $writeValueToSource = new WriteValueToSource(source: $this->cacheSource);
-        $writeValueToSource->write(key: $cacheKey, value: $value);
+        $writeValueToSource->write(key: $key, value: $value);
 
-        $this->invalidateCache(key: $cacheKey);
+        $this->invalidateCache(key: $key);
     }
 
-    private function writeBehind(CacheKey $cacheKey, mixed $value) : void
+    private function writeBehind(CacheKey $key, mixed $value) : void
     {
-        $this->invalidateCache(key: $cacheKey);
+        $this->invalidateCache(key: $key);
 
         if ($this->deferredSourceWrite === null) {
             $this->deferredSourceWrite = new DeferredSourceWrite(source: $this->cacheSource);
         }
 
-        $this->deferredSourceWrite->queueFromCacheKey(key: $cacheKey, value: $value);
+        $this->deferredSourceWrite->queueFromCacheKey(key: $key, value: $value);
     }
 
-    private function cacheAsideWrite(CacheKey $cacheKey, mixed $value) : void
+    private function cacheAsideWrite(CacheKey $key, mixed $value) : void
     {
         $writeValueToSource = new WriteValueToSource(source: $this->cacheSource);
-        $writeValueToSource->write(key: $cacheKey, value: $value);
+        $writeValueToSource->write(key: $key, value: $value);
     }
 
     private function writeToSourceOnly() : void {}
 
-    public function delete(CacheKey $cacheKey) : void
+    public function delete(CacheKey $key) : void
     {
         match ($this->sourceSyncPolicy) {
-            SourceSyncPolicy::WRITE_THROUGH => $this->deleteThrough(key: $cacheKey),
+            SourceSyncPolicy::WRITE_THROUGH => $this->deleteThrough(key: $key),
             SourceSyncPolicy::WRITE_AROUND,
-            SourceSyncPolicy::CACHE_ASIDE   => $this->invalidateCache(key: $cacheKey),
-            SourceSyncPolicy::WRITE_BEHIND  => $this->invalidateCache(key: $cacheKey),
-            SourceSyncPolicy::NO_SYNC       => $this->deleteFromSource(key: $cacheKey),
+            SourceSyncPolicy::CACHE_ASIDE   => $this->invalidateCache(key: $key),
+            SourceSyncPolicy::WRITE_BEHIND  => $this->invalidateCache(key: $key),
+            SourceSyncPolicy::NO_SYNC       => $this->deleteFromSource(key: $key),
         };
     }
 
-    private function deleteThrough(CacheKey $cacheKey) : void
+    private function deleteThrough(CacheKey $key) : void
     {
         $deleteValueFromSource = new DeleteValueFromSource(source: $this->cacheSource);
-        $deleteValueFromSource->delete(key: $cacheKey);
+        $deleteValueFromSource->delete(key: $key);
 
-        $this->invalidateCache(key: $cacheKey);
+        $this->invalidateCache(key: $key);
     }
 
-    private function deleteFromSource(CacheKey $cacheKey) : void
+    private function deleteFromSource(CacheKey $key) : void
     {
         $deleteValueFromSource = new DeleteValueFromSource(source: $this->cacheSource);
-        $deleteValueFromSource->delete(key: $cacheKey);
+        $deleteValueFromSource->delete(key: $key);
     }
 
-    public function loadFromSource(CacheKey $cacheKey) : mixed
+    public function loadFromSource(CacheKey $key) : mixed
     {
         $cacheSourceKey = CacheSourceKey::create(
-            key      : $cacheKey->fullKey(),
-            namespace: $cacheKey->namespace,
+            key      : $key->fullKey(),
+            namespace: $key->namespace,
         );
 
-        return $this->cacheSource->load(key: $cacheSourceKey);
+        return $this->cacheSource->load($cacheSourceKey);
     }
 
     public function shouldPopulateCacheOnMiss() : bool

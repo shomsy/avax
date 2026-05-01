@@ -14,6 +14,9 @@ final class RouteAnalyzer
      */
     private array $routes = [];
 
+    /**
+     * @param list<array{method: string, path: string, handler: mixed, middleware?: list<string>}> $routes
+     */
     public function setRoutes(array $routes) : self
     {
         $this->routes = array_map(

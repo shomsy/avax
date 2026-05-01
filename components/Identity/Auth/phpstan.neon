@@ -3,5 +3,5 @@ parameters:
   paths:
     - System
     - integrations
-  scanFiles:
-    - phpstan.stubs/avax-container.stub.php
+  bootstrapFiles:
+    - ../../../vendor/autoload.php

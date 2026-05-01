@@ -11,7 +11,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use DateInterval;
 use Psr\SimpleCache\InvalidArgumentException;
 
-final readonly class CacheFacade
+readonly class CacheFacade
 {
     public function __construct(
         private CacheRegistry              $cacheRegistry,

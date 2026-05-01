@@ -8,12 +8,12 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use InvalidArgumentException;
 use Override;
 
-final readonly class CompiledCacheTarget implements CacheReadTarget
+readonly class CompiledCacheTarget implements CacheReadTarget
 {
     public function __construct(
         public string               $name,
         public mixed                $builder,
-        public CompiledCacheSources $compiledCacheSources,
+        public CompiledCacheSources $sources,
     )
     {
         if (! is_callable($this->builder)) {
@@ -24,10 +24,10 @@ final readonly class CompiledCacheTarget implements CacheReadTarget
     public static function artifact(
         string               $name,
         callable             $builder,
-        CompiledCacheSources $compiledCacheSources,
+        CompiledCacheSources $sources,
     ) : self
     {
-        return new self(name: $name, builder: $builder, sources: $compiledCacheSources);
+        return new self(name: $name, builder: $builder, sources: $sources);
     }
 
     #[Override]

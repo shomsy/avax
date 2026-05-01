@@ -6,6 +6,9 @@ namespace Avax\Framework\System\Configuration\LoadConfiguration;
 
 final class ConfigurationRepository
 {
+    /**
+     * @var array<string, mixed>
+     */
     private array $config = [];
 
     public function get(string $key, mixed $default = null) : mixed
@@ -43,11 +46,17 @@ final class ConfigurationRepository
         return $this->get($key) !== null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function all() : array
     {
         return $this->config;
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function load(array $config) : void
     {
         $this->config = array_merge($this->config, $config);

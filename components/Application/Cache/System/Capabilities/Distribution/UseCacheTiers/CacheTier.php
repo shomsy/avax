@@ -16,20 +16,20 @@ final readonly class CacheTier
     public static function l1(string $name = 'L1', int $maxSize = 1000) : self
     {
         return new self(
-            name      : CacheTierName::from(value: $name),
-            priority  : 1,
-            maxSize   : $maxSize,
-            ttlDefault: 3600,
+            cacheTierName: CacheTierName::from(value: $name),
+            priority     : 1,
+            maxSize      : $maxSize,
+            ttlDefault   : 3600,
         );
     }
 
     public static function l2(string $name = 'L2', int $maxSize = 10000) : self
     {
         return new self(
-            name      : CacheTierName::from(value: $name),
-            priority  : 2,
-            maxSize   : $maxSize,
-            ttlDefault: 7200,
+            cacheTierName: CacheTierName::from(value: $name),
+            priority     : 2,
+            maxSize      : $maxSize,
+            ttlDefault   : 7200,
         );
     }
 

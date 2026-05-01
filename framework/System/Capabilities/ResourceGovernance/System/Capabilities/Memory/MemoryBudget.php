@@ -41,6 +41,9 @@ final readonly class MemorySnapshot
         public int $workerMemory,
     ) {}
 
+    /**
+     * @return array{request_number: int, memory_used_mb: float, worker_memory_mb: float}
+     */
     public function toArray() : array
     {
         return [

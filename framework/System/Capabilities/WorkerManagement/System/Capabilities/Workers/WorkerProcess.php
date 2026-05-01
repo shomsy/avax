@@ -5,18 +5,25 @@ declare(strict_types=1);
 namespace Avax\Components\WorkerManager\System\Capabilities\Workers;
 
 use Closure;
+use RuntimeException;
 
 final class WorkerProcess
 {
-    private int   $pid;
+    private int $pid       = 0;
     private bool  $running     = false;
     private bool  $idle        = true;
     private int   $taskCount   = 0;
     private int   $memoryUsage = 0;
     private int   $maxMemory   = 128;
-    private int   $startTime;
+    private int $startTime = 0;
+    /**
+     * @var array<string, mixed>
+     */
     private array $options;
 
+    /**
+     * @param array{max_memory?: int} $options
+     */
     public function __construct(array $options = [])
     {
         $this->options   = $options;
@@ -50,7 +57,13 @@ final class WorkerProcess
 
     public function start() : void
     {
-        $this->pid       = getmypid();
+        $pid = getmypid();
+
+        if ($pid === false) {
+            throw new RuntimeException('Unable to resolve current process id.');
+        }
+
+        $this->pid = $pid;
         $this->running   = true;
         $this->startTime = time();
         $this->idle      = true;

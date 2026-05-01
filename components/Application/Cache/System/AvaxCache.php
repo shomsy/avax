@@ -30,6 +30,12 @@ use Traversable;
 
 final class AvaxCache implements CacheContract
 {
+    private readonly CacheStore $cacheStore;
+
+    private readonly Clock $clock;
+
+    private readonly CacheMetrics|null $cacheMetrics;
+
     private readonly CacheTtl $cacheTtl;
 
     private readonly DecideStaleValueCanBeServed $decideStaleValueCanBeServed;
@@ -41,31 +47,34 @@ final class AvaxCache implements CacheContract
     private bool $stampedeProtectionEnabled;
 
     public function __construct(
-        private readonly CacheStore        $cacheStore,
-        private readonly Clock             $clock = new SystemClock(),
-        private readonly CacheMetrics|null $cacheMetrics = null,
-        ?StaleValuePolicy                  $staleValuePolicy = null,
-        ?RefreshPolicy                     $refreshPolicy = null,
-        ?CacheLockStore                    $cacheLockStore = null,
-        bool                               $stampedeProtection = false,
-        private readonly int               $lockWaitTimeoutSeconds = 5,
-        private readonly int               $lockTtlSeconds = 30,
-        private readonly int               $refreshAheadWindowSeconds = 60,
+        CacheStore            $store,
+        Clock                 $clock = new SystemClock(),
+        CacheMetrics|null     $metrics = null,
+        StaleValuePolicy|null $stalePolicy = null,
+        RefreshPolicy|null    $refreshPolicy = null,
+        CacheLockStore|null   $cacheLockStore = null,
+        bool                  $stampedeProtection = false,
+        private readonly int  $lockWaitTimeoutSeconds = 5,
+        private readonly int  $lockTtlSeconds = 30,
+        private readonly int  $refreshAheadWindowSeconds = 60,
     )
     {
+        $this->cacheStore                  = $store;
+        $this->clock                       = $clock;
+        $this->cacheMetrics                = $metrics;
         $this->cacheTtl                    = new CacheTtl(clock: $this->clock);
         $this->decideStaleValueCanBeServed = new DecideStaleValueCanBeServed(
-            policy: $staleValuePolicy ?? StaleValuePolicy::DO_NOT_SERVE_STALE,
+            staleValuePolicy: $stalePolicy ?? StaleValuePolicy::DO_NOT_SERVE_STALE,
         );
         $this->shouldRefreshCachedValue    = new ShouldRefreshCachedValue(
             clock                    : $this->clock,
-            policy                   : $refreshPolicy ?? RefreshPolicy::DO_NOT_REFRESH,
+            refreshPolicy            : $refreshPolicy ?? RefreshPolicy::DO_NOT_REFRESH,
             refreshAheadWindowSeconds: $this->refreshAheadWindowSeconds,
         );
 
         if ($stampedeProtection && $cacheLockStore instanceof CacheLockStore) {
             $this->acquireCacheStampedeLock = new AcquireCacheStampedeLock(
-                lockStore         : $cacheLockStore,
+                cacheLockStore    : $cacheLockStore,
                 waitTimeoutSeconds: $this->lockWaitTimeoutSeconds,
                 lockTtlSeconds    : $this->lockTtlSeconds,
             );
@@ -116,9 +125,9 @@ final class AvaxCache implements CacheContract
         return $this->loadWithStampedeProtection(key: $key, ttl: $ttl, loader: $loader);
     }
 
-    private function shouldRefreshValue(CachedValueLifecycle $cachedValueLifecycle) : bool
+    private function shouldRefreshValue(CachedValueLifecycle $lifecycle) : bool
     {
-        return $this->shouldRefreshCachedValue->shouldRefresh(lifecycle: $cachedValueLifecycle);
+        return $this->shouldRefreshCachedValue->shouldRefresh(lifecycle: $lifecycle);
     }
 
     private function loadWithStampedeProtection(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
@@ -278,7 +287,7 @@ final class AvaxCache implements CacheContract
     public function getMultiple(iterable $keys, mixed $default = null) : iterable
     {
         $result = [];
-        $keys   = $keys instanceof Traversable ? iterator_to_array($keys) : (is_array($keys) ? $keys : []);
+        $keys = $keys instanceof Traversable ? iterator_to_array($keys) : $keys;
 
         foreach ($keys as $key) {
             $result[$key] = $this->get(key: $key, default: $default);
@@ -330,7 +339,7 @@ final class AvaxCache implements CacheContract
     #[Override]
     public function setMultiple(iterable $values, int|DateInterval|null $ttl = null) : bool
     {
-        $values = $values instanceof Traversable ? iterator_to_array($values) : (is_array($values) ? $values : []);
+        $values = $values instanceof Traversable ? iterator_to_array($values) : $values;
 
         foreach ($values as $key => $value) {
             $this->set(key: $key, value: $value, ttl: $ttl);
@@ -342,7 +351,7 @@ final class AvaxCache implements CacheContract
     #[Override]
     public function deleteMultiple(iterable $keys) : bool
     {
-        $keys = $keys instanceof Traversable ? iterator_to_array($keys) : (is_array($keys) ? $keys : []);
+        $keys = $keys instanceof Traversable ? iterator_to_array($keys) : $keys;
 
         foreach ($keys as $key) {
             $this->delete(key: $key);

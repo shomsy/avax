@@ -10,6 +10,7 @@ use Avax\Components\Application\Cache\System\AvaxCache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
 use Override;
 use PHPUnit\Framework\TestCase;
 

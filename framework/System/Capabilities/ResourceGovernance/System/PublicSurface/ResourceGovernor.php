@@ -9,16 +9,22 @@ use Avax\Components\ResourceGovernor\System\Capabilities\Memory\MemorySnapshot;
 
 final class ResourceGovernor
 {
-    private static MemoryBudget $budget;
-    private static array        $snapshots        = [];
-    private static int          $requestCount     = 0;
-    private static float        $totalMemoryStart = 0;
+    private static MemoryBudget|null $budget = null;
+    /**
+     * @var list<MemorySnapshot>
+     */
+    private static array $snapshots        = [];
+    private static int   $requestCount     = 0;
+    private static int   $totalMemoryStart = 0;
 
+    /**
+     * @param array{worker_memory?: string, request_memory?: string} $config
+     */
     public static function configure(array $config) : void
     {
-        self::$budget = new MemoryBudget(
-            workerLimit : $config['worker_memory'] ?? '256M',
-            requestLimit: $config['request_memory'] ?? '32M',
+        self::$budget = MemoryBudget::fromString(
+            worker : $config['worker_memory'] ?? '256M',
+            request: $config['request_memory'] ?? '32M',
         );
     }
 
@@ -47,6 +53,10 @@ final class ResourceGovernor
     public static function check() : bool
     {
         $budget = self::$budget;
+
+        if ($budget === null) {
+            return true;
+        }
 
         if ($budget->requestLimit > 0) {
             $current = memory_get_usage(true);
@@ -99,7 +109,7 @@ final class ResourceGovernor
         }
 
         $recent = array_slice(self::$snapshots, -10);
-        $total  = array_sum(array_map(fn ($s) => $s->memoryUsed, $recent));
+        $total = array_sum(array_map(static fn (MemorySnapshot $snapshot) : int => $snapshot->memoryUsed, $recent));
 
         return $total / count($recent);
     }
@@ -115,6 +125,10 @@ final readonly class ResourceReport
         public float $trend,
     ) {}
 
+    /**
+     * @return array{request_count: int, worker_memory_mb: float, worker_limit_mb: float, near_limit: bool,
+     *                              trend_mb_per_request: float}
+     */
     public function toArray() : array
     {
         return [

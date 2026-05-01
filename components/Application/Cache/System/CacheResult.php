@@ -8,12 +8,20 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 class CacheResult
 {
+    public readonly CacheResultState $cacheResultState;
+
+    public readonly CacheKey|null $cacheKey;
+
     public function __construct(
-        public readonly CacheResultState $cacheResultState,
+        public readonly CacheResultState $state,
         public readonly mixed            $value,
-        public readonly CacheKey|null    $cacheKey = null,
+        public readonly CacheKey|null    $key = null,
         public readonly string|null      $message = null,
-    ) {}
+    )
+    {
+        $this->cacheResultState = $state;
+        $this->cacheKey         = $key;
+    }
 
     public static function hit(mixed $value, CacheKey|null $cacheKey = null) : self
     {
@@ -122,5 +130,10 @@ class CacheResult
     public function isStale() : bool
     {
         return $this->cacheResultState === CacheResultState::STALE;
+    }
+
+    public function isExpired() : bool
+    {
+        return $this->cacheResultState === CacheResultState::EXPIRED;
     }
 }

@@ -6,8 +6,9 @@ namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\CompiledNotConfigured;
+use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 
-final readonly class ReadFromCache
+readonly class ReadFromCache
 {
     public function __construct(
         private CacheRegistry              $cacheRegistry,

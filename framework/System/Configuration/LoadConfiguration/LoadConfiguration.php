@@ -11,6 +11,9 @@ final class LoadConfiguration
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function load(array $config) : void
     {
         $this->repository->load($config);

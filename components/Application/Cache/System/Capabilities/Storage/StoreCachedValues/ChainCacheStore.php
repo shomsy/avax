@@ -26,49 +26,49 @@ final readonly class ChainCacheStore implements CacheStore
     }
 
     #[Override]
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         foreach ($this->stores as $store) {
-            $result = $store->read(key: $cacheKey, clock: $clock);
+            $result = $store->read(key: $key, clock: $clock);
 
             if ($result instanceof CacheStoreRecordWasFound) {
-                $this->propagateToLowerTiers(key: $cacheKey, record: $result->record);
+                $this->propagateToLowerTiers(key: $key, record: $result->record);
 
                 return $result;
             }
         }
 
-        return new CacheStoreRecordWasMissing(key: $cacheKey);
+        return new CacheStoreRecordWasMissing(key: $key);
     }
 
-    private function propagateToLowerTiers(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    private function propagateToLowerTiers(CacheKey $key, StoredCacheRecord $record) : void
     {
         $found = false;
 
         foreach ($this->stores as $store) {
             if ($found) {
-                $store->write(key: $cacheKey, record: $storedCacheRecord);
+                $store->write(key: $key, record: $record);
             }
 
-            if ($store->exists(key: $cacheKey)) {
+            if ($store->exists(key: $key)) {
                 $found = true;
             }
         }
     }
 
     #[Override]
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    public function write(CacheKey $key, StoredCacheRecord $record) : void
     {
         foreach ($this->stores as $store) {
-            $store->write(key: $cacheKey, record: $storedCacheRecord);
+            $store->write(key: $key, record: $record);
         }
     }
 
     #[Override]
-    public function exists(CacheKey $cacheKey) : bool
+    public function exists(CacheKey $key) : bool
     {
         foreach ($this->stores as $store) {
-            if ($store->exists(key: $cacheKey)) {
+            if ($store->exists(key: $key)) {
                 return true;
             }
         }
@@ -77,10 +77,10 @@ final readonly class ChainCacheStore implements CacheStore
     }
 
     #[Override]
-    public function forget(CacheKey $cacheKey) : void
+    public function forget(CacheKey $key) : void
     {
         foreach ($this->stores as $store) {
-            $store->forget(key: $cacheKey);
+            $store->forget(key: $key);
         }
     }
 

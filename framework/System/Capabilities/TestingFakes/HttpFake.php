@@ -12,22 +12,35 @@ namespace Avax\Framework\System\Capabilities\TestingFakes;
 final class HttpFake
 {
     /**
-     * @var list<array{method: string, url: string, options: array}>
+     * @var list<array{method: string, url: string, options: array<string, mixed>}>
      */
     private array $requests = [];
 
     /**
-     * @var array<string, array{status: int, body: string, headers: array}>
+     * @var array<string, array{status: int, body: string, headers: array<string, list<string>>}>
      */
     private array $stubs = [];
 
+    /**
+     * @var array{status: int, body: string, headers: array<string, list<string>>}|null
+     */
     private array|null $defaultResponse = null;
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{status: int, body: string, headers: array<string, list<string>>}
+     */
     public function get(string $url, array $options = []) : array
     {
         return $this->recordRequest('GET', $url, $options);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{status: int, body: string, headers: array<string, list<string>>}
+     */
     private function recordRequest(string $method, string $url, array $options) : array
     {
         $this->requests[] = ['method' => $method, 'url' => $url, 'options' => $options];
@@ -41,21 +54,39 @@ final class HttpFake
         return $this->defaultResponse ?? ['status' => 200, 'body' => '', 'headers' => []];
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{status: int, body: string, headers: array<string, list<string>>}
+     */
     public function post(string $url, array $options = []) : array
     {
         return $this->recordRequest('POST', $url, $options);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{status: int, body: string, headers: array<string, list<string>>}
+     */
     public function put(string $url, array $options = []) : array
     {
         return $this->recordRequest('PUT', $url, $options);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array{status: int, body: string, headers: array<string, list<string>>}
+     */
     public function delete(string $url, array $options = []) : array
     {
         return $this->recordRequest('DELETE', $url, $options);
     }
 
+    /**
+     * @param array<string, list<string>> $headers
+     */
     public function stub(string $method, string $url, int $status = 200, string $body = '', array $headers = []) : self
     {
         $this->stubs["{$method}:{$url}"] = [
@@ -67,6 +98,9 @@ final class HttpFake
         return $this;
     }
 
+    /**
+     * @param array<string, list<string>> $headers
+     */
     public function defaultResponse(int $status = 200, string $body = '', array $headers = []) : self
     {
         $this->defaultResponse = ['status' => $status, 'body' => $body, 'headers' => $headers];
@@ -137,7 +171,7 @@ final class HttpFake
     }
 
     /**
-     * @return list<array{method: string, url: string, options: array}>
+     * @return list<array{method: string, url: string, options: array<string, mixed>}>
      */
     public function requests() : array
     {

@@ -17,16 +17,16 @@ final class DbMetricsCollector
     /** @var array<string, int> */
     private array $byConnection = [];
 
-    public function record(QuerySpan $span): void
+    public function record(QuerySpan $querySpan) : void
     {
         $this->queryCount++;
-        $this->totalDurationMs += $span->getDurationMs();
+        $this->totalDurationMs += $querySpan->getDurationMs();
 
-        if ($span->error !== null) {
+        if ($querySpan->error !== null) {
             $this->errorCount++;
         }
 
-        $connection = $span->connection ?? 'default';
+        $connection = $querySpan->connection ?? 'default';
         $this->byConnection[$connection] = ($this->byConnection[$connection] ?? 0) + 1;
     }
 

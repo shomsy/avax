@@ -12,16 +12,16 @@ final readonly class CleanupExpiredSessions
 {
     public function __construct(
         #[SensitiveParameter]
-        private ?PruneExpiredSessionsInterface $sessionRegistry,
+        private ?PruneExpiredSessionsInterface $pruneExpiredSessions,
         private Clock $clock,
     ) {}
 
     public function execute(): int
     {
-        if ($this->sessionRegistry === null) {
+        if (! $this->pruneExpiredSessions instanceof PruneExpiredSessionsInterface) {
             return 0;
         }
 
-        return $this->sessionRegistry->pruneExpired(now: $this->clock->now());
+        return $this->pruneExpiredSessions->pruneExpired(now: $this->clock->now());
     }
 }

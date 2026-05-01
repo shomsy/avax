@@ -15,18 +15,18 @@ final readonly class ExplainContainerService
     ) {
     }
 
-    public static function printExplanation(ContainerDependencyExplanation $explanation): void
+    public static function printExplanation(ContainerDependencyExplanation $containerDependencyExplanation) : void
     {
-        echo "\033[33mService: {$explanation->serviceId}\033[0m\n";
-        echo sprintf("  Scope: %s\n", $explanation->scope);
-        echo sprintf("  Shared: %s\n", $explanation->isShared ? 'yes' : 'no');
-        echo sprintf("  Lazy: %s\n", $explanation->isLazy ? 'yes' : 'no');
-        echo sprintf("  Deferred: %s\n", $explanation->isDeferred ? 'yes' : 'no');
-        echo sprintf("  Worker-safe: %s\n", $explanation->workerSafe ? 'yes' : 'no');
+        echo "\033[33mService: {$containerDependencyExplanation->serviceId}\033[0m\n";
+        echo sprintf("  Scope: %s\n", $containerDependencyExplanation->scope);
+        echo sprintf("  Shared: %s\n", $containerDependencyExplanation->isShared ? 'yes' : 'no');
+        echo sprintf("  Lazy: %s\n", $containerDependencyExplanation->isLazy ? 'yes' : 'no');
+        echo sprintf("  Deferred: %s\n", $containerDependencyExplanation->isDeferred ? 'yes' : 'no');
+        echo sprintf("  Worker-safe: %s\n", $containerDependencyExplanation->workerSafe ? 'yes' : 'no');
 
-        if (! empty($explanation->dependencies)) {
+        if ($containerDependencyExplanation->dependencies !== []) {
             echo "  Dependencies:\n";
-            foreach ($explanation->dependencies as $dep) {
+            foreach ($containerDependencyExplanation->dependencies as $dep) {
                 echo sprintf("    - %s\n", $dep);
             }
         }
@@ -36,28 +36,28 @@ final readonly class ExplainContainerService
 
     public function explain(string $id): ContainerDependencyExplanation
     {
-        $analyzer = new ContainerAnalyzer($this->container);
+        $containerAnalyzer = new ContainerAnalyzer($this->container);
 
-        return $analyzer->why($id);
+        return $containerAnalyzer->why($id);
     }
 
     /**
      * @return list<string>
      */
-    public function whoUses(string $id): array
+    public function whoUses() : array
     {
-        $analyzer = new ContainerAnalyzer($this->container);
+        $containerAnalyzer = new ContainerAnalyzer($this->container);
 
-        return $analyzer->whoUses($id);
+        return $containerAnalyzer->whoUses();
     }
 
     /**
      * @return list<string>
      */
-    public function whatBreaksIf(string $id): array
+    public function whatBreaksIf() : array
     {
-        $analyzer = new ContainerAnalyzer($this->container);
+        $containerAnalyzer = new ContainerAnalyzer($this->container);
 
-        return $analyzer->whatBreaksIf($id);
+        return $containerAnalyzer->whatBreaksIf();
     }
 }

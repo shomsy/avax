@@ -10,7 +10,7 @@ final readonly class HealthEndpoint
     {
         $resolvedChecks = $checks === [] ? ['runtime' => new HealthCheckResult(status: 'up')] : $checks;
         $allUp = ! in_array(needle: false, haystack: array_map(
-            callback: static fn (HealthCheckResult $result): bool => $result->status === 'up',
+            callback: static fn (HealthCheckResult $healthCheckResult) : bool => $healthCheckResult->status === 'up',
             array   : $resolvedChecks,
         ), strict: true);
 

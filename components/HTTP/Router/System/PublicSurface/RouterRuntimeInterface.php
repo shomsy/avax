@@ -15,5 +15,5 @@ interface RouterRuntimeInterface
     /**
      * Resolve the matched route from an incoming request and dispatch it.
      */
-    public function resolve(ServerRequest $request): ResponseInterface;
+    public function resolve(ServerRequest $serverRequest) : ResponseInterface;
 }

@@ -13,6 +13,6 @@ final readonly class UppercaseValues
 
     public function __invoke(): array
     {
-        return array_map('mb_strtoupper', $this->items);
+        return array_map(mb_strtoupper(...), $this->items);
     }
 }

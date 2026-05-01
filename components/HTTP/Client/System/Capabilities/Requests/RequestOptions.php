@@ -16,10 +16,10 @@ use Avax\Components\HTTP\Client\System\Capabilities\Resilience\TimeoutPolicy;
 final readonly class RequestOptions
 {
     /** Default timeout in milliseconds (30 seconds). */
-    public const DEFAULT_TIMEOUT = 30_000;
+    public const int DEFAULT_TIMEOUT = 30_000;
 
     /** Default connect timeout in milliseconds (10 seconds). */
-    public const DEFAULT_CONNECT_TIMEOUT = 10_000;
+    public const int DEFAULT_CONNECT_TIMEOUT = 10_000;
 
     /**
      * @param int                  $timeout         Total request timeout in milliseconds
@@ -81,7 +81,7 @@ final readonly class RequestOptions
     /**
      * Create options with a proxy.
      */
-    public static function withProxy(string $proxyUrl, string $auth = null) : self
+    public static function withProxy(string $proxyUrl, ?string $auth = null) : self
     {
         return new self(proxy: $proxyUrl, proxyAuth: $auth);
     }
@@ -103,14 +103,14 @@ final readonly class RequestOptions
         return new self(
             timeout        : $other->timeout !== self::DEFAULT_TIMEOUT ? $other->timeout : $this->timeout,
             connectTimeout : $other->connectTimeout !== self::DEFAULT_CONNECT_TIMEOUT ? $other->connectTimeout : $this->connectTimeout,
-            verifySsl      : $other->verifySsl !== true ? $other->verifySsl : $this->verifySsl,
+            verifySsl      : $other->verifySsl ? $this->verifySsl : $other->verifySsl,
             sslCertPath    : $other->sslCertPath ?? $this->sslCertPath,
             sslKeyPath     : $other->sslKeyPath ?? $this->sslKeyPath,
             proxy          : $other->proxy ?? $this->proxy,
             proxyAuth      : $other->proxyAuth ?? $this->proxyAuth,
-            followRedirects: $other->followRedirects !== true ? $other->followRedirects : $this->followRedirects,
+            followRedirects: $other->followRedirects ? $this->followRedirects : $other->followRedirects,
             maxRedirects   : $other->maxRedirects !== 5 ? $other->maxRedirects : $this->maxRedirects,
-            httpErrors     : $other->httpErrors !== false ? $other->httpErrors : $this->httpErrors,
+            httpErrors     : $other->httpErrors ?: $this->httpErrors,
             encoding       : $other->encoding ?? $this->encoding,
             retryPolicy    : $other->retryPolicy ?? $this->retryPolicy,
             timeoutPolicy  : $other->timeoutPolicy ?? $this->timeoutPolicy,
@@ -139,6 +139,6 @@ final readonly class RequestOptions
      */
     public function hasRetry() : bool
     {
-        return $this->retryPolicy !== null;
+        return $this->retryPolicy instanceof RetryPolicy;
     }
 }

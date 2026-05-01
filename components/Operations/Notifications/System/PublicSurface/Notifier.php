@@ -13,32 +13,32 @@ use Avax\Components\Operations\Notifications\System\Flows\SendNotification;
  */
 class Notifier
 {
-    private SendNotification $flow;
+    private readonly SendNotification $sendNotification;
 
     public function __construct()
     {
-        $this->flow = new SendNotification();
+        $this->sendNotification = new SendNotification();
     }
 
-    public function registerChannel(NotificationChannel $channel) : self
+    public function registerChannel(NotificationChannel $notificationChannel) : self
     {
-        $this->flow->registerChannel($channel);
+        $this->sendNotification->registerChannel($notificationChannel);
 
         return $this;
     }
 
-    public function sendTo(mixed $notifiable, Notification $notification, string $channel = null) : void
+    public function sendTo(mixed $notifiable, Notification $notification, ?string $channel = null) : void
     {
-        $this->flow->sendTo($notifiable, $notification, $channel);
+        $this->sendNotification->sendTo($notifiable, $notification, $channel);
     }
 
-    public function sendToMany(array $notifiables, Notification $notification, string $channel = null) : void
+    public function sendToMany(array $notifiables, Notification $notification, ?string $channel = null) : void
     {
-        $this->flow->sendToMany($notifiables, $notification, $channel);
+        $this->sendNotification->sendToMany($notifiables, $notification, $channel);
     }
 
     public function hasChannel(string $name) : bool
     {
-        return $this->flow->hasChannel($name);
+        return $this->sendNotification->hasChannel($name);
     }
 }

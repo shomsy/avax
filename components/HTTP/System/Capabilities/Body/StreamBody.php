@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Capabilities\Body;
 
-final class StreamBody
+use Stringable;
+
+final readonly class StreamBody implements Stringable
 {
     public function __construct(
         private string $content = '',

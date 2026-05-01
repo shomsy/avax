@@ -21,17 +21,17 @@ interface MfaStoreInterface
 
     public function findMethod(UserId $userId): ?MfaMethodRecord;
 
-    public function saveMethod(MfaMethodRecord $record): void;
+    public function saveMethod(MfaMethodRecord $mfaMethodRecord) : void;
 
     public function disable(UserId $userId): void;
 
     public function findPendingEnrollment(UserId $userId): ?MfaEnrollmentRecord;
 
-    public function startEnrollment(MfaEnrollmentRecord $record): void;
+    public function startEnrollment(MfaEnrollmentRecord $mfaEnrollmentRecord) : void;
 
     public function cancelEnrollment(UserId $userId): void;
 
-    public function saveRecovery(MfaRecoveryRecord $record): void;
+    public function saveRecovery(MfaRecoveryRecord $mfaRecoveryRecord) : void;
 
     public function findRecovery(string $tokenHash): ?MfaRecoveryRecord;
 

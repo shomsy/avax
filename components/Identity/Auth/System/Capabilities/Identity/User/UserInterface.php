@@ -27,11 +27,11 @@ interface UserInterface
      */
     public function getPermissions(): array;
 
-    public function hasRole(UserRole $role): bool;
+    public function hasRole(UserRole $userRole) : bool;
 
-    public function hasPermission(UserPermission $permission): bool;
+    public function hasPermission(UserPermission $userPermission) : bool;
 
-    public function canAccessRole(UserRole $requiredRole): bool;
+    public function canAccessRole(UserRole $userRole) : bool;
 
     public function isActive(): bool;
 }

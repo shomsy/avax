@@ -10,7 +10,7 @@ final readonly class ValidateSagaDefinition
 
     public array $warnings;
 
-    public function __construct(private SagaDefinition $definition)
+    public function __construct(private SagaDefinition $sagaDefinition)
     {
         $this->errors = [];
         $this->warnings = [];
@@ -19,13 +19,13 @@ final readonly class ValidateSagaDefinition
 
     private function validate(): void
     {
-        if ($this->definition->stepCount() === 0) {
+        if ($this->sagaDefinition->stepCount() === 0) {
             $this->errors[] = 'Saga must have at least one step.';
         }
 
-        if ($this->definition->stepCount() > 1) {
+        if ($this->sagaDefinition->stepCount() > 1) {
             $hasCompensation = false;
-            foreach ($this->definition as $step) {
+            foreach ($this->sagaDefinition as $step) {
                 if ($step->hasCompensation()) {
                     $hasCompensation = true;
 
@@ -39,14 +39,15 @@ final readonly class ValidateSagaDefinition
         }
 
         $stepNames = [];
-        foreach ($this->definition as $step) {
+        foreach ($this->sagaDefinition as $step) {
             if (in_array($step->name, $stepNames, true)) {
                 $this->errors[] = sprintf('Duplicate step name: %s', $step->name);
             }
+
             $stepNames[] = $step->name;
         }
 
-        foreach ($this->definition as $step) {
+        foreach ($this->sagaDefinition as $step) {
             if ($step->timeoutSeconds <= 0) {
                 $this->errors[] = sprintf('Step %s has invalid timeout: %d', $step->name, $step->timeoutSeconds);
             }
@@ -64,23 +65,23 @@ final readonly class ValidateSagaDefinition
             }
         }
 
-        $totalTimeout = $this->definition->totalTimeout();
-        if ($totalTimeout > $this->definition->maxDurationSeconds) {
+        $totalTimeout = $this->sagaDefinition->totalTimeout();
+        if ($totalTimeout > $this->sagaDefinition->maxDurationSeconds) {
             $this->warnings[] = sprintf(
                 'Step timeouts (%ds) exceed max saga duration (%ds).',
                 $totalTimeout,
-                $this->definition->maxDurationSeconds,
+                $this->sagaDefinition->maxDurationSeconds,
             );
         }
 
-        if ($this->definition->status === SagaStatus::INVALID) {
+        if ($this->sagaDefinition->status === SagaStatus::INVALID) {
             $this->errors[] = 'Saga definition is marked as invalid.';
         }
     }
 
     public function isValid(): bool
     {
-        return empty($this->errors);
+        return $this->errors === [];
     }
 
     public function getErrors(): array

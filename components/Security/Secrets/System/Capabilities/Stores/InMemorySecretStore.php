@@ -13,7 +13,7 @@ final class InMemorySecretStore implements SecretStore
 
     public function get(string $key): string
     {
-        return $this->secrets[$key] ?? throw new RuntimeException("Secret '{$key}' not found");
+        return $this->secrets[$key] ?? throw new RuntimeException(sprintf("Secret '%s' not found", $key));
     }
 
     public function set(string $key, string $value): void

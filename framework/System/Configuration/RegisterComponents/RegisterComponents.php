@@ -13,9 +13,9 @@ final class RegisterComponents
      */
     private array $registrations = [];
 
-    public function register(ComponentDefinition $definition) : self
+    public function register(ComponentDefinition $componentDefinition) : self
     {
-        $this->registrations[] = $definition;
+        $this->registrations[] = $componentDefinition;
 
         return $this;
     }

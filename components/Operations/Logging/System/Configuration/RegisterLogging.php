@@ -14,7 +14,7 @@ final class RegisterLogging
 {
     public function build(string $channel = 'app') : Log
     {
-        $logPath = storage_path("logs/{$channel}");
+        $logPath = storage_path('logs/' . $channel);
 
         return new Log(
             writer: new RotatingFileWriter(

@@ -25,8 +25,8 @@ final readonly class RuntimeEvent
      */
     public static function make(
         string $name,
-        float  $durationMS = null,
-        string $category = null,
+        ?float  $durationMS = null,
+        ?string $category = null,
         array  $metadata = [],
     ) : self
     {

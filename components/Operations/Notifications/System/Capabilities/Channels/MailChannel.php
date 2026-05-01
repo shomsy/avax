@@ -6,6 +6,7 @@ namespace Avax\Components\Operations\Notifications\System\Capabilities\Channels;
 
 use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 use Avax\Components\Operations\Mail\System\Capabilities\Transport\MailTransport;
+use Avax\Components\Operations\Notifications\System\Capabilities\MailNotificationContent;
 use Avax\Components\Operations\Notifications\System\Capabilities\Notification;
 use Avax\Components\Operations\Notifications\System\Capabilities\NotificationChannel;
 
@@ -15,14 +16,14 @@ use Avax\Components\Operations\Notifications\System\Capabilities\NotificationCha
 final readonly class MailChannel implements NotificationChannel
 {
     public function __construct(
-        private MailTransport $transport,
+        private MailTransport $mailTransport,
         private string $fromAddress = 'notifications@example.com',
     ) {}
 
     public function send(mixed $notifiable, Notification $notification) : void
     {
         $mailContent = $notification->toMail();
-        if ($mailContent === null) {
+        if (! $mailContent instanceof MailNotificationContent) {
             return;
         }
 
@@ -34,7 +35,7 @@ final readonly class MailChannel implements NotificationChannel
         $subject = $mailContent->subject ?: 'Notification';
         $body = $this->buildBody($mailContent);
 
-        $message = new MimeMessage(
+        $mimeMessage = new MimeMessage(
             from       : $this->fromAddress,
             to         : $email,
             subject    : $subject,
@@ -43,14 +44,14 @@ final readonly class MailChannel implements NotificationChannel
         );
 
         // Create a minimal envelope
-        $envelope = new class ($this->fromAddress, $email) {
+        $envelope = new readonly class ($this->fromAddress, $email) {
             public function __construct(
-                public readonly string $from,
-                public readonly string $to,
+                public string $from,
+                public string $to,
             ) {}
         };
 
-        $this->transport->send($message, $envelope);
+        $this->mailTransport->send($mimeMessage, $envelope);
     }
 
     private function resolveEmail(mixed $notifiable) : ?string
@@ -63,9 +64,11 @@ final readonly class MailChannel implements NotificationChannel
             if (property_exists($notifiable, 'email')) {
                 return $notifiable->email;
             }
+
             if (method_exists($notifiable, 'getEmail')) {
                 return $notifiable->getEmail();
             }
+
             if (method_exists($notifiable, 'routeNotificationFor')) {
                 return $notifiable->routeNotificationFor('mail');
             }
@@ -74,33 +77,31 @@ final readonly class MailChannel implements NotificationChannel
         return null;
     }
 
-    private function buildBody(MailNotificationContent $content) : string
+    private function buildBody(MailNotificationContent $mailNotificationContent) : string
     {
         $html = '<html><body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">';
 
-        if ($content->greeting !== '') {
-            $html .= "<h2>{$content->greeting}</h2>";
+        if ($mailNotificationContent->greeting !== '') {
+            $html .= sprintf('<h2>%s</h2>', $mailNotificationContent->greeting);
         }
 
-        if ($content->line !== '') {
-            $html .= "<p>{$content->line}</p>";
+        if ($mailNotificationContent->line !== '') {
+            $html .= sprintf('<p>%s</p>', $mailNotificationContent->line);
         }
 
-        foreach ($content->lines as $line) {
-            $html .= "<p>{$line}</p>";
+        foreach ($mailNotificationContent->lines as $line) {
+            $html .= sprintf('<p>%s</p>', $line);
         }
 
-        if ($content->actionText !== '' && $content->actionUrl !== '') {
-            $html .= '<p><a href="' . htmlspecialchars($content->actionUrl) . '" style="display: inline-block; padding: 10px 20px; background-color: #3490dc; color: #ffffff; text-decoration: none; border-radius: 4px;">' . htmlspecialchars($content->actionText) . '</a></p>';
+        if ($mailNotificationContent->actionText !== '' && $mailNotificationContent->actionUrl !== '') {
+            $html .= '<p><a href="' . htmlspecialchars($mailNotificationContent->actionUrl) . '" style="display: inline-block; padding: 10px 20px; background-color: #3490dc; color: #ffffff; text-decoration: none; border-radius: 4px;">' . htmlspecialchars($mailNotificationContent->actionText) . '</a></p>';
         }
 
-        if ($content->signOff !== '') {
-            $html .= "<p>{$content->signOff}</p>";
+        if ($mailNotificationContent->signOff !== '') {
+            $html .= sprintf('<p>%s</p>', $mailNotificationContent->signOff);
         }
 
-        $html .= '</body></html>';
-
-        return $html;
+        return $html . '</body></html>';
     }
 
     public function name() : string

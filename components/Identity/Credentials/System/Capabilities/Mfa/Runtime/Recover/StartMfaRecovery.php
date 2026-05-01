@@ -8,6 +8,7 @@ use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\
 use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottleExceeded;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
@@ -29,7 +30,7 @@ final readonly class StartMfaRecovery
         private MfaStoreInterface $mfaStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        int $expiresAfterSeconds = null,
+        ?int $expiresAfterSeconds = null,
         private ?AttemptThrottle $attemptThrottle = null,
     ) {
         $expiresAfterSeconds ??= 900;
@@ -40,21 +41,21 @@ final readonly class StartMfaRecovery
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function execute(BeginMfaRecoveryData $data): MfaRecoveryChallenge
+    public function execute(BeginMfaRecoveryData $beginMfaRecoveryData) : MfaRecoveryChallenge
     {
-        $throttleKey = $this->throttleKey(email: $data->email, ipAddress: $data->ipAddress);
+        $throttleKey = $this->throttleKey(email: $beginMfaRecoveryData->email, ipAddress: $beginMfaRecoveryData->ipAddress);
 
         try {
             $this->attemptThrottle?->check(key: $throttleKey);
-        } catch (AttemptThrottleExceeded $exception) {
+        } catch (AttemptThrottleExceeded $attemptThrottleExceeded) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.mfa.recovery.throttled',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'email'      => strtolower(string: $data->email),
-                                'ip_address' => $data->ipAddress,
-                                'user_agent' => $data->userAgent,
-                    'retry_after' => $exception->retryAfter(),
+                                'email'       => strtolower(string: $beginMfaRecoveryData->email),
+                                'ip_address'  => $beginMfaRecoveryData->ipAddress,
+                                'user_agent'  => $beginMfaRecoveryData->userAgent,
+                                'retry_after' => $attemptThrottleExceeded->retryAfter(),
                 ],
             ));
 
@@ -62,24 +63,24 @@ final readonly class StartMfaRecovery
         }
 
         $this->attemptThrottle?->recordAttempt(key: $throttleKey);
-        $user = $this->userSource->findByEmail(email: $data->email);
+        $user = $this->userSource->findByEmail(email: $beginMfaRecoveryData->email);
 
-        if ($user === null || ! $user->isActive() || ! $this->mfaStore->isEnabled(userId: $user->getId())) {
+        if (! $user instanceof User || ! $user->isActive() || ! $this->mfaStore->isEnabled(userId: $user->getId())) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.mfa.recovery.started',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'email' => strtolower(string: $data->email),
+                                'email'      => strtolower(string: $beginMfaRecoveryData->email),
                     'dispatched' => false,
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
+                                'ip_address' => $beginMfaRecoveryData->ipAddress,
+                                'user_agent' => $beginMfaRecoveryData->userAgent,
                 ],
             ));
 
             return MfaRecoveryChallenge::hidden();
         }
 
-        return $this->issue(userId: $user->getId()->value, data: $data);
+        return $this->issue(userId: $user->getId()->value, data: $beginMfaRecoveryData);
     }
 
     private function throttleKey(#[SensitiveParameter] string $email, #[SensitiveParameter] ?string $ipAddress): string
@@ -97,10 +98,10 @@ final readonly class StartMfaRecovery
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    private function issue(int $userId, BeginMfaRecoveryData $data): MfaRecoveryChallenge
+    private function issue(int $userId, BeginMfaRecoveryData $beginMfaRecoveryData) : MfaRecoveryChallenge
     {
         $plainToken = bin2hex(string: random_bytes(length: 32));
-        $expiresAt = $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds");
+        $expiresAt = $this->clock->now()->modify(modifier: sprintf('+%d seconds', $this->expiresAfterSeconds));
         $tokenHash = $this->hash(token: $plainToken);
         $this->mfaStore->saveRecovery(record: new MfaRecoveryRecord(
             tokenHash: $tokenHash,
@@ -113,8 +114,8 @@ final readonly class StartMfaRecovery
             context   : [
                             'user_id' => $userId,
                 'dispatched' => true,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $beginMfaRecoveryData->ipAddress,
+                            'user_agent' => $beginMfaRecoveryData->userAgent,
             ],
         ));
 

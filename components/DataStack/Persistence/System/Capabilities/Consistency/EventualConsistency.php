@@ -25,15 +25,15 @@ final readonly class VersionedValue
     public static function create(
         mixed $value,
         string $nodeId,
-        VectorClock $clock = null,
-        float       $timestamp = null,
+        ?VectorClock $vectorClock = null,
+        ?float       $timestamp = null,
     ): self {
-        $clock ??= VectorClock::initial($nodeId);
+        $vectorClock ??= VectorClock::initial($nodeId);
         $timestamp ??= microtime(true);
 
         return new self(
             value    : $value,
-            clock    : $clock,
+            clock    : $vectorClock,
             nodeId   : $nodeId,
             timestamp: $timestamp,
         );
@@ -135,33 +135,27 @@ final readonly class ConflictResolutionResult
 final class EventualConsistency implements ConsistencyPolicy
 {
     /**
-     * @var Closure|null Custom conflict resolver callback
-     */
-    private ?Closure $customResolver;
-
-    /**
      * @var ConflictResolution The conflict resolution strategy to use
      */
-    private ConflictResolution $resolutionStrategy;
+    private readonly ConflictResolution $conflictResolution;
 
     /**
      * @var list<Conflict> Detected conflicts (for auditing/debugging)
      */
     private array $conflicts = [];
 
-    /**
-     * @var int Maximum conflicts to retain
-     */
-    private int $maxConflictHistory;
-
     public function __construct(
-        ConflictResolution $resolutionStrategy = null,
-        Closure            $customResolver = null,
-        int $maxConflictHistory = 100,
+        ?ConflictResolution       $conflictResolution = null,
+        /**
+         * @var Closure|null Custom conflict resolver callback
+         */
+        private readonly ?Closure $customResolver = null,
+        /**
+         * @var int Maximum conflicts to retain
+         */
+        private readonly int      $maxConflictHistory = 100,
     ) {
-        $this->resolutionStrategy = $resolutionStrategy ?? ConflictResolution::lastWriteWins();
-        $this->customResolver = $customResolver;
-        $this->maxConflictHistory = $maxConflictHistory;
+        $this->conflictResolution = $conflictResolution ?? ConflictResolution::lastWriteWins();
     }
 
     public function canRead(mixed $currentValue, mixed $pendingWrite = null): bool
@@ -187,7 +181,7 @@ final class EventualConsistency implements ConsistencyPolicy
      */
     public function mergeReplicas(array $values): VersionedValue
     {
-        if (empty($values)) {
+        if ($values === []) {
             throw new RuntimeException('Cannot merge empty set of replica values');
         }
 
@@ -197,8 +191,9 @@ final class EventualConsistency implements ConsistencyPolicy
 
         // Find the latest value using vector clock comparison
         $latest = $values[0];
+        $counter = count($values);
 
-        for ($i = 1; $i < count($values); $i++) {
+        for ($i = 1; $i < $counter; $i++) {
             $current = $values[$i];
 
             if ($current->clock->happenedAfter($latest->clock)) {
@@ -256,7 +251,7 @@ final class EventualConsistency implements ConsistencyPolicy
         $this->recordConflict($conflict);
 
         // Use custom resolver if provided
-        if ($this->customResolver !== null) {
+        if ($this->customResolver instanceof Closure) {
             $resolved = ($this->customResolver)($valueA, $valueB, $context);
 
             return ConflictResolutionResult::resolved(
@@ -270,7 +265,7 @@ final class EventualConsistency implements ConsistencyPolicy
         }
 
         // Use the configured resolution strategy
-        return $this->resolutionStrategy->resolve(
+        return $this->conflictResolution->resolve(
             valueA : $valueA->value,
             valueB : $valueB->value,
             context: array_merge($context, [
@@ -332,7 +327,7 @@ final class EventualConsistency implements ConsistencyPolicy
      */
     public function resolutionStrategyName(): string
     {
-        return $this->resolutionStrategy->name();
+        return $this->conflictResolution->name();
     }
 
     public function name(): string

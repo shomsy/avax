@@ -12,36 +12,37 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 
-final class Router implements RouterInterface
+final readonly class Router implements RouterInterface
 {
-    private RouteCollection $routes;
+    private RouteCollection $routeCollection;
 
-    private MatchRoute $matcher;
+    private MatchRoute $matchRoute;
 
     public function __construct()
     {
-        $this->routes  = new RouteCollection();
-        $this->matcher = new MatchRoute();
+        $this->routeCollection = new RouteCollection();
+        $this->matchRoute      = new MatchRoute();
     }
 
     public function get(string $u, $a): void
     {
-        $this->routes->add(new RouteDefinition(new RouteMethod('GET'), $u, $a));
+        $this->routeCollection->add(new RouteDefinition(new RouteMethod('GET'), $u, $a));
     }
 
     public function post(string $u, $a): void
     {
-        $this->routes->add(new RouteDefinition(new RouteMethod('POST'), $u, $a));
+        $this->routeCollection->add(new RouteDefinition(new RouteMethod('POST'), $u, $a));
     }
 
-    public function dispatch(RequestInterface $r): ResponseInterface
+    public function dispatch(RequestInterface $request) : ResponseInterface
     {
-        $route = $this->matcher->execute($this->routes, $r);
-        if (! $route) {
+        $route = $this->matchRoute->execute($this->routeCollection, $request);
+        if (! $route instanceof RouteDefinition) {
             throw new RouterFailure('Route not found');
         }
+
         $a = $route->action();
 
-        return is_callable($a) ? $a($r) : throw new RouterFailure('Invalid action');
+        return is_callable($a) ? $a($request) : throw new RouterFailure('Invalid action');
     }
 }

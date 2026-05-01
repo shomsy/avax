@@ -15,16 +15,17 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\Requi
 
 final readonly class ReactivateUser
 {
-    public function __construct(private ProvisionableUserSourceInterface $userSource, private RequireAdminElevation $requireAdminElevation, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycle = null) {}
+    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private RequireAdminElevation $requireAdminElevation, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycleOrchestrator = null) {}
 
     public function execute(int $userId): void
     {
         $this->requireAdminElevation->execute();
         $id = new UserId(value: $userId);
-        $this->lifecycle?->activate(userId: $id, source: LifecycleSource::ADMIN, reason: 'admin_reactivated');
-        if ($this->lifecycle === null) {
-            $this->userSource->activate(id: $id);
+        $this->lifecycleOrchestrator?->activate(userId: $id, source: LifecycleSource::ADMIN, reason: 'admin_reactivated');
+        if (! $this->lifecycleOrchestrator instanceof LifecycleOrchestrator) {
+            $this->provisionableUserSource->activate(id: $id);
         }
+
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.provisioning.user.reactivated',
             occurredAt: $this->clock->now(),

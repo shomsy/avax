@@ -13,7 +13,7 @@ use Exception;
 final class RoleDenied extends Exception
 {
     public function __construct(
-        private readonly UserRole $requirement,
+        private readonly UserRole $userRole,
         string $message = 'Access denied.',
         int $code = 403,
     ) {
@@ -22,6 +22,6 @@ final class RoleDenied extends Exception
 
     public function requirement(): UserRole
     {
-        return $this->requirement;
+        return $this->userRole;
     }
 }

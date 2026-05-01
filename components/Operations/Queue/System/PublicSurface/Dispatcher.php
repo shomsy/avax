@@ -9,48 +9,42 @@ use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
 use Avax\Components\Operations\Queue\System\Flows\Dispatch\DispatchJob;
 use DateTimeInterface;
 
-final class Dispatcher
+final readonly class Dispatcher
 {
-    private DispatchJob $dispatcher;
-
-    private QueueBroker $broker;
-
-    public function __construct(DispatchJob $dispatcher, QueueBroker $broker)
+    public function __construct(private DispatchJob $dispatchJob, private QueueBroker $queueBroker)
     {
-        $this->dispatcher = $dispatcher;
-        $this->broker     = $broker;
     }
 
-    public function dispatch(JobDefinition $job): JobId
+    public function dispatch(JobDefinition $jobDefinition) : JobId
     {
-        return $this->dispatcher->dispatch($job, $this->broker);
+        return $this->dispatchJob->dispatch($jobDefinition, $this->queueBroker);
     }
 
-    public function dispatchSync(JobDefinition $job): mixed
+    public function dispatchSync(JobDefinition $jobDefinition) : mixed
     {
-        return $this->dispatcher->dispatchSync($job);
+        return $this->dispatchJob->dispatchSync($jobDefinition);
     }
 
-    public function later(JobDefinition $job, DateTimeInterface $delay): JobId
+    public function later(JobDefinition $jobDefinition, DateTimeInterface $delay) : JobId
     {
-        return $this->dispatcher->later($job, $delay, $this->broker);
+        return $this->dispatchJob->later($jobDefinition, $delay, $this->queueBroker);
     }
 
     public function bulk(array $jobs): array
     {
-        return $this->dispatcher->bulk($jobs, $this->broker);
+        return $this->dispatchJob->bulk($jobs, $this->queueBroker);
     }
 }
 
-final class JobId
+final readonly class JobId
 {
     public function __construct(
-        public readonly string $value,
-        public readonly ?string $queue = null,
+        public string  $value,
+        public ?string $queue = null,
     ) {
     }
 
-    public static function generate(string $queue = null): self
+    public static function generate(?string $queue = null) : self
     {
         return new self(
             value: uniqid('job-', true),
@@ -59,13 +53,13 @@ final class JobId
     }
 }
 
-final class JobResult
+final readonly class JobResult
 {
     public function __construct(
-        public readonly bool $success,
-        public readonly mixed $result = null,
-        public readonly ?string $error = null,
-        public readonly ?int $attempts = null,
+        public bool    $success,
+        public mixed   $result = null,
+        public ?string $error = null,
+        public ?int    $attempts = null,
     ) {
     }
 

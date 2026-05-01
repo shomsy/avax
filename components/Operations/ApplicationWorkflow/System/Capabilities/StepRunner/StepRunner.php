@@ -17,11 +17,11 @@ use Throwable;
  */
 final class StepRunner
 {
-    private IdempotencyStore $idempotencyStore;
+    private readonly IdempotencyStore $idempotencyStore;
 
-    private RetryPolicy $retryPolicy;
+    private readonly RetryPolicy $retryPolicy;
 
-    private SagaTimeout $timeout;
+    private readonly SagaTimeout $sagaTimeout;
 
     /**
      * @var array<string, array{error: string, time: string}>
@@ -29,19 +29,19 @@ final class StepRunner
     private array $failureLog = [];
 
     public function __construct(
-        IdempotencyStore $idempotencyStore = null,
-        RetryPolicy      $retryPolicy = null,
-        SagaTimeout      $timeout = null,
+        ?IdempotencyStore $idempotencyStore = null,
+        ?RetryPolicy      $retryPolicy = null,
+        ?SagaTimeout      $sagaTimeout = null,
     ) {
         $this->idempotencyStore = $idempotencyStore ?? new IdempotencyStore();
         $this->retryPolicy      = $retryPolicy ?? RetryPolicy::none();
-        $this->timeout          = $timeout ?? SagaTimeout::seconds(30);
+        $this->sagaTimeout = $sagaTimeout ?? SagaTimeout::seconds(30);
     }
 
     /**
      * Execute a saga step with idempotency check, retry, and timeout handling.
      *
-     * @param SagaStep       $step           The step to execute
+     * @param SagaStep $sagaStep The step to execute
      * @param mixed          $context        The saga context
      * @param IdempotencyKey $idempotencyKey The idempotency key for this execution
      *
@@ -50,7 +50,7 @@ final class StepRunner
      * @throws Throwable If the step fails after all retries
      */
     public function execute(
-        SagaStep $step,
+        SagaStep $sagaStep,
         mixed $context,
         IdempotencyKey $idempotencyKey,
     ): mixed {
@@ -67,7 +67,7 @@ final class StepRunner
             $startTime = hrtime(true);
 
             try {
-                $result = $this->executeWithTimeout($step, $context);
+                $result = $this->executeWithTimeout($sagaStep, $context);
 
                 // Record successful execution
                 $this->idempotencyStore->record($idempotencyKey, $result);
@@ -81,13 +81,13 @@ final class StepRunner
                 $this->recordFailure($idempotencyKey, $e, $attempt);
 
                 // Check timeout
-                if ($this->timeout->isExceeded((int) $elapsed)) {
+                if ($this->sagaTimeout->isExceeded((int) $elapsed)) {
                     throw new RuntimeException(
                         sprintf(
                             'Step "%s" timed out after %dms (limit: %dms)',
-                            $step->name,
+                            $sagaStep->name,
                             (int) $elapsed,
-                            $this->timeout->timeoutMs,
+                            $this->sagaTimeout->timeoutMs,
                         ),
                         0,
                         $e,
@@ -114,21 +114,21 @@ final class StepRunner
     /**
      * Execute a step with timeout enforcement.
      */
-    private function executeWithTimeout(SagaStep $step, mixed $context): mixed
+    private function executeWithTimeout(SagaStep $sagaStep, mixed $context) : mixed
     {
         $startTime = hrtime(true);
 
-        $result = $step->execute($context);
+        $result = $sagaStep->execute($context);
 
         $elapsed = (hrtime(true) - $startTime) / 1_000_000; // ms
 
-        if ($this->timeout->isExceeded((int) $elapsed)) {
+        if ($this->sagaTimeout->isExceeded((int) $elapsed)) {
             throw new RuntimeException(
                 sprintf(
                     'Step "%s" timed out after %dms (limit: %dms)',
-                    $step->name,
+                    $sagaStep->name,
                     (int) $elapsed,
-                    $this->timeout->timeoutMs,
+                    $this->sagaTimeout->timeoutMs,
                 ),
             );
         }
@@ -139,10 +139,10 @@ final class StepRunner
     /**
      * Record a step failure.
      */
-    private function recordFailure(IdempotencyKey $key, Throwable $e, int $attempt): void
+    private function recordFailure(IdempotencyKey $idempotencyKey, Throwable $throwable, int $attempt) : void
     {
-        $this->failureLog[$key->toString()] = [
-            'error' => $e->getMessage(),
+        $this->failureLog[$idempotencyKey->toString()] = [
+            'error' => $throwable->getMessage(),
             'time'  => date('c'),
             'attempt' => $attempt,
         ];
@@ -151,7 +151,7 @@ final class StepRunner
     /**
      * Sleep for a given number of milliseconds (testable).
      */
-    protected function sleep(int $ms): void
+    private function sleep(int $ms) : void
     {
         usleep($ms * 1000);
     }

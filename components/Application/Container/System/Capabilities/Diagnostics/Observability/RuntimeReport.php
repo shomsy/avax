@@ -72,7 +72,7 @@ final readonly class RuntimeReport implements JsonSerializable
     public function toJson() : string
     {
         try {
-            return (string) json_encode(value: $this, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            return json_encode(value: $this, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return '{}';
         }

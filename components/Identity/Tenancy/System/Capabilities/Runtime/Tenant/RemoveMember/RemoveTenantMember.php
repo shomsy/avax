@@ -7,6 +7,8 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\Re
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Model\Tenant;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMember;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberRole;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFailed;
@@ -15,17 +17,17 @@ final readonly class RemoveTenantMember
 {
     public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(RemoveTenantMemberData $data): void
+    public function execute(RemoveTenantMemberData $removeTenantMemberData) : void
     {
-        $tenant = $this->tenantStore->findTenantBySlug(slug: $data->tenantSlug);
+        $tenant = $this->tenantStore->findTenantBySlug(slug: $removeTenantMemberData->tenantSlug);
 
-        if ($tenant === null) {
-            throw TenantFailed::tenantNotFound(tenantSlug: $data->tenantSlug);
+        if (! $tenant instanceof Tenant) {
+            throw TenantFailed::tenantNotFound(tenantSlug: $removeTenantMemberData->tenantSlug);
         }
 
-        $member = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $data->userId);
+        $member = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $removeTenantMemberData->userId);
 
-        if ($member === null) {
+        if (! $member instanceof TenantMember) {
             throw TenantFailed::memberNotFound();
         }
 
@@ -33,14 +35,14 @@ final readonly class RemoveTenantMember
             throw TenantFailed::ownerCannotBeRemoved();
         }
 
-        $this->tenantStore->removeMember(tenantId: $tenant->tenantId, userId: $data->userId);
+        $this->tenantStore->removeMember(tenantId: $tenant->tenantId, userId: $removeTenantMemberData->userId);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.tenant.member.removed',
             occurredAt: $this->clock->now(),
             context   : [
                             'tenant_id' => $tenant->tenantId,
                 'tenant_slug' => $tenant->slug,
-                            'user_id'   => $data->userId,
+                            'user_id' => $removeTenantMemberData->userId,
             ],
         ));
     }

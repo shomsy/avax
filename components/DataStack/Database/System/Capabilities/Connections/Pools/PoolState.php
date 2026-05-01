@@ -45,14 +45,11 @@ final class PoolState
         }
     }
 
-    private readonly int $maxConnections;
-
     /**
      * @param int $maxConnections The absolute maximum number of people allowed in at once.
      */
-    public function __construct(int $maxConnections)
+    public function __construct(private readonly int $maxConnections)
     {
-        $this->maxConnections = $maxConnections;
     }
 
     /**

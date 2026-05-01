@@ -11,7 +11,7 @@ use InvalidArgumentException;
  */
 final readonly class EncryptionKey
 {
-    private const KEY_LENGTH = 32; // 256 bits for AES-256
+    private const int KEY_LENGTH = 32; // 256 bits for AES-256
 
     public function __construct(
         private string $keyMaterial,

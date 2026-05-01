@@ -83,7 +83,7 @@ final class TieredCache implements CacheStore
                 continue;
             }
 
-            $result = $store->read(key: $cacheKey, clock: $clock);
+            $result = $store->read(clock: $clock, key: $cacheKey);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 $this->promoteToFasterTier(key: $cacheKey, record: $result->record);
@@ -151,13 +151,7 @@ final class TieredCache implements CacheStore
     #[Override]
     public function exists(CacheKey $cacheKey) : bool
     {
-        foreach ($this->tiers as $tier) {
-            if ($tier !== null && $tier->exists(key: $cacheKey)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->tiers, fn ($tier) : bool => $tier !== null && $tier->exists(key: $cacheKey));
     }
 
     #[Override]

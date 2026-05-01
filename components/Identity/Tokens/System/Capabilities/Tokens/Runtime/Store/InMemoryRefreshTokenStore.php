@@ -23,17 +23,17 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
     public function issue(
         UserId $userId,
         DateTimeImmutable $expiresAt,
-        string                $familyId = null,
-        DateTimeImmutable     $mfaVerifiedAt = null,
+        ?string                $familyId = null,
+        ?DateTimeImmutable     $mfaVerifiedAt = null,
         bool $phishingResistant = false,
-        string                $clientId = null,
+        ?string                $clientId = null,
         array $scopes = [],
-        OAuthSenderConstraint $senderConstraint = null,
+        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
     ): IssuedRefreshToken {
         $tokenId = bin2hex(string: random_bytes(length: 32));
         $familyId ??= bin2hex(string: random_bytes(length: 16));
 
-        $record = new RefreshTokenRecord(
+        $refreshTokenRecord = new RefreshTokenRecord(
             tokenId          : $tokenId,
             familyId         : $familyId,
             userId           : $userId,
@@ -42,10 +42,10 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             phishingResistant: $phishingResistant,
             clientId         : $clientId,
             scopes           : $scopes,
-            senderConstraint : $senderConstraint,
+            senderConstraint : $oAuthSenderConstraint,
         );
 
-        $this->tokens[$tokenId] = $record;
+        $this->tokens[$tokenId] = $refreshTokenRecord;
 
         return new IssuedRefreshToken(
             token            : $tokenId, // In memory, tokenId IS the token

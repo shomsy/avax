@@ -34,7 +34,7 @@ final class KeyResolver
             $this->keys[$versionString] = EncryptionKey::fromBase64($base64Key, $versionString);
         }
 
-        $currentVersionString = (string) $currentVersion;
+        $currentVersionString = $currentVersion;
         if (! isset($this->keys[$currentVersionString])) {
             throw new InvalidArgumentException(
                 sprintf('Current key version "%s" not found in available versions', $currentVersionString),
@@ -99,8 +99,8 @@ final class KeyResolver
     /**
      * Add a new key version (for key rotation).
      */
-    public function addKey(EncryptionKey $key): void
+    public function addKey(EncryptionKey $encryptionKey) : void
     {
-        $this->keys[$key->version()] = $key;
+        $this->keys[$encryptionKey->version()] = $encryptionKey;
     }
 }

@@ -13,7 +13,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 $clock = new SystemClock();
 $l1    = new InMemoryCacheStore(clock: $clock);
 
-$cache = new AvaxCache(store: $l1, clock: $clock);
+$cache = new AvaxCache(clock: $clock, store: $l1);
 
 Cache::use(cache: $cache);
 

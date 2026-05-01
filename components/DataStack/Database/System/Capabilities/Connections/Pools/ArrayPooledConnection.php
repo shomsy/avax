@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools;
 
 use Override;
+use stdClass;
 
 final class ArrayPooledConnection implements PooledConnection
 {
@@ -22,7 +23,7 @@ final class ArrayPooledConnection implements PooledConnection
     }
 
     #[Override]
-    public function getResource(): object
+    public function getResource() : stdClass
     {
         $this->lastUsedAt = microtime(as_float: true);
 

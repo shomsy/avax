@@ -6,11 +6,11 @@ namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
 final class SessionDriver
 {
-    private static ?SessionStoreInterface $store = null;
+    private static ?SessionStoreInterface $sessionStore = null;
 
-    public static function setStore(SessionStoreInterface $store) : void
+    public static function setStore(SessionStoreInterface $sessionStore) : void
     {
-        self::$store = $store;
+        self::$sessionStore = $sessionStore;
     }
 
     public static function read(string $sessionId) : array
@@ -30,20 +30,20 @@ final class SessionDriver
 
     public static function exists(string $sessionId) : bool
     {
-        $store = self::get();
+        $sessionStore = self::get();
 
-        return method_exists(object_or_class: $store, method: 'exists')
-            ? $store->exists(sessionId: $sessionId)
-            : $store->read(id: $sessionId) !== [];
+        return method_exists(object_or_class: $sessionStore, method: 'exists')
+            ? $sessionStore->exists(sessionId: $sessionId)
+            : $sessionStore->read(id: $sessionId) !== [];
     }
 
     public static function get() : SessionStoreInterface
     {
-        if (self::$store === null) {
-            self::$store = self::make();
+        if (! self::$sessionStore instanceof SessionStoreInterface) {
+            self::$sessionStore = self::make();
         }
 
-        return self::$store;
+        return self::$sessionStore;
     }
 
     public static function make(array $config = []) : SessionStoreInterface

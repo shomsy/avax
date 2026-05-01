@@ -52,16 +52,16 @@ final readonly class Identity implements IdentityInterface
         #[SensitiveParameter]
         private ?JwtIdentityInterface $jwtIdentity = null,
     ) {
-        if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
+        if (! $this->sessionIdentity instanceof SessionIdentityInterface && ! $this->jwtIdentity instanceof JwtIdentityInterface) {
             throw new InvalidArgumentException(message: 'Identity requires at least one backend.');
         }
     }
 
     public static function fromBackends(
         #[SensitiveParameter]
-        SessionIdentityInterface $sessionIdentity = null,
+        ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        JwtIdentityInterface     $jwtIdentity = null,
+        ?JwtIdentityInterface     $jwtIdentity = null,
     ): self {
         return new self(
             sessionIdentity: $sessionIdentity,
@@ -73,7 +73,7 @@ final readonly class Identity implements IdentityInterface
 
     public function issue(
         User $user,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): IssuedAuthentication {
         if (! $user->isActive()) {
@@ -109,30 +109,30 @@ final readonly class Identity implements IdentityInterface
 
     private function resolveMode(): AuthenticationMode
     {
-        if ($this->sessionIdentity !== null && $this->jwtIdentity !== null) {
+        if ($this->sessionIdentity instanceof SessionIdentityInterface && $this->jwtIdentity instanceof JwtIdentityInterface) {
             return AuthenticationMode::HYBRID;
         }
 
-        if ($this->sessionIdentity !== null) {
+        if ($this->sessionIdentity instanceof SessionIdentityInterface) {
             return AuthenticationMode::SESSION;
         }
 
         return AuthenticationMode::TOKEN;
     }
 
-    public function clear(AuthenticationContext $context = null) : void
+    public function clear(?AuthenticationContext $authenticationContext = null) : void
     {
         $this->sessionIdentity?->clear();
 
         if (
-            $context !== null
-            && $this->jwtIdentity !== null
-            && $context->accessTokenId() !== null
-            && $context->accessTokenExpiresAt() !== null
+            $authenticationContext instanceof AuthenticationContext
+            && $this->jwtIdentity instanceof JwtIdentityInterface
+            && $authenticationContext->accessTokenId() !== null
+            && $authenticationContext->accessTokenExpiresAt() instanceof DateTimeImmutable
         ) {
             $this->jwtIdentity->revoke(
-                tokenId  : $context->accessTokenId(),
-                expiresAt: $context->accessTokenExpiresAt(),
+                tokenId  : $authenticationContext->accessTokenId(),
+                expiresAt: $authenticationContext->accessTokenExpiresAt(),
             );
         }
     }

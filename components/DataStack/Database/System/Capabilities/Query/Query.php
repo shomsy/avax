@@ -8,6 +8,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connectio
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\CreateBuilder\CreateBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
@@ -24,15 +25,15 @@ final readonly class Query
     public function __construct(
         private Connections $connections,
         private ?EventBus $eventBus = null,
-        private GrammarInterface $grammar = new Grammar\MySQLGrammar(),
-        private ?ExecutionScope $scope = null,
-        CreateBuilder            $createBuilder = null,
+        private GrammarInterface $grammar = new MySQLGrammar(),
+        private ?ExecutionScope  $executionScope = null,
+        ?CreateBuilder           $createBuilder = null,
     ) {
         $this->createBuilder = $createBuilder ?? new CreateBuilder(
             connections: $this->connections,
             grammar    : $this->grammar,
             eventBus   : $this->eventBus,
-            scope      : $this->scope,
+            scope      : $this->executionScope,
         );
     }
 
@@ -40,7 +41,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function from(string $table, string $connectionName = null) : QueryBuilder
+    public function from(string $table, ?string $connectionName = null) : QueryBuilder
     {
         return $this->builder(connectionName: $connectionName)->from(table: $table);
     }
@@ -49,7 +50,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function builder(string $connectionName = null) : QueryBuilder
+    public function builder(?string $connectionName = null) : QueryBuilder
     {
         return $this->createBuilder->for(connectionName: $connectionName);
     }
@@ -58,7 +59,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function raw(string $value, string $connectionName = null) : Expression
+    public function raw(string $value, ?string $connectionName = null) : Expression
     {
         return $this->builder(connectionName: $connectionName)->raw(value: $value);
     }

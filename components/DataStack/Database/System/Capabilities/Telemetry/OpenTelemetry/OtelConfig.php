@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry\OpenTelemetry;
 
-final class OtelConfig
+final readonly class OtelConfig
 {
     public function __construct(
-        public readonly string $serviceName = 'avax-database',
-        public readonly bool $enabled = true,
-        public readonly array $attributes = [],
+        public string $serviceName = 'avax-database',
+        public bool   $enabled = true,
+        public array  $attributes = [],
     ) {}
 }

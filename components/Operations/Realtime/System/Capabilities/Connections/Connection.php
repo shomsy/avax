@@ -10,7 +10,7 @@ final readonly class Connection
 {
     public string $id;
 
-    public function __construct(private Closure $sender, string $id = null)
+    public function __construct(private Closure $sender, ?string $id = null)
     {
         $this->id = $id ?? bin2hex(random_bytes(16));
     }

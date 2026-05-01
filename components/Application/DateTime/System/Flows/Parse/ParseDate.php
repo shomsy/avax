@@ -38,7 +38,7 @@ final class ParseDate
     {
         $tz = $timezone ?? date_default_timezone_get();
 
-        return (new DateTimeImmutable('@' . $timestamp, new DateTimeZone($tz)))->setTimezone(new DateTimeZone($tz));
+        return new DateTimeImmutable('@' . $timestamp, new DateTimeZone($tz))->setTimezone(new DateTimeZone($tz));
     }
 
     public function fromIso(string $iso) : DateTimeImmutable

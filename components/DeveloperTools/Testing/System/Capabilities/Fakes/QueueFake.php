@@ -55,6 +55,7 @@ class QueueFake implements QueueDriverInterface
         foreach ($this->pushed as $jobs) {
             $total += count($jobs);
         }
+
         foreach ($this->pushedLater as $jobs) {
             $total += count($jobs);
         }
@@ -101,7 +102,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertTrue(
             $this->hasPushed($job),
-            "The expected [{$job}] job was not pushed.",
+            sprintf('The expected [%s] job was not pushed.', $job),
         );
     }
 
@@ -110,7 +111,7 @@ class QueueFake implements QueueDriverInterface
      */
     public function hasPushed(string $job): bool
     {
-        return isset($this->pushed[$job]) && ! empty($this->pushed[$job]);
+        return isset($this->pushed[$job]) && (isset($this->pushed[$job]) && $this->pushed[$job] !== []);
     }
 
     /**
@@ -120,7 +121,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertFalse(
             $this->hasPushed($job),
-            "The unexpected [{$job}] job was pushed.",
+            sprintf('The unexpected [%s] job was pushed.', $job),
         );
     }
 
@@ -134,7 +135,7 @@ class QueueFake implements QueueDriverInterface
         Assert::assertSame(
             $times,
             $count,
-            "The [{$job}] job was pushed {$count} times instead of {$times} times.",
+            sprintf('The [%s] job was pushed %d times instead of %d times.', $job, $count, $times),
         );
     }
 
@@ -144,9 +145,8 @@ class QueueFake implements QueueDriverInterface
     public function pushedCount(string $job): int
     {
         $total = count($this->pushed[$job] ?? []);
-        $total += count($this->pushedLater[$job] ?? []);
 
-        return $total;
+        return $total + count($this->pushedLater[$job] ?? []);
     }
 
     /**
@@ -156,7 +156,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertTrue(
             $this->hasPushedWith($job, $expectedData),
-            "The [{$job}] job was not pushed with the expected data.",
+            sprintf('The [%s] job was not pushed with the expected data.', $job),
         );
     }
 
@@ -185,7 +185,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertTrue(
             $this->hasPushed($job),
-            "The [{$job}] job was not pushed.",
+            sprintf('The [%s] job was not pushed.', $job),
         );
     }
 
@@ -196,7 +196,7 @@ class QueueFake implements QueueDriverInterface
     {
         Assert::assertTrue(
             $this->hasPushedLater($job),
-            "The expected [{$job}] job was not pushed with a delay.",
+            sprintf('The expected [%s] job was not pushed with a delay.', $job),
         );
     }
 
@@ -205,7 +205,7 @@ class QueueFake implements QueueDriverInterface
      */
     public function hasPushedLater(string $job): bool
     {
-        return isset($this->pushedLater[$job]) && ! empty($this->pushedLater[$job]);
+        return isset($this->pushedLater[$job]) && (isset($this->pushedLater[$job]) && $this->pushedLater[$job] !== []);
     }
 
     /**

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Identity;
 
-final class User
+final readonly class User
 {
     public function __construct(
-        public readonly string $id,
-        public readonly string $email,
-        public readonly array $roles = [],
+        public string $id,
+        public string $email,
+        public array  $roles = [],
     ) {}
 
     public function hasRole(string $role): bool

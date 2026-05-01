@@ -20,12 +20,13 @@ interface HttpTransportInterface
     /**
      * Send an HTTP request and return the response.
      *
-     * @param OutboundRequest $request The outbound request to send
+     * @param OutboundRequest $outboundRequest The outbound request to send
+     *
      * @return ClientResponse The HTTP response
      *
      * @throws HttpRequestFailed if the request cannot be completed
      */
-    public function send(OutboundRequest $request): ClientResponse;
+    public function send(OutboundRequest $outboundRequest) : ClientResponse;
 
     /**
      * Build a PSR-7 request from the outbound request.
@@ -33,5 +34,5 @@ interface HttpTransportInterface
      * This method is provided for compatibility with PSR-7 middleware
      * and other libraries that expect PSR-7 request objects.
      */
-    public function buildPsr7Request(OutboundRequest $request): Request;
+    public function buildPsr7Request(OutboundRequest $outboundRequest) : Request;
 }

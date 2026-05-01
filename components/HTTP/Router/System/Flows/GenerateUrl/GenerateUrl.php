@@ -53,7 +53,7 @@ final class GenerateUrl
     public function execute(string $name, array $params = [], array $extra = []): string
     {
         if (! isset($this->routes[$name])) {
-            throw new RouterFailure("Route '{$name}' is not registered for URL generation");
+            throw new RouterFailure(sprintf("Route '%s' is not registered for URL generation", $name));
         }
 
         $pattern = $this->routes[$name];
@@ -66,7 +66,7 @@ final class GenerateUrl
                 $param = $matches[1];
                 if (! array_key_exists($param, $params)) {
                     throw new RouterFailure(
-                        "Missing required parameter '{$param}' for route '{$name}'",
+                        sprintf("Missing required parameter '%s' for route '%s'", $param, $name),
                     );
                 }
 

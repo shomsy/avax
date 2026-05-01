@@ -30,94 +30,94 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final class AssembleRuntime
 {
-    public function assemble(CreateContainerConfig $config, ObservabilityAssembly $observability): RuntimeAssembly
+    public function assemble(CreateContainerConfig $createContainerConfig, ObservabilityAssembly $observabilityAssembly) : RuntimeAssembly
     {
-        $registrations = new DependencyRegistry();
+        $dependencyRegistry        = new DependencyRegistry();
         $scopeStore    = new ScopeStore();
-        $servicePool   = new DependencyPool();
-        $scopes        = new ManageScopes(
+        $dependencyPool            = new DependencyPool();
+        $manageScopes              = new ManageScopes(
             store  : $scopeStore,
-            pool   : $servicePool,
-            metrics: $observability->metrics,
+            pool   : $dependencyPool,
+            metrics: $observabilityAssembly->metrics,
         );
-        $dependencies = new ResolveDependencies();
-        $blueprints   = new CreateDependencyBlueprint(
+        $resolveDependencies       = new ResolveDependencies();
+        $createDependencyBlueprint = new CreateDependencyBlueprint(
             cache       : new BlueprintCache(
-                cacheDir    : $config->cacheDir,
-                cacheVersion: $config->cacheVersion,
-                debug       : $config->debug,
-                metrics     : $observability->metrics,
+                              cacheDir    : $createContainerConfig->cacheDir,
+                              cacheVersion: $createContainerConfig->cacheVersion,
+                              debug       : $createContainerConfig->debug,
+                              metrics     : $observabilityAssembly->metrics,
             ),
-            dependencies: $dependencies,
+            dependencies: $resolveDependencies,
         );
-        $callArguments = new ResolveCallArguments(dependencies: $dependencies);
-        $caller        = new FunctionCaller(arguments: $callArguments);
-        $policy        = new ResolutionPolicy(
-            strict  : $config->strict,
-            debug   : $config->debug,
-            profile : $config->effectivePolicyProfile(),
-            failMode: $config->policyFailMode,
-            profiles: $config->policyProfiles,
+        $resolveCallArguments      = new ResolveCallArguments(dependencies: $resolveDependencies);
+        $functionCaller            = new FunctionCaller(arguments: $resolveCallArguments);
+        $resolutionPolicy          = new ResolutionPolicy(
+            strict  : $createContainerConfig->strict,
+            debug   : $createContainerConfig->debug,
+            profile : $createContainerConfig->effectivePolicyProfile(),
+            failMode: $createContainerConfig->policyFailMode,
+            profiles: $createContainerConfig->policyProfiles,
         );
-        $compiler = new CompileContainer(
-            registrations         : $registrations,
-            blueprints            : $blueprints,
-            cacheDir              : $config->cacheDir,
-            cacheVersion          : $config->cacheVersion,
-            configHash            : $config->configHash(),
-            diagnosticsMode       : $config->diagnosticsMode,
-            environment           : $config->environment(),
-            compileMode           : $config->compileMode,
-            strict                : $config->strict,
-            settingsFingerprint   : $config->settingsFingerprint(),
-            benchmarkBuildMarker  : $config->benchmarkBuildMarker(),
-            executionMode         : $config->executionMode,
-            pruneMode             : $config->pruneMode,
-            validateOnLoad        : $config->validatesCompiledArtifactsOnLoad(),
-            failClosedOnCorruption: $config->failsClosedOnCompiledCorruption(),
-            validateBeforeCompile : $config->validatesBeforeCompile(),
-            metrics               : $observability->metrics,
+        $compileContainer          = new CompileContainer(
+            cacheDir              : $createContainerConfig->cacheDir,
+            cacheVersion          : $createContainerConfig->cacheVersion,
+            configHash            : $createContainerConfig->configHash(),
+            diagnosticsMode       : $createContainerConfig->diagnosticsMode,
+            environment           : $createContainerConfig->environment(),
+            compileMode           : $createContainerConfig->compileMode,
+            strict                : $createContainerConfig->strict,
+            settingsFingerprint   : $createContainerConfig->settingsFingerprint(),
+            benchmarkBuildMarker  : $createContainerConfig->benchmarkBuildMarker(),
+            executionMode         : $createContainerConfig->executionMode,
+            pruneMode             : $createContainerConfig->pruneMode,
+            validateOnLoad        : $createContainerConfig->validatesCompiledArtifactsOnLoad(),
+            failClosedOnCorruption: $createContainerConfig->failsClosedOnCompiledCorruption(),
+            validateBeforeCompile : $createContainerConfig->validatesBeforeCompile(),
+            registrations         : $dependencyRegistry,
+            blueprints            : $createDependencyBlueprint,
+            metrics               : $observabilityAssembly->metrics,
             services              : new DependencyCompiler(
-                registrations: $registrations,
-                blueprints   : $blueprints,
+                                        registrations: $dependencyRegistry,
+                                        blueprints   : $createDependencyBlueprint,
             ),
         );
-        $resolver = new ResolveDependency(
-            registrations    : $registrations,
-            scopes           : $scopes,
+        $resolveDependency         = new ResolveDependency(
+            registrations    : $dependencyRegistry,
+            scopes           : $manageScopes,
             builder          : new BuildService(
-                blueprints  : $blueprints,
-                dependencies: $dependencies,
+                                   blueprints  : $createDependencyBlueprint,
+                                   dependencies: $resolveDependencies,
             ),
-            blueprints       : $blueprints,
+            blueprints       : $createDependencyBlueprint,
             injectProperties : new InjectProperties(),
-            injectMethods    : new InjectMethods(arguments: $callArguments),
-            caller           : $caller,
-            metrics          : $observability->metrics,
-            timeline         : $observability->timeline,
-            policy           : $policy,
+            injectMethods    : new InjectMethods(arguments: $resolveCallArguments),
+            caller           : $functionCaller,
+            metrics          : $observabilityAssembly->metrics,
+            timeline         : $observabilityAssembly->timeline,
+            policy           : $resolutionPolicy,
             compiledRuntime  : new CompiledRuntime(
-                compiler     : $compiler,
+                                   executionMode: $createContainerConfig->executionMode,
+                                   compiler     : $compileContainer,
                 inliner      : new HotPathInliner(),
-                metrics      : $observability->metrics,
-                executionMode: $config->executionMode,
+                                   metrics      : $observabilityAssembly->metrics,
             ),
             deferredProviders: new DeferredProviderRegistry(),
-            diagnosticsMode  : $config->diagnosticsMode,
-            environment      : $config->environment(),
-            sliceBoundaryMode: $config->sliceBoundaryMode,
-            asyncTarget      : $config->asyncTarget,
+            diagnosticsMode  : $createContainerConfig->diagnosticsMode,
+            environment      : $createContainerConfig->environment(),
+            sliceBoundaryMode: $createContainerConfig->sliceBoundaryMode,
+            asyncTarget      : $createContainerConfig->asyncTarget,
         );
 
         return new RuntimeAssembly(
-            registrations: $registrations,
+            registrations: $dependencyRegistry,
             scopeStore   : $scopeStore,
-            servicePool  : $servicePool,
-            scopes       : $scopes,
-            caller       : $caller,
-            policy       : $policy,
-            compiler     : $compiler,
-            resolver     : $resolver,
+            servicePool  : $dependencyPool,
+            scopes       : $manageScopes,
+            caller       : $functionCaller,
+            policy       : $resolutionPolicy,
+            compiler     : $compileContainer,
+            resolver     : $resolveDependency,
         );
     }
 }

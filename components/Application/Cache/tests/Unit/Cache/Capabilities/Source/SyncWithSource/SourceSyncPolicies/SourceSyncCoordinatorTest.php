@@ -36,7 +36,7 @@ final class SourceSyncCoordinatorTest extends TestCase
 
         $this->inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
 
-        $sourceSyncCoordinator->write(key: $this->makeKey(key: 'key_1'), value: 'new_value');
+        $sourceSyncCoordinator->write(value: 'new_value', key: $this->makeKey(key: 'key_1'));
 
         $this->assertFalse(condition: $this->inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
         $this->assertEquals(expected: 'new_value', actual: $this->testCacheSource->get(key: 'key_1'));
@@ -69,7 +69,7 @@ final class SourceSyncCoordinatorTest extends TestCase
 
         $this->inMemoryCacheStore->write(key: $this->makeKey(key: 'key_1'), record: $this->makeRecord(value: 'cached_value'));
 
-        $sourceSyncCoordinator->write(key: $this->makeKey(key: 'key_1'), value: 'new_value');
+        $sourceSyncCoordinator->write(value: 'new_value', key: $this->makeKey(key: 'key_1'));
 
         $this->assertFalse(condition: $this->inMemoryCacheStore->exists(key: $this->makeKey(key: 'key_1')));
         $this->assertEquals(expected: 'new_value', actual: $this->testCacheSource->get(key: 'key_1'));

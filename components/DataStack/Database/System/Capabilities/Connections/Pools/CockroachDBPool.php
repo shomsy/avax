@@ -51,8 +51,8 @@ class CockroachDBPool extends BaseConnectionPool
     public function withRetry(?int $maxRetries = null): RetryablePool
     {
         return new RetryablePool(
-            pool      : $this,
             maxRetries: $maxRetries ?? $this->maxRetries,
+            pool      : $this,
         );
     }
 

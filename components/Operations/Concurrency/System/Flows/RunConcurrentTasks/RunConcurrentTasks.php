@@ -15,6 +15,6 @@ final readonly class RunConcurrentTasks
      */
     public function run(array $tasks): array
     {
-        return (new TaskRunner())->runAll($tasks);
+        return new TaskRunner()->runAll($tasks);
     }
 }

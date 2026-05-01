@@ -22,14 +22,14 @@ use Throwable;
 final readonly class ErrorLogger implements LoggerInterface
 {
     /**
-     * @param Logging $logger The underlying logging facade
-     * @param SecretRedactor $redactor Redactor for sensitive data in context
+     * @param Logging        $logging        The underlying logging facade
+     * @param SecretRedactor $secretRedactor Redactor for sensitive data in context
      * @param string|null $correlationId Current correlation ID for request tracking
      * @param string|null $traceId Current trace ID for distributed tracing
      */
     public function __construct(
-        private Logging $logger,
-        private SecretRedactor $redactor = new SecretRedactor(),
+        private Logging        $logging,
+        private SecretRedactor $secretRedactor = new SecretRedactor(),
         private ?string $correlationId = null,
         private ?string $traceId = null,
     ) {
@@ -48,7 +48,7 @@ final readonly class ErrorLogger implements LoggerInterface
         $context = $this->enrichContext($context);
         $context = $this->redactContext($context);
 
-        $this->logger->log($level, $message, $context);
+        $this->logging->log($level, $message, $context);
     }
 
     /**
@@ -68,7 +68,7 @@ final readonly class ErrorLogger implements LoggerInterface
             $context['trace_id'] = $this->traceId;
         }
 
-        $context['timestamp'] = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d\TH:i:s.uP');
+        $context['timestamp'] = new DateTimeImmutable('now', new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s.uP');
 
         return $context;
     }
@@ -82,7 +82,7 @@ final readonly class ErrorLogger implements LoggerInterface
      */
     private function redactContext(array $context): array
     {
-        return $this->redactor->redactArray($context);
+        return $this->secretRedactor->redactArray($context);
     }
 
     public function alert(Stringable|string $message, array $context = []): void
@@ -127,15 +127,15 @@ final readonly class ErrorLogger implements LoggerInterface
      */
     public function logException(
         string $level,
-        Throwable $exception,
+        Throwable $throwable,
         array $additionalContext = [],
     ): void {
-        $context = $this->buildExceptionContext($exception, $additionalContext);
+        $context = $this->buildExceptionContext($throwable, $additionalContext);
 
         $message = sprintf(
             '%s: %s',
-            $exception::class,
-            $exception->getMessage(),
+            $throwable::class,
+            $throwable->getMessage(),
         );
 
         $this->log($level, $message, $context);
@@ -148,21 +148,21 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * @return array<string, mixed>
      */
-    private function buildExceptionContext(Throwable $exception, array $additionalContext = []): array
+    private function buildExceptionContext(Throwable $throwable, array $additionalContext = []) : array
     {
         $context = [
             'exception' => [
-                'class'   => $exception::class,
-                'message' => $exception->getMessage(),
-                'code'    => $exception->getCode(),
-                'file'    => $exception->getFile(),
-                'line'    => $exception->getLine(),
-                'trace'   => $this->formatTrace($exception),
+                'class'   => $throwable::class,
+                'message' => $throwable->getMessage(),
+                'code'    => $throwable->getCode(),
+                'file'    => $throwable->getFile(),
+                'line'    => $throwable->getLine(),
+                'trace'   => $this->formatTrace($throwable),
             ],
         ];
 
-        if ($exception->getPrevious() !== null) {
-            $context['exception']['previous'] = $this->buildExceptionContext($exception->getPrevious());
+        if ($throwable->getPrevious() instanceof Throwable) {
+            $context['exception']['previous'] = $this->buildExceptionContext($throwable->getPrevious());
         }
 
         return array_merge($context, $additionalContext);
@@ -174,11 +174,11 @@ final readonly class ErrorLogger implements LoggerInterface
      * @return list<array{file: string, line: int, class: string|null, type: string|null, function: string, args:
      *                          list<string>}>
      */
-    private function formatTrace(Throwable $exception): array
+    private function formatTrace(Throwable $throwable) : array
     {
         $trace = [];
 
-        foreach ($exception->getTrace() as $frame) {
+        foreach ($throwable->getTrace() as $frame) {
             $args = [];
 
             if (isset($frame['args'])) {
@@ -220,11 +220,11 @@ final readonly class ErrorLogger implements LoggerInterface
         if (is_string($arg)) {
             $truncated = mb_strlen($arg) > 100 ? mb_substr($arg, 0, 100) . '...' : $arg;
 
-            return $this->redactor->redactString($truncated);
+            return $this->secretRedactor->redactString($truncated);
         }
 
         if (is_array($arg)) {
-            $redacted = $this->redactor->redactArray($arg);
+            $redacted = $this->secretRedactor->redactArray($arg);
 
             $encoded = json_encode($redacted, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 

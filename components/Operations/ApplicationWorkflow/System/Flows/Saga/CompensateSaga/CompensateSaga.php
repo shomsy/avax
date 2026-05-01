@@ -23,29 +23,29 @@ final readonly class CompensateSaga
     ) {}
 
     public function compensate(
-        SagaInstance $instance,
-        SagaDefinition $definition,
+        SagaInstance   $sagaInstance,
+        SagaDefinition $sagaDefinition,
         callable $compensationRunner,
     ): SagaInstance {
-        if ($instance->status === SagaInstanceStatus::COMPENSATED) {
-            return $instance;
+        if ($sagaInstance->status === SagaInstanceStatus::COMPENSATED) {
+            return $sagaInstance;
         }
 
-        if ($instance->status !== SagaInstanceStatus::FAILED && $instance->status !== SagaInstanceStatus::COMPENSATING) {
+        if ($sagaInstance->status !== SagaInstanceStatus::FAILED && $sagaInstance->status !== SagaInstanceStatus::COMPENSATING) {
             throw new SagaCompensationFailure(
-                message: sprintf('Saga %s is not in failed state, cannot compensate.', $instance->id),
+                message: sprintf('Saga %s is not in failed state, cannot compensate.', $sagaInstance->id),
             );
         }
 
-        $compensationSteps = $this->chooseCompensationSteps->choose(saga: $instance, definition: $definition);
+        $compensationSteps = $this->chooseCompensationSteps->choose(saga: $sagaInstance, definition: $sagaDefinition);
 
         $results = [];
-        foreach ($compensationSteps as $stepDef) {
-            $stepName = $stepDef->name;
-            $previousResult = $instance->stepResults[$stepName] ?? null;
+        foreach ($compensationSteps as $compensationStep) {
+            $stepName       = $compensationStep->name;
+            $previousResult = $sagaInstance->stepResults[$stepName] ?? null;
 
             try {
-                $compensationResult = $compensationRunner($stepDef, $previousResult);
+                $compensationResult = $compensationRunner($compensationStep, $previousResult);
                 $results[$stepName] = CompensationStepResult::success($stepName, $compensationResult);
             } catch (Throwable $e) {
                 $results[$stepName] = CompensationStepResult::failure(stepName: $stepName, error: $e->getMessage());
@@ -53,16 +53,16 @@ final readonly class CompensateSaga
         }
 
         if ($this->hasFailedCompensations(results: $results)) {
-            return $this->markAsUnrecoverable(instance: $instance);
+            return $this->markAsUnrecoverable(instance: $sagaInstance);
         }
 
-        $compensated = $instance->compensate(compensationResults: $results);
+        $compensated = $sagaInstance->compensate(compensationResults: $results);
         $this->storeSagaState->save(instance: $compensated);
 
         $this->inspectSaga->record(
             event: SagaRuntimeEvent::compensated(
-                sagaId  : $instance->id,
-                sagaName: $instance->definitionName,
+                     sagaId  : $sagaInstance->id,
+                     sagaName: $sagaInstance->definitionName,
             ),
         );
 
@@ -71,61 +71,38 @@ final readonly class CompensateSaga
 
     private function hasFailedCompensations(array $results): bool
     {
-        foreach ($results as $result) {
-            if (! $result->success) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($results, fn ($result) : bool => ! $result->success);
     }
 
-    private function markAsUnrecoverable(SagaInstance $instance): SagaInstance
+    private function markAsUnrecoverable(SagaInstance $sagaInstance) : SagaInstance
     {
-        return $instance->fail(error: 'COMPENSATION_FAILED');
-    }
-
-    private function wasCompleted(SagaInstance $instance, string $stepName): bool
-    {
-        return in_array($stepName, $instance->completedSteps, true);
+        return $sagaInstance->fail(error: 'COMPENSATION_FAILED');
     }
 }
 
 final readonly class CompensationStepResult
 {
-    public string $stepName;
-
-    public bool $success;
-
     public array $output;
-
-    public ?string $error;
 
     public float $durationMs;
 
-    public ?DateTimeImmutable $completedAt;
-
     private function __construct(
-        string $stepName,
-        bool $success,
-        array             $output = null,
-        string            $error = null,
-        float             $durationMs = null,
-        DateTimeImmutable $completedAt = null,
+        public string             $stepName,
+        public bool               $success,
+        ?array                    $output = null,
+        public ?string            $error = null,
+        ?float                    $durationMs = null,
+        public ?DateTimeImmutable $completedAt = null,
     ) {
         $output           ??= [];
         $durationMs ??= 0.0;
-        $this->stepName   = $stepName;
-        $this->success    = $success;
         $this->output     = $output;
-        $this->error      = $error;
         $this->durationMs = $durationMs;
-        $this->completedAt = $completedAt;
     }
 
     public static function success(
         string $stepName,
-        array $output = null,
+        ?array $output = null,
         float $durationMs = 0.0,
     ): self {
         $output ??= [];
@@ -168,24 +145,7 @@ final readonly class CompensationStepResult
 
 final readonly class CompensationPlan
 {
-    public string $sagaId;
-
-    public array $steps;
-
-    public ?string $failedOnStep;
-
-    public bool $isRecoverable;
-
-    private function __construct(
-        string $sagaId,
-        array $steps,
-        ?string $failedOnStep,
-        bool $isRecoverable,
-    ) {
-        $this->sagaId       = $sagaId;
-        $this->steps        = $steps;
-        $this->failedOnStep = $failedOnStep;
-        $this->isRecoverable = $isRecoverable;
+    private function __construct(public string $sagaId, public array $steps, public ?string $failedOnStep, public bool $isRecoverable) {
     }
 
     public static function create(
@@ -197,7 +157,7 @@ final readonly class CompensationPlan
             sagaId       : $sagaId,
             steps        : $steps,
             failedOnStep : $failedOnStep,
-            isRecoverable: ! empty($steps),
+            isRecoverable: $steps !== [],
         );
     }
 

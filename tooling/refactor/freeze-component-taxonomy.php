@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 final class FreezeComponentTaxonomy
 {
-    private string $root;
+    private readonly string $root;
 
-    private bool $apply;
+    private readonly bool $apply;
 
     /** @var list<array{from: string, to: string, reason: string}> */
     private array $moves = [];
@@ -75,7 +75,7 @@ final class FreezeComponentTaxonomy
     {
         foreach (['components', 'framework'] as $required) {
             if (! is_dir($this->path($required))) {
-                throw new RuntimeException("Run from AvaX repo root. Missing {$required}/");
+                throw new RuntimeException(sprintf('Run from AvaX repo root. Missing %s/', $required));
             }
         }
     }
@@ -445,13 +445,13 @@ final class FreezeComponentTaxonomy
     {
         if (is_file($from)) {
             if (is_dir($to)) {
-                $this->conflicts[] = "File would overwrite directory: {$this->relative($from)} -> {$this->relative($to)}";
+                $this->conflicts[] = sprintf('File would overwrite directory: %s -> %s', $this->relative($from), $this->relative($to));
 
                 return;
             }
 
             if (is_file($to) && ! $this->sameFile($from, $to)) {
-                $this->conflicts[] = "Different target file exists: {$this->relative($from)} -> {$this->relative($to)}";
+                $this->conflicts[] = sprintf('Different target file exists: %s -> %s', $this->relative($from), $this->relative($to));
             }
 
             return;
@@ -462,7 +462,7 @@ final class FreezeComponentTaxonomy
         }
 
         if (is_file($to)) {
-            $this->conflicts[] = "Directory would overwrite file: {$this->relative($from)} -> {$this->relative($to)}";
+            $this->conflicts[] = sprintf('Directory would overwrite file: %s -> %s', $this->relative($from), $this->relative($to));
 
             return;
         }
@@ -547,7 +547,7 @@ final class FreezeComponentTaxonomy
                 return;
             }
 
-            throw new RuntimeException("Refusing to overwrite different file: {$this->relative($to)}");
+            throw new RuntimeException('Refusing to overwrite different file: ' . $this->relative($to));
         }
 
         rename($from, $to);
@@ -600,7 +600,7 @@ final class FreezeComponentTaxonomy
             }
         }
 
-        echo PHP_EOL . "Namespace rewrite candidates: {$changed}" . PHP_EOL;
+        echo PHP_EOL . ('Namespace rewrite candidates: ' . $changed) . PHP_EOL;
     }
 
     private function phpFiles(string $path): Generator
@@ -663,7 +663,7 @@ final class FreezeComponentTaxonomy
         echo '❌ Conflicts found. Nothing was moved.' . PHP_EOL;
 
         foreach ($this->conflicts as $conflict) {
-            echo " - {$conflict}" . PHP_EOL;
+            echo ' - ' . $conflict . PHP_EOL;
         }
 
         echo PHP_EOL;
@@ -733,8 +733,8 @@ final class FreezeComponentTaxonomy
 }
 
 try {
-    exit((new FreezeComponentTaxonomy($argv))->run());
-} catch (Throwable $exception) {
-    fwrite(STDERR, 'ERROR: ' . $exception->getMessage() . PHP_EOL);
+    exit(new FreezeComponentTaxonomy($argv)->run());
+} catch (Throwable $throwable) {
+    fwrite(STDERR, 'ERROR: ' . $throwable->getMessage() . PHP_EOL);
     exit(1);
 }

@@ -62,7 +62,7 @@ final class RedisRateLimiter
 
     private function attempts(string $key, int $decaySeconds) : int
     {
-        if ($this->redis !== null) {
+        if ($this->redis instanceof Redis) {
             $redisKey = $this->redisKey(key: $key);
             $this->redis->zRemRangeByScore($redisKey, '-inf', (string) (microtime(true) - $decaySeconds));
 
@@ -96,7 +96,7 @@ final class RedisRateLimiter
     {
         $now = microtime(true);
 
-        if ($this->redis !== null) {
+        if ($this->redis instanceof Redis) {
             $redisKey = $this->redisKey(key: $key);
             $this->redis->zAdd($redisKey, $now, $now . ':' . bin2hex(random_bytes(4)));
             $this->redis->expire($redisKey, $decaySeconds);
@@ -115,7 +115,7 @@ final class RedisRateLimiter
 
     public function clear(string $key) : void
     {
-        if ($this->redis !== null) {
+        if ($this->redis instanceof Redis) {
             $this->redis->del($this->redisKey(key: $key));
         }
 
@@ -135,7 +135,7 @@ final class RedisRateLimiter
 
     private function oldestHit(string $key, int $decaySeconds) : ?float
     {
-        if ($this->redis !== null) {
+        if ($this->redis instanceof Redis) {
             $redisKey = $this->redisKey(key: $key);
             $this->redis->zRemRangeByScore($redisKey, '-inf', (string) (microtime(true) - $decaySeconds));
             $entries = $this->redis->zRange($redisKey, 0, 0, true);

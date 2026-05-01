@@ -11,9 +11,9 @@ final class PolicyEvaluator
     /** @var list<PolicyRule> */
     private array $rules = [];
 
-    public function register(PolicyRule $rule): void
+    public function register(PolicyRule $policyRule) : void
     {
-        $this->rules[] = $rule;
+        $this->rules[] = $policyRule;
     }
 
     public function explain(string $action, object $resource, array $context): DecisionExplanation
@@ -62,7 +62,7 @@ final class PolicyEvaluator
         }
 
         return PolicyDecision::allow(
-            $reasons ? 'Matched ' . count($reasons) . ' rules' : null,
+            $reasons !== [] ? 'Matched ' . count($reasons) . ' rules' : null,
         );
     }
 }

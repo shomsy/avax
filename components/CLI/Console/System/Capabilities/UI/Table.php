@@ -36,7 +36,7 @@ class Table
      */
     private static function calculateWidths(array $headers, array $rows): array
     {
-        $widths = array_map(static fn (string $h): int => mb_strlen($h), $headers);
+        $widths = array_map(mb_strlen(...), $headers);
 
         foreach ($rows as $row) {
             foreach ($row as $i => $cell) {

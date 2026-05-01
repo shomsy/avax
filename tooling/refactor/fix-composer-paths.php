@@ -34,7 +34,7 @@ $newFiles = [];
 
 foreach ($files as $file) {
     if (! file_exists($file)) {
-        echo "REMOVED (missing): $file\n";
+        echo sprintf('REMOVED (missing): %s%s', $file, PHP_EOL);
 
         continue;
     }
@@ -43,10 +43,10 @@ foreach ($files as $file) {
         $newPath = $oldToNew[$file];
         if (file_exists($newPath)) {
             $newFiles[] = $newPath;
-            echo "MAPPED: {$file} -> {$newPath}\n";
+            echo sprintf('MAPPED: %s -> %s%s', $file, $newPath, PHP_EOL);
         } else {
             $newFiles[] = $file;
-            echo "KEPT (new not exists): {$file}\n";
+            echo sprintf('KEPT (new not exists): %s%s', $file, PHP_EOL);
         }
     } else {
         $newFiles[] = $file;

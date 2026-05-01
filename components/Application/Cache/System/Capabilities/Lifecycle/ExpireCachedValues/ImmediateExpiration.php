@@ -15,7 +15,7 @@ final readonly class ImmediateExpiration implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ) : ?Timestamp
+    ) : Timestamp
     {
         return $clock->now();
     }

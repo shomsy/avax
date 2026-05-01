@@ -23,6 +23,7 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederatedIdentityLink;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederatedIdentityLinkStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnection;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\FederationFailed;
@@ -33,9 +34,9 @@ use SensitiveParameter;
 final readonly class CompleteFederatedLogin
 {
     public function __construct(
-        private FederationConnectionStoreInterface $connectionStore,
-        private FederationRuntimeInterface $runtime,
-        private FederatedIdentityLinkStoreInterface $linkStore,
+        private FederationConnectionStoreInterface  $federationConnectionStore,
+        private FederationRuntimeInterface          $federationRuntime,
+        private FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore,
         private UserSourceInterface $userSource,
         private IdentityInterface $identity,
         private ProjectAuthenticatedUser $projectAuthenticatedUser,
@@ -46,19 +47,19 @@ final readonly class CompleteFederatedLogin
         private IdGeneratorInterface $idGenerator,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private ?DeterministicRiskEngine $riskEngine = null,
-        private ?LifecycleOrchestrator $lifecycle = null,
+        private ?DeterministicRiskEngine            $deterministicRiskEngine = null,
+        private ?LifecycleOrchestrator              $lifecycleOrchestrator = null,
     ) {}
 
     /**
      * @throws FederationFailed
      * @throws RandomException
      */
-    public function execute(CompleteFederatedLoginData $data): AuthenticationResult
+    public function execute(CompleteFederatedLoginData $completeFederatedLoginData) : AuthenticationResult
     {
-        $connection = $this->connectionStore->find(connectionId: $data->connectionId);
+        $connection = $this->federationConnectionStore->find(connectionId: $completeFederatedLoginData->connectionId);
 
-        if ($connection === null) {
+        if (! $connection instanceof FederationConnection) {
             throw FederationFailed::notFound();
         }
 
@@ -66,57 +67,57 @@ final readonly class CompleteFederatedLogin
             throw FederationFailed::domainNotVerified();
         }
 
-        $federated = $this->runtime->completeLogin(connection: $connection, payload: $data->payload);
-        $link = $this->linkStore->find(connectionId: $connection->connectionId, subject: $federated->subject);
-        $user = $link !== null
+        $federatedIdentity = $this->federationRuntime->completeLogin(payload: $completeFederatedLoginData->payload, connection: $connection);
+        $link              = $this->federatedIdentityLinkStore->find(connectionId: $connection->connectionId, subject: $federatedIdentity->subject);
+        $user              = $link instanceof FederatedIdentityLink
             ? $this->userSource->findById(id: new UserId(value: $link->userId))
             : null;
 
-        if ($user === null) {
-            $user = $this->userSource->findByEmail(email: $federated->email);
+        if (! $user instanceof User) {
+            $user = $this->userSource->findByEmail(email: $federatedIdentity->email);
         }
 
-        if ($user === null) {
-            $user = $this->provisionUser(email: $federated->email, displayName: $federated->displayName);
+        if (! $user instanceof User) {
+            $user = $this->provisionUser(email: $federatedIdentity->email, displayName: $federatedIdentity->displayName);
         }
 
-        if (! $user->isActive() || ($this->lifecycle !== null && ! $this->lifecycle->allowsAuthentication(userId: $user->getId()))) {
+        if (! $user->isActive() || ($this->lifecycleOrchestrator instanceof LifecycleOrchestrator && ! $this->lifecycleOrchestrator->allowsAuthentication(userId: $user->getId()))) {
             throw FederationFailed::notFound();
         }
 
         if ($this->userSource instanceof ProvisionableUserSourceInterface) {
-            $this->userSource->updateEmail(id: $user->getId(), email: $federated->email);
-            $mappedRoles = $this->mapRoles(groupRoleMap: $connection->groupRoleMap, groups: $federated->groups);
+            $this->userSource->updateEmail(email: $federatedIdentity->email, id: $user->getId());
+            $mappedRoles = $this->mapRoles(groupRoleMap: $connection->groupRoleMap, groups: $federatedIdentity->groups);
 
             if ($mappedRoles !== []) {
-                $this->userSource->replaceRoles(id: $user->getId(), roles: $mappedRoles);
+                $this->userSource->replaceRoles(roles: $mappedRoles, id: $user->getId());
                 $user = $this->userSource->findById(id: $user->getId()) ?? $user;
             }
         }
 
-        $this->linkStore->save(link: new FederatedIdentityLink(
+        $this->federatedIdentityLinkStore->save(link: new FederatedIdentityLink(
             connectionId: $connection->connectionId,
-            subject     : $federated->subject,
+            subject     : $federatedIdentity->subject,
             userId      : $user->getId()->value,
         ));
 
-        $decision = $this->riskEngine?->assessSuccessfulAuthentication(user: $user, ipAddress: $data->ipAddress, userAgent: $data->userAgent);
-        $issued = $this->identity->issue(user: $user);
+        $decision             = $this->deterministicRiskEngine?->assessSuccessfulAuthentication(user: $user, ipAddress: $completeFederatedLoginData->ipAddress, userAgent: $completeFederatedLoginData->userAgent);
+        $issuedAuthentication = $this->identity->issue(user: $user);
         $this->identity->sessionIdentity()?->captureCurrentSession(
-            ipAddress: $data->ipAddress,
-            userAgent: $data->userAgent,
+            ipAddress: $completeFederatedLoginData->ipAddress,
+            userAgent: $completeFederatedLoginData->userAgent,
         );
 
-        $context = AuthenticationContext::authenticated(
+        $authenticationContext = AuthenticationContext::authenticated(
+            sessionId           : $issuedAuthentication->sessionId,
+            accessTokenId       : $issuedAuthentication->accessToken?->tokenId,
+            accessTokenExpiresAt: $issuedAuthentication->accessToken?->expiresAt,
+            refreshTokenId      : $issuedAuthentication->refreshToken?->tokenId,
+            mfaVerifiedAt       : $issuedAuthentication->mfaVerifiedAt,
             user                : $this->projectAuthenticatedUser->fromUser(user: $user),
-            mode                : $issued->mode,
-            sessionId           : $issued->sessionId,
-            accessTokenId       : $issued->accessToken?->tokenId,
-            accessTokenExpiresAt: $issued->accessToken?->expiresAt,
-            refreshTokenId      : $issued->refreshToken?->tokenId,
-            mfaVerifiedAt       : $issued->mfaVerifiedAt,
+            mode                : $issuedAuthentication->mode,
         );
-        $this->currentAuthentication->store(context: $context);
+        $this->currentAuthentication->store(context: $authenticationContext);
 
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.login.completed',
@@ -126,15 +127,15 @@ final readonly class CompleteFederatedLogin
                 'tenant'      => $connection->tenantSlug,
                 'user_id'     => $user->getId()->value,
                 'risk_action' => $decision?->action->value,
-                'ip_address'  => $data->ipAddress,
-                'user_agent'  => $data->userAgent,
+                'ip_address' => $completeFederatedLoginData->ipAddress,
+                'user_agent' => $completeFederatedLoginData->userAgent,
             ],
         ));
 
         return AuthenticationResult::success(
-            context     : $context,
-            accessToken : $issued->accessToken?->token,
-            refreshToken: $issued->refreshToken?->token,
+            accessToken : $issuedAuthentication->accessToken?->token,
+            refreshToken: $issuedAuthentication->refreshToken?->token,
+            context     : $authenticationContext,
         );
     }
 
@@ -147,10 +148,10 @@ final readonly class CompleteFederatedLogin
         $password = bin2hex(string: random_bytes(length: 24));
 
         return $this->userSource->create(user: User::create(
-            id          : new UserId(value: $this->idGenerator->generate()),
-            email       : new UserEmail(value: $email),
             username    : $username,
             passwordHash: $this->passwordHasher->hash(password: $password),
+            id          : new UserId(value: $this->idGenerator->generate()),
+            email       : new UserEmail(value: $email),
         ));
     }
 

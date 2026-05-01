@@ -42,10 +42,10 @@ final readonly class DisableMfa
      */
     public function execute(): void
     {
-        $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $user                  = $authenticationContext->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
@@ -60,6 +60,10 @@ final readonly class DisableMfa
         $this->refreshTokenStore?->revokeUser(userId: $userId);
 
         $this->currentAuthentication->store(context: AuthenticationContext::authenticated(
+            sessionId           : $authenticationContext->sessionId(),
+            accessTokenId       : $authenticationContext->accessTokenId(),
+            accessTokenExpiresAt: $authenticationContext->accessTokenExpiresAt(),
+            refreshTokenId      : $authenticationContext->refreshTokenId(),
             user                : new AuthenticatedUser(
                 id           : $user->id,
                 email        : $user->email,
@@ -69,11 +73,7 @@ final readonly class DisableMfa
                 emailVerified: $user->emailVerified,
                 mfaEnabled   : false,
             ),
-            mode                : $context->mode(),
-            sessionId           : $context->sessionId(),
-            accessTokenId       : $context->accessTokenId(),
-            accessTokenExpiresAt: $context->accessTokenExpiresAt(),
-            refreshTokenId      : $context->refreshTokenId(),
+            mode                : $authenticationContext->mode(),
         ));
 
         $this->auditLog->record(event: new AuditEvent(

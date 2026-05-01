@@ -7,22 +7,23 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnection;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionHealth;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\FederationFailed;
 
 final readonly class EvaluateFederationBreakGlassBypass
 {
-    public function __construct(private FederationConnectionStoreInterface $connectionStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws FederationFailed
      */
     public function execute(string $connectionId): bool
     {
-        $connection = $this->connectionStore->find(connectionId: $connectionId);
+        $connection = $this->federationConnectionStore->find(connectionId: $connectionId);
 
-        if ($connection === null) {
+        if (! $connection instanceof FederationConnection) {
             throw FederationFailed::notFound();
         }
 

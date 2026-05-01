@@ -7,32 +7,32 @@ namespace Avax\Framework\System\Capabilities\Runtime;
 final readonly class RuntimeResult
 {
     private function __construct(
-        private ?RuntimeResponse $response,
+        private ?RuntimeResponse $runtimeResponse,
         private int $exitCode,
         private string $output,
     ) {}
 
-    public static function fromResponse(RuntimeResponse $response) : self
+    public static function fromResponse(RuntimeResponse $runtimeResponse) : self
     {
         return new self(
-            response: $response,
             exitCode: 0,
-            output  : $response->body(),
+            output  : $runtimeResponse->body(),
+            response: $runtimeResponse,
         );
     }
 
     public static function fromConsoleOutput(string $output, int $exitCode = 0) : self
     {
         return new self(
-            response: null,
             exitCode: $exitCode,
             output  : $output,
+            response: null,
         );
     }
 
     public function response() : ?RuntimeResponse
     {
-        return $this->response;
+        return $this->runtimeResponse;
     }
 
     public function exitCode() : int

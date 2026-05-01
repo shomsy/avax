@@ -14,8 +14,7 @@ use Avax\Framework\Foundation\Exception\NotImplementedException;
 final readonly class Tokens implements TokensInterface
 {
     public function __construct(
-        private ExchangeAuthorizationCode $exchangeCodeFlow,
-        private TokenCodec $codec,
+        private ExchangeAuthorizationCode $exchangeAuthorizationCode,
     ) {}
 
     public function authorize(array $request): object
@@ -25,7 +24,7 @@ final readonly class Tokens implements TokensInterface
 
     public function exchangeCode(string $code): object
     {
-        return $this->exchangeCodeFlow->execute($code);
+        return $this->exchangeAuthorizationCode->execute($code);
     }
 
     public function introspect(string $token): object

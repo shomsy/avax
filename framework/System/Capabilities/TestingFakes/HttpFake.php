@@ -43,13 +43,9 @@ final class HttpFake
     {
         $this->requests[] = ['method' => $method, 'url' => $url, 'options' => $options];
 
-        $stubKey = "{$method}:{$url}";
+        $stubKey = sprintf('%s:%s', $method, $url);
 
-        if (isset($this->stubs[$stubKey])) {
-            return $this->stubs[$stubKey];
-        }
-
-        return $this->defaultResponse ?? ['status' => 200, 'body' => '', 'headers' => []];
+        return $this->stubs[$stubKey] ?? $this->defaultResponse ?? ['status' => 200, 'body' => '', 'headers' => []];
     }
 
     /**
@@ -84,7 +80,7 @@ final class HttpFake
      */
     public function stub(string $method, string $url, int $status = 200, string $body = '', array $headers = []): self
     {
-        $this->stubs["{$method}:{$url}"] = [
+        $this->stubs[sprintf('%s:%s', $method, $url)] = [
             'status'  => $status,
             'body'    => $body,
             'headers' => $headers,
@@ -103,18 +99,21 @@ final class HttpFake
         return $this;
     }
 
-    public function assertSent(string $method, string $url = null): self
+    public function assertSent(string $method, ?string $url = null) : self
     {
         $found = false;
 
         foreach ($this->requests as $request) {
-            if (strtoupper($request['method']) === strtoupper($method)) {
-                if ($url === null || $request['url'] === $url) {
-                    $found = true;
-
-                    break;
-                }
+            if (strtoupper($request['method']) !== strtoupper($method)) {
+                continue;
             }
+
+            if ($url !== null && $request['url'] !== $url) {
+                continue;
+            }
+
+            $found = true;
+            break;
         }
 
         if (! $found) {
@@ -130,20 +129,24 @@ final class HttpFake
         return $this;
     }
 
-    public function assertNotSent(string $method, string $url = null): self
+    public function assertNotSent(string $method, ?string $url = null) : self
     {
         foreach ($this->requests as $request) {
-            if (strtoupper($request['method']) === strtoupper($method)) {
-                if ($url === null || $request['url'] === $url) {
-                    throw new TestingFakeException(
-                        sprintf(
-                            'HTTP %s %s was sent unexpectedly',
-                            strtoupper($method),
-                            $url ?? 'request',
-                        ),
-                    );
-                }
+            if (strtoupper($request['method']) !== strtoupper($method)) {
+                continue;
             }
+
+            if ($url !== null && $request['url'] !== $url) {
+                continue;
+            }
+
+            throw new TestingFakeException(
+                sprintf(
+                    'HTTP %s %s was sent unexpectedly',
+                    strtoupper($method),
+                    $url ?? 'request',
+                ),
+            );
         }
 
         return $this;

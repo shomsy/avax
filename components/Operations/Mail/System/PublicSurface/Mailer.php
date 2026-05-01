@@ -15,19 +15,19 @@ final readonly class Mailer
         private Envelope $envelope = new Envelope(from: 'noreply@localhost'),
     ) {}
 
-    public function send(MimeMessage $message): SendResult
+    public function send(MimeMessage $mimeMessage) : SendResult
     {
-        return $this->sendMail->send(message: $message, envelope: $this->envelope);
+        return $this->sendMail->send(envelope: $this->envelope, message: $mimeMessage);
     }
 
-    public function queue(MimeMessage $message): void
+    public function queue(MimeMessage $mimeMessage) : void
     {
-        $this->sendMail->queue(message: $message, envelope: $this->envelope);
+        $this->sendMail->queue(envelope: $this->envelope, message: $mimeMessage);
     }
 
     public function raw(): RawMailBuilder
     {
-        return new RawMailBuilder(sender: $this->sendMail, envelope: $this->envelope);
+        return new RawMailBuilder(envelope: $this->envelope, sender: $this->sendMail);
     }
 }
 
@@ -64,20 +64,20 @@ final class RawMailBuilder
     private array $headers = [];
 
     public function __construct(
-        private readonly SendMail $sender,
+        private readonly SendMail $sendMail,
         private readonly Envelope $envelope,
     ) {}
 
-    public function from(string $address, string $name = null) : self
+    public function from(string $address, ?string $name = null) : self
     {
-        $this->from = $name !== null ? "{$name} <{$address}>" : $address;
+        $this->from = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
 
         return $this;
     }
 
-    public function to(string $address, string $name = null) : self
+    public function to(string $address, ?string $name = null) : self
     {
-        $this->to = $name !== null ? "{$name} <{$address}>" : $address;
+        $this->to = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
 
         return $this;
     }
@@ -109,7 +109,8 @@ final class RawMailBuilder
             return SendResult::failure(error: 'Missing required fields: from, to, subject, body');
         }
 
-        return $this->sender->send(
+        return $this->sendMail->send(
+            envelope: $this->envelope->withFrom(from: $this->from),
             message : new MimeMessage(
                 from   : $this->from,
                 to     : $this->to,
@@ -117,7 +118,6 @@ final class RawMailBuilder
                 body   : $this->body,
                 headers: $this->headers,
             ),
-            envelope: $this->envelope->withFrom(from: $this->from),
         );
     }
 }

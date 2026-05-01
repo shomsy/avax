@@ -61,10 +61,10 @@ final class MiddlewareBuilder
     /**
      * Set a fallback handler for when no middleware matches.
      */
-    public function withFallback(MiddlewareInterface $fallback): self
+    public function withFallback(MiddlewareInterface $middleware) : self
     {
         $self = clone $this;
-        $self->fallback = $fallback;
+        $self->fallback = $middleware;
 
         return $self;
     }

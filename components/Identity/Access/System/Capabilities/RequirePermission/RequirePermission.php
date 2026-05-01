@@ -6,6 +6,7 @@ namespace Avax\Components\Identity\Access\System\Capabilities\RequirePermission;
 
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
@@ -25,16 +26,16 @@ final readonly class RequirePermission
      * @throws Unauthenticated
      * @throws PermissionDenied
      */
-    public function execute(UserPermission $permission): void
+    public function execute(UserPermission $userPermission) : void
     {
         $user = $this->currentAuthentication->read()->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
-        if (! $user->hasPermission(permission: $permission)) {
-            throw new PermissionDenied(requirement: $permission);
+        if (! $user->hasPermission(permission: $userPermission)) {
+            throw new PermissionDenied(requirement: $userPermission);
         }
     }
 }

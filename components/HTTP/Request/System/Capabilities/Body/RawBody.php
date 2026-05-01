@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Body;
 
-final class RawBody
+final readonly class RawBody
 {
     public function __construct(
         private string $content,

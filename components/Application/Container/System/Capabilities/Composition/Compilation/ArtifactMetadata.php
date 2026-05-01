@@ -12,76 +12,6 @@ use SensitiveParameter;
  */
 final readonly class ArtifactMetadata
 {
-    public string $checksum;
-
-    public array $statistics;
-
-    public array $invalidationReasons;
-
-    public array $validationIssues;
-
-    public array $invalidatedServices;
-
-    public array $changedServices;
-
-    public array $pruning;
-
-    public array $slices;
-
-    public array $ownership;
-
-    public array $decorations;
-
-    public array $deferred;
-
-    public array $lifetimes;
-
-    public array $tags;
-
-    public array $aliases;
-
-    public array $dependencies;
-
-    public array $sources;
-
-    public array $services;
-
-    public array $entries;
-
-    public string $benchmarkBuildMarker;
-
-    public bool $warmed;
-
-    public array $artifactPaths;
-
-    public string $dependencyGraphRevision;
-
-    public string $fingerprint;
-
-    public bool $strict;
-
-    public string $diagnosticsMode;
-
-    public string $pruneMode;
-
-    public string $executionMode;
-
-    public string $compileMode;
-
-    public string $environment;
-
-    public string $settingsFingerprint;
-
-    public string $configHash;
-
-    public string $cacheVersion;
-
-    public string $compiledAt;
-
-    public int $schemaVersion;
-
-    public string $format;
-
     /**
      * @param array<string, string> $entries
      * @param array<string, array{method: string, signature: string}> $schemaVersion
@@ -106,78 +36,43 @@ final readonly class ArtifactMetadata
      * @param array<string, int> $statistics
      */
     public function __construct(
-        string $format,
-        int $schemaVersion,
-        string $compiledAt,
-        string $cacheVersion,
+        public string $format,
+        public int    $schemaVersion,
+        public string $compiledAt,
+        public string $cacheVersion,
         #[SensitiveParameter]
-        string $configHash,
-        string $settingsFingerprint,
-        string $environment,
-        string $compileMode,
-        string $executionMode,
-        string $pruneMode,
-        string $diagnosticsMode,
-        bool $strict,
-        string $fingerprint,
-        string $dependencyGraphRevision,
-        array $artifactPaths,
-        bool $warmed,
-        string $benchmarkBuildMarker,
-        array $entries,
-        array $services,
-        array $sources,
-        array $dependencies,
-        array $aliases,
-        array $tags,
-        array $lifetimes,
-        array $deferred,
-        array $decorations,
-        array $ownership,
-        array $slices,
-        array $pruning,
-        array $changedServices,
-        array $invalidatedServices,
-        array $validationIssues,
-        array $invalidationReasons,
-        array $statistics,
-        string $checksum,
+        public string $configHash,
+        public string $settingsFingerprint,
+        public string $environment,
+        public string $compileMode,
+        public string $executionMode,
+        public string $pruneMode,
+        public string $diagnosticsMode,
+        public bool   $strict,
+        public string $fingerprint,
+        public string $dependencyGraphRevision,
+        public array  $artifactPaths,
+        public bool   $warmed,
+        public string $benchmarkBuildMarker,
+        public array  $entries,
+        public array  $services,
+        public array  $sources,
+        public array  $dependencies,
+        public array  $aliases,
+        public array  $tags,
+        public array  $lifetimes,
+        public array  $deferred,
+        public array  $decorations,
+        public array  $ownership,
+        public array  $slices,
+        public array  $pruning,
+        public array  $changedServices,
+        public array  $invalidatedServices,
+        public array  $validationIssues,
+        public array  $invalidationReasons,
+        public array  $statistics,
+        public string $checksum
     ) {
-        $this->format                  = $format;
-        $this->schemaVersion           = $schemaVersion;
-        $this->compiledAt              = $compiledAt;
-        $this->cacheVersion            = $cacheVersion;
-        $this->configHash              = $configHash;
-        $this->settingsFingerprint     = $settingsFingerprint;
-        $this->environment             = $environment;
-        $this->compileMode             = $compileMode;
-        $this->executionMode           = $executionMode;
-        $this->pruneMode               = $pruneMode;
-        $this->diagnosticsMode         = $diagnosticsMode;
-        $this->strict                  = $strict;
-        $this->fingerprint             = $fingerprint;
-        $this->dependencyGraphRevision = $dependencyGraphRevision;
-        $this->artifactPaths           = $artifactPaths;
-        $this->warmed                  = $warmed;
-        $this->benchmarkBuildMarker    = $benchmarkBuildMarker;
-        $this->entries                 = $entries;
-        $this->services                = $services;
-        $this->sources                 = $sources;
-        $this->dependencies            = $dependencies;
-        $this->aliases                 = $aliases;
-        $this->tags                    = $tags;
-        $this->lifetimes               = $lifetimes;
-        $this->deferred                = $deferred;
-        $this->decorations             = $decorations;
-        $this->ownership               = $ownership;
-        $this->slices                  = $slices;
-        $this->pruning                 = $pruning;
-        $this->changedServices         = $changedServices;
-        $this->invalidatedServices     = $invalidatedServices;
-        $this->validationIssues        = $validationIssues;
-        $this->invalidationReasons     = $invalidationReasons;
-        $this->statistics              = $statistics;
-        $this->checksum                = $checksum;
     }
 
     /**
@@ -185,13 +80,7 @@ final readonly class ArtifactMetadata
      */
     public function includes(array $serviceIds): bool
     {
-        foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
-            if (! $this->hasEntry(serviceId: $serviceId)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all(array_values(array: array_unique(array: $serviceIds)), fn (string $serviceId) : bool => $this->hasEntry(serviceId: $serviceId));
     }
 
     public function hasEntry(string $serviceId): bool
@@ -303,7 +192,11 @@ final readonly class ArtifactMetadata
         $services = [];
 
         foreach ($state as $serviceId => $service) {
-            if (! is_string(value: $serviceId) || ! is_array(value: $service)) {
+            if (! is_string(value: $serviceId)) {
+                continue;
+            }
+
+            if (! is_array(value: $service)) {
                 continue;
             }
 
@@ -330,7 +223,11 @@ final readonly class ArtifactMetadata
         $tags = [];
 
         foreach ($state as $tag => $serviceIds) {
-            if (! is_string(value: $tag) || ! is_array(value: $serviceIds)) {
+            if (! is_string(value: $tag)) {
+                continue;
+            }
+
+            if (! is_array(value: $serviceIds)) {
                 continue;
             }
 
@@ -480,7 +377,11 @@ final readonly class ArtifactMetadata
         $items = [];
 
         foreach ($state as $key => $value) {
-            if (! is_string(value: $key) || ! is_array(value: $value)) {
+            if (! is_string(value: $key)) {
+                continue;
+            }
+
+            if (! is_array(value: $value)) {
                 continue;
             }
 

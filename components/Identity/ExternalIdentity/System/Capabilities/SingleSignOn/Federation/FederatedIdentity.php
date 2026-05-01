@@ -19,7 +19,7 @@ final readonly class FederatedIdentity
         #[SensitiveParameter]
         public string $email,
         public string $displayName,
-        array $groups = null,
+        ?array $groups = null,
         public bool $emailVerified = true,
     ) {
         $groups ??= [];

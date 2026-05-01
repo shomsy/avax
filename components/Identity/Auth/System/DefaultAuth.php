@@ -156,9 +156,9 @@ final readonly class DefaultAuth implements Auth
         return $this->identity->login(credentials: $credentials);
     }
 
-    public function authenticateRequest(AuthenticationRequest $request): AuthenticationContext
+    public function authenticateRequest(AuthenticationRequest $authenticationRequest) : AuthenticationContext
     {
-        return $this->access->authenticateRequest(request: $request);
+        return $this->access->authenticateRequest(request: $authenticationRequest);
     }
 
     public function current(): AuthenticationContext
@@ -179,9 +179,9 @@ final readonly class DefaultAuth implements Auth
     /**
      * @throws DateMalformedStringException
      */
-    public function refresh(RefreshAuthenticationRequest $request): AuthenticationResult
+    public function refresh(RefreshAuthenticationRequest $refreshAuthenticationRequest) : AuthenticationResult
     {
-        return $this->identity->authentication()->refresh(request: $request);
+        return $this->identity->authentication()->refresh(request: $refreshAuthenticationRequest);
     }
 
     /**
@@ -212,9 +212,9 @@ final readonly class DefaultAuth implements Auth
      * @throws RateLimitException
      * @throws RegistrationFailed
      */
-    public function register(RegistrationData $data): RegistrationResult
+    public function register(RegistrationData $registrationData) : RegistrationResult
     {
-        return $this->identity->account()->register(data: $data);
+        return $this->identity->account()->register(data: $registrationData);
     }
 
     /**
@@ -222,49 +222,49 @@ final readonly class DefaultAuth implements Auth
      * @throws PasswordChangeFailed
      * @throws Unauthenticated
      */
-    public function changePassword(ChangePasswordData $data): void
+    public function changePassword(ChangePasswordData $changePasswordData) : void
     {
-        $this->identity->account()->changePassword(data: $data);
+        $this->identity->account()->changePassword(data: $changePasswordData);
     }
 
     /**
      * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
-    public function beginEmailChange(BeginEmailChangeData $data): EmailChangeChallenge
+    public function beginEmailChange(BeginEmailChangeData $beginEmailChangeData) : EmailChangeChallenge
     {
-        return $this->identity->account()->beginEmailChange(data: $data);
+        return $this->identity->account()->beginEmailChange(data: $beginEmailChangeData);
     }
 
-    public function confirmEmailChange(ConfirmEmailChangeData $data): bool
+    public function confirmEmailChange(ConfirmEmailChangeData $confirmEmailChangeData) : bool
     {
-        return $this->identity->account()->confirmEmailChange(data: $data);
-    }
-
-    /**
-     * @throws DateMalformedStringException
-     */
-    public function beginPasswordReset(BeginPasswordResetData $data): PasswordResetChallenge
-    {
-        return $this->identity->recovery()->beginPasswordReset(data: $data);
-    }
-
-    public function resetPassword(ResetPasswordData $data): bool
-    {
-        return $this->identity->recovery()->resetPassword(data: $data);
+        return $this->identity->account()->confirmEmailChange(data: $confirmEmailChangeData);
     }
 
     /**
      * @throws DateMalformedStringException
      */
-    public function beginEmailVerification(BeginEmailVerificationData $data): EmailVerificationChallenge
+    public function beginPasswordReset(BeginPasswordResetData $beginPasswordResetData) : PasswordResetChallenge
     {
-        return $this->identity->verification()->beginEmailVerification(data: $data);
+        return $this->identity->recovery()->beginPasswordReset(data: $beginPasswordResetData);
     }
 
-    public function verifyEmail(VerifyEmailData $data): bool
+    public function resetPassword(ResetPasswordData $resetPasswordData) : bool
     {
-        return $this->identity->verification()->verifyEmail(data: $data);
+        return $this->identity->recovery()->resetPassword(data: $resetPasswordData);
+    }
+
+    /**
+     * @throws DateMalformedStringException
+     */
+    public function beginEmailVerification(BeginEmailVerificationData $beginEmailVerificationData) : EmailVerificationChallenge
+    {
+        return $this->identity->verification()->beginEmailVerification(data: $beginEmailVerificationData);
+    }
+
+    public function verifyEmail(VerifyEmailData $verifyEmailData) : bool
+    {
+        return $this->identity->verification()->verifyEmail(data: $verifyEmailData);
     }
 
     /**
@@ -280,9 +280,9 @@ final readonly class DefaultAuth implements Auth
      * @throws RandomException
      * @throws Unauthenticated
      */
-    public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $data): BackupCodeSet
+    public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $confirmMfaEnrollmentData) : BackupCodeSet
     {
-        return $this->identity->mfa()->confirmMfaEnrollment(data: $data);
+        return $this->identity->mfa()->confirmMfaEnrollment(data: $confirmMfaEnrollmentData);
     }
 
     /**
@@ -303,9 +303,9 @@ final readonly class DefaultAuth implements Auth
         return $this->identity->mfa()->beginMfaChallenge();
     }
 
-    public function verifyMfaChallenge(VerifyMfaChallengeData $data): AuthenticationResult
+    public function verifyMfaChallenge(VerifyMfaChallengeData $verifyMfaChallengeData) : AuthenticationResult
     {
-        return $this->identity->mfa()->verifyMfaChallenge(data: $data);
+        return $this->identity->mfa()->verifyMfaChallenge(data: $verifyMfaChallengeData);
     }
 
     /**
@@ -329,14 +329,14 @@ final readonly class DefaultAuth implements Auth
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function beginMfaRecovery(BeginMfaRecoveryData $data): MfaRecoveryChallenge
+    public function beginMfaRecovery(BeginMfaRecoveryData $beginMfaRecoveryData) : MfaRecoveryChallenge
     {
-        return $this->identity->mfa()->beginMfaRecovery(data: $data);
+        return $this->identity->mfa()->beginMfaRecovery(data: $beginMfaRecoveryData);
     }
 
-    public function confirmMfaRecovery(ConfirmMfaRecoveryData $data): void
+    public function confirmMfaRecovery(ConfirmMfaRecoveryData $confirmMfaRecoveryData) : void
     {
-        $this->identity->mfa()->confirmMfaRecovery(data: $data);
+        $this->identity->mfa()->confirmMfaRecovery(data: $confirmMfaRecoveryData);
     }
 
     /**
@@ -349,23 +349,23 @@ final readonly class DefaultAuth implements Auth
         return $this->identity->passkey()->beginPasskeyRegistration();
     }
 
-    public function completePasskeyRegistration(CompletePasskeyRegistrationData $data): PasskeyCredential
+    public function completePasskeyRegistration(CompletePasskeyRegistrationData $completePasskeyRegistrationData) : PasskeyCredential
     {
-        return $this->identity->passkey()->completePasskeyRegistration(data: $data);
+        return $this->identity->passkey()->completePasskeyRegistration(data: $completePasskeyRegistrationData);
     }
 
     /**
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $data): PasskeyAuthenticationChallenge
+    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $beginPasskeyAuthenticationData) : PasskeyAuthenticationChallenge
     {
-        return $this->identity->passkey()->beginPasskeyAuthentication(data: $data);
+        return $this->identity->passkey()->beginPasskeyAuthentication(data: $beginPasskeyAuthenticationData);
     }
 
-    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $data): AuthenticationResult
+    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData) : AuthenticationResult
     {
-        return $this->identity->passkey()->completePasskeyAuthentication(data: $data);
+        return $this->identity->passkey()->completePasskeyAuthentication(data: $completePasskeyAuthenticationData);
     }
 
     /**
@@ -376,9 +376,9 @@ final readonly class DefaultAuth implements Auth
         return $this->identity->passkey()->readPasskeys();
     }
 
-    public function renamePasskey(RenamePasskeyData $data): PasskeyCredential
+    public function renamePasskey(RenamePasskeyData $renamePasskeyData) : PasskeyCredential
     {
-        return $this->identity->passkey()->renamePasskey(data: $data);
+        return $this->identity->passkey()->renamePasskey(data: $renamePasskeyData);
     }
 
     /**
@@ -389,19 +389,19 @@ final readonly class DefaultAuth implements Auth
         $this->identity->passkey()->revokePasskey(credentialId: $credentialId);
     }
 
-    public function registerOAuthClient(RegisterClientData $data): RegisteredOAuthClient
+    public function registerOAuthClient(RegisterClientData $registerClientData) : RegisteredOAuthClient
     {
-        return $this->externalIdentity->oauth()->registerClient(data: $data);
+        return $this->externalIdentity->oauth()->registerClient(data: $registerClientData);
     }
 
-    public function approveOAuthClientRegistration(ApproveClientRegistrationData $data): OAuthClient
+    public function approveOAuthClientRegistration(ApproveClientRegistrationData $approveClientRegistrationData) : OAuthClient
     {
-        return $this->externalIdentity->oauth()->approveClientRegistration(data: $data);
+        return $this->externalIdentity->oauth()->approveClientRegistration(data: $approveClientRegistrationData);
     }
 
-    public function updateOAuthClient(UpdateClientData $data): OAuthClient
+    public function updateOAuthClient(UpdateClientData $updateClientData) : OAuthClient
     {
-        return $this->externalIdentity->oauth()->updateClient(data: $data);
+        return $this->externalIdentity->oauth()->updateClient(data: $updateClientData);
     }
 
     public function disableOAuthClient(string $clientId): OAuthClient
@@ -433,40 +433,40 @@ final readonly class DefaultAuth implements Auth
     /**
      * @throws DateMalformedStringException
      */
-    public function authorizeOAuthCode(AuthorizeCodeData $data): IssuedAuthorizationCode
+    public function authorizeOAuthCode(AuthorizeCodeData $authorizeCodeData) : IssuedAuthorizationCode
     {
-        return $this->externalIdentity->oauth()->authorizeCode(data: $data);
+        return $this->externalIdentity->oauth()->authorizeCode(data: $authorizeCodeData);
     }
 
     /**
      * @throws DateMalformedStringException
      */
-    public function exchangeOAuthCode(ExchangeAuthorizationCodeData $data): OAuthTokenGrant
+    public function exchangeOAuthCode(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData) : OAuthTokenGrant
     {
-        return $this->externalIdentity->oauth()->exchangeAuthorizationCode(data: $data);
+        return $this->externalIdentity->oauth()->exchangeAuthorizationCode(data: $exchangeAuthorizationCodeData);
     }
 
-    public function exchangeOAuthClientCredentials(ExchangeClientCredentialsData $data): OAuthTokenGrant
+    public function exchangeOAuthClientCredentials(ExchangeClientCredentialsData $exchangeClientCredentialsData) : OAuthTokenGrant
     {
-        return $this->externalIdentity->oauth()->exchangeClientCredentials(data: $data);
+        return $this->externalIdentity->oauth()->exchangeClientCredentials(data: $exchangeClientCredentialsData);
     }
 
     /**
      * @throws DateMalformedStringException
      */
-    public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $data): OAuthTokenGrant
+    public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $exchangeRefreshTokenData) : OAuthTokenGrant
     {
-        return $this->externalIdentity->oauth()->exchangeRefreshToken(data: $data);
+        return $this->externalIdentity->oauth()->exchangeRefreshToken(data: $exchangeRefreshTokenData);
     }
 
-    public function revokeOAuthToken(RevokeTokenData $data): void
+    public function revokeOAuthToken(RevokeTokenData $revokeTokenData) : void
     {
-        $this->externalIdentity->oauth()->revokeToken(data: $data);
+        $this->externalIdentity->oauth()->revokeToken(data: $revokeTokenData);
     }
 
-    public function introspectOAuthToken(IntrospectTokenData $data): TokenIntrospection
+    public function introspectOAuthToken(IntrospectTokenData $introspectTokenData) : TokenIntrospection
     {
-        return $this->externalIdentity->oauth()->introspectToken(data: $data);
+        return $this->externalIdentity->oauth()->introspectToken(data: $introspectTokenData);
     }
 
     public function readOidcProviderMetadata(): OidcProviderMetadata
@@ -488,14 +488,14 @@ final readonly class DefaultAuth implements Auth
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function pushOidcAuthorizationRequest(PushAuthorizationRequestData $data): PushedAuthorizationRequest
+    public function pushOidcAuthorizationRequest(PushAuthorizationRequestData $pushAuthorizationRequestData) : PushedAuthorizationRequest
     {
-        return $this->externalIdentity->oidc()->pushAuthorizationRequest(data: $data);
+        return $this->externalIdentity->oidc()->pushAuthorizationRequest(data: $pushAuthorizationRequestData);
     }
 
-    public function oidcLogout(LogoutData $data): LogoutResult
+    public function oidcLogout(LogoutData $logoutData) : LogoutResult
     {
-        return $this->externalIdentity->oidc()->logout(data: $data);
+        return $this->externalIdentity->oidc()->logout(data: $logoutData);
     }
 
     public function logout(): void
@@ -507,17 +507,17 @@ final readonly class DefaultAuth implements Auth
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function buildOidcJarmResponse(BuildJarmResponseData $data): JarmResponse
+    public function buildOidcJarmResponse(BuildJarmResponseData $buildJarmResponseData) : JarmResponse
     {
-        return $this->externalIdentity->oidc()->buildJarmResponse(data: $data);
+        return $this->externalIdentity->oidc()->buildJarmResponse(data: $buildJarmResponseData);
     }
 
     /**
      * @throws RandomException
      */
-    public function registerFederationConnection(RegisterFederationConnectionData $data): FederationConnection
+    public function registerFederationConnection(RegisterFederationConnectionData $registerFederationConnectionData) : FederationConnection
     {
-        return $this->externalIdentity->sso()->registerConnection(data: $data);
+        return $this->externalIdentity->sso()->registerConnection(data: $registerFederationConnectionData);
     }
 
     /**
@@ -528,9 +528,9 @@ final readonly class DefaultAuth implements Auth
         return $this->externalIdentity->sso()->readConnections();
     }
 
-    public function verifyFederationDomain(VerifyFederationDomainData $data): FederationConnection
+    public function verifyFederationDomain(VerifyFederationDomainData $verifyFederationDomainData) : FederationConnection
     {
-        return $this->externalIdentity->sso()->verifyDomain(data: $data);
+        return $this->externalIdentity->sso()->verifyDomain(data: $verifyFederationDomainData);
     }
 
     /**
@@ -556,31 +556,31 @@ final readonly class DefaultAuth implements Auth
         return $this->externalIdentity->sso()->discoverConnection(email: $email);
     }
 
-    public function startFederatedLogin(StartFederatedLoginData $data): StartedFederatedLogin
+    public function startFederatedLogin(StartFederatedLoginData $startFederatedLoginData) : StartedFederatedLogin
     {
-        return $this->externalIdentity->sso()->startFederatedLogin(data: $data);
+        return $this->externalIdentity->sso()->startFederatedLogin(data: $startFederatedLoginData);
     }
 
     /**
      * @throws RandomException
      */
-    public function completeFederatedLogin(CompleteFederatedLoginData $data): AuthenticationResult
+    public function completeFederatedLogin(CompleteFederatedLoginData $completeFederatedLoginData) : AuthenticationResult
     {
-        return $this->externalIdentity->sso()->completeFederatedLogin(data: $data);
+        return $this->externalIdentity->sso()->completeFederatedLogin(data: $completeFederatedLoginData);
     }
 
     /**
      * @throws RandomException
      */
-    public function registerScimDirectory(RegisterScimDirectoryData $data): RegisteredScimDirectory
+    public function registerScimDirectory(RegisterScimDirectoryData $registerScimDirectoryData) : RegisteredScimDirectory
     {
-        return $this->identitySync->scim()->registerDirectory(data: $data);
+        return $this->identitySync->scim()->registerDirectory(data: $registerScimDirectoryData);
     }
 
     /**
      * @return list<ScimDirectory>
      */
-    public function readScimDirectories(string $tenantSlug = null) : array
+    public function readScimDirectories(?string $tenantSlug = null) : array
     {
         return $this->identitySync->scim()->readDirectories(tenantSlug: $tenantSlug);
     }
@@ -593,27 +593,27 @@ final readonly class DefaultAuth implements Auth
         return $this->identitySync->scim()->rotateToken(directoryId: $directoryId);
     }
 
-    public function markScimDirectoryOutage(MarkScimDirectoryOutageData $data): ScimDirectory
+    public function markScimDirectoryOutage(MarkScimDirectoryOutageData $markScimDirectoryOutageData) : ScimDirectory
     {
-        return $this->identitySync->scim()->markDirectoryOutage(data: $data);
+        return $this->identitySync->scim()->markDirectoryOutage(data: $markScimDirectoryOutageData);
     }
 
-    public function recoverScimDirectoryOutage(RecoverScimDirectoryOutageData $data): ScimDirectory
+    public function recoverScimDirectoryOutage(RecoverScimDirectoryOutageData $recoverScimDirectoryOutageData) : ScimDirectory
     {
-        return $this->identitySync->scim()->recoverDirectoryOutage(data: $data);
+        return $this->identitySync->scim()->recoverDirectoryOutage(data: $recoverScimDirectoryOutageData);
     }
 
     /**
      * @throws RandomException
      */
-    public function provisionScimUser(ProvisionScimUserData $data): ScimProvisioningResult
+    public function provisionScimUser(ProvisionScimUserData $provisionScimUserData) : ScimProvisioningResult
     {
-        return $this->identitySync->scim()->provisionUser(data: $data);
+        return $this->identitySync->scim()->provisionUser(data: $provisionScimUserData);
     }
 
-    public function deleteScimUser(DeleteScimUserData $data): void
+    public function deleteScimUser(DeleteScimUserData $deleteScimUserData) : void
     {
-        $this->identitySync->scim()->deleteUser(data: $data);
+        $this->identitySync->scim()->deleteUser(data: $deleteScimUserData);
     }
 
     /**
@@ -635,14 +635,14 @@ final readonly class DefaultAuth implements Auth
     /**
      * @throws RandomException
      */
-    public function syncScimGroups(SyncScimGroupsData $data): ScimProvisioningResult
+    public function syncScimGroups(SyncScimGroupsData $syncScimGroupsData) : ScimProvisioningResult
     {
-        return $this->identitySync->scim()->syncGroups(data: $data);
+        return $this->identitySync->scim()->syncGroups(data: $syncScimGroupsData);
     }
 
-    public function runScimBulk(ScimBulkRequest $data): ScimBulkResponse
+    public function runScimBulk(ScimBulkRequest $scimBulkRequest) : ScimBulkResponse
     {
-        return $this->identitySync->scim()->runBulk(data: $data);
+        return $this->identitySync->scim()->runBulk(data: $scimBulkRequest);
     }
 
     public function suspendUser(int $userId): void
@@ -663,9 +663,9 @@ final readonly class DefaultAuth implements Auth
     /**
      * @throws RandomException
      */
-    public function createTenant(CreateTenantData $data): Tenant
+    public function createTenant(CreateTenantData $createTenantData) : Tenant
     {
-        return $this->tenancy->tenants()->createTenant(data: $data);
+        return $this->tenancy->tenants()->createTenant(data: $createTenantData);
     }
 
     /**
@@ -679,14 +679,14 @@ final readonly class DefaultAuth implements Auth
     /**
      * @throws RandomException
      */
-    public function inviteTenantMember(InviteTenantMemberData $data): IssuedTenantInvite
+    public function inviteTenantMember(InviteTenantMemberData $inviteTenantMemberData) : IssuedTenantInvite
     {
-        return $this->tenancy->tenants()->inviteTenantMember(data: $data);
+        return $this->tenancy->tenants()->inviteTenantMember(data: $inviteTenantMemberData);
     }
 
-    public function acceptTenantInvite(AcceptTenantInviteData $data): TenantMember
+    public function acceptTenantInvite(AcceptTenantInviteData $acceptTenantInviteData) : TenantMember
     {
-        return $this->tenancy->tenants()->acceptTenantInvite(data: $data);
+        return $this->tenancy->tenants()->acceptTenantInvite(data: $acceptTenantInviteData);
     }
 
     /**
@@ -697,19 +697,19 @@ final readonly class DefaultAuth implements Auth
         return $this->tenancy->tenants()->readTenantMembers(tenantSlug: $tenantSlug);
     }
 
-    public function removeTenantMember(RemoveTenantMemberData $data): void
+    public function removeTenantMember(RemoveTenantMemberData $removeTenantMemberData) : void
     {
-        $this->tenancy->tenants()->removeTenantMember(data: $data);
+        $this->tenancy->tenants()->removeTenantMember(data: $removeTenantMemberData);
     }
 
-    public function suspendTenantMember(SuspendTenantMemberData $data): TenantMember
+    public function suspendTenantMember(SuspendTenantMemberData $suspendTenantMemberData) : TenantMember
     {
-        return $this->tenancy->tenants()->suspendTenantMember(data: $data);
+        return $this->tenancy->tenants()->suspendTenantMember(data: $suspendTenantMemberData);
     }
 
-    public function transferTenantOwnership(TransferTenantOwnershipData $data): Tenant
+    public function transferTenantOwnership(TransferTenantOwnershipData $transferTenantOwnershipData) : Tenant
     {
-        return $this->tenancy->tenants()->transferTenantOwnership(data: $data);
+        return $this->tenancy->tenants()->transferTenantOwnership(data: $transferTenantOwnershipData);
     }
 
     public function readTenantSecurityConfiguration(string $tenantSlug): ?TenantSecurityConfiguration
@@ -733,9 +733,9 @@ final readonly class DefaultAuth implements Auth
     /**
      * @throws RandomException
      */
-    public function beginTenantSecurityChange(BeginTenantSecurityChangeData $data): TenantSecurityChangeRequest
+    public function beginTenantSecurityChange(BeginTenantSecurityChangeData $beginTenantSecurityChangeData) : TenantSecurityChangeRequest
     {
-        return $this->tenancy->security()->beginChange(data: $data);
+        return $this->tenancy->security()->beginChange(data: $beginTenantSecurityChangeData);
     }
 
     public function approveTenantSecurityChange(string $changeId, string $approvedBy): TenantSecurityChangeRequest
@@ -775,7 +775,7 @@ final readonly class DefaultAuth implements Auth
         $this->access->requireAdminElevation();
     }
 
-    public function assessCurrentRisk(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : ?RiskDecision
+    public function assessCurrentRisk(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : ?RiskDecision
     {
         return $this->access->assessCurrentRisk(ipAddress: $ipAddress, userAgent: $userAgent);
     }
@@ -783,12 +783,12 @@ final readonly class DefaultAuth implements Auth
     /**
      * @return list<RiskSignal>
      */
-    public function readRiskSignals(int $userId = null) : array
+    public function readRiskSignals(?int $userId = null) : array
     {
         return $this->access->readRiskSignals(userId: $userId);
     }
 
-    public function explainAccessDenied(string $resource, string $requiredPermission = null, string $tenant = null, string $resourceTenant = null) : AuthIssueExplanation
+    public function explainAccessDenied(string $resource, ?string $requiredPermission = null, ?string $tenant = null, ?string $resourceTenant = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainAccessDenied(
             resource          : $resource,
@@ -798,7 +798,7 @@ final readonly class DefaultAuth implements Auth
         );
     }
 
-    public function explainStepUpRequired(string $action, bool $phishingResistantRequired = null, int $freshAfterSeconds = null) : AuthIssueExplanation
+    public function explainStepUpRequired(string $action, ?bool $phishingResistantRequired = null, ?int $freshAfterSeconds = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainStepUpRequired(
             action                   : $action,
@@ -807,7 +807,7 @@ final readonly class DefaultAuth implements Auth
         );
     }
 
-    public function explainSenderConstraintFailure(string $reason, string $requiredConstraint = null) : AuthIssueExplanation
+    public function explainSenderConstraintFailure(string $reason, ?string $requiredConstraint = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainSenderConstraintFailure(
             reason            : $reason,
@@ -815,12 +815,12 @@ final readonly class DefaultAuth implements Auth
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] string $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] ?string $sessionId = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainSessionRevocation(status: $status, sessionId: $sessionId);
     }
 
-    public function explainTrustedDeviceDecision(string $deviceId = null) : AuthIssueExplanation
+    public function explainTrustedDeviceDecision(?string $deviceId = null) : AuthIssueExplanation
     {
         return $this->diagnostics->explainTrustedDeviceDecision(deviceId: $deviceId);
     }

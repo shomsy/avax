@@ -16,31 +16,31 @@ final class RuntimeResponseTest extends TestCase
     #[Test]
     public function it_creates_response_with_status_code_headers_and_body(): void
     {
-        $response = new RuntimeResponse(
+        $runtimeResponse = new RuntimeResponse(
             statusCode: 200,
             headers: ['Content-Type' => ['application/json']],
             body: '{"status":"ok"}',
         );
 
-        self::assertSame(200, $response->statusCode());
-        self::assertSame(['Content-Type' => ['application/json']], $response->headers());
-        self::assertSame('{"status":"ok"}', $response->body());
+        self::assertSame(200, $runtimeResponse->statusCode());
+        self::assertSame(['Content-Type' => ['application/json']], $runtimeResponse->headers());
+        self::assertSame('{"status":"ok"}', $runtimeResponse->body());
     }
 
     #[Test]
     public function it_returns_empty_headers_by_default(): void
     {
-        $response = new RuntimeResponse(statusCode: 200);
+        $runtimeResponse = new RuntimeResponse(statusCode: 200);
 
-        self::assertSame([], $response->headers());
+        self::assertSame([], $runtimeResponse->headers());
     }
 
     #[Test]
     public function it_returns_empty_body_by_default(): void
     {
-        $response = new RuntimeResponse(statusCode: 200);
+        $runtimeResponse = new RuntimeResponse(statusCode: 200);
 
-        self::assertSame('', $response->body());
+        self::assertSame('', $runtimeResponse->body());
     }
 
     #[Test]
@@ -66,32 +66,32 @@ final class RuntimeResponseTest extends TestCase
     {
         $validCodes = [100, 200, 301, 404, 500, 599];
 
-        foreach ($validCodes as $code) {
-            $response = new RuntimeResponse(statusCode: $code);
-            self::assertSame($code, $response->statusCode());
+        foreach ($validCodes as $validCode) {
+            $response = new RuntimeResponse(statusCode: $validCode);
+            self::assertSame($validCode, $response->statusCode());
         }
     }
 
     #[Test]
     public function it_handles_informational_responses(): void
     {
-        $response = new RuntimeResponse(statusCode: 100, body: 'Continue');
+        $runtimeResponse = new RuntimeResponse(statusCode: 100, body: 'Continue');
 
-        self::assertSame(100, $response->statusCode());
-        self::assertSame('Continue', $response->body());
+        self::assertSame(100, $runtimeResponse->statusCode());
+        self::assertSame('Continue', $runtimeResponse->body());
     }
 
     #[Test]
     public function it_handles_server_error_responses(): void
     {
-        $response = new RuntimeResponse(
+        $runtimeResponse = new RuntimeResponse(
             statusCode: 500,
             headers: ['Content-Type' => ['text/plain']],
             body: 'Internal Server Error',
         );
 
-        self::assertSame(500, $response->statusCode());
-        self::assertSame(['Content-Type' => ['text/plain']], $response->headers());
-        self::assertSame('Internal Server Error', $response->body());
+        self::assertSame(500, $runtimeResponse->statusCode());
+        self::assertSame(['Content-Type' => ['text/plain']], $runtimeResponse->headers());
+        self::assertSame('Internal Server Error', $runtimeResponse->body());
     }
 }

@@ -15,15 +15,15 @@ final readonly class ReadClassDataShape
     /**
      * @param class-string $class
      */
-    public function read(string $class, DataTransferConfig $config): DataShape
+    public function read(string $class, DataTransferConfig $dataTransferConfig) : DataShape
     {
-        $reflection = new ReflectionClass(objectOrClass: $class);
+        $reflectionClass = new ReflectionClass(objectOrClass: $class);
 
-        $constructorFields = new ReadConstructorDataFields()->read(class: $reflection, config: $config);
+        $constructorFields = new ReadConstructorDataFields()->read(class: $reflectionClass, config: $dataTransferConfig);
         $publicFields = new ReadPublicDataFields()->read(
-            class         : $reflection,
-            config        : $config,
             existingFields: $constructorFields,
+            class         : $reflectionClass,
+            config        : $dataTransferConfig,
         );
 
         return new DataShape(

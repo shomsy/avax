@@ -39,9 +39,9 @@ final readonly class ClientMiddlewarePipeline
      *
      * Returns a new pipeline instance (immutable).
      */
-    public function with(ClientMiddlewareInterface $middleware): self
+    public function with(ClientMiddlewareInterface $clientMiddleware) : self
     {
-        return new self([...$this->middlewares, $middleware]);
+        return new self([...$this->middlewares, $clientMiddleware]);
     }
 
     /**
@@ -49,14 +49,14 @@ final readonly class ClientMiddlewarePipeline
      *
      * Convenience method that resolves and executes in one call.
      *
-     * @param OutboundRequest $request The outbound request
+     * @param OutboundRequest $outboundRequest The outbound request
      * @param Closure(OutboundRequest) : ClientResponse $finalHandler The terminal handler
      */
-    public function execute(OutboundRequest $request, Closure $finalHandler): ClientResponse
+    public function execute(OutboundRequest $outboundRequest, Closure $finalHandler) : ClientResponse
     {
         $handler = $this->resolve($finalHandler);
 
-        return $handler($request);
+        return $handler($outboundRequest);
     }
 
     /**
@@ -79,7 +79,7 @@ final readonly class ClientMiddlewarePipeline
         for ($i = count($this->middlewares) - 1; $i >= 0; $i--) {
             $middleware     = $this->middlewares[$i];
             $currentHandler = $handler;
-            $handler        = static fn (OutboundRequest $request) => $middleware->handle($request, $currentHandler);
+            $handler = static fn (OutboundRequest $outboundRequest) => $middleware->handle($outboundRequest, $currentHandler);
         }
 
         return $handler;
@@ -98,6 +98,6 @@ final readonly class ClientMiddlewarePipeline
      */
     public function isEmpty(): bool
     {
-        return empty($this->middlewares);
+        return $this->middlewares === [];
     }
 }

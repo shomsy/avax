@@ -35,7 +35,7 @@ final class ScimFailed extends RuntimeException
 
     public static function tooManyBulkOperations(int $provided, int $maximum): self
     {
-        return new self(message: "Too many bulk operations: {$provided}. Maximum allowed: {$maximum}");
+        return new self(message: sprintf('Too many bulk operations: %d. Maximum allowed: %d', $provided, $maximum));
     }
 
     public static function serviceUnavailable(string $message = 'SCIM directory is temporarily unavailable.'): self
@@ -45,6 +45,6 @@ final class ScimFailed extends RuntimeException
 
     public static function throttled(int $retryAfterSeconds, string $scope): self
     {
-        return new self(message: "SCIM directory operation throttled for {$scope}. Retry after {$retryAfterSeconds} seconds.");
+        return new self(message: sprintf('SCIM directory operation throttled for %s. Retry after %d seconds.', $scope, $retryAfterSeconds));
     }
 }

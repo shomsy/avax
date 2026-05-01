@@ -9,6 +9,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enums\MfaChallengePurpose;
@@ -29,11 +30,11 @@ final readonly class StartMfaChallenge
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-        private GeneralMfaStoreInterface $mfaStore,
-        private MfaChallengeStoreInterface $challengeStore,
+        private GeneralMfaStoreInterface   $generalMfaStore,
+        private MfaChallengeStoreInterface $mfaChallengeStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        int $expiresAfterSeconds = null,
+        ?int                               $expiresAfterSeconds = null,
         private int $maxAttempts = 5,
     ) {
         $expiresAfterSeconds ??= 300;
@@ -45,19 +46,19 @@ final readonly class StartMfaChallenge
      * @throws RandomException
      * @throws Unauthenticated
      */
-    public function execute(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : MfaChallenge
+    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : MfaChallenge
     {
         $user = $this->currentAuthentication->read()->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
         return $this->issueForUserId(
             userId   : new UserId(value: $user->id),
-            purpose  : MfaChallengePurpose::STEP_UP,
             ipAddress: $ipAddress,
             userAgent: $userAgent,
+            purpose  : MfaChallengePurpose::STEP_UP,
         );
     }
 
@@ -68,54 +69,54 @@ final readonly class StartMfaChallenge
      */
     private function issueForUserId(
         UserId $userId,
-        MfaChallengePurpose $purpose,
+        MfaChallengePurpose $mfaChallengePurpose,
         #[SensitiveParameter]
         ?string $ipAddress,
         ?string $userAgent,
     ): MfaChallenge {
-        if (! $this->mfaStore->isEnabled(userId: $userId)) {
+        if (! $this->generalMfaStore->isEnabled(userId: $userId)) {
             throw MfaChallengeFailed::notEnabled();
         }
 
-        $this->challengeStore->forgetForUser(userId: $userId);
+        $this->mfaChallengeStore->forgetForUser(userId: $userId);
 
         $now = $this->clock->now();
-        $record = new MfaChallengeRecord(
+        $mfaChallengeRecord = new MfaChallengeRecord(
             challengeId: bin2hex(string: random_bytes(length: 16)),
             userId     : $userId,
-            purpose    : $purpose,
+            purpose    : $mfaChallengePurpose,
             createdAt  : $now,
-            expiresAt  : $now->modify(modifier: "+{$this->expiresAfterSeconds} seconds"),
+            expiresAt  : $now->modify(modifier: sprintf('+%d seconds', $this->expiresAfterSeconds)),
             maxAttempts: $this->maxAttempts,
         );
 
-        $this->challengeStore->issue(record: $record);
+        $this->mfaChallengeStore->issue(record: $mfaChallengeRecord);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.mfa.challenge.requested',
             occurredAt: $now,
             context   : [
                             'user_id'    => $userId->value,
-                'challenge_id' => $record->challengeId,
-                            'purpose'    => $purpose->value,
+                            'challenge_id' => $mfaChallengeRecord->challengeId,
+                            'purpose'      => $mfaChallengePurpose->value,
                             'ip_address' => $ipAddress,
                             'user_agent' => $userAgent,
             ],
         ));
 
-        return $record->toBoundary();
+        return $mfaChallengeRecord->toBoundary();
     }
 
     /**
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function issueForLogin(User $user, #[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : MfaChallenge
+    public function issueForLogin(User $user, #[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : MfaChallenge
     {
         return $this->issueForUserId(
             userId   : $user->getId(),
-            purpose  : MfaChallengePurpose::LOGIN,
             ipAddress: $ipAddress,
             userAgent: $userAgent,
+            purpose  : MfaChallengePurpose::LOGIN,
         );
     }
 }

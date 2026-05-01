@@ -16,9 +16,9 @@ final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, Se
     /** @var array<string, SessionRecord> */
     private array $records = [];
 
-    public function track(SessionRecord $record): void
+    public function track(SessionRecord $sessionRecord) : void
     {
-        $this->records[$record->sessionId] = $record;
+        $this->records[$sessionRecord->sessionId] = $sessionRecord;
     }
 
     public function find(#[SensitiveParameter] string $sessionId): ?SessionRecord
@@ -26,9 +26,9 @@ final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, Se
         return $this->records[$sessionId] ?? null;
     }
 
-    public function save(SessionRecord $record): void
+    public function save(SessionRecord $sessionRecord) : void
     {
-        $this->records[$record->sessionId] = $record;
+        $this->records[$sessionRecord->sessionId] = $sessionRecord;
     }
 
     public function listForUser(UserId $userId): array
@@ -63,7 +63,11 @@ final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, Se
     public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason): void
     {
         foreach ($this->records as $sessionId => $record) {
-            if (! $record->userId->equals(other: $userId) || $record->isRevoked()) {
+            if (! $record->userId->equals(other: $userId)) {
+                continue;
+            }
+
+            if ($record->isRevoked()) {
                 continue;
             }
 

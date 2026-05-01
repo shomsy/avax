@@ -18,22 +18,22 @@ final readonly class TransferTenantOwnership
 {
     public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(TransferTenantOwnershipData $data): Tenant
+    public function execute(TransferTenantOwnershipData $transferTenantOwnershipData) : Tenant
     {
-        $tenant = $this->tenantStore->findTenantBySlug(slug: $data->tenantSlug);
+        $tenant    = $this->tenantStore->findTenantBySlug(slug: $transferTenantOwnershipData->tenantSlug);
 
-        if ($tenant === null) {
-            throw TenantFailed::tenantNotFound(tenantSlug: $data->tenantSlug);
+        if (! $tenant instanceof Tenant) {
+            throw TenantFailed::tenantNotFound(tenantSlug: $transferTenantOwnershipData->tenantSlug);
         }
 
         $currentOwner = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $tenant->ownerUserId);
-        $nextOwner = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $data->newOwnerUserId);
+        $nextOwner = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $transferTenantOwnershipData->newOwnerUserId);
 
-        if ($nextOwner === null) {
+        if (! $nextOwner instanceof TenantMember) {
             throw TenantFailed::memberNotFound();
         }
 
-        if ($currentOwner !== null) {
+        if ($currentOwner instanceof TenantMember) {
             $this->tenantStore->saveMember(member: new TenantMember(
                 tenantId: $currentOwner->tenantId,
                 userId  : $currentOwner->userId,
@@ -55,7 +55,7 @@ final readonly class TransferTenantOwnership
             tenantId   : $tenant->tenantId,
             slug       : $tenant->slug,
             name       : $tenant->name,
-            ownerUserId: $data->newOwnerUserId,
+            ownerUserId: $transferTenantOwnershipData->newOwnerUserId,
             createdAt  : $tenant->createdAt,
         );
         $this->tenantStore->saveTenant(tenant: $updated);
@@ -65,7 +65,7 @@ final readonly class TransferTenantOwnership
             context   : [
                             'tenant_id'   => $tenant->tenantId,
                             'tenant_slug' => $tenant->slug,
-                'new_owner_user_id' => $data->newOwnerUserId,
+                            'new_owner_user_id' => $transferTenantOwnershipData->newOwnerUserId,
             ],
         ));
 

@@ -11,8 +11,6 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\State;
  */
 final readonly class PaginationOptions
 {
-    public ?int $total;
-
     public int $perPage;
 
     public int $page;
@@ -23,15 +21,14 @@ final readonly class PaginationOptions
      * @param int|null $total   The optional total record count discovered for calculating pagination metadata.
      */
     public function __construct(
-        int $page = null,
-        int $perPage = null,
-        int $total = null,
+        ?int        $page = null,
+        ?int        $perPage = null,
+        public ?int $total = null,
     ) {
         $page        ??= 1;
         $perPage ??= 15;
         $this->page  = $page;
         $this->perPage = $perPage;
-        $this->total = $total;
     }
 
     /**

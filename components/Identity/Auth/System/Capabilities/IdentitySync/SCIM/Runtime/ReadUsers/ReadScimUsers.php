@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadUsers;
 
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
 
 final readonly class ReadScimUsers
 {
-    public function __construct(private ScimProvisionedIdentityStoreInterface $identityStore, private UserSourceInterface $userSource) {}
+    public function __construct(private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private UserSourceInterface $userSource) {}
 
     /**
      * @return list<ScimUserProjection>
@@ -18,21 +20,21 @@ final readonly class ReadScimUsers
     {
         $projections = [];
 
-        foreach ($this->identityStore->allForDirectory(directoryId: $directoryId) as $identity) {
-            $user = $this->userSource->findById(id: $identity->userId);
+        foreach ($this->scimProvisionedIdentityStore->allForDirectory(directoryId: $directoryId) as $scimProvisionedIdentity) {
+            $user = $this->userSource->findById(id: $scimProvisionedIdentity->userId);
 
-            if ($user === null) {
+            if (! $user instanceof User) {
                 continue;
             }
 
             $projections[] = new ScimUserProjection(
-                externalId: $identity->externalId,
+                externalId: $scimProvisionedIdentity->externalId,
                 userId    : $user->getId()->value,
                 email     : $user->getEmail()->value,
                 username  : $user->getUsername(),
-                roles     : array_map(callback: static fn ($role) => $role->value, array: $user->getRoles()),
-                groups    : $identity->groups,
-                state     : $identity->state,
+                roles     : array_map(callback: static fn (UserRole $userRole) => $userRole->value, array: $user->getRoles()),
+                groups    : $scimProvisionedIdentity->groups,
+                state     : $scimProvisionedIdentity->state,
             );
         }
 

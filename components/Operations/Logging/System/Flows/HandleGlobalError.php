@@ -10,13 +10,13 @@ use Throwable;
 
 final readonly class HandleGlobalError
 {
-    public function __construct(private Logging $logger)
+    public function __construct(private Logging $logging)
     {
     }
 
     public function execute(Throwable $throwable): void
     {
-        $this->logger->error($throwable->getMessage(), [
+        $this->logging->error($throwable->getMessage(), [
             'file'  => $throwable->getFile(),
             'line'  => $throwable->getLine(),
             'trace' => $throwable->getTraceAsString(),

@@ -25,8 +25,8 @@ final class HttpKernel implements HttpInterface
 
     public function __construct(
         private readonly RouterInterface $router,
-        private readonly BootHttpKernel $boot = new BootHttpKernel(),
-        private readonly TerminateHttpKernel $terminator = new TerminateHttpKernel(),
+        private readonly BootHttpKernel      $bootHttpKernel = new BootHttpKernel(),
+        private readonly TerminateHttpKernel $terminateHttpKernel = new TerminateHttpKernel(),
     ) {
     }
 
@@ -49,7 +49,7 @@ final class HttpKernel implements HttpInterface
             return;
         }
 
-        $this->boot->boot();
+        $this->bootHttpKernel->boot();
         $this->booted = true;
     }
 
@@ -65,7 +65,7 @@ final class HttpKernel implements HttpInterface
     {
         $this->boot();
 
-        $handler = fn (RequestInterface $req): ResponseInterface => $this->router->dispatch($req);
+        $handler = fn (RequestInterface $request) : ResponseInterface => $this->router->dispatch($request);
 
         // Build middleware pipeline in reverse order so first middleware runs first
         $pipeline = $this->middleware;
@@ -81,7 +81,7 @@ final class HttpKernel implements HttpInterface
      */
     public function terminate(RequestInterface $request, ResponseInterface $response): void
     {
-        $this->terminator->terminate($request, $response);
+        $this->terminateHttpKernel->terminate($request, $response);
     }
 
     /**

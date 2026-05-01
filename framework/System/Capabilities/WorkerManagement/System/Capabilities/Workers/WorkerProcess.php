@@ -24,17 +24,11 @@ final class WorkerProcess
     private int $startTime = 0;
 
     /**
-     * @var array<string, mixed>
-     */
-    private array $options;
-
-    /**
      * @param array{max_memory?: int} $options
      */
-    public function __construct(array $options = [])
+    public function __construct(private readonly array $options = [])
     {
-        $this->options = $options;
-        $this->maxMemory = $options['max_memory'] ?? 128;
+        $this->maxMemory = $this->options['max_memory'] ?? 128;
     }
 
     public function restart(bool $graceful) : void

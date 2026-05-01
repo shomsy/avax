@@ -11,9 +11,9 @@ final class QueryTimeline
     /** @var list<QuerySpan> */
     private array $spans = [];
 
-    public function add(QuerySpan $span): self
+    public function add(QuerySpan $querySpan) : self
     {
-        $this->spans[] = $span;
+        $this->spans[] = $querySpan;
 
         return $this;
     }
@@ -25,7 +25,7 @@ final class QueryTimeline
 
     public function totalDurationMs(): float
     {
-        return array_sum(array: array_map(callback: static fn (QuerySpan $span) => $span->getDurationMs(), array: $this->spans));
+        return array_sum(array: array_map(callback: static fn (QuerySpan $querySpan) : float => $querySpan->getDurationMs(), array: $this->spans));
     }
 
     public function reset(): void

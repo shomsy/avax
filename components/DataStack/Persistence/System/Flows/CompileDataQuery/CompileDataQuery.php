@@ -23,15 +23,15 @@ final class CompileDataQuery
     /**
      * Compiles a DataQuery into a DataQueryPlan.
      */
-    public function compile(DataQuery $query): DataQueryPlan
+    public function compile(DataQuery $dataQuery) : DataQueryPlan
     {
-        if ($query->entityType === null) {
+        if ($dataQuery->entityType === null) {
             throw new InvalidArgumentException('Cannot compile query without entity type.');
         }
 
-        $tableName = $this->extractTableName($query->entityType);
-        $sql = $this->buildSql($query, $tableName);
-        $bindings = $this->extractBindings($query);
+        $tableName = $this->extractTableName($dataQuery->entityType);
+        $sql       = $this->buildSql($dataQuery, $tableName);
+        $bindings  = $this->extractBindings($dataQuery);
 
         return new DataQueryPlan(
             sql     : $sql,
@@ -57,45 +57,46 @@ final class CompileDataQuery
      */
     private function camelToSnake(string $input): string
     {
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
+        return strtolower((string) preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
     }
 
     /**
      * Builds SQL from the query and table name.
      */
-    private function buildSql(DataQuery $query, string $tableName): string
+    private function buildSql(DataQuery $dataQuery, string $tableName) : string
     {
-        $select = implode(', ', $query->select);
-        $sql = "SELECT {$select} FROM {$tableName}";
+        $select = implode(', ', $dataQuery->select);
+        $sql    = sprintf('SELECT %s FROM %s', $select, $tableName);
 
         // Add JOINs
-        foreach ($query->joins as $join) {
-            $sql .= " {$join['type']} JOIN {$join['table']} ON {$join['on']}";
+        foreach ($dataQuery->joins as $join) {
+            $sql .= sprintf(' %s JOIN %s ON %s', $join['type'], $join['table'], $join['on']);
         }
 
         // Add WHERE conditions
-        $conditions = $this->buildWhereClause($query->conditions);
+        $conditions = $this->buildWhereClause($dataQuery->conditions);
         if ($conditions !== '') {
-            $sql .= " WHERE {$conditions}";
+            $sql .= ' WHERE ' . $conditions;
         }
 
         // Add ORDER BY
-        if ($query->orderBy !== []) {
+        if ($dataQuery->orderBy !== []) {
             $orderByParts = [];
-            foreach ($query->orderBy as $field => $direction) {
-                $orderByParts[] = "{$field} {$direction}";
+            foreach ($dataQuery->orderBy as $field => $direction) {
+                $orderByParts[] = sprintf('%s %s', $field, $direction);
             }
+
             $sql .= ' ORDER BY ' . implode(', ', $orderByParts);
         }
 
         // Add LIMIT
-        if ($query->limit !== null) {
-            $sql .= " LIMIT {$query->limit}";
+        if ($dataQuery->limit !== null) {
+            $sql .= ' LIMIT ' . $dataQuery->limit;
         }
 
         // Add OFFSET
-        if ($query->offset !== null) {
-            $sql .= " OFFSET {$query->offset}";
+        if ($dataQuery->offset !== null) {
+            $sql .= ' OFFSET ' . $dataQuery->offset;
         }
 
         return $sql;
@@ -116,7 +117,7 @@ final class CompileDataQuery
 
         foreach ($conditions as $condition) {
             if (is_array($condition) && isset($condition['field'], $condition['operator'])) {
-                $parts[] = "{$condition['field']} {$condition['operator']} ?";
+                $parts[] = sprintf('%s %s ?', $condition['field'], $condition['operator']);
             } elseif (is_string($condition)) {
                 $parts[] = $condition;
             }
@@ -130,11 +131,11 @@ final class CompileDataQuery
      *
      * @return array<int, mixed>
      */
-    private function extractBindings(DataQuery $query): array
+    private function extractBindings(DataQuery $dataQuery) : array
     {
         $bindings = [];
 
-        foreach ($query->conditions as $condition) {
+        foreach ($dataQuery->conditions as $condition) {
             if (is_array($condition) && isset($condition['value'])) {
                 $bindings[] = $condition['value'];
             }

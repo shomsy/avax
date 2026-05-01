@@ -11,8 +11,8 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\
  */
 final readonly class ChooseNextSagaStep
 {
-    public function choose(SagaStepDefinition $step): ?string
+    public function choose(SagaStepDefinition $sagaStepDefinition) : ?string
     {
-        return $step->nextStepName;
+        return $sagaStepDefinition->nextStepName;
     }
 }

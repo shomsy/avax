@@ -65,7 +65,7 @@ final class RuntimeConfiguration
             'frankenphp' => new FrankenPhpRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'swoole'    => new SwooleRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'workerman' => new WorkermanRuntime(receiver: $this->receiver(), sender: $this->sender()),
-            default     => throw new RuntimeException("Unknown adapter: {$this->adapter}"),
+            default => throw new RuntimeException('Unknown adapter: ' . $this->adapter),
         };
     }
 
@@ -124,6 +124,6 @@ final class RuntimeConfiguration
             return Closure::fromCallable($sender);
         }
 
-        return static function (WorkerResponse $response) : void {};
+        return static function (WorkerResponse $workerResponse) : void {};
     }
 }

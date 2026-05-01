@@ -43,7 +43,7 @@ final class SagaStep
      */
     public function compensate(mixed $context): mixed
     {
-        if ($this->compensation === null) {
+        if (! $this->compensation instanceof Closure) {
             return null;
         }
 
@@ -55,6 +55,6 @@ final class SagaStep
      */
     public function hasCompensation(): bool
     {
-        return $this->compensation !== null;
+        return $this->compensation instanceof Closure;
     }
 }

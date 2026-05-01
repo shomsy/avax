@@ -13,33 +13,33 @@ use Override;
 final class Neo4jGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileSelect(QueryState $state): string
+    public function compileSelect(QueryState $queryState) : string
     {
-        $pattern = $this->compileCypherPattern(state: $state);
+        $pattern = $this->compileCypherPattern(state: $queryState);
 
-        $sql = "MATCH {$pattern}";
+        $sql = 'MATCH ' . $pattern;
 
-        if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileCypherWhere(state: $state);
+        if ($queryState->wheres !== []) {
+            $sql .= ' WHERE ' . $this->compileCypherWhere(state: $queryState);
         }
 
-        $return = empty($state->columns) ? '*' : implode(separator: ', ', array: $state->columns);
-        $sql .= " RETURN {$return}";
+        $return = $queryState->columns === [] ? '*' : implode(separator: ', ', array: $queryState->columns);
+        $sql    .= ' RETURN ' . $return;
 
-        if (! empty($state->orders)) {
-            $sql .= ' ORDER BY ' . $this->compileCypherOrder(state: $state);
+        if ($queryState->orders !== []) {
+            $sql .= ' ORDER BY ' . $this->compileCypherOrder(state: $queryState);
         }
 
-        if ($state->limit) {
-            $sql .= ' LIMIT ' . $state->limit;
+        if ($queryState->limit) {
+            $sql .= ' LIMIT ' . $queryState->limit;
         }
 
         return $sql;
     }
 
-    private function compileCypherPattern(QueryState $state): string
+    private function compileCypherPattern(QueryState $queryState) : string
     {
-        $table = $state->from ?: 'n';
+        $table = $queryState->from ?: 'n';
         $alias = 'n';
 
         if (str_contains(haystack: $table, needle: '_')) {
@@ -47,104 +47,103 @@ final class Neo4jGrammar extends BaseGrammar
             $label = ucfirst(string: $parts[0]);
             $alias = $parts[1] ?? 'n';
 
-            return "{$alias}:{$label}";
+            return sprintf('%s:%s', $alias, $label);
         }
 
-        return "{$alias}:{$table}";
+        return sprintf('%s:%s', $alias, $table);
     }
 
-    private function compileCypherWhere(QueryState $state): string
+    private function compileCypherWhere(QueryState $queryState) : string
     {
         $conditions = [];
-        foreach ($state->wheres as $where) {
+        foreach ($queryState->wheres as $where) {
             $col = $where->column;
             $op = $where->operator;
-            $val = is_string(value: $where->value) ? "'{$where->value}'" : $where->value;
+            $val = is_string(value: $where->value) ? sprintf("'%s'", $where->value) : $where->value;
 
-            $conditions[] = "{$col} {$op} {$val}";
+            $conditions[] = sprintf('%s %s %s', $col, $op, $val);
         }
 
         return implode(separator: ' AND ', array: $conditions);
     }
 
-    private function compileCypherOrder(QueryState $state): string
+    private function compileCypherOrder(QueryState $queryState) : string
     {
         $orders = [];
-        foreach ($state->orders as $order) {
-            $orders[] = "{$order->column} {$order->direction}";
+        foreach ($queryState->orders as $order) {
+            $orders[] = sprintf('%s %s', $order->column, $order->direction);
         }
 
         return implode(separator: ', ', array: $orders);
     }
 
     #[Override]
-    public function compileInsert(QueryState $state): string
+    public function compileInsert(QueryState $queryState) : string
     {
-        $pattern = $this->compileCypherPattern(state: $state);
-        $props = $this->compileCypherProperties(values: $state->values);
+        $pattern = $this->compileCypherPattern(state: $queryState);
+        $props   = $this->compileCypherProperties(values: $queryState->values);
 
-        return "CREATE ({$pattern} {$props})";
+        return sprintf('CREATE (%s %s)', $pattern, $props);
     }
 
     private function compileCypherProperties(array $values): string
     {
         $props = [];
         foreach ($values as $key => $value) {
-            $val = is_string(value: $value) ? "'{$value}'" : $value;
-            $props[] = "{$key}: {$val}";
+            $val     = is_string(value: $value) ? sprintf("'%s'", $value) : $value;
+            $props[] = sprintf('%s: %s', $key, $val);
         }
 
         return '{' . implode(separator: ', ', array: $props) . '}';
     }
 
     #[Override]
-    public function compileUpdate(QueryState $state): string
+    public function compileUpdate(QueryState $queryState) : string
     {
-        $pattern = $this->compileCypherPattern(state: $state);
-        $props = $this->compileCypherProperties(values: $state->values);
+        $pattern = $this->compileCypherPattern(state: $queryState);
+        $props   = $this->compileCypherProperties(values: $queryState->values);
 
-        $sql = "MATCH {$pattern}";
+        $sql = 'MATCH ' . $pattern;
 
-        if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileCypherWhere(state: $state);
+        if ($queryState->wheres !== []) {
+            $sql .= ' WHERE ' . $this->compileCypherWhere(state: $queryState);
         }
 
-        $sql .= " SET {$props}";
-
-        return $sql;
+        return $sql . (' SET ' . $props);
     }
 
     #[Override]
-    public function compileDelete(QueryState $state): string
+    public function compileDelete(QueryState $queryState) : string
     {
-        $pattern = $this->compileCypherPattern(state: $state);
+        $pattern = $this->compileCypherPattern(state: $queryState);
 
-        return "DETACH DELETE {$pattern}";
+        return 'DETACH DELETE ' . $pattern;
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $pattern = $this->compileCypherPattern(state: $state);
-        $props = $this->compileCypherProperties(values: $state->values);
+        $pattern = $this->compileCypherPattern(state: $queryState);
+        $props   = $this->compileCypherProperties(values: $queryState->values);
 
-        return "MERGE ({$pattern} {$props})";
+        return sprintf('MERGE (%s %s)', $pattern, $props);
     }
 
     public function compileRelation(string $from, string $to, string $type, array $properties = []): string
     {
         $props = $this->compileCypherProperties(values: $properties);
-        $propsPart = empty($properties) ? '' : " {$props}";
+        $propsPart = $properties === [] ? '' : ' ' . $props;
 
-        return "({$from})-[:{$type}{$propsPart}]->({$to})";
+        return sprintf('(%s)-[:%s%s]->(%s)', $from, $type, $propsPart, $to);
     }
 
     public function compilePath(array $nodes, array $relations): string
     {
         $path = '(' . $nodes[0] . ')';
+        $counter = count(value: $relations);
 
-        for ($i = 0; $i < count(value: $relations); $i++) {
-            $path .= "-[r:{$relations[$i]}]->(" . $nodes[$i + 1] . ')';
+        for ($i = 0; $i < $counter; $i++) {
+            $path .= sprintf('-[r:%s]->(', $relations[$i]) . $nodes[$i + 1] . ')';
         }
 
         return $path;
@@ -152,7 +151,7 @@ final class Neo4jGrammar extends BaseGrammar
 
     public function compileShortestPath(string $start, string $end): string
     {
-        return "shortestPath(({$start})-[*]->({$end}))";
+        return sprintf('shortestPath((%s)-[*]->(%s))', $start, $end);
     }
 
     #[Override]
@@ -164,6 +163,6 @@ final class Neo4jGrammar extends BaseGrammar
     #[Override]
     public function compileTruncate(string $table): string
     {
-        return "MATCH (n:{$table}) DETACH DELETE n";
+        return sprintf('MATCH (n:%s) DETACH DELETE n', $table);
     }
 }

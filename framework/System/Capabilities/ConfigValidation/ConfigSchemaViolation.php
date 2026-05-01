@@ -9,9 +9,9 @@ namespace Avax\Framework\System\Capabilities\ConfigValidation;
  */
 final readonly class ConfigSchemaViolation
 {
-    public const SEVERITY_ERROR = 'error';
+    public const string SEVERITY_ERROR = 'error';
 
-    public const SEVERITY_WARNING = 'warning';
+    public const string SEVERITY_WARNING = 'warning';
 
     public function __construct(
         public string $severity,

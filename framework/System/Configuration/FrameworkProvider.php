@@ -21,16 +21,16 @@ final class FrameworkProvider implements ComponentProviderInterface
         return 'framework';
     }
 
-    public function register(ComponentRegistry $registry) : void
+    public function register(ComponentRegistry $componentRegistry) : void
     {
-        $registry->register(
+        $componentRegistry->register(
             new ComponentDefinition(
                 name         : 'framework.runtime',
                 providerClass: self::class,
             ),
         );
 
-        $registry->register(
+        $componentRegistry->register(
             new ComponentDefinition(
                 name         : 'framework.safety',
                 providerClass: self::class,

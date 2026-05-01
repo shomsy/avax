@@ -9,16 +9,16 @@ final class InMemoryRiskSignalStore implements RiskSignalStoreInterface
     /** @var list<RiskSignal> */
     private array $signals = [];
 
-    public function record(RiskSignal $signal): void
+    public function record(RiskSignal $riskSignal) : void
     {
-        $this->signals[] = $signal;
+        $this->signals[] = $riskSignal;
     }
 
     public function forUser(int $userId): array
     {
         return array_values(array: array_filter(
             array   : $this->signals,
-            callback: static fn (RiskSignal $signal): bool => $signal->userId === $userId,
+            callback: static fn (RiskSignal $riskSignal) : bool => $riskSignal->userId === $userId,
         ));
     }
 }

@@ -12,15 +12,15 @@ use Closure;
 
 final class Performance
 {
-    private static ?QueryCache $queries = null;
+    private static ?QueryCache $queryCache = null;
 
     public static function queryCache(): QueryCache
     {
-        if (self::$queries === null) {
-            self::$queries = new QueryCache();
+        if (! self::$queryCache instanceof QueryCache) {
+            self::$queryCache = new QueryCache();
         }
 
-        return self::$queries;
+        return self::$queryCache;
     }
 
     public static function routes(string $path): RouteCache

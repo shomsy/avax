@@ -8,6 +8,7 @@ use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Un
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\MfaChallengeFailed;
@@ -39,10 +40,10 @@ final readonly class RegenerateBackupCodes
      */
     public function execute(): BackupCodeSet
     {
-        $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $user                  = $authenticationContext->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
@@ -50,17 +51,17 @@ final readonly class RegenerateBackupCodes
         $userId = new UserId(value: $user->id);
         $method = $this->mfaStore->findMethod(userId: $userId);
 
-        if ($method === null) {
+        if (! $method instanceof MfaMethodRecord) {
             throw MfaChallengeFailed::notEnabled();
         }
 
-        $generated = $this->generateBackupCodes->execute();
+        $generatedBackupCodes = $this->generateBackupCodes->execute();
         $this->mfaStore->saveMethod(record: new MfaMethodRecord(
             userId              : $method->userId,
             method              : $method->method,
             secret              : $method->secret,
             enabledAt           : $method->enabledAt,
-            backupCodes         : $generated->records,
+            backupCodes         : $generatedBackupCodes->records,
             lastAcceptedTimeStep: $method->lastAcceptedTimeStep,
         ));
         $this->auditLog->record(event: new AuditEvent(
@@ -71,6 +72,6 @@ final readonly class RegenerateBackupCodes
             ],
         ));
 
-        return $generated->backupCodeSet;
+        return $generatedBackupCodes->backupCodeSet;
     }
 }

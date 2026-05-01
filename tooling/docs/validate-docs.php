@@ -26,14 +26,14 @@ $ownershipFolders = [
 
 $missing = [];
 
-foreach ($ownershipFolders as $folder) {
-    if (! is_dir($folder)) {
-        $missing[] = 'Missing docs folder: ' . str_replace($root . '/', '', $folder);
+foreach ($ownershipFolders as $ownershipFolder) {
+    if (! is_dir($ownershipFolder)) {
+        $missing[] = 'Missing docs folder: ' . str_replace($root . '/', '', $ownershipFolder);
 
         continue;
     }
 
-    $howThisWorks = $folder . '/how-this-works.md';
+    $howThisWorks = $ownershipFolder . '/how-this-works.md';
 
     if (! is_file($howThisWorks)) {
         $missing[] = 'Missing how-this-works.md: ' . str_replace($root . '/', '', $howThisWorks);

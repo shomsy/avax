@@ -69,14 +69,14 @@ final class CsvFormat implements ContentFormatterInterface
         $handle = fopen('php://temp', 'r+');
 
         if (isset($data[0]) && is_array($data[0])) {
-            fputcsv($handle, array_keys($data[0]));
+            fputcsv($handle, array_keys($data[0]), escape: '\\');
 
             foreach ($data as $row) {
-                fputcsv($handle, $row);
+                fputcsv($handle, $row, escape: '\\');
             }
         } else {
-            fputcsv($handle, array_keys($data));
-            fputcsv($handle, array_values($data));
+            fputcsv($handle, array_keys($data), escape: '\\');
+            fputcsv($handle, array_values($data), escape: '\\');
         }
 
         rewind($handle);

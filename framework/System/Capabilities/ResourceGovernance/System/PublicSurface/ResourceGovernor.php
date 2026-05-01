@@ -6,10 +6,11 @@ namespace Avax\Components\ResourceGovernor\System\PublicSurface;
 
 use Avax\Components\ResourceGovernor\System\Capabilities\Memory\MemoryBudget;
 use Avax\Components\ResourceGovernor\System\Capabilities\Memory\MemorySnapshot;
+use Stringable;
 
 final class ResourceGovernor
 {
-    private static ?MemoryBudget $budget = null;
+    private static ?MemoryBudget $memoryBudget = null;
 
     /**
      * @var list<MemorySnapshot>
@@ -25,7 +26,7 @@ final class ResourceGovernor
      */
     public static function configure(array $config) : void
     {
-        self::$budget = MemoryBudget::fromString(
+        self::$memoryBudget = MemoryBudget::fromString(
             worker : $config['worker_memory'] ?? '256M',
             request: $config['request_memory'] ?? '32M',
         );
@@ -55,9 +56,9 @@ final class ResourceGovernor
 
     public static function check() : bool
     {
-        $budget = self::$budget;
+        $budget = self::$memoryBudget;
 
-        if ($budget === null) {
+        if (! $budget instanceof MemoryBudget) {
             return true;
         }
 
@@ -90,7 +91,7 @@ final class ResourceGovernor
 
     public static function workerLimit() : int
     {
-        return self::$budget?->workerLimit ?? 0;
+        return self::$memoryBudget?->workerLimit ?? 0;
     }
 
     public static function isNearLimit(float $threshold = 0.8) : bool
@@ -112,13 +113,13 @@ final class ResourceGovernor
         }
 
         $recent = array_slice(self::$snapshots, -10);
-        $total = array_sum(array_map(static fn (MemorySnapshot $snapshot) : int => $snapshot->memoryUsed, $recent));
+        $total = array_sum(array_map(static fn (MemorySnapshot $memorySnapshot) : int => $memorySnapshot->memoryUsed, $recent));
 
         return $total / count($recent);
     }
 }
 
-final readonly class ResourceReport
+final readonly class ResourceReport implements Stringable
 {
     public function __construct(
         public int $requestCount,

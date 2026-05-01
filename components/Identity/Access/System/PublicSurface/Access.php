@@ -15,14 +15,14 @@ use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied
 final readonly class Access implements AccessInterface
 {
     public function __construct(
-        private AuthorizationEngine $engine,
-        private BeginAdminElevation $beginElevation,
-        private EndAdminElevation $endElevation,
+        private AuthorizationEngine $authorizationEngine,
+        private BeginAdminElevation $beginAdminElevation,
+        private EndAdminElevation   $endAdminElevation,
     ) {}
 
     public function allows(string $permission, mixed $resource = null): bool
     {
-        return $this->engine->check(permission: $permission, resource: $resource);
+        return $this->authorizationEngine->check(permission: $permission, resource: $resource);
     }
 
     public function denies(string $permission, mixed $resource = null): bool
@@ -33,18 +33,18 @@ final readonly class Access implements AccessInterface
     public function authorize(string $permission, mixed $resource = null): void
     {
         if ($this->denies(permission: $permission, resource: $resource)) {
-            throw new PermissionDenied("Permission denied: {$permission}");
+            throw new PermissionDenied('Permission denied: ' . $permission);
         }
     }
 
     public function beginElevation(): void
     {
-        $this->beginElevation->execute();
+        $this->beginAdminElevation->execute();
     }
 
     public function endElevation(): void
     {
-        $this->endElevation->execute();
+        $this->endAdminElevation->execute();
     }
 
     public function isElevated(): bool

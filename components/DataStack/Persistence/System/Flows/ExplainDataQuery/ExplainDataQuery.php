@@ -16,29 +16,29 @@ use function is_array;
  *
  * Returns query plan explanation with optimization suggestions.
  */
-final class ExplainDataQuery
+final readonly class ExplainDataQuery
 {
-    private CompileDataQuery $compiler;
+    private CompileDataQuery $compileDataQuery;
 
-    public function __construct(CompileDataQuery $compiler = null)
+    public function __construct(?CompileDataQuery $compileDataQuery = null)
     {
-        $this->compiler = $compiler ?? new CompileDataQuery();
+        $this->compileDataQuery = $compileDataQuery ?? new CompileDataQuery();
     }
 
     /**
      * Explains the query and returns an optimized plan with suggestions.
      */
-    public function explain(DataQuery $query): DataQueryPlan
+    public function explain(DataQuery $dataQuery) : DataQueryPlan
     {
-        $plan = $this->compiler->compile($query);
+        $dataQueryPlan = $this->compileDataQuery->compile($dataQuery);
 
-        $suggestions = $this->analyzeQuery($query, $plan);
+        $suggestions = $this->analyzeQuery($dataQuery);
 
         if ($suggestions !== []) {
-            $plan = $plan->withSuggestions($suggestions);
+            return $dataQueryPlan->withSuggestions($suggestions);
         }
 
-        return $plan;
+        return $dataQueryPlan;
     }
 
     /**
@@ -46,49 +46,57 @@ final class ExplainDataQuery
      *
      * @return array<string>
      */
-    private function analyzeQuery(DataQuery $query, DataQueryPlan $plan): array
+    private function analyzeQuery(DataQuery $dataQuery) : array
     {
         $suggestions = [];
 
         // Check for missing WHERE clause with LIMIT
-        if ($query->conditions === [] && $query->limit === null) {
+        if ($dataQuery->conditions === [] && $dataQuery->limit === null) {
             $suggestions[] = 'Consider adding a WHERE clause or LIMIT to avoid full table scans';
         }
 
         // Check for SELECT *
-        if ($query->select === ['*']) {
+        if ($dataQuery->select === ['*']) {
             $suggestions[] = 'Avoid SELECT * - specify only needed columns to reduce I/O';
         }
 
         // Check for missing ORDER BY with LIMIT
-        if ($query->limit !== null && $query->orderBy === []) {
+        if ($dataQuery->limit !== null && $dataQuery->orderBy === []) {
             $suggestions[] = 'Consider adding ORDER BY with LIMIT for deterministic results';
         }
 
         // Check for large OFFSET
-        if ($query->offset !== null && $query->offset > 1000) {
+        if ($dataQuery->offset !== null && $dataQuery->offset > 1000) {
             $suggestions[] = 'Large OFFSET detected - consider using keyset pagination instead';
         }
 
         // Check for multiple JOINs
-        if (count($query->joins) > 3) {
+        if (count($dataQuery->joins) > 3) {
             $suggestions[] = 'Multiple JOINs detected - consider denormalizing or using cached views';
         }
 
         // Check for missing indexes on WHERE conditions
-        if ($query->conditions !== []) {
-            $indexedFields = $this->extractIndexedFields($plan);
-            foreach ($query->conditions as $condition) {
-                if (is_array($condition) && isset($condition['field'])) {
-                    if (! in_array($condition['field'], $indexedFields, true)) {
-                        $suggestions[] = "Consider adding an index on column \"{$condition['field']}\"";
-                    }
+        if ($dataQuery->conditions !== []) {
+            $indexedFields = $this->extractIndexedFields();
+            foreach ($dataQuery->conditions as $condition) {
+                if (! is_array($condition)) {
+                    continue;
                 }
+
+                if (! isset($condition['field'])) {
+                    continue;
+                }
+
+                if (in_array($condition['field'], $indexedFields, true)) {
+                    continue;
+                }
+
+                $suggestions[] = sprintf('Consider adding an index on column "%s"', $condition['field']);
             }
         }
 
         // Estimate cost based on complexity
-        $estimatedCost = $this->estimateCost($query);
+        $estimatedCost = $this->estimateCost($dataQuery);
         if ($estimatedCost > 100.0) {
             $suggestions[] = 'High estimated query cost - consider query restructuring';
         }
@@ -101,7 +109,7 @@ final class ExplainDataQuery
      *
      * @return array<string>
      */
-    private function extractIndexedFields(DataQueryPlan $plan): array
+    private function extractIndexedFields() : array
     {
         // In a real implementation, this would query the database metadata
         // For now, we assume primary key and common fields are indexed
@@ -111,7 +119,7 @@ final class ExplainDataQuery
     /**
      * Estimates the query cost.
      */
-    private function estimateCost(DataQuery $query): float
+    private function estimateCost(DataQuery $dataQuery) : float
     {
         $cost = 1.0;
 
@@ -119,22 +127,22 @@ final class ExplainDataQuery
         $cost += 10.0;
 
         // JOINs are expensive
-        $cost += count($query->joins) * 20.0;
+        $cost += count($dataQuery->joins) * 20.0;
 
         // WHERE clauses reduce cost if indexed
-        $cost -= count($query->conditions) * 2.0;
+        $cost -= count($dataQuery->conditions) * 2.0;
 
         // LIMIT reduces cost
-        if ($query->limit !== null) {
+        if ($dataQuery->limit !== null) {
             $cost -= 5.0;
         }
 
         // ORDER BY adds cost
-        $cost += count($query->orderBy) * 5.0;
+        $cost += count($dataQuery->orderBy) * 5.0;
 
         // OFFSET adds cost
-        if ($query->offset !== null) {
-            $cost += $query->offset * 0.01;
+        if ($dataQuery->offset !== null) {
+            $cost += $dataQuery->offset * 0.01;
         }
 
         return max(1.0, $cost);

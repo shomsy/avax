@@ -30,7 +30,7 @@ final readonly class DatabaseExporter
      */
     public function exportToSql(string $path, ?string $table = null): string
     {
-        $filename = ($table !== null && $table !== '' && $table !== '0' ? $table : 'full_db') . '_export_' . date(format: 'Y_m_d_His') . '.sql';
+        $filename = (in_array($table, [null, '', '0'], true) ? 'full_db' : $table) . '_export_' . date(format: 'Y_m_d_His') . '.sql';
         $fullPath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
 
         if (! is_dir(filename: $path)) {
@@ -39,7 +39,7 @@ final readonly class DatabaseExporter
 
         $output = "-- Avax Database Export\n";
         $output .= '-- Generated: ' . date(format: 'Y-m-d H:i:s') . "\n";
-        $output .= $table !== null && $table !== '' && $table !== '0' ? "-- Table: {$table}\n\n" : "-- Scope: Full Database\n\n";
+        $output   .= in_array($table, [null, '', '0'], true) ? "-- Scope: Full Database\n\n" : "-- Table: {$table}\n\n";
 
         $tables = $table === null ? $this->readTableNames() : [$table];
 

@@ -17,41 +17,41 @@ use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 use Avax\Components\HTTP\Request\System\PublicSurface\Request;
 use Exception;
 
-final class CreateRequestFromGlobals
+final readonly class CreateRequestFromGlobals
 {
     public function __construct(
-        private ReadServerParameters $serverReader,
-        private ReadQueryParameters $queryReader,
-        private ReadUploadedFiles $fileReader,
-        private ReadRequestBody $bodyReader,
-        private NormalizeHeaders $headerNormalizer,
-        private NormalizeUploadedFiles $fileNormalizer,
-        private ParseJsonBody $jsonParser,
-        private ParseFormBody $formParser,
+        private ReadServerParameters   $readServerParameters,
+        private ReadQueryParameters    $readQueryParameters,
+        private ReadUploadedFiles      $readUploadedFiles,
+        private ReadRequestBody        $readRequestBody,
+        private NormalizeHeaders       $normalizeHeaders,
+        private NormalizeUploadedFiles $normalizeUploadedFiles,
+        private ParseJsonBody          $parseJsonBody,
+        private ParseFormBody          $parseFormBody,
     ) {
     }
 
     public function execute(): Request
     {
         try {
-            $server  = $this->serverReader->read();
-            $query   = $this->queryReader->read();
-            $files   = $this->fileReader->read();
-            $rawBody = $this->bodyReader->read();
+            $server  = $this->readServerParameters->read();
+            $query   = $this->readQueryParameters->read();
+            $files   = $this->readUploadedFiles->read();
+            $rawBody = $this->readRequestBody->read();
 
-            $headers = new RequestHeaders($this->headerNormalizer->normalize($server));
+            $requestHeaders = new RequestHeaders($this->normalizeHeaders->normalize($server));
 
-            $contentType = $headers->get('Content-Type')?->first() ?? '';
+            $contentType = $requestHeaders->get('Content-Type')?->first() ?? '';
             $parsedData  = match (true) {
-                str_contains($contentType, 'application/json')                  => $this->jsonParser->parse($rawBody),
-                str_contains($contentType, 'application/x-www-form-urlencoded') => $this->formParser->parse($rawBody),
+                str_contains($contentType, 'application/json')                  => $this->parseJsonBody->parse($rawBody),
+                str_contains($contentType, 'application/x-www-form-urlencoded') => $this->parseFormBody->parse($rawBody),
                 default                                                         => $_POST
             };
 
-            $body          = new RequestBody(new RawBody($rawBody), new ParsedBody($parsedData));
-            $uploadedFiles = new UploadedFiles($this->fileNormalizer->normalize($files));
+            $requestBody   = new RequestBody(new RawBody($rawBody), new ParsedBody($parsedData));
+            $uploadedFiles = new UploadedFiles($this->normalizeUploadedFiles->normalize($files));
 
-            $uri = new RequestUri(
+            $requestUri = new RequestUri(
                 scheme: ($server['HTTPS'] ?? '') === 'on' ? 'https' : 'http',
                 host: $server['HTTP_HOST'] ?? 'localhost',
                 path: explode('?', $server['REQUEST_URI'] ?? '/')[0],
@@ -60,16 +60,16 @@ final class CreateRequestFromGlobals
 
             return new Request(
                 method: $server['REQUEST_METHOD'] ?? 'GET',
-                uri: $uri,
-                headers: $headers,
-                body: $body,
-                files: $uploadedFiles,
                 serverParams: $server,
                 cookieParams: $_COOKIE,
                 queryParams: $query,
+                uri: $requestUri,
+                headers: $requestHeaders,
+                body: $requestBody,
+                files: $uploadedFiles,
             );
-        } catch (Exception $e) {
-            throw new GlobalsRequestCreationFailed('Failed to create request from globals: ' . $e->getMessage(), 0, $e);
+        } catch (Exception $exception) {
+            throw new GlobalsRequestCreationFailed('Failed to create request from globals: ' . $exception->getMessage(), 0, $exception);
         }
     }
 }

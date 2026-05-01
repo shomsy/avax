@@ -41,13 +41,13 @@ final class MethodEmitter
         string $methodName,
         string $serviceId,
         string $class,
-        ?ResolvePlan $plan,
+        ?ResolvePlan $resolvePlan,
         array $registrationArguments,
         bool $needsFinish,
     ) : string
     {
         $className = '\\' . ltrim(string: $class, characters: '\\');
-        $arguments = $this->emitArguments(plan: $plan, serviceId: $serviceId);
+        $arguments = $this->emitArguments(serviceId: $serviceId, plan: $resolvePlan);
         $compiledRegistrationArguments = $registrationArguments
                 |> serialize(...)
                 |> base64_encode(...)
@@ -63,9 +63,9 @@ final class MethodEmitter
             PHP;
 
         if ($arguments === []) {
-            $body .= PHP_EOL . "        \$instance = new {$className}();" . PHP_EOL;
+            $body .= PHP_EOL . sprintf('        $instance = new %s();', $className) . PHP_EOL;
         } else {
-            $body .= PHP_EOL . "        \$instance = new {$className}(" . PHP_EOL;
+            $body .= PHP_EOL . sprintf('        $instance = new %s(', $className) . PHP_EOL;
 
             foreach ($arguments as $index => $argument) {
                 $suffix = $index === array_key_last(array: $arguments) ? '' : ',';
@@ -76,7 +76,7 @@ final class MethodEmitter
         }
 
         if ($needsFinish) {
-            $body .= <<<PHP
+            return $body . <<<PHP
                     return \$resolver->finishCompiledService(
                         {$this->export(value: $serviceId)},
                         \$instance,
@@ -86,30 +86,26 @@ final class MethodEmitter
                     );
                 }
                 PHP;
-
-            return $body;
         }
 
-        $body .= <<<'PHP'
+        return $body . <<<'PHP'
                 return $instance;
             }
             PHP;
-
-        return $body;
     }
 
     /**
      * @return list<string>
      */
-    private function emitArguments(?ResolvePlan $plan, string $serviceId) : array
+    private function emitArguments(?ResolvePlan $resolvePlan, string $serviceId) : array
     {
-        if ($plan === null || $plan->isEmpty()) {
+        if (! $resolvePlan instanceof ResolvePlan || $resolvePlan->isEmpty()) {
             return [];
         }
 
         $arguments = [];
 
-        foreach ($plan->parameters as $parameter) {
+        foreach ($resolvePlan->parameters as $parameter) {
             $expression = 'array_key_exists(' . $this->export(value: $parameter['name']) . ', $arguments)'
                 . ' ? $arguments[' . $this->export(value: $parameter['name']) . ']';
 
@@ -147,7 +143,7 @@ final class MethodEmitter
         if ($parameter['hasDefault']) {
             return '\\unserialize(\\base64_decode('
                 . $this->export(value: $parameter['default'])
-                . '), [\'allowed_classes\' => false])';
+                . "), ['allowed_classes' => false])";
         }
 
         if ($parameter['allowsNull']) {
@@ -155,7 +151,7 @@ final class MethodEmitter
         }
 
         return 'throw new \\Avax\\Container\\Capabilities\\Diagnostics\\Errors\\ContainerException('
-            . $this->export(value: "Cannot resolve parameter [\${$parameter['name']}] for service [{$serviceId}].")
+            . $this->export(value: sprintf('Cannot resolve parameter [$%s] for service [%s].', $parameter['name'], $serviceId))
             . ')';
     }
 }

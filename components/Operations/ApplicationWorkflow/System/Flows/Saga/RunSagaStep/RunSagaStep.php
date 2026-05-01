@@ -13,17 +13,12 @@ use Throwable;
 
 final readonly class RunSagaStep
 {
-    public function __construct(
-        private StoreSagaState $storeSagaState,
-        private InspectSaga $inspectSaga,
-    ) {}
-
     public function execute(
-        SagaInstance $instance,
-        SagaDefinition $definition,
+        SagaInstance   $sagaInstance,
+        SagaDefinition $sagaDefinition,
         callable $stepRunner,
     ): SagaStepResult {
-        $currentStep = $instance->currentStepName;
+        $currentStep = $sagaInstance->currentStepName;
         if ($currentStep === null) {
             return SagaStepResult::failure(
                 stepName: 'no_step',
@@ -31,21 +26,21 @@ final readonly class RunSagaStep
             );
         }
 
-        $stepDef = $definition->getStep(name: $currentStep);
-        if ($stepDef === null) {
+        $stepDef = $sagaDefinition->getStep(name: $currentStep);
+        if (! $stepDef instanceof SagaStepDefinition) {
             return SagaStepResult::failure(
                 stepName: $currentStep,
                 error   : sprintf('Step %s not found in definition.', $currentStep),
             );
         }
 
-        $policy  = SagaStepExecutionPolicy::fromStep(step: $stepDef);
+        $sagaStepExecutionPolicy = SagaStepExecutionPolicy::fromStep(step: $stepDef);
         $attempt = 1;
         $startTime = microtime(true);
 
-        while ($attempt <= $policy->maxRetries + 1) {
+        while ( $attempt <= $sagaStepExecutionPolicy->maxRetries + 1 ) {
             try {
-                $output = $stepRunner($stepDef, $instance->data);
+                $output = $stepRunner($stepDef, $sagaInstance->data);
                 $duration = (microtime(true) - $startTime) * 1000;
 
                 return SagaStepResult::success(
@@ -55,7 +50,7 @@ final readonly class RunSagaStep
                     durationMs: $duration,
                 );
             } catch (Throwable $e) {
-                if (! $policy->canRetry(currentAttempt: $attempt)) {
+                if (! $sagaStepExecutionPolicy->canRetry(currentAttempt: $attempt)) {
                     $duration = (microtime(true) - $startTime) * 1000;
 
                     return SagaStepResult::failure(
@@ -67,7 +62,7 @@ final readonly class RunSagaStep
                 }
 
                 $attempt++;
-                usleep($policy->retryDelayMs * 1000);
+                usleep($sagaStepExecutionPolicy->retryDelayMs * 1000);
             }
         }
 
@@ -82,37 +77,37 @@ final readonly class RunSagaStep
     }
 
     public function scheduleNext(
-        SagaInstance $currentInstance,
-        SagaStepResult $result,
-        SagaDefinition $definition,
+        SagaInstance   $sagaInstance,
+        SagaStepResult $sagaStepResult,
+        SagaDefinition $sagaDefinition,
     ): SagaInstance {
-        if (! $result->success) {
-            return $currentInstance->fail(error: $result->error ?? 'Unknown error');
+        if (! $sagaStepResult->success) {
+            return $sagaInstance->fail(error: $sagaStepResult->error ?? 'Unknown error');
         }
 
-        $nextStep = $this->chooseNext(instance: $currentInstance, definition: $definition);
-        if ($nextStep === null) {
-            return $currentInstance->complete();
+        $nextStep = $this->chooseNext(instance: $sagaInstance, definition: $sagaDefinition);
+        if (! $nextStep instanceof SagaStepDefinition) {
+            return $sagaInstance->complete();
         }
 
-        return $currentInstance->advanceTo(
+        return $sagaInstance->advanceTo(
             stepName : $nextStep->name,
-            stepIndex: $currentInstance->currentStepIndex + 1,
-            result   : $result->toArray(),
+            stepIndex: $sagaInstance->currentStepIndex + 1,
+            result   : $sagaStepResult->toArray(),
         );
     }
 
-    public function chooseNext(SagaInstance $instance, SagaDefinition $definition): ?SagaStepDefinition
+    public function chooseNext(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : ?SagaStepDefinition
     {
-        $currentIndex = $instance->currentStepIndex;
+        $currentIndex = $sagaInstance->currentStepIndex;
         $nextIndex = $currentIndex + 1;
 
-        if ($nextIndex >= $definition->stepCount()) {
+        if ($nextIndex >= $sagaDefinition->stepCount()) {
             return null;
         }
 
-        $nextStepName = $definition->stepOrder[$nextIndex] ?? null;
+        $nextStepName = $sagaDefinition->stepOrder[$nextIndex] ?? null;
 
-        return $nextStepName ? $definition->getStep(name: $nextStepName) : null;
+        return $nextStepName ? $sagaDefinition->getStep(name: $nextStepName) : null;
     }
 }

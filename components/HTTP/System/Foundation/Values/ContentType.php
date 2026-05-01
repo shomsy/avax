@@ -64,7 +64,7 @@ enum ContentType: string
      */
     public static function isValid(string $mimeType): bool
     {
-        return self::tryFromMimeType($mimeType) !== null;
+        return self::tryFromMimeType($mimeType) instanceof ContentType;
     }
 
     /**
@@ -92,7 +92,7 @@ enum ContentType: string
      *
      * @param string|null $charset Override the default charset. If null, uses utf-8.
      */
-    public function mimeTypeWithCharset(string $charset = null): string
+    public function mimeTypeWithCharset(?string $charset = null) : string
     {
         $charset ??= self::DEFAULT_CHARSET;
 
@@ -112,7 +112,7 @@ enum ContentType: string
             self::APPLICATION_YAML,
             self::APPLICATION_TOML,
             self::TEXT_MARKDOWN,
-            self::TEXT_CALENDAR => "{$this->value}; charset={$charset}",
+            self::TEXT_CALENDAR => sprintf('%s; charset=%s', $this->value, $charset),
 
             // Content types that do NOT support charset
             default => $this->value,

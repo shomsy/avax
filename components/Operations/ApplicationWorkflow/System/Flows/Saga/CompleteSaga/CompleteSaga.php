@@ -20,26 +20,26 @@ final readonly class CompleteSaga
         private InspectSaga $inspectSaga,
     ) {}
 
-    public function complete(SagaInstance $instance): SagaInstance
+    public function complete(SagaInstance $sagaInstance) : SagaInstance
     {
-        if ($instance->status === SagaInstanceStatus::COMPLETED) {
-            return $instance;
+        if ($sagaInstance->status === SagaInstanceStatus::COMPLETED) {
+            return $sagaInstance;
         }
 
-        if ($instance->status === SagaInstanceStatus::FAILED) {
+        if ($sagaInstance->status === SagaInstanceStatus::FAILED) {
             throw new SagaCompletionFailure(
-                message: sprintf('Cannot complete failed saga %s.', $instance->id),
+                message: sprintf('Cannot complete failed saga %s.', $sagaInstance->id),
             );
         }
 
-        $completed = $instance->complete();
+        $completed = $sagaInstance->complete();
 
         $this->storeSagaState->save(instance: $completed);
 
         $this->inspectSaga->record(
             event: SagaRuntimeEvent::completed(
-                sagaId  : $instance->id,
-                sagaName: $instance->definitionName,
+                     sagaId  : $sagaInstance->id,
+                     sagaName: $sagaInstance->definitionName,
             ),
         );
 
@@ -47,32 +47,32 @@ final readonly class CompleteSaga
     }
 
     public function detectCompletion(
-        SagaInstance $instance,
-        SagaDefinition $definition,
+        SagaInstance   $sagaInstance,
+        SagaDefinition $sagaDefinition,
     ): bool {
-        if ($instance->currentStepName === null) {
+        if ($sagaInstance->currentStepName === null) {
             return true;
         }
 
-        $nextStep = $definition->getNextStep($instance->currentStepName ?? '');
+        $nextStep = $sagaDefinition->getNextStep($sagaInstance->currentStepName ?? '');
 
         return $nextStep === null;
     }
 
-    public function publishCompletion(SagaInstance $instance): void
+    public function publishCompletion(SagaInstance $sagaInstance) : void
     {
         $payload = [
-            'saga_id'      => $instance->id,
-            'definition_name' => $instance->definitionName,
-            'data'         => $instance->data,
-            'completed_steps' => $instance->completedSteps,
-            'completed_at' => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
+            'saga_id'         => $sagaInstance->id,
+            'definition_name' => $sagaInstance->definitionName,
+            'data'            => $sagaInstance->data,
+            'completed_steps' => $sagaInstance->completedSteps,
+            'completed_at'    => $sagaInstance->completedAt?->format(format: DateTimeInterface::ISO8601),
         ];
 
         $this->inspectSaga->record(
             event: SagaRuntimeEvent::create(
-                sagaId  : $instance->id,
-                sagaName: $instance->definitionName,
+                     sagaId  : $sagaInstance->id,
+                     sagaName: $sagaInstance->definitionName,
                 type    : 'saga_completed',
                 payload : $payload,
             ),
@@ -82,43 +82,18 @@ final readonly class CompleteSaga
 
 final readonly class SagaCompletion
 {
-    public string $sagaId;
-
-    public string $definitionName;
-
-    public array $finalData;
-
-    public array $completedSteps;
-
-    public DateTimeImmutable $completedAt;
-
-    public float $totalDurationMs;
-
-    private function __construct(
-        string $sagaId,
-        string $definitionName,
-        array $finalData,
-        array $completedSteps,
-        DateTimeImmutable $completedAt,
-        float $totalDurationMs,
-    ) {
-        $this->sagaId         = $sagaId;
-        $this->definitionName = $definitionName;
-        $this->finalData      = $finalData;
-        $this->completedSteps = $completedSteps;
-        $this->completedAt    = $completedAt;
-        $this->totalDurationMs = $totalDurationMs;
+    private function __construct(public string $sagaId, public string $definitionName, public array $finalData, public array $completedSteps, public DateTimeImmutable $completedAt, public float $totalDurationMs) {
     }
 
     public static function fromInstance(
-        SagaInstance $instance,
+        SagaInstance $sagaInstance,
         float $startTimeMs,
     ): self {
         return new self(
-            sagaId         : $instance->id,
-            definitionName : $instance->definitionName,
-            finalData      : $instance->data,
-            completedSteps : $instance->completedSteps,
+            sagaId         : $sagaInstance->id,
+            definitionName : $sagaInstance->definitionName,
+            finalData      : $sagaInstance->data,
+            completedSteps : $sagaInstance->completedSteps,
             completedAt    : new DateTimeImmutable(),
             totalDurationMs: (microtime(true) * 1000) - $startTimeMs,
         );

@@ -35,16 +35,10 @@ final class HttpClientProvider
     private array $clients = [];
 
     /**
-     * @var array<string, mixed>
-     */
-    private array $config = [];
-
-    /**
      * @param array<string, mixed> $config Default configuration
      */
-    public function __construct(array $config = [])
+    public function __construct(private array $config = [])
     {
-        $this->config = $config;
     }
 
     /**
@@ -57,19 +51,19 @@ final class HttpClientProvider
         int $timeoutMs = 15000,
         int $retryAttempts = 3,
     ): HttpClient {
-        $options = new RequestOptions(
+        $requestOptions = new RequestOptions(
             timeout    : $timeoutMs,
+            httpErrors : true,
             retryPolicy: RetryPolicy::exponential(
                 attempts   : $retryAttempts,
                 baseDelayMs: 500,
                 maxDelayMs : 5000,
             ),
-            httpErrors : true,
         );
 
         return new HttpClient(
             baseUrl       : $baseUrl,
-            defaultOptions: $options,
+            defaultOptions: $requestOptions,
         );
     }
 
@@ -82,21 +76,21 @@ final class HttpClientProvider
         int $timeoutMs = 5000,
         int $retryAttempts = 5,
     ): HttpClient {
-        $options = new RequestOptions(
+        $requestOptions = new RequestOptions(
             timeout        : $timeoutMs,
             connectTimeout : 2000,
             followRedirects: false,
+            httpErrors     : true,
             retryPolicy    : RetryPolicy::exponential(
                 attempts         : $retryAttempts,
                 baseDelayMs      : 1000,
-                backoffMultiplier: 3.0,
                 maxDelayMs       : 15000,
+                backoffMultiplier: 3.0,
             ),
-            httpErrors     : true,
         );
 
         return new HttpClient(
-            defaultOptions: $options,
+            defaultOptions: $requestOptions,
         );
     }
 
@@ -108,16 +102,16 @@ final class HttpClientProvider
     public static function forFileDownloads(
         int $timeoutMs = 300000,
     ): HttpClient {
-        $options = new RequestOptions(
+        $requestOptions = new RequestOptions(
             timeout        : $timeoutMs,
             connectTimeout : 30000,
-            retryPolicy    : RetryPolicy::none(),
             followRedirects: true,
             maxRedirects   : 10,
+            retryPolicy    : RetryPolicy::none(),
         );
 
         return new HttpClient(
-            defaultOptions: $options,
+            defaultOptions: $requestOptions,
         );
     }
 
@@ -125,19 +119,19 @@ final class HttpClientProvider
      * Create a client with strict timeouts.
      */
     public static function withStrictTimeouts(
-        string $baseUrl = null,
+        ?string $baseUrl = null,
         int $timeoutMs = 3000,
     ): HttpClient {
-        $options = new RequestOptions(
+        $requestOptions = new RequestOptions(
             timeout       : $timeoutMs,
             connectTimeout: 1000,
-            timeoutPolicy : TimeoutPolicy::strict($timeoutMs),
             retryPolicy   : RetryPolicy::none(),
+            timeoutPolicy : TimeoutPolicy::strict($timeoutMs),
         );
 
         return new HttpClient(
             baseUrl       : $baseUrl,
-            defaultOptions: $options,
+            defaultOptions: $requestOptions,
         );
     }
 
@@ -145,7 +139,7 @@ final class HttpClientProvider
      * Create a client with middleware.
      */
     public static function withMiddleware(
-        string $baseUrl = null,
+        ?string $baseUrl = null,
         ClientMiddlewareInterface ...$middlewares,
     ): HttpClient {
         return new HttpClient(
@@ -158,27 +152,27 @@ final class HttpClientProvider
      * Get or create an HTTP client with the given configuration.
      *
      * @param string|null $baseUrl Base URL for requests
-     * @param RequestOptions|null $options Default request options
-     * @param HttpTransportInterface|null $transport Custom transport
+     * @param RequestOptions|null         $requestOptions Default request options
+     * @param HttpTransportInterface|null $httpTransport  Custom transport
      * @param array<ClientMiddlewareInterface> $middlewares Middleware to apply
      * @param string|null $name Named client identifier (for caching)
      */
     public function client(
-        string $baseUrl = null,
-        RequestOptions $options = null,
-        HttpTransportInterface $transport = null,
+        ?string                 $baseUrl = null,
+        ?RequestOptions         $requestOptions = null,
+        ?HttpTransportInterface $httpTransport = null,
         array $middlewares = [],
-        string $name = null,
+        ?string                 $name = null,
     ): HttpClient {
         // Use name-based caching if a name is provided
         if ($name !== null && isset($this->clients[$name])) {
             return $this->clients[$name];
         }
 
-        $resolvedOptions   = $options   ?? $this->resolveOptions();
-        $resolvedTransport = $transport ?? new CurlTransport();
+        $resolvedOptions   = $requestOptions ?? $this->resolveOptions();
+        $resolvedTransport = $httpTransport ?? new CurlTransport();
 
-        $client = new HttpClient(
+        $httpClient = new HttpClient(
             baseUrl       : $baseUrl ?? $this->config['base_url'] ?? null,
             transport     : $resolvedTransport,
             defaultOptions: $resolvedOptions,
@@ -186,10 +180,10 @@ final class HttpClientProvider
         );
 
         if ($name !== null) {
-            $this->clients[$name] = $client;
+            $this->clients[$name] = $httpClient;
         }
 
-        return $client;
+        return $httpClient;
     }
 
     /**

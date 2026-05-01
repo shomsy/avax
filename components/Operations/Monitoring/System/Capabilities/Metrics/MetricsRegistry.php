@@ -29,8 +29,8 @@ final class MetricsRegistry
             'timings' => array_map(
                 callback: static fn (array $values): array => [
                     'count' => count($values),
-                    'avg_ms' => count($values) === 0 ? 0.0 : array_sum(array: $values) / count($values),
-                    'max_ms' => count($values) === 0 ? 0.0 : max($values),
+                    'avg_ms' => $values === [] ? 0.0 : array_sum(array: $values) / count($values),
+                    'max_ms' => $values === [] ? 0.0 : max($values),
                 ],
                 array   : $this->timings,
             ),

@@ -15,14 +15,14 @@ use Psr\Http\Message\UriInterface;
 
 final class Request implements RequestInterface
 {
-    private RequestData $data;
+    private RequestData $requestData;
 
     public function __construct(
         string $method,
-        RequestUri $uri,
-        RequestHeaders $headers,
-        RequestBody $body,
-        UploadedFiles $files,
+        RequestUri     $requestUri,
+        RequestHeaders $requestHeaders,
+        RequestBody    $requestBody,
+        UploadedFiles  $uploadedFiles,
         array  $serverParams = [],
         array  $cookieParams = [],
         array  $queryParams = [],
@@ -30,12 +30,12 @@ final class Request implements RequestInterface
         string $protocolVersion = '1.1',
     )
     {
-        $this->data = new RequestData(
+        $this->requestData = new RequestData(
             method         : $method,
-            uri            : $uri,
-            headers        : $headers,
-            body           : $body,
-            files          : $files,
+            uri            : $requestUri,
+            headers        : $requestHeaders,
+            body           : $requestBody,
+            files          : $uploadedFiles,
             serverParams   : $serverParams,
             cookieParams   : $cookieParams,
             queryParams    : $queryParams,
@@ -46,41 +46,41 @@ final class Request implements RequestInterface
 
     public function getProtocolVersion() : string
     {
-        return $this->data->protocolVersion;
+        return $this->requestData->protocolVersion;
     }
 
     public function withProtocolVersion($version) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withProtocolVersion($version);
+        $clone->requestData = $this->requestData->withProtocolVersion($version);
 
         return $clone;
     }
 
     public function getHeaders() : array
     {
-        return $this->data->headers->all();
+        return $this->requestData->headers->all();
     }
 
     public function hasHeader($name) : bool
     {
-        return $this->data->headers->has($name);
+        return $this->requestData->headers->has($name);
     }
 
     public function getHeader($name) : array
     {
-        return $this->data->headers->get($name)?->all() ?? [];
+        return $this->requestData->headers->get($name)?->all() ?? [];
     }
 
     public function getHeaderLine($name) : string
     {
-        return $this->data->headers->get($name)?->line() ?? '';
+        return $this->requestData->headers->get($name)?->line() ?? '';
     }
 
     public function withHeader($name, $value) : self
     {
         $clone = clone $this;
-        $clone->data->headers->set($name, $value);
+        $clone->requestData->headers->set($name, $value);
 
         return $clone;
     }
@@ -97,7 +97,7 @@ final class Request implements RequestInterface
 
     public function getBody() : StreamInterface
     {
-        return Utils::streamFor($this->data->body->raw()->toString());
+        return Utils::streamFor($this->requestData->body->raw()->toString());
     }
 
     public function withBody(StreamInterface $body) : self
@@ -107,7 +107,7 @@ final class Request implements RequestInterface
 
     public function getRequestTarget() : string
     {
-        return $this->data->uri->getPath();
+        return $this->requestData->uri->getPath();
     }
 
     public function withRequestTarget($target) : self
@@ -117,64 +117,64 @@ final class Request implements RequestInterface
 
     public function getMethod() : string
     {
-        return $this->data->method;
+        return $this->requestData->method;
     }
 
     public function withMethod($method) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withMethod($method);
+        $clone->requestData = $this->requestData->withMethod($method);
 
         return $clone;
     }
 
     public function getUri() : UriInterface
     {
-        return $this->data->uri;
+        return $this->requestData->uri;
     }
 
     public function withUri(UriInterface $uri, $preserveHost = false) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withUri($uri);
+        $clone->requestData = $this->requestData->withUri($uri);
 
         return $clone;
     }
 
     public function getServerParams() : array
     {
-        return $this->data->serverParams;
+        return $this->requestData->serverParams;
     }
 
     public function getCookieParams() : array
     {
-        return $this->data->cookieParams;
+        return $this->requestData->cookieParams;
     }
 
     public function withCookieParams(array $cookies) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withCookieParams($cookies);
+        $clone->requestData = $this->requestData->withCookieParams($cookies);
 
         return $clone;
     }
 
     public function getQueryParams() : array
     {
-        return $this->data->queryParams;
+        return $this->requestData->queryParams;
     }
 
     public function withQueryParams(array $query) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withQueryParams($query);
+        $clone->requestData = $this->requestData->withQueryParams($query);
 
         return $clone;
     }
 
     public function getUploadedFiles() : array
     {
-        return $this->data->files->all();
+        return $this->requestData->files->all();
     }
 
     public function withUploadedFiles(array $uploadedFiles) : self
@@ -184,7 +184,7 @@ final class Request implements RequestInterface
 
     public function getParsedBody() : array|object|null
     {
-        return $this->data->body->parsed()->data();
+        return $this->requestData->body->parsed()->data();
     }
 
     public function withParsedBody($data) : self
@@ -194,18 +194,18 @@ final class Request implements RequestInterface
 
     public function getAttributes() : array
     {
-        return $this->data->attributes;
+        return $this->requestData->attributes;
     }
 
     public function getAttribute($name, $default = null)
     {
-        return $this->data->attributes[$name] ?? $default;
+        return $this->requestData->attributes[$name] ?? $default;
     }
 
     public function withAttribute($name, $value) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withAttribute($name, $value);
+        $clone->requestData = $this->requestData->withAttribute($name, $value);
 
         return $clone;
     }
@@ -213,18 +213,18 @@ final class Request implements RequestInterface
     public function withoutAttribute($name) : self
     {
         $clone = clone $this;
-        $clone->data = $this->data->withoutAttribute($name);
+        $clone->requestData = $this->requestData->withoutAttribute($name);
 
         return $clone;
     }
 
     public function input(string $key, mixed $default = null) : mixed
     {
-        return $this->data->attributes[$key] ?? $this->data->queryParams[$key] ?? ($this->getParsedBody()[$key] ?? $default);
+        return $this->requestData->attributes[$key] ?? $this->requestData->queryParams[$key] ?? ($this->getParsedBody()[$key] ?? $default);
     }
 
     public function all() : array
     {
-        return array_merge($this->data->queryParams, (array) $this->getParsedBody(), $this->data->attributes);
+        return array_merge($this->requestData->queryParams, (array) $this->getParsedBody(), $this->requestData->attributes);
     }
 }

@@ -13,27 +13,27 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class RecoverScimDirectoryOutage
 {
-    public function __construct(private ScimDirectoryStoreInterface $directoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(RecoverScimDirectoryOutageData $data): ScimDirectory
+    public function execute(RecoverScimDirectoryOutageData $recoverScimDirectoryOutageData) : ScimDirectory
     {
-        $directory = $this->directoryStore->find(directoryId: $data->directoryId);
+        $directory = $this->scimDirectoryStore->find(directoryId: $recoverScimDirectoryOutageData->directoryId);
 
-        if ($directory === null) {
+        if (! $directory instanceof ScimDirectory) {
             throw ScimFailed::unknownDirectory();
         }
 
-        $recovered = $directory->recover(recoveredAt: $this->clock->now());
-        $this->directoryStore->save(directory: $recovered);
+        $scimDirectory = $directory->recover(recoveredAt: $this->clock->now());
+        $this->scimDirectoryStore->save(directory: $scimDirectory);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.directory.outage_recovered',
             occurredAt: $this->clock->now(),
             context   : [
-                'directory_id' => $recovered->directoryId,
-                'tenant' => $recovered->tenantSlug,
+                            'directory_id' => $scimDirectory->directoryId,
+                            'tenant'       => $scimDirectory->tenantSlug,
             ],
         ));
 
-        return $recovered;
+        return $scimDirectory;
     }
 }

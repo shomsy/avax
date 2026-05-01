@@ -35,7 +35,7 @@ final readonly class SessionRecord
 
     public function isRevoked(): bool
     {
-        return $this->revokedAt !== null;
+        return $this->revokedAt instanceof DateTimeImmutable;
     }
 
     public function isExpiredAt(DateTimeImmutable $moment): bool
@@ -53,7 +53,7 @@ final readonly class SessionRecord
             userId           : $this->userId,
             createdAt        : $this->createdAt,
             lastSeenAt       : $lastSeenAt,
-            idleExpiresAt    : $lastSeenAt->modify(modifier: "+{$idleTimeoutSeconds} seconds"),
+            idleExpiresAt    : $lastSeenAt->modify(modifier: sprintf('+%d seconds', $idleTimeoutSeconds)),
             absoluteExpiresAt: $this->absoluteExpiresAt,
             ipCreated        : $this->ipCreated,
             userAgentCreated : $this->userAgentCreated,

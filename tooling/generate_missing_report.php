@@ -21,12 +21,14 @@ if ($handle) {
                 if (! isset($oldComponents[$component])) {
                     $oldComponents[$component] = [];
                 }
-                if (count($parts) >= 2 && ! in_array($parts[1], $oldComponents[$component])) {
+
+                if (count($parts) >= 2 && ! in_array($parts[1], $oldComponents[$component], true)) {
                     $oldComponents[$component][] = $parts[1];
                 }
             }
         }
     }
+
     fclose($handle);
 }
 
@@ -51,7 +53,7 @@ foreach (array_keys($oldComponents) as $oldComp) {
         $foundInSuite   = false;
         $foundSuiteName = '';
         foreach ($newComponents as $suite => $subComps) {
-            if (in_array($oldComp, $subComps)) {
+            if (in_array($oldComp, $subComps, true)) {
                 $foundInSuite   = true;
                 $foundSuiteName = $suite;
 
@@ -65,17 +67,18 @@ foreach (array_keys($oldComponents) as $oldComp) {
     }
 }
 
-if (! empty($missingSuites)) {
+if ($missingSuites !== []) {
     $report .= "## Completely Missing Components / Suites\n";
-    foreach ($missingSuites as $missing) {
-        $report .= "- **$missing** (Found in avax.txt, not found in new architecture)\n";
+    foreach ($missingSuites as $missingSuite) {
+        $report .= "- **{$missingSuite}** (Found in avax.txt, not found in new architecture)\n";
     }
+
     $report .= "\n";
 }
 
 $report .= "## Detailed Component Analysis\n";
 foreach ($oldComponents as $oldComp => $oldSubComps) {
-    $report .= "### $oldComp\n";
+    $report                      .= sprintf('### %s%s', $oldComp, PHP_EOL);
 
     // Check if it's a suite now or exists at root
     $currentLocation = null;
@@ -83,10 +86,10 @@ foreach ($oldComponents as $oldComp => $oldSubComps) {
         $currentLocation = $newComponents[$oldComp];
     } else {
         foreach ($newComponents as $suite => $subComps) {
-            if (in_array($oldComp, $subComps)) {
+            if (in_array($oldComp, $subComps, true)) {
                 // We found it inside a suite
                 $currentLocation = glob($currentComponentsDir . '/' . $suite . '/' . $oldComp . '/*', GLOB_ONLYDIR);
-                $currentLocation = array_map('basename', $currentLocation);
+                $currentLocation = array_map(basename(...), $currentLocation);
 
                 break;
             }
@@ -97,23 +100,24 @@ foreach ($oldComponents as $oldComp => $oldSubComps) {
         $report .= "- *Component is entirely missing.*\n";
         // List top 5 subcomponents/files that are lost
         $preview = array_slice($oldSubComps, 0, 5);
-        if (! empty($preview)) {
+        if ($preview !== []) {
             $report .= '- Lost features include: `' . implode('`, `', $preview) . "`\n";
         }
     } else {
         $missingSub = array_diff($oldSubComps, $currentLocation);
         // Filter out typical files like .php that might have been caught
-        $missingSub = array_filter($missingSub, static fn ($s) => ! str_ends_with($s, '.php'));
+        $missingSub = array_filter($missingSub, static fn (string $s) : bool => ! str_ends_with($s, '.php'));
 
-        if (empty($missingSub)) {
+        if ($missingSub === []) {
             $report .= "- *Fully migrated or structure matched.*\n";
         } else {
             $report .= "- **Missing sub-components/folders:**\n";
             foreach ($missingSub as $sub) {
-                $report .= "  - `$sub`\n";
+                $report .= "  - `{$sub}`\n";
             }
         }
     }
+
     $report .= "\n";
 }
 

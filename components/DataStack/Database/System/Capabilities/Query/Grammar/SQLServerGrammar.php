@@ -21,16 +21,16 @@ use RuntimeException;
 final class SQLServerGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $table = $this->wrap(value: $state->from);
-        $rows = $this->normalizeInsertRows(values: $state->values);
+        $table = $this->wrap(value: $queryState->from);
+        $rows  = $this->normalizeInsertRows(values: $queryState->values);
 
-        if (empty($rows)) {
+        if ($rows === []) {
             throw new RuntimeException(message: 'INSERT compilation requires at least one row of values.');
         }
 
-        $columns = implode(separator: ', ', array: array_map(callback: fn ($c) => $this->wrap(value: $c), array: array_keys(array: $rows[0])));
+        $columns = implode(separator: ', ', array: array_map(callback: fn (int|string $c) : string => $this->wrap(value: $c), array: array_keys(array: $rows[0])));
 
         $valueGroups = [];
         foreach ($rows as $row) {
@@ -38,11 +38,12 @@ final class SQLServerGrammar extends BaseGrammar
             foreach ($row as $value) {
                 $placeholders[] = $value instanceof Expression ? $value->getValue() : '?';
             }
+
             $valueGroups[] = '(' . implode(separator: ', ', array: $placeholders) . ')';
         }
 
         $conflictColumns = implode(separator: ', ', array: array_map(
-            callback: fn ($col) => $this->wrap(value: $col),
+            callback: fn ($col) : string => $this->wrap(value: $col),
             array   : $uniqueBy,
         ));
 
@@ -50,17 +51,17 @@ final class SQLServerGrammar extends BaseGrammar
         foreach ($update as $column) {
             $updates[] = $this->wrap(value: $column) . ' = source.' . $this->wrap(value: $column);
         }
+
         $updateSet = implode(separator: ', ', array: $updates);
 
         $valuesSql = 'VALUES ' . implode(separator: ', ', array: $valueGroups);
 
         $sql = "MERGE {$table} AS target\n";
         $sql .= "USING (SELECT {$columns} {$valuesSql}) AS source ({$columns})\n";
-        $sql .= "ON target.{$conflictColumns} = source.{$conflictColumns}\n";
-        $sql .= "WHEN MATCHED THEN UPDATE SET {$updateSet}\n";
-        $sql .= "WHEN NOT MATCHED THEN INSERT ({$columns}) VALUES ({$columns});";
+        $sql             .= sprintf('ON target.%s = source.%s%s', $conflictColumns, $conflictColumns, PHP_EOL);
+        $sql             .= sprintf('WHEN MATCHED THEN UPDATE SET %s%s', $updateSet, PHP_EOL);
 
-        return $sql;
+        return $sql . sprintf('WHEN NOT MATCHED THEN INSERT (%s) VALUES (%s);', $columns, $columns);
     }
 
     #[Override]
@@ -80,7 +81,7 @@ final class SQLServerGrammar extends BaseGrammar
 
         if (str_contains(haystack: $value, needle: '.')) {
             return implode(separator: '.', array: array_map(
-                callback: fn ($segment) => $this->wrapSegment(segment: $segment),
+                callback: fn (string $segment) : string => $this->wrapSegment(segment: $segment),
                 array   : explode(separator: '.', string: $value),
             ));
         }
@@ -100,7 +101,7 @@ final class SQLServerGrammar extends BaseGrammar
         return '[' . str_replace(search: ']', replace: ']]', subject: $segment) . ']';
     }
 
-    protected function normalizeInsertRows(array $values): array
+    private function normalizeInsertRows(array $values) : array
     {
         parent::normalizeInsertRows(values: $values);
 
@@ -140,37 +141,37 @@ final class SQLServerGrammar extends BaseGrammar
 
     public function compileOutput(array $columns): string
     {
-        if (empty($columns)) {
+        if ($columns === []) {
             return '';
         }
 
-        $cols = implode(separator: ', ', array: array_map(callback: fn ($col) => $this->wrap(value: $col), array: $columns));
+        $cols = implode(separator: ', ', array: array_map(callback: fn ($col) : string => $this->wrap(value: $col), array: $columns));
 
         return 'OUTPUT ' . $cols;
     }
 
     public function compilePivot(string $column, string $pivotColumn, array $pivotValues): string
     {
-        $pivotcols = implode(separator: ', ', array: array_map(callback: static fn ($val) => "['{$val}']", array: $pivotValues));
+        $pivotcols = implode(separator: ', ', array: array_map(callback: static fn (string $val) : string => sprintf("['%s']", $val), array: $pivotValues));
 
-        return "PIVOT ({$column} FOR {$pivotColumn} IN ({$pivotcols}))";
+        return sprintf('PIVOT (%s FOR %s IN (%s))', $column, $pivotColumn, $pivotcols);
     }
 
     public function compileUnpivot(string $column, array $unpivotColumns): string
     {
-        $unpivcols = implode(separator: ', ', array: array_map(callback: fn ($col) => $this->wrap(value: $col), array: $unpivotColumns));
+        $unpivcols = implode(separator: ', ', array: array_map(callback: fn ($col) : string => $this->wrap(value: $col), array: $unpivotColumns));
 
-        return "UNPIVOT ({$column} IN ({$unpivcols}))";
+        return sprintf('UNPIVOT (%s IN (%s))', $column, $unpivcols);
     }
 
-    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
+    public function compileWindowFunction(string $function, ?string $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
         $sql = $function . '(';
 
         if ($partitionBy !== '') {
             $partitionColumns = implode(separator: ', ', array: array_map(
-                callback: fn ($col) => $this->wrap(value: $col),
+                callback: fn ($col) : string => $this->wrap(value: $col),
                 array   : explode(separator: ',', string: $partitionBy),
             ));
             $sql .= 'PARTITION BY ' . $partitionColumns;
@@ -180,13 +181,11 @@ final class SQLServerGrammar extends BaseGrammar
             $sql .= ' ORDER BY ' . $orderBy;
         }
 
-        $sql .= ')';
-
-        return $sql;
+        return $sql . ')';
     }
 
     public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery): string
     {
-        return "WITH {$name} AS (SELECT {$columns} FROM ({$initialQuery}) AS initial UNION ALL SELECT {$columns} FROM ({$recursiveQuery}) AS recursive)";
+        return sprintf('WITH %s AS (SELECT %s FROM (%s) AS initial UNION ALL SELECT %s FROM (%s) AS recursive)', $name, $columns, $initialQuery, $columns, $recursiveQuery);
     }
 }

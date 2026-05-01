@@ -11,15 +11,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST
  */
 final readonly class WhereNode
 {
-    public string $type;
-
     public string $boolean;
-
-    public mixed $value;
-
-    public string $operator;
-
-    public string $column;
 
     /**
      * @param string $column   The technical name of the field or a raw SQL fragment to be filtered.
@@ -29,17 +21,13 @@ final readonly class WhereNode
      * @param string $type     The type classification of the constraint (e.g., 'Basic', 'Null', 'Raw').
      */
     public function __construct(
-        string $column,
-        string $operator,
-        mixed $value = null,
-        string $boolean = null,
-        string $type = 'Basic',
+        public string $column,
+        public string $operator,
+        public mixed  $value = null,
+        ?string       $boolean = null,
+        public string $type = 'Basic',
     ) {
         $boolean ??= 'AND';
-        $this->column = $column;
-        $this->operator = $operator;
-        $this->value = $value;
         $this->boolean = $boolean;
-        $this->type = $type;
     }
 }

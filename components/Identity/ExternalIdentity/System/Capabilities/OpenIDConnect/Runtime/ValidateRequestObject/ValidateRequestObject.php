@@ -7,23 +7,24 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDCo
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\PkceMethod;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\OAuthAuthorizationFailed;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcRequestObject;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcRequestObjectStoreInterface;
 
 final readonly class ValidateRequestObject
 {
-    public function __construct(private ?OidcRequestObjectStoreInterface $requestObjectStore = null, private ?OAuthClientRegistryInterface $clientRegistry = null) {}
+    public function __construct(private ?OidcRequestObjectStoreInterface $oidcRequestObjectStore = null, private ?OAuthClientRegistryInterface $oAuthClientRegistry = null) {}
 
-    public function execute(ValidateRequestObjectData $data): ValidatedRequestObject
+    public function execute(ValidateRequestObjectData $validateRequestObjectData) : ValidatedRequestObject
     {
-        $requestUri = trim(string: $data->requestUri);
+        $requestUri = trim(string: $validateRequestObjectData->requestUri);
 
-        if ($requestUri === '' || $this->requestObjectStore === null) {
+        if ($requestUri === '' || ! $this->oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface) {
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
-        $requestObject = $this->requestObjectStore->consume(requestUri: $requestUri);
+        $requestObject = $this->oidcRequestObjectStore->consume(requestUri: $requestUri);
 
-        if ($requestObject === null) {
+        if (! $requestObject instanceof OidcRequestObject) {
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
@@ -35,7 +36,7 @@ final readonly class ValidateRequestObject
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
-        $client = $this->clientRegistry?->find(clientId: $clientId);
+        $client = $this->oAuthClientRegistry?->find(clientId: $clientId);
 
         if ($client?->requestObjectSignatureRequired === true && ! $requestObject->signatureVerified) {
             throw OAuthAuthorizationFailed::invalidRequestObject();
@@ -84,12 +85,12 @@ final readonly class ValidateRequestObject
                 continue;
             }
 
-            foreach ($parts as $value) {
-                if (in_array(needle: $value, haystack: $normalized, strict: true)) {
+            foreach ($parts as $part) {
+                if (in_array(needle: $part, haystack: $normalized, strict: true)) {
                     continue;
                 }
 
-                $normalized[] = $value;
+                $normalized[] = $part;
             }
         }
 

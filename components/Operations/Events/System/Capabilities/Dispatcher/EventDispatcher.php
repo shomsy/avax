@@ -12,7 +12,7 @@ use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegis
 final readonly class EventDispatcher
 {
     public function __construct(
-        private ListenerRegistry $registry,
+        private ListenerRegistry $listenerRegistry,
     ) {
     }
 
@@ -22,7 +22,7 @@ final readonly class EventDispatcher
     public function dispatch(string|object $event, mixed $data = null): object|string
     {
         $eventName = is_object($event) ? $event::class : $event;
-        $listeners = $this->registry->getListenersFor($eventName);
+        $listeners = $this->listenerRegistry->getListenersFor($eventName);
 
         foreach ($listeners as $listener) {
             if (is_object($event) && method_exists($event, 'isPropagationStopped') && $event->isPropagationStopped()) {

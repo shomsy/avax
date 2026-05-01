@@ -21,7 +21,7 @@ final class CheckRuntimeLeaks
         $this->checkNoRuntimeLeaksOutsideFramework();
 
         return [
-            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'status' => $this->errors === [] ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
         ];
     }
@@ -46,8 +46,8 @@ final class CheckRuntimeLeaks
             }
 
             $content = file_get_contents($file->getPathname());
-            foreach ($this->forbiddenRuntimeImports as $import) {
-                if (str_contains($content, 'use ' . $import)) {
+            foreach ($this->forbiddenRuntimeImports as $forbiddenRuntimeImport) {
+                if (str_contains($content, 'use ' . $forbiddenRuntimeImport)) {
                     $this->errors[] = $file->getPathname() . ': imports runtime adapter outside framework/System';
                 }
             }

@@ -24,11 +24,11 @@ final class MigrationGenerator
      *
      * @return string Created file path
      */
-    public function generate(string $name, string $path, string $table = null, bool $create = false) : string
+    public function generate(string $name, string $path, ?string $table = null, bool $create = false) : string
     {
         $timestamp = $this->getTimestamp();
         $className = $this->getClassName(name: $name);
-        $filename = "{$timestamp}_{$name}.php";
+        $filename = sprintf('%s_%s.php', $timestamp, $name);
         $filepath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
 
         $stub = $this->getStubContent(table: $table, create: $create);
@@ -45,14 +45,14 @@ final class MigrationGenerator
 
     private function getTimestamp(): string
     {
-        return (new DateTime())->format(format: 'Y_m_d_His');
+        return new DateTime()->format(format: 'Y_m_d_His');
     }
 
     private function getClassName(string $name): string
     {
         return str_replace(search: '_', replace: ' ', subject: $name)
                 |> ucwords(...)
-                |> (static fn ($x) => str_replace(search: ' ', replace: '', subject: $x));
+                |> (static fn ($x) : string|array => str_replace(search: ' ', replace: '', subject: $x));
     }
 
     private function getStubContent(?string $table, bool $create): string
@@ -66,7 +66,7 @@ final class MigrationGenerator
         $stubPath = __DIR__ . DIRECTORY_SEPARATOR . 'Stubs' . DIRECTORY_SEPARATOR . $stubName;
 
         if (! file_exists(filename: $stubPath)) {
-            throw new RuntimeException(message: "Migration stub not found: {$stubPath}");
+            throw new RuntimeException(message: 'Migration stub not found: ' . $stubPath);
         }
 
         return file_get_contents(filename: $stubPath);

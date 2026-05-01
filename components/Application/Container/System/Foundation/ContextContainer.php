@@ -35,28 +35,15 @@ use Throwable;
  */
 readonly class ContextContainer implements ContainerInterface
 {
-    private array $context;
-
-    private ResolveDependency $resolver;
-
-    private Container $base;
-
     /**
      * @param array<string, mixed> $context
      */
-    public function __construct(
-        Container $base,
-        ResolveDependency $resolver,
-        array $context,
-    ) {
-        $this->base     = $base;
-        $this->resolver = $resolver;
-        $this->context  = $context;
+    public function __construct(private Container $container, private ResolveDependency $resolveDependency, private array $context) {
     }
 
     public function has(string $id): bool
     {
-        return $this->resolver->hasInContext(id: $id, context: $this->context);
+        return $this->resolveDependency->hasInContext(id: $id, context: $this->context);
     }
 
     public function factory(string $abstract): Closure
@@ -72,7 +59,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function make(string $abstract, array $parameters = []): object
     {
-        return $this->resolver->makeInContext(id: $abstract, parameters: $parameters, context: $this->context);
+        return $this->resolveDependency->makeInContext(id: $abstract, parameters: $parameters, context: $this->context);
     }
 
     /**
@@ -80,7 +67,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function call(callable|string $callable, array $parameters = []): mixed
     {
-        return $this->resolver->callInContext(
+        return $this->resolveDependency->callInContext(
             callable  : $callable,
             parameters: $parameters,
             context   : $this->context,
@@ -92,7 +79,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function injectInto(object $target): object
     {
-        return $this->resolver->injectIntoInContext(target: $target, context: $this->context);
+        return $this->resolveDependency->injectIntoInContext(target: $target, context: $this->context);
     }
 
     /**
@@ -100,7 +87,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function canInject(object $target): bool
     {
-        return $this->base->canInject(target: $target);
+        return $this->container->canInject(target: $target);
     }
 
     /**
@@ -108,13 +95,13 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function inspectInjection(object $target): InjectionReport
     {
-        return $this->base->inspectInjection(target: $target);
+        return $this->container->inspectInjection(target: $target);
     }
 
     public function flush(): void
     {
         $this->assertGlobalMutationAllowed(action: 'flush runtime state');
-        $this->base->flush();
+        $this->container->flush();
     }
 
     protected function assertGlobalMutationAllowed(string $action): void
@@ -125,7 +112,7 @@ readonly class ContextContainer implements ContainerInterface
         }
 
         throw new InvalidArgumentException(
-            message: "Strict slice view [{$slice}] cannot {$action}. Use the root composition view for global runtime mutations.",
+            message: sprintf('Strict slice view [%s] cannot %s. Use the root composition view for global runtime mutations.', $slice, $action),
         );
     }
 
@@ -136,13 +123,13 @@ readonly class ContextContainer implements ContainerInterface
 
     protected function strictSliceBoundaries(): bool
     {
-        return $this->resolver->sliceBoundaryMode() === CreateContainerConfig::SLICE_BOUNDARY_MODE_STRICT;
+        return $this->resolveDependency->sliceBoundaryMode() === CreateContainerConfig::SLICE_BOUNDARY_MODE_STRICT;
     }
 
     public function reset(): void
     {
         $this->assertGlobalMutationAllowed(action: 'reset runtime state');
-        $this->base->reset();
+        $this->container->reset();
     }
 
     /**
@@ -151,7 +138,7 @@ readonly class ContextContainer implements ContainerInterface
     public function bootProviders(array $providers): void
     {
         $this->assertGlobalMutationAllowed(action: 'boot providers');
-        $this->base->bootProviders(providers: $providers);
+        $this->container->bootProviders(providers: $providers);
     }
 
     /**
@@ -164,7 +151,7 @@ readonly class ContextContainer implements ContainerInterface
 
     private function validateComposition(): ValidateComposition
     {
-        return new ValidateComposition(resolver: $this->resolver);
+        return new ValidateComposition(resolver: $this->resolveDependency);
     }
 
     /**
@@ -177,7 +164,7 @@ readonly class ContextContainer implements ContainerInterface
 
     private function explainService(): ExplainService
     {
-        return new ExplainService(resolver: $this->resolver);
+        return new ExplainService(resolver: $this->resolveDependency);
     }
 
     /**
@@ -206,7 +193,7 @@ readonly class ContextContainer implements ContainerInterface
 
     private function exportGraphFlow(): ExportGraph
     {
-        return new ExportGraph(resolver: $this->resolver);
+        return new ExportGraph(resolver: $this->resolveDependency);
     }
 
     public function debugGovernance(string $id = ''): array
@@ -281,17 +268,17 @@ readonly class ContextContainer implements ContainerInterface
 
     public function env(string $key, mixed $default = null): mixed
     {
-        return $this->base->env(key: $key, default: $default);
+        return $this->container->env(key: $key, default: $default);
     }
 
     public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void
     {
-        $this->base->openScope(kind: $kind, scopeId: $scopeId);
+        $this->container->openScope(kind: $kind, scopeId: $scopeId);
     }
 
-    public function closeScope(string $kind = null): void
+    public function closeScope(?string $kind = null) : void
     {
-        $this->base->closeScope(kind: $kind);
+        $this->container->closeScope(kind: $kind);
     }
 
     /**
@@ -299,7 +286,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function compileContainer(array $serviceIds = []): void
     {
-        $this->base->compileContainer(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
+        $this->container->compileContainer(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
     /**
@@ -316,7 +303,7 @@ readonly class ContextContainer implements ContainerInterface
 
         $visibleIds = array_values(array: array_map(
             callback: static fn (array $row): string => $row['serviceId'],
-            array   : $this->resolver->debugSliceInContext(slice: $slice, context: $this->context)['visible'] ?? [],
+            array   : $this->resolveDependency->debugSliceInContext(slice: $slice, context: $this->context)['visible'] ?? [],
         ));
 
         if ($serviceIds === []) {
@@ -324,14 +311,14 @@ readonly class ContextContainer implements ContainerInterface
         }
 
         $resolvedIds = array_map(
-            callback: fn (string $serviceId): string => $this->resolver->registrations()->resolveAlias(abstract: $serviceId),
+            callback: fn (string $serviceId) : string => $this->resolveDependency->registrations()->resolveAlias(abstract: $serviceId),
             array   : $serviceIds,
         );
         $filtered = array_values(array: array_intersect($visibleIds, $resolvedIds));
 
         if (count(value: $filtered) !== count(value: array_unique(array: $resolvedIds))) {
             throw new InvalidArgumentException(
-                message: "Strict slice view [{$slice}] can only compile services visible from its boundary.",
+                message: sprintf('Strict slice view [%s] can only compile services visible from its boundary.', $slice),
             );
         }
 
@@ -343,13 +330,13 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function warmCompiled(array $serviceIds = []): void
     {
-        $this->base->warmCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
+        $this->container->warmCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
     public function flushCompiled(): void
     {
         $this->assertGlobalMutationAllowed(action: 'flush compiled artifacts');
-        $this->base->flushCompiled();
+        $this->container->flushCompiled();
     }
 
     /**
@@ -358,47 +345,47 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function rebuildCompiled(array $serviceIds = []): void
     {
-        $this->base->rebuildCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
+        $this->container->rebuildCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
     public function compileReport(array $serviceIds = []): ?CompileReport
     {
-        return $this->base->compileReport(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
+        return $this->container->compileReport(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
     public function runtimeReport(): RuntimeReport
     {
-        return $this->base->runtimeReport();
+        return $this->container->runtimeReport();
     }
 
     public function hasAlias(string $alias): bool
     {
-        return $this->base->hasAlias(alias: $alias);
+        return $this->container->hasAlias(alias: $alias);
     }
 
     public function isDeferred(string $id): bool
     {
-        return $this->base->isDeferred(id: $id);
+        return $this->container->isDeferred(id: $id);
     }
 
     public function isLazy(string $id): bool
     {
-        return $this->base->isLazy(id: $id);
+        return $this->container->isLazy(id: $id);
     }
 
     public function isCompiled(string $id): bool
     {
-        return $this->base->isCompiled(id: $id);
+        return $this->container->isCompiled(id: $id);
     }
 
     public function isWarmedUp(): bool
     {
-        return $this->base->isWarmedUp();
+        return $this->container->isWarmedUp();
     }
 
     public function scopes(): ScopeInterface
     {
-        return $this->base->scopes();
+        return $this->container->scopes();
     }
 
     /**
@@ -406,7 +393,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function tagged(string $tag): array
     {
-        return $this->resolver->taggedInContext(tag: $tag, context: $this->context);
+        return $this->resolveDependency->taggedInContext(tag: $tag, context: $this->context);
     }
 
     /**
@@ -414,17 +401,17 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function grouped(string $group): array
     {
-        return $this->resolver->groupedInContext(group: $group, context: $this->context);
+        return $this->resolveDependency->groupedInContext(group: $group, context: $this->context);
     }
 
     public function lazy(string $abstract): LazyProxy
     {
-        return $this->resolver->lazyInContext(abstract: $abstract, context: $this->context);
+        return $this->resolveDependency->lazyInContext(abstract: $abstract, context: $this->context);
     }
 
     public function exportMetrics(): string
     {
-        return $this->base->exportMetrics();
+        return $this->container->exportMetrics();
     }
 
     public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = ''): string
@@ -482,79 +469,79 @@ readonly class ContextContainer implements ContainerInterface
     public function alias(string $alias, string $abstract): void
     {
         $this->assertGlobalMutationAllowed(action: 'register aliases');
-        $this->base->alias(alias: $alias, abstract: $abstract);
+        $this->container->alias(alias: $alias, abstract: $abstract);
     }
 
-    public function bind(string $abstract, mixed $concrete = null): DependencyRegistration
+    public function bind(string $abstract, mixed $concrete = null, bool $shared = false) : DependencyRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->base->bind(abstract: $abstract, concrete: $concrete),
+            registration: $this->container->bind(abstract: $abstract, concrete: $concrete),
         );
     }
 
-    protected function applySliceMetadata(DependencyRegistration $registration): DependencyRegistration
+    protected function applySliceMetadata(DependencyRegistration $dependencyRegistration) : DependencyRegistration
     {
         $slice = SliceContext::from(context: $this->context);
         if ($slice === '') {
-            return $registration;
+            return $dependencyRegistration;
         }
 
-        if ($registration->metadata->ownerSlice === 'default') {
-            $registration->ownedBy(ownerSlice: $slice);
+        if ($dependencyRegistration->metadata->ownerSlice === 'default') {
+            $dependencyRegistration->ownedBy(ownerSlice: $slice);
         }
 
         $category = SliceContext::category(slice: $slice);
-        if ($registration->metadata->category === 'configuration' && $category !== '') {
-            $registration->category(category: $category);
+        if ($dependencyRegistration->metadata->category === 'configuration' && $category !== '') {
+            $dependencyRegistration->category(category: $category);
         }
 
-        if ($registration->metadata->visibility === 'public') {
-            $registration->visibility(visibility: SliceContext::defaultVisibility(slice: $slice));
+        if ($dependencyRegistration->metadata->visibility === 'public') {
+            $dependencyRegistration->visibility(visibility: SliceContext::defaultVisibility(slice: $slice));
         }
 
-        if ($registration->metadata->reason === 'registered service') {
-            $registration->because(reason: "registered through slice view [{$slice}]");
+        if ($dependencyRegistration->metadata->reason === 'registered service') {
+            $dependencyRegistration->because(reason: sprintf('registered through slice view [%s]', $slice));
         }
 
-        if ($registration->metadata->provenance === 'manual registration') {
-            $registration->provenance(provenance: "slice view [{$slice}]");
+        if ($dependencyRegistration->metadata->provenance === 'manual registration') {
+            $dependencyRegistration->provenance(provenance: sprintf('slice view [%s]', $slice));
         }
 
         if ($this->strictSliceBoundaries()) {
             $category = SliceContext::category(slice: $slice);
             if ($category !== '') {
-                $registration->lockOwnership(ownerSlice: $slice, category: $category);
+                $dependencyRegistration->lockOwnership(ownerSlice: $slice, category: $category);
             }
         }
 
-        return $registration;
+        return $dependencyRegistration;
     }
 
     public function defer(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->base->defer(abstract: $abstract, concrete: $concrete),
+            registration: $this->container->defer(abstract: $abstract, concrete: $concrete),
         );
     }
 
     public function singleton(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->base->singleton(abstract: $abstract, concrete: $concrete),
+            registration: $this->container->singleton(abstract: $abstract, concrete: $concrete),
         );
     }
 
     public function scoped(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->base->scoped(abstract: $abstract, concrete: $concrete),
+            registration: $this->container->scoped(abstract: $abstract, concrete: $concrete),
         );
     }
 
     public function instance(string $abstract, object $instance): void
     {
-        $this->base->instance(abstract: $abstract, instance: $instance);
-        $registration = $this->resolver->registrations()->get(abstract: $abstract);
+        $this->container->instance(abstract: $abstract, instance: $instance);
+        $registration = $this->resolveDependency->registrations()->get(abstract: $abstract);
         if ($registration instanceof DependencyRegistration) {
             $this->applySliceMetadata(registration: $registration);
         }
@@ -565,13 +552,13 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function get(string $id): mixed
     {
-        return $this->resolver->getInContext(id: $id, context: $this->context);
+        return $this->resolveDependency->getInContext(id: $id, context: $this->context);
     }
 
     public function extend(string $abstract, callable $closure): void
     {
         $this->assertOwnedMutation(abstract: $abstract, action: 'extend');
-        $this->base->extend(abstract: $abstract, closure: $closure);
+        $this->container->extend(abstract: $abstract, closure: $closure);
     }
 
     protected function assertOwnedMutation(string $abstract, string $action): void
@@ -581,18 +568,18 @@ readonly class ContextContainer implements ContainerInterface
             return;
         }
 
-        $registration = $this->resolver->registrations()->get(
-            abstract: $this->resolver->registrations()->resolveAlias(abstract: $abstract),
+        $registration = $this->resolveDependency->registrations()->get(
+            abstract: $this->resolveDependency->registrations()->resolveAlias(abstract: $abstract),
         );
         if (! $registration instanceof DependencyRegistration) {
             throw new InvalidArgumentException(
-                message: "Strict slice view [{$slice}] cannot {$action} unknown service [{$abstract}].",
+                message: sprintf('Strict slice view [%s] cannot %s unknown service [%s].', $slice, $action, $abstract),
             );
         }
 
         if ($registration->metadata->ownerSlice !== $slice) {
             throw new InvalidArgumentException(
-                message: "Strict slice view [{$slice}] cannot {$action} service [{$abstract}] owned by [{$registration->metadata->ownerSlice}].",
+                message: sprintf('Strict slice view [%s] cannot %s service [%s] owned by [%s].', $slice, $action, $abstract, $registration->metadata->ownerSlice),
             );
         }
     }
@@ -600,14 +587,14 @@ readonly class ContextContainer implements ContainerInterface
     public function decorate(string $abstract, callable|DecoratorInterface|string $decorator): void
     {
         $this->assertOwnedMutation(abstract: $abstract, action: 'decorate');
-        $this->base->decorate(abstract: $abstract, decorator: $decorator);
+        $this->container->decorate(abstract: $abstract, decorator: $decorator);
     }
 
     public function when(string $consumer): RegisterForTarget
     {
         $this->assertGlobalMutationAllowed(action: 'register contextual rules');
 
-        return $this->base->when(consumer: $consumer);
+        return $this->container->when(consumer: $consumer);
     }
 
     public function tag(string|array $abstracts, string|array $tags): void
@@ -618,7 +605,7 @@ readonly class ContextContainer implements ContainerInterface
             }
         }
 
-        $this->base->tag(abstracts: $abstracts, tags: $tags);
+        $this->container->tag(abstracts: $abstracts, tags: $tags);
     }
 
     /**
@@ -631,16 +618,16 @@ readonly class ContextContainer implements ContainerInterface
         }
 
         return new self(
-            base    : $this->base,
-            resolver: $this->resolver,
             context : array_replace($this->context, $context),
+            base    : $this->container,
+            resolver: $this->resolveDependency,
         );
     }
 
     public function forSlice(string $slice): ContainerInterface
     {
         if (SliceContext::isRoot(slice: $slice)) {
-            return new RootCompositionView(base: $this->base, resolver: $this->resolver, context: []);
+            return new RootCompositionView(context: [], base: $this->container, resolver: $this->resolveDependency);
         }
 
         $context = SliceContext::with(context: $this->context, slice: $slice);
@@ -654,11 +641,11 @@ readonly class ContextContainer implements ContainerInterface
     protected function sliceView(array $context): ContainerInterface
     {
         return match (SliceContext::category(slice: SliceContext::from(context: $context))) {
-            'flow'          => new FlowSliceView(base: $this->base, resolver: $this->resolver, context: $context),
-            'capability'    => new CapabilitySliceView(base: $this->base, resolver: $this->resolver, context: $context),
-            'configuration' => new ConfigurationSliceView(base: $this->base, resolver: $this->resolver, context: $context),
-            'foundation'    => new FoundationSliceView(base: $this->base, resolver: $this->resolver, context: $context),
-            default         => new self(base: $this->base, resolver: $this->resolver, context: $context),
+            'flow'          => new FlowSliceView(context: $context, base: $this->container, resolver: $this->resolveDependency),
+            'capability'    => new CapabilitySliceView(context: $context, base: $this->container, resolver: $this->resolveDependency),
+            'configuration' => new ConfigurationSliceView(context: $context, base: $this->container, resolver: $this->resolveDependency),
+            'foundation'    => new FoundationSliceView(context: $context, base: $this->container, resolver: $this->resolveDependency),
+            default         => new self(context: $context, base: $this->container, resolver: $this->resolveDependency),
         };
     }
 }

@@ -17,11 +17,11 @@ interface IdentityInterface
 {
     public function issue(
         User $user,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): IssuedAuthentication;
 
-    public function clear(AuthenticationContext $context = null) : void;
+    public function clear(?AuthenticationContext $authenticationContext = null) : void;
 
     public function sessionIdentity(): ?SessionIdentityInterface;
 

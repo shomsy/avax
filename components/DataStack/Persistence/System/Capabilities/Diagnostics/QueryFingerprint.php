@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics;
 
+use Stringable;
+
 /**
  * Normalizes queries to patterns for grouping and comparison.
  *
  * Replaces literal values with placeholders to create a fingerprint
  * that can be used to group similar queries.
  */
-final readonly class QueryFingerprint
+final readonly class QueryFingerprint implements Stringable
 {
     public function __construct(
         public string $originalQuery,
@@ -39,9 +41,9 @@ final readonly class QueryFingerprint
      */
     public function matches(string $query): bool
     {
-        $other = self::fromQuery($query);
+        $queryFingerprint = self::fromQuery($query);
 
-        return $this->hash === $other->hash;
+        return $this->hash === $queryFingerprint->hash;
     }
 
     /**
@@ -70,22 +72,21 @@ final readonly class QueryFingerprint
 
         // Replace numeric literals (integers and floats)
         // Be careful not to replace numbers in table/column names
-        $normalized = preg_replace('/\b\d+\.\d+\b/', '?', $normalized);
-        $normalized = preg_replace('/\b\d+\b/', '?', $normalized);
+        $normalized = preg_replace('/\b\d+\.\d+\b/', '?', (string) $normalized);
+        $normalized = preg_replace('/\b\d+\b/', '?', (string) $normalized);
 
         // Normalize whitespace
-        $normalized = preg_replace('/\s+/', ' ', $normalized);
-        $normalized = trim($normalized);
+        $normalized = preg_replace('/\s+/', ' ', (string) $normalized);
 
-        return $normalized;
+        return trim((string) $normalized);
     }
 
     /**
      * Checks if this fingerprint matches another fingerprint.
      */
-    public function matchesFingerprint(QueryFingerprint $other): bool
+    public function matchesFingerprint(QueryFingerprint $queryFingerprint) : bool
     {
-        return $this->hash === $other->hash;
+        return $this->hash === $queryFingerprint->hash;
     }
 
     /**
@@ -93,6 +94,6 @@ final readonly class QueryFingerprint
      */
     public function __toString(): string
     {
-        return $this->pattern;
+        return (string) $this->pattern;
     }
 }

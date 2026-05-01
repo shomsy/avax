@@ -14,9 +14,9 @@ final class ConfigValidator
      */
     private array $schemas = [];
 
-    public function register(ConfigSchema $schema): self
+    public function register(ConfigSchema $configSchema) : self
     {
-        $this->schemas[$schema->name] = $schema;
+        $this->schemas[$configSchema->name] = $configSchema;
 
         return $this;
     }
@@ -32,7 +32,7 @@ final class ConfigValidator
     {
         $violations = [];
 
-        foreach ($this->schemas as $name => $schema) {
+        foreach (array_keys($this->schemas) as $name) {
             $section    = $allConfig[$name] ?? [];
             $violations = [...$violations, ...$this->validate($name, $section)];
         }
@@ -53,7 +53,7 @@ final class ConfigValidator
             return [new ConfigSchemaViolation(
                 severity: ConfigSchemaViolation::SEVERITY_WARNING,
                 key     : $schemaName,
-                message : "No schema registered for '{$schemaName}'",
+                message : sprintf("No schema registered for '%s'", $schemaName),
             )];
         }
 
@@ -61,7 +61,7 @@ final class ConfigValidator
         $violations = [];
 
         foreach ($schema->fields as $fieldName => $field) {
-            $dotKey = "{$schemaName}.{$fieldName}";
+            $dotKey = sprintf('%s.%s', $schemaName, $fieldName);
             $exists = array_key_exists($fieldName, $config);
             $value  = $exists ? $config[$fieldName] : null;
 
@@ -70,10 +70,10 @@ final class ConfigValidator
                     $violations[] = new ConfigSchemaViolation(
                         severity   : ConfigSchemaViolation::SEVERITY_ERROR,
                         key        : $dotKey,
-                        message    : "Required config key '{$dotKey}' is missing",
+                        message    : sprintf("Required config key '%s' is missing", $dotKey),
                         remediation: $field->description !== null
-                                         ? "Set {$dotKey} ({$field->description})"
-                                         : "Set {$dotKey} in config/{$schemaName}.php or via environment variable",
+                                         ? sprintf('Set %s (%s)', $dotKey, $field->description)
+                                         : sprintf('Set %s in config/%s.php or via environment variable', $dotKey, $schemaName),
                     );
                 }
 
@@ -108,11 +108,11 @@ final class ConfigValidator
     /**
      * @return list<ConfigSchemaViolation>
      */
-    private function validateType(string $key, mixed $value, ConfigSchemaField $field): array
+    private function validateType(string $key, mixed $value, ConfigSchemaField $configSchemaField) : array
     {
         $violations = [];
 
-        $isValid = match ($field->type) {
+        $isValid = match ($configSchemaField->type) {
             ConfigSchemaField::TYPE_STRING           => is_string($value),
             ConfigSchemaField::TYPE_NON_EMPTY_STRING => is_string($value) && $value !== '',
             ConfigSchemaField::TYPE_INT              => is_int($value),
@@ -131,13 +131,13 @@ final class ConfigValidator
                 message    : sprintf(
                     "Config '%s' expected type '%s', got '%s'",
                     $key,
-                    $field->type,
+                    $configSchemaField->type,
                     get_debug_type($value),
                 ),
                 remediation: sprintf(
                     'Change %s to a %s value',
                     $key,
-                    $field->type,
+                    $configSchemaField->type,
                 ),
             );
         }

@@ -14,12 +14,12 @@ final readonly class SessionLifecycleMiddleware
         private Session $session,
     ) {}
 
-    public function handle(ServerRequest $request, Closure $next) : mixed
+    public function handle(ServerRequest $serverRequest, Closure $next) : mixed
     {
         $this->session->start();
         $this->session->ageFlash();
 
-        $response = $next($request);
+        $response = $next($serverRequest);
 
         // Write close is handled implicitly by the destructors/flush in the new arch,
         // but if we were using native sessions, we would call session_write_close() here.

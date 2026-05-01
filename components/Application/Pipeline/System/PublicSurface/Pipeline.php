@@ -98,7 +98,7 @@ final class HookRegistry
 
     public function has(string $hook) : bool
     {
-        return isset($this->hooks[$hook]) && count($this->hooks[$hook]) > 0;
+        return isset($this->hooks[$hook]) && $this->hooks[$hook] !== [];
     }
 
     public function count(string $hook) : int

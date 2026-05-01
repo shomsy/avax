@@ -30,10 +30,10 @@ final readonly class BuildCompiledCache
 
     public function fromConfiguration(CompiledCacheConfiguration $compiledCacheConfiguration): CompiledCacheContract
     {
-        return new class ($compiledCacheConfiguration->directory, $this->clock) implements CompiledCacheContract {
+        return new readonly class ($compiledCacheConfiguration->directory, $this->clock) implements CompiledCacheContract {
             public function __construct(
-                private readonly string $directory,
-                private readonly Clock $clock,
+                private string $directory,
+                private Clock  $clock,
             ) {
             }
 
@@ -43,9 +43,9 @@ final readonly class BuildCompiledCache
                 $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
 
                 $readCompiledCache = new ReadCompiledCache(
+                    clock    : $this->clock,
                     directory: $compiledCacheDirectory,
                     manifest : $compiledCacheManifest,
-                    clock    : $this->clock,
                 );
 
                 return $readCompiledCache->read(name: $name, build: $build, sources: $compiledCacheSources);
@@ -57,9 +57,9 @@ final readonly class BuildCompiledCache
                 $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
 
                 $compileCache = new CompileCache(
+                    clock    : $this->clock,
                     directory: $compiledCacheDirectory,
                     manifest : $compiledCacheManifest,
-                    clock    : $this->clock,
                 );
 
                 return $compileCache->compile(name: $name, build: $build, sources: $compiledCacheSources);

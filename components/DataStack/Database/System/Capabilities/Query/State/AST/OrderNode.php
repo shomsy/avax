@@ -11,13 +11,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST
  */
 final readonly class OrderNode
 {
-    public string $type;
-
-    public ?string $sql;
-
     public string $direction;
-
-    public ?string $column;
 
     /**
      * @param string|null $column    The technical identifier of the field to be used for sorting.
@@ -26,15 +20,12 @@ final readonly class OrderNode
      * @param string      $type      The classification of the sorting node (e.g., 'Basic', 'Raw').
      */
     public function __construct(
-        string $column = null,
-        string $direction = null,
-        string $sql = null,
-        string $type = 'Basic',
+        public ?string $column = null,
+        ?string        $direction = null,
+        public ?string $sql = null,
+        public string  $type = 'Basic',
     ) {
         $direction ??= 'ASC';
-        $this->column = $column;
         $this->direction = $direction;
-        $this->sql = $sql;
-        $this->type = $type;
     }
 }

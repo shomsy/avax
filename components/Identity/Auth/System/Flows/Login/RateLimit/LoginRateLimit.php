@@ -17,9 +17,9 @@ final readonly class LoginRateLimit
     private int $maxAttempts;
 
     public function __construct(
-        private LoginRateLimitStorageInterface $storage,
+        private LoginRateLimitStorageInterface $loginRateLimitStorage,
         private Clock $clock,
-        int $maxAttempts = null,
+        ?int                                   $maxAttempts = null,
         private int $decaySeconds = 60,
     ) {
         $maxAttempts ??= 5;
@@ -39,22 +39,22 @@ final readonly class LoginRateLimit
     public function check(string $identifier): void
     {
         $identifier = $this->normalizeIdentifier(identifier: $identifier);
-        $attempts = $this->storage->get(identifier: $identifier);
+        $attempts = $this->loginRateLimitStorage->get(identifier: $identifier);
 
         if ($attempts >= $this->maxAttempts) {
-            $lastAttemptTime = $this->storage->getLastAttemptTime(identifier: $identifier);
+            $lastAttemptTime = $this->loginRateLimitStorage->getLastAttemptTime(identifier: $identifier);
             $elapsed = $this->clock->now()->getTimestamp() - $lastAttemptTime;
 
             if ($elapsed < $this->decaySeconds) {
                 $retryAfter = max(0, $this->decaySeconds - $elapsed);
 
                 throw new RateLimitException(
-                    message   : "Too many login attempts. Please try again in {$retryAfter} seconds.",
+                    message   : sprintf('Too many login attempts. Please try again in %s seconds.', $retryAfter),
                     retryAfter: $retryAfter,
                 );
             }
 
-            $this->storage->reset(identifier: $identifier);
+            $this->loginRateLimitStorage->reset(identifier: $identifier);
         }
     }
 
@@ -66,12 +66,12 @@ final readonly class LoginRateLimit
     public function reset(string $identifier): void
     {
         $identifier = $this->normalizeIdentifier(identifier: $identifier);
-        $this->storage->reset(identifier: $identifier);
+        $this->loginRateLimitStorage->reset(identifier: $identifier);
     }
 
     public function recordFailed(string $identifier): void
     {
         $identifier = $this->normalizeIdentifier(identifier: $identifier);
-        $this->storage->increment(identifier: $identifier);
+        $this->loginRateLimitStorage->increment(identifier: $identifier);
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\PublicSurface;
 
-final class Response
+final readonly class Response
 {
     public function __construct(
         private int $statusCode = 200,

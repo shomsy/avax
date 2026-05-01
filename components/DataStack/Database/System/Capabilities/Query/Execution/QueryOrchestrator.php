@@ -16,34 +16,28 @@ final class QueryOrchestrator
 {
     private bool $isPretending = false;
 
-    private ?ExecutionScope $scope
-        = null {
-        get {
-            return $this->scope;
-        }
-    }
-
-    private readonly ExecutorInterface $executor;
-
     /**
      * @param ExecutorInterface   $executor Low-level executor.
-     * @param ExecutionScope|null $scope    Correlation scope (optional).
+     * @param ExecutionScope|null $executionScope Correlation scope (optional).
      *
      * @throws RandomException
      */
     public function __construct(
-        ExecutorInterface $executor,
-        ExecutionScope $scope = null,
+        private readonly ExecutorInterface $executor,
+        private ?ExecutionScope            $executionScope
+        = null {
+            get {
+                return $this->executionScope;
+            }
+        },
     ) {
-        $this->executor = $executor;
-        $this->scope = $scope;
-        $this->scope ??= ExecutionScope::fresh();
+        $this->executionScope ??= ExecutionScope::fresh();
     }
 
     public function __clone()
     {
-        if ($this->scope !== null) {
-            $this->scope = clone $this->scope;
+        if ($this->executionScope instanceof ExecutionScope) {
+            $this->executionScope = clone $this->executionScope;
         }
     }
 
@@ -68,7 +62,7 @@ final class QueryOrchestrator
             return [];
         }
 
-        return $this->executor->query(sql: $sql, bindings: $bindings, scope: $this->scope);
+        return $this->executor->query(sql: $sql, bindings: $bindings, scope: $this->executionScope);
     }
 
     private function logPretend(string $sql): void
@@ -83,7 +77,7 @@ final class QueryOrchestrator
      */
     public function execute(
         string $sql,
-        array $bindings = null,
+        ?array $bindings = null,
     ): ExecutionResult {
         $bindings ??= [];
 
@@ -93,13 +87,13 @@ final class QueryOrchestrator
             return ExecutionResult::success(affectedRows: 1);
         }
 
-        return $this->executor->execute(sql: $sql, bindings: $bindings, scope: $this->scope);
+        return $this->executor->execute(sql: $sql, bindings: $bindings, scope: $this->executionScope);
     }
 
-    public function withScope(ExecutionScope $scope): self
+    public function withScope(ExecutionScope $executionScope) : self
     {
         return clone (object: $this, withProperties: [
-            'scope' => $scope,
+            'scope' => $executionScope,
         ]);
     }
 }

@@ -13,5 +13,5 @@ interface RouterInterface
 
     public function post(string $u, mixed $a): void;
 
-    public function dispatch(RequestInterface $r): ResponseInterface;
+    public function dispatch(RequestInterface $request) : ResponseInterface;
 }

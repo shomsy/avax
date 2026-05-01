@@ -11,7 +11,7 @@ use Avax\Framework\System\Capabilities\ConfigValidation\ConfigValidator;
 final readonly class ValidateConfig
 {
     public function __construct(
-        private ConfigValidator $validator = new ConfigValidator(),
+        private ConfigValidator $configValidator = new ConfigValidator(),
     ) {}
 
     /**
@@ -19,7 +19,7 @@ final readonly class ValidateConfig
      */
     public static function printReport(array $violations) : int
     {
-        if (empty($violations)) {
+        if ($violations === []) {
             echo "\033[32mConfig validation passed.\033[0m\n";
 
             return 0;
@@ -55,9 +55,9 @@ final readonly class ValidateConfig
         return $errorCount > 0 ? 1 : 0;
     }
 
-    public function registerSchema(ConfigSchema $schema) : self
+    public function registerSchema(ConfigSchema $configSchema) : self
     {
-        $this->validator->register($schema);
+        $this->configValidator->register($configSchema);
 
         return $this;
     }
@@ -68,6 +68,6 @@ final readonly class ValidateConfig
      */
     public function validate(array $config): array
     {
-        return $this->validator->validateAll($config);
+        return $this->configValidator->validateAll($config);
     }
 }

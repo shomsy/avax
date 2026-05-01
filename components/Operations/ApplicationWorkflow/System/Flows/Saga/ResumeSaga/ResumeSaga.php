@@ -5,80 +5,54 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ResumeSaga;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaStepDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\SagaInstance;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\SagaInstanceStatus;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaState\StoreSagaState;
 
 final readonly class ResumeSaga
 {
-    public function __construct(
-        private StoreSagaState $storeSagaState,
-    ) {}
-
     public function findRecoverable(): array
     {
         return [];
     }
 
     public function resume(
-        SagaInstance $failedInstance,
-        SagaDefinition $definition,
+        SagaInstance   $sagaInstance,
+        SagaDefinition $sagaDefinition,
     ): SagaInstance {
-        if ($failedInstance->status !== SagaInstanceStatus::FAILED) {
+        if ($sagaInstance->status !== SagaInstanceStatus::FAILED) {
             throw new SagaRecoveryFailure(
-                message: sprintf('Saga %s is not failed, cannot resume.', $failedInstance->id),
+                message: sprintf('Saga %s is not failed, cannot resume.', $sagaInstance->id),
             );
         }
 
-        $failedStep = $failedInstance->currentStepName;
+        $failedStep = $sagaInstance->currentStepName;
         if ($failedStep === null) {
             throw new SagaRecoveryFailure(
-                message: sprintf('Cannot determine failed step for saga %s.', $failedInstance->id),
+                message: sprintf('Cannot determine failed step for saga %s.', $sagaInstance->id),
             );
         }
 
-        $stepDef = $definition->getStep(name: $failedStep);
-        if ($stepDef === null) {
+        $stepDef = $sagaDefinition->getStep(name: $failedStep);
+        if (! $stepDef instanceof SagaStepDefinition) {
             throw new SagaRecoveryFailure(
                 message: sprintf('Step %s not found in definition.', $failedStep),
             );
         }
 
-        return $failedInstance->retry();
+        return $sagaInstance->retry();
     }
 
-    public function canRecover(SagaInstance $instance): bool
+    public function canRecover(SagaInstance $sagaInstance) : bool
     {
-        return in_array($instance->status, [
-            SagaInstanceStatus::FAILED,
-        ], true);
+        return $sagaInstance->status === SagaInstanceStatus::FAILED;
     }
 }
 
 final readonly class SagaRecoveryPlan
 {
-    public string $sagaId;
-
-    public ?string $failedStep;
-
-    public int $attemptNumber;
-
-    public array $recoverySteps;
-
-    public bool $isRecoverable;
-
-    private function __construct(
-        string $sagaId,
-        ?string $failedStep,
-        int $attemptNumber,
-        array $recoverySteps,
-        bool $isRecoverable,
-    ) {
-        $this->sagaId     = $sagaId;
-        $this->failedStep = $failedStep;
-        $this->attemptNumber = $attemptNumber;
-        $this->recoverySteps = $recoverySteps;
-        $this->isRecoverable = $isRecoverable;
+    private function __construct(public string $sagaId, public ?string $failedStep, public int $attemptNumber, public array $recoverySteps, public bool $isRecoverable) {
     }
 
     public static function create(

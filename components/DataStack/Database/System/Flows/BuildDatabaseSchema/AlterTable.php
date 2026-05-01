@@ -10,9 +10,9 @@ final class AlterTable
 {
     public static function execute(string $table, callable $define): Blueprint
     {
-        $bp = new Blueprint($table);
-        $define($bp);
+        $blueprint = new Blueprint($table);
+        $define($blueprint);
 
-        return $bp;
+        return $blueprint;
     }
 }

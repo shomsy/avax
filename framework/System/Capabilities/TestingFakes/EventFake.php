@@ -32,7 +32,7 @@ final class EventFake
         $this->dispatchedPayloads[$event][] = $payload;
     }
 
-    public function assertDispatched(string $event, int $times = null): self
+    public function assertDispatched(string $event, ?int $times = null) : self
     {
         if (! $this->wasDispatched($event)) {
             throw new TestingFakeException(
@@ -79,7 +79,7 @@ final class EventFake
 
     public function assertNothingDispatched(): self
     {
-        if (! empty($this->dispatched)) {
+        if ($this->dispatched !== []) {
             throw new TestingFakeException(
                 sprintf(
                     'Expected no events to be dispatched, but %d event(s) were: %s',

@@ -9,13 +9,13 @@ namespace Avax\Framework\System\Capabilities\ConfigExplanation;
  */
 final readonly class ConfigSource
 {
-    public const SOURCE_FILE = 'file';
+    public const string SOURCE_FILE = 'file';
 
-    public const SOURCE_ENV = 'env';
+    public const string SOURCE_ENV = 'env';
 
-    public const SOURCE_OVERRIDE = 'override';
+    public const string SOURCE_OVERRIDE = 'override';
 
-    public const SOURCE_DEFAULT = 'default';
+    public const string SOURCE_DEFAULT = 'default';
 
     public function __construct(
         public string $key,

@@ -6,7 +6,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\Con
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
+require_once dirname(3, path: __DIR__) . '/bootstrap.php';
 
 final class ManageScopesSmokeTest {}
 

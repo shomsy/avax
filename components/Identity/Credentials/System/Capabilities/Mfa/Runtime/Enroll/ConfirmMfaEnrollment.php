@@ -15,6 +15,7 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\BackupCodeSet;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\GenerateBackupCodes;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\MfaEnrollmentFailed;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records\MfaEnrollmentRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records\MfaMethodRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Totp\TotpInterface;
@@ -41,18 +42,18 @@ final readonly class ConfirmMfaEnrollment
      * @throws Unauthenticated
      * @throws RandomException
      */
-    public function execute(ConfirmMfaEnrollmentData $data): BackupCodeSet
+    public function execute(ConfirmMfaEnrollmentData $confirmMfaEnrollmentData) : BackupCodeSet
     {
         $user = $this->currentAuthentication->read()->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
         $userId = new UserId(value: $user->id);
         $record = $this->mfaStore->findPendingEnrollment(userId: $userId);
 
-        if ($record === null) {
+        if (! $record instanceof MfaEnrollmentRecord) {
             throw MfaEnrollmentFailed::missingEnrollment();
         }
 
@@ -64,29 +65,29 @@ final readonly class ConfirmMfaEnrollment
             throw MfaEnrollmentFailed::expiredEnrollment();
         }
 
-        $verification = $this->totp->verify(secret: $record->secret, code: $data->code, moment: $now);
+        $totpVerification = $this->totp->verify(secret: $record->secret, code: $confirmMfaEnrollmentData->code, moment: $now);
 
-        if (! $verification->accepted || $verification->timeStep === null) {
+        if (! $totpVerification->accepted || $totpVerification->timeStep === null) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.mfa.enrollment.failed',
                 occurredAt: $now,
                 context   : [
                     'user_id' => $user->id,
-                    'reason' => $verification->reason,
+                    'reason' => $totpVerification->reason,
                 ],
             ));
 
             throw MfaEnrollmentFailed::invalidCode();
         }
 
-        $generated = $this->generateBackupCodes->execute();
+        $generatedBackupCodes = $this->generateBackupCodes->execute();
         $this->mfaStore->saveMethod(record: new MfaMethodRecord(
             userId              : $userId,
             method              : $record->method,
             secret              : $record->secret,
             enabledAt           : $now,
-            backupCodes         : $generated->records,
-            lastAcceptedTimeStep: $verification->timeStep,
+            backupCodes         : $generatedBackupCodes->records,
+            lastAcceptedTimeStep: $totpVerification->timeStep,
         ));
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.mfa.enrollment.completed',
@@ -104,8 +105,13 @@ final readonly class ConfirmMfaEnrollment
                 'method' => $record->method->value,
             ],
         ));
-        $context = $this->currentAuthentication->read();
+        $authenticationContext = $this->currentAuthentication->read();
         $this->currentAuthentication->store(context: AuthenticationContext::authenticated(
+            sessionId           : $authenticationContext->sessionId(),
+            accessTokenId       : $authenticationContext->accessTokenId(),
+            accessTokenExpiresAt: $authenticationContext->accessTokenExpiresAt(),
+            refreshTokenId      : $authenticationContext->refreshTokenId(),
+            mfaVerifiedAt       : $now,
             user                : new AuthenticatedUser(
                 id           : $user->id,
                 email        : $user->email,
@@ -115,14 +121,9 @@ final readonly class ConfirmMfaEnrollment
                 emailVerified: $user->emailVerified,
                 mfaEnabled   : true,
             ),
-            mode                : $context->mode(),
-            sessionId           : $context->sessionId(),
-            accessTokenId       : $context->accessTokenId(),
-            accessTokenExpiresAt: $context->accessTokenExpiresAt(),
-            refreshTokenId      : $context->refreshTokenId(),
-            mfaVerifiedAt       : $now,
+            mode                : $authenticationContext->mode(),
         ));
 
-        return $generated->backupCodeSet;
+        return $generatedBackupCodes->backupCodeSet;
     }
 }

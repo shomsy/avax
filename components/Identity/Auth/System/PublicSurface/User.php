@@ -14,12 +14,12 @@ class User
         public readonly ?string $name = null,
     ) {}
 
-    public static function fromEntity(UserEntity $entity): self
+    public static function fromEntity(UserEntity $userEntity) : self
     {
         return new self(
-            id: $entity->id->value,
-            email: $entity->email->value,
-            name: $entity->name?->value,
+            id   : $userEntity->id->value,
+            email: $userEntity->email->value,
+            name : $userEntity->name?->value,
         );
     }
 }

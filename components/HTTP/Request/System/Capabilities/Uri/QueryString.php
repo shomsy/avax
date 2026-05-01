@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Uri;
 
-final class QueryString
+final readonly class QueryString
 {
     public function __construct(
         private string $query,

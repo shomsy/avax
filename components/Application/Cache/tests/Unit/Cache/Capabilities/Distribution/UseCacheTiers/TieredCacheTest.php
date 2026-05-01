@@ -32,7 +32,7 @@ final class TieredCacheTest extends TestCase
             record: $this->makeRecord(value: 'value_1'),
         );
 
-        $tieredCache->read(key: $this->makeKey(key: 'key_1'), clock: $this->frozenClock);
+        $tieredCache->read(clock: $this->frozenClock, key: $this->makeKey(key: 'key_1'));
 
         $this->assertTrue(condition: $tieredCache->getTier(name: CacheTierName::L1_MEMORY)->exists(key: $this->makeKey(key: 'key_1')));
     }
@@ -78,7 +78,7 @@ final class TieredCacheTest extends TestCase
             record: $this->makeRecord(value: 'value_2'),
         );
 
-        $result = $tieredCache->read(key: $this->makeKey(key: 'key_2'), clock: $this->frozenClock);
+        $result = $tieredCache->read(clock: $this->frozenClock, key: $this->makeKey(key: 'key_2'));
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
     }
@@ -87,7 +87,7 @@ final class TieredCacheTest extends TestCase
     {
         $tieredCache = $this->createTieredCache();
 
-        $result = $tieredCache->read(key: $this->makeKey(key: 'missing'), clock: $this->frozenClock);
+        $result = $tieredCache->read(clock: $this->frozenClock, key: $this->makeKey(key: 'missing'));
 
         $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
     }
@@ -147,7 +147,7 @@ final class TieredCacheTest extends TestCase
             record: $this->makeRecord(value: 'value_1'),
         );
 
-        $tieredCache->read(key: $this->makeKey(key: 'key_1'), clock: $this->frozenClock);
+        $tieredCache->read(clock: $this->frozenClock, key: $this->makeKey(key: 'key_1'));
 
         $this->assertTrue(condition: $tieredCache->getTier(name: CacheTierName::L1_MEMORY)->exists(key: $this->makeKey(key: 'key_1')));
         $this->assertTrue(condition: $tieredCache->getTier(name: CacheTierName::L2_DISTRIBUTED)->exists(key: $this->makeKey(key: 'key_1')));

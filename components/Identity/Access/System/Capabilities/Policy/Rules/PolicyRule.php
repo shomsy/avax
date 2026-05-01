@@ -14,7 +14,7 @@ final readonly class PolicyRule
         public string $reason,
     ) {}
 
-    public function applies(string $action, object $resource): bool
+    public function applies(string $action) : bool
     {
         return $this->action === $action;
     }
@@ -52,7 +52,7 @@ final readonly class AttributeCondition
         return $userRole === $requiredRole;
     }
 
-    public static function withinHours(int $startHour, int $endHour, object $resource, array $context): bool
+    public static function withinHours(int $startHour, int $endHour) : bool
     {
         $hour = (int) date('H');
 

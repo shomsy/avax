@@ -31,16 +31,13 @@ final class TransactionScope
     /** @var bool Logical flag indicating if the technical transaction window has been finalized/committed. */
     private bool $completed = false;
 
-    private readonly TransactionManagerInterface $manager;
-
     /**
-     * @param TransactionManagerInterface $manager The active technical authority responsible for atomicity and
+     * @param TransactionManagerInterface $transactionManager The active technical authority responsible for atomicity and
      *                                             persistence.
      */
-    public function __construct(TransactionManagerInterface $manager)
+    public function __construct(private readonly TransactionManagerInterface $transactionManager)
     {
-        $this->manager = $manager;
-        $this->manager->begin();
+        $this->transactionManager->begin();
     }
 
     /**
@@ -55,7 +52,7 @@ final class TransactionScope
     {
         if (! $this->completed) {
             try {
-                $this->manager->rollback();
+                $this->transactionManager->rollback();
             } catch (Throwable) {
                 // Defensive: isolation of secondary destruction failures to prevent process termination.
             }
@@ -72,7 +69,7 @@ final class TransactionScope
      */
     public function complete(): void
     {
-        $this->manager->commit();
+        $this->transactionManager->commit();
         $this->completed = true;
     }
 }

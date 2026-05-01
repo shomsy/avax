@@ -32,7 +32,7 @@ interface PersistenceInterface
 
     public function remove(object $entity): void;
 
-    public function flush(string $connectionName = null) : void;
+    public function flush(?string $connectionName = null) : void;
 
     public function clear(): void;
 }

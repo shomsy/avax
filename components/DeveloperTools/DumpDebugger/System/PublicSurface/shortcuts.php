@@ -17,6 +17,7 @@ if (! function_exists('dd')) {
         foreach ($vars as $var) {
             dump($var);
         }
+
         exit(1);
     }
 }

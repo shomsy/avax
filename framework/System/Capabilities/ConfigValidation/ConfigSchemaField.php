@@ -9,21 +9,21 @@ namespace Avax\Framework\System\Capabilities\ConfigValidation;
  */
 final readonly class ConfigSchemaField
 {
-    public const TYPE_STRING = 'string';
+    public const string TYPE_STRING = 'string';
 
-    public const TYPE_INT = 'int';
+    public const string TYPE_INT = 'int';
 
-    public const TYPE_FLOAT = 'float';
+    public const string TYPE_FLOAT = 'float';
 
-    public const TYPE_BOOL = 'bool';
+    public const string TYPE_BOOL = 'bool';
 
-    public const TYPE_ARRAY = 'array';
+    public const string TYPE_ARRAY = 'array';
 
-    public const TYPE_NON_EMPTY_STRING = 'non-empty-string';
+    public const string TYPE_NON_EMPTY_STRING = 'non-empty-string';
 
-    public const TYPE_URL = 'url';
+    public const string TYPE_URL = 'url';
 
-    public const TYPE_EMAIL = 'email';
+    public const string TYPE_EMAIL = 'email';
 
     /**
      * @param list<mixed> $allowed

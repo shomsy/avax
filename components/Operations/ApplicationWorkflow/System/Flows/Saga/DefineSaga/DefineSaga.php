@@ -14,13 +14,13 @@ final readonly class DefineSaga
         private RegisterSagaDefinition $registerSagaDefinition = new RegisterSagaDefinition(),
     ) {}
 
-    public function validate(SagaDefinition $definition): void
+    public function validate() : void
     {
-        $this->validateSagaDefinition->validate(definition: $definition);
+        $this->validateSagaDefinition->validate();
     }
 
-    public function register(SagaDefinition $definition): SagaDefinition
+    public function register(SagaDefinition $sagaDefinition) : SagaDefinition
     {
-        return $this->registerSagaDefinition->register(definition: $definition);
+        return $this->registerSagaDefinition->register(definition: $sagaDefinition);
     }
 }

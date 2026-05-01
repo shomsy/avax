@@ -16,7 +16,7 @@ use DateInterval;
 
 final class Security
 {
-    private static ?SecurityAuditLog $auditLog = null;
+    private static ?SecurityAuditLog $securityAuditLog = null;
 
     public static function generateCsrfToken(): string
     {
@@ -53,7 +53,7 @@ final class Security
 
     public static function fillable(array $input, array $fillable): array
     {
-        return (new MassAssignmentGuard())->onlyFillable(input: $input, fillable: $fillable);
+        return new MassAssignmentGuard()->onlyFillable(input: $input, fillable: $fillable);
     }
 
     public static function applySecurityHeaders(ResponseFormatter $responseFormatter): ResponseFormatter
@@ -61,9 +61,9 @@ final class Security
         return SecurityHeaders::apply(formatter: $responseFormatter);
     }
 
-    public static function generateSignedUrl(string $path, DateInterval $ttl): string
+    public static function generateSignedUrl(string $path, DateInterval $dateInterval) : string
     {
-        return SignedUrlGenerator::generate(path: $path, ttl: $ttl);
+        return SignedUrlGenerator::generate(path: $path, ttl: $dateInterval);
     }
 
     public static function verifySignedUrl(string $url): bool
@@ -98,11 +98,11 @@ final class Security
 
     private static function auditLog(): SecurityAuditLog
     {
-        if (self::$auditLog === null) {
-            self::$auditLog = new SecurityAuditLog();
+        if (! self::$securityAuditLog instanceof SecurityAuditLog) {
+            self::$securityAuditLog = new SecurityAuditLog();
         }
 
-        return self::$auditLog;
+        return self::$securityAuditLog;
     }
 }
 

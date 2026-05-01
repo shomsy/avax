@@ -58,7 +58,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
 
         $encodedHeader = $this->base64UrlEncode(value: $this->jsonEncode(value: $header));
         $encodedClaims = $this->base64UrlEncode(value: $this->jsonEncode(value: $claims));
-        $signingInput = "{$encodedHeader}.{$encodedClaims}";
+        $signingInput = sprintf('%s.%s', $encodedHeader, $encodedClaims);
         $signature = hash_hmac(
             algo  : self::SUPPORTED_ALGORITHMS[$this->algorithm],
             data  : $signingInput,
@@ -66,7 +66,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             binary: true,
         );
 
-        return "{$signingInput}.{$this->base64UrlEncode(value: $signature)}";
+        return sprintf('%s.%s', $signingInput, $this->base64UrlEncode(value: $signature));
     }
 
     private function base64UrlEncode(string $value): string
@@ -81,8 +81,8 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
     {
         try {
             return json_encode(value: $value, flags: JSON_THROW_ON_ERROR);
-        } catch (JsonException $exception) {
-            throw new InvalidArgumentException(message: 'Token payload could not be encoded as JSON.', previous: $exception);
+        } catch (JsonException $jsonException) {
+            throw new InvalidArgumentException(message: 'Token payload could not be encoded as JSON.', code: $jsonException->getCode(), previous: $jsonException);
         }
     }
 
@@ -120,7 +120,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             $providedSignature = $this->base64UrlDecode(value: $encodedSignature);
             $expectedSignature = hash_hmac(
                 algo  : self::SUPPORTED_ALGORITHMS[$this->algorithm],
-                data  : "{$encodedHeader}.{$encodedClaims}",
+                data  : sprintf('%s.%s', $encodedHeader, $encodedClaims),
                 key   : $this->secret,
                 binary: true,
             );
@@ -142,8 +142,8 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
     {
         try {
             $decoded = json_decode(json: $json, associative: true, flags: JSON_THROW_ON_ERROR);
-        } catch (JsonException $exception) {
-            throw new InvalidArgumentException(message: 'Token payload is not valid JSON.', previous: $exception);
+        } catch (JsonException $jsonException) {
+            throw new InvalidArgumentException(message: 'Token payload is not valid JSON.', code: $jsonException->getCode(), previous: $jsonException);
         }
 
         if (! is_array(value: $decoded)) {

@@ -24,17 +24,7 @@ enum SagaStepRetryPolicy: string
 
 final readonly class SagaStepDefinition
 {
-    public string $name;
-
-    public string $component;
-
-    public SagaStepKind $kind;
-
     public array $input;
-
-    public ?string $compensationComponent;
-
-    public ?array $compensationInput;
 
     public int $maxRetries;
 
@@ -46,46 +36,38 @@ final readonly class SagaStepDefinition
 
     public bool $optional;
 
-    public ?string $description;
-
     private function __construct(
-        string $name,
-        string $component,
-        SagaStepKind $kind,
-        array               $input = null,
-        string              $compensationComponent = null,
-        array               $compensationInput = null,
-        int                 $maxRetries = null,
-        int                 $retryDelayMs = null,
-        SagaStepRetryPolicy $retryPolicy = null,
-        int                 $timeoutSeconds = null,
-        bool                $optional = null,
-        string              $description = null,
+        public string        $name,
+        public string        $component,
+        public SagaStepKind  $kind,
+        ?array               $input = null,
+        public ?string       $compensationComponent = null,
+        public ?array        $compensationInput = null,
+        ?int                 $maxRetries = null,
+        ?int                 $retryDelayMs = null,
+        ?SagaStepRetryPolicy $sagaStepRetryPolicy = null,
+        ?int                 $timeoutSeconds = null,
+        ?bool                $optional = null,
+        public ?string       $description = null,
     ) {
         $input                   ??= [];
         $maxRetries              ??= 0;
         $retryDelayMs            ??= 1000;
-        $retryPolicy             ??= SagaStepRetryPolicy::NONE;
+        $sagaStepRetryPolicy ??= SagaStepRetryPolicy::NONE;
         $timeoutSeconds ??= 30;
         $optional                ??= false;
-        $this->name              = $name;
-        $this->component         = $component;
-        $this->kind              = $kind;
         $this->input             = $input;
-        $this->compensationComponent = $compensationComponent;
-        $this->compensationInput = $compensationInput;
         $this->maxRetries        = $maxRetries;
         $this->retryDelayMs      = $retryDelayMs;
-        $this->retryPolicy       = $retryPolicy;
+        $this->retryPolicy = $sagaStepRetryPolicy;
         $this->timeoutSeconds    = $timeoutSeconds;
         $this->optional          = $optional;
-        $this->description       = $description;
     }
 
     public static function action(
         string $name,
         string $component,
-        array $input = null,
+        ?array $input = null,
         array $options = [],
     ): self {
         $input ??= [];
@@ -98,29 +80,29 @@ final readonly class SagaStepDefinition
         string $component,
         array $options = [],
     ): self {
-        if (empty(trim($name))) {
+        if (in_array(trim($name), ['', '0'], true)) {
             throw new InvalidArgumentException(message: 'Step name cannot be empty.');
         }
 
-        if (empty(trim($component))) {
+        if (in_array(trim($component), ['', '0'], true)) {
             throw new InvalidArgumentException(message: 'Component cannot be empty.');
         }
 
-        $kind = SagaStepKind::from(value: $options['kind'] ?? 'action');
+        $sagaStepKind = SagaStepKind::from(value: $options['kind'] ?? 'action');
 
         return new self(
             name                 : $name,
             component            : $component,
-            kind                 : $kind,
+            kind                 : $sagaStepKind,
             input                : $options['input'] ?? [],
             compensationComponent: $options['compensation'] ?? null,
             compensationInput    : $options['compensation_input'] ?? null,
             maxRetries           : $options['max_retries'] ?? 0,
             retryDelayMs         : $options['retry_delay'] ?? 1000,
-            retryPolicy          : SagaStepRetryPolicy::from(value: $options['retry_policy'] ?? 'none'),
             timeoutSeconds       : $options['timeout'] ?? 30,
             optional             : $options['optional'] ?? false,
             description          : $options['description'] ?? null,
+            retryPolicy          : SagaStepRetryPolicy::from(value: $options['retry_policy'] ?? 'none'),
         );
     }
 

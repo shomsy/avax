@@ -17,7 +17,7 @@ final readonly class ListContainerBindings
      */
     public static function printTable(array $bindings) : void
     {
-        if (empty($bindings)) {
+        if ($bindings === []) {
             echo "No bindings registered.\n";
 
             return;

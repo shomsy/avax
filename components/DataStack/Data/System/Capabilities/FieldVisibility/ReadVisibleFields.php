@@ -12,13 +12,13 @@ final readonly class ReadVisibleFields
     /**
      * @return array<string, DataField>
      */
-    public function read(DataShape $shape, bool $excludeHidden = true): array
+    public function read(DataShape $dataShape, bool $excludeHidden = true) : array
     {
         return array_filter(
-            array   : $shape->fields(),
-            callback: static fn (DataField $field): bool => new ShouldExposeField()->check(
-                field        : $field,
+            array   : $dataShape->fields(),
+            callback: static fn (DataField $dataField) : bool => new ShouldExposeField()->check(
                 excludeHidden: $excludeHidden,
+                field        : $dataField,
             ),
         );
     }

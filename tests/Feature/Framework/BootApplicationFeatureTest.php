@@ -12,12 +12,12 @@ final class BootApplicationFeatureTest extends TestCase
 {
     public function test_application_can_boot_with_no_registered_components(): void
     {
-        $application = Avax::boot(
+        $avax = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot()),
         );
 
-        self::assertTrue($application->state()->isBooted());
-        self::assertSame([], $application->components()->names());
+        self::assertTrue($avax->state()->isBooted());
+        self::assertSame([], $avax->components()->names());
     }
 
     private function projectRoot(): string

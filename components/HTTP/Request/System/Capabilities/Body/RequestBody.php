@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\System\Capabilities\Body;
 
-final class RequestBody
+final readonly class RequestBody
 {
     public function __construct(
-        private RawBody $raw,
-        private ParsedBody $parsed,
+        private RawBody    $rawBody,
+        private ParsedBody $parsedBody,
     ) {}
 
     public function raw() : RawBody
     {
-        return $this->raw;
+        return $this->rawBody;
     }
 
     public function parsed() : ParsedBody
     {
-        return $this->parsed;
+        return $this->parsedBody;
     }
 }

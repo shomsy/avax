@@ -15,14 +15,14 @@ final readonly class EndpointPostureEngine
      */
     public function evaluate(
         array $signals,
-        EndpointPosturePolicy $policy,
+        EndpointPosturePolicy $endpointPosturePolicy,
     ): EndpointPostureDecision {
         $riskScore = $this->calculateRiskScore(signals: $signals);
 
         return match (true) {
-            $riskScore >= $policy->denyThreshold   => EndpointPostureDecision::DENY,
-            $riskScore >= $policy->stepUpThreshold => EndpointPostureDecision::STEP_UP,
-            $riskScore >= $policy->quarantineThreshold => EndpointPostureDecision::QUARANTINE,
+            $riskScore >= $endpointPosturePolicy->denyThreshold       => EndpointPostureDecision::DENY,
+            $riskScore >= $endpointPosturePolicy->stepUpThreshold     => EndpointPostureDecision::STEP_UP,
+            $riskScore >= $endpointPosturePolicy->quarantineThreshold => EndpointPostureDecision::QUARANTINE,
             default                                => EndpointPostureDecision::ALLOW,
         };
     }
@@ -68,8 +68,8 @@ final readonly class EndpointPosturePolicy
     public float $denyThreshold;
 
     public function __construct(
-        float $denyThreshold = null,
-        float $stepUpThreshold = null,
+        ?float $denyThreshold = null,
+        ?float $stepUpThreshold = null,
         public float $quarantineThreshold = 0.3,
     ) {
         $denyThreshold       ??= 0.8;

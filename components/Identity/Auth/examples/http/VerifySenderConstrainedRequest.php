@@ -32,19 +32,19 @@ final readonly class VerifySenderConstrainedRequest
         array $server,
         #[SensitiveParameter]
         ?string $accessToken,
-        OAuthSenderConstraint     $expectedSenderConstraint = null,
-        OAuthSenderConstraintType $requiredSenderConstraint = null,
+        ?OAuthSenderConstraint     $oAuthSenderConstraint = null,
+        ?OAuthSenderConstraintType $oAuthSenderConstraintType = null,
     ): ?OAuthSenderConstraint {
-        $auditLog = new NullAuditLog();
+        $nullAuditLog = new NullAuditLog();
 
         return new VerifyOAuthSenderConstraint(
             verifyDpopProof           : new VerifyDpopProof(
                 codec      : new HmacTokenCodec(secret: 'replace-me'),
                 replayStore: new InMemoryDpopProofReplayStore(),
-                auditLog   : $auditLog,
+                auditLog   : $nullAuditLog,
             ),
-            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $auditLog),
-            auditLog                  : $auditLog,
+            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $nullAuditLog),
+            auditLog                  : $nullAuditLog,
         )->execute(
             input                   : new HttpOAuthProofInput(
                 method     : $method,
@@ -53,8 +53,8 @@ final readonly class VerifySenderConstrainedRequest
                 server     : $server,
                 accessToken: $accessToken,
             ),
-            expectedSenderConstraint: $expectedSenderConstraint,
-            requiredSenderConstraint: $requiredSenderConstraint,
+            expectedSenderConstraint: $oAuthSenderConstraint,
+            requiredSenderConstraint: $oAuthSenderConstraintType,
         );
     }
 }

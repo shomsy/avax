@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Diagnostics;
 
-final class TraceId
+final readonly class TraceId
 {
     public function __construct(
-        public readonly string $value,
+        public string $value,
     ) {}
 
     public static function generate() : self

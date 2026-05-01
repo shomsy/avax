@@ -11,17 +11,17 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDCo
  */
 final readonly class SubjectIdentifier
 {
-    public function __construct(private SubjectIdentifierStrategy $strategy = SubjectIdentifierStrategy::PUBLIC) {}
+    public function __construct(private SubjectIdentifierStrategy $subjectIdentifierStrategy = SubjectIdentifierStrategy::PUBLIC) {}
 
     /**
      * Generates a subject identifier for a user.
      */
     public function generate(
         string $localSubject,
-        string $sectorIdentifier = null,
-        string $pairwiseSalt = null,
+        ?string $sectorIdentifier = null,
+        ?string $pairwiseSalt = null,
     ): string {
-        return match ($this->strategy) {
+        return match ($this->subjectIdentifierStrategy) {
             SubjectIdentifierStrategy::PUBLIC => $this->publicIdentifier(localSubject: $localSubject),
             SubjectIdentifierStrategy::PAIRWISE => $this->pairwiseIdentifier(
                 localSubject    : $localSubject,

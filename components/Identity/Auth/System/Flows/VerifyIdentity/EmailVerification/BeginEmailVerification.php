@@ -6,6 +6,7 @@ namespace Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerific
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
@@ -28,17 +29,17 @@ final readonly class BeginEmailVerification
     /**
      * @throws DateMalformedStringException
      */
-    public function execute(BeginEmailVerificationData $data): EmailVerificationChallenge
+    public function execute(BeginEmailVerificationData $beginEmailVerificationData) : EmailVerificationChallenge
     {
-        $user = $this->userSource->findByEmail(email: $data->email);
+        $user = $this->userSource->findByEmail(email: $beginEmailVerificationData->email);
 
-        if ($user === null || ! $user->isActive()) {
+        if (! $user instanceof User || ! $user->isActive()) {
             return EmailVerificationChallenge::hidden();
         }
 
-        $challenge = $this->emailVerificationStore->issue(
+        $emailVerificationChallenge = $this->emailVerificationStore->issue(
             userId   : $user->getId(),
-            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds"),
+            expiresAt: $this->clock->now()->modify(modifier: sprintf('+%d seconds', $this->expiresAfterSeconds)),
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -46,11 +47,11 @@ final readonly class BeginEmailVerification
             occurredAt: $this->clock->now(),
             context   : [
                             'user_id' => $user->getId()->value,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $beginEmailVerificationData->ipAddress,
+                            'user_agent' => $beginEmailVerificationData->userAgent,
             ],
         ));
 
-        return $challenge;
+        return $emailVerificationChallenge;
     }
 }

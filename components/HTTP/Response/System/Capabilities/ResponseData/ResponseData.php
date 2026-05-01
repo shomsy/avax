@@ -55,12 +55,12 @@ final readonly class ResponseData
         );
     }
 
-    public function withBody(StreamInterface $body) : self
+    public function withBody(StreamInterface $stream) : self
     {
         return new self(
             statusCode     : $this->statusCode,
             headers        : $this->headers,
-            body           : $body,
+            body           : $stream,
             reasonPhrase   : $this->reasonPhrase,
             protocolVersion: $this->protocolVersion,
         );

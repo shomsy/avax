@@ -12,16 +12,16 @@ final readonly class CleanupExpiredAuthorizationCodes
 {
     public function __construct(
         #[SensitiveParameter]
-        private ?PruneExpiredAuthorizationCodesInterface $codeStore,
+        private ?PruneExpiredAuthorizationCodesInterface $pruneExpiredAuthorizationCodes,
         private Clock $clock,
     ) {}
 
     public function execute(): int
     {
-        if ($this->codeStore === null) {
+        if (! $this->pruneExpiredAuthorizationCodes instanceof PruneExpiredAuthorizationCodesInterface) {
             return 0;
         }
 
-        return $this->codeStore->pruneExpired(now: $this->clock->now());
+        return $this->pruneExpiredAuthorizationCodes->pruneExpired(now: $this->clock->now());
     }
 }

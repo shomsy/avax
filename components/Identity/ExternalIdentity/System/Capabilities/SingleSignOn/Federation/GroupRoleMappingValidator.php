@@ -21,8 +21,8 @@ final readonly class GroupRoleMappingValidator
                 return false;
             }
 
-            foreach ($roles as $roleValue) {
-                if (UserRole::tryFrom(value: $roleValue) === null) {
+            foreach ($roles as $role) {
+                if (UserRole::tryFrom(value: $role) === null) {
                     return false;
                 }
             }

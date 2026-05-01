@@ -6,14 +6,14 @@ namespace Avax\Components\Identity\Security\System\Capabilities\Encryption;
 
 use RuntimeException;
 
-final class AesEncrypter implements EncrypterInterface
+final readonly class AesEncrypter implements EncrypterInterface
 {
     /**
      * @throws RuntimeException if encryption key is invalid or encryption fails
      */
     public function __construct(
-        private readonly string $key,
-        private readonly string $cipher = 'aes-256-gcm',
+        private string $key,
+        private string $cipher = 'aes-256-gcm',
     ) {
         if (strlen($key) !== 32) {
             throw new RuntimeException('Encryption key must be 32 bytes for AES-256.');
@@ -25,7 +25,7 @@ final class AesEncrypter implements EncrypterInterface
      *
      * @throws RuntimeException if encryption fails
      */
-    public function encrypt(mixed $value): string
+    public function encrypt(mixed $value, EncryptionKey $encryptionKey) : string
     {
         $ivLen = openssl_cipher_iv_length($this->cipher);
         $iv = random_bytes($ivLen);
@@ -46,7 +46,7 @@ final class AesEncrypter implements EncrypterInterface
      *
      * @throws RuntimeException if decryption fails or payload is tampered
      */
-    public function decrypt(string $payload): mixed
+    public function decrypt(string $payload, EncryptionKey $encryptionKey) : mixed
     {
         $payload = base64_decode($payload, true);
         if ($payload === false) {

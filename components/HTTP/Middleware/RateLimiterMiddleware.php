@@ -13,7 +13,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 final readonly class RateLimiterMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private RateLimiterInterface $limiter,
+        private RateLimiterInterface $rateLimiter,
         private object $responseFactory,
         private string $keySource = 'ip',
         private int $maxAttempts = 60,
@@ -27,14 +27,14 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
             default => 'global',
         };
 
-        if (! $this->limiter->canAttempt($key, $this->maxAttempts, $this->decaySeconds)) {
-            $remaining = $this->limiter->availableIn($key, $this->maxAttempts, $this->decaySeconds);
+        if (! $this->rateLimiter->canAttempt($key, $this->maxAttempts, $this->decaySeconds)) {
+            $remaining = $this->rateLimiter->availableIn($key, $this->maxAttempts, $this->decaySeconds);
 
             if (method_exists($this->responseFactory, 'rateLimited')) {
                 return $this->responseFactory->rateLimited($remaining);
             }
 
-            return new class ($remaining) implements ResponseInterface {
+            return new readonly class ($remaining) implements ResponseInterface {
                 public function __construct(private int $retryAfter) {}
 
                 public function getStatusCode(): int
@@ -112,7 +112,7 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
             };
         }
 
-        $this->limiter->recordFailedAttempt($key, $this->maxAttempts, $this->decaySeconds);
+        $this->rateLimiter->recordFailedAttempt($key, $this->maxAttempts, $this->decaySeconds);
 
         return $next($request);
     }

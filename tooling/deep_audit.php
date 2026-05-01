@@ -60,6 +60,7 @@ while (($line = fgets($handle)) !== false) {
         }
     }
 }
+
 fclose($handle);
 
 echo '  Found ' . count($oldDeclarations) . " unique declarations in avax.txt\n\n";
@@ -92,9 +93,9 @@ foreach ($iterator as $file) {
     }
 
     if (preg_match_all('/^(?:final\s+)?(?:readonly\s+)?(?:abstract\s+)?(class|interface|trait|enum)\s+(\w+)/m', $content, $matches, PREG_SET_ORDER)) {
-        foreach ($matches as $m) {
-            $type = $m[1];
-            $name = $m[2];
+        foreach ($matches as $match) {
+            $type = $match[1];
+            $name = $match[2];
 
             // Register under both the direct component and the suite-child
             $newDeclarations[$name] = [
@@ -118,18 +119,40 @@ $found   = [];
 
 foreach ($oldDeclarations as $key => $old) {
     $name = $old['name'];
-
     // Skip test support classes, documentation artifacts, config files
-    if (str_contains($old['file'], '/tests/')
-        || str_contains($old['file'], '/.agents/')
-        || str_contains($old['file'], '/Code-Review-And-ToDo/')
-        || str_contains($old['file'], '/docs/')
-        || str_contains($old['file'], '/tooling/')
-        || str_ends_with($old['file'], '.md')
-        || str_ends_with($old['file'], '.txt')
-        || str_ends_with($old['file'], '.sh')
-        || str_ends_with($old['file'], '.json')
-    ) {
+    if (str_contains($old['file'], '/tests/')) {
+        continue;
+    }
+
+    if (str_contains($old['file'], '/.agents/')) {
+        continue;
+    }
+
+    if (str_contains($old['file'], '/Code-Review-And-ToDo/')) {
+        continue;
+    }
+
+    if (str_contains($old['file'], '/docs/')) {
+        continue;
+    }
+
+    if (str_contains($old['file'], '/tooling/')) {
+        continue;
+    }
+
+    if (str_ends_with($old['file'], '.md')) {
+        continue;
+    }
+
+    if (str_ends_with($old['file'], '.txt')) {
+        continue;
+    }
+
+    if (str_ends_with($old['file'], '.sh')) {
+        continue;
+    }
+
+    if (str_ends_with($old['file'], '.json')) {
         continue;
     }
 
@@ -150,6 +173,7 @@ foreach ($missing as $item) {
     if (! isset($byComponent[$comp])) {
         $byComponent[$comp] = [];
     }
+
     $byComponent[$comp][] = $item;
 }
 
@@ -175,11 +199,12 @@ foreach ($byComponent as $comp => $items) {
     foreach ($items as $item) {
         $report .= "| `{$item['type']}` | **{$item['name']}** | `{$item['subpath']}` |\n";
     }
+
     $report .= "\n";
 }
 
 $outputPath = '/home/shomsy/projects/avax/deep-feature-audit.md';
 file_put_contents($outputPath, $report);
 
-echo "✅ Report saved to: {$outputPath}\n";
+echo sprintf('✅ Report saved to: %s%s', $outputPath, PHP_EOL);
 echo '   Total missing classes/interfaces: ' . count($missing) . "\n";

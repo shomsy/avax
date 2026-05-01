@@ -8,11 +8,6 @@ use Avax\Components\Application\Container\System\ContainerInterface;
 
 final readonly class ContainerAnalyzer
 {
-    public function __construct(
-        private ContainerInterface $container,
-    ) {
-    }
-
     public function assessWorkerSafety(): SafetyAssessment
     {
         return new SafetyAssessment(safe: true, violations: []);
@@ -29,20 +24,20 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function getServiceDependencies(string $id): array
+    public function getServiceDependencies() : array
     {
         return [];
     }
 
     public function why(string $id): string
     {
-        return "Service {$id} is available.";
+        return sprintf('Service %s is available.', $id);
     }
 
     /**
      * @return list<string>
      */
-    public function whoUses(string $id): array
+    public function whoUses() : array
     {
         return [];
     }
@@ -50,7 +45,7 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function whatBreaksIf(string $id): array
+    public function whatBreaksIf() : array
     {
         return [];
     }

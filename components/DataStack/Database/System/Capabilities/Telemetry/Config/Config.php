@@ -11,17 +11,13 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Confi
  */
 final class Config
 {
-    /** @var array<string, mixed> The actual list of settings stored in memory. */
-    private array $items = [];
-
     /**
      * Start the Settings Book with an initial list of items.
      *
      * @param array<string, mixed> $items The starting dictionary of settings.
      */
-    public function __construct(array $items = [])
+    public function __construct(private array $items = [])
     {
-        $this->items = $items;
     }
 
     /**

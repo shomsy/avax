@@ -27,11 +27,11 @@ final readonly class Authorization implements AccessInterface
 {
     public function __construct(
         #[SensitiveParameter]
-        private RequireAuthenticationBoundary $requireAuthentication,
-        private RequireRoleBoundary $requireRole,
-        private RequirePermissionBoundary $requirePermission,
+        private RequireAuthenticationBoundary $requireAuthenticationBoundary,
+        private RequireRoleBoundary           $requireRoleBoundary,
+        private RequirePermissionBoundary     $requirePermissionBoundary,
         #[SensitiveParameter]
-        private RequireAccessPolicyBoundary $requireAccessPolicy,
+        private RequireAccessPolicyBoundary   $requireAccessPolicyBoundary,
     ) {}
 
     /**
@@ -39,25 +39,25 @@ final readonly class Authorization implements AccessInterface
      */
     public function requireAuthentication(): void
     {
-        $this->requireAuthentication->execute();
+        $this->requireAuthenticationBoundary->execute();
     }
 
     /**
      * @throws Unauthenticated
      * @throws RoleDenied
      */
-    public function requireRole(UserRole $requiredRole): void
+    public function requireRole(UserRole $userRole) : void
     {
-        $this->requireRole->execute(requiredRole: $requiredRole);
+        $this->requireRoleBoundary->execute(requiredRole: $userRole);
     }
 
     /**
      * @throws Unauthenticated
      * @throws PermissionDenied
      */
-    public function requirePermission(UserPermission $permission): void
+    public function requirePermission(UserPermission $userPermission) : void
     {
-        $this->requirePermission->execute(permission: $permission);
+        $this->requirePermissionBoundary->execute(permission: $userPermission);
     }
 
     /**
@@ -68,8 +68,8 @@ final readonly class Authorization implements AccessInterface
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function requirePolicy(AccessPolicy $policy): void
+    public function requirePolicy(AccessPolicy $accessPolicy) : void
     {
-        $this->requireAccessPolicy->execute(policy: $policy);
+        $this->requireAccessPolicyBoundary->execute(policy: $accessPolicy);
     }
 }

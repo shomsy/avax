@@ -36,55 +36,55 @@ final class RuntimeSafetyFeatureTest extends TestCase
     public function request_a_state_does_not_leak_into_request_b_after_reset() : void
     {
         // Build the core runtime components directly
-        $scopeStore = new RequestScopeStore();
-        $context    = new RuntimeContext();
-        $registry   = new StateResetRegistry();
-        $registry->register(name: 'request-scopes', state: $scopeStore);
-        $registry->register(name: 'runtime-context', state: $context);
+        $requestScopeStore  = new RequestScopeStore();
+        $runtimeContext     = new RuntimeContext();
+        $stateResetRegistry = new StateResetRegistry();
+        $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
+        $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
 
         // --- Request A: simulate mutating request-scoped state ---
         $requestA = new RuntimeRequest(method: 'GET', uri: '/request-a');
 
         // Open a request scope and write request-A-specific data
         $openScopeA = new OpenHttpRequestScope(
-            requestScopes : $scopeStore,
-            runtimeContext: $context,
+            runtimeContext: $runtimeContext,
+            requestScopes : $requestScopeStore,
         );
         $openScopeA->open(request: $requestA);
 
         // Simulate session data mutation
-        $scopeA = $scopeStore->current();
-        $scopeA->write(key: 'session_user_id', value: 42);
-        $scopeA->write(key: 'session_role', value: 'admin');
-        $scopeA->write(key: 'session_tenant', value: 'tenant-a');
+        $requestScope = $requestScopeStore->current();
+        $requestScope->write(key: 'session_user_id', value: 42);
+        $requestScope->write(key: 'session_role', value: 'admin');
+        $requestScope->write(key: 'session_tenant', value: 'tenant-a');
 
         // Simulate auth context
-        $context->recordResult(
+        $runtimeContext->recordResult(
             result: RuntimeResult::fromConsoleOutput(output: 'request-a-response', exitCode: 200),
         );
 
         // Close request A scope
-        $closeScopeA = new CloseHttpRequestScope(requestScopes: $scopeStore);
+        $closeScopeA = new CloseHttpRequestScope(requestScopes: $requestScopeStore);
         $closeScopeA->close();
 
         // Verify request A data was stored
-        self::assertNotNull($context->lastResult());
+        self::assertNotNull($runtimeContext->lastResult());
 
         // --- Reset all state ---
-        $report = $registry->resetAll();
-        self::assertNotEmpty($report->resetComponents());
+        $stateResetReport = $stateResetRegistry->resetAll();
+        self::assertNotEmpty($stateResetReport->resetComponents());
 
         // --- Request B: handle a completely different request ---
         $requestB = new RuntimeRequest(method: 'GET', uri: '/request-b');
 
         $openScopeB = new OpenHttpRequestScope(
-            requestScopes : $scopeStore,
-            runtimeContext: $context,
+            runtimeContext: $runtimeContext,
+            requestScopes : $requestScopeStore,
         );
         $openScopeB->open(request: $requestB);
 
         // Request B should have a fresh scope with no Request A data
-        $scopeB = $scopeStore->current();
+        $scopeB = $requestScopeStore->current();
 
         // Assert: Request A session data must NOT be present
         self::assertNull(
@@ -105,93 +105,93 @@ final class RuntimeSafetyFeatureTest extends TestCase
         self::assertSame(99, $scopeB->read(key: 'session_user_id'));
 
         // Close request B scope
-        $closeScopeB = new CloseHttpRequestScope(requestScopes: $scopeStore);
+        $closeScopeB = new CloseHttpRequestScope(requestScopes: $requestScopeStore);
         $closeScopeB->close();
     }
 
     #[Test]
     public function runtime_context_is_cleared_between_requests() : void
     {
-        $scopeStore = new RequestScopeStore();
-        $context    = new RuntimeContext();
-        $registry   = new StateResetRegistry();
-        $registry->register(name: 'request-scopes', state: $scopeStore);
-        $registry->register(name: 'runtime-context', state: $context);
+        $requestScopeStore  = new RequestScopeStore();
+        $runtimeContext     = new RuntimeContext();
+        $stateResetRegistry = new StateResetRegistry();
+        $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
+        $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
 
         // Simulate request processing
-        $requestA = new RuntimeRequest(method: 'POST', uri: '/api/login');
+        $runtimeRequest = new RuntimeRequest(method: 'POST', uri: '/api/login');
 
         // Set context as if request A was processed
-        $openScope = new OpenHttpRequestScope(
-            requestScopes : $scopeStore,
-            runtimeContext: $context,
+        $openHttpRequestScope = new OpenHttpRequestScope(
+            runtimeContext: $runtimeContext,
+            requestScopes : $requestScopeStore,
         );
-        $openScope->open(request: $requestA);
+        $openHttpRequestScope->open(request: $runtimeRequest);
 
-        $context->recordResult(
+        $runtimeContext->recordResult(
             result: RuntimeResult::fromConsoleOutput(output: '{"user":"alice"}', exitCode: 200),
         );
 
-        self::assertNotNull($context->lastResult());
-        self::assertSame('POST', $context->currentRequest()->method());
-        self::assertSame('/api/login', $context->currentRequest()->uri());
+        self::assertNotNull($runtimeContext->lastResult());
+        self::assertSame('POST', $runtimeContext->currentRequest()->method());
+        self::assertSame('/api/login', $runtimeContext->currentRequest()->uri());
 
         // Reset
-        $registry->resetAll();
+        $stateResetRegistry->resetAll();
 
         // Context should be clean
-        self::assertNull($context->lastResult(), 'Last result should be null after reset');
-        self::assertNull($context->currentRequest(), 'Current request should be null after reset');
-        self::assertNull($context->currentScopeId(), 'Current scope ID should be null after reset');
+        self::assertNull($runtimeContext->lastResult(), 'Last result should be null after reset');
+        self::assertNull($runtimeContext->currentRequest(), 'Current request should be null after reset');
+        self::assertNull($runtimeContext->currentScopeId(), 'Current scope ID should be null after reset');
     }
 
     #[Test]
     public function multiple_sequential_requests_remain_isolated() : void
     {
-        $scopeStore = new RequestScopeStore();
-        $context    = new RuntimeContext();
-        $registry   = new StateResetRegistry();
-        $registry->register(name: 'request-scopes', state: $scopeStore);
-        $registry->register(name: 'runtime-context', state: $context);
+        $requestScopeStore  = new RequestScopeStore();
+        $runtimeContext     = new RuntimeContext();
+        $stateResetRegistry = new StateResetRegistry();
+        $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
+        $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
 
         // Process 5 sequential requests, each with different data
         for ($i = 1; $i <= 5; $i++) {
-            $request = new RuntimeRequest(method: 'GET', uri: "/page-$i");
+            $request = new RuntimeRequest(method: 'GET', uri: '/page-' . $i);
 
             $openScope = new OpenHttpRequestScope(
-                requestScopes : $scopeStore,
-                runtimeContext: $context,
+                runtimeContext: $runtimeContext,
+                requestScopes : $requestScopeStore,
             );
             $openScope->open(request: $request);
 
-            $scope = $scopeStore->current();
+            $scope = $requestScopeStore->current();
             $scope->write(key: 'page_number', value: $i);
-            $scope->write(key: 'page_uri', value: "/page-$i");
+            $scope->write(key: 'page_uri', value: '/page-' . $i);
 
             // Verify only current request's data is visible
             self::assertSame($i, $scope->read(key: 'page_number'));
-            self::assertSame("/page-$i", $scope->read(key: 'page_uri'));
+            self::assertSame('/page-' . $i, $scope->read(key: 'page_uri'));
 
-            $context->recordResult(
-                result: RuntimeResult::fromConsoleOutput(output: "page-$i", exitCode: 200),
+            $runtimeContext->recordResult(
+                result: RuntimeResult::fromConsoleOutput(output: 'page-' . $i, exitCode: 200),
             );
 
-            $closeScope = new CloseHttpRequestScope(requestScopes: $scopeStore);
+            $closeScope = new CloseHttpRequestScope(requestScopes: $requestScopeStore);
             $closeScope->close();
 
             // Reset between requests (simulating long-lived runtime behavior)
-            $registry->resetAll();
+            $stateResetRegistry->resetAll();
 
             // After reset, context should be clean
-            self::assertNull($context->lastResult());
-            self::assertNull($context->currentRequest());
+            self::assertNull($runtimeContext->lastResult());
+            self::assertNull($runtimeContext->currentRequest());
         }
     }
 
     #[Test]
     public function state_reset_registry_resets_all_registered_components() : void
     {
-        $registry = new StateResetRegistry();
+        $stateResetRegistry = new StateResetRegistry();
 
         // Create a mock resettable that tracks reset calls
         $mockResettable = new class () implements ResettableState {
@@ -203,9 +203,9 @@ final class RuntimeSafetyFeatureTest extends TestCase
             }
         };
 
-        $registry->register(name: 'test-component', state: $mockResettable);
+        $stateResetRegistry->register(name: 'test-component', state: $mockResettable);
 
-        $report = $registry->resetAll();
+        $stateResetReport = $stateResetRegistry->resetAll();
 
         self::assertSame(
             1,
@@ -214,7 +214,7 @@ final class RuntimeSafetyFeatureTest extends TestCase
         );
         self::assertCount(
             1,
-            $report->resetComponents(),
+            $stateResetReport->resetComponents(),
             'Reset report should contain one component',
         );
     }
@@ -222,26 +222,26 @@ final class RuntimeSafetyFeatureTest extends TestCase
     #[Test]
     public function request_scope_store_resets_properly() : void
     {
-        $store = new RequestScopeStore();
+        $requestScopeStore = new RequestScopeStore();
 
         // Open and populate a scope
-        $scope = $store->open();
-        $scope->write(key: 'leaked_data', value: 'should-not-persist');
-        $scope->write(key: 'user_id', value: 12345);
+        $requestScope = $requestScopeStore->open();
+        $requestScope->write(key: 'leaked_data', value: 'should-not-persist');
+        $requestScope->write(key: 'user_id', value: 12345);
 
-        self::assertTrue($store->hasCurrent());
-        self::assertSame('should-not-persist', $scope->read(key: 'leaked_data'));
+        self::assertTrue($requestScopeStore->hasCurrent());
+        self::assertSame('should-not-persist', $requestScope->read(key: 'leaked_data'));
 
         // Reset the store
-        $store->resetState();
+        $requestScopeStore->resetState();
 
         self::assertFalse(
-            $store->hasCurrent(),
+            $requestScopeStore->hasCurrent(),
             'Store should not have current scope after reset',
         );
 
         // Open a new scope -- should be completely fresh
-        $newScope = $store->open();
+        $newScope = $requestScopeStore->open();
         self::assertNull(
             $newScope->read(key: 'leaked_data'),
             'Leaked data from previous scope must not be present',
@@ -255,30 +255,30 @@ final class RuntimeSafetyFeatureTest extends TestCase
     #[Test]
     public function runtime_safety_detects_transaction_leaks() : void
     {
-        $registry = new StateResetRegistry();
-        $safety   = new RuntimeSafety(
-            stateResetRegistry: $registry,
+        $stateResetRegistry = new StateResetRegistry();
+        $runtimeSafety      = new RuntimeSafety(
+            stateResetRegistry: $stateResetRegistry,
         );
 
         // Simulate a transaction starting
-        $safety->trackTransaction(connectionName: 'default');
-        $safety->trackTransaction(connectionName: 'analytics');
+        $runtimeSafety->trackTransaction(connectionName: 'default');
+        $runtimeSafety->trackTransaction(connectionName: 'analytics');
 
-        self::assertTrue($safety->hasTransactionLeaks());
-        self::assertSame(2, $safety->transactionLeakCount());
+        self::assertTrue($runtimeSafety->hasTransactionLeaks());
+        self::assertSame(2, $runtimeSafety->transactionLeakCount());
 
-        $leaks = $safety->detectTransactionLeaks();
+        $leaks = $runtimeSafety->detectTransactionLeaks();
         self::assertCount(2, $leaks);
         self::assertContains('default', $leaks);
         self::assertContains('analytics', $leaks);
 
         // Complete one transaction
-        $safety->completeTransaction(connectionName: 'default');
-        self::assertSame(1, $safety->transactionLeakCount());
+        $runtimeSafety->completeTransaction(connectionName: 'default');
+        self::assertSame(1, $runtimeSafety->transactionLeakCount());
 
         // Complete the other
-        $safety->completeTransaction(connectionName: 'analytics');
-        self::assertFalse($safety->hasTransactionLeaks());
-        self::assertSame(0, $safety->transactionLeakCount());
+        $runtimeSafety->completeTransaction(connectionName: 'analytics');
+        self::assertFalse($runtimeSafety->hasTransactionLeaks());
+        self::assertSame(0, $runtimeSafety->transactionLeakCount());
     }
 }

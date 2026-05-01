@@ -63,24 +63,24 @@ final readonly class OAuth
 
     public function isConfigured(): bool
     {
-        return $this->registerClient !== null
-            && $this->approveClientRegistration !== null
-            && $this->updateClient !== null
-            && $this->disableClient !== null
-            && $this->rotateClientSecret !== null
-            && $this->readClients !== null
-            && $this->readWorkloadIdentities !== null
-            && $this->authorizeCode !== null
-            && $this->exchangeAuthorizationCode !== null
-            && $this->exchangeClientCredentials !== null
-            && $this->exchangeRefreshToken !== null
-            && $this->revokeToken !== null
-            && $this->introspectToken !== null;
+        return $this->registerClient instanceof RegisterClient
+            && $this->approveClientRegistration instanceof ApproveClientRegistration
+            && $this->updateClient instanceof UpdateClient
+            && $this->disableClient instanceof DisableClient
+            && $this->rotateClientSecret instanceof RotateClientSecret
+            && $this->readClients instanceof ReadClients
+            && $this->readWorkloadIdentities instanceof ReadWorkloadIdentities
+            && $this->authorizeCode instanceof AuthorizeCode
+            && $this->exchangeAuthorizationCode instanceof ExchangeAuthorizationCode
+            && $this->exchangeClientCredentials instanceof ExchangeClientCredentials
+            && $this->exchangeRefreshToken instanceof ExchangeRefreshToken
+            && $this->revokeToken instanceof RevokeToken
+            && $this->introspectToken instanceof IntrospectToken;
     }
 
-    public function registerClient(RegisterClientData $data): RegisteredOAuthClient
+    public function registerClient(RegisterClientData $registerClientData) : RegisteredOAuthClient
     {
-        return $this->registerClientOrFail()->execute(data: $data);
+        return $this->registerClientOrFail()->execute(data: $registerClientData);
     }
 
     private function registerClientOrFail(): RegisterClient
@@ -88,9 +88,9 @@ final readonly class OAuth
         return $this->registerClient ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'register_client');
     }
 
-    public function approveClientRegistration(ApproveClientRegistrationData $data): OAuthClient
+    public function approveClientRegistration(ApproveClientRegistrationData $approveClientRegistrationData) : OAuthClient
     {
-        return $this->approveClientRegistrationOrFail()->execute(data: $data);
+        return $this->approveClientRegistrationOrFail()->execute(data: $approveClientRegistrationData);
     }
 
     private function approveClientRegistrationOrFail(): ApproveClientRegistration
@@ -98,9 +98,9 @@ final readonly class OAuth
         return $this->approveClientRegistration ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'approve_client_registration');
     }
 
-    public function updateClient(UpdateClientData $data): OAuthClient
+    public function updateClient(UpdateClientData $updateClientData) : OAuthClient
     {
-        return $this->updateClientOrFail()->execute(data: $data);
+        return $this->updateClientOrFail()->execute(data: $updateClientData);
     }
 
     private function updateClientOrFail(): UpdateClient
@@ -157,9 +157,9 @@ final readonly class OAuth
     /**
      * @throws DateMalformedStringException
      */
-    public function authorizeCode(AuthorizeCodeData $data): IssuedAuthorizationCode
+    public function authorizeCode(AuthorizeCodeData $authorizeCodeData) : IssuedAuthorizationCode
     {
-        return $this->authorizeCodeOrFail()->execute(data: $data);
+        return $this->authorizeCodeOrFail()->execute(data: $authorizeCodeData);
     }
 
     private function authorizeCodeOrFail(): AuthorizeCode
@@ -170,9 +170,9 @@ final readonly class OAuth
     /**
      * @throws DateMalformedStringException
      */
-    public function exchangeAuthorizationCode(ExchangeAuthorizationCodeData $data): OAuthTokenGrant
+    public function exchangeAuthorizationCode(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData) : OAuthTokenGrant
     {
-        return $this->exchangeAuthorizationCodeOrFail()->execute(data: $data);
+        return $this->exchangeAuthorizationCodeOrFail()->execute(data: $exchangeAuthorizationCodeData);
     }
 
     private function exchangeAuthorizationCodeOrFail(): ExchangeAuthorizationCode
@@ -180,9 +180,9 @@ final readonly class OAuth
         return $this->exchangeAuthorizationCode ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'exchange_authorization_code');
     }
 
-    public function exchangeClientCredentials(ExchangeClientCredentialsData $data): OAuthTokenGrant
+    public function exchangeClientCredentials(ExchangeClientCredentialsData $exchangeClientCredentialsData) : OAuthTokenGrant
     {
-        return $this->exchangeClientCredentialsOrFail()->execute(data: $data);
+        return $this->exchangeClientCredentialsOrFail()->execute(data: $exchangeClientCredentialsData);
     }
 
     private function exchangeClientCredentialsOrFail(): ExchangeClientCredentials
@@ -193,9 +193,9 @@ final readonly class OAuth
     /**
      * @throws DateMalformedStringException
      */
-    public function exchangeRefreshToken(ExchangeRefreshTokenData $data): OAuthTokenGrant
+    public function exchangeRefreshToken(ExchangeRefreshTokenData $exchangeRefreshTokenData) : OAuthTokenGrant
     {
-        return $this->exchangeRefreshTokenOrFail()->execute(data: $data);
+        return $this->exchangeRefreshTokenOrFail()->execute(data: $exchangeRefreshTokenData);
     }
 
     private function exchangeRefreshTokenOrFail(): ExchangeRefreshToken
@@ -203,9 +203,9 @@ final readonly class OAuth
         return $this->exchangeRefreshToken ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'exchange_refresh_token');
     }
 
-    public function revokeToken(RevokeTokenData $data): void
+    public function revokeToken(RevokeTokenData $revokeTokenData) : void
     {
-        $this->revokeTokenOrFail()->execute(data: $data);
+        $this->revokeTokenOrFail()->execute(data: $revokeTokenData);
     }
 
     private function revokeTokenOrFail(): RevokeToken
@@ -213,9 +213,9 @@ final readonly class OAuth
         return $this->revokeToken ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'revoke_token');
     }
 
-    public function introspectToken(IntrospectTokenData $data): TokenIntrospection
+    public function introspectToken(IntrospectTokenData $introspectTokenData) : TokenIntrospection
     {
-        return $this->introspectTokenOrFail()->execute(data: $data);
+        return $this->introspectTokenOrFail()->execute(data: $introspectTokenData);
     }
 
     private function introspectTokenOrFail(): IntrospectToken

@@ -19,7 +19,7 @@ final class SessionScope
     private array $data = [];
 
     public function __construct(
-        private readonly SessionStoreInterface $store,
+        private readonly SessionStoreInterface $sessionStore,
     ) {}
 
     public function start() : bool
@@ -28,14 +28,12 @@ final class SessionScope
             return true;
         }
 
-        if (session_status() === PHP_SESSION_NONE) {
-            if (! session_start()) {
-                return false;
-            }
+        if (session_status() === PHP_SESSION_NONE && ! session_start()) {
+            return false;
         }
 
         $this->id   = session_id() ?: '';
-        $this->data = $this->store->read($this->id);
+        $this->data = $this->sessionStore->read($this->id);
         $this->started = true;
 
         return true;
@@ -87,7 +85,7 @@ final class SessionScope
     public function destroy() : void
     {
         $this->data = [];
-        $this->store->destroy($this->id);
+        $this->sessionStore->destroy($this->id);
         $this->started = false;
         $this->id = '';
     }
@@ -111,7 +109,7 @@ final class SessionScope
     public function save() : void
     {
         if ($this->started && $this->id !== '') {
-            $this->store->write($this->id, $this->data);
+            $this->sessionStore->write($this->id, $this->data);
         }
     }
 

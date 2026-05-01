@@ -19,13 +19,13 @@ use Avax\Components\DataStack\Persistence\System\Capabilities\UnitOfWork\UnitOfW
 abstract class Repository implements RepositoryInterface
 {
     public function __construct(
-        private readonly RepositoryStorageInterface $storage,
+        private readonly RepositoryStorageInterface $repositoryStorage,
         private readonly UnitOfWorkInterface $unitOfWork,
     ) {}
 
     public function findById(string|int $id): ?object
     {
-        return $this->storage->find(
+        return $this->repositoryStorage->find(
             entityClass: $this->entityClass(),
             id         : $id,
         );
@@ -36,18 +36,18 @@ abstract class Repository implements RepositoryInterface
      */
     abstract protected function entityClass(): string;
 
-    public function findAll(int $limit = null, int $offset = 0) : array
+    public function findAll(?int $limit = null, int $offset = 0) : array
     {
         return $this->findBy(criteria: [], limit: $limit ?? 100, offset: $offset);
     }
 
     public function findBy(
         array $criteria,
-        array $orderBy = null,
-        int   $limit = null,
-        int   $offset = null,
+        ?array $orderBy = null,
+        ?int   $limit = null,
+        ?int   $offset = null,
     ): array {
-        return $this->storage->findBy(
+        return $this->repositoryStorage->findBy(
             entityClass: $this->entityClass(),
             criteria   : $criteria,
             orderBy    : $orderBy,
@@ -75,7 +75,7 @@ abstract class Repository implements RepositoryInterface
 
     public function exists(array $criteria): bool
     {
-        return $this->storage->exists(
+        return $this->repositoryStorage->exists(
             entityClass: $this->entityClass(),
             criteria   : $criteria,
         );
@@ -83,7 +83,7 @@ abstract class Repository implements RepositoryInterface
 
     public function count(array $criteria = []): int
     {
-        return $this->storage->count(
+        return $this->repositoryStorage->count(
             entityClass: $this->entityClass(),
             criteria   : $criteria,
         );

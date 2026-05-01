@@ -48,7 +48,7 @@ final class FeatureFlags
         $store = self::store();
         $value = $store->get($flag);
 
-        return $value === true || $value === 'true' || $value === '1' || $value === 1;
+        return in_array($value, [true, 'true', '1', 1], true);
     }
 
     public static function variant(string $flag): string

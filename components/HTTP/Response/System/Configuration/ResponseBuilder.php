@@ -112,13 +112,13 @@ final class ResponseBuilder
         $response = new Response(
             statusCode     : $this->statusCode,
             headers        : $this->headers,
-            body           : null,
             reasonPhrase   : $this->reasonPhrase,
             protocolVersion: $this->protocolVersion,
+            body           : null,
         );
 
         if ($this->body !== null) {
-            $response = $response->withBody(Utils::streamFor($this->body));
+            return $response->withBody(Utils::streamFor($this->body));
         }
 
         return $response;

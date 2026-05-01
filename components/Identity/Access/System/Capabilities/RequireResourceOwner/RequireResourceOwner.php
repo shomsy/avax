@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner;
 
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
@@ -26,7 +27,7 @@ final readonly class RequireResourceOwner
     {
         $user = $this->currentAuthentication->read()->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 

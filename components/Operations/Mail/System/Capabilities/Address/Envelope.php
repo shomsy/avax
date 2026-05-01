@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Mail\System\Capabilities\Address;
 
-final class Envelope
+final readonly class Envelope
 {
     public function __construct(
-        public readonly string $from,
-        public readonly ?string $returnPath = null,
-        public readonly array $senderOptions = [],
+        public string  $from,
+        public ?string $returnPath = null,
+        public array   $senderOptions = [],
     ) {}
 
     public function withFrom(string $from): self

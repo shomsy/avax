@@ -13,8 +13,8 @@ final class WorkerLoop
     private bool $running = false;
 
     public function __construct(
-        private ?RuntimeInterface $runtime = null,
-        private ?WorkerRuntimeInterface $workerRuntime = null,
+        private readonly ?RuntimeInterface       $runtime = null,
+        private readonly ?WorkerRuntimeInterface $workerRuntime = null,
     ) {}
 
     public function start() : void
@@ -32,14 +32,12 @@ final class WorkerLoop
         $this->running = false;
     }
 
-    public function tick() : void {}
-
     public function run() : WorkerLifecycle
     {
         $runtime = $this->runtime;
         $workerRuntime = $this->workerRuntime;
 
-        if ($runtime === null || $workerRuntime === null) {
+        if (! $runtime instanceof RuntimeInterface || ! $workerRuntime instanceof WorkerRuntimeInterface) {
             throw new FrameworkMisconfigured(
                 message: 'Worker loop requires runtime and worker runtime before it can run.',
             );
@@ -47,7 +45,7 @@ final class WorkerLoop
 
         $this->start();
 
-        $lifecycle = new WorkerLifecycle(
+        $workerLifecycle = new WorkerLifecycle(
             runtimeName: $workerRuntime->name(),
             startedAt  : $runtime->clock()->now(),
         );
@@ -56,28 +54,28 @@ final class WorkerLoop
             $this->runUntilEmpty(
                 runtime      : $runtime,
                 workerRuntime: $workerRuntime,
-                lifecycle    : $lifecycle,
+                lifecycle    : $workerLifecycle,
             );
         } finally {
             $this->stop();
             $workerRuntime->stop();
             $runtime->stateResetRegistry()->resetAll();
             $runtime->state()->markShutdown(shutdownAt: $runtime->clock()->now());
-            $lifecycle->stop(stoppedAt: $runtime->clock()->now());
+            $workerLifecycle->stop(stoppedAt: $runtime->clock()->now());
         }
 
-        return $lifecycle;
+        return $workerLifecycle;
     }
 
     private function runUntilEmpty(
         RuntimeInterface $runtime,
         WorkerRuntimeInterface $workerRuntime,
-        WorkerLifecycle $lifecycle,
+        WorkerLifecycle $workerLifecycle,
     ) : void
     {
         $handleIncomingHttp = new HandleIncomingHttp();
 
-        while ( ($request = $workerRuntime->receive()) !== null ) {
+        while ( ($request = $workerRuntime->receive()) instanceof WorkerRequest ) {
             $response = $handleIncomingHttp->handle(
                 runtime: $runtime,
                 request: $request->request(),
@@ -90,7 +88,7 @@ final class WorkerLoop
                         ),
             );
 
-            $lifecycle->recordHandledRequest(requestId: $request->id());
+            $workerLifecycle->recordHandledRequest(requestId: $request->id());
             $runtime->stateResetRegistry()->resetAll();
         }
     }

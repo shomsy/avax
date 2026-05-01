@@ -12,21 +12,12 @@ use LogicException;
  */
 final readonly class ProviderBootPlan
 {
-    public array $dependencies;
-
-    public array $order;
-
     /**
      * @param list<class-string<RegisterDependency>> $order
      * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
      */
-    private function __construct(
-        array $order,
-        array $dependencies,
-    )
+    private function __construct(public array $order, public array $dependencies)
     {
-        $this->order = $order;
-        $this->dependencies = $dependencies;
     }
 
     /**
@@ -96,7 +87,7 @@ final readonly class ProviderBootPlan
 
         foreach ($dependencies[$class] ?? [] as $dependencyClass) {
             if (! isset($dependencies[$dependencyClass])) {
-                throw new InvalidArgumentException(message: "Provider dependency [{$dependencyClass}] does not exist.");
+                throw new InvalidArgumentException(message: sprintf('Provider dependency [%s] does not exist.', $dependencyClass));
             }
 
             self::visit(
@@ -122,7 +113,7 @@ final readonly class ProviderBootPlan
 
         foreach ($this->order as $class) {
             if (! isset($instances[$class])) {
-                throw new InvalidArgumentException(message: "Provider [{$class}] is missing from the resolved provider set.");
+                throw new InvalidArgumentException(message: sprintf('Provider [%s] is missing from the resolved provider set.', $class));
             }
 
             $ordered[] = $instances[$class];

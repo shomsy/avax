@@ -89,7 +89,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
 
         foreach ($this->routeRegistry->flush() as $builder) {
             $definition = $builder->build();
-            $method     = strtoupper(string: $definition->method);
+            $method = strtoupper(string: (string) $definition->method);
 
             $routesByMethod[$method] ??= [];
             $routesByMethod[$method][] = $definition;

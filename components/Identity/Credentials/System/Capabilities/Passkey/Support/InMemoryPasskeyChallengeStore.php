@@ -11,9 +11,9 @@ final class InMemoryPasskeyChallengeStore implements PasskeyChallengeStoreInterf
     /** @var array<string, PasskeyChallengeRecord> */
     private array $records = [];
 
-    public function issue(PasskeyChallengeRecord $record): void
+    public function issue(PasskeyChallengeRecord $passkeyChallengeRecord) : void
     {
-        $this->records[$record->challengeId] = $record;
+        $this->records[$passkeyChallengeRecord->challengeId] = $passkeyChallengeRecord;
     }
 
     public function find(string $challengeId): ?PasskeyChallengeRecord

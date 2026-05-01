@@ -18,65 +18,65 @@ final class RequestScopeTest extends TestCase
     #[Test]
     public function it_is_open_when_created(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
 
-        self::assertTrue($scope->isOpen());
-        self::assertInstanceOf(RequestScopeId::class, $scope->id());
+        self::assertTrue($requestScope->isOpen());
+        self::assertInstanceOf(RequestScopeId::class, $requestScope->id());
     }
 
     #[Test]
     public function it_stores_and_reads_value(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
 
-        $scope->write(key: 'user_id', value: 123);
-        $scope->write(key: 'user_name', value: 'Milos');
+        $requestScope->write(key: 'user_id', value: 123);
+        $requestScope->write(key: 'user_name', value: 'Milos');
 
-        self::assertSame(123, $scope->read(key: 'user_id'));
-        self::assertSame('Milos', $scope->read(key: 'user_name'));
+        self::assertSame(123, $requestScope->read(key: 'user_id'));
+        self::assertSame('Milos', $requestScope->read(key: 'user_name'));
     }
 
     #[Test]
     public function it_returns_null_for_missing_key(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
 
-        self::assertNull($scope->read(key: 'missing'));
+        self::assertNull($requestScope->read(key: 'missing'));
     }
 
     #[Test]
     public function it_checks_key_existence(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
 
-        $scope->write(key: 'exists', value: 'value');
+        $requestScope->write(key: 'exists', value: 'value');
 
-        self::assertTrue($scope->has(key: 'exists'));
-        self::assertFalse($scope->has(key: 'missing'));
+        self::assertTrue($requestScope->has(key: 'exists'));
+        self::assertFalse($requestScope->has(key: 'missing'));
     }
 
     #[Test]
     public function it_removes_value(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
 
-        $scope->write(key: 'temp', value: 'data');
-        self::assertTrue($scope->has(key: 'temp'));
+        $requestScope->write(key: 'temp', value: 'data');
+        self::assertTrue($requestScope->has(key: 'temp'));
 
-        $scope->remove(key: 'temp');
+        $requestScope->remove(key: 'temp');
 
-        self::assertFalse($scope->has(key: 'temp'));
+        self::assertFalse($requestScope->has(key: 'temp'));
     }
 
     #[Test]
     public function it_returns_all_values(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
 
-        $scope->write(key: 'a', value: 1);
-        $scope->write(key: 'b', value: 2);
+        $requestScope->write(key: 'a', value: 1);
+        $requestScope->write(key: 'b', value: 2);
 
-        $all = $scope->all();
+        $all = $requestScope->all();
 
         self::assertCount(2, $all);
         self::assertSame(1, $all['a']);
@@ -86,57 +86,57 @@ final class RequestScopeTest extends TestCase
     #[Test]
     public function it_closes_scope_and_clears_values(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
 
-        $scope->write(key: 'data', value: 'secret');
-        $scope->close();
+        $requestScope->write(key: 'data', value: 'secret');
+        $requestScope->close();
 
-        self::assertFalse($scope->isOpen());
-        self::assertSame([], $scope->all());
+        self::assertFalse($requestScope->isOpen());
+        self::assertSame([], $requestScope->all());
     }
 
     #[Test]
     public function it_throws_when_accessing_closed_scope(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
-        $scope->close();
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope->close();
 
         $this->expectException(RequestScopeAlreadyClosed::class);
         $this->expectExceptionMessage('Request scope is already closed.');
 
-        $scope->read(key: 'any');
+        $requestScope->read(key: 'any');
     }
 
     #[Test]
     public function it_throws_when_writing_to_closed_scope(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
-        $scope->close();
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope->close();
 
         $this->expectException(RequestScopeAlreadyClosed::class);
 
-        $scope->write(key: 'key', value: 'value');
+        $requestScope->write(key: 'key', value: 'value');
     }
 
     #[Test]
     public function it_throws_when_checking_closed_scope(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
-        $scope->close();
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope->close();
 
         $this->expectException(RequestScopeAlreadyClosed::class);
 
-        $scope->has(key: 'key');
+        $requestScope->has(key: 'key');
     }
 
     #[Test]
     public function it_throws_when_closing_already_closed_scope(): void
     {
-        $scope = new RequestScope(id: RequestScopeId::generate());
-        $scope->close();
+        $requestScope = new RequestScope(id: RequestScopeId::generate());
+        $requestScope->close();
 
         $this->expectException(RequestScopeAlreadyClosed::class);
 
-        $scope->close();
+        $requestScope->close();
     }
 }

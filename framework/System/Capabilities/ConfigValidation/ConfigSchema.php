@@ -33,7 +33,7 @@ final readonly class ConfigSchema
         bool $required = true,
         mixed $default = null,
         array $allowed = [],
-        string $description = null,
+        ?string $description = null,
     ): self {
         $fields        = $this->fields;
         $fields[$name] = new ConfigSchemaField(

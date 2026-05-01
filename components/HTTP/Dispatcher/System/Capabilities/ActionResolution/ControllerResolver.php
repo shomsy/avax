@@ -20,7 +20,7 @@ final readonly class ControllerResolver
     public function resolve(string $className): object
     {
         if (! class_exists($className)) {
-            throw new RuntimeException("Controller class '{$className}' does not exist.");
+            throw new RuntimeException(sprintf("Controller class '%s' does not exist.", $className));
         }
 
         if ($this->container->has($className)) {

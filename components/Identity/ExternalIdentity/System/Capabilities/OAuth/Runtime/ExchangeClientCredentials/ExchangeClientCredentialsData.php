@@ -19,7 +19,7 @@ final readonly class ExchangeClientCredentialsData
         public string $clientId,
         #[SensitiveParameter]
         public ?string $clientSecret = null,
-        array $scopes = null,
+        ?array $scopes = null,
         public ?string $audience = null,
         #[SensitiveParameter]
         public ?string $ipAddress = null,

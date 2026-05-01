@@ -16,11 +16,11 @@ use function is_string;
  */
 final class Encrypter implements EncrypterInterface
 {
-    private const CIPHER = 'aes-256-gcm';
+    private const string CIPHER = 'aes-256-gcm';
 
-    private const IV_LENGTH = 12; // 96 bits recommended for GCM
+    private const int IV_LENGTH = 12; // 96 bits recommended for GCM
 
-    private const TAG_LENGTH = 16; // 128 bits authentication tag
+    private const int TAG_LENGTH = 16; // 128 bits authentication tag
 
     /**
      * Check if this encrypter supports the given cipher.
@@ -34,13 +34,13 @@ final class Encrypter implements EncrypterInterface
      * Encrypt a value using AES-256-GCM.
      *
      * @param mixed         $value The value to encrypt (will be serialized if not string)
-     * @param EncryptionKey $key   The encryption key to use
+     * @param EncryptionKey $encryptionKey The encryption key to use
      *
      * @return EncryptedPayload The encrypted payload with cipher text, IV, and auth tag
      *
      * @throws EncryptionFailed if encryption operation fails
      */
-    public function encrypt(mixed $value, EncryptionKey $key): EncryptedPayload
+    public function encrypt(mixed $value, EncryptionKey $encryptionKey) : EncryptedPayload
     {
         // Serialize to JSON for safe, portable encoding
         $plaintext = is_string($value) ? $value : json_encode(value: $value, flags: JSON_THROW_ON_ERROR);
@@ -52,7 +52,7 @@ final class Encrypter implements EncrypterInterface
         $cipherText = openssl_encrypt(
             $plaintext,
             self::CIPHER,
-            $key->raw(),
+            $encryptionKey->raw(),
             OPENSSL_RAW_DATA,
             $iv,
             $tag,
@@ -68,7 +68,7 @@ final class Encrypter implements EncrypterInterface
             cipherText: $cipherText,
             iv        : $iv,
             tag       : $tag,
-            keyVersion: $key->version(),
+            keyVersion: $encryptionKey->version(),
         );
     }
 
@@ -77,23 +77,23 @@ final class Encrypter implements EncrypterInterface
      *
      * Validates the authentication tag to detect tampering.
      *
-     * @param EncryptedPayload $payload The encrypted payload to decrypt
-     * @param EncryptionKey    $key     The encryption key to use
+     * @param EncryptedPayload $encryptedPayload The encrypted payload to decrypt
+     * @param EncryptionKey    $encryptionKey    The encryption key to use
      *
      * @return string The decrypted plaintext
      *
      * @throws DecryptionFailed if decryption fails or payload has been tampered with
      */
-    public function decrypt(EncryptedPayload $payload, EncryptionKey $key): string
+    public function decrypt(EncryptedPayload $encryptedPayload, EncryptionKey $encryptionKey) : string
     {
         // Decrypt with AES-256-GCM, passing the authentication tag
         $plaintext = openssl_decrypt(
-            $payload->cipherText(),
+            $encryptedPayload->cipherText(),
             self::CIPHER,
-            $key->raw(),
+            $encryptionKey->raw(),
             OPENSSL_RAW_DATA,
-            $payload->iv(),
-            $payload->tag(),
+            $encryptedPayload->iv(),
+            $encryptedPayload->tag(),
         );
 
         if ($plaintext === false) {

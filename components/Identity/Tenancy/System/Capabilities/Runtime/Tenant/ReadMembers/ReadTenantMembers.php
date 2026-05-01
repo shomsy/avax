@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\ReadMembers;
 
+use Avax\Components\Identity\Tenancy\System\Capabilities\Model\Tenant;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMember;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFailed;
@@ -19,7 +20,7 @@ final readonly class ReadTenantMembers
     {
         $tenant = $this->tenantStore->findTenantBySlug(slug: $tenantSlug);
 
-        if ($tenant === null) {
+        if (! $tenant instanceof Tenant) {
             throw TenantFailed::tenantNotFound(tenantSlug: $tenantSlug);
         }
 

@@ -26,15 +26,15 @@ final class ResolveDependencies
     public function resolveParameters(
         array          $parameters,
         array          $overrides,
-        ResolveDependency $resolver,
-        ResolveRequest $request = null,
+        ResolveDependency $resolveDependency,
+        ?ResolveRequest   $resolveRequest = null,
     ) : array
     {
         return $this->resolvePlan(
-            plan     : $this->createPlan(parameters: $parameters),
             overrides: $overrides,
-            resolver : $resolver,
-            request  : $request,
+            plan     : $this->createPlan(parameters: $parameters),
+            resolver : $resolveDependency,
+            request  : $resolveRequest,
         );
     }
 
@@ -46,19 +46,19 @@ final class ResolveDependencies
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan     $plan,
+        ResolvePlan       $resolvePlan,
         array $overrides,
-        ResolveDependency $resolver,
-        ?ResolveRequest $request,
+        ResolveDependency $resolveDependency,
+        ?ResolveRequest   $resolveRequest,
     ): array {
         $resolved = [];
 
-        foreach ($plan->parameters as $parameter) {
+        foreach ($resolvePlan->parameters as $parameter) {
             $resolved[] = $this->resolveCompiledParameter(
                 parameter: $parameter,
                 overrides: $overrides,
-                resolver : $resolver,
-                request  : $request,
+                resolver : $resolveDependency,
+                request  : $resolveRequest,
             );
         }
 
@@ -75,30 +75,30 @@ final class ResolveDependencies
     private function resolveCompiledParameter(
         array $parameter,
         array $overrides,
-        ResolveDependency $resolver,
-        ?ResolveRequest $request,
+        ResolveDependency $resolveDependency,
+        ?ResolveRequest   $resolveRequest,
     ): mixed {
         if (array_key_exists(key: $parameter['name'], array: $overrides)) {
             return $overrides[$parameter['name']];
         }
 
         if (
-            $request !== null
+            $resolveRequest instanceof ResolveRequest
             && $parameter['serviceId'] === null
-            && array_key_exists(key: $parameter['inputName'], array: $request->context)
+            && array_key_exists(key: $parameter['inputName'], array: $resolveRequest->context)
         ) {
-            return $request->context[$parameter['inputName']];
+            return $resolveRequest->context[$parameter['inputName']];
         }
 
         if ($parameter['serviceId'] !== null) {
-            return $resolver->resolveRequest(
-                request: $request?->child(serviceId: $parameter['serviceId'])
+            return $resolveDependency->resolveRequest(
+                request: $resolveRequest?->child(serviceId: $parameter['serviceId'])
                              ?? new ResolveRequest(serviceId: $parameter['serviceId']),
             );
         }
 
         if ($parameter['hasDefault']) {
-            return unserialize(data: base64_decode(string: $parameter['default']), options: ['allowed_classes' => false]);
+            return unserialize(data: base64_decode(string: (string) $parameter['default']), options: ['allowed_classes' => false]);
         }
 
         if ($parameter['allowsNull']) {
@@ -107,10 +107,10 @@ final class ResolveDependencies
 
         throw new ContainerException(
             message: $parameter['source'] === 'runtime'
-                         ? "Runtime input [\${$parameter['inputName']}] is missing for [{$request?->serviceId}]. "
-                       . "Dependency path [{$request?->getPath()}]. Likely fix: pass an explicit override, use forContext(), or add a default value."
-                         : "Cannot resolve parameter [\${$parameter['name']}] for service [{$request?->serviceId}]. "
-                       . "Dependency path [{$request?->getPath()}]. Likely fix: register the dependency, add an Inject attribute, or provide an override.",
+                         ? sprintf('Runtime input [$%s] is missing for [%s]. ', $parameter['inputName'], $resolveRequest?->serviceId)
+                       . sprintf('Dependency path [%s]. Likely fix: pass an explicit override, use forContext(), or add a default value.', $resolveRequest?->getPath())
+                         : sprintf('Cannot resolve parameter [$%s] for service [%s]. ', $parameter['name'], $resolveRequest?->serviceId)
+                       . sprintf('Dependency path [%s]. Likely fix: register the dependency, add an Inject attribute, or provide an override.', $resolveRequest?->getPath()),
         );
     }
 
@@ -143,13 +143,13 @@ final class ResolveDependencies
     /**
      * Infers one service id from the parameter attribute or object type.
      */
-    private function serviceIdFor(ReflectionParameter $parameter): ?string
+    private function serviceIdFor(ReflectionParameter $reflectionParameter) : ?string
     {
-        if ($parameter->getAttributes(name: RuntimeInput::class) !== []) {
+        if ($reflectionParameter->getAttributes(name: RuntimeInput::class) !== []) {
             return null;
         }
 
-        $attributes = $parameter->getAttributes(name: Inject::class);
+        $attributes = $reflectionParameter->getAttributes(name: Inject::class);
         if ($attributes !== []) {
             $inject = $attributes[0]->newInstance();
             if (is_string(value: $inject->abstract) && $inject->abstract !== '') {
@@ -157,10 +157,11 @@ final class ResolveDependencies
             }
         }
 
-        $type = $parameter->getType();
+        $type = $reflectionParameter->getType();
         if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
             return $type->getName();
         }
+
         if ($type instanceof ReflectionUnionType) {
             foreach ($type->getTypes() as $namedType) {
                 if ($namedType instanceof ReflectionNamedType && ! $namedType->isBuiltin()) {
@@ -172,23 +173,23 @@ final class ResolveDependencies
         return null;
     }
 
-    private function sourceFor(ReflectionParameter $parameter): string
+    private function sourceFor(ReflectionParameter $reflectionParameter) : string
     {
-        return $this->serviceIdFor(parameter: $parameter) !== null ? 'service' : 'runtime';
+        return $this->serviceIdFor(parameter: $reflectionParameter) !== null ? 'service' : 'runtime';
     }
 
-    private function inputNameFor(ReflectionParameter $parameter): string
+    private function inputNameFor(ReflectionParameter $reflectionParameter) : string
     {
-        $attributes = $parameter->getAttributes(name: RuntimeInput::class);
+        $attributes = $reflectionParameter->getAttributes(name: RuntimeInput::class);
         if ($attributes === []) {
-            return $parameter->getName();
+            return $reflectionParameter->getName();
         }
 
-        $input = $attributes[0]->newInstance();
-        if (is_string(value: $input->name) && trim(string: $input->name) !== '') {
-            return trim(string: $input->name);
+        $runtimeInput = $attributes[0]->newInstance();
+        if (is_string(value: $runtimeInput->name) && trim(string: $runtimeInput->name) !== '') {
+            return trim(string: $runtimeInput->name);
         }
 
-        return $parameter->getName();
+        return $reflectionParameter->getName();
     }
 }

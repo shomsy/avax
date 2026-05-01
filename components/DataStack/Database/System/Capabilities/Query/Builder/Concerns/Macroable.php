@@ -36,7 +36,6 @@ trait Macroable
         );
 
         foreach ($methods as $method) {
-            $method->setAccessible(accessible: true);
             static::macro(name: $method->name, macro: $method->invoke(object: $mixin));
         }
     }
@@ -67,7 +66,7 @@ trait Macroable
     public function __call(string $method, array $parameters): mixed
     {
         if (! static::hasMacro(name: $method)) {
-            throw new BadMethodCallException(message: "Method [{$method}] does not exist on " . static::class);
+            throw new BadMethodCallException(message: sprintf('Method [%s] does not exist on ', $method) . static::class);
         }
 
         $macro = static::$macros[$method];

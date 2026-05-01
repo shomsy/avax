@@ -8,6 +8,7 @@ use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\
 use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottleExceeded;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
@@ -26,7 +27,7 @@ final readonly class BeginPasswordReset
         private PasswordResetStoreInterface $passwordResetStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        int $expiresAfterSeconds = null,
+        ?int $expiresAfterSeconds = null,
         private ?AttemptThrottle $attemptThrottle = null,
     ) {
         $expiresAfterSeconds ??= 3600;
@@ -36,21 +37,21 @@ final readonly class BeginPasswordReset
     /**
      * @throws DateMalformedStringException
      */
-    public function execute(BeginPasswordResetData $data): PasswordResetChallenge
+    public function execute(BeginPasswordResetData $beginPasswordResetData) : PasswordResetChallenge
     {
-        $throttleKey = $this->throttleKey(email: $data->email, ipAddress: $data->ipAddress);
+        $throttleKey = $this->throttleKey(email: $beginPasswordResetData->email, ipAddress: $beginPasswordResetData->ipAddress);
 
         try {
             $this->attemptThrottle?->check(key: $throttleKey);
-        } catch (AttemptThrottleExceeded $exception) {
+        } catch (AttemptThrottleExceeded $attemptThrottleExceeded) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.password_reset.throttled',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'email'      => strtolower(string: $data->email),
-                                'ip_address' => $data->ipAddress,
-                                'user_agent' => $data->userAgent,
-                    'retry_after' => $exception->retryAfter(),
+                                'email'       => strtolower(string: $beginPasswordResetData->email),
+                                'ip_address'  => $beginPasswordResetData->ipAddress,
+                                'user_agent'  => $beginPasswordResetData->userAgent,
+                                'retry_after' => $attemptThrottleExceeded->retryAfter(),
                 ],
             ));
 
@@ -58,26 +59,26 @@ final readonly class BeginPasswordReset
         }
 
         $this->attemptThrottle?->recordAttempt(key: $throttleKey);
-        $user = $this->userSource->findByEmail(email: $data->email);
+        $user = $this->userSource->findByEmail(email: $beginPasswordResetData->email);
 
-        if ($user === null || ! $user->isActive()) {
+        if (! $user instanceof User || ! $user->isActive()) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.password_reset.requested',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'email' => strtolower(string: $data->email),
+                                'email'      => strtolower(string: $beginPasswordResetData->email),
                     'dispatched' => false,
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
+                                'ip_address' => $beginPasswordResetData->ipAddress,
+                                'user_agent' => $beginPasswordResetData->userAgent,
                 ],
             ));
 
             return PasswordResetChallenge::hidden();
         }
 
-        $challenge = $this->passwordResetStore->issue(
+        $passwordResetChallenge = $this->passwordResetStore->issue(
             userId   : $user->getId(),
-            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds"),
+            expiresAt: $this->clock->now()->modify(modifier: sprintf('+%d seconds', $this->expiresAfterSeconds)),
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -86,12 +87,12 @@ final readonly class BeginPasswordReset
             context   : [
                             'user_id' => $user->getId()->value,
                 'dispatched' => true,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $beginPasswordResetData->ipAddress,
+                            'user_agent' => $beginPasswordResetData->userAgent,
             ],
         ));
 
-        return $challenge;
+        return $passwordResetChallenge;
     }
 
     private function throttleKey(#[SensitiveParameter] string $email, #[SensitiveParameter] ?string $ipAddress): string

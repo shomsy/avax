@@ -14,31 +14,32 @@ use RuntimeException;
 final class ClickHouseGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileSelect(QueryState $state): string
+    public function compileSelect(QueryState $queryState) : string
     {
-        parent::compileSelect(state: $state);
+        parent::compileSelect(state: $queryState);
 
         $components = [
-            'select' => $this->compileColumns(state: $state),
-            'from'  => $this->compileFrom(state: $state),
-            'joins' => $this->compileJoins(state: $state),
-            'wheres' => $this->compileWheres(state: $state),
-            'groups' => $this->compileGroups(state: $state),
-            'having' => $this->compileHaving(state: $state),
-            'orders' => $this->compileOrders(state: $state),
-            'limit' => $this->compileLimit(state: $state),
+            'select' => $this->compileColumns(state: $queryState),
+            'from'   => $this->compileFrom(state: $queryState),
+            'joins'  => $this->compileJoins(state: $queryState),
+            'wheres' => $this->compileWheres(state: $queryState),
+            'groups' => $this->compileGroups(state: $queryState),
+            'having' => $this->compileHaving(state: $queryState),
+            'orders' => $this->compileOrders(state: $queryState),
+            'limit'  => $this->compileLimit(state: $queryState),
         ];
 
         return implode(separator: ' ', array: array_filter(array: $components));
     }
 
-    protected function compileColumns(QueryState $state): string
+    #[Override]
+    protected function compileColumns(QueryState $queryState) : string
     {
-        parent::compileColumns(state: $state);
+        parent::compileColumns(state: $queryState);
 
-        $select = $state->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
+        $select = $queryState->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
 
-        $columns = array_map(callback: fn ($c) => $this->wrap(value: $c), array: $state->columns ?: ['*']);
+        $columns = array_map(callback: fn ($c) : string => $this->wrap(value: $c), array: $queryState->columns ?: ['*']);
 
         return $select . implode(separator: ', ', array: $columns);
     }
@@ -51,72 +52,72 @@ final class ClickHouseGrammar extends BaseGrammar
         return (string) $value;
     }
 
-    protected function compileHaving(QueryState $state): string
+    private function compileHaving(QueryState $queryState) : string
     {
         return '';
     }
 
     #[Override]
-    public function compileUpdate(QueryState $state): string
+    public function compileUpdate(QueryState $queryState) : string
     {
-        parent::compileUpdate(state: $state);
+        parent::compileUpdate(state: $queryState);
 
-        $table = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $queryState->from);
 
         $sets = [];
-        foreach ($state->values as $col => $val) {
-            $sets[] = "{$col} = {$val}";
+        foreach ($queryState->values as $col => $val) {
+            $sets[] = sprintf('%s = %s', $col, $val);
         }
 
-        $sql = "ALTER TABLE {$table} UPDATE " . implode(separator: ', ', array: $sets);
+        $sql = sprintf('ALTER TABLE %s UPDATE ', $table) . implode(separator: ', ', array: $sets);
 
-        if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileWheres(state: $state);
+        if ($queryState->wheres !== []) {
+            $sql .= ' WHERE ' . $this->compileWheres(state: $queryState);
         }
 
         return $sql;
     }
 
     #[Override]
-    public function compileDelete(QueryState $state): string
+    public function compileDelete(QueryState $queryState) : string
     {
-        parent::compileDelete(state: $state);
+        parent::compileDelete(state: $queryState);
 
-        $table = $this->wrap(value: $state->from);
-        $wheres = $this->compileWheres(state: $state);
+        $table  = $this->wrap(value: $queryState->from);
+        $wheres = $this->compileWheres(state: $queryState);
 
-        return "ALTER TABLE {$table} DELETE {$wheres}";
+        return sprintf('ALTER TABLE %s DELETE %s', $table, $wheres);
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
         try {
-            parent::compileUpsert(state: $state, uniqueBy: $uniqueBy, update: $update);
+            parent::compileUpsert(uniqueBy: $uniqueBy, update: $update, state: $queryState);
         } catch (RuntimeException) {
         }
 
-        return $this->compileInsert(state: $state);
+        return $this->compileInsert(state: $queryState);
     }
 
     #[Override]
-    public function compileInsert(QueryState $state): string
+    public function compileInsert(QueryState $queryState) : string
     {
-        parent::compileInsert(state: $state);
+        parent::compileInsert(state: $queryState);
 
-        $table  = $this->wrap(value: $state->from);
-        $columns = implode(separator: ', ', array: array_keys(array: $state->values));
+        $table   = $this->wrap(value: $queryState->from);
+        $columns = implode(separator: ', ', array: array_keys(array: $queryState->values));
         $values = implode(separator: ', ', array: array_map(
-            callback: static fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
-            array   : $state->values,
+            callback: static fn ($v) => is_string(value: $v) ? sprintf("'%s'", $v) : $v,
+            array   : $queryState->values,
         ));
 
-        return "INSERT INTO {$table} ({$columns}) VALUES ({$values})";
+        return sprintf('INSERT INTO %s (%s) VALUES (%s)', $table, $columns, $values);
     }
 
     public function compileSample(int $percent): string
     {
-        return "SAMPLE {$percent}/100";
+        return sprintf('SAMPLE %d/100', $percent);
     }
 
     public function compileArrayJoin(string $column): string
@@ -136,12 +137,12 @@ final class ClickHouseGrammar extends BaseGrammar
 
     public function compileWithRollingWindow(string $column, string $function): string
     {
-        return "rollingWindow('{$function}', {$column})";
+        return sprintf("rollingWindow('%s', %s)", $function, $column);
     }
 
     public function compileWithSeries(int $start, int $end): string
     {
-        return "WITH series AS (SELECT toUInt64(number) AS n FROM numbers({$start}, " . ($end - $start) . '))';
+        return sprintf('WITH series AS (SELECT toUInt64(number) AS n FROM numbers(%d, ', $start) . ($end - $start) . '))';
     }
 
     public function compileUsing(array $columns): string
@@ -166,7 +167,7 @@ final class ClickHouseGrammar extends BaseGrammar
 
     public function compileQuantile(float $q, string $column): string
     {
-        return "quantile({$q})(" . $this->wrap(value: $column) . ')';
+        return sprintf('quantile(%s)(', $q) . $this->wrap(value: $column) . ')';
     }
 
     #[Override]

@@ -58,7 +58,7 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     private function registerIdentity(): void
     {
         if (! $this->container->has(id: IdentityInterface::class)) {
-            $this->container->singleton(abstract: IdentityInterface::class, concrete: function () {
+            $this->container->singleton(abstract: IdentityInterface::class, concrete: function () : Identity {
                 $sessionIdentity = $this->container->has(id: SessionIdentityInterface::class)
                     ? $this->container->get(id: SessionIdentityInterface::class)
                     : null;
@@ -85,8 +85,8 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     private function registerAuth(): void
     {
         if (! $this->container->has(id: Auth::class)) {
-            $this->container->singleton(abstract: Auth::class, concrete: function () {
-                $builder = $this->applyOptionalBindings(builder: DefaultAuth::configuration()
+            $this->container->singleton(abstract: Auth::class, concrete: function () : Auth {
+                $authBuilder = $this->applyOptionalBindings(builder: DefaultAuth::configuration()
                     ->forUser(userSource: $this->container->get(id: UserSourceInterface::class))
                     ->withIdentity(identity: $this->container->get(id: IdentityInterface::class))
                     ->usingHasher(passwordHasher: $this->container->get(id: PasswordHasher::class))
@@ -94,11 +94,11 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
 
                 $rateLimit = $this->resolveLoginRateLimit();
 
-                if ($rateLimit !== null) {
-                    $builder->protectFromBruteForce(rateLimit: $rateLimit);
+                if ($rateLimit instanceof LoginRateLimit) {
+                    $authBuilder->protectFromBruteForce(rateLimit: $rateLimit);
                 }
 
-                return $builder->ready();
+                return $authBuilder->ready();
             });
         }
     }
@@ -106,17 +106,17 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     /**
      * @throws ReflectionException
      */
-    private function applyOptionalBindings(AuthBuilder $builder): AuthBuilder
+    private function applyOptionalBindings(AuthBuilder $authBuilder) : AuthBuilder
     {
         if ($this->container->has(id: Clock::class)) {
-            $builder->withClock(clock: $this->container->get(id: Clock::class));
+            $authBuilder->withClock(clock: $this->container->get(id: Clock::class));
         }
 
         if ($this->container->has(id: AuditLogInterface::class)) {
-            $builder->withAuditLog(auditLog: $this->container->get(id: AuditLogInterface::class));
+            $authBuilder->withAuditLog(auditLog: $this->container->get(id: AuditLogInterface::class));
         }
 
-        return $builder;
+        return $authBuilder;
     }
 
     /**
@@ -133,8 +133,8 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
         }
 
         return new LoginRateLimit(
-            storage: $this->container->get(id: LoginRateLimitStorageInterface::class),
             clock  : $this->container->get(id: Clock::class),
+            storage: $this->container->get(id: LoginRateLimitStorageInterface::class),
         );
     }
 }

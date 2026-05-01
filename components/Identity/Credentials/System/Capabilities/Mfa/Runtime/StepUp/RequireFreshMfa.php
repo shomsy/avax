@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp;
 
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\FreshMfaRequired;
+use DateTimeImmutable;
 use SensitiveParameter;
 
 /**
@@ -26,13 +28,13 @@ final readonly class RequireFreshMfa
      * @throws Unauthenticated
      * @throws FreshMfaRequired
      */
-    public function execute(int $maxAgeSeconds = null) : void
+    public function execute(?int $maxAgeSeconds = null) : void
     {
-        $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $user                  = $authenticationContext->user();
         $maxAgeSeconds ??= $this->maxAgeSeconds;
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
@@ -40,9 +42,9 @@ final readonly class RequireFreshMfa
             return;
         }
 
-        $verifiedAt = $context->mfaVerifiedAt();
+        $verifiedAt = $authenticationContext->mfaVerifiedAt();
 
-        if ($verifiedAt === null) {
+        if (! $verifiedAt instanceof DateTimeImmutable) {
             throw new FreshMfaRequired(maxAgeSeconds: $maxAgeSeconds);
         }
 

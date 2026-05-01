@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orc
 
 final readonly class GracefulStop
 {
-    public static function execute(): void
+    public static function execute() : never
     {
         echo "Starting graceful shutdown...\n";
 

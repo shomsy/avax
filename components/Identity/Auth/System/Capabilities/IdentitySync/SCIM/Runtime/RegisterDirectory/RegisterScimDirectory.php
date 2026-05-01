@@ -19,7 +19,7 @@ use SensitiveParameter;
 final readonly class RegisterScimDirectory
 {
     public function __construct(
-        private ScimDirectoryStoreInterface $directoryStore,
+        private ScimDirectoryStoreInterface $scimDirectoryStore,
         #[SensitiveParameter]
         private PasswordHasher $passwordHasher,
         private GroupRoleMappingValidator $groupRoleMappingValidator,
@@ -31,33 +31,33 @@ final readonly class RegisterScimDirectory
      * @throws ScimFailed
      * @throws RandomException
      */
-    public function execute(RegisterScimDirectoryData $data): RegisteredScimDirectory
+    public function execute(RegisterScimDirectoryData $registerScimDirectoryData) : RegisteredScimDirectory
     {
-        if (! $this->groupRoleMappingValidator->isValid(groupRoleMap: $data->groupRoleMap)) {
+        if (! $this->groupRoleMappingValidator->isValid(groupRoleMap: $registerScimDirectoryData->groupRoleMap)) {
             throw ScimFailed::invalidGroupRoleMapping();
         }
 
         $plainTextToken = bin2hex(string: random_bytes(length: 24));
-        $directory = new ScimDirectory(
+        $scimDirectory = new ScimDirectory(
             directoryId : 'scim_' . bin2hex(string: random_bytes(length: 12)),
-            tenantSlug  : trim(string: $data->tenantSlug),
-            name        : trim(string: $data->name),
+            tenantSlug  : trim(string: $registerScimDirectoryData->tenantSlug),
+            name        : trim(string: $registerScimDirectoryData->name),
             tokenHash   : $this->passwordHasher->hash(password: $plainTextToken),
-            groupRoleMap: $data->groupRoleMap,
+            groupRoleMap: $registerScimDirectoryData->groupRoleMap,
             createdAt   : $this->clock->now(),
         );
 
-        $this->directoryStore->save(directory: $directory);
+        $this->scimDirectoryStore->save(directory: $scimDirectory);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.directory.registered',
             occurredAt: $this->clock->now(),
             context   : [
-                'directory_id' => $directory->directoryId,
-                'tenant' => $directory->tenantSlug,
-                'name'   => $directory->name,
+                            'directory_id' => $scimDirectory->directoryId,
+                            'tenant'       => $scimDirectory->tenantSlug,
+                            'name'         => $scimDirectory->name,
             ],
         ));
 
-        return new RegisteredScimDirectory(directory: $directory, plainTextToken: $plainTextToken);
+        return new RegisteredScimDirectory(directory: $scimDirectory, plainTextToken: $plainTextToken);
     }
 }

@@ -13,16 +13,16 @@ use RuntimeException;
 
 final readonly class ApproveClientRegistration
 {
-    public function __construct(private OAuthClientRegistryInterface $clientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(ApproveClientRegistrationData $data): OAuthClient
+    public function execute(ApproveClientRegistrationData $approveClientRegistrationData) : OAuthClient
     {
-        $client = $this->clientRegistry->approve(
-            clientId  : $data->clientId,
-            approvedBy: $data->approvedBy,
+        $client = $this->oAuthClientRegistry->approve(
+            clientId  : $approveClientRegistrationData->clientId,
+            approvedBy: $approveClientRegistrationData->approvedBy,
         );
 
-        if ($client === null) {
+        if (! $client instanceof OAuthClient) {
             throw new RuntimeException(message: 'OAuth client was not found.');
         }
 

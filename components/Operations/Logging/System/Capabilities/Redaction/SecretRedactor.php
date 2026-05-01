@@ -20,7 +20,7 @@ final readonly class SecretRedactor
     /**
      * Keys that indicate sensitive values and should have their values redacted.
      */
-    private const SENSITIVE_KEYS
+    private const array SENSITIVE_KEYS
         = [
             'password',
             'passwd',
@@ -64,12 +64,12 @@ final readonly class SecretRedactor
     /**
      * The replacement string for redacted values.
      */
-    private const REDACTED = '***REDACTED***';
+    private const string REDACTED = '***REDACTED***';
 
     /**
      * Additional sensitive key patterns (case-insensitive partial matches).
      */
-    private const SENSITIVE_KEY_PATTERNS
+    private const array SENSITIVE_KEY_PATTERNS
         = [
             'password',
             'secret',
@@ -85,7 +85,7 @@ final readonly class SecretRedactor
      *
      * @var array<string, string> Pattern name => regex
      */
-    private const STRING_PATTERNS
+    private const array STRING_PATTERNS
         = [
             'bearer_token'      => '/Bearer\s+[A-Za-z0-9\-_\.]+\s*/i',
             'api_key_header'    => '/(?:x-api-key|api-key)\s*[:=]\s*[A-Za-z0-9\-_\.]+\s*/i',
@@ -172,20 +172,13 @@ final readonly class SecretRedactor
         }
 
         // Check additional custom keys
-        $additionalKeys = array_map(fn (string $k) : string => $this->normalizeKey($k), $this->additionalSensitiveKeys);
+        $additionalKeys = array_map($this->normalizeKey(...), $this->additionalSensitiveKeys);
 
         if (in_array($normalizedKey, $additionalKeys, true)) {
             return true;
         }
 
-        // Check partial matches against patterns
-        foreach (self::SENSITIVE_KEY_PATTERNS as $pattern) {
-            if (str_contains($normalizedKey, $pattern)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any(self::SENSITIVE_KEY_PATTERNS, fn ($pattern) : bool => str_contains($normalizedKey, (string) $pattern));
     }
 
     /**
@@ -204,7 +197,7 @@ final readonly class SecretRedactor
         }
 
         if ($this->redactEmails) {
-            $value = (string) preg_replace(
+            return (string) preg_replace(
                 '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/',
                 $this->createRedactedPlaceholder('email'),
                 $value,

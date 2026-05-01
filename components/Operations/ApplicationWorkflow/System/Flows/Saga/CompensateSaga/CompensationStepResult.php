@@ -26,8 +26,8 @@ final readonly class CompensationStepResult
     {
         return new self(
             stepName  : $stepName,
-            status    : CompensationStatus::SUCCESS,
             error     : null,
+            status    : CompensationStatus::SUCCESS,
             startedAt : $startedAt,
             finishedAt: microtime(true),
         );
@@ -37,8 +37,8 @@ final readonly class CompensationStepResult
     {
         return new self(
             stepName  : $stepName,
-            status    : CompensationStatus::FAILED,
             error     : $error,
+            status    : CompensationStatus::FAILED,
             startedAt : $startedAt,
             finishedAt: microtime(true),
         );

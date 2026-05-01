@@ -8,6 +8,7 @@ use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
@@ -15,6 +16,7 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\RefreshTokenRecord;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use DateMalformedStringException;
 use SensitiveParameter;
@@ -35,30 +37,30 @@ final readonly class RefreshAuthentication
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         #[SensitiveParameter]
         private ?JwtIdentityInterface $jwtIdentity = null,
-        private ?DeterministicRiskEngine $riskEngine = null,
+        private ?DeterministicRiskEngine $deterministicRiskEngine = null,
     ) {}
 
     /**
      * @throws RefreshAuthenticationFailed
      * @throws DateMalformedStringException
      */
-    public function execute(RefreshAuthenticationRequest $request): AuthenticationResult
+    public function execute(RefreshAuthenticationRequest $refreshAuthenticationRequest) : AuthenticationResult
     {
-        if ($this->refreshTokenStore === null || $this->jwtIdentity === null) {
+        if (! $this->refreshTokenStore instanceof RefreshTokenStoreInterface || ! $this->jwtIdentity instanceof JwtIdentityInterface) {
             throw RefreshAuthenticationFailed::invalidToken();
         }
 
-        $record = $this->refreshTokenStore->find(plainToken: $request->refreshToken);
+        $record = $this->refreshTokenStore->find(plainToken: $refreshAuthenticationRequest->refreshToken);
         $now = $this->clock->now();
 
-        if ($record === null || $record->isExpired()) {
+        if (! $record instanceof RefreshTokenRecord || $record->isExpired()) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.refresh.failed',
                 occurredAt: $now,
                 context   : [
                                 'reason' => 'missing_or_expired',
-                    'ip_address' => $request->ipAddress,
-                    'user_agent' => $request->userAgent,
+                                'ip_address' => $refreshAuthenticationRequest->ipAddress,
+                                'user_agent' => $refreshAuthenticationRequest->userAgent,
                 ],
             ));
 
@@ -71,8 +73,8 @@ final readonly class RefreshAuthentication
                 occurredAt: $now,
                 context   : [
                                 'reason' => 'oauth_bound_token',
-                    'ip_address' => $request->ipAddress,
-                    'user_agent' => $request->userAgent,
+                                'ip_address' => $refreshAuthenticationRequest->ipAddress,
+                                'user_agent' => $refreshAuthenticationRequest->userAgent,
                 ],
             ));
 
@@ -81,7 +83,7 @@ final readonly class RefreshAuthentication
 
         if ($record->isRotated()) {
             $this->refreshTokenStore->revokeFamily(familyId: $record->familyId);
-            $riskDecision = $this->riskEngine?->recordRefreshReuse(userId: $record->userId->value, clientId: $record->clientId);
+            $riskDecision = $this->deterministicRiskEngine?->recordRefreshReuse(userId: $record->userId->value, clientId: $record->clientId);
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.refresh.reuse_detected',
                 occurredAt: $now,
@@ -89,8 +91,8 @@ final readonly class RefreshAuthentication
                                 'user_id'    => $record->userId->value,
                                 'family_id'  => $record->familyId,
                     'risk_action' => $riskDecision?->action->value,
-                                'ip_address' => $request->ipAddress,
-                                'user_agent' => $request->userAgent,
+                                'ip_address' => $refreshAuthenticationRequest->ipAddress,
+                                'user_agent' => $refreshAuthenticationRequest->userAgent,
                 ],
             ));
 
@@ -99,21 +101,21 @@ final readonly class RefreshAuthentication
 
         $user = $this->userSource->findById(id: $record->userId);
 
-        if ($user === null || ! $user->isActive()) {
+        if (! $user instanceof User || ! $user->isActive()) {
             $this->refreshTokenStore->revokeFamily(familyId: $record->familyId);
 
             throw RefreshAuthenticationFailed::invalidToken();
         }
 
-        $accessToken = $this->jwtIdentity->issue(
+        $issuedToken        = $this->jwtIdentity->issue(
             user                : $user,
-            mfaVerifiedAt       : $record->mfaVerifiedAt,
             phishingResistant   : $record->phishingResistant,
-            clientId            : $record->clientId,
             scopes              : $record->scopes,
+            mfaVerifiedAt       : $record->mfaVerifiedAt,
+            clientId            : $record->clientId,
             refreshTokenFamilyId: $record->familyId,
         );
-        $refreshToken = $this->refreshTokenStore->issue(
+        $issuedRefreshToken = $this->refreshTokenStore->issue(
             userId           : $record->userId,
             expiresAt        : $now->modify(modifier: '+30 days'),
             familyId         : $record->familyId,
@@ -122,34 +124,34 @@ final readonly class RefreshAuthentication
             clientId         : $record->clientId,
             scopes           : $record->scopes,
         );
-        $this->refreshTokenStore->markRotated(tokenId: $record->tokenId, replacementTokenId: $refreshToken->tokenId);
+        $this->refreshTokenStore->markRotated(tokenId: $record->tokenId, replacementTokenId: $issuedRefreshToken->tokenId);
 
-        $context = AuthenticationContext::authenticated(
-            user                : $this->projectAuthenticatedUser->fromUser(user: $user),
-            mode                : AuthenticationMode::TOKEN,
-            accessTokenId       : $accessToken->tokenId,
-            accessTokenExpiresAt: $accessToken->expiresAt,
-            refreshTokenId      : $refreshToken->tokenId,
+        $authenticationContext = AuthenticationContext::authenticated(
+            accessTokenId       : $issuedToken->tokenId,
+            accessTokenExpiresAt: $issuedToken->expiresAt,
+            refreshTokenId      : $issuedRefreshToken->tokenId,
             mfaVerifiedAt       : $record->mfaVerifiedAt,
             phishingResistant   : $record->phishingResistant,
+            user                : $this->projectAuthenticatedUser->fromUser(user: $user),
+            mode                : AuthenticationMode::TOKEN,
         );
 
-        $this->currentAuthentication->store(context: $context);
+        $this->currentAuthentication->store(context: $authenticationContext);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.refresh.succeeded',
             occurredAt: $now,
             context   : [
                             'user_id'   => $user->getId()->value,
-                            'family_id' => $refreshToken->familyId,
-                'ip_address' => $request->ipAddress,
-                'user_agent' => $request->userAgent,
+                            'family_id'  => $issuedRefreshToken->familyId,
+                            'ip_address' => $refreshAuthenticationRequest->ipAddress,
+                            'user_agent' => $refreshAuthenticationRequest->userAgent,
             ],
         ));
 
         return AuthenticationResult::success(
-            context     : $context,
-            accessToken : $accessToken->token,
-            refreshToken: $refreshToken->token,
+            accessToken : $issuedToken->token,
+            refreshToken: $issuedRefreshToken->token,
+            context     : $authenticationContext,
         );
     }
 }

@@ -10,6 +10,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryUnavailable;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\ActiveSession;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
@@ -34,45 +35,45 @@ final readonly class ReadActiveSessions
      */
     public function execute(): array
     {
-        $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $user                  = $authenticationContext->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
-        if ($this->sessionRegistry === null) {
+        if (! $this->sessionRegistry instanceof SessionRegistryInterface) {
             throw SessionRegistryUnavailable::forSessionManagementFlow();
         }
 
-        $currentSessionId = $context->sessionId();
+        $currentSessionId = $authenticationContext->sessionId();
         $now = $this->clock->now();
         $sessions = [];
 
-        foreach ($this->sessionRegistry->listForUser(userId: new UserId(value: $user->id)) as $record) {
-            if (! $record->isActiveAt(moment: $now)) {
+        foreach ($this->sessionRegistry->listForUser(userId: new UserId(value: $user->id)) as $sessionRecord) {
+            if (! $sessionRecord->isActiveAt(moment: $now)) {
                 continue;
             }
 
-            $sessions[] = $this->toBoundary(record: $record, currentSessionId: $currentSessionId);
+            $sessions[] = $this->toBoundary(currentSessionId: $currentSessionId, record: $sessionRecord);
         }
 
         return $sessions;
     }
 
-    private function toBoundary(SessionRecord $record, #[SensitiveParameter] ?string $currentSessionId): ActiveSession
+    private function toBoundary(SessionRecord $sessionRecord, #[SensitiveParameter] ?string $currentSessionId) : ActiveSession
     {
         return new ActiveSession(
-            sessionId        : $record->sessionId,
-            createdAt        : $record->createdAt,
-            lastSeenAt       : $record->lastSeenAt,
-            idleExpiresAt    : $record->idleExpiresAt,
-            absoluteExpiresAt: $record->absoluteExpiresAt,
-            ipAddress        : $record->ipCreated,
-            userAgent        : $record->userAgentCreated,
-            current          : $record->sessionId === $currentSessionId,
-            revokedAt        : $record->revokedAt,
-            revokeReason     : $record->revokeReason,
+            sessionId        : $sessionRecord->sessionId,
+            createdAt        : $sessionRecord->createdAt,
+            lastSeenAt       : $sessionRecord->lastSeenAt,
+            idleExpiresAt    : $sessionRecord->idleExpiresAt,
+            absoluteExpiresAt: $sessionRecord->absoluteExpiresAt,
+            ipAddress        : $sessionRecord->ipCreated,
+            userAgent        : $sessionRecord->userAgentCreated,
+            current          : $sessionRecord->sessionId === $currentSessionId,
+            revokedAt        : $sessionRecord->revokedAt,
+            revokeReason     : $sessionRecord->revokeReason,
         );
     }
 }

@@ -13,25 +13,25 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 final readonly class Register
 {
     public function __construct(
-        private ValidateRegistrationData $validator,
-        private HashRegisteredPassword $hasher,
-        private CreateRegisteredUser $creator,
+        private ValidateRegistrationData $validateRegistrationData,
+        private HashRegisteredPassword   $hashRegisteredPassword,
+        private CreateRegisteredUser     $createRegisteredUser,
         private Identity $identity,
     ) {}
 
     /**
      * @throws RegistrationFailed
      */
-    public function execute(RegistrationData $data): RegistrationResult
+    public function execute(RegistrationData $registrationData) : RegistrationResult
     {
-        $this->validator->execute($data);
+        $this->validateRegistrationData->execute($registrationData);
 
-        $hashedPassword = $this->hasher->execute($data->password);
+        $hashedPassword = $this->hashRegisteredPassword->execute($registrationData->password);
 
-        $user = $this->creator->execute($data, $hashedPassword);
+        $user = $this->createRegisteredUser->execute($registrationData, $hashedPassword);
 
-        $issued = $this->identity->issue($user);
+        $issuedAuthentication = $this->identity->issue($user);
 
-        return new RegistrationResult($user, $issued);
+        return new RegistrationResult($user, $issuedAuthentication);
     }
 }

@@ -20,8 +20,6 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final readonly class LifetimePlan
 {
-    public bool $poolResetBeforeReuse;
-
     public int $poolSize;
 
     public bool $disposable;
@@ -32,22 +30,16 @@ final readonly class LifetimePlan
 
     public string $scopeKind;
 
-    public string $storage;
-
-    public string $name;
-
-    public string $serviceId;
-
     public function __construct(
-        string $serviceId,
-        string $name,
-        string $storage,
-        string $scopeKind = null,
-        bool $warm = null,
-        bool $lazy = null,
-        bool $disposable = null,
-        int  $poolSize = null,
-        bool $poolResetBeforeReuse = true,
+        public string $serviceId,
+        public string $name,
+        public string $storage,
+        ?string       $scopeKind = null,
+        ?bool         $warm = null,
+        ?bool         $lazy = null,
+        ?bool         $disposable = null,
+        ?int          $poolSize = null,
+        public bool   $poolResetBeforeReuse = true,
     )
     {
         $scopeKind                  ??= '';
@@ -55,23 +47,19 @@ final readonly class LifetimePlan
         $lazy                       ??= false;
         $disposable ??= false;
         $poolSize                   ??= 8;
-        $this->serviceId            = $serviceId;
-        $this->name                 = $name;
-        $this->storage              = $storage;
         $this->scopeKind            = $scopeKind;
         $this->warm                 = $warm;
         $this->lazy                 = $lazy;
         $this->disposable           = $disposable;
         $this->poolSize             = $poolSize;
-        $this->poolResetBeforeReuse = $poolResetBeforeReuse;
     }
 
-    public static function fromRegistration(string $serviceId, ?DependencyRegistration $registration): self
+    public static function fromRegistration(string $serviceId, ?DependencyRegistration $dependencyRegistration) : self
     {
-        $name      = $registration?->lifetime ?? TransientLifetime::NAME;
+        $name      = $dependencyRegistration?->lifetime ?? TransientLifetime::NAME;
         $storage   = self::storageFor(name: $name);
         $scopeKind = $name === PooledLifetime::NAME
-            ? (string) ($registration?->poolScopeKind ?? ScopeKind::OPERATION)
+            ? $dependencyRegistration?->poolScopeKind ?? ScopeKind::OPERATION
             : self::scopeKindFor(name: $name);
 
         return new self(
@@ -79,11 +67,11 @@ final readonly class LifetimePlan
             name                : $name,
             storage             : $storage,
             scopeKind           : $scopeKind,
-            warm                : (bool) ($registration?->warm ?? false),
-            lazy                : (bool) ($registration?->lazy ?? false),
-            disposable          : (bool) ($registration?->disposable ?? false),
-            poolSize            : max(1, (int) ($registration?->poolSize ?? 8)),
-            poolResetBeforeReuse: (bool) ($registration?->poolResetBeforeReuse ?? true),
+            warm                : $dependencyRegistration?->warm ?? false,
+            lazy                : $dependencyRegistration?->lazy ?? false,
+            disposable          : $dependencyRegistration?->disposable ?? false,
+            poolSize            : max(1, $dependencyRegistration?->poolSize ?? 8),
+            poolResetBeforeReuse: $dependencyRegistration?->poolResetBeforeReuse ?? true,
         );
     }
 
@@ -136,7 +124,11 @@ final readonly class LifetimePlan
 
     public function requiresScope(): bool
     {
-        return $this->isScoped() || $this->isPooled();
+        if ($this->isScoped()) {
+            return true;
+        }
+
+        return $this->isPooled();
     }
 
     public function isScoped(): bool

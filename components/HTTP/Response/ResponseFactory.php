@@ -36,7 +36,7 @@ final class ResponseFactory
      */
     public function redirect(string $url, int $statusCode = 302) : ResponseInterface
     {
-        return new Response($statusCode, ['location' => [$url]], Utils::streamFor("Redirecting to {$url}"));
+        return new Response($statusCode, ['location' => [$url]], Utils::streamFor('Redirecting to ' . $url));
     }
 
     /**

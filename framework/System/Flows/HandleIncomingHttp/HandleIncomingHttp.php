@@ -10,6 +10,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
+use Closure;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 use Random\RandomException;
@@ -25,34 +26,34 @@ final readonly class HandleIncomingHttp
     /**
      * @throws RandomException
      */
-    public function handle(RuntimeInterface $runtime, RuntimeRequest $request): RuntimeResponse
+    public function handle(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest) : RuntimeResponse
     {
-        $openRequestScope = new OpenHttpRequestScope(
-            requestScopes : $runtime->requestScopes(),
+        $openHttpRequestScope  = new OpenHttpRequestScope(
             runtimeContext: $runtime->context(),
+            requestScopes : $runtime->requestScopes(),
         );
-        $closeRequestScope = new CloseHttpRequestScope(requestScopes: $runtime->requestScopes());
+        $closeHttpRequestScope = new CloseHttpRequestScope(requestScopes: $runtime->requestScopes());
 
-        $openRequestScope->open(request: $request);
+        $openHttpRequestScope->open(request: $runtimeRequest);
 
         try {
-            return $this->handleInCurrentScope(runtime: $runtime, request: $request);
+            return $this->handleInCurrentScope(runtime: $runtime, request: $runtimeRequest);
         } finally {
-            $closeRequestScope->close();
+            $closeHttpRequestScope->close();
         }
     }
 
-    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $request): RuntimeResponse
+    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest) : RuntimeResponse
     {
         $httpHandler = $runtime->httpHandler();
 
-        if ($httpHandler === null) {
+        if (! $httpHandler instanceof Closure) {
             throw new FrameworkMisconfigured(message: 'No HTTP handler is configured for the framework runtime.');
         }
 
         try {
             $response = $this->normalizeResponse(
-                value: $httpHandler($request, $runtime),
+                value: $httpHandler($runtimeRequest, $runtime),
             );
 
             $runtime->context()->finishRequest(
@@ -60,11 +61,11 @@ final readonly class HandleIncomingHttp
             );
 
             return $response;
-        } catch (Throwable $throwable) {
+        } catch (Throwable) {
             $response = RuntimeResponse::fromPsrResponse(
                 response: $this->responseFactory->createErrorResponse(
-                    statusCode: 500,
                     message   : 'Internal Server Error',
+                    statusCode: 500,
                 ),
             );
 

@@ -90,7 +90,6 @@ final class AttributeMetadataReader
 
             $relations[$reflectionProperty->getName()] = new RelationMetadata(
                 property        : $reflectionProperty->getName(),
-                kind            : $kind,
                 targetEntity    : $instance->targetEntity,
                 mappedBy        : $instance->mappedBy ?? null,
                 inversedBy      : $instance->inversedBy ?? null,
@@ -98,6 +97,7 @@ final class AttributeMetadataReader
                 referencedColumn: $joinColumn?->newInstance()->referencedColumnName ?? 'id',
                 cascade         : $instance->cascade ?? [],
                 lazy            : $instance->lazy ?? true,
+                kind            : $kind,
             );
         }
 

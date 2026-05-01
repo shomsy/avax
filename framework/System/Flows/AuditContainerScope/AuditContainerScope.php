@@ -20,7 +20,7 @@ final readonly class AuditContainerScope
      */
     public static function printReport(array $violations): int
     {
-        if (empty($violations)) {
+        if ($violations === []) {
             echo "\033[32mNo scope violations detected.\033[0m\n";
 
             return 0;
@@ -45,8 +45,8 @@ final readonly class AuditContainerScope
      */
     public function audit(): array
     {
-        $analyzer = new ContainerAnalyzer($this->container);
+        $containerAnalyzer = new ContainerAnalyzer($this->container);
 
-        return $analyzer->detectScopeViolations();
+        return $containerAnalyzer->detectScopeViolations();
     }
 }

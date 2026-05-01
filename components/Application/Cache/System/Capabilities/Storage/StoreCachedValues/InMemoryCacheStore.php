@@ -49,12 +49,12 @@ final class InMemoryCacheStore implements CacheStore
         $cachedValueLifecycle    = $record->lifecycle->withAccessed(clock: $clock);
         $this->records[$fullKey] = new StoredCacheRecord(
             value         : $record->value,
-            lifecycle     : $cachedValueLifecycle,
             serializedData: $record->serializedData,
             format        : $record->format,
+            lifecycle     : $cachedValueLifecycle,
         );
 
-        return new CacheStoreRecordWasFound(key: $cacheKey, record: $this->records[$fullKey], clock: $clock);
+        return new CacheStoreRecordWasFound(clock: $clock, key: $cacheKey, record: $this->records[$fullKey]);
     }
 
     #[Override]

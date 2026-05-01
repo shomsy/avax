@@ -17,20 +17,7 @@ use ReflectionFunction;
  */
 final readonly class DependencyCompiler
 {
-    private MethodEmitter $emitter;
-
-    private CreateDependencyBlueprint $blueprints;
-
-    private DependencyRegistry $registrations;
-
-    public function __construct(
-        DependencyRegistry $registrations,
-        CreateDependencyBlueprint $blueprints,
-        MethodEmitter $emitter = new MethodEmitter(),
-    ) {
-        $this->registrations = $registrations;
-        $this->blueprints    = $blueprints;
-        $this->emitter       = $emitter;
+    public function __construct(private DependencyRegistry $dependencyRegistry, private CreateDependencyBlueprint $createDependencyBlueprint, private MethodEmitter $methodEmitter = new MethodEmitter()) {
     }
 
     /**
@@ -59,15 +46,15 @@ final readonly class DependencyCompiler
     public function compileFromDescription(array $description): array
     {
         $source = $description['direct']
-            ? $this->emitter->emitDirectMethod(
+            ? $this->methodEmitter->emitDirectMethod(
                 methodName           : $description['method'],
                 serviceId            : $description['serviceId'],
                 class                : (string) $description['class'],
-                plan                 : $description['plan'],
                 registrationArguments: $description['registrationArguments'],
                 needsFinish          : $description['needsFinish'],
+                plan                 : $description['plan'],
             )
-            : $this->emitter->emitDynamicMethod(methodName: $description['method']);
+            : $this->methodEmitter->emitDynamicMethod(methodName: $description['method']);
 
         return [
             'serviceId' => $description['serviceId'],
@@ -93,16 +80,16 @@ final readonly class DependencyCompiler
      */
     public function describe(string $serviceId): array
     {
-        $methodName            = $this->emitter->methodNameFor(serviceId: $serviceId);
-        $registration          = $this->registrations->get(abstract: $serviceId);
+        $methodName   = $this->methodEmitter->methodNameFor(serviceId: $serviceId);
+        $registration = $this->dependencyRegistry->get(abstract: $serviceId);
         $candidate             = $this->candidateFor(serviceId: $serviceId, registration: $registration);
         $registrationArguments = $registration?->arguments ?? [];
 
         if (is_string(value: $candidate) && class_exists(class: $candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
-            $blueprint   = $this->blueprints->createFor(class: $candidate);
+            $blueprint   = $this->createDependencyBlueprint->createFor(class: $candidate);
             $needsFinish = $blueprint->injectableProperties !== []
                 || $blueprint->injectableMethods            !== []
-                || $this->registrations->hasExtenders(abstract: $serviceId);
+                || $this->dependencyRegistry->hasExtenders(abstract: $serviceId);
 
             return [
                 'serviceId' => $serviceId,
@@ -142,10 +129,10 @@ final readonly class DependencyCompiler
         ];
     }
 
-    private function candidateFor(string $serviceId, ?DependencyRegistration $registration): mixed
+    private function candidateFor(string $serviceId, ?DependencyRegistration $dependencyRegistration) : mixed
     {
-        if ($registration !== null) {
-            return $registration->concrete;
+        if ($dependencyRegistration instanceof DependencyRegistration) {
+            return $dependencyRegistration->concrete;
         }
 
         return class_exists(class: $serviceId) ? $serviceId : null;
@@ -156,13 +143,7 @@ final readonly class DependencyCompiler
      */
     private function supportsCompiledArguments(array $arguments): bool
     {
-        foreach ($arguments as $value) {
-            if (! $this->supportsCompiledValue(value: $value)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($arguments, fn ($value) : bool => $this->supportsCompiledValue(value: $value));
     }
 
     private function supportsCompiledValue(mixed $value): bool
@@ -175,13 +156,7 @@ final readonly class DependencyCompiler
             return false;
         }
 
-        foreach ($value as $item) {
-            if (! $this->supportsCompiledValue(value: $item)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($value, fn ($item) : bool => $this->supportsCompiledValue(value: $item));
     }
 
     /**
@@ -190,11 +165,11 @@ final readonly class DependencyCompiler
     private function dynamicSignature(mixed $candidate): string
     {
         if ($candidate instanceof Closure) {
-            $reflection = new ReflectionFunction(function: $candidate);
+            $reflectionFunction = new ReflectionFunction(function: $candidate);
 
-            return 'closure:' . ($reflection->getFileName() ?: 'internal')
-                . ':' . $reflection->getStartLine()
-                . ':' . $reflection->getEndLine();
+            return 'closure:' . ($reflectionFunction->getFileName() ?: 'internal')
+                . ':' . $reflectionFunction->getStartLine()
+                . ':' . $reflectionFunction->getEndLine();
         }
 
         if (is_object(value: $candidate)) {

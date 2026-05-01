@@ -25,30 +25,24 @@ use Throwable;
 final class ConnectionPool implements ConnectionPoolInterface
 {
     /** @var SplQueue<array{connection: DatabaseConnection, released_at: float}> The "Garage" where idle connections are parked. */
-    private SplQueue $pool;
+    private readonly SplQueue $pool;
 
     /** @var PoolState The internal authority who keeps track of how many "Cars" are currently out. */
-    private PoolState $state;
+    private readonly PoolState $poolState;
 
     /** @var ExecutionScope|null The "Luggage Tag" (Trace ID) for this pool's actions. */
-    private ?ExecutionScope $scope = null;
-
-    private readonly ?EventBus $eventBus;
-
-    private readonly array $config;
+    private ?ExecutionScope $executionScope = null;
 
     /**
      * @param array<string, mixed> $config   The instructions for the garage (e.g., "Max 10 cars").
      * @param EventBus|null        $eventBus The "Notification System" for reporting when a car is taken or returned.
      */
     public function __construct(
-        array $config,
-        ?EventBus $eventBus = null,
+        private readonly array     $config,
+        private readonly ?EventBus $eventBus = null,
     ) {
-        $this->config = $config;
-        $this->eventBus = $eventBus;
         $this->pool   = new SplQueue();
-        $this->state  = new PoolState(
+        $this->poolState = new PoolState(
             maxConnections: (int) ($this->config['pool']['max_connections'] ?? 10),
         );
     }
@@ -69,25 +63,25 @@ final class ConnectionPool implements ConnectionPoolInterface
             $connection = $item['connection'];
 
             if ($this->validateConnection(connection: $connection)) {
-                $this->state->recordRecycledAcquisition();
+                $this->poolState->recordRecycledAcquisition();
 
                 $this->eventBus?->dispatch(event: new ConnectionAcquired(
                     connectionName: $this->getName(),
                     isRecycled    : true,
-                    correlationId : $this->scope?->correlationId ?? 'ctx_unknown',
+                    correlationId : $this->executionScope?->correlationId ?? 'ctx_unknown',
                 ));
 
                 return new BorrowedConnection(connection: $connection, pool: $this);
             }
 
             // If the connection was dead, we release its slot in our counter.
-            $this->state->releaseSlot();
+            $this->poolState->releaseSlot();
         }
 
         // 2. If no recyclables, try to create a new one.
         $name = $this->config['name'] ?? 'anonymous';
 
-        if (! $this->state->tryReserveSlot()) {
+        if (! $this->poolState->tryReserveSlot()) {
             $limit = $this->config['pool']['max_connections'] ?? 10;
 
             throw new PoolLimitReachedException(name: $name, limit: (int) $limit);
@@ -96,13 +90,13 @@ final class ConnectionPool implements ConnectionPoolInterface
         $connection = new OpenConnection(
             buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
-            scope                  : $this->scope,
+            scope                  : $this->executionScope,
         )->using(config: $this->config);
 
         $this->eventBus?->dispatch(event: new ConnectionAcquired(
             connectionName: $this->getName(),
             isRecycled    : false,
-            correlationId : $this->scope?->correlationId ?? 'ctx_unknown',
+            correlationId : $this->executionScope?->correlationId ?? 'ctx_unknown',
         ));
 
         return new BorrowedConnection(connection: $connection, pool: $this);
@@ -127,7 +121,7 @@ final class ConnectionPool implements ConnectionPoolInterface
 
             // If it's too old or doesn't "Ping" correctly, it's gone.
             if ($idleTime > $maxIdleTime || ! $this->validateConnection(connection: $item['connection'])) {
-                $this->state->releaseSlot();
+                $this->poolState->releaseSlot();
                 $prunedCount++;
 
                 continue;
@@ -147,14 +141,14 @@ final class ConnectionPool implements ConnectionPoolInterface
     /**
      * Ask a connection "Are you alive?" (Ping).
      */
-    public function validateConnection(?DatabaseConnection $connection = null) : bool
+    public function validateConnection(?DatabaseConnection $databaseConnection = null) : bool
     {
-        if ($connection === null) {
+        if (! $databaseConnection instanceof DatabaseConnection) {
             return false;
         }
 
         try {
-            return $connection->ping();
+            return $databaseConnection->ping();
         } catch (Throwable) {
             return false;
         }
@@ -182,16 +176,16 @@ final class ConnectionPool implements ConnectionPoolInterface
     /**
      * Return a used connection to the pool.
      *
-     * @param DatabaseConnection $connection The connection to return.
+     * @param DatabaseConnection $databaseConnection The connection to return.
      */
-    public function release(DatabaseConnection $connection): void
+    public function release(DatabaseConnection $databaseConnection) : void
     {
-        if ($connection instanceof BorrowedConnection) {
-            $connection = $connection->getOriginalConnection();
+        if ($databaseConnection instanceof BorrowedConnection) {
+            $databaseConnection = $databaseConnection->getOriginalConnection();
         }
 
-        if (! $this->validateConnection(connection: $connection)) {
-            $this->state->releaseSlot();
+        if (! $this->validateConnection(connection: $databaseConnection)) {
+            $this->poolState->releaseSlot();
 
             return;
         }
@@ -201,12 +195,12 @@ final class ConnectionPool implements ConnectionPoolInterface
         // If the lot is full of idle cars, get rid of the oldest 'parked' one.
         if ($this->pool->count() >= $maxIdle) {
             $this->pool->dequeue();
-            $this->state->releaseSlot();
+            $this->poolState->releaseSlot();
         }
 
         $this->pool->enqueue(
             value: [
-                       'connection' => $connection,
+                       'connection' => $databaseConnection,
                 'released_at' => microtime(as_float: true),
             ],
         );
@@ -223,9 +217,9 @@ final class ConnectionPool implements ConnectionPoolInterface
     /**
      * Attach a "Luggage Tag" (Scope) to this pool for logging and tracing.
      */
-    public function withScope(ExecutionScope $scope): self
+    public function withScope(ExecutionScope $executionScope) : self
     {
-        $this->scope = $scope;
+        $this->executionScope = $executionScope;
 
         return $this;
     }
@@ -247,11 +241,11 @@ final class ConnectionPool implements ConnectionPoolInterface
 
         return new ConnectionPoolMetrics(
             data: [
-                'spawnedConnections' => $this->state->spawnedCount,
+                      'spawnedConnections' => $this->poolState->spawnedCount,
                 'idleConnections'   => $this->pool->count(),
-                'activeConnections' => max(0, $this->state->spawnedCount - $this->pool->count()),
+                      'activeConnections'  => max(0, $this->poolState->spawnedCount - $this->pool->count()),
                 'maxConnections'    => (int) ($this->config['pool']['max_connections'] ?? 10),
-                'totalAcquisitions' => $this->state->totalAcquisitions,
+                      'totalAcquisitions'  => $this->poolState->totalAcquisitions,
                 'maxIdleTime'       => $maxIdleTime,
             ],
         );

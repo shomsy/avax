@@ -19,11 +19,6 @@ final class CheckNamespaceDrift
         'Avax\\Database\\System\\',
     ];
 
-    private array $allowedBridgeNamespaces = [
-        'Avax\\DataFoundation\\',
-        'Avax\\DataLayer\\',
-    ];
-
     private array $checkedFiles = [];
 
     public function check(): array
@@ -31,7 +26,7 @@ final class CheckNamespaceDrift
         $this->scanForNamespaceDrift();
 
         return [
-            'status' => empty($this->checkedFiles) ? 'PASS' : 'FAIL',
+            'status' => $this->checkedFiles === [] ? 'PASS' : 'FAIL',
             'files'  => $this->checkedFiles,
         ];
     }
@@ -61,16 +56,19 @@ final class CheckNamespaceDrift
             }
 
             $filePath = $file->getPathname();
-
             // Skip allowed bridge files
-            if (str_contains($filePath, '/DataFoundation/') || str_contains($filePath, '/DataLayer/')) {
+            if (str_contains($filePath, '/DataFoundation/')) {
+                continue;
+            }
+
+            if (str_contains($filePath, '/DataLayer/')) {
                 continue;
             }
 
             $content = file_get_contents($filePath);
-            foreach ($this->forbiddenNamespaces as $ns) {
-                if (str_contains($content, 'namespace ' . $ns)) {
-                    $this->checkedFiles[] = $filePath . ': contains ' . $ns;
+            foreach ($this->forbiddenNamespaces as $forbiddenNamespace) {
+                if (str_contains($content, 'namespace ' . $forbiddenNamespace)) {
+                    $this->checkedFiles[] = $filePath . ': contains ' . $forbiddenNamespace;
                 }
             }
         }

@@ -20,7 +20,7 @@ final class NativeSessionStore implements SessionStoreInterface
 
     private bool $cliFallbackActive = false;
 
-    public function __construct(private readonly SessionCookieSettings $cookieSettings = new SessionCookieSettings()) {}
+    public function __construct(private readonly SessionCookieSettings $sessionCookieSettings = new SessionCookieSettings()) {}
 
     public function regenerate(): string
     {
@@ -65,11 +65,11 @@ final class NativeSessionStore implements SessionStoreInterface
 
         if (! headers_sent()) {
             session_set_cookie_params(lifetime_or_options: [
-                                                               'secure' => $this->cookieSettings->secure,
-                'httponly' => $this->cookieSettings->httpOnly,
-                'samesite' => $this->normalizeSameSite(sameSite: $this->cookieSettings->sameSite),
-                                                               'path'   => $this->cookieSettings->path,
-                                                               'domain' => $this->cookieSettings->domain,
+                                                               'secure'   => $this->sessionCookieSettings->secure,
+                                                               'httponly' => $this->sessionCookieSettings->httpOnly,
+                                                               'samesite' => $this->normalizeSameSite(sameSite: $this->sessionCookieSettings->sameSite),
+                                                               'path'     => $this->sessionCookieSettings->path,
+                                                               'domain'   => $this->sessionCookieSettings->domain,
             ]);
         }
 

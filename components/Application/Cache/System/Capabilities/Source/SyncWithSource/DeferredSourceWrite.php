@@ -19,7 +19,7 @@ final class DeferredSourceWrite
     public function queueFromCacheKey(CacheKey $cacheKey, mixed $value): void
     {
         $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
-        $this->queue(key: $cacheSourceKey, value: $value);
+        $this->queue(value: $value, key: $cacheSourceKey);
     }
 
     public function queue(CacheSourceKey $cacheSourceKey, mixed $value): void

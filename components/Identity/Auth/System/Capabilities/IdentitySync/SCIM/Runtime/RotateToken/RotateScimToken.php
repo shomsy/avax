@@ -20,7 +20,7 @@ use SensitiveParameter;
 final readonly class RotateScimToken
 {
     public function __construct(
-        private ScimDirectoryStoreInterface $directoryStore,
+        private ScimDirectoryStoreInterface $scimDirectoryStore,
         #[SensitiveParameter]
         private PasswordHasher $passwordHasher,
         private AuditLogInterface $auditLog,
@@ -34,9 +34,9 @@ final readonly class RotateScimToken
      */
     public function execute(string $directoryId): RotatedScimToken
     {
-        $directory = $this->directoryStore->find(directoryId: $directoryId);
+        $directory     = $this->scimDirectoryStore->find(directoryId: $directoryId);
 
-        if ($directory === null) {
+        if (! $directory instanceof ScimDirectory) {
             throw ScimFailed::unknownDirectory();
         }
 
@@ -47,7 +47,7 @@ final readonly class RotateScimToken
         $this->enforceThrottle(directoryId: $directory->directoryId);
 
         $plainTextToken = bin2hex(string: random_bytes(length: 24));
-        $rotated = new ScimDirectory(
+        $scimDirectory = new ScimDirectory(
             directoryId : $directory->directoryId,
             tenantSlug  : $directory->tenantSlug,
             name        : $directory->name,
@@ -57,7 +57,7 @@ final readonly class RotateScimToken
             rotatedAt   : $this->clock->now(),
         );
 
-        $this->directoryStore->save(directory: $rotated);
+        $this->scimDirectoryStore->save(directory: $scimDirectory);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.directory.token_rotated',
             occurredAt: $this->clock->now(),
@@ -67,12 +67,12 @@ final readonly class RotateScimToken
             ],
         ));
 
-        return new RotatedScimToken(directory: $rotated, plainTextToken: $plainTextToken);
+        return new RotatedScimToken(directory: $scimDirectory, plainTextToken: $plainTextToken);
     }
 
     private function enforceThrottle(string $directoryId): void
     {
-        if ($this->attemptThrottle === null) {
+        if (! $this->attemptThrottle instanceof AttemptThrottle) {
             return;
         }
 
@@ -80,8 +80,8 @@ final readonly class RotateScimToken
 
         try {
             $this->attemptThrottle->check(key: $key);
-        } catch (AttemptThrottleExceeded $exceeded) {
-            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'rotate');
+        } catch (AttemptThrottleExceeded $attemptThrottleExceeded) {
+            throw ScimFailed::throttled(retryAfterSeconds: $attemptThrottleExceeded->retryAfter(), scope: 'rotate');
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);

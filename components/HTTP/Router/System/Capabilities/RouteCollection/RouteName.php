@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\Capabilities\RouteCollection;
 
-final class RouteName
+final readonly class RouteName
 {
     public function __construct(
         private string $name,

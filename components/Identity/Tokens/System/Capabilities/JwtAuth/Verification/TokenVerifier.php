@@ -10,13 +10,10 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use RuntimeException;
 
-final class TokenVerifier
+final readonly class TokenVerifier
 {
-    private JwtSigner $signer;
-
-    public function __construct(JwtSigner $signer)
+    public function __construct(private JwtSigner $jwtSigner)
     {
-        $this->signer = $signer;
     }
 
     public function verify(string $token): AccessToken
@@ -31,7 +28,7 @@ final class TokenVerifier
         try {
             $decoded = JWT::decode(
                 $token,
-                new Key($this->signer->getSecret(), $this->signer->getAlgo()),
+                new Key($this->jwtSigner->getSecret(), $this->jwtSigner->getAlgo()),
             );
 
             $payload = (array) $decoded;
@@ -41,8 +38,8 @@ final class TokenVerifier
             }
 
             return $payload;
-        } catch (Exception $e) {
-            throw new RuntimeException('Invalid token: ' . $e->getMessage());
+        } catch (Exception $exception) {
+            throw new RuntimeException('Invalid token: ' . $exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 }

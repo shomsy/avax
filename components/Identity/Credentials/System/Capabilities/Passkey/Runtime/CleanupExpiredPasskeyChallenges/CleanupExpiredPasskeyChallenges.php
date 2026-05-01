@@ -9,14 +9,14 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\Pru
 
 final readonly class CleanupExpiredPasskeyChallenges
 {
-    public function __construct(private ?PruneExpiredPasskeyChallengesInterface $challengeStore, private Clock $clock) {}
+    public function __construct(private ?PruneExpiredPasskeyChallengesInterface $pruneExpiredPasskeyChallenges, private Clock $clock) {}
 
     public function execute(): int
     {
-        if ($this->challengeStore === null) {
+        if (! $this->pruneExpiredPasskeyChallenges instanceof PruneExpiredPasskeyChallengesInterface) {
             return 0;
         }
 
-        return $this->challengeStore->pruneExpired(now: $this->clock->now());
+        return $this->pruneExpiredPasskeyChallenges->pruneExpired(now: $this->clock->now());
     }
 }

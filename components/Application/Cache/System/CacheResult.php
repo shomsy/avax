@@ -25,8 +25,8 @@ class CacheResult
     public static function hit(mixed $value, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            state: CacheResultState::HIT,
             value: $value,
+            state: CacheResultState::HIT,
             key  : $cacheKey,
         );
     }
@@ -34,8 +34,8 @@ class CacheResult
     public static function miss(?CacheKey $cacheKey = null): self
     {
         return new self(
-            state: CacheResultState::MISS,
             value: null,
+            state: CacheResultState::MISS,
             key  : $cacheKey,
         );
     }
@@ -43,8 +43,8 @@ class CacheResult
     public static function expired(mixed $value, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            state: CacheResultState::EXPIRED,
             value: $value,
+            state: CacheResultState::EXPIRED,
             key  : $cacheKey,
         );
     }
@@ -52,8 +52,8 @@ class CacheResult
     public static function stale(mixed $value, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            state: CacheResultState::STALE,
             value: $value,
+            state: CacheResultState::STALE,
             key  : $cacheKey,
         );
     }
@@ -61,8 +61,8 @@ class CacheResult
     public static function stored(bool $success, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            state: $success ? CacheResultState::STORED : CacheResultState::STORE_FAILED,
             value: $success,
+            state: $success ? CacheResultState::STORED : CacheResultState::STORE_FAILED,
             key  : $cacheKey,
         );
     }
@@ -70,8 +70,8 @@ class CacheResult
     public static function deleted(bool $success, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            state: $success ? CacheResultState::DELETED : CacheResultState::DELETE_FAILED,
             value: $success,
+            state: $success ? CacheResultState::DELETED : CacheResultState::DELETE_FAILED,
             key  : $cacheKey,
         );
     }
@@ -79,18 +79,18 @@ class CacheResult
     public static function cleared(bool $success): self
     {
         return new self(
-            state: $success ? CacheResultState::CLEARED : CacheResultState::CLEAR_FAILED,
             value: $success,
+            state: $success ? CacheResultState::CLEARED : CacheResultState::CLEAR_FAILED,
         );
     }
 
     public static function error(string $message, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            state  : CacheResultState::ERROR,
             value  : null,
-            key    : $cacheKey,
             message: $message,
+            state  : CacheResultState::ERROR,
+            key    : $cacheKey,
         );
     }
 

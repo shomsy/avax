@@ -37,7 +37,7 @@ final class MiddlewareRegistry
     public static function create(string $alias, array $args = []): MiddlewareInterface
     {
         if (! isset(self::$aliases[$alias])) {
-            throw new InvalidArgumentException("Middleware alias [{$alias}] is not registered.");
+            throw new InvalidArgumentException(sprintf('Middleware alias [%s] is not registered.', $alias));
         }
 
         return (self::$aliases[$alias])(...$args);

@@ -15,6 +15,8 @@ use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\Req
 use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\FreshMfaRequired;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\AdminElevationFailed;
@@ -47,35 +49,35 @@ final readonly class RequireAccessPolicy
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function execute(AccessPolicy $policy): void
+    public function execute(AccessPolicy $accessPolicy) : void
     {
         $this->requireAuthentication->execute();
-        $identityPolicy = $policy->identityPolicy;
+        $identityPolicy = $accessPolicy->identityPolicy;
 
-        if ($policy->requiredRole !== null) {
-            $this->requireRole->execute(requiredRole: $policy->requiredRole);
+        if ($accessPolicy->requiredRole instanceof UserRole) {
+            $this->requireRole->execute(requiredRole: $accessPolicy->requiredRole);
         }
 
-        if ($policy->requiredPermission !== null) {
-            $this->requirePermission->execute(permission: $policy->requiredPermission);
+        if ($accessPolicy->requiredPermission instanceof UserPermission) {
+            $this->requirePermission->execute(permission: $accessPolicy->requiredPermission);
         }
 
-        if ($policy->resourceOwnerUserId !== null) {
-            $this->requireResourceOwner->execute(ownerUserId: $policy->resourceOwnerUserId);
+        if ($accessPolicy->resourceOwnerUserId !== null) {
+            $this->requireResourceOwner->execute(ownerUserId: $accessPolicy->resourceOwnerUserId);
         }
 
-        if ($policy->phishingResistantRequired || $identityPolicy?->phishingResistantRequired === true) {
+        if ($accessPolicy->phishingResistantRequired || $identityPolicy?->phishingResistantRequired === true) {
             $this->requirePhishingResistantAuthentication->execute();
         }
 
-        $freshMfaMaxAgeSeconds = $policy->freshMfaMaxAgeSeconds
+        $freshMfaMaxAgeSeconds = $accessPolicy->freshMfaMaxAgeSeconds
             ?? $identityPolicy?->freshMfaMaxAgeSeconds;
 
-        if ($policy->freshMfa || $freshMfaMaxAgeSeconds !== null) {
+        if ($accessPolicy->freshMfa || $freshMfaMaxAgeSeconds !== null) {
             $this->requireFreshMfa->execute(maxAgeSeconds: $freshMfaMaxAgeSeconds);
         }
 
-        if ($policy->adminElevation || $identityPolicy?->adminElevationRequired === true) {
+        if ($accessPolicy->adminElevation || $identityPolicy?->adminElevationRequired === true) {
             $this->requireAdminElevation->execute();
         }
     }

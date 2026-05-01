@@ -8,7 +8,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 
-final class RunConsoleCommand
+final readonly class RunConsoleCommand
 {
     public function __construct(
         private RuntimeInterface $runtime,
@@ -50,7 +50,7 @@ final class RunConsoleCommand
 
     private function resolveConsoleCommand(string $commandName) : callable
     {
-        return static fn () => print "Command: {$commandName}\n";
+        return static fn () : int => print sprintf('Command: %s%s', $commandName, PHP_EOL);
     }
 
     private function executeConsoleCommand(callable $command, array $input) : string

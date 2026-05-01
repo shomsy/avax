@@ -114,7 +114,11 @@ enum HttpStatusCode: int
      */
     public function isError(): bool
     {
-        return $this->isClientError() || $this->isServerError();
+        if ($this->isClientError()) {
+            return true;
+        }
+
+        return $this->isServerError();
     }
 
     /**

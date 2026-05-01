@@ -22,7 +22,7 @@ final readonly class PushedAuthorizationRequest
         public DateTimeImmutable $expiresAt,
         public string $clientId,
         public string $redirectUri,
-        array $scopes = null,
+        ?array $scopes = null,
         public ?string $state = null,
         public ?string $nonce = null,
         #[SensitiveParameter]

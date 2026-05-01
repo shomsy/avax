@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\DI\Container;
 
 final class GeneratedFixtureDependency
 {
@@ -19,7 +20,7 @@ final class GeneratedFixtureEntry
     }
 }
 
-return static function () {
+return static function () : Container {
     $cacheDir  = sys_get_temp_dir() . '/container-generated-fixture-' . uniqid();
     $container = makeTestContainer(config: CreateContainerConfig::create(
         cacheDir     : $cacheDir,

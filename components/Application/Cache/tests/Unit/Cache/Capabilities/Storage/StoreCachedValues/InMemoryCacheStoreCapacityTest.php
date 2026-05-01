@@ -74,7 +74,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_3'), record: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
 
         $this->frozenClock->moveForward(duration: Duration::ofSeconds(seconds: 1));
-        $inMemoryCacheStore->read(key: $this->makeKey(key: 'key_1'), clock: $this->frozenClock);
+        $inMemoryCacheStore->read(clock: $this->frozenClock, key: $this->makeKey(key: 'key_1'));
 
         $this->frozenClock->moveForward(duration: Duration::ofSeconds(seconds: 1));
         $inMemoryCacheStore->write(key: $this->makeKey(key: 'key_4'), record: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));

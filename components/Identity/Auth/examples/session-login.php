@@ -18,10 +18,10 @@ $passwordHasher = new PasswordHasher();
 $userSource     = new InMemoryUserSource();
 
 $userSource->create(user: User::create(
-    id          : new UserId(value: 1),
-    email       : new UserEmail(value: 'user@example.com'),
     username    : 'user',
     passwordHash: $passwordHasher->hash(password: 'password'),
+    id          : new UserId(value: 1),
+    email       : new UserEmail(value: 'user@example.com'),
 ));
 
 $auth = Auth::configuration()
@@ -37,8 +37,8 @@ try {
     ));
 
     echo 'Welcome, ' . $loginResult->user()->email() . PHP_EOL;
-} catch (AuthenticationFailed $exception) {
-    echo 'Login failed: ' . $exception->getMessage() . PHP_EOL;
+} catch (AuthenticationFailed $authenticationFailed) {
+    echo 'Login failed: ' . $authenticationFailed->getMessage() . PHP_EOL;
 }
 
 if ($auth->check()) {

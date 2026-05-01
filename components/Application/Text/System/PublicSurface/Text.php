@@ -44,12 +44,12 @@ final readonly class Text implements Stringable
 
     public function plural(int $count = 2) : self
     {
-        return new self((new ToPlural())->execute($this->value, $count));
+        return new self(new ToPlural()->execute($this->value, $count));
     }
 
     public function singular() : self
     {
-        return new self((new ToSingular())->execute($this->value));
+        return new self(new ToSingular()->execute($this->value));
     }
 
     public function lower() : self
@@ -103,7 +103,7 @@ final readonly class Text implements Stringable
 
     public function isValidEmail() : bool
     {
-        return (new IsValidEmail())->execute($this->value);
+        return new IsValidEmail()->execute($this->value);
     }
 
     // ──────────────────────────────────────────────

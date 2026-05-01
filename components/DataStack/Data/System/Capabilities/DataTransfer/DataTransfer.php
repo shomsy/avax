@@ -157,7 +157,7 @@ final class DataTransfer
             $rule = match ($ruleName) {
                 'EmailRule'              => new EmailRule(),
                 'IntegerRule'            => new IntegerRule(),
-                'MinLengthRule'          => (new ReflectionClass(new MinLengthRule(1)))->newInstance()->args[0] ?? 1,
+                'MinLengthRule' => new ReflectionClass(new MinLengthRule(1))->newInstance()->args[0] ?? 1,
                 'MinRule'                => new MinRule(1),
                 'PasswordComplexityRule' => new PasswordComplexityRule(),
                 default                  => null,

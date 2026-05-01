@@ -7,6 +7,7 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnection;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionHealth;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
@@ -15,16 +16,16 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\F
 
 final readonly class StartFederatedLogin
 {
-    public function __construct(private FederationConnectionStoreInterface $connectionStore, private FederationRuntimeInterface $runtime, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private FederationRuntimeInterface $federationRuntime, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws FederationFailed
      */
-    public function execute(StartFederatedLoginData $data): StartedFederatedLogin
+    public function execute(StartFederatedLoginData $startFederatedLoginData) : StartedFederatedLogin
     {
-        $connection = $this->connectionStore->find(connectionId: $data->connectionId);
+        $connection = $this->federationConnectionStore->find(connectionId: $startFederatedLoginData->connectionId);
 
-        if ($connection === null) {
+        if (! $connection instanceof FederationConnection) {
             throw FederationFailed::notFound();
         }
 
@@ -36,7 +37,7 @@ final readonly class StartFederatedLogin
             throw FederationFailed::connectionUnavailable();
         }
 
-        $started = $this->runtime->startLogin(connection: $connection, redirectUri: $data->redirectUri, state: $data->state);
+        $startedFederatedLogin = $this->federationRuntime->startLogin(redirectUri: $startFederatedLoginData->redirectUri, state: $startFederatedLoginData->state, connection: $connection);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.login.started',
             occurredAt: $this->clock->now(),
@@ -46,6 +47,6 @@ final readonly class StartFederatedLogin
             ],
         ));
 
-        return $started;
+        return $startedFederatedLogin;
     }
 }

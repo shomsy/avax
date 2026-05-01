@@ -48,10 +48,10 @@ final class InMemoryMfaStore implements MfaStoreInterface
         return $this->methods[$userId->value] ?? null;
     }
 
-    public function saveMethod(MfaMethodRecord $record): void
+    public function saveMethod(MfaMethodRecord $mfaMethodRecord) : void
     {
-        $this->methods[$record->userId->value] = $record;
-        unset($this->pendingEnrollments[$record->userId->value]);
+        $this->methods[$mfaMethodRecord->userId->value] = $mfaMethodRecord;
+        unset($this->pendingEnrollments[$mfaMethodRecord->userId->value]);
     }
 
     public function disable(UserId $userId): void
@@ -74,9 +74,9 @@ final class InMemoryMfaStore implements MfaStoreInterface
         return $this->pendingEnrollments[$userId->value] ?? null;
     }
 
-    public function startEnrollment(MfaEnrollmentRecord $record): void
+    public function startEnrollment(MfaEnrollmentRecord $mfaEnrollmentRecord) : void
     {
-        $this->pendingEnrollments[$record->userId->value] = $record;
+        $this->pendingEnrollments[$mfaEnrollmentRecord->userId->value] = $mfaEnrollmentRecord;
     }
 
     public function cancelEnrollment(UserId $userId): void
@@ -84,10 +84,10 @@ final class InMemoryMfaStore implements MfaStoreInterface
         unset($this->pendingEnrollments[$userId->value]);
     }
 
-    public function saveRecovery(MfaRecoveryRecord $record): void
+    public function saveRecovery(MfaRecoveryRecord $mfaRecoveryRecord) : void
     {
-        $this->forgetRecoveryForUser(userId: $record->userId);
-        $this->recoveryTokens[$record->tokenHash] = $record;
+        $this->forgetRecoveryForUser(userId: $mfaRecoveryRecord->userId);
+        $this->recoveryTokens[$mfaRecoveryRecord->tokenHash] = $mfaRecoveryRecord;
     }
 
     public function findRecovery(#[SensitiveParameter] string $tokenHash): ?MfaRecoveryRecord

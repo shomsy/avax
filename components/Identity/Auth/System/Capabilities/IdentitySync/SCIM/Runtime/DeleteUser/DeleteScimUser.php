@@ -15,42 +15,44 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryHealth;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentity;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 final readonly class DeleteScimUser
 {
-    public function __construct(private ProvisionableUserSourceInterface $userSource, private ScimDirectoryStoreInterface $directoryStore, private ScimProvisionedIdentityStoreInterface $identityStore, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycle = null, private ?AttemptThrottle $attemptThrottle = null) {}
+    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private ScimDirectoryStoreInterface $scimDirectoryStore, private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycleOrchestrator = null, private ?AttemptThrottle $attemptThrottle = null) {}
 
     /**
      * @throws ScimFailed
      */
-    public function execute(DeleteScimUserData $data): void
+    public function execute(DeleteScimUserData $deleteScimUserData) : void
     {
-        $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
-        $this->enforceDirectoryAvailability(directory: $directory);
-        $this->enforceThrottle(directoryId: $directory->directoryId);
-        $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
+        $scimDirectory = $this->authenticateDirectory(directoryId: $deleteScimUserData->directoryId, directoryToken: $deleteScimUserData->directoryToken);
+        $this->enforceDirectoryAvailability(directory: $scimDirectory);
+        $this->enforceThrottle(directoryId: $scimDirectory->directoryId);
+        $identity = $this->scimProvisionedIdentityStore->find(directoryId: $scimDirectory->directoryId, externalId: $deleteScimUserData->externalId);
 
-        if ($identity === null) {
+        if (! $identity instanceof ScimProvisionedIdentity) {
             throw ScimFailed::unknownProvisionedIdentity();
         }
 
-        $this->lifecycle?->deprovision(userId: $identity->userId, source: LifecycleSource::SCIM, reason: 'scim_deleted');
-        if ($this->lifecycle === null) {
-            $this->userSource->deactivate(id: $identity->userId);
-            $this->userSource->replaceRoles(id: $identity->userId, roles: []);
-            $this->userSource->replacePermissions(id: $identity->userId, permissions: []);
+        $this->lifecycleOrchestrator?->deprovision(userId: $identity->userId, source: LifecycleSource::SCIM, reason: 'scim_deleted');
+        if (! $this->lifecycleOrchestrator instanceof LifecycleOrchestrator) {
+            $this->provisionableUserSource->deactivate(id: $identity->userId);
+            $this->provisionableUserSource->replaceRoles(roles: [], id: $identity->userId);
+            $this->provisionableUserSource->replacePermissions(permissions: [], id: $identity->userId);
         }
-        $this->identityStore->remove(directoryId: $directory->directoryId, externalId: $data->externalId);
+
+        $this->scimProvisionedIdentityStore->remove(directoryId: $scimDirectory->directoryId, externalId: $deleteScimUserData->externalId);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.user.deleted',
             occurredAt: $this->clock->now(),
             context   : [
-                'directory_id' => $directory->directoryId,
-                'tenant'      => $directory->tenantSlug,
-                'external_id' => $data->externalId,
+                            'directory_id' => $scimDirectory->directoryId,
+                            'tenant'       => $scimDirectory->tenantSlug,
+                            'external_id'  => $deleteScimUserData->externalId,
                 'user_id'     => $identity->userId->value,
             ],
         ));
@@ -64,29 +66,29 @@ final readonly class DeleteScimUser
         #[SensitiveParameter]
         string $directoryToken,
     ): ScimDirectory {
-        $directory = $this->directoryStore->find(directoryId: $directoryId);
+        $directory = $this->scimDirectoryStore->find(directoryId: $directoryId);
 
-        if ($directory === null) {
+        if (! $directory instanceof ScimDirectory) {
             throw ScimFailed::unknownDirectory();
         }
 
-        if (! $this->directoryStore->verifyToken(directoryId: $directoryId, plainTextToken: $directoryToken)) {
+        if (! $this->scimDirectoryStore->verifyToken(directoryId: $directoryId, plainTextToken: $directoryToken)) {
             throw ScimFailed::invalidDirectoryToken();
         }
 
         return $directory;
     }
 
-    private function enforceDirectoryAvailability(ScimDirectory $directory): void
+    private function enforceDirectoryAvailability(ScimDirectory $scimDirectory) : void
     {
-        if ($directory->health === ScimDirectoryHealth::UNAVAILABLE) {
+        if ($scimDirectory->health === ScimDirectoryHealth::UNAVAILABLE) {
             throw ScimFailed::serviceUnavailable();
         }
     }
 
     private function enforceThrottle(string $directoryId): void
     {
-        if ($this->attemptThrottle === null) {
+        if (! $this->attemptThrottle instanceof AttemptThrottle) {
             return;
         }
 
@@ -94,8 +96,8 @@ final readonly class DeleteScimUser
 
         try {
             $this->attemptThrottle->check(key: $key);
-        } catch (AttemptThrottleExceeded $exceeded) {
-            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: 'delete');
+        } catch (AttemptThrottleExceeded $attemptThrottleExceeded) {
+            throw ScimFailed::throttled(retryAfterSeconds: $attemptThrottleExceeded->retryAfter(), scope: 'delete');
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);

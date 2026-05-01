@@ -10,45 +10,45 @@ use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegis
 /**
  * Public surface for the Events component.
  */
-final class Events implements EventsInterface
+final readonly class Events implements EventsInterface
 {
-    private ListenerRegistry $registry;
+    private ListenerRegistry $listenerRegistry;
 
-    private EventDispatcher $dispatcher;
+    private EventDispatcher $eventDispatcher;
 
     public function __construct()
     {
-        $this->registry = new ListenerRegistry();
-        $this->dispatcher = new EventDispatcher($this->registry);
+        $this->listenerRegistry = new ListenerRegistry();
+        $this->eventDispatcher  = new EventDispatcher($this->listenerRegistry);
     }
 
     public function dispatch(string|object $event, mixed $data = null): void
     {
-        $this->dispatcher->dispatch($event, $data);
+        $this->eventDispatcher->dispatch($event, $data);
     }
 
     public function listen(string $event, callable $listener, int $priority = 0): void
     {
-        $this->registry->subscribe($event, $listener, $priority);
+        $this->listenerRegistry->subscribe($event, $listener, $priority);
     }
 
     public function flush(): void
     {
-        $this->registry->clear();
+        $this->listenerRegistry->clear();
     }
 
     public function forget(string $event): void
     {
-        $this->registry->remove($event);
+        $this->listenerRegistry->remove($event);
     }
 
     public function hasListeners(string $event): bool
     {
-        return $this->registry->hasListeners($event);
+        return $this->listenerRegistry->hasListeners($event);
     }
 
     public function listenerCount(string $event): int
     {
-        return $this->registry->listenerCount($event);
+        return $this->listenerRegistry->listenerCount($event);
     }
 }

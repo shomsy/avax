@@ -9,7 +9,7 @@ namespace Avax\Framework\System\Capabilities\TracingTimeline;
  */
 final class RuntimeTimeline
 {
-    private float $startMS;
+    private readonly float $startMS;
 
     /**
      * @var list<RuntimeEvent>
@@ -28,11 +28,10 @@ final class RuntimeTimeline
     /**
      * Start timing a named operation.
      */
-    public function begin(string $name, string $category = null) : TraceSpan
+    public function begin(string $name, ?string $category = null) : TraceSpan
     {
         return new TraceSpan(
             name    : $name,
-            category: $category,
             onFinish: function (float $durationMS) use ($name, $category) : void {
                 $this->record(
                     name      : $name,
@@ -40,6 +39,7 @@ final class RuntimeTimeline
                     category  : $category,
                 );
             },
+            category: $category,
         );
     }
 
@@ -48,8 +48,8 @@ final class RuntimeTimeline
      */
     public function record(
         string $name,
-        float  $durationMS = null,
-        string $category = null,
+        ?float  $durationMS = null,
+        ?string $category = null,
         array  $metadata = [],
     ) : void
     {
@@ -136,12 +136,12 @@ final class RuntimeTimeline
         return [
             'duration_ms' => $this->durationMS(),
             'events' => array_map(
-                static fn (RuntimeEvent $e) : array => [
-                    'name'        => $e->name,
-                    'timestamp_ms' => round($e->timestampMS, 2),
-                    'duration_ms' => $e->durationMS !== null ? round($e->durationMS, 2) : null,
-                    'category'    => $e->category,
-                    'metadata'    => $e->metadata,
+                static fn (RuntimeEvent $runtimeEvent) : array => [
+                    'name'         => $runtimeEvent->name,
+                    'timestamp_ms' => round($runtimeEvent->timestampMS, 2),
+                    'duration_ms'  => $runtimeEvent->durationMS !== null ? round($runtimeEvent->durationMS, 2) : null,
+                    'category'     => $runtimeEvent->category,
+                    'metadata'     => $runtimeEvent->metadata,
                 ],
                 $this->events,
             ),

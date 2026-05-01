@@ -15,9 +15,9 @@ final readonly class LimitMfaAttempts
     private int $maxAttempts;
 
     public function __construct(
-        private AttemptLimitStorageInterface $storage,
+        private AttemptLimitStorageInterface $attemptLimitStorage,
         private Clock $clock,
-        int $maxAttempts = null,
+        ?int                                 $maxAttempts = null,
         private int $decaySeconds = 300,
     ) {
         $maxAttempts ??= 5;
@@ -36,16 +36,16 @@ final readonly class LimitMfaAttempts
      */
     public function check(string $key): void
     {
-        $attempts = $this->storage->get(key: $key);
+        $attempts = $this->attemptLimitStorage->get(key: $key);
 
         if ($attempts < $this->maxAttempts) {
             return;
         }
 
-        $elapsed = $this->clock->now()->getTimestamp() - $this->storage->getLastAttemptTime(key: $key);
+        $elapsed = $this->clock->now()->getTimestamp() - $this->attemptLimitStorage->getLastAttemptTime(key: $key);
 
         if ($elapsed >= $this->decaySeconds) {
-            $this->storage->reset(key: $key);
+            $this->attemptLimitStorage->reset(key: $key);
 
             return;
         }
@@ -55,11 +55,11 @@ final readonly class LimitMfaAttempts
 
     public function reset(string $key): void
     {
-        $this->storage->reset(key: $key);
+        $this->attemptLimitStorage->reset(key: $key);
     }
 
     public function recordFailed(string $key): void
     {
-        $this->storage->increment(key: $key, timestamp: $this->clock->now()->getTimestamp());
+        $this->attemptLimitStorage->increment(key: $key, timestamp: $this->clock->now()->getTimestamp());
     }
 }

@@ -20,6 +20,7 @@ final class ConfigurationRepository
             if (! isset($current[$k])) {
                 return $default;
             }
+
             $current = $current[$k];
         }
 
@@ -35,6 +36,7 @@ final class ConfigurationRepository
             if (! isset($current[$k])) {
                 $current[$k] = [];
             }
+
             $current = &$current[$k];
         }
 

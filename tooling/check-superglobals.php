@@ -24,11 +24,11 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    if (strtolower(string: $file->getExtension()) !== 'php') {
+    if (strtolower(string: (string) $file->getExtension()) !== 'php') {
         continue;
     }
 
-    $relativePath = str_replace(search: '\\', replace: '/', subject: substr(string: $file->getRealPath(), offset: strlen(string: $root) + 1));
+    $relativePath = str_replace(search: '\\', replace: '/', subject: substr(string: (string) $file->getRealPath(), offset: strlen(string: $root) + 1));
     if (in_array(needle: $relativePath, haystack: $allowedFiles, strict: true)) {
         continue;
     }
@@ -46,8 +46,9 @@ foreach ($iterator as $file) {
 if ($violations !== []) {
     echo "Superglobal usage detected outside HTTP boundary:\n";
     foreach (array_unique(array: $violations) as $violation) {
-        echo "  - {$violation}\n";
+        echo sprintf('  - %s%s', $violation, PHP_EOL);
     }
+
     exit(1);
 }
 

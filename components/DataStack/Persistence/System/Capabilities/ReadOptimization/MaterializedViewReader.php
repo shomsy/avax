@@ -80,9 +80,9 @@ final readonly class MaterializedViewStats
     {
         return new self(
             viewName   : $viewName,
+            refreshedAt: microtime(true),
             success    : false,
             error      : $error,
-            refreshedAt: microtime(true),
         );
     }
 }
@@ -101,16 +101,6 @@ final readonly class MaterializedViewStats
 final class MaterializedView implements MaterializedViewInterface
 {
     /**
-     * @var string Unique view name
-     */
-    private readonly string $name;
-
-    /**
-     * @var Closure() : T The query that produces the view data
-     */
-    private readonly Closure $query;
-
-    /**
      * @var T|null Cached data
      */
     private ?array $data = null;
@@ -119,11 +109,6 @@ final class MaterializedView implements MaterializedViewInterface
      * @var float|null Timestamp of last refresh
      */
     private ?float $lastRefreshedAt = null;
-
-    /**
-     * @var float Staleness threshold in seconds (default: 1 hour)
-     */
-    private readonly float $stalenessThreshold;
 
     /**
      * @var int Number of rows in the last refresh
@@ -135,14 +120,14 @@ final class MaterializedView implements MaterializedViewInterface
      * @param float         $stalenessThreshold Seconds before view is considered stale
      */
     public function __construct(
-        string $name,
-        Closure $query,
-        float $stalenessThreshold = 3600.0,
+        /**
+         * @var string Unique view name
+         */
+        private readonly string  $name,
+        private readonly Closure $query,
+        private readonly float   $stalenessThreshold = 3600.0
     )
     {
-        $this->name  = $name;
-        $this->query = $query;
-        $this->stalenessThreshold = $stalenessThreshold;
     }
 
     public function name(): string
@@ -168,8 +153,8 @@ final class MaterializedView implements MaterializedViewInterface
                 durationMs  : $durationMs,
                 refreshedAt : $this->lastRefreshedAt,
             );
-        } catch (Throwable $e) {
-            return MaterializedViewStats::failure($this->name, $e->getMessage());
+        } catch (Throwable $throwable) {
+            return MaterializedViewStats::failure($this->name, $throwable->getMessage());
         }
     }
 
@@ -177,25 +162,17 @@ final class MaterializedView implements MaterializedViewInterface
     {
         if ($this->data === null) {
             throw new RuntimeException(
-                "Materialized view '{$this->name}' has not been refreshed yet",
+                sprintf("Materialized view '%s' has not been refreshed yet", $this->name),
             );
         }
 
-        if (empty($filters)) {
+        if ($filters === []) {
             return $this->data;
         }
 
         return array_values(array_filter(
             $this->data,
-            static function (array $row) use ($filters): bool {
-                foreach ($filters as $key => $value) {
-                    if (! isset($row[$key]) || $row[$key] !== $value) {
-                        return false;
-                    }
-                }
-
-                return true;
-            },
+                                static fn (array $row) : bool => array_all($filters, fn ($value, $key) : bool => isset($row[$key]) && $row[$key] === $value),
         ));
     }
 
@@ -249,7 +226,7 @@ final class MaterializedView implements MaterializedViewInterface
     public function summary(): string
     {
         if ($this->data === null) {
-            return "View '{$this->name}': not refreshed";
+            return sprintf("View '%s': not refreshed", $this->name);
         }
 
         $age = $this->age();
@@ -296,9 +273,9 @@ final class MaterializedViewRegistry
     /**
      * Registers a materialized view.
      */
-    public function register(MaterializedView $view): void
+    public function register(MaterializedView $materializedView) : void
     {
-        $this->views[$view->name()] = $view;
+        $this->views[$materializedView->name()] = $materializedView;
     }
 
     /**
@@ -333,7 +310,7 @@ final class MaterializedViewRegistry
     public function get(string $name): MaterializedView
     {
         if (! isset($this->views[$name])) {
-            throw new RuntimeException("Materialized view '{$name}' is not registered");
+            throw new RuntimeException(sprintf("Materialized view '%s' is not registered", $name));
         }
 
         return $this->views[$name];
@@ -348,7 +325,7 @@ final class MaterializedViewRegistry
     {
         return array_values(array_filter(
             $this->views,
-            static fn (MaterializedView $view): bool => $view->isStale(),
+                                static fn (MaterializedView $materializedView) : bool => $materializedView->isStale(),
         ));
     }
 

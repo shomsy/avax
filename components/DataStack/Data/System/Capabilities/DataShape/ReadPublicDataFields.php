@@ -15,42 +15,46 @@ use ReflectionProperty;
 final readonly class ReadPublicDataFields
 {
     /**
-     * @param ReflectionClass<object>  $class
+     * @param ReflectionClass<object> $reflectionClass
      * @param array<string, DataField> $existingFields
      *
      * @return array<string, DataField>
      */
-    public function read(ReflectionClass $class, DataTransferConfig $config, array $existingFields = []): array
+    public function read(ReflectionClass $reflectionClass, DataTransferConfig $dataTransferConfig, array $existingFields = []) : array
     {
-        if (! $config->allowPublicPropertyHydration) {
+        if (! $dataTransferConfig->allowPublicPropertyHydration) {
             return [];
         }
 
         $fields = [];
 
-        foreach ($class->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $property) {
-            if ($property->isStatic() || array_key_exists(key: $property->getName(), array: $existingFields)) {
+        foreach ($reflectionClass->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
+            if ($reflectionProperty->isStatic()) {
                 continue;
             }
 
-            $attributes = new ReadDataFieldAttributes()->read(property: $property);
+            if (array_key_exists(key: $reflectionProperty->getName(), array: $existingFields)) {
+                continue;
+            }
+
+            $attributes = new ReadDataFieldAttributes()->read(property: $reflectionProperty);
             $inputName  = new ReadMappedInputName()->read(
-                fieldName : $property->getName(),
+                fieldName : $reflectionProperty->getName(),
                 attributes: $attributes,
-                config    : $config,
+                config    : $dataTransferConfig,
             );
 
-            $fields[$property->getName()] = new DataField(
-                name              : $property->getName(),
+            $fields[$reflectionProperty->getName()] = new DataField(
+                name              : $reflectionProperty->getName(),
                 inputName         : $inputName->value,
-                type              : DataFieldType::fromReflectionType(type: $property->getType()),
                 attributes        : $attributes,
                 isConstructorField: false,
                 isPromotedProperty: false,
                 isPublicProperty  : true,
-                hasDefaultValue   : $property->hasDefaultValue(),
-                defaultValue      : $property->hasDefaultValue() ? $property->getDefaultValue() : null,
-                property          : $property,
+                hasDefaultValue   : $reflectionProperty->hasDefaultValue(),
+                defaultValue      : $reflectionProperty->hasDefaultValue() ? $reflectionProperty->getDefaultValue() : null,
+                type              : DataFieldType::fromReflectionType(type: $reflectionProperty->getType()),
+                property          : $reflectionProperty,
             );
         }
 

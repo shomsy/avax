@@ -43,8 +43,8 @@ final readonly class Authentication
      * @throws RefreshAuthenticationFailed
      * @throws DateMalformedStringException
      */
-    public function refresh(RefreshAuthenticationRequest $request): AuthenticationResult
+    public function refresh(RefreshAuthenticationRequest $refreshAuthenticationRequest) : AuthenticationResult
     {
-        return $this->refreshAuthentication->execute(request: $request);
+        return $this->refreshAuthentication->execute(request: $refreshAuthenticationRequest);
     }
 }

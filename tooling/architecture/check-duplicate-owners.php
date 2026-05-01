@@ -19,33 +19,33 @@ $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($compon
 $classMap = [];
 
 foreach ($iterator as $file) {
-    if (! $file->isFile() || $file->getExtension() !== 'php') {
+    if (! $file->isFile()) {
+        continue;
+    }
+
+    if ($file->getExtension() !== 'php') {
         continue;
     }
 
     $path         = $file->getRealPath();
     $relativePath = str_replace($rootDir . '/', '', $path);
-
     // Ignore vendor, tests, tooling
-    if (str_contains($relativePath, 'vendor/') || str_contains($relativePath, 'tests/')) {
+    if (str_contains($relativePath, 'vendor/')) {
+        continue;
+    }
+
+    if (str_contains($relativePath, 'tests/')) {
         continue;
     }
 
     $content = file_get_contents($path);
 
-    if (preg_match('/(?:class|interface|trait|enum)\s+([a-zA-Z0-9_]+)/', $content, $matches)) {
+    if (preg_match('/(?:class|interface|trait|enum)\s+(\w+)/', $content, $matches)) {
         $className = $matches[1];
 
         // Exclude common names that are expected to be duplicated across components like Exception, Configuration
         $commonNames = ['Exception', 'Configuration', 'ServiceProvider', 'Factory', 'Manager', 'Builder'];
-        $isCommon    = false;
-        foreach ($commonNames as $common) {
-            if (str_ends_with($className, $common)) {
-                $isCommon = true;
-
-                break;
-            }
-        }
+        $isCommon = array_any($commonNames, fn ($common) : bool => str_ends_with($className, (string) $common));
 
         if ($isCommon) {
             continue;
@@ -57,7 +57,7 @@ foreach ($iterator as $file) {
             $isPreviousBridge = str_contains(file_get_contents($rootDir . '/' . $classMap[$className]), '@deprecated') || str_contains(file_get_contents($rootDir . '/' . $classMap[$className]), 'bridge');
 
             if (! $isCurrentBridge && ! $isPreviousBridge) {
-                $errors[] = "Duplicate class name owner found: {$className}. Claimed by both {$classMap[$className]} and {$relativePath}";
+                $errors[] = sprintf('Duplicate class name owner found: %s. Claimed by both %s and %s', $className, $classMap[$className], $relativePath);
             }
         } else {
             $classMap[$className] = $relativePath;
@@ -65,11 +65,12 @@ foreach ($iterator as $file) {
     }
 }
 
-if (! empty($errors)) {
+if ($errors !== []) {
     echo "Duplicate owner checks failed:\n";
     foreach ($errors as $error) {
-        echo "- {$error}\n";
+        echo sprintf('- %s%s', $error, PHP_EOL);
     }
+
     exit(1);
 }
 

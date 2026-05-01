@@ -9,13 +9,13 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\F
 
 final readonly class ReadFederationConnections
 {
-    public function __construct(private FederationConnectionStoreInterface $connectionStore) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore) {}
 
     /**
      * @return list<FederationConnection>
      */
     public function execute(): array
     {
-        return $this->connectionStore->all();
+        return $this->federationConnectionStore->all();
     }
 }

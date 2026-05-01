@@ -27,9 +27,9 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     public function registerNodeStore(CacheNodeId $cacheNodeId, CacheStore $cacheStore): self
     {
         return new self(
-            ring      : $this->consistentHashRing,
             clock     : $this->clock,
             nodeStores: array_merge($this->nodeStores, [$cacheNodeId->toString() => $cacheStore]),
+            ring      : $this->consistentHashRing,
         );
     }
 
@@ -48,7 +48,7 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
             return new CacheStoreRecordWasMissing(key: $cacheKey);
         }
 
-        return $store->read(key: $cacheKey, clock: $clock);
+        return $store->read(clock: $clock, key: $cacheKey);
     }
 
     public function getNodeStore(CacheNodeId $cacheNodeId): ?CacheStore

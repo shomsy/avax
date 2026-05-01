@@ -30,16 +30,16 @@ final class PersistenceTimeline
      * @param float      $duration  Duration in milliseconds
      * @param float|null $timestamp Optional timestamp in milliseconds
      */
-    public function record(string $query, float $duration, float $timestamp = null) : void
+    public function record(string $query, float $duration, ?float $timestamp = null) : void
     {
         $timestamp ??= microtime(true) * 1000;
-        $fingerprint = QueryFingerprint::fromQuery($query);
+        $queryFingerprint = QueryFingerprint::fromQuery($query);
 
         $this->entries[] = [
             'query'     => $query,
             'duration'  => $duration,
             'timestamp' => $timestamp,
-            'fingerprint' => $fingerprint,
+            'fingerprint' => $queryFingerprint,
         ];
 
         if ($this->startTime === null || $timestamp < $this->startTime) {
@@ -66,11 +66,11 @@ final class PersistenceTimeline
      *
      * @return array<array{query: string, duration: float, timestamp: float, fingerprint: QueryFingerprint}>
      */
-    public function getByFingerprint(QueryFingerprint $fingerprint): array
+    public function getByFingerprint(QueryFingerprint $queryFingerprint) : array
     {
         return array_values(array_filter(
             $this->entries,
-            static fn (array $entry): bool => $entry['fingerprint']->matchesFingerprint($fingerprint),
+                                static fn (array $entry) : bool => $entry['fingerprint']->matchesFingerprint($queryFingerprint),
         ));
     }
 

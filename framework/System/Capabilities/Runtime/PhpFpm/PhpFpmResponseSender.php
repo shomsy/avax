@@ -8,16 +8,16 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 
 final readonly class PhpFpmResponseSender
 {
-    public function send(RuntimeResponse $response) : void
+    public function send(RuntimeResponse $runtimeResponse) : void
     {
-        http_response_code(response_code: $response->statusCode());
+        http_response_code(response_code: $runtimeResponse->statusCode());
 
-        foreach ($response->headers() as $name => $values) {
+        foreach ($runtimeResponse->headers() as $name => $values) {
             foreach ($values as $value) {
                 header(header: sprintf('%s: %s', $name, $value), replace: false);
             }
         }
 
-        echo $response->body();
+        echo $runtimeResponse->body();
     }
 }

@@ -47,7 +47,7 @@ class MakeServiceCommand extends Command
         $methods = [];
 
         if (is_string($methodsInput) && $methodsInput !== '') {
-            $methods = array_map('trim', explode(',', $methodsInput));
+            $methods = array_map(trim(...), explode(',', $methodsInput));
         }
 
         try {

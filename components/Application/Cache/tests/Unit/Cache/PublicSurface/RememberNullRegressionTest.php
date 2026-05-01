@@ -81,8 +81,8 @@ final class RememberNullRegressionTest extends TestCase
             clock: $this->frozenClock,
         );
         $this->avaxCache = new AvaxCache(
-            store: $this->inMemoryCacheStore,
             clock: $this->frozenClock,
+            store: $this->inMemoryCacheStore,
         );
     }
 }

@@ -7,11 +7,11 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\Retry;
 use Closure;
 use Throwable;
 
-final class RetryExecutor
+final readonly class RetryExecutor
 {
     public function __construct(
         private Closure $operation,
-        private RetryOptions $options,
+        private RetryOptions $retryOptions,
     ) {}
 
     public function execute() : RetryResult
@@ -19,7 +19,7 @@ final class RetryExecutor
         $lastException = null;
         $attemptNumber = 0;
 
-        while ( $attemptNumber < $this->options->attempts ) {
+        while ( $attemptNumber < $this->retryOptions->attempts ) {
             $attemptNumber++;
 
             try {
@@ -34,7 +34,7 @@ final class RetryExecutor
             } catch (Throwable $e) {
                 $lastException = $e;
 
-                if ($attemptNumber < $this->options->attempts) {
+                if ($attemptNumber < $this->retryOptions->attempts) {
                     $this->sleep();
                 }
             }
@@ -50,7 +50,7 @@ final class RetryExecutor
 
     private function sleep() : void
     {
-        $delay = (int) ($this->options->backoffMs * (1 + random_int(0, 100) / 100));
+        $delay = (int) ($this->retryOptions->backoffMs * (1 + random_int(0, 100) / 100));
         usleep($delay * 1000);
     }
 }

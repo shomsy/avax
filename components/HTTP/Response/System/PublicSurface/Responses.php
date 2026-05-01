@@ -14,7 +14,6 @@ use Avax\Components\HTTP\Response\Response;
 use JsonSerializable;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use SensitiveParameter;
 use Stringable;
 
@@ -24,11 +23,6 @@ use Stringable;
  */
 final class Responses implements ResponseFactoryInterface
 {
-    public function __construct(
-        private ?StreamFactoryInterface $streamFactory = null,
-        private ?ResponseInterface $response = null,
-    ) {}
-
     public function response(mixed $data, int $status = 200) : ResponseInterface
     {
         return $this->send(data: $data, status: $status);

@@ -14,50 +14,50 @@ use Psr\Log\LoggerInterface;
 
 final class Session implements SessionInterface
 {
-    private ?SessionRecord $record = null;
+    private ?SessionRecord $sessionRecord = null;
 
-    private SessionTransaction $transaction;
+    private readonly SessionTransaction $sessionTransaction;
 
     public function __construct(
-        private readonly SessionScope $scope,
-        private readonly ?SessionMetadata $metadata = null,
-        private readonly ?SessionAudit $audit = null,
-        private readonly ?SessionEventBus $events = null,
+        private readonly SessionScope     $sessionScope,
+        private readonly ?SessionMetadata $sessionMetadata = null,
+        private readonly ?SessionAudit    $sessionAudit = null,
+        private readonly ?SessionEventBus $sessionEventBus = null,
         private readonly ?LoggerInterface $logger = null,
     )
     {
-        $this->transaction = new SessionTransaction($this->scope);
+        $this->sessionTransaction = new SessionTransaction($this->sessionScope);
     }
 
     public function start() : bool
     {
-        $started = $this->scope->start();
+        $started = $this->sessionScope->start();
 
         if (! $started) {
-            $this->audit?->record('session.start_failed');
-            $this->events?->dispatch('session.start_failed');
+            $this->sessionAudit?->record('session.start_failed');
+            $this->sessionEventBus?->dispatch('session.start_failed');
 
             return false;
         }
 
-        $data = $this->scope->get('_record');
+        $data = $this->sessionScope->get('_record');
 
         if ($data instanceof SessionRecord) {
-            $this->record = $data;
-            if ($this->record->isExpired() || ($this->metadata !== null && ! $this->metadata->verify($this->record->ipCreated ?? '', $this->record->userAgentCreated ?? ''))) {
-                $this->audit?->record('session.rejected', ['reason' => 'expired_or_mismatch']);
-                $this->events?->dispatch('session.rejected', ['reason' => 'expired_or_mismatch']);
+            $this->sessionRecord = $data;
+            if ($this->sessionRecord->isExpired() || ($this->sessionMetadata instanceof SessionMetadata && ! $this->sessionMetadata->verify($this->sessionRecord->ipCreated ?? '', $this->sessionRecord->userAgentCreated ?? ''))) {
+                $this->sessionAudit?->record('session.rejected', ['reason' => 'expired_or_mismatch']);
+                $this->sessionEventBus?->dispatch('session.rejected', ['reason' => 'expired_or_mismatch']);
                 $this->clear();
                 $this->createNewRecord();
             } else {
                 $this->touch();
-                $this->audit?->record('session.started', ['id' => $this->record->sessionId]);
-                $this->events?->dispatch('session.started', ['id' => $this->record->sessionId]);
+                $this->sessionAudit?->record('session.started', ['id' => $this->sessionRecord->sessionId]);
+                $this->sessionEventBus?->dispatch('session.started', ['id' => $this->sessionRecord->sessionId]);
             }
         } else {
             $this->createNewRecord();
-            $this->audit?->record('session.created', ['id' => $this->record?->sessionId]);
-            $this->events?->dispatch('session.created', ['id' => $this->record?->sessionId]);
+            $this->sessionAudit?->record('session.created', ['id' => $this->sessionRecord?->sessionId]);
+            $this->sessionEventBus?->dispatch('session.created', ['id' => $this->sessionRecord?->sessionId]);
         }
 
         return true;
@@ -65,33 +65,33 @@ final class Session implements SessionInterface
 
     public function isStarted() : bool
     {
-        return $this->scope->isStarted();
+        return $this->sessionScope->isStarted();
     }
 
     private function createNewRecord() : void
     {
         $now = new DateTimeImmutable();
-        $this->record = new SessionRecord(
+        $this->sessionRecord = new SessionRecord(
             sessionId        : bin2hex(random_bytes(16)),
             createdAt        : $now,
             lastSeenAt       : $now,
             idleExpiresAt    : $now->modify('+30 minutes'),
             absoluteExpiresAt: $now->modify('+24 hours'),
-            ipCreated        : $this->metadata?->getIp(),
-            userAgentCreated : $this->metadata?->getUserAgent(),
+            ipCreated        : $this->sessionMetadata?->getIp(),
+            userAgentCreated : $this->sessionMetadata?->getUserAgent(),
         );
         $this->saveRecord();
     }
 
     private function touch() : void
     {
-        if ($this->record === null) {
+        if (! $this->sessionRecord instanceof SessionRecord) {
             return;
         }
 
         $now = new DateTimeImmutable();
-        $this->record = new SessionRecord(
-            ...((array) $this->record),
+        $this->sessionRecord = new SessionRecord(
+            ...((array) $this->sessionRecord),
             lastSeenAt   : $now,
             idleExpiresAt: $now->modify('+30 minutes'),
         );
@@ -100,32 +100,32 @@ final class Session implements SessionInterface
 
     private function saveRecord() : void
     {
-        if ($this->record !== null) {
-            $this->scope->set('_record', $this->record);
+        if ($this->sessionRecord instanceof SessionRecord) {
+            $this->sessionScope->set('_record', $this->sessionRecord);
         }
     }
 
     public function id() : string
     {
-        return $this->scope->id() ?: ($this->record?->sessionId ?? '');
+        return $this->sessionScope->id() ?: ($this->sessionRecord?->sessionId ?? '');
     }
 
     public function has(string $key) : bool
     {
-        return $this->scope->has($key);
+        return $this->sessionScope->has($key);
     }
 
     public function get(string $key, mixed $default = null) : mixed
     {
-        $value = $this->scope->get($key, $default);
-        $this->events?->dispatch('session.retrieved', ['key' => $key]);
+        $value = $this->sessionScope->get($key, $default);
+        $this->sessionEventBus?->dispatch('session.retrieved', ['key' => $key]);
 
         return $value;
     }
 
     public function all() : array
     {
-        return $this->scope->all();
+        return $this->sessionScope->all();
     }
 
     public function set(string $key, mixed $value) : void
@@ -135,16 +135,16 @@ final class Session implements SessionInterface
 
     public function put(string $key, mixed $value) : void
     {
-        $this->scope->set($key, $value);
-        $this->audit?->record('session.put', ['key' => $key]);
-        $this->events?->dispatch('session.put', ['key' => $key]);
+        $this->sessionScope->set($key, $value);
+        $this->sessionAudit?->record('session.put', ['key' => $key]);
+        $this->sessionEventBus?->dispatch('session.put', ['key' => $key]);
     }
 
     public function forget(string $key) : void
     {
-        $this->scope->forget($key);
-        $this->audit?->record('session.forget', ['key' => $key]);
-        $this->events?->dispatch('session.forget', ['key' => $key]);
+        $this->sessionScope->forget($key);
+        $this->sessionAudit?->record('session.forget', ['key' => $key]);
+        $this->sessionEventBus?->dispatch('session.forget', ['key' => $key]);
     }
 
     public function clear() : void
@@ -154,30 +154,30 @@ final class Session implements SessionInterface
 
     public function flush() : void
     {
-        $this->scope->clear();
-        $this->record = null;
-        $this->audit?->record('session.flushed');
-        $this->events?->dispatch('session.flushed');
+        $this->sessionScope->clear();
+        $this->sessionRecord = null;
+        $this->sessionAudit?->record('session.flushed');
+        $this->sessionEventBus?->dispatch('session.flushed');
     }
 
     public function destroy() : void
     {
-        $this->scope->destroy();
-        $this->record = null;
-        $this->audit?->record('session.destroyed');
-        $this->events?->dispatch('session.destroyed');
+        $this->sessionScope->destroy();
+        $this->sessionRecord = null;
+        $this->sessionAudit?->record('session.destroyed');
+        $this->sessionEventBus?->dispatch('session.destroyed');
     }
 
     public function regenerate(bool $destroy = false) : bool
     {
         $oldId = $this->id();
-        $result = $this->scope->regenerate($destroy);
+        $result = $this->sessionScope->regenerate($destroy);
 
         if ($result) {
             $this->createNewRecord();
-            $this->audit?->record('session.regenerated', ['old_id' => $oldId, 'new_id' => $this->id()]);
-            $this->events?->dispatch('session.regenerated', ['old_id' => $oldId, 'new_id' => $this->id()]);
-            $this->logger?->info("Session regenerated: {$this->id()}");
+            $this->sessionAudit?->record('session.regenerated', ['old_id' => $oldId, 'new_id' => $this->id()]);
+            $this->sessionEventBus?->dispatch('session.regenerated', ['old_id' => $oldId, 'new_id' => $this->id()]);
+            $this->logger?->info('Session regenerated: ' . $this->id());
         }
 
         return $result;
@@ -186,7 +186,7 @@ final class Session implements SessionInterface
     public function save() : void
     {
         $this->saveRecord();
-        $this->scope->save();
+        $this->sessionScope->save();
     }
 
     public function flash(string $key, mixed $value) : void
@@ -212,11 +212,11 @@ final class Session implements SessionInterface
 
     public function transaction() : SessionTransaction
     {
-        return $this->transaction;
+        return $this->sessionTransaction;
     }
 
     public function events() : SessionEventBus
     {
-        return $this->events ?? new SessionEventBus();
+        return $this->sessionEventBus ?? new SessionEventBus();
     }
 }

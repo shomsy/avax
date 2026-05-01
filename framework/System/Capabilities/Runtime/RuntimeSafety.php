@@ -40,10 +40,10 @@ final class RuntimeSafety
     /**
      * Register a resettable state component.
      */
-    public function registerResettable(string $name, ResettableState $state) : self
+    public function registerResettable(string $name, ResettableState $resettableState) : self
     {
-        $this->resettableStates[$name] = $state;
-        $this->stateResetRegistry->register($name, $state);
+        $this->resettableStates[$name] = $resettableState;
+        $this->stateResetRegistry->register($name, $resettableState);
 
         return $this;
     }
@@ -87,11 +87,11 @@ final class RuntimeSafety
         $failures = [];
 
         // Reset registered states via the registry
-        $report = $this->stateResetRegistry->resetAll();
-        $reset = $report->resetComponents();
+        $stateResetReport = $this->stateResetRegistry->resetAll();
+        $reset            = $stateResetReport->resetComponents();
 
-        foreach ($report->failures() as $name => $exception) {
-            $failures[$name] = $exception->getMessage();
+        foreach ($stateResetReport->failures() as $name => $throwable) {
+            $failures[$name] = $throwable->getMessage();
         }
 
         // Execute custom reset callbacks
@@ -99,8 +99,8 @@ final class RuntimeSafety
             try {
                 $callback();
                 $reset[] = $name;
-            } catch (Throwable $exception) {
-                $failures[$name] = $exception->getMessage();
+            } catch (Throwable $throwable) {
+                $failures[$name] = $throwable->getMessage();
             }
         }
 
@@ -108,8 +108,8 @@ final class RuntimeSafety
         $transactionLeaks = $this->detectTransactionLeaks();
 
         // Rollback leaked transactions
-        foreach ($transactionLeaks as $connectionName) {
-            $this->completeTransaction($connectionName);
+        foreach ($transactionLeaks as $transactionLeak) {
+            $this->completeTransaction($transactionLeak);
         }
 
         return [
@@ -154,7 +154,7 @@ final class RuntimeSafety
      */
     public function hasTransactionLeaks() : bool
     {
-        return ! empty($this->activeTransactions);
+        return $this->activeTransactions !== [];
     }
 
     /**

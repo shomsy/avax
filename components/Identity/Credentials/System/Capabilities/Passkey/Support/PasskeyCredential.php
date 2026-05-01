@@ -21,6 +21,6 @@ final readonly class PasskeyCredential
 
     public function isRevoked(): bool
     {
-        return $this->revokedAt !== null;
+        return $this->revokedAt instanceof DateTimeImmutable;
     }
 }

@@ -14,7 +14,7 @@ final readonly class RequireCsrfProtection
     private string $cookieName;
 
     public function __construct(
-        string $cookieName = null,
+        ?string $cookieName = null,
         #[SensitiveParameter]
         private string $headerName = 'x-csrf-token',
     ) {
@@ -29,9 +29,9 @@ final readonly class RequireCsrfProtection
      */
     public function execute(
         string $method,
-        array $server = null,
+        ?array $server = null,
         #[SensitiveParameter]
-        array $headers = null,
+        ?array $headers = null,
         array $cookies = [],
     ): bool {
         $server ??= [];

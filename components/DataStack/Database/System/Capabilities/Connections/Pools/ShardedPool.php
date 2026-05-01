@@ -83,6 +83,6 @@ final class ShardedPool
             );
         }
 
-        return ['total' => $totalStats, 'shards' => array_map(callback: static fn ($pool): PoolStats => $pool->stats(), array: $this->pools)];
+        return ['total' => $totalStats, 'shards' => array_map(callback: static fn (ConnectionPoolInterface $connectionPool) : PoolStats => $connectionPool->stats(), array: $this->pools)];
     }
 }

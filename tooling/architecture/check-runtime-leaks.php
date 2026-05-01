@@ -30,21 +30,16 @@ foreach ($scanRoots as $scanRoot) {
     );
 
     foreach ($iterator as $file) {
-        if (! $file instanceof SplFileInfo || $file->getExtension() !== 'php') {
+        if (! $file instanceof SplFileInfo) {
+            continue;
+        }
+
+        if ($file->getExtension() !== 'php') {
             continue;
         }
 
         $path = str_replace($root, '', $file->getPathname());
-
-        $isAllowed = false;
-
-        foreach ($allowedPaths as $allowedPath) {
-            if (str_contains($path, $allowedPath)) {
-                $isAllowed = true;
-
-                break;
-            }
-        }
+        $isAllowed = array_any($allowedPaths, fn ($allowedPath) : bool => str_contains($path, (string) $allowedPath));
 
         if ($isAllowed) {
             continue;
@@ -56,12 +51,12 @@ foreach ($scanRoots as $scanRoot) {
             continue;
         }
 
-        foreach ($forbiddenTokens as $token) {
+        foreach ($forbiddenTokens as $forbiddenToken) {
             // Check for use statements or instantiation to avoid matching string literals in unrelated code
             // But for safety, simple str_contains is a good start.
             // We can add space before token to avoid matching parts of other words.
-            if (str_contains($contents, ' ' . $token) || str_contains($contents, '\\' . $token)) {
-                $violations[] = sprintf('%s leaks runtime-specific token "%s"', ltrim($path, '/'), $token);
+            if (str_contains($contents, ' ' . $forbiddenToken) || str_contains($contents, '\\' . $forbiddenToken)) {
+                $violations[] = sprintf('%s leaks runtime-specific token "%s"', ltrim($path, '/'), $forbiddenToken);
             }
         }
     }

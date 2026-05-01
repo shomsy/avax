@@ -41,9 +41,9 @@ interface EventBusInterface
     /**
      * Sign up a multi-topic "Subscriber" (a class that listens to many things).
      *
-     * @param EventSubscriberInterface $subscriber A helper who has a list of everything they care about.
+     * @param EventSubscriberInterface $eventSubscriber A helper who has a list of everything they care about.
      */
-    public function registerSubscriber(EventSubscriberInterface $subscriber): void;
+    public function registerSubscriber(EventSubscriberInterface $eventSubscriber) : void;
 
     /**
      * Manually sign up a single listener for a specific signal.

@@ -6,6 +6,7 @@ namespace Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerific
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
@@ -18,37 +19,37 @@ final readonly class VerifyEmail
         #[SensitiveParameter]
         private EmailVerificationStoreInterface $emailVerificationStore,
         #[SensitiveParameter]
-        private EmailVerificationStateStoreInterface $emailVerificationState,
+        private EmailVerificationStateStoreInterface $emailVerificationStateStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
     ) {}
 
-    public function execute(VerifyEmailData $data): bool
+    public function execute(VerifyEmailData $verifyEmailData) : bool
     {
-        $userId = $this->emailVerificationStore->consume(token: $data->token, now: $this->clock->now());
+        $userId = $this->emailVerificationStore->consume(token: $verifyEmailData->token, now: $this->clock->now());
 
-        if ($userId === null) {
+        if (! $userId instanceof UserId) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.email_verification.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
                                 'reason' => 'invalid_token',
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
+                                'ip_address' => $verifyEmailData->ipAddress,
+                                'user_agent' => $verifyEmailData->userAgent,
                 ],
             ));
 
             return false;
         }
 
-        $this->emailVerificationState->markVerified(userId: $userId);
+        $this->emailVerificationStateStore->markVerified(userId: $userId);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.email_verification.completed',
             occurredAt: $this->clock->now(),
             context   : [
                             'user_id' => $userId->value,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $verifyEmailData->ipAddress,
+                            'user_agent' => $verifyEmailData->userAgent,
             ],
         ));
 

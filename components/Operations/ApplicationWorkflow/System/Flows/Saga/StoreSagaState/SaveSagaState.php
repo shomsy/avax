@@ -12,16 +12,16 @@ final readonly class SaveSagaState
     /**
      * @param array<string, SagaState> $states
      */
-    public function save(array &$states, SagaState $state, int $expectedVersion = null) : SagaState
+    public function save(array &$states, SagaState $sagaState, ?int $expectedVersion = null) : SagaState
     {
-        $current = $states[$state->instanceId] ?? null;
+        $current = $states[$sagaState->instanceId] ?? null;
 
         if ($expectedVersion !== null && $current !== null && $current->version !== $expectedVersion) {
-            throw SagaStateStoreFailure::concurrentUpdate(instanceId: $state->instanceId);
+            throw SagaStateStoreFailure::concurrentUpdate(instanceId: $sagaState->instanceId);
         }
 
-        $states[$state->instanceId] = $state;
+        $states[$sagaState->instanceId] = $sagaState;
 
-        return $state;
+        return $sagaState;
     }
 }

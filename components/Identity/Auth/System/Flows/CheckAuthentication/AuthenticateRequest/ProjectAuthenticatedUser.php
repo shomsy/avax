@@ -16,7 +16,7 @@ final readonly class ProjectAuthenticatedUser
 {
     public function __construct(
         #[SensitiveParameter]
-        private EmailVerificationStateStoreInterface $emailVerificationState,
+        private EmailVerificationStateStoreInterface $emailVerificationStateStore,
         private MfaStoreInterface $mfaStore,
     ) {}
 
@@ -24,7 +24,7 @@ final readonly class ProjectAuthenticatedUser
     {
         return AuthenticatedUser::fromUser(
             user         : $user,
-            emailVerified: $this->emailVerificationState->isVerified(userId: $user->getId()),
+            emailVerified: $this->emailVerificationStateStore->isVerified(userId: $user->getId()),
             mfaEnabled   : $this->mfaStore->isEnabled(userId: $user->getId()),
         );
     }

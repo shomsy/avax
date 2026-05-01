@@ -79,7 +79,7 @@ final class AvaxCache implements CacheContract
     {
         $startTime = hrtime(true);
         $cacheKey  = CacheKey::create(key: $key);
-        $result    = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
+        $result = $this->cacheStore->read(clock: $this->clock, key: $cacheKey);
 
         if ($result instanceof CacheStoreRecordWasFound) {
             $record    = $result->record;
@@ -141,7 +141,7 @@ final class AvaxCache implements CacheContract
             }
         } catch (CacheLockWasNotAcquired) {
             $cacheKey = CacheKey::create(key: $key);
-            $result   = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
+            $result = $this->cacheStore->read(clock: $this->clock, key: $cacheKey);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 $this->recordMetrics(
@@ -291,7 +291,7 @@ final class AvaxCache implements CacheContract
 
         try {
             $cacheKey = CacheKey::create(key: $key);
-            $result   = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
+            $result = $this->cacheStore->read(clock: $this->clock, key: $cacheKey);
 
             if ($result instanceof CacheStoreRecordWasMissing) {
                 $this->recordMetrics(

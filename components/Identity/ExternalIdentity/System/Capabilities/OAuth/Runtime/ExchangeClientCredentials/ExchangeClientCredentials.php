@@ -8,8 +8,11 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClient;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthGrantType;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\OAuthTokenExchangeFailed;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\OAuthTokenGrant;
 use SensitiveParameter;
@@ -17,7 +20,7 @@ use SensitiveParameter;
 final readonly class ExchangeClientCredentials
 {
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
+        private OAuthClientRegistryInterface $oAuthClientRegistry,
         #[SensitiveParameter]
         private JwtIdentityInterface $jwtIdentity,
         private AuditLogInterface $auditLog,
@@ -27,61 +30,55 @@ final readonly class ExchangeClientCredentials
     /**
      * @throws OAuthTokenExchangeFailed
      */
-    public function execute(ExchangeClientCredentialsData $data): OAuthTokenGrant
+    public function execute(ExchangeClientCredentialsData $exchangeClientCredentialsData) : OAuthTokenGrant
     {
-        $client = $this->clientRegistry->find(clientId: $data->clientId);
+        $client = $this->oAuthClientRegistry->find(clientId: $exchangeClientCredentialsData->clientId);
 
-        if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
-            $this->recordFailure(data: $data, reason: 'client_authentication_failed');
+        if (! $client instanceof OAuthClient || ! $this->oAuthClientRegistry->verifySecret(clientId: $exchangeClientCredentialsData->clientId, plainTextSecret: $exchangeClientCredentialsData->clientSecret)) {
+            $this->recordFailure(reason: 'client_authentication_failed', data: $exchangeClientCredentialsData);
 
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
         if (! $client->allowsGrantType(grantType: OAuthGrantType::CLIENT_CREDENTIALS) || ! $client->workloadIdentity) {
-            $this->recordFailure(data: $data, reason: 'client_credentials_not_allowed');
+            $this->recordFailure(reason: 'client_credentials_not_allowed', data: $exchangeClientCredentialsData);
 
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
-        $scopes = $this->normalizeScopes(scopes: $data->scopes);
-        $audience = $this->normalizeAudience(audience: $data->audience);
+        $scopes      = $this->normalizeScopes(scopes: $exchangeClientCredentialsData->scopes);
+        $audience    = $this->normalizeAudience(audience: $exchangeClientCredentialsData->audience);
 
         if (! $client->allowsScopes(scopes: $scopes)) {
-            $this->recordFailure(data: $data, reason: 'scope_mismatch');
+            $this->recordFailure(reason: 'scope_mismatch', data: $exchangeClientCredentialsData);
 
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
         if (! $client->allowsAudience(audience: $audience)) {
-            $this->recordFailure(data: $data, reason: 'audience_mismatch');
+            $this->recordFailure(reason: 'audience_mismatch', data: $exchangeClientCredentialsData);
 
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
         if (! $client->allowsAudienceScopes(audience: $audience, scopes: $scopes)) {
-            $this->recordFailure(data: $data, reason: 'scope_boundary_mismatch');
+            $this->recordFailure(reason: 'scope_boundary_mismatch', data: $exchangeClientCredentialsData);
 
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
-        if ($client->requiredSenderConstraint !== null) {
-            if (
-                $data->senderConstraint === null
-                || $data->senderConstraint->type !== $client->requiredSenderConstraint
-            ) {
-                $this->recordFailure(data: $data, reason: 'sender_constraint_missing_or_wrong_type');
-
-                throw OAuthTokenExchangeFailed::invalidSenderConstraint();
-            }
+        if ($client->requiredSenderConstraint instanceof OAuthSenderConstraintType && (! $exchangeClientCredentialsData->senderConstraint instanceof OAuthSenderConstraint || $exchangeClientCredentialsData->senderConstraint->type !== $client->requiredSenderConstraint)) {
+            $this->recordFailure(reason: 'sender_constraint_missing_or_wrong_type', data: $exchangeClientCredentialsData);
+            throw OAuthTokenExchangeFailed::invalidSenderConstraint();
         }
 
         $subject = 'client:' . $client->clientId;
-        $issued  = $this->jwtIdentity->issueWorkloadToken(
+        $issuedToken = $this->jwtIdentity->issueWorkloadToken(
             subject         : $subject,
             clientId        : $client->clientId,
             scopes          : $scopes,
-            senderConstraint: $data->senderConstraint,
             audience        : $audience,
+            senderConstraint: $exchangeClientCredentialsData->senderConstraint,
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -91,38 +88,38 @@ final readonly class ExchangeClientCredentials
                             'client_id' => $client->clientId,
                             'scope'     => implode(separator: ' ', array: $scopes),
                             'audience'  => $audience,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $exchangeClientCredentialsData->ipAddress,
+                            'user_agent' => $exchangeClientCredentialsData->userAgent,
             ],
         ));
 
         return new OAuthTokenGrant(
-            accessToken         : $issued->token,
-            accessTokenExpiresAt: $issued->expiresAt,
+            accessToken         : $issuedToken->token,
+            accessTokenExpiresAt: $issuedToken->expiresAt,
             refreshToken        : null,
             idToken             : null,
             clientId            : $client->clientId,
             userId              : null,
             scopes              : $scopes,
-            tokenType           : $data->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
-            senderConstraint    : $data->senderConstraint,
+            tokenType           : $exchangeClientCredentialsData->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
+            senderConstraint    : $exchangeClientCredentialsData->senderConstraint,
             subject             : $subject,
             audience            : $audience,
             workloadIdentity    : true,
         );
     }
 
-    private function recordFailure(ExchangeClientCredentialsData $data, string $reason): void
+    private function recordFailure(ExchangeClientCredentialsData $exchangeClientCredentialsData, string $reason) : void
     {
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.client_credentials.failed',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id' => $data->clientId,
+                            'client_id'  => $exchangeClientCredentialsData->clientId,
                             'reason'    => $reason,
-                            'audience'  => $this->normalizeAudience(audience: $data->audience),
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'audience'   => $this->normalizeAudience(audience: $exchangeClientCredentialsData->audience),
+                            'ip_address' => $exchangeClientCredentialsData->ipAddress,
+                            'user_agent' => $exchangeClientCredentialsData->userAgent,
             ],
         ));
     }
@@ -145,8 +142,11 @@ final readonly class ExchangeClientCredentials
 
         foreach ($scopes as $scope) {
             $value = trim(string: $scope);
+            if ($value === '') {
+                continue;
+            }
 
-            if ($value === '' || in_array(needle: $value, haystack: $normalized, strict: true)) {
+            if (in_array(needle: $value, haystack: $normalized, strict: true)) {
                 continue;
             }
 

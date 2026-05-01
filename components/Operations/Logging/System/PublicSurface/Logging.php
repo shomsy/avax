@@ -11,7 +11,7 @@ use Stringable;
 final readonly class Logging implements LoggerInterface
 {
     public function __construct(
-        private RotatingFileWriter $writer,
+        private RotatingFileWriter $rotatingFileWriter,
     ) {}
 
     public function emergency(string|Stringable $message, array $context = []) : void
@@ -56,6 +56,6 @@ final readonly class Logging implements LoggerInterface
 
     public function log($level, string|Stringable $message, array $context = []) : void
     {
-        $this->writer->write((string) $message, (string) $level, $context);
+        $this->rotatingFileWriter->write((string) $message, (string) $level, $context);
     }
 }

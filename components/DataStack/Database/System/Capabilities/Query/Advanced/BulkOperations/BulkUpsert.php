@@ -8,14 +8,14 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Advanced\Upsert
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Advanced\Upsert\UpsertBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class BulkUpsert
+final readonly class BulkUpsert
 {
     public function __construct(
-        private readonly GrammarInterface $grammar,
-        private readonly string $table,
-        private readonly array $columns,
-        private readonly OnConflict $conflict,
-        private readonly int $batchSize = 100,
+        private GrammarInterface $grammar,
+        private string           $table,
+        private array            $columns,
+        private OnConflict       $onConflict,
+        private int              $batchSize = 100,
     ) {}
 
     /**
@@ -30,7 +30,7 @@ final class BulkUpsert
                 grammar : $this->grammar,
                 table   : $this->table,
                 columns : $this->columns,
-                conflict: $this->conflict,
+                conflict: $this->onConflict,
             )->build(rows: $batch);
         }
 

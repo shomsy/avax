@@ -56,24 +56,24 @@ function parityIssuesFor(string $peerName, array $current, array $peer) : array
         $peerValue    = (string) ($peer['meta'][$key] ?? '');
 
         if ($currentValue !== $peerValue) {
-            $issues[] = "peer [{$peerName}] mismatched {$key}: current={$currentValue}, peer={$peerValue}";
+            $issues[] = sprintf('peer [%s] mismatched %s: current=%s, peer=%s', $peerName, $key, $currentValue, $peerValue);
         }
     }
 
     $currentSettings = $current['meta']['phpSettings'] ?? [];
     $peerSettings = $peer['meta']['phpSettings'] ?? [];
     if ($currentSettings !== $peerSettings) {
-        $issues[] = "peer [{$peerName}] PHP settings do not match the canonical benchmark settings";
+        $issues[] = sprintf('peer [%s] PHP settings do not match the canonical benchmark settings', $peerName);
     }
 
     if (($current['meta']['guard'] ?? null) !== ($peer['meta']['guard'] ?? null)) {
-        $issues[] = "peer [{$peerName}] guard mode does not match the canonical median benchmark policy";
+        $issues[] = sprintf('peer [%s] guard mode does not match the canonical median benchmark policy', $peerName);
     }
 
     $currentScenarios = benchmarkScenariosForArtifact(artifact: $current);
     $peerScenarios    = benchmarkScenariosForArtifact(artifact: $peer);
     if ($currentScenarios !== $peerScenarios) {
-        $issues[] = "peer [{$peerName}] scenario set does not match the canonical benchmark suite";
+        $issues[] = sprintf('peer [%s] scenario set does not match the canonical benchmark suite', $peerName);
     }
 
     return $issues;
@@ -108,7 +108,7 @@ function peerMatrixPayload(array $artifacts, array $thresholds) : array
     $current = $artifacts['current'];
     $peers   = $artifacts
             |> array_keys(...)
-            |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $name) : bool => $name !== 'current'))
+            |> (static fn ($x) : array => array_filter(array: $x, callback: static fn (string $name) : bool => $name !== 'current'))
             |> array_values(...);
     sort(array: $peers);
 
@@ -211,11 +211,11 @@ $json       = json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESC
 if (is_string(value: $outputPath) && $outputPath !== '') {
     $directory = dirname(path: $outputPath);
     if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0o775, recursive: true) && ! is_dir(filename: $directory)) {
-        throw new RuntimeException(message: "Cannot create peer benchmark artifact directory [{$directory}].");
+        throw new RuntimeException(message: sprintf('Cannot create peer benchmark artifact directory [%s].', $directory));
     }
 
     if (file_put_contents(filename: $outputPath, data: $json, flags: LOCK_EX) === false) {
-        throw new RuntimeException(message: "Cannot write peer benchmark artifact [{$outputPath}].");
+        throw new RuntimeException(message: sprintf('Cannot write peer benchmark artifact [%s].', $outputPath));
     }
 }
 
@@ -226,8 +226,8 @@ if ($failOnRegression && ($payload['parityIssues'] !== [] || $payload['regressio
                    callback: static fn (array $row) : string => 'regression vs peer [' . $row['peer'] . '] on [' . $row['scenario'] . ']',
                    array   : $payload['regressions'],
                )
-                     |> (static fn ($x) => array_merge($payload['parityIssues'], $x))
-                     |> (static fn ($x) => implode(separator: "\n- ", array: $x)),
+                     |> (static fn ($x) : array => array_merge($payload['parityIssues'], $x))
+                     |> (static fn ($x) : string => implode(separator: "\n- ", array: $x)),
     );
 }
 

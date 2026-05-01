@@ -11,8 +11,8 @@ if ($argc < 3) {
 
 require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
 
-$fixturePath = (string) ($argv[1] ?? '');
-$outputDir   = rtrim(string: (string) ($argv[2] ?? ''), characters: '/');
+$fixturePath                   = $argv[1] ?? '';
+$outputDir                     = rtrim(string: $argv[2] ?? '', characters: '/');
 
 if (! is_file(filename: $fixturePath)) {
     fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] was not found.\n");
@@ -48,7 +48,7 @@ foreach ($serviceIds as $serviceId) {
         callback: static fn (array $parameter): bool => ($parameter['source'] ?? '') === 'runtime',
     )
             |> array_values(...)
-            |> (static fn ($x) => array_map(callback: static fn (array $parameter): string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''), array: $x))
+            |> (static fn ($x) : array => array_map(callback: static fn (array $parameter) : string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''), array: $x))
             |> array_values(...);
 
     foreach ($plan['methods'] ?? [] as $method) {
@@ -118,12 +118,12 @@ $serviceIdUnion = implode(separator: '|', array: array_map(
 ));
 $groupUnion = $payload['groups']
         |> array_keys(...)
-        |> (static fn ($x) => array_map(callback: static fn (string $group): string => "'" . str_replace(search: "'", replace: "\\'", subject: $group) . "'", array: $x))
-        |> (static fn ($x) => implode(separator: '|', array: $x));
+        |> (static fn ($x) : array => array_map(callback: static fn (string $group) : string => "'" . str_replace(search: "'", replace: "\\'", subject: $group) . "'", array: $x))
+        |> (static fn ($x) : string => implode(separator: '|', array: $x));
 $sliceUnion = $payload['sliceExports']
         |> array_keys(...)
-        |> (static fn ($x) => array_map(callback: static fn (string $slice): string => "'" . str_replace(search: "'", replace: "\\'", subject: $slice) . "'", array: $x))
-        |> (static fn ($x) => implode(separator: '|', array: $x));
+        |> (static fn ($x) : array => array_map(callback: static fn (string $slice) : string => "'" . str_replace(search: "'", replace: "\\'", subject: $slice) . "'", array: $x))
+        |> (static fn ($x) : string => implode(separator: '|', array: $x));
 
 $stub = <<<PHP
     <?php

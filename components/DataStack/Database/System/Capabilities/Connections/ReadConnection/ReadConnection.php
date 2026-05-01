@@ -26,7 +26,7 @@ final class ReadConnection
     /** @var array<string, ConnectionPool> */
     private array $pools = [];
 
-    private ?ExecutionScope $scope;
+    private readonly ?ExecutionScope $executionScope;
 
     private readonly ResolveDefaultConnection $resolveDefaultConnection;
 
@@ -40,11 +40,11 @@ final class ReadConnection
     public function __construct(
         private readonly array $config,
         private readonly ?EventBus $eventBus = null,
-        ExecutionScope           $scope = null,
-        ResolveDefaultConnection $resolveDefaultConnection = null,
-        RememberConnection       $rememberConnection = null,
+        ?ExecutionScope           $executionScope = null,
+        ?ResolveDefaultConnection $resolveDefaultConnection = null,
+        ?RememberConnection       $rememberConnection = null,
     ) {
-        $this->scope              = $scope ?? ExecutionScope::fresh();
+        $this->executionScope = $executionScope ?? ExecutionScope::fresh();
         $this->resolveDefaultConnection = $resolveDefaultConnection ?? new ResolveDefaultConnection(config: $this->config);
         $this->rememberConnection = $rememberConnection ?? new RememberConnection();
     }
@@ -52,12 +52,12 @@ final class ReadConnection
     /**
      * @throws Throwable
      */
-    public function connection(string $name = null) : DatabaseConnection
+    public function connection(?string $name = null) : DatabaseConnection
     {
         $resolvedName = $this->resolveDefaultConnection->resolve(connectionName: $name);
         $cached = $this->rememberConnection->read(connections: $this->connections, name: $resolvedName);
 
-        if ($cached !== null) {
+        if ($cached instanceof DatabaseConnection) {
             return $cached;
         }
 
@@ -92,17 +92,15 @@ final class ReadConnection
                 pool : new ConnectionPool(config: $config, eventBus: $this->eventBus),
             );
 
-        if ($this->scope !== null) {
-            $pool->withScope(scope: $this->scope);
-        }
+        $pool->withScope(scope: $this->executionScope);
 
         return $pool;
     }
 
-    public function withScope(ExecutionScope $scope): self
+    public function withScope(ExecutionScope $executionScope) : self
     {
         return clone (object: $this, withProperties: [
-            'scope' => $scope,
+            'scope' => $executionScope,
         ]);
     }
 
@@ -116,7 +114,7 @@ final class ReadConnection
         return new OpenConnection(
             buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
-            scope                  : $this->scope,
+            scope                  : $this->executionScope,
         )->using(config: $config);
     }
 }

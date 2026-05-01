@@ -21,13 +21,13 @@ final readonly class Runtime implements RuntimeInterface
      * @param array<string, Closure> $consoleCommands
      */
     public function __construct(
-        private RuntimeState $state,
-        private RuntimeContext $context,
-        private RequestScopeStore $requestScopes,
+        private RuntimeState      $runtimeState,
+        private RuntimeContext    $runtimeContext,
+        private RequestScopeStore $requestScopeStore,
         private StateResetRegistry $stateResetRegistry,
-        private ComponentRegistry $components,
+        private ComponentRegistry $componentRegistry,
         private ProjectPath $projectPath,
-        private EnvironmentName $environment,
+        private EnvironmentName   $environmentName,
         private Clock $clock,
         private string $runtimeName,
         private ?Closure $httpHandler = null,
@@ -36,22 +36,22 @@ final readonly class Runtime implements RuntimeInterface
 
     public function state() : RuntimeState
     {
-        return $this->state;
+        return $this->runtimeState;
     }
 
     public function context() : RuntimeContext
     {
-        return $this->context;
+        return $this->runtimeContext;
     }
 
     public function requestScopes() : RequestScopeStore
     {
-        return $this->requestScopes;
+        return $this->requestScopeStore;
     }
 
     public function components() : ComponentRegistry
     {
-        return $this->components;
+        return $this->componentRegistry;
     }
 
     public function stateResetRegistry() : StateResetRegistry
@@ -66,7 +66,7 @@ final readonly class Runtime implements RuntimeInterface
 
     public function environment() : EnvironmentName
     {
-        return $this->environment;
+        return $this->environmentName;
     }
 
     public function clock() : Clock

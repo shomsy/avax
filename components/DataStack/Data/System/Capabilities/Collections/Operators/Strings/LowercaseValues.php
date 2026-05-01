@@ -13,6 +13,6 @@ final readonly class LowercaseValues
 
     public function __invoke(): array
     {
-        return array_map('mb_strtolower', $this->items);
+        return array_map(mb_strtolower(...), $this->items);
     }
 }

@@ -7,10 +7,10 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Projectio
 use Attribute;
 
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
-final class Column
+final readonly class Column
 {
     public function __construct(
-        public readonly ?string $name = null,
-        public readonly ?string $type = null,
+        public ?string $name = null,
+        public ?string $type = null,
     ) {}
 }

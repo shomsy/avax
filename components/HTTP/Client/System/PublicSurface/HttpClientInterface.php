@@ -130,11 +130,11 @@ interface HttpClientInterface
     /**
      * Send a fully customized outbound request.
      *
-     * @param OutboundRequest $request The outbound request to send
+     * @param OutboundRequest $outboundRequest The outbound request to send
      *
      * @throws HttpRequestFailed if the request fails
      */
-    public function send(OutboundRequest $request): ClientResponse;
+    public function send(OutboundRequest $outboundRequest) : ClientResponse;
 
     /**
      * Get the base URL configured for this client.

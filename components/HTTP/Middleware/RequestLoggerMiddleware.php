@@ -21,13 +21,13 @@ final readonly class RequestLoggerMiddleware implements MiddlewareInterface
         $uri = $request->getUri();
         $ip = $request->getServerParams()['REMOTE_ADDR'] ?? '-';
 
-        $this->logger->info("[HTTP] {$method} {$uri} from {$ip}");
+        $this->logger->info(sprintf('[HTTP] %s %s from %s', $method, $uri, $ip));
 
         $start = microtime(true);
         $response = $next($request);
         $duration = round((microtime(true) - $start) * 1000, 2);
 
-        $this->logger->info("[HTTP] {$method} {$uri} -> {$response->getStatusCode()} ({$duration}ms)");
+        $this->logger->info(sprintf('[HTTP] %s %s -> %s (%sms)', $method, $uri, $response->getStatusCode(), $duration));
 
         return $response;
     }

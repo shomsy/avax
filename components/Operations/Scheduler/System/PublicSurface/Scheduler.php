@@ -9,7 +9,7 @@ use Closure;
 
 final class Scheduler
 {
-    private static TaskRunner $runner;
+    private static TaskRunner $taskRunner;
 
     private static array $scheduledTasks = [];
 
@@ -33,18 +33,18 @@ final class Scheduler
 
     public static function runDueTasks(): SchedulerReport
     {
-        $runner = self::getRunner();
+        $taskRunner = self::getRunner();
 
-        return $runner->run();
+        return $taskRunner->run();
     }
 
     private static function getRunner(): TaskRunner
     {
-        if (! isset(self::$runner)) {
-            self::$runner = new TaskRunner();
+        if (! isset(self::$taskRunner)) {
+            self::$taskRunner = new TaskRunner();
         }
 
-        return self::$runner;
+        return self::$taskRunner;
     }
 
     public static function history(int $limit = 100): array

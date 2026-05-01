@@ -7,6 +7,7 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDCo
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcProviderInterface;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\ResolvedToken;
 use RuntimeException;
 use SensitiveParameter;
 
@@ -22,7 +23,7 @@ final readonly class ReadOidcUserInfo
     {
         $resolved = $this->jwtIdentity->resolve(token: $accessToken);
 
-        if ($resolved === null) {
+        if (! $resolved instanceof ResolvedToken) {
             throw new RuntimeException(message: 'Active access token is required for OIDC userinfo.');
         }
 
@@ -48,7 +49,7 @@ final readonly class ReadOidcUserInfo
 
     private function subjectIdentifier(User $user, ?string $clientId): string
     {
-        if ($this->oidcProvider !== null && $clientId !== null && trim(string: $clientId) !== '') {
+        if ($this->oidcProvider instanceof OidcProviderInterface && $clientId !== null && trim(string: $clientId) !== '') {
             return $this->oidcProvider->subjectIdentifier(user: $user, clientId: $clientId);
         }
 

@@ -8,6 +8,7 @@ use Avax\Components\Identity\Security\System\Capabilities\Configuration\Security
 use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\ApproveSecurityChange;
 use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\BeginSecurityChange;
 use Avax\Framework\Foundation\Exception\NotImplementedException;
+use stdClass;
 
 /**
  * Security - Main entry point for Identity/Security component.
@@ -15,24 +16,24 @@ use Avax\Framework\Foundation\Exception\NotImplementedException;
 final readonly class Security implements SecurityInterface
 {
     public function __construct(
-        private SecurityConfigurationStore $configStore,
-        private BeginSecurityChange $beginChange,
-        private ApproveSecurityChange $approveChange,
+        private SecurityConfigurationStore $securityConfigurationStore,
+        private BeginSecurityChange        $beginSecurityChange,
+        private ApproveSecurityChange      $approveSecurityChange,
     ) {}
 
-    public function readConfiguration(string $tenantId): object
+    public function readConfiguration(string $tenantId) : stdClass
     {
-        return $this->configStore->read($tenantId);
+        return $this->securityConfigurationStore->read($tenantId);
     }
 
     public function beginChange(string $tenantId, array $data): object
     {
-        return $this->beginChange->execute($tenantId, $data);
+        return $this->beginSecurityChange->execute($tenantId, $data);
     }
 
     public function approveChange(string $requestId): void
     {
-        $this->approveChange->execute($requestId);
+        $this->approveSecurityChange->execute($requestId);
     }
 
     public function applyChange(string $requestId): void

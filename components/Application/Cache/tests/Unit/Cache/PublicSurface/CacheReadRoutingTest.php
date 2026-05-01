@@ -21,7 +21,9 @@ use Avax\Components\Application\Cache\System\PublicSurface\Read\RuntimeCacheTarg
 use Avax\Tests\TestCase;
 use Override;
 use Psr\SimpleCache\InvalidArgumentException;
+use ReflectionIntersectionType;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionUnionType;
 
 final class CacheReadRoutingTest extends TestCase
@@ -79,13 +81,13 @@ final class CacheReadRoutingTest extends TestCase
 
     public function test_read_signature_accepts_cache_read_target(): void
     {
-        $param = (new ReflectionMethod(objectOrMethod: Cache::class, method: 'read'))->getParameters()[0];
+        $param     = new ReflectionMethod(objectOrMethod: Cache::class, method: 'read')->getParameters()[0];
         $type  = $param->getType();
 
         $this->assertInstanceOf(expected: ReflectionUnionType::class, actual: $type);
 
         $types     = $type->getTypes();
-        $typeNames = array_map(static fn ($t) => $t->getName(), $types);
+        $typeNames = array_map(static fn (ReflectionIntersectionType|ReflectionNamedType $t) => $t->getName(), $types);
 
         $this->assertContains(needle: \Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget::class, haystack: $typeNames);
         $this->assertContains(needle: 'string', haystack: $typeNames);
@@ -93,7 +95,7 @@ final class CacheReadRoutingTest extends TestCase
 
     public function test_compiled_cache_read_has_correct_signature(): void
     {
-        $params = (new ReflectionMethod(objectOrMethod: CompiledCache::class, method: 'read'))->getParameters();
+        $params = new ReflectionMethod(objectOrMethod: CompiledCache::class, method: 'read')->getParameters();
 
         $this->assertCount(expectedCount: 3, haystack: $params);
         $this->assertSame(expected: 'name', actual: $params[0]->getName());
@@ -103,7 +105,7 @@ final class CacheReadRoutingTest extends TestCase
 
     public function test_compiled_cache_compile_has_correct_signature(): void
     {
-        $params = (new ReflectionMethod(objectOrMethod: CompiledCache::class, method: 'compile'))->getParameters();
+        $params = new ReflectionMethod(objectOrMethod: CompiledCache::class, method: 'compile')->getParameters();
 
         $this->assertCount(expectedCount: 3, haystack: $params);
         $this->assertSame(expected: 'name', actual: $params[0]->getName());
@@ -211,7 +213,7 @@ final class CacheReadRoutingTest extends TestCase
 
         $this->frozenClock        = new FrozenClock();
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock);
-        $this->cacheContract      = new AvaxCache(store: $this->inMemoryCacheStore, clock: $this->frozenClock);
+        $this->cacheContract = new AvaxCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         Cache::use(cache: $this->cacheContract);
     }

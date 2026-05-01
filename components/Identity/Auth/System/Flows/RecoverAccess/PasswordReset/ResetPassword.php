@@ -7,6 +7,7 @@ namespace Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
@@ -34,18 +35,18 @@ final readonly class ResetPassword
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
     ) {}
 
-    public function execute(ResetPasswordData $data): bool
+    public function execute(ResetPasswordData $resetPasswordData) : bool
     {
-        $userId = $this->passwordResetStore->consume(token: $data->token, now: $this->clock->now());
+        $userId = $this->passwordResetStore->consume(token: $resetPasswordData->token, now: $this->clock->now());
 
-        if ($userId === null) {
+        if (! $userId instanceof UserId) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.password_reset.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
                                 'reason' => 'invalid_token',
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
+                                'ip_address' => $resetPasswordData->ipAddress,
+                                'user_agent' => $resetPasswordData->userAgent,
                 ],
             ));
 
@@ -53,8 +54,8 @@ final readonly class ResetPassword
         }
 
         $this->userSource->updatePassword(
+            passwordHash: $this->passwordHasher->hash(password: $resetPasswordData->newPassword),
             id          : $userId,
-            passwordHash: $this->passwordHasher->hash(password: $data->newPassword),
         );
         $this->sessionRegistry?->revokeForUser(userId: $userId, revokedAt: $this->clock->now(), reason: 'password_reset');
         $this->mfaChallengeStore?->forgetForUser(userId: $userId);
@@ -65,8 +66,8 @@ final readonly class ResetPassword
             occurredAt: $this->clock->now(),
             context   : [
                             'user_id' => $userId->value,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $resetPasswordData->ipAddress,
+                            'user_agent' => $resetPasswordData->userAgent,
             ],
         ));
 

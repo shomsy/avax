@@ -29,10 +29,10 @@ final readonly class EntityPersister
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $entityMetadata->identifierField();
-        $payload = $this->payload(entity: $entity, metadata: $entityMetadata, includeIdentifier: false);
+        $payload = $this->payload(entity: $entity, includeIdentifier: false, metadata: $entityMetadata);
 
-        $builder = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
-        $generatedId = $builder->insertGetId(values: $payload);
+        $queryBuilder = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
+        $generatedId  = $queryBuilder->insertGetId(values: $payload);
 
         if ($identifier instanceof FieldMetadata && $identifier->generated) {
             $this->setPropertyValue(entity: $entity, property: $identifier->property, value: $generatedId);
@@ -63,7 +63,6 @@ final readonly class EntityPersister
     private function propertyValue(object $entity, string $property): mixed
     {
         $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
-        $reflectionProperty->setAccessible(accessible: true);
 
         return $reflectionProperty->getValue(object: $entity);
     }
@@ -74,7 +73,6 @@ final readonly class EntityPersister
     private function setPropertyValue(object $entity, string $property, mixed $value): void
     {
         $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
-        $reflectionProperty->setAccessible(accessible: true);
         $reflectionProperty->setValue(objectOrValue: $entity, value: $value);
     }
 
@@ -95,7 +93,7 @@ final readonly class EntityPersister
             throw new RuntimeException(message: 'Cannot update an entity without an identifier value.');
         }
 
-        $payload = $this->payload(entity: $entity, metadata: $entityMetadata, includeIdentifier: false);
+        $payload = $this->payload(entity: $entity, includeIdentifier: false, metadata: $entityMetadata);
 
         $this->query->builder(connectionName: $connectionName)
             ->from(table: $entityMetadata->table)
@@ -238,7 +236,7 @@ final readonly class EntityPersister
         }
 
         return array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
+            callback: fn (array $row) : object => $this->hydrator->hydrate(
                 entityClass: $entityClass,
                 row        : $row,
                 metadata   : $entityMetadata,

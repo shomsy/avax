@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View;
 
+use Avax\Components\HTTP\Context\System\PublicSurface\HttpContextInterface;
 use Jenssegers\Blade\Blade;
 use Throwable;
 
@@ -29,7 +30,7 @@ class BladeTemplateEngine extends Blade
     private function getBaseUrl(): string
     {
         $context = function_exists(function: 'http_context') ? http_context() : null;
-        if ($context !== null) {
+        if ($context instanceof HttpContextInterface) {
             return $context->baseUrl();
         }
 
@@ -43,7 +44,7 @@ class BladeTemplateEngine extends Blade
     private function configureCustomDirectives(): void
     {
         // Asset directive
-        $this->compiler()->directive(name: 'asset', handler: fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'asset', handler: fn (string $expression) : string => sprintf(
             "<?php echo preg_match('/^public/', %s) ? '%s/' . ltrim(%s, '\"\\'/') : '%s/' . ltrim(%s, '\"\\'/'); ?>",
             $expression,
             $this->getBaseUrl(),
@@ -53,7 +54,7 @@ class BladeTemplateEngine extends Blade
         ));
 
         // Datetime directive
-        $this->compiler()->directive(name: 'datetime', handler: static fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'datetime', handler: static fn (string $expression) : string => sprintf(
             "<?php echo with(%s)->format('Y-m-d H:i:s'); ?>",
             $expression,
         ));
@@ -62,19 +63,19 @@ class BladeTemplateEngine extends Blade
         $this->compiler()->directive(name: 'csrf', handler: static fn (): string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
 
         // Route directive
-        $this->compiler()->directive(name: 'route', handler: static fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'route', handler: static fn (string $expression) : string => sprintf(
             '<?php echo route(%s); ?>',
             $expression,
         ));
 
         // Checked directive
-        $this->compiler()->directive(name: 'checked', handler: static fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'checked', handler: static fn (string $expression) : string => sprintf(
             "<?php echo %s ? 'checked' : ''; ?>",
             $expression,
         ));
 
         // Selected directive
-        $this->compiler()->directive(name: 'selected', handler: static fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'selected', handler: static fn (string $expression) : string => sprintf(
             "<?php echo %s ? 'selected' : ''; ?>",
             $expression,
         ));
@@ -82,20 +83,20 @@ class BladeTemplateEngine extends Blade
         // Dump directive
         $this->compiler()->directive(
             name   : 'dump',
-            handler: static fn ($expression): string => sprintf(
+            handler: static fn (string $expression) : string => sprintf(
                 '<?php var_dump(%s); ?>',
                 $expression,
             ),
         );
 
         // Die and dump directive
-        $this->compiler()->directive(name: 'dd', handler: static fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'dd', handler: static fn (string $expression) : string => sprintf(
             '<?php die(var_dump(%s)); ?>',
             $expression,
         ));
 
         // Markdown directive
-        $this->compiler()->directive(name: 'markdown', handler: static fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'markdown', handler: static fn (string $expression) : string => sprintf(
             '<?php echo (new Parsedown())->text(%s); ?>',
             $expression,
         ));
@@ -110,7 +111,7 @@ class BladeTemplateEngine extends Blade
         $this->compiler()->directive(name: 'endguest', handler: static fn (): string => '<?php endif; ?>');
 
         // Environment directive
-        $this->compiler()->directive(name: 'ifenv', handler: static fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'ifenv', handler: static fn (string $expression) : string => sprintf(
             "<?php if (config('cashback.env') === %s): ?>",
             $expression,
         ));
@@ -125,7 +126,7 @@ class BladeTemplateEngine extends Blade
         ));
 
         // HTTP method directive
-        $this->compiler()->directive(name: 'method', handler: static fn ($expression): string => sprintf(
+        $this->compiler()->directive(name: 'method', handler: static fn (string $expression) : string => sprintf(
             "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . %s . '\">'; ?>",
             $expression,
         ));

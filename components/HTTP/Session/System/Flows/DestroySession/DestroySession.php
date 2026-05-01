@@ -9,12 +9,12 @@ use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
 final readonly class DestroySession
 {
     public function __construct(
-        private SessionScope $scope,
+        private SessionScope $sessionScope,
     ) {
     }
 
     public function execute(): void
     {
-        $this->scope->destroy();
+        $this->sessionScope->destroy();
     }
 }

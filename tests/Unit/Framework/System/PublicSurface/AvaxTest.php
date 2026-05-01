@@ -13,19 +13,19 @@ final class AvaxTest extends TestCase
 {
     public function test_it_boots_a_small_public_surface_that_delegates_to_framework_flows(): void
     {
-        $application = Avax::boot(
+        $avax = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
                 ->withHttpHandler(httpHandler: static fn (): string => 'pong')
                 ->registerConsoleCommand(name: 'ping', command: static fn (): string => 'pong'),
         );
 
-        $response = $application->http()->handle(
+        $runtimeResponse = $avax->http()->handle(
             request: new RuntimeRequest(method: 'GET', uri: '/health'),
         );
 
-        self::assertTrue($application->state()->isBooted());
-        self::assertSame('pong', $response->body());
-        self::assertSame('pong', $application->console()->run(commandName: 'ping')->output());
+        self::assertTrue($avax->state()->isBooted());
+        self::assertSame('pong', $runtimeResponse->body());
+        self::assertSame('pong', $avax->console()->run(commandName: 'ping')->output());
     }
 
     private function projectRoot(): string

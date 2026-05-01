@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication;
 
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
@@ -21,13 +22,13 @@ final readonly class RequirePhishingResistantAuthentication
      */
     public function execute(): void
     {
-        $context = $this->currentAuthentication->read();
+        $authenticationContext = $this->currentAuthentication->read();
 
-        if ($context->user() === null) {
+        if (! $authenticationContext->user() instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
-        if (! $context->isPhishingResistant()) {
+        if (! $authenticationContext->isPhishingResistant()) {
             throw new PhishingResistantAuthenticationRequired();
         }
     }

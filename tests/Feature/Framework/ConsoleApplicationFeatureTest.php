@@ -12,7 +12,7 @@ final class ConsoleApplicationFeatureTest extends TestCase
 {
     public function test_console_public_surface_runs_a_framework_command_end_to_end(): void
     {
-        $application = Avax::boot(
+        $avax = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
                 ->registerConsoleCommand(
                     name   : 'ping',
@@ -20,10 +20,10 @@ final class ConsoleApplicationFeatureTest extends TestCase
                 ),
         );
 
-        $result = $application->console()->run(commandName: 'ping');
+        $runtimeResult = $avax->console()->run(commandName: 'ping');
 
-        self::assertSame(0, $result->exitCode());
-        self::assertSame('pong', $result->output());
+        self::assertSame(0, $runtimeResult->exitCode());
+        self::assertSame('pong', $runtimeResult->output());
     }
 
     private function projectRoot(): string

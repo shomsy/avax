@@ -12,11 +12,11 @@ use DateTimeImmutable;
  */
 interface SessionRegistryInterface
 {
-    public function track(SessionRecord $record): void;
+    public function track(SessionRecord $sessionRecord) : void;
 
     public function find(string $sessionId): ?SessionRecord;
 
-    public function save(SessionRecord $record): void;
+    public function save(SessionRecord $sessionRecord) : void;
 
     /**
      * @return list<SessionRecord>

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\Consistency;
 
+use Stringable;
+
 /**
  * Interface for consistency policies.
  *
@@ -61,16 +63,15 @@ interface ConsistencyPolicy
  * Vector clocks provide a way to determine the partial ordering
  * of events and detect conflicts in distributed systems.
  */
-final class VectorClock
+final class VectorClock implements Stringable
 {
-    /**
-     * @var array<string, int> Map of node ID to logical timestamp
-     */
-    private array $clock;
-
-    public function __construct(array $clock = [])
+    public function __construct(
+        /**
+         * @var array<string, int> Map of node ID to logical timestamp
+         */
+        private array $clock = []
+    )
     {
-        $this->clock = $clock;
     }
 
     /**
@@ -138,9 +139,9 @@ final class VectorClock
         $allLessOrEqual = true;
         $atLeastOneLess = false;
 
-        foreach ($allNodes as $nodeId) {
-            $thisValue = $this->clock[$nodeId]  ?? 0;
-            $otherValue = $other->clock[$nodeId] ?? 0;
+        foreach ($allNodes as $allNode) {
+            $thisValue  = $this->clock[$allNode] ?? 0;
+            $otherValue = $other->clock[$allNode] ?? 0;
 
             if ($thisValue > $otherValue) {
                 $allLessOrEqual = false;
@@ -194,7 +195,7 @@ final class VectorClock
         $parts = [];
 
         foreach ($this->clock as $nodeId => $timestamp) {
-            $parts[] = "{$nodeId}:{$timestamp}";
+            $parts[] = sprintf('%s:%d', $nodeId, $timestamp);
         }
 
         return '{' . implode(', ', $parts) . '}';

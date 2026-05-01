@@ -18,32 +18,17 @@ final class User implements Stringable, UserInterface
     /** @var list<UserRole> */
     public array $roles;
 
-    public UserId $id;
-
-    public UserEmail $email;
-
-    public string $username;
-
-    public string $passwordHash;
-
-    public bool $isActive;
-
     public function __construct(
-        UserId $_id,
+        public UserId    $id,
         #[SensitiveParameter]
-        UserEmail $_email,
-        string $_username,
+        public UserEmail $email,
+        public string    $username,
         #[SensitiveParameter]
-        string $_passwordHash,
-        array $roles = null,
-        array $permissions = null,
-        bool $_isActive = true,
+        public string    $passwordHash,
+        ?array           $roles = null,
+        ?array           $permissions = null,
+        public bool      $isActive = true,
     ) {
-        $this->id          = $_id;
-        $this->email       = $_email;
-        $this->username    = $_username;
-        $this->passwordHash = $_passwordHash;
-        $this->isActive    = $_isActive;
         $this->roles       = array_values(array: $roles ?? []);
         $this->permissions = array_values(array: $permissions ?? []);
     }
@@ -53,58 +38,40 @@ final class User implements Stringable, UserInterface
      * @param list<UserPermission>|null $permissions
      */
     public static function create(
-        UserId $id,
+        UserId    $userId,
         #[SensitiveParameter]
-        UserEmail $email,
+        UserEmail $userEmail,
         string $username,
         #[SensitiveParameter]
         string $passwordHash,
-        array $roles = null,
-        array $permissions = null,
+        ?array    $roles = null,
+        ?array    $permissions = null,
         bool $isActive = true,
     ): self {
         return new self(
-            _id          : $id,
-            _email       : $email,
-            _username    : $username,
-            _passwordHash: $passwordHash,
             roles        : $roles,
             permissions  : $permissions,
+            _id          : $userId,
+            _email       : $userEmail,
+            _username    : $username,
+            _passwordHash: $passwordHash,
             _isActive    : $isActive,
         );
     }
 
-    public function hasRole(UserRole $role): bool
+    public function hasRole(UserRole $userRole) : bool
     {
-        foreach ($this->roles as $existingRole) {
-            if ($existingRole === $role) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->roles, fn ($existingRole) : bool => $existingRole === $userRole);
     }
 
-    public function hasPermission(UserPermission $permission): bool
+    public function hasPermission(UserPermission $userPermission) : bool
     {
-        foreach ($this->permissions as $existingPermission) {
-            if ($existingPermission->equals(other: $permission)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->permissions, fn ($existingPermission) => $existingPermission->equals(other: $userPermission));
     }
 
-    public function canAccessRole(UserRole $requiredRole): bool
+    public function canAccessRole(UserRole $userRole) : bool
     {
-        foreach ($this->roles as $role) {
-            if ($role->canAccess(required: $requiredRole)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->roles, fn ($role) => $role->canAccess(required: $userRole));
     }
 
     public function getId(): UserId

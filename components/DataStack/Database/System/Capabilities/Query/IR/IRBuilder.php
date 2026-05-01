@@ -14,9 +14,9 @@ final readonly class IRBuilder
 {
     private QueryNode $queryNode;
 
-    public function __construct(QueryNode $query = null)
+    public function __construct(?QueryNode $queryNode = null)
     {
-        $this->queryNode = $query ?? new QueryNode();
+        $this->queryNode = $queryNode ?? new QueryNode();
     }
 
     public static function query(): self
@@ -31,17 +31,17 @@ final readonly class IRBuilder
         return $this;
     }
 
-    public function from(string $table, string $alias = null) : self
+    public function from(string $table, ?string $alias = null) : self
     {
         $this->queryNode->from(table: $table, alias: $alias);
 
         return $this;
     }
 
-    public function join(string $table, string $type = null, WhereNode $on = null, string $alias = null) : self
+    public function join(string $table, ?string $type = null, ?WhereNode $whereNode = null, ?string $alias = null) : self
     {
         $type ??= 'inner';
-        $this->queryNode->join(join: new JoinNode(type: $type, table: $table, alias: $alias, on: $on));
+        $this->queryNode->join(join: new JoinNode(type: $type, table: $table, alias: $alias, on: $whereNode));
 
         return $this;
     }

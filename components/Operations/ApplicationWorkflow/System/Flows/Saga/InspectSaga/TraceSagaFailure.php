@@ -12,11 +12,11 @@ final readonly class TraceSagaFailure
     /**
      * @return list<SagaRuntimeEvent>
      */
-    public function trace(SagaTimeline $timeline): array
+    public function trace(SagaTimeline $sagaTimeline) : array
     {
         return array_values(array: array_filter(
-            array   : $timeline->events,
-            callback: static fn (SagaRuntimeEvent $event): bool => str_contains(haystack: $event->type, needle: 'failed'),
+                                       array   : $sagaTimeline->events,
+                                       callback: static fn (SagaRuntimeEvent $sagaRuntimeEvent) : bool => str_contains(haystack: $sagaRuntimeEvent->type, needle: 'failed'),
         ));
     }
 }

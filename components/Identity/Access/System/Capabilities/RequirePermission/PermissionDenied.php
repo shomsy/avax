@@ -13,7 +13,7 @@ use Exception;
 final class PermissionDenied extends Exception
 {
     public function __construct(
-        private readonly UserPermission $requirement,
+        private readonly UserPermission $userPermission,
         string $message = 'Access denied.',
         int $code = 403,
     ) {
@@ -22,6 +22,6 @@ final class PermissionDenied extends Exception
 
     public function requirement(): UserPermission
     {
-        return $this->requirement;
+        return $this->userPermission;
     }
 }

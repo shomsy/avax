@@ -17,6 +17,6 @@ final readonly class PasskeyChallengeRecord
 
     public function wasUsed(): bool
     {
-        return $this->usedAt !== null;
+        return $this->usedAt instanceof DateTimeImmutable;
     }
 }

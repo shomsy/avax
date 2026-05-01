@@ -8,14 +8,14 @@ use Avax\Components\HTTP\Middleware\System\Capabilities\Pipeline\MiddlewarePipel
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
-final class RunMiddlewarePipeline
+final readonly class RunMiddlewarePipeline
 {
     public function __construct(
-        private MiddlewarePipeline $pipeline,
+        private MiddlewarePipeline $middlewarePipeline,
     ) {}
 
     public function execute(RequestInterface $request, callable $core): ResponseInterface
     {
-        return $this->pipeline->run($request, $core);
+        return $this->middlewarePipeline->run($request, $core);
     }
 }

@@ -26,12 +26,16 @@ $businessLogicTokens = [
 ];
 
 foreach ($iterator as $file) {
-    if (! $file->isFile() || $file->getExtension() !== 'php') {
+    if (! $file->isFile()) {
+        continue;
+    }
+
+    if ($file->getExtension() !== 'php') {
         continue;
     }
 
     $path = $file->getRealPath();
-    if (! str_contains($path, '/System/PublicSurface/')) {
+    if (! str_contains((string) $path, '/System/PublicSurface/')) {
         continue;
     }
 
@@ -42,22 +46,23 @@ foreach ($iterator as $file) {
     // Let's do a strict check for loops and conditionals.
     foreach ([' foreach', ' while', ' switch'] as $token) {
         if (str_contains($content, $token)) {
-            $errors[] = "Potential business logic ({$token}) found in PublicSurface: {$relativePath}. PublicSurface should delegate to Flows or Capabilities.";
+            $errors[] = sprintf('Potential business logic (%s) found in PublicSurface: %s. PublicSurface should delegate to Flows or Capabilities.', $token, $relativePath);
         }
     }
 
     // Check if file is too long (over 150 lines is likely too much for a thin facade/boundary)
     $lines = substr_count($content, "\n");
     if ($lines > 150) {
-        $errors[] = "PublicSurface file is too large ({$lines} lines): {$relativePath}. It may contain business logic.";
+        $errors[] = sprintf('PublicSurface file is too large (%d lines): %s. It may contain business logic.', $lines, $relativePath);
     }
 }
 
-if (! empty($errors)) {
+if ($errors !== []) {
     echo "PublicSurface checks failed:\n";
     foreach ($errors as $error) {
-        echo "- {$error}\n";
+        echo sprintf('- %s%s', $error, PHP_EOL);
     }
+
     exit(1);
 }
 

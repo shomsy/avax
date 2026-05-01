@@ -9,7 +9,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
 interface HttpInterface
 {
-    public function handle(RequestInterface $r) : ResponseInterface;
+    public function handle(RequestInterface $request) : ResponseInterface;
 
-    public function terminate(RequestInterface $r, ResponseInterface $res) : void;
+    public function terminate(RequestInterface $request, ResponseInterface $response) : void;
 }

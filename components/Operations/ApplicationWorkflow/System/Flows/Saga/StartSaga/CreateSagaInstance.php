@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaStepDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\InspectSaga\SagaRuntimeEvent;
 use Random\RandomException;
 use RuntimeException;
@@ -13,32 +14,32 @@ use Throwable;
 final readonly class CreateSagaInstance
 {
     public function createFromCommand(
-        SagaStartCommand $command,
-        SagaDefinition $definition,
+        SagaStartCommand $sagaStartCommand,
+        SagaDefinition   $sagaDefinition,
     ): SagaInstance {
         return $this->create(
-            id         : $command->sagaId ?? $this->generateId(),
-            definition : $definition,
-            initialData: $command->initialData,
+            id         : $sagaStartCommand->sagaId ?? $this->generateId(),
+            initialData: $sagaStartCommand->initialData,
             options    : [
-                             'correlation_id' => $command->correlationId,
-                             'tenant_id'      => $command->tenantId,
-                'idempotency_key' => $command->idempotencyKey,
-                'timeout_seconds' => $definition->timeoutSeconds,
+                             'correlation_id'  => $sagaStartCommand->correlationId,
+                             'tenant_id'       => $sagaStartCommand->tenantId,
+                             'idempotency_key' => $sagaStartCommand->idempotencyKey,
+                             'timeout_seconds' => $sagaDefinition->timeoutSeconds,
             ],
+            definition : $sagaDefinition,
         );
     }
 
     public function create(
         string $id,
-        SagaDefinition $definition,
+        SagaDefinition $sagaDefinition,
         array $initialData,
         array $options = [],
     ): SagaInstance {
         return SagaInstance::create(
             id            : $id,
-            definitionName: $definition->name,
-            type          : $definition->type,
+            definitionName: $sagaDefinition->name,
+            type          : $sagaDefinition->type,
             initialData   : $initialData,
             options       : $options,
         );
@@ -63,7 +64,7 @@ final readonly class CreateSagaCorrelationId
     /**
      * @throws RandomException
      */
-    public function create(string $prefix = null, string $suffix = null) : string
+    public function create(?string $prefix = null, ?string $suffix = null) : string
     {
         $parts = array_filter([
             $prefix,
@@ -75,11 +76,10 @@ final readonly class CreateSagaCorrelationId
         return implode('_', $parts);
     }
 
-    public function fromCommand(SagaStartCommand $command): string
+    public function fromCommand(SagaStartCommand $sagaStartCommand) : string
     {
         return $this->create(
-            prefix: $command->definitionName,
-            suffix: $command->tenantId,
+            prefix: $sagaStartCommand->definitionName,
         );
     }
 }
@@ -88,14 +88,14 @@ final readonly class RecordSagaStarted
 {
     public function __construct(private object $store, private object $inspect) {}
 
-    public function record(SagaInstance $instance): void
+    public function record(SagaInstance $sagaInstance) : void
     {
-        $this->store->set("saga_{$instance->id}", $instance->toArray());
+        $this->store->set('saga_' . $sagaInstance->id, $sagaInstance->toArray());
 
         $this->inspect->record(
             SagaRuntimeEvent::started(
-                sagaId  : $instance->id,
-                sagaName: $instance->definitionName,
+                sagaId  : $sagaInstance->id,
+                sagaName: $sagaInstance->definitionName,
             ),
         );
     }
@@ -103,23 +103,23 @@ final readonly class RecordSagaStarted
 
 final readonly class ScheduleFirstSagaStep
 {
-    public function schedule(SagaInstance $instance, SagaDefinition $definition): SagaInstance
+    public function schedule(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : SagaInstance
     {
-        $firstStep = $definition->getFirstStep();
+        $firstStep = $sagaDefinition->getFirstStep();
 
-        if ($firstStep === null) {
+        if (! $firstStep instanceof SagaStepDefinition) {
             throw new SagaStartFailure(
-                message: sprintf('Saga %s has no steps to execute.', $definition->name),
+                message: sprintf('Saga %s has no steps to execute.', $sagaDefinition->name),
             );
         }
 
-        return $instance->start(firstStepName: $firstStep->name);
+        return $sagaInstance->start(firstStepName: $firstStep->name);
     }
 }
 
 final class SagaStartFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Failed to start saga.', Throwable $previous = null)
+    public function __construct(string $message = 'Failed to start saga.', ?Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

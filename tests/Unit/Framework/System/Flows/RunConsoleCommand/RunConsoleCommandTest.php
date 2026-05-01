@@ -12,7 +12,7 @@ final class RunConsoleCommandTest extends TestCase
 {
     public function test_it_runs_registered_framework_commands(): void
     {
-        $application = Avax::boot(
+        $avax = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
                 ->registerConsoleCommand(
                     name   : 'ping',
@@ -20,22 +20,22 @@ final class RunConsoleCommandTest extends TestCase
                 ),
         );
 
-        $result = $application->console()->run(commandName: 'ping');
+        $runtimeResult = $avax->console()->run(commandName: 'ping');
 
-        self::assertSame(0, $result->exitCode());
-        self::assertSame('pong', $result->output());
+        self::assertSame(0, $runtimeResult->exitCode());
+        self::assertSame('pong', $runtimeResult->output());
     }
 
     public function test_help_lists_legacy_component_commands_from_existing_code(): void
     {
-        $application = Avax::boot(
+        $avax = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot()),
         );
 
-        $result = $application->console()->run(commandName: 'help');
+        $runtimeResult = $avax->console()->run(commandName: 'help');
 
-        self::assertSame(0, $result->exitCode());
-        self::assertStringContainsString('migrate', $result->output());
+        self::assertSame(0, $runtimeResult->exitCode());
+        self::assertStringContainsString('migrate', $runtimeResult->output());
     }
 
     private function projectRoot(): string

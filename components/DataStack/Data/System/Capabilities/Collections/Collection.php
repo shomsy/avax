@@ -5,11 +5,38 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Capabilities\Collections;
 
 use ArrayIterator;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Aggregate\AverageValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Aggregate\FindMaxValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Aggregate\FindMinValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Aggregate\SumValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Composites\Pair\Pair;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Convert\ConvertCollectionToArray;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Convert\ConvertCollectionToJson;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Convert\ConvertCollectionToXml;
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Create\MakeCollection;
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Create\WrapValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Exceptions\MutationException;
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Mutability\MutationGuard;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Order\ReverseValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Order\ShuffleValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Order\SortValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Order\SortValuesBy;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Read\HasValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Read\ReadValueByPath;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Search\ContainsValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Search\SearchValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Transform\ChunkValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Transform\FilterValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Transform\FlipValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Transform\GroupValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Transform\MapValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Transform\PartitionValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Transform\ReduceValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Transform\UniqueValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Write\AppendValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Write\ForgetValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Write\PullValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Write\PutValueByPath;
 use Traversable;
 
 /**
@@ -18,12 +45,12 @@ use Traversable;
  */
 final readonly class Collection implements CollectionInterface
 {
-    private MutationGuard $guard;
+    private MutationGuard $mutationGuard;
 
     public function __construct(
         private array $items = [],
     ) {
-        $this->guard = new MutationGuard();
+        $this->mutationGuard = new MutationGuard();
     }
 
     public static function make(iterable $items = []): static
@@ -84,7 +111,7 @@ final readonly class Collection implements CollectionInterface
         }
 
         if (str_contains(haystack: $key, needle: '.')) {
-            return new Read\ReadValueByPath(items: $this->items)->get(path: $key, default: $default);
+            return new ReadValueByPath(items: $this->items)->get(path: $key, default: $default);
         }
 
         return $default;
@@ -93,17 +120,17 @@ final readonly class Collection implements CollectionInterface
     public function has(string $key): bool
     {
         return array_key_exists(key: $key, array: $this->items)
-            || new Read\HasValue(items: $this->items)->check(key: $key);
+            || new HasValue(items: $this->items)->check(key: $key);
     }
 
     public function set(string $key, mixed $value): static
     {
-        $this->guard->assertMutable();
+        $this->mutationGuard->assertMutable();
 
         $items = $this->items;
 
         if (str_contains(haystack: $key, needle: '.')) {
-            $items = new Write\PutValueByPath(items: $items)->put(path: $key, value: $value);
+            $items = new PutValueByPath(items: $items)->put(path: $key, value: $value);
         } else {
             $items[$key] = $value;
         }
@@ -113,27 +140,27 @@ final readonly class Collection implements CollectionInterface
 
     public function forget(string $key): static
     {
-        $this->guard->assertMutable();
+        $this->mutationGuard->assertMutable();
 
         return new self(
-            items: new Write\ForgetValue(items: $this->items)->forget(key: $key),
+            items: new ForgetValue(items: $this->items)->forget(key: $key),
         );
     }
 
     public function add(mixed $value): static
     {
-        $this->guard->assertMutable();
+        $this->mutationGuard->assertMutable();
 
         return new self(
-            items: new Write\AppendValue(items: $this->items)->append(value: $value),
+            items: new AppendValue(items: $this->items)->append(value: $value),
         );
     }
 
     public function pull(string $key): Pair
     {
-        $this->guard->assertMutable();
+        $this->mutationGuard->assertMutable();
 
-        [$value, $items] = new Write\PullValue(items: $this->items)->pull(key: $key);
+        [$value, $items] = new PullValue(items: $this->items)->pull(key: $key);
 
         return new Pair(
             first : $value,
@@ -144,52 +171,52 @@ final readonly class Collection implements CollectionInterface
     public function map(callable $callback): static
     {
         return new self(
-            items: new Transform\MapValues(items: $this->items)->map(callback: $callback),
+            items: new MapValues(items: $this->items)->map(callback: $callback),
         );
     }
 
     public function filter(callable $callback): static
     {
         return new self(
-            items: new Transform\FilterValues(items: $this->items)->filter(callback: $callback),
+            items: new FilterValues(items: $this->items)->filter(callback: $callback),
         );
     }
 
     public function reduce(callable $callback, mixed $initial = null): mixed
     {
-        return new Transform\ReduceValues(items: $this->items)->reduce(callback: $callback, initial: $initial);
+        return new ReduceValues(items: $this->items)->reduce(callback: $callback, initial: $initial);
     }
 
     public function sum(string|callable $key): int|float
     {
-        return new Aggregate\SumValues(items: $this->items)->sum(key: $key);
+        return new SumValues(items: $this->items)->sum(key: $key);
     }
 
     public function average(string|callable $key): float
     {
-        return new Aggregate\AverageValues(items: $this->items)->average(key: $key);
+        return new AverageValues(items: $this->items)->average(key: $key);
     }
 
     public function min(string|callable $key): mixed
     {
-        return new Aggregate\FindMinValue(items: $this->items)->min(key: $key);
+        return new FindMinValue(items: $this->items)->min(key: $key);
     }
 
     public function max(string|callable $key): mixed
     {
-        return new Aggregate\FindMaxValue(items: $this->items)->max(key: $key);
+        return new FindMaxValue(items: $this->items)->max(key: $key);
     }
 
     public function chunk(int $size): static
     {
         return new self(
-            items: new Transform\ChunkValues(items: $this->items)->chunk(size: $size),
+            items: new ChunkValues(items: $this->items)->chunk(size: $size),
         );
     }
 
     public function groupBy(string|callable $key): array
     {
-        return new Transform\GroupValues(items: $this->items)->group(key: $key);
+        return new GroupValues(items: $this->items)->group(key: $key);
     }
 
     public function keyBy(string|callable $key): static
@@ -206,19 +233,19 @@ final readonly class Collection implements CollectionInterface
 
     public function partition(callable $callback): array
     {
-        [$pass, $fail] = new Transform\PartitionValues(items: $this->items)->partition(callback: $callback);
+        [$pass, $fail] = new PartitionValues(items: $this->items)->partition(callback: $callback);
 
         return [new self(items: $pass), new self(items: $fail)];
     }
 
     public function contains(mixed $value): bool
     {
-        return new Search\ContainsValue(items: $this->items)->contains(value: $value);
+        return new ContainsValue(items: $this->items)->contains(value: $value);
     }
 
     public function search(mixed $value): int|false
     {
-        return new Search\SearchValue(items: $this->items)->search(value: $value);
+        return new SearchValue(items: $this->items)->search(value: $value);
     }
 
     public function whereIn(string $key, array $values): static
@@ -268,54 +295,54 @@ final readonly class Collection implements CollectionInterface
         return new self(items: $filtered);
     }
 
-    public function sort(callable $callback = null) : static
+    public function sort(?callable $callback = null) : static
     {
         return new self(
-            items: new Order\SortValues(items: $this->items)->sort(callback: $callback),
+            items: new SortValues(items: $this->items)->sort(callback: $callback),
         );
     }
 
     public function sortBy(string|callable $key, bool $descending = false): static
     {
         return new self(
-            items: new Order\SortValuesBy(items: $this->items)->sortBy(key: $key, options: SORT_REGULAR, descending: $descending),
+            items: new SortValuesBy(items: $this->items)->sortBy(key: $key, options: SORT_REGULAR, descending: $descending),
         );
     }
 
     public function reverse(): static
     {
         return new self(
-            items: new Order\ReverseValues(items: $this->items)->reverse(),
+            items: new ReverseValues(items: $this->items)->reverse(),
         );
     }
 
     public function shuffle(): static
     {
         return new self(
-            items: new Order\ShuffleValues(items: $this->items)->shuffle(),
+            items: new ShuffleValues(items: $this->items)->shuffle(),
         );
     }
 
     public function unique(): static
     {
         return new self(
-            items: new Transform\UniqueValues(items: $this->items)->unique(),
+            items: new UniqueValues(items: $this->items)->unique(),
         );
     }
 
     public function toArray(): array
     {
-        return new Convert\ConvertCollectionToArray(items: $this->items)->toArray();
+        return new ConvertCollectionToArray(items: $this->items)->toArray();
     }
 
     public function toJson(int $flags = 0): string
     {
-        return new Convert\ConvertCollectionToJson(items: $this->items)->toJson(flags: $flags);
+        return new ConvertCollectionToJson(items: $this->items)->toJson(flags: $flags);
     }
 
     public function toXml(string $rootElement = 'root'): string
     {
-        return new Convert\ConvertCollectionToXml(items: $this->items)->toXml(rootElement: $rootElement);
+        return new ConvertCollectionToXml(items: $this->items)->toXml(rootElement: $rootElement);
     }
 
     public function only(array $keys): static
@@ -364,7 +391,7 @@ final readonly class Collection implements CollectionInterface
     public function flip(): static
     {
         return new self(
-            items: new Transform\FlipValues(items: $this->items)->flip(),
+            items: new FlipValues(items: $this->items)->flip(),
         );
     }
 
@@ -416,19 +443,19 @@ final readonly class Collection implements CollectionInterface
 
     public function lock(): static
     {
-        if ($this->guard->isLocked()) {
+        if ($this->mutationGuard->isLocked()) {
             throw MutationException::collectionIsAlreadyLocked();
         }
 
         $clone = new self(items: $this->items);
-        $clone->guard->lock();
+        $clone->mutationGuard->lock();
 
         return $clone;
     }
 
     public function isLocked(): bool
     {
-        return $this->guard->isLocked();
+        return $this->mutationGuard->isLocked();
     }
 
     public function getIterator(): Traversable
@@ -448,11 +475,11 @@ final readonly class Collection implements CollectionInterface
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->guard->assertMutable();
+        $this->mutationGuard->assertMutable();
     }
 
     public function offsetUnset(mixed $offset): void
     {
-        $this->guard->assertMutable();
+        $this->mutationGuard->assertMutable();
     }
 }

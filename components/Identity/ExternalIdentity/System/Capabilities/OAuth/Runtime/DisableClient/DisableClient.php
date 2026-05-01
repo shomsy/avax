@@ -13,13 +13,13 @@ use RuntimeException;
 
 final readonly class DisableClient
 {
-    public function __construct(private OAuthClientRegistryInterface $clientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     public function execute(string $clientId): OAuthClient
     {
-        $client = $this->clientRegistry->deactivate(clientId: $clientId);
+        $client = $this->oAuthClientRegistry->deactivate(clientId: $clientId);
 
-        if ($client === null) {
+        if (! $client instanceof OAuthClient) {
             throw new RuntimeException(message: 'OAuth client was not found.');
         }
 

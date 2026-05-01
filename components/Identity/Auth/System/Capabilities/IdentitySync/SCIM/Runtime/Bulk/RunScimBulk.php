@@ -20,20 +20,20 @@ final readonly class RunScimBulk
     /**
      * @throws RandomException
      */
-    public function execute(ScimBulkRequest $request): ScimBulkResponse
+    public function execute(ScimBulkRequest $scimBulkRequest) : ScimBulkResponse
     {
-        if ($request->operations === []) {
+        if ($scimBulkRequest->operations === []) {
             throw ScimFailed::invalidBulkRequest(message: 'SCIM bulk request must contain at least one operation.');
         }
 
-        if (count(value: $request->operations) > $this->maximumOperations) {
-            throw ScimFailed::tooManyBulkOperations(provided: count(value: $request->operations), maximum: $this->maximumOperations);
+        if (count(value: $scimBulkRequest->operations) > $this->maximumOperations) {
+            throw ScimFailed::tooManyBulkOperations(provided: count(value: $scimBulkRequest->operations), maximum: $this->maximumOperations);
         }
 
         $results = [];
 
-        foreach ($request->operations as $operation) {
-            $results[] = $this->executeOperation(request: $request, operation: $operation);
+        foreach ($scimBulkRequest->operations as $operation) {
+            $results[] = $this->executeOperation(request: $scimBulkRequest, operation: $operation);
         }
 
         return new ScimBulkResponse(operations: $results);
@@ -42,36 +42,36 @@ final readonly class RunScimBulk
     /**
      * @throws RandomException
      */
-    private function executeOperation(ScimBulkRequest $request, ScimBulkOperation $operation): ScimBulkOperationResult
+    private function executeOperation(ScimBulkRequest $scimBulkRequest, ScimBulkOperation $scimBulkOperation) : ScimBulkOperationResult
     {
-        $method = strtoupper(string: trim(string: $operation->method));
-        $path = '/' . trim(string: $operation->path, characters: '/');
+        $method = strtoupper(string: trim(string: $scimBulkOperation->method));
+        $path   = '/' . trim(string: $scimBulkOperation->path, characters: '/');
 
         return match (true) {
-            $method === 'POST' && $path === '/Users'                                                                => $this->createUser(request: $request, operation: $operation),
+            $method === 'POST' && $path === '/Users'                                                                   => $this->createUser(request: $scimBulkRequest, operation: $scimBulkOperation),
             $method === 'PUT' && preg_match(pattern: '~^/Users/([^/]+)$~', subject: $path, matches: $matches) === 1 => $this->replaceUser(
-                request   : $request,
-                operation : $operation,
                 externalId: urldecode(string: $matches[1]),
+                request   : $scimBulkRequest,
+                operation : $scimBulkOperation,
             ),
             $method === 'DELETE' && preg_match(pattern: '~^/Users/([^/]+)$~', subject: $path, matches: $matches) === 1 => $this->deleteUser(
-                request   : $request,
-                operation : $operation,
                 externalId: urldecode(string: $matches[1]),
+                request   : $scimBulkRequest,
+                operation : $scimBulkOperation,
             ),
-            default => throw ScimFailed::invalidBulkRequest(message: "Unsupported SCIM bulk operation [{$method} {$path}]."),
+            default                                                                                                    => throw ScimFailed::invalidBulkRequest(message: sprintf('Unsupported SCIM bulk operation [%s %s].', $method, $path)),
         };
     }
 
     /**
      * @throws RandomException
      */
-    private function createUser(ScimBulkRequest $request, ScimBulkOperation $operation): ScimBulkOperationResult
+    private function createUser(ScimBulkRequest $scimBulkRequest, ScimBulkOperation $scimBulkOperation) : ScimBulkOperationResult
     {
-        $result = $this->provisionScimUser->execute(data: $this->provisionData(
-            request   : $request,
-            body      : $operation->body,
-            externalId: $this->requiredString(body: $operation->body, field: 'externalId'),
+        $scimProvisioningResult = $this->provisionScimUser->execute(data: $this->provisionData(
+            body      : $scimBulkOperation->body,
+            externalId: $this->requiredString(body: $scimBulkOperation->body, field: 'externalId'),
+            request   : $scimBulkRequest,
         ));
 
         return new ScimBulkOperationResult(
@@ -79,24 +79,24 @@ final readonly class RunScimBulk
             path    : '/Users',
             status  : 201,
             response: [
-                'externalId' => $result->externalId,
-                'userId'  => $result->userId,
-                'state'   => $result->state->value,
-                'roles'   => $result->roles,
-                'created' => $result->created,
+                          'externalId' => $scimProvisioningResult->externalId,
+                          'userId'     => $scimProvisioningResult->userId,
+                          'state'      => $scimProvisioningResult->state->value,
+                          'roles'      => $scimProvisioningResult->roles,
+                          'created'    => $scimProvisioningResult->created,
             ],
-            bulkId  : $operation->bulkId,
+            bulkId  : $scimBulkOperation->bulkId,
         );
     }
 
     /**
      * @param array<string, mixed> $body
      */
-    private function provisionData(ScimBulkRequest $request, array $body, string $externalId): ProvisionScimUserData
+    private function provisionData(ScimBulkRequest $scimBulkRequest, array $body, string $externalId) : ProvisionScimUserData
     {
         return new ProvisionScimUserData(
-            directoryId   : $request->directoryId,
-            directoryToken: $request->directoryToken,
+            directoryId   : $scimBulkRequest->directoryId,
+            directoryToken: $scimBulkRequest->directoryToken,
             externalId    : $externalId,
             email         : $this->email(body: $body),
             username      : $this->requiredString(body: $body, field: 'userName'),
@@ -117,7 +117,11 @@ final readonly class RunScimBulk
         }
 
         foreach ($emails as $email) {
-            if (! is_array(value: $email) || ! is_string(value: $email['value'] ?? null)) {
+            if (! is_array(value: $email)) {
+                continue;
+            }
+
+            if (! is_string(value: $email['value'] ?? null)) {
                 continue;
             }
 
@@ -135,7 +139,7 @@ final readonly class RunScimBulk
         $value = $body[$field] ?? null;
 
         if (! is_scalar(value: $value) || trim(string: (string) $value) === '') {
-            throw new InvalidArgumentException(message: "Field [{$field}] is required.");
+            throw new InvalidArgumentException(message: sprintf('Field [%s] is required.', $field));
         }
 
         return trim(string: (string) $value);
@@ -183,12 +187,12 @@ final readonly class RunScimBulk
     /**
      * @throws RandomException
      */
-    private function replaceUser(ScimBulkRequest $request, ScimBulkOperation $operation, string $externalId): ScimBulkOperationResult
+    private function replaceUser(ScimBulkRequest $scimBulkRequest, ScimBulkOperation $scimBulkOperation, string $externalId) : ScimBulkOperationResult
     {
-        $result = $this->provisionScimUser->execute(data: $this->provisionData(
-            request   : $request,
-            body      : $operation->body,
+        $scimProvisioningResult = $this->provisionScimUser->execute(data: $this->provisionData(
+            body      : $scimBulkOperation->body,
             externalId: $externalId,
+            request   : $scimBulkRequest,
         ));
 
         return new ScimBulkOperationResult(
@@ -196,22 +200,22 @@ final readonly class RunScimBulk
             path    : '/Users/' . rawurlencode(string: $externalId),
             status  : 200,
             response: [
-                'externalId' => $result->externalId,
-                'userId'     => $result->userId,
-                'state'      => $result->state->value,
-                'roles'      => $result->roles,
-                'updated'    => $result->updated,
-                'idempotent' => $result->idempotent,
+                          'externalId' => $scimProvisioningResult->externalId,
+                          'userId'     => $scimProvisioningResult->userId,
+                          'state'      => $scimProvisioningResult->state->value,
+                          'roles'      => $scimProvisioningResult->roles,
+                          'updated'    => $scimProvisioningResult->updated,
+                          'idempotent' => $scimProvisioningResult->idempotent,
             ],
-            bulkId  : $operation->bulkId,
+            bulkId  : $scimBulkOperation->bulkId,
         );
     }
 
-    private function deleteUser(ScimBulkRequest $request, ScimBulkOperation $operation, string $externalId): ScimBulkOperationResult
+    private function deleteUser(ScimBulkRequest $scimBulkRequest, ScimBulkOperation $scimBulkOperation, string $externalId) : ScimBulkOperationResult
     {
         $this->deleteScimUser->execute(data: new DeleteScimUserData(
-            directoryId   : $request->directoryId,
-            directoryToken: $request->directoryToken,
+                                                 directoryId   : $scimBulkRequest->directoryId,
+                                                 directoryToken: $scimBulkRequest->directoryToken,
             externalId    : $externalId,
         ));
 
@@ -220,7 +224,7 @@ final readonly class RunScimBulk
             path    : '/Users/' . rawurlencode(string: $externalId),
             status  : 204,
             response: [],
-            bulkId  : $operation->bulkId,
+            bulkId  : $scimBulkOperation->bulkId,
         );
     }
 }

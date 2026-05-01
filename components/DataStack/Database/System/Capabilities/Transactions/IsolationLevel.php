@@ -20,7 +20,7 @@ enum IsolationLevel: string
     /**
      * Returns the SQL statement to set this isolation level.
      */
-    public function toSql(string $dialect = null) : string
+    public function toSql(?string $dialect = null) : string
     {
         $sql = match ($this) {
             self::READ_UNCOMMITTED => 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED',
@@ -50,7 +50,7 @@ enum IsolationLevel: string
             self::SERIALIZABLE    => 'SERIALIZABLE',
         };
 
-        return "SET SESSION TRANSACTION ISOLATION LEVEL {$value}";
+        return 'SET SESSION TRANSACTION ISOLATION LEVEL ' . $value;
     }
 
     /**
@@ -65,7 +65,7 @@ enum IsolationLevel: string
             self::SERIALIZABLE    => 'SERIALIZABLE',
         };
 
-        return "SET TRANSACTION ISOLATION LEVEL {$value}";
+        return 'SET TRANSACTION ISOLATION LEVEL ' . $value;
     }
 
     /**
@@ -101,7 +101,7 @@ enum IsolationLevel: string
         return match ($dialect) {
             'mysql'     => true,
             'postgresql' => true,
-            'sqlite'    => $this === self::READ_COMMITTED || $this === self::SERIALIZABLE || $this === self::READ_UNCOMMITTED,
+            'sqlite' => in_array($this, [self::READ_COMMITTED, self::SERIALIZABLE, self::READ_UNCOMMITTED], true),
             'sqlserver' => true,
             default     => false,
         };

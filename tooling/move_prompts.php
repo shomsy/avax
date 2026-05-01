@@ -11,11 +11,12 @@ if (! is_dir($dst)) {
 
 $dir = opendir($src);
 while ( false !== ($file = readdir($dir)) ) {
-    if (($file != '.') && ($file != '..')) {
+    if (($file !== '.') && ($file !== '..')) {
         rename($src . '/' . $file, $dst . '/' . $file);
     }
 }
+
 closedir($dir);
 rmdir($src);
 
-echo "Moved $src to $dst\n";
+echo sprintf('Moved %s to %s%s', $src, $dst, PHP_EOL);

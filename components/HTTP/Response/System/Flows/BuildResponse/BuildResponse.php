@@ -7,11 +7,11 @@ namespace Avax\Components\HTTP\Response\System\Flows\BuildResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
-final class BuildResponse
+final readonly class BuildResponse
 {
     public function __construct(
-        private NormalizeResponseBody $bodyNormalizer,
-        private NormalizeResponseHeaders $headerNormalizer,
+        private NormalizeResponseBody    $normalizeResponseBody,
+        private NormalizeResponseHeaders $normalizeResponseHeaders,
     ) {
     }
 
@@ -19,8 +19,8 @@ final class BuildResponse
     {
         return new Response(
             statusCode: $status,
-            headers: $this->headerNormalizer->normalize($headers),
-            body      : $this->bodyNormalizer->normalize($content),
+            headers   : $this->normalizeResponseHeaders->normalize($headers),
+            body      : $this->normalizeResponseBody->normalize($content),
         );
     }
 }

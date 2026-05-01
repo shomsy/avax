@@ -10,7 +10,7 @@ use Avax\Components\Presentation\View\System\PublicSurface\View;
 final class RegisterViewDependencies
 {
     public static function register(
-        TemplateEngineInterface $engine,
+        TemplateEngineInterface $templateEngine,
         array $config = [],
     ): void {
         $defaults = [
@@ -21,7 +21,7 @@ final class RegisterViewDependencies
 
         $config = array_merge($defaults, $config);
 
-        View::setEngine($engine);
+        View::setEngine($templateEngine);
         View::configure($config);
     }
 }

@@ -25,11 +25,12 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
     public function find(#[SensitiveParameter] string $sessionId): ?SessionRecord
     {
         /** @noinspection SqlNoDataSourceInspection */
-        $statement = $this->prepare(
+        $pdoStatement = $this->prepare(
             query: 'SELECT * FROM auth_sessions WHERE session_id = :session_id LIMIT 1',
         );
-        $statement->execute(params: ['session_id' => $sessionId]);
-        $row = $statement->fetch(mode: PDO::FETCH_ASSOC);
+        $pdoStatement->execute(params: ['session_id' => $sessionId]);
+
+        $row = $pdoStatement->fetch(mode: PDO::FETCH_ASSOC);
 
         return is_array(value: $row) ? $this->hydrate(row: $row) : null;
     }
@@ -70,12 +71,12 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
         );
     }
 
-    public function save(SessionRecord $record): void
+    public function save(SessionRecord $sessionRecord) : void
     {
-        $this->track(record: $record);
+        $this->track(record: $sessionRecord);
     }
 
-    public function track(SessionRecord $record): void
+    public function track(SessionRecord $sessionRecord) : void
     {
         /** @noinspection SqlNoDataSourceInspection */
         $this->executeStatement(
@@ -96,7 +97,7 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
                     revoked_at = EXCLUDED.revoked_at,
                     revoke_reason = EXCLUDED.revoke_reason
                 SQL,
-            parameters: $this->mapRecord(record: $record),
+            parameters: $this->mapRecord(record: $sessionRecord),
         );
     }
 
@@ -105,9 +106,9 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
      */
     private function executeStatement(string $query, array $parameters): void
     {
-        $statement = $this->prepare(query: $query);
+        $pdoStatement = $this->prepare(query: $query);
 
-        if (! $statement->execute(params: $parameters)) {
+        if (! $pdoStatement->execute(params: $parameters)) {
             throw new RuntimeException(message: 'Session registry statement execution failed.');
         }
     }
@@ -115,30 +116,31 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
     /**
      * @return array<string, string|int|null>
      */
-    private function mapRecord(SessionRecord $record): array
+    private function mapRecord(SessionRecord $sessionRecord) : array
     {
         return [
-            'session_id'         => $record->sessionId,
-            'user_id'            => $record->userId->value,
-            'created_at'         => $record->createdAt->format(format: DATE_ATOM),
-            'last_seen_at'       => $record->lastSeenAt->format(format: DATE_ATOM),
-            'idle_expires_at'    => $record->idleExpiresAt->format(format: DATE_ATOM),
-            'absolute_expires_at' => $record->absoluteExpiresAt->format(format: DATE_ATOM),
-            'ip_created'         => $record->ipCreated,
-            'user_agent_created' => $record->userAgentCreated,
-            'revoked_at'         => $record->revokedAt?->format(format: DATE_ATOM),
-            'revoke_reason'      => $record->revokeReason,
+            'session_id'          => $sessionRecord->sessionId,
+            'user_id'             => $sessionRecord->userId->value,
+            'created_at'          => $sessionRecord->createdAt->format(format: DATE_ATOM),
+            'last_seen_at'        => $sessionRecord->lastSeenAt->format(format: DATE_ATOM),
+            'idle_expires_at'     => $sessionRecord->idleExpiresAt->format(format: DATE_ATOM),
+            'absolute_expires_at' => $sessionRecord->absoluteExpiresAt->format(format: DATE_ATOM),
+            'ip_created'          => $sessionRecord->ipCreated,
+            'user_agent_created'  => $sessionRecord->userAgentCreated,
+            'revoked_at'          => $sessionRecord->revokedAt?->format(format: DATE_ATOM),
+            'revoke_reason'       => $sessionRecord->revokeReason,
         ];
     }
 
     public function listForUser(UserId $userId): array
     {
         /** @noinspection SqlNoDataSourceInspection */
-        $statement = $this->prepare(
+        $pdoStatement = $this->prepare(
             query: 'SELECT * FROM auth_sessions WHERE user_id = :user_id ORDER BY last_seen_at DESC',
         );
-        $statement->execute(params: ['user_id' => $userId->value]);
-        $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
+        $pdoStatement->execute(params: ['user_id' => $userId->value]);
+
+        $rows = $pdoStatement->fetchAll(mode: PDO::FETCH_ASSOC);
 
         return array_values(array: array_map(
             /**
@@ -178,11 +180,11 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
     public function pruneExpired(DateTimeImmutable $now): int
     {
         /** @noinspection SqlNoDataSourceInspection */
-        $statement = $this->prepare(
+        $pdoStatement = $this->prepare(
             query: 'DELETE FROM auth_sessions WHERE revoked_at IS NOT NULL OR idle_expires_at <= :now OR absolute_expires_at <= :now',
         );
-        $statement->execute(params: ['now' => $now->format(format: DATE_ATOM)]);
+        $pdoStatement->execute(params: ['now' => $now->format(format: DATE_ATOM)]);
 
-        return $statement->rowCount();
+        return $pdoStatement->rowCount();
     }
 }

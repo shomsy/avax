@@ -4,27 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects;
 
+use Stringable;
+
 /**
  * Immutable value object representing a database column identifier with optional alias.
  *
  * @see /docs/Foundation/Database/DSL/QueryStates.md
  */
-final readonly class ColumnIdentifier
+final readonly class ColumnIdentifier implements Stringable
 {
-    public ?string $alias;
-
-    public string $name;
-
     /**
      * @param string      $name  The technical identifier of the database column.
      * @param string|null $alias The optional domain-specific label (alias) for the projection.
      */
-    public function __construct(
-        string $name,
-        string $alias = null,
-    ) {
-        $this->name = $name;
-        $this->alias = $alias;
+    public function __construct(public string $name, public ?string $alias = null) {
     }
 
     /**
@@ -36,6 +29,6 @@ final readonly class ColumnIdentifier
             return $this->name;
         }
 
-        return "{$this->name} AS {$this->alias}";
+        return sprintf('%s AS %s', $this->name, $this->alias);
     }
 }

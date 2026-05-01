@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\RouteIntelligence\RouteInfo;
 final readonly class ListRoutes
 {
     public function __construct(
-        private RouteAnalyzer $analyzer = new RouteAnalyzer(),
+        private RouteAnalyzer $routeAnalyzer = new RouteAnalyzer(),
     ) {}
 
     /**
@@ -18,7 +18,7 @@ final readonly class ListRoutes
      */
     public static function printTable(array $routes) : void
     {
-        if (empty($routes)) {
+        if ($routes === []) {
             echo "No routes registered.\n";
 
             return;
@@ -65,7 +65,7 @@ final readonly class ListRoutes
 
     public function loadRoutes(array $routes) : self
     {
-        $this->analyzer->setRoutes($routes);
+        $this->routeAnalyzer->setRoutes($routes);
 
         return $this;
     }
@@ -75,6 +75,6 @@ final readonly class ListRoutes
      */
     public function list() : array
     {
-        return $this->analyzer->routes();
+        return $this->routeAnalyzer->routes();
     }
 }

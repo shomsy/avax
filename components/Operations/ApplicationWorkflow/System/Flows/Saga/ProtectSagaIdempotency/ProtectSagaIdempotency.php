@@ -7,14 +7,12 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Prote
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use Stringable;
 
 final readonly class ProtectSagaIdempotency
 {
-    private array $commandKeys;
-
-    public function __construct(array $commandKeys = [])
+    public function __construct(private array $commandKeys = [])
     {
-        $this->commandKeys = $commandKeys;
     }
 
     public static function inMemory(): self
@@ -22,9 +20,9 @@ final readonly class ProtectSagaIdempotency
         return new self(commandKeys: []);
     }
 
-    public function record(string $key, SagaCommandResult $result): void
+    public function record(string $key, SagaCommandResult $sagaCommandResult) : void
     {
-        $this->commandKeys[$key] = $result;
+        $this->commandKeys[$key] = $sagaCommandResult;
     }
 
     public function check(string $key): ?SagaCommandResult
@@ -43,37 +41,16 @@ final readonly class ProtectSagaIdempotency
     }
 }
 
-final readonly class SagaCommandKey
+final readonly class SagaCommandKey implements Stringable
 {
-    public string $value;
-
-    public string $aggregateType;
-
-    public string $aggregateId;
-
-    public string $action;
-
-    public ?string $tenantId;
-
-    private function __construct(
-        string $value,
-        string $aggregateType,
-        string $aggregateId,
-        string $action,
-        ?string $tenantId,
-    ) {
-        $this->value       = $value;
-        $this->aggregateType = $aggregateType;
-        $this->aggregateId = $aggregateId;
-        $this->action      = $action;
-        $this->tenantId    = $tenantId;
+    private function __construct(public string $value, public string $aggregateType, public string $aggregateId, public string $action, public ?string $tenantId) {
     }
 
     public static function create(
         string $aggregateType,
         string $aggregateId,
         string $action,
-        string $tenantId = null,
+        ?string $tenantId = null,
     ): self {
         $parts = array_filter([$aggregateType, $aggregateId, $action, $tenantId]);
         $value = implode(':', $parts);
@@ -100,28 +77,7 @@ final readonly class SagaCommandKey
 
 final readonly class SagaCommandResult
 {
-    public string $sagaId;
-
-    public bool $success;
-
-    public array $output;
-
-    public ?string $error;
-
-    public DateTimeImmutable $occurredAt;
-
-    private function __construct(
-        string $sagaId,
-        bool $success,
-        array $output,
-        ?string $error,
-        DateTimeImmutable $occurredAt,
-    ) {
-        $this->sagaId  = $sagaId;
-        $this->success = $success;
-        $this->output  = $output;
-        $this->error   = $error;
-        $this->occurredAt = $occurredAt;
+    private function __construct(public string $sagaId, public bool $success, public array $output, public ?string $error, public DateTimeImmutable $occurredAt) {
     }
 
     public static function success(string $sagaId, array $output = []): self
@@ -160,17 +116,11 @@ final readonly class SagaCommandResult
 
 final class DuplicateSagaCommand extends Exception
 {
-    public ?string $sagaId;
-
-    public ?SagaCommandResult $previousResult;
-
     public function __construct(
         string $message = 'Duplicate saga command detected.',
-        string            $sagaId = null,
-        SagaCommandResult $previousResult = null,
+        public ?string            $sagaId = null,
+        public ?SagaCommandResult $previousResult = null,
     ) {
         parent::__construct(message: $message);
-        $this->sagaId = $sagaId;
-        $this->previousResult = $previousResult;
     }
 }

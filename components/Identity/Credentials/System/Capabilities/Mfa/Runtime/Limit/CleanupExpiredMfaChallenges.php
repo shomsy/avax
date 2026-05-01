@@ -8,14 +8,14 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class CleanupExpiredMfaChallenges
 {
-    public function __construct(private ?PruneExpiredMfaChallengesInterface $challengeStore, private Clock $clock) {}
+    public function __construct(private ?PruneExpiredMfaChallengesInterface $pruneExpiredMfaChallenges, private Clock $clock) {}
 
     public function execute(): int
     {
-        if ($this->challengeStore === null) {
+        if (! $this->pruneExpiredMfaChallenges instanceof PruneExpiredMfaChallengesInterface) {
             return 0;
         }
 
-        return $this->challengeStore->pruneExpired(now: $this->clock->now());
+        return $this->pruneExpiredMfaChallenges->pruneExpired(now: $this->clock->now());
     }
 }

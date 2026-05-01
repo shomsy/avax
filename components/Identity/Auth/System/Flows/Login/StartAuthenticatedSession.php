@@ -17,8 +17,8 @@ final readonly class StartAuthenticatedSession
         private Sessions $sessions,
     ) {}
 
-    public function execute(IssuedAuthentication $issued): void
+    public function execute(IssuedAuthentication $issuedAuthentication) : void
     {
-        $this->sessions->start($issued);
+        $this->sessions->start($issuedAuthentication);
     }
 }

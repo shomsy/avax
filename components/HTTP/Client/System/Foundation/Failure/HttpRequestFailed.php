@@ -29,7 +29,7 @@ class HttpRequestFailed extends RuntimeException
         public readonly ?string $url = null,
         public readonly ?string $method = null,
         public readonly ?string $reason = null,
-        Throwable $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
     }

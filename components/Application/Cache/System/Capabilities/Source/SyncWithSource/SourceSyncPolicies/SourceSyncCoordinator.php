@@ -19,10 +19,10 @@ final class SourceSyncCoordinator
     public function write(CacheKey $cacheKey, mixed $value) : void
     {
         match ($this->sourceSyncPolicy) {
-            SourceSyncPolicy::WRITE_THROUGH => $this->writeThrough(key: $cacheKey, value: $value),
-            SourceSyncPolicy::WRITE_AROUND => $this->writeAround(key: $cacheKey, value: $value),
-            SourceSyncPolicy::WRITE_BEHIND => $this->writeBehind(key: $cacheKey, value: $value),
-            SourceSyncPolicy::CACHE_ASIDE  => $this->cacheAsideWrite(key: $cacheKey, value: $value),
+            SourceSyncPolicy::WRITE_THROUGH => $this->writeThrough(value: $value, key: $cacheKey),
+            SourceSyncPolicy::WRITE_AROUND  => $this->writeAround(value: $value, key: $cacheKey),
+            SourceSyncPolicy::WRITE_BEHIND  => $this->writeBehind(value: $value, key: $cacheKey),
+            SourceSyncPolicy::CACHE_ASIDE   => $this->cacheAsideWrite(value: $value, key: $cacheKey),
             SourceSyncPolicy::NO_SYNC      => $this->writeToSourceOnly(),
         };
     }
@@ -30,7 +30,7 @@ final class SourceSyncCoordinator
     private function writeThrough(CacheKey $cacheKey, mixed $value) : void
     {
         $writeValueToSource = new WriteValueToSource(source: $this->cacheSource);
-        $writeValueToSource->write(key: $cacheKey, value: $value);
+        $writeValueToSource->write(value: $value, key: $cacheKey);
 
         if ($this->cacheStore instanceof CacheStore) {
             $this->invalidateCache(key: $cacheKey);
@@ -45,7 +45,7 @@ final class SourceSyncCoordinator
     private function writeAround(CacheKey $cacheKey, mixed $value) : void
     {
         $writeValueToSource = new WriteValueToSource(source: $this->cacheSource);
-        $writeValueToSource->write(key: $cacheKey, value: $value);
+        $writeValueToSource->write(value: $value, key: $cacheKey);
 
         $this->invalidateCache(key: $cacheKey);
     }
@@ -58,13 +58,13 @@ final class SourceSyncCoordinator
             $this->deferredSourceWrite = new DeferredSourceWrite(source: $this->cacheSource);
         }
 
-        $this->deferredSourceWrite->queueFromCacheKey(key: $cacheKey, value: $value);
+        $this->deferredSourceWrite->queueFromCacheKey(value: $value, key: $cacheKey);
     }
 
     private function cacheAsideWrite(CacheKey $cacheKey, mixed $value) : void
     {
         $writeValueToSource = new WriteValueToSource(source: $this->cacheSource);
-        $writeValueToSource->write(key: $cacheKey, value: $value);
+        $writeValueToSource->write(value: $value, key: $cacheKey);
     }
 
     private function writeToSourceOnly() : void {}

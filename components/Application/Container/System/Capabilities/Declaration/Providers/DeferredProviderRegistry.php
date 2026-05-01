@@ -46,81 +46,81 @@ final class DeferredProviderRegistry
     /**
      * @param list<string> $serviceIds
      */
-    public function bootFor(array $serviceIds, DependencyRegistry $registrations, ResolutionMetrics $metrics = null): void
+    public function bootFor(array $serviceIds, DependencyRegistry $dependencyRegistry, ?ResolutionMetrics $resolutionMetrics = null) : void
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             $this->bootIfNeeded(
-                serviceId: $registrations->resolveAlias(abstract: $serviceId),
-                metrics  : $metrics,
+                serviceId: $dependencyRegistry->resolveAlias(abstract: $serviceId),
+                metrics  : $resolutionMetrics,
             );
         }
     }
 
-    public function bootIfNeeded(string $serviceId, ResolutionMetrics $metrics = null): void
+    public function bootIfNeeded(string $serviceId, ?ResolutionMetrics $resolutionMetrics = null) : void
     {
         $providerClass = $this->serviceOwners[$serviceId] ?? null;
         if ($providerClass === null || isset($this->bootedProviders[$providerClass])) {
             return;
         }
 
-        $this->bootProvider(providerClass: $providerClass, metrics: $metrics);
+        $this->bootProvider(providerClass: $providerClass, metrics: $resolutionMetrics);
     }
 
     /**
      * @param class-string<RegisterDependency> $providerClass
      */
-    private function bootProvider(string $providerClass, ResolutionMetrics $metrics = null): void
+    private function bootProvider(string $providerClass, ?ResolutionMetrics $resolutionMetrics = null) : void
     {
         $provider = $this->providers[$providerClass] ?? null;
         if (! $provider instanceof RegisterDependency) {
-            throw new ContainerException(message: "Deferred provider [{$providerClass}] is not registered.");
+            throw new ContainerException(message: sprintf('Deferred provider [%s] is not registered.', $providerClass));
         }
 
         foreach ($provider->dependsOn() as $dependencyClass) {
             if (isset($this->providers[$dependencyClass]) && ! isset($this->bootedProviders[$dependencyClass])) {
-                $this->bootProvider(providerClass: $dependencyClass, metrics: $metrics);
+                $this->bootProvider(providerClass: $dependencyClass, metrics: $resolutionMetrics);
             }
         }
 
         $provider->register();
-        $metrics?->increment(name: 'container_provider_register_total');
+        $resolutionMetrics?->increment(name: 'container_provider_register_total');
         $provider->boot();
-        $metrics?->increment(name: 'container_provider_boot_total');
-        $metrics?->increment(name: 'container_provider_deferred_boot_total');
+        $resolutionMetrics?->increment(name: 'container_provider_boot_total');
+        $resolutionMetrics?->increment(name: 'container_provider_deferred_boot_total');
         $this->bootedProviders[$providerClass] = true;
     }
 
-    public function register(RegisterDependency $provider, array $serviceIds, DependencyRegistry $registrations, ResolutionMetrics $metrics = null): void
+    public function register(RegisterDependency $registerDependency, array $serviceIds, DependencyRegistry $dependencyRegistry, ?ResolutionMetrics $resolutionMetrics = null) : void
     {
-        $providerClass = $provider::class;
+        $providerClass = $registerDependency::class;
         $ids           = array_map(
-            callback: static fn (string $serviceId): string => $registrations->resolveAlias(abstract: $serviceId),
+                callback: static fn (string $serviceId) : string => $dependencyRegistry->resolveAlias(abstract: $serviceId),
             array   : $serviceIds,
         )
-                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $serviceId): bool => $serviceId !== ''))
+                |> (static fn ($x) : array => array_filter(array: $x, callback: static fn (string $serviceId) : bool => $serviceId !== ''))
                 |> array_unique(...)
                 |> array_values(...);
 
         sort(array: $ids);
 
         if ($ids === []) {
-            throw new ContainerException(message: "Deferred provider [{$providerClass}] must declare at least one provided service.");
+            throw new ContainerException(message: sprintf('Deferred provider [%s] must declare at least one provided service.', $providerClass));
         }
 
-        $this->providers[$providerClass] = $provider;
+        $this->providers[$providerClass] = $registerDependency;
 
-        foreach ($ids as $serviceId) {
-            $existing = $this->serviceOwners[$serviceId] ?? null;
+        foreach ($ids as $id) {
+            $existing = $this->serviceOwners[$id] ?? null;
             if ($existing !== null && $existing !== $providerClass) {
                 throw new ContainerException(
-                    message: "Deferred provider conflict for service [{$serviceId}] between [{$existing}] and [{$providerClass}].",
+                    message: sprintf('Deferred provider conflict for service [%s] between [%s] and [%s].', $id, $existing, $providerClass),
                 );
             }
 
-            $this->serviceOwners[$serviceId] = $providerClass;
+            $this->serviceOwners[$id] = $providerClass;
         }
 
-        $metrics?->increment(name: 'container_provider_deferred_total');
-        $metrics?->increment(name: 'container_provider_deferred_services_total', by: count(value: $ids));
+        $resolutionMetrics?->increment(name: 'container_provider_deferred_total');
+        $resolutionMetrics?->increment(name: 'container_provider_deferred_services_total', by: count(value: $ids));
     }
 }

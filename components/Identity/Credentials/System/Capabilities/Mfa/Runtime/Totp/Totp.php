@@ -19,8 +19,8 @@ final readonly class Totp implements TotpInterface
     private int $digits;
 
     public function __construct(
-        int $digits = null,
-        int $periodSeconds = null,
+        ?int $digits = null,
+        ?int $periodSeconds = null,
         private int $allowedSkewSteps = 1,
     ) {
         $digits       ??= 6;
@@ -84,11 +84,11 @@ final readonly class Totp implements TotpInterface
             throw new InvalidArgumentException(message: 'Issuer and account label are required for MFA enrollment.');
         }
 
-        $label = rawurlencode(string: "{$issuer}:{$accountLabel}");
+        $label = rawurlencode(string: sprintf('%s:%s', $issuer, $accountLabel));
         $issuerQuery = rawurlencode(string: $issuer);
         $secretQuery = rawurlencode(string: $secret);
 
-        return "otpauth://totp/{$label}?secret={$secretQuery}&issuer={$issuerQuery}&algorithm=SHA1&digits={$this->digits}&period={$this->periodSeconds}";
+        return sprintf('otpauth://totp/%s?secret=%s&issuer=%s&algorithm=SHA1&digits=%d&period=%d', $label, $secretQuery, $issuerQuery, $this->digits, $this->periodSeconds);
     }
 
     public function verify(
@@ -97,7 +97,7 @@ final readonly class Totp implements TotpInterface
         #[SensitiveParameter]
         string $code,
         DateTimeImmutable $moment,
-        int $lastAcceptedTimeStep = null,
+        ?int $lastAcceptedTimeStep = null,
     ): TotpVerification {
         if (preg_match(pattern: '/^\d{6,8}$/', subject: $code) !== 1) {
             return TotpVerification::invalid(reason: 'format_invalid');

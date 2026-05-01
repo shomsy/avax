@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\RuntimeIsolation\RuntimeIsolationGuard;
 final readonly class CheckRuntimeIsolation
 {
     public function __construct(
-        private RuntimeIsolationGuard $guard = new RuntimeIsolationGuard(),
+        private RuntimeIsolationGuard $runtimeIsolationGuard = new RuntimeIsolationGuard(),
     ) {
     }
 
@@ -23,7 +23,7 @@ final readonly class CheckRuntimeIsolation
         $violations = [];
 
         foreach ($files as $path => $source) {
-            $fileViolations = $this->guard->detectLeaks(source: $source, path: $path);
+            $fileViolations = $this->runtimeIsolationGuard->detectLeaks(source: $source, path: $path);
 
             if ($fileViolations !== []) {
                 $violations[$path] = $fileViolations;

@@ -11,14 +11,14 @@ final readonly class Tasks
 {
     public static function dispatch(object $task) : void
     {
-        $bus = new TaskBus();
-        $bus->dispatch($task);
+        $taskBus = new TaskBus();
+        $taskBus->dispatch($task);
     }
 
-    public static function later(object $task, DateInterval $delay) : void
+    public static function later(object $task, DateInterval $dateInterval) : void
     {
-        $bus = new TaskBus();
-        $bus->dispatchlater($task, $delay);
+        $taskBus = new TaskBus();
+        $taskBus->dispatchlater($task, $dateInterval);
     }
 
     public static function batch(array $tasks) : TaskBatch
@@ -29,20 +29,19 @@ final readonly class Tasks
 
 final readonly class TaskBatch
 {
-    /** @var list<object> */
-    private array $tasks;
-
-    public function __construct(array $tasks)
+    public function __construct(
+        /** @var list<object> */
+        private array $tasks
+    )
     {
-        $this->tasks = $tasks;
     }
 
     public function dispatch() : void
     {
-        $bus = new TaskBus();
+        $taskBus = new TaskBus();
 
         foreach ($this->tasks as $task) {
-            $bus->dispatch($task);
+            $taskBus->dispatch($task);
         }
     }
 }

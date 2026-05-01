@@ -513,7 +513,7 @@ function benchmarkScenarios() : array
 function benchmarkPhpSettings() : array
 {
     return [
-        'memory_limit'       => (string) ini_get(option: 'memory_limit'),
+        'memory_limit' => ini_get(option: 'memory_limit'),
         'opcache.enable_cli' => (string) ini_get(option: 'opcache.enable_cli'),
         'zend.assertions'    => (string) ini_get(option: 'zend.assertions'),
     ];
@@ -608,7 +608,7 @@ if ($jsonOutput || is_string(value: $outputPath)) {
 foreach ($results as $name => $result) {
     fwrite(
         stream: STDOUT,
-        data  : str_pad(string: $name, length: 24)
+        data  : str_pad(string: (string) $name, length: 24)
                 . str_pad(string: number_format(num: $result['time_ms'], decimals: 2) . ' ms', length: 14)
                 . str_pad(string: number_format(num: $result['ops_per_s'], decimals: 2) . ' ops/s', length: 18)
                 . number_format(num: $result['peak_mb'], decimals: 2) . " MB\n",

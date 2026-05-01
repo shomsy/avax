@@ -21,12 +21,6 @@ final readonly class SyncResult
      */
     public function allReplicasInSync() : bool
     {
-        foreach ($this->replicaSyncResults as $replicaSyncResult) {
-            if (! $replicaSyncResult->wasInSync) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->replicaSyncResults, fn ($replicaSyncResult) => $replicaSyncResult->wasInSync);
     }
 }

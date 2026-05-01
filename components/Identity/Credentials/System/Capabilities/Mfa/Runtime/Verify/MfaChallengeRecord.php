@@ -28,7 +28,7 @@ final readonly class MfaChallengeRecord
         public MfaChallengePurpose $purpose,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $expiresAt,
-        int $maxAttempts = null,
+        ?int $maxAttempts = null,
         public array $attempts = [],
     ) {
         $maxAttempts ??= 5;
@@ -45,10 +45,10 @@ final readonly class MfaChallengeRecord
         return count(value: $this->attempts) >= $this->maxAttempts;
     }
 
-    public function recordAttempt(MfaVerificationAttempt $attempt): self
+    public function recordAttempt(MfaVerificationAttempt $mfaVerificationAttempt) : self
     {
         $attempts = $this->attempts;
-        $attempts[] = $attempt;
+        $attempts[] = $mfaVerificationAttempt;
 
         return new self(
             challengeId: $this->challengeId,

@@ -245,18 +245,18 @@ final class CacheHealthDetector
                         $memoryLimit,
                     ),
                     memoryUsage: $usagePercent,
+                    lastCheck  : $now,
                     memoryLimit: $memoryLimit,
                     keyCount   : $memoryInfo['keyCount'],
-                    lastCheck  : $now,
                 );
             }
 
             return CacheHealthStatus::healthy(
                 latency    : 0,
                 memoryUsage: $usagePercent,
+                lastCheck  : $now,
                 memoryLimit: $memoryLimit,
                 keyCount   : $memoryInfo['keyCount'],
-                lastCheck  : $now,
             );
         } catch (Throwable $throwable) {
             return CacheHealthStatus::degraded(
@@ -409,11 +409,11 @@ final class CacheHealthDetector
             latency        : max($latency->latency, $connection->latency),
             memoryUsage    : $memory->memoryUsage,
             hitRate        : $hitRate->hitRate,
+            lastCheck      : $connection->lastCheck,
             memoryLimit    : $memory->memoryLimit,
             keyCount       : $memory->keyCount,
             connectionCount: $connection->connectionCount,
             version        : $connection->version,
-            lastCheck      : $connection->lastCheck,
         );
     }
 

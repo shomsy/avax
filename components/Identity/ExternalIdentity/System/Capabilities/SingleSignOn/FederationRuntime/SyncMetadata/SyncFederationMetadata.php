@@ -15,7 +15,7 @@ use JsonException;
 
 final readonly class SyncFederationMetadata
 {
-    public function __construct(private FederationConnectionStoreInterface $connectionStore, private FederationMetadataRuntimeInterface $runtime, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private FederationMetadataRuntimeInterface $federationMetadataRuntime, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws FederationFailed
@@ -23,9 +23,9 @@ final readonly class SyncFederationMetadata
      */
     public function execute(string $connectionId): FederationConnection
     {
-        $connection = $this->connectionStore->find(connectionId: $connectionId);
+        $connection = $this->federationConnectionStore->find(connectionId: $connectionId);
 
-        if ($connection === null) {
+        if (! $connection instanceof FederationConnection) {
             throw FederationFailed::notFound();
         }
 
@@ -33,27 +33,27 @@ final readonly class SyncFederationMetadata
             throw FederationFailed::metadataUrlMissing();
         }
 
-        $metadata = $this->runtime->readMetadata(connection: $connection);
-        $synced = $connection->withMetadata(
-            metadataIssuer: $metadata->issuer,
+        $federationMetadata   = $this->federationMetadataRuntime->readMetadata(connection: $connection);
+        $federationConnection = $connection->withMetadata(
+            metadataIssuer: $federationMetadata->issuer,
             metadataHash  : hash(algo: 'sha256', data: json_encode(value: [
-                                                                              'issuer' => $metadata->issuer,
-                'single_sign_on_url' => $metadata->singleSignOnUrl,
-                                                                              'claims' => $metadata->claims,
+                                                                              'issuer'             => $federationMetadata->issuer,
+                                                                              'single_sign_on_url' => $federationMetadata->singleSignOnUrl,
+                                                                              'claims'             => $federationMetadata->claims,
             ], flags: JSON_THROW_ON_ERROR)),
             syncedAt      : $this->clock->now(),
         );
-        $this->connectionStore->save(connection: $synced);
+        $this->federationConnectionStore->save(connection: $federationConnection);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.metadata.synced',
             occurredAt: $this->clock->now(),
             context   : [
-                            'connection_id' => $synced->connectionId,
-                            'tenant'        => $synced->tenantSlug,
-                'metadata_issuer' => $synced->metadataIssuer,
+                            'connection_id'   => $federationConnection->connectionId,
+                            'tenant'          => $federationConnection->tenantSlug,
+                            'metadata_issuer' => $federationConnection->metadataIssuer,
             ],
         ));
 
-        return $synced;
+        return $federationConnection;
     }
 }

@@ -23,7 +23,7 @@ final readonly class Result
 
     public function succeeded() : bool
     {
-        return $this->failure === null;
+        return ! $this->failure instanceof Failure;
     }
 
     public function value() : mixed

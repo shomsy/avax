@@ -31,7 +31,7 @@ final class FailingCacheStore implements CacheStore
     }
 
     #[Override]
-    public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasMissing
     {
         $this->maybeFail();
 

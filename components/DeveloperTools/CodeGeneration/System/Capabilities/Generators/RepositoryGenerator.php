@@ -50,7 +50,7 @@ class RepositoryGenerator extends CodeGenerator
     {
         $base = preg_replace('/Repository$/', '', $repositoryName);
 
-        return $base !== '' && $base !== '0' && $base !== [] ? $base : 'Entity';
+        return in_array($base, ['', '0', []], true) ? 'Entity' : $base;
     }
 
     /**

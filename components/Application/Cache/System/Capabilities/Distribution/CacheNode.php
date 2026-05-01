@@ -17,15 +17,7 @@ final readonly class CacheNode implements Stringable
 
     public CacheNodeStatus $cacheNodeStatus;
 
-    public function __construct(
-        public string $id,
-        public string $host,
-        public int $port,
-        public int $weight = 100,
-        public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
-        public ?int $virtualNodeCount = null,
-    ) {
-        $this->cacheNodeStatus = $cacheNodeStatus;
+    public function __construct(public string $id, public string $host, public int $port, public int $weight = 100, public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY, public ?int $virtualNodeCount = null) {
     }
 
     /**
@@ -44,8 +36,8 @@ final readonly class CacheNode implements Stringable
             host            : $host,
             port            : $port,
             weight          : $weight,
-            status          : $cacheNodeStatus,
             virtualNodeCount: $virtualNodeCount,
+            status          : $cacheNodeStatus,
         );
     }
 
@@ -90,8 +82,8 @@ final readonly class CacheNode implements Stringable
             host            : $this->host,
             port            : $this->port,
             weight          : $this->weight,
-            status          : $cacheNodeStatus,
             virtualNodeCount: $this->virtualNodeCount,
+            status          : $cacheNodeStatus,
         );
     }
 
@@ -105,8 +97,8 @@ final readonly class CacheNode implements Stringable
             host            : $this->host,
             port            : $this->port,
             weight          : $weight,
-            status          : $this->cacheNodeStatus,
             virtualNodeCount: $this->virtualNodeCount,
+            status          : $this->cacheNodeStatus,
         );
     }
 
@@ -157,8 +149,8 @@ final readonly class CacheNode implements Stringable
             host            : $data['host'],
             port            : $data['port'],
             weight          : $data['weight'] ?? 100,
-            status          : $status,
             virtualNodeCount: $data['virtualNodeCount'] ?? null,
+            status          : $status,
         );
     }
 

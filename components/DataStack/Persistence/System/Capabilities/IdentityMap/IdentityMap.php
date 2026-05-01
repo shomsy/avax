@@ -77,8 +77,8 @@ final class IdentityMap
     {
         $count = 0;
 
-        foreach ($this->entities as $classEntities) {
-            $count += count($classEntities);
+        foreach ($this->entities as $entity) {
+            $count += count($entity);
         }
 
         return $count;

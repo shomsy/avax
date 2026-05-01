@@ -17,20 +17,20 @@ final readonly class ConfigureSagaRuntime
         private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus(),
     ) {}
 
-    public function configure(SagaRuntimeConfig $config): SagaRuntime
+    public function configure(SagaRuntimeConfig $sagaRuntimeConfig) : SagaRuntime
     {
-        $validation = new ValidateSagaRuntimeConfig(config: $config);
-        if (! $validation->isValid()) {
-            $errors = implode(', ', $validation->getErrors());
+        $validateSagaRuntimeConfig = new ValidateSagaRuntimeConfig(config: $sagaRuntimeConfig);
+        if (! $validateSagaRuntimeConfig->isValid()) {
+            $errors = implode(', ', $validateSagaRuntimeConfig->getErrors());
 
             throw new SagaRuntimeConfigurationFailure(
                 message: sprintf('Invalid saga runtime configuration: %s', $errors),
             );
         }
 
-        $store = $this->registerSagaStore->register(type: $config->storeType, config: $config->storeConfig);
+        $store      = $this->registerSagaStore->register(type: $sagaRuntimeConfig->storeType, config: $sagaRuntimeConfig->storeConfig);
         $stepRunner = $this->registerSagaStepRunner->register();
-        $messageBus = $this->registerSagaMessageBus->register($config->messageBusType, config: $config->messageBusConfig);
+        $messageBus = $this->registerSagaMessageBus->register($sagaRuntimeConfig->messageBusType, config: $sagaRuntimeConfig->messageBusConfig);
 
         return new SagaRuntime(
             store      : $store,
@@ -66,32 +66,7 @@ final readonly class SagaRuntime
 
 final readonly class SagaRuntimeConfig
 {
-    public string $storeType;
-
-    public array $storeConfig;
-
-    public string $messageBusType;
-
-    public array $messageBusConfig;
-
-    public ?int $timeoutSeconds;
-
-    public ?int $maxRetries;
-
-    private function __construct(
-        string $storeType,
-        array $storeConfig,
-        string $messageBusType,
-        array $messageBusConfig,
-        ?int $timeoutSeconds,
-        ?int $maxRetries,
-    ) {
-        $this->storeType      = $storeType;
-        $this->storeConfig    = $storeConfig;
-        $this->messageBusType = $messageBusType;
-        $this->messageBusConfig = $messageBusConfig;
-        $this->timeoutSeconds = $timeoutSeconds;
-        $this->maxRetries     = $maxRetries;
+    private function __construct(public string $storeType, public array $storeConfig, public string $messageBusType, public array $messageBusConfig, public ?int $timeoutSeconds, public ?int $maxRetries) {
     }
 
     public static function inMemory(): self

@@ -14,15 +14,15 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSo
 final readonly class CreateRegisteredUser
 {
     public function __construct(
-        private UserSource $source,
+        private UserSource $userSource,
     ) {}
 
-    public function execute(RegistrationData $data, string $hashedPassword): User
+    public function execute(RegistrationData $registrationData, string $hashedPassword) : User
     {
-        return $this->source->create([
-                                         'email' => $data->email,
+        return $this->userSource->create([
+                                             'email'    => $registrationData->email,
             'password' => $hashedPassword,
-            'username' => $data->username ?? $data->email,
+                                             'username' => $registrationData->username ?? $registrationData->email,
         ]);
     }
 }

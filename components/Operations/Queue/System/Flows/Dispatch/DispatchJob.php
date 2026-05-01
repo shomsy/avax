@@ -12,42 +12,39 @@ use Avax\Components\Operations\Queue\System\PublicSurface\JobResult;
 use DateTimeInterface;
 use Throwable;
 
-final class DispatchJob
+final readonly class DispatchJob
 {
-    private JobRegistry $registry;
-
-    public function __construct(JobRegistry $registry)
+    public function __construct(private JobRegistry $jobRegistry)
     {
-        $this->registry = $registry;
     }
 
-    public function dispatchSync(JobDefinition $job): JobResult
+    public function dispatchSync(JobDefinition $jobDefinition) : JobResult
     {
         try {
-            $handler = $this->registry->resolve($job->handler);
-            $result = $handler($job->payload);
+            $handler = $this->jobRegistry->resolve($jobDefinition->handler);
+            $result  = $handler($jobDefinition->payload);
 
             return JobResult::success($result);
-        } catch (Throwable $e) {
-            return JobResult::failure($e->getMessage());
+        } catch (Throwable $throwable) {
+            return JobResult::failure($throwable->getMessage());
         }
     }
 
-    public function later(JobDefinition $job, DateTimeInterface $delay, QueueBroker $broker): JobId
+    public function later(JobDefinition $jobDefinition, DateTimeInterface $delay, QueueBroker $queueBroker) : JobId
     {
-        $queue = $job->queue ?? 'default';
+        $queue = $jobDefinition->queue ?? 'default';
         $jobId = JobId::generate($queue);
 
-        $jobData       = $job->toArray();
+        $jobData = $jobDefinition->toArray();
         $jobData['id'] = $jobId->value;
         $jobData['executeAt'] = $delay->getTimestamp();
 
-        $broker->push($queue, $jobData);
+        $queueBroker->push($queue, $jobData);
 
         return $jobId;
     }
 
-    public function bulk(array $jobs, QueueBroker $broker): array
+    public function bulk(array $jobs, QueueBroker $queueBroker) : array
     {
         $ids = [];
 
@@ -56,21 +53,21 @@ final class DispatchJob
                 continue;
             }
 
-            $ids[] = $this->dispatch($job, $broker);
+            $ids[] = $this->dispatch($job, $queueBroker);
         }
 
         return $ids;
     }
 
-    public function dispatch(JobDefinition $job, QueueBroker $broker): JobId
+    public function dispatch(JobDefinition $jobDefinition, QueueBroker $queueBroker) : JobId
     {
-        $queue = $job->queue ?? 'default';
+        $queue = $jobDefinition->queue ?? 'default';
         $jobId = JobId::generate($queue);
 
-        $jobData = $job->toArray();
+        $jobData = $jobDefinition->toArray();
         $jobData['id'] = $jobId->value;
 
-        $broker->push($queue, $jobData);
+        $queueBroker->push($queue, $jobData);
 
         return $jobId;
     }

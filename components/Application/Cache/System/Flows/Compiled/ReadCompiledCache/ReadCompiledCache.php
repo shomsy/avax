@@ -33,7 +33,7 @@ final readonly class ReadCompiledCache
         $compiledCacheFreshness = $checkCompiledCacheIsFresh->check(name: $compiledCacheName, sources: $compiledCacheSources);
 
         if ($compiledCacheFreshness === CompiledCacheFreshness::MISSING || $compiledCacheFreshness === CompiledCacheFreshness::STALE) {
-            return $this->rebuild(name: $compiledCacheName, build: $build, sources: $compiledCacheSources);
+            return $this->rebuild(build: $build, name: $compiledCacheName, sources: $compiledCacheSources);
         }
 
         return $this->requireCompiledArtifact(name: $compiledCacheName);
@@ -46,9 +46,9 @@ final readonly class ReadCompiledCache
     ) : mixed
     {
         $compileCache = new CompileCache(
+            clock    : $this->clock,
             directory: $this->compiledCacheDirectory,
             manifest : $this->compiledCacheManifest,
-            clock    : $this->clock,
         );
 
         $compileCache->compile(name: $compiledCacheName->toString(), build: $build, sources: $compiledCacheSources);

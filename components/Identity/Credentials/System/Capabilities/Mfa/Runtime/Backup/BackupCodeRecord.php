@@ -22,7 +22,7 @@ final readonly class BackupCodeRecord
 
     public function isUsed(): bool
     {
-        return $this->usedAt !== null;
+        return $this->usedAt instanceof DateTimeImmutable;
     }
 
     public function markUsed(DateTimeImmutable $moment): self

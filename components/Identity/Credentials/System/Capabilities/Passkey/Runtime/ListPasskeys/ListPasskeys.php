@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\ListPasskeys;
 
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyCredential;
@@ -16,7 +17,7 @@ final readonly class ListPasskeys
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
         #[SensitiveParameter]
-        private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyCredentialStoreInterface $passkeyCredentialStore,
     ) {}
 
     /**
@@ -28,10 +29,10 @@ final readonly class ListPasskeys
     {
         $user = $this->currentAuthentication->read()->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw PasskeyOperationFailed::unauthenticated();
         }
 
-        return $this->credentialStore->forUser(userId: $user->id);
+        return $this->passkeyCredentialStore->forUser(userId: $user->id);
     }
 }

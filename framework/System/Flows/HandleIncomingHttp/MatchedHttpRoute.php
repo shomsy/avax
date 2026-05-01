@@ -10,17 +10,17 @@ use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 final readonly class MatchedHttpRoute
 {
     public function __construct(
-        private RouteDefinition $route,
-        private ServerRequest $request,
+        private RouteDefinition $routeDefinition,
+        private ServerRequest   $serverRequest,
     ) {}
 
     public function route() : RouteDefinition
     {
-        return $this->route;
+        return $this->routeDefinition;
     }
 
     public function request() : ServerRequest
     {
-        return $this->request;
+        return $this->serverRequest;
     }
 }

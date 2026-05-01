@@ -32,9 +32,9 @@ final readonly class OAuthTokenGrant
         public ?string $idToken,
         public string $clientId,
         public ?int $userId,
-        array  $scopes = null,
+        ?array  $scopes = null,
         #[SensitiveParameter]
-        string $tokenType = null,
+        ?string $tokenType = null,
         public ?OAuthSenderConstraint $senderConstraint = null,
         public ?string $subject = null,
         public ?string $audience = null,

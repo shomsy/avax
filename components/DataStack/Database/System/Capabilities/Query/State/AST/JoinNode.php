@@ -13,17 +13,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\JoinCla
  */
 final readonly class JoinNode
 {
-    public ?JoinClause $clause;
-
-    public ?string $second;
-
-    public ?string $operator;
-
-    public ?string $first;
-
     public string $type;
-
-    public string $table;
 
     /**
      * @param string          $table    The technical name of the target database table to be joined.
@@ -34,19 +24,14 @@ final readonly class JoinNode
      * @param JoinClause|null $clause   Optional container for complex, multi-condition join logic.
      */
     public function __construct(
-        string $table,
-        string     $type = null,
-        string     $first = null,
-        string     $operator = null,
-        string     $second = null,
-        JoinClause $clause = null,
+        public string      $table,
+        ?string            $type = null,
+        public ?string     $first = null,
+        public ?string     $operator = null,
+        public ?string     $second = null,
+        public ?JoinClause $clause = null,
     ) {
         $type ??= 'inner';
-        $this->table = $table;
         $this->type = $type;
-        $this->first = $first;
-        $this->operator = $operator;
-        $this->second = $second;
-        $this->clause = $clause;
     }
 }

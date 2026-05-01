@@ -14,9 +14,9 @@ final class RedisSessionStore implements SessionStoreInterface
 
     private ?Redis $redis = null;
 
-    private string $prefix;
+    private readonly string $prefix;
 
-    private int $ttl;
+    private readonly int $ttl;
 
     public function __construct(private array $config = [])
     {
@@ -27,7 +27,7 @@ final class RedisSessionStore implements SessionStoreInterface
 
     public function read(string $id) : array
     {
-        if ($this->redis === null) {
+        if (! $this->redis instanceof Redis) {
             return $this->fallback[$id] ?? [];
         }
 
@@ -44,7 +44,7 @@ final class RedisSessionStore implements SessionStoreInterface
 
     public function write(string $id, array $data) : bool
     {
-        if ($this->redis === null) {
+        if (! $this->redis instanceof Redis) {
             $this->fallback[$id] = $data;
 
             return true;
@@ -57,7 +57,7 @@ final class RedisSessionStore implements SessionStoreInterface
 
     public function destroy(string $id) : bool
     {
-        if ($this->redis === null) {
+        if (! $this->redis instanceof Redis) {
             unset($this->fallback[$id]);
 
             return true;
@@ -68,7 +68,7 @@ final class RedisSessionStore implements SessionStoreInterface
 
     public function exists(string $sessionId) : bool
     {
-        if ($this->redis === null) {
+        if (! $this->redis instanceof Redis) {
             return isset($this->fallback[$sessionId]);
         }
 

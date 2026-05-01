@@ -4,7 +4,7 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "7114cc3b1baa3cfc4edab8c30f629b10",
+  "content-hash": "5e69a5bdfbcac22875f742b9c9a3be7e",
   "packages": [
     {
       "name": "amphp/amp",
@@ -3531,59 +3531,6 @@
       "time": "2020-09-18T13:47:07+00:00"
     },
     {
-      "name": "phpstan/phpstan",
-      "version": "1.12.33",
-      "dist": {
-        "type": "zip",
-        "url": "https://api.github.com/repos/phpstan/phpstan/zipball/37982d6fc7cbb746dda7773530cda557cdf119e1",
-        "reference": "37982d6fc7cbb746dda7773530cda557cdf119e1",
-        "shasum": ""
-      },
-      "require": {
-        "php": "^7.2|^8.0"
-      },
-      "conflict": {
-        "phpstan/phpstan-shim": "*"
-      },
-      "bin": [
-        "phpstan",
-        "phpstan.phar"
-      ],
-      "type": "library",
-      "autoload": {
-        "files": [
-          "bootstrap.php"
-        ]
-      },
-      "notification-url": "https://packagist.org/downloads/",
-      "license": [
-        "MIT"
-      ],
-      "description": "PHPStan - PHP Static Analysis Tool",
-      "keywords": [
-        "dev",
-        "static analysis"
-      ],
-      "support": {
-        "docs": "https://phpstan.org/user-guide/getting-started",
-        "forum": "https://github.com/phpstan/phpstan/discussions",
-        "issues": "https://github.com/phpstan/phpstan/issues",
-        "security": "https://github.com/phpstan/phpstan/security/policy",
-        "source": "https://github.com/phpstan/phpstan-src"
-      },
-      "funding": [
-        {
-          "url": "https://github.com/ondrejmirtes",
-          "type": "github"
-        },
-        {
-          "url": "https://github.com/phpstan",
-          "type": "github"
-        }
-      ],
-      "time": "2026-02-28T20:30:03+00:00"
-    },
-    {
       "name": "psr/clock",
       "version": "1.0.0",
       "source": {
@@ -4205,59 +4152,6 @@
         "source": "https://github.com/ramsey/uuid/tree/4.9.2"
       },
       "time": "2025-12-14T04:43:48+00:00"
-    },
-    {
-      "name": "rector/type-perfect",
-      "version": "0.1.8",
-      "source": {
-        "type": "git",
-        "url": "https://github.com/rectorphp/type-perfect.git",
-        "reference": "00c585702e1d03be48f69f08ff872aa67875d7fa"
-      },
-      "dist": {
-        "type": "zip",
-        "url": "https://api.github.com/repos/rectorphp/type-perfect/zipball/00c585702e1d03be48f69f08ff872aa67875d7fa",
-        "reference": "00c585702e1d03be48f69f08ff872aa67875d7fa",
-        "shasum": ""
-      },
-      "require": {
-        "php": "^7.2|^8.0",
-        "phpstan/phpstan": "^1.11",
-        "webmozart/assert": "^1.11"
-      },
-      "type": "phpstan-extension",
-      "extra": {
-        "phpstan": {
-          "includes": [
-            "config/extension.neon"
-          ]
-        }
-      },
-      "autoload": {
-        "psr-4": {
-          "Rector\\TypePerfect\\": "src"
-        }
-      },
-      "notification-url": "https://packagist.org/downloads/",
-      "license": [
-        "MIT"
-      ],
-      "description": "Next level type declaration checks",
-      "support": {
-        "issues": "https://github.com/rectorphp/type-perfect/issues",
-        "source": "https://github.com/rectorphp/type-perfect/tree/0.1.8"
-      },
-      "funding": [
-        {
-          "url": "https://www.paypal.me/rectorphp",
-          "type": "custom"
-        },
-        {
-          "url": "https://github.com/tomasvotruba",
-          "type": "github"
-        }
-      ],
-      "time": "2024-07-07T20:42:03+00:00"
     },
     {
       "name": "revolt/event-loop",
@@ -6493,64 +6387,6 @@
       "time": "2026-04-26T05:33:54+00:00"
     },
     {
-      "name": "webmozart/assert",
-      "version": "1.12.1",
-      "source": {
-        "type": "git",
-        "url": "https://github.com/webmozarts/assert.git",
-        "reference": "9be6926d8b485f55b9229203f962b51ed377ba68"
-      },
-      "dist": {
-        "type": "zip",
-        "url": "https://api.github.com/repos/webmozarts/assert/zipball/9be6926d8b485f55b9229203f962b51ed377ba68",
-        "reference": "9be6926d8b485f55b9229203f962b51ed377ba68",
-        "shasum": ""
-      },
-      "require": {
-        "ext-ctype": "*",
-        "ext-date": "*",
-        "ext-filter": "*",
-        "php": "^7.2 || ^8.0"
-      },
-      "suggest": {
-        "ext-intl": "",
-        "ext-simplexml": "",
-        "ext-spl": ""
-      },
-      "type": "library",
-      "extra": {
-        "branch-alias": {
-          "dev-master": "1.10-dev"
-        }
-      },
-      "autoload": {
-        "psr-4": {
-          "Webmozart\\Assert\\": "src/"
-        }
-      },
-      "notification-url": "https://packagist.org/downloads/",
-      "license": [
-        "MIT"
-      ],
-      "authors": [
-        {
-          "name": "Bernhard Schussek",
-          "email": "bschussek@gmail.com"
-        }
-      ],
-      "description": "Assertions to validate method input/output with nice error messages.",
-      "keywords": [
-        "assert",
-        "check",
-        "validate"
-      ],
-      "support": {
-        "issues": "https://github.com/webmozarts/assert/issues",
-        "source": "https://github.com/webmozarts/assert/tree/1.12.1"
-      },
-      "time": "2025-10-29T15:56:20+00:00"
-    },
-    {
       "name": "wyndow/fuzzywuzzy",
       "version": "v0.6.0",
       "source": {
@@ -8413,6 +8249,59 @@
       "time": "2026-01-25T14:56:51+00:00"
     },
     {
+      "name": "phpstan/phpstan",
+      "version": "2.1.54",
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
+        "reference": "8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
+        "shasum": ""
+      },
+      "require": {
+        "php": "^7.4|^8.0"
+      },
+      "conflict": {
+        "phpstan/phpstan-shim": "*"
+      },
+      "bin": [
+        "phpstan",
+        "phpstan.phar"
+      ],
+      "type": "library",
+      "autoload": {
+        "files": [
+          "bootstrap.php"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "description": "PHPStan - PHP Static Analysis Tool",
+      "keywords": [
+        "dev",
+        "static analysis"
+      ],
+      "support": {
+        "docs": "https://phpstan.org/user-guide/getting-started",
+        "forum": "https://github.com/phpstan/phpstan/discussions",
+        "issues": "https://github.com/phpstan/phpstan/issues",
+        "security": "https://github.com/phpstan/phpstan/security/policy",
+        "source": "https://github.com/phpstan/phpstan-src"
+      },
+      "funding": [
+        {
+          "url": "https://github.com/ondrejmirtes",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/phpstan",
+          "type": "github"
+        }
+      ],
+      "time": "2026-04-29T13:31:09+00:00"
+    },
+    {
       "name": "phpunit/php-code-coverage",
       "version": "10.1.16",
       "source": {
@@ -9517,21 +9406,21 @@
     },
     {
       "name": "rector/rector",
-      "version": "1.2.10",
+      "version": "2.4.2",
       "source": {
         "type": "git",
         "url": "https://github.com/rectorphp/rector.git",
-        "reference": "40f9cf38c05296bd32f444121336a521a293fa61"
+        "reference": "e645b6463c6a88ea5b44b17d3387d35a912c7946"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/rectorphp/rector/zipball/40f9cf38c05296bd32f444121336a521a293fa61",
-        "reference": "40f9cf38c05296bd32f444121336a521a293fa61",
+        "url": "https://api.github.com/repos/rectorphp/rector/zipball/e645b6463c6a88ea5b44b17d3387d35a912c7946",
+        "reference": "e645b6463c6a88ea5b44b17d3387d35a912c7946",
         "shasum": ""
       },
       "require": {
-        "php": "^7.2|^8.0",
-        "phpstan/phpstan": "^1.12.5"
+        "php": "^7.4|^8.0",
+        "phpstan/phpstan": "^2.1.48"
       },
       "conflict": {
         "rector/rector-doctrine": "*",
@@ -9556,6 +9445,7 @@
         "MIT"
       ],
       "description": "Instant Upgrade and Automated Refactoring of any PHP code",
+      "homepage": "https://getrector.com/",
       "keywords": [
         "automation",
         "dev",
@@ -9564,7 +9454,7 @@
       ],
       "support": {
         "issues": "https://github.com/rectorphp/rector/issues",
-        "source": "https://github.com/rectorphp/rector/tree/1.2.10"
+        "source": "https://github.com/rectorphp/rector/tree/2.4.2"
       },
       "funding": [
         {
@@ -9572,7 +9462,60 @@
           "type": "github"
         }
       ],
-      "time": "2024-11-08T13:59:10+00:00"
+      "time": "2026-04-16T13:07:34+00:00"
+    },
+    {
+      "name": "rector/type-perfect",
+      "version": "2.1.4",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/rectorphp/type-perfect.git",
+        "reference": "5ba40eca0903de8e33a7beb575b2feaa25948d18"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/rectorphp/type-perfect/zipball/5ba40eca0903de8e33a7beb575b2feaa25948d18",
+        "reference": "5ba40eca0903de8e33a7beb575b2feaa25948d18",
+        "shasum": ""
+      },
+      "require": {
+        "php": "^7.4|^8.0",
+        "phpstan/phpstan": "^2.1.14",
+        "webmozart/assert": "^1.11 || ^2.1"
+      },
+      "type": "phpstan-extension",
+      "extra": {
+        "phpstan": {
+          "includes": [
+            "config/extension.neon"
+          ]
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Rector\\TypePerfect\\": "src"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "description": "Next level type declaration checks",
+      "support": {
+        "issues": "https://github.com/rectorphp/type-perfect/issues",
+        "source": "https://github.com/rectorphp/type-perfect/tree/2.1.4"
+      },
+      "funding": [
+        {
+          "url": "https://www.paypal.me/rectorphp",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/tomasvotruba",
+          "type": "github"
+        }
+      ],
+      "time": "2026-04-17T23:36:51+00:00"
     },
     {
       "name": "sebastian/cli-parser",
@@ -11728,6 +11671,68 @@
         }
       ],
       "time": "2025-11-17T20:03:58+00:00"
+    },
+    {
+      "name": "webmozart/assert",
+      "version": "2.3.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/webmozarts/assert.git",
+        "reference": "eb0d790f735ba6cff25c683a85a1da0eadeff9e4"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/webmozarts/assert/zipball/eb0d790f735ba6cff25c683a85a1da0eadeff9e4",
+        "reference": "eb0d790f735ba6cff25c683a85a1da0eadeff9e4",
+        "shasum": ""
+      },
+      "require": {
+        "ext-ctype": "*",
+        "ext-date": "*",
+        "ext-filter": "*",
+        "php": "^8.2"
+      },
+      "suggest": {
+        "ext-intl": "",
+        "ext-simplexml": "",
+        "ext-spl": ""
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-feature/2-0": "2.0-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Webmozart\\Assert\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Bernhard Schussek",
+          "email": "bschussek@gmail.com"
+        },
+        {
+          "name": "Woody Gilk",
+          "email": "woody.gilk@gmail.com"
+        }
+      ],
+      "description": "Assertions to validate method input/output with nice error messages.",
+      "keywords": [
+        "assert",
+        "check",
+        "validate"
+      ],
+      "support": {
+        "issues": "https://github.com/webmozarts/assert/issues",
+        "source": "https://github.com/webmozarts/assert/tree/2.3.0"
+      },
+      "time": "2026-04-11T10:33:05+00:00"
     }
   ],
   "aliases": [],

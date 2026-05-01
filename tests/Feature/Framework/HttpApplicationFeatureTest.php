@@ -13,23 +13,23 @@ final class HttpApplicationFeatureTest extends TestCase
 {
     public function test_http_public_surface_runs_a_request_and_then_allows_state_reset(): void
     {
-        $application = Avax::boot(
+        $avax = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
                 ->withHttpHandler(
-                    httpHandler: static fn (RuntimeRequest $request): string => 'hello ' . $request->uri(),
+                    httpHandler: static fn (RuntimeRequest $runtimeRequest) : string => 'hello ' . $runtimeRequest->uri(),
                 ),
         );
 
-        $response = $application->http()->handle(
+        $runtimeResponse = $avax->http()->handle(
             request: new RuntimeRequest(method: 'GET', uri: '/world'),
         );
 
-        self::assertSame('hello /world', $response->body());
-        self::assertNotNull($application->context()->lastResult());
+        self::assertSame('hello /world', $runtimeResponse->body());
+        self::assertNotNull($avax->context()->lastResult());
 
-        $application->resetState();
+        $avax->resetState();
 
-        self::assertNull($application->context()->lastResult());
+        self::assertNull($avax->context()->lastResult());
     }
 
     private function projectRoot(): string

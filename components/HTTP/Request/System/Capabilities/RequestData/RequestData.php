@@ -56,11 +56,11 @@ final readonly class RequestData
         );
     }
 
-    public function withUri(RequestUri $uri) : self
+    public function withUri(RequestUri $requestUri) : self
     {
         return new self(
             method         : $this->method,
-            uri            : $uri,
+            uri            : $requestUri,
             headers        : $this->headers,
             body           : $this->body,
             files          : $this->files,

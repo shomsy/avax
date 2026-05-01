@@ -21,41 +21,41 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_has_no_active_request_when_created(): void
     {
-        $context = new RuntimeContext();
+        $runtimeContext = new RuntimeContext();
 
-        self::assertFalse($context->hasActiveRequest());
-        self::assertNull($context->currentRequest());
-        self::assertNull($context->currentScopeId());
-        self::assertNull($context->lastResult());
+        self::assertFalse($runtimeContext->hasActiveRequest());
+        self::assertNull($runtimeContext->currentRequest());
+        self::assertNull($runtimeContext->currentScopeId());
+        self::assertNull($runtimeContext->lastResult());
     }
 
     #[Test]
     public function it_starts_request_and_sets_active_request(): void
     {
-        $context = new RuntimeContext();
-        $scopeId = RequestScopeId::generate();
-        $request = new RuntimeRequest(method: 'GET', uri: '/test');
+        $runtimeContext = new RuntimeContext();
+        $requestScopeId = RequestScopeId::generate();
+        $runtimeRequest = new RuntimeRequest(method: 'GET', uri: '/test');
 
-        $context->startRequest(scopeId: $scopeId, request: $request);
+        $runtimeContext->startRequest(scopeId: $requestScopeId, request: $runtimeRequest);
 
-        self::assertTrue($context->hasActiveRequest());
-        self::assertSame($request, $context->currentRequest());
-        self::assertSame($scopeId, $context->currentScopeId());
+        self::assertTrue($runtimeContext->hasActiveRequest());
+        self::assertSame($runtimeRequest, $runtimeContext->currentRequest());
+        self::assertSame($requestScopeId, $runtimeContext->currentScopeId());
     }
 
     #[Test]
     public function it_throws_when_starting_request_while_another_is_active(): void
     {
-        $context = new RuntimeContext();
-        $scopeId = RequestScopeId::generate();
-        $request = new RuntimeRequest(method: 'GET', uri: '/test');
+        $runtimeContext = new RuntimeContext();
+        $requestScopeId = RequestScopeId::generate();
+        $runtimeRequest = new RuntimeRequest(method: 'GET', uri: '/test');
 
-        $context->startRequest(scopeId: $scopeId, request: $request);
+        $runtimeContext->startRequest(scopeId: $requestScopeId, request: $runtimeRequest);
 
         $this->expectException(FrameworkMisconfigured::class);
         $this->expectExceptionMessage('Runtime context already has an active request.');
 
-        $context->startRequest(
+        $runtimeContext->startRequest(
             scopeId: RequestScopeId::generate(),
             request: new RuntimeRequest(method: 'POST', uri: '/other'),
         );
@@ -64,63 +64,63 @@ final class RuntimeContextTest extends TestCase
     #[Test]
     public function it_finishes_request_and_clears_active_request(): void
     {
-        $context = new RuntimeContext();
-        $scopeId = RequestScopeId::generate();
-        $request = new RuntimeRequest(method: 'GET', uri: '/test');
-        $result  = RuntimeResult::fromConsoleOutput(output: 'done');
+        $runtimeContext = new RuntimeContext();
+        $requestScopeId = RequestScopeId::generate();
+        $runtimeRequest = new RuntimeRequest(method: 'GET', uri: '/test');
+        $runtimeResult  = RuntimeResult::fromConsoleOutput(output: 'done');
 
-        $context->startRequest(scopeId: $scopeId, request: $request);
-        $context->finishRequest(result: $result);
+        $runtimeContext->startRequest(scopeId: $requestScopeId, request: $runtimeRequest);
+        $runtimeContext->finishRequest(result: $runtimeResult);
 
-        self::assertFalse($context->hasActiveRequest());
-        self::assertNull($context->currentRequest());
-        self::assertNull($context->currentScopeId());
-        self::assertSame($result, $context->lastResult());
+        self::assertFalse($runtimeContext->hasActiveRequest());
+        self::assertNull($runtimeContext->currentRequest());
+        self::assertNull($runtimeContext->currentScopeId());
+        self::assertSame($runtimeResult, $runtimeContext->lastResult());
     }
 
     #[Test]
     public function it_records_result_without_affecting_active_request(): void
     {
-        $context = new RuntimeContext();
-        $scopeId = RequestScopeId::generate();
-        $request = new RuntimeRequest(method: 'GET', uri: '/test');
-        $result  = RuntimeResult::fromConsoleOutput(output: 'output');
+        $runtimeContext = new RuntimeContext();
+        $requestScopeId = RequestScopeId::generate();
+        $runtimeRequest = new RuntimeRequest(method: 'GET', uri: '/test');
+        $runtimeResult  = RuntimeResult::fromConsoleOutput(output: 'output');
 
-        $context->startRequest(scopeId: $scopeId, request: $request);
-        $context->recordResult(result: $result);
+        $runtimeContext->startRequest(scopeId: $requestScopeId, request: $runtimeRequest);
+        $runtimeContext->recordResult(result: $runtimeResult);
 
-        self::assertTrue($context->hasActiveRequest());
-        self::assertSame($request, $context->currentRequest());
-        self::assertSame($result, $context->lastResult());
+        self::assertTrue($runtimeContext->hasActiveRequest());
+        self::assertSame($runtimeRequest, $runtimeContext->currentRequest());
+        self::assertSame($runtimeResult, $runtimeContext->lastResult());
     }
 
     #[Test]
     public function it_returns_last_result_when_no_request_is_active(): void
     {
-        $context = new RuntimeContext();
-        $result  = RuntimeResult::fromConsoleOutput(output: 'result');
+        $runtimeContext = new RuntimeContext();
+        $runtimeResult  = RuntimeResult::fromConsoleOutput(output: 'result');
 
-        $context->recordResult(result: $result);
+        $runtimeContext->recordResult(result: $runtimeResult);
 
-        self::assertSame($result, $context->lastResult());
-        self::assertNull($context->currentRequest());
+        self::assertSame($runtimeResult, $runtimeContext->lastResult());
+        self::assertNull($runtimeContext->currentRequest());
     }
 
     #[Test]
     public function it_resets_state_and_clears_all_values(): void
     {
-        $context = new RuntimeContext();
-        $scopeId = RequestScopeId::generate();
-        $request = new RuntimeRequest(method: 'GET', uri: '/test');
-        $result  = RuntimeResult::fromConsoleOutput(output: 'done');
+        $runtimeContext = new RuntimeContext();
+        $requestScopeId = RequestScopeId::generate();
+        $runtimeRequest = new RuntimeRequest(method: 'GET', uri: '/test');
+        $runtimeResult  = RuntimeResult::fromConsoleOutput(output: 'done');
 
-        $context->startRequest(scopeId: $scopeId, request: $request);
-        $context->recordResult(result: $result);
-        $context->resetState();
+        $runtimeContext->startRequest(scopeId: $requestScopeId, request: $runtimeRequest);
+        $runtimeContext->recordResult(result: $runtimeResult);
+        $runtimeContext->resetState();
 
-        self::assertFalse($context->hasActiveRequest());
-        self::assertNull($context->currentRequest());
-        self::assertNull($context->currentScopeId());
-        self::assertNull($context->lastResult());
+        self::assertFalse($runtimeContext->hasActiveRequest());
+        self::assertNull($runtimeContext->currentRequest());
+        self::assertNull($runtimeContext->currentScopeId());
+        self::assertNull($runtimeContext->lastResult());
     }
 }

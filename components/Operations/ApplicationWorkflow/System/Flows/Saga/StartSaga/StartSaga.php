@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaStepDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\InspectSaga\InspectSaga;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\InspectSaga\SagaRuntimeEvent;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ProtectSagaIdempotency\ProtectSagaIdempotency;
@@ -12,6 +13,7 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ProtectSaga
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaState\StoreSagaState;
 use InvalidArgumentException;
 use Random\RandomException;
+use Stringable;
 
 final readonly class StartSaga
 {
@@ -22,56 +24,56 @@ final readonly class StartSaga
     ) {}
 
     public function startWithIdempotency(
-        SagaDefinition $definition,
-        SagaStartCommand $command,
+        SagaDefinition   $sagaDefinition,
+        SagaStartCommand $sagaStartCommand,
     ): SagaInstance {
-        if ($command->idempotencyKey !== null) {
-            $existing = $this->protectSagaIdempotency->check(key: $command->idempotencyKey);
-            if ($existing !== null) {
+        if ($sagaStartCommand->idempotencyKey !== null) {
+            $existing = $this->protectSagaIdempotency->check(key: $sagaStartCommand->idempotencyKey);
+            if ($existing instanceof SagaCommandResult) {
                 return $existing;
             }
         }
 
-        $instance = $this->start(definition: $definition, command: $command);
+        $sagaInstance = $this->start(definition: $sagaDefinition, command: $sagaStartCommand);
 
-        if ($command->idempotencyKey !== null) {
+        if ($sagaStartCommand->idempotencyKey !== null) {
             $this->protectSagaIdempotency->record(
-                key   : $command->idempotencyKey,
-                result: SagaCommandResult::success(sagaId: $instance->id, output: $instance->toArray()),
+                key   : $sagaStartCommand->idempotencyKey,
+                result: SagaCommandResult::success(sagaId: $sagaInstance->id, output: $sagaInstance->toArray()),
             );
         }
 
-        return $instance;
+        return $sagaInstance;
     }
 
     public function start(
-        SagaDefinition $definition,
-        SagaStartCommand $command,
-        callable $correlationIdGenerator = null,
+        SagaDefinition   $sagaDefinition,
+        SagaStartCommand $sagaStartCommand,
+        ?callable        $correlationIdGenerator = null,
     ): SagaInstance {
-        if (! $definition->isValid()) {
+        if (! $sagaDefinition->isValid()) {
             throw new SagaStartFailure(
-                message: sprintf('Saga definition %s is invalid: %s', $definition->name, implode(', ', $definition->getValidationErrors())),
+                message: sprintf('Saga definition %s is invalid: %s', $sagaDefinition->name, implode(', ', $sagaDefinition->getValidationErrors())),
             );
         }
 
-        $firstStep = $definition->getFirstStep();
-        if ($firstStep === null) {
+        $firstStep = $sagaDefinition->getFirstStep();
+        if (! $firstStep instanceof SagaStepDefinition) {
             throw new SagaStartFailure(message: 'Saga has no steps to execute.');
         }
 
-        $id = $command->sagaId ?? ($correlationIdGenerator ?? 'default')();
-        $correlationId = $command->correlationId ?? $this->createCorrelationId();
+        $id            = $sagaStartCommand->sagaId ?? ($correlationIdGenerator ?? 'default')();
+        $correlationId = $sagaStartCommand->correlationId ?? $this->createCorrelationId();
 
         $instance = SagaInstance::create(
             id            : $id,
-            definitionName: $definition->name,
-            type          : $definition->type,
-            initialData   : $command->initialData,
+            definitionName: $sagaDefinition->name,
+            type          : $sagaDefinition->type,
+            initialData   : $sagaStartCommand->initialData,
             options       : [
                                 'correlation_id' => $correlationId,
-                                'tenant_id'      => $command->tenantId,
-                'timeout_seconds' => $definition->timeoutSeconds,
+                                'tenant_id'       => $sagaStartCommand->tenantId,
+                                'timeout_seconds' => $sagaDefinition->timeoutSeconds,
             ],
         );
 
@@ -80,7 +82,7 @@ final readonly class StartSaga
         $this->storeSagaState->save(instance: $instance);
 
         $this->inspectSaga->record(
-            event: SagaRuntimeEvent::started(sagaId: $id, sagaName: $definition->name),
+            event: SagaRuntimeEvent::started(sagaId: $id, sagaName: $sagaDefinition->name),
         );
 
         return $instance;
@@ -97,41 +99,16 @@ final readonly class StartSaga
 
 final readonly class SagaStartCommand
 {
-    public ?string $sagaId;
-
-    public string $definitionName;
-
-    public array $initialData;
-
-    public ?string $correlationId;
-
-    public ?string $tenantId;
-
-    public ?string $idempotencyKey;
-
-    private function __construct(
-        ?string $sagaId,
-        string $definitionName,
-        array $initialData,
-        ?string $correlationId,
-        ?string $tenantId,
-        ?string $idempotencyKey,
-    ) {
-        $this->sagaId        = $sagaId;
-        $this->definitionName = $definitionName;
-        $this->initialData   = $initialData;
-        $this->correlationId = $correlationId;
-        $this->tenantId      = $tenantId;
-        $this->idempotencyKey = $idempotencyKey;
+    private function __construct(public ?string $sagaId, public string $definitionName, public array $initialData, public ?string $correlationId, public ?string $tenantId, public ?string $idempotencyKey) {
     }
 
     public static function create(
         string $definitionName,
-        array $initialData = null,
+        ?array $initialData = null,
         array $options = [],
     ): self {
         $initialData ??= [];
-        if (empty(trim($definitionName))) {
+        if (in_array(trim($definitionName), ['', '0'], true)) {
             throw new InvalidArgumentException(message: 'Definition name cannot be empty.');
         }
 
@@ -158,19 +135,10 @@ final readonly class SagaStartCommand
     }
 }
 
-final readonly class SagaCorrelationId
+final readonly class SagaCorrelationId implements Stringable
 {
-    public string $value;
-
-    public ?string $prefix;
-
-    public ?string $suffix;
-
-    private function __construct(string $value, string $prefix = null, string $suffix = null)
+    private function __construct(public string $value, public ?string $prefix = null, public ?string $suffix = null)
     {
-        $this->value = $value;
-        $this->prefix = $prefix;
-        $this->suffix = $suffix;
     }
 
     /**
@@ -188,7 +156,7 @@ final readonly class SagaCorrelationId
             bin2hex(random_bytes(6)),
         );
         if ($suffix !== null) {
-            $value .= "_{$suffix}";
+            $value .= '_' . $suffix;
         }
 
         return new self(value: $value, prefix: $prefix, suffix: $suffix);

@@ -21,8 +21,8 @@ final class CacheSourceFailed extends RuntimeException
     {
         return new self(
             message  : sprintf('System source unavailable: %s', $reason),
-            sourceKey: $cacheSourceKey,
             throwable: $throwable,
+            sourceKey: $cacheSourceKey,
         );
     }
 
@@ -30,8 +30,8 @@ final class CacheSourceFailed extends RuntimeException
     {
         return new self(
             message  : sprintf('System source timeout for key "%s"', $cacheSourceKey->fullKey()),
-            sourceKey: $cacheSourceKey,
             throwable: $throwable,
+            sourceKey: $cacheSourceKey,
         );
     }
 
@@ -39,8 +39,8 @@ final class CacheSourceFailed extends RuntimeException
     {
         return new self(
             message  : sprintf('System source key "%s" not found', $cacheSourceKey->fullKey()),
-            sourceKey: $cacheSourceKey,
             throwable: $throwable,
+            sourceKey: $cacheSourceKey,
         );
     }
 }

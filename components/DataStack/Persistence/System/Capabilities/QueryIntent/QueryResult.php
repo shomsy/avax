@@ -109,13 +109,13 @@ final readonly class QueryResult
     /**
      * Returns a new instance with the specified fingerprint.
      */
-    public function withFingerprint(QueryFingerprint $fingerprint): QueryResult
+    public function withFingerprint(QueryFingerprint $queryFingerprint) : QueryResult
     {
         return new QueryResult(
             rows       : $this->rows,
             count      : $this->count,
             tookMs     : $this->tookMs,
-            fingerprint: $fingerprint,
+            fingerprint: $queryFingerprint,
         );
     }
 }

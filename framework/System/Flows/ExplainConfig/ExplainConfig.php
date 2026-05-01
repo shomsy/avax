@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\ConfigExplanation\ConfigSource;
 final readonly class ExplainConfig
 {
     public function __construct(
-        private ConfigExplainer $explainer = new ConfigExplainer(),
+        private ConfigExplainer $configExplainer = new ConfigExplainer(),
     ) {
     }
 
@@ -43,8 +43,8 @@ final readonly class ExplainConfig
     {
         $secretPatterns = ['password', 'secret', 'key', 'token', 'api_key', 'apikey'];
 
-        foreach ($secretPatterns as $pattern) {
-            if (stripos($key, $pattern) !== false) {
+        foreach ($secretPatterns as $secretPattern) {
+            if (stripos($key, $secretPattern) !== false) {
                 return is_string($value) && $value !== ''
                     ? substr($value, 0, 3) . '***' . substr($value, -2)
                     : $value;
@@ -56,14 +56,14 @@ final readonly class ExplainConfig
 
     public function explain(string $key): string
     {
-        $source = $this->explainer->getSource($key);
+        $source = $this->configExplainer->getSource($key);
 
-        if ($source === null) {
-            return "Config key '{$key}' not found in source registry.";
+        if (! $source instanceof ConfigSource) {
+            return sprintf("Config key '%s' not found in source registry.", $key);
         }
 
         $lines = [
-            "Config: {$key}",
+            'Config: ' . $key,
             sprintf('  Value: %s', var_export($source->value, true)),
             sprintf('  Source: %s', $source->source),
         ];
@@ -84,6 +84,6 @@ final readonly class ExplainConfig
      */
     public function allSources(): array
     {
-        return $this->explainer->allSources();
+        return $this->configExplainer->allSources();
     }
 }

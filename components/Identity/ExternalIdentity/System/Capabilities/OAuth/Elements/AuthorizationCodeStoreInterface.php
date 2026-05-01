@@ -21,11 +21,11 @@ interface AuthorizationCodeStoreInterface
         string $redirectUri,
         array $scopes,
         DateTimeImmutable $expiresAt,
-        string            $state = null,
-        string            $nonce = null,
-        string            $codeChallenge = null,
-        PkceMethod        $codeChallengeMethod = null,
-        DateTimeImmutable $mfaVerifiedAt = null,
+        ?string            $state = null,
+        ?string            $nonce = null,
+        ?string            $codeChallenge = null,
+        ?PkceMethod        $pkceMethod = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): IssuedAuthorizationCode;
 

@@ -10,11 +10,11 @@ final class IdentitySyncCapabilityUnavailable extends LogicException
 {
     public static function scim(string $operation): self
     {
-        return new self(message: "SCIM operation [{$operation}] is not configured.");
+        return new self(message: sprintf('SCIM operation [%s] is not configured.', $operation));
     }
 
     public static function provisioning(string $operation): self
     {
-        return new self(message: "Provisioning operation [{$operation}] is not configured.");
+        return new self(message: sprintf('Provisioning operation [%s] is not configured.', $operation));
     }
 }

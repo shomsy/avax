@@ -24,13 +24,13 @@ final readonly class Verification
     /**
      * @throws DateMalformedStringException
      */
-    public function beginEmailVerification(BeginEmailVerificationData $data): EmailVerificationChallenge
+    public function beginEmailVerification(BeginEmailVerificationData $beginEmailVerificationData) : EmailVerificationChallenge
     {
-        return $this->beginEmailVerification->execute(data: $data);
+        return $this->beginEmailVerification->execute(data: $beginEmailVerificationData);
     }
 
-    public function verifyEmail(VerifyEmailData $data): bool
+    public function verifyEmail(VerifyEmailData $verifyEmailData) : bool
     {
-        return $this->verifyEmail->execute(data: $data);
+        return $this->verifyEmail->execute(data: $verifyEmailData);
     }
 }

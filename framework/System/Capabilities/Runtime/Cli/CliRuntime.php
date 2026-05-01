@@ -11,8 +11,8 @@ final readonly class CliRuntime
 {
     public function __construct(
         private ConsoleKernelInterface $consoleKernel,
-        private CliInputReader $inputReader = new CliInputReader(),
-        private CliOutputWriter $outputWriter = new CliOutputWriter(),
+        private CliInputReader  $cliInputReader = new CliInputReader(),
+        private CliOutputWriter $cliOutputWriter = new CliOutputWriter(),
     ) {
     }
 
@@ -21,7 +21,7 @@ final readonly class CliRuntime
      */
     public function run(array $argv): RuntimeResult
     {
-        $input = $this->inputReader->read(argv: $argv);
+        $input = $this->cliInputReader->read(argv: $argv);
 
         return $this->consoleKernel->run(
             commandName: $input['command'],
@@ -29,8 +29,8 @@ final readonly class CliRuntime
         );
     }
 
-    public function render(RuntimeResult $result): string
+    public function render(RuntimeResult $runtimeResult) : string
     {
-        return $this->outputWriter->render(result: $result);
+        return $this->cliOutputWriter->render(result: $runtimeResult);
     }
 }

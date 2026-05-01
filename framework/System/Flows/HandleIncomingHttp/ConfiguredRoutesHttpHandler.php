@@ -41,9 +41,9 @@ final readonly class ConfiguredRoutesHttpHandler
             );
         }
 
-        $routeRegistrar = new FrameworkRouteRegistrar();
+        $frameworkRouteRegistrar = new FrameworkRouteRegistrar();
         $services       = [
-            RouterInterface::class => $routeRegistrar,
+            RouterInterface::class => $frameworkRouteRegistrar,
         ];
         $routeContainer = new RouteFacadeContainer(services: $services);
 
@@ -62,23 +62,23 @@ final readonly class ConfiguredRoutesHttpHandler
         }
 
         return new self(
-            registeredHttpRoutes: $routeRegistrar->collectRoutes(),
+            registeredHttpRoutes: $frameworkRouteRegistrar->collectRoutes(),
         );
     }
 
     public static function fromRouteDefinitions(callable $routeDefinitions): self
     {
-        $routeRegistrar = new FrameworkRouteRegistrar();
-        $routeDefinitions($routeRegistrar);
+        $frameworkRouteRegistrar = new FrameworkRouteRegistrar();
+        $routeDefinitions($frameworkRouteRegistrar);
 
         return new self(
-            registeredHttpRoutes: $routeRegistrar->collectRoutes(),
+            registeredHttpRoutes: $frameworkRouteRegistrar->collectRoutes(),
         );
     }
 
-    public function __invoke(RuntimeRequest $request): ResponseInterface
+    public function __invoke(RuntimeRequest $runtimeRequest) : ResponseInterface
     {
-        $serverRequest = $this->readIncomingHttpRequest->read(request: $request);
+        $serverRequest = $this->readIncomingHttpRequest->read(request: $runtimeRequest);
 
         try {
             $matchedRoute = $this->matchHttpRoute->match(
@@ -96,13 +96,13 @@ final readonly class ConfiguredRoutesHttpHandler
             }
 
             return $this->responseFactory->createErrorResponse(
-                statusCode : 404,
                 message    : 'Route not found',
+                statusCode : 404,
             );
         } catch (MethodNotAllowedException $exception) {
             return $this->responseFactory->createErrorResponse(
-                statusCode : 405,
                 message    : $exception->getMessage(),
+                statusCode : 405,
             );
         }
     }

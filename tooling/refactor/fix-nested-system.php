@@ -39,7 +39,7 @@ foreach ($nestedMoves as $from => $to) {
         continue;
     }
 
-    $op = "MOVE {$from} -> {$to}";
+    $op = sprintf('MOVE %s -> %s', $from, $to);
     echo ($dryRun ? '[dry-run] ' : '') . $op . "\n";
 
     if (! $dryRun) {
@@ -49,7 +49,11 @@ foreach ($nestedMoves as $from => $to) {
 
         $items = scandir($fromPath);
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
+            if ($item === '.') {
+                continue;
+            }
+
+            if ($item === '..') {
                 continue;
             }
 

@@ -8,8 +8,8 @@ use Avax\Components\Operations\Logging\System\PublicSurface\Logging;
 
 final class WriteLogEntry
 {
-    public function write(Logging $log, string $level, string $message) : void
+    public function write(Logging $logging, string $level, string $message) : void
     {
-        $log->log($level, $message);
+        $logging->log($level, $message);
     }
 }

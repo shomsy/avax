@@ -31,9 +31,9 @@ final readonly class AuthenticatedUser
         #[SensitiveParameter]
         public string $email,
         public string $username,
-        array $roles = null,
-        array $permissions = null,
-        bool  $emailVerified = null,
+        ?array $roles = null,
+        ?array $permissions = null,
+        ?bool  $emailVerified = null,
         public bool $mfaEnabled = false,
     ) {
         $roles             ??= [];
@@ -46,17 +46,17 @@ final readonly class AuthenticatedUser
 
     public static function fromUser(
         User $user,
-        bool $emailVerified = null,
+        ?bool $emailVerified = null,
         bool $mfaEnabled = false,
     ): self {
         $emailVerified ??= false;
         $roles = array_map(
-            callback: static fn (UserRole $role): string => $role->value,
+            callback: static fn (UserRole $userRole) : string => $userRole->value,
             array   : $user->getRoles(),
         );
 
         $permissions = array_map(
-            callback: static fn (UserPermission $permission): string => $permission->value,
+            callback: static fn (UserPermission $userPermission) : string => $userPermission->value,
             array   : $user->getPermissions(),
         );
 
@@ -71,18 +71,18 @@ final readonly class AuthenticatedUser
         );
     }
 
-    public function hasRole(UserRole $role): bool
+    public function hasRole(UserRole $userRole) : bool
     {
-        return in_array(needle: $role->value, haystack: $this->roles, strict: true);
+        return in_array(needle: $userRole->value, haystack: $this->roles, strict: true);
     }
 
-    public function canAccessRole(UserRole $requiredRole): bool
+    public function canAccessRole(UserRole $userRole) : bool
     {
-        return array_any(array: $this->roles, callback: static fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $requiredRole));
+        return array_any(array: $this->roles, callback: static fn ($storedRole) => UserRole::from(value: $storedRole)->canAccess(required: $userRole));
     }
 
-    public function hasPermission(UserPermission $permission): bool
+    public function hasPermission(UserPermission $userPermission) : bool
     {
-        return in_array(needle: $permission->value, haystack: $this->permissions, strict: true);
+        return in_array(needle: $userPermission->value, haystack: $this->permissions, strict: true);
     }
 }

@@ -34,11 +34,11 @@ final readonly class AppKernel implements HttpInterface, Kernel
     private array $middlewareStack;
 
     public function __construct(
-        private RouterRuntimeInterface $router,
+        private RouterRuntimeInterface $routerRuntime,
         private ResponseFactory $responseFactory,
         private array $globalMiddleware = [],
     ) {
-        $this->middlewareStack = empty($this->globalMiddleware)
+        $this->middlewareStack = $this->globalMiddleware === []
             ? $this->createDefaultMiddlewareStack()
             : $this->globalMiddleware;
     }
@@ -183,7 +183,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
             (new class () {
                 public function rateLimited(int $retryAfter): ResponseInterface
                 {
-                    return (new ResponseFactory())->rateLimited($retryAfter);
+                    return new ResponseFactory()->rateLimited($retryAfter);
                 }
             }),
             'ip',
@@ -197,23 +197,23 @@ final readonly class AppKernel implements HttpInterface, Kernel
         return MiddlewareRegistry::getPriorityHints();
     }
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $serverRequest) : ResponseInterface
     {
-        if (! $request instanceof RequestInterface) {
+        if (! $serverRequest instanceof RequestInterface) {
             return $this->responseFactory->error('Invalid request type', 400);
         }
 
-        return $this->runPipeline($request);
+        return $this->runPipeline($serverRequest);
     }
 
     private function runPipeline(RequestInterface $request): ResponseInterface
     {
-        $core = fn (RequestInterface $req): ResponseInterface => $this->router->resolve($req);
+        $core = fn (RequestInterface $request) : ResponseInterface => $this->routerRuntime->resolve($request);
 
         $pipeline = $this->middlewareStack;
 
         while ($middleware = array_pop($pipeline)) {
-            $core = static fn (RequestInterface $req) => $middleware->handle($req, $core);
+            $core = static fn (RequestInterface $request) => $middleware->handle($request, $core);
         }
 
         return $core($request);
@@ -224,19 +224,19 @@ final readonly class AppKernel implements HttpInterface, Kernel
         return $this->handle($request);
     }
 
-    public function terminate(RequestInterface $r, ResponseInterface $res): void
+    public function terminate(RequestInterface $request, ResponseInterface $response) : void
     {
     }
 
     public function getRouter(): RouterRuntimeInterface
     {
-        return $this->router;
+        return $this->routerRuntime;
     }
 
     public function withMiddleware(MiddlewareInterface $middleware): self
     {
         return new self(
-            $this->router,
+            $this->routerRuntime,
             $this->responseFactory,
             [...$this->middlewareStack, $middleware],
         );

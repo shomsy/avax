@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
-final class FileSessionStore implements SessionStoreInterface
+final readonly class FileSessionStore implements SessionStoreInterface
 {
     private string $path;
 
-    private int $ttl;
-
-    public function __construct(private array $config = [])
+    public function __construct(array $config = [])
     {
         $this->path = $config['path'] ?? sys_get_temp_dir() . '/avax-sessions';
-        $this->ttl  = $config['ttl']  ?? 1200;
 
         if (! is_dir(filename: $this->path)) {
             mkdir(directory: $this->path, permissions: 0o755, recursive: true);

@@ -21,21 +21,15 @@ final class ProviderState
     /** @var list<string> */
     public static array $events = [];
 
-    public string $message = 'registered';
-
-    public function __construct(string $message = 'registered')
+    public function __construct(public string $message = 'registered')
     {
-        $this->message = $message;
     }
 }
 
-final class BaseProvider implements RegisterDependency
+final readonly class BaseProvider implements RegisterDependency
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->app = $app;
     }
 
     public function dependsOn(): array
@@ -46,7 +40,7 @@ final class BaseProvider implements RegisterDependency
     public function register(): void
     {
         ProviderState::$events[] = 'base-register';
-        $this->app->instance(abstract: ProviderState::class, instance: new ProviderState(message: 'base-register'));
+        $this->container->instance(abstract: ProviderState::class, instance: new ProviderState(message: 'base-register'));
     }
 
     /**
@@ -56,17 +50,14 @@ final class BaseProvider implements RegisterDependency
     public function boot(): void
     {
         ProviderState::$events[]                           = 'base-boot';
-        $this->app->get(id: ProviderState::class)->message = 'base-booted';
+        $this->container->get(id: ProviderState::class)->message = 'base-booted';
     }
 }
 
-final class DemoProvider implements RegisterDependency
+final readonly class DemoProvider implements RegisterDependency
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->app = $app;
     }
 
     public function dependsOn(): array
@@ -83,10 +74,10 @@ final class DemoProvider implements RegisterDependency
         ProviderState::$events[] = 'demo-register';
         assertSame(
             expected: 'base-register',
-            actual  : $this->app->get(id: ProviderState::class)->message,
+            actual  : $this->container->get(id: ProviderState::class)->message,
             message : 'Dependent providers should register after their dependencies.',
         );
-        $this->app->get(id: ProviderState::class)->message = 'demo-registered';
+        $this->container->get(id: ProviderState::class)->message = 'demo-registered';
     }
 
     /**
@@ -98,10 +89,10 @@ final class DemoProvider implements RegisterDependency
         ProviderState::$events[] = 'demo-boot';
         assertSame(
             expected: 'base-booted',
-            actual  : $this->app->get(id: ProviderState::class)->message,
+            actual  : $this->container->get(id: ProviderState::class)->message,
             message : 'Dependent providers should boot after their dependencies.',
         );
-        $this->app->get(id: ProviderState::class)->message = 'demo-booted';
+        $this->container->get(id: ProviderState::class)->message = 'demo-booted';
     }
 }
 
@@ -115,21 +106,15 @@ final class DeferredProvidedService implements DeferredProvidedContract
 
 final class DeferredProviderConsumer
 {
-    public DeferredProvidedContract $dependency;
-
-    public function __construct(DeferredProvidedContract $dependency)
+    public function __construct(public DeferredProvidedContract $dependency)
     {
-        $this->dependency = $dependency;
     }
 }
 
-final class DeferredDemoProvider implements RegisterDeferredDependency
+final readonly class DeferredDemoProvider implements RegisterDeferredDependency
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->app = $app;
     }
 
     public function dependsOn(): array
@@ -150,7 +135,7 @@ final class DeferredDemoProvider implements RegisterDeferredDependency
     public function register(): void
     {
         ProviderState::$events[] = 'deferred-register';
-        $this->app->singleton(abstract: DeferredProvidedContract::class, concrete: DeferredProvidedService::class);
+        $this->container->singleton(abstract: DeferredProvidedContract::class, concrete: DeferredProvidedService::class);
     }
 
     public function boot(): void
@@ -159,13 +144,10 @@ final class DeferredDemoProvider implements RegisterDeferredDependency
     }
 }
 
-final class CycleProviderA implements RegisterDependency
+final readonly class CycleProviderA implements RegisterDependency
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->app = $app;
     }
 
     public function dependsOn(): array
@@ -175,21 +157,14 @@ final class CycleProviderA implements RegisterDependency
 
     public function register(): void
     {
-        $this->app->instance(abstract: 'cycle-a', instance: new stdClass());
-    }
-
-    public function boot(): void
-    {
+        $this->container->instance(abstract: 'cycle-a', instance: new stdClass());
     }
 }
 
-final class CycleProviderB implements RegisterDependency
+final readonly class CycleProviderB implements RegisterDependency
 {
-    private ContainerInterface $app;
-
-    public function __construct(ContainerInterface $app)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->app = $app;
     }
 
     public function dependsOn(): array
@@ -199,11 +174,7 @@ final class CycleProviderB implements RegisterDependency
 
     public function register(): void
     {
-        $this->app->instance(abstract: 'cycle-b', instance: new stdClass());
-    }
-
-    public function boot(): void
-    {
+        $this->container->instance(abstract: 'cycle-b', instance: new stdClass());
     }
 }
 

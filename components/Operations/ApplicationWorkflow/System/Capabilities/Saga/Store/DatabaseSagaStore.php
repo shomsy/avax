@@ -20,10 +20,11 @@ final readonly class DatabaseSagaStore implements SagaStoreInterface
     {
         $stmt = $this->pdo->prepare('SELECT * FROM sagas WHERE id = ?');
         $stmt->execute([$sagaId]);
+
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            $row['context'] = json_decode($row['context'], true);
+            $row['context'] = json_decode((string) $row['context'], true);
         }
 
         return $row ?: null;

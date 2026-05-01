@@ -8,16 +8,13 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
 
-final class ResultMapper
+final readonly class ResultMapper
 {
-    private string $className;
-
     private array $propertyMappings;
 
-    public function __construct(string $className)
+    public function __construct(private string $className)
     {
-        $this->className = $className;
-        $this->propertyMappings = $this->buildMappings(className: $className);
+        $this->propertyMappings = $this->buildMappings(className: $this->className);
     }
 
     /**
@@ -25,14 +22,14 @@ final class ResultMapper
      */
     private function buildMappings(string $className): array
     {
-        $ref          = new ReflectionClass(objectOrClass: $className);
+        $reflectionClass = new ReflectionClass(objectOrClass: $className);
         $mappings = [];
 
-        foreach ($ref->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $property) {
-            $propertyName = $property->getName();
+        foreach ($reflectionClass->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
+            $propertyName = $reflectionProperty->getName();
             $dbColumn = $propertyName;
 
-            $attributes = $property->getAttributes(name: Column::class);
+            $attributes = $reflectionProperty->getAttributes(name: Column::class);
             if (! empty($attributes)) {
                 $attr = $attributes[0]->newInstance();
                 $dbColumn = $attr->name ?? $propertyName;
@@ -60,7 +57,7 @@ final class ResultMapper
                 } else {
                     $property = new ReflectionClass(objectOrClass: $this->className)
                         ->getProperty(name: $propertyName);
-                    $property->setValue(object: $instance, value: $value);
+                    $property->setValue(value: $value, object: $instance);
                 }
             }
         }

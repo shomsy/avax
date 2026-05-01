@@ -11,18 +11,18 @@ final readonly class SmtpTransport implements MailTransport
 {
     public function __construct(private array $config = []) {}
 
-    public function send(MimeMessage $message, Envelope $envelope): TransportResult
+    public function send(MimeMessage $mimeMessage, Envelope $envelope) : TransportResult
     {
         $headers = [
             'From: ' . $envelope->from,
             'MIME-Version: 1.0',
-            'Content-Type: ' . $message->contentType . '; charset=UTF-8',
+            'Content-Type: ' . $mimeMessage->contentType . '; charset=UTF-8',
         ];
 
         $sent = mail(
-            to                : $message->to,
-            subject           : $message->subject,
-            message           : $message->body,
+            to                : $mimeMessage->to,
+            subject           : $mimeMessage->subject,
+            message           : $mimeMessage->body,
             additional_headers: implode(separator: "\r\n", array: $headers),
         );
 

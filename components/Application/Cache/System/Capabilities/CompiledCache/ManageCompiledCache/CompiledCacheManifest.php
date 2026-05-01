@@ -12,10 +12,10 @@ final class CompiledCacheManifest
     private array $entries = [];
 
     public function __construct(
-        CompiledCacheManifestEntry $entry = null,
+        ?CompiledCacheManifestEntry $compiledCacheManifestEntry = null,
     ) {
-        if ($entry instanceof CompiledCacheManifestEntry) {
-            $this->entries[$entry->name->toString()] = $entry;
+        if ($compiledCacheManifestEntry instanceof CompiledCacheManifestEntry) {
+            $this->entries[$compiledCacheManifestEntry->name->toString()] = $compiledCacheManifestEntry;
         }
     }
 

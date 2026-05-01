@@ -6,10 +6,10 @@ namespace Avax\Components\Identity\Auth\System\Flows\ReadCurrentUser;
 
 use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 
-final class ReadCurrentUser
+final readonly class ReadCurrentUser
 {
     public function __construct(
-        private readonly Auth $auth,
+        private Auth $auth,
     ) {}
 
     public function user(): mixed

@@ -29,14 +29,11 @@ use Throwable;
  */
 final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
 {
-    private ?LoggerInterface $logger;
-
     /**
      * @param LoggerInterface|null $logger Optional technical logger for capturing observer execution failures.
      */
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(private ?LoggerInterface $logger = null)
     {
-        $this->logger = $logger;
     }
 
     /**

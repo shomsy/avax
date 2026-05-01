@@ -13,13 +13,13 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 final readonly class Logout
 {
     public function __construct(
-        private ClearAuthenticatedIdentity $clearIdentity,
+        private ClearAuthenticatedIdentity $clearAuthenticatedIdentity,
         private Identity $identity,
     ) {}
 
     public function execute(): void
     {
-        $this->clearIdentity->execute();
+        $this->clearAuthenticatedIdentity->execute();
         $this->identity->clear();
     }
 }

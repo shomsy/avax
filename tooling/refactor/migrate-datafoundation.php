@@ -29,10 +29,10 @@ $migrations = [
 
 $copied = 0;
 foreach ($migrations as $srcRel => $dstRel) {
-    $src = "$dfRoot/$srcRel";
-    $dst = "$dataRoot/$dstRel";
+    $src     = sprintf('%s/%s', $dfRoot, $srcRel);
+    $dst     = sprintf('%s/%s', $dataRoot, $dstRel);
     if (! file_exists($src)) {
-        echo "MISSING $src\n";
+        echo sprintf('MISSING %s%s', $src, PHP_EOL);
 
         continue;
     }
@@ -44,19 +44,19 @@ foreach ($migrations as $srcRel => $dstRel) {
     $content = file_get_contents($dst);
     $dir    = dirname($dstRel);
     $newNs  = 'Avax\\Components\\Data\\System\\' . str_replace('/', '\\', $dir);
-    $content = preg_replace('#^namespace\s+.*;$#m', "namespace {$newNs};", $content, 1, $count);
+    $content = preg_replace('#^namespace\s+.*;$#m', sprintf('namespace %s;', $newNs), $content, 1, $count);
     if ($count === 0) {
         $content = "namespace {$newNs};\n\n" . $content;
     }
     $content = str_replace(['use Avax\DataFoundation\\', 'use components\DataFoundation\\'], 'use Avax\\Components\\Data\\', $content);
     file_put_contents($dst, $content);
-    echo "Migrated: $srcRel -> $dstRel\n";
+    echo sprintf('Migrated: %s -> %s%s', $srcRel, $dstRel, PHP_EOL);
     $copied++;
 }
 
 // Validation rules directory copy
-$valSrc         = "$dfRoot/Validation/Attributes/Rules";
-$valDstBase = "$dataRoot/Capabilities/Validation/Rules";
+$valSrc      = $dfRoot . '/Validation/Attributes/Rules';
+$valDstBase  = $dataRoot . '/Capabilities/Validation/Rules';
 if (is_dir($valSrc)) {
     $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($valSrc, FilesystemIterator::SKIP_DOTS));
     foreach ($it as $file) {
@@ -64,8 +64,8 @@ if (is_dir($valSrc)) {
             continue;
         }
         $absPath = $file->getRealPath();
-        $rel    = substr($absPath, strlen($valSrc) + 1);
-        $dst    = "$valDstBase/$rel";
+        $rel = substr((string) $absPath, strlen($valSrc) + 1);
+        $dst = sprintf('%s/%s', $valDstBase, $rel);
         $dstDir = dirname($dst);
         if (! is_dir($dstDir)) {
             mkdir($dstDir, 0o777, true);
@@ -78,15 +78,15 @@ if (is_dir($valSrc)) {
         if ($dir !== '.' && $dir !== '') {
             $newNs .= '\\' . str_replace('/', '\\', $dir);
         }
-        $content = preg_replace('#^namespace\s+.*;$#m', "namespace {$newNs};", $content, 1, $c);
+        $content = preg_replace('#^namespace\s+.*;$#m', sprintf('namespace %s;', $newNs), $content, 1, $c);
         if ($c === 0) {
             $content = "namespace {$newNs};\n\n" . $content;
         }
         $content = str_replace(['use Avax\DataFoundation\\', 'use components\DataFoundation\\'], 'use Avax\\Components\\Data\\', $content);
         file_put_contents($dst, $content);
-        echo "Migrated Validation/Rules: $rel\n";
+        echo sprintf('Migrated Validation/Rules: %s%s', $rel, PHP_EOL);
         $copied++;
     }
 }
 
-echo "\nTotal migrated: $copied\n";
+echo "\nTotal migrated: {$copied}\n";

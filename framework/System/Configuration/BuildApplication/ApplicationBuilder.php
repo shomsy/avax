@@ -28,7 +28,7 @@ final class ApplicationBuilder
 
     public function __construct(
         private ProjectPath $projectPath,
-        private EnvironmentName $environment,
+        private EnvironmentName $environmentName,
         private Clock $clock = new SystemClock(),
         private string $runtimeName = 'avax',
     ) {
@@ -41,7 +41,7 @@ final class ApplicationBuilder
 
     public function environment(): EnvironmentName
     {
-        return $this->environment;
+        return $this->environmentName;
     }
 
     public function clock(): Clock
@@ -57,7 +57,7 @@ final class ApplicationBuilder
     public function withEnvironment(EnvironmentName|string $environment): self
     {
         $clone              = clone $this;
-        $clone->environment = $environment instanceof EnvironmentName
+        $clone->environmentName = $environment instanceof EnvironmentName
             ? $environment
             : new EnvironmentName(value: $environment);
 
@@ -120,10 +120,10 @@ final class ApplicationBuilder
         return $clone;
     }
 
-    public function registerComponentProvider(ComponentProviderInterface $provider): self
+    public function registerComponentProvider(ComponentProviderInterface $componentProvider) : self
     {
         $clone                     = clone $this;
-        $clone->componentProviders = [...$clone->componentProviders, $provider];
+        $clone->componentProviders = [...$clone->componentProviders, $componentProvider];
 
         return $clone;
     }

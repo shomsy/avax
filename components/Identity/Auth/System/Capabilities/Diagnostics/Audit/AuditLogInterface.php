@@ -9,5 +9,5 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit;
  */
 interface AuditLogInterface
 {
-    public function record(AuditEvent $event): void;
+    public function record(AuditEvent $auditEvent) : void;
 }

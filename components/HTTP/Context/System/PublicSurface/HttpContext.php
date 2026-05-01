@@ -17,14 +17,14 @@ use Psr\Http\Message\UriInterface;
 final readonly class HttpContext implements HttpContextInterface
 {
     public function __construct(
-        private ?ServerRequestInterface $request,
-        private GlobalsProviderInterface $globals,
+        private ?ServerRequestInterface  $serverRequest,
+        private GlobalsProviderInterface $globalsProvider,
     ) {
     }
 
     public function request(): ?ServerRequestInterface
     {
-        return $this->request;
+        return $this->serverRequest;
     }
 
     public function baseUrl(): string
@@ -43,7 +43,7 @@ final readonly class HttpContext implements HttpContextInterface
 
     public function scheme(): string
     {
-        $uri = $this->request?->getUri();
+        $uri = $this->serverRequest?->getUri();
         if ($uri instanceof UriInterface && ($scheme = $uri->getScheme()) !== '') {
             return $scheme;
         }
@@ -55,7 +55,7 @@ final readonly class HttpContext implements HttpContextInterface
 
     public function host(): string
     {
-        $uri = $this->request?->getUri();
+        $uri = $this->serverRequest?->getUri();
         if ($uri instanceof UriInterface && ($host = $uri->getHost()) !== '') {
             return $host;
         }
@@ -67,12 +67,12 @@ final readonly class HttpContext implements HttpContextInterface
 
     public function serverParams(): array
     {
-        return $this->request?->getServerParams() ?? $this->globals->server();
+        return $this->serverRequest?->getServerParams() ?? $this->globalsProvider->server();
     }
 
     private function port(): ?int
     {
-        $uri = $this->request?->getUri();
+        $uri = $this->serverRequest?->getUri();
         if ($uri instanceof UriInterface && ($port = $uri->getPort()) !== null) {
             return $port;
         }
@@ -105,14 +105,14 @@ final readonly class HttpContext implements HttpContextInterface
 
     public function userAgent(): ?string
     {
-        return $this->request?->getHeaderLine('User-Agent')
+        return $this->serverRequest?->getHeaderLine('User-Agent')
             ?? $this->serverParams()['HTTP_USER_AGENT']
             ?? null;
     }
 
     public function authHeader(): ?string
     {
-        return $this->request?->getHeaderLine('Authorization')
+        return $this->serverRequest?->getHeaderLine('Authorization')
             ?? $this->serverParams()['HTTP_AUTHORIZATION']
             ?? $this->serverParams()['REDIRECT_HTTP_AUTHORIZATION']
             ?? null;
@@ -120,26 +120,26 @@ final readonly class HttpContext implements HttpContextInterface
 
     public function cookies(): array
     {
-        return $this->request?->getCookieParams() ?? $this->globals->cookies();
+        return $this->serverRequest?->getCookieParams() ?? $this->globalsProvider->cookies();
     }
 
     public function query(): array
     {
-        return $this->request?->getQueryParams() ?? $this->globals->query();
+        return $this->serverRequest?->getQueryParams() ?? $this->globalsProvider->query();
     }
 
     public function post(): array
     {
-        $parsed = $this->request?->getParsedBody();
+        $parsed = $this->serverRequest?->getParsedBody();
         if (is_array($parsed)) {
             return $parsed;
         }
 
-        return $this->globals->post();
+        return $this->globalsProvider->post();
     }
 
     public function files(): array
     {
-        return $this->request?->getUploadedFiles() ?? $this->globals->files();
+        return $this->serverRequest?->getUploadedFiles() ?? $this->globalsProvider->files();
     }
 }

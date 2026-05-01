@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Middleware;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
 /**
@@ -28,8 +29,8 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
     protected function createForbiddenResponse(): ResponseInterface
     {
         // Return a minimal 403 response
-        $responseClass = class_exists('Avax\Components\HTTP\Response\System\PublicSurface\Response')
-            ? 'Avax\Components\HTTP\Response\System\PublicSurface\Response'
+        $responseClass = class_exists(Response::class)
+            ? Response::class
             : null;
 
         if ($responseClass !== null) {

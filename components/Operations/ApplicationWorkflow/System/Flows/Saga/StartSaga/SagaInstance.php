@@ -23,64 +23,7 @@ enum SagaInstanceStatus: string
 
 final readonly class SagaInstance
 {
-    public string $id;
-
-    public string $definitionName;
-
-    public string $type;
-
-    public SagaInstanceStatus $status;
-
-    public int $currentStepIndex;
-
-    public ?string $currentStepName;
-
-    public array $data;
-
-    public array $completedSteps;
-
-    public array $stepResults;
-
-    public ?DateTimeImmutable $startedAt;
-
-    public ?DateTimeImmutable $completedAt;
-
-    public ?DateTimeImmutable $timeoutAt;
-
-    public ?string $correlationId;
-
-    public ?string $tenantId;
-
-    private function __construct(
-        string $id,
-        string $definitionName,
-        string $type,
-        SagaInstanceStatus $status,
-        int $currentStepIndex,
-        ?string $currentStepName,
-        array $data,
-        array $completedSteps,
-        array $stepResults,
-        ?DateTimeImmutable $startedAt,
-        ?DateTimeImmutable $completedAt,
-        ?DateTimeImmutable $timeoutAt,
-        ?string $correlationId,
-        ?string $tenantId,
-    ) {
-        $this->id              = $id;
-        $this->definitionName  = $definitionName;
-        $this->type            = $type;
-        $this->status          = $status;
-        $this->currentStepIndex = $currentStepIndex;
-        $this->currentStepName = $currentStepName;
-        $this->data            = $data;
-        $this->completedSteps  = $completedSteps;
-        $this->stepResults     = $stepResults;
-        $this->startedAt       = $startedAt;
-        $this->completedAt     = $completedAt;
-        $this->timeoutAt       = $timeoutAt;
-        $this->correlationId   = $correlationId;
-        $this->tenantId        = $tenantId;
+    private function __construct(public string $id, public string $definitionName, public string $type, public SagaInstanceStatus $status, public int $currentStepIndex, public ?string $currentStepName, public array $data, public array $completedSteps, public array $stepResults, public ?DateTimeImmutable $startedAt, public ?DateTimeImmutable $completedAt, public ?DateTimeImmutable $timeoutAt, public ?string $correlationId, public ?string $tenantId) {
     }
 
     /**
@@ -94,7 +37,7 @@ final readonly class SagaInstance
         array $initialData,
         array $options = [],
     ): self {
-        if (empty(trim($id))) {
+        if (in_array(trim($id), ['', '0'], true)) {
             throw new InvalidArgumentException(message: 'Saga instance ID cannot be empty.');
         }
 

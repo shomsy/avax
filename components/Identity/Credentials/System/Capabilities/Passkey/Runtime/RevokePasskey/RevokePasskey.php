@@ -7,10 +7,12 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runti
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyCredentialStoreInterface;
 use SensitiveParameter;
 
@@ -21,7 +23,7 @@ final readonly class RevokePasskey
         private CurrentAuthentication $currentAuthentication,
         private RequireFreshMfa $requireFreshMfa,
         #[SensitiveParameter]
-        private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyCredentialStoreInterface $passkeyCredentialStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
     ) {}
@@ -34,18 +36,18 @@ final readonly class RevokePasskey
     {
         $user = $this->currentAuthentication->read()->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             throw PasskeyOperationFailed::unauthenticated();
         }
 
-        $credential = $this->credentialStore->find(credentialId: $credentialId);
+        $credential = $this->passkeyCredentialStore->find(credentialId: $credentialId);
 
-        if ($credential === null || $credential->userId !== $user->id) {
+        if (! $credential instanceof PasskeyCredential || $credential->userId !== $user->id) {
             throw PasskeyOperationFailed::notFound();
         }
 
         $this->requireFreshMfa->execute();
-        $this->credentialStore->revoke(credentialId: $credentialId, revokedAt: $this->clock->now());
+        $this->passkeyCredentialStore->revoke(credentialId: $credentialId, revokedAt: $this->clock->now());
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.passkey.revoked',
             occurredAt: $this->clock->now(),

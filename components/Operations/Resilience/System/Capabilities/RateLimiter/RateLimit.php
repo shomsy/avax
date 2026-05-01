@@ -6,16 +6,16 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter;
 
 final class RateLimit
 {
-    private static ?RedisRateLimiter $limiter = null;
+    private static ?RedisRateLimiter $redisRateLimiter = null;
 
-    public static function setLimiter(RedisRateLimiter $limiter) : void
+    public static function setLimiter(RedisRateLimiter $redisRateLimiter) : void
     {
-        self::useLimiter(limiter: $limiter);
+        self::useLimiter(limiter: $redisRateLimiter);
     }
 
-    public static function useLimiter(RedisRateLimiter $limiter) : void
+    public static function useLimiter(RedisRateLimiter $redisRateLimiter) : void
     {
-        self::$limiter = $limiter;
+        self::$redisRateLimiter = $redisRateLimiter;
     }
 
     public static function attempt(string $key, int $maxAttempts, int $decaySeconds = 60) : bool
@@ -29,11 +29,11 @@ final class RateLimit
 
     private static function limiter() : RedisRateLimiter
     {
-        if (self::$limiter === null) {
-            self::$limiter = new RedisRateLimiter(config: ['driver' => 'auto']);
+        if (! self::$redisRateLimiter instanceof RedisRateLimiter) {
+            self::$redisRateLimiter = new RedisRateLimiter(config: ['driver' => 'auto']);
         }
 
-        return self::$limiter;
+        return self::$redisRateLimiter;
     }
 
     public static function remaining(string $key, int $maxAttempts, int $decaySeconds = 60) : int

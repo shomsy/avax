@@ -14,11 +14,11 @@ final readonly class ApiDocumentation
      */
     public static function openApi(array $routes = []): array
     {
-        return (new OpenApiGenerator())->generate(routes: $routes);
+        return new OpenApiGenerator()->generate(routes: $routes);
     }
 
     public static function swagger(string $openApiUrl = '/api/docs/openapi.json'): string
     {
-        return (new SwaggerUi())->html(openApiUrl: $openApiUrl);
+        return new SwaggerUi()->html(openApiUrl: $openApiUrl);
     }
 }

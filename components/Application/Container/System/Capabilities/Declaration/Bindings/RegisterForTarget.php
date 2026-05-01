@@ -13,17 +13,8 @@ final class RegisterForTarget
 {
     private string $needs = '';
 
-    private readonly string $consumer;
-
-    private readonly DependencyRegistry $registry;
-
-    public function __construct(
-        DependencyRegistry $registry,
-        string $consumer,
-    )
+    public function __construct(private readonly DependencyRegistry $dependencyRegistry, private readonly string $consumer)
     {
-        $this->registry = $registry;
-        $this->consumer = $consumer;
     }
 
     public function needs(string $abstract) : self
@@ -41,7 +32,7 @@ final class RegisterForTarget
             );
         }
 
-        $this->registry->addContextual(
+        $this->dependencyRegistry->addContextual(
             consumer: $this->consumer,
             needs   : $this->needs,
             give    : $implementation,

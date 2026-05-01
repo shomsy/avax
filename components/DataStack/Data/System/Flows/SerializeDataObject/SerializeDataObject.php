@@ -10,11 +10,11 @@ use stdClass;
 
 final readonly class SerializeDataObject
 {
-    public function __construct(private ?DataTransferConfig $config = null) {}
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
 
-    public function toArray(object $object, int $depth = null, bool $excludeHidden = true) : array
+    public function toArray(object $object, ?int $depth = null, bool $excludeHidden = true) : array
     {
-        return new ConvertDataObjectToArray(config: $this->config)->convert(
+        return new ConvertDataObjectToArray(config: $this->dataTransferConfig)->convert(
             object       : $object,
             depth        : $depth,
             excludeHidden: $excludeHidden,
@@ -24,11 +24,11 @@ final readonly class SerializeDataObject
     /**
      * @throws JsonException
      */
-    public function toJson(object $object, int $flags = null, int $depth = 512) : string
+    public function toJson(object $object, ?int $flags = null, int $depth = 512) : string
     {
         $flags ??= 0;
 
-        return new ConvertDataObjectToJson(config: $this->config)->convert(object: $object, flags: $flags, depth: $depth);
+        return new ConvertDataObjectToJson(config: $this->dataTransferConfig)->convert(object: $object, flags: $flags, depth: $depth);
     }
 
     public function toFlatArray(object $object): array
@@ -41,11 +41,11 @@ final readonly class SerializeDataObject
      */
     public function toStdClass(object $object): stdClass
     {
-        return new ConvertDataObjectToStdClass(config: $this->config)->convert(object: $object);
+        return new ConvertDataObjectToStdClass(config: $this->dataTransferConfig)->convert(object: $object);
     }
 
     public function toJsonApi(object $object, string $type): array
     {
-        return new ConvertDataObjectToJsonApi(config: $this->config)->convert(object: $object, type: $type);
+        return new ConvertDataObjectToJsonApi(config: $this->dataTransferConfig)->convert(object: $object, type: $type);
     }
 }

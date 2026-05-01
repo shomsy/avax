@@ -116,6 +116,6 @@ final class RequestUri implements UriInterface
 
     public function __toString() : string
     {
-        return ($this->scheme ? $this->scheme . '://' : '') . $this->host . $this->path . ($this->query ? '?' . $this->query : '');
+        return ($this->scheme !== '' && $this->scheme !== '0' ? $this->scheme . '://' : '') . $this->host . $this->path . ($this->query !== '' && $this->query !== '0' ? '?' . $this->query : '');
     }
 }

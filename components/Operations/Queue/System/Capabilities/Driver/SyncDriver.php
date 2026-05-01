@@ -47,7 +47,7 @@ final class SyncDriver implements QueueDriverInterface
 
     public function pop(): ?Job
     {
-        if (empty($this->pending)) {
+        if ($this->pending === []) {
             return null;
         }
 

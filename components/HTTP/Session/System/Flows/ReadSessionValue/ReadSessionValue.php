@@ -9,11 +9,11 @@ use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
 final readonly class ReadSessionValue
 {
     public function __construct(
-        private SessionScope $scope,
+        private SessionScope $sessionScope,
     ) {}
 
     public function execute(string $key, mixed $default = null) : mixed
     {
-        return $this->scope->get($key, $default);
+        return $this->sessionScope->get($key, $default);
     }
 }

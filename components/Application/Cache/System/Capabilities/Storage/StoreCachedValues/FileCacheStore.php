@@ -158,7 +158,7 @@ final readonly class FileCacheStore implements CacheStore
             return false;
         }
 
-        $result = $this->read(key: $cacheKey, clock: $this->clock);
+        $result = $this->read(clock: $this->clock, key: $cacheKey);
 
         return $result instanceof CacheStoreRecordWasFound;
     }
@@ -207,20 +207,20 @@ final readonly class FileCacheStore implements CacheStore
 
             $record = new StoredCacheRecord(
                 value         : $value,
-                lifecycle     : $lifecycle,
                 serializedData: $data['serializedData'] ?? null,
                 format        : $data['format']         ?? null,
+                lifecycle     : $lifecycle,
             );
 
             $updatedLifecycle = $lifecycle->withAccessed(clock: $clock);
             $record           = new StoredCacheRecord(
                 value         : $record->value,
-                lifecycle     : $updatedLifecycle,
                 serializedData: $record->serializedData,
                 format        : $record->format,
+                lifecycle     : $updatedLifecycle,
             );
 
-            return new CacheStoreRecordWasFound(key: $cacheKey, record: $record, clock: $clock);
+            return new CacheStoreRecordWasFound(clock: $clock, key: $cacheKey, record: $record);
         } catch (Throwable) {
             $this->forget(key: $cacheKey);
 

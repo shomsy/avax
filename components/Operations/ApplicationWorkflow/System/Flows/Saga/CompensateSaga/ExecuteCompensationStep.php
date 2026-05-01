@@ -14,19 +14,19 @@ final readonly class ExecuteCompensationStep
     public function __construct(private object $compensationRunner) {}
 
     public function execute(
-        SagaStepDefinition $step,
+        SagaStepDefinition $sagaStepDefinition,
         array $previousResult,
     ): array {
-        if ($step->compensationComponent === null) {
+        if ($sagaStepDefinition->compensationComponent === null) {
             throw new SagaCompensationFailure(
-                message: sprintf('No compensation defined for step %s.', $step->name),
+                message: sprintf('No compensation defined for step %s.', $sagaStepDefinition->name),
             );
         }
 
         $startTime = microtime(true);
 
         $input = $previousResult['output'] ?? [];
-        $result = ($this->compensationRunner)($step->compensationComponent, $input);
+        $result = ($this->compensationRunner)($sagaStepDefinition->compensationComponent, $input);
 
         $duration = (microtime(true) - $startTime) * 1000;
 
@@ -40,7 +40,7 @@ final readonly class ExecuteCompensationStep
 
 final readonly class RecordCompensationCompleted
 {
-    public function __construct(private object $store, private object $inspect) {}
+    public function __construct(private object $inspect) {}
 
     public function record(
         string $sagaId,
@@ -61,7 +61,7 @@ final readonly class RecordCompensationCompleted
 
 final readonly class RecordCompensationFailed
 {
-    public function __construct(private object $store, private object $inspect) {}
+    public function __construct(private object $inspect) {}
 
     public function record(
         string $sagaId,
@@ -101,7 +101,7 @@ final readonly class PublishSagaCompensated
 
 class SagaCompensationFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga compensation failed.', Throwable $previous = null)
+    public function __construct(string $message = 'Saga compensation failed.', ?Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

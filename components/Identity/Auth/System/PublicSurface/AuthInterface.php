@@ -25,9 +25,9 @@ interface AuthInterface
 
     public function guest(): bool;
 
-    public function register(RegistrationData $data): RegistrationResult;
+    public function register(RegistrationData $registrationData) : RegistrationResult;
 
-    public function changePassword(ChangePasswordData $data): void;
+    public function changePassword(ChangePasswordData $changePasswordData) : void;
 
     public function logoutAllSessions(): void;
 }

@@ -6,8 +6,10 @@ namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Ru
 
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\DeterministicRiskEngine;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskDecision;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 
@@ -17,23 +19,23 @@ final readonly class AssessCurrentRisk
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
         private UserSourceInterface $userSource,
-        private DeterministicRiskEngine $riskEngine,
+        private DeterministicRiskEngine $deterministicRiskEngine,
     ) {}
 
-    public function execute(#[SensitiveParameter] string $ipAddress = null, string $userAgent = null) : ?RiskDecision
+    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : ?RiskDecision
     {
         $user = $this->currentAuthentication->read()->user();
 
-        if ($user === null) {
+        if (! $user instanceof AuthenticatedUser) {
             return null;
         }
 
         $entity = $this->userSource->findById(id: new UserId(value: $user->id));
 
-        if ($entity === null) {
+        if (! $entity instanceof User) {
             return null;
         }
 
-        return $this->riskEngine->assessSuccessfulAuthentication(user: $entity, ipAddress: $ipAddress, userAgent: $userAgent);
+        return $this->deterministicRiskEngine->assessSuccessfulAuthentication(user: $entity, ipAddress: $ipAddress, userAgent: $userAgent);
     }
 }

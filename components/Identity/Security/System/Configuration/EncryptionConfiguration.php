@@ -16,7 +16,7 @@ use InvalidArgumentException;
  */
 final readonly class EncryptionConfiguration
 {
-    private const DEFAULT_CIPHER = 'aes-256-gcm';
+    private const string DEFAULT_CIPHER = 'aes-256-gcm';
 
     public function __construct(
         private string $cipher = self::DEFAULT_CIPHER,
@@ -24,7 +24,7 @@ final readonly class EncryptionConfiguration
         private string $currentVersion = '1',
         private string $salt = '',
     ) {
-        if (empty($this->keyVersions)) {
+        if ($this->keyVersions === []) {
             throw new InvalidArgumentException('Encryption configuration requires at least one key version');
         }
 

@@ -9,7 +9,7 @@ use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 
 final readonly class NullTransport implements MailTransport
 {
-    public function send(MimeMessage $message, Envelope $envelope): TransportResult
+    public function send(MimeMessage $mimeMessage, Envelope $envelope) : TransportResult
     {
         return new TransportResult(
             success  : true,

@@ -13,38 +13,38 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\F
 
 final readonly class VerifyFederationDomain
 {
-    public function __construct(private FederationConnectionStoreInterface $connectionStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws FederationFailed
      */
-    public function execute(VerifyFederationDomainData $data): FederationConnection
+    public function execute(VerifyFederationDomainData $verifyFederationDomainData) : FederationConnection
     {
-        $connection = $this->connectionStore->find(connectionId: $data->connectionId);
+        $connection = $this->federationConnectionStore->find(connectionId: $verifyFederationDomainData->connectionId);
 
-        if ($connection === null) {
+        if (! $connection instanceof FederationConnection) {
             throw FederationFailed::notFound();
         }
 
         if (
             $connection->domainVerificationToken === null
-            || ! hash_equals(known_string: $connection->domainVerificationToken, user_string: trim(string: $data->verificationToken))
+            || ! hash_equals(known_string: $connection->domainVerificationToken, user_string: trim(string: $verifyFederationDomainData->verificationToken))
         ) {
             throw FederationFailed::invalidDomainVerificationToken();
         }
 
-        $verified = $connection->withVerifiedDomain(verifiedAt: $this->clock->now());
-        $this->connectionStore->save(connection: $verified);
+        $federationConnection = $connection->withVerifiedDomain(verifiedAt: $this->clock->now());
+        $this->federationConnectionStore->save(connection: $federationConnection);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.domain.verified',
             occurredAt: $this->clock->now(),
             context   : [
-                'connection_id' => $verified->connectionId,
-                'tenant' => $verified->tenantSlug,
-                'domain' => $verified->domain,
+                            'connection_id' => $federationConnection->connectionId,
+                            'tenant'        => $federationConnection->tenantSlug,
+                            'domain'        => $federationConnection->domain,
             ],
         ));
 
-        return $verified;
+        return $federationConnection;
     }
 }

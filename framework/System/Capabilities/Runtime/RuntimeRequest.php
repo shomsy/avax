@@ -13,27 +13,15 @@ final readonly class RuntimeRequest
     private string $uri;
 
     /**
-     * @var array<string, list<string>>
-     */
-    private array $headers;
-
-    private ?string $body;
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $attributes;
-
-    /**
      * @param array<string, list<string>> $headers
      * @param array<string, mixed> $attributes
      */
     public function __construct(
         string $method,
         string $uri,
-        array $headers = [],
-        string $body = null,
-        array $attributes = [],
+        private array   $headers = [],
+        private ?string $body = null,
+        private array   $attributes = [],
     ) {
         $normalizedMethod = strtoupper(string: trim(string: $method));
         $normalizedUri = trim(string: $uri);
@@ -48,9 +36,6 @@ final readonly class RuntimeRequest
 
         $this->method  = $normalizedMethod;
         $this->uri     = $normalizedUri;
-        $this->headers = $headers;
-        $this->body    = $body;
-        $this->attributes = $attributes;
     }
 
     public function method() : string

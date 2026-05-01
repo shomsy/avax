@@ -54,7 +54,7 @@ final class TaggedCache
             $redisKeys = $this->cacheStore->getRedis()->sMembers($this->tagKey);
 
             if (is_array($redisKeys)) {
-                $keys = array_values(array_unique(array_merge($keys, array_map('strval', $redisKeys))));
+                $keys = array_values(array_unique(array_merge($keys, array_map(strval(...), $redisKeys))));
             }
         }
 

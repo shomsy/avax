@@ -13,19 +13,19 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
     /**
      * @param list<OidcProviderInterface> $verificationProviders
      */
-    public function __construct(private OidcProviderInterface $activeProvider, private array $verificationProviders = []) {}
+    public function __construct(private OidcProviderInterface $oidcProvider, private array $verificationProviders = []) {}
 
     public function issueIdToken(
         User $user,
         string $clientId,
         array $scopes,
-        string            $nonce = null,
-        DateTimeImmutable $authenticatedAt = null,
+        ?string            $nonce = null,
+        ?DateTimeImmutable $authenticatedAt = null,
         #[SensitiveParameter]
-        string            $sessionId = null,
+        ?string            $sessionId = null,
         bool $phishingResistant = false,
     ): OidcIdToken {
-        return $this->activeProvider->issueIdToken(
+        return $this->oidcProvider->issueIdToken(
             user             : $user,
             clientId         : $clientId,
             scopes           : $scopes,
@@ -38,20 +38,20 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
 
     public function issueJwt(array $claims): string
     {
-        return $this->activeProvider->issueJwt(claims: $claims);
+        return $this->oidcProvider->issueJwt(claims: $claims);
     }
 
     public function readProviderMetadata(): OidcProviderMetadata
     {
-        return $this->activeProvider->readProviderMetadata();
+        return $this->oidcProvider->readProviderMetadata();
     }
 
     public function readJsonWebKeySet(): OidcJsonWebKeySet
     {
         $keys = [];
 
-        foreach ($this->providers() as $provider) {
-            foreach ($provider->readJsonWebKeySet()->keys as $key) {
+        foreach ($this->providers() as $oidcProvider) {
+            foreach ($oidcProvider->readJsonWebKeySet()->keys as $key) {
                 $keys[$key->keyId] = $key;
             }
         }
@@ -64,18 +64,18 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
      */
     private function providers(): array
     {
-        return [$this->activeProvider, ...$this->verificationProviders];
+        return [$this->oidcProvider, ...$this->verificationProviders];
     }
 
     public function subjectIdentifier(User $user, string $clientId): string
     {
-        return $this->activeProvider->subjectIdentifier(user: $user, clientId: $clientId);
+        return $this->oidcProvider->subjectIdentifier(user: $user, clientId: $clientId);
     }
 
     public function resolveIdToken(#[SensitiveParameter] string $idToken): ?array
     {
-        foreach ($this->providers() as $provider) {
-            $claims = $provider->resolveIdToken(idToken: $idToken);
+        foreach ($this->providers() as $oidcProvider) {
+            $claims = $oidcProvider->resolveIdToken(idToken: $idToken);
 
             if ($claims !== null) {
                 return $claims;
@@ -87,8 +87,8 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
 
     public function resolveJwt(#[SensitiveParameter] string $jwt): ?array
     {
-        foreach ($this->providers() as $provider) {
-            $claims = $provider->resolveJwt(jwt: $jwt);
+        foreach ($this->providers() as $oidcProvider) {
+            $claims = $oidcProvider->resolveJwt(jwt: $jwt);
 
             if ($claims !== null) {
                 return $claims;

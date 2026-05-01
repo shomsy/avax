@@ -27,7 +27,7 @@ final readonly class Table
 
     private function calculateWidths(): array
     {
-        $widths = array_map('strlen', $this->headers);
+        $widths = array_map(strlen(...), $this->headers);
         foreach ($this->rows as $row) {
             foreach ($row as $i => $cell) {
                 $widths[$i] = max($widths[$i], strlen((string) $cell));

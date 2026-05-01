@@ -27,7 +27,7 @@ interface RepositoryInterface
      *
      * @return array<T>
      */
-    public function findAll(int $limit = null, int $offset = 0) : array;
+    public function findAll(?int $limit = null, int $offset = 0) : array;
 
     /**
      * Find entities matching the given criteria.
@@ -39,9 +39,9 @@ interface RepositoryInterface
      */
     public function findBy(
         array $criteria,
-        array $orderBy = null,
-        int   $limit = null,
-        int   $offset = null,
+        ?array $orderBy = null,
+        ?int   $limit = null,
+        ?int   $offset = null,
     ): array;
 
     /**

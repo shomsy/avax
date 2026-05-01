@@ -10,9 +10,6 @@ final readonly class CacheStoreRecordWasMissing
 {
     public CacheKey $cacheKey;
 
-    public function __construct(
-        public CacheKey $cacheKey,
-    ) {
-        $this->cacheKey = $cacheKey;
+    public function __construct(public CacheKey $cacheKey) {
     }
 }

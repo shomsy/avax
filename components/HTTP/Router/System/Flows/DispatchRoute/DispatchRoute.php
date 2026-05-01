@@ -8,17 +8,17 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinition;
 
-final class DispatchRoute
+final readonly class DispatchRoute
 {
     public function __construct(
-        private ResolveRouteAction $resolver,
-        private InvokeRouteAction $invoker,
+        private ResolveRouteAction $resolveRouteAction,
+        private InvokeRouteAction  $invokeRouteAction,
     ) {}
 
-    public function execute(RouteDefinition $route, RequestInterface $request): ResponseInterface
+    public function execute(RouteDefinition $routeDefinition, RequestInterface $request) : ResponseInterface
     {
-        $action = $this->resolver->resolve($route);
+        $action = $this->resolveRouteAction->resolve($routeDefinition);
 
-        return $this->invoker->invoke($action, $request);
+        return $this->invokeRouteAction->invoke($action, $request);
     }
 }

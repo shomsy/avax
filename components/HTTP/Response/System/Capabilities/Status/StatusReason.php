@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Response\System\Capabilities\Status;
 
-final class StatusReason
+final readonly class StatusReason
 {
     public function __construct(
         private string $reason,

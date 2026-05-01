@@ -3,12 +3,13 @@
 declare(strict_types=1);
 $dirs = ['components/Data', 'components/Database', 'components/Persistence'];
 foreach ($dirs as $dir) {
-    echo "Checking dir: $dir\n";
+    echo sprintf('Checking dir: %s%s', $dir, PHP_EOL);
     if (! is_dir($dir)) {
-        echo "Dir not found: $dir\n";
+        echo sprintf('Dir not found: %s%s', $dir, PHP_EOL);
 
         continue;
     }
+
     $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
     foreach ($files as $file) {
         if ($file->getExtension() === 'php') {

@@ -19,7 +19,7 @@ use RuntimeException;
  */
 readonly class ResolveRouteFromHttpRequest implements RequestHandlerInterface
 {
-    public function __construct(private RouterRuntimeInterface $router) {}
+    public function __construct(private RouterRuntimeInterface $routerRuntime) {}
 
     public function handle(RequestInterface $request) : ResponseInterface
     {
@@ -27,6 +27,6 @@ readonly class ResolveRouteFromHttpRequest implements RequestHandlerInterface
             throw new RuntimeException('HttpKernel requires an internal Avax HTTP ServerRequest instance for router execution.');
         }
 
-        return $this->router->resolve($request);
+        return $this->routerRuntime->resolve($request);
     }
 }

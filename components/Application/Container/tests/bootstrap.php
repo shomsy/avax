@@ -6,7 +6,7 @@ namespace Psr\Container {
 
     use Throwable;
 
-    if (! interface_exists('Psr\\Container\\ContainerInterface')) {
+    if (! interface_exists(ContainerInterface::class)) {
         interface ContainerInterface
         {
             public function get(string $id) : mixed;
@@ -100,8 +100,8 @@ namespace {
     }
 
     function makeTestContainer(
-        ?CreateContainerConfig $config = null,
+        ?CreateContainerConfig $createContainerConfig = null,
     ): Container {
-        return new CreateContainer()->create($config);
+        return new CreateContainer()->create($createContainerConfig);
     }
 }

@@ -14,12 +14,12 @@ use Override;
 final class CockroachDBGrammar extends PostgreSQLGrammar
 {
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $sql = $this->compileInsert(state: $state);
+        $sql = $this->compileInsert(state: $queryState);
 
         $conflictColumns = array_map(
-            callback: fn ($col) => $this->wrap(value: $col),
+            callback: fn ($col) : string => $this->wrap(value: $col),
             array   : $uniqueBy,
         );
         $conflictClause = implode(separator: ', ', array: $conflictColumns);
@@ -31,26 +31,26 @@ final class CockroachDBGrammar extends PostgreSQLGrammar
 
         $updateClause = implode(separator: ', ', array: $updates);
 
-        return "{$sql} ON CONFLICT ({$conflictClause}) DO UPDATE SET {$updateClause}";
+        return sprintf('%s ON CONFLICT (%s) DO UPDATE SET %s', $sql, $conflictClause, $updateClause);
     }
 
     public function compileImport(string $format, string $path): string
     {
-        return "IMPORT INTO {$format} '{$path}'";
+        return sprintf("IMPORT INTO %s '%s'", $format, $path);
     }
 
     public function compileChangeFeed(string $table, string $sink): string
     {
-        return "CREATE CHANGEFEED FOR {$table} TO '{$sink}'";
+        return sprintf("CREATE CHANGEFEED FOR %s TO '%s'", $table, $sink);
     }
 
     public function compileZone(string $zone): string
     {
-        return "ALTER RANGE {$zone} CONFIGURE ZONE";
+        return sprintf('ALTER RANGE %s CONFIGURE ZONE', $zone);
     }
 
     public function compileRegionalInTable(string $region): string
     {
-        return "REGIONAL BY TABLE IN {$region}";
+        return 'REGIONAL BY TABLE IN ' . $region;
     }
 }

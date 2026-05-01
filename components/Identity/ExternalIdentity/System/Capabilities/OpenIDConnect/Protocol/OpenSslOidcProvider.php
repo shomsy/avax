@@ -33,10 +33,10 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         private string $tokenEndpoint,
         private string $userInfoEndpoint,
         private string $jsonWebKeySetUri,
-        SubjectIdentifierStrategy $subjectIdentifierStrategy = null,
+        ?SubjectIdentifierStrategy $subjectIdentifierStrategy = null,
         #[SensitiveParameter]
         private ?string $pairwiseSalt = null,
-        int                       $idTokenLifetime = null,
+        ?int                       $idTokenLifetime = null,
         private string $algorithm = 'RS256',
     ) {
         $subjectIdentifierStrategy ??= SubjectIdentifierStrategy::PUBLIC;
@@ -84,10 +84,10 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         User $user,
         string $clientId,
         array $scopes,
-        string            $nonce = null,
-        DateTimeImmutable $authenticatedAt = null,
+        ?string            $nonce = null,
+        ?DateTimeImmutable $authenticatedAt = null,
         #[SensitiveParameter]
-        string            $sessionId = null,
+        ?string            $sessionId = null,
         bool $phishingResistant = false,
     ): OidcIdToken {
         $issuedAt  = new DateTimeImmutable();
@@ -179,8 +179,8 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     {
         try {
             return json_encode(value: $payload, flags: JSON_THROW_ON_ERROR);
-        } catch (JsonException $exception) {
-            throw new InvalidArgumentException(message: 'OIDC payload could not be encoded.', previous: $exception);
+        } catch (JsonException $jsonException) {
+            throw new InvalidArgumentException(message: 'OIDC payload could not be encoded.', code: $jsonException->getCode(), previous: $jsonException);
         }
     }
 

@@ -44,11 +44,11 @@ final readonly class DependencyBlueprint
         return new self(
             class               : $state['class'],
             instantiable        : $state['instantiable']         ?? false,
-            constructor         : $state['constructor']          ?? null,
             injectableProperties: $state['injectableProperties'] ?? [],
             injectableMethods   : $state['injectableMethods']    ?? [],
             shared              : $state['shared']               ?? false,
             fingerprint         : $state['fingerprint']          ?? '',
+            constructor         : $state['constructor'] ?? null,
         );
     }
 }

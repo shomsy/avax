@@ -16,9 +16,9 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
     /** @var array<string, MfaChallengeRecord> */
     private array $records = [];
 
-    public function issue(MfaChallengeRecord $record): void
+    public function issue(MfaChallengeRecord $mfaChallengeRecord) : void
     {
-        $this->records[$record->challengeId] = $record;
+        $this->records[$mfaChallengeRecord->challengeId] = $mfaChallengeRecord;
     }
 
     public function find(string $challengeId): ?MfaChallengeRecord
@@ -26,9 +26,9 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
         return $this->records[$challengeId] ?? null;
     }
 
-    public function save(MfaChallengeRecord $record): void
+    public function save(MfaChallengeRecord $mfaChallengeRecord) : void
     {
-        $this->records[$record->challengeId] = $record;
+        $this->records[$mfaChallengeRecord->challengeId] = $mfaChallengeRecord;
     }
 
     public function forget(string $challengeId): void

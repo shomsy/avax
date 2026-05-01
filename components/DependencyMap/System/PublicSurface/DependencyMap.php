@@ -8,40 +8,40 @@ use Avax\Components\DependencyMap\System\Capabilities\Graph\DependencyGraph;
 
 final readonly class DependencyMap
 {
-    public function __construct(private DependencyGraph $graph) {}
+    public function __construct(private DependencyGraph $dependencyGraph) {}
 
     public function add(string $dependency, array $dependsOn = []): void
     {
-        $this->graph->add($dependency, $dependsOn);
+        $this->dependencyGraph->add($dependency, $dependsOn);
     }
 
     public function remove(string $dependency): void
     {
-        $this->graph->remove($dependency);
+        $this->dependencyGraph->remove($dependency);
     }
 
     public function dependsOn(string $dependency): array
     {
-        return $this->graph->dependsOn($dependency);
+        return $this->dependencyGraph->dependsOn($dependency);
     }
 
     public function dependents(string $dependency): array
     {
-        return $this->graph->dependents($dependency);
+        return $this->dependencyGraph->dependents($dependency);
     }
 
     public function cycles(): array
     {
-        return $this->graph->detectCycles();
+        return $this->dependencyGraph->detectCycles();
     }
 
     public function orphans(): array
     {
-        return $this->graph->findOrphans();
+        return $this->dependencyGraph->findOrphans();
     }
 
     public function exportMermaid(): string
     {
-        return $this->graph->toMermaid();
+        return $this->dependencyGraph->toMermaid();
     }
 }

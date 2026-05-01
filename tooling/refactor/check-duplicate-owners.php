@@ -25,7 +25,7 @@ final class CheckDuplicateOwners
         $this->checkDuplicateBehaviorMerged();
 
         return [
-            'status' => empty($this->errors) ? 'PASS' : 'FAIL',
+            'status' => $this->errors === [] ? 'PASS' : 'FAIL',
             'errors' => $this->errors,
         ];
     }
@@ -34,16 +34,16 @@ final class CheckDuplicateOwners
     {
         $componentsPath = dirname(__DIR__, 2) . '/components';
 
-        foreach ($this->forbiddenOwners as $owner) {
-            $path = $componentsPath . '/' . $owner;
+        foreach ($this->forbiddenOwners as $forbiddenOwner) {
+            $path = $componentsPath . '/' . $forbiddenOwner;
             if (is_dir($path)) {
-                $this->errors[] = "Forbidden root owner at components/{$owner}";
+                $this->errors[] = 'Forbidden root owner at components/' . $forbiddenOwner;
             }
         }
 
         // DataFoundation and DataLayer are allowed as bridges
-        foreach ($this->allowedBridges as $bridge) {
-            $path = $componentsPath . '/' . $bridge;
+        foreach ($this->allowedBridges as $allowedBridge) {
+            $path = $componentsPath . '/' . $allowedBridge;
             if (is_dir($path)) {
                 // Check if it's a proper bridge (thin) or has real behavior
                 $systemPath = $path . '/System';
@@ -51,7 +51,7 @@ final class CheckDuplicateOwners
                     // Has System - treat as potential duplicate
                     $files = glob($systemPath . '/**/*.php') ?: [];
                     if (count($files) > 5) {
-                        $this->errors[] = "Bridge {$bridge} has too much real behavior";
+                        $this->errors[] = sprintf('Bridge %s has too much real behavior', $allowedBridge);
                     }
                 }
             }

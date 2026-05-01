@@ -35,7 +35,7 @@ final readonly class Entities
         $this->unitOfWork->remove($entity);
     }
 
-    public function flush(string $connectionName = null) : void
+    public function flush(?string $connectionName = null) : void
     {
         $this->unitOfWork->flush($connectionName);
     }

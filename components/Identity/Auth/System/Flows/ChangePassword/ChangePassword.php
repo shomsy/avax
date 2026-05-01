@@ -9,8 +9,10 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\RateLimitException;
@@ -44,7 +46,7 @@ final readonly class ChangePassword
         private ?MfaChallengeStoreInterface $mfaChallengeStore = null,
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
-        private ?LoginRateLimit $rateLimit = null,
+        private ?LoginRateLimit $loginRateLimit = null,
         private ?RequireFreshMfa $requireFreshMfa = null,
     ) {}
 
@@ -53,47 +55,47 @@ final readonly class ChangePassword
      * @throws Unauthenticated
      * @throws RateLimitException
      */
-    public function execute(ChangePasswordData $data): void
+    public function execute(ChangePasswordData $changePasswordData) : void
     {
-        $context = $this->currentAuthentication->read();
-        $currentUser = $context->user();
+        $authenticationContext = $this->currentAuthentication->read();
+        $currentUser           = $authenticationContext->user();
 
-        if ($currentUser === null) {
+        if (! $currentUser instanceof AuthenticatedUser) {
             throw new Unauthenticated();
         }
 
         $user = $this->userSource->findById(id: new UserId(value: $currentUser->id));
 
-        if ($user === null || ! $user->isActive()) {
+        if (! $user instanceof User || ! $user->isActive()) {
             throw new Unauthenticated();
         }
 
         if ($currentUser->mfaEnabled) {
-            if ($this->requireFreshMfa === null) {
+            if (! $this->requireFreshMfa instanceof RequireFreshMfa) {
                 throw new FreshMfaRequired(maxAgeSeconds: 300);
             }
 
             $this->requireFreshMfa->execute();
         }
 
-        $this->rateLimit?->check(identifier: (string) $user->getId());
+        $this->loginRateLimit?->check(identifier: (string) $user->getId());
 
-        if (! $this->passwordHasher->verify(password: $data->currentPassword, hash: $user->getPasswordHash())) {
-            $this->rateLimit?->recordFailed(identifier: (string) $user->getId());
+        if (! $this->passwordHasher->verify(password: $changePasswordData->currentPassword, hash: $user->getPasswordHash())) {
+            $this->loginRateLimit?->recordFailed(identifier: (string) $user->getId());
 
             throw PasswordChangeFailed::currentPasswordMismatch();
         }
 
-        $newHash = $this->passwordHasher->hash(password: $data->newPassword);
+        $newHash = $this->passwordHasher->hash(password: $changePasswordData->newPassword);
 
-        $this->userSource->updatePassword(id: $user->getId(), passwordHash: $newHash);
+        $this->userSource->updatePassword(passwordHash: $newHash, id: $user->getId());
         $this->sessionRegistry?->revokeForUser(userId: $user->getId(), revokedAt: $this->clock->now(), reason: 'password_changed');
         $this->mfaChallengeStore?->forgetForUser(userId: $user->getId());
         $this->refreshTokenStore?->revokeUser(userId: $user->getId());
-        $this->identity->clear(context: $context);
+        $this->identity->clear(context: $authenticationContext);
         $this->currentAuthentication->clear();
 
-        $this->rateLimit?->reset(identifier: (string) $user->getId());
+        $this->loginRateLimit?->reset(identifier: (string) $user->getId());
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.password.changed',
             occurredAt: $this->clock->now(),

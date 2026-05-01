@@ -28,7 +28,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
     ) : AuthorizationCodeRecord
     {
         $code   = bin2hex(string: random_bytes(length: 32));
-        $record = new AuthorizationCodeRecord(
+        $authorizationCodeRecord = new AuthorizationCodeRecord(
             code       : $code,
             subject    : $subject,
             expiresAt  : $expiresAt,
@@ -38,9 +38,9 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             state      : $state,
         );
 
-        $this->codes[$code] = $record;
+        $this->codes[$code] = $authorizationCodeRecord;
 
-        return $record;
+        return $authorizationCodeRecord;
     }
 
     public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment) : AuthorizationCodeRecord|null

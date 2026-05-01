@@ -13,15 +13,15 @@ final class FailureRecorder
 
     public function record(string $workflow, Throwable $throwable) : FailureRecord
     {
-        $record = new FailureRecord(
+        $failureRecord = new FailureRecord(
             workflow: $workflow,
             message : $throwable->getMessage(),
             type    : $throwable::class,
         );
 
-        $this->records[] = $record;
+        $this->records[] = $failureRecord;
 
-        return $record;
+        return $failureRecord;
     }
 
     /**

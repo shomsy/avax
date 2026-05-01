@@ -16,7 +16,7 @@ final readonly class BeginSecurityChange
     /**
      * @param array<string, mixed> $data
      */
-    public function execute(string $tenantId, array $data) : object
+    public function execute(string $tenantId, array $data) : \stdClass
     {
         return $this->securityConfigurationStore->begin(tenantId: $tenantId, data: $data);
     }

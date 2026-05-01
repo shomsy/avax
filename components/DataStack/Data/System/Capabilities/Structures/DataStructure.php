@@ -17,8 +17,8 @@ class DataStructure
      */
     public function __construct(iterable $requiredFields = [])
     {
-        foreach ($requiredFields as $field) {
-            $this->require(field: $field);
+        foreach ($requiredFields as $requiredField) {
+            $this->require(field: $requiredField);
         }
     }
 

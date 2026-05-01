@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit;
 
+use Avax\Framework\System\Capabilities\PreCommit\Validators\ValidatorInterface;
 use Avax\Framework\System\Capabilities\PreCommit\Report\ReportStorage;
 use Avax\Framework\System\Capabilities\PreCommit\Todo\TodoGenerator;
 use Avax\Framework\System\Capabilities\PreCommit\ValidationChain\ValidationChain;
@@ -17,6 +18,8 @@ use Avax\Framework\System\Capabilities\PreCommit\Validators\ScriptRunnerValidato
 use Avax\Framework\System\Capabilities\PreCommit\Validators\SecurityValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\TodoCommentValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\ToolingIntegrationValidator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Pre-Commit Validation CLI
@@ -57,6 +60,7 @@ class PreCommitValidator
         $options = [
             'format' => 'text',
             'staged' => true,
+            'full' => false,
             'save-report' => true,
             'generate-todo' => true,
             'help' => false,
@@ -115,10 +119,10 @@ class PreCommitValidator
         echo "   Files to validate: " . count($context['staged_files']) . "\n\n";
         fwrite(STDERR, "DEBUG: Got here with " . count($context['staged_files']) . " files\n");
 
-        $result = $this->validationChain->validate($context);
-        $this->validationReport->addResult($result);
+        $validationResult = $this->validationChain->validate($context);
+        $this->validationReport->addResult($validationResult);
         $this->validationReport->addMetadata('context', $context);
-        $this->validationReport->addMetadata('validators', array_map(fn ($v) : string => $v->getName(), $this->validationChain->getValidators()));
+        $this->validationReport->addMetadata('validators', array_map(fn (ValidatorInterface $validator) : string => $validator->getName(), $this->validationChain->getValidators()));
         $this->validationReport->setExecutionTime(microtime(true) - $startTime);
 
         if ($this->options['save-report']) {
@@ -126,7 +130,7 @@ class PreCommitValidator
         }
 
         $this->outputResults();
-        return $result->isPassed() ? 0 : 1;
+        return $validationResult->isPassed() ? 0 : 1;
     }
 
     /**
@@ -146,6 +150,9 @@ class PreCommitValidator
             if ($content !== false) {
                 $files = array_values(array_filter(array_map(trim(...), explode("\n", $content))));
             }
+        } elseif ($this->options['full']) {
+            // --full flag: scan entire project for PHP files
+            $files = $this->detectAllProjectFiles($basePath);
         } elseif ($this->options['staged']) {
             $gitBin = $this->findGitBinary();
             exec($gitBin . ' diff --cached --name-only --diff-filter=ACM 2>/dev/null', $output, $returnVar);
@@ -167,6 +174,44 @@ class PreCommitValidator
             'timestamp' => date('c'),
             'git_branch' => $this->getGitBranch(),
         ];
+    }
+
+    /**
+     * Detect all PHP files in the project for full scan.
+     *
+     * @return list<string>
+     */
+    private function detectAllProjectFiles(string $basePath): array
+    {
+        $directories = ['framework', 'components', 'tests'];
+        $files = [];
+
+        foreach ($directories as $dir) {
+            $dirPath = $basePath . '/' . $dir;
+            if (! is_dir($dirPath)) {
+                continue;
+            }
+
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($dirPath, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::LEAVES_ONLY
+            );
+
+            foreach ($iterator as $file) {
+                if ($file->isDir()) {
+                    continue;
+                }
+
+                if ($file->getExtension() !== 'php') {
+                    continue;
+                }
+
+                $relativePath = $dir . '/' . $iterator->getSubPathName();
+                $files[] = $relativePath;
+            }
+        }
+
+        return $files;
     }
 
     private function getGitBranch(): string
@@ -242,15 +287,17 @@ class PreCommitValidator
         echo "Usage: php avax validate [options]\n\n";
         echo "Options:\n";
         echo "  --format=FORMAT      Output format: text|json (default: text)\n";
-        echo "  --staged             Validate staged files via git (default: true)\n";
-        echo "  --files=LIST         Comma-separated file list\n";
-        echo "  --staged-files-file  File containing list of staged files\n";
-        echo "  --save-report        Save report to file (default: true)\n";
+        echo "  --staged            Validate staged files via git (default: true)\n";
+        echo "  --full              Scan entire project (framework/, components/, tests/)\n";
+        echo "  --files=LIST        Comma-separated file list\n";
+        echo "  --staged-files-file File containing list of staged files\n";
+        echo "  --save-report       Save report to file (default: true)\n";
         echo "  --generate-todo      Generate TODO items from failures (default: true)\n";
-        echo "  -h, --help           Show this help\n\n";
+        echo "  -h, --help          Show this help\n\n";
         echo "Examples:\n";
         echo "  php avax validate\n";
         echo "  php avax validate --format=json\n";
+        echo "  php avax validate --full\n";
         echo "  php avax validate --staged-files-file=files.txt\n\n";
         echo "Validation Chain:\n";
         echo "  1. Naming Convention Validator\n";

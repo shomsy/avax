@@ -47,26 +47,47 @@ According to original TODO requirements:
 
 | Component                           | Required | Status           |
 |-------------------------------------|----------|------------------|
-| CLI command (`php avax pre-commit`) | Yes      | ❌ Missing        |
-| Git hook installer script           | Yes      | ❌ Missing        |
-| ExternalToolRunner adapter          | Yes      | Partially exists |
-| Phased implementation               | Yes      | ❌ Not started    |
+| CLI command (`php avax pre-commit`) | Yes      | ✅ **DONE**      |
+| Git hook installer script           | Yes      | ✅ **DONE**      |
+| ExternalToolRunner adapter          | Yes      | ✅ Exists        |
+| Phased implementation               | Yes      | ✅ **DONE**      |
 
 ### 1.4 Implementation Phases Status
 
 | Phase | Description            | Status     |
 |-------|------------------------|------------|
 | 1     | Analyze existing state | ✅ Complete |
-| 2     | Propose new structure  | ⚠️ Partial |
-| 3     | Connect tooling + CLI  | ❌ Missing  |
-| 4     | Add additional checks  | ⚠️ Partial |
-| 5     | Add auto-fix + delete  | ❌ Missing  |
-| 6     | Add tests              | ❌ Missing  |
-| 7     | Document               | ❌ Missing  |
+| 2     | Propose new structure  | ✅ Complete |
+| 3     | Connect tooling + CLI  | ✅ Complete |
+| 4     | Add additional checks  | ✅ Complete |
+| 5     | Add auto-fix + delete  | ⚠️ Partial (model exists, UI not implemented) |
+| 6     | Add tests              | ✅ **DONE** |
+| 7     | Document               | ✅ **DONE** |
 
-### 1.5 Conclusion
+### 1.5 Bugs Fixed
 
-**Existing state**: ~70% of PreCommit system already exists in framework. Missing: CLI integration, Git hook installer,
-some cleanup logic.
+| Bug | File | Fix |
+|-----|------|-----|
+| `array_any()` not a PHP function | `RunExternalToolingScripts.php` | Replaced with `foreach` loop |
 
-**Recommendation**: Proceed with Phase 2 - connect existing framework to CLI and create hook installer.
+### 1.6 Architecture Notes
+
+The PreCommit system uses TWO validation approaches:
+
+1. **Capabilities** (`Capabilities/*.php`): Used by `PreCommit.php` - run checks sequentially, return `list<PreCommitIssue>`
+2. **Validators** (`Validators/*.php`) + `ValidationChain`: Alternative system via `PreCommitValidator.php` - Chain of Responsibility pattern
+
+Both systems coexist. `ValidationChain` is NOT used by `PreCommit.php` - it is used by `PreCommitValidator.php` which is a separate entry point for the `avax validate` command.
+
+### 1.7 Conclusion
+
+**Existing state**: ~95% of PreCommit system is now complete and functional.
+
+**Completed work**:
+- CLI command: `php avax pre-commit [--fix] [--full]`
+- Git hook installer: `php tooling/pre-commit/install-hook.php [--force|--uninstall]`
+- Unit tests for `PreCommitIssue`, `PreCommitResult`, `PreCommitConfig`
+- Bug fix: `array_any()` replaced with proper PHP loop
+
+**Remaining**:
+- Auto-fix UI not fully implemented (model exists)

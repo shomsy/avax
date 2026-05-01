@@ -52,7 +52,7 @@ $command = $argv[1] ?? 'help';
 $arg1    = $argv[2] ?? null;
 $arg2    = $argv[3] ?? null;
 
-if (in_array(needle: $command, haystack: ['serve', 'make:controller', 'make:model', 'make:migration', 'make:seeder', 'validate', 'tooling:run', 'legacy:audit', 'migrate:fresh', 'migrate:refresh', 'cache:clear', 'container:why', 'container:scope-audit', 'routes:explain', 'routes:conflicts', 'config:explain'], strict: true)) {
+if (in_array(needle: $command, haystack: ['serve', 'make:controller', 'make:model', 'make:migration', 'make:seeder', 'tooling:run', 'legacy:audit', 'migrate:fresh', 'migrate:refresh', 'cache:clear', 'container:why', 'container:scope-audit', 'routes:explain', 'routes:conflicts', 'config:explain'], strict: true)) {
     exit(handleStandaloneCommand(command: $command, arg1: $arg1, arg2: $arg2, argv: $argv, rootDir: $rootDir));
 }
 
@@ -162,8 +162,14 @@ try {
         case 'validate':
         case 'pre-commit':
         case 'discipline:check':
-            require_once $rootDir . '/framework/System/Capabilities/PreCommit/PreCommitValidator.php';
-            exit((new PreCommitValidator($argv))->run());
+            $validatorPath = $rootDir . '/framework/System/Capabilities/PreCommit/PreCommitValidator.php';
+            if (! file_exists($validatorPath)) {
+                echo "Error: PreCommitValidator not found at {$validatorPath}\n";
+                exit(1);
+            }
+            require_once $validatorPath;
+            $validator = new PreCommitValidator($argv);
+            exit($validator->run());
 
         case 'discipline:report':
             $reportPath = $rootDir . '/Code-Review-And-ToDo/pre-commit/latest.json';
@@ -269,6 +275,8 @@ exit $?
             echo "Usage: php avax [command] [arguments]\n\n";
             echo "\033[32mValidation Commands:\033[0m\n";
             echo "  validate              Run pre-commit validation checks\n";
+            echo "  validate --full       Scan entire project (all PHP files)\n";
+            echo "  pre-commit            Alias for validate\n";
             echo "\n\033[32mDatabase Commands:\033[0m\n";
             echo "  db:create <name>       Create a new database\n";
             echo "  db:drop <name>         Drop an existing database\n";

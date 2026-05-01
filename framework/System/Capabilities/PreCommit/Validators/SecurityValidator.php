@@ -150,7 +150,7 @@ class SecurityValidator extends BaseValidator
                 // Check for truly dangerous functions, excluding allowed ones
                 $dangerous = ['eval', 'assert', 'create_function'];
                 // Check if it's in a comment
-                if (in_array($funcName, $dangerous) && ! $this->isTokenInComment($tokens, $token)) {
+                if (in_array($funcName, $dangerous, true) && ! $this->isTokenInComment($tokens, $token)) {
                     $foundDangerous[$token[1]] = true;
                 }
             }

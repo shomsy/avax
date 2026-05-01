@@ -12,7 +12,7 @@ final class AuthorizationEngine
     /**
      * @param iterable<string> $permissions
      */
-    public function __construct(iterable $permissions = [], private bool $defaultAllow = false)
+    public function __construct(iterable $permissions = [], private readonly bool $defaultAllow = false)
     {
         foreach ($permissions as $permission) {
             $this->grant(permission: $permission);

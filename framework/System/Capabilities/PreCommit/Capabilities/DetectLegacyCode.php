@@ -72,9 +72,11 @@ final class DetectLegacyCode
                         if (stripos($content, $pattern) === false) {
                             continue;
                         }
+
                         if ($this->isInComment($content, $pattern)) {
                             continue;
                         }
+
                         $issues[] = new PreCommitIssue(
                             'DetectLegacyCode',
                             PreCommitIssue::SEVERITY_WARNING,

@@ -16,7 +16,6 @@ structured metadata, scoped permissions, and automatic injection.
 ## 1) Skill File Format
 
 ### Required: SKILL.md
-
 Every skill is a directory containing a `SKILL.md` file with YAML frontmatter
 delimited by `---`:
 
@@ -34,7 +33,6 @@ author: <string>                # Optional. Who wrote this skill.
 ```
 
 ### Optional: agents/openai.yaml
-
 Structured metadata for tool and provider integration:
 
 ```yaml
@@ -77,32 +75,30 @@ permissions:
 
 ### Directory Semantics
 
-| Directory    | Purpose                                        | Required |
-|:-------------|:-----------------------------------------------|:--------:|
-| `SKILL.md`   | Core instructions and metadata                 |   Yes    |
-| `agents/`    | Provider-specific integration configs          |    No    |
-| `scripts/`   | Executable helpers the skill may reference     |    No    |
-| `tests/`     | Validation scripts to verify skill correctness |    No    |
-| `examples/`  | Usage examples and reference implementations   |    No    |
-| `resources/` | Templates, assets, or supplementary files      |    No    |
+| Directory | Purpose | Required |
+|:---|:---|:---:|
+| `SKILL.md` | Core instructions and metadata | Yes |
+| `agents/` | Provider-specific integration configs | No |
+| `scripts/` | Executable helpers the skill may reference | No |
+| `tests/` | Validation scripts to verify skill correctness | No |
+| `examples/` | Usage examples and reference implementations | No |
+| `resources/` | Templates, assets, or supplementary files | No |
 
 ---
 
 ## 3) Discovery and Loading
 
 ### Discovery Roots
-
 Skills are discovered by scanning these roots in priority order:
 
-| Priority | Scope        | Path                    | Override Behavior     |
-|:--------:|:-------------|:------------------------|:----------------------|
-|    1     | **Repo**     | `.agents/skills/`       | Wins over all         |
-|    2     | **Repo Alt** | `.codex/skills/`        | Alternative repo path |
-|    3     | **User**     | `$HOME/.agents/skills/` | Per-user skills       |
-|    4     | **System**   | `/etc/agents/skills/`   | System-wide skills    |
+| Priority | Scope | Path | Override Behavior |
+|:---:|:---|:---|:---|
+| 1 | **Repo** | `.agents/skills/` | Wins over all |
+| 2 | **Repo Alt** | `.codex/skills/` | Alternative repo path |
+| 3 | **User** | `$HOME/.agents/skills/` | Per-user skills |
+| 4 | **System** | `/etc/agents/skills/` | System-wide skills |
 
 ### Discovery Rules
-
 1. **Depth limit**: Scan at most 6 levels deep from each root.
 2. **Deduplication**: If the same skill name exists at multiple scopes,
    the highest-priority scope wins (Repo > User > System).
@@ -110,9 +106,7 @@ Skills are discovered by scanning these roots in priority order:
    with a warning.
 
 ### Name Resolution
-
 The skill name is determined in this order:
-
 1. The `name` field in YAML frontmatter (if present).
 2. The directory name containing `SKILL.md`.
 
@@ -121,17 +115,13 @@ The skill name is determined in this order:
 ## 4) Skill Invocation
 
 ### Explicit Invocation
-
 Users can reference skills by name in prompts:
-
 - `$skill-name` — Dollar prefix notation.
 - `skill://skill-name` — URI notation.
 - Direct mention in structured input.
 
 ### Implicit Invocation
-
 A skill is considered **implicitly active** when the agent:
-
 1. Reads or executes a file under `<skill>/scripts/`.
 2. References a file under `<skill>/resources/`.
 3. Follows instructions that match a skill's description.
@@ -146,15 +136,14 @@ operation.
 Each skill's `trust_tier` determines its maximum permissions, as defined
 in `approval-policy.md`:
 
-| trust_tier | File Access          | Network      | Shell                  |
-|:-----------|:---------------------|:-------------|:-----------------------|
-| **T0**     | Read workspace only  | None         | No                     |
-| **T1**     | Read/write workspace | None         | Approved commands only |
-| **T2**     | Read/write + deps    | Outbound     | With approval          |
-| **T3**     | Unrestricted         | Unrestricted | With approval          |
+| trust_tier | File Access | Network | Shell |
+|:---|:---|:---|:---|
+| **T0** | Read workspace only | None | No |
+| **T1** | Read/write workspace | None | Approved commands only |
+| **T2** | Read/write + deps | Outbound | With approval |
+| **T3** | Unrestricted | Unrestricted | With approval |
 
 ### Tier Ceiling Rule
-
 A skill MUST NOT request operations above its declared `trust_tier`. If a
 skill declares `trust_tier: T1` but attempts a network request, the
 operation MUST be blocked.
@@ -174,7 +163,6 @@ instructions. The injection format:
 ```
 
 ### Token Limits
-
 - Individual skill injection: Max 10,000 tokens.
 - Combined skill injections per session: Max 30,000 tokens.
 - If limits are exceeded, newer/higher-priority skills take precedence.
@@ -184,9 +172,7 @@ instructions. The injection format:
 ## 7) Validation Contract
 
 ### Required Checks
-
 Before a skill is loaded, the following MUST be validated:
-
 1. `SKILL.md` exists and is readable.
 2. YAML frontmatter is valid and contains `name` + `description`.
 3. `name` is ≤ 64 characters.
@@ -195,7 +181,6 @@ Before a skill is loaded, the following MUST be validated:
 6. `version` (if present) is valid semver.
 
 ### Failure Modes
-
 - Missing `SKILL.md`: Skill directory is silently skipped.
 - Invalid frontmatter: Warning logged, skill skipped.
 - Name too long: Truncated to 64 characters with warning.
@@ -210,21 +195,19 @@ at [agentskills.io](https://agentskills.io/specification), as implemented
 by the `anthropics/skills` reference repository.
 
 ### Description Optimization (CSO — Claude Search Optimization)
-
 The `description` field is the primary matching surface. At runtime, the
 agent matches user intent to skills based on this field. Optimize it:
 
 1. **Front-load the verb**: Start with what the skill does.
-    - ✅ "Creates Word documents from structured data"
-    - ❌ "A skill for Word document creation"
+   - ✅ "Creates Word documents from structured data"
+   - ❌ "A skill for Word document creation"
 2. **Include trigger phrases**: What would a user type to need this?
-    - ✅ "Generates PDF reports, exports data to PDF, creates printable documents"
+   - ✅ "Generates PDF reports, exports data to PDF, creates printable documents"
 3. **Max 1024 characters**: Longer descriptions are truncated.
 4. **No marketing language**: Be precise, not persuasive.
 5. **Include file types/extensions**: If the skill handles specific formats.
 
 ### Marketplace Convention
-
 Skills MAY be distributed via a marketplace registry. To participate,
 include a `.claude-plugin/marketplace.json` at the skill collection root:
 
@@ -248,7 +231,6 @@ include a `.claude-plugin/marketplace.json` at the skill collection root:
 ```
 
 ### Skill Creator Workflow
-
 When creating a new skill, follow this process:
 
 1. **Design**: Define the skill's purpose, triggers, and outputs
@@ -264,9 +246,7 @@ The harness ships a baseline generator at `scaffolds/create-skill.sh` to create
 the directory layout and compliant frontmatter quickly.
 
 ### Scripts Directory
-
 The `scripts/` directory MAY contain executable helpers:
-
 - **Node.js scripts** (`.js`, `.cjs`): For complex operations
 - **Shell scripts** (`.sh`): For system operations
 - **Python scripts** (`.py`): For data processing
@@ -277,14 +257,14 @@ The `scripts/` directory MAY contain executable helpers:
 
 ## 9) Relationship to Other Standards
 
-| Standard                    | Relationship                                             |
-|:----------------------------|:---------------------------------------------------------|
-| `approval-policy.md`        | `trust_tier` maps to approval trust tiers                |
-| `feature-flags.md`          | Skills respect active feature flags                      |
-| `hooks-policy.md`           | Skill invocation may trigger `PreTask` context injection |
-| `memory-lifecycle.md`       | Learned skills may be persisted to `learned_skills/`     |
-| `naming-standard.md`        | Skill names MUST follow kebab-case convention            |
-| `continuous-learning.md`    | Evolved skills from instincts must comply                |
-| `instincts-policy.md`       | Instincts may graduate to skills                         |
-| `platform-compatibility.md` | Skills must be platform-agnostic                         |
-| `context-management.md`     | Skill injection consumes P1 budget (max 3)               |
+| Standard | Relationship |
+|:---|:---|
+| `approval-policy.md` | `trust_tier` maps to approval trust tiers |
+| `feature-flags.md` | Skills respect active feature flags |
+| `hooks-policy.md` | Skill invocation may trigger `PreTask` context injection |
+| `memory-lifecycle.md` | Learned skills may be persisted to `learned_skills/` |
+| `naming-standard.md` | Skill names MUST follow kebab-case convention |
+| `continuous-learning.md` | Evolved skills from instincts must comply |
+| `instincts-policy.md` | Instincts may graduate to skills |
+| `platform-compatibility.md` | Skills must be platform-agnostic |
+| `context-management.md` | Skill injection consumes P1 budget (max 3) |

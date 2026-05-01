@@ -135,13 +135,13 @@ final class ValidationReport
                 'all_passed' => $this->isAllPassed(),
             ],
             'metadata' => $this->metadata,
-            'results' => array_map(fn (ValidationResult $r) => [
-                'passed'    => $r->isPassed(),
-                'severity'  => $r->getSeverity(),
-                'messages'  => $r->getMessages(),
-                'file'      => $r->getFile(),
-                'line'      => $r->getLine(),
-                'rule_code' => $r->getRuleCode(),
+            'results' => array_map(fn (ValidationResult $validationResult): array => [
+                'passed'    => $validationResult->isPassed(),
+                'severity'  => $validationResult->getSeverity(),
+                'messages'  => $validationResult->getMessages(),
+                'file'      => $validationResult->getFile(),
+                'line'      => $validationResult->getLine(),
+                'rule_code' => $validationResult->getRuleCode(),
             ], $this->results),
         ];
     }

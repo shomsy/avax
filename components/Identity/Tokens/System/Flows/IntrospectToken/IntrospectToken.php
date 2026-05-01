@@ -16,7 +16,7 @@ final readonly class IntrospectToken
         private TokenRevocationStoreInterface $tokenRevocationStore,
     ) {}
 
-    public function execute(#[SensitiveParameter] string $token) : object
+    public function execute(#[SensitiveParameter] string $token) : \stdClass
     {
         $claims = $this->tokenCodec->decode(token: $token);
         $now    = new DateTimeImmutable();

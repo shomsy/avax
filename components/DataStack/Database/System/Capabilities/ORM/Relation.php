@@ -30,7 +30,7 @@ final class HasMany extends Relation
         string               $related,
         string               $foreignKey,
         string               $localKey,
-        private Closure|null $loader = null,
+        private readonly Closure|null $loader = null,
     )
     {
         parent::__construct(parent: $parent, related: $related, foreignKey: $foreignKey, localKey: $localKey);

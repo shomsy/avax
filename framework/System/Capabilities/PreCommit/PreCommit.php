@@ -21,6 +21,8 @@ use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitResult;
 use Avax\Framework\System\Capabilities\PreCommit\Reports\PreCommitReportWriter;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Throwable;
 
 /**
@@ -97,10 +99,15 @@ final readonly class PreCommit
     {
         $basePath = getcwd() ?: '.';
 
-        // If no files provided, detect from git
+        // If no files provided, detect from git or scan project
         $files = $this->files;
         if ($files === []) {
-            $files = $this->detectStagedFiles();
+            if ($this->touchedOnly) {
+                $files = $this->detectStagedFiles();
+            } else {
+                // --full flag: scan entire project, ignore git status
+                $files = $this->detectAllProjectFiles();
+            }
         }
 
         return [
@@ -108,9 +115,9 @@ final readonly class PreCommit
             'base_path'    => $basePath,
             'system_root'  => $this->detectSystemRoot($basePath),
             'touched_only' => $this->touchedOnly,
-            'config'     => $this->preCommitConfig,
+            'config'       => $this->preCommitConfig,
             'timestamp'    => date('c'),
-            'git_branch' => $this->getGitBranch(),
+            'git_branch'  => $this->getGitBranch(),
         ];
     }
 
@@ -127,10 +134,53 @@ final readonly class PreCommit
         } else {
             exec($gitBin . ' diff --name-only 2>/dev/null', $output, $returnVar);
         }
+
         if ($returnVar !== 0 || $output === []) {
             return [];
         }
+
         return array_values(array_filter($output));
+    }
+
+    /**
+     * Detect all PHP files in the project.
+     *
+     * @return list<string>
+     */
+    private function detectAllProjectFiles() : array
+    {
+        $basePath = getcwd() ?: '.';
+
+        // Scan framework, components, tests directories for PHP files
+        $directories = ['framework', 'components', 'tests'];
+
+        $files = [];
+        foreach ($directories as $dir) {
+            $dirPath = $basePath . '/' . $dir;
+            if (! is_dir($dirPath)) {
+                continue;
+            }
+
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($dirPath, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::LEAVES_ONLY
+            );
+
+            foreach ($iterator as $file) {
+                if ($file->isDir()) {
+                    continue;
+                }
+
+                if ($file->getExtension() !== 'php') {
+                    continue;
+                }
+
+                $relativePath = $dir . '/' . $iterator->getSubPathName();
+                $files[] = $relativePath;
+            }
+        }
+
+        return $files;
     }
 
     /**
@@ -144,10 +194,12 @@ final readonly class PreCommit
                 return $location;
             }
         }
+
         exec('command -v git 2>/dev/null', $output, $returnVar);
         if ($returnVar === 0 && $output !== []) {
             return trim($output[0]);
         }
+
         return 'git';
     }
 
@@ -176,6 +228,22 @@ final readonly class PreCommit
         $gitBin = $this->findGitBinary();
         exec($gitBin . ' rev-parse --abbrev-ref HEAD 2>/dev/null', $output, $returnVar);
         return $returnVar === 0 ? ($output[0] ?? 'unknown') : 'unknown';
+    }
+
+    /**
+     * Create a check instance.
+     *
+     * @param class-string $checkClass
+     *
+     * @return CheckPhpSyntax|CheckNamingConventions|CheckHowToRules|CheckForbiddenWords|CheckFileStructure|DetectLegacyCode|DetectDeprecatedCode|DetectLegacyAliases|DetectTodoComments|DetectToolingScripts|CheckPublicSurfaceRules|DetectArchitectureViolations|RunExternalToolingScripts
+     */
+    private function createCheck(string $checkClass): object
+    {
+        if ($checkClass === CheckHowToRules::class) {
+            return new CheckHowToRules();
+        }
+
+        return new $checkClass();
     }
 
     /**
@@ -212,7 +280,7 @@ final readonly class PreCommit
             }
 
             try {
-                $check = new $checkClass($this->preCommitConfig);
+                $check = $this->createCheck($checkClass);
                 $issues = $check->run($context);
 
                 if ($issues === []) {

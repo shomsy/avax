@@ -29,14 +29,14 @@ final readonly class Tokens implements TokensInterface
 
     public static function hmac(string $secret) : self
     {
-        $authorizationCodeStore = new InMemoryAuthorizationCodeStore();
-        $tokenCodec             = new HmacTokenCodec(secret: $secret);
-        $tokenRevocationStore   = new InMemoryTokenRevocationStore();
+        $inMemoryAuthorizationCodeStore = new InMemoryAuthorizationCodeStore();
+        $hmacTokenCodec             = new HmacTokenCodec(secret: $secret);
+        $inMemoryTokenRevocationStore   = new InMemoryTokenRevocationStore();
 
         return self::fromRuntime(
-            authorizationCodeStore: $authorizationCodeStore,
-            tokenCodec            : $tokenCodec,
-            tokenRevocationStore  : $tokenRevocationStore,
+            authorizationCodeStore: $inMemoryAuthorizationCodeStore,
+            tokenCodec            : $hmacTokenCodec,
+            tokenRevocationStore  : $inMemoryTokenRevocationStore,
         );
     }
 
@@ -63,17 +63,17 @@ final readonly class Tokens implements TokensInterface
         );
     }
 
-    public function authorize(array $request): object
+    public function authorize(array $request): \stdClass
     {
         return $this->authorizeTokenRequest->execute(request: $request);
     }
 
-    public function exchangeCode(string $code): object
+    public function exchangeCode(string $code): \stdClass
     {
         return $this->exchangeAuthorizationCode->execute($code);
     }
 
-    public function introspect(string $token): object
+    public function introspect(string $token): \stdClass
     {
         return $this->introspectToken->execute(token: $token);
     }

@@ -13,13 +13,13 @@ final readonly class AuthorizeTokenRequest
 {
     public function __construct(
         private AuthorizationCodeStoreInterface $authorizationCodeStore,
-        private DateInterval                    $authorizationCodeTtl = new DateInterval(duration: 'PT5M'),
+        private DateInterval                    $dateInterval = new DateInterval(duration: 'PT5M'),
     ) {}
 
     /**
      * @param array<string, mixed> $request
      */
-    public function execute(array $request) : object
+    public function execute(array $request) : \stdClass
     {
         $subject = $request['subject'] ?? $request['sub'] ?? $request['user_id'] ?? null;
 
@@ -31,8 +31,8 @@ final readonly class AuthorizeTokenRequest
         $redirectUri = $request['redirect_uri'] ?? null;
         $state       = $request['state'] ?? null;
         $scopes      = $this->normalizeScopes(scopes: $request['scope'] ?? $request['scopes'] ?? []);
-        $expiresAt   = (new DateTimeImmutable())->add(interval: $this->authorizationCodeTtl);
-        $record      = $this->authorizationCodeStore->create(
+        $expiresAt   = new DateTimeImmutable()->add(interval: $this->dateInterval);
+        $authorizationCodeRecord      = $this->authorizationCodeStore->create(
             subject    : (string) $subject,
             expiresAt  : $expiresAt,
             clientId   : is_string(value: $clientId) ? $clientId : null,
@@ -42,10 +42,10 @@ final readonly class AuthorizeTokenRequest
         );
 
         return (object) [
-            'code'       => $record->code,
+            'code'       => $authorizationCodeRecord->code,
             'token_type' => 'authorization_code',
-            'expires_at' => $record->expiresAt,
-            'state'      => $record->state,
+            'expires_at' => $authorizationCodeRecord->expiresAt,
+            'state'      => $authorizationCodeRecord->state,
         ];
     }
 

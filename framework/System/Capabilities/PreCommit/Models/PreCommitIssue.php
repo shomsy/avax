@@ -30,6 +30,7 @@ final class PreCommitIssue
     public const string DELETE_KEEP_COMPAT = 'keep_because_compatibility_contract';
 
     public const string DELETE_KEEP_REFERENCED = 'keep_because_referenced';
+
     /** @var array<string, mixed> */
     private array $metadata = [];
 

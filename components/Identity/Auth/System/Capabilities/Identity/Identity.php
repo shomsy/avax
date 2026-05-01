@@ -9,8 +9,8 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Au
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Recovery;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Verification;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Mfa\Mfa;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Passkey\Passkey;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Mfa;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Passkey;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Sessions;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;

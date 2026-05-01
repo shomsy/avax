@@ -15,11 +15,11 @@ final readonly class BuildSagaTimeline
     public function build(array $events, string $instanceId): SagaTimeline
     {
         return new SagaTimeline(
-            instanceId: $instanceId,
             events    : array_values(array: array_filter(
                 array   : $events,
                 callback: static fn (SagaRuntimeEvent $sagaRuntimeEvent) : bool => $sagaRuntimeEvent->instanceId === $instanceId,
             )),
+            instanceId: $instanceId,
         );
     }
 }

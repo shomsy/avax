@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Container\System\PublicSurface;
 
+use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Foundation\DIContainer;
-use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
 use Avax\Components\Application\Container\System\PublicSurface\Container;
-use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Tests\TestCase;
 use DateTime;
 use DateTimeImmutable;

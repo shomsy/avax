@@ -19,9 +19,9 @@ final class SignedUrlGenerator
         self::$algo = $algo;
     }
 
-    public static function generate(string $path, DateInterval $ttl): string
+    public static function generate(string $path, DateInterval $dateInterval) : string
     {
-        $expires = time() + ($ttl->i * 60 + $ttl->s);
+        $expires = time() + ($dateInterval->i * 60 + $dateInterval->s);
 
         $payload = [
             'path' => $path,

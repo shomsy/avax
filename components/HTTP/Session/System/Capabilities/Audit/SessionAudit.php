@@ -14,7 +14,7 @@ final readonly class SessionAudit
 
     public function record(string $event, array $data = []) : void
     {
-        if ($this->logger === null) {
+        if (! $this->logger instanceof LoggerInterface) {
             return;
         }
 

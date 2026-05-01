@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router;
 
-// Re-export from canonical location for backward compatibility
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
+
+// Backward compatibility alias — use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface instead
 class_alias(
-    System\PublicSurface\RouterRuntimeInterface::class,
+    RouterRuntimeInterface::class,
     __NAMESPACE__ . '\RouterRuntimeInterface',
 );
-
-/**
- * @deprecated Use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface
- */
-interface RouterRuntimeInterface extends System\PublicSurface\RouterRuntimeInterface {}

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\PublicSurface;
 
-use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
+use Avax\Components\Application\Container\System\ContainerInterface;
 use RuntimeException;
 
 /**
@@ -21,9 +21,11 @@ use RuntimeException;
  */
 class Container
 {
-    private static ?DIContainerInterface $container = null;
+    private static ?ContainerInterface $container = null;
 
-    public static function setContainer(DIContainerInterface $container): void
+    private ?ContainerInterface $engine = null;
+
+    public static function setContainer(ContainerInterface $container) : void
     {
         self::$container = $container;
     }
@@ -31,9 +33,46 @@ class Container
     /**
      * Set a container instance (alias).
      */
-    public static function initialize(DIContainerInterface $container): void
+    public static function initialize(ContainerInterface $container) : void
     {
         self::$container = $container;
+    }
+
+    /**
+     * Create container facade from underlying engine.
+     */
+    public static function fromEngine(ContainerInterface $container) : self
+    {
+        $instance         = new self();
+        $instance->engine = $container;
+
+        self::$container = $container;
+
+        return $instance;
+    }
+
+    /**
+     * Get the underlying container engine.
+     */
+    public function engine() : ContainerInterface
+    {
+        return $this->engine ?? self::$container;
+    }
+
+    /**
+     * Create container facade from underlying engine.
+     */
+    public static function fromEngine(ContainerInterface $container) : self
+    {
+        return new self($container);
+    }
+
+    /**
+     * Get the underlying container engine.
+     */
+    public function engine() : ContainerInterface
+    {
+        return self::$container;
     }
 
     public static function make(string $abstract, array $parameters = []): object
@@ -96,9 +135,9 @@ class Container
         self::getContainer()->flush();
     }
 
-    private static function getContainer(): DIContainerInterface
+    private static function getContainer() : ContainerInterface
     {
-        if (self::$container === null) {
+        if (! self::$container instanceof ContainerInterface) {
             throw new RuntimeException('Container not set. Call Container::setContainer() first.');
         }
 

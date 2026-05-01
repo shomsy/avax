@@ -157,8 +157,7 @@ $classAliases = [
     View::class                                                   => \Avax\Components\Presentation\View\System\PublicSurface\View::class,
     Filesystem::class                                             => \Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem::class,
     Config::class                                                 => \Avax\Components\Application\Config\System\PublicSurface\Config::class,
-    ContainerInterface::class                                     => \Avax\Components\Application\Container\System\PublicSurface\ContainerInterface::class,
-    \Avax\Components\Container\ContainerInterface::class          => \Avax\Components\Application\Container\System\PublicSurface\ContainerInterface::class,
+    \Avax\Container\ContainerInterface::class => ContainerInterface::class,
 ];
 
 foreach ($classAliases as $alias => $target) {

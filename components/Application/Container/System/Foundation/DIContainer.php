@@ -21,6 +21,7 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Resolve
 use Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeInterface;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeKind;
+use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Flows\BootProviders\BootProviders;
 use Avax\Components\Application\Container\System\Flows\CallFunction\CallFunction;
 use Avax\Components\Application\Container\System\Flows\CloseScope\CloseScope;

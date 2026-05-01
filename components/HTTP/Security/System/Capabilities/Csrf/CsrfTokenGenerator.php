@@ -23,11 +23,7 @@ final class CsrfTokenGenerator
 
     public function token(): string
     {
-        if (isset($_SESSION[self::SESSION_KEY])) {
-            return $_SESSION[self::SESSION_KEY];
-        }
-
-        return $this->generate();
+        return $_SESSION[self::SESSION_KEY] ?? $this->generate();
     }
 
     public function generate(): string

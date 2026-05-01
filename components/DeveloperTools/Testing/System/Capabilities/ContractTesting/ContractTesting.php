@@ -9,30 +9,30 @@ use Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting\S
 
 final readonly class ContractTesting
 {
-    public static function verify() : ContractVerificationReport
+    public static function verify(): ContractVerificationReport
     {
-        $verifier = new ContractVerifier();
+        $verifier = new ContractVerifier;
 
         return $verifier->verify();
     }
 
-    public static function verifyComponent(string $componentClass) : ComponentContractResult
+    public static function verifyComponent(string $componentClass): ComponentContractResult
     {
-        $verifier = new ContractVerifier();
+        $verifier = new ContractVerifier;
 
         return $verifier->verifyComponent($componentClass);
     }
 
-    public static function breakingChanges(string $sinceVersion) : BreakingChangesReport
+    public static function breakingChanges(string $sinceVersion): BreakingChangesReport
     {
-        $detector = new BreakingChangeDetector();
+        $detector = new BreakingChangeDetector;
 
         return $detector->detect($sinceVersion);
     }
 
-    public static function registerContract(string $componentClass, array $contract) : void
+    public static function registerContract(string $componentClass, array $contract): void
     {
-        $verifier = new ContractVerifier();
+        $verifier = new ContractVerifier;
         $verifier->registerContract($componentClass, $contract);
     }
 }
@@ -47,18 +47,18 @@ final readonly class ContractVerificationReport
         $this->results = $results;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'passed'  => $this->passed(),
+            'passed' => $this->passed(),
             'results' => array_map(
-                fn (ComponentContractResult $r) => $r->toArray(),
+                static fn (ComponentContractResult $r) => $r->toArray(),
                 $this->results,
             ),
         ];
     }
 
-    public function passed() : bool
+    public function passed(): bool
     {
         foreach ($this->results as $result) {
             if (! $result->passed) {
@@ -73,19 +73,19 @@ final readonly class ContractVerificationReport
 final readonly class ComponentContractResult
 {
     public function __construct(
-        public string      $component,
-        public bool        $passed,
-        public array       $checks = [],
-        public string|null $error = null,
+        public string $component,
+        public bool $passed,
+        public array $checks = [],
+        public ?string $error = null,
     ) {}
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'component' => $this->component,
-            'passed'    => $this->passed,
-            'checks'    => $this->checks,
-            'error'     => $this->error,
+            'passed' => $this->passed,
+            'checks' => $this->checks,
+            'error' => $this->error,
         ];
     }
 }
@@ -96,18 +96,18 @@ final readonly class BreakingChangesReport
         public array $changes = [],
     ) {}
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'has_breaking' => $this->hasBreaking(),
-            'changes'      => array_map(
-                fn ($c) => is_array($c) ? $c : (array) $c,
+            'changes' => array_map(
+                static fn ($c) => is_array($c) ? $c : (array) $c,
                 $this->changes,
             ),
         ];
     }
 
-    public function hasBreaking() : bool
+    public function hasBreaking(): bool
     {
         return count($this->changes) > 0;
     }

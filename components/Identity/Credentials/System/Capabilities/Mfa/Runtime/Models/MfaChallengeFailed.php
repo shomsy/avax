@@ -13,15 +13,14 @@ final class MfaChallengeFailed extends RuntimeException
 {
     public function __construct(
         private readonly MfaChallengeFailure $reason,
-        private readonly int|null $retryAfter = null,
-        string                    $message = 'MFA verification failed.',
-        int                       $code = 401,
-    )
-    {
+        private readonly ?int $retryAfter = null,
+        string $message = 'MFA verification failed.',
+        int $code = 401,
+    ) {
         parent::__construct(message: $message, code: $code);
     }
 
-    public static function invalidCode() : self
+    public static function invalidCode(): self
     {
         return new self(
             reason : MfaChallengeFailure::INVALID,
@@ -29,7 +28,7 @@ final class MfaChallengeFailed extends RuntimeException
         );
     }
 
-    public static function expired() : self
+    public static function expired(): self
     {
         return new self(
             reason : MfaChallengeFailure::EXPIRED,
@@ -37,7 +36,7 @@ final class MfaChallengeFailed extends RuntimeException
         );
     }
 
-    public static function locked(int $retryAfter) : self
+    public static function locked(int $retryAfter): self
     {
         return new self(
             reason    : MfaChallengeFailure::LOCKED,
@@ -47,7 +46,7 @@ final class MfaChallengeFailed extends RuntimeException
         );
     }
 
-    public static function notFound() : self
+    public static function notFound(): self
     {
         return new self(
             reason : MfaChallengeFailure::NOT_FOUND,
@@ -55,7 +54,7 @@ final class MfaChallengeFailed extends RuntimeException
         );
     }
 
-    public static function notEnabled() : self
+    public static function notEnabled(): self
     {
         return new self(
             reason : MfaChallengeFailure::NOT_ENABLED,
@@ -64,12 +63,12 @@ final class MfaChallengeFailed extends RuntimeException
         );
     }
 
-    public function reason() : MfaChallengeFailure
+    public function reason(): MfaChallengeFailure
     {
         return $this->reason;
     }
 
-    public function retryAfter() : int|null
+    public function retryAfter(): ?int
     {
         return $this->retryAfter;
     }

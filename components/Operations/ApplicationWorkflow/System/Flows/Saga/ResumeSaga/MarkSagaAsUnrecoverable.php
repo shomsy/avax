@@ -8,10 +8,10 @@ use InvalidArgumentException;
 
 enum SagaRecoveryAction: string
 {
-    case RETRY      = 'retry';
+    case RETRY = 'retry';
     case COMPENSATE = 'compensate';
-    case ABANDON    = 'abandon';
-    case MANUAL     = 'manual';
+    case ABANDON = 'abandon';
+    case MANUAL = 'manual';
 }
 
 final readonly class MarkSagaAsUnrecoverable
@@ -20,12 +20,12 @@ final readonly class MarkSagaAsUnrecoverable
         private SagaRecoveryAction $action,
     ) {}
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'marks a saga as unrecoverable when recovery rules reject it.';
     }
 
-    public function mark(array $sagaData, array $failureReasons) : SagaRecoveryResult
+    public function mark(array $sagaData, array $failureReasons): SagaRecoveryResult
     {
         if (empty($failureReasons)) {
             throw new InvalidArgumentException(message: 'Failure reasons cannot be empty.');
@@ -41,7 +41,7 @@ final readonly class MarkSagaAsUnrecoverable
         );
     }
 
-    private function shouldAbandon(array $reasons) : bool
+    private function shouldAbandon(array $reasons): bool
     {
         $maxRetries = 3;
         $retryCount = 0;
@@ -55,7 +55,7 @@ final readonly class MarkSagaAsUnrecoverable
         return $retryCount >= $maxRetries;
     }
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return ['recovery_action' => $this->action->value];
     }
@@ -65,7 +65,7 @@ final readonly class SagaRecoveryResult
 {
     public function __construct(
         public string $sagaId,
-        public bool   $recoverable,
+        public bool $recoverable,
         public SagaRecoveryAction $action,
         public string $reason,
     ) {}

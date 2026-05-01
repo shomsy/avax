@@ -76,9 +76,9 @@ final class SourceSyncCoordinator
         match ($this->sourceSyncPolicy) {
             SourceSyncPolicy::WRITE_THROUGH => $this->deleteThrough(key: $cacheKey),
             SourceSyncPolicy::WRITE_AROUND,
-            SourceSyncPolicy::CACHE_ASIDE   => $this->invalidateCache(key: $cacheKey),
-            SourceSyncPolicy::WRITE_BEHIND  => $this->invalidateCache(key: $cacheKey),
-            SourceSyncPolicy::NO_SYNC       => $this->deleteFromSource(key: $cacheKey),
+            SourceSyncPolicy::CACHE_ASIDE  => $this->invalidateCache(key: $cacheKey),
+            SourceSyncPolicy::WRITE_BEHIND => $this->invalidateCache(key: $cacheKey),
+            SourceSyncPolicy::NO_SYNC      => $this->deleteFromSource(key: $cacheKey),
         };
     }
 

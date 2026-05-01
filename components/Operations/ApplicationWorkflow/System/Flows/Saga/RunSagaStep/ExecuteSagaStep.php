@@ -15,8 +15,7 @@ final readonly class ExecuteSagaStep
     public function execute(
         SagaStepDefinition $step,
         array $sagaData,
-    ) : array
-    {
+    ): array {
         $startTime = microtime(true);
 
         $input = $this->prepareInput(stepInput: $step->input, sagaData: $sagaData);
@@ -26,18 +25,18 @@ final readonly class ExecuteSagaStep
         $duration = (microtime(true) - $startTime) * 1000;
 
         return [
-            'success'     => true,
-            'output'      => is_array($result) ? $result : ['result' => $result],
+            'success' => true,
+            'output' => is_array($result) ? $result : ['result' => $result],
             'duration_ms' => $duration,
         ];
     }
 
-    private function prepareInput(array $stepInput, array $sagaData) : array
+    private function prepareInput(array $stepInput, array $sagaData): array
     {
         $input = [];
         foreach ($stepInput as $key => $value) {
             if (is_string($value) && str_starts_with($value, '$')) {
-                $dataKey     = substr($value, 1);
+                $dataKey = substr($value, 1);
                 $input[$key] = $sagaData[$dataKey] ?? $value;
             } else {
                 $input[$key] = $value;
@@ -52,7 +51,7 @@ final readonly class LoadSagaInstance
 {
     public function __construct(private object $store) {}
 
-    public function load(string $sagaId) : SagaInstance|null
+    public function load(string $sagaId): ?SagaInstance
     {
         $data = $this->store->get("saga_{$sagaId}");
         if ($data === null) {
@@ -62,7 +61,7 @@ final readonly class LoadSagaInstance
         return SagaInstance::fromArray(row: $data);
     }
 
-    public function exists(string $sagaId) : bool
+    public function exists(string $sagaId): bool
     {
         return $this->store->get("saga_{$sagaId}") !== null;
     }
@@ -75,9 +74,8 @@ final readonly class RecordSagaStepCompleted
     public function record(
         SagaInstance $instance,
         string $stepName,
-        array  $result,
-    ) : void
-    {
+        array $result,
+    ): void {
         $instance = $instance->advanceTo(
             stepName : $stepName,
             stepIndex: $instance->currentStepIndex + 1,
@@ -105,8 +103,7 @@ final readonly class RecordSagaStepFailed
         SagaInstance $instance,
         string $stepName,
         string $error,
-    ) : void
-    {
+    ): void {
         $instance = $instance->fail(error: $error);
 
         $this->store->set("saga_{$instance->id}", $instance->toArray());
@@ -125,10 +122,9 @@ final readonly class RecordSagaStepFailed
 final readonly class ScheduleNextSagaStep
 {
     public function schedule(
-        SagaInstance       $current,
+        SagaInstance $current,
         SagaStepDefinition $nextStep,
-    ) : SagaInstance
-    {
+    ): SagaInstance {
         return $current;
     }
 }
@@ -138,10 +134,9 @@ final readonly class ChooseNextSagaStep
     public function choose(
         SagaInstance $instance,
         array $definition,
-    ) : SagaStepDefinition|null
-    {
+    ): ?SagaStepDefinition {
         $currentIndex = $instance->currentStepIndex;
-        $nextIndex    = $currentIndex + 1;
+        $nextIndex = $currentIndex + 1;
 
         if ($nextIndex >= count($definition['stepOrder'] ?? [])) {
             return null;

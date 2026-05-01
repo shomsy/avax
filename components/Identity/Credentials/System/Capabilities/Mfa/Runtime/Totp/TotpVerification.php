@@ -9,9 +9,9 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\T
  */
 final readonly class TotpVerification
 {
-    private function __construct(public bool $accepted, public string $reason, public int|null $timeStep = null) {}
+    private function __construct(public bool $accepted, public string $reason, public ?int $timeStep = null) {}
 
-    public static function accepted(int $timeStep) : self
+    public static function accepted(int $timeStep): self
     {
         return new self(
             accepted: true,
@@ -20,7 +20,7 @@ final readonly class TotpVerification
         );
     }
 
-    public static function invalid(string $reason = 'invalid') : self
+    public static function invalid(string $reason = 'invalid'): self
     {
         return new self(
             accepted: false,

@@ -6,22 +6,22 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Resum
 
 enum SagaRecoveryStrategy: string
 {
-    case RETRY      = 'retry';
+    case RETRY = 'retry';
     case COMPENSATE = 'compensate';
-    case SKIP       = 'skip';
-    case ABANDON    = 'abandon';
+    case SKIP = 'skip';
+    case ABANDON = 'abandon';
 }
 
 final readonly class SagaRecoveryPlan
 {
     public function __construct(
         public SagaRecoveryStrategy $strategy,
-        public int  $maxRetries,
-        public int  $retryDelayMs,
+        public int $maxRetries,
+        public int $retryDelayMs,
         public bool $allowSkipSteps,
     ) {}
 
-    public static function standard() : self
+    public static function standard(): self
     {
         return new self(
             strategy      : SagaRecoveryStrategy::RETRY,
@@ -31,7 +31,7 @@ final readonly class SagaRecoveryPlan
         );
     }
 
-    public static function aggressive() : self
+    public static function aggressive(): self
     {
         return new self(
             strategy      : SagaRecoveryStrategy::COMPENSATE,
@@ -41,28 +41,28 @@ final readonly class SagaRecoveryPlan
         );
     }
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'plans saga recovery including strategy, retries, and delay.';
     }
 
-    public function canRetry(int $attempt) : bool
+    public function canRetry(int $attempt): bool
     {
         return $this->strategy === SagaRecoveryStrategy::RETRY
             && $attempt < $this->maxRetries;
     }
 
-    public function calculateDelay(int $attempt) : int
+    public function calculateDelay(int $attempt): int
     {
         return $this->retryDelayMs * (2 ** $attempt);
     }
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return [
-            'strategy'         => $this->strategy->value,
-            'max_retries'      => $this->maxRetries,
-            'retry_delay_ms'   => $this->retryDelayMs,
+            'strategy' => $this->strategy->value,
+            'max_retries' => $this->maxRetries,
+            'retry_delay_ms' => $this->retryDelayMs,
             'allow_skip_steps' => $this->allowSkipSteps,
         ];
     }

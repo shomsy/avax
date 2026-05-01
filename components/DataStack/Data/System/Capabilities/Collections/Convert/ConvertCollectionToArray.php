@@ -13,20 +13,20 @@ final readonly class ConvertCollectionToArray
         private array $items = [],
     ) {}
 
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return $this->toArray();
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return array_map(
-            callback: fn (mixed $item) : mixed => $this->normalizeItem(item: $item),
+            callback: fn (mixed $item): mixed => $this->normalizeItem(item: $item),
             array   : $this->items,
         );
     }
 
-    private function normalizeItem(mixed $item) : mixed
+    private function normalizeItem(mixed $item): mixed
     {
         if (is_object(value: $item) && method_exists(object_or_class: $item, method: 'toArray')) {
             return $item->toArray();
@@ -35,7 +35,7 @@ final readonly class ConvertCollectionToArray
         return $item;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

@@ -13,7 +13,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermissi
  */
 final readonly class RequireFreshAssuranceForAdminAction
 {
-    public function execute() : AccessPolicy
+    public function execute(): AccessPolicy
     {
         return AccessPolicy::forIdentityPolicy(
             identityPolicy    : IdentityPolicyCatalog::admin(),

@@ -8,11 +8,11 @@ use DateTimeImmutable;
 
 interface PasskeyChallengeStoreInterface
 {
-    public function issue(PasskeyChallengeRecord $record) : void;
+    public function issue(PasskeyChallengeRecord $record): void;
 
-    public function find(string $challengeId) : PasskeyChallengeRecord|null;
+    public function find(string $challengeId): ?PasskeyChallengeRecord;
 
-    public function markUsed(string $challengeId, DateTimeImmutable $usedAt) : void;
+    public function markUsed(string $challengeId, DateTimeImmutable $usedAt): void;
 
-    public function forget(string $challengeId) : void;
+    public function forget(string $challengeId): void;
 }

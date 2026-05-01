@@ -17,7 +17,7 @@ final readonly class VerifyPassword
         private PasswordHasher $hasher,
     ) {}
 
-    public function execute(User $user, string $password) : bool
+    public function execute(User $user, string $password): bool
     {
         return $this->hasher->verify($password, $user->passwordHash);
     }

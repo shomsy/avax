@@ -56,32 +56,32 @@ final class ContainerKernelTest extends TestCase
     #[Override]
     protected function setUp() : void
     {
-        $this->definitions = new DefinitionStore;
+        $this->definitions = new DefinitionStore();
 
-        $registry = new ScopeRegistry;
+        $registry = new ScopeRegistry();
         $scopes   = new ScopeManager(registry: $registry);
-        $timeline = new ResolutionTimeline;
+        $timeline = new ResolutionTimeline();
 
         $cache    = $this->createMock(PrototypeCache::class);
-        $analyzer = new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer);
+        $analyzer = new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer());
         $factory  = new ServicePrototypeFactory(cache: $cache, analyzer: $analyzer);
 
-        $resolver         = new DependencyResolver;
+        $resolver         = new DependencyResolver();
         $instantiator     = new Instantiator(prototypes: $factory, resolver: $resolver);
         $engine           = new ResolutionEngine(
             resolver    : $resolver,
             instantiator: $instantiator,
             store       : $this->definitions,
             registry    : $registry,
-            metrics     : new CollectMetrics
+            metrics     : new CollectMetrics(),
         );
         $propertyInjector = new PropertyInjector(container: null);
         $injector         = new InjectDependencies(
             servicePrototypeFactory: $factory,
             propertyInjector       : $propertyInjector,
             methodInjector         : new MethodInjector(
-                                         parameterResolver: new ResolveMethodParameters(resolver: $resolver)
-                                     )
+                                         parameterResolver: new ResolveMethodParameters(resolver: $resolver),
+                                     ),
         );
         $invoker          = new InvokeAction(container: null, resolver: $resolver);
 
@@ -92,7 +92,7 @@ final class ContainerKernelTest extends TestCase
             scopes          : $scopes,
             prototypeFactory: $factory,
             timeline        : $timeline,
-            autoDefine      : true
+            autoDefine      : true,
         );
 
         $this->kernel     = new ContainerKernel(definitions: $this->definitions, config: $config);

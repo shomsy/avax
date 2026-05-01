@@ -13,9 +13,9 @@ final readonly class BeginEmailVerificationData
 {
     public function __construct(
         #[SensitiveParameter]
-        public string      $email,
+        public string $email,
         #[SensitiveParameter]
-        public string|null $ipAddress = null,
-        public string|null $userAgent = null,
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
     ) {}
 }

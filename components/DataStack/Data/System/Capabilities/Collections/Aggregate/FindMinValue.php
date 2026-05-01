@@ -15,28 +15,26 @@ final readonly class FindMinValue
         private array $items = [],
     ) {}
 
-
-    public function __invoke(string|callable $key) : mixed
+    public function __invoke(string|callable $key): mixed
     {
         return $this->min(key: $key);
     }
 
-
-    public function min(string|callable $key) : mixed
+    public function min(string|callable $key): mixed
     {
         if ($this->items === []) {
             throw new LogicException(message: 'Cannot find minimum of empty collection.');
         }
 
         $values = array_map(
-            callback: static fn (mixed $item) : mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
+            callback: static fn (mixed $item): mixed => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
             array   : $this->items,
         );
 
         return min(value: $values);
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

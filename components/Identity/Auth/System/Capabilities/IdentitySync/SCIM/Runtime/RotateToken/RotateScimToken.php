@@ -22,17 +22,17 @@ final readonly class RotateScimToken
     public function __construct(
         private ScimDirectoryStoreInterface $directoryStore,
         #[SensitiveParameter]
-        private PasswordHasher              $passwordHasher,
-        private AuditLogInterface           $auditLog,
-        private Clock                       $clock,
-        private AttemptThrottle|null        $attemptThrottle = null,
+        private PasswordHasher $passwordHasher,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private ?AttemptThrottle $attemptThrottle = null,
     ) {}
 
     /**
      * @throws ScimFailed
      * @throws RandomException
      */
-    public function execute(string $directoryId) : RotatedScimToken
+    public function execute(string $directoryId): RotatedScimToken
     {
         $directory = $this->directoryStore->find(directoryId: $directoryId);
 
@@ -47,7 +47,7 @@ final readonly class RotateScimToken
         $this->enforceThrottle(directoryId: $directory->directoryId);
 
         $plainTextToken = bin2hex(string: random_bytes(length: 24));
-        $rotated        = new ScimDirectory(
+        $rotated = new ScimDirectory(
             directoryId : $directory->directoryId,
             tenantSlug  : $directory->tenantSlug,
             name        : $directory->name,
@@ -59,24 +59,24 @@ final readonly class RotateScimToken
 
         $this->directoryStore->save(directory: $rotated);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.scim.directory.token_rotated',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'directory_id' => $directory->directoryId,
-                                                           'tenant'       => $directory->tenantSlug,
-                                                       ],
-                                       ));
+            name      : 'auth.scim.directory.token_rotated',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'directory_id' => $directory->directoryId,
+                'tenant' => $directory->tenantSlug,
+            ],
+        ));
 
         return new RotatedScimToken(directory: $rotated, plainTextToken: $plainTextToken);
     }
 
-    private function enforceThrottle(string $directoryId) : void
+    private function enforceThrottle(string $directoryId): void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . 'rotate';
+        $key = 'scim:'.$directoryId.':'.'rotate';
 
         try {
             $this->attemptThrottle->check(key: $key);

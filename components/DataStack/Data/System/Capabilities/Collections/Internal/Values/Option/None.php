@@ -12,26 +12,26 @@ use RuntimeException;
  */
 final class None extends Option
 {
-    private static self|null $instance = null;
+    private static ?self $instance = null;
 
     private function __construct()
     {
         // Empty - singleton
     }
 
-    public static function instance() : self
+    public static function instance(): self
     {
-        return self::$instance ??= new self();
+        return self::$instance ??= new self;
     }
 
     #[Override]
-    public function isSome() : bool
+    public function isSome(): bool
     {
         return false;
     }
 
     #[Override]
-    public function unwrap() : mixed
+    public function unwrap(): mixed
     {
         throw new RuntimeException('Cannot unwrap none value.');
     }

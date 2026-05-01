@@ -18,19 +18,19 @@ final class RepositoryRegistry
     /** @var array<string, RepositoryStorageInterface> */
     private array $backends = [];
 
-    public function register(string $entityClass, RepositoryStorageInterface $backend) : void
+    public function register(string $entityClass, RepositoryStorageInterface $backend): void
     {
         $this->backends[$entityClass] = $backend;
     }
 
-    public function get(string $entityClass) : RepositoryStorageInterface
+    public function get(string $entityClass): RepositoryStorageInterface
     {
         return $this->backends[$entityClass] ?? throw new RuntimeException(
             message: "No storage backend registered for entity: {$entityClass}",
         );
     }
 
-    public function has(string $entityClass) : bool
+    public function has(string $entityClass): bool
     {
         return isset($this->backends[$entityClass]);
     }
@@ -40,7 +40,7 @@ final class RepositoryRegistry
      *
      * @return array<string>
      */
-    public function registeredEntities() : array
+    public function registeredEntities(): array
     {
         return array_keys($this->backends);
     }
@@ -49,7 +49,7 @@ final class RepositoryRegistry
      * Clear all registrations.
      * Useful for worker state reset.
      */
-    public function clear() : void
+    public function clear(): void
     {
         $this->backends = [];
     }

@@ -8,5 +8,5 @@ use DateTimeImmutable;
 
 interface PruneExpiredAuthorizationCodesInterface
 {
-    public function pruneExpired(DateTimeImmutable $now) : int;
+    public function pruneExpired(DateTimeImmutable $now): int;
 }

@@ -6,7 +6,7 @@ use Avax\Components\Documentation\Api\System\PublicSurface\ApiDocumentation;
 use Avax\Components\Operations\Monitoring\System\PublicSurface\Monitoring;
 use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
 
-$router = function (RouteBuilder $routes) {
+$router = static function (RouteBuilder $routes) : void {
     $routes->get('/', static fn () => [
         'name'    => 'Avax',
         'version' => '1.0.0',

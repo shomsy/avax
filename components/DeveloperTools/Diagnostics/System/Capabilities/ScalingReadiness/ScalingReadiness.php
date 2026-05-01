@@ -8,29 +8,29 @@ use Avax\Components\DeveloperTools\Diagnostics\System\Capabilities\ScalingReadin
 
 final readonly class ScalingReadiness
 {
-    public static function isReady() : bool
+    public static function isReady(): bool
     {
         return self::audit()->isReady();
     }
 
-    public static function audit() : ScalingAudit
+    public static function audit(): ScalingAudit
     {
         return new ScalingAudit([
-                                    self::checkLocalFileState(),
-                                    self::checkLocalFileLocks(),
-                                    self::checkStickySession(),
-                                    self::checkInProcessQueue(),
-                                    self::checkHardcodedPaths(),
-                                    self::checkLocalTempFiles(),
-                                    self::checkStatelessMiddleware(),
-                                ]);
+            self::checkLocalFileState(),
+            self::checkLocalFileLocks(),
+            self::checkStickySession(),
+            self::checkInProcessQueue(),
+            self::checkHardcodedPaths(),
+            self::checkLocalTempFiles(),
+            self::checkStatelessMiddleware(),
+        ]);
     }
 
-    private static function checkLocalFileState() : ScalingCheckResult
+    private static function checkLocalFileState(): ScalingCheckResult
     {
         $session = getenv('SESSION_STORE') ?: '';
-        $cache   = getenv('CACHE_STORE') ?: '';
-        $lock    = getenv('LOCK_STORE') ?: '';
+        $cache = getenv('CACHE_STORE') ?: '';
+        $lock = getenv('LOCK_STORE') ?: '';
 
         $safe = ($session === 'redis' || $session === 'Redis')
             && ($cache === 'redis' || $cache === 'Redis')
@@ -45,7 +45,7 @@ final readonly class ScalingReadiness
         );
     }
 
-    private static function checkLocalFileLocks() : ScalingCheckResult
+    private static function checkLocalFileLocks(): ScalingCheckResult
     {
         return new ScalingCheckResult(
             name   : 'NoLocalFileLocks',
@@ -54,7 +54,7 @@ final readonly class ScalingReadiness
         );
     }
 
-    private static function checkStickySession() : ScalingCheckResult
+    private static function checkStickySession(): ScalingCheckResult
     {
         return new ScalingCheckResult(
             name   : 'NoStickySession',
@@ -63,7 +63,7 @@ final readonly class ScalingReadiness
         );
     }
 
-    private static function checkInProcessQueue() : ScalingCheckResult
+    private static function checkInProcessQueue(): ScalingCheckResult
     {
         return new ScalingCheckResult(
             name   : 'NoInProcessQueue',
@@ -72,7 +72,7 @@ final readonly class ScalingReadiness
         );
     }
 
-    private static function checkHardcodedPaths() : ScalingCheckResult
+    private static function checkHardcodedPaths(): ScalingCheckResult
     {
         return new ScalingCheckResult(
             name   : 'NoHardcodedPaths',
@@ -81,7 +81,7 @@ final readonly class ScalingReadiness
         );
     }
 
-    private static function checkLocalTempFiles() : ScalingCheckResult
+    private static function checkLocalTempFiles(): ScalingCheckResult
     {
         return new ScalingCheckResult(
             name   : 'NoLocalTempFiles',
@@ -90,7 +90,7 @@ final readonly class ScalingReadiness
         );
     }
 
-    private static function checkStatelessMiddleware() : ScalingCheckResult
+    private static function checkStatelessMiddleware(): ScalingCheckResult
     {
         return new ScalingCheckResult(
             name   : 'StatelessMiddleware',

@@ -1,22 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 use components\Container\Features\Think\Model\MethodPrototype;
 use components\Container\Features\Think\Model\ParameterPrototype;
 use components\Container\Features\Think\Model\ServicePrototype;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => 'Avax\\Container\\Config\\Settings',
-                                                'constructor'        =>
-                                                    MethodPrototype::__set_state(array: [
+                                                'constructor'        => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
-                                                                                            'parameters' =>
-                                                                                                [
+                                                                                            'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'items',
                                                                                                                                                'type'       => null,
                                                                                                                                                'hasDefault' => true,
-                                                                                                                                               'default'    =>
-                                                                                                                                                   [
+                                                                                                                                               'default' => [
                                                                                                                                                    ],
                                                                                                                                                'isVariadic' => false,
                                                                                                                                                'allowsNull' => false,
@@ -24,11 +23,9 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                 ],
                                                                                         ]),
-                                                'injectedProperties' =>
-                                                    [
+                                                'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    =>
-                                                    [
+                                                'injectedMethods'    => [
                                                     ],
                                                 'isInstantiable'     => true,
                                             ]);

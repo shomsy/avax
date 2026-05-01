@@ -183,11 +183,11 @@ function benchmark(callable $callback, int $iterations = 1) : array
  * @param array<string, mixed> $settings
  */
 function benchContainer(
-    array|null  $settings = null,
-    string|null $compileMode = null,
-    bool|null   $debug = null,
-    string|null $diagnosticsMode = null,
-    string  $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
+    array  $settings = null,
+    string $compileMode = null,
+    bool   $debug = null,
+    string $diagnosticsMode = null,
+    string $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
 ) : Container
 {
     $settings        ??= [];

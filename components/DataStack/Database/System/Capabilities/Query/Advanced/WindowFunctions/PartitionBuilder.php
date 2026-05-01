@@ -13,22 +13,22 @@ final class PartitionBuilder
 
     public function __construct(private readonly GrammarInterface $grammar) {}
 
-    public function by(string ...$columns) : self
+    public function by(string ...$columns): self
     {
         $this->columns = $columns;
 
         return $this;
     }
 
-    public function toSql() : string
+    public function toSql(): string
     {
         if ($this->columns === []) {
             return '';
         }
 
-        return 'PARTITION BY ' . implode(
-                separator: ', ',
-                array    : array_map(callback: fn ($column) : string => $this->grammar->wrap(value: $column), array: $this->columns),
-            );
+        return 'PARTITION BY '.implode(
+            separator: ', ',
+            array    : array_map(callback: fn ($column): string => $this->grammar->wrap(value: $column), array: $this->columns),
+        );
     }
 }

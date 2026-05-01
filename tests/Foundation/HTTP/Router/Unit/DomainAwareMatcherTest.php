@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
@@ -30,12 +29,12 @@ class DomainAwareMatcherTest extends TestCase
             method: 'GET',
             path  : '/api/users',
             action: 'UserController@index',
-            domain: null // No domain constraint
+            domain: null, // No domain constraint
         );
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getUri')->willReturn(
-            value: $this->createMock(UriInterface::class)
+            value: $this->createMock(UriInterface::class),
         );
 
         // Base matcher should be called and return a match
@@ -56,7 +55,7 @@ class DomainAwareMatcherTest extends TestCase
             method: 'GET',
             path  : '/admin',
             action: 'AdminController@index',
-            domain: 'admin.example.com'
+            domain: 'admin.example.com',
         );
 
         $uri = $this->createMock(UriInterface::class);
@@ -82,7 +81,7 @@ class DomainAwareMatcherTest extends TestCase
             method: 'GET',
             path  : '/admin',
             action: 'AdminController@index',
-            domain: 'admin.example.com'
+            domain: 'admin.example.com',
         );
 
         $uri = $this->createMock(UriInterface::class);
@@ -107,7 +106,7 @@ class DomainAwareMatcherTest extends TestCase
             method: 'GET',
             path  : '/dashboard',
             action: 'DashboardController@index',
-            domain: '*.example.com' // Wildcard subdomain
+            domain: '*.example.com', // Wildcard subdomain
         );
 
         $uri = $this->createMock(UriInterface::class);
@@ -133,7 +132,7 @@ class DomainAwareMatcherTest extends TestCase
             method: 'GET',
             path  : '/dashboard',
             action: 'DashboardController@index',
-            domain: '*.example.com'
+            domain: '*.example.com',
         );
 
         $uri = $this->createMock(UriInterface::class);
@@ -157,7 +156,7 @@ class DomainAwareMatcherTest extends TestCase
             method: 'GET',
             path  : '/api',
             action: 'ApiController@index',
-            domain: 'api.example.com'
+            domain: 'api.example.com',
         );
 
         $uri = $this->createMock(UriInterface::class);
@@ -183,7 +182,7 @@ class DomainAwareMatcherTest extends TestCase
             method: 'GET',
             path  : '/test',
             action: 'TestController@index',
-            domain: 'example.com'
+            domain: 'example.com',
         );
 
         $uri = $this->createMock(UriInterface::class);
@@ -211,13 +210,13 @@ class DomainAwareMatcherTest extends TestCase
                     method: 'GET',
                     path  : '/api',
                     action: 'ApiController@index',
-                    domain: 'api.example.com'
+                    domain: 'api.example.com',
                 ),
                 '/fallback' => new RouteDefinition(
                     method: 'GET',
                     path  : '/fallback',
                     action: 'FallbackController@index',
-                    domain: null // No domain constraint
+                    domain: null, // No domain constraint
                 ),
             ],
         ];

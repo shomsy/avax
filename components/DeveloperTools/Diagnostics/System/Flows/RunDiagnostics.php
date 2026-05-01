@@ -8,7 +8,7 @@ use Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface\Diagnostics;
 
 final class RunDiagnostics
 {
-    public static function execute() : array
+    public static function execute(): array
     {
         return [Diagnostics::health()];
     }

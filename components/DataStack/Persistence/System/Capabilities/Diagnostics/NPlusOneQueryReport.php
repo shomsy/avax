@@ -13,20 +13,20 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics;
 final readonly class NPlusOneQueryReport
 {
     /**
-     * @param array<string> $sampleQueries
+     * @param  array<string>  $sampleQueries
      */
     public function __construct(
         public QueryFingerprint $pattern,
-        public int         $count,
-        public float       $timeSpanMs,
-        public array       $sampleQueries = [],
-        public string|null $suggestion = null,
+        public int $count,
+        public float $timeSpanMs,
+        public array $sampleQueries = [],
+        public ?string $suggestion = null,
     ) {}
 
     /**
      * Returns the number of times this pattern was executed.
      */
-    public function count() : int
+    public function count(): int
     {
         return $this->count;
     }
@@ -34,7 +34,7 @@ final readonly class NPlusOneQueryReport
     /**
      * Returns the time span over which these queries were executed.
      */
-    public function timeSpanMs() : float
+    public function timeSpanMs(): float
     {
         return $this->timeSpanMs;
     }
@@ -44,7 +44,7 @@ final readonly class NPlusOneQueryReport
      *
      * @return array<string>
      */
-    public function sampleQueries() : array
+    public function sampleQueries(): array
     {
         return $this->sampleQueries;
     }
@@ -52,7 +52,7 @@ final readonly class NPlusOneQueryReport
     /**
      * Returns the optimization suggestion.
      */
-    public function suggestion() : string|null
+    public function suggestion(): ?string
     {
         return $this->suggestion;
     }
@@ -60,7 +60,7 @@ final readonly class NPlusOneQueryReport
     /**
      * Checks if this is a severe N+1 problem.
      */
-    public function isSevere(int $threshold = 50) : bool
+    public function isSevere(int $threshold = 50): bool
     {
         return $this->count >= $threshold;
     }
@@ -68,7 +68,7 @@ final readonly class NPlusOneQueryReport
     /**
      * Returns a string summary of the report.
      */
-    public function summary() : string
+    public function summary(): string
     {
         $summary = "N+1 Query Detected:\n";
         $summary .= "  Pattern: {$this->pattern->pattern()}\n";
@@ -85,7 +85,7 @@ final readonly class NPlusOneQueryReport
     /**
      * Returns the query pattern.
      */
-    public function pattern() : QueryFingerprint
+    public function pattern(): QueryFingerprint
     {
         return $this->pattern;
     }
@@ -93,7 +93,7 @@ final readonly class NPlusOneQueryReport
     /**
      * Creates a report with a default suggestion.
      */
-    public function withSuggestion(string $suggestion) : NPlusOneQueryReport
+    public function withSuggestion(string $suggestion): NPlusOneQueryReport
     {
         return new NPlusOneQueryReport(
             pattern      : $this->pattern,

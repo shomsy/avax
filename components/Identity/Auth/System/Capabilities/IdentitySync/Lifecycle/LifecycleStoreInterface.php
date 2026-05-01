@@ -8,7 +8,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 
 interface LifecycleStoreInterface
 {
-    public function save(LifecycleRecord $record) : void;
+    public function save(LifecycleRecord $record): void;
 
-    public function find(UserId $userId) : LifecycleRecord|null;
+    public function find(UserId $userId): ?LifecycleRecord;
 }

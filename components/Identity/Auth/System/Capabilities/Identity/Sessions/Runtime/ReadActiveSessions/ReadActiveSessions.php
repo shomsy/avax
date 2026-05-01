@@ -21,23 +21,24 @@ final readonly class ReadActiveSessions
 {
     public function __construct(
         #[SensitiveParameter]
-        private CurrentAuthentication         $currentAuthentication,
-        private Clock                         $clock,
+        private CurrentAuthentication $currentAuthentication,
+        private Clock $clock,
         #[SensitiveParameter]
-        private SessionRegistryInterface|null $sessionRegistry = null,
+        private ?SessionRegistryInterface $sessionRegistry = null,
     ) {}
 
     /**
      * @return list<ActiveSession>
+     *
      * @throws Unauthenticated
      */
-    public function execute() : array
+    public function execute(): array
     {
         $context = $this->currentAuthentication->read();
-        $user    = $context->user();
+        $user = $context->user();
 
         if ($user === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         if ($this->sessionRegistry === null) {
@@ -45,8 +46,8 @@ final readonly class ReadActiveSessions
         }
 
         $currentSessionId = $context->sessionId();
-        $now              = $this->clock->now();
-        $sessions         = [];
+        $now = $this->clock->now();
+        $sessions = [];
 
         foreach ($this->sessionRegistry->listForUser(userId: new UserId(value: $user->id)) as $record) {
             if (! $record->isActiveAt(moment: $now)) {
@@ -59,7 +60,7 @@ final readonly class ReadActiveSessions
         return $sessions;
     }
 
-    private function toBoundary(SessionRecord $record, #[SensitiveParameter] string|null $currentSessionId) : ActiveSession
+    private function toBoundary(SessionRecord $record, #[SensitiveParameter] ?string $currentSessionId): ActiveSession
     {
         return new ActiveSession(
             sessionId        : $record->sessionId,

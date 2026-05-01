@@ -12,7 +12,7 @@ final readonly class CacheKeyPrefix implements Stringable
     private string $prefix;
 
     public function __construct(
-        string        $prefix,
+        string $prefix,
         public string $separator = ':',
     )
     {

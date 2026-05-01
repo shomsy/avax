@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\ExplainDataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQueryPlan;
 use Avax\Components\DataStack\Persistence\System\Flows\CompileDataQuery\CompileDataQuery;
+
 use function count;
 use function in_array;
 use function is_array;
@@ -20,15 +21,15 @@ final class ExplainDataQuery
 {
     private CompileDataQuery $compiler;
 
-    public function __construct(CompileDataQuery|null $compiler = null)
+    public function __construct(?CompileDataQuery $compiler = null)
     {
-        $this->compiler = $compiler ?? new CompileDataQuery();
+        $this->compiler = $compiler ?? new CompileDataQuery;
     }
 
     /**
      * Explains the query and returns an optimized plan with suggestions.
      */
-    public function explain(DataQuery $query) : DataQueryPlan
+    public function explain(DataQuery $query): DataQueryPlan
     {
         $plan = $this->compiler->compile($query);
 
@@ -46,7 +47,7 @@ final class ExplainDataQuery
      *
      * @return array<string>
      */
-    private function analyzeQuery(DataQuery $query, DataQueryPlan $plan) : array
+    private function analyzeQuery(DataQuery $query, DataQueryPlan $plan): array
     {
         $suggestions = [];
 
@@ -101,7 +102,7 @@ final class ExplainDataQuery
      *
      * @return array<string>
      */
-    private function extractIndexedFields(DataQueryPlan $plan) : array
+    private function extractIndexedFields(DataQueryPlan $plan): array
     {
         // In a real implementation, this would query the database metadata
         // For now, we assume primary key and common fields are indexed
@@ -111,7 +112,7 @@ final class ExplainDataQuery
     /**
      * Estimates the query cost.
      */
-    private function estimateCost(DataQuery $query) : float
+    private function estimateCost(DataQuery $query): float
     {
         $cost = 1.0;
 

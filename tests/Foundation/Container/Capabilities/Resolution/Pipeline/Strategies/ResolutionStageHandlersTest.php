@@ -21,7 +21,7 @@ final class ResolutionStageHandlersTest extends TestCase
 
         $this->assertSame(
             expected: [ResolutionState::ContextualLookup, ResolutionState::DefinitionLookup],
-            actual  : $handlers->orderedStates()
+            actual  : $handlers->orderedStates(),
         );
 
         $context = new KernelContext(serviceId: 'foo');
@@ -38,7 +38,7 @@ final class ResolutionStageHandlersTest extends TestCase
 
         $this->assertSame(
             expected: ResolutionState::DefinitionLookup,
-            actual  : $handlers->nextStateAfter(state: ResolutionState::ContextualLookup)
+            actual  : $handlers->nextStateAfter(state: ResolutionState::ContextualLookup),
         );
         $this->assertNull(actual: $handlers->nextStateAfter(state: ResolutionState::DefinitionLookup));
     }

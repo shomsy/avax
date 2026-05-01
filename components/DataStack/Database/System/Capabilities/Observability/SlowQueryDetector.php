@@ -20,13 +20,13 @@ final readonly class SlowQueryReport
         public string $fingerprint = '',
         public string $connection = '',
         public float $timestamp = 0.0,
-        public int   $occurrences = 1,
+        public int $occurrences = 1,
     ) {}
 
     /**
      * Returns a human-readable summary.
      */
-    public function summary() : string
+    public function summary(): string
     {
         return sprintf(
             "[%s] Query took %.2fms (threshold: %.2fms, %.1fx over)\nSQL: %s",
@@ -41,22 +41,22 @@ final readonly class SlowQueryReport
     /**
      * Returns a formatted duration comparison string.
      */
-    public function severityLabel() : string
+    public function severityLabel(): string
     {
         $ratio = $this->timesOverThreshold();
 
         return match (true) {
             $ratio >= 10.0 => 'CRITICAL',
-            $ratio >= 5.0  => 'SEVERE',
-            $ratio >= 2.0  => 'WARNING',
-            default        => 'SLOW',
+            $ratio >= 5.0 => 'SEVERE',
+            $ratio >= 2.0 => 'WARNING',
+            default => 'SLOW',
         };
     }
 
     /**
      * Returns how many times the threshold was exceeded.
      */
-    public function timesOverThreshold() : float
+    public function timesOverThreshold(): float
     {
         if ($this->thresholdMs <= 0) {
             return 0.0;
@@ -68,19 +68,19 @@ final readonly class SlowQueryReport
     /**
      * Converts to an associative array.
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'sql'          => $this->sql,
-            'bindings'     => $this->bindings,
-            'duration_ms'  => $this->durationMs,
+            'sql' => $this->sql,
+            'bindings' => $this->bindings,
+            'duration_ms' => $this->durationMs,
             'threshold_ms' => $this->thresholdMs,
-            'fingerprint'  => $this->fingerprint,
-            'connection'   => $this->connection,
-            'timestamp'    => $this->timestamp,
-            'occurrences'  => $this->occurrences,
-            'severity'     => $this->severityLabel(),
-            'times_over'   => $this->timesOverThreshold(),
+            'fingerprint' => $this->fingerprint,
+            'connection' => $this->connection,
+            'timestamp' => $this->timestamp,
+            'occurrences' => $this->occurrences,
+            'severity' => $this->severityLabel(),
+            'times_over' => $this->timesOverThreshold(),
         ];
     }
 }
@@ -103,19 +103,19 @@ final readonly class SlowQueryStatistics
     /**
      * Creates statistics from a list of slow query reports.
      *
-     * @param list<SlowQueryReport> $reports
+     * @param  list<SlowQueryReport>  $reports
      */
-    public static function fromReports(array $reports) : self
+    public static function fromReports(array $reports): self
     {
         if ($reports === []) {
-            return new self();
+            return new self;
         }
 
         $totalDuration = 0.0;
-        $maxDuration   = 0.0;
-        $minDuration   = PHP_FLOAT_MAX;
+        $maxDuration = 0.0;
+        $minDuration = PHP_FLOAT_MAX;
         $byFingerprint = [];
-        $byConnection  = [];
+        $byConnection = [];
 
         foreach ($reports as $report) {
             $totalDuration += $report->durationMs;
@@ -129,12 +129,12 @@ final readonly class SlowQueryStatistics
             }
 
             if ($report->fingerprint !== '') {
-                $fp                 = $report->fingerprint;
+                $fp = $report->fingerprint;
                 $byFingerprint[$fp] = ($byFingerprint[$fp] ?? 0) + 1;
             }
 
             if ($report->connection !== '') {
-                $conn                = $report->connection;
+                $conn = $report->connection;
                 $byConnection[$conn] = ($byConnection[$conn] ?? 0) + 1;
             }
         }
@@ -155,7 +155,7 @@ final readonly class SlowQueryStatistics
     /**
      * Returns a summary string.
      */
-    public function summary() : string
+    public function summary(): string
     {
         return sprintf(
             "Slow Query Statistics:\n  Total: %d\n  Avg: %.2fms\n  Max: %.2fms\n  Min: %.2fms\n  Total Duration: %.2fms",
@@ -190,25 +190,23 @@ final class SlowQueryDetector
         /**
          * @var float Threshold in milliseconds for what constitutes a "slow" query
          */
-        private float                            $thresholdMs = 1000.0,
+        private float $thresholdMs = 1000.0,
         /**
          * @var QueryFingerprinter|null Optional fingerprinter for grouping
          */
-        private readonly QueryFingerprinter|null $queryFingerprinter = null,
+        private readonly ?QueryFingerprinter $queryFingerprinter = null,
         /**
          * @var int Maximum number of slow queries to retain (0 = unlimited)
          */
-        private readonly int                     $maxEntries = 0
-    )
-    {
-    }
+        private readonly int $maxEntries = 0,
+    ) {}
 
     /**
      * Analyzes all entries from a QueryTimeline and detects slow queries.
      *
      * @return list<SlowQueryReport>
      */
-    public function analyzeTimeline(QueryTimeline $queryTimeline) : array
+    public function analyzeTimeline(QueryTimeline $queryTimeline): array
     {
         $detected = [];
 
@@ -226,7 +224,7 @@ final class SlowQueryDetector
      *
      * @return list<SlowQueryReport>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->slowQueries;
     }
@@ -234,7 +232,7 @@ final class SlowQueryDetector
     /**
      * Records a query entry from the QueryTimeline.
      */
-    public function recordEntry(QueryEntry $queryEntry) : bool
+    public function recordEntry(QueryEntry $queryEntry): bool
     {
         return $this->record(
             sql       : $queryEntry->sql,
@@ -254,8 +252,7 @@ final class SlowQueryDetector
         float $durationMs,
         array $bindings = [],
         string $connection = '',
-    ) : bool
-    {
+    ): bool {
         if ($durationMs < $this->thresholdMs) {
             return false;
         }
@@ -284,7 +281,7 @@ final class SlowQueryDetector
     /**
      * Adds a slow query report directly.
      */
-    public function addReport(SlowQueryReport $slowQueryReport) : void
+    public function addReport(SlowQueryReport $slowQueryReport): void
     {
         $this->slowQueries[] = $slowQueryReport;
 
@@ -304,12 +301,12 @@ final class SlowQueryDetector
      *
      * @return list<SlowQueryReport>
      */
-    public function byFingerprint(string $fingerprint) : array
+    public function byFingerprint(string $fingerprint): array
     {
         return array_values(array_filter(
-                                $this->slowQueries,
-                                static fn (SlowQueryReport $slowQueryReport) : bool => $slowQueryReport->fingerprint === $fingerprint,
-                            ));
+            $this->slowQueries,
+            static fn (SlowQueryReport $slowQueryReport): bool => $slowQueryReport->fingerprint === $fingerprint,
+        ));
     }
 
     /**
@@ -317,12 +314,12 @@ final class SlowQueryDetector
      *
      * @return list<SlowQueryReport>
      */
-    public function bySeverity(string $severity) : array
+    public function bySeverity(string $severity): array
     {
         return array_values(array_filter(
-                                $this->slowQueries,
-                                static fn (SlowQueryReport $slowQueryReport) : bool => $slowQueryReport->severityLabel() === $severity,
-                            ));
+            $this->slowQueries,
+            static fn (SlowQueryReport $slowQueryReport): bool => $slowQueryReport->severityLabel() === $severity,
+        ));
     }
 
     /**
@@ -330,12 +327,12 @@ final class SlowQueryDetector
      *
      * @return list<SlowQueryReport>
      */
-    public function topSlow(int $limit = 10) : array
+    public function topSlow(int $limit = 10): array
     {
         $sorted = $this->slowQueries;
         usort(
             $sorted,
-            static fn (SlowQueryReport $a, SlowQueryReport $b) : int => $b->durationMs <=> $a->durationMs,
+            static fn (SlowQueryReport $a, SlowQueryReport $b): int => $b->durationMs <=> $a->durationMs,
         );
 
         return array_slice($sorted, 0, $limit);
@@ -344,7 +341,7 @@ final class SlowQueryDetector
     /**
      * Returns computed statistics about slow queries.
      */
-    public function statistics() : SlowQueryStatistics
+    public function statistics(): SlowQueryStatistics
     {
         return SlowQueryStatistics::fromReports($this->slowQueries);
     }
@@ -354,7 +351,7 @@ final class SlowQueryDetector
      *
      * @return array<string, int>
      */
-    public function fingerprintCounts() : array
+    public function fingerprintCounts(): array
     {
         return $this->fingerprintCounts;
     }
@@ -362,7 +359,7 @@ final class SlowQueryDetector
     /**
      * Returns the total count of slow queries.
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->slowQueries);
     }
@@ -370,7 +367,7 @@ final class SlowQueryDetector
     /**
      * Returns the current threshold in milliseconds.
      */
-    public function getThresholdMs() : float
+    public function getThresholdMs(): float
     {
         return $this->thresholdMs;
     }
@@ -378,7 +375,7 @@ final class SlowQueryDetector
     /**
      * Sets a new threshold in milliseconds.
      */
-    public function setThresholdMs(float $thresholdMs) : void
+    public function setThresholdMs(float $thresholdMs): void
     {
         $this->thresholdMs = $thresholdMs;
     }
@@ -386,9 +383,9 @@ final class SlowQueryDetector
     /**
      * Resets the slow query log and statistics.
      */
-    public function reset() : void
+    public function reset(): void
     {
-        $this->slowQueries       = [];
+        $this->slowQueries = [];
         $this->fingerprintCounts = [];
     }
 }

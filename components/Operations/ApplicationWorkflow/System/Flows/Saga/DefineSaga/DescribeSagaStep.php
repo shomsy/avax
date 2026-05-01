@@ -11,15 +11,14 @@ final readonly class DescribeSagaStep
         public string $description,
         public array $inputSchema,
         public array $outputSchema,
-        public bool  $compensatable,
+        public bool $compensatable,
     ) {}
 
     public static function create(
         string $name,
         string $description,
         bool $compensatable = true,
-    ) : self
-    {
+    ): self {
         return new self(
             name         : $name,
             description  : $description,
@@ -29,17 +28,17 @@ final readonly class DescribeSagaStep
         );
     }
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'describes a saga step including name, description, schemas, and compensatability.';
     }
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return [
-            'name'          => $this->name,
-            'description'   => $this->description,
-            'input_schema'  => $this->inputSchema,
+            'name' => $this->name,
+            'description' => $this->description,
+            'input_schema' => $this->inputSchema,
             'output_schema' => $this->outputSchema,
             'compensatable' => $this->compensatable,
         ];

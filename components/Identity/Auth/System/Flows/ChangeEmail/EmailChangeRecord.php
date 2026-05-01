@@ -11,9 +11,9 @@ use SensitiveParameter;
 final readonly class EmailChangeRecord
 {
     public function __construct(
-        public UserId            $userId,
+        public UserId $userId,
         #[SensitiveParameter]
-        public string            $newEmail,
+        public string $newEmail,
         public DateTimeImmutable $expiresAt,
     ) {}
 }

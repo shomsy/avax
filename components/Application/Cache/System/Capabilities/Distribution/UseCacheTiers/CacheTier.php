@@ -8,9 +8,9 @@ final readonly class CacheTier
 {
     public function __construct(
         public CacheTierName $cacheTierName,
-        public int           $priority,
-        public int           $maxSize = 1000,
-        public int           $ttlDefault = 3600,
+        public int $priority,
+        public int $maxSize = 1000,
+        public int $ttlDefault = 3600,
     ) {}
 
     public static function l1(string $name = 'L1', int $maxSize = 1000) : self

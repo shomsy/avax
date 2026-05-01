@@ -15,12 +15,12 @@ final readonly class ForgetValue
         private array $items = [],
     ) {}
 
-    public function __invoke(string $key) : array
+    public function __invoke(string $key): array
     {
         return $this->forget(key: $key);
     }
 
-    public function forget(string $key) : array
+    public function forget(string $key): array
     {
         $items = $this->items;
 
@@ -40,7 +40,7 @@ final readonly class ForgetValue
         return $items;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

@@ -8,17 +8,17 @@ use RuntimeException;
 
 final class PoolException extends RuntimeException
 {
-    public static function poolExhausted() : self
+    public static function poolExhausted(): self
     {
         return new self(message: 'Connection pool exhausted');
     }
 
-    public static function invalidConnection() : self
+    public static function invalidConnection(): self
     {
         return new self(message: 'Invalid connection');
     }
 
-    public static function timeout(int $timeoutMs) : self
+    public static function timeout(int $timeoutMs): self
     {
         return new self(message: sprintf('Connection timeout after %dms', $timeoutMs));
     }

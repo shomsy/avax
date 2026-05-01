@@ -25,5 +25,5 @@ abstract class TestCase extends BaseTestCase
 class_alias(
     class     : TestCase::class,
     alias     : 'components\\Tests\\TestCase',
-    autoload  : false
+    autoload  : false,
 );

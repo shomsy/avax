@@ -22,7 +22,7 @@ final class IdentityMap
     /**
      * Get a tracked entity by class and identifier.
      */
-    public function get(string $entityClass, string|int $id) : object|null
+    public function get(string $entityClass, string|int $id): ?object
     {
         return $this->entities[$entityClass][(string) $id] ?? null;
     }
@@ -30,7 +30,7 @@ final class IdentityMap
     /**
      * Register an entity in the identity map.
      */
-    public function put(string $entityClass, string|int $id, object $entity) : void
+    public function put(string $entityClass, string|int $id, object $entity): void
     {
         $this->entities[$entityClass][(string) $id] = $entity;
     }
@@ -38,7 +38,7 @@ final class IdentityMap
     /**
      * Remove an entity from the identity map.
      */
-    public function remove(string $entityClass, string|int $id) : void
+    public function remove(string $entityClass, string|int $id): void
     {
         unset($this->entities[$entityClass][(string) $id]);
     }
@@ -46,7 +46,7 @@ final class IdentityMap
     /**
      * Check if an entity is tracked.
      */
-    public function has(string $entityClass, string|int $id) : bool
+    public function has(string $entityClass, string|int $id): bool
     {
         return isset($this->entities[$entityClass][(string) $id]);
     }
@@ -56,7 +56,7 @@ final class IdentityMap
      *
      * @return array<string, object>
      */
-    public function allFor(string $entityClass) : array
+    public function allFor(string $entityClass): array
     {
         return $this->entities[$entityClass] ?? [];
     }
@@ -65,7 +65,7 @@ final class IdentityMap
      * Clear all tracked entities.
      * Critical for worker state reset between requests.
      */
-    public function clear() : void
+    public function clear(): void
     {
         $this->entities = [];
     }
@@ -73,7 +73,7 @@ final class IdentityMap
     /**
      * Get total count of tracked entities across all classes.
      */
-    public function count() : int
+    public function count(): int
     {
         $count = 0;
 

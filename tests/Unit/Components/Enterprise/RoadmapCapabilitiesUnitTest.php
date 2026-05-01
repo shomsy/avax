@@ -32,7 +32,7 @@ final class RoadmapCapabilitiesUnitTest extends TestCase
     {
         $attempts = 0;
 
-        $result = Resilience::retry(function () use (&$attempts) {
+        $result = Resilience::retry(static function () use (&$attempts) {
             $attempts++;
 
             if ($attempts < 2) {
@@ -98,7 +98,7 @@ final class RoadmapCapabilitiesUnitTest extends TestCase
 
         (new RegisterScheduledTask())->register(
             expression: '* * * * *',
-            task      : function () use (&$ran) : void {
+            task      : static function () use (&$ran) : void {
                 $ran = true;
             },
         );
@@ -151,7 +151,7 @@ final class RoadmapCapabilitiesUnitTest extends TestCase
     public function test_task_fake_records_dispatched_tasks() : void
     {
         $fake = new TaskFake();
-        $task = new class {};
+        $task = new class ( ) {};
 
         $fake->dispatch(task: $task);
 

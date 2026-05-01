@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Tests\Operations;
@@ -16,8 +17,12 @@ final class SagaTest extends TestCase
         $def      = new SagaDefinition();
 
         $steps = 0;
-        $def->step('step1', function () use (&$steps) { $steps++; });
-        $def->step('step2', function () use (&$steps) { $steps++; });
+        $def->step('step1', static function () use (&$steps) : void {
+            $steps++;
+        });
+        $def->step('step2', static function () use (&$steps) : void {
+            $steps++;
+        });
 
         $workflow->runSaga($def);
 
@@ -34,18 +39,22 @@ final class SagaTest extends TestCase
 
         $def->step(
             'step1',
-            function () use (&$step1Done) { $step1Done = true; },
-            function () use (&$step1Compensated) { $step1Compensated = true; }
+            static function () use (&$step1Done) : void {
+                $step1Done = true;
+            },
+            static function () use (&$step1Compensated) : void {
+                $step1Compensated = true;
+            },
         );
 
-        $def->step('step2', function () {
-            throw new Exception("Fail at step 2");
+        $def->step('step2', static function () : void {
+            throw new Exception('Fail at step 2');
         });
 
         try {
             $workflow->runSaga($def);
         } catch (Exception $e) {
-            $this->assertEquals("Fail at step 2", $e->getMessage());
+            $this->assertEquals('Fail at step 2', $e->getMessage());
         }
 
         $this->assertTrue($step1Done);

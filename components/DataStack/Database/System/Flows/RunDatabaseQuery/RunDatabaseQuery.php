@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseC
 
 final class RunDatabaseQuery
 {
-    public function execute(DatabaseConnection $connection, string $query, array $bindings = []) : QueryResult
+    public function execute(DatabaseConnection $connection, string $query, array $bindings = []): QueryResult
     {
         return new QueryResult(rows: [], affected: 0);
     }

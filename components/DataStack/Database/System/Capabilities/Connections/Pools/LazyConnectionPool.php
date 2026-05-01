@@ -10,26 +10,25 @@ use Override;
 
 final class LazyConnectionPool implements ConnectionPoolInterface
 {
-    private ConnectionPoolInterface|null $connectionPool = null;
+    private ?ConnectionPoolInterface $connectionPool = null;
 
     public function __construct(
-        private readonly Closure|null $factory = null,
-    )
-    {
+        private readonly ?Closure $factory = null,
+    ) {
         if (! $this->factory instanceof Closure) {
             throw new InvalidArgumentException(message: 'Pool factory is required.');
         }
     }
 
     #[Override]
-    public function destroy() : void
+    public function destroy(): void
     {
         $this->connectionPool?->destroy();
         $this->connectionPool = null;
     }
 
     #[Override]
-    public function stats() : PoolStats
+    public function stats(): PoolStats
     {
         return $this->connectionPool?->stats() ?? new PoolStats(
             totalConnections : 0,
@@ -40,7 +39,7 @@ final class LazyConnectionPool implements ConnectionPoolInterface
         );
     }
 
-    public function warmup(int $count = 1) : void
+    public function warmup(int $count = 1): void
     {
         if ($count < 1) {
             return;
@@ -53,12 +52,12 @@ final class LazyConnectionPool implements ConnectionPoolInterface
     }
 
     #[Override]
-    public function get() : PooledConnection
+    public function get(): PooledConnection
     {
         return $this->pool()->get();
     }
 
-    private function pool() : ConnectionPoolInterface
+    private function pool(): ConnectionPoolInterface
     {
         if (! $this->connectionPool instanceof ConnectionPoolInterface) {
             $pool = ($this->factory)();
@@ -74,7 +73,7 @@ final class LazyConnectionPool implements ConnectionPoolInterface
     }
 
     #[Override]
-    public function release(PooledConnection $pooledConnection) : void
+    public function release(PooledConnection $pooledConnection): void
     {
         $this->pool()->release(connection: $pooledConnection);
     }

@@ -27,7 +27,7 @@ final class DecoratedService implements DecoratedContract
 
 final class OwnedDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
+    public function decorate(mixed $instance, ContainerInterface $container = null) : mixed
     {
         assertInstanceOf(expectedClass: DecoratedService::class, value: $instance, message: 'Decorators should receive the resolved concrete instance.');
         $instance->decorated = true;
@@ -38,7 +38,7 @@ final class OwnedDecorator implements DecoratorInterface
 
 final class InvisibleDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
+    public function decorate(mixed $instance, ContainerInterface $container = null) : mixed
     {
         return $instance;
     }

@@ -15,7 +15,7 @@ final class TaskDispatch
 {
     private static DispatchStrategyResolver $resolver;
 
-    public static function dispatch(object $task) : void
+    public static function dispatch(object $task): void
     {
         $strategy = self::resolver()->resolve($task);
 
@@ -28,39 +28,39 @@ final class TaskDispatch
         }
     }
 
-    private static function resolver() : DispatchStrategyResolver
+    private static function resolver(): DispatchStrategyResolver
     {
         if (! isset(self::$resolver)) {
-            self::$resolver = new DispatchStrategyResolver();
+            self::$resolver = new DispatchStrategyResolver;
         }
 
         return self::$resolver;
     }
 
-    public static function sync(object $task) : void
+    public static function sync(object $task): void
     {
-        $dispatcher = new SyncDispatcher();
+        $dispatcher = new SyncDispatcher;
         $dispatcher->dispatch($task);
     }
 
-    public static function async(object $task) : void
+    public static function async(object $task): void
     {
-        $dispatcher = new AsyncDispatcher();
+        $dispatcher = new AsyncDispatcher;
         $dispatcher->dispatch($task);
     }
 
-    public static function later(object $task, DateInterval $delay) : void
+    public static function later(object $task, DateInterval $delay): void
     {
         $dispatcher = new DeferredDispatcher($delay);
         $dispatcher->dispatch($task);
     }
 
-    public static function afterResponse(object $task) : void
+    public static function afterResponse(object $task): void
     {
         self::later($task, new DateInterval('PT0S'));
     }
 
-    public static function batch(array $tasks) : TaskBatch
+    public static function batch(array $tasks): TaskBatch
     {
         return new TaskBatch($tasks);
     }
@@ -69,22 +69,23 @@ final class TaskDispatch
 final class TaskBatch
 {
     /** @var list<object> */
-    private array        $tasks;
-    private Closure|null $then = null;
+    private array $tasks;
+
+    private ?Closure $then = null;
 
     public function __construct(array $tasks)
     {
         $this->tasks = $tasks;
     }
 
-    public function then(Closure $callback) : self
+    public function then(Closure $callback): self
     {
         $this->then = $callback;
 
         return $this;
     }
 
-    public function dispatch() : void
+    public function dispatch(): void
     {
         foreach ($this->tasks as $task) {
             TaskDispatch::dispatch($task);

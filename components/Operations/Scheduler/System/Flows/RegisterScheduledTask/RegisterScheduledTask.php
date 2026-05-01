@@ -10,7 +10,7 @@ use Closure;
 
 final readonly class RegisterScheduledTask
 {
-    public function register(string $expression, Closure $task) : ScheduledTask
+    public function register(string $expression, Closure $task): ScheduledTask
     {
         return Scheduler::schedule(expression: $expression, task: $task);
     }

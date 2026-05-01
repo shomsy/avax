@@ -11,7 +11,7 @@ final class QueryResult
         public readonly int $affected = 0,
     ) {}
 
-    public function first() : array|null
+    public function first(): ?array
     {
         return $this->rows[0] ?? null;
     }

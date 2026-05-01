@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\MessageBus\System\Capabilities\Middleware;
 
-use Avax\Components\Operations\MessageBus\System\PublicSurface\Command;
-use Avax\Components\Operations\MessageBus\System\PublicSurface\DomainEvent;
-use Avax\Components\Operations\MessageBus\System\PublicSurface\Query;
 use Closure;
 use Throwable;
 

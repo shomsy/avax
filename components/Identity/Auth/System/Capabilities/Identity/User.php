@@ -12,7 +12,7 @@ final class User
         public readonly array $roles = [],
     ) {}
 
-    public function hasRole(string $role) : bool
+    public function hasRole(string $role): bool
     {
         return in_array($role, $this->roles, true);
     }

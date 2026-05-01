@@ -19,12 +19,9 @@ final readonly class SyncScimGroups
     public function __construct(private ScimDirectoryStoreInterface $directoryStore, private ScimProvisionedIdentityStoreInterface $identityStore, private UserSourceInterface $userSource, private ProvisionScimUser $provisionScimUser) {}
 
     /**
-     * @param SyncScimGroupsData $data
-     *
-     * @return ScimProvisioningResult
      * @throws RandomException
      */
-    public function execute(SyncScimGroupsData $data) : ScimProvisioningResult
+    public function execute(SyncScimGroupsData $data): ScimProvisioningResult
     {
         $directory = $this->directoryStore->find(directoryId: $data->directoryId);
 
@@ -49,13 +46,13 @@ final readonly class SyncScimGroups
         }
 
         return $this->provisionScimUser->execute(data: new ProvisionScimUserData(
-                                                           directoryId   : $data->directoryId,
-                                                           directoryToken: $data->directoryToken,
-                                                           externalId    : $data->externalId,
-                                                           email         : $user->getEmail()->value,
-                                                           username      : $user->getUsername(),
-                                                           groups        : $data->groups,
-                                                           state         : $data->state,
-                                                       ));
+            directoryId   : $data->directoryId,
+            directoryToken: $data->directoryToken,
+            externalId    : $data->externalId,
+            email         : $user->getEmail()->value,
+            username      : $user->getUsername(),
+            groups        : $data->groups,
+            state         : $data->state,
+        ));
     }
 }

@@ -27,9 +27,9 @@ class TemplateEngine extends BladeOne
     /**
      * TemplateEngine constructor.
      *
-     * @param string $templatePath The path to template files.
-     * @param string $compiledPath The path where compiled templates are stored.
-     * @param int $mode BladeOne mode (e.g., MODE_AUTO).
+     * @param  string  $templatePath  The path to template files.
+     * @param  string  $compiledPath  The path where compiled templates are stored.
+     * @param  int  $mode  BladeOne mode (e.g., MODE_AUTO).
      *
      * @throws FoundationContainerException
      * @throws ContainerExceptionInterface
@@ -40,8 +40,7 @@ class TemplateEngine extends BladeOne
         string $templatePath,
         string $compiledPath,
         int $mode = BladeOne::MODE_AUTO,
-    )
-    {
+    ) {
         // Initialize the parent BladeOne class with provided paths and mode
         parent::__construct(
             templatePath: $templatePath,
@@ -64,12 +63,10 @@ class TemplateEngine extends BladeOne
         $this->configureSelectedDirective();
     }
 
-    /**
-     */
-    private function initializeBaseAssetPath() : void
+    private function initializeBaseAssetPath(): void
     {
         // Retrieve the base URL and append the asset directory from configuration
-        $this->baseAssetPath = $this->getBaseUrl() . config(key: 'views.assets');
+        $this->baseAssetPath = $this->getBaseUrl().config(key: 'views.assets');
     }
 
     /**
@@ -80,7 +77,7 @@ class TemplateEngine extends BladeOne
      * This method dynamically constructs the base URL making it flexible for different environments and protocols.
      */
     #[Override]
-    public function getBaseUrl() : string
+    public function getBaseUrl(): string
     {
         $context = function_exists(function: 'http_context') ? http_context() : null;
         if ($context !== null) {
@@ -95,11 +92,11 @@ class TemplateEngine extends BladeOne
      *
      * This directive allows usage of @asset in Blade templates to reference assets relative to the base asset path.
      */
-    private function configureAssetDirective() : void
+    private function configureAssetDirective(): void
     {
         $this->directive(
             name   : 'asset',
-            handler: fn ($expression) : string => sprintf(
+            handler: fn ($expression): string => sprintf(
                 "<?php echo '%s/' . ltrim(%s, '\"\\'/'); ?>",
                 $this->baseAssetPath,
                 $expression,
@@ -113,11 +110,11 @@ class TemplateEngine extends BladeOne
      * Allows templates to use a simple `@datetime` directive to format dates,
      * enhancing readability and consistency across templates.
      */
-    private function configureDateTimeDirective() : void
+    private function configureDateTimeDirective(): void
     {
         $this->directive(
             name   : 'datetime',
-            handler: static fn ($expression) : string => sprintf(
+            handler: static fn ($expression): string => sprintf(
                 "<?php echo (new DateTime(%s))->format('Y-m-d H:i:s'); ?>",
                 $expression,
             ),
@@ -130,18 +127,18 @@ class TemplateEngine extends BladeOne
      * Adds 'ifenv' and 'endifenv' directives for conditional content rendering based on
      * application's environment settings. Supports clean conditional checks in templates.
      */
-    private function configureEnvironmentDirective() : void
+    private function configureEnvironmentDirective(): void
     {
         $this->directive(
             name   : 'ifenv',
-            handler: static fn ($expression) : string => sprintf(
+            handler: static fn ($expression): string => sprintf(
                 "<?php if (config('cashback.env') === %s): ?>",
                 $expression,
             ),
         );
         $this->directive(
             name   : 'endifenv',
-            handler: static fn () : string => '<?php endif; ?>',
+            handler: static fn (): string => '<?php endif; ?>',
         );
     }
 
@@ -151,11 +148,11 @@ class TemplateEngine extends BladeOne
      * This method defines the 'markdown' directive, which leverages the Parsedown library
      * to convert Markdown syntax into HTML. Allows easy embedding of Markdown content.
      */
-    private function configureMarkdownDirective() : void
+    private function configureMarkdownDirective(): void
     {
         $this->directive(
             name   : 'markdown',
-            handler: static fn ($expression) : string => sprintf(
+            handler: static fn ($expression): string => sprintf(
                 '<?php echo (new Parsedown())->text(%s); ?>',
                 $expression,
             ),
@@ -168,11 +165,11 @@ class TemplateEngine extends BladeOne
      * Allows usage of `@route` for clean URL generation within Blade templates,
      * enabling route-based link creation without hardcoding URLs.
      */
-    private function configureRouteDirective() : void
+    private function configureRouteDirective(): void
     {
         $this->directive(
             name   : 'route',
-            handler: static fn ($expression) : string => sprintf('<?php echo route(%s); ?>', $expression),
+            handler: static fn ($expression): string => sprintf('<?php echo route(%s); ?>', $expression),
         );
     }
 
@@ -181,11 +178,11 @@ class TemplateEngine extends BladeOne
      *
      * Enables easy addition of CSRF tokens via `@csrf` in form templates for security.
      */
-    private function configureCsrfDirective() : void
+    private function configureCsrfDirective(): void
     {
         $this->directive(
             name   : 'csrf',
-            handler: static fn () : string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>",
+            handler: static fn (): string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>",
         );
     }
 
@@ -195,35 +192,35 @@ class TemplateEngine extends BladeOne
      * `@dump` outputs variable data; `@dd` outputs data and terminates script execution.
      * Useful for debugging variables within templates.
      */
-    private function configureDumpDirective() : void
+    private function configureDumpDirective(): void
     {
         $this->directive(
             name   : 'dump',
-            handler: static fn ($expression) : string => sprintf('<?php var_dump(%s); ?>', $expression),
+            handler: static fn ($expression): string => sprintf('<?php var_dump(%s); ?>', $expression),
         );
         $this->directive(
             name   : 'dd',
-            handler: static fn ($expression) : string => sprintf('<?php die(var_dump(%s)); ?>', $expression),
+            handler: static fn ($expression): string => sprintf('<?php die(var_dump(%s)); ?>', $expression),
         );
     }
 
-    private function configureAuthDirectives() : void
+    private function configureAuthDirectives(): void
     {
         $this->directive(
             name   : 'auth',
-            handler: static fn () : string => '<?php if (auth()->check()): ?>',
+            handler: static fn (): string => '<?php if (auth()->check()): ?>',
         );
         $this->directive(
             name   : 'endauth',
-            handler: static fn () : string => '<?php endif; ?>',
+            handler: static fn (): string => '<?php endif; ?>',
         );
         $this->directive(
             name   : 'guest',
-            handler: static fn () : string => '<?php if (!auth()->check()): ?>',
+            handler: static fn (): string => '<?php if (!auth()->check()): ?>',
         );
         $this->directive(
             name   : 'endguest',
-            handler: static fn () : string => '<?php endif; ?>',
+            handler: static fn (): string => '<?php endif; ?>',
         );
     }
 
@@ -232,11 +229,11 @@ class TemplateEngine extends BladeOne
      *
      * `@includeWhen(condition, view)` includes a view template based on a condition.
      */
-    private function configureIncludeWhenDirective() : void
+    private function configureIncludeWhenDirective(): void
     {
         $this->directive(
             name   : 'includeWhen',
-            handler: static fn ($expression) : string => sprintf(
+            handler: static fn ($expression): string => sprintf(
                 "<?php if (%s) { include '%s' ; } ?>",
                 $expression[0],
                 $expression[1],
@@ -249,13 +246,13 @@ class TemplateEngine extends BladeOne
      *
      * Enables form support for HTTP methods like PUT and DELETE.
      */
-    private function configureMethodDirective() : void
+    private function configureMethodDirective(): void
     {
         $this->directive(
             name   : 'method',
             handler: static fn (
                 $expression,
-            ) : string => sprintf(
+            ): string => sprintf(
                 "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . %s . '\">'; ?>",
                 $expression,
             ),
@@ -267,11 +264,11 @@ class TemplateEngine extends BladeOne
      *
      * Adds `checked` attribute to checkboxes or radio buttons conditionally.
      */
-    private function configureCheckedDirective() : void
+    private function configureCheckedDirective(): void
     {
         $this->directive(
             name   : 'checked',
-            handler: static fn ($expression) : string => sprintf("<?php echo %s ? 'checked' : ''; ?>", $expression),
+            handler: static fn ($expression): string => sprintf("<?php echo %s ? 'checked' : ''; ?>", $expression),
         );
     }
 
@@ -280,11 +277,11 @@ class TemplateEngine extends BladeOne
      *
      * Adds `selected` attribute to dropdown options conditionally.
      */
-    private function configureSelectedDirective() : void
+    private function configureSelectedDirective(): void
     {
         $this->directive(
             name   : 'selected',
-            handler: static fn ($expression) : string => sprintf("<?php echo %s ? 'selected' : ''; ?>", $expression),
+            handler: static fn ($expression): string => sprintf("<?php echo %s ? 'selected' : ''; ?>", $expression),
         );
     }
 }

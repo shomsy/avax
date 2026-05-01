@@ -11,7 +11,7 @@ final readonly class FindMaxValue
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke() : mixed
+    public function __invoke(): mixed
     {
         return $this->items === [] ? null : max($this->items);
     }

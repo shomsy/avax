@@ -21,9 +21,8 @@ final readonly class RunSagaStep
     public function execute(
         SagaInstance $instance,
         SagaDefinition $definition,
-        callable     $stepRunner,
-    ) : SagaStepResult
-    {
+        callable $stepRunner,
+    ): SagaStepResult {
         $currentStep = $instance->currentStepName;
         if ($currentStep === null) {
             return SagaStepResult::failure(
@@ -40,13 +39,13 @@ final readonly class RunSagaStep
             );
         }
 
-        $policy    = SagaStepExecutionPolicy::fromStep(step: $stepDef);
-        $attempt   = 1;
+        $policy = SagaStepExecutionPolicy::fromStep(step: $stepDef);
+        $attempt = 1;
         $startTime = microtime(true);
 
-        while ( $attempt <= $policy->maxRetries + 1 ) {
+        while ($attempt <= $policy->maxRetries + 1) {
             try {
-                $output   = $stepRunner($stepDef, $instance->data);
+                $output = $stepRunner($stepDef, $instance->data);
                 $duration = (microtime(true) - $startTime) * 1000;
 
                 return SagaStepResult::success(
@@ -83,11 +82,10 @@ final readonly class RunSagaStep
     }
 
     public function scheduleNext(
-        SagaInstance   $currentInstance,
+        SagaInstance $currentInstance,
         SagaStepResult $result,
         SagaDefinition $definition,
-    ) : SagaInstance
-    {
+    ): SagaInstance {
         if (! $result->success) {
             return $currentInstance->fail(error: $result->error ?? 'Unknown error');
         }
@@ -104,10 +102,10 @@ final readonly class RunSagaStep
         );
     }
 
-    public function chooseNext(SagaInstance $instance, SagaDefinition $definition) : SagaStepDefinition|null
+    public function chooseNext(SagaInstance $instance, SagaDefinition $definition): ?SagaStepDefinition
     {
         $currentIndex = $instance->currentStepIndex;
-        $nextIndex    = $currentIndex + 1;
+        $nextIndex = $currentIndex + 1;
 
         if ($nextIndex >= $definition->stepCount()) {
             return null;

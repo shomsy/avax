@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Integration;
 
 use Avax\Components\Application\Container\Core\AppFactory;
@@ -77,7 +76,7 @@ class RouterHardeningTest extends TestCase
             providers: $providers,
             routes   : $routesFile,
             cacheDir : $cacheDir,
-            debug    : true
+            debug    : true,
         );
     }
 
@@ -90,7 +89,7 @@ class RouterHardeningTest extends TestCase
 
         return new Request(
             serverParams: ['REQUEST_METHOD' => $method],
-            uri         : $uri
+            uri         : $uri,
         );
     }
 
@@ -270,7 +269,7 @@ class RouterHardeningTest extends TestCase
             providers: $providers,
             routes   : $routes,
             cacheDir : $cacheDir,
-            debug    : true
+            debug    : true,
         );
     }
 }

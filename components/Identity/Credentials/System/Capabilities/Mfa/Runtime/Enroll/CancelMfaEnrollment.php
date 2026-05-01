@@ -7,10 +7,10 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\E
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use SensitiveParameter;
 
 /**
@@ -21,29 +21,29 @@ final readonly class CancelMfaEnrollment
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface     $mfaStore,
-        private AuditLogInterface     $auditLog,
-        private Clock                 $clock,
+        private MfaStoreInterface $mfaStore,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
     ) {}
 
     /**
      * @throws Unauthenticated
      */
-    public function execute() : void
+    public function execute(): void
     {
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         $this->mfaStore->cancelEnrollment(userId: new UserId(value: $user->id));
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.mfa.enrollment.cancelled',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'user_id' => $user->id,
-                                                       ],
-                                       ));
+            name      : 'auth.mfa.enrollment.cancelled',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'user_id' => $user->id,
+            ],
+        ));
     }
 }

@@ -99,7 +99,7 @@ final class RateLimiterUnitTest extends TestCase
             limiter: $limiter,
             config : ['max_attempts' => 1],
         );
-        $request    = new ServerRequest(method: 'GET', uri: '/blocked', serverParams: ['REMOTE_ADDR' => '127.0.0.1']);
+        $request = new ServerRequest(method: 'GET', uri: '/blocked', serverParams: ['REMOTE_ADDR' => '127.0.0.1']);
 
         $middleware->handle(request: $request, next: static fn () : Response => new Response(status: 200));
         $response = $middleware->handle(request: $request, next: static fn () : Response => new Response(status: 200));

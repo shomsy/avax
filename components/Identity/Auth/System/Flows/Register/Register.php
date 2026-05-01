@@ -15,14 +15,14 @@ final readonly class Register
     public function __construct(
         private ValidateRegistrationData $validator,
         private HashRegisteredPassword $hasher,
-        private CreateRegisteredUser   $creator,
-        private Identity               $identity,
+        private CreateRegisteredUser $creator,
+        private Identity $identity,
     ) {}
 
     /**
      * @throws RegistrationFailed
      */
-    public function execute(RegistrationData $data) : RegistrationResult
+    public function execute(RegistrationData $data): RegistrationResult
     {
         $this->validator->execute($data);
 

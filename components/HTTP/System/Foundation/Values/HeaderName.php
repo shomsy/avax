@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Foundation\Values;
 
-use ValueError;
 use function sprintf;
 use function strcasecmp;
 use function strtolower;
 use function trim;
 use function ucwords;
+
+use ValueError;
 
 enum HeaderName: string
 {

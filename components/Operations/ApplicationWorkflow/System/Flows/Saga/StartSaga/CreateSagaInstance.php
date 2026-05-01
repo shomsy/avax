@@ -15,28 +15,26 @@ final readonly class CreateSagaInstance
     public function createFromCommand(
         SagaStartCommand $command,
         SagaDefinition $definition,
-    ) : SagaInstance
-    {
+    ): SagaInstance {
         return $this->create(
             id         : $command->sagaId ?? $this->generateId(),
             definition : $definition,
             initialData: $command->initialData,
             options    : [
-                             'correlation_id'  => $command->correlationId,
-                             'tenant_id'       => $command->tenantId,
-                             'idempotency_key' => $command->idempotencyKey,
-                             'timeout_seconds' => $definition->timeoutSeconds,
-                         ],
+                'correlation_id' => $command->correlationId,
+                'tenant_id' => $command->tenantId,
+                'idempotency_key' => $command->idempotencyKey,
+                'timeout_seconds' => $definition->timeoutSeconds,
+            ],
         );
     }
 
     public function create(
         string $id,
         SagaDefinition $definition,
-        array  $initialData,
-        array  $options = [],
-    ) : SagaInstance
-    {
+        array $initialData,
+        array $options = [],
+    ): SagaInstance {
         return SagaInstance::create(
             id            : $id,
             definitionName: $definition->name,
@@ -49,7 +47,7 @@ final readonly class CreateSagaInstance
     /**
      * @throws RandomException
      */
-    private function generateId() : string
+    private function generateId(): string
     {
         return sprintf('saga_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));
     }
@@ -57,7 +55,7 @@ final readonly class CreateSagaInstance
 
 final readonly class CreateSagaCorrelationId
 {
-    public function fromTenant(string $tenantId) : string
+    public function fromTenant(string $tenantId): string
     {
         return $this->create(prefix: $tenantId);
     }
@@ -65,19 +63,19 @@ final readonly class CreateSagaCorrelationId
     /**
      * @throws RandomException
      */
-    public function create(string|null $prefix = null, string|null $suffix = null) : string
+    public function create(?string $prefix = null, ?string $suffix = null): string
     {
         $parts = array_filter([
-                                  $prefix,
-                                  date('YmdHis'),
-                                  bin2hex(random_bytes(4)),
-                                  $suffix,
-                              ]);
+            $prefix,
+            date('YmdHis'),
+            bin2hex(random_bytes(4)),
+            $suffix,
+        ]);
 
         return implode('_', $parts);
     }
 
-    public function fromCommand(SagaStartCommand $command) : string
+    public function fromCommand(SagaStartCommand $command): string
     {
         return $this->create(
             prefix: $command->definitionName,
@@ -90,7 +88,7 @@ final readonly class RecordSagaStarted
 {
     public function __construct(private object $store, private object $inspect) {}
 
-    public function record(SagaInstance $instance) : void
+    public function record(SagaInstance $instance): void
     {
         $this->store->set("saga_{$instance->id}", $instance->toArray());
 
@@ -105,7 +103,7 @@ final readonly class RecordSagaStarted
 
 final readonly class ScheduleFirstSagaStep
 {
-    public function schedule(SagaInstance $instance, SagaDefinition $definition) : SagaInstance
+    public function schedule(SagaInstance $instance, SagaDefinition $definition): SagaInstance
     {
         $firstStep = $definition->getFirstStep();
 
@@ -121,7 +119,7 @@ final readonly class ScheduleFirstSagaStep
 
 final class SagaStartFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Failed to start saga.', Throwable|null $previous = null)
+    public function __construct(string $message = 'Failed to start saga.', ?Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

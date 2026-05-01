@@ -14,26 +14,24 @@ final readonly class MapValues
     ) {}
 
     /**
-     * @param callable $callback fn(mixed $item, int|string $key) : mixed
-     *
+     * @param  callable  $callback  fn(mixed $item, int|string $key) : mixed
      * @return array<mixed>
      */
-    public function __invoke(callable $callback) : array
+    public function __invoke(callable $callback): array
     {
         return $this->map(callback: $callback);
     }
 
     /**
-     * @param callable $callback fn(mixed $item, int|string $key) : mixed
-     *
+     * @param  callable  $callback  fn(mixed $item, int|string $key) : mixed
      * @return array<mixed>
      */
-    public function map(callable $callback) : array
+    public function map(callable $callback): array
     {
         return array_map(callback: $callback, array: $this->items);
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

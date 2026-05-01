@@ -9,30 +9,30 @@ use Closure;
 final readonly class DataTransferConfig
 {
     /**
-     * @param array<class-string, class-string|object|callable> $valueCasters
-     * @param array<class-string, object|callable> $validationRules
+     * @param  array<class-string, class-string|object|callable>  $valueCasters
+     * @param  array<class-string, object|callable>  $validationRules
      */
     public function __construct(
         public UnknownFieldPolicy $unknownFieldPolicy = UnknownFieldPolicy::Reject,
-        public bool          $allowPublicPropertyHydration = true,
-        public bool          $collectUnknownFields = false,
-        public int           $maxDepth = 32,
-        private Closure|null $namingPolicy = null,
-        private array        $valueCasters = [],
-        private array        $validationRules = [],
+        public bool $allowPublicPropertyHydration = true,
+        public bool $collectUnknownFields = false,
+        public int $maxDepth = 32,
+        private ?Closure $namingPolicy = null,
+        private array $valueCasters = [],
+        private array $validationRules = [],
     ) {}
 
-    public static function default() : self
+    public static function default(): self
     {
-        return new self();
+        return new self;
     }
 
-    public static function legacy() : self
+    public static function legacy(): self
     {
         return new self(unknownFieldPolicy: UnknownFieldPolicy::Ignore);
     }
 
-    public function inputNameFor(string $fieldName) : string
+    public function inputNameFor(string $fieldName): string
     {
         if (! $this->namingPolicy instanceof Closure) {
             return $fieldName;
@@ -41,7 +41,7 @@ final readonly class DataTransferConfig
         return ($this->namingPolicy)($fieldName);
     }
 
-    public function withUnknownFieldPolicy(UnknownFieldPolicy $unknownFieldPolicy) : self
+    public function withUnknownFieldPolicy(UnknownFieldPolicy $unknownFieldPolicy): self
     {
         return new self(
             unknownFieldPolicy          : $unknownFieldPolicy,
@@ -54,7 +54,7 @@ final readonly class DataTransferConfig
         );
     }
 
-    public function withNamingPolicy(Closure $policy) : self
+    public function withNamingPolicy(Closure $policy): self
     {
         return new self(
             unknownFieldPolicy          : $this->unknownFieldPolicy,
@@ -67,7 +67,7 @@ final readonly class DataTransferConfig
         );
     }
 
-    public function withValueCaster(string $class, object|callable|string $caster) : self
+    public function withValueCaster(string $class, object|callable|string $caster): self
     {
         return new self(
             unknownFieldPolicy          : $this->unknownFieldPolicy,
@@ -80,7 +80,7 @@ final readonly class DataTransferConfig
         );
     }
 
-    public function withValidationRule(string $attributeClass, object|callable $rule) : self
+    public function withValidationRule(string $attributeClass, object|callable $rule): self
     {
         return new self(
             unknownFieldPolicy          : $this->unknownFieldPolicy,
@@ -93,12 +93,12 @@ final readonly class DataTransferConfig
         );
     }
 
-    public function casterFor(string $class) : object|callable|string|null
+    public function casterFor(string $class): object|callable|string|null
     {
         return $this->valueCasters[$class] ?? null;
     }
 
-    public function validationRuleFor(string $attributeClass) : object|callable|null
+    public function validationRuleFor(string $attributeClass): object|callable|null
     {
         return $this->validationRules[$attributeClass] ?? null;
     }

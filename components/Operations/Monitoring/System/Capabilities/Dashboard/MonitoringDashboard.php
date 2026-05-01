@@ -11,14 +11,14 @@ final readonly class MonitoringDashboard
 {
     public function __construct(
         private MetricsRegistry $metrics,
-        private HealthReport    $health,
+        private HealthReport $health,
     ) {}
 
-    public function data() : array
+    public function data(): array
     {
         return [
-            'health'       => $this->health->toArray(),
-            'metrics'      => $this->metrics->snapshot(),
+            'health' => $this->health->toArray(),
+            'metrics' => $this->metrics->snapshot(),
             'generated_at' => date(format: DATE_ATOM),
         ];
     }

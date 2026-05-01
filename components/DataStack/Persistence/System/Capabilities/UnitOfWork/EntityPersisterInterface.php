@@ -16,20 +16,20 @@ interface EntityPersisterInterface
     /**
      * Extract the identifier value from an entity, or null if not yet assigned.
      */
-    public function extractIdentifier(object $entity) : string|int|null;
+    public function extractIdentifier(object $entity): string|int|null;
 
     /**
      * Insert a new entity into storage.
      */
-    public function insert(object $entity, string|null $connectionName = null) : void;
+    public function insert(object $entity, ?string $connectionName = null): void;
 
     /**
      * Update an existing entity in storage.
      */
-    public function update(object $entity, string|null $connectionName = null) : void;
+    public function update(object $entity, ?string $connectionName = null): void;
 
     /**
      * Delete an entity from storage.
      */
-    public function delete(object $entity, string|null $connectionName = null) : void;
+    public function delete(object $entity, ?string $connectionName = null): void;
 }

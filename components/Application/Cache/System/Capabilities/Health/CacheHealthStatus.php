@@ -17,16 +17,16 @@ final readonly class CacheHealthStatus
     public Timestamp $timestamp;
 
     public function __construct(
-        public bool      $connected,
-        public int       $latency,
-        public float     $memoryUsage,
-        public float     $hitRate,
+        public bool   $connected,
+        public int    $latency,
+        public float  $memoryUsage,
+        public float  $hitRate,
         public Timestamp $timestamp,
         public string|null $error = null,
-        public int       $memoryLimit = 0,
-        public int       $keyCount = 0,
-        public int       $connectionCount = 0,
-        public string    $version = '',
+        public int    $memoryLimit = 0,
+        public int    $keyCount = 0,
+        public int    $connectionCount = 0,
+        public string $version = '',
     )
     {
         $this->timestamp = $timestamp;
@@ -36,15 +36,15 @@ final readonly class CacheHealthStatus
      * Create a healthy status.
      */
     public static function healthy(
-        int        $latency = 0,
-        float      $memoryUsage = 0.0,
-        float      $hitRate = 1.0,
-        Timestamp|null $lastCheck = null,
-        Timestamp|null $timestamp = null,
-        int        $memoryLimit = 0,
-        int        $keyCount = 0,
-        int        $connectionCount = 0,
-        string     $version = '',
+        int       $latency = 0,
+        float     $memoryUsage = 0.0,
+        float     $hitRate = 1.0,
+        Timestamp $lastCheck = null,
+        Timestamp $timestamp = null,
+        int       $memoryLimit = 0,
+        int       $keyCount = 0,
+        int       $connectionCount = 0,
+        string    $version = '',
     ) : self
     {
         return new self(
@@ -65,12 +65,12 @@ final readonly class CacheHealthStatus
      * Create an unhealthy status with an error.
      */
     public static function unhealthy(
-        string     $error,
-        int        $latency = 0,
-        float      $memoryUsage = 0.0,
-        float      $hitRate = 0.0,
-        Timestamp|null $lastCheck = null,
-        Timestamp|null $timestamp = null,
+        string    $error,
+        int       $latency = 0,
+        float     $memoryUsage = 0.0,
+        float     $hitRate = 0.0,
+        Timestamp $lastCheck = null,
+        Timestamp $timestamp = null,
     ) : self
     {
         return new self(
@@ -87,16 +87,16 @@ final readonly class CacheHealthStatus
      * Create a degraded status (connected but with issues).
      */
     public static function degraded(
-        string     $error,
-        int        $latency = 0,
-        float      $memoryUsage = 0.0,
-        float      $hitRate = 0.5,
-        Timestamp|null $lastCheck = null,
-        Timestamp|null $timestamp = null,
-        int            $memoryLimit = 0,
-        int            $keyCount = 0,
-        int            $connectionCount = 0,
-        string         $version = '',
+        string    $error,
+        int       $latency = 0,
+        float     $memoryUsage = 0.0,
+        float     $hitRate = 0.5,
+        Timestamp $lastCheck = null,
+        Timestamp $timestamp = null,
+        int       $memoryLimit = 0,
+        int       $keyCount = 0,
+        int       $connectionCount = 0,
+        string    $version = '',
     ) : self
     {
         return new self(
@@ -119,7 +119,7 @@ final readonly class CacheHealthStatus
      * Degraded means: connected but with warnings (high latency, high memory, or low hit rate).
      */
     public function isDegraded(
-        int   $maxLatencyMs = 100,
+        int $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
         float $minHitRate = 0.5,
     ) : bool
@@ -217,7 +217,7 @@ final readonly class CacheHealthStatus
      * Get the health level as a string.
      */
     public function getHealthLevel(
-        int   $maxLatencyMs = 100,
+        int $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
         float $minHitRate = 0.5,
     ) : string
@@ -239,7 +239,7 @@ final readonly class CacheHealthStatus
      * Healthy means: connected, latency under threshold, memory under limit, hit rate acceptable.
      */
     public function isHealthy(
-        int   $maxLatencyMs = 100,
+        int $maxLatencyMs = 100,
         float $maxMemoryUsagePercent = 90.0,
         float $minHitRate = 0.5,
     ) : bool

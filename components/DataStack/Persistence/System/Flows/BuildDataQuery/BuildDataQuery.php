@@ -6,6 +6,7 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\BuildDataQuery;
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQuery;
 use InvalidArgumentException;
+
 use function class_exists;
 use function in_array;
 use function is_array;
@@ -27,7 +28,7 @@ final class BuildDataQuery
     private array $entityRegistry = [];
 
     /**
-     * @param array<string, class-string> $entityRegistry
+     * @param  array<string, class-string>  $entityRegistry
      */
     public function __construct(array $entityRegistry = [])
     {
@@ -37,24 +38,23 @@ final class BuildDataQuery
     /**
      * Builds a DataQuery from the given parameters.
      *
-     * @param class-string|string|null $entityType
-     * @param array<string, mixed>     $conditions
-     * @param array<string, string>    $orderBy
-     * @param array<string>            $select
-     * @param array<array{type: string, table: string, on: string}> $joins
+     * @param  class-string|string|null  $entityType
+     * @param  array<string, mixed>  $conditions
+     * @param  array<string, string>  $orderBy
+     * @param  array<string>  $select
+     * @param  array<array{type: string, table: string, on: string}>  $joins
      *
      * @throws InvalidArgumentException
      */
     public function build(
-        string|null $entityType = null,
-        array  $conditions = [],
-        array  $orderBy = [],
-        int    $limit = null,
-        int    $offset = null,
-        array  $joins = [],
-        array  $select = ['*'],
-    ) : DataQuery
-    {
+        ?string $entityType = null,
+        array $conditions = [],
+        array $orderBy = [],
+        ?int $limit = null,
+        ?int $offset = null,
+        array $joins = [],
+        array $select = ['*'],
+    ): DataQuery {
         $resolvedEntityType = $this->resolveEntityType($entityType);
 
         $query = new DataQuery(
@@ -73,13 +73,12 @@ final class BuildDataQuery
     /**
      * Resolves an entity type alias to a class name.
      *
-     * @param class-string|string|null $entityType
-     *
+     * @param  class-string|string|null  $entityType
      * @return class-string|null
      *
      * @throws InvalidArgumentException
      */
-    private function resolveEntityType(string|null $entityType) : string|null
+    private function resolveEntityType(?string $entityType): ?string
     {
         if ($entityType === null) {
             return null;
@@ -101,13 +100,12 @@ final class BuildDataQuery
     /**
      * Validates query conditions.
      *
-     * @param array<string, mixed> $conditions
-     *
+     * @param  array<string, mixed>  $conditions
      * @return array<string, mixed>
      *
      * @throws InvalidArgumentException
      */
-    private function validateConditions(array $conditions) : array
+    private function validateConditions(array $conditions): array
     {
         foreach ($conditions as $key => $value) {
             if (is_array($value) && isset($value['field'], $value['value'], $value['operator'])) {
@@ -133,13 +131,12 @@ final class BuildDataQuery
     /**
      * Validates ORDER BY clauses.
      *
-     * @param array<string, string> $orderBy
-     *
+     * @param  array<string, string>  $orderBy
      * @return array<string, string>
      *
      * @throws InvalidArgumentException
      */
-    private function validateOrderBy(array $orderBy) : array
+    private function validateOrderBy(array $orderBy): array
     {
         $validDirections = ['ASC', 'DESC'];
 
@@ -162,7 +159,7 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    private function validateLimit(int|null $limit) : int|null
+    private function validateLimit(?int $limit): ?int
     {
         if ($limit !== null && $limit < 0) {
             throw new InvalidArgumentException('Limit must be a non-negative integer.');
@@ -176,7 +173,7 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    private function validateOffset(int|null $offset) : int|null
+    private function validateOffset(?int $offset): ?int
     {
         if ($offset !== null && $offset < 0) {
             throw new InvalidArgumentException('Offset must be a non-negative integer.');
@@ -190,7 +187,7 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    public function buildFrom(DataQuery $query) : DataQuery
+    public function buildFrom(DataQuery $query): DataQuery
     {
         return new DataQuery(
             entityType: $this->resolveEntityType($query->entityType),
@@ -206,9 +203,9 @@ final class BuildDataQuery
     /**
      * Registers an entity type alias.
      *
-     * @param class-string $className
+     * @param  class-string  $className
      */
-    public function registerEntity(string $alias, string $className) : void
+    public function registerEntity(string $alias, string $className): void
     {
         $this->entityRegistry[$alias] = $className;
     }

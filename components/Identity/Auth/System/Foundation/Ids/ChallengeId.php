@@ -22,7 +22,7 @@ final readonly class ChallengeId implements Stringable
         $this->value = $normalized;
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->value;
     }

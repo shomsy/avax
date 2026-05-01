@@ -308,7 +308,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 'old_value',
             valueB : 'new_value',
-            context: ['timestampA' => 100.0, 'timestampB' => 200.0]
+            context: ['timestampA' => 100.0, 'timestampB' => 200.0],
         );
 
         $this->assertSame('new_value', $result);
@@ -321,7 +321,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 'value_a',
             valueB : 'value_b',
-            context: ['timestampA' => 100.0, 'timestampB' => 100.0]
+            context: ['timestampA' => 100.0, 'timestampB' => 100.0],
         );
 
         $this->assertSame('value_b', $result);
@@ -345,7 +345,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 'first_value',
             valueB : 'second_value',
-            context: ['timestampA' => 100.0, 'timestampB' => 200.0]
+            context: ['timestampA' => 100.0, 'timestampB' => 200.0],
         );
 
         $this->assertSame('first_value', $result);
@@ -358,7 +358,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 'value_a',
             valueB : 'value_b',
-            context: ['timestampA' => 100.0, 'timestampB' => 100.0]
+            context: ['timestampA' => 100.0, 'timestampB' => 100.0],
         );
 
         $this->assertSame('value_a', $result);
@@ -373,7 +373,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 10,
             valueB : 20,
-            context: []
+            context: [],
         );
 
         $this->assertSame(20, $result);
@@ -386,7 +386,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 1.5,
             valueB : 2.7,
-            context: []
+            context: [],
         );
 
         $this->assertSame(2.7, $result);
@@ -399,7 +399,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 'a',
             valueB : 'b',
-            context: ['timestampA' => 100.0, 'timestampB' => 200.0]
+            context: ['timestampA' => 100.0, 'timestampB' => 200.0],
         );
 
         $this->assertSame('b', $result);
@@ -414,7 +414,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : ['a', 'b'],
             valueB : ['c', 'd'],
-            context: []
+            context: [],
         );
 
         $this->assertSame(['a', 'b', 'c', 'd'], $result);
@@ -427,7 +427,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 'hello ',
             valueB : 'world',
-            context: []
+            context: [],
         );
 
         $this->assertSame('hello world', $result);
@@ -440,7 +440,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 10,
             valueB : 20,
-            context: ['timestampA' => 100.0, 'timestampB' => 200.0]
+            context: ['timestampA' => 100.0, 'timestampB' => 200.0],
         );
 
         $this->assertSame(20, $result);
@@ -538,7 +538,7 @@ final class ConsistencyPolicyTest extends TestCase
             nodeId   : 'nodeA',
             timestamp: microtime(true),
         );
-        $updated  = $original->update('v2');
+        $updated = $original->update('v2');
 
         $this->assertSame(['nodeA' => 3, 'nodeB' => 3], $updated->clock->toArray());
     }
@@ -753,7 +753,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 10,
             valueB : 5,
-            context: []
+            context: [],
         );
 
         $this->assertSame(5, $result);
@@ -768,7 +768,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 'from_a',
             valueB : 'from_b',
-            context: ['nodeIdA' => 'nodeA', 'nodeIdB' => 'nodeB']
+            context: ['nodeIdA' => 'nodeA', 'nodeIdB' => 'nodeB'],
         );
 
         $this->assertSame('from_a', $result);
@@ -781,7 +781,7 @@ final class ConsistencyPolicyTest extends TestCase
         $result = $strategy->resolve(
             valueA : 'from_x',
             valueB : 'from_y',
-            context: ['nodeIdA' => 'nodeX', 'nodeIdB' => 'nodeY', 'timestampA' => 100.0, 'timestampB' => 200.0]
+            context: ['nodeIdA' => 'nodeX', 'nodeIdB' => 'nodeY', 'timestampA' => 100.0, 'timestampB' => 200.0],
         );
 
         $this->assertSame('from_y', $result);

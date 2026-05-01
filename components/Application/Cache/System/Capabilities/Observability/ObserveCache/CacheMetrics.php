@@ -6,31 +6,31 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Observability\Ob
 
 final class CacheMetrics
 {
-    private int $hits                     = 0;
+    private int $hits = 0;
 
-    private int $misses                   = 0;
+    private int $misses = 0;
 
-    private int $writes                   = 0;
+    private int $writes = 0;
 
-    private int $deletes                  = 0;
+    private int $deletes = 0;
 
-    private int $evictions                = 0;
+    private int $evictions = 0;
 
-    private int $invalidations            = 0;
+    private int $invalidations = 0;
 
-    private int $refreshes                = 0;
+    private int $refreshes = 0;
 
-    private int $staleServed              = 0;
+    private int $staleServed = 0;
 
-    private int $lockWaits                = 0;
+    private int $lockWaits = 0;
 
-    private int $sourceFailures           = 0;
+    private int $sourceFailures = 0;
 
-    private int $storeFailures            = 0;
+    private int $storeFailures = 0;
 
     private int $totalLatencyMicroseconds = 0;
 
-    private int $operationCount           = 0;
+    private int $operationCount = 0;
 
     public function recordHit() : void
     {

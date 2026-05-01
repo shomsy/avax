@@ -8,19 +8,17 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMember;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberState;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFailed;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class AcceptTenantInvite
 {
-    public function __construct(private TenantStoreInterface $tenantStore, private UserSourceInterface $userSource, private AuditLogInterface $auditLog, private Clock $clock)
-    {
-    }
+    public function __construct(private TenantStoreInterface $tenantStore, private UserSourceInterface $userSource, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(AcceptTenantInviteData $data) : TenantMember
+    public function execute(AcceptTenantInviteData $data): TenantMember
     {
         $invite = $this->tenantStore->findInviteByToken(plainToken: $data->inviteToken);
 
@@ -59,10 +57,10 @@ final readonly class AcceptTenantInvite
             name      : 'auth.tenant.member.invite_accepted',
             occurredAt: $member->joinedAt,
             context   : [
-                                                           'tenant_id' => $member->tenantId,
-                                                           'user_id'   => $member->userId,
-                                                           'role'      => $member->role->value,
-                                                       ],
+                'tenant_id' => $member->tenantId,
+                'user_id' => $member->userId,
+                'role' => $member->role->value,
+            ],
         ));
 
         return $member;

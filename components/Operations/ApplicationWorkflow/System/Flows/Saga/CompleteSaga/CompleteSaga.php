@@ -20,7 +20,7 @@ final readonly class CompleteSaga
         private InspectSaga $inspectSaga,
     ) {}
 
-    public function complete(SagaInstance $instance) : SagaInstance
+    public function complete(SagaInstance $instance): SagaInstance
     {
         if ($instance->status === SagaInstanceStatus::COMPLETED) {
             return $instance;
@@ -38,19 +38,18 @@ final readonly class CompleteSaga
 
         $this->inspectSaga->record(
             event: SagaRuntimeEvent::completed(
-                     sagaId  : $instance->id,
-                     sagaName: $instance->definitionName,
-                 ),
+                sagaId  : $instance->id,
+                sagaName: $instance->definitionName,
+            ),
         );
 
         return $completed;
     }
 
     public function detectCompletion(
-        SagaInstance   $instance,
+        SagaInstance $instance,
         SagaDefinition $definition,
-    ) : bool
-    {
+    ): bool {
         if ($instance->currentStepName === null) {
             return true;
         }
@@ -60,23 +59,23 @@ final readonly class CompleteSaga
         return $nextStep === null;
     }
 
-    public function publishCompletion(SagaInstance $instance) : void
+    public function publishCompletion(SagaInstance $instance): void
     {
         $payload = [
-            'saga_id'         => $instance->id,
+            'saga_id' => $instance->id,
             'definition_name' => $instance->definitionName,
-            'data'            => $instance->data,
+            'data' => $instance->data,
             'completed_steps' => $instance->completedSteps,
-            'completed_at'    => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
+            'completed_at' => $instance->completedAt?->format(format: DateTimeInterface::ISO8601),
         ];
 
         $this->inspectSaga->record(
             event: SagaRuntimeEvent::create(
-                     sagaId  : $instance->id,
-                     sagaName: $instance->definitionName,
-                     type    : 'saga_completed',
-                     payload : $payload,
-                 ),
+                sagaId  : $instance->id,
+                sagaName: $instance->definitionName,
+                type    : 'saga_completed',
+                payload : $payload,
+            ),
         );
     }
 }
@@ -84,52 +83,55 @@ final readonly class CompleteSaga
 final readonly class SagaCompletion
 {
     public string $sagaId;
+
     public string $definitionName;
-    public array  $finalData;
-    public array  $completedSteps;
+
+    public array $finalData;
+
+    public array $completedSteps;
+
     public DateTimeImmutable $completedAt;
-    public float  $totalDurationMs;
+
+    public float $totalDurationMs;
 
     private function __construct(
         string $sagaId,
         string $definitionName,
-        array  $finalData,
-        array  $completedSteps,
+        array $finalData,
+        array $completedSteps,
         DateTimeImmutable $completedAt,
-        float  $totalDurationMs,
-    )
-    {
-        $this->sagaId          = $sagaId;
-        $this->definitionName  = $definitionName;
-        $this->finalData       = $finalData;
-        $this->completedSteps  = $completedSteps;
-        $this->completedAt     = $completedAt;
+        float $totalDurationMs,
+    ) {
+        $this->sagaId = $sagaId;
+        $this->definitionName = $definitionName;
+        $this->finalData = $finalData;
+        $this->completedSteps = $completedSteps;
+        $this->completedAt = $completedAt;
         $this->totalDurationMs = $totalDurationMs;
     }
 
     public static function fromInstance(
         SagaInstance $instance,
         float $startTimeMs,
-    ) : self
-    {
+    ): self {
         return new self(
             sagaId         : $instance->id,
             definitionName : $instance->definitionName,
             finalData      : $instance->data,
             completedSteps : $instance->completedSteps,
-            completedAt    : new DateTimeImmutable(),
+            completedAt    : new DateTimeImmutable,
             totalDurationMs: (microtime(true) * 1000) - $startTimeMs,
         );
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'saga_id'           => $this->sagaId,
-            'definition_name'   => $this->definitionName,
-            'final_data'        => $this->finalData,
-            'completed_steps'   => $this->completedSteps,
-            'completed_at'      => $this->completedAt->format(format: DateTimeInterface::ISO8601),
+            'saga_id' => $this->sagaId,
+            'definition_name' => $this->definitionName,
+            'final_data' => $this->finalData,
+            'completed_steps' => $this->completedSteps,
+            'completed_at' => $this->completedAt->format(format: DateTimeInterface::ISO8601),
             'total_duration_ms' => $this->totalDurationMs,
         ];
     }

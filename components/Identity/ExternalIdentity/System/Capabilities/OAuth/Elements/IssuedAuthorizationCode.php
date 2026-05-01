@@ -14,10 +14,10 @@ final readonly class IssuedAuthorizationCode
 {
     public function __construct(
         #[SensitiveParameter]
-        public string            $code,
+        public string $code,
         #[SensitiveParameter]
-        public string            $codeId,
+        public string $codeId,
         public DateTimeImmutable $expiresAt,
-        public string|null       $state = null,
+        public ?string $state = null,
     ) {}
 }

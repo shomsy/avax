@@ -39,7 +39,7 @@ final class ConfigureSagaRuntimeTest extends TestCase
 
         $config = $runtime->withStepRunner(
             stepRunner: $stepRunner,
-            config    : $runtime->withStore(store: $store)
+            config    : $runtime->withStore(store: $store),
         );
 
         $validated = $runtime->validate(config: $config);

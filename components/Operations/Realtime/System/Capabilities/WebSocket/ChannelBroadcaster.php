@@ -8,7 +8,7 @@ final readonly class ChannelBroadcaster
 {
     public function __construct(private string $channel) {}
 
-    public function send(string $event, mixed $data) : int
+    public function send(string $event, mixed $data): int
     {
         return WebSocketServer::broadcast(
             channel: $this->channel,

@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataField;
 
 final readonly class ShouldExposeField
 {
-    public function check(DataField $field, bool $excludeHidden = true) : bool
+    public function check(DataField $field, bool $excludeHidden = true): bool
     {
         if (! $excludeHidden) {
             return true;

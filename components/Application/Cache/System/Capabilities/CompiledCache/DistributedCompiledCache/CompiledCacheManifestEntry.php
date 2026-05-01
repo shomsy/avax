@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
 
-use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
-use RuntimeException;
-
-
 
 /**
  * Value object representing a single compiled cache manifest entry.
@@ -28,12 +23,12 @@ final readonly class CompiledCacheManifestEntry
      * @param string|null  $frameworkVersion Framework version used for compilation
      */
     public function __construct(
-        public string      $name,
-        public string      $compiledPath,
-        public array       $sourceFiles,
-        public string      $fingerprint,
-        public Timestamp   $createdAt,
-        public Timestamp   $updatedAt,
+        public string    $name,
+        public string    $compiledPath,
+        public array     $sourceFiles,
+        public string    $fingerprint,
+        public Timestamp $createdAt,
+        public Timestamp $updatedAt,
         public string|null $type = null,
         public string|null $phpVersion = null,
         public string|null $frameworkVersion = null,

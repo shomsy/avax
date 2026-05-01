@@ -8,5 +8,5 @@ use DateTimeImmutable;
 
 interface PruneExpiredSessionsInterface
 {
-    public function pruneExpired(DateTimeImmutable $now) : int;
+    public function pruneExpired(DateTimeImmutable $now): int;
 }

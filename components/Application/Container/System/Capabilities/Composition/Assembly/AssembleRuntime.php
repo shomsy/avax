@@ -40,8 +40,8 @@ final class AssembleRuntime
             pool   : $servicePool,
             metrics: $observability->metrics,
         );
-        $dependencies  = new ResolveDependencies();
-        $blueprints    = new CreateDependencyBlueprint(
+        $dependencies = new ResolveDependencies();
+        $blueprints = new CreateDependencyBlueprint(
             cache       : new BlueprintCache(
                               cacheDir    : $config->cacheDir,
                               cacheVersion: $config->cacheVersion,
@@ -59,7 +59,7 @@ final class AssembleRuntime
             failMode: $config->policyFailMode,
             profiles: $config->policyProfiles,
         );
-        $compiler      = new CompileContainer(
+        $compiler = new CompileContainer(
             registrations         : $registrations,
             blueprints            : $blueprints,
             cacheDir              : $config->cacheDir,
@@ -82,7 +82,7 @@ final class AssembleRuntime
                                         blueprints   : $blueprints,
                                     ),
         );
-        $resolver      = new ResolveDependency(
+        $resolver = new ResolveDependency(
             registrations    : $registrations,
             scopes           : $scopes,
             builder          : new BuildService(

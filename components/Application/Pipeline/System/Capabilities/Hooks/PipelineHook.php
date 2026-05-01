@@ -25,9 +25,9 @@ final readonly class PipelineHook
     public const string ON_TERMINATE = 'onTerminate';
 
     public function __construct(
-        public string  $name,
+        public string $name,
         public Closure $handler,
-        public int     $priority = 0,
+        public int    $priority = 0,
     ) {}
 }
 
@@ -35,8 +35,8 @@ final readonly class PipelineStage
 {
     public function __construct(
         public string $name,
-        public bool   $stopped = false,
-        public mixed  $data = null,
+        public bool  $stopped = false,
+        public mixed $data = null,
     ) {}
 
     public function stop(mixed $data = null) : self
@@ -53,7 +53,7 @@ final class StagePipeline
     public function register(PipelineHook $pipelineHook) : void
     {
         $this->hooks[] = $pipelineHook;
-        usort($this->hooks, fn ($a, $b) : int => $b->priority <=> $a->priority);
+        usort($this->hooks, static fn ($a, $b) : int => $b->priority <=> $a->priority);
     }
 
     public function execute(string $stage, mixed $initial = null) : mixed

@@ -20,25 +20,25 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaSt
 final readonly class Saga
 {
     public function __construct(
-        private DefineSaga     $defineSaga,
-        private StartSaga      $startSaga,
-        private RunSagaStep    $runSagaStep,
-        private CompleteSaga   $completeSaga,
+        private DefineSaga $defineSaga,
+        private StartSaga $startSaga,
+        private RunSagaStep $runSagaStep,
+        private CompleteSaga $completeSaga,
         private CompensateSaga $compensateSaga,
-        private ResumeSaga     $resumeSaga,
+        private ResumeSaga $resumeSaga,
         private ProtectSagaIdempotency $protectSagaIdempotency,
         private StoreSagaState $storeSagaState,
-        private InspectSaga    $inspectSaga,
+        private InspectSaga $inspectSaga,
     ) {}
 
-    public static function inMemory() : self
+    public static function inMemory(): self
     {
-        $store       = new StoreSagaState();
-        $idempotency = new ProtectSagaIdempotency();
-        $inspect     = new InspectSaga();
+        $store = new StoreSagaState;
+        $idempotency = new ProtectSagaIdempotency;
+        $inspect = new InspectSaga;
 
         return new self(
-            defineSaga            : new DefineSaga(),
+            defineSaga            : new DefineSaga,
             startSaga             : new StartSaga(storeSagaState: $store, protectSagaIdempotency: $idempotency, inspectSaga: $inspect),
             runSagaStep           : new RunSagaStep(storeSagaState: $store, inspectSaga: $inspect),
             completeSaga          : new CompleteSaga(storeSagaState: $store, inspectSaga: $inspect),
@@ -50,47 +50,47 @@ final readonly class Saga
         );
     }
 
-    public function define() : DefineSaga
+    public function define(): DefineSaga
     {
         return $this->defineSaga;
     }
 
-    public function start() : StartSaga
+    public function start(): StartSaga
     {
         return $this->startSaga;
     }
 
-    public function runStep() : RunSagaStep
+    public function runStep(): RunSagaStep
     {
         return $this->runSagaStep;
     }
 
-    public function complete() : CompleteSaga
+    public function complete(): CompleteSaga
     {
         return $this->completeSaga;
     }
 
-    public function compensate() : CompensateSaga
+    public function compensate(): CompensateSaga
     {
         return $this->compensateSaga;
     }
 
-    public function resume() : ResumeSaga
+    public function resume(): ResumeSaga
     {
         return $this->resumeSaga;
     }
 
-    public function idempotency() : ProtectSagaIdempotency
+    public function idempotency(): ProtectSagaIdempotency
     {
         return $this->protectSagaIdempotency;
     }
 
-    public function state() : StoreSagaState
+    public function state(): StoreSagaState
     {
         return $this->storeSagaState;
     }
 
-    public function inspect() : InspectSaga
+    public function inspect(): InspectSaga
     {
         return $this->inspectSaga;
     }

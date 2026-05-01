@@ -13,20 +13,20 @@ final readonly class UppercaseValues
         private array $items = [],
     ) {}
 
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return $this->uppercase();
     }
 
-    public function uppercase() : array
+    public function uppercase(): array
     {
         return array_map(
-            callback: static fn (mixed $value) : string => strtoupper(string: (string) $value),
+            callback: static fn (mixed $value): string => strtoupper(string: (string) $value),
             array   : $this->items,
         );
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

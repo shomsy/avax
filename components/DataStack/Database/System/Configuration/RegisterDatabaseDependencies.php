@@ -31,14 +31,14 @@ final readonly class RegisterDatabaseDependencies implements RegisterDependency
 {
     public function __construct(private ContainerInterface $container) {}
 
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [];
     }
 
-    public function register() : void
+    public function register(): void
     {
-        $this->container->singleton(abstract: Database::class, concrete: fn () : Database => $this->buildDatabase());
+        $this->container->singleton(abstract: Database::class, concrete: fn (): Database => $this->buildDatabase());
 
         $this->container->singleton(abstract: Connections::class, concrete: fn () => $this->container->get(id: Database::class)->connections());
 
@@ -73,7 +73,7 @@ final readonly class RegisterDatabaseDependencies implements RegisterDependency
     /**
      * @throws RandomException
      */
-    private function buildDatabase() : Database
+    private function buildDatabase(): Database
     {
         return Database::configuration()
             ->usingConfig(config: $this->resolveDatabaseConfig())
@@ -83,7 +83,7 @@ final readonly class RegisterDatabaseDependencies implements RegisterDependency
     /**
      * @return array<string, mixed>
      */
-    private function resolveDatabaseConfig() : array
+    private function resolveDatabaseConfig(): array
     {
         if (! $this->container->has(id: 'config')) {
             return [];

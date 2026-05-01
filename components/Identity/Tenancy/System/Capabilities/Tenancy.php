@@ -16,17 +16,17 @@ use SensitiveParameter;
 final readonly class Tenancy
 {
     public function __construct(
-        private Tenants  $tenants,
+        private Tenants $tenants,
         #[SensitiveParameter]
         private Security $security,
     ) {}
 
-    public function tenants() : Tenants
+    public function tenants(): Tenants
     {
         return $this->tenants;
     }
 
-    public function security() : Security
+    public function security(): Security
     {
         return $this->security;
     }

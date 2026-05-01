@@ -6,24 +6,22 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\TenantSec
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\TenantSecurity\TenantSecurityFailed;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityChangeRequest;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityChangeRequestStatus;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityChangeRequestStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityConfiguration;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityConfigurationStoreInterface;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class ApplyTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private AuditLogInterface $auditLog, private Clock $clock)
-    {
-    }
+    public function __construct(private TenantSecurityConfigurationStoreInterface $configurationStore, private TenantSecurityChangeRequestStoreInterface $changeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws TenantSecurityFailed
      */
-    public function execute(string $changeId) : TenantSecurityConfiguration
+    public function execute(string $changeId): TenantSecurityConfiguration
     {
         $changeRequest = $this->changeRequestStore->find(changeId: $changeId);
 
@@ -56,10 +54,10 @@ final readonly class ApplyTenantSecurityChange
             name      : 'auth.tenant_security.change.applied',
             occurredAt: $this->clock->now(),
             context   : [
-                                                           'change_id'       => $applied->changeId,
-                                                           'tenant'          => $applied->tenantSlug,
-                                                           'rollout_version' => $applied->after->rolloutVersion,
-                                                       ],
+                'change_id' => $applied->changeId,
+                'tenant' => $applied->tenantSlug,
+                'rollout_version' => $applied->after->rolloutVersion,
+            ],
         ));
 
         return $applied->after;

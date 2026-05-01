@@ -14,7 +14,7 @@ final class DateTimeFormatter
             'date'     => 'Y-m-d',
             'time'     => 'H:i:s',
             'datetime' => 'Y-m-d H:i:s',
-        'timestamp' => 'U',
+            'timestamp' => 'U',
             'iso8601'  => 'c',
             'rfc2822'  => 'D, d M Y H:i:s O',
             'human'    => 'F j, Y g:i a',

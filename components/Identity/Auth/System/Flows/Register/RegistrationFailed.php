@@ -11,12 +11,12 @@ use Exception;
  */
 final class RegistrationFailed extends Exception
 {
-    public static function emailTaken() : self
+    public static function emailTaken(): self
     {
         return new self(message: 'Email is already taken.', code: 409);
     }
 
-    public static function usernameTaken() : self
+    public static function usernameTaken(): self
     {
         return new self(message: 'Username is already taken.', code: 409);
     }

@@ -10,16 +10,16 @@ namespace Avax\Framework\System\Capabilities\RouteIntelligence;
 final readonly class RouteInfo
 {
     /**
-     * @param list<string>          $middleware
+     * @param list<string> $middleware
      * @param array<string, string> $constraints
      */
     public function __construct(
-        public string      $method,
-        public string      $pattern,
-        public string      $handler,
-        public array       $middleware = [],
+        public string $method,
+        public string $pattern,
+        public string $handler,
+        public array  $middleware = [],
         public string|null $name = null,
-        public array       $constraints = [],
+        public array  $constraints = [],
     ) {}
 
     public function hasParameters() : bool

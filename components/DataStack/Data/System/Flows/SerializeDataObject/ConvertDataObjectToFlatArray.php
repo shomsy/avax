@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Data\System\Flows\SerializeDataObject;
 
 final readonly class ConvertDataObjectToFlatArray
 {
-    public function convert(object $object) : array
+    public function convert(object $object): array
     {
         return get_object_vars(object: $object);
     }

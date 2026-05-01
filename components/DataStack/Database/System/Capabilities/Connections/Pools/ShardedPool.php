@@ -14,21 +14,20 @@ final class ShardedPool
     private array $pools = [];
 
     public function __construct(
-        private readonly int     $shardCount,
+        private readonly int $shardCount,
         private readonly Closure $poolFactory,
-    )
-    {
+    ) {
         if ($shardCount < 1) {
             throw new InvalidArgumentException(message: 'Shard count must be >= 1');
         }
     }
 
-    public function getForUserId(int $userId) : ConnectionPoolInterface
+    public function getForUserId(int $userId): ConnectionPoolInterface
     {
         return $this->getForKey(key: (string) $userId);
     }
 
-    public function getForKey(string $key) : ConnectionPoolInterface
+    public function getForKey(string $key): ConnectionPoolInterface
     {
         $shardIndex = abs(num: crc32(string: $key)) % $this->shardCount;
 
@@ -44,12 +43,12 @@ final class ShardedPool
         return $this->pools[$shardIndex];
     }
 
-    public function getForTenant(string $tenantId) : ConnectionPoolInterface
+    public function getForTenant(string $tenantId): ConnectionPoolInterface
     {
         return $this->getForKey(key: $tenantId);
     }
 
-    public function closeAll() : void
+    public function closeAll(): void
     {
         foreach ($this->pools as $pool) {
             $pool->destroy();
@@ -58,12 +57,12 @@ final class ShardedPool
         $this->pools = [];
     }
 
-    public function getShardCount() : int
+    public function getShardCount(): int
     {
         return $this->shardCount;
     }
 
-    public function getStats() : array
+    public function getStats(): array
     {
         $totalStats = new PoolStats(
             totalConnections : 0,
@@ -74,7 +73,7 @@ final class ShardedPool
         );
 
         foreach ($this->pools as $pool) {
-            $stats      = $pool->stats();
+            $stats = $pool->stats();
             $totalStats = new PoolStats(
                 totalConnections : $totalStats->totalConnections + $stats->totalConnections,
                 activeConnections: $totalStats->activeConnections + $stats->activeConnections,
@@ -84,6 +83,6 @@ final class ShardedPool
             );
         }
 
-        return ['total' => $totalStats, 'shards' => array_map(callback: static fn ($pool) : PoolStats => $pool->stats(), array: $this->pools)];
+        return ['total' => $totalStats, 'shards' => array_map(callback: static fn ($pool): PoolStats => $pool->stats(), array: $this->pools)];
     }
 }

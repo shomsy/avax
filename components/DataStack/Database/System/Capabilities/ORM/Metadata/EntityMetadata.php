@@ -9,18 +9,18 @@ use ReflectionProperty;
 final readonly class EntityMetadata
 {
     /**
-     * @param array<string, FieldMetadata> $fields
-     * @param array<string, RelationMetadata> $relations
+     * @param  array<string, FieldMetadata>  $fields
+     * @param  array<string, RelationMetadata>  $relations
      */
     public function __construct(
-        public string      $className,
-        public string      $table,
-        public array       $fields,
-        public array       $relations,
-        public string|null $repositoryClass = null,
+        public string $className,
+        public string $table,
+        public array $fields,
+        public array $relations,
+        public ?string $repositoryClass = null,
     ) {}
 
-    public function identifierField() : FieldMetadata|null
+    public function identifierField(): ?FieldMetadata
     {
         foreach ($this->fields as $field) {
             if ($field->id) {
@@ -34,7 +34,7 @@ final readonly class EntityMetadata
     /**
      * @return array<string, mixed>
      */
-    public function extractColumnValues(object $entity) : array
+    public function extractColumnValues(object $entity): array
     {
         $values = [];
 
@@ -47,7 +47,7 @@ final readonly class EntityMetadata
         return $values;
     }
 
-    public function propertyForColumn(string $column) : string|null
+    public function propertyForColumn(string $column): ?string
     {
         foreach ($this->fields as $field) {
             if ($field->column === $column) {

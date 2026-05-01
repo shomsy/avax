@@ -30,7 +30,7 @@ final class HotPathInliner
         }
 
         $this->compiledContainer = $compiledContainer;
-        $this->calls    = [];
+        $this->calls = [];
     }
 
     /**
@@ -39,7 +39,7 @@ final class HotPathInliner
     public function detach() : void
     {
         $this->compiledContainer = null;
-        $this->calls    = [];
+        $this->calls = [];
     }
 
     /**
@@ -53,7 +53,7 @@ final class HotPathInliner
     /**
      * @return array<string, mixed>
      */
-    public function state(string|null $serviceId = null) : array
+    public function state(string $serviceId = null) : array
     {
         $attached = $this->compiledContainer instanceof CompiledContainer;
         $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiledContainer->has(serviceId: $serviceId);
@@ -61,7 +61,7 @@ final class HotPathInliner
         return [
             'attached'   => $attached,
             'entryCount' => $this->compiledContainer?->entryCount() ?? 0,
-            'entryIds'   => $this->compiledContainer?->entryIds() ?? [],
+            'entryIds' => $this->compiledContainer?->entryIds() ?? [],
             'hasEntry'   => $hasEntry,
             'reason'     => match (true) {
                 ! $attached                              => 'no compiled runtime is attached',

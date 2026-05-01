@@ -10,8 +10,8 @@ use Throwable;
 final class CompiledCacheCouldNotBeWritten extends RuntimeException
 {
     public function __construct(
-        string     $name,
-        Throwable|null $throwable = null,
+        string    $name,
+        Throwable $throwable = null,
     )
     {
         parent::__construct(

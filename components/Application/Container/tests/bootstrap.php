@@ -96,7 +96,7 @@ namespace {
     }
 
     function makeTestContainer(
-        CreateContainerConfig|null $config = null,
+        CreateContainerConfig $config = null,
     ) : Container
     {
         return new CreateContainer()->create(config: $config);

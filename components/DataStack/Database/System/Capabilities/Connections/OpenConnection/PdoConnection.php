@@ -17,18 +17,16 @@ use Throwable;
 final readonly class PdoConnection implements DatabaseConnection
 {
     /**
-     * @param string $name The nickname for this connection (e.g., 'primary').
-     * @param PDO $pdo The active technical engine already plugged into the DB.
+     * @param  string  $name  The nickname for this connection (e.g., 'primary').
+     * @param  PDO  $pdo  The active technical engine already plugged into the DB.
      */
-    public function __construct(private string $name, private PDO $pdo)
-    {
-    }
+    public function __construct(private string $name, private PDO $pdo) {}
 
     /**
      * Get the actual technical engine (PDO) to run your SQL.
      */
     #[Override]
-    public function getConnection() : PDO
+    public function getConnection(): PDO
     {
         return $this->pdo;
     }
@@ -37,7 +35,7 @@ final readonly class PdoConnection implements DatabaseConnection
      * Send a heartbeat query to verify connection health.
      */
     #[Override]
-    public function ping() : bool
+    public function ping(): bool
     {
         try {
             $this->pdo->query(query: 'SELECT 1');
@@ -52,7 +50,7 @@ final readonly class PdoConnection implements DatabaseConnection
      * Get the nickname assigned to this connection.
      */
     #[Override]
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }

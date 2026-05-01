@@ -14,7 +14,7 @@ final class FakeClock implements Clock
 {
     private Timestamp $timestamp;
 
-    public function __construct(Timestamp|null $timestamp = null)
+    public function __construct(Timestamp $timestamp = null)
     {
         $this->timestamp = $timestamp ?? Timestamp::now();
     }

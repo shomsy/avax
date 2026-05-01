@@ -49,20 +49,18 @@ use PDO;
 final class PooledConnectionAuthority implements ConnectionPoolInterface, DatabaseConnection
 {
     /** @var DatabaseConnection|null The actual tool we've grabbed from the library (null if we haven't needed it yet). */
-    private DatabaseConnection|null $databaseConnection = null;
+    private ?DatabaseConnection $databaseConnection = null;
 
     /**
-     * @param ConnectionPoolInterface $connectionPool The "Library" we borrow from.
+     * @param  ConnectionPoolInterface  $connectionPool  The "Library" we borrow from.
      */
-    public function __construct(private readonly ConnectionPoolInterface $connectionPool)
-    {
-    }
+    public function __construct(private readonly ConnectionPoolInterface $connectionPool) {}
 
     /**
      * Get the active PDO tool. If we haven't borrowed one yet, we grab it now.
      */
     #[Override]
-    public function getConnection() : PDO
+    public function getConnection(): PDO
     {
         return $this->resolveBorrowed()->getConnection();
     }
@@ -74,7 +72,7 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      * We check if we already have a connection. If not, we ask the pool
      * for a fresh one. We only do this once.
      */
-    private function resolveBorrowed() : DatabaseConnection
+    private function resolveBorrowed(): DatabaseConnection
     {
         if (! $this->databaseConnection instanceof DatabaseConnection) {
             $this->databaseConnection = $this->connectionPool->acquire();
@@ -89,7 +87,7 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      * @return DatabaseConnection A fresh tool from the shared resource.
      */
     #[Override]
-    public function acquire() : DatabaseConnection
+    public function acquire(): DatabaseConnection
     {
         return $this->connectionPool->acquire();
     }
@@ -100,7 +98,7 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      * @return bool True if we can still "talk" to the database.
      */
     #[Override]
-    public function ping() : bool
+    public function ping(): bool
     {
         return $this->resolveBorrowed()->ping();
     }
@@ -109,7 +107,7 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      * Get the technical nickname of this connection.
      */
     #[Override]
-    public function getName() : string
+    public function getName(): string
     {
         return $this->connectionPool->getName();
     }
@@ -118,7 +116,7 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
      * Hand a connection back to the shared library.
      */
     #[Override]
-    public function release(DatabaseConnection $databaseConnection) : void
+    public function release(DatabaseConnection $databaseConnection): void
     {
         $this->connectionPool->release(connection: $databaseConnection);
     }

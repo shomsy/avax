@@ -6,11 +6,11 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Poo
 
 interface ConnectionPoolInterface
 {
-    public function get() : PooledConnection;
+    public function get(): PooledConnection;
 
-    public function release(PooledConnection $pooledConnection) : void;
+    public function release(PooledConnection $pooledConnection): void;
 
-    public function destroy() : void;
+    public function destroy(): void;
 
-    public function stats() : PoolStats;
+    public function stats(): PoolStats;
 }

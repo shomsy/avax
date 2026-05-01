@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $dirs    = ['framework', 'components', 'tests'];
 $baseDir = realpath(__DIR__);
 
@@ -44,12 +46,16 @@ $mappings = [
 
 foreach ($dirs as $dir) {
     $targetDir = $baseDir . '/' . $dir;
-    if (! is_dir($targetDir)) continue;
+    if (! is_dir($targetDir)) {
+        continue;
+    }
 
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($targetDir));
 
     foreach ($iterator as $file) {
-        if ($file->getExtension() !== 'php') continue;
+        if ($file->getExtension() !== 'php') {
+            continue;
+        }
 
         $path     = $file->getPathname();
         $content  = file_get_contents($path);
@@ -65,7 +71,7 @@ foreach ($dirs as $dir) {
 
         if ($content !== $original) {
             file_put_contents($path, $content);
-            echo "✨ Purified: " . str_replace($baseDir . '/', '', $path) . "\n";
+            echo '✨ Purified: ' . str_replace($baseDir . '/', '', $path) . "\n";
         }
     }
 }

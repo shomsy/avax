@@ -13,17 +13,17 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\Con
 final class RememberConnection
 {
     /**
-     * @param array<string, DatabaseConnection> $connections
+     * @param  array<string, DatabaseConnection>  $connections
      */
-    public function read(array $connections, string $name) : DatabaseConnection|null
+    public function read(array $connections, string $name): ?DatabaseConnection
     {
         return $connections[$name] ?? null;
     }
 
     /**
-     * @param array<string, DatabaseConnection> $connections
+     * @param  array<string, DatabaseConnection>  $connections
      */
-    public function remember(array &$connections, string $name, DatabaseConnection $databaseConnection) : DatabaseConnection
+    public function remember(array &$connections, string $name, DatabaseConnection $databaseConnection): DatabaseConnection
     {
         $connections[$name] = $databaseConnection;
 
@@ -31,17 +31,17 @@ final class RememberConnection
     }
 
     /**
-     * @param array<string, ConnectionPool> $pools
+     * @param  array<string, ConnectionPool>  $pools
      */
-    public function readPool(array $pools, string $name) : ConnectionPool|null
+    public function readPool(array $pools, string $name): ?ConnectionPool
     {
         return $pools[$name] ?? null;
     }
 
     /**
-     * @param array<string, ConnectionPool> $pools
+     * @param  array<string, ConnectionPool>  $pools
      */
-    public function rememberPool(array &$pools, string $name, ConnectionPool $connectionPool) : ConnectionPool
+    public function rememberPool(array &$pools, string $name, ConnectionPool $connectionPool): ConnectionPool
     {
         $pools[$name] = $connectionPool;
 

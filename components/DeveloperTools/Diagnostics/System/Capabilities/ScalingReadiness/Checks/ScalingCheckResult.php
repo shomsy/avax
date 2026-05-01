@@ -8,15 +8,15 @@ final readonly class ScalingCheckResult
 {
     public function __construct(
         public string $name,
-        public bool   $passed,
+        public bool $passed,
         public string $message,
     ) {}
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'name'    => $this->name,
-            'passed'  => $this->passed,
+            'name' => $this->name,
+            'passed' => $this->passed,
             'message' => $this->message,
         ];
     }

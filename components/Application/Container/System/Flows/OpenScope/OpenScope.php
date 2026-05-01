@@ -19,7 +19,7 @@ final readonly class OpenScope
     /**
      * Opens one new scope frame.
      */
-    public function open(string|null $kind = null, string $scopeId = '') : void
+    public function open(string $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->resolveDependency->openScope(kind: $kind, scopeId: $scopeId);

@@ -15,12 +15,12 @@ final readonly class ChunkValues
         private array $items = [],
     ) {}
 
-    public function __invoke(int $size) : array
+    public function __invoke(int $size): array
     {
         return $this->chunk(size: $size);
     }
 
-    public function chunk(int $size) : array
+    public function chunk(int $size): array
     {
         if ($size <= 0) {
             throw new InvalidArgumentException(message: 'Chunk size must be greater than 0.');
@@ -29,7 +29,7 @@ final readonly class ChunkValues
         return array_chunk(array: $this->items, length: $size, preserve_keys: true);
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

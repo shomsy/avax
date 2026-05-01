@@ -11,24 +11,24 @@ final class ProjectionBuilder implements Projection
 
     public function __construct(private readonly string $targetClass) {}
 
-    public static function for(string $targetClass) : self
+    public static function for(string $targetClass): self
     {
         return new self(targetClass: $targetClass);
     }
 
-    public function mapColumn(string $column, string $property) : self
+    public function mapColumn(string $column, string $property): self
     {
         $this->fieldMappings[$column] = $property;
 
         return $this;
     }
 
-    public function getTargetClass() : string
+    public function getTargetClass(): string
     {
         return $this->targetClass;
     }
 
-    public function getFieldMappings() : array
+    public function getFieldMappings(): array
     {
         if ($this->fieldMappings !== []) {
             return $this->fieldMappings;
@@ -37,7 +37,7 @@ final class ProjectionBuilder implements Projection
         return new ResultMapper(className: $this->targetClass)->getFieldMappings();
     }
 
-    public function map(array $row) : object
+    public function map(array $row): object
     {
         if ($this->fieldMappings === []) {
             return new ResultMapper(className: $this->targetClass)->map(row: $row);

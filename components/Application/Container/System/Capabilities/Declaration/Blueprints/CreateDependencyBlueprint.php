@@ -19,12 +19,12 @@ use ReflectionUnionType;
  */
 final readonly class CreateDependencyBlueprint
 {
-    private BlueprintCache           $cache;
+    private BlueprintCache $cache;
     private ResolveDependencies|null $dependencies;
 
     public function __construct(
-        BlueprintCache           $cache = null,
-        ResolveDependencies|null $dependencies = null,
+        BlueprintCache      $cache = null,
+        ResolveDependencies $dependencies = null,
     )
     {
         $this->dependencies = $dependencies;
@@ -56,7 +56,7 @@ final readonly class CreateDependencyBlueprint
         $fingerprint = $this->cache->shouldValidateSource()
             ? $this->cacheFingerprintFor(class: $class)
             : '';
-        $cached      = $this->cache->get(class: $class, fingerprint: $fingerprint);
+        $cached = $this->cache->get(class: $class, fingerprint: $fingerprint);
         if ($cached !== null) {
             return $cached;
         }

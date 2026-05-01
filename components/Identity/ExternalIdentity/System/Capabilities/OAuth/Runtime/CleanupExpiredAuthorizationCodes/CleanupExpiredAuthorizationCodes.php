@@ -12,11 +12,11 @@ final readonly class CleanupExpiredAuthorizationCodes
 {
     public function __construct(
         #[SensitiveParameter]
-        private PruneExpiredAuthorizationCodesInterface|null $codeStore,
-        private Clock                                        $clock,
+        private ?PruneExpiredAuthorizationCodesInterface $codeStore,
+        private Clock $clock,
     ) {}
 
-    public function execute() : int
+    public function execute(): int
     {
         if ($this->codeStore === null) {
             return 0;

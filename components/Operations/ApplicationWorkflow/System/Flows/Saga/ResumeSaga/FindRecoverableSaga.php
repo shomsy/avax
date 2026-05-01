@@ -13,10 +13,10 @@ final readonly class FindRecoverableSaga
 {
     public function __construct(private object $store) {}
 
-    public function find(string|null $tenantId = null, int $limit = 100) : array
+    public function find(?string $tenantId = null, int $limit = 100): array
     {
         $recoverable = [];
-        $allSagas    = $this->store->all();
+        $allSagas = $this->store->all();
 
         foreach ($allSagas as $sagaId => $data) {
             if ($this->isRecoverable(data: $data, tenantId: $tenantId)) {
@@ -30,7 +30,7 @@ final readonly class FindRecoverableSaga
         return $recoverable;
     }
 
-    private function isRecoverable(array $data, string|null $tenantId) : bool
+    private function isRecoverable(array $data, ?string $tenantId): bool
     {
         if (($data['status'] ?? '') !== 'failed') {
             return false;
@@ -54,29 +54,28 @@ final readonly class RebuildSagaState
     public function rebuild(
         string $sagaId,
         array $events,
-    ) : array
-    {
-        $data             = [];
-        $completedSteps   = [];
-        $stepResults      = [];
+    ): array {
+        $data = [];
+        $completedSteps = [];
+        $stepResults = [];
         $currentStepIndex = 0;
-        $currentStepName  = null;
+        $currentStepName = null;
 
         foreach ($events as $event) {
             $type = $event['type'] ?? '';
 
             switch ($type) {
                 case 'saga_started':
-                    $data             = $event['payload'] ?? [];
+                    $data = $event['payload'] ?? [];
                     $currentStepIndex = 0;
 
                     break;
 
                 case 'step_completed':
-                    $stepName               = $event['step_name'] ?? '';
-                    $completedSteps[]       = $stepName;
+                    $stepName = $event['step_name'] ?? '';
+                    $completedSteps[] = $stepName;
                     $stepResults[$stepName] = $event['payload'] ?? [];
-                    $currentStepName        = $stepName;
+                    $currentStepName = $stepName;
                     $currentStepIndex++;
 
                     break;
@@ -91,11 +90,11 @@ final readonly class RebuildSagaState
         }
 
         return [
-            'data'               => $data,
-            'completed_steps'    => $completedSteps,
-            'step_results'       => $stepResults,
+            'data' => $data,
+            'completed_steps' => $completedSteps,
+            'step_results' => $stepResults,
             'current_step_index' => $currentStepIndex,
-            'current_step_name'  => $currentStepName,
+            'current_step_name' => $currentStepName,
         ];
     }
 }
@@ -105,14 +104,13 @@ final readonly class ContinueSagaAfterFailure
     public function continue(
         SagaInstance $instance,
         array $definition,
-    ) : array
-    {
+    ): array {
         if ($instance->status !== SagaInstanceStatus::FAILED) {
             throw new SagaRecoveryFailure(message: 'Saga is not in failed state.');
         }
 
         $definitionSteps = $definition['steps'] ?? [];
-        $stepOrder       = $definition['stepOrder'] ?? [];
+        $stepOrder = $definition['stepOrder'] ?? [];
 
         $currentIndex = $instance->currentStepIndex;
         if ($currentIndex >= count($stepOrder)) {
@@ -131,7 +129,7 @@ final readonly class ContinueSagaAfterFailure
 
         return [
             'next_step' => $nextStep,
-            'retry'     => true,
+            'retry' => true,
         ];
     }
 }
@@ -143,8 +141,7 @@ final readonly class MarkSagaAsUnrecoverable
     public function mark(
         SagaInstance $instance,
         string $reason,
-    ) : void
-    {
+    ): void {
         $this->inspect->record(
             SagaRuntimeEvent::create(
                 sagaId  : $instance->id,

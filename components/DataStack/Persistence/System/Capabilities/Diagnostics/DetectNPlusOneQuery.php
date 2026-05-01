@@ -24,13 +24,10 @@ final class DetectNPlusOneQuery
      */
     private array $reports = [];
 
-    /**
-     * @var int
-     */
     private int $threshold;
 
     /**
-     * @param int $threshold Number of same-pattern queries to trigger detection (default: 20)
+     * @param  int  $threshold  Number of same-pattern queries to trigger detection (default: 20)
      */
     public function __construct(int $threshold = 20)
     {
@@ -40,22 +37,22 @@ final class DetectNPlusOneQuery
     /**
      * Records a query execution for analysis.
      *
-     * @param string $query The SQL query string
-     * @param float|null $timestamp Optional timestamp in milliseconds
+     * @param  string  $query  The SQL query string
+     * @param  float|null  $timestamp  Optional timestamp in milliseconds
      */
-    public function record(string $query, float|null $timestamp = null) : void
+    public function record(string $query, ?float $timestamp = null): void
     {
         $timestamp ??= microtime(true) * 1000;
         $fingerprint = QueryFingerprint::fromQuery($query);
-        $hash        = $fingerprint->hash;
+        $hash = $fingerprint->hash;
 
         if (! isset($this->queryPatterns[$hash])) {
             $this->queryPatterns[$hash] = [
-                'count'     => 0,
-                'queries'   => [],
+                'count' => 0,
+                'queries' => [],
                 'firstSeen' => $timestamp,
-                'lastSeen'  => $timestamp,
-                'pattern'   => $fingerprint,
+                'lastSeen' => $timestamp,
+                'pattern' => $fingerprint,
             ];
         }
 
@@ -76,13 +73,13 @@ final class DetectNPlusOneQuery
     /**
      * Generates a report for a detected N+1 pattern.
      */
-    private function generateReport(string $hash) : void
+    private function generateReport(string $hash): void
     {
         if (isset($this->reports[$hash])) {
             return;
         }
 
-        $data     = $this->queryPatterns[$hash];
+        $data = $this->queryPatterns[$hash];
         $timeSpan = $data['lastSeen'] - $data['firstSeen'];
 
         $report = new NPlusOneQueryReport(
@@ -99,7 +96,7 @@ final class DetectNPlusOneQuery
     /**
      * Generates an optimization suggestion based on the query pattern.
      */
-    private function generateSuggestion(string $pattern) : string
+    private function generateSuggestion(string $pattern): string
     {
         $upperPattern = strtoupper($pattern);
 
@@ -119,7 +116,7 @@ final class DetectNPlusOneQuery
      *
      * @return array<NPlusOneQueryReport>
      */
-    public function detect() : array
+    public function detect(): array
     {
         foreach ($this->queryPatterns as $hash => $data) {
             if ($data['count'] >= $this->threshold) {
@@ -134,9 +131,9 @@ final class DetectNPlusOneQuery
     /**
      * Updates an existing report with the latest count.
      */
-    private function generateOrUpdateReport(string $hash) : void
+    private function generateOrUpdateReport(string $hash): void
     {
-        $data     = $this->queryPatterns[$hash];
+        $data = $this->queryPatterns[$hash];
         $timeSpan = $data['lastSeen'] - $data['firstSeen'];
 
         $report = new NPlusOneQueryReport(
@@ -155,7 +152,7 @@ final class DetectNPlusOneQuery
      *
      * @return array<string, array{count: int, queries: array<string>, firstSeen: float, lastSeen: float}>
      */
-    public function getPatterns() : array
+    public function getPatterns(): array
     {
         return $this->queryPatterns;
     }
@@ -163,7 +160,7 @@ final class DetectNPlusOneQuery
     /**
      * Returns the count of unique query patterns.
      */
-    public function getPatternCount() : int
+    public function getPatternCount(): int
     {
         return count($this->queryPatterns);
     }
@@ -171,16 +168,16 @@ final class DetectNPlusOneQuery
     /**
      * Resets all tracked patterns and reports.
      */
-    public function reset() : void
+    public function reset(): void
     {
         $this->queryPatterns = [];
-        $this->reports       = [];
+        $this->reports = [];
     }
 
     /**
      * Gets the current detection threshold.
      */
-    public function getThreshold() : int
+    public function getThreshold(): int
     {
         return $this->threshold;
     }
@@ -188,7 +185,7 @@ final class DetectNPlusOneQuery
     /**
      * Sets a new detection threshold.
      */
-    public function setThreshold(int $threshold) : void
+    public function setThreshold(int $threshold): void
     {
         $this->threshold = $threshold;
     }

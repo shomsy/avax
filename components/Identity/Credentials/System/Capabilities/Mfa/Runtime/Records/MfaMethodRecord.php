@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records;
 
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\BackupCodeRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enums\MfaMethod;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use DateTimeImmutable;
 use SensitiveParameter;
 
 /**
  * Stored active MFA method and recovery state.
  *
- * @param list<BackupCodeRecord> $backupCodes
+ * @param  list<BackupCodeRecord>  $backupCodes
  */
 final readonly class MfaMethodRecord
 {
@@ -21,27 +21,26 @@ final readonly class MfaMethodRecord
     public array $backupCodes;
 
     /**
-     * @param list<BackupCodeRecord> $backupCodes
+     * @param  list<BackupCodeRecord>  $backupCodes
      */
     public function __construct(
-        public UserId            $userId,
-        public MfaMethod         $method,
+        public UserId $userId,
+        public MfaMethod $method,
         #[SensitiveParameter]
-        public string            $secret,
+        public string $secret,
         public DateTimeImmutable $enabledAt,
         #[SensitiveParameter]
-        array                    $backupCodes = null,
-        public int|null          $lastAcceptedTimeStep = null,
-    )
-    {
+        ?array $backupCodes = null,
+        public ?int $lastAcceptedTimeStep = null,
+    ) {
         $backupCodes ??= [];
         $this->backupCodes = $backupCodes;
     }
 
     /**
-     * @param list<BackupCodeRecord> $backupCodes
+     * @param  list<BackupCodeRecord>  $backupCodes
      */
-    public function withBackupCodes(#[SensitiveParameter] array $backupCodes) : self
+    public function withBackupCodes(#[SensitiveParameter] array $backupCodes): self
     {
         return new self(
             userId              : $this->userId,
@@ -53,7 +52,7 @@ final readonly class MfaMethodRecord
         );
     }
 
-    public function withLastAcceptedTimeStep(int $timeStep) : self
+    public function withLastAcceptedTimeStep(int $timeStep): self
     {
         return new self(
             userId              : $this->userId,

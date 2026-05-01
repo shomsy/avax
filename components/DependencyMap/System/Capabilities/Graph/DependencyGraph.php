@@ -9,12 +9,12 @@ final class DependencyGraph
     /** @var array<string, DependencyNode> */
     private array $nodes = [];
 
-    public function add(string $dependency, array $dependsOn = []) : void
+    public function add(string $dependency, array $dependsOn = []): void
     {
         $this->nodes[$dependency] = new DependencyNode($dependency, $dependsOn);
     }
 
-    public function remove(string $dependency) : void
+    public function remove(string $dependency): void
     {
         unset($this->nodes[$dependency]);
     }
@@ -22,7 +22,7 @@ final class DependencyGraph
     /**
      * @return list<string>
      */
-    public function dependsOn(string $dependency) : array
+    public function dependsOn(string $dependency): array
     {
         return $this->nodes[$dependency]?->dependsOn ?? [];
     }
@@ -30,12 +30,12 @@ final class DependencyGraph
     /**
      * @return list<list<string>>
      */
-    public function detectCycles() : array
+    public function detectCycles(): array
     {
         $cycles = [];
 
         foreach ($this->nodes as $dependency => $node) {
-            $path    = [];
+            $path = [];
             $visited = [];
 
             if ($this->findCycle($dependency, $path, $visited)) {
@@ -46,7 +46,7 @@ final class DependencyGraph
         return $cycles;
     }
 
-    private function findCycle(string $dependency, array &$path, array &$visited) : bool
+    private function findCycle(string $dependency, array &$path, array &$visited): bool
     {
         if (isset($visited[$dependency])) {
             return true;
@@ -62,7 +62,7 @@ final class DependencyGraph
             return false;
         }
 
-        $path[$dependency]    = $dependency;
+        $path[$dependency] = $dependency;
         $visited[$dependency] = true;
 
         foreach ($this->nodes[$dependency]->dependsOn as $dep) {
@@ -79,7 +79,7 @@ final class DependencyGraph
     /**
      * @return list<string>
      */
-    public function findOrphans() : array
+    public function findOrphans(): array
     {
         $orphans = [];
 
@@ -95,7 +95,7 @@ final class DependencyGraph
     /**
      * @return list<string>
      */
-    public function dependents(string $dependency) : array
+    public function dependents(string $dependency): array
     {
         $dependents = [];
 
@@ -108,7 +108,7 @@ final class DependencyGraph
         return $dependents;
     }
 
-    public function toMermaid() : string
+    public function toMermaid(): string
     {
         $lines = ['graph TD'];
 
@@ -125,10 +125,10 @@ final class DependencyGraph
 final readonly class DependencyNode
 {
     /**
-     * @param list<string> $dependsOn
+     * @param  list<string>  $dependsOn
      */
     public function __construct(
         public string $name,
-        public array  $dependsOn = [],
+        public array $dependsOn = [],
     ) {}
 }

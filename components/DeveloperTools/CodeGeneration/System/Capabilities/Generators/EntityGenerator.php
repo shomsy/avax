@@ -15,13 +15,12 @@ class EntityGenerator extends CodeGenerator
     /**
      * Generate an entity class file.
      *
-     * @param string $name Entity name or table name (e.g. "User" or "users")
-     * @param array $data Additional data (e.g. ['fields' => [['name' => 'id', 'type' => 'int'], ...]])
-     *
+     * @param  string  $name  Entity name or table name (e.g. "User" or "users")
+     * @param  array  $data  Additional data (e.g. ['fields' => [['name' => 'id', 'type' => 'int'], ...]])
      * @return string The generated file path
      */
     #[Override]
-    public function generate(string $name, array $data = []) : string
+    public function generate(string $name, array $data = []): string
     {
         $className = Str::studly($name);
 
@@ -29,10 +28,10 @@ class EntityGenerator extends CodeGenerator
         $className = ! in_array(preg_replace('/Entity$/', '', $className), ['', '0'], true) && preg_replace('/Entity$/', '', $className) !== [] ? preg_replace('/Entity$/', '', $className) : $className;
         $className .= 'Entity';
 
-        $subDir    = $data['subDir'] ?? 'Entities';
+        $subDir = $data['subDir'] ?? 'Entities';
         $namespace = $this->getNamespace($subDir);
-        $tableName = $data['table'] ?? Str::snake($name) . 's';
-        $fields    = $data['fields'] ?? [];
+        $tableName = $data['table'] ?? Str::snake($name).'s';
+        $fields = $data['fields'] ?? [];
 
         $stub = $this->buildStub($className, $namespace, $tableName, $fields);
         $path = $this->getFilePath($className, $subDir);
@@ -45,7 +44,7 @@ class EntityGenerator extends CodeGenerator
     /**
      * Build the entity class stub.
      */
-    protected function buildStub(string $className, string $namespace, string $tableName, array $fields) : string
+    protected function buildStub(string $className, string $namespace, string $tableName, array $fields): string
     {
         if ($fields === []) {
             $fields = [
@@ -56,16 +55,16 @@ class EntityGenerator extends CodeGenerator
         }
 
         $properties = '';
-        $getters    = '';
-        $setters    = '';
+        $getters = '';
+        $setters = '';
 
         foreach ($fields as $field) {
             $fieldName = Str::camel($field['name']);
             $fieldType = $this->mapType($field['type'] ?? 'string');
 
             $properties .= "    private {$fieldType} \${$fieldName};\n";
-            $getters    .= $this->generateGetter($fieldName, $fieldType);
-            $setters    .= $this->generateSetter($fieldName, $fieldType);
+            $getters .= $this->generateGetter($fieldName, $fieldType);
+            $setters .= $this->generateSetter($fieldName, $fieldType);
         }
 
         return <<<PHP
@@ -90,24 +89,24 @@ class EntityGenerator extends CodeGenerator
     /**
      * Map database types to PHP types.
      */
-    protected function mapType(string $type) : string
+    protected function mapType(string $type): string
     {
         return match (strtolower($type)) {
             'int', 'integer', 'bigint', 'smallint', 'tinyint' => 'int',
-            'float', 'decimal', 'double', 'real'              => 'float',
-            'bool', 'boolean'                                 => 'bool',
-            'datetime', 'datetimeimmutable', 'timestamp'      => '\\DateTimeImmutable',
-            'json'                                            => 'array',
-            default                                           => 'string',
+            'float', 'decimal', 'double', 'real' => 'float',
+            'bool', 'boolean' => 'bool',
+            'datetime', 'datetimeimmutable', 'timestamp' => '\\DateTimeImmutable',
+            'json' => 'array',
+            default => 'string',
         };
     }
 
     /**
      * Generate a getter method.
      */
-    protected function generateGetter(string $fieldName, string $fieldType) : string
+    protected function generateGetter(string $fieldName, string $fieldType): string
     {
-        $methodName = 'get' . Str::studly($fieldName);
+        $methodName = 'get'.Str::studly($fieldName);
 
         return "\n    public function {$methodName}(): {$fieldType}\n    {\n        return \$this->{$fieldName};\n    }\n";
     }
@@ -115,9 +114,9 @@ class EntityGenerator extends CodeGenerator
     /**
      * Generate a setter method.
      */
-    protected function generateSetter(string $fieldName, string $fieldType) : string
+    protected function generateSetter(string $fieldName, string $fieldType): string
     {
-        $methodName = 'set' . Str::studly($fieldName);
+        $methodName = 'set'.Str::studly($fieldName);
 
         return "\n    public function {$methodName}({$fieldType} \${$fieldName}) : self\n    {\n        \$this->{$fieldName} = \${$fieldName};\n\n        return \$this;\n    }\n";
     }

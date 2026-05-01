@@ -14,12 +14,12 @@ final class InMemoryEmailVerificationStateStore implements EmailVerificationStat
     /** @var array<int, true> */
     private array $verified = [];
 
-    public function isVerified(UserId $userId) : bool
+    public function isVerified(UserId $userId): bool
     {
         return isset($this->verified[$userId->value]);
     }
 
-    public function markVerified(UserId $userId) : void
+    public function markVerified(UserId $userId): void
     {
         $this->verified[$userId->value] = true;
     }

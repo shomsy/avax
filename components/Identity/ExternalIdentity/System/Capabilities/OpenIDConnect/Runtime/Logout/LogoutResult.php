@@ -9,10 +9,10 @@ use SensitiveParameter;
 final readonly class LogoutResult
 {
     public function __construct(
-        public bool        $revoked,
+        public bool $revoked,
         #[SensitiveParameter]
-        public string|null $sessionId = null,
-        public string|null $postLogoutRedirectUri = null,
-        public string|null $state = null,
+        public ?string $sessionId = null,
+        public ?string $postLogoutRedirectUri = null,
+        public ?string $state = null,
     ) {}
 }

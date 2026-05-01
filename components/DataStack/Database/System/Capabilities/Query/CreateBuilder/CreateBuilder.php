@@ -20,25 +20,25 @@ use Throwable;
 final readonly class CreateBuilder
 {
     public function __construct(
-        private Connections         $connections,
-        private GrammarInterface    $grammar,
-        private EventBus|null       $eventBus = null,
-        private ExecutionScope|null $executionScope = null,
+        private Connections $connections,
+        private GrammarInterface $grammar,
+        private ?EventBus $eventBus = null,
+        private ?ExecutionScope $executionScope = null,
     ) {}
 
     /**
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function for(string|null $connectionName = null) : QueryBuilder
+    public function for(?string $connectionName = null): QueryBuilder
     {
-        $connection   = $this->connections->connection(name: $connectionName);
+        $connection = $this->connections->connection(name: $connectionName);
         $queryOrchestrator = new QueryOrchestrator(
             executor: new PDOExecutor(
-                          connection    : $connection,
-                          eventBus      : $this->eventBus,
-                          connectionName: $connection->getName(),
-                      ),
+                connection    : $connection,
+                eventBus      : $this->eventBus,
+                connectionName: $connection->getName(),
+            ),
             scope   : $this->executionScope,
         );
 

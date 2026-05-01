@@ -11,10 +11,10 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
  */
 final class NullEmailVerificationStateStore implements EmailVerificationStateStoreInterface
 {
-    public function isVerified(UserId $userId) : bool
+    public function isVerified(UserId $userId): bool
     {
         return false;
     }
 
-    public function markVerified(UserId $userId) : void {}
+    public function markVerified(UserId $userId): void {}
 }

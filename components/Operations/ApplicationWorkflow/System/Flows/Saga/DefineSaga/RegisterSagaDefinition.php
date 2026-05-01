@@ -12,9 +12,9 @@ final class RegisterSagaDefinition
     /** @var array<string, SagaDefinition> */
     private array $definitions = [];
 
-    public function __construct(private readonly ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition()) {}
+    public function __construct(private readonly ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition) {}
 
-    public function register(SagaDefinition $definition) : SagaDefinition
+    public function register(SagaDefinition $definition): SagaDefinition
     {
         $this->validateSagaDefinition->validate(definition: $definition);
         $this->definitions[$definition->name] = $definition;
@@ -22,7 +22,7 @@ final class RegisterSagaDefinition
         return $definition;
     }
 
-    public function read(string $name) : SagaDefinition|null
+    public function read(string $name): ?SagaDefinition
     {
         return $this->definitions[$name] ?? null;
     }

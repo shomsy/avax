@@ -18,8 +18,8 @@ final readonly class CacheKey implements Stringable
     private string $normalized;
 
     public function __construct(
-        public string            $original,
-        public string|null       $namespace = null,
+        public string      $original,
+        public string|null $namespace = null,
         public CacheVersion|null $cacheVersion = null,
     )
     {
@@ -62,10 +62,10 @@ final readonly class CacheKey implements Stringable
     }
 
     public static function create(
-        string            $key,
-        string|null       $namespace = null,
-        CacheVersion|null $version = null,
-        CacheVersion|null $cacheVersion = null,
+        string       $key,
+        string       $namespace = null,
+        CacheVersion $version = null,
+        CacheVersion $cacheVersion = null,
     ) : self
     {
         return new self(original: $key, namespace: $namespace, cacheVersion: $version ?? $cacheVersion);

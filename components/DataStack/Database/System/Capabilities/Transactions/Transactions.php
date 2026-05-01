@@ -15,9 +15,6 @@ use Throwable;
  */
 final class Transactions
 {
-    /**
-     * @var DatabaseConnection
-     */
     private readonly DatabaseConnection $connection;
 
     /**
@@ -54,22 +51,22 @@ final class Transactions
      * Executes a closure within a transaction with retry logic for deadlocks.
      *
      * @template T
-     * @param Closure(self) : T $callback
      *
+     * @param  Closure(self) : T  $callback
      * @return T
+     *
      * @throws Throwable
      */
     public function transactionWithRetry(
-        Closure             $callback,
-        IsolationLevel|null $isolationLevel = null,
-        RetryPolicy         $retryPolicy = null,
-    ) : mixed
-    {
-        $policy        = $retryPolicy ?? RetryPolicy::forDeadlocks();
-        $attempt       = 0;
+        Closure $callback,
+        ?IsolationLevel $isolationLevel = null,
+        ?RetryPolicy $retryPolicy = null,
+    ): mixed {
+        $policy = $retryPolicy ?? RetryPolicy::forDeadlocks();
+        $attempt = 0;
         $lastException = null;
 
-        while ( $attempt < $policy->maxAttempts ) {
+        while ($attempt < $policy->maxAttempts) {
             try {
                 return $this->transaction($callback, $isolationLevel);
             } catch (Throwable $e) {
@@ -94,12 +91,13 @@ final class Transactions
      * Automatically handles begin/commit/rollback and supports nesting.
      *
      * @template T
-     * @param Closure(self) : T $callback
      *
+     * @param  Closure(self) : T  $callback
      * @return T
+     *
      * @throws Throwable Re-throws the original exception after rollback
      */
-    public function transaction(Closure $callback, IsolationLevel|null $isolationLevel = null) : mixed
+    public function transaction(Closure $callback, ?IsolationLevel $isolationLevel = null): mixed
     {
         $this->begin($isolationLevel);
 
@@ -126,7 +124,7 @@ final class Transactions
      *
      * @throws RuntimeException If a transaction is already active at the root level
      */
-    public function begin(IsolationLevel|null $isolationLevel = null) : void
+    public function begin(?IsolationLevel $isolationLevel = null): void
     {
         if ($this->depth === 0) {
             $this->connection->beginTransaction();
@@ -147,9 +145,9 @@ final class Transactions
     /**
      * Generates a unique savepoint name.
      */
-    private function generateSavepointName() : string
+    private function generateSavepointName(): string
     {
-        return 'avax_sp_' . $this->depth . '_' . spl_object_id($this) . '_' . hrtime(true);
+        return 'avax_sp_'.$this->depth.'_'.spl_object_id($this).'_'.hrtime(true);
     }
 
     /**
@@ -157,7 +155,7 @@ final class Transactions
      *
      * @throws RuntimeException If no transaction is active
      */
-    public function commit() : void
+    public function commit(): void
     {
         if ($this->depth === 0) {
             throw new RuntimeException('Cannot commit: no transaction is active');
@@ -178,7 +176,7 @@ final class Transactions
     /**
      * Executes all registered commit callbacks and clears the list.
      */
-    private function executeCommitCallbacks() : void
+    private function executeCommitCallbacks(): void
     {
         foreach ($this->commitCallbacks as $callback) {
             try {
@@ -196,7 +194,7 @@ final class Transactions
      *
      * @throws RuntimeException If no transaction is active
      */
-    public function rollback() : void
+    public function rollback(): void
     {
         if ($this->depth === 0) {
             throw new RuntimeException('Cannot rollback: no transaction is active');
@@ -217,7 +215,7 @@ final class Transactions
     /**
      * Executes all registered rollback callbacks and clears the list.
      */
-    private function executeRollbackCallbacks() : void
+    private function executeRollbackCallbacks(): void
     {
         foreach ($this->rollbackCallbacks as $callback) {
             try {
@@ -233,7 +231,7 @@ final class Transactions
     /**
      * Registers a callback to be executed after a successful commit.
      */
-    public function afterCommit(Closure $callback) : void
+    public function afterCommit(Closure $callback): void
     {
         $this->commitCallbacks[] = $callback;
     }
@@ -241,7 +239,7 @@ final class Transactions
     /**
      * Registers a callback to be executed after a rollback.
      */
-    public function afterRollback(Closure $callback) : void
+    public function afterRollback(Closure $callback): void
     {
         $this->rollbackCallbacks[] = $callback;
     }
@@ -250,7 +248,7 @@ final class Transactions
      * Returns the current transaction nesting depth.
      * 0 means no transaction is active.
      */
-    public function depth() : int
+    public function depth(): int
     {
         return $this->depth;
     }
@@ -258,7 +256,7 @@ final class Transactions
     /**
      * Returns whether a transaction is currently active.
      */
-    public function isActive() : bool
+    public function isActive(): bool
     {
         return $this->active;
     }
@@ -266,7 +264,7 @@ final class Transactions
     /**
      * Returns the current savepoint name (for the innermost nested transaction).
      */
-    public function currentSavepoint() : string|null
+    public function currentSavepoint(): ?string
     {
         return empty($this->savepoints) ? null : end($this->savepoints);
     }
@@ -276,12 +274,12 @@ final class Transactions
      *
      * Use with caution - this does not interact with the database.
      */
-    public function reset() : void
+    public function reset(): void
     {
-        $this->depth             = 0;
-        $this->active            = false;
-        $this->savepoints        = [];
-        $this->commitCallbacks   = [];
+        $this->depth = 0;
+        $this->active = false;
+        $this->savepoints = [];
+        $this->commitCallbacks = [];
         $this->rollbackCallbacks = [];
     }
 }

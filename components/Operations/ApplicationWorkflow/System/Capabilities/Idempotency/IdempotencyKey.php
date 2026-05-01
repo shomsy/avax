@@ -21,7 +21,7 @@ final readonly class IdempotencyKey
     /**
      * Generate a unique idempotency key for a step execution.
      */
-    public static function generate(string $sagaId, string $stepName, string $attempt = '0') : self
+    public static function generate(string $sagaId, string $stepName, string $attempt = '0'): self
     {
         return new self(
             sagaId  : $sagaId,
@@ -33,7 +33,7 @@ final readonly class IdempotencyKey
     /**
      * Parse a string representation back into an IdempotencyKey.
      */
-    public static function fromString(string $key) : self
+    public static function fromString(string $key): self
     {
         $parts = explode(':', $key, 3);
         if (count($parts) !== 3) {
@@ -50,7 +50,7 @@ final readonly class IdempotencyKey
     /**
      * Get the string representation of the key.
      */
-    public function toString() : string
+    public function toString(): string
     {
         return sprintf('%s:%s:%s', $this->sagaId, $this->stepName, $this->attempt);
     }

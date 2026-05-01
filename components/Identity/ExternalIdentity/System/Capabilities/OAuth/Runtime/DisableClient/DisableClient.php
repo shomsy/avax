@@ -15,7 +15,7 @@ final readonly class DisableClient
 {
     public function __construct(private OAuthClientRegistryInterface $clientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(string $clientId) : OAuthClient
+    public function execute(string $clientId): OAuthClient
     {
         $client = $this->clientRegistry->deactivate(clientId: $clientId);
 
@@ -24,13 +24,13 @@ final readonly class DisableClient
         }
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.oauth.client.disabled',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'client_id'   => $client->clientId,
-                                                           'tenant_slug' => $client->tenantSlug,
-                                                       ],
-                                       ));
+            name      : 'auth.oauth.client.disabled',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $client->clientId,
+                'tenant_slug' => $client->tenantSlug,
+            ],
+        ));
 
         return $client;
     }

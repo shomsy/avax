@@ -21,39 +21,38 @@ use SensitiveParameter;
 final readonly class VerifySenderConstrainedRequest
 {
     /**
-     * @param array<string, mixed> $headers
-     * @param array<string, mixed> $server
+     * @param  array<string, mixed>  $headers
+     * @param  array<string, mixed>  $server
      */
     public function execute(
-        string                    $method,
-        string                    $uri,
+        string $method,
+        string $uri,
         #[SensitiveParameter]
-        array                     $headers,
-        array                     $server,
+        array $headers,
+        array $server,
         #[SensitiveParameter]
-        string|null               $accessToken,
-        OAuthSenderConstraint     $expectedSenderConstraint = null,
-        OAuthSenderConstraintType|null $requiredSenderConstraint = null,
-    ) : OAuthSenderConstraint|null
-    {
-        $auditLog = new NullAuditLog();
+        ?string $accessToken,
+        ?OAuthSenderConstraint $expectedSenderConstraint = null,
+        ?OAuthSenderConstraintType $requiredSenderConstraint = null,
+    ): ?OAuthSenderConstraint {
+        $auditLog = new NullAuditLog;
 
         return new VerifyOAuthSenderConstraint(
             verifyDpopProof           : new VerifyDpopProof(
-                                            codec      : new HmacTokenCodec(secret: 'replace-me'),
-                                            replayStore: new InMemoryDpopProofReplayStore(),
-                                            auditLog   : $auditLog,
-                                        ),
+                codec      : new HmacTokenCodec(secret: 'replace-me'),
+                replayStore: new InMemoryDpopProofReplayStore,
+                auditLog   : $auditLog,
+            ),
             verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $auditLog),
             auditLog                  : $auditLog,
         )->execute(
             input                   : new HttpOAuthProofInput(
-                                          method     : $method,
-                                          uri        : $uri,
-                                          headers    : $headers,
-                                          server     : $server,
-                                          accessToken: $accessToken,
-                                      ),
+                method     : $method,
+                uri        : $uri,
+                headers    : $headers,
+                server     : $server,
+                accessToken: $accessToken,
+            ),
             expectedSenderConstraint: $expectedSenderConstraint,
             requiredSenderConstraint: $requiredSenderConstraint,
         );

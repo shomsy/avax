@@ -15,14 +15,14 @@ final readonly class LocalStorageAdapter implements StorageAdapter
     public function __construct(private array $config = [])
     {
         $this->root = rtrim(
-            string    : $config['root'] ?? dirname(path: __DIR__, levels: 6) . '/storage/app',
+            string    : $config['root'] ?? dirname(path: __DIR__, levels: 6).'/storage/app',
             characters: '/',
         );
 
         $this->makeDirectory(directory: '');
     }
 
-    public function makeDirectory(string $directory) : bool
+    public function makeDirectory(string $directory): bool
     {
         $fullPath = $directory === '' || $directory === '.' ? $this->root : $this->fullPath(path: $directory);
 
@@ -30,15 +30,15 @@ final readonly class LocalStorageAdapter implements StorageAdapter
             return true;
         }
 
-        return mkdir(directory: $fullPath, permissions: 0755, recursive: true);
+        return mkdir(directory: $fullPath, permissions: 0o755, recursive: true);
     }
 
-    private function fullPath(string $path) : string
+    private function fullPath(string $path): string
     {
-        return $this->root . '/' . $this->normalize(path: $path);
+        return $this->root.'/'.$this->normalize(path: $path);
     }
 
-    private function normalize(string $path) : string
+    private function normalize(string $path): string
     {
         $normalized = trim(string: str_replace(search: '\\', replace: '/', subject: $path), characters: '/');
 
@@ -49,46 +49,46 @@ final readonly class LocalStorageAdapter implements StorageAdapter
         return $normalized;
     }
 
-    public function exists(string $path) : bool
+    public function exists(string $path): bool
     {
         return file_exists(filename: $this->fullPath(path: $path));
     }
 
-    public function signedUrl(string $path, int $expiresInSeconds = 3600) : string
+    public function signedUrl(string $path, int $expiresInSeconds = 3600): string
     {
-        $expiresAt      = time() + $expiresInSeconds;
+        $expiresAt = time() + $expiresInSeconds;
         $normalizedPath = $this->normalize(path: $path);
-        $secret         = $this->config['signing_key'] ?? 'avax-local-storage';
-        $signature      = hash_hmac(algo: 'sha256', data: $normalizedPath . '|' . $expiresAt, key: $secret);
+        $secret = $this->config['signing_key'] ?? 'avax-local-storage';
+        $signature = hash_hmac(algo: 'sha256', data: $normalizedPath.'|'.$expiresAt, key: $secret);
 
-        return $this->url(path: $normalizedPath) . '?expires=' . $expiresAt . '&signature=' . $signature;
+        return $this->url(path: $normalizedPath).'?expires='.$expiresAt.'&signature='.$signature;
     }
 
-    public function url(string $path) : string
+    public function url(string $path): string
     {
-        return rtrim(string: $this->config['url'] ?? '/storage', characters: '/') . '/' . $this->normalize(path: $path);
+        return rtrim(string: $this->config['url'] ?? '/storage', characters: '/').'/'.$this->normalize(path: $path);
     }
 
-    public function size(string $path) : int
+    public function size(string $path): int
     {
         $fullPath = $this->fullPath(path: $path);
 
         return is_file(filename: $fullPath) ? (int) filesize(filename: $fullPath) : 0;
     }
 
-    public function move(string $from, string $to) : bool
+    public function move(string $from, string $to): bool
     {
         return $this->copy(from: $from, to: $to) && $this->delete(path: $from);
     }
 
-    public function copy(string $from, string $to) : bool
+    public function copy(string $from, string $to): bool
     {
         $contents = $this->get(path: $from);
 
         return $contents !== null && $this->put(path: $to, contents: $contents);
     }
 
-    public function get(string $path) : string|null
+    public function get(string $path): ?string
     {
         $fullPath = $this->fullPath(path: $path);
 
@@ -101,7 +101,7 @@ final readonly class LocalStorageAdapter implements StorageAdapter
         return $contents === false ? null : $contents;
     }
 
-    public function put(string $path, string $contents) : bool
+    public function put(string $path, string $contents): bool
     {
         $fullPath = $this->fullPath(path: $path);
         $this->makeDirectory(directory: dirname(path: $path));
@@ -109,7 +109,7 @@ final readonly class LocalStorageAdapter implements StorageAdapter
         return file_put_contents(filename: $fullPath, data: $contents) !== false;
     }
 
-    public function delete(string $path) : bool
+    public function delete(string $path): bool
     {
         $fullPath = $this->fullPath(path: $path);
 
@@ -120,7 +120,7 @@ final readonly class LocalStorageAdapter implements StorageAdapter
         return unlink(filename: $fullPath);
     }
 
-    public function files(string $directory = '') : array
+    public function files(string $directory = ''): array
     {
         $root = $this->fullPath(path: $directory);
 
@@ -128,7 +128,7 @@ final readonly class LocalStorageAdapter implements StorageAdapter
             return [];
         }
 
-        $files    = [];
+        $files = [];
         $iterator = new RecursiveIteratorIterator(
             iterator: new RecursiveDirectoryIterator(directory: $root, flags: RecursiveDirectoryIterator::SKIP_DOTS),
         );
@@ -147,7 +147,7 @@ final readonly class LocalStorageAdapter implements StorageAdapter
         return $files;
     }
 
-    public function deleteDirectory(string $directory) : bool
+    public function deleteDirectory(string $directory): bool
     {
         $fullPath = $this->fullPath(path: $directory);
 

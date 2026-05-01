@@ -11,36 +11,36 @@ use SensitiveParameter;
 interface OidcProviderInterface
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function issueIdToken(
-        User                   $user,
-        string                 $clientId,
-        array                  $scopes,
-        string                 $nonce = null,
-        DateTimeImmutable|null $authenticatedAt = null,
-        string                 $sessionId = null,
-        bool                   $phishingResistant = false,
-    ) : OidcIdToken;
+        User $user,
+        string $clientId,
+        array $scopes,
+        ?string $nonce = null,
+        ?DateTimeImmutable $authenticatedAt = null,
+        ?string $sessionId = null,
+        bool $phishingResistant = false,
+    ): OidcIdToken;
 
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
-    public function issueJwt(array $claims) : string;
+    public function issueJwt(array $claims): string;
 
-    public function readProviderMetadata() : OidcProviderMetadata;
+    public function readProviderMetadata(): OidcProviderMetadata;
 
-    public function readJsonWebKeySet() : OidcJsonWebKeySet;
+    public function readJsonWebKeySet(): OidcJsonWebKeySet;
 
-    public function subjectIdentifier(User $user, string $clientId) : string;
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null;
+    public function subjectIdentifier(User $user, string $clientId): string;
 
     /**
      * @return array<string, mixed>|null
      */
-    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null;
+    public function resolveIdToken(#[SensitiveParameter] string $idToken): ?array;
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function resolveJwt(#[SensitiveParameter] string $jwt): ?array;
 }

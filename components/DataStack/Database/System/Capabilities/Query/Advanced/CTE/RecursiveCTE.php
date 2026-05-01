@@ -9,12 +9,12 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryStat
 final readonly class RecursiveCTE
 {
     public function __construct(
-        public string     $name,
+        public string $name,
         public QueryState $initial,
         public QueryState $recursive,
     ) {}
 
-    public function register(CTEBuilder $cteBuilder) : CTEBuilder
+    public function register(CTEBuilder $cteBuilder): CTEBuilder
     {
         return $cteBuilder->withRecursive(name: $this->name, initialQuery: $this->initial, recursiveQuery: $this->recursive);
     }

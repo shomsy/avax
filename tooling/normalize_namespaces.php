@@ -1,9 +1,12 @@
 <?php
+
+declare(strict_types=1);
 $dirs = ['components/Data', 'components/Database', 'components/Persistence'];
 foreach ($dirs as $dir) {
     echo "Checking dir: $dir\n";
     if (! is_dir($dir)) {
         echo "Dir not found: $dir\n";
+
         continue;
     }
     $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
@@ -13,9 +16,9 @@ foreach ($dirs as $dir) {
             $newContent = str_replace('DataStack\\', '', $content);
             if ($content !== $newContent) {
                 file_put_contents($file->getPathname(), $newContent);
-                echo "Updated: " . $file->getPathname() . "\n";
+                echo 'Updated: ' . $file->getPathname() . "\n";
             } else {
-                echo "No change needed for: " . $file->getPathname() . "\n";
+                echo 'No change needed for: ' . $file->getPathname() . "\n";
             }
         }
     }

@@ -51,7 +51,7 @@ final class Saga
      */
     private array $completedSteps;
 
-    private string|null $failureReason;
+    private ?string $failureReason;
 
     private SagaStoreInterface $store;
 
@@ -61,23 +61,23 @@ final class Saga
 
     private function __construct(string $name)
     {
-        $this->name                 = $name;
-        $this->id                   = $this->generateId();
-        $this->status               = SagaState::Running;
-        $this->steps                = [];
-        $this->context              = [];
-        $this->stepResults          = [];
-        $this->completedSteps       = [];
-        $this->failureReason        = null;
-        $this->store                = new InMemorySagaStore();
-        $this->stepRunner           = new StepRunner();
-        $this->compensationExecutor = new CompensationExecutor();
+        $this->name = $name;
+        $this->id = $this->generateId();
+        $this->status = SagaState::Running;
+        $this->steps = [];
+        $this->context = [];
+        $this->stepResults = [];
+        $this->completedSteps = [];
+        $this->failureReason = null;
+        $this->store = new InMemorySagaStore;
+        $this->stepRunner = new StepRunner;
+        $this->compensationExecutor = new CompensationExecutor;
     }
 
     /**
      * Generate a unique ID for the saga instance.
      */
-    private function generateId() : string
+    private function generateId(): string
     {
         return sprintf(
             '%s-%s-%s',
@@ -90,7 +90,7 @@ final class Saga
     /**
      * Start defining a new saga with a given name.
      */
-    public static function define(string $name) : self
+    public static function define(string $name): self
     {
         return new self($name);
     }
@@ -98,7 +98,7 @@ final class Saga
     /**
      * Create a saga from an existing store (for resuming).
      */
-    public static function fromStore(SagaStoreInterface $store, string $sagaId) : ?self
+    public static function fromStore(SagaStoreInterface $store, string $sagaId): ?self
     {
         $saga = $store->findById($sagaId);
         if ($saga === null) {
@@ -111,11 +111,11 @@ final class Saga
     /**
      * Add a step to the saga definition.
      *
-     * @param string  $name   The step name
-     * @param Closure $action The action to execute
-     * @param Closure|null $compensation The compensation to run on failure
+     * @param  string  $name  The step name
+     * @param  Closure  $action  The action to execute
+     * @param  Closure|null  $compensation  The compensation to run on failure
      */
-    public function step(string $name, Closure $action, Closure|null $compensation = null) : self
+    public function step(string $name, Closure $action, ?Closure $compensation = null): self
     {
         $this->steps[] = new SagaStep(
             name        : $name,
@@ -129,9 +129,9 @@ final class Saga
     /**
      * Mark the saga as failed with a given reason.
      */
-    public function fail(string $reason) : SagaResult
+    public function fail(string $reason): SagaResult
     {
-        $this->status        = SagaState::Failed;
+        $this->status = SagaState::Failed;
         $this->failureReason = $reason;
         $this->store->save($this);
 
@@ -148,7 +148,7 @@ final class Saga
     /**
      * Run compensation for all completed steps in reverse order.
      */
-    public function compensate() : SagaResult
+    public function compensate(): SagaResult
     {
         $this->status = SagaState::Compensating;
 
@@ -161,7 +161,7 @@ final class Saga
         if ($result->success) {
             $this->status = SagaState::Compensated;
         } else {
-            $this->status        = SagaState::Failed;
+            $this->status = SagaState::Failed;
             $this->failureReason = $result->failureReason;
         }
 
@@ -180,11 +180,10 @@ final class Saga
     /**
      * Execute the saga with the given context.
      *
-     * @param mixed $context The initial context/data for the saga
-     *
+     * @param  mixed  $context  The initial context/data for the saga
      * @return SagaResult The result of the saga execution
      */
-    public function execute(mixed $context = []) : SagaResult
+    public function execute(mixed $context = []): SagaResult
     {
         $this->context = is_array($context) ? $context : ['value' => $context];
 
@@ -199,7 +198,7 @@ final class Saga
                 );
 
                 $this->stepResults[$step->name] = $result;
-                $this->completedSteps[]         = $step->name;
+                $this->completedSteps[] = $step->name;
 
                 // Update context with step result for next steps
                 if (is_array($result)) {
@@ -225,9 +224,9 @@ final class Saga
     /**
      * Handle a failure during saga execution.
      */
-    private function handleFailure(Throwable $e) : SagaResult
+    private function handleFailure(Throwable $e): SagaResult
     {
-        $this->status        = SagaState::Failed;
+        $this->status = SagaState::Failed;
         $this->failureReason = $e->getMessage();
 
         // Run compensation for completed steps in reverse order
@@ -256,7 +255,7 @@ final class Saga
     /**
      * Get the saga's unique identifier.
      */
-    public function getId() : string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -264,7 +263,7 @@ final class Saga
     /**
      * Get the current saga status.
      */
-    public function getStatus() : SagaState
+    public function getStatus(): SagaState
     {
         return $this->status;
     }
@@ -272,7 +271,7 @@ final class Saga
     /**
      * Set the saga status (used by store).
      */
-    public function setStatus(SagaState $status) : void
+    public function setStatus(SagaState $status): void
     {
         $this->status = $status;
     }
@@ -280,7 +279,7 @@ final class Saga
     /**
      * Get the saga name.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -290,7 +289,7 @@ final class Saga
      *
      * @return array<string, mixed>
      */
-    public function getContext() : array
+    public function getContext(): array
     {
         return $this->context;
     }
@@ -300,7 +299,7 @@ final class Saga
      *
      * @return array<int, string>
      */
-    public function getCompletedSteps() : array
+    public function getCompletedSteps(): array
     {
         return $this->completedSteps;
     }
@@ -310,7 +309,7 @@ final class Saga
      *
      * @return array<string, mixed>
      */
-    public function getStepResults() : array
+    public function getStepResults(): array
     {
         return $this->stepResults;
     }
@@ -318,7 +317,7 @@ final class Saga
     /**
      * Get the failure reason if any.
      */
-    public function getFailureReason() : string|null
+    public function getFailureReason(): ?string
     {
         return $this->failureReason;
     }
@@ -328,7 +327,7 @@ final class Saga
      *
      * @return array<SagaStep>
      */
-    public function getSteps() : array
+    public function getSteps(): array
     {
         return $this->steps;
     }
@@ -336,11 +335,11 @@ final class Saga
     /**
      * Set the store for this saga.
      */
-    public function withStore(SagaStoreInterface $store) : self
+    public function withStore(SagaStoreInterface $store): self
     {
-        $this->store                = $store;
-        $this->stepRunner           = new StepRunner();
-        $this->compensationExecutor = new CompensationExecutor();
+        $this->store = $store;
+        $this->stepRunner = new StepRunner;
+        $this->compensationExecutor = new CompensationExecutor;
 
         return $this;
     }
@@ -352,18 +351,18 @@ final class Saga
 final readonly class SagaResult
 {
     public function __construct(
-        public bool   $success,
+        public bool $success,
         public string $sagaId,
-        public array  $data,
-        public array  $completedSteps,
-        public array  $stepResults,
-        public string|null $failureReason = null,
+        public array $data,
+        public array $completedSteps,
+        public array $stepResults,
+        public ?string $failureReason = null,
     ) {}
 
     /**
      * Check if the saga completed successfully.
      */
-    public function isSuccessful() : bool
+    public function isSuccessful(): bool
     {
         return $this->success;
     }
@@ -371,7 +370,7 @@ final readonly class SagaResult
     /**
      * Get the failure reason if the saga failed.
      */
-    public function getFailureReason() : string|null
+    public function getFailureReason(): ?string
     {
         return $this->failureReason;
     }
@@ -379,7 +378,7 @@ final readonly class SagaResult
     /**
      * Get data for a specific step.
      */
-    public function getStepResult(string $stepName) : mixed
+    public function getStepResult(string $stepName): mixed
     {
         return $this->stepResults[$stepName] ?? null;
     }

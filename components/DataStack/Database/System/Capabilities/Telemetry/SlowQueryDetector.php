@@ -13,7 +13,7 @@ final class SlowQueryDetector
 
     public function __construct(private readonly int $thresholdMs = 1000) {}
 
-    public function record(QuerySpan $span) : bool
+    public function record(QuerySpan $span): bool
     {
         if (! $span->isSlow(thresholdMs: $this->thresholdMs)) {
             return false;
@@ -24,12 +24,12 @@ final class SlowQueryDetector
         return true;
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->slowQueries;
     }
 
-    public function reset() : void
+    public function reset(): void
     {
         $this->slowQueries = [];
     }

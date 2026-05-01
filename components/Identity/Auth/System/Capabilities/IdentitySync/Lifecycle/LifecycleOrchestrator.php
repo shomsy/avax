@@ -14,12 +14,12 @@ final readonly class LifecycleOrchestrator
 {
     public function __construct(private ProvisionableUserSourceInterface $userSource, private LifecycleStoreInterface $store, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function activate(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
+    public function activate(UserId $userId, LifecycleSource $source, ?string $reason = null): LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::ACTIVE, source: $source, reason: $reason);
     }
 
-    private function transition(UserId $userId, LifecycleState $target, LifecycleSource $source, string|null $reason) : LifecycleRecord
+    private function transition(UserId $userId, LifecycleState $target, LifecycleSource $source, ?string $reason): LifecycleRecord
     {
         $user = $this->userSource->findById(id: $userId);
 
@@ -28,15 +28,15 @@ final readonly class LifecycleOrchestrator
         }
 
         $currentRecord = $this->store->find(userId: $userId);
-        $current       = $currentRecord !== null ? $currentRecord->state : ($user->isActive() ? LifecycleState::ACTIVE : LifecycleState::SUSPENDED);
+        $current = $currentRecord !== null ? $currentRecord->state : ($user->isActive() ? LifecycleState::ACTIVE : LifecycleState::SUSPENDED);
 
         if (! $this->isAllowedTransition(from: $current, to: $target)) {
             throw LifecycleFailed::transitionNotAllowed(from: $current, to: $target);
         }
 
         match ($target) {
-            LifecycleState::ACTIVE        => $this->userSource->activate(id: $userId),
-            LifecycleState::SUSPENDED     => $this->userSource->deactivate(id: $userId),
+            LifecycleState::ACTIVE => $this->userSource->activate(id: $userId),
+            LifecycleState::SUSPENDED => $this->userSource->deactivate(id: $userId),
             LifecycleState::DEPROVISIONED => $this->deprovisionUser(userId: $userId),
         };
 
@@ -50,50 +50,50 @@ final readonly class LifecycleOrchestrator
 
         $this->store->save(record: $record);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.lifecycle.transitioned',
-                                           occurredAt: $record->changedAt,
-                                           context   : [
-                                                           'user_id' => $record->userId,
-                                                           'state'   => $record->state->value,
-                                                           'source'  => $record->source->value,
-                                                           'reason'  => $record->reason,
-                                                       ],
-                                       ));
+            name      : 'auth.lifecycle.transitioned',
+            occurredAt: $record->changedAt,
+            context   : [
+                'user_id' => $record->userId,
+                'state' => $record->state->value,
+                'source' => $record->source->value,
+                'reason' => $record->reason,
+            ],
+        ));
 
         return $record;
     }
 
-    private function isAllowedTransition(LifecycleState $from, LifecycleState $to) : bool
+    private function isAllowedTransition(LifecycleState $from, LifecycleState $to): bool
     {
         return match ($from) {
             LifecycleState::ACTIVE, LifecycleState::SUSPENDED => in_array(needle: $to, haystack: [LifecycleState::ACTIVE, LifecycleState::SUSPENDED, LifecycleState::DEPROVISIONED], strict: true),
-            LifecycleState::DEPROVISIONED                     => $to === LifecycleState::DEPROVISIONED,
+            LifecycleState::DEPROVISIONED => $to === LifecycleState::DEPROVISIONED,
         };
     }
 
-    private function deprovisionUser(UserId $userId) : void
+    private function deprovisionUser(UserId $userId): void
     {
         $this->userSource->replaceRoles(id: $userId, roles: []);
         $this->userSource->replacePermissions(id: $userId, permissions: []);
         $this->userSource->deactivate(id: $userId);
     }
 
-    public function suspend(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
+    public function suspend(UserId $userId, LifecycleSource $source, ?string $reason = null): LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::SUSPENDED, source: $source, reason: $reason);
     }
 
-    public function deprovision(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
+    public function deprovision(UserId $userId, LifecycleSource $source, ?string $reason = null): LifecycleRecord
     {
         return $this->transition(userId: $userId, target: LifecycleState::DEPROVISIONED, source: $source, reason: $reason);
     }
 
-    public function read(UserId $userId) : LifecycleRecord|null
+    public function read(UserId $userId): ?LifecycleRecord
     {
         return $this->store->find(userId: $userId);
     }
 
-    public function allowsAuthentication(UserId $userId) : bool
+    public function allowsAuthentication(UserId $userId): bool
     {
         $record = $this->store->find(userId: $userId);
 

@@ -17,7 +17,7 @@ use Traversable;
 /**
  * Unordered unique value collection.
  */
-final readonly class Set implements IteratorAggregate, Countable
+final readonly class Set implements Countable, IteratorAggregate
 {
     /**
      * @var array<int, mixed>
@@ -25,24 +25,22 @@ final readonly class Set implements IteratorAggregate, Countable
     private array $items;
 
     /**
-     * @param iterable<mixed> $items
+     * @param  iterable<mixed>  $items
      */
     public function __construct(
         iterable $items = [],
-    )
-    {
+    ) {
         $this->items = $this->normalize(items: $items);
     }
 
     /**
-     * @param iterable<mixed> $items
-     *
+     * @param  iterable<mixed>  $items
      * @return array<int, mixed>
      */
-    private function normalize(iterable $items) : array
+    private function normalize(iterable $items): array
     {
         $normalized = [];
-        $seen       = [];
+        $seen = [];
 
         foreach (NormalizedIterable::toArrayPreserveKeys(iterable: $items) as $item) {
             try {
@@ -55,7 +53,7 @@ final readonly class Set implements IteratorAggregate, Countable
                 continue;
             }
 
-            $seen[$hash]  = true;
+            $seen[$hash] = true;
             $normalized[] = $item;
         }
 
@@ -65,17 +63,17 @@ final readonly class Set implements IteratorAggregate, Countable
     /**
      * @return array<int, mixed>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }
 
-    public function add(mixed $value) : self
+    public function add(mixed $value): self
     {
         return new self(items: [...$this->items, $value]);
     }
 
-    public function remove(mixed $value) : self
+    public function remove(mixed $value): self
     {
         try {
             $hash = Comparator::hash(value: $value);
@@ -84,35 +82,35 @@ final readonly class Set implements IteratorAggregate, Countable
         }
 
         $filtered = array_values(array_filter(
-                                     $this->items,
-                                     static function (mixed $item) use ($hash) : bool {
-                                         try {
-                                             return Comparator::hash(value: $item) !== $hash;
-                                         } catch (JsonException) {
-                                             return serialize($item) !== $hash;
-                                         }
-                                     },
-                                 ));
+            $this->items,
+            static function (mixed $item) use ($hash): bool {
+                try {
+                    return Comparator::hash(value: $item) !== $hash;
+                } catch (JsonException) {
+                    return serialize($item) !== $hash;
+                }
+            },
+        ));
 
         return new self(items: $filtered);
     }
 
-    public function union(iterable $items) : self
+    public function union(iterable $items): self
     {
         return new self(items: [...$this->items, ...NormalizedIterable::toArrayPreserveKeys(iterable: $items)]);
     }
 
-    public function intersect(iterable $items) : self
+    public function intersect(iterable $items): self
     {
         $other = new self(items: $items);
 
         return new self(items: array_values(array_filter(
-                                                $this->items,
-                                                static fn (mixed $item) : bool => $other->contains(value: $item),
-                                            )));
+            $this->items,
+            static fn (mixed $item): bool => $other->contains(value: $item),
+        )));
     }
 
-    public function contains(mixed $value) : bool
+    public function contains(mixed $value): bool
     {
         try {
             $hash = Comparator::hash(value: $value);
@@ -135,29 +133,29 @@ final readonly class Set implements IteratorAggregate, Countable
         return false;
     }
 
-    public function diff(iterable $items) : self
+    public function diff(iterable $items): self
     {
         $other = new self(items: $items);
 
         return new self(items: array_values(array_filter(
-                                                $this->items,
-                                                static fn (mixed $item) : bool => ! $other->contains(value: $item),
-                                            )));
+            $this->items,
+            static fn (mixed $item): bool => ! $other->contains(value: $item),
+        )));
     }
 
-    public function toDataList() : DataList
+    public function toDataList(): DataList
     {
         return new DataList(items: $this->items);
     }
 
     #[Override]
-    public function count() : int
+    public function count(): int
     {
         return count($this->items);
     }
 
     #[Override]
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->items);
     }

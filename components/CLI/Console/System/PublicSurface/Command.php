@@ -48,9 +48,9 @@ abstract class Command
     /**
      * Run the command with given input and output.
      */
-    public function run(ConsoleInput $consoleInput, ConsoleOutput $consoleOutput) : int
+    public function run(ConsoleInput $consoleInput, ConsoleOutput $consoleOutput): int
     {
-        $this->input  = $consoleInput;
+        $this->input = $consoleInput;
         $this->output = $consoleOutput;
 
         return $this->handle();
@@ -60,12 +60,12 @@ abstract class Command
      * Handle the command execution.
      * Must return an exit code (SUCCESS, FAILURE, or INVALID).
      */
-    abstract protected function handle() : int;
+    abstract protected function handle(): int;
 
     /**
      * Get the command name.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -73,7 +73,7 @@ abstract class Command
     /**
      * Get the command description.
      */
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -81,7 +81,7 @@ abstract class Command
     /**
      * Get the command signature.
      */
-    public function getSignature() : string
+    public function getSignature(): string
     {
         return $this->signature;
     }
@@ -89,7 +89,7 @@ abstract class Command
     /**
      * Get the expected arguments.
      */
-    public function getArguments() : array
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -97,7 +97,7 @@ abstract class Command
     /**
      * Get the expected options.
      */
-    public function getOptions() : array
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -105,7 +105,7 @@ abstract class Command
     /**
      * Get an argument value by name.
      */
-    protected function argument(string $key, mixed $default = null) : mixed
+    protected function argument(string $key, mixed $default = null): mixed
     {
         return $this->input->getArgument($key) ?? $default;
     }
@@ -113,7 +113,7 @@ abstract class Command
     /**
      * Get an option value by name.
      */
-    protected function option(string $key, mixed $default = null) : mixed
+    protected function option(string $key, mixed $default = null): mixed
     {
         return $this->input->getOption($key) ?? $default;
     }
@@ -121,7 +121,7 @@ abstract class Command
     /**
      * Check if an option is present.
      */
-    protected function hasOption(string $key) : bool
+    protected function hasOption(string $key): bool
     {
         return $this->input->hasOption($key);
     }
@@ -129,7 +129,7 @@ abstract class Command
     /**
      * Output a plain line.
      */
-    protected function line(string $message = '') : void
+    protected function line(string $message = ''): void
     {
         $this->output->line($message);
     }
@@ -137,7 +137,7 @@ abstract class Command
     /**
      * Output an info message.
      */
-    protected function info(string $message) : void
+    protected function info(string $message): void
     {
         $this->output->info($message);
     }
@@ -145,7 +145,7 @@ abstract class Command
     /**
      * Output an error message.
      */
-    protected function error(string $message) : void
+    protected function error(string $message): void
     {
         $this->output->error($message);
     }
@@ -153,7 +153,7 @@ abstract class Command
     /**
      * Output a warning message.
      */
-    protected function warn(string $message) : void
+    protected function warn(string $message): void
     {
         $this->output->warn($message);
     }
@@ -161,7 +161,7 @@ abstract class Command
     /**
      * Output a comment message.
      */
-    protected function comment(string $message) : void
+    protected function comment(string $message): void
     {
         $this->output->comment($message);
     }
@@ -169,7 +169,7 @@ abstract class Command
     /**
      * Ask a question.
      */
-    protected function ask(string $question, string|null $default = null) : string
+    protected function ask(string $question, ?string $default = null): string
     {
         return $this->output->ask($question, $default);
     }
@@ -177,7 +177,7 @@ abstract class Command
     /**
      * Confirm an action.
      */
-    protected function confirm(string $question, bool $default = false) : bool
+    protected function confirm(string $question, bool $default = false): bool
     {
         return $this->output->confirm($question, $default);
     }

@@ -26,15 +26,15 @@ final class UnitOfWork
 
     public function __construct(
         private readonly AttributeMetadataReader $attributeMetadataReader,
-        private readonly EntityPersister         $entityPersister,
-        private readonly IdentityMap     $identityMap,
+        private readonly EntityPersister $entityPersister,
+        private readonly IdentityMap $identityMap,
     ) {}
 
-    public function persist(object $entity) : void
+    public function persist(object $entity): void
     {
-        $entityMetadata  = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier      = $entityMetadata->identifierField();
-        $objectId        = spl_object_id(object: $entity);
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
+        $identifier = $entityMetadata->identifierField();
+        $objectId = spl_object_id(object: $entity);
         $identifierValue = $identifier instanceof FieldMetadata ? $this->readProperty(entity: $entity, property: $identifier->property) : null;
 
         unset($this->removed[$objectId]);
@@ -51,7 +51,7 @@ final class UnitOfWork
     /**
      * @throws ReflectionException
      */
-    private function readProperty(object $entity, string $property) : mixed
+    private function readProperty(object $entity, string $property): mixed
     {
         $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
         $reflectionProperty->setAccessible(accessible: true);
@@ -62,7 +62,7 @@ final class UnitOfWork
     /**
      * @throws Throwable
      */
-    public function flush(string|null $connectionName = null) : void
+    public function flush(?string $connectionName = null): void
     {
         foreach ($this->new as $objectId => $entity) {
             $this->entityPersister->insert(entity: $entity, connectionName: $connectionName);
@@ -87,7 +87,7 @@ final class UnitOfWork
 
         foreach ($this->removed as $objectId => $entity) {
             $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-            $identifier      = $metadata->identifierField();
+            $identifier = $metadata->identifierField();
             $identifierValue = $identifier instanceof FieldMetadata ? $this->readProperty(entity: $entity, property: $identifier->property) : null;
 
             $this->entityPersister->delete(entity: $entity, connectionName: $connectionName);
@@ -99,17 +99,17 @@ final class UnitOfWork
         }
     }
 
-    public function remove(object $entity) : void
+    public function remove(object $entity): void
     {
         $objectId = spl_object_id(object: $entity);
         unset($this->new[$objectId], $this->dirty[$objectId]);
         $this->removed[$objectId] = $entity;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
-        $this->new     = [];
-        $this->dirty   = [];
+        $this->new = [];
+        $this->dirty = [];
         $this->removed = [];
     }
 }

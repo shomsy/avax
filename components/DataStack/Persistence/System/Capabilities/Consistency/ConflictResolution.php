@@ -25,13 +25,13 @@ final class ConflictResolution
     private readonly Closure $resolver;
 
     /**
-     * @param Closure $resolver Function(mixed $a, mixed $b, array $context) : mixed
-     * @param string $name Strategy name
+     * @param  Closure  $resolver  Function(mixed $a, mixed $b, array $context) : mixed
+     * @param  string  $name  Strategy name
      */
     private function __construct(Closure $resolver, string $name)
     {
         $this->resolver = $resolver;
-        $this->name     = $name;
+        $this->name = $name;
     }
 
     /**
@@ -40,10 +40,10 @@ final class ConflictResolution
      * Selects the value with the most recent timestamp.
      * Simple but can lose concurrent writes silently.
      */
-    public static function lastWriteWins() : self
+    public static function lastWriteWins(): self
     {
         return new self(
-            resolver: static function (mixed $valueA, mixed $valueB, array $context) : mixed {
+            resolver: static function (mixed $valueA, mixed $valueB, array $context): mixed {
                 $timestampA = $context['timestampA'] ?? 0.0;
                 $timestampB = $context['timestampB'] ?? 0.0;
 
@@ -59,10 +59,10 @@ final class ConflictResolution
      * Selects the value with the earliest timestamp.
      * Useful when the first write is considered authoritative.
      */
-    public static function firstWriteWins() : self
+    public static function firstWriteWins(): self
     {
         return new self(
-            resolver: static function (mixed $valueA, mixed $valueB, array $context) : mixed {
+            resolver: static function (mixed $valueA, mixed $valueB, array $context): mixed {
                 $timestampA = $context['timestampA'] ?? 0.0;
                 $timestampB = $context['timestampB'] ?? 0.0;
 
@@ -77,9 +77,9 @@ final class ConflictResolution
      *
      * Uses a provided closure to resolve conflicts.
      *
-     * @param Closure(mixed, mixed, array<string, mixed>) : mixed $resolver
+     * @param  Closure(mixed, mixed, array<string, mixed>) : mixed  $resolver
      */
-    public static function custom(Closure $resolver) : self
+    public static function custom(Closure $resolver): self
     {
         return new self(
             resolver: $resolver,
@@ -93,16 +93,16 @@ final class ConflictResolution
      * Attempts to merge both values. Works well for append-only
      * data structures and sets.
      */
-    public static function merge() : self
+    public static function merge(): self
     {
         return new self(
-            resolver: static function (mixed $valueA, mixed $valueB, array $context) : mixed {
+            resolver: static function (mixed $valueA, mixed $valueB, array $context): mixed {
                 if (is_array($valueA) && is_array($valueB)) {
                     return array_merge($valueA, $valueB);
                 }
 
                 if (is_string($valueA) && is_string($valueB)) {
-                    return $valueA . $valueB;
+                    return $valueA.$valueB;
                 }
 
                 // Fall back to last write wins
@@ -121,10 +121,10 @@ final class ConflictResolution
      * Selects the numerically higher value. Useful for counters
      * and incrementing metrics.
      */
-    public static function highestValueWins() : self
+    public static function highestValueWins(): self
     {
         return new self(
-            resolver: static function (mixed $valueA, mixed $valueB, array $context) : mixed {
+            resolver: static function (mixed $valueA, mixed $valueB, array $context): mixed {
                 if (is_numeric($valueA) && is_numeric($valueB)) {
                     return $valueB >= $valueA ? $valueB : $valueA;
                 }
@@ -144,10 +144,10 @@ final class ConflictResolution
      * Selects the numerically lower value. Useful for finding
      * minimums across replicas.
      */
-    public static function lowestValueWins() : self
+    public static function lowestValueWins(): self
     {
         return new self(
-            resolver: static function (mixed $valueA, mixed $valueB, array $context) : mixed {
+            resolver: static function (mixed $valueA, mixed $valueB, array $context): mixed {
                 if (is_numeric($valueA) && is_numeric($valueB)) {
                     return $valueB <= $valueA ? $valueB : $valueA;
                 }
@@ -166,10 +166,10 @@ final class ConflictResolution
      * Marks the conflict for manual resolution. Returns both values
      * wrapped in a conflict structure.
      */
-    public static function manualIntervention() : self
+    public static function manualIntervention(): self
     {
         return new self(
-            resolver: static fn (mixed $valueA, mixed $valueB, array $context) : mixed => new ConflictPair(
+            resolver: static fn (mixed $valueA, mixed $valueB, array $context): mixed => new ConflictPair(
                 valueA   : $valueA,
                 valueB   : $valueB,
                 context  : $context,
@@ -184,12 +184,12 @@ final class ConflictResolution
      *
      * Prefer values from specific nodes (defined by priority order).
      *
-     * @param list<string> $nodePriority Ordered list of node IDs (highest priority first)
+     * @param  list<string>  $nodePriority  Ordered list of node IDs (highest priority first)
      */
-    public static function nodePriority(array $nodePriority) : self
+    public static function nodePriority(array $nodePriority): self
     {
         return new self(
-            resolver: static function (mixed $valueA, mixed $valueB, array $context) use ($nodePriority) : mixed {
+            resolver: static function (mixed $valueA, mixed $valueB, array $context) use ($nodePriority): mixed {
                 $nodeA = $context['nodeIdA'] ?? '';
                 $nodeB = $context['nodeIdB'] ?? '';
 
@@ -222,13 +222,12 @@ final class ConflictResolution
     /**
      * Executes the resolution strategy.
      *
-     * @param mixed $valueA First conflicting value
-     * @param mixed $valueB Second conflicting value
-     * @param array<string, mixed> $context Additional context
-     *
+     * @param  mixed  $valueA  First conflicting value
+     * @param  mixed  $valueB  Second conflicting value
+     * @param  array<string, mixed>  $context  Additional context
      * @return mixed The resolved value
      */
-    public function resolve(mixed $valueA, mixed $valueB, array $context = []) : mixed
+    public function resolve(mixed $valueA, mixed $valueB, array $context = []): mixed
     {
         return ($this->resolver)($valueA, $valueB, $context);
     }
@@ -236,7 +235,7 @@ final class ConflictResolution
     /**
      * Returns the strategy name.
      */
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }
@@ -244,18 +243,18 @@ final class ConflictResolution
     /**
      * Returns a description of the strategy.
      */
-    public function description() : string
+    public function description(): string
     {
         return match ($this->name) {
-            'last_write_wins'     => 'Selects the value with the most recent timestamp',
-            'first_write_wins'    => 'Selects the value with the earliest timestamp',
-            'merge'               => 'Attempts to merge both values together',
-            'highest_value_wins'  => 'Selects the numerically highest value',
-            'lowest_value_wins'   => 'Selects the numerically lowest value',
+            'last_write_wins' => 'Selects the value with the most recent timestamp',
+            'first_write_wins' => 'Selects the value with the earliest timestamp',
+            'merge' => 'Attempts to merge both values together',
+            'highest_value_wins' => 'Selects the numerically highest value',
+            'lowest_value_wins' => 'Selects the numerically lowest value',
             'manual_intervention' => 'Preserves both values for manual resolution',
-            'node_priority'       => 'Prefers values from higher-priority nodes',
-            'custom'              => 'Uses a custom resolution function',
-            default               => 'Unknown strategy',
+            'node_priority' => 'Prefers values from higher-priority nodes',
+            'custom' => 'Uses a custom resolution function',
+            default => 'Unknown strategy',
         };
     }
 }
@@ -275,7 +274,7 @@ final readonly class ConflictPair
     /**
      * Resolves the conflict by choosing value A.
      */
-    public function chooseA() : mixed
+    public function chooseA(): mixed
     {
         return $this->valueA;
     }
@@ -283,7 +282,7 @@ final readonly class ConflictPair
     /**
      * Resolves the conflict by choosing value B.
      */
-    public function chooseB() : mixed
+    public function chooseB(): mixed
     {
         return $this->valueB;
     }
@@ -291,7 +290,7 @@ final readonly class ConflictPair
     /**
      * Returns a summary string.
      */
-    public function summary() : string
+    public function summary(): string
     {
         return sprintf(
             "Conflict (age: %.1fs):\n  A: %s\n  B: %s",
@@ -304,7 +303,7 @@ final readonly class ConflictPair
     /**
      * Returns the age of the conflict in seconds.
      */
-    public function age() : float
+    public function age(): float
     {
         return microtime(true) - $this->createdAt;
     }

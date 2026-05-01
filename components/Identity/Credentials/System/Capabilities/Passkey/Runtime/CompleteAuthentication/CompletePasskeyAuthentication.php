@@ -7,10 +7,6 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runti
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyChallengeStoreInterface;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyCredentialStoreInterface;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyRuntimeInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
@@ -18,29 +14,33 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyChallengeStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyCredentialStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyRuntimeInterface;
 use SensitiveParameter;
 
 final readonly class CompletePasskeyAuthentication
 {
     public function __construct(
-        private PasskeyRuntimeInterface         $runtime,
-        private PasskeyChallengeStoreInterface  $challengeStore,
+        private PasskeyRuntimeInterface $runtime,
+        private PasskeyChallengeStoreInterface $challengeStore,
         #[SensitiveParameter]
         private PasskeyCredentialStoreInterface $credentialStore,
-        private UserSourceInterface             $userSource,
-        private IdentityInterface               $identity,
-        private ProjectAuthenticatedUser        $projectAuthenticatedUser,
+        private UserSourceInterface $userSource,
+        private IdentityInterface $identity,
+        private ProjectAuthenticatedUser $projectAuthenticatedUser,
         #[SensitiveParameter]
-        private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
-        private string                          $rpId,
+        private CurrentAuthentication $currentAuthentication,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private string $rpId,
     ) {}
 
     /**
      * @throws PasskeyOperationFailed
      */
-    public function execute(CompletePasskeyAuthenticationData $data) : AuthenticationResult
+    public function execute(CompletePasskeyAuthenticationData $data): AuthenticationResult
     {
         $challenge = $this->challengeStore->find(challengeId: $data->challengeId);
 
@@ -79,7 +79,7 @@ final readonly class CompletePasskeyAuthentication
             throw PasskeyOperationFailed::notFound();
         }
 
-        $issued  = $this->identity->issue(
+        $issued = $this->identity->issue(
             user             : $user,
             mfaVerifiedAt    : $this->clock->now(),
             phishingResistant: true,
@@ -103,15 +103,15 @@ final readonly class CompletePasskeyAuthentication
         $this->credentialStore->touch(credentialId: $credential->credentialId, usedAt: $this->clock->now());
         $this->challengeStore->markUsed(challengeId: $data->challengeId, usedAt: $this->clock->now());
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.passkey.authentication.succeeded',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'user_id'       => $user->getId()->value,
-                                                           'credential_id' => $credential->credentialId,
-                                                           'ip_address'    => $data->ipAddress,
-                                                           'user_agent'    => $data->userAgent,
-                                                       ],
-                                       ));
+            name      : 'auth.passkey.authentication.succeeded',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'user_id' => $user->getId()->value,
+                'credential_id' => $credential->credentialId,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
+        ));
 
         return AuthenticationResult::success(
             context     : $context,

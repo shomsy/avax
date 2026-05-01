@@ -15,13 +15,12 @@ class ControllerGenerator extends CodeGenerator
     /**
      * Generate a controller class file.
      *
-     * @param string $name Controller name (e.g. "UserController" or "User")
-     * @param array $data Additional data (e.g. ['methods' => ['index', 'show']])
-     *
+     * @param  string  $name  Controller name (e.g. "UserController" or "User")
+     * @param  array  $data  Additional data (e.g. ['methods' => ['index', 'show']])
      * @return string The generated file path
      */
     #[Override]
-    public function generate(string $name, array $data = []) : string
+    public function generate(string $name, array $data = []): string
     {
         // Normalize name - ensure it ends with "Controller"
         $className = Str::studly($name);
@@ -30,9 +29,9 @@ class ControllerGenerator extends CodeGenerator
             $className .= 'Controller';
         }
 
-        $subDir    = $data['subDir'] ?? 'Controllers';
+        $subDir = $data['subDir'] ?? 'Controllers';
         $namespace = $this->getNamespace($subDir);
-        $methods   = $data['methods'] ?? [];
+        $methods = $data['methods'] ?? [];
 
         $stub = $this->buildStub($className, $namespace, $methods);
         $path = $this->getFilePath($className, $subDir);
@@ -45,7 +44,7 @@ class ControllerGenerator extends CodeGenerator
     /**
      * Build the controller class stub.
      */
-    protected function buildStub(string $className, string $namespace, array $methods) : string
+    protected function buildStub(string $className, string $namespace, array $methods): string
     {
         $methodsCode = '';
 
@@ -74,7 +73,7 @@ class ControllerGenerator extends CodeGenerator
     /**
      * Generate a single controller method.
      */
-    protected function generateMethod(string $method) : string
+    protected function generateMethod(string $method): string
     {
         $methodName = Str::camel($method);
 

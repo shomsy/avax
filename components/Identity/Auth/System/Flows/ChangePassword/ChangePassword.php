@@ -30,22 +30,22 @@ use SensitiveParameter;
 final readonly class ChangePassword
 {
     public function __construct(
-        private UserSourceInterface             $userSource,
+        private UserSourceInterface $userSource,
         #[SensitiveParameter]
-        private PasswordHasher                  $passwordHasher,
+        private PasswordHasher $passwordHasher,
         #[SensitiveParameter]
-        private IdentityInterface               $identity,
+        private IdentityInterface $identity,
         #[SensitiveParameter]
-        private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
+        private CurrentAuthentication $currentAuthentication,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
         #[SensitiveParameter]
-        private SessionRegistryInterface|null   $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null $mfaChallengeStore = null,
+        private ?SessionRegistryInterface $sessionRegistry = null,
+        private ?MfaChallengeStoreInterface $mfaChallengeStore = null,
         #[SensitiveParameter]
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private LoginRateLimit|null             $rateLimit = null,
-        private RequireFreshMfa|null            $requireFreshMfa = null,
+        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
+        private ?LoginRateLimit $rateLimit = null,
+        private ?RequireFreshMfa $requireFreshMfa = null,
     ) {}
 
     /**
@@ -53,19 +53,19 @@ final readonly class ChangePassword
      * @throws Unauthenticated
      * @throws RateLimitException
      */
-    public function execute(ChangePasswordData $data) : void
+    public function execute(ChangePasswordData $data): void
     {
-        $context     = $this->currentAuthentication->read();
+        $context = $this->currentAuthentication->read();
         $currentUser = $context->user();
 
         if ($currentUser === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         $user = $this->userSource->findById(id: new UserId(value: $currentUser->id));
 
         if ($user === null || ! $user->isActive()) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         if ($currentUser->mfaEnabled) {
@@ -95,11 +95,11 @@ final readonly class ChangePassword
 
         $this->rateLimit?->reset(identifier: (string) $user->getId());
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.password.changed',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'user_id' => $user->getId()->value,
-                                                       ],
-                                       ));
+            name      : 'auth.password.changed',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'user_id' => $user->getId()->value,
+            ],
+        ));
     }
 }

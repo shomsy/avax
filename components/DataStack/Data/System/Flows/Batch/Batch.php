@@ -15,16 +15,16 @@ use Traversable;
 /**
  * Fixed-size batches over ordered input.
  */
-final readonly class Batch implements IteratorAggregate, Countable
+final readonly class Batch implements Countable, IteratorAggregate
 {
     /**
-     * @param array<int, array<int, mixed>> $batches
+     * @param  array<int, array<int, mixed>>  $batches
      */
     private function __construct(
         private array $batches,
     ) {}
 
-    public static function from(iterable $items, int $size) : self
+    public static function from(iterable $items, int $size): self
     {
         if ($size <= 0) {
             throw InvalidFlowException::invalidBatchSize(size: $size);
@@ -32,28 +32,28 @@ final readonly class Batch implements IteratorAggregate, Countable
 
         return new self(
             batches: array_chunk(
-                         array : array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items)),
-                         length: $size,
-                     ),
+                array : array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items)),
+                length: $size,
+            ),
         );
     }
 
     /**
      * @return array<int, array<int, mixed>>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->batches;
     }
 
     #[Override]
-    public function count() : int
+    public function count(): int
     {
         return count($this->batches);
     }
 
     #[Override]
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->batches);
     }

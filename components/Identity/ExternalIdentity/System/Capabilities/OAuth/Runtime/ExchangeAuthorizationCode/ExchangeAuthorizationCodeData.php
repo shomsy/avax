@@ -10,17 +10,17 @@ use SensitiveParameter;
 final readonly class ExchangeAuthorizationCodeData
 {
     public function __construct(
-        public string                     $clientId,
+        public string $clientId,
         #[SensitiveParameter]
-        public string                     $code,
-        public string                     $redirectUri,
+        public string $code,
+        public string $redirectUri,
         #[SensitiveParameter]
-        public string|null                $clientSecret = null,
+        public ?string $clientSecret = null,
         #[SensitiveParameter]
-        public string|null                $codeVerifier = null,
+        public ?string $codeVerifier = null,
         #[SensitiveParameter]
-        public string|null                $ipAddress = null,
-        public string|null                $userAgent = null,
-        public OAuthSenderConstraint|null $senderConstraint = null,
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
+        public ?OAuthSenderConstraint $senderConstraint = null,
     ) {}
 }

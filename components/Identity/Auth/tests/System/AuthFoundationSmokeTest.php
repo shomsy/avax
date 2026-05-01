@@ -10,9 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 final class AuthFoundationSmokeTest extends TestCase
 {
-    public function test_password_hashing_round_trip_verifies_password() : void
+    public function test_password_hashing_round_trip_verifies_password(): void
     {
-        $passwordHasher = new PasswordHasher();
+        $passwordHasher = new PasswordHasher;
 
         $hash = $passwordHasher->hash(password: 'correct horse battery staple');
 
@@ -20,9 +20,9 @@ final class AuthFoundationSmokeTest extends TestCase
         self::assertFalse($passwordHasher->verify(password: 'wrong password', hash: $hash));
     }
 
-    public function test_email_normalization_trims_and_lowercases() : void
+    public function test_email_normalization_trims_and_lowercases(): void
     {
-        $normalizeEmail = new NormalizeEmail();
+        $normalizeEmail = new NormalizeEmail;
 
         self::assertSame(
             expected: 'user@example.com',

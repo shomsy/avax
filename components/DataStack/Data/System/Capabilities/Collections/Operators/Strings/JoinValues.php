@@ -11,7 +11,7 @@ final readonly class JoinValues
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(string $glue = '') : string
+    public function __invoke(string $glue = ''): string
     {
         return implode($glue, $this->items);
     }

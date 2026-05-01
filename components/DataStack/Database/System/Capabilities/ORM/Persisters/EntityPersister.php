@@ -17,7 +17,7 @@ use Throwable;
 final readonly class EntityPersister
 {
     public function __construct(
-        private Query    $query,
+        private Query $query,
         private AttributeMetadataReader $attributeMetadataReader,
         private Hydrator $hydrator,
     ) {}
@@ -25,11 +25,11 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function insert(object $entity, string|null $connectionName = null) : void
+    public function insert(object $entity, ?string $connectionName = null): void
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier     = $entityMetadata->identifierField();
-        $payload        = $this->payload(entity: $entity, metadata: $entityMetadata, includeIdentifier: false);
+        $identifier = $entityMetadata->identifierField();
+        $payload = $this->payload(entity: $entity, metadata: $entityMetadata, includeIdentifier: false);
 
         $builder = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
         $generatedId = $builder->insertGetId(values: $payload);
@@ -42,7 +42,7 @@ final readonly class EntityPersister
     /**
      * @return array<string, mixed>
      */
-    private function payload(object $entity, EntityMetadata $entityMetadata, bool $includeIdentifier) : array
+    private function payload(object $entity, EntityMetadata $entityMetadata, bool $includeIdentifier): array
     {
         $payload = [];
 
@@ -60,7 +60,7 @@ final readonly class EntityPersister
     /**
      * @throws ReflectionException
      */
-    private function propertyValue(object $entity, string $property) : mixed
+    private function propertyValue(object $entity, string $property): mixed
     {
         $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
         $reflectionProperty->setAccessible(accessible: true);
@@ -71,7 +71,7 @@ final readonly class EntityPersister
     /**
      * @throws ReflectionException
      */
-    private function setPropertyValue(object $entity, string $property, mixed $value) : void
+    private function setPropertyValue(object $entity, string $property, mixed $value): void
     {
         $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
         $reflectionProperty->setAccessible(accessible: true);
@@ -81,10 +81,10 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function update(object $entity, string|null $connectionName = null) : void
+    public function update(object $entity, ?string $connectionName = null): void
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier     = $entityMetadata->identifierField();
+        $identifier = $entityMetadata->identifierField();
 
         if (! $identifier instanceof FieldMetadata) {
             throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
@@ -106,10 +106,10 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function delete(object $entity, string|null $connectionName = null) : void
+    public function delete(object $entity, ?string $connectionName = null): void
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier     = $entityMetadata->identifierField();
+        $identifier = $entityMetadata->identifierField();
 
         if (! $identifier instanceof FieldMetadata) {
             throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
@@ -129,10 +129,10 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function refresh(object $entity, string|null $connectionName = null) : object
+    public function refresh(object $entity, ?string $connectionName = null): object
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier     = $entityMetadata->identifierField();
+        $identifier = $entityMetadata->identifierField();
 
         if (! $identifier instanceof FieldMetadata) {
             throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
@@ -160,14 +160,14 @@ final readonly class EntityPersister
     }
 
     /**
-     * @param class-string $entityClass
+     * @param  class-string  $entityClass
      *
      * @throws Throwable
      */
-    public function find(string $entityClass, mixed $id, string|null $connectionName = null) : object|null
+    public function find(string $entityClass, mixed $id, ?string $connectionName = null): ?object
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
-        $identifier     = $entityMetadata->identifierField();
+        $identifier = $entityMetadata->identifierField();
 
         if (! $identifier instanceof FieldMetadata) {
             throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entityClass));
@@ -187,12 +187,12 @@ final readonly class EntityPersister
     }
 
     /**
-     * @param array<string, mixed> $criteria
-     *
+     * @param  array<string, mixed>  $criteria
      * @return list<object>
+     *
      * @throws Throwable
      */
-    public function findAll(string $entityClass, array|null $criteria = null, string|null $connectionName = null) : array
+    public function findAll(string $entityClass, ?array $criteria = null, ?string $connectionName = null): array
     {
         $criteria ??= [];
 
@@ -200,33 +200,32 @@ final readonly class EntityPersister
     }
 
     /**
-     * @param class-string $entityClass
-     * @param array<string, mixed> $criteria
-     *
+     * @param  class-string  $entityClass
+     * @param  array<string, mixed>  $criteria
      * @return list<object>
+     *
      * @throws Throwable
      */
     public function findBy(
         string $entityClass,
-        array  $criteria,
-        string|null $orderBy = null,
-        string|null $direction = null,
+        array $criteria,
+        ?string $orderBy = null,
+        ?string $direction = null,
         ?int $limit = null,
         ?int $offset = null,
-        string|null $connectionName = null,
-    ) : array
-    {
+        ?string $connectionName = null,
+    ): array {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
-        $query          = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
+        $query = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
 
         foreach ($criteria as $column => $value) {
             $actualColumn = $entityMetadata->fields[$column]->column ?? $column;
-            $query        = $query->where(column: $actualColumn, operator: '=', value: $value);
+            $query = $query->where(column: $actualColumn, operator: '=', value: $value);
         }
 
         if ($orderBy !== null) {
             $actualOrderBy = $entityMetadata->fields[$orderBy]->column ?? $orderBy;
-            $query         = $query->orderBy(column: $actualOrderBy, direction: $direction ?? 'ASC');
+            $query = $query->orderBy(column: $actualOrderBy, direction: $direction ?? 'ASC');
         }
 
         if ($limit !== null) {

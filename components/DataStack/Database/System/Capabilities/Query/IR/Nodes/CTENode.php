@@ -9,20 +9,20 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final readonly class CTENode
 {
     public function __construct(
-        public string  $name,
-        public array   $columns,
-        public string  $query,
+        public string $name,
+        public array $columns,
+        public string $query,
         public CTEType $cteType = CTEType::SIMPLE,
     ) {}
 
-    public function getSql(GrammarInterface $grammar) : string
+    public function getSql(GrammarInterface $grammar): string
     {
         $columns = $this->columns === []
             ? ''
-            : '(' . implode(separator: ', ', array: array_map(
-                callback: static fn ($col) : string => $grammar->wrap(value: $col),
+            : '('.implode(separator: ', ', array: array_map(
+                callback: static fn ($col): string => $grammar->wrap(value: $col),
                 array   : $this->columns,
-            )) . ')';
+            )).')';
 
         return sprintf('%s%s AS (%s)', $this->name, $columns, $this->query);
     }

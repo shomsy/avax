@@ -11,7 +11,7 @@ use Avax\Framework\Foundation\Exception\NotImplementedException;
  */
 final readonly class BeginSecurityChange
 {
-    public function execute(string $tenantId, array $data) : object
+    public function execute(string $tenantId, array $data): object
     {
         throw new NotImplementedException('Security change workflow not yet implemented');
     }

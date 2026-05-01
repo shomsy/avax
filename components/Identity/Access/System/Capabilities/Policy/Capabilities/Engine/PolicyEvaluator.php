@@ -11,12 +11,12 @@ final class PolicyEvaluator
     /** @var list<PolicyRule> */
     private array $rules = [];
 
-    public function register(PolicyRule $rule) : void
+    public function register(PolicyRule $rule): void
     {
         $this->rules[] = $rule;
     }
 
-    public function explain(string $action, object $resource, array $context) : DecisionExplanation
+    public function explain(string $action, object $resource, array $context): DecisionExplanation
     {
         $reasons = [];
 
@@ -39,7 +39,7 @@ final class PolicyEvaluator
         return new DecisionExplanation($allowed, $reasons);
     }
 
-    public function evaluate(string $action, object $resource, array $context) : PolicyDecision
+    public function evaluate(string $action, object $resource, array $context): PolicyDecision
     {
         $reasons = [];
 
@@ -62,7 +62,7 @@ final class PolicyEvaluator
         }
 
         return PolicyDecision::allow(
-            $reasons ? 'Matched ' . count($reasons) . ' rules' : null,
+            $reasons ? 'Matched '.count($reasons).' rules' : null,
         );
     }
 }
@@ -70,7 +70,7 @@ final class PolicyEvaluator
 final readonly class PolicyDecision
 {
     public function __construct(
-        public bool        $allowed,
-        public string|null $reason,
+        public bool $allowed,
+        public ?string $reason,
     ) {}
 }

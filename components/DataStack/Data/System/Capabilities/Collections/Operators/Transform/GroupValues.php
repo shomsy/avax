@@ -11,11 +11,11 @@ final readonly class GroupValues
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(callable|string $groupBy) : array
+    public function __invoke(callable|string $groupBy): array
     {
         $results = [];
         foreach ($this->items as $key => $value) {
-            $groupKey             = is_callable($groupBy) ? $groupBy($value, $key) : ($value[$groupBy] ?? null);
+            $groupKey = is_callable($groupBy) ? $groupBy($value, $key) : ($value[$groupBy] ?? null);
             $results[$groupKey][] = $value;
         }
 

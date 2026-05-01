@@ -18,7 +18,7 @@ final readonly class CloseScope
     /**
      * Closes the current scope frame.
      */
-    public function close(string|null $kind = null) : void
+    public function close(string $kind = null) : void
     {
         $this->resolveDependency->closeScope(kind: $kind);
     }

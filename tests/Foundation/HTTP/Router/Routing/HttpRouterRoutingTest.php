@@ -35,12 +35,12 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/users/{id?}',
-            action: 'handler'
+            action: 'handler',
         );
 
         $request = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://example.com/users/99')
+            uri         : UriBuilder::createFromString(uri: 'https://example.com/users/99'),
         );
 
         $route = $this->router->resolve(request: $request);
@@ -59,12 +59,12 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/users/{id?}',
-            action: 'handler'
+            action: 'handler',
         );
 
         $request = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://example.com/users')
+            uri         : UriBuilder::createFromString(uri: 'https://example.com/users'),
         );
 
         $route = $this->router->resolve(request: $request);
@@ -86,12 +86,12 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/accounts/{accountId?}',
-            action: 'handler'
+            action: 'handler',
         );
 
         $request = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://example.com/accounts')
+            uri         : UriBuilder::createFromString(uri: 'https://example.com/accounts'),
         );
 
         $route = $this->router->resolve(request: $request);
@@ -111,12 +111,12 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/files/{path*}',
-            action: 'handler'
+            action: 'handler',
         );
 
         $request = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://example.com/files/a/b/c')
+            uri         : UriBuilder::createFromString(uri: 'https://example.com/files/a/b/c'),
         );
 
         $route = $this->router->resolve(request: $request);
@@ -135,12 +135,12 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/assets/{path*}',
-            action: 'handler'
+            action: 'handler',
         );
 
         $request = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://example.com/assets/logo.png')
+            uri         : UriBuilder::createFromString(uri: 'https://example.com/assets/logo.png'),
         );
 
         $route = $this->router->resolve(request: $request);
@@ -159,7 +159,7 @@ final class HttpRouterRoutingTest extends TestCase
 
         $request = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://example.com/missing')
+            uri         : UriBuilder::createFromString(uri: 'https://example.com/missing'),
         );
 
         $route = $this->router->resolve(request: $request);
@@ -179,7 +179,7 @@ final class HttpRouterRoutingTest extends TestCase
 
         $request = new Request(
             serverParams: ['REQUEST_METHOD' => 'POST'],
-            uri         : UriBuilder::createFromString(uri: 'https://example.com/unknown')
+            uri         : UriBuilder::createFromString(uri: 'https://example.com/unknown'),
         );
 
         $route = $this->router->resolve(request: $request);
@@ -199,12 +199,12 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/home',
-            action: 'handler'
+            action: 'handler',
         );
 
         $requestMatch = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://api.example.com/home')
+            uri         : UriBuilder::createFromString(uri: 'https://api.example.com/home'),
         );
 
         $matched = $this->router->resolve(request: $requestMatch);
@@ -212,7 +212,7 @@ final class HttpRouterRoutingTest extends TestCase
 
         $requestMiss = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://www.example.com/home')
+            uri         : UriBuilder::createFromString(uri: 'https://www.example.com/home'),
         );
 
         $this->expectException(exception: RouteNotFoundException::class);
@@ -230,7 +230,7 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/files/{path*}/extra',
-            action: 'handler'
+            action: 'handler',
         );
     }
 
@@ -245,7 +245,7 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/first/{a*}/second/{b*}',
-            action: 'handler'
+            action: 'handler',
         );
     }
 
@@ -260,7 +260,7 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/{*}',
-            action: 'handler'
+            action: 'handler',
         );
     }
 
@@ -275,12 +275,12 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/users/{id}',
-            action: 'handler'
+            action: 'handler',
         );
 
         $request = new Request(
             serverParams: ['REQUEST_METHOD' => 'GET'],
-            uri         : UriBuilder::createFromString(uri: 'https://example.com/users/abc')
+            uri         : UriBuilder::createFromString(uri: 'https://example.com/users/abc'),
         );
 
         $this->expectException(exception: RuntimeException::class);
@@ -296,7 +296,7 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/named',
-            action: 'handler'
+            action: 'handler',
         );
 
         $found = $this->router->getByName(name: 'named.route');
@@ -316,13 +316,13 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : '/ping',
-            action: 'handler'
+            action: 'handler',
         );
         $this->router->clearPrefix();
         $this->router->registerRoute(
             method: 'GET',
             path  : '/raw',
-            action: 'handler2'
+            action: 'handler2',
         );
 
         $routes = $this->router->allRoutes();
@@ -343,20 +343,20 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->registerRoute(
             method: 'GET',
             path  : 'missing-slash',
-            action: 'handler'
+            action: 'handler',
         );
     }
 
     #[Override]
     protected function setUp() : void
     {
-        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger);
+        $matcherRegistry = RouteMatcherRegistry::withDefaults(logger: new NullLogger());
         $matcher         = $matcherRegistry->get(key: 'domain');
 
         $this->router = new HttpRequestRouter(
-            constraintValidator: new RouteConstraintValidator,
+            constraintValidator: new RouteConstraintValidator(),
             matcher            : $matcher,
-            logger             : new NullLogger
+            logger             : new NullLogger(),
         );
     }
 }

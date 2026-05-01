@@ -14,11 +14,11 @@ final readonly class FreshnessStatus
     public Timestamp $timestamp;
 
     public function __construct(
-        public string    $entryName,
-        public bool      $isFresh,
-        public string    $reason,
+        public string $entryName,
+        public bool   $isFresh,
+        public string $reason,
         public Timestamp $timestamp,
-        public int       $sourceFilesMtime,
+        public int    $sourceFilesMtime,
         public int|false $compiledFileMtime,
     )
     {

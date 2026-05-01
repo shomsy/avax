@@ -9,11 +9,10 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataField;
 final readonly class ReadDataObjectValues
 {
     /**
-     * @param array<string, DataField> $fields
-     *
+     * @param  array<string, DataField>  $fields
      * @return array<string, mixed>
      */
-    public function read(object $object, array $fields) : array
+    public function read(object $object, array $fields): array
     {
         $values = [];
 

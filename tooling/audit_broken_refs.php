@@ -1,13 +1,19 @@
 <?php
+
+declare(strict_types=1);
 // Custom autoloader for PHP-Parser v5 only, avoiding project's vendor/autoload.php
-spl_autoload_register(function ($class) {
+spl_autoload_register(function ($class) : void {
     $prefix  = 'PhpParser\\';
     $baseDir = __DIR__ . '/vendor/nikic/php-parser/lib/PhpParser/';
     $len     = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) return;
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
     $relativeClass = substr($class, $len);
     $file          = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
-    if (file_exists($file)) require $file;
+    if (file_exists($file)) {
+        require $file;
+    }
 });
 
 use PhpParser\Node;
@@ -18,14 +24,20 @@ use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 
 $baseDir = __DIR__;
-$parser  = (new ParserFactory)->createForNewestSupportedVersion();
+$parser = (new ParserFactory())->createForNewestSupportedVersion();
 
 $phpFiles = [];
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir)) as $file) {
-    if (! $file->isFile() || $file->getExtension() !== 'php') continue;
+    if (! $file->isFile() || $file->getExtension() !== 'php') {
+        continue;
+    }
     $path = $file->getPathname();
-    if (strpos($path, '/vendor/') !== false) continue;
-    if (strpos($path, '/audit_broken_refs.php') !== false) continue;
+    if (str_contains($path, '/vendor/')) {
+        continue;
+    }
+    if (str_contains($path, '/audit_broken_refs.php')) {
+        continue;
+    }
     $phpFiles[] = $path;
 }
 
@@ -36,13 +48,18 @@ $total      = count($phpFiles);
 echo "PASS 1: Parsing $total files for definitions...\n";
 
 foreach ($phpFiles as $idx => $path) {
-    if (($idx + 1) % 500 === 0) echo "  " . ($idx + 1) . " / $total\n";
+    if (($idx + 1) % 500 === 0) {
+        echo '  ' . ($idx + 1) . " / $total\n";
+    }
+
     try {
         $stmts = $parser->parse(file_get_contents($path));
     } catch (Exception $e) {
         continue;
     }
-    if (! $stmts) continue;
+    if (! $stmts) {
+        continue;
+    }
     $ns = '';
     foreach ($stmts as $stmt) {
         if ($stmt instanceof Stmt\Namespace_) {
@@ -60,13 +77,15 @@ foreach ($phpFiles as $idx => $path) {
     }
 }
 
-echo "PASS 1 done. Defined: " . count($defined) . "\n";
+echo 'PASS 1 done. Defined: ' . count($defined) . "\n";
 
 function resolveName(Node\Name $name, string $ns, array $uses) : string
 {
     // PHP-Parser v5: name->name is the string representation
     $nameStr = $name->name;
-    if ($name instanceof Node\Name\FullyQualified) return $nameStr;
+    if ($name instanceof Node\Name\FullyQualified) {
+        return $nameStr;
+    }
     $parts = explode('\\', $nameStr);
     $first = $parts[0];
     if (isset($uses[$first])) {
@@ -83,22 +102,32 @@ function isBuiltin(string $name) : bool
     return in_array(strtolower($name), ['self', 'static', 'parent', 'true', 'false', 'null', 'array', 'callable', 'int', 'float', 'string', 'bool', 'object', 'mixed', 'iterable', 'void', 'never']);
 }
 
-function addRef(string $fqn, string $file, string $ctx, int $line, array &$references, array $defined)
+function addRef(string $fqn, string $file, string $ctx, int $line, array &$references, array $defined) : void
 {
     $fqn = trim($fqn, '\\');
-    if ($fqn === '' || isBuiltin($fqn)) return;
-    if (strpos($fqn, 'Psr\\') === 0) return;
-    if (isset($defined[$fqn])) return;
-    if (strpos($fqn, '\\') === false) {
+    if ($fqn === '' || isBuiltin($fqn)) {
+        return;
+    }
+    if (str_starts_with($fqn, 'Psr\\')) {
+        return;
+    }
+    if (isset($defined[$fqn])) {
+        return;
+    }
+    if (! str_contains($fqn, '\\')) {
         $globals = ['arrayiterator', 'runtimeexception', 'invalidargumentexception', 'logicexception', 'exception', 'throwable', 'datetime', 'datetimeimmutable', 'dateinterval', 'closure', 'generator', 'arrayobject', 'splfileinfo', 'splfileobject', 'countable', 'iterator', 'iteratoraggregate', 'arrayaccess', 'serializable', 'jsonserializable', 'traversable', 'seekableiterator', 'recursiveiterator', 'pdostatement', 'pdoexception', 'reflectionclass', 'reflectionfunction', 'reflectionmethod', 'reflectionproperty', 'reflectionparameter', 'reflector', 'phpunit_framework_testcase', 'testcase'];
-        if (in_array(strtolower($fqn), $globals)) return;
+        if (in_array(strtolower($fqn), $globals)) {
+            return;
+        }
     }
     $references[$fqn][] = ['file' => $file, 'context' => $ctx, 'line' => $line];
 }
 
-function processType(?Node $type, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined)
+function processType(?Node $type, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined) : void
 {
-    if (! $type) return;
+    if (! $type) {
+        return;
+    }
     if ($type instanceof Node\Name) {
         addRef(resolveName($type, $ns, $uses), $file, $ctx, $line, $references, $defined);
     } elseif ($type instanceof Node\UnionType || $type instanceof Node\IntersectionType) {
@@ -229,7 +258,7 @@ class RefVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    private function add(string $fqn, string $ctx, int $line)
+    private function add(string $fqn, string $ctx, int $line) : void
     {
         addRef($fqn, $this->file, $ctx, $line, $this->references, $this->defined);
     }
@@ -239,7 +268,7 @@ class RefVisitor extends NodeVisitorAbstract
         return resolveName($name, $this->ns, $this->uses);
     }
 
-    private function processType(?Node $type, string $ctx, int $line)
+    private function processType(?Node $type, string $ctx, int $line) : void
     {
         processType($type, $this->ns, $this->uses, $this->file, $ctx, $line, $this->references, $this->defined);
     }
@@ -248,13 +277,18 @@ class RefVisitor extends NodeVisitorAbstract
 echo "PASS 2: Parsing $total files for references...\n";
 
 foreach ($phpFiles as $idx => $path) {
-    if (($idx + 1) % 500 === 0) echo "  " . ($idx + 1) . " / $total\n";
+    if (($idx + 1) % 500 === 0) {
+        echo '  ' . ($idx + 1) . " / $total\n";
+    }
+
     try {
         $stmts = $parser->parse(file_get_contents($path));
     } catch (Exception $e) {
         continue;
     }
-    if (! $stmts) continue;
+    if (! $stmts) {
+        continue;
+    }
     $traverser = new NodeTraverser();
     $traverser->addVisitor(new RefVisitor($path, $defined, $references));
     $traverser->traverse($stmts);
@@ -296,6 +330,7 @@ foreach ($references as $fqn => $refs) {
     foreach ($refs as $r) {
         if (in_array($r['context'], ['extends', 'implements', 'class_alias target', 'catch', 'constructor-param', 'new'])) {
             $isCritical = true;
+
             break;
         }
     }
@@ -308,7 +343,7 @@ foreach ($references as $fqn => $refs) {
     echo "\n";
 }
 echo "=== SUMMARY ===\n";
-echo "Defined: " . count($defined) . "\n";
-echo "Missing: " . count($references) . "\n";
-echo "  CRITICAL: " . $severityCounts['CRITICAL'] . "\n";
-echo "  MINOR: " . $severityCounts['MINOR'] . "\n";
+echo 'Defined: ' . count($defined) . "\n";
+echo 'Missing: ' . count($references) . "\n";
+echo '  CRITICAL: ' . $severityCounts['CRITICAL'] . "\n";
+echo '  MINOR: ' . $severityCounts['MINOR'] . "\n";

@@ -24,10 +24,10 @@ final class HttpApplicationTest extends TestCase
     {
         $backup = [
             '_SERVER' => $_SERVER ?? [],
-            '_GET'    => $_GET ?? [],
-            '_POST'   => $_POST ?? [],
+            '_GET'   => $_GET ?? [],
+            '_POST'  => $_POST ?? [],
             '_COOKIE' => $_COOKIE ?? [],
-            '_FILES'  => $_FILES ?? [],
+            '_FILES' => $_FILES ?? [],
         ];
 
         /** @var ResponseInterface|null $response */
@@ -50,11 +50,11 @@ final class HttpApplicationTest extends TestCase
                 providers: [MiddlewareBaseRegisterDependency::class, RouterBaseRegisterDependency::class],
                 routes   : $this->createRoutesFile(),
                 cacheDir : sys_get_temp_dir(),
-                debug    : true
+                debug    : true,
             );
 
-            $app->getContainer()->instance(abstract: LoggerInterface::class, instance: new NullLogger);
-            $app->getContainer()->instance(abstract: RouterRuntimeInterface::class, instance: new FakeRouter);
+            $app->getContainer()->instance(abstract: LoggerInterface::class, instance: new NullLogger());
+            $app->getContainer()->instance(abstract: RouterRuntimeInterface::class, instance: new FakeRouter());
 
             ob_start();
             $response = $app->run();

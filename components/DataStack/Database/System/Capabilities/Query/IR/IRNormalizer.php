@@ -12,7 +12,7 @@ final class IRNormalizer
     /**
      * @throws JsonException
      */
-    public function fingerprint(QueryNode $queryNode) : string
+    public function fingerprint(QueryNode $queryNode): string
     {
         return hash(algo: 'sha256', data: json_encode(value: $this->toCanonicalArray(query: $queryNode), flags: JSON_THROW_ON_ERROR));
     }
@@ -20,44 +20,44 @@ final class IRNormalizer
     /**
      * Build a deterministic payload suitable for cache keys, diffing and telemetry.
      */
-    public function toCanonicalArray(QueryNode $queryNode) : array
+    public function toCanonicalArray(QueryNode $queryNode): array
     {
         return [
-            'select'   => array_values(array: $queryNode->getSelect()),
-            'from'     => $queryNode->getFrom()?->table,
-            'joins'    => array_map(
-                callback: static fn ($join) : array => [
-                    'type'  => strtoupper(string: $join->type),
+            'select' => array_values(array: $queryNode->getSelect()),
+            'from' => $queryNode->getFrom()?->table,
+            'joins' => array_map(
+                callback: static fn ($join): array => [
+                    'type' => strtoupper(string: $join->type),
                     'table' => $join->table,
                     'alias' => $join->alias,
                 ],
                 array   : $queryNode->getJoins(),
             ),
-            'wheres'   => array_map(
-                callback: static fn ($where) : array => [
-                    'column'   => $where->column,
+            'wheres' => array_map(
+                callback: static fn ($where): array => [
+                    'column' => $where->column,
                     'operator' => $where->operator->value,
-                    'boolean'  => strtoupper(string: $where->boolean),
+                    'boolean' => strtoupper(string: $where->boolean),
                 ],
                 array   : $queryNode->getWheres(),
             ),
-            'groups'   => array_values(array: $queryNode->getGroups()),
-            'orders'   => array_map(
-                callback: static fn ($order) : array => [
-                    'column'    => $order->column,
+            'groups' => array_values(array: $queryNode->getGroups()),
+            'orders' => array_map(
+                callback: static fn ($order): array => [
+                    'column' => $order->column,
                     'direction' => strtoupper(string: $order->direction),
-                    'nulls'     => $order->nulls,
+                    'nulls' => $order->nulls,
                 ],
                 array   : $queryNode->getOrders(),
             ),
-            'limit'    => $queryNode->getLimit(),
-            'offset'   => $queryNode->getOffset(),
+            'limit' => $queryNode->getLimit(),
+            'offset' => $queryNode->getOffset(),
             'distinct' => $queryNode->isDistinct(),
-            'ctes'     => array_map(
-                callback: static fn ($cte) : array => [
-                    'name'    => $cte->name,
+            'ctes' => array_map(
+                callback: static fn ($cte): array => [
+                    'name' => $cte->name,
                     'columns' => $cte->columns,
-                    'type'    => $cte->type->name,
+                    'type' => $cte->type->name,
                 ],
                 array   : $queryNode->getCTEs(),
             ),

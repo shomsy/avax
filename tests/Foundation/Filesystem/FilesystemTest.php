@@ -10,9 +10,9 @@ use components\Filesystem\Filesystem;
 
 final class FilesystemTest extends TestCase
 {
-    private LocalDisk  $disk;
+    private LocalDisk $disk;
     private Filesystem $filesystem;
-    private string     $testDir;
+    private string    $testDir;
 
     public function testPutGetExistsAndDeleteRoundTrip() : void
     {
@@ -64,7 +64,7 @@ final class FilesystemTest extends TestCase
         $this->filesystem = new Filesystem(disk: $this->disk);
         $this->testDir    = '/home/shomsy/projects/components/tests/fixtures/Filesystem/facade_test';
 
-        @mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
+        @mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
     }
 
     protected function tearDown() : void

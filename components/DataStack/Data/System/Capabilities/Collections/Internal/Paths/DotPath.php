@@ -15,7 +15,7 @@ final readonly class DotPath
         private string $path,
     ) {}
 
-    public function getParentPath() : string
+    public function getParentPath(): string
     {
         $segments = $this->getSegments();
         array_pop(array: $segments);
@@ -23,24 +23,24 @@ final readonly class DotPath
         return implode(separator: self::DELIMITER, array: $segments);
     }
 
-    public function getSegments() : array
+    public function getSegments(): array
     {
         return explode(separator: self::DELIMITER, string: $this->path);
     }
 
-    public function getKey() : string
+    public function getKey(): string
     {
         $segments = $this->getSegments();
 
         return end(array: $segments);
     }
 
-    public function isNested() : bool
+    public function isNested(): bool
     {
         return count(value: $this->getSegments()) > 1;
     }
 
-    public function getValue(array $items, mixed $default = null) : mixed
+    public function getValue(array $items, mixed $default = null): mixed
     {
         $current = $items;
 
@@ -55,12 +55,12 @@ final readonly class DotPath
         return $current;
     }
 
-    public function setValue(array &$items, mixed $value) : void
+    public function setValue(array &$items, mixed $value): void
     {
-        $keys    = $this->getSegments();
+        $keys = $this->getSegments();
         $current = &$items;
 
-        while ( count(value: $keys) > 1 ) {
+        while (count(value: $keys) > 1) {
             $segment = array_shift(array: $keys);
 
             if (! isset($current[$segment]) || ! is_array(value: $current[$segment])) {
@@ -73,12 +73,12 @@ final readonly class DotPath
         $current[array_shift(array: $keys)] = $value;
     }
 
-    public function unsetValue(array &$items) : bool
+    public function unsetValue(array &$items): bool
     {
-        $keys    = $this->getSegments();
+        $keys = $this->getSegments();
         $current = &$items;
 
-        while ( count(value: $keys) > 1 ) {
+        while (count(value: $keys) > 1) {
             $segment = array_shift(array: $keys);
 
             if (! isset($current[$segment]) || ! is_array(value: $current[$segment])) {
@@ -93,7 +93,7 @@ final readonly class DotPath
         return true;
     }
 
-    public function exists(array $items) : bool
+    public function exists(array $items): bool
     {
         $current = $items;
 

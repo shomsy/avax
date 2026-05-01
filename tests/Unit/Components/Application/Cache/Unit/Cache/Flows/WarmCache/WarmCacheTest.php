@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 final class WarmCacheTest extends TestCase
 {
-    private FrozenClock        $clock;
+    private FrozenClock $clock;
     private InMemoryCacheStore $store;
 
     public function test_warm_with_callable_loaders() : void
@@ -89,8 +89,8 @@ final class WarmCacheTest extends TestCase
             lifecycle: CachedValueLifecycle::create(
                            createdAt: $this->clock->now(),
                            expiresAt: $this->clock->now()->add(duration: Duration::ofSeconds(seconds: 3600)),
-                           clock    : $this->clock
-                       )
+                           clock    : $this->clock,
+                       ),
         ));
 
         $warmCache = new WarmCache(store: $this->store, clock: $this->clock);

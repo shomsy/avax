@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Identity;
 
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\IssuedRefreshToken;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\IssuedToken;
-use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
 use DateTimeImmutable;
 use SensitiveParameter;
 
@@ -16,14 +16,14 @@ use SensitiveParameter;
 final readonly class IssuedAuthentication
 {
     public function __construct(
-        public AuthenticationMode      $mode,
+        public AuthenticationMode $mode,
         #[SensitiveParameter]
-        public string|null             $sessionId = null,
+        public ?string $sessionId = null,
         #[SensitiveParameter]
-        public IssuedToken|null        $accessToken = null,
+        public ?IssuedToken $accessToken = null,
         #[SensitiveParameter]
-        public IssuedRefreshToken|null $refreshToken = null,
-        public DateTimeImmutable|null  $mfaVerifiedAt = null,
-        public bool                    $phishingResistant = false,
+        public ?IssuedRefreshToken $refreshToken = null,
+        public ?DateTimeImmutable $mfaVerifiedAt = null,
+        public bool $phishingResistant = false,
     ) {}
 }

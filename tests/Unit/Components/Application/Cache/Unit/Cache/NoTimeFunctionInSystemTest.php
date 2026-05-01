@@ -20,7 +20,7 @@ final class NoTimeFunctionInSystemTest extends TestCase
         $filesWithTime = [];
 
         $iterator = new RecursiveIteratorIterator(
-            iterator: new RecursiveDirectoryIterator(directory: $systemDir)
+            iterator: new RecursiveDirectoryIterator(directory: $systemDir),
         );
 
         foreach ($iterator as $file) {
@@ -38,7 +38,7 @@ final class NoTimeFunctionInSystemTest extends TestCase
 
         $this->assertEmpty(
             actual : $filesWithTime,
-            message: 'Found time() calls in System/: ' . implode(', ', $filesWithTime)
+            message: 'Found time() calls in System/: ' . implode(', ', $filesWithTime),
         );
     }
 
@@ -52,7 +52,7 @@ final class NoTimeFunctionInSystemTest extends TestCase
         foreach ($required as $class) {
             $this->assertTrue(
                 condition: class_exists($class),
-                message  : "Class $class should be autoloadable"
+                message  : "Class $class should be autoloadable",
             );
         }
     }
@@ -61,7 +61,7 @@ final class NoTimeFunctionInSystemTest extends TestCase
     {
         $this->assertTrue(
             condition: method_exists(Cache::class, 'read'),
-            message  : 'Cache::read() should exist'
+            message  : 'Cache::read() should exist',
         );
     }
 }

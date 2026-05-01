@@ -8,7 +8,7 @@ final class QueryNode
 {
     private array $select = [];
 
-    private FromNode|null $from = null;
+    private ?FromNode $from = null;
 
     private array $joins = [];
 
@@ -18,130 +18,130 @@ final class QueryNode
 
     private array $orders = [];
 
-    private int|null $limit = null;
+    private ?int $limit = null;
 
-    private int|null $offset = null;
+    private ?int $offset = null;
 
     private bool $distinct = false;
 
     private array $ctes = [];
 
-    public function select(string ...$columns) : self
+    public function select(string ...$columns): self
     {
         $this->select = $columns;
 
         return $this;
     }
 
-    public function from(string $table, string|null $alias = null) : self
+    public function from(string $table, ?string $alias = null): self
     {
         $this->from = new FromNode(table: $table, alias: $alias);
 
         return $this;
     }
 
-    public function join(JoinNode $join) : self
+    public function join(JoinNode $join): self
     {
         $this->joins[] = $join;
 
         return $this;
     }
 
-    public function where(WhereNode $where) : self
+    public function where(WhereNode $where): self
     {
         $this->wheres[] = $where;
 
         return $this;
     }
 
-    public function groupBy(string ...$columns) : self
+    public function groupBy(string ...$columns): self
     {
         $this->groups = $columns;
 
         return $this;
     }
 
-    public function orderBy(string $column, string $direction = 'ASC') : self
+    public function orderBy(string $column, string $direction = 'ASC'): self
     {
         $this->orders[] = new OrderByNode(column: $column, direction: $direction);
 
         return $this;
     }
 
-    public function limit(int $limit) : self
+    public function limit(int $limit): self
     {
         $this->limit = $limit;
 
         return $this;
     }
 
-    public function offset(int $offset) : self
+    public function offset(int $offset): self
     {
         $this->offset = $offset;
 
         return $this;
     }
 
-    public function distinct() : self
+    public function distinct(): self
     {
         $this->distinct = true;
 
         return $this;
     }
 
-    public function withCTE(CTENode $cte) : self
+    public function withCTE(CTENode $cte): self
     {
         $this->ctes[] = $cte;
 
         return $this;
     }
 
-    public function getSelect() : array
+    public function getSelect(): array
     {
         return $this->select;
     }
 
-    public function getFrom() : FromNode|null
+    public function getFrom(): ?FromNode
     {
         return $this->from;
     }
 
-    public function getJoins() : array
+    public function getJoins(): array
     {
         return $this->joins;
     }
 
-    public function getWheres() : array
+    public function getWheres(): array
     {
         return $this->wheres;
     }
 
-    public function getGroups() : array
+    public function getGroups(): array
     {
         return $this->groups;
     }
 
-    public function getOrders() : array
+    public function getOrders(): array
     {
         return $this->orders;
     }
 
-    public function getLimit() : int|null
+    public function getLimit(): ?int
     {
         return $this->limit;
     }
 
-    public function getOffset() : int|null
+    public function getOffset(): ?int
     {
         return $this->offset;
     }
 
-    public function isDistinct() : bool
+    public function isDistinct(): bool
     {
         return $this->distinct;
     }
 
-    public function getCTEs() : array
+    public function getCTEs(): array
     {
         return $this->ctes;
     }

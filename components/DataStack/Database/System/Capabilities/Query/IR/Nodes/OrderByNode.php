@@ -9,14 +9,14 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final class OrderByNode
 {
     public function __construct(
-        public readonly string   $column,
-        public readonly string   $direction = 'ASC',
-        public readonly int|null $nulls = null,
+        public readonly string $column,
+        public readonly string $direction = 'ASC',
+        public readonly ?int $nulls = null,
     ) {}
 
-    public function getSql(GrammarInterface $grammar) : string
+    public function getSql(GrammarInterface $grammar): string
     {
-        $column    = $grammar->wrap(value: $this->column);
+        $column = $grammar->wrap(value: $this->column);
         $direction = strtoupper(string: $this->direction);
 
         $sql = "{$column} {$direction}";

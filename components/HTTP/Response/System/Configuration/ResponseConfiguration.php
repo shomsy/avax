@@ -22,8 +22,8 @@ final readonly class ResponseConfiguration
     public function __construct(
         private string $charset = 'utf-8',
         private string $defaultContentType = 'text/html',
-        private array  $defaultHeaders = [],
-        private bool   $compress = false,
+        private array $defaultHeaders = [],
+        private bool  $compress = false,
         private string $protocolVersion = '1.1',
     ) {}
 

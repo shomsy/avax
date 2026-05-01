@@ -13,7 +13,7 @@ final readonly class Threshold
 {
     public const int MIN = 0;
 
-    public const int MAX     = 100;
+    public const int MAX = 100;
 
     public const int DEFAULT = 70;
 
@@ -24,12 +24,12 @@ final readonly class Threshold
         }
     }
 
-    public static function default() : self
+    public static function default(): self
     {
         return new self(self::DEFAULT);
     }
 
-    public function isDefault() : bool
+    public function isDefault(): bool
     {
         return $this->value === self::DEFAULT;
     }

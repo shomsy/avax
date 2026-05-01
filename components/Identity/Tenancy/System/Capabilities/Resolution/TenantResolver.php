@@ -8,7 +8,7 @@ use Psr\Http\Message\RequestInterface;
 
 final readonly class TenantResolver
 {
-    public static function resolve(RequestInterface $request) : string
+    public static function resolve(RequestInterface $request): string
     {
         if ($tenantId = self::resolveFromDomain($request)) {
             return $tenantId;
@@ -25,17 +25,17 @@ final readonly class TenantResolver
         return 'default';
     }
 
-    private static function resolveFromDomain(RequestInterface $request) : string|null
+    private static function resolveFromDomain(RequestInterface $request): ?string
     {
         return DomainResolver::resolve($request);
     }
 
-    private static function resolveFromHeader(RequestInterface $request) : string|null
+    private static function resolveFromHeader(RequestInterface $request): ?string
     {
         return HeaderResolver::resolve($request);
     }
 
-    private static function resolveFromPath(RequestInterface $request) : string|null
+    private static function resolveFromPath(RequestInterface $request): ?string
     {
         return PathResolver::resolve($request);
     }
@@ -43,9 +43,9 @@ final readonly class TenantResolver
 
 final readonly class DomainResolver
 {
-    public static function resolve(RequestInterface $request) : string|null
+    public static function resolve(RequestInterface $request): ?string
     {
-        $host  = $request->getUri()->getHost();
+        $host = $request->getUri()->getHost();
         $parts = explode('.', $host);
 
         if (count($parts) > 2) {
@@ -58,7 +58,7 @@ final readonly class DomainResolver
 
 final readonly class HeaderResolver
 {
-    public static function resolve(RequestInterface $request) : string|null
+    public static function resolve(RequestInterface $request): ?string
     {
         return $request->getHeaderLine('X-Tenant-ID') ?: null;
     }
@@ -66,9 +66,9 @@ final readonly class HeaderResolver
 
 final readonly class PathResolver
 {
-    public static function resolve(RequestInterface $request) : string|null
+    public static function resolve(RequestInterface $request): ?string
     {
-        $path  = $request->getUri()->getPath();
+        $path = $request->getUri()->getPath();
         $parts = explode('/', $path);
 
         if (count($parts) >= 2 && $parts[1] === 'tenants') {

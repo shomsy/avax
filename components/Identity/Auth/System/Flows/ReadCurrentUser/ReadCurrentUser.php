@@ -12,7 +12,7 @@ final class ReadCurrentUser
         private readonly Auth $auth,
     ) {}
 
-    public function user() : mixed
+    public function user(): mixed
     {
         return $this->auth->user();
     }

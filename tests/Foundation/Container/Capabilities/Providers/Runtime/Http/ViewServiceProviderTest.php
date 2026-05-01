@@ -25,8 +25,8 @@ final class ViewBaseRegisterDependencyTest extends TestCase
         $builder->method('withArguments')->willReturnSelf();
         $builder->method('withArgument')->willReturnSelf();
 
-        mkdir(directory: $temporaryBase . DIRECTORY_SEPARATOR . 'Presentation' . DIRECTORY_SEPARATOR . 'Views', permissions: 0777, recursive: true);
-        mkdir(directory: $defaultCache, permissions: 0777, recursive: true);
+        mkdir(directory: $temporaryBase . DIRECTORY_SEPARATOR . 'Presentation' . DIRECTORY_SEPARATOR . 'Views', permissions: 0o777, recursive: true);
+        mkdir(directory: $defaultCache, permissions: 0o777, recursive: true);
         chdir(directory: $temporaryBase);
 
         try {
@@ -38,12 +38,12 @@ final class ViewBaseRegisterDependencyTest extends TestCase
                         $registrations[$abstract] = $concrete;
 
                         return $builder;
-                    }
+                    },
                 );
             $container
                 ->method('get')
                 ->with('config')
-                ->willReturn(value: new Settings);
+                ->willReturn(value: new Settings());
 
             $provider = new ViewBaseRegisterDependency(app: $container);
             $provider->register();

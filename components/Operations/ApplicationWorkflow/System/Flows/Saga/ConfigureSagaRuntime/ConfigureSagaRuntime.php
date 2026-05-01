@@ -12,12 +12,12 @@ use stdClass;
 final readonly class ConfigureSagaRuntime
 {
     public function __construct(
-        private RegisterSagaStore      $registerSagaStore = new RegisterSagaStore(),
-        private RegisterSagaStepRunner $registerSagaStepRunner = new RegisterSagaStepRunner(),
-        private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus(),
+        private RegisterSagaStore $registerSagaStore = new RegisterSagaStore,
+        private RegisterSagaStepRunner $registerSagaStepRunner = new RegisterSagaStepRunner,
+        private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus,
     ) {}
 
-    public function configure(SagaRuntimeConfig $config) : SagaRuntime
+    public function configure(SagaRuntimeConfig $config): SagaRuntime
     {
         $validation = new ValidateSagaRuntimeConfig(config: $config);
         if (! $validation->isValid()) {
@@ -28,7 +28,7 @@ final readonly class ConfigureSagaRuntime
             );
         }
 
-        $store      = $this->registerSagaStore->register(type: $config->storeType, config: $config->storeConfig);
+        $store = $this->registerSagaStore->register(type: $config->storeType, config: $config->storeConfig);
         $stepRunner = $this->registerSagaStepRunner->register();
         $messageBus = $this->registerSagaMessageBus->register($config->messageBusType, config: $config->messageBusConfig);
 
@@ -36,7 +36,7 @@ final readonly class ConfigureSagaRuntime
             store      : $store,
             stepRunner : $stepRunner,
             messageBus : $messageBus,
-            idempotency: new ProtectSagaIdempotency(),
+            idempotency: new ProtectSagaIdempotency,
             inspect    : InspectSaga::inMemory(),
         );
     }
@@ -46,18 +46,18 @@ final readonly class SagaRuntime
 {
     public function __construct(
         public StoreSagaState $store,
-        public object         $stepRunner,
-        public object         $messageBus,
+        public object $stepRunner,
+        public object $messageBus,
         public ProtectSagaIdempotency $idempotency,
-        public InspectSaga    $inspect,
+        public InspectSaga $inspect,
     ) {}
 
-    public static function inMemory() : self
+    public static function inMemory(): self
     {
         return new self(
             store      : StoreSagaState::inMemory(),
-            stepRunner : new stdClass(),
-            messageBus : new stdClass(),
+            stepRunner : new stdClass,
+            messageBus : new stdClass,
             idempotency: ProtectSagaIdempotency::inMemory(),
             inspect    : InspectSaga::inMemory(),
         );
@@ -67,30 +67,34 @@ final readonly class SagaRuntime
 final readonly class SagaRuntimeConfig
 {
     public string $storeType;
-    public array  $storeConfig;
+
+    public array $storeConfig;
+
     public string $messageBusType;
-    public array  $messageBusConfig;
-    public int|null $timeoutSeconds;
-    public int|null $maxRetries;
+
+    public array $messageBusConfig;
+
+    public ?int $timeoutSeconds;
+
+    public ?int $maxRetries;
 
     private function __construct(
-        string   $storeType,
-        array    $storeConfig,
-        string   $messageBusType,
-        array    $messageBusConfig,
-        int|null $timeoutSeconds,
-        int|null $maxRetries,
-    )
-    {
-        $this->storeType        = $storeType;
-        $this->storeConfig      = $storeConfig;
-        $this->messageBusType   = $messageBusType;
+        string $storeType,
+        array $storeConfig,
+        string $messageBusType,
+        array $messageBusConfig,
+        ?int $timeoutSeconds,
+        ?int $maxRetries,
+    ) {
+        $this->storeType = $storeType;
+        $this->storeConfig = $storeConfig;
+        $this->messageBusType = $messageBusType;
         $this->messageBusConfig = $messageBusConfig;
-        $this->timeoutSeconds   = $timeoutSeconds;
-        $this->maxRetries       = $maxRetries;
+        $this->timeoutSeconds = $timeoutSeconds;
+        $this->maxRetries = $maxRetries;
     }
 
-    public static function inMemory() : self
+    public static function inMemory(): self
     {
         return new self(
             storeType       : 'memory',
@@ -102,7 +106,7 @@ final readonly class SagaRuntimeConfig
         );
     }
 
-    public static function create(array $config) : self
+    public static function create(array $config): self
     {
         return new self(
             storeType       : $config['store_type'] ?? 'memory',

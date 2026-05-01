@@ -10,9 +10,9 @@ final readonly class RefreshAuthenticationRequest
 {
     public function __construct(
         #[SensitiveParameter]
-        public string      $refreshToken,
+        public string $refreshToken,
         #[SensitiveParameter]
-        public string|null $ipAddress = null,
-        public string|null $userAgent = null,
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
     ) {}
 }

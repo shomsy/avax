@@ -9,11 +9,11 @@ final readonly class CompensationPlan
     public function __construct(
         public string $sagaType,
         public array $steps,
-        public bool  $parallel,
-        public int   $timeoutMs,
+        public bool $parallel,
+        public int $timeoutMs,
     ) {}
 
-    public static function create(string $sagaType, array $steps) : self
+    public static function create(string $sagaType, array $steps): self
     {
         return new self(
             sagaType : $sagaType,
@@ -23,22 +23,22 @@ final readonly class CompensationPlan
         );
     }
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'plans compensation execution including steps, parallelism, and timeout.';
     }
 
-    public function orderedSteps() : array
+    public function orderedSteps(): array
     {
         return array_reverse($this->steps);
     }
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return [
-            'saga_type'  => $this->sagaType,
+            'saga_type' => $this->sagaType,
             'step_count' => count($this->steps),
-            'parallel'   => $this->parallel,
+            'parallel' => $this->parallel,
             'timeout_ms' => $this->timeoutMs,
         ];
     }

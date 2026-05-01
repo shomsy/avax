@@ -18,17 +18,17 @@ final readonly class RevokeToken
     public function __construct(
         private OAuthClientRegistryInterface $clientRegistry,
         #[SensitiveParameter]
-        private RefreshTokenStoreInterface   $refreshTokenStore,
+        private RefreshTokenStoreInterface $refreshTokenStore,
         #[SensitiveParameter]
-        private JwtIdentityInterface         $jwtIdentity,
-        private AuditLogInterface            $auditLog,
-        private Clock                        $clock,
+        private JwtIdentityInterface $jwtIdentity,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
     ) {}
 
     /**
      * @throws OAuthTokenExchangeFailed
      */
-    public function execute(RevokeTokenData $data) : void
+    public function execute(RevokeTokenData $data): void
     {
         $client = $this->clientRegistry->find(clientId: $data->clientId);
 
@@ -64,15 +64,15 @@ final readonly class RevokeToken
         }
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.oauth.token.revoked',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'client_id'       => $data->clientId,
-                                                           'token_type_hint' => $data->tokenTypeHint,
-                                                           'revoked'         => $revoked ? 1 : 0,
-                                                           'ip_address'      => $data->ipAddress,
-                                                           'user_agent'      => $data->userAgent,
-                                                       ],
-                                       ));
+            name      : 'auth.oauth.token.revoked',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $data->clientId,
+                'token_type_hint' => $data->tokenTypeHint,
+                'revoked' => $revoked ? 1 : 0,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
+        ));
     }
 }

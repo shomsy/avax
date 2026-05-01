@@ -9,25 +9,25 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final class WhereNode
 {
     public function __construct(
-        public readonly string      $column,
+        public readonly string $column,
         public readonly ComparisonOperator $operator,
-        public readonly mixed       $value,
-        public readonly string      $boolean = 'AND',
-        public readonly string|null $connector = null,
+        public readonly mixed $value,
+        public readonly string $boolean = 'AND',
+        public readonly ?string $connector = null,
     ) {}
 
-    public function getSql(GrammarInterface $grammar) : string
+    public function getSql(GrammarInterface $grammar): string
     {
-        $column   = $grammar->wrap(value: $this->column);
+        $column = $grammar->wrap(value: $this->column);
         $operator = $this->operator->value;
-        $boolean  = strtoupper(string: $this->boolean);
+        $boolean = strtoupper(string: $this->boolean);
 
         if ($this->operator === ComparisonOperator::IS_NULL || $this->operator === ComparisonOperator::IS_NOT_NULL) {
             return "{$boolean} {$column} {$operator}";
         }
 
         if ($this->operator === ComparisonOperator::IN || $this->operator === ComparisonOperator::NOT_IN) {
-            $values       = is_array(value: $this->value) ? $this->value : [$this->value];
+            $values = is_array(value: $this->value) ? $this->value : [$this->value];
             $placeholders = implode(separator: ', ', array: array_fill(start_index: 0, count: count(value: $values), value: '?'));
 
             return "{$boolean} {$column} {$operator} ({$placeholders})";

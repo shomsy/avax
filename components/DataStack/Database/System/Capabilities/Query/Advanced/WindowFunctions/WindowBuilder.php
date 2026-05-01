@@ -10,95 +10,94 @@ final class WindowBuilder
 {
     public function __construct(
         private readonly GrammarInterface $grammar,
-        private readonly string           $function,
-        private array|null  $partitionBy = null,
-        private string|null $orderBy = null,
-        private string      $frame = 'ROWS UNBOUNDED PRECEDING',
-    )
-    {
+        private readonly string $function,
+        private ?array $partitionBy = null,
+        private ?string $orderBy = null,
+        private string $frame = 'ROWS UNBOUNDED PRECEDING',
+    ) {
         $this->partitionBy ??= [];
-        $this->orderBy     ??= '';
+        $this->orderBy ??= '';
     }
 
-    public static function rowNumber(GrammarInterface $grammar) : self
+    public static function rowNumber(GrammarInterface $grammar): self
     {
         return new self(grammar: $grammar, function: 'ROW_NUMBER');
     }
 
-    public static function rank(GrammarInterface $grammar) : self
+    public static function rank(GrammarInterface $grammar): self
     {
         return new self(grammar: $grammar, function: 'RANK');
     }
 
-    public static function denseRank(GrammarInterface $grammar) : self
+    public static function denseRank(GrammarInterface $grammar): self
     {
         return new self(grammar: $grammar, function: 'DENSE_RANK');
     }
 
-    public static function lag(GrammarInterface $grammar, string $column) : self
+    public static function lag(GrammarInterface $grammar, string $column): self
     {
         return new self(grammar: $grammar, function: sprintf('LAG(%s)', $column));
     }
 
-    public static function lead(GrammarInterface $grammar, string $column) : self
+    public static function lead(GrammarInterface $grammar, string $column): self
     {
         return new self(grammar: $grammar, function: sprintf('LEAD(%s)', $column));
     }
 
-    public function partitionBy(string ...$columns) : self
+    public function partitionBy(string ...$columns): self
     {
         $this->partitionBy = $columns;
 
         return $this;
     }
 
-    public function orderBy(string $column, string $direction = 'ASC') : self
+    public function orderBy(string $column, string $direction = 'ASC'): self
     {
         $this->orderBy = sprintf('%s %s', $column, $direction);
 
         return $this;
     }
 
-    public function frame(string $frame) : self
+    public function frame(string $frame): self
     {
         $this->frame = $frame;
 
         return $this;
     }
 
-    public function rowsUnboundedPreceding() : self
+    public function rowsUnboundedPreceding(): self
     {
         $this->frame = 'ROWS UNBOUNDED PRECEDING';
 
         return $this;
     }
 
-    public function rowsBetween(int $start, int $end) : self
+    public function rowsBetween(int $start, int $end): self
     {
-        $startExpr = $start < 0 ? $start . ' PRECEDING' : $start . ' FOLLOWING';
-        $endExpr   = $end < 0 ? $end . ' PRECEDING' : $end . ' FOLLOWING';
+        $startExpr = $start < 0 ? $start.' PRECEDING' : $start.' FOLLOWING';
+        $endExpr = $end < 0 ? $end.' PRECEDING' : $end.' FOLLOWING';
 
         $this->frame = sprintf('ROWS BETWEEN %s AND %s', $startExpr, $endExpr);
 
         return $this;
     }
 
-    public function getSql(string $alias = '') : string
+    public function getSql(string $alias = ''): string
     {
-        $sql   = $this->function . ' OVER';
+        $sql = $this->function.' OVER';
         $parts = [];
 
         if ($this->partitionBy !== null && $this->partitionBy !== [] || $this->orderBy !== '' || $this->frame !== '') {
             if ($this->partitionBy !== null && $this->partitionBy !== []) {
                 $partition = implode(separator: ', ', array: array_map(
-                    callback: fn ($col) : string => $this->grammar->wrap(value: $col),
+                    callback: fn ($col): string => $this->grammar->wrap(value: $col),
                     array   : $this->partitionBy,
                 ));
-                $parts[]   = 'PARTITION BY ' . $partition;
+                $parts[] = 'PARTITION BY '.$partition;
             }
 
             if ($this->orderBy !== '') {
-                $parts[] = 'ORDER BY ' . $this->orderBy;
+                $parts[] = 'ORDER BY '.$this->orderBy;
             }
 
             if ($this->frame !== '') {
@@ -106,10 +105,10 @@ final class WindowBuilder
             }
         }
 
-        $sql .= ' (' . implode(separator: ' ', array: $parts) . ')';
+        $sql .= ' ('.implode(separator: ' ', array: $parts).')';
 
         if ($alias !== '') {
-            $sql .= ' AS ' . $this->grammar->wrap(value: $alias);
+            $sql .= ' AS '.$this->grammar->wrap(value: $alias);
         }
 
         return $sql;

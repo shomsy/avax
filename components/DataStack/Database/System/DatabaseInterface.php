@@ -18,19 +18,19 @@ use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transact
  */
 interface DatabaseInterface
 {
-    public function connections() : Connections;
+    public function connections(): Connections;
 
-    public function query() : Query;
+    public function query(): Query;
 
-    public function entityManager() : EntityManager;
+    public function entityManager(): EntityManager;
 
-    public function migrations() : Migrations;
+    public function migrations(): Migrations;
 
-    public function schema() : Schema;
+    public function schema(): Schema;
 
-    public function transactions() : Transactions;
+    public function transactions(): Transactions;
 
-    public function telemetry() : Telemetry;
+    public function telemetry(): Telemetry;
 
-    public function table(string $table, string|null $connectionName = null) : QueryBuilder;
+    public function table(string $table, ?string $connectionName = null): QueryBuilder;
 }

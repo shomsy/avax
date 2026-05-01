@@ -42,7 +42,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
         return CachedValueLifecycle::create(
             createdAt: $created,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
-            clock    : $this->clock
+            clock    : $this->clock,
         );
     }
 

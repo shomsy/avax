@@ -121,7 +121,7 @@ final class InMemoryCacheStoreTest extends TestCase
         $avaxCache->set(key: 'existing', value: 'original');
 
         $loadCount = 0;
-        $result    = $avaxCache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) : string {
+        $result = $avaxCache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount) : string {
             $loadCount++;
 
             return 'loaded';

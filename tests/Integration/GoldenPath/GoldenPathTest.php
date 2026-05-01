@@ -55,7 +55,7 @@ class GoldenPathTest extends TestCase
     {
         Pipeline::beforeController(static fn ($r) => $r);
         Pipeline::afterController(static fn ($r) => $r);
-        
+
         $hooks = Pipeline::hooks();
 
         $this->assertIsArray($hooks);
@@ -71,8 +71,9 @@ class GoldenPathTest extends TestCase
 
         $result = Fallback::execute(
             fallbacks: [
-                           static function () use (&$callCount) {
+                           static function () use (&$callCount) : void {
                                $callCount++;
+
                                throw new RuntimeException('Primary failed');
                            },
                            static function () use (&$callCount) {
@@ -80,7 +81,7 @@ class GoldenPathTest extends TestCase
 
                                return 'fallback_result';
                            },
-                       ]
+                       ],
         );
 
         $this->assertEquals('fallback_result', $result);
@@ -121,7 +122,7 @@ class GoldenPathTest extends TestCase
                                static fn () => 'task2',
                                static fn () => 'task3',
                            ],
-            maxConcurrent: 3
+            maxConcurrent: 3,
         );
 
         $this->assertCount(3, $results);

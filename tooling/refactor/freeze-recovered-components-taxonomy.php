@@ -5,7 +5,7 @@ declare(strict_types=1);
 final class FreezeRecoveredComponentsTaxonomy
 {
     private string $root;
-    private bool   $apply;
+    private bool $apply;
 
     /** @var list<array{from: string, to: string, reason: string}> */
     private array $moves = [];
@@ -128,7 +128,7 @@ final class FreezeRecoveredComponentsTaxonomy
             $this->moveDirectory(
                 from  : $this->path($move['from']),
                 to    : $this->path($move['to']),
-                reason: $move['reason']
+                reason: $move['reason'],
             );
         }
 
@@ -169,7 +169,7 @@ final class FreezeRecoveredComponentsTaxonomy
     private function printHeader() : void
     {
         echo "AvaX Recovered Components Taxonomy Freeze\n";
-        echo "Mode: " . ($this->apply ? "APPLY" : "DRY-RUN") . "\n";
+        echo 'Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN') . "\n";
         echo "Tests: untouched\n";
         echo "Production namespace rewrite: yes\n\n";
     }
@@ -260,7 +260,7 @@ final class FreezeRecoveredComponentsTaxonomy
         $directory = dirname($report);
 
         if (! is_dir($directory)) {
-            mkdir($directory, 0777, true);
+            mkdir($directory, 0o777, true);
         }
 
         $lines = [
@@ -309,14 +309,14 @@ final class FreezeRecoveredComponentsTaxonomy
     private function printConflicts() : void
     {
         echo PHP_EOL;
-        echo "❌ Conflicts found. Nothing was moved." . PHP_EOL;
+        echo '❌ Conflicts found. Nothing was moved.' . PHP_EOL;
 
         foreach ($this->conflicts as $conflict) {
             echo " - {$conflict}" . PHP_EOL;
         }
 
         echo PHP_EOL;
-        echo "Fix conflicts manually or inspect the report before applying." . PHP_EOL;
+        echo 'Fix conflicts manually or inspect the report before applying.' . PHP_EOL;
     }
 
     private function moveDirectory(string $from, string $to, string $reason) : void
@@ -334,7 +334,7 @@ final class FreezeRecoveredComponentsTaxonomy
             is_dir($to) ? 'MERGE' : 'MOVE',
             $this->relative($from),
             $this->relative($to),
-            $reason
+            $reason,
         );
 
         $this->operations[] = $operation;
@@ -364,7 +364,7 @@ final class FreezeRecoveredComponentsTaxonomy
             $parent = dirname($to);
 
             if (! is_dir($parent)) {
-                mkdir($parent, 0777, true);
+                mkdir($parent, 0o777, true);
             }
 
             rename($from, $to);
@@ -384,7 +384,7 @@ final class FreezeRecoveredComponentsTaxonomy
         $parent = dirname($to);
 
         if (! is_dir($parent)) {
-            mkdir($parent, 0777, true);
+            mkdir($parent, 0o777, true);
         }
 
         if (is_file($to)) {
@@ -468,7 +468,7 @@ final class FreezeRecoveredComponentsTaxonomy
         }
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)
+            new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
         );
 
         foreach ($iterator as $file) {
@@ -498,21 +498,21 @@ final class FreezeRecoveredComponentsTaxonomy
 
         $updated = $content;
 
-        if (strpos($content, "'Security'") === false) {
+        if (! str_contains($content, "'Security'")) {
             $updated = preg_replace(
                 "/private array \\$allowedSuites = \\[\n(?:.*'DeveloperTools',\n?)/",
                 "$1        'Security',\n",
-                $updated
+                $updated,
             );
         }
 
         $newHelpers = "'Security', 'WorkerManagement', 'ExternalState', 'RuntimeSafety', 'ResourceGovernance'";
 
-        if (strpos($content, "'WorkerManagement'") === false) {
+        if (! str_contains($content, "'WorkerManagement'")) {
             $updated = preg_replace(
                 "/private array \\$helperFolders = \\[\n(?:.*'Security',\n?)/",
-                "$1        " . $newHelpers . ",\n",
-                $updated
+                '$1        ' . $newHelpers . ",\n",
+                $updated,
             );
         }
 

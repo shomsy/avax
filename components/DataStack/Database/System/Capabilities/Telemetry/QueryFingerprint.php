@@ -6,12 +6,12 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry;
 
 final class QueryFingerprint
 {
-    public function hash(string $sql) : string
+    public function hash(string $sql): string
     {
         return hash(algo: 'sha256', data: $this->normalize(sql: $sql));
     }
 
-    public function normalize(string $sql) : string
+    public function normalize(string $sql): string
     {
         $sql = preg_replace(pattern: "/'(?:''|[^'])*'/", replacement: '?', subject: $sql) ?? $sql;
         $sql = preg_replace(pattern: '/\b\d+(?:\.\d+)?\b/', replacement: '?', subject: $sql) ?? $sql;

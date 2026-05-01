@@ -11,27 +11,27 @@ use SensitiveParameter;
 /**
  * In-memory session registry for tests and lightweight deployments.
  */
-final class InMemorySessionRegistry implements SessionRegistryInterface, PruneExpiredSessionsInterface
+final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, SessionRegistryInterface
 {
     /** @var array<string, SessionRecord> */
     private array $records = [];
 
-    public function track(SessionRecord $record) : void
+    public function track(SessionRecord $record): void
     {
         $this->records[$record->sessionId] = $record;
     }
 
-    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
+    public function find(#[SensitiveParameter] string $sessionId): ?SessionRecord
     {
         return $this->records[$sessionId] ?? null;
     }
 
-    public function save(SessionRecord $record) : void
+    public function save(SessionRecord $record): void
     {
         $this->records[$record->sessionId] = $record;
     }
 
-    public function listForUser(UserId $userId) : array
+    public function listForUser(UserId $userId): array
     {
         $records = [];
 
@@ -43,13 +43,13 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
 
         usort(
             array   : $records,
-            callback: static fn (SessionRecord $left, SessionRecord $right) : int => $right->lastSeenAt <=> $left->lastSeenAt,
+            callback: static fn (SessionRecord $left, SessionRecord $right): int => $right->lastSeenAt <=> $left->lastSeenAt,
         );
 
         return $records;
     }
 
-    public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
+    public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason): void
     {
         $record = $this->records[$sessionId] ?? null;
 
@@ -60,7 +60,7 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         $this->records[$sessionId] = $record->withRevocation(revokedAt: $revokedAt, revokeReason: $reason);
     }
 
-    public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason) : void
+    public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason): void
     {
         foreach ($this->records as $sessionId => $record) {
             if (! $record->userId->equals(other: $userId) || $record->isRevoked()) {
@@ -71,7 +71,7 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         }
     }
 
-    public function pruneExpired(DateTimeImmutable $now) : int
+    public function pruneExpired(DateTimeImmutable $now): int
     {
         $removed = 0;
 

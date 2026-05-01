@@ -16,7 +16,7 @@ final readonly class HashRegisteredPassword
         private PasswordHasher $hasher,
     ) {}
 
-    public function execute(string $password) : string
+    public function execute(string $password): string
     {
         return $this->hasher->hash($password);
     }

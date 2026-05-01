@@ -12,14 +12,14 @@ use DateTimeImmutable;
 final readonly class SagaRuntimeEvent
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function __construct(
-        public string            $type,
-        public string            $instanceId,
-        public array             $payload = [],
-        public string|null       $correlationId = null,
-        public string|null       $causationId = null,
-        public DateTimeImmutable $occurredAt = new DateTimeImmutable(),
+        public string $type,
+        public string $instanceId,
+        public array $payload = [],
+        public ?string $correlationId = null,
+        public ?string $causationId = null,
+        public DateTimeImmutable $occurredAt = new DateTimeImmutable,
     ) {}
 }

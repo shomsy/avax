@@ -19,16 +19,16 @@ final readonly class RequirePhishingResistantAuthentication
      * @throws PhishingResistantAuthenticationRequired
      * @throws Unauthenticated
      */
-    public function execute() : void
+    public function execute(): void
     {
         $context = $this->currentAuthentication->read();
 
         if ($context->user() === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         if (! $context->isPhishingResistant()) {
-            throw new PhishingResistantAuthenticationRequired();
+            throw new PhishingResistantAuthenticationRequired;
         }
     }
 }

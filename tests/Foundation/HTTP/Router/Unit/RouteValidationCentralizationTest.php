@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
@@ -29,7 +28,7 @@ class RouteValidationCentralizationTest extends TestCase
             method     : 'GET',
             path       : '/users/{id}',
             action     : 'Controller@show',
-            constraints: ['id' => '\d+']
+            constraints: ['id' => '\d+'],
         );
 
         $this->assertEquals(expected: ['id' => '\d+'], actual: $route->constraints);
@@ -48,7 +47,7 @@ class RouteValidationCentralizationTest extends TestCase
             method     : 'GET',
             path       : '/users/{id}',
             action     : 'Controller@show',
-            constraints: ['id' => '[invalid'] // Missing closing bracket
+            constraints: ['id' => '[invalid'], // Missing closing bracket
         );
     }
 
@@ -65,7 +64,7 @@ class RouteValidationCentralizationTest extends TestCase
             method     : 'GET',
             path       : '/users/{id}',
             action     : 'Controller@show',
-            constraints: ['id' => '(unclosed'] // Unclosed parenthesis
+            constraints: ['id' => '(unclosed'], // Unclosed parenthesis
         );
     }
 
@@ -156,7 +155,7 @@ class RouteValidationCentralizationTest extends TestCase
             method: 'GET',
             path  : '/test',
             action: 'Controller@show',
-            name  : '__avax.reserved.name'
+            name  : '__avax.reserved.name',
         );
     }
 
@@ -171,7 +170,7 @@ class RouteValidationCentralizationTest extends TestCase
         new RouteDefinition(
             method: 'GET',
             path  : '/invalid/{param*}/extra', // Wildcard not at end
-            action: 'Controller@show'
+            action: 'Controller@show',
         );
     }
 }

@@ -18,13 +18,9 @@ final class MiddlewarePipelineTest extends TestCase
     {
         $stack = new MiddlewareStack();
 
-        $middleware1 = static function ($request, $next) {
-            return $next($request);
-        };
+        $middleware1 = static fn ($request, $next) => $next($request);
 
-        $middleware2 = static function ($request, $next) {
-            return $next($request);
-        };
+        $middleware2 = static fn ($request, $next) => $next($request);
 
         $stack->push($middleware1);
         $stack->push($middleware2);
@@ -80,9 +76,7 @@ final class MiddlewarePipelineTest extends TestCase
         // Build pipeline from inside out
         foreach (array_reverse($middlewares) as $middleware) {
             $next     = $pipeline;
-            $pipeline = static function ($request) use ($middleware, $next) {
-                return $middleware($request, $next);
-            };
+            $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
         $pipeline('request');
@@ -126,9 +120,7 @@ final class MiddlewarePipelineTest extends TestCase
 
         foreach (array_reverse($middlewares) as $middleware) {
             $next     = $pipeline;
-            $pipeline = static function ($request) use ($middleware, $next) {
-                return $middleware($request, $next);
-            };
+            $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
         $result = $pipeline('request');
@@ -162,9 +154,7 @@ final class MiddlewarePipelineTest extends TestCase
 
         foreach (array_reverse($middlewares) as $middleware) {
             $next     = $pipeline;
-            $pipeline = static function ($request) use ($middleware, $next) {
-                return $middleware($request, $next);
-            };
+            $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
         $pipeline(['original' => true]);
@@ -185,18 +175,14 @@ final class MiddlewarePipelineTest extends TestCase
         $stack = new MiddlewareStack();
         $stack->push($headerMiddleware);
 
-        $coreHandler = static function ($request) {
-            return ['body' => 'Hello', 'headers' => []];
-        };
+        $coreHandler  = static fn ($request) => ['body' => 'Hello', 'headers' => []];
 
         $middlewares = $stack->all();
         $pipeline    = $coreHandler;
 
         foreach (array_reverse($middlewares) as $middleware) {
             $next     = $pipeline;
-            $pipeline = static function ($request) use ($middleware, $next) {
-                return $middleware($request, $next);
-            };
+            $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
         $response = $pipeline(['method' => 'GET']);
@@ -209,18 +195,14 @@ final class MiddlewarePipelineTest extends TestCase
     {
         $stack = new MiddlewareStack();
 
-        $coreHandler = static function ($request) {
-            return "handled: {$request}";
-        };
+        $coreHandler  = static fn ($request) => "handled: {$request}";
 
         $middlewares = $stack->all();
         $pipeline    = $coreHandler;
 
         foreach (array_reverse($middlewares) as $middleware) {
             $next     = $pipeline;
-            $pipeline = static function ($request) use ($middleware, $next) {
-                return $middleware($request, $next);
-            };
+            $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
         $result = $pipeline('test');
@@ -255,9 +237,7 @@ final class MiddlewarePipelineTest extends TestCase
 
         foreach (array_reverse($middlewares) as $middleware) {
             $next     = $pipeline;
-            $pipeline = static function ($request) use ($middleware, $next) {
-                return $middleware($request, $next);
-            };
+            $pipeline = static fn ($request) => $middleware($request, $next);
         }
 
         $result = $pipeline(['start' => true]);

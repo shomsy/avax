@@ -29,18 +29,18 @@ use SensitiveParameter;
 final readonly class SingleSignOn
 {
     public function __construct(
-        private RegisterFederationConnection|null    $registerConnection,
-        private ReadFederationConnections|null       $readConnections,
-        private VerifyFederationDomain|null          $verifyDomain,
-        private SyncFederationMetadata|null          $syncMetadata,
-        private CheckFederationConnectionHealth|null $checkConnectionHealth,
-        private EvaluateFederationBreakGlassBypass|null $evaluateBreakGlassBypass,
-        private DiscoverFederationConnection|null    $discoverConnection,
-        private StartFederatedLogin|null             $startFederatedLogin,
-        private CompleteFederatedLogin|null          $completeFederatedLogin,
+        private ?RegisterFederationConnection $registerConnection,
+        private ?ReadFederationConnections $readConnections,
+        private ?VerifyFederationDomain $verifyDomain,
+        private ?SyncFederationMetadata $syncMetadata,
+        private ?CheckFederationConnectionHealth $checkConnectionHealth,
+        private ?EvaluateFederationBreakGlassBypass $evaluateBreakGlassBypass,
+        private ?DiscoverFederationConnection $discoverConnection,
+        private ?StartFederatedLogin $startFederatedLogin,
+        private ?CompleteFederatedLogin $completeFederatedLogin,
     ) {}
 
-    public function isConfigured() : bool
+    public function isConfigured(): bool
     {
         return $this->registerConnection !== null
             && $this->readConnections !== null
@@ -56,12 +56,12 @@ final readonly class SingleSignOn
     /**
      * @throws RandomException
      */
-    public function registerConnection(RegisterFederationConnectionData $data) : FederationConnection
+    public function registerConnection(RegisterFederationConnectionData $data): FederationConnection
     {
         return $this->registerConnectionOrFail()->execute(data: $data);
     }
 
-    private function registerConnectionOrFail() : RegisterFederationConnection
+    private function registerConnectionOrFail(): RegisterFederationConnection
     {
         return $this->registerConnection ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'register_connection');
     }
@@ -69,22 +69,22 @@ final readonly class SingleSignOn
     /**
      * @return list<FederationConnection>
      */
-    public function readConnections() : array
+    public function readConnections(): array
     {
         return $this->readConnectionsOrFail()->execute();
     }
 
-    private function readConnectionsOrFail() : ReadFederationConnections
+    private function readConnectionsOrFail(): ReadFederationConnections
     {
         return $this->readConnections ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'read_connections');
     }
 
-    public function verifyDomain(VerifyFederationDomainData $data) : FederationConnection
+    public function verifyDomain(VerifyFederationDomainData $data): FederationConnection
     {
         return $this->verifyDomainOrFail()->execute(data: $data);
     }
 
-    private function verifyDomainOrFail() : VerifyFederationDomain
+    private function verifyDomainOrFail(): VerifyFederationDomain
     {
         return $this->verifyDomain ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'verify_domain');
     }
@@ -92,52 +92,52 @@ final readonly class SingleSignOn
     /**
      * @throws JsonException
      */
-    public function syncMetadata(string $connectionId) : FederationConnection
+    public function syncMetadata(string $connectionId): FederationConnection
     {
         return $this->syncMetadataOrFail()->execute(connectionId: $connectionId);
     }
 
-    private function syncMetadataOrFail() : SyncFederationMetadata
+    private function syncMetadataOrFail(): SyncFederationMetadata
     {
         return $this->syncMetadata ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'sync_metadata');
     }
 
-    public function checkConnectionHealth(string $connectionId) : FederationConnectionHealth
+    public function checkConnectionHealth(string $connectionId): FederationConnectionHealth
     {
         return $this->checkConnectionHealthOrFail()->execute(connectionId: $connectionId);
     }
 
-    private function checkConnectionHealthOrFail() : CheckFederationConnectionHealth
+    private function checkConnectionHealthOrFail(): CheckFederationConnectionHealth
     {
         return $this->checkConnectionHealth ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'check_connection_health');
     }
 
-    public function evaluateBreakGlassBypass(string $connectionId) : bool
+    public function evaluateBreakGlassBypass(string $connectionId): bool
     {
         return $this->evaluateBreakGlassBypassOrFail()->execute(connectionId: $connectionId);
     }
 
-    private function evaluateBreakGlassBypassOrFail() : EvaluateFederationBreakGlassBypass
+    private function evaluateBreakGlassBypassOrFail(): EvaluateFederationBreakGlassBypass
     {
         return $this->evaluateBreakGlassBypass ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'evaluate_break_glass_bypass');
     }
 
-    public function discoverConnection(#[SensitiveParameter] string $email) : FederationConnection|null
+    public function discoverConnection(#[SensitiveParameter] string $email): ?FederationConnection
     {
         return $this->discoverConnectionOrFail()->execute(email: $email);
     }
 
-    private function discoverConnectionOrFail() : DiscoverFederationConnection
+    private function discoverConnectionOrFail(): DiscoverFederationConnection
     {
         return $this->discoverConnection ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'discover_connection');
     }
 
-    public function startFederatedLogin(StartFederatedLoginData $data) : StartedFederatedLogin
+    public function startFederatedLogin(StartFederatedLoginData $data): StartedFederatedLogin
     {
         return $this->startFederatedLoginOrFail()->execute(data: $data);
     }
 
-    private function startFederatedLoginOrFail() : StartFederatedLogin
+    private function startFederatedLoginOrFail(): StartFederatedLogin
     {
         return $this->startFederatedLogin ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'start_federated_login');
     }
@@ -145,12 +145,12 @@ final readonly class SingleSignOn
     /**
      * @throws RandomException
      */
-    public function completeFederatedLogin(CompleteFederatedLoginData $data) : AuthenticationResult
+    public function completeFederatedLogin(CompleteFederatedLoginData $data): AuthenticationResult
     {
         return $this->completeFederatedLoginOrFail()->execute(data: $data);
     }
 
-    private function completeFederatedLoginOrFail() : CompleteFederatedLogin
+    private function completeFederatedLoginOrFail(): CompleteFederatedLogin
     {
         return $this->completeFederatedLogin ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'complete_federated_login');
     }

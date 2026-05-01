@@ -24,14 +24,14 @@ final class RequestBehaviorTest extends TestCase
     }
 
     private function createRequest(
-        array|null $serverParams = null,
-        array|null $queryParams = null,
-        array      $parsedBody = [],
+        array $serverParams = null,
+        array $queryParams = null,
+        array $parsedBody = [],
     ) : Request
     {
         $serverParams ??= [];
         $queryParams  ??= [];
-        $uri          = UriBuilder::createFromString(uri: 'http://localhost/test');
+        $uri = UriBuilder::createFromString(uri: 'http://localhost/test');
 
         return Request::create(
             serverParams: array_merge(['REQUEST_METHOD' => 'GET'], $serverParams),
@@ -45,7 +45,7 @@ final class RequestBehaviorTest extends TestCase
     {
         $request = $this->createRequest(
             queryParams: ['foo' => 'query-foo', 'shared' => 'query-shared'],
-            parsedBody : ['bar' => 'request-bar', 'shared' => 'request-shared']
+            parsedBody : ['bar' => 'request-bar', 'shared' => 'request-shared'],
         );
 
         $this->assertSame(expected: 'query-foo', actual: $request->input(key: 'foo'));
@@ -56,7 +56,7 @@ final class RequestBehaviorTest extends TestCase
         $request = $this->createRequest(
             serverParams: ['REQUEST_METHOD' => 'POST'],
             queryParams : ['foo' => 'query-foo'],
-            parsedBody  : ['bar' => 'request-bar']
+            parsedBody  : ['bar' => 'request-bar'],
         );
 
         $this->assertSame(expected: 'query-foo', actual: $request->input(key: 'foo'));
@@ -73,7 +73,7 @@ final class RequestBehaviorTest extends TestCase
     public function test_query_returns_value_from_query_params() : void
     {
         $request = $this->createRequest(
-            queryParams: ['foo' => 'query-value']
+            queryParams: ['foo' => 'query-value'],
         );
 
         $this->assertSame(expected: 'query-value', actual: $request->query('foo'));
@@ -89,7 +89,7 @@ final class RequestBehaviorTest extends TestCase
     public function test_has_returns_true_if_key_in_query() : void
     {
         $request = $this->createRequest(
-            queryParams: ['foo' => 'bar']
+            queryParams: ['foo' => 'bar'],
         );
 
         $this->assertTrue(condition: $request->has('foo'));
@@ -105,7 +105,7 @@ final class RequestBehaviorTest extends TestCase
     public function test_get_is_alias_for_input() : void
     {
         $request = $this->createRequest(
-            queryParams: ['foo' => 'bar']
+            queryParams: ['foo' => 'bar'],
         );
 
         $this->assertSame(expected: $request->input(key: 'foo'), actual: $request->get('foo'));
@@ -114,7 +114,7 @@ final class RequestBehaviorTest extends TestCase
     public function test_get_query_params_returns_query_array() : void
     {
         $request = $this->createRequest(
-            queryParams: ['foo' => 'bar', 'baz' => 'qux']
+            queryParams: ['foo' => 'bar', 'baz' => 'qux'],
         );
 
         $this->assertSame(expected: ['foo' => 'bar', 'baz' => 'qux'], actual: $request->getQueryParams());
@@ -124,7 +124,7 @@ final class RequestBehaviorTest extends TestCase
     {
         $request = $this->createRequest(
             serverParams: ['REQUEST_METHOD' => 'POST'],
-            parsedBody  : ['name' => 'John']
+            parsedBody  : ['name' => 'John'],
         );
 
         $this->assertSame(expected: ['name' => 'John'], actual: $request->getParsedBody());
@@ -181,7 +181,7 @@ final class RequestBehaviorTest extends TestCase
             serverParams: [
                 'REQUEST_METHOD' => 'GET',
             ],
-            uri         : $uri
+            uri         : $uri,
         );
 
         $this->assertSame(expected: '/test/path', actual: $request->path());
@@ -190,7 +190,7 @@ final class RequestBehaviorTest extends TestCase
     public function test_get_method_returns_http_method() : void
     {
         $request = $this->createRequest(
-            serverParams: ['REQUEST_METHOD' => 'POST']
+            serverParams: ['REQUEST_METHOD' => 'POST'],
         );
 
         $this->assertSame(expected: 'POST', actual: $request->getMethod());

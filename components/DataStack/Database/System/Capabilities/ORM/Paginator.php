@@ -13,12 +13,12 @@ final readonly class Paginator
         public int $currentPage,
     ) {}
 
-    public function lastPage() : int
+    public function lastPage(): int
     {
         return (int) ceil($this->total / $this->perPage);
     }
 
-    public function hasMorePages() : bool
+    public function hasMorePages(): bool
     {
         return $this->currentPage < $this->lastPage();
     }

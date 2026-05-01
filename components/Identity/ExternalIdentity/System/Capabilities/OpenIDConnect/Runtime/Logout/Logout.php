@@ -13,17 +13,17 @@ final readonly class Logout
 {
     public function __construct(private FrontChannelLogout $frontChannelLogout, private BackChannelLogout $backChannelLogout) {}
 
-    public function execute(LogoutData $data) : LogoutResult
+    public function execute(LogoutData $data): LogoutResult
     {
         if ($data->logoutToken !== null && trim(string: $data->logoutToken) !== '') {
             return $this->backChannelLogout->execute(data: new BackChannelLogoutData(logoutToken: $data->logoutToken));
         }
 
         return $this->frontChannelLogout->execute(data: new FrontChannelLogoutData(
-                                                            sessionId            : $data->sessionId,
-                                                            idTokenHint          : $data->idTokenHint,
-                                                            postLogoutRedirectUri: $data->postLogoutRedirectUri,
-                                                            state                : $data->state,
-                                                        ));
+            sessionId            : $data->sessionId,
+            idTokenHint          : $data->idTokenHint,
+            postLogoutRedirectUri: $data->postLogoutRedirectUri,
+            state                : $data->state,
+        ));
     }
 }

@@ -11,13 +11,13 @@ use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCache
 final readonly class CacheConfiguration
 {
     public function __construct(
-        public string                          $name = 'default',
-        public int|null                        $defaultTtl = 3600,
-        public int|null                        $maxCapacity = null,
-        public StaleValuePolicy                $staleValuePolicy = StaleValuePolicy::DO_NOT_SERVE_STALE,
+        public string           $name = 'default',
+        public int|null         $defaultTtl = 3600,
+        public int|null         $maxCapacity = null,
+        public StaleValuePolicy $staleValuePolicy = StaleValuePolicy::DO_NOT_SERVE_STALE,
         public ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
-        public bool                            $enableMetrics = true,
-        public bool                            $enableTracing = false,
-        public array                           $serializerOptions = [],
+        public bool             $enableMetrics = true,
+        public bool             $enableTracing = false,
+        public array            $serializerOptions = [],
     ) {}
 }

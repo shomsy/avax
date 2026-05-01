@@ -10,15 +10,14 @@ final readonly class ScimBulkOperation
     public array $body;
 
     /**
-     * @param array<string, mixed> $body
+     * @param  array<string, mixed>  $body
      */
     public function __construct(
-        public string      $method,
-        public string      $path,
+        public string $method,
+        public string $path,
         array $body = [],
-        public string|null $bulkId = null,
-    )
-    {
+        public ?string $bulkId = null,
+    ) {
         $body ??= [];
         $this->body = $body;
     }

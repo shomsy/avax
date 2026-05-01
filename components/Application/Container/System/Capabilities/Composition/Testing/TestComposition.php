@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Composition\Testing;
 
-use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
 use Avax\Components\Application\Container\System\Container;
 use Avax\Components\Application\Container\System\Flows\CreateContainer\CreateContainer;
@@ -38,9 +37,9 @@ final readonly class TestComposition
     public function bindFlow(
         string $slice,
         string $abstract,
-        mixed  $concrete = null,
-        bool|null $entry = null,
-        array  $imports = [],
+        mixed $concrete = null,
+        bool  $entry = null,
+        array $imports = [],
     ) : DependencyRegistration
     {
         $entry ??= false;
@@ -63,7 +62,7 @@ final readonly class TestComposition
         string $slice,
         string $abstract,
         mixed $concrete = null,
-        bool  $exported = true,
+        bool $exported = true,
     ) : DependencyRegistration
     {
         $registration = $this->container->singleton(abstract: $abstract, concrete: $concrete)
@@ -82,7 +81,7 @@ final readonly class TestComposition
         string $slice,
         string $abstract,
         mixed $concrete = null,
-        bool  $exported = false,
+        bool $exported = false,
     ) : DependencyRegistration
     {
         $registration = $this->container->bind(abstract: $abstract, concrete: $concrete)

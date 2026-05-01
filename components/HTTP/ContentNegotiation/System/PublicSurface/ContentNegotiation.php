@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\ContentNegotiation\System\PublicSurface;
 
-use Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Formats\CsvFormat;
-use Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Formats\JsonFormat;
-use Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Formats\XmlFormat;
 use Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Negotiator\AcceptHeaderParser;
 use Psr\Http\Message\RequestInterface;
 use SimpleXMLElement;
@@ -22,7 +19,7 @@ final readonly class ContentNegotiation
 {
     public static function negotiate(
         RequestInterface $request,
-        array            $supported = ['application/json', 'application/xml', 'text/csv']
+        array $supported = ['application/json', 'application/xml', 'text/csv'],
     ) : NegotiatedContent
     {
         $header = $request->getHeaderLine('Accept');
@@ -63,7 +60,7 @@ final readonly class ContentNegotiation
 final readonly class NegotiatedContent
 {
     public function __construct(
-        public string           $mimeType,
+        public string $mimeType,
         public ContentFormatter $formatter,
     ) {}
 }

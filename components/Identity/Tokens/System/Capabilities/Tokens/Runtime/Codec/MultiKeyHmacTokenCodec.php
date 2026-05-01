@@ -12,20 +12,19 @@ use SensitiveParameter;
 final readonly class MultiKeyHmacTokenCodec implements TokenCodecInterface
 {
     /**
-     * @param TokenCodecInterface       $primaryCodec
-     * @param list<TokenCodecInterface> $verificationCodecs
+     * @param  list<TokenCodecInterface>  $verificationCodecs
      */
     public function __construct(
         private TokenCodecInterface $primaryCodec,
-        private array               $verificationCodecs = [],
+        private array $verificationCodecs = [],
     ) {}
 
-    public function encode(array $claims) : string
+    public function encode(array $claims): string
     {
         return $this->primaryCodec->encode(claims: $claims);
     }
 
-    public function decode(#[SensitiveParameter] string $token) : array|null
+    public function decode(#[SensitiveParameter] string $token): ?array
     {
         $decoded = $this->primaryCodec->decode(token: $token);
 

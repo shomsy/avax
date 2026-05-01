@@ -13,7 +13,7 @@ namespace Avax\Components\Application\Validation\System\Capabilities\Rules;
  */
 final class Validator
 {
-    private array $data  = [];
+    private array $data = [];
 
     private array $rules = [];
 

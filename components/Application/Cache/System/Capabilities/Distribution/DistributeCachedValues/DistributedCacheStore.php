@@ -19,8 +19,8 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
 {
     public function __construct(
         private ConsistentHashRing $consistentHashRing,
-        private Clock              $clock,
-        private array              $nodeStores = [],
+        private Clock $clock,
+        private array $nodeStores = [],
     ) {}
 
     public function registerNodeStore(CacheNodeId $cacheNodeId, CacheStore $cacheStore) : self

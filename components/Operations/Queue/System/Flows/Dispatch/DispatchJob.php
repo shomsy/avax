@@ -21,11 +21,11 @@ final class DispatchJob
         $this->registry = $registry;
     }
 
-    public function dispatchSync(JobDefinition $job) : JobResult
+    public function dispatchSync(JobDefinition $job): JobResult
     {
         try {
             $handler = $this->registry->resolve($job->handler);
-            $result  = $handler($job->payload);
+            $result = $handler($job->payload);
 
             return JobResult::success($result);
         } catch (Throwable $e) {
@@ -33,13 +33,13 @@ final class DispatchJob
         }
     }
 
-    public function later(JobDefinition $job, DateTimeInterface $delay, QueueBroker $broker) : JobId
+    public function later(JobDefinition $job, DateTimeInterface $delay, QueueBroker $broker): JobId
     {
         $queue = $job->queue ?? 'default';
         $jobId = JobId::generate($queue);
 
-        $jobData              = $job->toArray();
-        $jobData['id']        = $jobId->value;
+        $jobData = $job->toArray();
+        $jobData['id'] = $jobId->value;
         $jobData['executeAt'] = $delay->getTimestamp();
 
         $broker->push($queue, $jobData);
@@ -47,7 +47,7 @@ final class DispatchJob
         return $jobId;
     }
 
-    public function bulk(array $jobs, QueueBroker $broker) : array
+    public function bulk(array $jobs, QueueBroker $broker): array
     {
         $ids = [];
 
@@ -62,12 +62,12 @@ final class DispatchJob
         return $ids;
     }
 
-    public function dispatch(JobDefinition $job, QueueBroker $broker) : JobId
+    public function dispatch(JobDefinition $job, QueueBroker $broker): JobId
     {
         $queue = $job->queue ?? 'default';
         $jobId = JobId::generate($queue);
 
-        $jobData       = $job->toArray();
+        $jobData = $job->toArray();
         $jobData['id'] = $jobId->value;
 
         $broker->push($queue, $jobData);

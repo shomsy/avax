@@ -13,12 +13,12 @@ final readonly class ApplicationWorkflow
 {
     public function __construct(private Saga $saga) {}
 
-    public static function inMemory() : self
+    public static function inMemory(): self
     {
         return new self(saga: Saga::inMemory());
     }
 
-    public function saga() : Saga
+    public function saga(): Saga
     {
         return $this->saga;
     }

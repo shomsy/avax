@@ -13,7 +13,7 @@ final class SelectNode
         public readonly bool $distinct = false,
     ) {}
 
-    public function getSql(GrammarInterface $grammar) : string
+    public function getSql(GrammarInterface $grammar): string
     {
         $columns = $this->columns === []
             ? ['*']
@@ -21,6 +21,6 @@ final class SelectNode
 
         $wrapped = array_map(callback: static fn ($column) => $grammar->wrap(value: $column), array: $columns);
 
-        return ($this->distinct ? 'SELECT DISTINCT ' : 'SELECT ') . implode(separator: ', ', array: $wrapped);
+        return ($this->distinct ? 'SELECT DISTINCT ' : 'SELECT ').implode(separator: ', ', array: $wrapped);
     }
 }

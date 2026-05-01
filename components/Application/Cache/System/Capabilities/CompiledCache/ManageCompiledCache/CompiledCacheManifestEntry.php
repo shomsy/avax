@@ -17,10 +17,10 @@ final readonly class CompiledCacheManifestEntry
     public function __construct(
         public CompiledCacheName $compiledCacheName,
         public CompiledCachePath $compiledCachePath,
-        public Timestamp         $timestamp,
-        public string            $sourceFingerprint,
-        public string|null       $phpVersion = null,
-        public string|null       $frameworkVersion = null,
+        public Timestamp   $timestamp,
+        public string      $sourceFingerprint,
+        public string|null $phpVersion = null,
+        public string|null $frameworkVersion = null,
     ) {
         $this->compiledCacheName = $compiledCacheName;
         $this->compiledCachePath = $compiledCachePath;
@@ -40,7 +40,7 @@ final readonly class CompiledCacheManifestEntry
     public static function create(
         string $name,
         string $path,
-        int    $createdAt,
+        int $createdAt,
         string $sourceFingerprint,
     ) : self
     {

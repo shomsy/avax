@@ -14,7 +14,6 @@ use RuntimeException;
  */
 final class RouteBootstrapperTest extends TestCase
 {
-
     /**
      * Test that routes appear exactly once in final router state.
      *
@@ -36,7 +35,7 @@ final class RouteBootstrapperTest extends TestCase
         // 4. Clean up temporary files
 
         $this->markTestIncomplete(
-            message: 'Route deduplication test requires complex bootstrap setup with temp files'
+            message: 'Route deduplication test requires complex bootstrap setup with temp files',
         );
     }
 
@@ -74,7 +73,7 @@ final class RouteBootstrapperTest extends TestCase
 
         $this->assertTrue(
             condition: method_exists(object_or_class: RouteCollector::class, method: 'flush'),
-            message  : 'RouteCollector should have flush method with security guard'
+            message  : 'RouteCollector should have flush method with security guard',
         );
     }
 }

@@ -15,9 +15,9 @@ final readonly class ConfigSource
     public const SOURCE_DEFAULT  = 'default';
 
     public function __construct(
-        public string      $key,
-        public string      $source,
-        public mixed       $value,
+        public string $key,
+        public string $source,
+        public mixed  $value,
         public string|null $envVar = null,
         public string|null $filePath = null,
     ) {}

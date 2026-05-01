@@ -8,20 +8,20 @@ final readonly class SmtpMailer
 {
     public function __construct(private array $config = []) {}
 
-    public function send(Mailable $mailable) : bool
+    public function send(Mailable $mailable): bool
     {
         if (($this->config['driver'] ?? 'mail') === 'array') {
             return true;
         }
 
         $headers = [
-            'From: ' . ($mailable->getFrom() ?? $this->config['from'] ?? 'noreply@localhost'),
+            'From: '.($mailable->getFrom() ?? $this->config['from'] ?? 'noreply@localhost'),
             'MIME-Version: 1.0',
             'Content-Type: text/html; charset=UTF-8',
         ];
 
         foreach ($mailable->getCc() as $cc) {
-            $headers[] = 'Cc: ' . $cc;
+            $headers[] = 'Cc: '.$cc;
         }
 
         return mail(

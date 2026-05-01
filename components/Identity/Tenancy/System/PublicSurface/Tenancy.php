@@ -11,32 +11,32 @@ use Psr\Http\Message\RequestInterface;
 
 final class Tenancy
 {
-    public static function resolve(RequestInterface $request) : string
+    public static function resolve(RequestInterface $request): string
     {
         return TenantResolver::resolve($request);
     }
 
-    public static function getTenantId() : string|null
+    public static function getTenantId(): ?string
     {
         return TenantContext::current();
     }
 
-    public static function setTenantId(string $tenantId) : void
+    public static function setTenantId(string $tenantId): void
     {
         TenantContext::set($tenantId);
     }
 
-    public static function clearTenant() : void
+    public static function clearTenant(): void
     {
         TenantContext::clear();
     }
 
-    public static function run(string $tenantId, Closure $operation) : mixed
+    public static function run(string $tenantId, Closure $operation): mixed
     {
         return TenantContext::with($tenantId, $operation);
     }
 
-    public static function switch(string $tenantId) : void
+    public static function switch(string $tenantId): void
     {
         TenantContext::set($tenantId);
     }

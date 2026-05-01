@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 
 final class SortItems
 {
-    public function __invoke(Collection $collection, callable|null $callback = null, bool $descending = false) : Collection
+    public function __invoke(Collection $collection, ?callable $callback = null, bool $descending = false): Collection
     {
         $items = $collection->all();
         if ($callback !== null) {

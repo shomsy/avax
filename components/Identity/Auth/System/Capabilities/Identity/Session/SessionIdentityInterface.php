@@ -12,20 +12,20 @@ use DateTimeImmutable;
 interface SessionIdentityInterface
 {
     public function issue(
-        int               $userId,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool              $phishingResistant = false,
-    ) : string|null;
+        int $userId,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
+    ): ?string;
 
-    public function captureCurrentSession(string|null $ipAddress = null, string|null $userAgent = null) : void;
+    public function captureCurrentSession(?string $ipAddress = null, ?string $userAgent = null): void;
 
-    public function resolveUserId() : int|null;
+    public function resolveUserId(): ?int;
 
-    public function resolveMfaVerifiedAt() : DateTimeImmutable|null;
+    public function resolveMfaVerifiedAt(): ?DateTimeImmutable;
 
-    public function resolvePhishingResistant() : bool;
+    public function resolvePhishingResistant(): bool;
 
-    public function currentSessionId() : string|null;
+    public function currentSessionId(): ?string;
 
-    public function clear() : void;
+    public function clear(): void;
 }

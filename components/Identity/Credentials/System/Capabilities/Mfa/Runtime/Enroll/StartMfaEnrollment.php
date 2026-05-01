@@ -7,15 +7,15 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\E
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enums\MfaMethod;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enums\MfaStatus;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\MfaEnrollmentFailed;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Records\MfaEnrollmentRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Totp\TotpInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use SensitiveParameter;
 
@@ -29,14 +29,13 @@ final readonly class StartMfaEnrollment
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface     $mfaStore,
-        private TotpInterface         $totp,
-        private AuditLogInterface     $auditLog,
-        private Clock                 $clock,
-        string                        $issuer = null,
-        private int                   $expiresAfterSeconds = 900,
-    )
-    {
+        private MfaStoreInterface $mfaStore,
+        private TotpInterface $totp,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        ?string $issuer = null,
+        private int $expiresAfterSeconds = 900,
+    ) {
         $issuer ??= 'Avax Auth';
         $this->issuer = $issuer;
     }
@@ -46,12 +45,12 @@ final readonly class StartMfaEnrollment
      * @throws MfaEnrollmentFailed
      * @throws DateMalformedStringException
      */
-    public function execute() : MfaEnrollment
+    public function execute(): MfaEnrollment
     {
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         $userId = new UserId(value: $user->id);
@@ -61,7 +60,7 @@ final readonly class StartMfaEnrollment
         }
 
         $startedAt = $this->clock->now();
-        $record    = new MfaEnrollmentRecord(
+        $record = new MfaEnrollmentRecord(
             userId      : $userId,
             method      : MfaMethod::TOTP,
             accountLabel: $user->email,
@@ -72,13 +71,13 @@ final readonly class StartMfaEnrollment
         );
         $this->mfaStore->startEnrollment(record: $record);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.mfa.enrollment.started',
-                                           occurredAt: $startedAt,
-                                           context   : [
-                                                           'user_id' => $user->id,
-                                                           'method'  => $record->method->value,
-                                                       ],
-                                       ));
+            name      : 'auth.mfa.enrollment.started',
+            occurredAt: $startedAt,
+            context   : [
+                'user_id' => $user->id,
+                'method' => $record->method->value,
+            ],
+        ));
 
         return new MfaEnrollment(
             method      : $record->method,

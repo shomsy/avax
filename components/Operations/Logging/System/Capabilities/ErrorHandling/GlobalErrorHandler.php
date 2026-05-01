@@ -43,7 +43,7 @@ final class GlobalErrorHandler
     /**
      * Get the singleton instance.
      */
-    public static function getInstance() : ?self
+    public static function getInstance(): ?self
     {
         return self::$instance;
     }
@@ -51,7 +51,7 @@ final class GlobalErrorHandler
     /**
      * Set the singleton instance.
      */
-    public static function setInstance(self $instance) : void
+    public static function setInstance(self $instance): void
     {
         self::$instance = $instance;
     }
@@ -61,7 +61,7 @@ final class GlobalErrorHandler
      *
      * Should be called once during framework boot.
      */
-    public function register() : void
+    public function register(): void
     {
         if ($this->registered) {
             $this->logger->warning('GlobalErrorHandler::register called but handlers are already registered');
@@ -70,7 +70,7 @@ final class GlobalErrorHandler
         }
 
         $this->previousExceptionHandler = set_exception_handler($this->handleException(...));
-        $this->previousErrorHandler     = set_error_handler($this->handleError(...));
+        $this->previousErrorHandler = set_error_handler($this->handleError(...));
 
         $this->shutdownErrorHandler->register();
 
@@ -82,7 +82,7 @@ final class GlobalErrorHandler
     /**
      * Unregister all global error handlers and restore previous handlers.
      */
-    public function unregister() : void
+    public function unregister(): void
     {
         if (! $this->registered) {
             return;
@@ -111,7 +111,7 @@ final class GlobalErrorHandler
     /**
      * Check if handlers are currently registered.
      */
-    public function isRegistered() : bool
+    public function isRegistered(): bool
     {
         return $this->registered;
     }
@@ -119,7 +119,7 @@ final class GlobalErrorHandler
     /**
      * Handle uncaught exceptions.
      */
-    public function handleException(Throwable $throwable) : void
+    public function handleException(Throwable $throwable): void
     {
         $this->handleRuntimeFailure->handleException($throwable);
     }
@@ -129,7 +129,7 @@ final class GlobalErrorHandler
      *
      * @return false Return false to let PHP's internal error handler run for suppressed errors
      */
-    public function handleError(int $severity, string $message, string $file, int $line) : false
+    public function handleError(int $severity, string $message, string $file, int $line): false
     {
         // If error reporting is suppressed (e.g., with @), delegate to previous handler
         if ((error_reporting() & $severity) === 0) {
@@ -145,13 +145,13 @@ final class GlobalErrorHandler
         } catch (Throwable $handlerException) {
             // If the handler itself fails, log and exit
             $this->logger->critical(
-                'Error handler failed: ' . $handlerException->getMessage(),
+                'Error handler failed: '.$handlerException->getMessage(),
                 [
                     'original_error' => [
                         'severity' => $severity,
-                        'message'  => $message,
-                        'file'     => $file,
-                        'line'     => $line,
+                        'message' => $message,
+                        'file' => $file,
+                        'line' => $line,
                     ],
                     'handler_exception' => $handlerException->getMessage(),
                 ],
@@ -168,7 +168,7 @@ final class GlobalErrorHandler
     /**
      * Handle a fatal error during shutdown.
      */
-    public function handleShutdown() : void
+    public function handleShutdown(): void
     {
         $error = error_get_last();
 

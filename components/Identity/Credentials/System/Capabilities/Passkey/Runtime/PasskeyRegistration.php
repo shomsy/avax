@@ -7,7 +7,7 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runti
 final readonly class PasskeyRegistration
 {
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function __construct(public string $challengeId, public array $options) {}
 }

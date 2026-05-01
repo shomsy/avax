@@ -13,15 +13,15 @@ if (! function_exists('logger')) {
      * Log a message or get the Logger instance.
      *
      * @param string|null $message
-     * @param array|null  $context
-     * @param string      $level
+     * @param array|null $context
+     * @param string     $level
      *
      * @return LoggerInterface|null
      */
-    function logger(string|null $message = null, array|null $context = null, string $level = 'info') : LoggerInterface|null
+    function logger(string $message = null, array $context = null, string $level = 'info') : LoggerInterface|null
     {
         $context ??= [];
-        $logger  = app(LoggerInterface::class);
+        $logger = app(LoggerInterface::class);
 
         if ($message === null) {
             return $logger;

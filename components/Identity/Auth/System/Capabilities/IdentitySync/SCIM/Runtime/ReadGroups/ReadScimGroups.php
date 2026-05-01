@@ -13,7 +13,7 @@ final readonly class ReadScimGroups
     /**
      * @return list<ScimGroupProjection>
      */
-    public function execute(string $directoryId) : array
+    public function execute(string $directoryId): array
     {
         $groups = [];
 
@@ -35,7 +35,7 @@ final readonly class ReadScimGroups
             $members = $group['members'];
             usort(
                 array   : $members,
-                callback: static fn (ScimGroupMember $left, ScimGroupMember $right) : int => strcmp(string1: $left->externalId, string2: $right->externalId),
+                callback: static fn (ScimGroupMember $left, ScimGroupMember $right): int => strcmp(string1: $left->externalId, string2: $right->externalId),
             );
             $projections[] = new ScimGroupProjection(
                 directoryId: $directoryId,

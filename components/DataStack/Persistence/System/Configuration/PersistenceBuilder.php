@@ -8,7 +8,7 @@ final class PersistenceBuilder
 {
     private array $config = [];
 
-    public function getConfig() : array
+    public function getConfig(): array
     {
         return $this->config;
     }

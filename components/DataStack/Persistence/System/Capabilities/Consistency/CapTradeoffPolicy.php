@@ -53,11 +53,11 @@ enum CapTradeoff: string
     /**
      * Returns a human-readable description.
      */
-    public function description() : string
+    public function description(): string
     {
         return match ($this) {
-            self::CP       => 'Consistency over Availability: Operations may be rejected during network partitions to maintain data consistency.',
-            self::AP       => 'Availability over Consistency: Operations always succeed, but may return stale data during network partitions.',
+            self::CP => 'Consistency over Availability: Operations may be rejected during network partitions to maintain data consistency.',
+            self::AP => 'Availability over Consistency: Operations always succeed, but may return stale data during network partitions.',
             self::BALANCED => 'Balanced: Prefers consistency with graceful fallback to availability during extended partitions.',
         };
     }
@@ -65,11 +65,11 @@ enum CapTradeoff: string
     /**
      * Returns the consistency level (0.0 to 1.0).
      */
-    public function consistencyLevel() : float
+    public function consistencyLevel(): float
     {
         return match ($this) {
-            self::CP       => 1.0,
-            self::AP       => 0.3,
+            self::CP => 1.0,
+            self::AP => 0.3,
             self::BALANCED => 0.7,
         };
     }
@@ -77,11 +77,11 @@ enum CapTradeoff: string
     /**
      * Returns the availability level (0.0 to 1.0).
      */
-    public function availabilityLevel() : float
+    public function availabilityLevel(): float
     {
         return match ($this) {
-            self::CP       => 0.5,
-            self::AP       => 1.0,
+            self::CP => 0.5,
+            self::AP => 1.0,
             self::BALANCED => 0.8,
         };
     }
@@ -89,11 +89,11 @@ enum CapTradeoff: string
     /**
      * Returns whether reads should wait for the latest data.
      */
-    public function shouldWaitForConsistentRead() : bool
+    public function shouldWaitForConsistentRead(): bool
     {
         return match ($this) {
-            self::CP       => true,
-            self::AP       => false,
+            self::CP => true,
+            self::AP => false,
             self::BALANCED => true,
         };
     }
@@ -101,11 +101,11 @@ enum CapTradeoff: string
     /**
      * Returns whether writes should be rejected if consistency cannot be guaranteed.
      */
-    public function shouldRejectInconsistentWrites() : bool
+    public function shouldRejectInconsistentWrites(): bool
     {
         return match ($this) {
-            self::CP       => true,
-            self::AP       => false,
+            self::CP => true,
+            self::AP => false,
             self::BALANCED => true,
         };
     }
@@ -113,11 +113,11 @@ enum CapTradeoff: string
     /**
      * Returns the recommended conflict resolution strategy for this tradeoff.
      */
-    public function recommendedConflictStrategy() : ConflictResolution
+    public function recommendedConflictStrategy(): ConflictResolution
     {
         return match ($this) {
-            self::CP       => ConflictResolution::lastWriteWins(),
-            self::AP       => ConflictResolution::merge(),
+            self::CP => ConflictResolution::lastWriteWins(),
+            self::AP => ConflictResolution::merge(),
             self::BALANCED => ConflictResolution::lastWriteWins(),
         };
     }
@@ -125,7 +125,7 @@ enum CapTradeoff: string
     /**
      * Returns whether this tradeoff prioritizes consistency.
      */
-    public function prioritizesConsistency() : bool
+    public function prioritizesConsistency(): bool
     {
         return $this === self::CP || $this === self::BALANCED;
     }
@@ -133,7 +133,7 @@ enum CapTradeoff: string
     /**
      * Returns whether this tradeoff prioritizes availability.
      */
-    public function prioritizesAvailability() : bool
+    public function prioritizesAvailability(): bool
     {
         return $this === self::AP || $this === self::BALANCED;
     }
@@ -163,22 +163,22 @@ final readonly class CapTradeoffPolicy
          * Timeout for achieving consensus (in milliseconds).
          * For CP systems: how long to wait before giving up on consistency.
          */
-        public int   $consensusTimeoutMs = 5000,
+        public int $consensusTimeoutMs = 5000,
 
         /**
          * Whether to allow reads from potentially stale replicas.
          */
-        public bool  $allowStaleReads = false,
+        public bool $allowStaleReads = false,
 
         /**
          * Number of replicas required for a successful write.
          */
-        public int   $writeQuorum = 2,
+        public int $writeQuorum = 2,
 
         /**
          * Number of replicas required for a successful read.
          */
-        public int   $readQuorum = 2,
+        public int $readQuorum = 2,
     ) {}
 
     /**
@@ -188,8 +188,7 @@ final readonly class CapTradeoffPolicy
         int $writeQuorum = 2,
         int $readQuorum = 2,
         int $consensusTimeoutMs = 5000,
-    ) : self
-    {
+    ): self {
         return new self(
             tradeoff           : CapTradeoff::CP,
             maxStalenessSeconds: 0.0,
@@ -206,8 +205,7 @@ final readonly class CapTradeoffPolicy
     public static function highAvailability(
         float $maxStalenessSeconds = 60.0,
         bool $allowStaleReads = true,
-    ) : self
-    {
+    ): self {
         return new self(
             tradeoff           : CapTradeoff::AP,
             maxStalenessSeconds: $maxStalenessSeconds,
@@ -225,8 +223,7 @@ final readonly class CapTradeoffPolicy
         float $maxStalenessSeconds = 10.0,
         int $writeQuorum = 2,
         int $readQuorum = 2,
-    ) : self
-    {
+    ): self {
         return new self(
             tradeoff           : CapTradeoff::BALANCED,
             maxStalenessSeconds: $maxStalenessSeconds,
@@ -240,7 +237,7 @@ final readonly class CapTradeoffPolicy
     /**
      * Returns whether the policy requires quorum-based operations.
      */
-    public function requiresQuorum() : bool
+    public function requiresQuorum(): bool
     {
         return $this->writeQuorum > 1 || $this->readQuorum > 1;
     }
@@ -248,14 +245,14 @@ final readonly class CapTradeoffPolicy
     /**
      * Returns a summary of the policy.
      */
-    public function summary() : string
+    public function summary(): string
     {
         return sprintf(
             "CAP Policy: %s (C: %.1f, A: %.1f)\n"
-            . "Max Staleness: %.1fs\n"
-            . "Quorums - Write: %d, Read: %d\n"
-            . "Stale Reads: %s\n"
-            . 'Consensus Timeout: %dms',
+            ."Max Staleness: %.1fs\n"
+            ."Quorums - Write: %d, Read: %d\n"
+            ."Stale Reads: %s\n"
+            .'Consensus Timeout: %dms',
             $this->tradeoff->value,
             $this->tradeoff->consistencyLevel(),
             $this->tradeoff->availabilityLevel(),

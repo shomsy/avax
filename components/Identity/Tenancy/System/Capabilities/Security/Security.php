@@ -19,27 +19,27 @@ final readonly class Security
 {
     public function __construct(
         #[SensitiveParameter]
-        private ReadTenantSecurityConfiguration  $readTenantSecurityConfiguration,
+        private ReadTenantSecurityConfiguration $readTenantSecurityConfiguration,
         #[SensitiveParameter]
-        private ReadTenantSecurityChangeRequest  $readTenantSecurityChangeRequest,
+        private ReadTenantSecurityChangeRequest $readTenantSecurityChangeRequest,
         #[SensitiveParameter]
         private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
         #[SensitiveParameter]
-        private BeginTenantSecurityChange        $beginTenantSecurityChange,
+        private BeginTenantSecurityChange $beginTenantSecurityChange,
         #[SensitiveParameter]
-        private ApproveTenantSecurityChange      $approveTenantSecurityChange,
+        private ApproveTenantSecurityChange $approveTenantSecurityChange,
         #[SensitiveParameter]
-        private ApplyTenantSecurityChange        $applyTenantSecurityChange,
+        private ApplyTenantSecurityChange $applyTenantSecurityChange,
         #[SensitiveParameter]
-        private RollbackTenantSecurityChange     $rollbackTenantSecurityChange,
+        private RollbackTenantSecurityChange $rollbackTenantSecurityChange,
     ) {}
 
-    public function readConfiguration(string $tenantSlug) : TenantSecurityConfiguration|null
+    public function readConfiguration(string $tenantSlug): ?TenantSecurityConfiguration
     {
         return $this->readTenantSecurityConfiguration->execute(tenantSlug: $tenantSlug);
     }
 
-    public function readChangeRequest(string $changeId) : TenantSecurityChangeRequest|null
+    public function readChangeRequest(string $changeId): ?TenantSecurityChangeRequest
     {
         return $this->readTenantSecurityChangeRequest->execute(changeId: $changeId);
     }
@@ -47,7 +47,7 @@ final readonly class Security
     /**
      * @return list<TenantSecurityChangeRequest>
      */
-    public function readChangeRequests(string $tenantSlug) : array
+    public function readChangeRequests(string $tenantSlug): array
     {
         return $this->readTenantSecurityChangeRequests->execute(tenantSlug: $tenantSlug);
     }
@@ -55,22 +55,22 @@ final readonly class Security
     /**
      * @throws RandomException
      */
-    public function beginChange(BeginTenantSecurityChangeData $data) : TenantSecurityChangeRequest
+    public function beginChange(BeginTenantSecurityChangeData $data): TenantSecurityChangeRequest
     {
         return $this->beginTenantSecurityChange->execute(data: $data);
     }
 
-    public function approveChange(string $changeId, string $approvedBy) : TenantSecurityChangeRequest
+    public function approveChange(string $changeId, string $approvedBy): TenantSecurityChangeRequest
     {
         return $this->approveTenantSecurityChange->execute(changeId: $changeId, approvedBy: $approvedBy);
     }
 
-    public function applyChange(string $changeId) : TenantSecurityConfiguration
+    public function applyChange(string $changeId): TenantSecurityConfiguration
     {
         return $this->applyTenantSecurityChange->execute(changeId: $changeId);
     }
 
-    public function rollbackChange(string $changeId) : TenantSecurityConfiguration
+    public function rollbackChange(string $changeId): TenantSecurityConfiguration
     {
         return $this->rollbackTenantSecurityChange->execute(changeId: $changeId);
     }

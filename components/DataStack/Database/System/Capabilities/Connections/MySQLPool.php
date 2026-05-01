@@ -19,7 +19,7 @@ final class MySQLPool implements ConnectionPool
     ) {}
 
     #[Override]
-    public function get() : PDO
+    public function get(): PDO
     {
         if ($this->pool !== []) {
             return array_pop($this->pool);
@@ -29,7 +29,7 @@ final class MySQLPool implements ConnectionPool
     }
 
     #[Override]
-    public function release(PDO $pdo) : void
+    public function release(PDO $pdo): void
     {
         $this->pool[] = $pdo;
     }

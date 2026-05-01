@@ -108,7 +108,7 @@ final class HttpFake
         return $this;
     }
 
-    public function assertSent(string $method, string|null $url = null) : self
+    public function assertSent(string $method, string $url = null) : self
     {
         $found = false;
 
@@ -116,6 +116,7 @@ final class HttpFake
             if (strtoupper($request['method']) === strtoupper($method)) {
                 if ($url === null || $request['url'] === $url) {
                     $found = true;
+
                     break;
                 }
             }
@@ -124,7 +125,7 @@ final class HttpFake
         if (! $found) {
             throw new TestingFakeException(
                 sprintf(
-                    "HTTP %s %s was not sent",
+                    'HTTP %s %s was not sent',
                     strtoupper($method),
                     $url ?? 'request',
                 ),
@@ -134,14 +135,14 @@ final class HttpFake
         return $this;
     }
 
-    public function assertNotSent(string $method, string|null $url = null) : self
+    public function assertNotSent(string $method, string $url = null) : self
     {
         foreach ($this->requests as $request) {
             if (strtoupper($request['method']) === strtoupper($method)) {
                 if ($url === null || $request['url'] === $url) {
                     throw new TestingFakeException(
                         sprintf(
-                            "HTTP %s %s was sent unexpectedly",
+                            'HTTP %s %s was sent unexpectedly',
                             strtoupper($method),
                             $url ?? 'request',
                         ),
@@ -160,7 +161,7 @@ final class HttpFake
         if ($actual !== $count) {
             throw new TestingFakeException(
                 sprintf(
-                    "Expected %d HTTP requests, got %d",
+                    'Expected %d HTTP requests, got %d',
                     $count,
                     $actual,
                 ),

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 $avaxTxt              = '/home/shomsy/projects/avax/avax.txt';
@@ -9,7 +10,7 @@ if (! file_exists($avaxTxt)) {
 }
 
 $oldComponents = [];
-$handle        = fopen($avaxTxt, "r");
+$handle = fopen($avaxTxt, 'r');
 if ($handle) {
     while ( ($line = fgets($handle)) !== false ) {
         if (str_starts_with($line, '=== components/')) {
@@ -53,6 +54,7 @@ foreach (array_keys($oldComponents) as $oldComp) {
             if (in_array($oldComp, $subComps)) {
                 $foundInSuite   = true;
                 $foundSuiteName = $suite;
+
                 break;
             }
         }
@@ -85,6 +87,7 @@ foreach ($oldComponents as $oldComp => $oldSubComps) {
                 // We found it inside a suite
                 $currentLocation = glob($currentComponentsDir . '/' . $suite . '/' . $oldComp . '/*', GLOB_ONLYDIR);
                 $currentLocation = array_map('basename', $currentLocation);
+
                 break;
             }
         }
@@ -95,12 +98,12 @@ foreach ($oldComponents as $oldComp => $oldSubComps) {
         // List top 5 subcomponents/files that are lost
         $preview = array_slice($oldSubComps, 0, 5);
         if (! empty($preview)) {
-            $report .= "- Lost features include: `" . implode('`, `', $preview) . "`\n";
+            $report .= '- Lost features include: `' . implode('`, `', $preview) . "`\n";
         }
     } else {
         $missingSub = array_diff($oldSubComps, $currentLocation);
         // Filter out typical files like .php that might have been caught
-        $missingSub = array_filter($missingSub, fn ($s) => ! str_ends_with($s, '.php'));
+        $missingSub = array_filter($missingSub, static fn ($s) => ! str_ends_with($s, '.php'));
 
         if (empty($missingSub)) {
             $report .= "- *Fully migrated or structure matched.*\n";

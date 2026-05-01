@@ -17,7 +17,7 @@ final readonly class FindUserByCredentials
         private UserSource $source,
     ) {}
 
-    public function execute(string $email) : ?User
+    public function execute(string $email): ?User
     {
         return $this->source->findByEmail($email);
     }

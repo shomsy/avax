@@ -16,7 +16,7 @@ use ReflectionClass;
 final class SessionTest extends TestCase
 {
     private ArraySessionStore $store;
-    private SessionScope      $scope;
+    private SessionScope $scope;
 
     #[Test]
     public function session_is_not_started_initially() : void

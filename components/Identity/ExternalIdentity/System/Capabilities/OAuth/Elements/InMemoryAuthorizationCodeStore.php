@@ -24,25 +24,24 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
      * @throws RandomException
      */
     public function issue(
-        UserId                 $userId,
-        string                 $clientId,
-        string                 $redirectUri,
-        array                  $scopes,
-        DateTimeImmutable      $expiresAt,
-        string                 $state = null,
-        string                 $nonce = null,
+        UserId $userId,
+        string $clientId,
+        string $redirectUri,
+        array $scopes,
+        DateTimeImmutable $expiresAt,
+        ?string $state = null,
+        ?string $nonce = null,
         #[SensitiveParameter]
-        string                 $codeChallenge = null,
+        ?string $codeChallenge = null,
         #[SensitiveParameter]
-        PkceMethod             $codeChallengeMethod = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool                   $phishingResistant = false,
-    ) : IssuedAuthorizationCode
-    {
+        ?PkceMethod $codeChallengeMethod = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
+    ): IssuedAuthorizationCode {
         $plainCode = bin2hex(string: random_bytes(length: 32));
-        $codeId    = 'code_' . bin2hex(string: random_bytes(length: 12));
+        $codeId = 'code_'.bin2hex(string: random_bytes(length: 12));
 
-        $this->records[$codeId]                                 = new AuthorizationCodeRecord(
+        $this->records[$codeId] = new AuthorizationCodeRecord(
             codeId             : $codeId,
             clientId           : $clientId,
             userId             : $userId,
@@ -65,12 +64,12 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         );
     }
 
-    private function hash(#[SensitiveParameter] string $plainCode) : string
+    private function hash(#[SensitiveParameter] string $plainCode): string
     {
         return hash(algo: 'sha256', data: $plainCode);
     }
 
-    public function find(#[SensitiveParameter] string $plainCode) : AuthorizationCodeRecord|null
+    public function find(#[SensitiveParameter] string $plainCode): ?AuthorizationCodeRecord
     {
         $codeId = $this->hashToCodeId[$this->hash(plainCode: $plainCode)] ?? null;
 
@@ -81,7 +80,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         return $this->records[$codeId] ?? null;
     }
 
-    public function markUsed(#[SensitiveParameter] string $codeId, DateTimeImmutable $usedAt) : void
+    public function markUsed(#[SensitiveParameter] string $codeId, DateTimeImmutable $usedAt): void
     {
         $record = $this->records[$codeId] ?? null;
 
@@ -105,7 +104,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         );
     }
 
-    public function pruneExpired(DateTimeImmutable $now) : int
+    public function pruneExpired(DateTimeImmutable $now): int
     {
         $removed = 0;
 
@@ -124,7 +123,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
 
         $this->hashToCodeId = array_filter(
             array   : $this->hashToCodeId,
-            callback: fn (#[SensitiveParameter] string $codeId) : bool => isset($this->records[$codeId]),
+            callback: fn (#[SensitiveParameter] string $codeId): bool => isset($this->records[$codeId]),
         );
 
         return $removed;

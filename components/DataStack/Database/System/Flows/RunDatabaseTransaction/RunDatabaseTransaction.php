@@ -8,14 +8,14 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseC
 
 final class RunDatabaseTransaction
 {
-    public function execute(DatabaseConnection $connection, callable $work) : mixed
+    public function execute(DatabaseConnection $connection, callable $work): mixed
     {
         return $work();
     }
 
-    public function begin() : void {}
+    public function begin(): void {}
 
-    public function commit() : void {}
+    public function commit(): void {}
 
-    public function rollback() : void {}
+    public function rollback(): void {}
 }

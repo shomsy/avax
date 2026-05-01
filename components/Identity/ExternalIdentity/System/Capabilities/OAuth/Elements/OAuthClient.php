@@ -13,106 +13,115 @@ use SensitiveParameter;
  */
 final readonly class OAuthClient
 {
-    public bool                         $active;
-    public OAuthClientApprovalStatus    $approvalStatus;
-    public bool                         $backChannelLogoutSupported;
-    public bool                         $frontChannelLogoutSupported;
-    public bool                         $requestObjectSignatureRequired;
-    public bool                         $phishingResistantRequired;
-    public bool                         $workloadIdentity;
+    public bool $active;
+
+    public OAuthClientApprovalStatus $approvalStatus;
+
+    public bool $backChannelLogoutSupported;
+
+    public bool $frontChannelLogoutSupported;
+
+    public bool $requestObjectSignatureRequired;
+
+    public bool $phishingResistantRequired;
+
+    public bool $workloadIdentity;
+
     public OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod;
+
     /** @var array<string, list<string>> */
     public array $audienceScopeBoundaries;
+
     /** @var list<OAuthGrantType> */
     public array $allowedGrantTypes;
+
     /** @var list<string> */
     public array $allowedAudiences;
 
     /**
-     * @param list<string>                $redirectUris
-     * @param list<string>                $allowedScopes
-     * @param list<string>                $allowedAudiences
-     * @param list<OAuthGrantType>        $allowedGrantTypes
-     * @param array<string, list<string>> $audienceScopeBoundaries
+     * @param  list<string>  $redirectUris
+     * @param  list<string>  $allowedScopes
+     * @param  list<string>  $allowedAudiences
+     * @param  list<OAuthGrantType>  $allowedGrantTypes
+     * @param  array<string, list<string>>  $audienceScopeBoundaries
      */
     public function __construct(
-        public string                         $clientId,
-        public string                         $name,
-        public OAuthClientType                $type,
-        public array                          $redirectUris,
-        public array                          $allowedScopes,
-        public string|null                    $tenantSlug = null,
-        array                                 $allowedAudiences = null,
-        array                                 $allowedGrantTypes = null,
-        array                                 $audienceScopeBoundaries = null,
+        public string $clientId,
+        public string $name,
+        public OAuthClientType $type,
+        public array $redirectUris,
+        public array $allowedScopes,
+        public ?string $tenantSlug = null,
+        ?array $allowedAudiences = null,
+        ?array $allowedGrantTypes = null,
+        ?array $audienceScopeBoundaries = null,
         #[SensitiveParameter]
-        OAuthTokenEndpointAuthMethod          $tokenEndpointAuthMethod = null,
-        public OAuthSenderConstraintType|null $requiredSenderConstraint = null,
-        bool                                  $workloadIdentity = null,
-        bool                                  $phishingResistantRequired = null,
-        bool                                  $requestObjectSignatureRequired = null,
-        bool                                  $frontChannelLogoutSupported = null,
-        bool                                  $backChannelLogoutSupported = null,
-        OAuthClientApprovalStatus             $approvalStatus = null,
-        public DateTimeImmutable|null         $approvedAt = null,
-        public string|null                    $approvedBy = null,
-        bool                                  $active = null,
+        ?OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod = null,
+        public ?OAuthSenderConstraintType $requiredSenderConstraint = null,
+        ?bool $workloadIdentity = null,
+        ?bool $phishingResistantRequired = null,
+        ?bool $requestObjectSignatureRequired = null,
+        ?bool $frontChannelLogoutSupported = null,
+        ?bool $backChannelLogoutSupported = null,
+        ?OAuthClientApprovalStatus $approvalStatus = null,
+        public ?DateTimeImmutable $approvedAt = null,
+        public ?string $approvedBy = null,
+        ?bool $active = null,
         #[SensitiveParameter]
-        public string|null                    $secretHash = null,
+        public ?string $secretHash = null,
         #[SensitiveParameter]
-        public string|null                    $requestObjectVerificationKeyPem = null,
-    )
-    {
-        $allowedAudiences                     ??= [];
-        $allowedGrantTypes                    ??= [];
-        $audienceScopeBoundaries              ??= [];
-        $tokenEndpointAuthMethod              ??= OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC;
-        $workloadIdentity                     ??= false;
-        $phishingResistantRequired            ??= false;
-        $requestObjectSignatureRequired       ??= false;
-        $frontChannelLogoutSupported          ??= false;
-        $backChannelLogoutSupported           ??= false;
-        $approvalStatus                       ??= OAuthClientApprovalStatus::APPROVED;
-        $active                               ??= true;
-        $this->allowedAudiences               = $allowedAudiences;
-        $this->allowedGrantTypes              = $allowedGrantTypes;
-        $this->audienceScopeBoundaries        = $audienceScopeBoundaries;
-        $this->tokenEndpointAuthMethod        = $tokenEndpointAuthMethod;
-        $this->workloadIdentity               = $workloadIdentity;
-        $this->phishingResistantRequired      = $phishingResistantRequired;
+        public ?string $requestObjectVerificationKeyPem = null,
+    ) {
+        $allowedAudiences ??= [];
+        $allowedGrantTypes ??= [];
+        $audienceScopeBoundaries ??= [];
+        $tokenEndpointAuthMethod ??= OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC;
+        $workloadIdentity ??= false;
+        $phishingResistantRequired ??= false;
+        $requestObjectSignatureRequired ??= false;
+        $frontChannelLogoutSupported ??= false;
+        $backChannelLogoutSupported ??= false;
+        $approvalStatus ??= OAuthClientApprovalStatus::APPROVED;
+        $active ??= true;
+        $this->allowedAudiences = $allowedAudiences;
+        $this->allowedGrantTypes = $allowedGrantTypes;
+        $this->audienceScopeBoundaries = $audienceScopeBoundaries;
+        $this->tokenEndpointAuthMethod = $tokenEndpointAuthMethod;
+        $this->workloadIdentity = $workloadIdentity;
+        $this->phishingResistantRequired = $phishingResistantRequired;
         $this->requestObjectSignatureRequired = $requestObjectSignatureRequired;
-        $this->frontChannelLogoutSupported    = $frontChannelLogoutSupported;
-        $this->backChannelLogoutSupported     = $backChannelLogoutSupported;
-        $this->approvalStatus                 = $approvalStatus;
-        $this->active                         = $active;
+        $this->frontChannelLogoutSupported = $frontChannelLogoutSupported;
+        $this->backChannelLogoutSupported = $backChannelLogoutSupported;
+        $this->approvalStatus = $approvalStatus;
+        $this->active = $active;
     }
 
-    public function isPublic() : bool
+    public function isPublic(): bool
     {
         return $this->type === OAuthClientType::PUBLIC;
     }
 
-    public function isConfidential() : bool
+    public function isConfidential(): bool
     {
         return $this->type === OAuthClientType::CONFIDENTIAL;
     }
 
-    public function allowsRedirectUri(string $redirectUri) : bool
+    public function allowsRedirectUri(string $redirectUri): bool
     {
         return in_array(needle: $redirectUri, haystack: $this->redirectUris, strict: true);
     }
 
-    public function allowsGrantType(OAuthGrantType $grantType) : bool
+    public function allowsGrantType(OAuthGrantType $grantType): bool
     {
         return in_array(needle: $grantType, haystack: $this->allowedGrantTypes, strict: true);
     }
 
-    public function requiresAudience() : bool
+    public function requiresAudience(): bool
     {
         return $this->allowedAudiences !== [];
     }
 
-    public function allowsAudience(string|null $audience) : bool
+    public function allowsAudience(?string $audience): bool
     {
         if ($this->allowedAudiences === []) {
             return $audience === null || trim(string: $audience) === '';
@@ -126,9 +135,9 @@ final readonly class OAuthClient
     }
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
-    public function allowsAudienceScopes(string|null $audience, array $scopes) : bool
+    public function allowsAudienceScopes(?string $audience, array $scopes): bool
     {
         if (! $this->allowsScopes(scopes: $scopes)) {
             return false;
@@ -144,29 +153,29 @@ final readonly class OAuthClient
     }
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
-    public function allowsScopes(array $scopes) : bool
+    public function allowsScopes(array $scopes): bool
     {
         return array_all(array: $scopes, callback: fn ($scope) => in_array(needle: $scope, haystack: $this->allowedScopes, strict: true));
     }
 
-    public function requiresSenderConstraint() : bool
+    public function requiresSenderConstraint(): bool
     {
         return $this->requiredSenderConstraint !== null;
     }
 
-    public function isActive() : bool
+    public function isActive(): bool
     {
         return $this->active;
     }
 
-    public function isApproved() : bool
+    public function isApproved(): bool
     {
         return $this->approvalStatus === OAuthClientApprovalStatus::APPROVED;
     }
 
-    public function isPendingApproval() : bool
+    public function isPendingApproval(): bool
     {
         return $this->approvalStatus === OAuthClientApprovalStatus::PENDING_APPROVAL;
     }

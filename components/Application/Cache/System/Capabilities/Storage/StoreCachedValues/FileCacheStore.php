@@ -23,13 +23,12 @@ final readonly class FileCacheStore implements CacheStore
 
     private const int WRITE_MODE = 0o644;
 
-
     private JsonCacheSerializer $jsonCacheSerializer;
 
     public function __construct(
-        private string       $basePath,
-        private Clock        $clock = new SystemClock(),
-        JsonCacheSerializer|null $jsonCacheSerializer = null,
+        private string      $basePath,
+        private Clock       $clock = new SystemClock(),
+        JsonCacheSerializer $jsonCacheSerializer = null,
     )
     {
         $this->jsonCacheSerializer = $jsonCacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);

@@ -10,35 +10,35 @@ final class CTEBuilder
 {
     private array $ctes = [];
 
-    public function with(string $name, QueryState $queryState) : self
+    public function with(string $name, QueryState $queryState): self
     {
         $this->ctes[$name] = [
             'query' => $queryState,
-            'type'  => 'simple',
+            'type' => 'simple',
         ];
 
         return $this;
     }
 
-    public function withRecursive(string $name, QueryState $initialQuery, QueryState $recursiveQuery) : self
+    public function withRecursive(string $name, QueryState $initialQuery, QueryState $recursiveQuery): self
     {
         $this->ctes[$name] = [
-            'initial'   => $initialQuery,
+            'initial' => $initialQuery,
             'recursive' => $recursiveQuery,
-            'type'      => 'recursive',
+            'type' => 'recursive',
         ];
 
         return $this;
     }
 
-    public function getSQL() : string
+    public function getSQL(): string
     {
         $definitions = [];
         $isRecursive = false;
         foreach ($this->ctes as $name => $cte) {
             if ($cte['type'] === 'recursive') {
                 $definitions[] = sprintf('%s AS (%s UNION ALL %s)', $name, $this->buildCTE(query: $cte['initial']), $this->buildCTE(query: $cte['recursive']));
-                $isRecursive   = true;
+                $isRecursive = true;
             } else {
                 $definitions[] = sprintf('%s AS (%s)', $name, $this->buildCTE(query: $cte['query']));
             }
@@ -46,17 +46,18 @@ final class CTEBuilder
         if ($definitions === []) {
             return '';
         }
-        return 'WITH ' . ($isRecursive ? 'RECURSIVE ' : '') . implode(separator: ', ', array: $definitions);
+
+        return 'WITH '.($isRecursive ? 'RECURSIVE ' : '').implode(separator: ', ', array: $definitions);
     }
 
-    private function buildCTE(QueryState $queryState) : string
+    private function buildCTE(QueryState $queryState): string
     {
         $columns = implode(separator: ', ', array: $queryState->columns !== [] ? $queryState->columns : ['*']);
 
         return sprintf('SELECT %s FROM %s', $columns, $queryState->from);
     }
 
-    public function getCTEs() : array
+    public function getCTEs(): array
     {
         return $this->ctes;
     }

@@ -13,12 +13,12 @@ use Avax\Components\Operations\Queue\System\PublicSurface\Dispatcher;
  */
 final class RegisterQueueDependencies
 {
-    public function build() : Dispatcher
+    public function build(): Dispatcher
     {
         return new Dispatcher(
             dispatchJob: new DispatchJob(
-                             broker: new SyncQueue(),
-                         ),
+                broker: new SyncQueue,
+            ),
         );
     }
 }

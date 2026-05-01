@@ -128,7 +128,7 @@ final class HttpClientProvider
      * Create a client with strict timeouts.
      */
     public static function withStrictTimeouts(
-        string|null $baseUrl = null,
+        string $baseUrl = null,
         int    $timeoutMs = 3000,
     ) : HttpClient
     {
@@ -151,7 +151,7 @@ final class HttpClientProvider
      * @param ClientMiddlewareInterface ...$middlewares
      */
     public static function withMiddleware(
-        string|null $baseUrl = null,
+        string $baseUrl = null,
         ClientMiddlewareInterface ...$middlewares,
     ) : HttpClient
     {
@@ -164,16 +164,16 @@ final class HttpClientProvider
     /**
      * Get or create an HTTP client with the given configuration.
      *
-     * @param string|null                 $baseUrl   Base URL for requests
-     * @param RequestOptions|null         $options   Default request options
+     * @param string|null         $baseUrl Base URL for requests
+     * @param RequestOptions|null $options Default request options
      * @param HttpTransportInterface|null $transport Custom transport
      * @param array<ClientMiddlewareInterface> $middlewares Middleware to apply
-     * @param string|null                 $name      Named client identifier (for caching)
+     * @param string|null         $name    Named client identifier (for caching)
      */
     public function client(
         string                 $baseUrl = null,
         RequestOptions         $options = null,
-        HttpTransportInterface|null $transport = null,
+        HttpTransportInterface $transport = null,
         array                  $middlewares = [],
         string                 $name = null,
     ) : HttpClient

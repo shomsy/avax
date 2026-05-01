@@ -36,6 +36,7 @@ $newFiles = [];
 foreach ($files as $file) {
     if (! file_exists($file)) {
         echo "REMOVED (missing): $file\n";
+
         continue;
     }
 

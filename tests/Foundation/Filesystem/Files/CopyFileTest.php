@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Filesystem\Files;
 
+use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Filesystem\Files\CopyFile;
 use Avax\Filesystem\Files\FileNotFound;
-use Avax\Filesystem\Files\FileCopyFailed;
-use Avax\Filesystem\Disks\Local\LocalDisk;
 use Avax\Tests\TestCase;
 
 class CopyFileTest extends TestCase
@@ -19,7 +18,7 @@ class CopyFileTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
+        $this->disk     = new LocalDisk();
         $this->sourceFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/copy_source.txt';
         $this->destFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/copy_dest.txt';
     }

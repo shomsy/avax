@@ -48,7 +48,7 @@ final readonly class ListComponents
         }
 
         echo str_repeat('=', $width) . "\n";
-        echo "Total: " . count($manifests) . " component(s)\n";
+        echo 'Total: ' . count($manifests) . " component(s)\n";
     }
 
     /**

@@ -6,9 +6,9 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCa
 
 interface CacheLockStore
 {
-    public function acquire(string $key, int $ttlSeconds = 30, string|null $owner = null) : bool;
+    public function acquire(string $key, int $ttlSeconds = 30, string $owner = null) : bool;
 
-    public function release(string $key, string|null $owner = null) : void;
+    public function release(string $key, string $owner = null) : void;
 
     public function isAcquired(string $key) : bool;
 

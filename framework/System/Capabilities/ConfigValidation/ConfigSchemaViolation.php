@@ -13,9 +13,9 @@ final readonly class ConfigSchemaViolation
     public const SEVERITY_WARNING = 'warning';
 
     public function __construct(
-        public string      $severity,
-        public string      $key,
-        public string      $message,
+        public string $severity,
+        public string $key,
+        public string $message,
         public string|null $remediation = null,
     ) {}
 

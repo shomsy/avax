@@ -17,8 +17,8 @@ interface DomainEvent {}
 final class MessageBus
 {
     private static CommandBus $commandBus;
-    private static QueryBus   $queryBus;
-    private static EventBus   $eventBus;
+    private static QueryBus $queryBus;
+    private static EventBus $eventBus;
 
     public static function query(object $query) : mixed
     {

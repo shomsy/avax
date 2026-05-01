@@ -8,18 +8,18 @@ use SensitiveParameter;
 
 interface ScimDirectoryStoreInterface
 {
-    public function save(ScimDirectory $directory) : void;
+    public function save(ScimDirectory $directory): void;
 
-    public function find(string $directoryId) : ScimDirectory|null;
+    public function find(string $directoryId): ?ScimDirectory;
 
     /**
      * @return list<ScimDirectory>
      */
-    public function all() : array;
+    public function all(): array;
 
     public function verifyToken(
         string $directoryId,
         #[SensitiveParameter]
         string $plainTextToken,
-    ) : bool;
+    ): bool;
 }

@@ -5,23 +5,21 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\System\PublicSurface;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\System\Capabilities\Kubernetes\GracefulStop;
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\System\Capabilities\Kubernetes\LivenessProbe;
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\System\Capabilities\Kubernetes\ReadinessProbe;
 use Throwable;
 
 final readonly class Orchestration
 {
-    public static function liveness() : LivenessResponse
+    public static function liveness(): LivenessResponse
     {
         return new LivenessResponse(status: 'ok');
     }
 
-    public static function readiness() : ReadinessResponse
+    public static function readiness(): ReadinessResponse
     {
         $checks = [
             'database' => ReadinessCheck::check('database'),
-            'cache'    => ReadinessCheck::check('cache'),
-            'queue'    => ReadinessCheck::check('queue'),
+            'cache' => ReadinessCheck::check('cache'),
+            'queue' => ReadinessCheck::check('queue'),
         ];
 
         $allReady = ! in_array(false, array_column($checks, 'ready'));
@@ -32,12 +30,12 @@ final readonly class Orchestration
         );
     }
 
-    public static function startup() : StartupResponse
+    public static function startup(): StartupResponse
     {
         return new StartupResponse(status: 'started');
     }
 
-    public static function preStop() : void
+    public static function preStop(): void
     {
         GracefulStop::execute();
     }
@@ -49,7 +47,7 @@ final readonly class LivenessResponse
         public string $status,
     ) {}
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return ['status' => $this->status];
     }
@@ -62,18 +60,17 @@ final readonly class ReadinessResponse
 
     public function __construct(
         public string $status,
-        array         $checks = [],
-    )
-    {
+        array $checks = [],
+    ) {
         $this->checks = $checks;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'status' => $this->status,
             'checks' => array_map(
-                fn (ReadinessCheck $c) => $c->toArray(),
+                static fn (ReadinessCheck $c) => $c->toArray(),
                 $this->checks,
             ),
         ];
@@ -83,13 +80,13 @@ final readonly class ReadinessResponse
 final readonly class ReadinessCheck
 {
     public function __construct(
-        public string      $name,
-        public bool        $ready,
-        public float       $latencyMs = 0.0,
-        public string|null $error = null,
+        public string $name,
+        public bool $ready,
+        public float $latencyMs = 0.0,
+        public ?string $error = null,
     ) {}
 
-    public static function check(string $name) : self
+    public static function check(string $name): self
     {
         $start = microtime(true);
 
@@ -105,12 +102,12 @@ final readonly class ReadinessCheck
         }
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'ready'      => $this->ready,
+            'ready' => $this->ready,
             'latency_ms' => $this->latencyMs,
-            'error'      => $this->error,
+            'error' => $this->error,
         ];
     }
 }
@@ -121,7 +118,7 @@ final readonly class StartupResponse
         public string $status,
     ) {}
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return ['status' => $this->status];
     }

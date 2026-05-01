@@ -24,12 +24,12 @@ class InvalidHttpResponse extends RuntimeException
      * @param Throwable|null $previous   Previous exception for chaining
      */
     public function __construct(
-        string                $message = 'Invalid HTTP response',
-        int                   $code = 0,
-        public readonly int|null    $statusCode = null,
+        string                   $message = 'Invalid HTTP response',
+        int                      $code = 0,
+        public readonly int|null $statusCode = null,
         public readonly string|null $url = null,
         public readonly mixed $body = null,
-        Throwable             $previous = null,
+        Throwable                $previous = null,
     )
     {
         parent::__construct($message, $code, $previous);

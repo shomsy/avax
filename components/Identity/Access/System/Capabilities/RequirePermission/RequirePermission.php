@@ -25,12 +25,12 @@ final readonly class RequirePermission
      * @throws Unauthenticated
      * @throws PermissionDenied
      */
-    public function execute(UserPermission $permission) : void
+    public function execute(UserPermission $permission): void
     {
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         if (! $user->hasPermission(permission: $permission)) {

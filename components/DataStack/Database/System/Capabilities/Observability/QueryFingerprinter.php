@@ -24,7 +24,7 @@ final readonly class QueryFingerprintEntry implements Stringable
     /**
      * Checks if this fingerprint matches another query.
      */
-    public function matches(string $query) : bool
+    public function matches(string $query): bool
     {
         new self(
             pattern      : $this->pattern,
@@ -39,7 +39,7 @@ final readonly class QueryFingerprintEntry implements Stringable
      * Returns a string representation.
      */
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->pattern;
     }
@@ -66,18 +66,16 @@ final readonly class QueryFingerprinter
         /**
          * @var bool Whether to include the original query in the fingerprint entry
          */
-        private bool $includeOriginal = false
-    )
-    {
-    }
+        private bool $includeOriginal = false,
+    ) {}
 
     /**
      * Creates a fingerprint with the original query preserved.
      */
-    public function fingerprintWithOriginal(string $sql) : QueryFingerprintEntry
+    public function fingerprintWithOriginal(string $sql): QueryFingerprintEntry
     {
         $pattern = $this->normalize($sql);
-        $hash    = $this->hash($pattern);
+        $hash = $this->hash($pattern);
 
         return new QueryFingerprintEntry(
             pattern      : $pattern,
@@ -95,7 +93,7 @@ final readonly class QueryFingerprinter
      * 3. Normalizes whitespace to single spaces
      * 4. Optionally lowercases the query
      */
-    public function normalize(string $sql) : string
+    public function normalize(string $sql): string
     {
         $normalized = $sql;
 
@@ -122,7 +120,7 @@ final readonly class QueryFingerprinter
     /**
      * Computes the hash of a fingerprint pattern.
      */
-    public function hash(string $pattern) : string
+    public function hash(string $pattern): string
     {
         return hash('sha256', $pattern);
     }
@@ -133,7 +131,7 @@ final readonly class QueryFingerprinter
      * Useful when you want to group queries by structure but keep
      * the referenced objects visible.
      */
-    public function normalizeValuesOnly(string $sql) : string
+    public function normalizeValuesOnly(string $sql): string
     {
         $normalized = $sql;
 
@@ -152,7 +150,7 @@ final readonly class QueryFingerprinter
     /**
      * Checks if two queries have the same fingerprint.
      */
-    public function isSamePattern(string $sqlA, string $sqlB) : bool
+    public function isSamePattern(string $sqlA, string $sqlB): bool
     {
         return $this->fingerprint($sqlA)->hash === $this->fingerprint($sqlB)->hash;
     }
@@ -160,10 +158,10 @@ final readonly class QueryFingerprinter
     /**
      * Creates a fingerprint for a SQL query.
      */
-    public function fingerprint(string $sql) : QueryFingerprintEntry
+    public function fingerprint(string $sql): QueryFingerprintEntry
     {
         $pattern = $this->normalize($sql);
-        $hash    = $this->hash($pattern);
+        $hash = $this->hash($pattern);
 
         return new QueryFingerprintEntry(
             pattern      : $pattern,
@@ -175,16 +173,15 @@ final readonly class QueryFingerprinter
     /**
      * Groups queries by their fingerprints.
      *
-     * @param list<string> $queries
-     *
+     * @param  list<string>  $queries
      * @return array<string, list<string>> Hash => [queries...]
      */
-    public function groupByFingerprint(array $queries) : array
+    public function groupByFingerprint(array $queries): array
     {
         $groups = [];
 
         foreach ($queries as $query) {
-            $fingerprint                  = $this->fingerprint($query);
+            $fingerprint = $this->fingerprint($query);
             $groups[$fingerprint->hash][] = $query;
         }
 
@@ -194,14 +191,14 @@ final readonly class QueryFingerprinter
     /**
      * Returns the number of unique fingerprints in a list of queries.
      *
-     * @param list<string> $queries
+     * @param  list<string>  $queries
      */
-    public function uniqueCount(array $queries) : int
+    public function uniqueCount(array $queries): int
     {
         $fingerprints = [];
 
         foreach ($queries as $query) {
-            $fingerprint                      = $this->fingerprint($query);
+            $fingerprint = $this->fingerprint($query);
             $fingerprints[$fingerprint->hash] = true;
         }
 

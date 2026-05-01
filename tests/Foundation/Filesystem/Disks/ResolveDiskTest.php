@@ -39,8 +39,8 @@ class ResolveDiskTest extends TestCase
         $resolver = new ResolveDisk(
             config: new FilesystemConfig(
                         default: 'media',
-                        disks  : ['media' => ['driver' => 'local']]
-                    )
+                        disks  : ['media' => ['driver' => 'local']],
+                    ),
         );
 
         self::assertInstanceOf(LocalDisk::class, $resolver->execute());

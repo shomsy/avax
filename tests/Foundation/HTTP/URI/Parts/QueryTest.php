@@ -261,11 +261,11 @@ final class QueryTest extends TestCase
         $rendered = (string) $query;
         self::assertLessThan(
             expected: strpos($rendered, 'second'),
-            actual  : strpos($rendered, 'first')
+            actual  : strpos($rendered, 'first'),
         );
         self::assertLessThan(
             expected: strpos($rendered, 'third'),
-            actual  : strpos($rendered, 'second')
+            actual  : strpos($rendered, 'second'),
         );
     }
 

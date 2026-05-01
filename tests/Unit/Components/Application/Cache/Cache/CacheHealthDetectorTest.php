@@ -12,7 +12,6 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
@@ -35,7 +34,7 @@ final class FakeCacheStoreForHealth implements CacheStore
 
     private Clock $clock;
 
-    public function __construct(Clock|null $clock = null)
+    public function __construct(Clock $clock = null)
     {
         $this->clock = $clock ?? new SystemClock();
     }
@@ -143,17 +142,17 @@ final class CacheHealthDetectorTest extends TestCase
     // --- detect() returns health status ---
 
     private function createDetector(
-        Clock|null $clock = null,
-        int        $latencyThresholdMs = 100,
-        float      $memoryUsageThreshold = 90.0,
-        float      $hitRateThreshold = 0.5
+        Clock $clock = null,
+        int   $latencyThresholdMs = 100,
+        float $memoryUsageThreshold = 90.0,
+        float $hitRateThreshold = 0.5,
     ) : CacheHealthDetector
     {
         return CacheHealthDetector::create(
             clock               : $clock ?? new FrozenClock(Timestamp::fromUnixTime(1000000)),
             latencyThresholdMs  : $latencyThresholdMs,
             memoryUsageThreshold: $memoryUsageThreshold,
-            hitRateThreshold    : $hitRateThreshold
+            hitRateThreshold    : $hitRateThreshold,
         );
     }
 
@@ -194,7 +193,7 @@ final class CacheHealthDetectorTest extends TestCase
             latencyThresholdMs   : 100,
             memoryUsageThreshold : 90.0,
             hitRateThreshold     : 0.5,
-            statusCacheTtlSeconds: 5
+            statusCacheTtlSeconds: 5,
         );
 
         $status1 = $detector->detect($store, 'ttl-store');
@@ -346,7 +345,7 @@ final class CacheHealthDetectorTest extends TestCase
             memoryLimit    : 1024,
             keyCount       : 500,
             connectionCount: 3,
-            version        : '7.0.0'
+            version        : '7.0.0',
         );
 
         $this->assertTrue($status->connected);
@@ -364,7 +363,7 @@ final class CacheHealthDetectorTest extends TestCase
     {
         $status = CacheHealthStatus::unhealthy(
             error  : 'Connection timeout',
-            latency: 5000
+            latency: 5000,
         );
 
         $this->assertFalse($status->connected);
@@ -377,7 +376,7 @@ final class CacheHealthDetectorTest extends TestCase
         $status = CacheHealthStatus::degraded(
             error  : 'High latency',
             latency: 200,
-            hitRate: 0.3
+            hitRate: 0.3,
         );
 
         $this->assertTrue($status->connected);
@@ -393,7 +392,7 @@ final class CacheHealthDetectorTest extends TestCase
         $status = CacheHealthStatus::healthy(
             latency    : 10,
             memoryUsage: 50.0,
-            hitRate    : 0.8
+            hitRate    : 0.8,
         );
 
         $this->assertTrue($status->isHealthy());
@@ -410,7 +409,7 @@ final class CacheHealthDetectorTest extends TestCase
     {
         $status = CacheHealthStatus::degraded(
             error  : 'Slow',
-            latency: 200
+            latency: 200,
         );
 
         $this->assertFalse($status->isHealthy());
@@ -423,7 +422,7 @@ final class CacheHealthDetectorTest extends TestCase
             latency    : 0,
             memoryUsage: 95.0,
             hitRate    : 1.0,
-            lastCheck  : Timestamp::fromUnixTime(1000000)
+            lastCheck  : Timestamp::fromUnixTime(1000000),
         );
 
         $this->assertFalse($status->isHealthy());
@@ -436,7 +435,7 @@ final class CacheHealthDetectorTest extends TestCase
             latency    : 0,
             memoryUsage: 0.0,
             hitRate    : 0.2,
-            lastCheck  : Timestamp::fromUnixTime(1000000)
+            lastCheck  : Timestamp::fromUnixTime(1000000),
         );
 
         $this->assertFalse($status->isHealthy());
@@ -446,7 +445,7 @@ final class CacheHealthDetectorTest extends TestCase
     {
         $status = CacheHealthStatus::degraded(
             error  : 'Slow',
-            latency: 50
+            latency: 50,
         );
 
         // With relaxed threshold, should be healthy
@@ -460,7 +459,7 @@ final class CacheHealthDetectorTest extends TestCase
     {
         $status = CacheHealthStatus::degraded(
             error  : 'High latency',
-            latency: 200
+            latency: 200,
         );
 
         $this->assertTrue($status->isDegraded());
@@ -471,7 +470,7 @@ final class CacheHealthDetectorTest extends TestCase
         $status = CacheHealthStatus::healthy(
             latency    : 10,
             memoryUsage: 50.0,
-            hitRate    : 0.8
+            hitRate    : 0.8,
         );
 
         $this->assertFalse($status->isDegraded());
@@ -517,7 +516,7 @@ final class CacheHealthDetectorTest extends TestCase
             memoryUsage: 500.0,
             hitRate    : 1.0,
             lastCheck  : Timestamp::fromUnixTime(1000000),
-            memoryLimit: 1000
+            memoryLimit: 1000,
         );
 
         $this->assertSame(50.0, $status->getMemoryUsagePercent());
@@ -538,7 +537,7 @@ final class CacheHealthDetectorTest extends TestCase
             memoryUsage: 96.0,
             hitRate    : 1.0,
             lastCheck  : Timestamp::fromUnixTime(1000000),
-            memoryLimit: 100
+            memoryLimit: 100,
         );
 
         $this->assertTrue($critical->isMemoryCritical());
@@ -555,7 +554,7 @@ final class CacheHealthDetectorTest extends TestCase
             memoryUsage: 85.0,
             hitRate    : 1.0,
             lastCheck  : Timestamp::fromUnixTime(1000000),
-            memoryLimit: 100
+            memoryLimit: 100,
         );
 
         $this->assertTrue($high->isMemoryHigh());
@@ -580,7 +579,7 @@ final class CacheHealthDetectorTest extends TestCase
             latency    : 0,
             memoryUsage: 0.0,
             hitRate    : 0.2,
-            lastCheck  : Timestamp::fromUnixTime(1000000)
+            lastCheck  : Timestamp::fromUnixTime(1000000),
         );
 
         $this->assertTrue($status->isHitRateLow());
@@ -599,7 +598,7 @@ final class CacheHealthDetectorTest extends TestCase
             memoryLimit    : 1024,
             keyCount       : 100,
             connectionCount: 2,
-            version        : '6.2.0'
+            version        : '6.2.0',
         );
 
         $array = $status->toArray();

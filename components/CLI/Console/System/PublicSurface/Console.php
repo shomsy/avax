@@ -22,13 +22,11 @@ class Console
 
     private readonly string $appVersion;
 
-
     public function __construct(
-        string|null $name = null,
-        string|null $version = null,
-        private readonly ConsoleOutput $consoleOutput = new ConsoleOutput(),
-    )
-    {
+        ?string $name = null,
+        ?string $version = null,
+        private readonly ConsoleOutput $consoleOutput = new ConsoleOutput,
+    ) {
         $this->appName = $name ?? 'Avax Console';
         $this->appVersion = $version ?? '1.0.0';
     }
@@ -36,7 +34,7 @@ class Console
     /**
      * Register a command instance.
      */
-    public function register(Command $command) : self
+    public function register(Command $command): self
     {
         $this->commands[$command->getName()] = $command;
 
@@ -46,7 +44,7 @@ class Console
     /**
      * Check if a command is registered.
      */
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->commands[$name]);
     }
@@ -54,7 +52,7 @@ class Console
     /**
      * Resolve a command by name.
      */
-    public function resolve(string $name) : ?Command
+    public function resolve(string $name): ?Command
     {
         return $this->commands[$name] ?? null;
     }
@@ -62,7 +60,7 @@ class Console
     /**
      * Get all registered commands.
      */
-    public function getCommands() : array
+    public function getCommands(): array
     {
         return $this->commands;
     }
@@ -72,7 +70,7 @@ class Console
      *
      * Parses argv, resolves the command, and executes it.
      */
-    public function run(array|null $argv = null) : int
+    public function run(?array $argv = null): int
     {
         $argv ??= $_SERVER['argv'] ?? [];
 
@@ -121,7 +119,7 @@ class Console
     /**
      * List all registered commands.
      */
-    public function list() : void
+    public function list(): void
     {
         $this->consoleOutput->line(sprintf('%s version %s', $this->appName, $this->appVersion));
         $this->consoleOutput->newLine();
@@ -159,7 +157,7 @@ class Console
     /**
      * Get the output instance.
      */
-    public function getOutput() : ConsoleOutput
+    public function getOutput(): ConsoleOutput
     {
         return $this->consoleOutput;
     }

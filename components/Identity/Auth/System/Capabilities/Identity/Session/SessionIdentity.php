@@ -23,59 +23,64 @@ use SensitiveParameter;
  */
 final class SessionIdentity implements SessionIdentityInterface
 {
-    private string                     $issuedAtKey          = 'auth_session_issued_at';
-    private string                     $phishingResistantKey = 'auth_phishing_resistant';
-    private string                     $mfaVerifiedAtKey     = 'auth_mfa_verified_at';
-    private string                     $sessionKey           = 'auth_user_id';
-    private readonly SessionLifetime   $lifetime;
+    private string $issuedAtKey = 'auth_session_issued_at';
+
+    private string $phishingResistantKey = 'auth_phishing_resistant';
+
+    private string $mfaVerifiedAtKey = 'auth_mfa_verified_at';
+
+    private string $sessionKey = 'auth_user_id';
+
+    private readonly SessionLifetime $lifetime;
+
     private readonly AuditLogInterface $auditLog;
-    private readonly Clock             $clock;
+
+    private readonly Clock $clock;
+
     private readonly SessionStoreInterface $store;
 
     public function __construct(
-        SessionStoreInterface|null $store = null,
-        Clock|null                 $clock = null,
-        AuditLogInterface|null     $auditLog = null,
-        SessionLifetime|null       $lifetime = null,
+        ?SessionStoreInterface $store = null,
+        ?Clock $clock = null,
+        ?AuditLogInterface $auditLog = null,
+        ?SessionLifetime $lifetime = null,
         #[SensitiveParameter]
-        private readonly SessionRegistryInterface|null $sessionRegistry = null,
+        private readonly ?SessionRegistryInterface $sessionRegistry = null,
         #[SensitiveParameter]
-        string|null                $sessionKey = null,
-        string|null                $mfaVerifiedAtKey = null,
-        string|null                $phishingResistantKey = null,
-        string|null                $issuedAtKey = null,
-        private readonly string                        $lastSeenAtKey = 'auth_session_last_seen_at',
-    )
-    {
-        $store                ??= new NativeSessionStore();
-        $clock                ??= new Clock();
-        $auditLog             ??= new NullAuditLog();
-        $lifetime             ??= new SessionLifetime();
-        $sessionKey           ??= 'auth_user_id';
-        $mfaVerifiedAtKey     ??= 'auth_mfa_verified_at';
+        ?string $sessionKey = null,
+        ?string $mfaVerifiedAtKey = null,
+        ?string $phishingResistantKey = null,
+        ?string $issuedAtKey = null,
+        private readonly string $lastSeenAtKey = 'auth_session_last_seen_at',
+    ) {
+        $store ??= new NativeSessionStore;
+        $clock ??= new Clock;
+        $auditLog ??= new NullAuditLog;
+        $lifetime ??= new SessionLifetime;
+        $sessionKey ??= 'auth_user_id';
+        $mfaVerifiedAtKey ??= 'auth_mfa_verified_at';
         $phishingResistantKey ??= 'auth_phishing_resistant';
-        $issuedAtKey          ??= 'auth_session_issued_at';
-        $this->store                = $store;
-        $this->clock                = $clock;
-        $this->auditLog             = $auditLog;
-        $this->lifetime             = $lifetime;
-        $this->sessionKey           = $sessionKey;
-        $this->mfaVerifiedAtKey     = $mfaVerifiedAtKey;
+        $issuedAtKey ??= 'auth_session_issued_at';
+        $this->store = $store;
+        $this->clock = $clock;
+        $this->auditLog = $auditLog;
+        $this->lifetime = $lifetime;
+        $this->sessionKey = $sessionKey;
+        $this->mfaVerifiedAtKey = $mfaVerifiedAtKey;
         $this->phishingResistantKey = $phishingResistantKey;
-        $this->issuedAtKey          = $issuedAtKey;
+        $this->issuedAtKey = $issuedAtKey;
     }
 
     /**
      * @throws DateMalformedStringException
      */
     public function issue(
-        int               $userId,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool              $phishingResistant = false,
-    ) : string|null
-    {
+        int $userId,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
+    ): ?string {
         $sessionId = $this->store->regenerate();
-        $now       = $this->clock->now();
+        $now = $this->clock->now();
 
         $this->store->put(key: $this->sessionKey, value: $userId);
         $this->store->put(key: $this->mfaVerifiedAtKey, value: $mfaVerifiedAt?->format(format: DATE_ATOM));
@@ -85,13 +90,13 @@ final class SessionIdentity implements SessionIdentityInterface
 
         if ($sessionId !== '') {
             $this->sessionRegistry?->track(record: new SessionRecord(
-                                                       sessionId        : $sessionId,
-                                                       userId           : new UserId(value: $userId),
-                                                       createdAt        : $now,
-                                                       lastSeenAt       : $now,
-                                                       idleExpiresAt    : $now->modify(modifier: "+{$this->lifetime->idleTimeoutSeconds} seconds"),
-                                                       absoluteExpiresAt: $now->modify(modifier: "+{$this->lifetime->absoluteTimeoutSeconds} seconds"),
-                                                   ));
+                sessionId        : $sessionId,
+                userId           : new UserId(value: $userId),
+                createdAt        : $now,
+                lastSeenAt       : $now,
+                idleExpiresAt    : $now->modify(modifier: "+{$this->lifetime->idleTimeoutSeconds} seconds"),
+                absoluteExpiresAt: $now->modify(modifier: "+{$this->lifetime->absoluteTimeoutSeconds} seconds"),
+            ));
         }
 
         return $sessionId !== '' ? $sessionId : null;
@@ -100,7 +105,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function captureCurrentSession(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : void
+    public function captureCurrentSession(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): void
     {
         $sessionId = $this->currentSessionId();
 
@@ -119,15 +124,15 @@ final class SessionIdentity implements SessionIdentityInterface
 
             $now = $this->clock->now();
             $this->sessionRegistry->track(record: new SessionRecord(
-                                                      sessionId        : $sessionId,
-                                                      userId           : new UserId(value: $userId),
-                                                      createdAt        : $now,
-                                                      lastSeenAt       : $now,
-                                                      idleExpiresAt    : $now->modify(modifier: "+{$this->lifetime->idleTimeoutSeconds} seconds"),
-                                                      absoluteExpiresAt: $now->modify(modifier: "+{$this->lifetime->absoluteTimeoutSeconds} seconds"),
-                                                      ipCreated        : $ipAddress,
-                                                      userAgentCreated : $userAgent,
-                                                  ));
+                sessionId        : $sessionId,
+                userId           : new UserId(value: $userId),
+                createdAt        : $now,
+                lastSeenAt       : $now,
+                idleExpiresAt    : $now->modify(modifier: "+{$this->lifetime->idleTimeoutSeconds} seconds"),
+                absoluteExpiresAt: $now->modify(modifier: "+{$this->lifetime->absoluteTimeoutSeconds} seconds"),
+                ipCreated        : $ipAddress,
+                userAgentCreated : $userAgent,
+            ));
 
             return;
         }
@@ -135,7 +140,7 @@ final class SessionIdentity implements SessionIdentityInterface
         $this->sessionRegistry->save(record: $record->withClientMetadata(ipAddress: $ipAddress, userAgent: $userAgent));
     }
 
-    public function currentSessionId() : string|null
+    public function currentSessionId(): ?string
     {
         return $this->store->id();
     }
@@ -143,7 +148,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function resolveUserId() : int|null
+    public function resolveUserId(): ?int
     {
         if (! $this->isSessionActive()) {
             return null;
@@ -171,7 +176,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    private function isSessionActive() : bool
+    private function isSessionActive(): bool
     {
         $sessionId = $this->currentSessionId();
 
@@ -197,7 +202,7 @@ final class SessionIdentity implements SessionIdentityInterface
             }
         }
 
-        $issuedAt   = $this->readDate(key: $this->issuedAtKey);
+        $issuedAt = $this->readDate(key: $this->issuedAtKey);
         $lastSeenAt = $this->readDate(key: $this->lastSeenAtKey);
 
         if ($issuedAt === null || $lastSeenAt === null) {
@@ -225,16 +230,16 @@ final class SessionIdentity implements SessionIdentityInterface
         return true;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->store->invalidate();
     }
 
-    private function expire(string $reason) : void
+    private function expire(string $reason): void
     {
         $storedUserId = $this->store->get(key: $this->sessionKey);
-        $sessionId    = $this->currentSessionId();
-        $userId       = is_int(value: $storedUserId)
+        $sessionId = $this->currentSessionId();
+        $userId = is_int(value: $storedUserId)
             ? $storedUserId
             : (is_string(value: $storedUserId) && ctype_digit(text: $storedUserId) ? (int) $storedUserId : null);
 
@@ -243,17 +248,17 @@ final class SessionIdentity implements SessionIdentityInterface
         }
 
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.session.expired',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'user_id' => $userId,
-                                                           'reason'  => $reason,
-                                                       ],
-                                       ));
+            name      : 'auth.session.expired',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'user_id' => $userId,
+                'reason' => $reason,
+            ],
+        ));
         $this->clear();
     }
 
-    private function readDate(string $key) : DateTimeImmutable|null
+    private function readDate(string $key): ?DateTimeImmutable
     {
         $stored = $this->store->get(key: $key);
 
@@ -271,7 +276,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    private function touch() : void
+    private function touch(): void
     {
         $now = $this->clock->now();
         $this->store->put(key: $this->lastSeenAtKey, value: $now->format(format: DATE_ATOM));
@@ -294,7 +299,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function resolveMfaVerifiedAt() : DateTimeImmutable|null
+    public function resolveMfaVerifiedAt(): ?DateTimeImmutable
     {
         if (! $this->isSessionActive()) {
             return null;
@@ -316,7 +321,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function resolvePhishingResistant() : bool
+    public function resolvePhishingResistant(): bool
     {
         if (! $this->isSessionActive()) {
             return false;

@@ -14,31 +14,31 @@ use RuntimeException;
  */
 abstract class Seeder
 {
-    protected QueryBuilder|null $builder = null;
+    protected ?QueryBuilder $builder = null;
 
     /**
      * Seed the given seeder class.
      */
-    public function call(string $class) : void
+    public function call(string $class): void
     {
         basename(path: $class);
         echo sprintf('[36mSeeding:[0m %s%s', $class, PHP_EOL);
-        (new $class())->withBuilder(builder: $this->builder())->run();
+        (new $class)->withBuilder(builder: $this->builder())->run();
     }
 
     /**
      * Run the database seeds.
      */
-    abstract public function run() : void;
+    abstract public function run(): void;
 
-    public function withBuilder(QueryBuilder $queryBuilder) : static
+    public function withBuilder(QueryBuilder $queryBuilder): static
     {
         $this->builder = $queryBuilder;
 
         return $this;
     }
 
-    protected function builder() : QueryBuilder
+    protected function builder(): QueryBuilder
     {
         if (! $this->builder instanceof QueryBuilder) {
             throw new RuntimeException(message: 'Seeder requires an injected QueryBuilder before it can run.');
@@ -50,7 +50,7 @@ abstract class Seeder
     /**
      * Get a query builder instance for a table.
      */
-    protected function command(string $table) : QueryBuilder
+    protected function command(string $table): QueryBuilder
     {
         return $this->builder()->from(table: $table);
     }

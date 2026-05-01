@@ -9,21 +9,21 @@ use DateTimeImmutable;
 
 final readonly class CronExpression
 {
-    public static function matches(string $expression) : bool
+    public static function matches(string $expression): bool
     {
         $cron = new CronLib($expression);
 
         return $cron->isDue();
     }
 
-    public static function nextRun(string $expression) : DateTimeImmutable
+    public static function nextRun(string $expression): DateTimeImmutable
     {
         $cron = new CronLib($expression);
 
         return $cron->getNextRunDate();
     }
 
-    public static function isValid(string $expression) : bool
+    public static function isValid(string $expression): bool
     {
         return CronLib::isValidExpression($expression);
     }

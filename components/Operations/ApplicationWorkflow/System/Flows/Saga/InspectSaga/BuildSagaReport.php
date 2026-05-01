@@ -9,7 +9,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Inspe
  */
 final readonly class BuildSagaReport
 {
-    public function build(SagaTimeline $timeline) : SagaReport
+    public function build(SagaTimeline $timeline): SagaReport
     {
         return new SagaReport(instanceId: $timeline->instanceId, events: $timeline->events);
     }

@@ -15,8 +15,8 @@ final readonly class GracefulShutdown
             return;
         }
 
-        pcntl_signal(SIGTERM, fn () => ShutdownSequence::execute($timeoutSeconds));
-        pcntl_signal(SIGINT, fn () => ShutdownSequence::execute($timeoutSeconds));
+        pcntl_signal(SIGTERM, static fn () => ShutdownSequence::execute($timeoutSeconds));
+        pcntl_signal(SIGINT, static fn () => ShutdownSequence::execute($timeoutSeconds));
     }
 
     public static function sequence() : ShutdownSequence

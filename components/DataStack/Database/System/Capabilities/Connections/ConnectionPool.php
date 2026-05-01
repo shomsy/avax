@@ -8,7 +8,7 @@ use PDO;
 
 interface ConnectionPool
 {
-    public function get() : PDO;
+    public function get(): PDO;
 
-    public function release(PDO $pdo) : void;
+    public function release(PDO $pdo): void;
 }

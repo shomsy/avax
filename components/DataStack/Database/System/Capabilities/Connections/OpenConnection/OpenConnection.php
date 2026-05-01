@@ -18,16 +18,16 @@ final readonly class OpenConnection
 {
     public function __construct(
         private BuildPhysicalConnection $buildPhysicalConnection,
-        private EventBus|null       $eventBus = null,
-        private ExecutionScope|null $executionScope = null,
+        private ?EventBus $eventBus = null,
+        private ?ExecutionScope $executionScope = null,
     ) {}
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      *
      * @throws Throwable
      */
-    public function using(array $config) : DatabaseConnection
+    public function using(array $config): DatabaseConnection
     {
         $label = $config['name'] ?? 'default';
         $scope = $this->executionScope ?? ExecutionScope::fresh();
@@ -36,23 +36,23 @@ final readonly class OpenConnection
             $connection = $this->buildPhysicalConnection->from(config: $config);
 
             $this->eventBus?->dispatch(event: new ConnectionOpened(
-                                                  connectionName: $label,
-                                                  correlationId : $scope->correlationId,
-                                              ));
+                connectionName: $label,
+                correlationId : $scope->correlationId,
+            ));
 
             return $connection;
         } catch (Throwable $throwable) {
             $this->eventBus?->dispatch(event: new ConnectionFailed(
-                                                  connectionName: $label,
-                                                  exception     : $throwable,
-                                                  correlationId : $scope->correlationId,
-                                              ));
+                connectionName: $label,
+                exception     : $throwable,
+                correlationId : $scope->correlationId,
+            ));
 
             throw $throwable;
         }
     }
 
-    public function withEvents(EventBus $eventBus) : self
+    public function withEvents(EventBus $eventBus): self
     {
         return new self(
             buildPhysicalConnection: $this->buildPhysicalConnection,
@@ -61,7 +61,7 @@ final readonly class OpenConnection
         );
     }
 
-    public function withScope(ExecutionScope $executionScope) : self
+    public function withScope(ExecutionScope $executionScope): self
     {
         return new self(
             buildPhysicalConnection: $this->buildPhysicalConnection,

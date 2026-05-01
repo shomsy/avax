@@ -14,7 +14,8 @@ use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed
  */
 final readonly class EncryptedPayload
 {
-    private const SEPARATOR      = ':';
+    private const SEPARATOR = ':';
+
     private const VERSION_PREFIX = 'v1';
 
     public function __construct(
@@ -29,23 +30,23 @@ final readonly class EncryptedPayload
      *
      * @throws DecryptionFailed if the payload format is invalid or tampered
      */
-    public static function deserialize(string $serialized) : self
+    public static function deserialize(string $serialized): self
     {
         $parts = explode(self::SEPARATOR, $serialized);
 
         if (count($parts) !== 5) {
-            throw new DecryptionFailed('Invalid encrypted payload format: expected 5 parts, got ' . count($parts));
+            throw new DecryptionFailed('Invalid encrypted payload format: expected 5 parts, got '.count($parts));
         }
 
         [$version, $cipherTextB64, $ivB64, $tagB64, $keyVersion] = $parts;
 
         if ($version !== self::VERSION_PREFIX) {
-            throw new DecryptionFailed('Unknown payload version: ' . $version);
+            throw new DecryptionFailed('Unknown payload version: '.$version);
         }
 
         $cipherText = base64_decode($cipherTextB64, true);
-        $iv         = base64_decode($ivB64, true);
-        $tag        = base64_decode($tagB64, true);
+        $iv = base64_decode($ivB64, true);
+        $tag = base64_decode($tagB64, true);
 
         if ($cipherText === false || $iv === false || $tag === false) {
             throw new DecryptionFailed('Invalid encrypted payload: contains malformed base64 data');
@@ -57,7 +58,7 @@ final readonly class EncryptedPayload
     /**
      * Get the encrypted cipher text.
      */
-    public function cipherText() : string
+    public function cipherText(): string
     {
         return $this->cipherText;
     }
@@ -65,7 +66,7 @@ final readonly class EncryptedPayload
     /**
      * Get the initialization vector.
      */
-    public function iv() : string
+    public function iv(): string
     {
         return $this->iv;
     }
@@ -73,7 +74,7 @@ final readonly class EncryptedPayload
     /**
      * Get the authentication tag (GCM).
      */
-    public function tag() : string
+    public function tag(): string
     {
         return $this->tag;
     }
@@ -81,7 +82,7 @@ final readonly class EncryptedPayload
     /**
      * Get the key version used for encryption.
      */
-    public function keyVersion() : string
+    public function keyVersion(): string
     {
         return $this->keyVersion;
     }
@@ -91,7 +92,7 @@ final readonly class EncryptedPayload
      *
      * Format: v1:<cipherTextBase64>:<ivBase64>:<tagBase64>:<keyVersion>
      */
-    public function serialize() : string
+    public function serialize(): string
     {
         return implode(self::SEPARATOR, [
             self::VERSION_PREFIX,

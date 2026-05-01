@@ -12,7 +12,7 @@ class Confirm
     /**
      * Ask a yes/no question and return boolean.
      */
-    public static function ask(string $question, bool $default = false) : bool
+    public static function ask(string $question, bool $default = false): bool
     {
         $defaultStr = $default ? 'yes' : 'no';
         echo sprintf('%s (yes/no) [%s]: ', $question, $defaultStr);
@@ -31,7 +31,7 @@ class Confirm
     /**
      * Read a line from stdin.
      */
-    private static function readLine() : string
+    private static function readLine(): string
     {
         $handle = fopen('php://stdin', 'r');
         if ($handle === false) {

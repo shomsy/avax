@@ -33,17 +33,17 @@ interface ConnectionPoolInterface
      *
      * @return DatabaseConnection A ready-to-use tool to talk to your database.
      */
-    public function acquire() : DatabaseConnection;
+    public function acquire(): DatabaseConnection;
 
     /**
      * Hand a database connection back to the pool so others can use it.
      *
-     * @param DatabaseConnection $databaseConnection The tool you are finished using.
+     * @param  DatabaseConnection  $databaseConnection  The tool you are finished using.
      */
-    public function release(DatabaseConnection $databaseConnection) : void;
+    public function release(DatabaseConnection $databaseConnection): void;
 
     /**
      * Get the nickname of this pool.
      */
-    public function getName() : string;
+    public function getName(): string;
 }

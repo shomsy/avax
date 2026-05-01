@@ -14,7 +14,7 @@ final readonly class Expression implements Stringable
     public string $value;
 
     /**
-     * @param string $value The raw technical SQL fragment to be injected literally.
+     * @param  string  $value  The raw technical SQL fragment to be injected literally.
      */
     public function __construct(string $value)
     {
@@ -30,7 +30,7 @@ final readonly class Expression implements Stringable
      *
      * @return string The raw SQL instruction.
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -44,7 +44,7 @@ final readonly class Expression implements Stringable
      *
      * @return string The raw SQL fragment.
      */
-    public function getValue() : string
+    public function getValue(): string
     {
         return $this->value;
     }

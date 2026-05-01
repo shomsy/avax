@@ -10,7 +10,7 @@ use DateTimeImmutable;
 final readonly class ScimProvisionedIdentity
 {
     /**
-     * @param list<string> $groups
+     * @param  list<string>  $groups
      */
     public function __construct(public string $directoryId, public string $externalId, public UserId $userId, public string $fingerprint, public array $groups, public ScimAccountState $state, public DateTimeImmutable $synchronizedAt) {}
 }

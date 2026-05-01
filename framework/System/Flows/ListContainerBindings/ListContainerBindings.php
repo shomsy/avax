@@ -36,7 +36,7 @@ final readonly class ListContainerBindings
         }
 
         echo str_repeat('-', $width) . "\n";
-        echo "Total: " . count($bindings) . " bindings\n";
+        echo 'Total: ' . count($bindings) . " bindings\n";
     }
 
     /**

@@ -12,44 +12,44 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Provisio
 final readonly class Provisioning
 {
     public function __construct(
-        private SuspendUser|null     $suspendUser,
-        private ReactivateUser|null  $reactivateUser,
-        private DeprovisionUser|null $deprovisionUser,
+        private ?SuspendUser $suspendUser,
+        private ?ReactivateUser $reactivateUser,
+        private ?DeprovisionUser $deprovisionUser,
     ) {}
 
-    public function isConfigured() : bool
+    public function isConfigured(): bool
     {
         return $this->suspendUser !== null
             && $this->reactivateUser !== null
             && $this->deprovisionUser !== null;
     }
 
-    public function suspendUser(int $userId) : void
+    public function suspendUser(int $userId): void
     {
         $this->suspendUserOrFail()->execute(userId: $userId);
     }
 
-    private function suspendUserOrFail() : SuspendUser
+    private function suspendUserOrFail(): SuspendUser
     {
         return $this->suspendUser ?? throw IdentitySyncCapabilityUnavailable::provisioning(operation: 'suspend_user');
     }
 
-    public function reactivateUser(int $userId) : void
+    public function reactivateUser(int $userId): void
     {
         $this->reactivateUserOrFail()->execute(userId: $userId);
     }
 
-    private function reactivateUserOrFail() : ReactivateUser
+    private function reactivateUserOrFail(): ReactivateUser
     {
         return $this->reactivateUser ?? throw IdentitySyncCapabilityUnavailable::provisioning(operation: 'reactivate_user');
     }
 
-    public function deprovisionUser(int $userId) : void
+    public function deprovisionUser(int $userId): void
     {
         $this->deprovisionUserOrFail()->execute(userId: $userId);
     }
 
-    private function deprovisionUserOrFail() : DeprovisionUser
+    private function deprovisionUserOrFail(): DeprovisionUser
     {
         return $this->deprovisionUser ?? throw IdentitySyncCapabilityUnavailable::provisioning(operation: 'deprovision_user');
     }

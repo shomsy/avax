@@ -8,14 +8,14 @@ use DateTimeImmutable;
 
 final readonly class PasskeyChallengeRecord
 {
-    public function __construct(public string $challengeId, public string $challenge, public PasskeyChallengePurpose $purpose, public DateTimeImmutable $expiresAt, public int|null $userId = null, public DateTimeImmutable|null $usedAt = null) {}
+    public function __construct(public string $challengeId, public string $challenge, public PasskeyChallengePurpose $purpose, public DateTimeImmutable $expiresAt, public ?int $userId = null, public ?DateTimeImmutable $usedAt = null) {}
 
-    public function isExpiredAt(DateTimeImmutable $moment) : bool
+    public function isExpiredAt(DateTimeImmutable $moment): bool
     {
         return $this->expiresAt <= $moment;
     }
 
-    public function wasUsed() : bool
+    public function wasUsed(): bool
     {
         return $this->usedAt !== null;
     }

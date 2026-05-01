@@ -13,12 +13,12 @@ final readonly class PullValue
         private array $items = [],
     ) {}
 
-    public function __invoke(string $key) : mixed
+    public function __invoke(string $key): mixed
     {
         return $this->pull(key: $key);
     }
 
-    public function pull(string $key) : mixed
+    public function pull(string $key): mixed
     {
         $value = $this->items[$key] ?? null;
 
@@ -32,7 +32,7 @@ final readonly class PullValue
         return [$value, $this->items];
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

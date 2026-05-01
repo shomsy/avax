@@ -15,23 +15,23 @@ final class InMemoryAttemptThrottleStore implements AttemptThrottleStoreInterfac
     /** @var array<string, int> */
     private array $lastAttemptTimes = [];
 
-    public function get(string $key) : int
+    public function get(string $key): int
     {
         return $this->attempts[$key] ?? 0;
     }
 
-    public function increment(string $key, int $timestamp) : void
+    public function increment(string $key, int $timestamp): void
     {
-        $this->attempts[$key]         = ($this->attempts[$key] ?? 0) + 1;
+        $this->attempts[$key] = ($this->attempts[$key] ?? 0) + 1;
         $this->lastAttemptTimes[$key] = $timestamp;
     }
 
-    public function reset(string $key) : void
+    public function reset(string $key): void
     {
         unset($this->attempts[$key], $this->lastAttemptTimes[$key]);
     }
 
-    public function getLastAttemptTime(string $key) : int
+    public function getLastAttemptTime(string $key): int
     {
         return $this->lastAttemptTimes[$key] ?? 0;
     }

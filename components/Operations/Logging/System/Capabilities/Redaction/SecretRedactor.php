@@ -101,12 +101,12 @@ final readonly class SecretRedactor
 
     /**
      * @param string $redactionMask The replacement string for redacted values
-     * @param bool   $redactEmails  Whether to redact email addresses
+     * @param bool $redactEmails Whether to redact email addresses
      * @param list<string> $additionalSensitiveKeys Additional sensitive keys to redact
      */
     public function __construct(
         private string $redactionMask = self::REDACTED,
-        private bool  $redactEmails = false,
+        private bool $redactEmails = false,
         private array $additionalSensitiveKeys = [],
     ) {}
 

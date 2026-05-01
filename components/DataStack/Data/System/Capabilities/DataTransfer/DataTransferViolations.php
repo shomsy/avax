@@ -18,34 +18,34 @@ use Traversable;
 final readonly class DataTransferViolations implements Countable, IteratorAggregate, JsonSerializable
 {
     /**
-     * @param DataTransferViolation[] $violations
+     * @param  DataTransferViolation[]  $violations
      */
     public function __construct(
         private array $violations = [],
     ) {}
 
-    public static function empty() : self
+    public static function empty(): self
     {
         return new self([]);
     }
 
-    public static function from(array $violations) : self
+    public static function from(array $violations): self
     {
         return new self($violations);
     }
 
-    public function add(DataTransferViolation $dataTransferViolation) : self
+    public function add(DataTransferViolation $dataTransferViolation): self
     {
         return new self([...$this->violations, $dataTransferViolation]);
     }
 
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->violations === [];
     }
 
     #[Override]
-    public function count() : int
+    public function count(): int
     {
         return count($this->violations);
     }
@@ -54,16 +54,16 @@ final readonly class DataTransferViolations implements Countable, IteratorAggreg
      * @return Traversable<int, DataTransferViolation>
      */
     #[Override]
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         yield from $this->violations;
     }
 
     #[Override]
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return array_map(
-            static fn (DataTransferViolation $dataTransferViolation) : array => $dataTransferViolation->jsonSerialize(),
+            static fn (DataTransferViolation $dataTransferViolation): array => $dataTransferViolation->jsonSerialize(),
             $this->violations,
         );
     }

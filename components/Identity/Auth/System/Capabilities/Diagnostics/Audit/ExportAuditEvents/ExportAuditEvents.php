@@ -11,7 +11,7 @@ final readonly class ExportAuditEvents
 {
     public function __construct(private DrainAuditLogInterface $auditLog, private AuditExporterInterface $exporter) {}
 
-    public function execute() : int
+    public function execute(): int
     {
         $events = $this->auditLog->drain();
 

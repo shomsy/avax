@@ -9,12 +9,12 @@ use JsonException;
 
 final readonly class ConvertDataObjectToJson
 {
-    public function __construct(private DataTransferConfig|null $config = null) {}
+    public function __construct(private ?DataTransferConfig $config = null) {}
 
     /**
      * @throws JsonException
      */
-    public function convert(object $object, int|null $flags = null, int $depth = 512) : string
+    public function convert(object $object, ?int $flags = null, int $depth = 512): string
     {
         $flags ??= 0;
 

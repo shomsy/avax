@@ -49,7 +49,7 @@ final class ExtensibleMessage
 
 final class MessageDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
+    public function decorate(mixed $instance, ContainerInterface $container = null) : mixed
     {
         assertInstanceOf(expectedClass: ExtensibleMessage::class, value: $instance, message: 'Decorator contract should receive the resolved service instance.');
         $message        = $instance;

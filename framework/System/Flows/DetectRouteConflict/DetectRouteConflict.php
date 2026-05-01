@@ -38,9 +38,9 @@ final readonly class DetectRouteConflict
             echo "\n";
         }
 
-        echo "Total: " . count($conflicts) . " conflict(s)\n";
+        echo 'Total: ' . count($conflicts) . " conflict(s)\n";
 
-        return count(array_filter($conflicts, fn ($c) => $c->isExact())) > 0 ? 1 : 0;
+        return count(array_filter($conflicts, static fn ($c) => $c->isExact())) > 0 ? 1 : 0;
     }
 
     public function loadRoutes(array $routes) : self

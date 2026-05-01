@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\PublicSurface;
 
-use Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\Capabilities\Checks\CacheCheck;
-use Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\Capabilities\Checks\DatabaseCheck;
 use Exception;
 
 final readonly class HealthCheck
 {
-    public static function liveness() : HealthReport
+    public static function liveness(): HealthReport
     {
         return new HealthReport(status: 'ok', checks: []);
     }
 
-    public static function readiness() : HealthReport
+    public static function readiness(): HealthReport
     {
         $checks = [
             'database' => self::checkDatabase(),
-            'cache'    => self::checkCache(),
+            'cache' => self::checkCache(),
         ];
 
         $allUp = ! in_array(false, array_column($checks, 'status'));
@@ -30,7 +28,7 @@ final readonly class HealthCheck
         );
     }
 
-    private static function checkDatabase() : CheckResult
+    private static function checkDatabase(): CheckResult
     {
         try {
             return new CheckResult(status: 'up', latencyMs: 0.0);
@@ -39,7 +37,7 @@ final readonly class HealthCheck
         }
     }
 
-    private static function checkCache() : CheckResult
+    private static function checkCache(): CheckResult
     {
         try {
             return new CheckResult(status: 'up', latencyMs: 0.0);
@@ -56,18 +54,17 @@ final readonly class HealthReport
 
     public function __construct(
         public string $status,
-        array         $checks = [],
-    )
-    {
+        array $checks = [],
+    ) {
         $this->checks = $checks;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'status' => $this->status,
             'checks' => array_map(
-                fn (CheckResult $c) => $c->toArray(),
+                static fn (CheckResult $c) => $c->toArray(),
                 $this->checks,
             ),
         ];
@@ -77,17 +74,17 @@ final readonly class HealthReport
 final readonly class CheckResult
 {
     public function __construct(
-        public string      $status,
-        public float       $latencyMs = 0.0,
-        public string|null $error = null,
+        public string $status,
+        public float $latencyMs = 0.0,
+        public ?string $error = null,
     ) {}
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'status'     => $this->status,
+            'status' => $this->status,
             'latency_ms' => $this->latencyMs,
-            'error'      => $this->error,
+            'error' => $this->error,
         ];
     }
 }

@@ -13,23 +13,22 @@ use RuntimeException;
 final readonly class VersionedValue
 {
     public function __construct(
-        public mixed  $value,
+        public mixed $value,
         public VectorClock $clock,
         public string $nodeId,
-        public float  $timestamp,
+        public float $timestamp,
     ) {}
 
     /**
      * Creates a new versioned value.
      */
     public static function create(
-        mixed       $value,
-        string      $nodeId,
-        VectorClock|null $clock = null,
-        float       $timestamp = null,
-    ) : self
-    {
-        $clock     ??= VectorClock::initial($nodeId);
+        mixed $value,
+        string $nodeId,
+        ?VectorClock $clock = null,
+        ?float $timestamp = null,
+    ): self {
+        $clock ??= VectorClock::initial($nodeId);
         $timestamp ??= microtime(true);
 
         return new self(
@@ -43,7 +42,7 @@ final readonly class VersionedValue
     /**
      * Creates an updated version of this value.
      */
-    public function update(mixed $newValue) : self
+    public function update(mixed $newValue): self
     {
         return new self(
             value    : $newValue,
@@ -63,7 +62,7 @@ final readonly class Conflict
         public VersionedValue $valueA,
         public VersionedValue $valueB,
         public string $key,
-        public float  $detectedAt,
+        public float $detectedAt,
     ) {}
 
     /**
@@ -73,8 +72,7 @@ final readonly class Conflict
         VersionedValue $a,
         VersionedValue $b,
         string $key,
-    ) : self
-    {
+    ): self {
         return new self(
             valueA    : $a,
             valueB    : $b,
@@ -92,14 +90,14 @@ final readonly class ConflictResolutionResult
     public function __construct(
         public mixed $resolvedValue,
         public string $strategy,
-        public bool  $wasConflict,
+        public bool $wasConflict,
         public array $details = [],
     ) {}
 
     /**
      * Creates a result with no conflict (straightforward value).
      */
-    public static function noConflict(mixed $value) : self
+    public static function noConflict(mixed $value): self
     {
         return new self(
             resolvedValue: $value,
@@ -111,7 +109,7 @@ final readonly class ConflictResolutionResult
     /**
      * Creates a result from a conflict resolution.
      */
-    public static function resolved(mixed $value, string $strategy, array $details = []) : self
+    public static function resolved(mixed $value, string $strategy, array $details = []): self
     {
         return new self(
             resolvedValue: $value,
@@ -139,7 +137,7 @@ final class EventualConsistency implements ConsistencyPolicy
     /**
      * @var Closure|null Custom conflict resolver callback
      */
-    private Closure|null $customResolver;
+    private ?Closure $customResolver;
 
     /**
      * @var ConflictResolution The conflict resolution strategy to use
@@ -157,24 +155,23 @@ final class EventualConsistency implements ConsistencyPolicy
     private int $maxConflictHistory;
 
     public function __construct(
-        ConflictResolution|null $resolutionStrategy = null,
-        Closure            $customResolver = null,
-        int                $maxConflictHistory = 100,
-    )
-    {
+        ?ConflictResolution $resolutionStrategy = null,
+        ?Closure $customResolver = null,
+        int $maxConflictHistory = 100,
+    ) {
         $this->resolutionStrategy = $resolutionStrategy ?? ConflictResolution::lastWriteWins();
-        $this->customResolver     = $customResolver;
+        $this->customResolver = $customResolver;
         $this->maxConflictHistory = $maxConflictHistory;
     }
 
-    public function canRead(mixed $currentValue, mixed $pendingWrite = null) : bool
+    public function canRead(mixed $currentValue, mixed $pendingWrite = null): bool
     {
         // In eventual consistency, reads always succeed
         // The read may return stale data, but it will eventually be consistent
         return true;
     }
 
-    public function canWrite(mixed $currentValue, mixed $newValue) : bool
+    public function canWrite(mixed $currentValue, mixed $newValue): bool
     {
         // In eventual consistency, writes always succeed
         // Conflicts are detected and resolved later
@@ -184,11 +181,10 @@ final class EventualConsistency implements ConsistencyPolicy
     /**
      * Merges a set of versioned values from multiple replicas.
      *
-     * @param list<VersionedValue> $values
-     *
+     * @param  list<VersionedValue>  $values
      * @return VersionedValue The merged value
      */
-    public function mergeReplicas(array $values) : VersionedValue
+    public function mergeReplicas(array $values): VersionedValue
     {
         if (empty($values)) {
             throw new RuntimeException('Cannot merge empty set of replica values');
@@ -214,7 +210,7 @@ final class EventualConsistency implements ConsistencyPolicy
 
                 // Create new versioned value with merged clock and resolved value
                 $mergedClock = $latest->clock->merge($current->clock);
-                $latest      = new VersionedValue(
+                $latest = new VersionedValue(
                     value    : $resolved,
                     clock    : $mergedClock,
                     nodeId   : 'merged',
@@ -232,7 +228,7 @@ final class EventualConsistency implements ConsistencyPolicy
      * Uses vector clocks to determine if values are concurrent
      * (conflict) or causally related (no conflict).
      */
-    public function resolveConflict(mixed $valueA, mixed $valueB, array $context = []) : mixed
+    public function resolveConflict(mixed $valueA, mixed $valueB, array $context = []): mixed
     {
         if (! $valueA instanceof VersionedValue || ! $valueB instanceof VersionedValue) {
             // Can't compare without vector clocks, default to valueA
@@ -266,9 +262,9 @@ final class EventualConsistency implements ConsistencyPolicy
                 value   : $resolved,
                 strategy: 'custom',
                 details : [
-                              'conflict' => $conflict,
-                              'context'  => $context,
-                          ],
+                    'conflict' => $conflict,
+                    'context' => $context,
+                ],
             );
         }
 
@@ -277,20 +273,20 @@ final class EventualConsistency implements ConsistencyPolicy
             valueA : $valueA->value,
             valueB : $valueB->value,
             context: array_merge($context, [
-                         'clockA'     => $valueA->clock,
-                         'clockB'     => $valueB->clock,
-                         'timestampA' => $valueA->timestamp,
-                         'timestampB' => $valueB->timestamp,
-                         'nodeIdA'    => $valueA->nodeId,
-                         'nodeIdB'    => $valueB->nodeId,
-                     ]),
+                'clockA' => $valueA->clock,
+                'clockB' => $valueB->clock,
+                'timestampA' => $valueA->timestamp,
+                'timestampB' => $valueB->timestamp,
+                'nodeIdA' => $valueA->nodeId,
+                'nodeIdB' => $valueB->nodeId,
+            ]),
         );
     }
 
     /**
      * Records a detected conflict.
      */
-    private function recordConflict(Conflict $conflict) : void
+    private function recordConflict(Conflict $conflict): void
     {
         $this->conflicts[] = $conflict;
 
@@ -303,7 +299,7 @@ final class EventualConsistency implements ConsistencyPolicy
     /**
      * Detects if two values are in conflict.
      */
-    public function detectConflict(mixed $valueA, mixed $valueB) : bool
+    public function detectConflict(mixed $valueA, mixed $valueB): bool
     {
         if (! $valueA instanceof VersionedValue || ! $valueB instanceof VersionedValue) {
             return false;
@@ -317,7 +313,7 @@ final class EventualConsistency implements ConsistencyPolicy
      *
      * @return list<Conflict>
      */
-    public function getConflicts() : array
+    public function getConflicts(): array
     {
         return $this->conflicts;
     }
@@ -325,7 +321,7 @@ final class EventualConsistency implements ConsistencyPolicy
     /**
      * Returns the number of detected conflicts.
      */
-    public function conflictCount() : int
+    public function conflictCount(): int
     {
         return count($this->conflicts);
     }
@@ -333,22 +329,22 @@ final class EventualConsistency implements ConsistencyPolicy
     /**
      * Returns the resolution strategy name.
      */
-    public function resolutionStrategyName() : string
+    public function resolutionStrategyName(): string
     {
         return $this->resolutionStrategy->name();
     }
 
-    public function name() : string
+    public function name(): string
     {
         return 'eventual';
     }
 
-    public function description() : string
+    public function description(): string
     {
         return 'Eventual consistency: writes always succeed, conflicts are detected via vector clocks and resolved using configured strategy. Data converges when no new writes occur.';
     }
 
-    public function consistencyLevel() : float
+    public function consistencyLevel(): float
     {
         return 0.3; // Low consistency, high availability
     }
@@ -356,7 +352,7 @@ final class EventualConsistency implements ConsistencyPolicy
     /**
      * Clears the conflict history.
      */
-    public function clearConflicts() : void
+    public function clearConflicts(): void
     {
         $this->conflicts = [];
     }

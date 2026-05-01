@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Avax\Components\Application\Container\Features\Think\Model\MethodPrototype;
 use Avax\Components\Application\Container\Features\Think\Model\ParameterPrototype;
 use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
@@ -12,11 +14,9 @@ use Avax\Components\HTTP\Router\Validation\RouteConstraintValidator;
 
 return ServicePrototype::__set_state(array: [
                                                 'class'              => HttpRequestRouter::class,
-                                                'constructor'        =>
-                                                    MethodPrototype::__set_state(array: [
+                                                'constructor'        => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
-                                                                                            'parameters' =>
-                                                                                                [
+                                                                                            'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
                                                                                                                                                'name'       => 'constraintValidator',
                                                                                                                                                'type' => RouteConstraintValidator::class,
@@ -46,11 +46,9 @@ return ServicePrototype::__set_state(array: [
                                                                                                                                            ]),
                                                                                                 ],
                                                                                         ]),
-                                                'injectedProperties' =>
-                                                    [
+                                                'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    =>
-                                                    [
+                                                'injectedMethods'    => [
                                                     ],
                                                 'isInstantiable'     => true,
                                             ]);

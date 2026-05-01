@@ -10,6 +10,7 @@ use InvalidArgumentException;
 final readonly class TimeWindow
 {
     public DateTimeImmutable $startsAt;
+
     public DateTimeImmutable $endsAt;
 
     public function __construct(DateTimeImmutable $startsAt, DateTimeImmutable $endsAt)
@@ -19,10 +20,10 @@ final readonly class TimeWindow
         }
 
         $this->startsAt = $startsAt;
-        $this->endsAt   = $endsAt;
+        $this->endsAt = $endsAt;
     }
 
-    public function contains(DateTimeImmutable $moment) : bool
+    public function contains(DateTimeImmutable $moment): bool
     {
         return $moment >= $this->startsAt && $moment <= $this->endsAt;
     }

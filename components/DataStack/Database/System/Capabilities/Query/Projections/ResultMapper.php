@@ -16,25 +16,25 @@ final class ResultMapper
 
     public function __construct(string $className)
     {
-        $this->className        = $className;
+        $this->className = $className;
         $this->propertyMappings = $this->buildMappings(className: $className);
     }
 
     /**
      * @throws ReflectionException
      */
-    private function buildMappings(string $className) : array
+    private function buildMappings(string $className): array
     {
-        $ref      = new ReflectionClass(objectOrClass: $className);
+        $ref = new ReflectionClass(objectOrClass: $className);
         $mappings = [];
 
         foreach ($ref->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
-            $dbColumn     = $propertyName;
+            $dbColumn = $propertyName;
 
             $attributes = $property->getAttributes(name: Column::class);
             if (! empty($attributes)) {
-                $attr     = $attributes[0]->newInstance();
+                $attr = $attributes[0]->newInstance();
                 $dbColumn = $attr->name ?? $propertyName;
             }
 
@@ -47,7 +47,7 @@ final class ResultMapper
     /**
      * @throws ReflectionException
      */
-    public function map(array $row) : object
+    public function map(array $row): object
     {
         $instance = new ($this->className)();
 
@@ -68,12 +68,12 @@ final class ResultMapper
         return $instance;
     }
 
-    public function getFieldMappings() : array
+    public function getFieldMappings(): array
     {
         return $this->propertyMappings;
     }
 
-    public function getTargetClass() : string
+    public function getTargetClass(): string
     {
         return $this->className;
     }

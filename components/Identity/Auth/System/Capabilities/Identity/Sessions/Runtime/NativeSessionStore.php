@@ -14,13 +14,15 @@ final class NativeSessionStore implements SessionStoreInterface
     /**
      * @var array<string, mixed>
      */
-    private array  $cliSession        = [];
-    private string $cliSessionId      = '';
-    private bool   $cliFallbackActive = false;
+    private array $cliSession = [];
 
-    public function __construct(private readonly SessionCookieSettings $cookieSettings = new SessionCookieSettings()) {}
+    private string $cliSessionId = '';
 
-    public function regenerate() : string
+    private bool $cliFallbackActive = false;
+
+    public function __construct(private readonly SessionCookieSettings $cookieSettings = new SessionCookieSettings) {}
+
+    public function regenerate(): string
     {
         $this->start();
 
@@ -41,7 +43,7 @@ final class NativeSessionStore implements SessionStoreInterface
         return $this->readNativeSessionId();
     }
 
-    public function start() : void
+    public function start(): void
     {
         if (session_status() === PHP_SESSION_DISABLED) {
             throw new RuntimeException(message: 'Session support is disabled.');
@@ -63,12 +65,12 @@ final class NativeSessionStore implements SessionStoreInterface
 
         if (! headers_sent()) {
             session_set_cookie_params(lifetime_or_options: [
-                                                               'secure'   => $this->cookieSettings->secure,
-                                                               'httponly' => $this->cookieSettings->httpOnly,
-                                                               'samesite' => $this->normalizeSameSite(sameSite: $this->cookieSettings->sameSite),
-                                                               'path'     => $this->cookieSettings->path,
-                                                               'domain'   => $this->cookieSettings->domain,
-                                                           ]);
+                'secure' => $this->cookieSettings->secure,
+                'httponly' => $this->cookieSettings->httpOnly,
+                'samesite' => $this->normalizeSameSite(sameSite: $this->cookieSettings->sameSite),
+                'path' => $this->cookieSettings->path,
+                'domain' => $this->cookieSettings->domain,
+            ]);
         }
 
         session_start();
@@ -78,41 +80,39 @@ final class NativeSessionStore implements SessionStoreInterface
         }
     }
 
-    private function canStartAfterOutput() : bool
+    private function canStartAfterOutput(): bool
     {
         return in_array(needle: PHP_SAPI, haystack: ['cli', 'phpdbg'], strict: true);
     }
 
-    private function activateCliFallback() : void
+    private function activateCliFallback(): void
     {
         $this->cliFallbackActive = true;
     }
 
     /**
-     * @param string $sameSite
-     *
      * @return 'Lax'|'Strict'|'None'
      */
-    private function normalizeSameSite(string $sameSite) : string
+    private function normalizeSameSite(string $sameSite): string
     {
         return match (strtolower(string: $sameSite)) {
             'strict' => 'Strict',
-            'none'   => 'None',
-            default  => 'Lax',
+            'none' => 'None',
+            default => 'Lax',
         };
     }
 
-    private function nativeSessionActive() : bool
+    private function nativeSessionActive(): bool
     {
         return session_status() === PHP_SESSION_ACTIVE;
     }
 
-    private function generateCliSessionId() : string
+    private function generateCliSessionId(): string
     {
-        return 'cli-session-' . str_replace(search: '.', replace: '', subject: uniqid(prefix: '', more_entropy: true));
+        return 'cli-session-'.str_replace(search: '.', replace: '', subject: uniqid(prefix: '', more_entropy: true));
     }
 
-    private function readNativeSessionId() : string
+    private function readNativeSessionId(): string
     {
         $sessionId = session_id();
 
@@ -123,7 +123,7 @@ final class NativeSessionStore implements SessionStoreInterface
         return $sessionId;
     }
 
-    public function id() : string|null
+    public function id(): ?string
     {
         $this->start();
 
@@ -140,7 +140,7 @@ final class NativeSessionStore implements SessionStoreInterface
         return $sessionId === false || $sessionId === '' ? null : $sessionId;
     }
 
-    public function get(string $key) : mixed
+    public function get(string $key): mixed
     {
         $this->start();
 
@@ -151,7 +151,7 @@ final class NativeSessionStore implements SessionStoreInterface
         return $_SESSION[$key] ?? null;
     }
 
-    public function put(string $key, mixed $value) : void
+    public function put(string $key, mixed $value): void
     {
         $this->start();
 
@@ -164,7 +164,7 @@ final class NativeSessionStore implements SessionStoreInterface
         $_SESSION[$key] = $value;
     }
 
-    public function forget(string $key) : void
+    public function forget(string $key): void
     {
         $this->start();
 
@@ -177,12 +177,12 @@ final class NativeSessionStore implements SessionStoreInterface
         unset($_SESSION[$key]);
     }
 
-    public function invalidate() : void
+    public function invalidate(): void
     {
         $this->start();
 
         if ($this->cliFallbackActive) {
-            $this->cliSession   = [];
+            $this->cliSession = [];
             $this->cliSessionId = '';
 
             return;
@@ -193,15 +193,15 @@ final class NativeSessionStore implements SessionStoreInterface
         $useCookies = ini_get(option: 'session.use_cookies') !== '0';
 
         if ($useCookies && session_status() === PHP_SESSION_ACTIVE) {
-            $params      = session_get_cookie_params();
+            $params = session_get_cookie_params();
             $sessionName = session_name();
 
             if ($sessionName !== false) {
                 setcookie($sessionName, '', [
-                    'expires'  => time() - 42000,
-                    'path'     => $params['path'],
-                    'domain'   => $params['domain'],
-                    'secure'   => $params['secure'],
+                    'expires' => time() - 42000,
+                    'path' => $params['path'],
+                    'domain' => $params['domain'],
+                    'secure' => $params['secure'],
                     'httponly' => $params['httponly'],
                     'samesite' => $this->normalizeSameSite(sameSite: $params['samesite']),
                 ]);

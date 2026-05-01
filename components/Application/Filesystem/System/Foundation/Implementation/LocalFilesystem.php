@@ -33,7 +33,7 @@ readonly class LocalFilesystem implements FilesystemInterface
         return (new ReadFile(disk: $this->disk()))->execute(path: $path);
     }
 
-    public function disk(string|null $name = null) : Disk
+    public function disk(string $name = null) : Disk
     {
         return $this->resolveDisk->execute(name: $name);
     }

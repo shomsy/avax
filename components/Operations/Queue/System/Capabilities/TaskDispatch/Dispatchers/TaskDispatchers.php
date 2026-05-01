@@ -8,12 +8,12 @@ use DateInterval;
 
 final class SyncDispatcher
 {
-    public function dispatch(object $task) : void
+    public function dispatch(object $task): void
     {
         $this->execute($task);
     }
 
-    private function execute(object $task) : void
+    private function execute(object $task): void
     {
         if (method_exists($task, 'handle')) {
             $task->handle();
@@ -25,12 +25,12 @@ final class SyncDispatcher
 
 final class AsyncDispatcher
 {
-    public function dispatch(object $task) : void
+    public function dispatch(object $task): void
     {
         $this->enqueue($task);
     }
 
-    private function enqueue(object $task) : void
+    private function enqueue(object $task): void
     {
         $class = $task::class;
         echo "Queued task: {$class}\n";
@@ -46,7 +46,7 @@ final class DeferredDispatcher
         $this->delay = $delay;
     }
 
-    public function dispatch(object $task) : void
+    public function dispatch(object $task): void
     {
         $ms = (int) (($this->delay->i * 60 + $this->delay->s) * 1000);
 
@@ -62,12 +62,12 @@ final class DeferredDispatcher
         register_shutdown_function(fn () => $this->executeLater($task, $ms));
     }
 
-    private function executeNow(object $task) : void
+    private function executeNow(object $task): void
     {
-        (new SyncDispatcher())->dispatch($task);
+        (new SyncDispatcher)->dispatch($task);
     }
 
-    private function executeLater(object $task, int $delayMs) : void
+    private function executeLater(object $task, int $delayMs): void
     {
         usleep($delayMs * 1000);
 

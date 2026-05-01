@@ -13,27 +13,26 @@ final readonly class PushAuthorizationRequestData
     public array $scopes;
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
-        public string          $clientId,
-        public string          $redirectUri,
-        array                  $scopes = null,
-        public string|null     $state = null,
-        public string|null     $nonce = null,
+        public string $clientId,
+        public string $redirectUri,
+        ?array $scopes = null,
+        public ?string $state = null,
+        public ?string $nonce = null,
         #[SensitiveParameter]
-        public string|null     $requestObjectJwt = null,
+        public ?string $requestObjectJwt = null,
         #[SensitiveParameter]
-        public string|null     $clientSecret = null,
+        public ?string $clientSecret = null,
         #[SensitiveParameter]
-        public string|null     $codeChallenge = null,
+        public ?string $codeChallenge = null,
         #[SensitiveParameter]
-        public PkceMethod|null $codeChallengeMethod = null,
+        public ?PkceMethod $codeChallengeMethod = null,
         #[SensitiveParameter]
-        public string|null     $ipAddress = null,
-        public string|null     $userAgent = null,
-    )
-    {
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
+    ) {
         $scopes ??= [];
         $this->scopes = $scopes;
     }

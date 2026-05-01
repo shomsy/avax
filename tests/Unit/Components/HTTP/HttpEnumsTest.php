@@ -1357,7 +1357,7 @@ final class HttpEnumsTest extends TestCase
         foreach (HeaderName::cases() as $case) {
             $this->assertFalse(
                 $case->isBidirectional(),
-                "Header {$case->name} should not be bidirectional"
+                "Header {$case->name} should not be bidirectional",
             );
         }
     }

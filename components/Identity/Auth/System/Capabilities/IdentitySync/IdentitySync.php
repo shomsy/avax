@@ -15,16 +15,16 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
 final readonly class IdentitySync
 {
     public function __construct(
-        private SCIM         $scim,
+        private SCIM $scim,
         private Provisioning $provisioning,
     ) {}
 
-    public function scim() : SCIM
+    public function scim(): SCIM
     {
         return $this->scim;
     }
 
-    public function provisioning() : Provisioning
+    public function provisioning(): Provisioning
     {
         return $this->provisioning;
     }

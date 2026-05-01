@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Avax\Components\Application\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
 
 return ServicePrototype::__set_state(array: [
@@ -7,7 +9,7 @@ return ServicePrototype::__set_state(array: [
                                                 'constructor'        => null,
                                                 'injectedProperties' => [
                                                 ],
-                                                'injectedMethods'    => [
+                                                'injectedMethods' => [
                                                 ],
-                                                'isInstantiable'     => true,
+                                                'isInstantiable'  => true,
                                             ]);

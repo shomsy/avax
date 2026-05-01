@@ -18,7 +18,7 @@ final readonly class SerializedCachePayload implements Stringable
     {
     }
 
-    public static function create(string $data, string $format, Clock|null $clock = null) : self
+    public static function create(string $data, string $format, Clock $clock = null) : self
     {
         $clock ??= new SystemClock();
         $checksum = hash_hmac(algo: 'sha256', data: $data, key: self::class);
@@ -42,7 +42,7 @@ final readonly class SerializedCachePayload implements Stringable
 
     public function isOlderThan(DateInterval $dateInterval) : bool
     {
-        $now    = Timestamp::now();
+        $now = Timestamp::now();
         $timestamp = $this->timestamp->add(duration: Duration::fromDateInterval(interval: $dateInterval));
 
         return $now->isAfter(other: $timestamp);

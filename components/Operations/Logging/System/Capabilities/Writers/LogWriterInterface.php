@@ -12,5 +12,5 @@ interface LogWriterInterface
     /**
      * Writes log content to the storage.
      */
-    public function write(string $content) : void;
+    public function write(string $content): void;
 }

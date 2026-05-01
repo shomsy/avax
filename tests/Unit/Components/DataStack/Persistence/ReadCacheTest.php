@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\Persistence;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Observability\QueryFingerprinter;
 use Avax\Components\DataStack\Persistence\System\Capabilities\ReadOptimization\CacheEntry;
 use Avax\Components\DataStack\Persistence\System\Capabilities\ReadOptimization\CacheResult;
 use Avax\Components\DataStack\Persistence\System\Capabilities\ReadOptimization\ReadCache;
@@ -34,9 +33,7 @@ final class ReadCacheTest extends TestCase
     {
         $cache = new ReadCache(defaultTtl: 60.0);
 
-        $result = $cache->remember('key1', static function () {
-            return 'computed_value';
-        });
+        $result = $cache->remember('key1', static fn () => 'computed_value');
 
         $this->assertSame('computed_value', $result);
     }
@@ -46,7 +43,7 @@ final class ReadCacheTest extends TestCase
         $cache     = new ReadCache(defaultTtl: 60.0);
         $callCount = 0;
 
-        $first  = $cache->remember('key1', static function () use (&$callCount) {
+        $first = $cache->remember('key1', static function () use (&$callCount) {
             $callCount++;
 
             return 'computed';
@@ -66,9 +63,7 @@ final class ReadCacheTest extends TestCase
     {
         $cache = new ReadCache(defaultTtl: 60.0);
 
-        $result = $cache->remember('key1', static function () {
-            return 'ttl_test';
-        }, ttl:                    120.0);
+        $result = $cache->remember('key1', static fn () => 'ttl_test', ttl: 120.0);
 
         $this->assertSame('ttl_test', $result);
     }

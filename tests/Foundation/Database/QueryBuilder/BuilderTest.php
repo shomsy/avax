@@ -79,7 +79,7 @@ class BuilderTest extends TestCase
                 email TEXT NOT NULL,
                 created_at TEXT NULL,
                 updated_at TEXT NULL
-            )'
+            )',
         );
 
         // noinspection SqlNoDataSourceInspection
@@ -88,7 +88,7 @@ class BuilderTest extends TestCase
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
                 title TEXT NOT NULL
-            )'
+            )',
         );
 
         $this->database->table(table: 'users')->insert(values: ['name' => 'John Doe', 'email' => 'john@example.com']);

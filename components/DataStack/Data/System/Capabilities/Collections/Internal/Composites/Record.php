@@ -10,21 +10,21 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Interna
 final readonly class Record
 {
     /**
-     * @param array<string, mixed> $fields
+     * @param  array<string, mixed>  $fields
      */
     private function __construct(
         private array $fields,
     ) {}
 
     /**
-     * @param array<string, mixed> $fields
+     * @param  array<string, mixed>  $fields
      */
-    public static function fromArray(array $fields) : self
+    public static function fromArray(array $fields): self
     {
         return new self(fields: $fields);
     }
 
-    public static function fromFields(RecordField ...$recordField) : self
+    public static function fromFields(RecordField ...$recordField): self
     {
         $mapped = [];
 
@@ -35,12 +35,12 @@ final readonly class Record
         return new self(fields: $mapped);
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return array_key_exists($name, $this->fields);
     }
 
-    public function get(string $name, mixed $default = null) : mixed
+    public function get(string $name, mixed $default = null): mixed
     {
         return $this->fields[$name] ?? $default;
     }
@@ -48,7 +48,7 @@ final readonly class Record
     /**
      * @return array<string, mixed>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->fields;
     }

@@ -11,7 +11,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
  */
 interface EmailVerificationStateStoreInterface
 {
-    public function isVerified(UserId $userId) : bool;
+    public function isVerified(UserId $userId): bool;
 
-    public function markVerified(UserId $userId) : void;
+    public function markVerified(UserId $userId): void;
 }

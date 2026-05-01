@@ -7,13 +7,12 @@ namespace Avax\Components\Application\Cache\System\Flows\Operations\ForgetCached
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Throwable;
 
 final readonly class ForgetCachedValue
 {
     public function __construct(
-        private CacheStore        $cacheStore,
+        private CacheStore $cacheStore,
         private CacheMetrics|null $cacheMetrics = null,
     ) {}
 

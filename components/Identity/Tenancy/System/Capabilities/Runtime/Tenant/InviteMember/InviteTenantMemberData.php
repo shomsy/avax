@@ -10,10 +10,10 @@ use SensitiveParameter;
 final readonly class InviteTenantMemberData
 {
     public function __construct(
-        public string           $tenantSlug,
+        public string $tenantSlug,
         #[SensitiveParameter]
-        public string           $email,
+        public string $email,
         public TenantMemberRole $role,
-        public string           $invitedBy,
+        public string $invitedBy,
     ) {}
 }

@@ -14,7 +14,7 @@ final readonly class ReadTenants
     /**
      * @return list<Tenant>
      */
-    public function execute() : array
+    public function execute(): array
     {
         return $this->tenantStore->allTenants();
     }

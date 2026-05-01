@@ -14,7 +14,7 @@ final readonly class ReadScimDirectories
     /**
      * @return list<ScimDirectory>
      */
-    public function execute(string|null $tenantSlug = null) : array
+    public function execute(?string $tenantSlug = null): array
     {
         $directories = $this->directoryStore->all();
 
@@ -23,8 +23,8 @@ final readonly class ReadScimDirectories
         }
 
         return array_values(array: array_filter(
-                                       array   : $directories,
-                                       callback: static fn (ScimDirectory $directory) : bool => $directory->tenantSlug === trim(string: $tenantSlug),
-                                   ));
+            array   : $directories,
+            callback: static fn (ScimDirectory $directory): bool => $directory->tenantSlug === trim(string: $tenantSlug),
+        ));
     }
 }

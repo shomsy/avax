@@ -9,14 +9,14 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class RequestCoalescing
 {
     public function __construct(
-        private CacheLockStore   $cacheLockStore,
+        private CacheLockStore $cacheLockStore,
         private CacheLockTimeout $cacheLockTimeout = new CacheLockTimeout(seconds: 5),
     ) {}
 
     public function execute(
         CacheKey $cacheKey,
-        callable  $loader,
-        callable|null $onStale = null,
+        callable $loader,
+        callable $onStale = null,
     ) : mixed
     {
         $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);

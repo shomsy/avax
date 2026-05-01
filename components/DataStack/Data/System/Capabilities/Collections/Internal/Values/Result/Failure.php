@@ -17,19 +17,19 @@ final class Failure extends Result
     ) {}
 
     #[Override]
-    public function isOk() : bool
+    public function isOk(): bool
     {
         return false;
     }
 
     #[Override]
-    public function unwrap() : mixed
+    public function unwrap(): mixed
     {
         throw InvalidValueException::because(message: 'Cannot unwrap a value from an Error result.');
     }
 
     #[Override]
-    public function unwrapError() : mixed
+    public function unwrapError(): mixed
     {
         return $this->error;
     }

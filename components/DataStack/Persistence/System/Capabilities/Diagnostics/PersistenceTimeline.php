@@ -19,32 +19,26 @@ final class PersistenceTimeline
      */
     private array $entries = [];
 
-    /**
-     * @var float|null
-     */
-    private float|null $startTime = null;
+    private ?float $startTime = null;
 
-    /**
-     * @var float|null
-     */
-    private float|null $endTime = null;
+    private ?float $endTime = null;
 
     /**
      * Records a query execution in the timeline.
      *
-     * @param string $query    The SQL query
-     * @param float  $duration Duration in milliseconds
-     * @param float|null $timestamp Optional timestamp in milliseconds
+     * @param  string  $query  The SQL query
+     * @param  float  $duration  Duration in milliseconds
+     * @param  float|null  $timestamp  Optional timestamp in milliseconds
      */
-    public function record(string $query, float $duration, float|null $timestamp = null) : void
+    public function record(string $query, float $duration, ?float $timestamp = null): void
     {
         $timestamp ??= microtime(true) * 1000;
         $fingerprint = QueryFingerprint::fromQuery($query);
 
         $this->entries[] = [
-            'query'       => $query,
-            'duration'    => $duration,
-            'timestamp'   => $timestamp,
+            'query' => $query,
+            'duration' => $duration,
+            'timestamp' => $timestamp,
             'fingerprint' => $fingerprint,
         ];
 
@@ -62,7 +56,7 @@ final class PersistenceTimeline
      *
      * @return array<array{query: string, duration: float, timestamp: float, fingerprint: QueryFingerprint}>
      */
-    public function getTimeline() : array
+    public function getTimeline(): array
     {
         return $this->entries;
     }
@@ -72,37 +66,36 @@ final class PersistenceTimeline
      *
      * @return array<array{query: string, duration: float, timestamp: float, fingerprint: QueryFingerprint}>
      */
-    public function getByFingerprint(QueryFingerprint $fingerprint) : array
+    public function getByFingerprint(QueryFingerprint $fingerprint): array
     {
         return array_values(array_filter(
-                                $this->entries,
-                                static fn (array $entry) : bool => $entry['fingerprint']->matchesFingerprint($fingerprint),
-                            ));
+            $this->entries,
+            static fn (array $entry): bool => $entry['fingerprint']->matchesFingerprint($fingerprint),
+        ));
     }
 
     /**
      * Returns queries that took longer than the specified threshold.
      *
-     * @param float $thresholdMs Threshold in milliseconds
-     *
+     * @param  float  $thresholdMs  Threshold in milliseconds
      * @return array<array{query: string, duration: float, timestamp: float, fingerprint: QueryFingerprint}>
      */
-    public function getSlowQueries(float $thresholdMs) : array
+    public function getSlowQueries(float $thresholdMs): array
     {
         return array_values(array_filter(
-                                $this->entries,
-                                static fn (array $entry) : bool => $entry['duration'] > $thresholdMs,
-                            ));
+            $this->entries,
+            static fn (array $entry): bool => $entry['duration'] > $thresholdMs,
+        ));
     }
 
     /**
      * Resets the timeline.
      */
-    public function reset() : void
+    public function reset(): void
     {
-        $this->entries   = [];
+        $this->entries = [];
         $this->startTime = null;
-        $this->endTime   = null;
+        $this->endTime = null;
     }
 
     /**
@@ -116,13 +109,13 @@ final class PersistenceTimeline
      *     slowestQuery: array{query: string, duration: float, timestamp: float, fingerprint: QueryFingerprint}|null
      * }
      */
-    public function summary() : array
+    public function summary(): array
     {
         return [
-            'count'        => $this->getQueryCount(),
-            'totalTime'    => $this->getTotalTime(),
-            'averageTime'  => $this->getAverageTime(),
-            'timeSpan'     => $this->getTimeSpan(),
+            'count' => $this->getQueryCount(),
+            'totalTime' => $this->getTotalTime(),
+            'averageTime' => $this->getAverageTime(),
+            'timeSpan' => $this->getTimeSpan(),
             'slowestQuery' => $this->getSlowestQuery(),
         ];
     }
@@ -130,7 +123,7 @@ final class PersistenceTimeline
     /**
      * Returns the total number of queries recorded.
      */
-    public function getQueryCount() : int
+    public function getQueryCount(): int
     {
         return count($this->entries);
     }
@@ -138,7 +131,7 @@ final class PersistenceTimeline
     /**
      * Returns the total execution time of all queries.
      */
-    public function getTotalTime() : float
+    public function getTotalTime(): float
     {
         $total = 0.0;
 
@@ -152,7 +145,7 @@ final class PersistenceTimeline
     /**
      * Returns the average query execution time.
      */
-    public function getAverageTime() : float
+    public function getAverageTime(): float
     {
         if ($this->entries === []) {
             return 0.0;
@@ -164,7 +157,7 @@ final class PersistenceTimeline
     /**
      * Returns the time span of the timeline.
      */
-    public function getTimeSpan() : float
+    public function getTimeSpan(): float
     {
         if ($this->startTime === null || $this->endTime === null) {
             return 0.0;
@@ -178,19 +171,19 @@ final class PersistenceTimeline
      *
      * @return array{query: string, duration: float, timestamp: float, fingerprint: QueryFingerprint}|null
      */
-    public function getSlowestQuery() : array|null
+    public function getSlowestQuery(): ?array
     {
         if ($this->entries === []) {
             return null;
         }
 
-        $slowest     = null;
+        $slowest = null;
         $maxDuration = -1.0;
 
         foreach ($this->entries as $entry) {
             if ($entry['duration'] > $maxDuration) {
                 $maxDuration = $entry['duration'];
-                $slowest     = $entry;
+                $slowest = $entry;
             }
         }
 

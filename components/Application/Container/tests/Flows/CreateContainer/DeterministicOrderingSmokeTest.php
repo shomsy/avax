@@ -9,7 +9,6 @@ use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\D
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\ProviderBootPlan;
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\DI\Container;
-use Avax\Components\Application\Container\DI\ContainerInterface;
 
 final class OrderingProviderAlpha implements RegisterDependency
 {

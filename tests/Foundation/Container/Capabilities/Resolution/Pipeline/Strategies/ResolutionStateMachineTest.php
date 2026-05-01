@@ -13,7 +13,7 @@ final class ResolutionStateMachineTest extends TestCase
 {
     public function test_allows_valid_transition() : void
     {
-        $stateMachine = new ResolutionStateMachine;
+        $stateMachine = new ResolutionStateMachine();
 
         $stateMachine->advanceTo(next: ResolutionState::DefinitionLookup);
 
@@ -22,7 +22,7 @@ final class ResolutionStateMachineTest extends TestCase
 
     public function test_throws_on_invalid_transition() : void
     {
-        $stateMachine = new ResolutionStateMachine;
+        $stateMachine = new ResolutionStateMachine();
 
         $this->expectException(exception: ContainerException::class);
         $stateMachine->advanceTo(next: ResolutionState::Instantiate);
@@ -30,7 +30,7 @@ final class ResolutionStateMachineTest extends TestCase
 
     public function test_terminal_transition_without_hit_fails() : void
     {
-        $stateMachine = new ResolutionStateMachine;
+        $stateMachine = new ResolutionStateMachine();
 
         $this->expectException(exception: ContainerException::class);
         $stateMachine->advanceTo(next: ResolutionState::Success);
@@ -38,7 +38,7 @@ final class ResolutionStateMachineTest extends TestCase
 
     public function test_cannot_skip_instantiate() : void
     {
-        $stateMachine = new ResolutionStateMachine;
+        $stateMachine = new ResolutionStateMachine();
 
         $stateMachine->advanceTo(next: ResolutionState::DefinitionLookup);
         $stateMachine->advanceTo(next: ResolutionState::Autowire);

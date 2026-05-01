@@ -22,13 +22,12 @@ final readonly class Query
     private CreateBuilder $createBuilder;
 
     public function __construct(
-        private Connections      $connections,
-        private EventBus|null    $eventBus = null,
-        private GrammarInterface $grammar = new Grammar\MySQLGrammar(),
-        private ExecutionScope|null $scope = null,
-        CreateBuilder            $createBuilder = null,
-    )
-    {
+        private Connections $connections,
+        private ?EventBus $eventBus = null,
+        private GrammarInterface $grammar = new Grammar\MySQLGrammar,
+        private ?ExecutionScope $scope = null,
+        ?CreateBuilder $createBuilder = null,
+    ) {
         $this->createBuilder = $createBuilder ?? new CreateBuilder(
             connections: $this->connections,
             grammar    : $this->grammar,
@@ -41,7 +40,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function from(string $table, string|null $connectionName = null) : QueryBuilder
+    public function from(string $table, ?string $connectionName = null): QueryBuilder
     {
         return $this->builder(connectionName: $connectionName)->from(table: $table);
     }
@@ -50,7 +49,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function builder(string|null $connectionName = null) : QueryBuilder
+    public function builder(?string $connectionName = null): QueryBuilder
     {
         return $this->createBuilder->for(connectionName: $connectionName);
     }
@@ -59,12 +58,12 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function raw(string $value, string|null $connectionName = null) : Expression
+    public function raw(string $value, ?string $connectionName = null): Expression
     {
         return $this->builder(connectionName: $connectionName)->raw(value: $value);
     }
 
-    public function grammar() : GrammarInterface
+    public function grammar(): GrammarInterface
     {
         return $this->grammar;
     }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\CLI\Console\System\Capabilities\Commands;
 
-use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\ControllerGenerator;
 use Avax\Components\CLI\Console\System\PublicSurface\Command;
+use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\ControllerGenerator;
 use Override;
 use RuntimeException;
 
@@ -14,11 +14,11 @@ use RuntimeException;
  */
 class MakeControllerCommand extends Command
 {
-    protected string $name        = 'make:controller';
+    protected string $name = 'make:controller';
 
     protected string $description = 'Create a new controller class';
 
-    protected string $signature   = 'make:controller {name} [--methods=]';
+    protected string $signature = 'make:controller {name} [--methods=]';
 
     protected array $arguments = ['name'];
 
@@ -29,7 +29,7 @@ class MakeControllerCommand extends Command
     ) {}
 
     #[Override]
-    protected function handle() : int
+    protected function handle(): int
     {
         $name = $this->argument(0);
 
@@ -44,7 +44,7 @@ class MakeControllerCommand extends Command
         }
 
         $methodsInput = $this->option('methods');
-        $methods      = [];
+        $methods = [];
 
         if (is_string($methodsInput) && $methodsInput !== '') {
             $methods = array_map('trim', explode(',', $methodsInput));
@@ -53,11 +53,11 @@ class MakeControllerCommand extends Command
         try {
             $path = $this->controllerGenerator->generate($name, ['methods' => $methods]);
 
-            $this->info('Controller created successfully: ' . $path);
+            $this->info('Controller created successfully: '.$path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create controller: ' . $runtimeException->getMessage());
+            $this->error('Failed to create controller: '.$runtimeException->getMessage());
 
             return self::FAILURE;
         }

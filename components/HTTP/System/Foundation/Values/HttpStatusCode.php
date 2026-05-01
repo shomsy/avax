@@ -140,18 +140,18 @@ enum HttpStatusCode: int
     {
         return match ($this) {
             // 2xx
-            self::OK                     => 'OK',
-            self::CREATED                => 'Created',
-            self::ACCEPTED               => 'Accepted',
-            self::NO_CONTENT             => 'No Content',
+            self::OK                 => 'OK',
+            self::CREATED            => 'Created',
+            self::ACCEPTED           => 'Accepted',
+            self::NO_CONTENT         => 'No Content',
 
             // 3xx
-            self::MOVED_PERMANENTLY      => 'Moved Permanently',
-            self::FOUND                  => 'Found',
-            self::SEE_OTHER              => 'See Other',
-            self::NOT_MODIFIED           => 'Not Modified',
-            self::TEMPORARY_REDIRECT     => 'Temporary Redirect',
-            self::PERMANENT_REDIRECT     => 'Permanent Redirect',
+            self::MOVED_PERMANENTLY  => 'Moved Permanently',
+            self::FOUND              => 'Found',
+            self::SEE_OTHER          => 'See Other',
+            self::NOT_MODIFIED       => 'Not Modified',
+            self::TEMPORARY_REDIRECT => 'Temporary Redirect',
+            self::PERMANENT_REDIRECT => 'Permanent Redirect',
 
             // 4xx
             self::BAD_REQUEST            => 'Bad Request',

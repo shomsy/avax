@@ -18,15 +18,15 @@ final readonly class ReadCachedValueFromReplica
 
     public function __construct(
         private ChooseReplicaForRead $chooseReplicaForRead,
-        private Clock                $clock,
-        CacheStore                   ...$cacheStore,
+        private Clock $clock,
+        CacheStore    ...$cacheStore,
     )
     {
         $this->stores = $cacheStore;
     }
 
     public function read(
-        CacheKey          $cacheKey,
+        CacheKey $cacheKey,
         ReplicationPolicy $replicationPolicy = ReplicationPolicy::SYNCHRONOUS,
     ) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {

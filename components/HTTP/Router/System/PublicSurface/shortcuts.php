@@ -15,8 +15,8 @@ if (! function_exists('route')) {
      * Generate a URL for a given route name.
      *
      * @param string $name
-     * @param array  $parameters
-     * @param bool   $absolute
+     * @param array $parameters
+     * @param bool  $absolute
      *
      * @return string
      */
@@ -33,7 +33,7 @@ if (! function_exists('redirect')) {
      * Create a redirect HTTP response.
      *
      * @param string $url
-     * @param int    $status
+     * @param int $status
      *
      * @return ResponseInterface
      */
@@ -50,7 +50,7 @@ if (! function_exists('url')) {
      * Generate a fully qualified URL.
      *
      * @param string $path
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return string
      */

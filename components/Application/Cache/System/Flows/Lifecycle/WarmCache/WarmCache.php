@@ -17,11 +17,11 @@ final readonly class WarmCache
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private Clock      $clock,
-        private CacheTtl   $cacheTtl = new CacheTtl(),
+        private Clock    $clock,
+        private CacheTtl $cacheTtl = new CacheTtl(),
     ) {}
 
-    public function warm(iterable $entries, int|DateInterval|null $ttl = null) : int
+    public function warm(iterable $entries, int|DateInterval $ttl = null) : int
     {
         $count = 0;
 

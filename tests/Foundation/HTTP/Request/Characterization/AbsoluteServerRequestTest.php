@@ -23,19 +23,19 @@ final class AbsoluteServerRequestTest extends TestCase
     }
 
     private function createRequest(
-        array|null           $serverParams = null,
-        UriInterface|null    $uri = null,
-        array|null           $queryParams = null,
-        array|null           $parsedBody = null,
-        array|null           $cookies = null,
-        array                $uploadedFiles = []
+        array        $serverParams = null,
+        UriInterface $uri = null,
+        array        $queryParams = null,
+        array        $parsedBody = null,
+        array        $cookies = null,
+        array        $uploadedFiles = [],
     ) : AbsoluteServerRequest
     {
         $serverParams ??= ['REQUEST_METHOD' => 'GET'];
         $queryParams  ??= [];
         $parsedBody   ??= [];
         $cookies      ??= [];
-        $defaultUri   = UriBuilder::createFromString(uri: 'http://localhost/test');
+        $defaultUri = UriBuilder::createFromString(uri: 'http://localhost/test');
 
         return new AbsoluteServerRequest(
             server       : $serverParams,
@@ -44,7 +44,7 @@ final class AbsoluteServerRequestTest extends TestCase
             queryParams  : $queryParams,
             parsedBody   : $parsedBody,
             cookies      : $cookies,
-            uploadedFiles: $uploadedFiles
+            uploadedFiles: $uploadedFiles,
         );
     }
 

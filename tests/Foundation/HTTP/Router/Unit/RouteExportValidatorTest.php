@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
+
 use Avax\Tests\TestCase;
 use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use components\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteExportValidator;
@@ -27,7 +27,7 @@ class RouteExportValidatorTest extends TestCase
         $route = new RouteDefinition(
             method: 'GET',
             path  : '/test',
-            action: 'Controller@action'
+            action: 'Controller@action',
         );
 
         $this->assertTrue(condition: $this->validator->validate(route: $route));
@@ -42,7 +42,7 @@ class RouteExportValidatorTest extends TestCase
         $route = new RouteDefinition(
             method: 'POST',
             path  : '/users',
-            action: ['UserController', 'store']
+            action: ['UserController', 'store'],
         );
 
         $this->assertTrue(condition: $this->validator->validate(route: $route));
@@ -64,7 +64,7 @@ class RouteExportValidatorTest extends TestCase
             defaults     : ['page' => 1, 'limit' => 10],
             domain       : 'api.example.com',
             attributes   : ['version' => 'v1'],
-            authorization: 'admin'
+            authorization: 'admin',
         );
 
         $this->assertTrue(condition: $this->validator->validate(route: $route));
@@ -79,17 +79,12 @@ class RouteExportValidatorTest extends TestCase
         $route = new RouteDefinition(
             method: 'GET',
             path  : '/test',
-            action: static function () {
-                return 'closure';
-            }
+            action: static fn () => 'closure',
         );
 
         $this->logger->expects(invocationRule: $this->once())
             ->method(constraint: 'warning')
-            ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
-                return isset($context['issues']) &&
-                    in_array(needle: 'action contains non-serializable data (closures or objects)', haystack: $context['issues']);
-            }));
+            ->with('Route cannot be cached', $this->callback(callback: static fn ($context) => isset($context['issues']) && in_array(needle: 'action contains non-serializable data (closures or objects)', haystack: $context['issues'])));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
     }
@@ -103,15 +98,12 @@ class RouteExportValidatorTest extends TestCase
         $route = new RouteDefinition(
             method: 'GET',
             path  : '/test',
-            action: ['Controller'] // Missing method
+            action: ['Controller'], // Missing method
         );
 
         $this->logger->expects(invocationRule: $this->once())
             ->method(constraint: 'warning')
-            ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
-                return isset($context['issues']) &&
-                    in_array(needle: 'action contains non-serializable data (closures or objects)', haystack: $context['issues']);
-            }));
+            ->with('Route cannot be cached', $this->callback(callback: static fn ($context) => isset($context['issues']) && in_array(needle: 'action contains non-serializable data (closures or objects)', haystack: $context['issues'])));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
     }
@@ -126,15 +118,12 @@ class RouteExportValidatorTest extends TestCase
             method    : 'GET',
             path      : '/test',
             action    : 'Controller@action',
-            middleware: ['auth', static function () {}, 'json'] // Closure in middleware
+            middleware: ['auth', static function () : void {}, 'json'], // Closure in middleware
         );
 
         $this->logger->expects(invocationRule: $this->once())
             ->method(constraint: 'warning')
-            ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
-                return isset($context['issues']) &&
-                    in_array(needle: 'middleware contains non-string values', haystack: $context['issues']);
-            }));
+            ->with('Route cannot be cached', $this->callback(callback: static fn ($context) => isset($context['issues']) && in_array(needle: 'middleware contains non-string values', haystack: $context['issues'])));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
     }
@@ -149,15 +138,12 @@ class RouteExportValidatorTest extends TestCase
             method  : 'GET',
             path    : '/test',
             action  : 'Controller@action',
-            defaults: ['callback' => static function () {}] // Closure in defaults
+            defaults: ['callback' => static function () : void {}], // Closure in defaults
         );
 
         $this->logger->expects(invocationRule: $this->once())
             ->method(constraint: 'warning')
-            ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
-                return isset($context['issues']) &&
-                    in_array(needle: 'defaults contain non-scalar values', haystack: $context['issues']);
-            }));
+            ->with('Route cannot be cached', $this->callback(callback: static fn ($context) => isset($context['issues']) && in_array(needle: 'defaults contain non-scalar values', haystack: $context['issues'])));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
     }
@@ -172,15 +158,12 @@ class RouteExportValidatorTest extends TestCase
             method    : 'GET',
             path      : '/test',
             action    : 'Controller@action',
-            attributes: ['object' => new stdClass] // Object in attributes
+            attributes: ['object' => new stdClass()], // Object in attributes
         );
 
         $this->logger->expects(invocationRule: $this->once())
             ->method(constraint: 'warning')
-            ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
-                return isset($context['issues']) &&
-                    in_array(needle: 'attributes contain non-scalar values', haystack: $context['issues']);
-            }));
+            ->with('Route cannot be cached', $this->callback(callback: static fn ($context) => isset($context['issues']) && in_array(needle: 'attributes contain non-scalar values', haystack: $context['issues'])));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
     }
@@ -195,15 +178,12 @@ class RouteExportValidatorTest extends TestCase
             method: 'GET',
             path  : '/test',
             action: 'Controller@action',
-            domain: 123 // Integer instead of string
+            domain: 123, // Integer instead of string
         );
 
         $this->logger->expects(invocationRule: $this->once())
             ->method(constraint: 'warning')
-            ->with('Route cannot be cached', $this->callback(callback: static function ($context) {
-                return isset($context['issues']) &&
-                    in_array(needle: 'domain is not a string', haystack: $context['issues']);
-            }));
+            ->with('Route cannot be cached', $this->callback(callback: static fn ($context) => isset($context['issues']) && in_array(needle: 'domain is not a string', haystack: $context['issues'])));
 
         $this->assertFalse(condition: $this->validator->validate(route: $route));
     }
@@ -217,15 +197,13 @@ class RouteExportValidatorTest extends TestCase
         $exportableRoute = new RouteDefinition(
             method: 'GET',
             path  : '/exportable',
-            action: 'Controller@action'
+            action: 'Controller@action',
         );
 
         $nonExportableRoute = new RouteDefinition(
             method: 'POST',
             path  : '/closure',
-            action: static function () {
-                return 'closure';
-            }
+            action: static fn () => 'closure',
         );
 
         $routes = [$exportableRoute, $nonExportableRoute];
@@ -255,7 +233,7 @@ class RouteExportValidatorTest extends TestCase
             path      : '/test',
             action    : 'Controller@action',
             defaults  : ['optional' => null],
-            attributes: ['meta' => null]
+            attributes: ['meta' => null],
         );
 
         $this->assertTrue(condition: $this->validator->validate(route: $route));
@@ -272,7 +250,7 @@ class RouteExportValidatorTest extends TestCase
             path      : '/test',
             action    : 'Controller@action',
             defaults  : ['nested' => ['key' => 'value', 'count' => 5]],
-            attributes: ['config' => ['enabled' => true, 'options' => ['a', 'b']]]
+            attributes: ['config' => ['enabled' => true, 'options' => ['a', 'b']]],
         );
 
         $this->assertTrue(condition: $this->validator->validate(route: $route));

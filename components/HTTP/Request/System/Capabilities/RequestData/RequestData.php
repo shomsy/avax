@@ -12,16 +12,16 @@ use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 final readonly class RequestData
 {
     public function __construct(
-        public string        $method,
-        public RequestUri    $uri,
+        public string      $method,
+        public RequestUri  $uri,
         public RequestHeaders $headers,
-        public RequestBody   $body,
+        public RequestBody $body,
         public UploadedFiles $files,
-        public array         $serverParams,
-        public array         $cookieParams,
-        public array         $queryParams,
-        public array         $attributes,
-        public string        $protocolVersion,
+        public array       $serverParams,
+        public array       $cookieParams,
+        public array       $queryParams,
+        public array       $attributes,
+        public string      $protocolVersion,
     ) {}
 
     public function withMethod(string $method) : self

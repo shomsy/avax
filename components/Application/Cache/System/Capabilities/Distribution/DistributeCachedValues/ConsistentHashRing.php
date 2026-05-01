@@ -10,8 +10,6 @@ final class ConsistentHashRing
 {
     private const int VIRTUAL_NODES = 150;
 
-
-
     /** @var array<int, CacheNode> */
     private array $ring = [];
 

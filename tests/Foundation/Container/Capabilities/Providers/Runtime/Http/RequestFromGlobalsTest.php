@@ -21,8 +21,9 @@ final readonly class FakeContainer
     private bool $hasSession;
 
     public function __construct(
-        bool                        $hasSession,
-        #[SensitiveParameter] mixed $session
+        bool  $hasSession,
+        #[SensitiveParameter]
+        mixed $session,
     )
     {
         $this->hasSession = $hasSession;
@@ -58,7 +59,7 @@ final class RequestFromGlobalsTest extends TestCase
 
     public function test_create_from_globals_ignores_invalid_session_binding() : void
     {
-        appInstance(instance: new FakeContainer(hasSession: true, session: new stdClass));
+        appInstance(instance: new FakeContainer(hasSession: true, session: new stdClass()));
 
         $request = Request::createFromGlobals();
 
@@ -76,7 +77,7 @@ final class RequestFromGlobalsTest extends TestCase
 
     public function test_create_from_globals_uses_session_interface() : void
     {
-        $session = new NullSession;
+        $session = new NullSession();
         appInstance(instance: new FakeContainer(hasSession: true, session: $session));
 
         $request = Request::createFromGlobals();
@@ -88,10 +89,10 @@ final class RequestFromGlobalsTest extends TestCase
     protected function setUp() : void
     {
         $this->serverBackup = $_SERVER ?? [];
-        $this->getBackup    = $_GET ?? [];
-        $this->postBackup   = $_POST ?? [];
+        $this->getBackup = $_GET ?? [];
+        $this->postBackup = $_POST ?? [];
         $this->cookieBackup = $_COOKIE ?? [];
-        $this->filesBackup  = $_FILES ?? [];
+        $this->filesBackup = $_FILES ?? [];
 
         $_SERVER = [
             'HTTP_HOST'       => 'components.test',

@@ -22,16 +22,15 @@ final class KeyResolver
     private string $currentVersion;
 
     /**
-     * @param array<string, string> $keyVersions    Map of version => base64-encoded key
-     * @param string                $currentVersion The version to use for new encryptions
+     * @param  array<string, string>  $keyVersions  Map of version => base64-encoded key
+     * @param  string  $currentVersion  The version to use for new encryptions
      */
     public function __construct(
         array $keyVersions,
         string $currentVersion,
-    )
-    {
+    ) {
         foreach ($keyVersions as $version => $base64Key) {
-            $versionString              = (string) $version;
+            $versionString = (string) $version;
             $this->keys[$versionString] = EncryptionKey::fromBase64($base64Key, $versionString);
         }
 
@@ -48,7 +47,7 @@ final class KeyResolver
     /**
      * Get the current active encryption key (for new encryptions).
      */
-    public function getCurrentKey() : EncryptionKey
+    public function getCurrentKey(): EncryptionKey
     {
         return $this->keys[$this->currentVersion];
     }
@@ -56,11 +55,10 @@ final class KeyResolver
     /**
      * Get a specific key by version (for decrypting older payloads).
      *
-     * @param string $version The key version to retrieve
-     *
+     * @param  string  $version  The key version to retrieve
      * @return EncryptionKey|null The encryption key or null if not found
      */
-    public function getKeyByVersion(string $version) : ?EncryptionKey
+    public function getKeyByVersion(string $version): ?EncryptionKey
     {
         return $this->keys[$version] ?? null;
     }
@@ -70,7 +68,7 @@ final class KeyResolver
      *
      * @return array<string, EncryptionKey>
      */
-    public function getAllKeys() : array
+    public function getAllKeys(): array
     {
         return $this->keys;
     }
@@ -78,7 +76,7 @@ final class KeyResolver
     /**
      * Get the current key version identifier.
      */
-    public function getCurrentVersion() : string
+    public function getCurrentVersion(): string
     {
         return $this->currentVersion;
     }
@@ -86,7 +84,7 @@ final class KeyResolver
     /**
      * Set the current active key version.
      */
-    public function setCurrentVersion(string $version) : void
+    public function setCurrentVersion(string $version): void
     {
         if (! isset($this->keys[$version])) {
             throw new InvalidArgumentException(
@@ -100,7 +98,7 @@ final class KeyResolver
     /**
      * Add a new key version (for key rotation).
      */
-    public function addKey(EncryptionKey $key) : void
+    public function addKey(EncryptionKey $key): void
     {
         $this->keys[$key->version()] = $key;
     }

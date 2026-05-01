@@ -13,7 +13,7 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observ
 final class BlueprintCache
 {
     /** @var array<string, DependencyBlueprint> */
-    private array         $items = [];
+    private array $items = [];
 
     private readonly bool $debug;
 
@@ -22,9 +22,9 @@ final class BlueprintCache
     private readonly string $cacheDir;
 
     public function __construct(
-        string|null $cacheDir = null,
-        string|null $cacheVersion = null,
-        bool|null   $debug = null,
+        string $cacheDir = null,
+        string $cacheVersion = null,
+        bool   $debug = null,
         private readonly ResolutionMetrics|null $resolutionMetrics = null,
     )
     {

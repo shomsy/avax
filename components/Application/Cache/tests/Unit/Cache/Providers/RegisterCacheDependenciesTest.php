@@ -20,7 +20,6 @@ final class RegisterCacheDependenciesTest extends TestCase
 
     private InMemoryCacheStore $inMemoryCacheStore;
 
-
     private CacheContract $cacheContract;
 
     public function test_cache_store_with_name_requires_provider() : void

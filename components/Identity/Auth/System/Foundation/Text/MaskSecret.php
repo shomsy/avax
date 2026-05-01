@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Auth\System\Foundation\Text;
 
 final class MaskSecret
 {
-    public function __invoke(string $value, int $visiblePrefix = 4) : string
+    public function __invoke(string $value, int $visiblePrefix = 4): string
     {
         $length = strlen(string: $value);
 
@@ -14,6 +14,6 @@ final class MaskSecret
             return str_repeat(string: '*', times: $length);
         }
 
-        return substr(string: $value, offset: 0, length: $visiblePrefix) . str_repeat(string: '*', times: $length - $visiblePrefix);
+        return substr(string: $value, offset: 0, length: $visiblePrefix).str_repeat(string: '*', times: $length - $visiblePrefix);
     }
 }

@@ -12,7 +12,7 @@ use Closure;
 final readonly class SagaCompensationDefinition
 {
     public function __construct(
-        public string       $name,
-        public Closure|null $runCompensation = null,
+        public string $name,
+        public ?Closure $runCompensation = null,
     ) {}
 }

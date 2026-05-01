@@ -11,7 +11,7 @@ final readonly class ContainsValue
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(mixed $value, bool $strict = true) : bool
+    public function __invoke(mixed $value, bool $strict = true): bool
     {
         return in_array($value, $this->items, $strict);
     }

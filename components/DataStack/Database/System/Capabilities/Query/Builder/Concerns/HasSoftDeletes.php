@@ -58,11 +58,11 @@ trait HasSoftDeletes
      *                                     inclusion
      *                                     active.
      */
-    public function withTrashed() : self
+    public function withTrashed(): self
     {
-        return clone(object: $this, withProperties: [
+        return clone (object: $this, withProperties: [
             'usesSoftDeletes' => true,
-            'withTrashed'     => true,
+            'withTrashed' => true,
         ]);
     }
 
@@ -89,20 +89,20 @@ trait HasSoftDeletes
      * Isolate domain records that have been logically removed from the active
      * set, typically for recovery, permanent destruction, or auditing.
      */
-    public function onlyTrashed() : self
+    public function onlyTrashed(): self
     {
-        return clone(object: $this, withProperties: [
+        return clone (object: $this, withProperties: [
             'usesSoftDeletes' => true,
-            'onlyTrashed'     => true,
+            'onlyTrashed' => true,
         ]);
     }
 
     /**
      * Explicitly opt the current query into soft-delete filtering semantics.
      */
-    public function usingSoftDeletes() : self
+    public function usingSoftDeletes(): self
     {
-        return clone(object: $this, withProperties: [
+        return clone (object: $this, withProperties: [
             'usesSoftDeletes' => true,
         ]);
     }
@@ -117,13 +117,12 @@ trait HasSoftDeletes
      * @see /docs/Foundation/Database/DSL/SoftDeletes.md#restoring-records
      * t.
      *
-     * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
-     *
+     * @param  string  $column  The technical deletion field identifier (defaults to 'deleted_at').
      * @return bool True if the records were successfully marked as active.
      *
      * @throws Throwable If the restoration update fails at the persistence layer.
      */
-    public function restore(string $column = 'deleted_at') : bool
+    public function restore(string $column = 'deleted_at'): bool
     {
         return $this->update(values: [$column => null]);
     }
@@ -136,8 +135,7 @@ trait HasSoftDeletes
      * the current feature flags (withTrashed, onlyTrashed), ensuring that
      * logical deletion is respected in all final SQL instructions.
      *
-     * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
-     *
+     * @param  string  $column  The technical deletion field identifier (defaults to 'deleted_at').
      * @return QueryBuilder|HasSoftDeletes A
      *                                     fresh,
      *                                     cloned
@@ -150,7 +148,7 @@ trait HasSoftDeletes
      *                                     filters
      *                                     injected.
      */
-    public function withSoftDeleteFilter(string $column = 'deleted_at') : self
+    public function withSoftDeleteFilter(string $column = 'deleted_at'): self
     {
         if (! $this->usesSoftDeletes) {
             return $this;
@@ -174,9 +172,8 @@ trait HasSoftDeletes
      * Provide an expressive DSL for SQL "IS NOT NULL" logic, acting as a
      * categorical filter for required technical metadata.
      *
-     * @param string $column The technical field name to target for the non-null check.
-     * @param string $boolean The logical joiner used to attach this condition ('AND' or 'OR').
-     *
+     * @param  string  $column  The technical field name to target for the non-null check.
+     * @param  string  $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
      * @return QueryBuilder|HasSoftDeletes A
      *                                     fresh,
      *                                     cloned
@@ -187,7 +184,7 @@ trait HasSoftDeletes
      *                                     non-null
      *                                     filter.
      */
-    public function whereNotNull(string $column, string $boolean = 'AND') : self
+    public function whereNotNull(string $column, string $boolean = 'AND'): self
     {
         return $this->whereNull(column: $column, boolean: $boolean, not: true);
     }
@@ -199,10 +196,9 @@ trait HasSoftDeletes
      * Provide an expressive DSL for SQL "IS NULL" logic, primarily used for
      * checking existence flags or soft-delete statuses.
      *
-     * @param string $column The technical field name to target for the null check.
-     * @param string|null $boolean The logical joiner used to attach this condition ('AND' or 'OR').
-     * @param bool   $not    Flag indicating whether to check for existence (IS NOT NULL) instead.
-     *
+     * @param  string  $column  The technical field name to target for the null check.
+     * @param  string|null  $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
+     * @param  bool  $not  Flag indicating whether to check for existence (IS NOT NULL) instead.
      * @return QueryBuilder|HasSoftDeletes A
      *                                     fresh,
      *                                     cloned
@@ -213,18 +209,18 @@ trait HasSoftDeletes
      *                                     null
      *                                     filter.
      */
-    public function whereNull(string $column, string|null $boolean = null, bool $not = false) : self
+    public function whereNull(string $column, ?string $boolean = null, bool $not = false): self
     {
-        $boolean      ??= 'AND';
+        $boolean ??= 'AND';
         $operator = $not ? 'IS NOT NULL' : 'IS NULL';
 
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-                                                           column  : $column,
-                                                           operator: $operator,
-                                                           boolean : $boolean,
-                                                           type    : 'Null',
-                                                       ));
+            column  : $column,
+            operator: $operator,
+            boolean : $boolean,
+            type    : 'Null',
+        ));
 
         return $clone;
     }

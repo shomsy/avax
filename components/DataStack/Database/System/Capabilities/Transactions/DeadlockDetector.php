@@ -15,7 +15,7 @@ use Throwable;
 final readonly class DeadlockReport
 {
     public function __construct(
-        public bool  $isDeadlock,
+        public bool $isDeadlock,
         public string $type = '',
         public string $message = '',
         public string $errorCode = '',
@@ -33,8 +33,7 @@ final readonly class DeadlockReport
         string $errorCode,
         string $suggestion,
         array $affectedTables = [],
-    ) : self
-    {
+    ): self {
         return new self(
             isDeadlock    : true,
             type          : $type,
@@ -49,7 +48,7 @@ final readonly class DeadlockReport
     /**
      * Creates a report indicating no deadlock was detected.
      */
-    public static function notDeadlock() : self
+    public static function notDeadlock(): self
     {
         return new self(
             isDeadlock: false,
@@ -62,7 +61,7 @@ final readonly class DeadlockReport
     /**
      * Returns a human-readable summary of the deadlock report.
      */
-    public function summary() : string
+    public function summary(): string
     {
         if (! $this->isDeadlock) {
             return 'No deadlock detected';
@@ -73,7 +72,7 @@ final readonly class DeadlockReport
         $summary .= "Message: {$this->message}\n";
 
         if (! empty($this->affectedTables)) {
-            $summary .= 'Affected Tables: ' . implode(', ', $this->affectedTables);
+            $summary .= 'Affected Tables: '.implode(', ', $this->affectedTables);
             $summary .= "\n";
         }
 
@@ -117,9 +116,9 @@ final class DeadlockDetector
      */
     private DeadlockDetectorConfig $config;
 
-    public function __construct(DeadlockDetectorConfig|null $config = null)
+    public function __construct(?DeadlockDetectorConfig $config = null)
     {
-        $this->config = $config ?? new DeadlockDetectorConfig();
+        $this->config = $config ?? new DeadlockDetectorConfig;
     }
 
     /**
@@ -127,11 +126,11 @@ final class DeadlockDetector
      *
      * @return DeadlockReport Analysis result
      */
-    public function analyze(Throwable $exception) : DeadlockReport
+    public function analyze(Throwable $exception): DeadlockReport
     {
-        $message   = strtolower($exception->getMessage());
+        $message = strtolower($exception->getMessage());
         $errorCode = (string) $exception->getCode();
-        $sqlState  = $this->extractSqlState($exception);
+        $sqlState = $this->extractSqlState($exception);
 
         // Check SQLSTATE codes first
         if ($this->isDeadlockSqlState($sqlState)) {
@@ -174,7 +173,7 @@ final class DeadlockDetector
     /**
      * Quick check if an exception is a deadlock.
      */
-    public function isDeadlock(Throwable $exception) : bool
+    public function isDeadlock(Throwable $exception): bool
     {
         return $this->analyze($exception)->isDeadlock;
     }
@@ -182,11 +181,10 @@ final class DeadlockDetector
     /**
      * Analyzes multiple exceptions to find deadlocks.
      *
-     * @param list<Throwable> $exceptions
-     *
+     * @param  list<Throwable>  $exceptions
      * @return list<DeadlockReport>
      */
-    public function analyzeBatch(array $exceptions) : array
+    public function analyzeBatch(array $exceptions): array
     {
         $reports = [];
 
@@ -195,9 +193,9 @@ final class DeadlockDetector
         }
 
         return array_values(array_filter(
-                                $reports,
-                                static fn (DeadlockReport $report) : bool => $report->isDeadlock,
-                            ));
+            $reports,
+            static fn (DeadlockReport $report): bool => $report->isDeadlock,
+        ));
     }
 
     /**
@@ -207,7 +205,7 @@ final class DeadlockDetector
      *
      * @return list<string>
      */
-    private function extractAffectedTables(string $message) : array
+    private function extractAffectedTables(string $message): array
     {
         $tables = [];
 
@@ -227,7 +225,7 @@ final class DeadlockDetector
     /**
      * Extracts the SQLSTATE from a PDOException.
      */
-    private function extractSqlState(Throwable $exception) : string
+    private function extractSqlState(Throwable $exception): string
     {
         if (! $exception instanceof PDOException) {
             return '';
@@ -239,7 +237,7 @@ final class DeadlockDetector
     /**
      * Checks if the SQLSTATE indicates a deadlock.
      */
-    private function isDeadlockSqlState(string $sqlState) : bool
+    private function isDeadlockSqlState(string $sqlState): bool
     {
         if ($sqlState === '') {
             return false;
@@ -251,7 +249,7 @@ final class DeadlockDetector
     /**
      * Checks if the error code indicates a deadlock.
      */
-    private function isDeadlockErrorCode(string $errorCode) : bool
+    private function isDeadlockErrorCode(string $errorCode): bool
     {
         if ($errorCode === '') {
             return false;
@@ -263,7 +261,7 @@ final class DeadlockDetector
     /**
      * Gets a suggestion based on the SQLSTATE code.
      */
-    private function getSuggestionForSqlState(string $sqlState) : string
+    private function getSuggestionForSqlState(string $sqlState): string
     {
         return match ($sqlState) {
             '40001' => 'Serialization failure detected. Retry the transaction. Consider using a lower isolation level or restructuring the transaction order.',
@@ -275,14 +273,14 @@ final class DeadlockDetector
     /**
      * Gets a suggestion based on the matched error pattern.
      */
-    private function getSuggestionForPattern(string $pattern) : string
+    private function getSuggestionForPattern(string $pattern): string
     {
         return match ($pattern) {
-            'deadlock'                   => 'Deadlock detected. Ensure transactions access resources in a consistent order to prevent circular waits.',
-            'serialization failure'      => 'Serialization failure. Consider using SERIALIZABLE isolation level or retrying the transaction.',
-            'lock wait timeout'          => 'Lock wait timeout. The transaction waited too long for a lock. Check for long-running transactions.',
+            'deadlock' => 'Deadlock detected. Ensure transactions access resources in a consistent order to prevent circular waits.',
+            'serialization failure' => 'Serialization failure. Consider using SERIALIZABLE isolation level or retrying the transaction.',
+            'lock wait timeout' => 'Lock wait timeout. The transaction waited too long for a lock. Check for long-running transactions.',
             'try restarting transaction' => 'Database recommends restarting the transaction. Implement retry logic with backoff.',
-            default                      => 'Deadlock-like error detected. Retry the transaction with exponential backoff.',
+            default => 'Deadlock-like error detected. Retry the transaction with exponential backoff.',
         };
     }
 }
@@ -293,8 +291,8 @@ final class DeadlockDetector
 final readonly class DeadlockDetectorConfig
 {
     /**
-     * @param list<string> $deadlockSqlStates SQLSTATE codes that indicate deadlocks
-     * @param list<string> $deadlockErrorCodes Additional error codes to check
+     * @param  list<string>  $deadlockSqlStates  SQLSTATE codes that indicate deadlocks
+     * @param  list<string>  $deadlockErrorCodes  Additional error codes to check
      */
     public function __construct(
         public array $deadlockSqlStates = ['40001', '40P01'],
@@ -304,7 +302,7 @@ final readonly class DeadlockDetectorConfig
     /**
      * Creates a configuration with MySQL-specific deadlock codes.
      */
-    public static function forMySQL() : self
+    public static function forMySQL(): self
     {
         return new self(
             deadlockSqlStates: ['40001'],
@@ -314,7 +312,7 @@ final readonly class DeadlockDetectorConfig
     /**
      * Creates a configuration with PostgreSQL-specific deadlock codes.
      */
-    public static function forPostgreSQL() : self
+    public static function forPostgreSQL(): self
     {
         return new self(
             deadlockSqlStates: ['40P01', '40001'],
@@ -324,7 +322,7 @@ final readonly class DeadlockDetectorConfig
     /**
      * Creates a configuration with SQLite-specific deadlock codes.
      */
-    public static function forSQLite() : self
+    public static function forSQLite(): self
     {
         return new self(
             deadlockSqlStates: ['40001', '5'], // 5 is SQLITE_BUSY

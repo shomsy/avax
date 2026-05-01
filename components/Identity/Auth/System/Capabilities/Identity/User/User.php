@@ -10,12 +10,14 @@ use Stringable;
 /**
  * User entity within the Avax Auth System.
  */
-final class User implements UserInterface, Stringable
+final class User implements Stringable, UserInterface
 {
     /** @var list<UserPermission> */
     public array $permissions;
+
     /** @var list<UserRole> */
-    public array  $roles;
+    public array $roles;
+
     public UserId $id;
 
     public UserEmail $email;
@@ -27,42 +29,40 @@ final class User implements UserInterface, Stringable
     public bool $isActive;
 
     public function __construct(
-        UserId     $_id,
+        UserId $_id,
         #[SensitiveParameter]
-        UserEmail  $_email,
-        string     $_username,
+        UserEmail $_email,
+        string $_username,
         #[SensitiveParameter]
-        string     $_passwordHash,
-        array|null $roles = null,
-        array|null $permissions = null,
-        bool       $_isActive = true,
-    )
-    {
-        $this->id           = $_id;
-        $this->email        = $_email;
-        $this->username     = $_username;
+        string $_passwordHash,
+        ?array $roles = null,
+        ?array $permissions = null,
+        bool $_isActive = true,
+    ) {
+        $this->id = $_id;
+        $this->email = $_email;
+        $this->username = $_username;
         $this->passwordHash = $_passwordHash;
-        $this->isActive     = $_isActive;
-        $this->roles       = array_values(array: $roles ?? []);
+        $this->isActive = $_isActive;
+        $this->roles = array_values(array: $roles ?? []);
         $this->permissions = array_values(array: $permissions ?? []);
     }
 
     /**
-     * @param list<UserRole>|null $roles
-     * @param list<UserPermission>|null $permissions
+     * @param  list<UserRole>|null  $roles
+     * @param  list<UserPermission>|null  $permissions
      */
     public static function create(
-        UserId    $id,
+        UserId $id,
         #[SensitiveParameter]
         UserEmail $email,
-        string    $username,
+        string $username,
         #[SensitiveParameter]
-        string    $passwordHash,
-        array|null $roles = null,
-        array|null $permissions = null,
-        bool      $isActive = true,
-    ) : self
-    {
+        string $passwordHash,
+        ?array $roles = null,
+        ?array $permissions = null,
+        bool $isActive = true,
+    ): self {
         return new self(
             _id          : $id,
             _email       : $email,
@@ -74,7 +74,7 @@ final class User implements UserInterface, Stringable
         );
     }
 
-    public function hasRole(UserRole $role) : bool
+    public function hasRole(UserRole $role): bool
     {
         foreach ($this->roles as $existingRole) {
             if ($existingRole === $role) {
@@ -85,7 +85,7 @@ final class User implements UserInterface, Stringable
         return false;
     }
 
-    public function hasPermission(UserPermission $permission) : bool
+    public function hasPermission(UserPermission $permission): bool
     {
         foreach ($this->permissions as $existingPermission) {
             if ($existingPermission->equals(other: $permission)) {
@@ -96,7 +96,7 @@ final class User implements UserInterface, Stringable
         return false;
     }
 
-    public function canAccessRole(UserRole $requiredRole) : bool
+    public function canAccessRole(UserRole $requiredRole): bool
     {
         foreach ($this->roles as $role) {
             if ($role->canAccess(required: $requiredRole)) {
@@ -107,27 +107,27 @@ final class User implements UserInterface, Stringable
         return false;
     }
 
-    public function getId() : UserId
+    public function getId(): UserId
     {
         return $this->id;
     }
 
-    public function getEmail() : UserEmail
+    public function getEmail(): UserEmail
     {
         return $this->email;
     }
 
-    public function getUsername() : string
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function getPasswordHash() : string
+    public function getPasswordHash(): string
     {
         return $this->passwordHash;
     }
 
-    public function isActive() : bool
+    public function isActive(): bool
     {
         return $this->isActive;
     }
@@ -135,7 +135,7 @@ final class User implements UserInterface, Stringable
     /**
      * @return list<UserRole>
      */
-    public function getRoles() : array
+    public function getRoles(): array
     {
         return $this->roles;
     }
@@ -143,12 +143,12 @@ final class User implements UserInterface, Stringable
     /**
      * @return list<UserPermission>
      */
-    public function getPermissions() : array
+    public function getPermissions(): array
     {
         return $this->permissions;
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->email->value;
     }

@@ -15,44 +15,43 @@ interface ConsistencyPolicy
     /**
      * Returns the name of this consistency policy.
      */
-    public function name() : string;
+    public function name(): string;
 
     /**
      * Determines if a read is allowed given the current state.
      *
-     * @param mixed $currentValue The current value
-     * @param mixed $pendingWrite Any pending write
+     * @param  mixed  $currentValue  The current value
+     * @param  mixed  $pendingWrite  Any pending write
      */
-    public function canRead(mixed $currentValue, mixed $pendingWrite = null) : bool;
+    public function canRead(mixed $currentValue, mixed $pendingWrite = null): bool;
 
     /**
      * Determines if a write should be accepted.
      *
-     * @param mixed $currentValue The current value
-     * @param mixed $newValue The proposed new value
+     * @param  mixed  $currentValue  The current value
+     * @param  mixed  $newValue  The proposed new value
      */
-    public function canWrite(mixed $currentValue, mixed $newValue) : bool;
+    public function canWrite(mixed $currentValue, mixed $newValue): bool;
 
     /**
      * Resolves a conflict between two values.
      *
-     * @param mixed $valueA First conflicting value
-     * @param mixed $valueB Second conflicting value
-     * @param array<string, mixed> $context Additional context for resolution
-     *
+     * @param  mixed  $valueA  First conflicting value
+     * @param  mixed  $valueB  Second conflicting value
+     * @param  array<string, mixed>  $context  Additional context for resolution
      * @return mixed The resolved value
      */
-    public function resolveConflict(mixed $valueA, mixed $valueB, array $context = []) : mixed;
+    public function resolveConflict(mixed $valueA, mixed $valueB, array $context = []): mixed;
 
     /**
      * Returns a description of this policy's guarantees.
      */
-    public function description() : string;
+    public function description(): string;
 
     /**
      * Returns the consistency level (0 = none, 1 = strong).
      */
-    public function consistencyLevel() : float;
+    public function consistencyLevel(): float;
 }
 
 /**
@@ -76,15 +75,15 @@ final class VectorClock
     /**
      * Creates an empty vector clock.
      */
-    public static function empty() : self
+    public static function empty(): self
     {
-        return new self();
+        return new self;
     }
 
     /**
      * Creates a vector clock with a single node initialized to 1.
      */
-    public static function initial(string $nodeId) : self
+    public static function initial(string $nodeId): self
     {
         return new self([$nodeId => 1]);
     }
@@ -92,9 +91,9 @@ final class VectorClock
     /**
      * Increments the clock for the given node.
      */
-    public function increment(string $nodeId) : self
+    public function increment(string $nodeId): self
     {
-        $newClock          = $this->clock;
+        $newClock = $this->clock;
         $newClock[$nodeId] = ($newClock[$nodeId] ?? 0) + 1;
 
         return new self($newClock);
@@ -103,7 +102,7 @@ final class VectorClock
     /**
      * Merges this clock with another, taking the maximum of each component.
      */
-    public function merge(self $other) : self
+    public function merge(self $other): self
     {
         $merged = $this->clock;
 
@@ -117,7 +116,7 @@ final class VectorClock
     /**
      * Checks if this clock happened-after another clock.
      */
-    public function happenedAfter(self $other) : bool
+    public function happenedAfter(self $other): bool
     {
         return $other->happenedBefore($this);
     }
@@ -128,12 +127,12 @@ final class VectorClock
      * A < B if all components of A are <= corresponding components of B,
      * and at least one component is strictly less.
      */
-    public function happenedBefore(self $other) : bool
+    public function happenedBefore(self $other): bool
     {
         $allNodes = array_unique(array_merge(
-                                     array_keys($this->clock),
-                                     array_keys($other->clock),
-                                 ));
+            array_keys($this->clock),
+            array_keys($other->clock),
+        ));
 
         $allLessOrEqual = true;
         $atLeastOneLess = false;
@@ -161,7 +160,7 @@ final class VectorClock
      *
      * Concurrent clocks indicate a conflict that needs resolution.
      */
-    public function isConcurrent(self $other) : bool
+    public function isConcurrent(self $other): bool
     {
         return ! $this->happenedBefore($other)
             && ! $other->happenedBefore($this)
@@ -171,7 +170,7 @@ final class VectorClock
     /**
      * Checks if two clocks are equal.
      */
-    public function equals(self $other) : bool
+    public function equals(self $other): bool
     {
         return $this->clock === $other->clock;
     }
@@ -181,7 +180,7 @@ final class VectorClock
      *
      * @return array<string, int>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->clock;
     }
@@ -189,7 +188,7 @@ final class VectorClock
     /**
      * Returns a string representation.
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         $parts = [];
 
@@ -197,6 +196,6 @@ final class VectorClock
             $parts[] = "{$nodeId}:{$timestamp}";
         }
 
-        return '{' . implode(', ', $parts) . '}';
+        return '{'.implode(', ', $parts).'}';
     }
 }

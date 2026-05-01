@@ -12,63 +12,75 @@ use Random\RandomException;
 
 enum SagaInstanceStatus: string
 {
-    case PENDING      = 'pending';
-    case RUNNING      = 'running';
-    case COMPLETED    = 'completed';
+    case PENDING = 'pending';
+    case RUNNING = 'running';
+    case COMPLETED = 'completed';
     case COMPENSATING = 'compensating';
-    case COMPENSATED  = 'compensated';
-    case FAILED       = 'failed';
-    case TIMEOUT      = 'timeout';
+    case COMPENSATED = 'compensated';
+    case FAILED = 'failed';
+    case TIMEOUT = 'timeout';
 }
 
 final readonly class SagaInstance
 {
-    public string             $id;
-    public string             $definitionName;
-    public string             $type;
+    public string $id;
+
+    public string $definitionName;
+
+    public string $type;
+
     public SagaInstanceStatus $status;
-    public int                $currentStepIndex;
-    public string|null        $currentStepName;
-    public array              $data;
-    public array              $completedSteps;
-    public array              $stepResults;
-    public DateTimeImmutable|null $startedAt;
-    public DateTimeImmutable|null $completedAt;
-    public DateTimeImmutable|null $timeoutAt;
-    public string|null        $correlationId;
-    public string|null        $tenantId;
+
+    public int $currentStepIndex;
+
+    public ?string $currentStepName;
+
+    public array $data;
+
+    public array $completedSteps;
+
+    public array $stepResults;
+
+    public ?DateTimeImmutable $startedAt;
+
+    public ?DateTimeImmutable $completedAt;
+
+    public ?DateTimeImmutable $timeoutAt;
+
+    public ?string $correlationId;
+
+    public ?string $tenantId;
 
     private function __construct(
-        string             $id,
-        string             $definitionName,
-        string             $type,
+        string $id,
+        string $definitionName,
+        string $type,
         SagaInstanceStatus $status,
-        int                $currentStepIndex,
-        string|null        $currentStepName,
-        array              $data,
-        array              $completedSteps,
-        array              $stepResults,
-        DateTimeImmutable|null $startedAt,
-        DateTimeImmutable|null $completedAt,
-        DateTimeImmutable|null $timeoutAt,
-        string|null        $correlationId,
-        string|null        $tenantId,
-    )
-    {
-        $this->id               = $id;
-        $this->definitionName   = $definitionName;
-        $this->type             = $type;
-        $this->status           = $status;
+        int $currentStepIndex,
+        ?string $currentStepName,
+        array $data,
+        array $completedSteps,
+        array $stepResults,
+        ?DateTimeImmutable $startedAt,
+        ?DateTimeImmutable $completedAt,
+        ?DateTimeImmutable $timeoutAt,
+        ?string $correlationId,
+        ?string $tenantId,
+    ) {
+        $this->id = $id;
+        $this->definitionName = $definitionName;
+        $this->type = $type;
+        $this->status = $status;
         $this->currentStepIndex = $currentStepIndex;
-        $this->currentStepName  = $currentStepName;
-        $this->data             = $data;
-        $this->completedSteps   = $completedSteps;
-        $this->stepResults      = $stepResults;
-        $this->startedAt        = $startedAt;
-        $this->completedAt      = $completedAt;
-        $this->timeoutAt        = $timeoutAt;
-        $this->correlationId    = $correlationId;
-        $this->tenantId         = $tenantId;
+        $this->currentStepName = $currentStepName;
+        $this->data = $data;
+        $this->completedSteps = $completedSteps;
+        $this->stepResults = $stepResults;
+        $this->startedAt = $startedAt;
+        $this->completedAt = $completedAt;
+        $this->timeoutAt = $timeoutAt;
+        $this->correlationId = $correlationId;
+        $this->tenantId = $tenantId;
     }
 
     /**
@@ -81,13 +93,12 @@ final readonly class SagaInstance
         string $type,
         array $initialData,
         array $options = [],
-    ) : self
-    {
+    ): self {
         if (empty(trim($id))) {
             throw new InvalidArgumentException(message: 'Saga instance ID cannot be empty.');
         }
 
-        $startedAt = new DateTimeImmutable();
+        $startedAt = new DateTimeImmutable;
         $timeoutAt = isset($options['timeout_seconds'])
             ? new DateTimeImmutable()->modify(modifier: sprintf('+%d seconds', $options['timeout_seconds']))
             : null;
@@ -113,7 +124,7 @@ final readonly class SagaInstance
     /**
      * @throws RandomException
      */
-    private static function generateCorrelationId() : string
+    private static function generateCorrelationId(): string
     {
         return sprintf('saga_%s_%s', date('YmdHis'), bin2hex(random_bytes(6)));
     }
@@ -121,7 +132,7 @@ final readonly class SagaInstance
     /**
      * @throws DateMalformedStringException
      */
-    public static function fromArray(array $row) : self
+    public static function fromArray(array $row): self
     {
         return new self(
             id              : $row['id'],
@@ -141,7 +152,7 @@ final readonly class SagaInstance
         );
     }
 
-    public function start(string $firstStepName) : self
+    public function start(string $firstStepName): self
     {
         return new self(
             id              : $this->id,
@@ -161,12 +172,12 @@ final readonly class SagaInstance
         );
     }
 
-    public function advanceTo(string $stepName, int $stepIndex, array $result) : self
+    public function advanceTo(string $stepName, int $stepIndex, array $result): self
     {
-        $completedSteps   = $this->completedSteps;
+        $completedSteps = $this->completedSteps;
         $completedSteps[] = $this->currentStepName;
 
-        $stepResults                               = $this->stepResults;
+        $stepResults = $this->stepResults;
         $stepResults[$this->currentStepName ?? ''] = $result;
 
         return new self(
@@ -187,7 +198,7 @@ final readonly class SagaInstance
         );
     }
 
-    public function complete() : self
+    public function complete(): self
     {
         return new self(
             id              : $this->id,
@@ -200,16 +211,16 @@ final readonly class SagaInstance
             completedSteps  : $this->completedSteps,
             stepResults     : $this->stepResults,
             startedAt       : $this->startedAt,
-            completedAt     : new DateTimeImmutable(),
+            completedAt     : new DateTimeImmutable,
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
             tenantId        : $this->tenantId,
         );
     }
 
-    public function fail(string $error) : self
+    public function fail(string $error): self
     {
-        $stepResults                               = $this->stepResults;
+        $stepResults = $this->stepResults;
         $stepResults[$this->currentStepName ?? ''] = ['error' => $error, 'failed_at' => new DateTimeImmutable()->format(format: DateTimeInterface::ISO8601)];
 
         return new self(
@@ -223,14 +234,14 @@ final readonly class SagaInstance
             completedSteps  : $this->completedSteps,
             stepResults     : $stepResults,
             startedAt       : $this->startedAt,
-            completedAt     : new DateTimeImmutable(),
+            completedAt     : new DateTimeImmutable,
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
             tenantId        : $this->tenantId,
         );
     }
 
-    public function compensate(array $compensationResults = []) : self
+    public function compensate(array $compensationResults = []): self
     {
         return new self(
             id              : $this->id,
@@ -243,14 +254,14 @@ final readonly class SagaInstance
             completedSteps  : $this->completedSteps,
             stepResults     : $compensationResults,
             startedAt       : $this->startedAt,
-            completedAt     : new DateTimeImmutable(),
+            completedAt     : new DateTimeImmutable,
             timeoutAt       : $this->timeoutAt,
             correlationId   : $this->correlationId,
             tenantId        : $this->tenantId,
         );
     }
 
-    public function retry() : self
+    public function retry(): self
     {
         return new self(
             id              : $this->id,
@@ -270,23 +281,23 @@ final readonly class SagaInstance
         );
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'id'                 => $this->id,
-            'definition_name'    => $this->definitionName,
-            'type'               => $this->type,
-            'status'             => $this->status->value,
+            'id' => $this->id,
+            'definition_name' => $this->definitionName,
+            'type' => $this->type,
+            'status' => $this->status->value,
             'current_step_index' => $this->currentStepIndex,
-            'current_step_name'  => $this->currentStepName,
-            'data'               => $this->data,
-            'completed_steps'    => $this->completedSteps,
-            'step_results'       => $this->stepResults,
-            'started_at'         => $this->startedAt?->format(format: DateTimeInterface::ISO8601),
-            'completed_at'       => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
-            'timeout_at'         => $this->timeoutAt?->format(format: DateTimeInterface::ISO8601),
-            'correlation_id'     => $this->correlationId,
-            'tenant_id'          => $this->tenantId,
+            'current_step_name' => $this->currentStepName,
+            'data' => $this->data,
+            'completed_steps' => $this->completedSteps,
+            'step_results' => $this->stepResults,
+            'started_at' => $this->startedAt?->format(format: DateTimeInterface::ISO8601),
+            'completed_at' => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
+            'timeout_at' => $this->timeoutAt?->format(format: DateTimeInterface::ISO8601),
+            'correlation_id' => $this->correlationId,
+            'tenant_id' => $this->tenantId,
         ];
     }
 }

@@ -100,7 +100,7 @@ final class RuntimeRequestTest extends TestCase
             uri: '/test',
             headers: [
                         'Accept' => ['text/html', 'application/json'],
-                'Cache-Control' => ['no-cache', 'no-store'],
+                        'Cache-Control' => ['no-cache', 'no-store'],
             ],
         );
 

@@ -12,18 +12,18 @@ use DateTimeImmutable;
  */
 interface SessionRegistryInterface
 {
-    public function track(SessionRecord $record) : void;
+    public function track(SessionRecord $record): void;
 
-    public function find(string $sessionId) : SessionRecord|null;
+    public function find(string $sessionId): ?SessionRecord;
 
-    public function save(SessionRecord $record) : void;
+    public function save(SessionRecord $record): void;
 
     /**
      * @return list<SessionRecord>
      */
-    public function listForUser(UserId $userId) : array;
+    public function listForUser(UserId $userId): array;
 
-    public function revoke(string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void;
+    public function revoke(string $sessionId, DateTimeImmutable $revokedAt, string $reason): void;
 
-    public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason) : void;
+    public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason): void;
 }

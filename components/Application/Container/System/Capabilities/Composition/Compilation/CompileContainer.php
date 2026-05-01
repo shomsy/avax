@@ -27,63 +27,63 @@ final class CompileContainer
 
     private const int SCHEMA_VERSION = 8;
 
-    private DependencyCompiler                 $services;
+    private DependencyCompiler $services;
 
-    private ArtifactMetadata|null    $lastMetadata = null;
+    private ArtifactMetadata|null       $lastMetadata = null;
     private readonly ResolutionMetrics|null $metrics;
-    private readonly bool            $validateBeforeCompile;
-    private readonly bool            $failClosedOnCorruption;
-    private readonly bool            $validateOnLoad;
-    private readonly string          $pruneMode;
-    private readonly string          $executionMode;
-    private readonly string          $benchmarkBuildMarker;
-    private readonly string          $settingsFingerprint;
-    private readonly bool            $strict;
-    private readonly string          $compileMode;
-    private readonly string          $environment;
-    private readonly string          $diagnosticsMode;
-    private readonly string          $configHash;
-    private readonly string          $cacheVersion;
-    private readonly string          $cacheDir;
+    private readonly bool               $validateBeforeCompile;
+    private readonly bool               $failClosedOnCorruption;
+    private readonly bool               $validateOnLoad;
+    private readonly string             $pruneMode;
+    private readonly string             $executionMode;
+    private readonly string             $benchmarkBuildMarker;
+    private readonly string             $settingsFingerprint;
+    private readonly bool               $strict;
+    private readonly string             $compileMode;
+    private readonly string             $environment;
+    private readonly string             $diagnosticsMode;
+    private readonly string             $configHash;
+    private readonly string             $cacheVersion;
+    private readonly string             $cacheDir;
     private readonly CreateDependencyBlueprint $blueprints;
-    private readonly DependencyRegistry        $registrations;
+    private readonly DependencyRegistry $registrations;
 
     public function __construct(
-        DependencyRegistry        $registrations,
+        DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
-        string                 $cacheDir = null,
-        string                 $cacheVersion = null,
+        string             $cacheDir = null,
+        string             $cacheVersion = null,
         #[SensitiveParameter]
-        string                 $configHash = null,
-        string                 $diagnosticsMode = null,
-        string                 $environment = null,
-        string                 $compileMode = null,
-        bool                   $strict = null,
-        string                 $settingsFingerprint = null,
-        string                 $benchmarkBuildMarker = null,
-        string                 $executionMode = null,
-        string                 $pruneMode = null,
-        bool                   $validateOnLoad = null,
-        bool                   $failClosedOnCorruption = null,
-        bool                   $validateBeforeCompile = null,
-        ResolutionMetrics      $metrics = null,
-        DependencyCompiler        $services = null,
+        string             $configHash = null,
+        string             $diagnosticsMode = null,
+        string             $environment = null,
+        string             $compileMode = null,
+        bool               $strict = null,
+        string             $settingsFingerprint = null,
+        string             $benchmarkBuildMarker = null,
+        string             $executionMode = null,
+        string             $pruneMode = null,
+        bool               $validateOnLoad = null,
+        bool               $failClosedOnCorruption = null,
+        bool               $validateBeforeCompile = null,
+        ResolutionMetrics  $metrics = null,
+        DependencyCompiler $services = null,
     )
     {
-        $cacheDir                     ??= '';
-        $cacheVersion                 ??= 'container-v1';
-        $configHash                   ??= '';
-        $diagnosticsMode              ??= 'minimal';
-        $environment                  ??= '';
-        $compileMode                  ??= 'production';
-        $strict                       ??= false;
-        $settingsFingerprint          ??= '';
-        $benchmarkBuildMarker         ??= '';
-        $executionMode                ??= CreateContainerConfig::EXECUTION_MODE_COMPILED;
-        $pruneMode                    ??= CreateContainerConfig::PRUNE_MODE_NONE;
-        $validateOnLoad               ??= false;
-        $failClosedOnCorruption       ??= true;
-        $validateBeforeCompile        ??= false;
+        $cacheDir               ??= '';
+        $cacheVersion           ??= 'container-v1';
+        $configHash             ??= '';
+        $diagnosticsMode        ??= 'minimal';
+        $environment            ??= '';
+        $compileMode            ??= 'production';
+        $strict                 ??= false;
+        $settingsFingerprint    ??= '';
+        $benchmarkBuildMarker   ??= '';
+        $executionMode          ??= CreateContainerConfig::EXECUTION_MODE_COMPILED;
+        $pruneMode              ??= CreateContainerConfig::PRUNE_MODE_NONE;
+        $validateOnLoad         ??= false;
+        $failClosedOnCorruption ??= true;
+        $validateBeforeCompile  ??= false;
         $this->registrations          = $registrations;
         $this->blueprints             = $blueprints;
         $this->cacheDir               = $cacheDir;
@@ -101,7 +101,7 @@ final class CompileContainer
         $this->failClosedOnCorruption = $failClosedOnCorruption;
         $this->validateBeforeCompile  = $validateBeforeCompile;
         $this->metrics                = $metrics;
-        $this->services = $services ?? new DependencyCompiler(
+        $this->services         = $services ?? new DependencyCompiler(
             registrations: $this->registrations,
             blueprints   : $this->blueprints,
         );
@@ -126,7 +126,7 @@ final class CompileContainer
      * @throws JsonException
      * @throws ReflectionException
      */
-    public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer
+    public function compile(array $serviceIds = null, array $validationIssues = null, bool $warmed = false) : CompiledContainer
     {
         $serviceIds       ??= [];
         $validationIssues ??= [];
@@ -313,7 +313,7 @@ final class CompileContainer
                     ]
                     : [],
             ],
-            'statistics'   => [
+            'statistics' => [
                 'reusedServices' => $reusedServices,
             ],
             'invalidationReasons' => array_values(array: array_unique(array: $invalidationReasons)),
@@ -627,8 +627,8 @@ final class CompileContainer
     private function invalidationReasonsFor(
         string $serviceId,
         ArtifactMetadata $previous,
-        array  $current,
-        array  $dependencies,
+        array $current,
+        array $dependencies,
     ) : array
     {
         $reasons = [];
@@ -661,9 +661,9 @@ final class CompileContainer
      *     poolSize: int, poolResetBeforeReuse: bool}>, deferred: array<string, bool>, decorations: array<string, int>,
      *     ownership: array<string, array<string, mixed>>, slices: array<string, array<string, mixed>>, pruning:
      *     array<string, mixed>, statistics: array<string, int>, invalidationReasons: list<string> } $snapshot
-     * @param list<string>          $validationIssues
+     * @param list<string> $validationIssues
      * @param ArtifactMetadata|null $previous
-     * @param bool                  $warmed
+     * @param bool         $warmed
      *
      * @return ArtifactMetadata
      */
@@ -671,7 +671,7 @@ final class CompileContainer
         array $snapshot,
         array $validationIssues,
         ArtifactMetadata|null $previous,
-        bool  $warmed,
+        bool $warmed,
     ) : ArtifactMetadata
     {
         $previousServices = $previous?->services ?? [];
@@ -1236,9 +1236,9 @@ final class CompileContainer
     private function warningsFor(
         ArtifactMetadata|null $metadata,
         string $freshnessState,
-        array  $compatibilityIssues,
-        bool   $checksumValid,
-        bool   $available,
+        array $compatibilityIssues,
+        bool  $checksumValid,
+        bool  $available,
     ) : array
     {
         $warnings = [];

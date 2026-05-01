@@ -28,7 +28,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_app_resolves_service() : void
     {
-        $this->container->bind('test', fn () => 'value');
+        $this->container->bind('test', static fn () => 'value');
 
         $result = app('test');
 
@@ -60,14 +60,14 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_bind_registers() : void
     {
-        bind('test', fn () => 'value');
+        bind('test', static fn () => 'value');
 
         $this->assertTrue($this->container->has('test'));
     }
 
     public function test_singleton_same_instance() : void
     {
-        singleton('single', fn () => new stdClass());
+        singleton('single', static fn () => new stdClass());
 
         $i1 = $this->container->make('single');
         $i2 = $this->container->make('single');
@@ -83,7 +83,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_register_alias_for_bind() : void
     {
-        register('test', fn () => 'value');
+        register('test', static fn () => 'value');
 
         $this->assertTrue($this->container->has('test'));
     }

@@ -12,8 +12,8 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
     private CacheVersion|null $cacheVersion = null;
 
     public function __construct(
-        CacheVersion  $initialVersion,
-        CacheVersion|null $currentVersion = null,
+        CacheVersion $initialVersion,
+        CacheVersion $currentVersion = null,
     )
     {
         $this->cacheVersion = $currentVersion ?? $initialVersion;
@@ -39,7 +39,7 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
 
     public function bumpVersion() : self
     {
-        $new                 = clone $this;
+        $new = clone $this;
         $new->cacheVersion = $this->cacheVersion->incrementMajor();
 
         return $new;

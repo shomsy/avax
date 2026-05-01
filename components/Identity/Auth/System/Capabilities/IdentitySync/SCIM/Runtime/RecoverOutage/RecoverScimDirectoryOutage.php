@@ -15,7 +15,7 @@ final readonly class RecoverScimDirectoryOutage
 {
     public function __construct(private ScimDirectoryStoreInterface $directoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(RecoverScimDirectoryOutageData $data) : ScimDirectory
+    public function execute(RecoverScimDirectoryOutageData $data): ScimDirectory
     {
         $directory = $this->directoryStore->find(directoryId: $data->directoryId);
 
@@ -26,13 +26,13 @@ final readonly class RecoverScimDirectoryOutage
         $recovered = $directory->recover(recoveredAt: $this->clock->now());
         $this->directoryStore->save(directory: $recovered);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.scim.directory.outage_recovered',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'directory_id' => $recovered->directoryId,
-                                                           'tenant'       => $recovered->tenantSlug,
-                                                       ],
-                                       ));
+            name      : 'auth.scim.directory.outage_recovered',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'directory_id' => $recovered->directoryId,
+                'tenant' => $recovered->tenantSlug,
+            ],
+        ));
 
         return $recovered;
     }

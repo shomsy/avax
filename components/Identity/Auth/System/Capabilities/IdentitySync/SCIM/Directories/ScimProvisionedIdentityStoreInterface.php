@@ -6,14 +6,14 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Su
 
 interface ScimProvisionedIdentityStoreInterface
 {
-    public function save(ScimProvisionedIdentity $identity) : void;
+    public function save(ScimProvisionedIdentity $identity): void;
 
-    public function find(string $directoryId, string $externalId) : ScimProvisionedIdentity|null;
+    public function find(string $directoryId, string $externalId): ?ScimProvisionedIdentity;
 
     /**
      * @return list<ScimProvisionedIdentity>
      */
-    public function allForDirectory(string $directoryId) : array;
+    public function allForDirectory(string $directoryId): array;
 
-    public function remove(string $directoryId, string $externalId) : void;
+    public function remove(string $directoryId, string $externalId): void;
 }

@@ -13,7 +13,7 @@ use Override;
 final class ElasticsearchGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileSelect(QueryState $state) : string
+    public function compileSelect(QueryState $state): string
     {
         $index = $this->wrap(value: $state->from);
         $query = $this->compileElasticsearchQuery(state: $state);
@@ -22,12 +22,12 @@ final class ElasticsearchGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function wrap(mixed $value) : string
+    public function wrap(mixed $value): string
     {
         return (string) $value;
     }
 
-    private function compileElasticsearchQuery(QueryState $state) : string
+    private function compileElasticsearchQuery(QueryState $state): string
     {
         $query = ['query' => ['match_all' => (object) []]];
 
@@ -55,71 +55,71 @@ final class ElasticsearchGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileInsert(QueryState $state) : string
+    public function compileInsert(QueryState $state): string
     {
-        $index    = $this->wrap(value: $state->from);
+        $index = $this->wrap(value: $state->from);
         $document = json_encode(value: $state->values);
 
         return "{$index}/_doc {$document}";
     }
 
     #[Override]
-    public function compileUpdate(QueryState $state) : string
+    public function compileUpdate(QueryState $state): string
     {
-        $index    = $this->wrap(value: $state->from);
-        $id       = $state->values['id'] ?? '';
+        $index = $this->wrap(value: $state->from);
+        $id = $state->values['id'] ?? '';
         $document = json_encode(value: $state->values);
 
         return "{$index}/_doc/{$id} {$document}";
     }
 
     #[Override]
-    public function compileDelete(QueryState $state) : string
+    public function compileDelete(QueryState $state): string
     {
         $index = $this->wrap(value: $state->from);
-        $id    = $state->values['id'] ?? '';
+        $id = $state->values['id'] ?? '';
 
         return "{$index}/_doc/{$id}";
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
     {
-        $index    = $this->wrap(value: $state->from);
-        $id       = $state->values['id'] ?? '';
+        $index = $this->wrap(value: $state->from);
+        $id = $state->values['id'] ?? '';
         $document = json_encode(value: $state->values);
 
         return "{$index}/_doc/{$id} {$document}";
     }
 
-    public function compileMatch(string $field, string $query, float $boost = 1.0) : string
+    public function compileMatch(string $field, string $query, float $boost = 1.0): string
     {
         return json_encode(value: ['match' => [$field => ['query' => $query, 'boost' => $boost]]]);
     }
 
-    public function compileMultiMatch(array $fields, string $query) : string
+    public function compileMultiMatch(array $fields, string $query): string
     {
         return json_encode(value: ['multi_match' => ['query' => $query, 'fields' => $fields]]);
     }
 
-    public function compileTerm(string $field, mixed $value) : string
+    public function compileTerm(string $field, mixed $value): string
     {
         return json_encode(value: ['term' => [$field => $value]]);
     }
 
-    public function compileTerms(string $field, array $values) : string
+    public function compileTerms(string $field, array $values): string
     {
         return json_encode(value: ['terms' => [$field => $values]]);
     }
 
-    public function compileRange(string $field, array $range) : string
+    public function compileRange(string $field, array $range): string
     {
         return json_encode(value: ['range' => [$field => $range]]);
     }
 
-    public function compileBool(array|null $must = null, array|null $mustNot = null, array $should = []) : string
+    public function compileBool(?array $must = null, ?array $mustNot = null, array $should = []): string
     {
-        $must    ??= [];
+        $must ??= [];
         $mustNot ??= [];
         $bool = [];
         if (! empty($must)) {
@@ -135,14 +135,14 @@ final class ElasticsearchGrammar extends BaseGrammar
         return json_encode(value: ['bool' => $bool]);
     }
 
-    public function compileAggregation(string $name, string $type, array $config) : string
+    public function compileAggregation(string $name, string $type, array $config): string
     {
         return json_encode(value: ['aggs' => [$name => [$type => $config]]]);
     }
 
     #[Override]
-    public function compileTruncate(string $table) : string
+    public function compileTruncate(string $table): string
     {
-        return "{$table}/_delete_by_query " . json_encode(value: ['query' => ['match_all' => (object) []]]);
+        return "{$table}/_delete_by_query ".json_encode(value: ['query' => ['match_all' => (object) []]]);
     }
 }

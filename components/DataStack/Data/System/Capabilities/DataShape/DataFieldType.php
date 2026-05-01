@@ -13,14 +13,14 @@ use ReflectionUnionType;
 final readonly class DataFieldType
 {
     /**
-     * @param list<string> $names
+     * @param  list<string>  $names
      */
     public function __construct(
         private array $names,
         public bool $allowsNull = true,
     ) {}
 
-    public static function fromReflectionType(ReflectionType|null $type) : self
+    public static function fromReflectionType(?ReflectionType $type): self
     {
         if (! $type instanceof ReflectionType) {
             return self::mixed();
@@ -48,7 +48,7 @@ final readonly class DataFieldType
 
             usort(
                 array   : $names,
-                callback: static fn (string $left, string $right) : int => (int) class_exists(class: $right) <=> (int) class_exists(class: $left),
+                callback: static fn (string $left, string $right): int => (int) class_exists(class: $right) <=> (int) class_exists(class: $left),
             );
 
             return new self(
@@ -60,7 +60,7 @@ final readonly class DataFieldType
         return self::mixed();
     }
 
-    public static function mixed() : self
+    public static function mixed(): self
     {
         return new self(names: ['mixed'], allowsNull: true);
     }
@@ -68,39 +68,39 @@ final readonly class DataFieldType
     /**
      * @return list<string>
      */
-    public function names() : array
+    public function names(): array
     {
         return $this->names;
     }
 
-    public function isMixed() : bool
+    public function isMixed(): bool
     {
         return $this->primaryName() === 'mixed';
     }
 
-    public function primaryName() : string|null
+    public function primaryName(): ?string
     {
         return $this->names[0] ?? null;
     }
 
-    public function isArray() : bool
+    public function isArray(): bool
     {
         return in_array(needle: 'array', haystack: $this->names, strict: true);
     }
 
-    public function isScalar() : bool
+    public function isScalar(): bool
     {
         return in_array(needle: $this->primaryName(), haystack: ['int', 'float', 'string', 'bool'], strict: true);
     }
 
-    public function isClass() : bool
+    public function isClass(): bool
     {
         $name = $this->primaryName();
 
         return $name !== null && class_exists(class: $name);
     }
 
-    public function isBackedEnum() : bool
+    public function isBackedEnum(): bool
     {
         $name = $this->primaryName();
 
@@ -109,7 +109,7 @@ final readonly class DataFieldType
             && is_subclass_of(object_or_class: $name, class: BackedEnum::class);
     }
 
-    public function displayName() : string
+    public function displayName(): string
     {
         return implode(separator: '|', array: $this->names);
     }

@@ -15,16 +15,16 @@ use Traversable;
 /**
  * Sliding windows over ordered input.
  */
-final readonly class Window implements IteratorAggregate, Countable
+final readonly class Window implements Countable, IteratorAggregate
 {
     /**
-     * @param array<int, array<int, mixed>> $windows
+     * @param  array<int, array<int, mixed>>  $windows
      */
     private function __construct(
         private array $windows,
     ) {}
 
-    public static function from(iterable $items, int $size, int $step = 1) : self
+    public static function from(iterable $items, int $size, int $step = 1): self
     {
         if ($size <= 0) {
             throw InvalidFlowException::invalidWindowSize(size: $size);
@@ -34,7 +34,7 @@ final readonly class Window implements IteratorAggregate, Countable
             throw InvalidFlowException::invalidWindowSize(size: $step);
         }
 
-        $source  = array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items));
+        $source = array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items));
         $windows = [];
         $counter = count($source);
 
@@ -54,19 +54,19 @@ final readonly class Window implements IteratorAggregate, Countable
     /**
      * @return array<int, array<int, mixed>>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->windows;
     }
 
     #[Override]
-    public function count() : int
+    public function count(): int
     {
         return count($this->windows);
     }
 
     #[Override]
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->windows);
     }

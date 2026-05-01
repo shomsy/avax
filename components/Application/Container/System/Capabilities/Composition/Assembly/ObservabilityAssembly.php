@@ -16,11 +16,11 @@ final readonly class ObservabilityAssembly
     public Clock $clock;
 
     public function __construct(
-        Clock                     $clock,
-        public ResolutionMetrics  $resolutionMetrics,
+        Clock                    $clock,
+        public ResolutionMetrics $resolutionMetrics,
         public ResolutionTimeline $resolutionTimeline,
     )
     {
-        $this->clock    = $clock;
+        $this->clock = $clock;
     }
 }

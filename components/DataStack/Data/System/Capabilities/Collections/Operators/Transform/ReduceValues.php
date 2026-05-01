@@ -11,7 +11,7 @@ final readonly class ReduceValues
 {
     public function __construct(private array $items = []) {}
 
-    public function __invoke(callable $callback, mixed $initial = null) : mixed
+    public function __invoke(callable $callback, mixed $initial = null): mixed
     {
         return array_reduce($this->items, $callback, $initial);
     }

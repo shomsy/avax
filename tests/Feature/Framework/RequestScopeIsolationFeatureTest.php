@@ -334,7 +334,9 @@ final class RequestScopeIsolationFeatureTest extends TestCase
             $report->resetComponents(),
             'Both registered components should be reset',
         );
-        self::assertEmpty($report->failures(),
-                          'No failures should occur during reset');
+        self::assertEmpty(
+            $report->failures(),
+            'No failures should occur during reset',
+        );
     }
 }

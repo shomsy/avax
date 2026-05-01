@@ -17,7 +17,7 @@ final readonly class UpdateClient
 {
     public function __construct(private OAuthClientRegistryInterface $clientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(UpdateClientData $data) : OAuthClient
+    public function execute(UpdateClientData $data): OAuthClient
     {
         $existing = $this->clientRegistry->find(clientId: $data->clientId);
 
@@ -31,12 +31,12 @@ final readonly class UpdateClient
             current         : $existing->tokenEndpointAuthMethod,
             workloadIdentity: $data->workloadIdentity,
         );
-        $approvalRequired        = $data->approvalRequired;
-        $approvalStatus          = $approvalRequired
+        $approvalRequired = $data->approvalRequired;
+        $approvalStatus = $approvalRequired
             ? OAuthClientApprovalStatus::PENDING_APPROVAL
             : $existing->approvalStatus;
-        $approvedAt              = $approvalRequired ? null : $existing->approvedAt;
-        $approvedBy              = $approvalRequired ? null : $existing->approvedBy;
+        $approvedAt = $approvalRequired ? null : $existing->approvedAt;
+        $approvedBy = $approvalRequired ? null : $existing->approvedBy;
 
         $updated = new OAuthClient(
             clientId                       : $existing->clientId,
@@ -64,17 +64,17 @@ final readonly class UpdateClient
         );
         $this->clientRegistry->replace(client: $updated);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.oauth.client.updated',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'client_id'                         => $updated->clientId,
-                                                           'tenant_slug'                       => $updated->tenantSlug,
-                                                           'type'                              => $updated->type->value,
-                                                           'active'                            => $updated->active ? 1 : 0,
-                                                           'request_object_signature_required' => $updated->requestObjectSignatureRequired ? 1 : 0,
-                                                           'approval_status'                   => $updated->approvalStatus->value,
-                                                       ],
-                                       ));
+            name      : 'auth.oauth.client.updated',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $updated->clientId,
+                'tenant_slug' => $updated->tenantSlug,
+                'type' => $updated->type->value,
+                'active' => $updated->active ? 1 : 0,
+                'request_object_signature_required' => $updated->requestObjectSignatureRequired ? 1 : 0,
+                'approval_status' => $updated->approvalStatus->value,
+            ],
+        ));
 
         return $updated;
     }

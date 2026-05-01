@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 $testDir = __DIR__ . '/tests';
 
 $replacements = [
     // 1. Classes
-    'ResponseFactory'                               => 'Responses',
-    'EntityManager'                                 => 'Persistence',
+    'ResponseFactory' => 'Responses',
+    'EntityManager'   => 'Persistence',
 
     // 2. Namespaces & Imports
     'Avax\HTTP\Response\ResponseFactory'            => 'Avax\Components\HTTP\Response\System\PublicSurface\Responses',
@@ -22,7 +24,9 @@ if (! is_dir($testDir)) {
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($testDir));
 
 foreach ($iterator as $file) {
-    if ($file->getExtension() !== 'php') continue;
+    if ($file->getExtension() !== 'php') {
+        continue;
+    }
 
     $path     = $file->getPathname();
     $content  = file_get_contents($path);

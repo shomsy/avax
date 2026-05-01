@@ -41,9 +41,9 @@ final readonly class ListRoutes
         echo str_repeat('-', strlen($header)) . "\n";
 
         foreach ($routes as $route) {
-            $method     = $route->method;
-            $pattern    = $route->pattern;
-            $handler    = strlen($route->handler) > $handlerWidth
+            $method  = $route->method;
+            $pattern = $route->pattern;
+            $handler = strlen($route->handler) > $handlerWidth
                 ? substr($route->handler, 0, $handlerWidth - 3) . '...'
                 : $route->handler;
             $middleware = implode(', ', $route->middleware);

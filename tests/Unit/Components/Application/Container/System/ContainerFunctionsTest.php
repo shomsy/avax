@@ -32,7 +32,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_app_resolves_service() : void
     {
-        $this->container->bind('test.service', fn () => 'test-value');
+        $this->container->bind('test.service', static fn () => 'test-value');
 
         $result = app('test.service');
 
@@ -55,7 +55,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_make_with_parameters() : void
     {
-        $instance = new class {
+        $instance = new class () {
             public string $value;
         };
 
@@ -66,7 +66,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_bind_registers_binding() : void
     {
-        bind('bound.service', fn () => 'value');
+        bind('bound.service', static fn () => 'value');
 
         $result = $this->container->get('bound.service');
 
@@ -75,7 +75,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_bind_with_shared_parameter() : void
     {
-        bind('shared.service', fn () => new stdClass(), shared: true);
+        bind('shared.service', static fn () => new stdClass(), shared: true);
 
         $result1 = $this->container->make('shared.service');
         $result2 = $this->container->make('shared.service');
@@ -85,7 +85,7 @@ final class ContainerFunctionsTest extends TestCase
 
     public function test_singleton_registers_single_instance() : void
     {
-        singleton('single', fn () => new stdClass());
+        singleton('single', static fn () => new stdClass());
 
         $result1 = $this->container->make('single');
         $result2 = $this->container->make('single');

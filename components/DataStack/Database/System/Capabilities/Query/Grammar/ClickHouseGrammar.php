@@ -14,25 +14,25 @@ use RuntimeException;
 final class ClickHouseGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileSelect(QueryState $state) : string
+    public function compileSelect(QueryState $state): string
     {
         parent::compileSelect(state: $state);
 
         $components = [
             'select' => $this->compileColumns(state: $state),
-            'from'   => $this->compileFrom(state: $state),
-            'joins'  => $this->compileJoins(state: $state),
+            'from' => $this->compileFrom(state: $state),
+            'joins' => $this->compileJoins(state: $state),
             'wheres' => $this->compileWheres(state: $state),
             'groups' => $this->compileGroups(state: $state),
             'having' => $this->compileHaving(state: $state),
             'orders' => $this->compileOrders(state: $state),
-            'limit'  => $this->compileLimit(state: $state),
+            'limit' => $this->compileLimit(state: $state),
         ];
 
         return implode(separator: ' ', array: array_filter(array: $components));
     }
 
-    protected function compileColumns(QueryState $state) : string
+    protected function compileColumns(QueryState $state): string
     {
         parent::compileColumns(state: $state);
 
@@ -40,24 +40,24 @@ final class ClickHouseGrammar extends BaseGrammar
 
         $columns = array_map(callback: fn ($c) => $this->wrap(value: $c), array: $state->columns ?: ['*']);
 
-        return $select . implode(separator: ', ', array: $columns);
+        return $select.implode(separator: ', ', array: $columns);
     }
 
     #[Override]
-    public function wrap(mixed $value) : string
+    public function wrap(mixed $value): string
     {
         parent::wrap(value: $value);
 
         return (string) $value;
     }
 
-    protected function compileHaving(QueryState $state) : string
+    protected function compileHaving(QueryState $state): string
     {
         return '';
     }
 
     #[Override]
-    public function compileUpdate(QueryState $state) : string
+    public function compileUpdate(QueryState $state): string
     {
         parent::compileUpdate(state: $state);
 
@@ -68,28 +68,28 @@ final class ClickHouseGrammar extends BaseGrammar
             $sets[] = "{$col} = {$val}";
         }
 
-        $sql = "ALTER TABLE {$table} UPDATE " . implode(separator: ', ', array: $sets);
+        $sql = "ALTER TABLE {$table} UPDATE ".implode(separator: ', ', array: $sets);
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileWheres(state: $state);
+            $sql .= ' WHERE '.$this->compileWheres(state: $state);
         }
 
         return $sql;
     }
 
     #[Override]
-    public function compileDelete(QueryState $state) : string
+    public function compileDelete(QueryState $state): string
     {
         parent::compileDelete(state: $state);
 
-        $table  = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $state->from);
         $wheres = $this->compileWheres(state: $state);
 
         return "ALTER TABLE {$table} DELETE {$wheres}";
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
     {
         try {
             parent::compileUpsert(state: $state, uniqueBy: $uniqueBy, update: $update);
@@ -100,13 +100,13 @@ final class ClickHouseGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileInsert(QueryState $state) : string
+    public function compileInsert(QueryState $state): string
     {
         parent::compileInsert(state: $state);
 
-        $table   = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $state->from);
         $columns = implode(separator: ', ', array: array_keys(array: $state->values));
-        $values  = implode(separator: ', ', array: array_map(
+        $values = implode(separator: ', ', array: array_map(
             callback: static fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
             array   : $state->values,
         ));
@@ -114,64 +114,64 @@ final class ClickHouseGrammar extends BaseGrammar
         return "INSERT INTO {$table} ({$columns}) VALUES ({$values})";
     }
 
-    public function compileSample(int $percent) : string
+    public function compileSample(int $percent): string
     {
         return "SAMPLE {$percent}/100";
     }
 
-    public function compileArrayJoin(string $column) : string
+    public function compileArrayJoin(string $column): string
     {
-        return 'ARRAY JOIN ' . $this->wrap(value: $column);
+        return 'ARRAY JOIN '.$this->wrap(value: $column);
     }
 
-    public function compilePrewhere(array $columns) : string
+    public function compilePrewhere(array $columns): string
     {
-        return 'PREWHERE ' . implode(separator: ', ', array: $columns);
+        return 'PREWHERE '.implode(separator: ', ', array: $columns);
     }
 
-    public function compileFinal() : string
+    public function compileFinal(): string
     {
         return 'FINAL';
     }
 
-    public function compileWithRollingWindow(string $column, string $function) : string
+    public function compileWithRollingWindow(string $column, string $function): string
     {
         return "rollingWindow('{$function}', {$column})";
     }
 
-    public function compileWithSeries(int $start, int $end) : string
+    public function compileWithSeries(int $start, int $end): string
     {
-        return "WITH series AS (SELECT toUInt64(number) AS n FROM numbers({$start}, " . ($end - $start) . '))';
+        return "WITH series AS (SELECT toUInt64(number) AS n FROM numbers({$start}, ".($end - $start).'))';
     }
 
-    public function compileUsing(array $columns) : string
+    public function compileUsing(array $columns): string
     {
-        return 'USING ' . implode(separator: ', ', array: $columns);
+        return 'USING '.implode(separator: ', ', array: $columns);
     }
 
-    public function compileGlobal(array $columns) : string
+    public function compileGlobal(array $columns): string
     {
-        return 'GLOBAL ' . implode(separator: ', ', array: $columns);
+        return 'GLOBAL '.implode(separator: ', ', array: $columns);
     }
 
-    public function compileGroupArray(string $column) : string
+    public function compileGroupArray(string $column): string
     {
-        return 'groupArray(' . $this->wrap(value: $column) . ')';
+        return 'groupArray('.$this->wrap(value: $column).')';
     }
 
-    public function compileGroupUniqArray(string $column) : string
+    public function compileGroupUniqArray(string $column): string
     {
-        return 'groupUniqArray(' . $this->wrap(value: $column) . ')';
+        return 'groupUniqArray('.$this->wrap(value: $column).')';
     }
 
-    public function compileQuantile(float $q, string $column) : string
+    public function compileQuantile(float $q, string $column): string
     {
-        return "quantile({$q})(" . $this->wrap(value: $column) . ')';
+        return "quantile({$q})(".$this->wrap(value: $column).')';
     }
 
     #[Override]
-    public function compileTruncate(string $table) : string
+    public function compileTruncate(string $table): string
     {
-        return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
+        return 'DROP TABLE IF EXISTS '.$this->wrap(value: $table);
     }
 }

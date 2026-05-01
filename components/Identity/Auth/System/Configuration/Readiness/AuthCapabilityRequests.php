@@ -13,8 +13,7 @@ final readonly class AuthCapabilityRequests
         private bool $passkey,
         private bool $federation,
         private bool $scim,
-    ) {
-    }
+    ) {}
 
     public static function from(
         bool $enterpriseMode,
@@ -29,8 +28,7 @@ final readonly class AuthCapabilityRequests
         bool $federatedIdentityLinkStoreConfigured,
         bool $scimDirectoryStoreConfigured,
         bool $scimProvisionedIdentityStoreConfigured,
-    ) : self
-    {
+    ): self {
         return new self(
             enterpriseMode    : $enterpriseMode,
             oauth             : $oauthClientRegistryConfigured
@@ -48,32 +46,32 @@ final readonly class AuthCapabilityRequests
         );
     }
 
-    public function enterpriseMode() : bool
+    public function enterpriseMode(): bool
     {
         return $this->enterpriseMode;
     }
 
-    public function oauth() : bool
+    public function oauth(): bool
     {
         return $this->oauth;
     }
 
-    public function oidcRequestObjects() : bool
+    public function oidcRequestObjects(): bool
     {
         return $this->oidcRequestObjects;
     }
 
-    public function passkey() : bool
+    public function passkey(): bool
     {
         return $this->passkey;
     }
 
-    public function federation() : bool
+    public function federation(): bool
     {
         return $this->federation;
     }
 
-    public function scim() : bool
+    public function scim(): bool
     {
         return $this->scim;
     }

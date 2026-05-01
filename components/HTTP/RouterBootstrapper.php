@@ -54,7 +54,7 @@ final class RouterBootstrapper
     /**
      * Create bootstrapper with router and route collection.
      */
-    public function __construct(RouterInterface $router, RouterRuntimeInterface|null $runtimeRouter = null)
+    public function __construct(RouterInterface $router, RouterRuntimeInterface $runtimeRouter = null)
     {
         $this->router        = $router;
         $this->runtimeRouter = $runtimeRouter ?? ($router instanceof RouterRuntimeInterface ? $router : null);
@@ -63,7 +63,7 @@ final class RouterBootstrapper
     /**
      * Register multiple routes for different HTTP methods on the same path.
      *
-     * @param array  $methods
+     * @param array $methods
      * @param string $path
      * @param callable|array|string $handler
      *
@@ -222,7 +222,7 @@ final class RouterBootstrapper
     /**
      * Group routes with common middleware or prefix.
      */
-    public function group(callable $routes, array|null $middleware = null, string $prefix = '') : self
+    public function group(callable $routes, array $middleware = null, string $prefix = '') : self
     {
         $middleware ??= [];
         $previousMiddleware = $this->activeMiddleware;

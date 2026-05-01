@@ -12,10 +12,10 @@ final readonly class ComponentManifest
      * @param list<string> $dependencies
      */
     public function __construct(
-        public string      $name,
-        public string      $version,
+        public string $name,
+        public string $version,
         public string|null $path = null,
-        public array       $dependencies = [],
+        public array  $dependencies = [],
     ) {}
 
     public function version() : Version

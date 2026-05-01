@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
+
 use Avax\Tests\TestCase;
 use components\HTTP\Enums\HttpMethod;
 
@@ -55,7 +55,7 @@ class HttpMethodCompletenessTest extends TestCase
         foreach (HttpMethod::cases() as $method) {
             $this->assertTrue(
                 condition: HttpMethod::isSupported(method: $method->value),
-                message  : "HTTP method {$method->value} should be supported"
+                message  : "HTTP method {$method->value} should be supported",
             );
         }
     }
@@ -76,7 +76,7 @@ class HttpMethodCompletenessTest extends TestCase
         foreach ($unsupportedMethods as $method) {
             $this->assertFalse(
                 condition: HttpMethod::isSupported(method: $method),
-                message  : "HTTP method {$method} should not be supported"
+                message  : "HTTP method {$method} should not be supported",
             );
         }
     }
@@ -88,7 +88,7 @@ class HttpMethodCompletenessTest extends TestCase
     {
         $enumValues = array_map(
             callback: static fn ($case) => $case->value,
-            array   : HttpMethod::cases()
+            array   : HttpMethod::cases(),
         );
 
         $supportedMethods = HttpMethod::getSupportedMethods();
@@ -121,7 +121,7 @@ class HttpMethodCompletenessTest extends TestCase
         foreach ($rfc9110Methods as $method) {
             $this->assertTrue(
                 condition: HttpMethod::isSupported(method: $method),
-                message  : "RFC 9110 method {$method} should be supported"
+                message  : "RFC 9110 method {$method} should be supported",
             );
         }
     }

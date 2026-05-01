@@ -44,11 +44,11 @@ final class Dispatcher
 final class JobId
 {
     public function __construct(
-        public readonly string      $value,
+        public readonly string $value,
         public readonly string|null $queue = null,
     ) {}
 
-    public static function generate(string|null $queue = null) : self
+    public static function generate(string $queue = null) : self
     {
         return new self(
             value: uniqid('job-', true),
@@ -60,8 +60,8 @@ final class JobId
 final class JobResult
 {
     public function __construct(
-        public readonly bool     $success,
-        public readonly mixed    $result = null,
+        public readonly bool  $success,
+        public readonly mixed $result = null,
         public readonly string|null $error = null,
         public readonly int|null $attempts = null,
     ) {}

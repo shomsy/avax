@@ -63,16 +63,16 @@ final readonly class ExplainConfig
 
         $lines = [
             "Config: {$key}",
-            sprintf("  Value: %s", var_export($source->value, true)),
-            sprintf("  Source: %s", $source->source),
+            sprintf('  Value: %s', var_export($source->value, true)),
+            sprintf('  Source: %s', $source->source),
         ];
 
         if ($source->isFromEnv() && $source->envVar !== null) {
-            $lines[] = sprintf("  Environment variable: %s", $source->envVar);
+            $lines[] = sprintf('  Environment variable: %s', $source->envVar);
         }
 
         if ($source->isFromFile() && $source->filePath !== null) {
-            $lines[] = sprintf("  File: %s", $source->filePath);
+            $lines[] = sprintf('  File: %s', $source->filePath);
         }
 
         return implode("\n", $lines);

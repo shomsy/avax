@@ -17,10 +17,10 @@ final readonly class GovernComposition
     /**
      * @param array<string, list<string>> $graph
      * @param array<string, list<string>> $dependents
-     * @param DependencyRegistry        $registrations
+     * @param DependencyRegistry $registrations
      * @param CreateDependencyBlueprint $blueprints
-     * @param ResolutionPolicy       $policy
-     * @param string                 $environment
+     * @param ResolutionPolicy   $policy
+     * @param string             $environment
      *
      * @return array{
      *     schemaVersion: int,
@@ -34,12 +34,12 @@ final readonly class GovernComposition
      * @throws ReflectionException
      */
     public function report(
-        array            $graph,
-        array            $dependents,
-        DependencyRegistry        $registrations,
+        array              $graph,
+        array              $dependents,
+        DependencyRegistry $registrations,
         CreateDependencyBlueprint $blueprints,
         ResolutionPolicy $policy,
-        string           $environment = '',
+        string             $environment = '',
     ) : array
     {
         $activePolicy = $policy->forEnvironment(environment: $environment);

@@ -20,18 +20,17 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\DTO;
  */
 final readonly class ExecutionResult
 {
-    private int  $affectedRows;
+    private int $affectedRows;
 
     /**
-     * @param bool $success      Whether the database accepted and performed the instruction.
-     * @param int  $affectedRows The number of records touched (if applicable).
+     * @param  bool  $success  Whether the database accepted and performed the instruction.
+     * @param  int  $affectedRows  The number of records touched (if applicable).
      */
     public function __construct(
-        private bool            $success,
-        ?int                    $affectedRows = null,
+        private bool $success,
+        ?int $affectedRows = null,
         private int|string|null $lastInsertId = null,
-    )
-    {
+    ) {
         $affectedRows ??= 0;
         $this->affectedRows = $affectedRows;
     }
@@ -39,7 +38,7 @@ final readonly class ExecutionResult
     /**
      * Create a success report.
      */
-    public static function success(int|null $affectedRows = null, int|string|null $lastInsertId = null) : self
+    public static function success(?int $affectedRows = null, int|string|null $lastInsertId = null): self
     {
         $affectedRows ??= 0;
 
@@ -49,7 +48,7 @@ final readonly class ExecutionResult
     /**
      * Create a failure report.
      */
-    public static function failure() : self
+    public static function failure(): self
     {
         return new self(success: false, affectedRows: 0);
     }
@@ -57,7 +56,7 @@ final readonly class ExecutionResult
     /**
      * Was the operation successful?
      */
-    public function isSuccessful() : bool
+    public function isSuccessful(): bool
     {
         return $this->success;
     }
@@ -65,7 +64,7 @@ final readonly class ExecutionResult
     /**
      * Get the number of affected rows.
      */
-    public function getAffectedRows() : int
+    public function getAffectedRows(): int
     {
         return $this->affectedRows;
     }
@@ -73,7 +72,7 @@ final readonly class ExecutionResult
     /**
      * Get the database-generated identifier for a successful INSERT when available.
      */
-    public function getLastInsertId() : int|string|null
+    public function getLastInsertId(): int|string|null
     {
         return $this->lastInsertId;
     }

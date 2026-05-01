@@ -35,7 +35,7 @@ use Throwable;
  */
 readonly class ContextContainer implements ContainerInterface
 {
-    private array     $context;
+    private array $context;
     private ResolveDependency $resolver;
     private Container $base;
 
@@ -45,7 +45,7 @@ readonly class ContextContainer implements ContainerInterface
     public function __construct(
         Container $base,
         ResolveDependency $resolver,
-        array     $context,
+        array $context,
     )
     {
         $this->base     = $base;
@@ -288,7 +288,7 @@ readonly class ContextContainer implements ContainerInterface
         $this->base->openScope(kind: $kind, scopeId: $scopeId);
     }
 
-    public function closeScope(string|null $kind = null) : void
+    public function closeScope(string $kind = null) : void
     {
         $this->base->closeScope(kind: $kind);
     }

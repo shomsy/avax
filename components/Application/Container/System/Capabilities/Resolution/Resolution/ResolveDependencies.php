@@ -18,7 +18,7 @@ use Throwable;
 final class ResolveDependencies
 {
     /**
-     * @param array               $parameters
+     * @param array $parameters
      * @param array<string, mixed> $overrides
      * @param ResolveDependency $resolver
      * @param ResolveRequest|null $request
@@ -27,10 +27,10 @@ final class ResolveDependencies
      * @throws Throwable
      */
     public function resolveParameters(
-        array           $parameters,
-        array           $overrides,
+        array          $parameters,
+        array          $overrides,
         ResolveDependency $resolver,
-        ResolveRequest  $request = null,
+        ResolveRequest $request = null,
     ) : array
     {
         return $this->resolvePlan(
@@ -49,8 +49,8 @@ final class ResolveDependencies
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan         $plan,
-        array               $overrides,
+        ResolvePlan $plan,
+        array       $overrides,
         ResolveDependency $resolver,
         ResolveRequest|null $request,
     ) : array
@@ -74,14 +74,14 @@ final class ResolveDependencies
      *                            string, allowsNull: bool} $parameter
      * @param array<string, mixed> $overrides
      * @param ResolveDependency $resolver
-     * @param ResolveRequest|null  $request
+     * @param ResolveRequest|null $request
      *
      * @return mixed
      * @throws Throwable
      */
     private function resolveCompiledParameter(
-        array               $parameter,
-        array               $overrides,
+        array $parameter,
+        array $overrides,
         ResolveDependency $resolver,
         ResolveRequest|null $request,
     ) : mixed

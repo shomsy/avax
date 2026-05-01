@@ -34,7 +34,7 @@ final readonly class AuditContainerScope
             echo sprintf("  Dependency: %s\n\n", $violation->dependency);
         }
 
-        echo "Total: " . count($violations) . " violation(s)\n";
+        echo 'Total: ' . count($violations) . " violation(s)\n";
 
         return 1;
     }

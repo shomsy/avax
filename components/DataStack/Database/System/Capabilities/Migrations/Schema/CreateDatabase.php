@@ -17,7 +17,7 @@ final readonly class CreateDatabase
     /**
      * @throws Throwable
      */
-    public function named(string $name) : void
+    public function named(string $name): void
     {
         $this->queryBuilder->createDatabase(name: $name);
     }

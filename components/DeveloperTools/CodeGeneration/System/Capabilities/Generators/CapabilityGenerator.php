@@ -15,13 +15,12 @@ class ServiceGenerator extends CodeGenerator
     /**
      * Generate a service class file.
      *
-     * @param string $name Service name (e.g. "UserService" or "User")
-     * @param array  $data Additional data (e.g. ['methods' => ['create', 'update']])
-     *
+     * @param  string  $name  Service name (e.g. "UserService" or "User")
+     * @param  array  $data  Additional data (e.g. ['methods' => ['create', 'update']])
      * @return string The generated file path
      */
     #[Override]
-    public function generate(string $name, array $data = []) : string
+    public function generate(string $name, array $data = []): string
     {
         $className = Str::studly($name);
 
@@ -30,9 +29,9 @@ class ServiceGenerator extends CodeGenerator
             $className .= 'Service';
         }
 
-        $subDir    = $data['subDir'] ?? 'Services';
+        $subDir = $data['subDir'] ?? 'Services';
         $namespace = $this->getNamespace($subDir);
-        $methods   = $data['methods'] ?? [];
+        $methods = $data['methods'] ?? [];
 
         $stub = $this->buildStub($className, $namespace, $methods);
         $path = $this->getFilePath($className, $subDir);
@@ -45,7 +44,7 @@ class ServiceGenerator extends CodeGenerator
     /**
      * Build the service class stub.
      */
-    protected function buildStub(string $className, string $namespace, array $methods) : string
+    protected function buildStub(string $className, string $namespace, array $methods): string
     {
         $methodsCode = '';
 
@@ -74,7 +73,7 @@ class ServiceGenerator extends CodeGenerator
     /**
      * Generate a single service method.
      */
-    protected function generateMethod(string $method) : string
+    protected function generateMethod(string $method): string
     {
         $methodName = Str::camel($method);
 
@@ -82,8 +81,8 @@ class ServiceGenerator extends CodeGenerator
             'create' => "\n    public function create(array \$data) : mixed\n    {\n        // TODO: Implement create\n    }\n",
             'update' => "\n    public function update(int \$id, array \$data) : mixed\n    {\n        // TODO: Implement update\n    }\n",
             'delete' => "\n    public function delete(int \$id) : void\n    {\n        // TODO: Implement delete\n    }\n",
-            'find'   => "\n    public function find(int \$id) : mixed\n    {\n        // TODO: Implement find\n    }\n",
-            default  => "\n    public function {$methodName}() : void\n    {\n        // TODO: Implement {$methodName}\n    }\n",
+            'find' => "\n    public function find(int \$id) : mixed\n    {\n        // TODO: Implement find\n    }\n",
+            default => "\n    public function {$methodName}() : void\n    {\n        // TODO: Implement {$methodName}\n    }\n",
         };
     }
 }

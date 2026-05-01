@@ -14,26 +14,24 @@ final readonly class FilterValues
     ) {}
 
     /**
-     * @param callable $callback fn(mixed $item, int|string $key) : bool
-     *
+     * @param  callable  $callback  fn(mixed $item, int|string $key) : bool
      * @return array<mixed>
      */
-    public function __invoke(callable $callback) : array
+    public function __invoke(callable $callback): array
     {
         return $this->filter(callback: $callback);
     }
 
     /**
-     * @param callable $callback fn(mixed $item, int|string $key) : bool
-     *
+     * @param  callable  $callback  fn(mixed $item, int|string $key) : bool
      * @return array<mixed>
      */
-    public function filter(callable $callback) : array
+    public function filter(callable $callback): array
     {
         return array_filter(array: $this->items, callback: $callback, mode: ARRAY_FILTER_USE_BOTH);
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

@@ -17,21 +17,19 @@ final class MigrationRepository
 {
     private string $table = 'migrations';
 
-
     private readonly Schema $schema;
 
     public function __construct(
         private readonly QueryBuilder $queryBuilder,
-        Schema                        $schema,
-    )
-    {
-        $this->schema  = $schema;
+        Schema $schema,
+    ) {
+        $this->schema = $schema;
     }
 
     /**
      * @throws Throwable
      */
-    public function getRan() : array
+    public function getRan(): array
     {
         return $this->queryBuilder->from(table: $this->table)
             ->select('migration', 'checksum')
@@ -41,7 +39,7 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function getLastBatch(int $steps = 1) : array
+    public function getLastBatch(int $steps = 1): array
     {
         $maxBatch = (int) $this->queryBuilder->from(table: $this->table)->max(column: 'batch');
         $minBatch = max(0, $maxBatch - $steps + 1);
@@ -56,7 +54,7 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function getNextBatchNumber() : int
+    public function getNextBatchNumber(): int
     {
         return (int) $this->queryBuilder->from(table: $this->table)->max(column: 'batch') + 1;
     }
@@ -64,19 +62,19 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function log(string $name, int $batch, string $checksum) : void
+    public function log(string $name, int $batch, string $checksum): void
     {
         $this->queryBuilder->from(table: $this->table)->insert(values: [
-                                                                      'migration' => $name,
-                                                                      'batch'     => $batch,
-                                                                      'checksum'  => $checksum,
-                                                                  ]);
+            'migration' => $name,
+            'batch' => $batch,
+            'checksum' => $checksum,
+        ]);
     }
 
     /**
      * @throws Throwable
      */
-    public function remove(string $name) : void
+    public function remove(string $name): void
     {
         $this->queryBuilder->from(table: $this->table)->where(column: 'migration', value: $name)->delete();
     }
@@ -84,7 +82,7 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function ensureTableExists() : void
+    public function ensureTableExists(): void
     {
         try {
             $this->queryBuilder->from(table: $this->table)->limit(limit: 1)->get();
@@ -96,9 +94,9 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function createRepository() : void
+    public function createRepository(): void
     {
-        $this->schema->create(table: $this->table, callback: static function ($table) : void {
+        $this->schema->create(table: $this->table, callback: static function ($table): void {
             $table->id();
             $table->string(name: 'migration');
             $table->integer(name: 'batch');

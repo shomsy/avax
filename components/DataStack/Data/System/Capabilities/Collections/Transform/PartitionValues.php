@@ -14,21 +14,19 @@ final readonly class PartitionValues
     ) {}
 
     /**
-     * @param callable $callback fn(mixed $item) : bool
-     *
+     * @param  callable  $callback  fn(mixed $item) : bool
      * @return array{0: array, 1: array}
      */
-    public function __invoke(callable $callback) : array
+    public function __invoke(callable $callback): array
     {
         return $this->partition(callback: $callback);
     }
 
     /**
-     * @param callable $callback fn(mixed $item) : bool
-     *
+     * @param  callable  $callback  fn(mixed $item) : bool
      * @return array{0: array, 1: array}
      */
-    public function partition(callable $callback) : array
+    public function partition(callable $callback): array
     {
         $pass = [];
         $fail = [];
@@ -44,7 +42,7 @@ final readonly class PartitionValues
         return [$pass, $fail];
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

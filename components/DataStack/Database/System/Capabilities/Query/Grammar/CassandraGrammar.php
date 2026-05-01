@@ -14,44 +14,44 @@ use RuntimeException;
 final class CassandraGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileSelect(QueryState $state) : string
+    public function compileSelect(QueryState $state): string
     {
         parent::compileSelect(state: $state);
 
         $columns = implode(separator: ', ', array: ($state->columns ?: ['*']));
-        $table   = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $state->from);
 
         $sql = "SELECT {$columns} FROM {$table}";
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
+            $sql .= ' WHERE '.$this->compileCassandraWhere(state: $state);
         }
 
         if (! empty($state->orders)) {
-            $sql .= ' ORDER BY ' . $this->compileCassandraOrder(state: $state);
+            $sql .= ' ORDER BY '.$this->compileCassandraOrder(state: $state);
         }
 
         if ($state->limit) {
-            $sql .= ' LIMIT ' . $state->limit;
+            $sql .= ' LIMIT '.$state->limit;
         }
 
         return $sql;
     }
 
     #[Override]
-    public function wrap(mixed $value) : string
+    public function wrap(mixed $value): string
     {
         parent::wrap(value: $value);
 
         return (string) $value;
     }
 
-    private function compileCassandraWhere(QueryState $state) : string
+    private function compileCassandraWhere(QueryState $state): string
     {
         $conditions = [];
         foreach ($state->wheres as $where) {
             $col = $where->column;
-            $op  = $where->operator;
+            $op = $where->operator;
             $val = is_string(value: $where->value) ? "'{$where->value}'" : $where->value;
 
             $conditions[] = "{$col} {$op} {$val}";
@@ -60,7 +60,7 @@ final class CassandraGrammar extends BaseGrammar
         return implode(separator: ' AND ', array: $conditions);
     }
 
-    private function compileCassandraOrder(QueryState $state) : string
+    private function compileCassandraOrder(QueryState $state): string
     {
         $orders = [];
         foreach ($state->orders as $order) {
@@ -71,7 +71,7 @@ final class CassandraGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileUpdate(QueryState $state) : string
+    public function compileUpdate(QueryState $state): string
     {
         parent::compileUpdate(state: $state);
 
@@ -82,17 +82,17 @@ final class CassandraGrammar extends BaseGrammar
             $sets[] = "{$col} = {$val}";
         }
 
-        $sql = "UPDATE {$table} SET " . implode(separator: ', ', array: $sets);
+        $sql = "UPDATE {$table} SET ".implode(separator: ', ', array: $sets);
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
+            $sql .= ' WHERE '.$this->compileCassandraWhere(state: $state);
         }
 
         return $sql;
     }
 
     #[Override]
-    public function compileDelete(QueryState $state) : string
+    public function compileDelete(QueryState $state): string
     {
         parent::compileDelete(state: $state);
 
@@ -101,14 +101,14 @@ final class CassandraGrammar extends BaseGrammar
         $sql = "DELETE FROM {$table}";
 
         if (! empty($state->wheres)) {
-            $sql .= ' WHERE ' . $this->compileCassandraWhere(state: $state);
+            $sql .= ' WHERE '.$this->compileCassandraWhere(state: $state);
         }
 
         return $sql;
     }
 
     #[Override]
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
     {
         try {
             parent::compileUpsert(state: $state, uniqueBy: $uniqueBy, update: $update);
@@ -119,13 +119,13 @@ final class CassandraGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileInsert(QueryState $state) : string
+    public function compileInsert(QueryState $state): string
     {
         parent::compileInsert(state: $state);
 
-        $table   = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $state->from);
         $columns = implode(separator: ', ', array: array_keys(array: $state->values));
-        $values  = implode(separator: ', ', array: array_map(
+        $values = implode(separator: ', ', array: array_map(
             callback: static fn ($v) => is_string(value: $v) ? "'{$v}'" : $v,
             array   : $state->values,
         ));
@@ -133,30 +133,30 @@ final class CassandraGrammar extends BaseGrammar
         return "INSERT INTO {$table} ({$columns}) VALUES ({$values})";
     }
 
-    public function compileBatch(array $statements) : string
+    public function compileBatch(array $statements): string
     {
         $stmts = implode(separator: '; ', array: $statements);
 
         return "BEGIN BATCH {$stmts} APPLY BATCH";
     }
 
-    public function compileCounterIncrement(string $column, int $amount) : string
+    public function compileCounterIncrement(string $column, int $amount): string
     {
         return "{$column} = {$column} + {$amount}";
     }
 
-    public function compileTTL(int $seconds) : string
+    public function compileTTL(int $seconds): string
     {
         return "USING TTL {$seconds}";
     }
 
-    public function compileTimestamp(int $timestamp) : string
+    public function compileTimestamp(int $timestamp): string
     {
         return "USING TIMESTAMP {$timestamp}";
     }
 
     #[Override]
-    public function compileTruncate(string $table) : string
+    public function compileTruncate(string $table): string
     {
         return "TRUNCATE {$this->wrap(value: $table)}";
     }

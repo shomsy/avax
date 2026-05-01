@@ -16,15 +16,14 @@ class ProgressBar
     public function __construct(
         private readonly int $total,
         int $barWidth = 50,
-    )
-    {
+    ) {
         $this->barWidth = max(10, $barWidth);
     }
 
     /**
      * Advance the progress by a step.
      */
-    public function advance(int $step = 1) : void
+    public function advance(int $step = 1): void
     {
         $this->current = min($this->current + $step, $this->total);
         $this->display();
@@ -33,13 +32,13 @@ class ProgressBar
     /**
      * Display the current progress bar.
      */
-    public function display() : void
+    public function display(): void
     {
-        $percent    = $this->total > 0 ? ($this->current / $this->total) : 0;
+        $percent = $this->total > 0 ? ($this->current / $this->total) : 0;
         $filledBars = (int) round($percent * $this->barWidth);
-        $emptyBars  = $this->barWidth - $filledBars;
+        $emptyBars = $this->barWidth - $filledBars;
 
-        $bar        = str_repeat('=', $filledBars) . str_repeat(' ', $emptyBars);
+        $bar = str_repeat('=', $filledBars).str_repeat(' ', $emptyBars);
         $percentStr = sprintf('%3d%%', (int) ($percent * 100));
 
         echo sprintf('
@@ -53,7 +52,7 @@ class ProgressBar
     /**
      * Set the current progress directly.
      */
-    public function setProgress(int $current) : void
+    public function setProgress(int $current): void
     {
         $this->current = min(max(0, $current), $this->total);
         $this->display();
@@ -62,7 +61,7 @@ class ProgressBar
     /**
      * Finish the progress bar.
      */
-    public function finish() : void
+    public function finish(): void
     {
         $this->current = $this->total;
         $this->display();
@@ -71,7 +70,7 @@ class ProgressBar
     /**
      * Get current progress.
      */
-    public function getCurrent() : int
+    public function getCurrent(): int
     {
         return $this->current;
     }
@@ -79,7 +78,7 @@ class ProgressBar
     /**
      * Get total steps.
      */
-    public function getTotal() : int
+    public function getTotal(): int
     {
         return $this->total;
     }

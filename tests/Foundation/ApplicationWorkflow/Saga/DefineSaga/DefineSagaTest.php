@@ -21,7 +21,7 @@ final class DefineSagaTest extends TestCase
             steps        : [
                                new SagaStepDefinition(name: 'reserve_inventory', nextStepName: 'charge_card', hasSideEffect: true, compensation: new SagaCompensationDefinition(name: 'release_inventory')),
                                new SagaStepDefinition(name: 'charge_card'),
-                           ]
+                           ],
         );
 
         new DefineSaga()->validate(definition: $definition);
@@ -37,7 +37,7 @@ final class DefineSagaTest extends TestCase
             steps        : [
                                new SagaStepDefinition(name: 'reserve_inventory'),
                                new SagaStepDefinition(name: 'reserve_inventory'),
-                           ]
+                           ],
         );
 
         $this->expectException(InvalidSagaDefinition::class);
@@ -53,7 +53,7 @@ final class DefineSagaTest extends TestCase
             firstStepName: 'reserve_inventory',
             steps        : [
                                new SagaStepDefinition(name: 'reserve_inventory', nextStepName: 'missing'),
-                           ]
+                           ],
         );
 
         $this->expectException(InvalidSagaDefinition::class);

@@ -16,7 +16,7 @@ final class LazyProxy
     private static WeakMap $instances;
 
     public function __construct(
-        private readonly string  $serviceId,
+        private readonly string $serviceId,
         private readonly Closure $factory,
     )
     {

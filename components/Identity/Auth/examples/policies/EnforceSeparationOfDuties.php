@@ -11,7 +11,7 @@ use Avax\Components\Identity\Access\System\Capabilities\Policy\IdentityPolicyCat
  */
 final readonly class EnforceSeparationOfDuties
 {
-    public function execute() : bool
+    public function execute(): bool
     {
         return IdentityPolicyCatalog::admin()->separationOfDutiesRequired;
     }

@@ -14,17 +14,17 @@ final class SessionIdentity
     public function __construct(
         private readonly Session $session,
         private readonly SessionLifetime $lifetime,
-        private readonly string  $sessionKey = 'auth_user_id',
-        private readonly string  $mfaVerifiedAtKey = 'auth_mfa_verified_at',
-        private readonly string  $phishingResistantKey = 'auth_phishing_resistant',
-        private readonly string  $issuedAtKey = 'auth_session_issued_at',
-        private readonly string  $lastSeenAtKey = 'auth_session_last_seen_at',
+        private readonly string $sessionKey = 'auth_user_id',
+        private readonly string $mfaVerifiedAtKey = 'auth_mfa_verified_at',
+        private readonly string $phishingResistantKey = 'auth_phishing_resistant',
+        private readonly string $issuedAtKey = 'auth_session_issued_at',
+        private readonly string $lastSeenAtKey = 'auth_session_last_seen_at',
     ) {}
 
-    public function issue(int $userId, DateTimeImmutable|null $mfaVerifiedAt = null, bool $phishingResistant = false) : string
+    public function issue(int $userId, ?DateTimeImmutable $mfaVerifiedAt = null, bool $phishingResistant = false): string
     {
         $this->session->regenerate();
-        $now = (new DateTimeImmutable())->format(DATE_ATOM);
+        $now = (new DateTimeImmutable)->format(DATE_ATOM);
 
         $this->session->put($this->sessionKey, $userId);
         $this->session->put($this->mfaVerifiedAtKey, $mfaVerifiedAt?->format(DATE_ATOM));
@@ -35,7 +35,7 @@ final class SessionIdentity
         return $this->session->id();
     }
 
-    public function resolveUserId() : int|null
+    public function resolveUserId(): ?int
     {
         if (! $this->isSessionActive()) {
             return null;
@@ -54,16 +54,16 @@ final class SessionIdentity
         return null;
     }
 
-    private function isSessionActive() : bool
+    private function isSessionActive(): bool
     {
-        $issuedAt   = $this->readDate($this->issuedAtKey);
+        $issuedAt = $this->readDate($this->issuedAtKey);
         $lastSeenAt = $this->readDate($this->lastSeenAtKey);
 
         if (! $issuedAt || ! $lastSeenAt) {
             return false;
         }
 
-        $now = new DateTimeImmutable();
+        $now = new DateTimeImmutable;
 
         if ($issuedAt->modify("+{$this->lifetime->absoluteTimeoutSeconds} seconds") <= $now) {
             $this->expire();
@@ -80,7 +80,7 @@ final class SessionIdentity
         return true;
     }
 
-    private function readDate(string $key) : ?DateTimeImmutable
+    private function readDate(string $key): ?DateTimeImmutable
     {
         $stored = $this->session->get($key);
         if (! $stored) {
@@ -94,22 +94,22 @@ final class SessionIdentity
         }
     }
 
-    private function expire() : void
+    private function expire(): void
     {
         $this->session->flush();
     }
 
-    private function touch() : void
+    private function touch(): void
     {
-        $this->session->put($this->lastSeenAtKey, (new DateTimeImmutable())->format(DATE_ATOM));
+        $this->session->put($this->lastSeenAtKey, (new DateTimeImmutable)->format(DATE_ATOM));
     }
 
-    public function resolveMfaVerifiedAt() : ?DateTimeImmutable
+    public function resolveMfaVerifiedAt(): ?DateTimeImmutable
     {
         return $this->readDate($this->mfaVerifiedAtKey);
     }
 
-    public function resolvePhishingResistant() : bool
+    public function resolvePhishingResistant(): bool
     {
         return $this->session->get($this->phishingResistantKey) === '1';
     }

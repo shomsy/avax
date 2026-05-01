@@ -12,18 +12,17 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
     private array $objects = [];
 
     public function store(
-        string            $requestUri,
-        array             $claims,
+        string $requestUri,
+        array $claims,
         DateTimeImmutable $expiresAt,
-        bool              $signatureVerified = false,
-        string|null       $signingAlgorithm = null,
-        string|null       $signingClientId = null,
-    ) : OidcRequestObject
-    {
+        bool $signatureVerified = false,
+        ?string $signingAlgorithm = null,
+        ?string $signingClientId = null,
+    ): OidcRequestObject {
         $object = new OidcRequestObject(
             requestUri       : $requestUri,
             claims           : $claims,
-            createdAt        : new DateTimeImmutable(),
+            createdAt        : new DateTimeImmutable,
             expiresAt        : $expiresAt,
             signatureVerified: $signatureVerified,
             signingAlgorithm : $signingAlgorithm,
@@ -35,7 +34,7 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
         return $object;
     }
 
-    public function consume(string $requestUri) : OidcRequestObject|null
+    public function consume(string $requestUri): ?OidcRequestObject
     {
         $object = $this->find(requestUri: $requestUri);
 
@@ -48,7 +47,7 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
         return $object;
     }
 
-    public function find(string $requestUri) : OidcRequestObject|null
+    public function find(string $requestUri): ?OidcRequestObject
     {
         $object = $this->objects[$requestUri] ?? null;
 

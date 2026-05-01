@@ -27,8 +27,8 @@ final readonly class PrimaryReplicaPolicy
         public bool $syncReplication = true,
         public bool $failover = false,
         public ReplicationPolicy $replicationPolicy = ReplicationPolicy::SYNCHRONOUS,
-        public int  $failoverTimeoutSeconds = 30,
-        public int  $maxReplicationRetries = 3,
+        public int $failoverTimeoutSeconds = 30,
+        public int $maxReplicationRetries = 3,
     ) {}
 
     /**

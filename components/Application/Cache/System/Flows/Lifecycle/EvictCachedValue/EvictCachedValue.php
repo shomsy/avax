@@ -9,15 +9,14 @@ use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCache
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Throwable;
 
 final readonly class EvictCachedValue
 {
     public function __construct(
-        private CacheStore                      $cacheStore,
+        private CacheStore        $cacheStore,
         private ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
-        private CacheMetrics|null               $cacheMetrics = null,
+        private CacheMetrics|null $cacheMetrics = null,
     ) {}
 
     public function evict(CacheKey $cacheKey) : bool

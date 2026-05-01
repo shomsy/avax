@@ -8,21 +8,21 @@ final readonly class RouteCache
 {
     public function __construct(private string $path) {}
 
-    public function write(array $routes) : void
+    public function write(array $routes): void
     {
         $directory = dirname(path: $this->path);
 
         if (! is_dir(filename: $directory)) {
-            mkdir(directory: $directory, permissions: 0755, recursive: true);
+            mkdir(directory: $directory, permissions: 0o755, recursive: true);
         }
 
         file_put_contents(
             filename: $this->path,
-            data    : '<?php return ' . var_export(value: $routes, return: true) . ';' . PHP_EOL,
+            data    : '<?php return '.var_export(value: $routes, return: true).';'.PHP_EOL,
         );
     }
 
-    public function read() : array
+    public function read(): array
     {
         if (! is_file(filename: $this->path)) {
             return [];
@@ -33,7 +33,7 @@ final readonly class RouteCache
         return is_array(value: $routes) ? $routes : [];
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         if (is_file(filename: $this->path)) {
             unlink(filename: $this->path);

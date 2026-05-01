@@ -48,8 +48,8 @@ abstract class CacheStoreContractTest extends TestCase
             lifecycle: CachedValueLifecycle::create(
                            createdAt: $clock->now(),
                            expiresAt: $clock->now()->add(duration: Duration::ofSeconds(seconds: 3600)),
-                           clock    : $clock
-                       )
+                           clock    : $clock,
+                       ),
         );
 
         $store->write(key: $key, record: $record);
@@ -70,8 +70,8 @@ abstract class CacheStoreContractTest extends TestCase
             lifecycle: CachedValueLifecycle::create(
                            createdAt: $clock->now(),
                            expiresAt: $clock->now()->add(duration: Duration::ofSeconds(seconds: 3600)),
-                           clock    : $clock
-                       )
+                           clock    : $clock,
+                       ),
         );
 
         $store->write(key: $key, record: $record);
@@ -93,8 +93,8 @@ abstract class CacheStoreContractTest extends TestCase
             lifecycle: CachedValueLifecycle::create(
                            createdAt: $clock->now(),
                            expiresAt: $clock->now()->add(duration: Duration::ofSeconds(seconds: 1)),
-                           clock    : $clock
-                       )
+                           clock    : $clock,
+                       ),
         );
 
         $store->write(key: $key, record: $record);
@@ -116,8 +116,8 @@ abstract class CacheStoreContractTest extends TestCase
             lifecycle: CachedValueLifecycle::create(
                            createdAt: $clock->now(),
                            expiresAt: $clock->now()->add(duration: Duration::ofSeconds(seconds: 3600)),
-                           clock    : $clock
-                       )
+                           clock    : $clock,
+                       ),
         );
 
         $store->write(key: $key, record: $record);
@@ -137,8 +137,8 @@ abstract class CacheStoreContractTest extends TestCase
             lifecycle: CachedValueLifecycle::create(
                            createdAt: $clock->now(),
                            expiresAt: $clock->now()->add(duration: Duration::ofSeconds(seconds: 3600)),
-                           clock    : $clock
-                       )
+                           clock    : $clock,
+                       ),
         );
 
         $store->write(key: CacheKey::create(key: 'key1'), record: $record);
@@ -163,8 +163,8 @@ abstract class CacheStoreContractTest extends TestCase
             lifecycle: CachedValueLifecycle::create(
                            createdAt: $clock->now(),
                            expiresAt: $clock->now()->add(duration: Duration::ofSeconds(seconds: 3600)),
-                           clock    : $clock
-                       )
+                           clock    : $clock,
+                       ),
         );
 
         $store->write(key: $key, record: $record);

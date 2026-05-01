@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\HandleRuntimeFailure;
 
 use Avax\Components\Operations\Logging\System\PublicSurface\Logging;
-use Throwable;
+
 use function Sentry\captureException;
+
+use Throwable;
 
 /**
  * Reports runtime failures to the logging system and external error trackers.
@@ -18,8 +20,8 @@ final readonly class ReportRuntimeFailure
 {
     public function __construct(
         private Logging|null $logger = null,
-        private string|null  $correlationId = null,
-        private string|null  $traceId = null,
+        private string|null $correlationId = null,
+        private string|null $traceId = null,
     ) {}
 
     /**

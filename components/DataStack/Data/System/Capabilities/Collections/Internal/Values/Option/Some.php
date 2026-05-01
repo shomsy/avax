@@ -16,13 +16,13 @@ final class Some extends Option
     ) {}
 
     #[Override]
-    public function isSome() : bool
+    public function isSome(): bool
     {
         return true;
     }
 
     #[Override]
-    public function unwrap() : mixed
+    public function unwrap(): mixed
     {
         return $this->value;
     }

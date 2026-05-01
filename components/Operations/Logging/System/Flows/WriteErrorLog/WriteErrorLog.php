@@ -96,8 +96,8 @@ final readonly class WriteErrorLog
     /**
      * Write a structured error log entry.
      *
-     * @param string $level   PSR-3 log level (emergency, alert, critical, error, warning, notice, info,
-     *                        debug)
+     * @param string $level PSR-3 log level (emergency, alert, critical, error, warning, notice, info,
+     *                      debug)
      * @param string $message Log message
      * @param array<string, mixed> $context Additional context data
      *
@@ -120,7 +120,7 @@ final readonly class WriteErrorLog
     /**
      * Build a structured log record.
      *
-     * @param string $level   PSR-3 log level
+     * @param string $level PSR-3 log level
      * @param string $message Log message
      * @param array<string, mixed> $context Additional context
      *

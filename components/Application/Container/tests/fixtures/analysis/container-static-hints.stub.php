@@ -28,13 +28,13 @@ return [
                     'HintConditionalService',
                     'HintIdentityService',
                 ],
-        'flow.hints'          => [
+        'flow.hints' => [
                 ],
         ],
     'sliceImports'  => [
         'capability.identity' => [
                 ],
-        'flow.hints'          => [
+        'flow.hints' => [
                     'capability.identity',
                 ],
         ],
@@ -45,13 +45,13 @@ return [
                 ],
         ],
     'runtimeInputs' => [
-        'HintConditionalService'   => [
+        'HintConditionalService' => [
                 ],
-        'HintIdentityService'      => [
+        'HintIdentityService'    => [
                 ],
-        'HintPipelineStepA'        => [
+        'HintPipelineStepA'      => [
                 ],
-        'HintPipelineStepB'        => [
+        'HintPipelineStepB'      => [
                 ],
         'HintRuntimeInputConsumer' => [
                     'token',
@@ -62,14 +62,14 @@ return [
             'profiles' => [
                             'prod',
                         ],
-            'flags'    => [
+            'flags'   => [
                             'beta',
                         ],
-            'tenants'  => [
+            'tenants' => [
                         ],
-            'regions'  => [
+            'regions' => [
                         ],
-            'modes'    => [
+            'modes'   => [
                         ],
                     'fallback' => false,
                 ],

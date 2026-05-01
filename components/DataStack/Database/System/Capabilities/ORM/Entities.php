@@ -16,36 +16,34 @@ use Throwable;
 readonly class Entities
 {
     public function __construct(
-        Query                   $query,
+        Query $query,
         AttributeMetadataReader $attributeMetadataReader,
-        Hydrator                $hydrator,
+        Hydrator $hydrator,
         private EntityPersister $entityPersister,
     ) {}
 
     /**
-     * @param class-string $entityClass
+     * @param  class-string  $entityClass
      */
-    public function find(string $entityClass, mixed $id, string|null $connection = null) : object|null
+    public function find(string $entityClass, mixed $id, ?string $connection = null): ?object
     {
         return $this->entityPersister->find(entityClass: $entityClass, id: $id, connectionName: $connection);
     }
 
     /**
-     * @param class-string $entityClass
-     * @param array<string, mixed> $criteria
-     *
+     * @param  class-string  $entityClass
+     * @param  array<string, mixed>  $criteria
      * @return list<object>
      */
     public function findBy(
         string $entityClass,
-        array  $criteria,
-        string|null $orderBy = null,
-        string|null $direction = null,
+        array $criteria,
+        ?string $orderBy = null,
+        ?string $direction = null,
         ?int $limit = null,
         ?int $offset = null,
-        string|null $connection = null,
-    ) : array
-    {
+        ?string $connection = null,
+    ): array {
         return $this->entityPersister->findBy(
             entityClass   : $entityClass,
             criteria      : $criteria,
@@ -60,7 +58,7 @@ readonly class Entities
     /**
      * @throws Throwable
      */
-    public function insert(object $entity, string|null $connection = null) : void
+    public function insert(object $entity, ?string $connection = null): void
     {
         $this->entityPersister->insert(entity: $entity, connectionName: $connection);
     }
@@ -68,7 +66,7 @@ readonly class Entities
     /**
      * @throws Throwable
      */
-    public function update(object $entity, string|null $connection = null) : void
+    public function update(object $entity, ?string $connection = null): void
     {
         $this->entityPersister->update(entity: $entity, connectionName: $connection);
     }
@@ -76,7 +74,7 @@ readonly class Entities
     /**
      * @throws Throwable
      */
-    public function delete(object $entity, string|null $connection = null) : void
+    public function delete(object $entity, ?string $connection = null): void
     {
         $this->entityPersister->delete(entity: $entity, connectionName: $connection);
     }
@@ -84,7 +82,7 @@ readonly class Entities
     /**
      * @throws Throwable
      */
-    public function refresh(object $entity, string|null $connection = null) : object
+    public function refresh(object $entity, ?string $connection = null): object
     {
         return $this->entityPersister->refresh(entity: $entity, connectionName: $connection);
     }

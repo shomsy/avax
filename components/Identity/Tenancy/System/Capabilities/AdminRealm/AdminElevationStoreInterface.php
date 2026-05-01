@@ -6,11 +6,11 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm;
 
 interface AdminElevationStoreInterface
 {
-    public function start(AdminElevationRecord $record) : void;
+    public function start(AdminElevationRecord $record): void;
 
-    public function find(string $bindingId) : AdminElevationRecord|null;
+    public function find(string $bindingId): ?AdminElevationRecord;
 
-    public function revoke(string $bindingId) : void;
+    public function revoke(string $bindingId): void;
 
-    public function revokeUser(int $userId) : void;
+    public function revokeUser(int $userId): void;
 }

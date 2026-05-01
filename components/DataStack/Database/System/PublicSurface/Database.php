@@ -20,56 +20,56 @@ use Avax\Components\DataStack\Database\System\Configuration\DatabaseBuilder;
 final readonly class Database
 {
     public function __construct(
-        private Connections            $connections,
-        private QueryCapability        $queryCapability,
-        private EntitiesCapability     $entitiesCapability,
-        private SchemaCapability       $schemaCapability,
-        private MigrationsCapability   $migrationsCapability,
+        private Connections $connections,
+        private QueryCapability $queryCapability,
+        private EntitiesCapability $entitiesCapability,
+        private SchemaCapability $schemaCapability,
+        private MigrationsCapability $migrationsCapability,
         private TransactionsCapability $transactionsCapability,
-        private TelemetryCapability    $telemetryCapability,
+        private TelemetryCapability $telemetryCapability,
     ) {}
 
-    public static function configuration() : DatabaseBuilder
+    public static function configuration(): DatabaseBuilder
     {
-        return new DatabaseBuilder();
+        return new DatabaseBuilder;
     }
 
-    public function connections() : Connections
+    public function connections(): Connections
     {
         return $this->connections;
     }
 
-    public function query() : Query
+    public function query(): Query
     {
         return new Query(query: $this->queryCapability);
     }
 
-    public function entities() : Entities
+    public function entities(): Entities
     {
         return new Entities(entities: $this->entitiesCapability);
     }
 
-    public function schema() : Schema
+    public function schema(): Schema
     {
         return new Schema(schema: $this->schemaCapability);
     }
 
-    public function migrations() : Migrations
+    public function migrations(): Migrations
     {
         return new Migrations(migrations: $this->migrationsCapability);
     }
 
-    public function transactions() : Transactions
+    public function transactions(): Transactions
     {
         return new Transactions(transactions: $this->transactionsCapability);
     }
 
-    public function telemetry() : Telemetry
+    public function telemetry(): Telemetry
     {
         return new Telemetry(telemetry: $this->telemetryCapability);
     }
 
-    public function table(string $table, string|null $connectionName = null) : QueryBuilder
+    public function table(string $table, ?string $connectionName = null): QueryBuilder
     {
         return $this->queryCapability->from(table: $table, connectionName: $connectionName);
     }

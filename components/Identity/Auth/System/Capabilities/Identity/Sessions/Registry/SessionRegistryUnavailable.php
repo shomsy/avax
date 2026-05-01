@@ -8,7 +8,7 @@ use RuntimeException;
 
 final class SessionRegistryUnavailable extends RuntimeException
 {
-    public static function forSessionManagementFlow() : self
+    public static function forSessionManagementFlow(): self
     {
         return new self(message: 'Tracked session management requires a configured session registry.');
     }

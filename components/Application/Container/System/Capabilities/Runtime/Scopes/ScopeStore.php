@@ -93,13 +93,13 @@ final class ScopeStore
      * @throws ContainerException
      */
     public function setFor(
-        string  $abstract,
-        mixed   $instance,
-        string|null $kind = null,
-        bool    $disposable = false,
+        string $abstract,
+        mixed  $instance,
+        string $kind = null,
+        bool   $disposable = false,
     ) : void
     {
-        $kind         ??= ScopeKind::ANY;
+        $kind ??= ScopeKind::ANY;
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
             $required = ScopeKind::normalize(kind: $kind);
@@ -120,7 +120,7 @@ final class ScopeStore
     /**
      * Opens one new nested scope.
      */
-    public function open(string|null $kind = null, string $scopeId = '') : void
+    public function open(string $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->scopes[] = [
@@ -144,7 +144,7 @@ final class ScopeStore
      * }
      * @throws ContainerException
      */
-    public function close(string|null $kind = null) : array
+    public function close(string $kind = null) : array
     {
         if ($this->scopes === []) {
             throw new ContainerException(message: 'Cannot close scope without an active scope.');
@@ -183,11 +183,11 @@ final class ScopeStore
      */
     public function setPooledFor(
         string $abstract,
-        mixed  $instance,
+        mixed $instance,
         string $kind,
-        int    $maxSize,
-        bool|null $resetBeforeReuse = null,
-        bool   $disposable = false,
+        int   $maxSize,
+        bool  $resetBeforeReuse = null,
+        bool  $disposable = false,
     ) : void
     {
         $resetBeforeReuse ??= true;

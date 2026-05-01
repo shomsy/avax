@@ -15,17 +15,17 @@ final readonly class DataTransferViolation implements JsonSerializable
     public function __construct(
         public string $field,
         public string $message,
-        public string|null $code = null,
-        public mixed  $invalidValue = null,
+        public ?string $code = null,
+        public mixed $invalidValue = null,
     ) {}
 
     #[Override]
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return [
-            'field'        => $this->field,
-            'message'      => $this->message,
-            'code'         => $this->code,
+            'field' => $this->field,
+            'message' => $this->message,
+            'code' => $this->code,
             'invalidValue' => $this->invalidValue,
         ];
     }

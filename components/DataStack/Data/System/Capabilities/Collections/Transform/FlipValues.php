@@ -13,17 +13,17 @@ final readonly class FlipValues
         private array $items = [],
     ) {}
 
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return $this->flip();
     }
 
-    public function flip() : array
+    public function flip(): array
     {
         return array_flip(array: $this->items);
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

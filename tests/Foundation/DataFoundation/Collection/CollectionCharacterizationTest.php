@@ -289,7 +289,7 @@ final class CollectionCharacterizationTest extends TestCase
     public function testWhenFluent() : void
     {
         $col    = $this->collection(items: [1, 2, 3]);
-        $result = $col->when(condition: true, callback: fn ($c) => $c->map(callback: static fn ($n) => $n * 2));
+        $result = $col->when(condition: true, callback: static fn ($c) => $c->map(callback: static fn ($n) => $n * 2));
 
         $this->assertSame([2, 4, 6], $result->all());
     }

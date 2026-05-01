@@ -10,15 +10,14 @@ final readonly class DescribeSagaCompensation
         public string $stepName,
         public string $description,
         public array $rollbackSchema,
-        public bool  $idempotent,
+        public bool $idempotent,
     ) {}
 
     public static function create(
         string $stepName,
         string $description,
         bool $idempotent = true,
-    ) : self
-    {
+    ): self {
         return new self(
             stepName      : $stepName,
             description   : $description,
@@ -27,18 +26,18 @@ final readonly class DescribeSagaCompensation
         );
     }
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'describes saga compensation including step name, description, rollback, and idempotency.';
     }
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return [
-            'step_name'       => $this->stepName,
-            'description'     => $this->description,
+            'step_name' => $this->stepName,
+            'description' => $this->description,
             'rollback_schema' => $this->rollbackSchema,
-            'idempotent'      => $this->idempotent,
+            'idempotent' => $this->idempotent,
         ];
     }
 }

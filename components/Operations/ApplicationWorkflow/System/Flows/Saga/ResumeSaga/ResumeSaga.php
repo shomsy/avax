@@ -15,16 +15,15 @@ final readonly class ResumeSaga
         private StoreSagaState $storeSagaState,
     ) {}
 
-    public function findRecoverable() : array
+    public function findRecoverable(): array
     {
         return [];
     }
 
     public function resume(
-        SagaInstance   $failedInstance,
+        SagaInstance $failedInstance,
         SagaDefinition $definition,
-    ) : SagaInstance
-    {
+    ): SagaInstance {
         if ($failedInstance->status !== SagaInstanceStatus::FAILED) {
             throw new SagaRecoveryFailure(
                 message: sprintf('Saga %s is not failed, cannot resume.', $failedInstance->id),
@@ -48,32 +47,35 @@ final readonly class ResumeSaga
         return $failedInstance->retry();
     }
 
-    public function canRecover(SagaInstance $instance) : bool
+    public function canRecover(SagaInstance $instance): bool
     {
         return in_array($instance->status, [
             SagaInstanceStatus::FAILED,
-        ],              true);
+        ], true);
     }
 }
 
 final readonly class SagaRecoveryPlan
 {
     public string $sagaId;
-    public string|null $failedStep;
-    public int    $attemptNumber;
-    public array  $recoverySteps;
-    public bool   $isRecoverable;
+
+    public ?string $failedStep;
+
+    public int $attemptNumber;
+
+    public array $recoverySteps;
+
+    public bool $isRecoverable;
 
     private function __construct(
         string $sagaId,
-        string|null $failedStep,
-        int    $attemptNumber,
-        array  $recoverySteps,
-        bool   $isRecoverable,
-    )
-    {
-        $this->sagaId        = $sagaId;
-        $this->failedStep    = $failedStep;
+        ?string $failedStep,
+        int $attemptNumber,
+        array $recoverySteps,
+        bool $isRecoverable,
+    ) {
+        $this->sagaId = $sagaId;
+        $this->failedStep = $failedStep;
         $this->attemptNumber = $attemptNumber;
         $this->recoverySteps = $recoverySteps;
         $this->isRecoverable = $isRecoverable;
@@ -81,10 +83,9 @@ final readonly class SagaRecoveryPlan
 
     public static function create(
         string $sagaId,
-        string|null $failedStep,
-        int    $attemptNumber,
-    ) : self
-    {
+        ?string $failedStep,
+        int $attemptNumber,
+    ): self {
         return new self(
             sagaId       : $sagaId,
             failedStep   : $failedStep,
@@ -94,11 +95,11 @@ final readonly class SagaRecoveryPlan
         );
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'saga_id'        => $this->sagaId,
-            'failed_step'    => $this->failedStep,
+            'saga_id' => $this->sagaId,
+            'failed_step' => $this->failedStep,
             'attempt_number' => $this->attemptNumber,
             'recovery_steps' => $this->recoverySteps,
             'is_recoverable' => $this->isRecoverable,

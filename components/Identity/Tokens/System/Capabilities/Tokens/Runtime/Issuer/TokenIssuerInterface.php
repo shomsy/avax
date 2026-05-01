@@ -14,21 +14,14 @@ use DateTimeImmutable;
 interface TokenIssuerInterface
 {
     /**
-     * @param User                   $user
-     * @param DateTimeImmutable|null $mfaVerifiedAt
-     * @param bool                   $phishingResistant
-     * @param string|null            $clientId
-     * @param list<string>           $scopes
-     * @param string|null            $refreshTokenFamilyId
-     *
-     * @return IssuedToken
+     * @param  list<string>  $scopes
      */
     public function issue(
-        User                   $user,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool                   $phishingResistant = false,
-        string                 $clientId = null,
-        array                  $scopes = [],
-        string                 $refreshTokenFamilyId = null,
-    ) : IssuedToken;
+        User $user,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
+        ?string $clientId = null,
+        array $scopes = [],
+        ?string $refreshTokenFamilyId = null,
+    ): IssuedToken;
 }

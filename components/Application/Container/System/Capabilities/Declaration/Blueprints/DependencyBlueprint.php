@@ -14,26 +14,26 @@ final readonly class DependencyBlueprint
 
     public array $injectableProperties;
 
-    public bool  $instantiable;
+    public bool $instantiable;
 
     /**
      * @param list<array{name: string, serviceId: string|null, readonly: bool}> $injectableProperties
-     * @param list<array{name: string, plan: ResolvePlan}>                      $injectableMethods
+     * @param list<array{name: string, plan: ResolvePlan}> $injectableMethods
      */
     public function __construct(
-        public string           $class,
-        bool|null               $instantiable = null,
+        public string $class,
+        bool          $instantiable = null,
         public ResolvePlan|null $resolvePlan = null,
-        array|null              $injectableProperties = null,
-        array|null              $injectableMethods = null,
-        bool|null               $shared = null,
-        public string           $fingerprint = '',
+        array         $injectableProperties = null,
+        array         $injectableMethods = null,
+        bool          $shared = null,
+        public string $fingerprint = '',
     )
     {
-        $instantiable               ??= false;
-        $injectableProperties       ??= [];
-        $injectableMethods          ??= [];
-        $shared                     ??= false;
+        $instantiable         ??= false;
+        $injectableProperties ??= [];
+        $injectableMethods    ??= [];
+        $shared               ??= false;
         $this->instantiable         = $instantiable;
         $this->injectableProperties = $injectableProperties;
         $this->injectableMethods    = $injectableMethods;

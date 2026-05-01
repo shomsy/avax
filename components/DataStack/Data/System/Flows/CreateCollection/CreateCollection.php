@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 
 final class CreateCollection
 {
-    public function create(array $items = []) : Collection
+    public function create(array $items = []): Collection
     {
         return new Collection($items);
     }

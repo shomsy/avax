@@ -12,23 +12,23 @@ use SensitiveParameter;
 final readonly class ResolvedToken
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
-        public User                       $user,
+        public User $user,
         #[SensitiveParameter]
-        public string                     $tokenId,
-        public DateTimeImmutable          $expiresAt,
-        public DateTimeImmutable|null     $mfaVerifiedAt = null,
-        public bool                       $phishingResistant = false,
-        public string|null                $clientId = null,
-        public array                      $scopes = [],
-        public OAuthSenderConstraint|null $senderConstraint = null,
-        public string|null                $familyId = null,
+        public string $tokenId,
+        public DateTimeImmutable $expiresAt,
+        public ?DateTimeImmutable $mfaVerifiedAt = null,
+        public bool $phishingResistant = false,
+        public ?string $clientId = null,
+        public array $scopes = [],
+        public ?OAuthSenderConstraint $senderConstraint = null,
+        public ?string $familyId = null,
     ) {}
 
-    public function isExpired() : bool
+    public function isExpired(): bool
     {
-        return $this->expiresAt < new DateTimeImmutable();
+        return $this->expiresAt < new DateTimeImmutable;
     }
 }

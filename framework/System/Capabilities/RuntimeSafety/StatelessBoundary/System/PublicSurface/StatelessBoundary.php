@@ -74,8 +74,8 @@ final readonly class BoundaryAudit
      */
     public function __construct(
         public string $mode,
-        public array  $statelessRoutes,
-        public array  $statefulViolations,
+        public array $statelessRoutes,
+        public array $statefulViolations,
     ) {}
 
     public function isCompliant() : bool

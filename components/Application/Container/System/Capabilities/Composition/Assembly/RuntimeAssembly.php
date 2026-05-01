@@ -18,24 +18,24 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final readonly class RuntimeAssembly
 {
-    public ResolveDependency  $resolver;
+    public ResolveDependency $resolver;
     public CompileContainer $compiler;
     public ResolutionPolicy $policy;
-    public FunctionCaller  $caller;
-    public ManageScopes    $scopes;
-    public DependencyPool     $servicePool;
-    public ScopeStore      $scopeStore;
+    public FunctionCaller    $caller;
+    public ManageScopes      $scopes;
+    public DependencyPool    $servicePool;
+    public ScopeStore        $scopeStore;
     public DependencyRegistry $registrations;
 
     public function __construct(
         DependencyRegistry $registrations,
-        ScopeStore      $scopeStore,
-        DependencyPool     $servicePool,
-        ManageScopes    $scopes,
-        FunctionCaller  $caller,
+        ScopeStore        $scopeStore,
+        DependencyPool    $servicePool,
+        ManageScopes      $scopes,
+        FunctionCaller    $caller,
         ResolutionPolicy $policy,
         CompileContainer $compiler,
-        ResolveDependency  $resolver,
+        ResolveDependency $resolver,
     )
     {
         $this->registrations = $registrations;

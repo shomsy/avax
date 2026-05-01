@@ -6,5 +6,5 @@ namespace Avax\Components\Operations\Tasks\System\Foundation;
 
 interface JobInterface
 {
-    public function handle(array $data = []) : void;
+    public function handle(array $data = []): void;
 }

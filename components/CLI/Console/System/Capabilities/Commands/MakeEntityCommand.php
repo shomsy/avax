@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\CLI\Console\System\Capabilities\Commands;
 
-use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\EntityGenerator;
 use Avax\Components\CLI\Console\System\PublicSurface\Command;
+use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\EntityGenerator;
 use Override;
 use RuntimeException;
 
@@ -14,11 +14,11 @@ use RuntimeException;
  */
 class MakeEntityCommand extends Command
 {
-    protected string $name        = 'make:entity';
+    protected string $name = 'make:entity';
 
     protected string $description = 'Create a new entity class';
 
-    protected string $signature   = 'make:entity {name} [--table=] [--fields=]';
+    protected string $signature = 'make:entity {name} [--table=] [--fields=]';
 
     protected array $arguments = ['name'];
 
@@ -29,7 +29,7 @@ class MakeEntityCommand extends Command
     ) {}
 
     #[Override]
-    protected function handle() : int
+    protected function handle(): int
     {
         $name = $this->argument(0);
 
@@ -43,9 +43,9 @@ class MakeEntityCommand extends Command
             }
         }
 
-        $table       = $this->option('table');
+        $table = $this->option('table');
         $fieldsInput = $this->option('fields');
-        $fields      = [];
+        $fields = [];
 
         if (is_string($fieldsInput) && $fieldsInput !== '') {
             $fields = $this->parseFields($fieldsInput);
@@ -64,11 +64,11 @@ class MakeEntityCommand extends Command
 
             $path = $this->entityGenerator->generate($name, $data);
 
-            $this->info('Entity created successfully: ' . $path);
+            $this->info('Entity created successfully: '.$path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create entity: ' . $runtimeException->getMessage());
+            $this->error('Failed to create entity: '.$runtimeException->getMessage());
 
             return self::FAILURE;
         }
@@ -77,12 +77,12 @@ class MakeEntityCommand extends Command
     /**
      * Parse field string "name:type,name:type" into array.
      */
-    private function parseFields(string $input) : array
+    private function parseFields(string $input): array
     {
         $fields = [];
 
         foreach (explode(',', $input) as $pair) {
-            $parts     = explode(':', trim($pair), 2);
+            $parts = explode(':', trim($pair), 2);
             $fieldName = $parts[0] ?? '';
             $fieldType = $parts[1] ?? 'string';
 

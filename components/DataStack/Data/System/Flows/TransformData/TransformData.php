@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Data\System\Flows\TransformData;
 
 final class TransformData
 {
-    public function transform(array $data, callable $transformer) : array
+    public function transform(array $data, callable $transformer): array
     {
         return array_map($transformer, $data);
     }

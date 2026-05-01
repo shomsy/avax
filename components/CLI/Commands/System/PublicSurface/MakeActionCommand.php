@@ -12,10 +12,10 @@ final readonly class MakeActionCommand
 {
     public function __construct(
         private CapabilityGeneratorInterface $capabilityGenerator,
-        private LoggerInterface              $logger,
+        private LoggerInterface $logger,
     ) {}
 
-    public function execute(array $arguments) : void
+    public function execute(array $arguments): void
     {
         $name = $arguments['name'] ?? null;
         if (empty($name)) {
@@ -28,7 +28,7 @@ final readonly class MakeActionCommand
             $this->capabilityGenerator->create($name);
             $this->logger->info(sprintf("Action '%s' created successfully.", $name));
         } catch (Throwable $throwable) {
-            $this->logger->error('Error creating action: ' . $throwable->getMessage());
+            $this->logger->error('Error creating action: '.$throwable->getMessage());
         }
     }
 }

@@ -6,16 +6,16 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\Re
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberRole;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFailed;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class RemoveTenantMember
 {
     public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(RemoveTenantMemberData $data) : void
+    public function execute(RemoveTenantMemberData $data): void
     {
         $tenant = $this->tenantStore->findTenantBySlug(slug: $data->tenantSlug);
 
@@ -35,13 +35,13 @@ final readonly class RemoveTenantMember
 
         $this->tenantStore->removeMember(tenantId: $tenant->tenantId, userId: $data->userId);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.tenant.member.removed',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'tenant_id'   => $tenant->tenantId,
-                                                           'tenant_slug' => $tenant->slug,
-                                                           'user_id'     => $data->userId,
-                                                       ],
-                                       ));
+            name      : 'auth.tenant.member.removed',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'tenant_id' => $tenant->tenantId,
+                'tenant_slug' => $tenant->slug,
+                'user_id' => $data->userId,
+            ],
+        ));
     }
 }

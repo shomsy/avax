@@ -51,7 +51,7 @@ final class DistributedCacheStoreTest extends TestCase
         $lifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),
-            clock    : $this->clock
+            clock    : $this->clock,
         );
 
         return new StoredCacheRecord(value: $value, lifecycle: $lifecycle);

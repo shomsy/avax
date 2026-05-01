@@ -13,51 +13,51 @@ use SensitiveParameter;
 interface OAuthClientRegistryInterface
 {
     /**
-     * @param list<string>                $redirectUris
-     * @param list<string>                $allowedScopes
-     * @param list<string>                $allowedAudiences
-     * @param list<OAuthGrantType>        $allowedGrantTypes
-     * @param array<string, list<string>> $audienceScopeBoundaries
+     * @param  list<string>  $redirectUris
+     * @param  list<string>  $allowedScopes
+     * @param  list<string>  $allowedAudiences
+     * @param  list<OAuthGrantType>  $allowedGrantTypes
+     * @param  array<string, list<string>>  $audienceScopeBoundaries
      */
     public function register(
-        string                            $name,
-        OAuthClientType                   $type,
-        array                             $redirectUris,
-        string                            $tenantSlug = null,
-        array                             $allowedScopes = [],
-        array                             $allowedAudiences = [],
-        array                             $allowedGrantTypes = [],
-        array                             $audienceScopeBoundaries = [],
-        OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
-        OAuthSenderConstraintType         $requiredSenderConstraint = null,
-        bool                              $workloadIdentity = false,
-        bool                              $phishingResistantRequired = false,
-        bool                              $requestObjectSignatureRequired = false,
-        bool                              $frontChannelLogoutSupported = false,
-        bool                              $backChannelLogoutSupported = false,
-        bool                              $approvalRequired = null,
+        string $name,
+        OAuthClientType $type,
+        array $redirectUris,
+        ?string $tenantSlug = null,
+        array $allowedScopes = [],
+        array $allowedAudiences = [],
+        array $allowedGrantTypes = [],
+        array $audienceScopeBoundaries = [],
+        ?OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod = null,
+        ?OAuthSenderConstraintType $requiredSenderConstraint = null,
+        bool $workloadIdentity = false,
+        bool $phishingResistantRequired = false,
+        bool $requestObjectSignatureRequired = false,
+        bool $frontChannelLogoutSupported = false,
+        bool $backChannelLogoutSupported = false,
+        ?bool $approvalRequired = null,
         #[SensitiveParameter]
-        string                            $requestObjectVerificationKeyPem = null,
-    ) : RegisteredOAuthClient;
+        ?string $requestObjectVerificationKeyPem = null,
+    ): RegisteredOAuthClient;
 
-    public function replace(OAuthClient $client) : void;
+    public function replace(OAuthClient $client): void;
 
-    public function deactivate(string $clientId) : OAuthClient|null;
+    public function deactivate(string $clientId): ?OAuthClient;
 
-    public function approve(string $clientId, string $approvedBy) : OAuthClient|null;
+    public function approve(string $clientId, string $approvedBy): ?OAuthClient;
 
-    public function rotateSecret(string $clientId) : RegisteredOAuthClient|null;
+    public function rotateSecret(string $clientId): ?RegisteredOAuthClient;
 
-    public function find(string $clientId) : OAuthClient|null;
+    public function find(string $clientId): ?OAuthClient;
 
     /**
      * @return list<OAuthClient>
      */
-    public function all() : array;
+    public function all(): array;
 
     public function verifySecret(
-        string      $clientId,
+        string $clientId,
         #[SensitiveParameter]
-        string|null $plainTextSecret,
-    ) : bool;
+        ?string $plainTextSecret,
+    ): bool;
 }

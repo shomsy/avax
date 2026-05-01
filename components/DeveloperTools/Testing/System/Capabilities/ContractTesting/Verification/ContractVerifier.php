@@ -13,12 +13,12 @@ final class ContractVerifier
     /** @var array<string, array> */
     private array $contracts = [];
 
-    public function registerContract(string $componentClass, array $contract) : void
+    public function registerContract(string $componentClass, array $contract): void
     {
         $this->contracts[$componentClass] = $contract;
     }
 
-    public function verify() : ContractVerificationReport
+    public function verify(): ContractVerificationReport
     {
         $results = [];
 
@@ -29,7 +29,7 @@ final class ContractVerifier
         return new ContractVerificationReport($results);
     }
 
-    public function verifyComponent(string $componentClass) : ComponentContractResult
+    public function verifyComponent(string $componentClass): ComponentContractResult
     {
         $contract = $this->contracts[$componentClass] ?? null;
 
@@ -46,9 +46,9 @@ final class ContractVerifier
 
         foreach ($contract['methods'] ?? [] as $method) {
             $checks[] = [
-                'method'    => $method['name'],
+                'method' => $method['name'],
                 'signature' => $method['signature'] ?? null,
-                'passed'    => true,
+                'passed' => true,
             ];
         }
 
@@ -63,7 +63,7 @@ final class ContractVerifier
 
 final class BreakingChangeDetector
 {
-    public function detect(string $sinceVersion) : BreakingChangesReport
+    public function detect(string $sinceVersion): BreakingChangesReport
     {
         return new BreakingChangesReport([]);
     }

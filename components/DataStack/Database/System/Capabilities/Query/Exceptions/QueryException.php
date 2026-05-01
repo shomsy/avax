@@ -25,17 +25,17 @@ final class QueryException extends DatabaseException
      *
      * -- intent: capture the full state of the failure for debugging and logging.
      *
-     * @param string $message Technical failure description
-     * @param string $sql     The dialect-specific SQL string that failed
-     * @param Throwable|null $previous The underlying driver exception
+     * @param  string  $message  Technical failure description
+     * @param  string  $sql  The dialect-specific SQL string that failed
+     * @param  Throwable|null  $previous  The underlying driver exception
      */
     public function __construct(
-        string    $message,
-        private readonly string                      $sql,
-        #[SensitiveParameter] private readonly array $rawBindings = [],
-        Throwable|null $previous = null,
-    )
-    {
+        string $message,
+        private readonly string $sql,
+        #[SensitiveParameter]
+        private readonly array $rawBindings = [],
+        ?Throwable $previous = null,
+    ) {
         $this->redactedBindings = $this->redactBindings(bindings: $this->rawBindings);
         parent::__construct(message: $message, code: 0, previous: $previous);
     }
@@ -43,9 +43,9 @@ final class QueryException extends DatabaseException
     /**
      * Redact sensitive values from binding payloads.
      */
-    private function redactBindings(array $bindings) : array
+    private function redactBindings(array $bindings): array
     {
-        return array_map(callback: static fn ($value) : string => '[REDACTED]', array: $bindings);
+        return array_map(callback: static fn ($value): string => '[REDACTED]', array: $bindings);
     }
 
     /**
@@ -53,7 +53,7 @@ final class QueryException extends DatabaseException
      *
      * -- intent: expose the problematic query for technical analysis.
      */
-    public function getSql() : string
+    public function getSql(): string
     {
         return $this->sql;
     }
@@ -63,7 +63,7 @@ final class QueryException extends DatabaseException
      *
      * -- intent: expose the provided data values for debugging.
      */
-    public function getBindings(bool $redacted = true) : array
+    public function getBindings(bool $redacted = true): array
     {
         return $redacted ? $this->redactedBindings : $this->rawBindings;
     }

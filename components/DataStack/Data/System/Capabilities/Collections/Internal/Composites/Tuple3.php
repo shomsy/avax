@@ -15,22 +15,22 @@ final readonly class Tuple3
         private mixed $third,
     ) {}
 
-    public function first() : mixed
+    public function first(): mixed
     {
         return $this->first;
     }
 
-    public function second() : mixed
+    public function second(): mixed
     {
         return $this->second;
     }
 
-    public function third() : mixed
+    public function third(): mixed
     {
         return $this->third;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return [$this->first, $this->second, $this->third];
     }

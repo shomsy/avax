@@ -8,17 +8,16 @@ final class SpanBuilder
 {
     public function build(
         string $query,
-        array  $bindings = null,
-        string|null $connection = null,
-        int    $rows = null,
-        string|null $error = null,
-        float  $startTime = null,
-        float  $endTime = null,
-    ) : QuerySpan
-    {
-        $bindings  ??= [];
+        ?array $bindings = null,
+        ?string $connection = null,
+        ?int $rows = null,
+        ?string $error = null,
+        ?float $startTime = null,
+        ?float $endTime = null,
+    ): QuerySpan {
+        $bindings ??= [];
         $startTime ??= microtime(as_float: true);
-        $endTime   ??= microtime(as_float: true);
+        $endTime ??= microtime(as_float: true);
 
         return new QuerySpan(
             query     : $query,

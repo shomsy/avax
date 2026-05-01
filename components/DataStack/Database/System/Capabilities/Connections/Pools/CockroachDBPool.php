@@ -18,13 +18,12 @@ class CockroachDBPool extends BaseConnectionPool
 {
     public function __construct(
         protected array $config = [],
-        int                  $minConnections = 5,
-        int                  $maxConnections = 20,
-        int                  $connectionTimeoutMs = 10000,
-        int                  $idleTimeoutMs = 300000,
+        int $minConnections = 5,
+        int $maxConnections = 20,
+        int $connectionTimeoutMs = 10000,
+        int $idleTimeoutMs = 300000,
         private readonly int $maxRetries = 3,
-    )
-    {
+    ) {
         parent::__construct(
             minConnections     : $minConnections,
             maxConnections     : $maxConnections,
@@ -34,14 +33,14 @@ class CockroachDBPool extends BaseConnectionPool
     }
 
     #[Override]
-    protected function createConnection() : PooledConnection
+    protected function createConnection(): PooledConnection
     {
         // @todo Replace with real CockroachDB connection (PostgreSQL-compatible wire protocol)
         return new ArrayPooledConnection(config: $this->config);
     }
 
     #[Override]
-    protected function validateConnection(PooledConnection $pooledConnection) : bool
+    protected function validateConnection(PooledConnection $pooledConnection): bool
     {
         return $pooledConnection->isValid();
     }
@@ -49,7 +48,7 @@ class CockroachDBPool extends BaseConnectionPool
     /**
      * Get a wrapped retryable pool for handling CockroachDB transaction retries.
      */
-    public function withRetry(int|null $maxRetries = null) : RetryablePool
+    public function withRetry(?int $maxRetries = null): RetryablePool
     {
         return new RetryablePool(
             pool      : $this,
@@ -60,7 +59,7 @@ class CockroachDBPool extends BaseConnectionPool
     /**
      * Get the configured max retry count.
      */
-    public function maxRetries() : int
+    public function maxRetries(): int
     {
         return $this->maxRetries;
     }

@@ -39,7 +39,7 @@ class ReadFileTest extends TestCase
     public function testExecuteThrowsExceptionForNonExistentFile() : void
     {
         $this->expectException(exception: FileNotFound::class);
-        $this->expectExceptionMessage(message: "File not found:");
+        $this->expectExceptionMessage(message: 'File not found:');
 
         new ReadFile(disk: $this->disk)->execute(path: '/nonexistent/file.txt');
     }
@@ -53,12 +53,12 @@ class ReadFileTest extends TestCase
         $this->expectException(exception: FileNotFound::class);
 
         file_put_contents(filename: $this->testFile, data: "content\n");
-        chmod(filename: $this->testFile, permissions: 0000);
+        chmod(filename: $this->testFile, permissions: 0o000);
 
         try {
             new ReadFile(disk: $this->disk)->execute(path: $this->testFile);
         } finally {
-            chmod(filename: $this->testFile, permissions: 0644);
+            chmod(filename: $this->testFile, permissions: 0o644);
         }
     }
 }

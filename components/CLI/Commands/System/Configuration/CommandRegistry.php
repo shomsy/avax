@@ -12,10 +12,10 @@ final class CommandRegistry
     private array $commands
         = [
             'make:controller' => MakeControllerCommand::class,
-            'make:entity'     => MakeEntityCommand::class,
+            'make:entity' => MakeEntityCommand::class,
         ];
 
-    public function all() : array
+    public function all(): array
     {
         return $this->commands;
     }

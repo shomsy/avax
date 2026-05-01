@@ -9,9 +9,7 @@ use Avax\DataHandling\DataTransfer\Capabilities\Attributes\Hidden;
 use Avax\DataHandling\DataTransfer\Capabilities\Attributes\ListOf;
 use Avax\DataHandling\DataTransfer\Capabilities\Attributes\MapFrom;
 use Avax\DataHandling\DataTransfer\Capabilities\ValueConversion\ValueCasterInterface;
-use Avax\DataHandling\DataTransfer\Capabilities\ValueConversion\ValueConversionContext;
 use Avax\DataHandling\DataTransfer\DataTransfer;
-use Avax\DataHandling\DataTransfer\InspectDataShape\DataField;
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
 use Avax\DataHandling\Validation\Attributes\Rules\EmailRule;
@@ -31,7 +29,7 @@ final class DataTransferRuntimeTest extends TestCase
             'addresses' => [
                 ['city' => 'Novi Sad'],
             ],
-            'secret'    => 'hashed',
+            'secret' => 'hashed',
         ];
 
         // Act
@@ -200,13 +198,16 @@ final readonly class RuntimeProfileData
     public function __construct(
         #[MapFrom(name: 'user_name')]
         #[CastWith(casterClass: TrimStringCaster::class)]
-        public string                                   $name,
-        public RuntimeRole                              $role,
-        #[SensitiveParameter] public RuntimeAddressData $address,
-        #[SensitiveParameter] #[ListOf(class: RuntimeAddressData::class)]
-        public array                                    $addresses,
-        #[SensitiveParameter] #[Hidden]
-        public string                                   $secret,
+        public string             $name,
+        public RuntimeRole        $role,
+        #[SensitiveParameter]
+        public RuntimeAddressData $address,
+        #[SensitiveParameter]
+        #[ListOf(class: RuntimeAddressData::class)]
+        public array              $addresses,
+        #[SensitiveParameter]
+        #[Hidden]
+        public string             $secret,
     ) {}
 }
 

@@ -10,12 +10,12 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Tokens;
  */
 final readonly class TokenCodec
 {
-    public function encode(array $payload, string $secret) : string
+    public function encode(array $payload, string $secret): string
     {
         return base64_encode(json_encode($payload)); // Simple placeholder
     }
 
-    public function decode(string $token, string $secret) : array
+    public function decode(string $token, string $secret): array
     {
         return json_decode(base64_decode($token), true); // Simple placeholder
     }

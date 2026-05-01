@@ -11,46 +11,46 @@ final class S3StorageAdapter implements StorageAdapter
 
     public function __construct(private readonly array $config = []) {}
 
-    public function put(string $path, string $contents) : bool
+    public function put(string $path, string $contents): bool
     {
         $this->objects[$this->normalize(path: $path)] = $contents;
 
         return true;
     }
 
-    private function normalize(string $path) : string
+    private function normalize(string $path): string
     {
         return trim(string: str_replace(search: '\\', replace: '/', subject: $path), characters: '/');
     }
 
-    public function get(string $path) : string|null
+    public function get(string $path): ?string
     {
         return $this->objects[$this->normalize(path: $path)] ?? null;
     }
 
-    public function delete(string $path) : bool
+    public function delete(string $path): bool
     {
         unset($this->objects[$this->normalize(path: $path)]);
 
         return true;
     }
 
-    public function exists(string $path) : bool
+    public function exists(string $path): bool
     {
         return array_key_exists(key: $this->normalize(path: $path), array: $this->objects);
     }
 
-    public function signedUrl(string $path, int $expiresInSeconds = 3600) : string
+    public function signedUrl(string $path, int $expiresInSeconds = 3600): string
     {
-        $expiresAt      = time() + $expiresInSeconds;
+        $expiresAt = time() + $expiresInSeconds;
         $normalizedPath = $this->normalize(path: $path);
-        $secret         = $this->config['secret'] ?? 'avax-s3-storage';
-        $signature      = hash_hmac(algo: 'sha256', data: $normalizedPath . '|' . $expiresAt, key: $secret);
+        $secret = $this->config['secret'] ?? 'avax-s3-storage';
+        $signature = hash_hmac(algo: 'sha256', data: $normalizedPath.'|'.$expiresAt, key: $secret);
 
-        return $this->url(path: $normalizedPath) . '?X-Amz-Expires=' . $expiresInSeconds . '&X-Amz-Date=' . $expiresAt . '&X-Amz-Signature=' . $signature;
+        return $this->url(path: $normalizedPath).'?X-Amz-Expires='.$expiresInSeconds.'&X-Amz-Date='.$expiresAt.'&X-Amz-Signature='.$signature;
     }
 
-    public function url(string $path) : string
+    public function url(string $path): string
     {
         $bucket = $this->config['bucket'] ?? 'avax';
         $region = $this->config['region'] ?? 'us-east-1';
@@ -63,17 +63,17 @@ final class S3StorageAdapter implements StorageAdapter
         );
     }
 
-    public function size(string $path) : int
+    public function size(string $path): int
     {
         return strlen(string: $this->objects[$this->normalize(path: $path)] ?? '');
     }
 
-    public function makeDirectory(string $directory) : bool
+    public function makeDirectory(string $directory): bool
     {
         return true;
     }
 
-    public function deleteDirectory(string $directory) : bool
+    public function deleteDirectory(string $directory): bool
     {
         foreach ($this->files(directory: $directory) as $file) {
             unset($this->objects[$file]);
@@ -82,10 +82,10 @@ final class S3StorageAdapter implements StorageAdapter
         return true;
     }
 
-    public function files(string $directory = '') : array
+    public function files(string $directory = ''): array
     {
         $prefix = $this->normalize(path: $directory);
-        $files  = array_keys(array: $this->objects);
+        $files = array_keys(array: $this->objects);
 
         if ($prefix === '') {
             sort(array: $files);
@@ -94,9 +94,9 @@ final class S3StorageAdapter implements StorageAdapter
         }
 
         $filtered = array_values(array_filter(
-                                     array   : $files,
-                                     callback: static fn (string $file) : bool => str_starts_with(haystack: $file, needle: rtrim(string: $prefix, characters: '/') . '/'),
-                                 ));
+            array   : $files,
+            callback: static fn (string $file): bool => str_starts_with(haystack: $file, needle: rtrim(string: $prefix, characters: '/').'/'),
+        ));
         sort(array: $filtered);
 
         return $filtered;

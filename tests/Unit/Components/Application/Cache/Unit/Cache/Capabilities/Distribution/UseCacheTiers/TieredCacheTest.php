@@ -28,7 +28,7 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->getTier(name: CacheTierName::L1_MEMORY)->write(
             key   : $this->makeKey(key: 'key_1'),
-            record: $this->makeRecord(value: 'value_1')
+            record: $this->makeRecord(value: 'value_1'),
         );
 
         $tieredCache->read(key: $this->makeKey(key: 'key_1'), clock: $this->clock);
@@ -62,7 +62,7 @@ final class TieredCacheTest extends TestCase
         $lifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: $ttlSeconds)),
-            clock    : $this->clock
+            clock    : $this->clock,
         );
 
         return new StoredCacheRecord(value: $value, lifecycle: $lifecycle);
@@ -74,7 +74,7 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->getTier(name: CacheTierName::L2_DISTRIBUTED)->write(
             key   : $this->makeKey(key: 'key_2'),
-            record: $this->makeRecord(value: 'value_2')
+            record: $this->makeRecord(value: 'value_2'),
         );
 
         $result = $tieredCache->read(key: $this->makeKey(key: 'key_2'), clock: $this->clock);
@@ -131,7 +131,7 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->getTier(name: CacheTierName::L2_DISTRIBUTED)->write(
             key   : $this->makeKey(key: 'key_1'),
-            record: $this->makeRecord(value: 'value_1')
+            record: $this->makeRecord(value: 'value_1'),
         );
 
         $this->assertTrue(condition: $tieredCache->exists(key: $this->makeKey(key: 'key_1')));
@@ -143,7 +143,7 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->getTier(name: CacheTierName::L2_DISTRIBUTED)->write(
             key   : $this->makeKey(key: 'key_1'),
-            record: $this->makeRecord(value: 'value_1')
+            record: $this->makeRecord(value: 'value_1'),
         );
 
         $tieredCache->read(key: $this->makeKey(key: 'key_1'), clock: $this->clock);

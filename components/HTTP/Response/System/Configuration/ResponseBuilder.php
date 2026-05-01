@@ -48,8 +48,8 @@ final class ResponseBuilder
      */
     public function withHeader(string $name, string $value) : self
     {
-        $self                = clone $this;
-        $key                 = strtolower($name);
+        $self = clone $this;
+        $key  = strtolower($name);
         $self->headers[$key] ??= [];
         $self->headers[$key][] = $value;
 

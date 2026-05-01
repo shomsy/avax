@@ -22,7 +22,7 @@ final readonly class OpenApiGenerator
             $method                         = strtolower(string: $route['method']);
             $paths[$route['path']][$method] = [
                 'summary'   => $route['summary'] ?? $method . ' ' . $route['path'],
-                'tags'      => $route['tags'] ?? ['Application'],
+                'tags' => $route['tags'] ?? ['Application'],
                 'responses' => [
                     '200' => [
                         'description' => 'Successful response',
@@ -39,7 +39,7 @@ final readonly class OpenApiGenerator
                 'title'   => $this->title,
                 'version' => $this->version,
             ],
-            'paths'   => $paths,
+            'paths' => $paths,
         ];
     }
 }

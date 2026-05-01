@@ -17,7 +17,7 @@ final readonly class TruncateTable
     /**
      * @throws Throwable
      */
-    public function named(string $table) : void
+    public function named(string $table): void
     {
         $this->queryBuilder->truncate(table: $table);
     }

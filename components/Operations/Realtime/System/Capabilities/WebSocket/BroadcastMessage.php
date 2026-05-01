@@ -8,7 +8,7 @@ final readonly class BroadcastMessage
 {
     public function __construct(
         public string $event,
-        public mixed  $data,
+        public mixed $data,
         public string $channel,
     ) {}
 

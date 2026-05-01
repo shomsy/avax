@@ -127,7 +127,7 @@ final readonly class ErrorLogger implements LoggerInterface
     public function logException(
         string $level,
         Throwable $exception,
-        array  $additionalContext = [],
+        array $additionalContext = [],
     ) : void
     {
         $context = $this->buildExceptionContext($exception, $additionalContext);

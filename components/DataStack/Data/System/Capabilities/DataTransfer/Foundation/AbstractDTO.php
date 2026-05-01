@@ -18,12 +18,12 @@ use ReflectionProperty;
 abstract class AbstractDTO implements DataObject
 {
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function __construct(array $data = [])
     {
         $reflectionClass = new ReflectionClass($this);
-        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
+        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
             $name = $property->getName();
@@ -39,11 +39,11 @@ abstract class AbstractDTO implements DataObject
      *
      * @return array<string, mixed>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
-        $result          = [];
+        $result = [];
         $reflectionClass = new ReflectionClass($this);
-        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
+        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
             if ($property->isInitialized($this)) {

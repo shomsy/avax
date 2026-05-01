@@ -12,5 +12,5 @@ interface IdGeneratorInterface
     /**
      * Generate a new unique ID.
      */
-    public function generate() : int;
+    public function generate(): int;
 }

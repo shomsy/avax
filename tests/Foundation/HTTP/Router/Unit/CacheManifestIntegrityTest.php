@@ -44,7 +44,7 @@ class CacheManifestIntegrityTest extends TestCase
             files      : $files,
             hash       : $hash,
             generatedAt: $generatedAt,
-            checksum   : $checksum
+            checksum   : $checksum,
         );
     }
 
@@ -141,7 +141,7 @@ class CacheManifestIntegrityTest extends TestCase
             files      : $files,
             hash       : $manifest1->getHash(),
             generatedAt: $manifest1->getGeneratedAt(),
-            checksum   : 'different-checksum'
+            checksum   : 'different-checksum',
         );
 
         $this->assertFalse(condition: $manifest1->matches(other: $manifest2));
@@ -161,14 +161,14 @@ class CacheManifestIntegrityTest extends TestCase
             files      : $files,
             hash       : sha1(string: json_encode(value: $files)),
             generatedAt: 1640995400,
-            checksum   : '' // Empty checksum
+            checksum   : '', // Empty checksum
         );
 
         $manifest2 = new RouteCacheManifest(
             files      : $files,
             hash       : sha1(string: json_encode(value: $files)),
             generatedAt: 1640995400,
-            checksum   : '' // Empty checksum
+            checksum   : '', // Empty checksum
         );
 
         $this->assertTrue(condition: $manifest1->matches(other: $manifest2));
@@ -190,7 +190,7 @@ class CacheManifestIntegrityTest extends TestCase
             files      : $files,
             hash       : $manifest1->getHash(),
             generatedAt: $manifest1->getGeneratedAt(),
-            checksum   : '' // Empty checksum
+            checksum   : '', // Empty checksum
         );
 
         // Should still match due to fallback logic

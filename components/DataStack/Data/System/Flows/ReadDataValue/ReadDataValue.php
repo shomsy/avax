@@ -12,7 +12,7 @@ final readonly class ReadDataValue
         private ArrayReader $arrayReader,
     ) {}
 
-    public function read(array $data, string $key, mixed $default = null) : mixed
+    public function read(array $data, string $key, mixed $default = null): mixed
     {
         return $this->arrayReader->get($data, $key, $default);
     }

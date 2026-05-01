@@ -17,7 +17,7 @@ final readonly class Logout
         private Identity $identity,
     ) {}
 
-    public function execute() : void
+    public function execute(): void
     {
         $this->clearIdentity->execute();
         $this->identity->clear();

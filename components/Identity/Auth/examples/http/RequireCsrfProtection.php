@@ -14,37 +14,35 @@ final readonly class RequireCsrfProtection
     private string $cookieName;
 
     public function __construct(
-        string         $cookieName = null,
+        ?string $cookieName = null,
         #[SensitiveParameter]
         private string $headerName = 'x-csrf-token',
-    )
-    {
+    ) {
         $cookieName ??= 'csrf_token';
         $this->cookieName = $cookieName;
     }
 
     /**
-     * @param array<string, mixed> $server
-     * @param array<string, mixed> $headers
-     * @param array<string, mixed> $cookies
+     * @param  array<string, mixed>  $server
+     * @param  array<string, mixed>  $headers
+     * @param  array<string, mixed>  $cookies
      */
     public function execute(
         string $method,
-        array  $server = null,
+        ?array $server = null,
         #[SensitiveParameter]
-        array  $headers = null,
-        array  $cookies = [],
-    ) : bool
-    {
-        $server  ??= [];
+        ?array $headers = null,
+        array $cookies = [],
+    ): bool {
+        $server ??= [];
         $headers ??= [];
         if ($this->isSafeMethod(method: $method)) {
             return true;
         }
 
-        $origin  = $this->readValue(values: $server, key: 'HTTP_ORIGIN');
+        $origin = $this->readValue(values: $server, key: 'HTTP_ORIGIN');
         $referer = $this->readValue(values: $server, key: 'HTTP_REFERER');
-        $host    = $this->readValue(values: $server, key: 'HTTP_HOST');
+        $host = $this->readValue(values: $server, key: 'HTTP_HOST');
 
         if (! $this->sameOrigin(originLikeValue: $origin, host: $host) && ! $this->sameOrigin(originLikeValue: $referer, host: $host)) {
             return false;
@@ -60,15 +58,15 @@ final readonly class RequireCsrfProtection
         return hash_equals(known_string: $cookieToken, user_string: $headerToken);
     }
 
-    private function isSafeMethod(string $method) : bool
+    private function isSafeMethod(string $method): bool
     {
         return in_array(needle: strtoupper(string: $method), haystack: ['GET', 'HEAD', 'OPTIONS'], strict: true);
     }
 
     /**
-     * @param array<string, mixed> $values
+     * @param  array<string, mixed>  $values
      */
-    private function readValue(array $values, string $key) : string|null
+    private function readValue(array $values, string $key): ?string
     {
         foreach ($values as $candidateKey => $value) {
             if (strcasecmp(string1: $candidateKey, string2: $key) !== 0) {
@@ -85,7 +83,7 @@ final readonly class RequireCsrfProtection
         return null;
     }
 
-    private function sameOrigin(string|null $originLikeValue, string|null $host) : bool
+    private function sameOrigin(?string $originLikeValue, ?string $host): bool
     {
         if ($originLikeValue === null || $host === null) {
             return false;

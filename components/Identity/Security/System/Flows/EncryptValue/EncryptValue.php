@@ -22,12 +22,11 @@ final readonly class EncryptValue
     /**
      * Execute the encryption flow.
      *
-     * @param mixed              $value The value to encrypt
-     * @param EncryptionKey|null $key   Optional specific key to use (defaults to current key)
-     *
+     * @param  mixed  $value  The value to encrypt
+     * @param  EncryptionKey|null  $key  Optional specific key to use (defaults to current key)
      * @return EncryptedPayload The encrypted payload
      */
-    public function execute(mixed $value, EncryptionKey|null $key = null) : EncryptedPayload
+    public function execute(mixed $value, ?EncryptionKey $key = null): EncryptedPayload
     {
         $encryptionKey = $key ?? $this->keyResolver->getCurrentKey();
 

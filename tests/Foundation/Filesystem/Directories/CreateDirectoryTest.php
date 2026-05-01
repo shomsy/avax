@@ -18,7 +18,7 @@ class CreateDirectoryTest extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->disk = new LocalDisk();
+        $this->disk    = new LocalDisk();
         $this->testDir = '/home/shomsy/projects/components/tests/fixtures/Filesystem/create_dir_test';
         $this->conflictingFile = '/home/shomsy/projects/components/tests/fixtures/Filesystem/create_dir_conflict.txt';
     }
@@ -43,7 +43,7 @@ class CreateDirectoryTest extends TestCase
 
     public function testExecuteReturnsTrueIfDirectoryExists() : void
     {
-        mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
+        mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
 
         $result = new CreateDirectory(disk: $this->disk)->execute(path: $this->testDir);
 

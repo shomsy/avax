@@ -8,11 +8,11 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 
 final class KeyItemsBy
 {
-    public function __invoke(Collection $collection, callable|string $callback) : Collection
+    public function __invoke(Collection $collection, callable|string $callback): Collection
     {
         $result = [];
         foreach ($collection->all() as $key => $item) {
-            $newKey          = is_callable($callback) ? $callback($item, $key) : ($item[$callback] ?? $key);
+            $newKey = is_callable($callback) ? $callback($item, $key) : ($item[$callback] ?? $key);
             $result[$newKey] = $item;
         }
 

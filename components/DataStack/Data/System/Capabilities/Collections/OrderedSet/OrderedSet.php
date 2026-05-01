@@ -17,7 +17,7 @@ use Traversable;
 /**
  * Unique value collection that preserves insertion order.
  */
-final readonly class OrderedSet implements IteratorAggregate, Countable
+final readonly class OrderedSet implements Countable, IteratorAggregate
 {
     /**
      * @var array<int, mixed>
@@ -25,13 +25,12 @@ final readonly class OrderedSet implements IteratorAggregate, Countable
     private array $items;
 
     /**
-     * @param iterable<mixed> $items
+     * @param  iterable<mixed>  $items
      */
     public function __construct(
         iterable $items = [],
-    )
-    {
-        $seen    = [];
+    ) {
+        $seen = [];
         $ordered = [];
 
         foreach (NormalizedIterable::toArrayPreserveKeys(iterable: $items) as $item) {
@@ -46,7 +45,7 @@ final readonly class OrderedSet implements IteratorAggregate, Countable
             }
 
             $seen[$hash] = true;
-            $ordered[]   = $item;
+            $ordered[] = $item;
         }
 
         $this->items = $ordered;
@@ -55,17 +54,17 @@ final readonly class OrderedSet implements IteratorAggregate, Countable
     /**
      * @return array<int, mixed>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }
 
-    public function add(mixed $value) : self
+    public function add(mixed $value): self
     {
         return new self(items: [...$this->items, $value]);
     }
 
-    public function contains(mixed $value) : bool
+    public function contains(mixed $value): bool
     {
         try {
             $hash = Comparator::hash(value: $value);
@@ -88,19 +87,19 @@ final readonly class OrderedSet implements IteratorAggregate, Countable
         return false;
     }
 
-    public function toDataList() : DataList
+    public function toDataList(): DataList
     {
         return new DataList(items: $this->items);
     }
 
     #[Override]
-    public function count() : int
+    public function count(): int
     {
         return count($this->items);
     }
 
     #[Override]
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->items);
     }

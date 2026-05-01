@@ -11,7 +11,7 @@ final readonly class ReadOidcJsonWebKeySet
 {
     public function __construct(private OidcProviderInterface $oidcProvider) {}
 
-    public function execute() : OidcJsonWebKeySet
+    public function execute(): OidcJsonWebKeySet
     {
         return $this->oidcProvider->readJsonWebKeySet();
     }

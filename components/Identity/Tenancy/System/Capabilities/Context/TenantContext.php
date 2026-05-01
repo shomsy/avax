@@ -8,24 +8,24 @@ use Closure;
 
 final class TenantContext
 {
-    private static string|null $current = null;
+    private static ?string $current = null;
 
-    public static function current() : string|null
+    public static function current(): ?string
     {
         return self::$current;
     }
 
-    public static function set(string $tenantId) : void
+    public static function set(string $tenantId): void
     {
         self::$current = $tenantId;
     }
 
-    public static function clear() : void
+    public static function clear(): void
     {
         self::$current = null;
     }
 
-    public static function with(string $tenantId, Closure $operation) : mixed
+    public static function with(string $tenantId, Closure $operation): mixed
     {
         $previous = self::$current;
 

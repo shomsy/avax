@@ -6,14 +6,14 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 
 interface FederationConnectionStoreInterface
 {
-    public function save(FederationConnection $connection) : void;
+    public function save(FederationConnection $connection): void;
 
-    public function find(string $connectionId) : FederationConnection|null;
+    public function find(string $connectionId): ?FederationConnection;
 
-    public function findByDomain(string $domain) : FederationConnection|null;
+    public function findByDomain(string $domain): ?FederationConnection;
 
     /**
      * @return list<FederationConnection>
      */
-    public function all() : array;
+    public function all(): array;
 }

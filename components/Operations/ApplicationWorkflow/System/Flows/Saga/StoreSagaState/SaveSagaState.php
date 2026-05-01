@@ -10,9 +10,9 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Store
 final readonly class SaveSagaState
 {
     /**
-     * @param array<string, SagaState> $states
+     * @param  array<string, SagaState>  $states
      */
-    public function save(array &$states, SagaState $state, int|null $expectedVersion = null) : SagaState
+    public function save(array &$states, SagaState $state, ?int $expectedVersion = null): SagaState
     {
         $current = $states[$state->instanceId] ?? null;
 

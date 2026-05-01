@@ -13,20 +13,26 @@ use function is_string;
  */
 final class DataQueryBuilder
 {
-    private string|null $entityType = null;
-    private array    $conditions = [];
-    private array    $orderBy    = [];
-    private int|null $limit      = null;
-    private int|null $offset     = null;
-    private array    $joins      = [];
-    private array    $select     = ['*'];
+    private ?string $entityType = null;
+
+    private array $conditions = [];
+
+    private array $orderBy = [];
+
+    private ?int $limit = null;
+
+    private ?int $offset = null;
+
+    private array $joins = [];
+
+    private array $select = ['*'];
 
     /**
      * Sets the entity type to query.
      *
-     * @param class-string $entityType
+     * @param  class-string  $entityType
      */
-    public function from(string $entityType) : DataQueryBuilder
+    public function from(string $entityType): DataQueryBuilder
     {
         $this->entityType = $entityType;
 
@@ -36,9 +42,9 @@ final class DataQueryBuilder
     /**
      * Sets the fields to select.
      *
-     * @param array<string>|string $fields
+     * @param  array<string>|string  $fields
      */
-    public function select(array|string $fields = ['*']) : DataQueryBuilder
+    public function select(array|string $fields = ['*']): DataQueryBuilder
     {
         if (is_string($fields)) {
             $fields = [$fields];
@@ -51,14 +57,12 @@ final class DataQueryBuilder
 
     /**
      * Adds a where condition.
-     *
-     * @param mixed $value
      */
-    public function where(string $field, mixed $value, string $operator = '=') : DataQueryBuilder
+    public function where(string $field, mixed $value, string $operator = '='): DataQueryBuilder
     {
         $this->conditions[] = [
-            'field'    => $field,
-            'value'    => $value,
+            'field' => $field,
+            'value' => $value,
             'operator' => $operator,
         ];
 
@@ -68,7 +72,7 @@ final class DataQueryBuilder
     /**
      * Adds an ORDER BY clause.
      */
-    public function orderBy(string $field, string $direction = 'ASC') : DataQueryBuilder
+    public function orderBy(string $field, string $direction = 'ASC'): DataQueryBuilder
     {
         $this->orderBy[$field] = strtoupper($direction);
 
@@ -78,7 +82,7 @@ final class DataQueryBuilder
     /**
      * Sets the LIMIT clause.
      */
-    public function limit(int $limit) : DataQueryBuilder
+    public function limit(int $limit): DataQueryBuilder
     {
         $this->limit = $limit;
 
@@ -88,7 +92,7 @@ final class DataQueryBuilder
     /**
      * Sets the OFFSET clause.
      */
-    public function offset(int $offset) : DataQueryBuilder
+    public function offset(int $offset): DataQueryBuilder
     {
         $this->offset = $offset;
 
@@ -98,7 +102,7 @@ final class DataQueryBuilder
     /**
      * Adds a LEFT JOIN clause.
      */
-    public function leftJoin(string $table, string $on) : DataQueryBuilder
+    public function leftJoin(string $table, string $on): DataQueryBuilder
     {
         return $this->join('LEFT', $table, $on);
     }
@@ -106,14 +110,14 @@ final class DataQueryBuilder
     /**
      * Adds a JOIN clause.
      *
-     * @param array{type: string, table: string, on: string} $join
+     * @param  array{type: string, table: string, on: string}  $join
      */
-    public function join(string $type, string $table, string $on) : DataQueryBuilder
+    public function join(string $type, string $table, string $on): DataQueryBuilder
     {
         $this->joins[] = [
-            'type'  => $type,
+            'type' => $type,
             'table' => $table,
-            'on'    => $on,
+            'on' => $on,
         ];
 
         return $this;
@@ -122,7 +126,7 @@ final class DataQueryBuilder
     /**
      * Adds an INNER JOIN clause.
      */
-    public function innerJoin(string $table, string $on) : DataQueryBuilder
+    public function innerJoin(string $table, string $on): DataQueryBuilder
     {
         return $this->join('INNER', $table, $on);
     }
@@ -130,7 +134,7 @@ final class DataQueryBuilder
     /**
      * Builds and returns the DataQuery instance.
      */
-    public function build() : DataQuery
+    public function build(): DataQuery
     {
         return new DataQuery(
             entityType: $this->entityType,
@@ -146,15 +150,15 @@ final class DataQueryBuilder
     /**
      * Resets the builder to its initial state.
      */
-    public function reset() : DataQueryBuilder
+    public function reset(): DataQueryBuilder
     {
         $this->entityType = null;
         $this->conditions = [];
-        $this->orderBy    = [];
-        $this->limit      = null;
-        $this->offset     = null;
-        $this->joins      = [];
-        $this->select     = ['*'];
+        $this->orderBy = [];
+        $this->limit = null;
+        $this->offset = null;
+        $this->joins = [];
+        $this->select = ['*'];
 
         return $this;
     }

@@ -24,8 +24,8 @@ final readonly class CompileCache
     }
 
     public function compile(
-        string               $name,
-        callable             $build,
+        string   $name,
+        callable $build,
         CompiledCacheSources $compiledCacheSources,
     ) : CompiledCacheArtifact
     {
@@ -43,7 +43,7 @@ final readonly class CompileCache
 
         $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
         $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
-        $now          = $this->clock->now();
+        $now = $this->clock->now();
 
         $compiledCacheManifestEntry = CompiledCacheManifestEntry::create(
             name             : $compiledCacheName->toString(),

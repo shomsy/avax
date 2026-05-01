@@ -111,7 +111,7 @@ class FileLoader implements ConfigLoader
     /**
      * Ensure the given configuration is an array.
      *
-     * @param mixed  $config   The loaded configuration data.
+     * @param mixed $config The loaded configuration data.
      * @param string $filePath The path to the configuration file.
      *
      * @throws RuntimeException if the configuration is not an array.

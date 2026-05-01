@@ -14,32 +14,32 @@ use SensitiveParameter;
 final readonly class AuthorizationCodeRecord
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
         #[SensitiveParameter]
-        public string                 $codeId,
-        public string                 $clientId,
-        public UserId                 $userId,
-        public string                 $redirectUri,
-        public array                  $scopes,
-        public DateTimeImmutable      $expiresAt,
-        public string|null            $nonce = null,
+        public string $codeId,
+        public string $clientId,
+        public UserId $userId,
+        public string $redirectUri,
+        public array $scopes,
+        public DateTimeImmutable $expiresAt,
+        public ?string $nonce = null,
         #[SensitiveParameter]
-        public string|null            $codeChallenge = null,
+        public ?string $codeChallenge = null,
         #[SensitiveParameter]
-        public PkceMethod|null        $codeChallengeMethod = null,
-        public DateTimeImmutable|null $usedAt = null,
-        public DateTimeImmutable|null $mfaVerifiedAt = null,
-        public bool                   $phishingResistant = false,
+        public ?PkceMethod $codeChallengeMethod = null,
+        public ?DateTimeImmutable $usedAt = null,
+        public ?DateTimeImmutable $mfaVerifiedAt = null,
+        public bool $phishingResistant = false,
     ) {}
 
-    public function isExpiredAt(DateTimeImmutable $moment) : bool
+    public function isExpiredAt(DateTimeImmutable $moment): bool
     {
         return $this->expiresAt <= $moment;
     }
 
-    public function wasUsed() : bool
+    public function wasUsed(): bool
     {
         return $this->usedAt !== null;
     }

@@ -19,18 +19,17 @@ final class MigrationException extends DatabaseException
      *
      * -- intent: link the failure to the specific migration file and query.
      *
-     * @param string         $migrationClass Technical class name of the migration
-     * @param string         $message        Detailed failure description
-     * @param string|null    $sql            The specific SQL statement that failed
-     * @param Throwable|null $throwable      Underlying system trigger
+     * @param  string  $migrationClass  Technical class name of the migration
+     * @param  string  $message  Detailed failure description
+     * @param  string|null  $sql  The specific SQL statement that failed
+     * @param  Throwable|null  $throwable  Underlying system trigger
      */
     public function __construct(
-        private readonly string      $migrationClass,
-        string                       $message,
-        private readonly string|null $sql = null,
-        ?Throwable                   $throwable = null,
-    )
-    {
+        private readonly string $migrationClass,
+        string $message,
+        private readonly ?string $sql = null,
+        ?Throwable $throwable = null,
+    ) {
         parent::__construct(message: sprintf('Migration [%s] failed: %s', $this->migrationClass, $message), code: 0, previous: $throwable);
     }
 
@@ -39,7 +38,7 @@ final class MigrationException extends DatabaseException
      *
      * -- intent: identify the broken migration script.
      */
-    public function getMigrationClass() : string
+    public function getMigrationClass(): string
     {
         return $this->migrationClass;
     }
@@ -49,7 +48,7 @@ final class MigrationException extends DatabaseException
      *
      * -- intent: facilitate manual correction of the schema.
      */
-    public function getSql() : string|null
+    public function getSql(): ?string
     {
         return $this->sql;
     }

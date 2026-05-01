@@ -118,10 +118,10 @@ final class ResourceGovernor
 final readonly class ResourceReport
 {
     public function __construct(
-        public int   $requestCount,
-        public int   $workerMemory,
-        public int   $workerLimit,
-        public bool  $nearLimit,
+        public int  $requestCount,
+        public int  $workerMemory,
+        public int  $workerLimit,
+        public bool $nearLimit,
         public float $trend,
     ) {}
 
@@ -134,7 +134,7 @@ final readonly class ResourceReport
         return [
             'request_count'        => $this->requestCount,
             'worker_memory_mb'     => $this->workerMemory / 1024 / 1024,
-            'worker_limit_mb'      => $this->workerLimit / 1024 / 1024,
+            'worker_limit_mb' => $this->workerLimit / 1024 / 1024,
             'near_limit'           => $this->nearLimit,
             'trend_mb_per_request' => $this->trend / 1024 / 1024,
         ];
@@ -143,7 +143,7 @@ final readonly class ResourceReport
     public function __toString() : string
     {
         return sprintf(
-            "Worker memory: %.1fMB / %.1fMB | Requests: %d | Near limit: %s | Trend: %.2fMB/req",
+            'Worker memory: %.1fMB / %.1fMB | Requests: %d | Near limit: %s | Trend: %.2fMB/req',
             $this->workerMemory / 1024 / 1024,
             $this->workerLimit / 1024 / 1024,
             $this->requestCount,

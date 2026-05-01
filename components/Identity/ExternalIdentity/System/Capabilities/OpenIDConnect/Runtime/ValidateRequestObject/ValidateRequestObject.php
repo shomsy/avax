@@ -11,9 +11,9 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\
 
 final readonly class ValidateRequestObject
 {
-    public function __construct(private OidcRequestObjectStoreInterface|null $requestObjectStore = null, private OAuthClientRegistryInterface|null $clientRegistry = null) {}
+    public function __construct(private ?OidcRequestObjectStoreInterface $requestObjectStore = null, private ?OAuthClientRegistryInterface $clientRegistry = null) {}
 
-    public function execute(ValidateRequestObjectData $data) : ValidatedRequestObject
+    public function execute(ValidateRequestObjectData $data): ValidatedRequestObject
     {
         $requestUri = trim(string: $data->requestUri);
 
@@ -27,8 +27,8 @@ final readonly class ValidateRequestObject
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
-        $claims      = $requestObject->claims;
-        $clientId    = $this->readStringValue(value: $claims['client_id'] ?? null);
+        $claims = $requestObject->claims;
+        $clientId = $this->readStringValue(value: $claims['client_id'] ?? null);
         $redirectUri = $this->readStringValue(value: $claims['redirect_uri'] ?? null);
 
         if ($clientId === null || $redirectUri === null) {
@@ -57,7 +57,7 @@ final readonly class ValidateRequestObject
         );
     }
 
-    private function readStringValue(mixed $value) : string|null
+    private function readStringValue(mixed $value): ?string
     {
         if (! is_string(value: $value)) {
             return null;
@@ -69,11 +69,10 @@ final readonly class ValidateRequestObject
     }
 
     /**
-     * @param list<string> $scopes
-     *
+     * @param  list<string>  $scopes
      * @return list<string>
      */
-    private function normalizeScopes(array $scopes) : array
+    private function normalizeScopes(array $scopes): array
     {
         $normalized = [];
 
@@ -99,11 +98,10 @@ final readonly class ValidateRequestObject
     }
 
     /**
-     * @param array<int, string>|string|null $value
-     *
+     * @param  array<int, string>|string|null  $value
      * @return list<string>
      */
-    private function normalizeScopeValue(string|array|null $value) : array
+    private function normalizeScopeValue(string|array|null $value): array
     {
         if (is_array(value: $value)) {
             return array_values(array: $value);
@@ -118,7 +116,7 @@ final readonly class ValidateRequestObject
         return $parts === false ? [] : $parts;
     }
 
-    private function normalizeCodeChallengeMethod(string|null $value) : PkceMethod|null
+    private function normalizeCodeChallengeMethod(?string $value): ?PkceMethod
     {
         if ($value === null || trim(string: $value) === '') {
             return null;

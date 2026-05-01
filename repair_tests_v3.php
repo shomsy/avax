@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $baseDir = realpath(__DIR__);
 $testDir = $baseDir . '/tests';
 
@@ -13,7 +15,9 @@ $mappings = [
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($testDir));
 
 foreach ($iterator as $file) {
-    if ($file->getExtension() !== 'php') continue;
+    if ($file->getExtension() !== 'php') {
+        continue;
+    }
 
     $path     = realpath($file->getPathname());
     $content  = file_get_contents($path);
@@ -36,13 +40,13 @@ foreach ($iterator as $file) {
         $currentNamespace = trim($matches[1]);
         if ($currentNamespace !== $expectedNamespace) {
             $content = str_replace("namespace $currentNamespace;", "namespace $expectedNamespace;", $content);
-            echo "✅ Fixed Namespace: " . basename($path) . "\n";
+            echo '✅ Fixed Namespace: ' . basename($path) . "\n";
         }
     }
 
     if ($content !== $original) {
         file_put_contents($path, $content);
-        echo "🔄 Updated References: " . basename($path) . "\n";
+        echo '🔄 Updated References: ' . basename($path) . "\n";
     }
 }
 

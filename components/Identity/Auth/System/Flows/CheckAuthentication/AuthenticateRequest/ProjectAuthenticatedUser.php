@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest;
 
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStateStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
 use SensitiveParameter;
 
 /**
@@ -17,10 +17,10 @@ final readonly class ProjectAuthenticatedUser
     public function __construct(
         #[SensitiveParameter]
         private EmailVerificationStateStoreInterface $emailVerificationState,
-        private MfaStoreInterface                    $mfaStore,
+        private MfaStoreInterface $mfaStore,
     ) {}
 
-    public function fromUser(User $user) : AuthenticatedUser
+    public function fromUser(User $user): AuthenticatedUser
     {
         return AuthenticatedUser::fromUser(
             user         : $user,

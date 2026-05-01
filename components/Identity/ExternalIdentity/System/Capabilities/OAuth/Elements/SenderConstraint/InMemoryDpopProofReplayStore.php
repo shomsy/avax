@@ -14,9 +14,9 @@ final class InMemoryDpopProofReplayStore implements DpopProofReplayStoreInterfac
     /** @var array<string, DateTimeImmutable> */
     private array $proofs = [];
 
-    public function remember(string $proofId, DateTimeImmutable $expiresAt) : bool
+    public function remember(string $proofId, DateTimeImmutable $expiresAt): bool
     {
-        $now = new DateTimeImmutable();
+        $now = new DateTimeImmutable;
 
         foreach ($this->proofs as $storedId => $storedExpiry) {
             if ($storedExpiry <= $now) {

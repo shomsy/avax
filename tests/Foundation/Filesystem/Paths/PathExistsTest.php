@@ -44,7 +44,7 @@ class PathExistsTest extends TestCase
 
     public function testExecuteReturnsTrueForExistingDirectory() : void
     {
-        @mkdir(directory: $this->testDir, permissions: 0755, recursive: true);
+        @mkdir(directory: $this->testDir, permissions: 0o755, recursive: true);
 
         $result = new PathExists()->execute(path: $this->testDir);
 

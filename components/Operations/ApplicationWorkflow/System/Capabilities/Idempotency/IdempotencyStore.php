@@ -17,7 +17,7 @@ final class IdempotencyStore
     /**
      * Record that a key has been executed with a result.
      */
-    public function record(IdempotencyKey $key, mixed $result) : void
+    public function record(IdempotencyKey $key, mixed $result): void
     {
         $this->executed[$key->toString()] = $result;
     }
@@ -25,7 +25,7 @@ final class IdempotencyStore
     /**
      * Check if a key has already been executed.
      */
-    public function hasExecuted(IdempotencyKey $key) : bool
+    public function hasExecuted(IdempotencyKey $key): bool
     {
         return isset($this->executed[$key->toString()]);
     }
@@ -33,7 +33,7 @@ final class IdempotencyStore
     /**
      * Get the cached result for an already-executed key.
      */
-    public function getResult(IdempotencyKey $key) : mixed
+    public function getResult(IdempotencyKey $key): mixed
     {
         return $this->executed[$key->toString()] ?? null;
     }
@@ -41,7 +41,7 @@ final class IdempotencyStore
     /**
      * Clear all recorded keys (useful for testing).
      */
-    public function clear() : void
+    public function clear(): void
     {
         $this->executed = [];
     }

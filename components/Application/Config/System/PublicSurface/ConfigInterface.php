@@ -12,7 +12,7 @@ interface ConfigInterface
 
     public function set(string $key, mixed $value) : void;
 
-    public function load(string $path, string|null $namespace = null) : void;
+    public function load(string $path, string $namespace = null) : void;
 
     public function all() : array;
 }

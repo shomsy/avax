@@ -11,5 +11,5 @@ use SensitiveParameter;
  */
 interface TokenVerifierInterface
 {
-    public function verify(#[SensitiveParameter] string $token) : bool;
+    public function verify(#[SensitiveParameter] string $token): bool;
 }

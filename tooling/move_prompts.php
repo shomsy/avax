@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 $src = '/home/shomsy/projects/avax/AI Prompts';
 $dst = '/home/shomsy/projects/avax/.agents/how-to';
 
 if (! is_dir($dst)) {
-    mkdir($dst, 0777, true);
+    mkdir($dst, 0o777, true);
 }
 
 $dir = opendir($src);

@@ -94,7 +94,7 @@ final class ConfigValidator
                                      implode(', ', array_map(static fn (mixed $value) : string => var_export($value, true), $field->allowed)),
                                  ),
                     remediation: sprintf(
-                                     "Change %s to one of: %s",
+                                     'Change %s to one of: %s',
                                      $dotKey,
                                      implode(', ', array_map(static fn (mixed $value) : string => var_export($value, true), $field->allowed)),
                                  ),
@@ -119,7 +119,7 @@ final class ConfigValidator
             ConfigSchemaField::TYPE_FLOAT            => is_float($value) || is_int($value),
             ConfigSchemaField::TYPE_BOOL             => is_bool($value),
             ConfigSchemaField::TYPE_ARRAY            => is_array($value),
-            ConfigSchemaField::TYPE_URL              => is_string($value) && filter_var($value, FILTER_VALIDATE_URL) !== false,
+            ConfigSchemaField::TYPE_URL => is_string($value) && filter_var($value, FILTER_VALIDATE_URL) !== false,
             ConfigSchemaField::TYPE_EMAIL            => is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false,
             default                                  => true,
         };
@@ -135,7 +135,7 @@ final class ConfigValidator
                                  get_debug_type($value),
                              ),
                 remediation: sprintf(
-                                 "Change %s to a %s value",
+                                 'Change %s to a %s value',
                                  $key,
                                  $field->type,
                              ),

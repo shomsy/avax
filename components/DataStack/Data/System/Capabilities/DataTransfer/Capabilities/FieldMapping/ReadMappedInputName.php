@@ -10,9 +10,9 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Configuratio
 final readonly class ReadMappedInputName
 {
     /**
-     * @param object[] $attributes
+     * @param  object[]  $attributes
      */
-    public function read(string $fieldName, array $attributes, DataTransferConfig $dataTransferConfig) : FieldInputName
+    public function read(string $fieldName, array $attributes, DataTransferConfig $dataTransferConfig): FieldInputName
     {
         foreach ($attributes as $attribute) {
             if ($attribute instanceof MapFrom) {

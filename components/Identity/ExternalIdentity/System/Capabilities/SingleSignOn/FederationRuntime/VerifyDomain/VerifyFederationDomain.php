@@ -18,7 +18,7 @@ final readonly class VerifyFederationDomain
     /**
      * @throws FederationFailed
      */
-    public function execute(VerifyFederationDomainData $data) : FederationConnection
+    public function execute(VerifyFederationDomainData $data): FederationConnection
     {
         $connection = $this->connectionStore->find(connectionId: $data->connectionId);
 
@@ -36,14 +36,14 @@ final readonly class VerifyFederationDomain
         $verified = $connection->withVerifiedDomain(verifiedAt: $this->clock->now());
         $this->connectionStore->save(connection: $verified);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.federation.domain.verified',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'connection_id' => $verified->connectionId,
-                                                           'tenant'        => $verified->tenantSlug,
-                                                           'domain'        => $verified->domain,
-                                                       ],
-                                       ));
+            name      : 'auth.federation.domain.verified',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'connection_id' => $verified->connectionId,
+                'tenant' => $verified->tenantSlug,
+                'domain' => $verified->domain,
+            ],
+        ));
 
         return $verified;
     }

@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 
 final class FlattenItems
 {
-    public function __invoke(Collection $collection, int $depth = -1) : Collection
+    public function __invoke(Collection $collection, int $depth = -1): Collection
     {
         $result = [];
         $this->flattenRecursive($collection->all(), $result, $depth);
@@ -16,7 +16,7 @@ final class FlattenItems
         return Collection::from($result);
     }
 
-    private function flattenRecursive(array $items, array &$result, int $depth) : void
+    private function flattenRecursive(array $items, array &$result, int $depth): void
     {
         foreach ($items as $item) {
             if (is_array($item) && $depth !== 0) {

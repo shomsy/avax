@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Source\ControlConsistency;
 
-
-
-
-
 final readonly class EventualConsistency
 {
     public function __construct(

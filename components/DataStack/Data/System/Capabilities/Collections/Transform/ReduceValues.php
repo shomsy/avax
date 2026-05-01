@@ -14,24 +14,22 @@ final readonly class ReduceValues
     ) {}
 
     /**
-     * @param callable $callback fn(mixed $carry, mixed $item, int|string $key) : mixed
-     *
+     * @param  callable  $callback  fn(mixed $carry, mixed $item, int|string $key) : mixed
      */
-    public function __invoke(callable $callback, mixed $initial = null) : mixed
+    public function __invoke(callable $callback, mixed $initial = null): mixed
     {
         return $this->reduce(callback: $callback, initial: $initial);
     }
 
     /**
-     * @param callable $callback fn(mixed $carry, mixed $item, int|string $key) : mixed
-     *
+     * @param  callable  $callback  fn(mixed $carry, mixed $item, int|string $key) : mixed
      */
-    public function reduce(callable $callback, mixed $initial = null) : mixed
+    public function reduce(callable $callback, mixed $initial = null): mixed
     {
         return array_reduce(array: $this->items, callback: $callback, initial: $initial);
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

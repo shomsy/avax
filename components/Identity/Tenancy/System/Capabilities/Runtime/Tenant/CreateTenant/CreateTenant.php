@@ -8,13 +8,13 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEve
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\Tenant;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMember;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberRole;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantMemberState;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFailed;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Random\RandomException;
 
 final readonly class CreateTenant
@@ -24,7 +24,7 @@ final readonly class CreateTenant
     /**
      * @throws RandomException
      */
-    public function execute(CreateTenantData $data) : Tenant
+    public function execute(CreateTenantData $data): Tenant
     {
         $slug = strtolower(string: trim(string: $data->slug));
 
@@ -43,7 +43,7 @@ final readonly class CreateTenant
         }
 
         $tenant = new Tenant(
-            tenantId   : 'tenant_' . bin2hex(string: random_bytes(length: 12)),
+            tenantId   : 'tenant_'.bin2hex(string: random_bytes(length: 12)),
             slug       : $slug,
             name       : trim(string: $data->name),
             ownerUserId: $data->ownerUserId,
@@ -51,21 +51,21 @@ final readonly class CreateTenant
         );
         $this->tenantStore->saveTenant(tenant: $tenant);
         $this->tenantStore->saveMember(member: new TenantMember(
-                                                   tenantId: $tenant->tenantId,
-                                                   userId  : $data->ownerUserId,
-                                                   role    : TenantMemberRole::OWNER,
-                                                   state   : TenantMemberState::ACTIVE,
-                                                   joinedAt: $tenant->createdAt,
-                                               ));
+            tenantId: $tenant->tenantId,
+            userId  : $data->ownerUserId,
+            role    : TenantMemberRole::OWNER,
+            state   : TenantMemberState::ACTIVE,
+            joinedAt: $tenant->createdAt,
+        ));
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.tenant.created',
-                                           occurredAt: $tenant->createdAt,
-                                           context   : [
-                                                           'tenant_id'     => $tenant->tenantId,
-                                                           'tenant_slug'   => $tenant->slug,
-                                                           'owner_user_id' => $tenant->ownerUserId,
-                                                       ],
-                                       ));
+            name      : 'auth.tenant.created',
+            occurredAt: $tenant->createdAt,
+            context   : [
+                'tenant_id' => $tenant->tenantId,
+                'tenant_slug' => $tenant->slug,
+                'owner_user_id' => $tenant->ownerUserId,
+            ],
+        ));
 
         return $tenant;
     }

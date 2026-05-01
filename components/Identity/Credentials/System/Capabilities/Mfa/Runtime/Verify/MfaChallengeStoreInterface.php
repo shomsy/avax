@@ -11,13 +11,13 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
  */
 interface MfaChallengeStoreInterface
 {
-    public function issue(MfaChallengeRecord $record) : void;
+    public function issue(MfaChallengeRecord $record): void;
 
-    public function find(string $challengeId) : MfaChallengeRecord|null;
+    public function find(string $challengeId): ?MfaChallengeRecord;
 
-    public function save(MfaChallengeRecord $record) : void;
+    public function save(MfaChallengeRecord $record): void;
 
-    public function forget(string $challengeId) : void;
+    public function forget(string $challengeId): void;
 
-    public function forgetForUser(UserId $userId) : void;
+    public function forgetForUser(UserId $userId): void;
 }

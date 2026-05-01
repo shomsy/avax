@@ -8,7 +8,7 @@ final readonly class SourceValueWasLoaded
 {
     public function __construct(
         public CacheSourceKey $cacheSourceKey,
-        public mixed          $value,
+        public mixed $value,
     ) {}
 
     public function hasValue() : bool

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Resilience\System\Capabilities\Fallback\System\PublicSurface;
 
-use Avax\Components\Operations\Resilience\System\Capabilities\Fallback\System\Capabilities\Detection\DependencyHealthMonitor;
 use RuntimeException;
 use Throwable;
 
@@ -80,7 +79,7 @@ final class FallbackStrategyItem
     public function __construct(
         public string $dependency,
         public string $fallbackClass,
-        public bool   $active = false,
+        public bool $active = false,
     ) {}
 
     public function isActive() : bool

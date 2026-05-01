@@ -26,12 +26,12 @@ final readonly class Account
 {
     public function __construct(
         #[SensitiveParameter]
-        private ChangePassword          $changePassword,
+        private ChangePassword $changePassword,
         #[SensitiveParameter]
-        private BeginEmailChange        $beginEmailChange,
+        private BeginEmailChange $beginEmailChange,
         #[SensitiveParameter]
-        private ConfirmEmailChange|null $confirmEmailChange,
-        private Register                $register,
+        private ?ConfirmEmailChange $confirmEmailChange,
+        private Register $register,
     ) {}
 
     /**
@@ -39,7 +39,7 @@ final readonly class Account
      * @throws RateLimitException
      * @throws Unauthenticated
      */
-    public function changePassword(ChangePasswordData $data) : void
+    public function changePassword(ChangePasswordData $data): void
     {
         $this->changePassword->execute(data: $data);
     }
@@ -48,17 +48,17 @@ final readonly class Account
      * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
-    public function beginEmailChange(BeginEmailChangeData $data) : EmailChangeChallenge
+    public function beginEmailChange(BeginEmailChangeData $data): EmailChangeChallenge
     {
         return $this->beginEmailChange->execute(data: $data);
     }
 
-    public function confirmEmailChange(ConfirmEmailChangeData $data) : bool
+    public function confirmEmailChange(ConfirmEmailChangeData $data): bool
     {
         return $this->confirmEmailChangeOrFail()->execute(data: $data);
     }
 
-    private function confirmEmailChangeOrFail() : ConfirmEmailChange
+    private function confirmEmailChangeOrFail(): ConfirmEmailChange
     {
         return $this->confirmEmailChange ?? throw EmailChangeFailed::unsupported();
     }
@@ -67,7 +67,7 @@ final readonly class Account
      * @throws RegistrationFailed
      * @throws RateLimitException
      */
-    public function register(RegistrationData $data) : RegistrationResult
+    public function register(RegistrationData $data): RegistrationResult
     {
         return $this->register->execute(data: $data);
     }

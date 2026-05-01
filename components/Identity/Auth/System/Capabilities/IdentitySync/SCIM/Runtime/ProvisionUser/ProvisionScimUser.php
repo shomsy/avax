@@ -33,31 +33,28 @@ final readonly class ProvisionScimUser
 {
     public function __construct(
         private ProvisionableUserSourceInterface $userSource,
-        private ScimDirectoryStoreInterface      $directoryStore,
+        private ScimDirectoryStoreInterface $directoryStore,
         private ScimProvisionedIdentityStoreInterface $identityStore,
         #[SensitiveParameter]
-        private PasswordHasher                   $passwordHasher,
-        private IdGeneratorInterface             $idGenerator,
-        private AuditLogInterface                $auditLog,
-        private Clock                            $clock,
-        private LifecycleOrchestrator|null       $lifecycle = null,
-        private AttemptThrottle|null             $attemptThrottle = null,
+        private PasswordHasher $passwordHasher,
+        private IdGeneratorInterface $idGenerator,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private ?LifecycleOrchestrator $lifecycle = null,
+        private ?AttemptThrottle $attemptThrottle = null,
     ) {}
 
     /**
-     * @param ProvisionScimUserData $data
-     *
-     * @return ScimProvisioningResult
      * @throws RandomException
      * @throws ScimFailed
      */
-    public function execute(ProvisionScimUserData $data) : ScimProvisioningResult
+    public function execute(ProvisionScimUserData $data): ScimProvisioningResult
     {
         $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
         $this->enforceDirectoryAvailability(directory: $directory);
         $this->enforceThrottle(directoryId: $directory->directoryId);
-        $roles            = $this->resolveRoles(directory: $directory, groups: $data->groups);
-        $fingerprint      = $this->fingerprint(data: $data, roles: $roles);
+        $roles = $this->resolveRoles(directory: $directory, groups: $data->groups);
+        $fingerprint = $this->fingerprint(data: $data, roles: $roles);
         $existingIdentity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
 
         if ($existingIdentity !== null && $existingIdentity->fingerprint === $fingerprint) {
@@ -65,7 +62,7 @@ final readonly class ProvisionScimUser
                 userId       : $existingIdentity->userId->value,
                 externalId   : $data->externalId,
                 state        : $existingIdentity->state,
-                roles        : array_map(callback: static fn (UserRole $role) : string => $role->value, array: $roles),
+                roles        : array_map(callback: static fn (UserRole $role): string => $role->value, array: $roles),
                 created      : false,
                 updated      : false,
                 idempotent   : true,
@@ -77,13 +74,13 @@ final readonly class ProvisionScimUser
             ? $this->userSource->findById(id: $existingIdentity->userId)
             : $this->userSource->findByEmail(email: $data->email);
 
-        $created       = false;
+        $created = false;
         $driftDetected = $existingIdentity !== null;
 
         if ($user === null) {
-            $created  = true;
+            $created = true;
             $password = bin2hex(string: random_bytes(length: 16));
-            $user     = $this->userSource->create(user: User::create(
+            $user = $this->userSource->create(user: User::create(
                 id          : new UserId(value: $this->idGenerator->generate()),
                 email       : new UserEmail(value: $data->email),
                 username    : $data->username,
@@ -102,45 +99,45 @@ final readonly class ProvisionScimUser
 
         if ($this->lifecycle !== null) {
             match ($data->state) {
-                ScimAccountState::ACTIVE    => $this->lifecycle->activate(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_active'),
+                ScimAccountState::ACTIVE => $this->lifecycle->activate(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_active'),
                 ScimAccountState::SUSPENDED => $this->lifecycle->suspend(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_suspended'),
-                ScimAccountState::DISABLED  => $this->lifecycle->deprovision(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_disabled'),
+                ScimAccountState::DISABLED => $this->lifecycle->deprovision(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_disabled'),
             };
         } else {
             match ($data->state) {
-                ScimAccountState::ACTIVE                                => $this->userSource->activate(id: $user->getId()),
+                ScimAccountState::ACTIVE => $this->userSource->activate(id: $user->getId()),
                 ScimAccountState::SUSPENDED, ScimAccountState::DISABLED => $this->userSource->deactivate(id: $user->getId()),
             };
         }
 
         $this->identityStore->save(identity: new ScimProvisionedIdentity(
-                                                 directoryId   : $directory->directoryId,
-                                                 externalId    : $data->externalId,
-                                                 userId        : $user->getId(),
-                                                 fingerprint   : $fingerprint,
-                                                 groups        : $data->groups,
-                                                 state         : $data->state,
-                                                 synchronizedAt: $this->clock->now(),
-                                             ));
+            directoryId   : $directory->directoryId,
+            externalId    : $data->externalId,
+            userId        : $user->getId(),
+            fingerprint   : $fingerprint,
+            groups        : $data->groups,
+            state         : $data->state,
+            synchronizedAt: $this->clock->now(),
+        ));
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.scim.user.provisioned',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'directory_id'   => $directory->directoryId,
-                                                           'tenant'         => $directory->tenantSlug,
-                                                           'external_id'    => $data->externalId,
-                                                           'user_id'        => $user->getId()->value,
-                                                           'state'          => $data->state->value,
-                                                           'created'        => $created ? 1 : 0,
-                                                           'drift_detected' => $driftDetected ? 1 : 0,
-                                                       ],
-                                       ));
+            name      : 'auth.scim.user.provisioned',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'directory_id' => $directory->directoryId,
+                'tenant' => $directory->tenantSlug,
+                'external_id' => $data->externalId,
+                'user_id' => $user->getId()->value,
+                'state' => $data->state->value,
+                'created' => $created ? 1 : 0,
+                'drift_detected' => $driftDetected ? 1 : 0,
+            ],
+        ));
 
         return new ScimProvisioningResult(
             userId       : $user->getId()->value,
             externalId   : $data->externalId,
             state        : $data->state,
-            roles        : array_map(callback: static fn (UserRole $role) : string => $role->value, array: $roles),
+            roles        : array_map(callback: static fn (UserRole $role): string => $role->value, array: $roles),
             created      : $created,
             updated      : ! $created,
             idempotent   : false,
@@ -155,8 +152,7 @@ final readonly class ProvisionScimUser
         string $directoryId,
         #[SensitiveParameter]
         string $directoryToken,
-    ) : ScimDirectory
-    {
+    ): ScimDirectory {
         $directory = $this->directoryStore->find(directoryId: $directoryId);
 
         if ($directory === null) {
@@ -170,20 +166,20 @@ final readonly class ProvisionScimUser
         return $directory;
     }
 
-    private function enforceDirectoryAvailability(ScimDirectory $directory) : void
+    private function enforceDirectoryAvailability(ScimDirectory $directory): void
     {
         if ($directory->health === ScimDirectoryHealth::UNAVAILABLE) {
             throw ScimFailed::serviceUnavailable();
         }
     }
 
-    private function enforceThrottle(string $directoryId) : void
+    private function enforceThrottle(string $directoryId): void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . 'provision';
+        $key = 'scim:'.$directoryId.':'.'provision';
 
         try {
             $this->attemptThrottle->check(key: $key);
@@ -195,11 +191,10 @@ final readonly class ProvisionScimUser
     }
 
     /**
-     * @param list<string> $groups
-     *
+     * @param  list<string>  $groups
      * @return list<UserRole>
      */
-    private function resolveRoles(ScimDirectory $directory, array $groups) : array
+    private function resolveRoles(ScimDirectory $directory, array $groups): array
     {
         $roles = [];
 
@@ -219,20 +214,20 @@ final readonly class ProvisionScimUser
     }
 
     /**
-     * @param list<UserRole> $roles
+     * @param  list<UserRole>  $roles
      */
-    private function fingerprint(ProvisionScimUserData $data, array $roles) : string
+    private function fingerprint(ProvisionScimUserData $data, array $roles): string
     {
         try {
             return hash(algo: 'sha256', data: json_encode(value: [
-                                                                     'email'    => strtolower(string: trim(string: $data->email)),
-                                                                     'username' => trim(string: $data->username),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 'groups' => $data->groups,
-                                                                     'roles'    => array_map(callback: static fn (UserRole $role) : string => $role->value, array: $roles),
-                                                                     'state'    => $data->state->value,
-                                                                 ], flags: JSON_THROW_ON_ERROR));
+                'email' => strtolower(string: trim(string: $data->email)),
+                'username' => trim(string: $data->username),
+                'groups' => $data->groups,
+                'roles' => array_map(callback: static fn (UserRole $role): string => $role->value, array: $roles),
+                'state' => $data->state->value,
+            ], flags: JSON_THROW_ON_ERROR));
         } catch (JsonException) {
-            return hash(algo: 'sha256', data: strtolower(string: trim(string: $data->email)) . '|' . trim(string: $data->username) . '|' . $data->state->value);
+            return hash(algo: 'sha256', data: strtolower(string: trim(string: $data->email)).'|'.trim(string: $data->username).'|'.$data->state->value);
         }
     }
 }

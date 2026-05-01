@@ -14,7 +14,7 @@ final readonly class QuotedIdentifier
     public string $value;
 
     /**
-     * @param string $value The pre-sanitized and dialect-aware quoted identifier technical string.
+     * @param  string  $value  The pre-sanitized and dialect-aware quoted identifier technical string.
      */
     public function __construct(string $value)
     {
@@ -24,7 +24,7 @@ final readonly class QuotedIdentifier
     /**
      * Return the quoted identifier string.
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->value;
     }

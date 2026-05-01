@@ -17,24 +17,23 @@ final readonly class DeterministicRiskEngine
     public function __construct(private KnownAuthenticationEnvironmentStoreInterface $knownEnvironments, private RiskSignalStoreInterface $signals, private Clock $clock) {}
 
     public function assessSuccessfulAuthentication(
-        User        $user,
+        User $user,
         #[SensitiveParameter]
-        string|null $ipAddress,
-        string|null $userAgent,
-    ) : RiskDecision
-    {
+        ?string $ipAddress,
+        ?string $userAgent,
+    ): RiskDecision {
         $userId = $user->getId()->value;
 
         if (! $this->knownEnvironments->hasSeen(userId: $userId, ipAddress: $ipAddress, userAgent: $userAgent)) {
             $this->signals->record(signal: new RiskSignal(
-                                               userId    : $userId,
-                                               name      : 'new_environment',
-                                               occurredAt: $this->clock->now(),
-                                               context   : [
-                                                               'ip_address' => $ipAddress,
-                                                               'user_agent' => $userAgent,
-                                                           ],
-                                           ));
+                userId    : $userId,
+                name      : 'new_environment',
+                occurredAt: $this->clock->now(),
+                context   : [
+                    'ip_address' => $ipAddress,
+                    'user_agent' => $userAgent,
+                ],
+            ));
             $this->knownEnvironments->remember(userId: $userId, ipAddress: $ipAddress, userAgent: $userAgent);
 
             if ($user->hasRole(role: UserRole::ADMIN)) {
@@ -47,16 +46,16 @@ final readonly class DeterministicRiskEngine
         return RiskDecision::allow('known_environment');
     }
 
-    public function recordRefreshReuse(int $userId, string|null $clientId) : RiskDecision
+    public function recordRefreshReuse(int $userId, ?string $clientId): RiskDecision
     {
         $this->signals->record(signal: new RiskSignal(
-                                           userId    : $userId,
-                                           name      : 'refresh_reuse_detected',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'client_id' => $clientId,
-                                                       ],
-                                       ));
+            userId    : $userId,
+            name      : 'refresh_reuse_detected',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $clientId,
+            ],
+        ));
 
         return new RiskDecision(action: RiskAction::REVOKE_SESSIONS, reasons: ['refresh_reuse_detected']);
     }
@@ -64,7 +63,7 @@ final readonly class DeterministicRiskEngine
     /**
      * @return list<RiskSignal>
      */
-    public function readSignalsForUser(int $userId) : array
+    public function readSignalsForUser(int $userId): array
     {
         return $this->signals->forUser(userId: $userId);
     }

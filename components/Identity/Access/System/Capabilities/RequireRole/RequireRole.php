@@ -25,12 +25,12 @@ final readonly class RequireRole
      * @throws Unauthenticated
      * @throws RoleDenied
      */
-    public function execute(UserRole $requiredRole) : void
+    public function execute(UserRole $requiredRole): void
     {
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated();
+            throw new Unauthenticated;
         }
 
         if (! $user->canAccessRole(requiredRole: $requiredRole)) {

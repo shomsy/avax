@@ -17,12 +17,12 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
         private readonly PasswordHasher $passwordHasher,
     ) {}
 
-    public function save(ScimDirectory $directory) : void
+    public function save(ScimDirectory $directory): void
     {
         $this->directories[$directory->directoryId] = $directory;
     }
 
-    public function all() : array
+    public function all(): array
     {
         return array_values(array: $this->directories);
     }
@@ -31,8 +31,7 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
         string $directoryId,
         #[SensitiveParameter]
         string $plainTextToken,
-    ) : bool
-    {
+    ): bool {
         $directory = $this->find(directoryId: $directoryId);
 
         if ($directory === null) {
@@ -42,7 +41,7 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
         return $this->passwordHasher->verify(password: $plainTextToken, hash: $directory->tokenHash);
     }
 
-    public function find(string $directoryId) : ScimDirectory|null
+    public function find(string $directoryId): ?ScimDirectory
     {
         return $this->directories[$directoryId] ?? null;
     }

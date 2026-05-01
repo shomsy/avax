@@ -13,9 +13,9 @@ final class DispatchStrategyResolver
         $this->defaultStrategy = $defaultStrategy;
     }
 
-    public function resolve(object $task) : string
+    public function resolve(object $task): string
     {
-        $class  = $task::class;
+        $class = $task::class;
         $config = $this->loadTaskConfig($class);
 
         if ($config['strategy'] ?? '') {
@@ -25,7 +25,7 @@ final class DispatchStrategyResolver
         return $this->defaultStrategy;
     }
 
-    private function loadTaskConfig(string $class) : array
+    private function loadTaskConfig(string $class): array
     {
         return [];
     }

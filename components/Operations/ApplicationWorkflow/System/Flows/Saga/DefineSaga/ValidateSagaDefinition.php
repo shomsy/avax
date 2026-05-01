@@ -7,16 +7,17 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Defin
 final readonly class ValidateSagaDefinition
 {
     public array $errors;
+
     public array $warnings;
 
     public function __construct(private SagaDefinition $definition)
     {
-        $this->errors   = [];
+        $this->errors = [];
         $this->warnings = [];
         $this->validate();
     }
 
-    private function validate() : void
+    private function validate(): void
     {
         if ($this->definition->stepCount() === 0) {
             $this->errors[] = 'Saga must have at least one step.';
@@ -77,17 +78,17 @@ final readonly class ValidateSagaDefinition
         }
     }
 
-    public function isValid() : bool
+    public function isValid(): bool
     {
         return empty($this->errors);
     }
 
-    public function getErrors() : array
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
-    public function getWarnings() : array
+    public function getWarnings(): array
     {
         return $this->warnings;
     }

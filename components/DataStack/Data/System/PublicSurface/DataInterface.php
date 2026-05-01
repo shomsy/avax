@@ -21,12 +21,12 @@ interface DataInterface
     /**
      * Get the type-safe array reader.
      */
-    public function array() : ArrayReader;
+    public function array(): ArrayReader;
 
     /**
      * Get the array writer for mutation operations.
      */
-    public function write() : ArrayWriter;
+    public function write(): ArrayWriter;
 
     /**
      * Create a new Collection from an array.
@@ -34,9 +34,8 @@ interface DataInterface
      * @template TKey of array-key
      * @template TValue
      *
-     * @param array<TKey, TValue> $items
-     *
+     * @param  array<TKey, TValue>  $items
      * @return Collection<TKey, TValue>
      */
-    public function collect(array $items = []) : Collection;
+    public function collect(array $items = []): Collection;
 }

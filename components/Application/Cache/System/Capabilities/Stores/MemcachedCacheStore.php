@@ -8,7 +8,6 @@ use Avax\Components\Application\Cache\System\Foundation\CacheStoreInterface;
 use Memcached;
 use Override;
 
-
 final class MemcachedCacheStore implements CacheStoreInterface
 {
     private readonly Memcached $memcached;

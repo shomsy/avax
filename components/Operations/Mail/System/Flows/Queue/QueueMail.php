@@ -11,7 +11,7 @@ final readonly class QueueMail
 {
     public function __construct(private Mailer $mailer) {}
 
-    public function queue(MimeMessage $message) : void
+    public function queue(MimeMessage $message): void
     {
         $this->mailer->queue(message: $message);
     }

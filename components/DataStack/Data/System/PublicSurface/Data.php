@@ -19,48 +19,48 @@ use Override;
 final readonly class Data implements DataInterface
 {
     public function __construct(
-        private ArrayReader     $arrayReader,
-        private ArrayWriter     $arrayWriter,
+        private ArrayReader $arrayReader,
+        private ArrayWriter $arrayWriter,
         private ReadNestedValue $readNestedValue,
         private WriteNestedValue $writeNestedValue,
-        private SumValues       $sumValues,
-        private AverageValues   $averageValues,
+        private SumValues $sumValues,
+        private AverageValues $averageValues,
     ) {}
 
-    public function get(array $data, string $key, mixed $default = null) : mixed
+    public function get(array $data, string $key, mixed $default = null): mixed
     {
         return $this->readNestedValue->execute($data, $key, $default);
     }
 
-    public function set(array &$data, string $key, mixed $value) : void
+    public function set(array &$data, string $key, mixed $value): void
     {
         $this->writeNestedValue->execute($data, $key, $value);
     }
 
-    public function sum(iterable $items, string|callable|null $key = null) : int|float
+    public function sum(iterable $items, string|callable|null $key = null): int|float
     {
         return $this->sumValues->execute($items, $key);
     }
 
-    public function avg(iterable $items, string|callable|null $key = null) : float
+    public function avg(iterable $items, string|callable|null $key = null): float
     {
         return $this->averageValues->execute($items, $key);
     }
 
     #[Override]
-    public function array() : ArrayReader
+    public function array(): ArrayReader
     {
         return $this->arrayReader;
     }
 
     #[Override]
-    public function write() : ArrayWriter
+    public function write(): ArrayWriter
     {
         return $this->arrayWriter;
     }
 
     #[Override]
-    public function collect(array $items = []) : Collection
+    public function collect(array $items = []): Collection
     {
         return Collection::from(items: $items);
     }

@@ -20,16 +20,16 @@ use ReflectionException;
  */
 final class CompiledRuntime
 {
-    private int                            $compiledRevision = -1;
-    private readonly string                $executionMode;
+    private int                     $compiledRevision = -1;
+    private readonly string         $executionMode;
     private readonly ResolutionMetrics|null $metrics;
-    private readonly HotPathInliner        $inliner;
+    private readonly HotPathInliner $inliner;
     private readonly CompileContainer|null $compiler;
 
     public function __construct(
         CompileContainer  $compiler = null,
         HotPathInliner    $inliner = null,
-        ResolutionMetrics|null $metrics = null,
+        ResolutionMetrics $metrics = null,
         string            $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
     )
     {
@@ -66,7 +66,7 @@ final class CompiledRuntime
      * @throws ReflectionException
      * @throws JsonException
      */
-    public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer|null
+    public function compile(array $serviceIds = null, array $validationIssues = null, bool $warmed = false) : CompiledContainer|null
     {
         $serviceIds       ??= [];
         $validationIssues ??= [];
@@ -111,7 +111,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function refresh(DependencyRegistry $registrations, string|null $serviceId = null) : void
+    public function refresh(DependencyRegistry $registrations, string $serviceId = null) : void
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
             $this->inliner->detach();

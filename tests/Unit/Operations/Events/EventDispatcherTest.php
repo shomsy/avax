@@ -16,7 +16,7 @@ use stdClass;
 final class EventDispatcherTest extends TestCase
 {
     private ListenerRegistry $registry;
-    private EventDispatcher  $dispatcher;
+    private EventDispatcher $dispatcher;
 
     #[Test]
     public function dispatch_calls_registered_listener() : void
@@ -100,7 +100,7 @@ final class EventDispatcherTest extends TestCase
     {
         $callCount = 0;
 
-        $event = new class {
+        $event = new class () {
             public bool $propagationStopped = false;
 
             public function isPropagationStopped() : bool

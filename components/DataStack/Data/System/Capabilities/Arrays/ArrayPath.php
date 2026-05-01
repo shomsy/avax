@@ -10,12 +10,12 @@ final readonly class ArrayPath
         private string $path,
     ) {}
 
-    public static function fromString(string $path) : self
+    public static function fromString(string $path): self
     {
         return new self(path: $path);
     }
 
-    public function parent() : ArrayPath|null
+    public function parent(): ?ArrayPath
     {
         $keys = $this->keys();
 
@@ -28,19 +28,19 @@ final readonly class ArrayPath
         return new self(path: implode(separator: '.', array: $keys));
     }
 
-    public function keys() : array
+    public function keys(): array
     {
         return explode(separator: '.', string: $this->path);
     }
 
-    public function last() : string
+    public function last(): string
     {
         $keys = $this->keys();
 
         return end($keys);
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->path;
     }

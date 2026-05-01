@@ -9,5 +9,5 @@ interface DrainAuditLogInterface extends AuditLogInterface
     /**
      * @return list<AuditEvent>
      */
-    public function drain() : array;
+    public function drain(): array;
 }

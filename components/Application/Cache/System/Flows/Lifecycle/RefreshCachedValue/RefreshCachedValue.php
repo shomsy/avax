@@ -6,7 +6,6 @@ namespace Avax\Components\Application\Cache\System\Flows\Lifecycle\RefreshCached
 
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\CacheTtl;
-use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\RefreshPolicy;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\ShouldRefreshCachedValue;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
@@ -21,19 +20,19 @@ use Throwable;
 final readonly class RefreshCachedValue
 {
     public function __construct(
-        private CacheStore               $cacheStore,
-        private Clock                    $clock,
+        private CacheStore $cacheStore,
+        private Clock      $clock,
         private ShouldRefreshCachedValue $shouldRefreshCachedValue
         = new ShouldRefreshCachedValue(
             clock: new SystemClock(),
         ),
-        private CacheTtl                 $cacheTtl = new CacheTtl(),
+        private CacheTtl   $cacheTtl = new CacheTtl(),
     ) {}
 
     public function refreshIfNeeded(
-        CacheKey      $cacheKey,
-        callable      $loader,
-        int|DateInterval|null $ttl = null,
+        CacheKey         $cacheKey,
+        callable         $loader,
+        int|DateInterval $ttl = null,
     ) : mixed
     {
         $result = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
@@ -51,8 +50,8 @@ final readonly class RefreshCachedValue
 
     public function refresh(
         CacheKey $cacheKey,
-        callable      $loader,
-        int|DateInterval|null $ttl = null,
+        callable         $loader,
+        int|DateInterval $ttl = null,
     ) : mixed
     {
         try {

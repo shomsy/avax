@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Flows\Lifecycle\InvalidateCachedValue;
 
-use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\InvalidateCachedValues\InvalidationReason;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheTag;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final readonly class InvalidateCachedValue
 {
     public function __construct(
-        private CacheStore        $cacheStore,
+        private CacheStore $cacheStore,
         private CacheMetrics|null $cacheMetrics = null,
     ) {}
 
@@ -48,12 +45,14 @@ final readonly class InvalidateCachedValue
     public function invalidateByTag() : int
     {
         $this->cacheMetrics?->recordInvalidation();
+
         return 0;
     }
 
     public function invalidateByNamespace() : int
     {
         $this->cacheMetrics?->recordInvalidation();
+
         return 0;
     }
 }

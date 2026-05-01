@@ -6,14 +6,14 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Arrays;
 
 final readonly class ArrayWriter
 {
-    public function set(array &$data, string $key, mixed $value) : void
+    public function set(array &$data, string $key, mixed $value): void
     {
         $data[$key] = $value;
     }
 
-    public function setNested(array &$data, string $path, mixed $value) : void
+    public function setNested(array &$data, string $path, mixed $value): void
     {
-        $keys    = explode(separator: '.', string: $path);
+        $keys = explode(separator: '.', string: $path);
         $current = &$data;
 
         foreach ($keys as $key) {
@@ -27,14 +27,14 @@ final readonly class ArrayWriter
         $current = $value;
     }
 
-    public function forget(array &$data, string $key) : void
+    public function forget(array &$data, string $key): void
     {
         unset($data[$key]);
     }
 
-    public function forgetNested(array &$data, string $path) : void
+    public function forgetNested(array &$data, string $path): void
     {
-        $keys    = explode(separator: '.', string: $path);
+        $keys = explode(separator: '.', string: $path);
         $current = &$data;
         $lastKey = array_pop($keys);
 
@@ -49,7 +49,7 @@ final readonly class ArrayWriter
         unset($current[$lastKey]);
     }
 
-    public function push(array &$data, string $key, mixed $value) : void
+    public function push(array &$data, string $key, mixed $value): void
     {
         if (! isset($data[$key]) || ! is_array($data[$key])) {
             $data[$key] = [];

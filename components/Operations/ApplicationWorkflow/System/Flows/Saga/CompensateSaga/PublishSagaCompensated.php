@@ -10,7 +10,7 @@ final readonly class PublishSagaCompensated
         private string $eventBus,
     ) {}
 
-    public function describeResponsibility() : string
+    public function describeResponsibility(): string
     {
         return 'publishes saga compensated event to message bus.';
     }
@@ -18,8 +18,7 @@ final readonly class PublishSagaCompensated
     public function publish(
         string $sagaId,
         array $compensatedSteps,
-    ) : SagaCompensatedEvent
-    {
+    ): SagaCompensatedEvent {
         return new SagaCompensatedEvent(
             sagaId          : $sagaId,
             compensatedSteps: $compensatedSteps,
@@ -27,7 +26,7 @@ final readonly class PublishSagaCompensated
         );
     }
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return ['event_bus' => $this->eventBus];
     }
@@ -41,12 +40,12 @@ final readonly class SagaCompensatedEvent
         public float $timestamp,
     ) {}
 
-    public function toMetadata() : array
+    public function toMetadata(): array
     {
         return [
-            'saga_id'           => $this->sagaId,
+            'saga_id' => $this->sagaId,
             'compensated_steps' => $this->compensatedSteps,
-            'timestamp'         => $this->timestamp,
+            'timestamp' => $this->timestamp,
         ];
     }
 }

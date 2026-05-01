@@ -21,12 +21,12 @@ use SensitiveParameter;
 
 final readonly class DeleteScimUser
 {
-    public function __construct(private ProvisionableUserSourceInterface $userSource, private ScimDirectoryStoreInterface $directoryStore, private ScimProvisionedIdentityStoreInterface $identityStore, private AuditLogInterface $auditLog, private Clock $clock, private LifecycleOrchestrator|null $lifecycle = null, private AttemptThrottle|null $attemptThrottle = null) {}
+    public function __construct(private ProvisionableUserSourceInterface $userSource, private ScimDirectoryStoreInterface $directoryStore, private ScimProvisionedIdentityStoreInterface $identityStore, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycle = null, private ?AttemptThrottle $attemptThrottle = null) {}
 
     /**
      * @throws ScimFailed
      */
-    public function execute(DeleteScimUserData $data) : void
+    public function execute(DeleteScimUserData $data): void
     {
         $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
         $this->enforceDirectoryAvailability(directory: $directory);
@@ -45,15 +45,15 @@ final readonly class DeleteScimUser
         }
         $this->identityStore->remove(directoryId: $directory->directoryId, externalId: $data->externalId);
         $this->auditLog->record(event: new AuditEvent(
-                                           name      : 'auth.scim.user.deleted',
-                                           occurredAt: $this->clock->now(),
-                                           context   : [
-                                                           'directory_id' => $directory->directoryId,
-                                                           'tenant'       => $directory->tenantSlug,
-                                                           'external_id'  => $data->externalId,
-                                                           'user_id'      => $identity->userId->value,
-                                                       ],
-                                       ));
+            name      : 'auth.scim.user.deleted',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'directory_id' => $directory->directoryId,
+                'tenant' => $directory->tenantSlug,
+                'external_id' => $data->externalId,
+                'user_id' => $identity->userId->value,
+            ],
+        ));
     }
 
     /**
@@ -63,8 +63,7 @@ final readonly class DeleteScimUser
         string $directoryId,
         #[SensitiveParameter]
         string $directoryToken,
-    ) : ScimDirectory
-    {
+    ): ScimDirectory {
         $directory = $this->directoryStore->find(directoryId: $directoryId);
 
         if ($directory === null) {
@@ -78,20 +77,20 @@ final readonly class DeleteScimUser
         return $directory;
     }
 
-    private function enforceDirectoryAvailability(ScimDirectory $directory) : void
+    private function enforceDirectoryAvailability(ScimDirectory $directory): void
     {
         if ($directory->health === ScimDirectoryHealth::UNAVAILABLE) {
             throw ScimFailed::serviceUnavailable();
         }
     }
 
-    private function enforceThrottle(string $directoryId) : void
+    private function enforceThrottle(string $directoryId): void
     {
         if ($this->attemptThrottle === null) {
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . 'delete';
+        $key = 'scim:'.$directoryId.':'.'delete';
 
         try {
             $this->attemptThrottle->check(key: $key);

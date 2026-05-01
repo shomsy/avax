@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\CLI\Console\System\Capabilities\Commands;
 
-use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\ServiceGenerator;
 use Avax\Components\CLI\Console\System\PublicSurface\Command;
+use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\ServiceGenerator;
 use Override;
 use RuntimeException;
 
@@ -29,7 +29,7 @@ class MakeServiceCommand extends Command
     ) {}
 
     #[Override]
-    protected function handle() : int
+    protected function handle(): int
     {
         $name = $this->argument(0);
 
@@ -44,7 +44,7 @@ class MakeServiceCommand extends Command
         }
 
         $methodsInput = $this->option('methods');
-        $methods      = [];
+        $methods = [];
 
         if (is_string($methodsInput) && $methodsInput !== '') {
             $methods = array_map('trim', explode(',', $methodsInput));
@@ -53,11 +53,11 @@ class MakeServiceCommand extends Command
         try {
             $path = $this->serviceGenerator->generate($name, ['methods' => $methods]);
 
-            $this->info('Service created successfully: ' . $path);
+            $this->info('Service created successfully: '.$path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create service: ' . $runtimeException->getMessage());
+            $this->error('Failed to create service: '.$runtimeException->getMessage());
 
             return self::FAILURE;
         }

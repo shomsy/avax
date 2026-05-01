@@ -12,7 +12,7 @@ use DateTimeImmutable;
  */
 interface EmailVerificationStoreInterface
 {
-    public function issue(UserId $userId, DateTimeImmutable $expiresAt) : EmailVerificationChallenge;
+    public function issue(UserId $userId, DateTimeImmutable $expiresAt): EmailVerificationChallenge;
 
-    public function consume(string $token, DateTimeImmutable $now) : UserId|null;
+    public function consume(string $token, DateTimeImmutable $now): ?UserId;
 }

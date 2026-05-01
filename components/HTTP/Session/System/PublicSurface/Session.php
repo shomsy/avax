@@ -18,9 +18,9 @@ final class Session implements SessionInterface
     private SessionTransaction $transaction;
 
     public function __construct(
-        private readonly SessionScope     $scope,
+        private readonly SessionScope  $scope,
         private readonly SessionMetadata|null $metadata = null,
-        private readonly ?SessionAudit    $audit = null,
+        private readonly ?SessionAudit $audit = null,
         private readonly SessionEventBus|null $events = null,
         private readonly LoggerInterface|null $logger = null,
     )

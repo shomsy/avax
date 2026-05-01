@@ -11,8 +11,8 @@ use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Un
 use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\PermissionDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied;
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\FreshMfaRequired;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\FreshMfaRequired;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\AdminElevationFailed;
 use SensitiveParameter;
 
@@ -34,7 +34,7 @@ final readonly class RequireFreshPasskeyForAdminAction
      * @throws PermissionDenied
      * @throws RoleDenied
      */
-    public function execute() : void
+    public function execute(): void
     {
         $this->requireAccessPolicy->execute(policy: AccessPolicy::forIdentityPolicy(
             identityPolicy    : IdentityPolicyCatalog::admin(),

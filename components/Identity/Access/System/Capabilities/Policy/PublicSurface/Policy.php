@@ -10,14 +10,15 @@ use Avax\Components\Identity\Access\System\Capabilities\Policy\System\Capabiliti
 final class Policy
 {
     private static PolicyEvaluator $evaluator;
-    private static array           $definitions = [];
 
-    public static function define(string $name, array $rules) : void
+    private static array $definitions = [];
+
+    public static function define(string $name, array $rules): void
     {
         self::$definitions[$name] = $rules;
     }
 
-    public static function authorize(string $name, array $context) : bool
+    public static function authorize(string $name, array $context): bool
     {
         $rules = self::$definitions[$name] ?? [];
 
@@ -32,26 +33,26 @@ final class Policy
         return true;
     }
 
-    public static function allows(string $action, object $resource, array $context = []) : PolicyDecision
+    public static function allows(string $action, object $resource, array $context = []): PolicyDecision
     {
         return self::evaluator()->evaluate($action, $resource, $context);
     }
 
-    private static function evaluator() : PolicyEvaluator
+    private static function evaluator(): PolicyEvaluator
     {
         if (! isset(self::$evaluator)) {
-            self::$evaluator = new PolicyEvaluator();
+            self::$evaluator = new PolicyEvaluator;
         }
 
         return self::$evaluator;
     }
 
-    public static function register(PolicyRule $rule) : void
+    public static function register(PolicyRule $rule): void
     {
         self::evaluator()->register($rule);
     }
 
-    public static function explain(string $action, object $resource, array $context = []) : DecisionExplanation
+    public static function explain(string $action, object $resource, array $context = []): DecisionExplanation
     {
         return self::evaluator()->explain($action, $resource, $context);
     }
@@ -60,16 +61,16 @@ final class Policy
 final readonly class PolicyDecision
 {
     public function __construct(
-        public bool        $allowed,
-        public string|null $reason = null,
+        public bool $allowed,
+        public ?string $reason = null,
     ) {}
 
-    public static function allow(string|null $reason = null) : self
+    public static function allow(?string $reason = null): self
     {
         return new self(true, $reason);
     }
 
-    public static function deny(string|null $reason = null) : self
+    public static function deny(?string $reason = null): self
     {
         return new self(false, $reason);
     }
@@ -82,16 +83,15 @@ final readonly class DecisionExplanation
 
     public function __construct(
         public bool $allowed,
-        array       $reasons = [],
-    )
-    {
+        array $reasons = [],
+    ) {
         $this->reasons = $reasons;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->allowed
-            ? 'ALLOWED: ' . implode(' AND ', $this->reasons)
-            : 'DENIED: ' . implode(' AND ', $this->reasons);
+            ? 'ALLOWED: '.implode(' AND ', $this->reasons)
+            : 'DENIED: '.implode(' AND ', $this->reasons);
     }
 }

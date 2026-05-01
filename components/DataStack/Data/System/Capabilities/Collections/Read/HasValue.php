@@ -15,12 +15,12 @@ final readonly class HasValue
         private array $items = [],
     ) {}
 
-    public function __invoke(string $key) : bool
+    public function __invoke(string $key): bool
     {
         return $this->check(key: $key);
     }
 
-    public function check(string $key) : bool
+    public function check(string $key): bool
     {
         if (array_key_exists(key: $key, array: $this->items)) {
             return true;
@@ -33,7 +33,7 @@ final readonly class HasValue
         return false;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

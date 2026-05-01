@@ -13,17 +13,17 @@ final readonly class JoinValues
         private array $items = [],
     ) {}
 
-    public function __invoke(string $separator = '') : string
+    public function __invoke(string $separator = ''): string
     {
         return $this->join(separator: $separator);
     }
 
-    public function join(string $separator = '') : string
+    public function join(string $separator = ''): string
     {
         return implode(separator: $separator, array: $this->items);
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }

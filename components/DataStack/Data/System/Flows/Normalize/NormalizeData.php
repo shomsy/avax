@@ -12,7 +12,7 @@ use Traversable;
  */
 final readonly class NormalizeData
 {
-    public function execute(mixed $data) : array
+    public function execute(mixed $data): array
     {
         if (is_array($data)) {
             return $data;

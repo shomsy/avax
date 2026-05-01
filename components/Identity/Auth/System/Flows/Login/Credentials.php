@@ -14,12 +14,12 @@ use SensitiveParameter;
 final readonly class Credentials
 {
     public function __construct(
-        public string      $identifier,
+        public string $identifier,
         // email or username
         #[SensitiveParameter]
-        public string      $password,
+        public string $password,
         #[SensitiveParameter]
-        public string|null $ipAddress = null,
-        public string|null $userAgent = null,
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
     ) {}
 }

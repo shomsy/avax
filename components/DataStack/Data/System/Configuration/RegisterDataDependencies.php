@@ -17,15 +17,15 @@ use Avax\Components\DataStack\Data\System\PublicSurface\Data;
  */
 final class RegisterDataDependencies
 {
-    public function build() : Data
+    public function build(): Data
     {
-        $sumValues = new SumValues();
+        $sumValues = new SumValues;
 
         return new Data(
-            arrayReader     : new ArrayReader(),
-            arrayWriter     : new ArrayWriter(),
-            readNestedValue : new ReadNestedValue(),
-            writeNestedValue: new WriteNestedValue(),
+            arrayReader     : new ArrayReader,
+            arrayWriter     : new ArrayWriter,
+            readNestedValue : new ReadNestedValue,
+            writeNestedValue: new WriteNestedValue,
             sumValues       : $sumValues,
             averageValues   : new AverageValues($sumValues),
         );

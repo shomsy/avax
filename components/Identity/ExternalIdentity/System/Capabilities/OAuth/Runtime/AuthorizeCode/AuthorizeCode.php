@@ -33,20 +33,19 @@ final readonly class AuthorizeCode
         private AuthorizationCodeStoreInterface $codeStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private OidcProviderInterface|null $oidcProvider = null,
-        private ValidateRequestObject|null $requestObjectValidator = null,
-    ) {
-    }
+        private ?OidcProviderInterface $oidcProvider = null,
+        private ?ValidateRequestObject $requestObjectValidator = null,
+    ) {}
 
     /**
      * @throws OAuthAuthorizationFailed
      * @throws DateMalformedStringException
      */
-    public function execute(AuthorizeCodeData $data) : IssuedAuthorizationCode
+    public function execute(AuthorizeCodeData $data): IssuedAuthorizationCode
     {
         $context = $this->currentAuthentication->read();
-        $actor   = $context->user();
-        $now     = $this->clock->now();
+        $actor = $context->user();
+        $now = $this->clock->now();
         if ($data->requestUri !== null && trim(string: $data->requestUri) !== '') {
             if ($this->requestObjectValidator === null) {
                 $this->recordFailure(data: $data, reason: 'request_object_not_supported');
@@ -172,39 +171,38 @@ final readonly class AuthorizeCode
             name      : 'auth.oauth.authorization_code.issued',
             occurredAt: $now,
             context   : [
-                                                           'client_id'  => $client->clientId,
-                                                           'user_id'    => $user->getId()->value,
-                                                           'code_id'    => $issued->codeId,
-                                                           'scope'      => implode(separator: ' ', array: $scopes),
-                                                           'ip_address' => $data->ipAddress,
-                                                           'user_agent' => $data->userAgent,
-                                                       ],
+                'client_id' => $client->clientId,
+                'user_id' => $user->getId()->value,
+                'code_id' => $issued->codeId,
+                'scope' => implode(separator: ' ', array: $scopes),
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
         ));
 
         return $issued;
     }
 
-    private function recordFailure(AuthorizeCodeData $data, string $reason) : void
+    private function recordFailure(AuthorizeCodeData $data, string $reason): void
     {
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.authorization_code.failed',
             occurredAt: $this->clock->now(),
             context   : [
-                                                           'client_id'    => $data->clientId,
-                                                           'redirect_uri' => $data->redirectUri,
-                                                           'reason'       => $reason,
-                                                           'ip_address'   => $data->ipAddress,
-                                                           'user_agent'   => $data->userAgent,
-                                                       ],
+                'client_id' => $data->clientId,
+                'redirect_uri' => $data->redirectUri,
+                'reason' => $reason,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ],
         ));
     }
 
     /**
-     * @param list<string> $scopes
-     *
+     * @param  list<string>  $scopes
      * @return list<string>
      */
-    private function normalizeScopes(array $scopes) : array
+    private function normalizeScopes(array $scopes): array
     {
         $normalized = [];
 

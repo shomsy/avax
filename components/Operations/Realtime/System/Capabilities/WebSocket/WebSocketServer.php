@@ -39,7 +39,7 @@ final class WebSocketServer
 
     public static function connect(string $connectionId, string $channel = 'default') : void
     {
-        self::$connections[$connectionId]        = [
+        self::$connections[$connectionId] = [
             'id'        => $connectionId,
             'channel'   => $channel,
             'joined_at' => time(),
@@ -87,7 +87,7 @@ final class WebSocketServer
         return WebSocketClientScript::forEndpoint(endpoint: $endpoint);
     }
 
-    public static function connections(string|null $channel = null) : array
+    public static function connections(string $channel = null) : array
     {
         if ($channel === null) {
             return array_keys(array: self::$connections);

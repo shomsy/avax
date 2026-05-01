@@ -9,15 +9,15 @@ use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 
 final readonly class NullTransport implements MailTransport
 {
-    public function send(MimeMessage $message, Envelope $envelope) : TransportResult
+    public function send(MimeMessage $message, Envelope $envelope): TransportResult
     {
         return new TransportResult(
             success  : true,
-            messageId: '<' . uniqid(prefix: 'msg-', more_entropy: true) . '-null@local>',
+            messageId: '<'.uniqid(prefix: 'msg-', more_entropy: true).'-null@local>',
         );
     }
 
-    public function supports(string $driver) : bool
+    public function supports(string $driver): bool
     {
         return $driver === 'null';
     }

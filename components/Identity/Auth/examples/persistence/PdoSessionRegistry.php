@@ -22,7 +22,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
+    public function find(#[SensitiveParameter] string $sessionId): ?SessionRecord
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(query: 'SELECT * FROM auth_sessions WHERE session_id = :session_id LIMIT 1');
@@ -33,11 +33,11 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      *
      * @throws DateMalformedStringException
      */
-    private function hydrate(array $row) : SessionRecord
+    private function hydrate(array $row): SessionRecord
     {
         return new SessionRecord(
             sessionId        : (string) $row['session_id'],
@@ -55,12 +55,12 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         );
     }
 
-    public function save(SessionRecord $record) : void
+    public function save(SessionRecord $record): void
     {
         $this->track(record: $record);
     }
 
-    public function track(SessionRecord $record) : void
+    public function track(SessionRecord $record): void
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
@@ -87,23 +87,23 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     /**
      * @return array<string, string|int|null>
      */
-    private function mapRecord(SessionRecord $record) : array
+    private function mapRecord(SessionRecord $record): array
     {
         return [
-            'session_id'          => $record->sessionId,
-            'user_id'             => $record->userId->value,
-            'created_at'          => $record->createdAt->format(format: DATE_ATOM),
-            'last_seen_at'        => $record->lastSeenAt->format(format: DATE_ATOM),
-            'idle_expires_at'     => $record->idleExpiresAt->format(format: DATE_ATOM),
+            'session_id' => $record->sessionId,
+            'user_id' => $record->userId->value,
+            'created_at' => $record->createdAt->format(format: DATE_ATOM),
+            'last_seen_at' => $record->lastSeenAt->format(format: DATE_ATOM),
+            'idle_expires_at' => $record->idleExpiresAt->format(format: DATE_ATOM),
             'absolute_expires_at' => $record->absoluteExpiresAt->format(format: DATE_ATOM),
-            'ip_created'          => $record->ipCreated,
-            'user_agent_created'  => $record->userAgentCreated,
-            'revoked_at'          => $record->revokedAt?->format(format: DATE_ATOM),
-            'revoke_reason'       => $record->revokeReason,
+            'ip_created' => $record->ipCreated,
+            'user_agent_created' => $record->userAgentCreated,
+            'revoked_at' => $record->revokedAt?->format(format: DATE_ATOM),
+            'revoke_reason' => $record->revokeReason,
         ];
     }
 
-    public function listForUser(UserId $userId) : array
+    public function listForUser(UserId $userId): array
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
@@ -113,37 +113,37 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         $rows = $statement->fetchAll(mode: PDO::FETCH_ASSOC);
 
         return array_map(
-        /**
-         * @throws DateMalformedStringException
-         */
-            callback: fn (array $row) : SessionRecord => $this->hydrate(row: $row),
+            /**
+             * @throws DateMalformedStringException
+             */
+            callback: fn (array $row): SessionRecord => $this->hydrate(row: $row),
             array   : $rows,
         );
     }
 
-    public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
+    public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason): void
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id',
         );
         $statement->execute(params: [
-                                        'session_id'    => $sessionId,
-                                        'revoked_at'    => $revokedAt->format(format: DATE_ATOM),
-                                        'revoke_reason' => $reason,
-                                    ]);
+            'session_id' => $sessionId,
+            'revoked_at' => $revokedAt->format(format: DATE_ATOM),
+            'revoke_reason' => $reason,
+        ]);
     }
 
-    public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason) : void
+    public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason): void
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id',
         );
         $statement->execute(params: [
-                                        'user_id'       => $userId->value,
-                                        'revoked_at'    => $revokedAt->format(format: DATE_ATOM),
-                                        'revoke_reason' => $reason,
-                                    ]);
+            'user_id' => $userId->value,
+            'revoked_at' => $revokedAt->format(format: DATE_ATOM),
+            'revoke_reason' => $reason,
+        ]);
     }
 }

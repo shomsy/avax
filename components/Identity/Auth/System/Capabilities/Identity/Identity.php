@@ -38,21 +38,20 @@ final readonly class Identity implements IdentityInterface
 {
     public function __construct(
         #[SensitiveParameter]
-        private Authentication|null           $authentication = null,
+        private ?Authentication $authentication = null,
         #[SensitiveParameter]
-        private Sessions|null                 $sessions = null,
+        private ?Sessions $sessions = null,
         #[SensitiveParameter]
-        private Account|null                  $account = null,
-        private Recovery|null                 $recovery = null,
-        private Verification|null             $verification = null,
-        private Mfa|null                      $mfa = null,
-        private Passkey|null                  $passkey = null,
+        private ?Account $account = null,
+        private ?Recovery $recovery = null,
+        private ?Verification $verification = null,
+        private ?Mfa $mfa = null,
+        private ?Passkey $passkey = null,
         #[SensitiveParameter]
-        private SessionIdentityInterface|null $sessionIdentity = null,
+        private ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        private JwtIdentityInterface|null     $jwtIdentity = null,
-    )
-    {
+        private ?JwtIdentityInterface $jwtIdentity = null,
+    ) {
         if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
             throw new InvalidArgumentException(message: 'Identity requires at least one backend.');
         }
@@ -60,11 +59,10 @@ final readonly class Identity implements IdentityInterface
 
     public static function fromBackends(
         #[SensitiveParameter]
-        SessionIdentityInterface|null $sessionIdentity = null,
+        ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        JwtIdentityInterface|null $jwtIdentity = null,
-    ) : self
-    {
+        ?JwtIdentityInterface $jwtIdentity = null,
+    ): self {
         return new self(
             sessionIdentity: $sessionIdentity,
             jwtIdentity    : $jwtIdentity,
@@ -74,11 +72,10 @@ final readonly class Identity implements IdentityInterface
     // ── Owned behavior (cross-cutting identity lifecycle) ──
 
     public function issue(
-        User              $user,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool              $phishingResistant = false,
-    ) : IssuedAuthentication
-    {
+        User $user,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
+    ): IssuedAuthentication {
         if (! $user->isActive()) {
             throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
         }
@@ -88,12 +85,12 @@ final readonly class Identity implements IdentityInterface
             mfaVerifiedAt    : $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
         );
-        $sessionId    = $this->sessionIdentity?->issue(
+        $sessionId = $this->sessionIdentity?->issue(
             userId           : $user->getId()->value,
             mfaVerifiedAt    : $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
         );
-        $accessToken  = $this->jwtIdentity?->issue(
+        $accessToken = $this->jwtIdentity?->issue(
             user                : $user,
             mfaVerifiedAt       : $mfaVerifiedAt,
             phishingResistant   : $phishingResistant,
@@ -110,7 +107,7 @@ final readonly class Identity implements IdentityInterface
         );
     }
 
-    private function resolveMode() : AuthenticationMode
+    private function resolveMode(): AuthenticationMode
     {
         if ($this->sessionIdentity !== null && $this->jwtIdentity !== null) {
             return AuthenticationMode::HYBRID;
@@ -123,7 +120,7 @@ final readonly class Identity implements IdentityInterface
         return AuthenticationMode::TOKEN;
     }
 
-    public function clear(AuthenticationContext|null $context = null) : void
+    public function clear(?AuthenticationContext $context = null): void
     {
         $this->sessionIdentity?->clear();
 
@@ -140,14 +137,14 @@ final readonly class Identity implements IdentityInterface
         }
     }
 
-    public function sessionIdentity() : SessionIdentityInterface|null
+    public function sessionIdentity(): ?SessionIdentityInterface
     {
         return $this->sessionIdentity;
     }
 
     // ── Fast-path convenience (high-frequency auth operations) ──
 
-    public function jwtIdentity() : JwtIdentityInterface|null
+    public function jwtIdentity(): ?JwtIdentityInterface
     {
         return $this->jwtIdentity;
     }
@@ -156,49 +153,49 @@ final readonly class Identity implements IdentityInterface
      * @throws AuthenticationFailed
      * @throws RateLimitException
      */
-    public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
+    public function login(#[SensitiveParameter] Credentials $credentials): AuthenticationResult
     {
         return $this->authentication()->login(credentials: $credentials);
     }
 
     // ── Sub-capability accessors ──
 
-    public function authentication() : Authentication
+    public function authentication(): Authentication
     {
         return $this->authentication ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'authentication');
     }
 
-    public function logout() : void
+    public function logout(): void
     {
         $this->authentication()->logout();
     }
 
-    public function sessions() : Sessions
+    public function sessions(): Sessions
     {
         return $this->sessions ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'sessions');
     }
 
-    public function account() : Account
+    public function account(): Account
     {
         return $this->account ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'account');
     }
 
-    public function recovery() : Recovery
+    public function recovery(): Recovery
     {
         return $this->recovery ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'recovery');
     }
 
-    public function verification() : Verification
+    public function verification(): Verification
     {
         return $this->verification ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'verification');
     }
 
-    public function mfa() : Mfa
+    public function mfa(): Mfa
     {
         return $this->mfa ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'mfa');
     }
 
-    public function passkey() : Passkey
+    public function passkey(): Passkey
     {
         return $this->passkey ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'passkey');
     }

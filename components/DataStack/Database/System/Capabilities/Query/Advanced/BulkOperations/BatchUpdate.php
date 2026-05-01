@@ -6,12 +6,12 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Advanced\
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class BatchUpdate
+final readonly class BatchUpdate
 {
     public function __construct(
-        private readonly GrammarInterface $grammar,
-        private readonly string $table,
-        private readonly string $keyColumn,
+        private GrammarInterface $grammar,
+        private string           $table,
+        private string           $keyColumn,
     ) {}
 
     /**

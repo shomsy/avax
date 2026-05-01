@@ -33,7 +33,7 @@ final class CompiledCache
 
     private static function instance() : CompiledCacheContract
     {
-        if (self::$compiledCacheContract === null) {
+        if (! self::$compiledCacheContract instanceof CompiledCacheContract) {
             throw new NotConfigured(message: 'No compiled cache configured');
         }
 

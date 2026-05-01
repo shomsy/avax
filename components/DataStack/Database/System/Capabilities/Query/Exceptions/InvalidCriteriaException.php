@@ -13,8 +13,6 @@ use Avax\Components\DataStack\Database\System\Foundation\Exceptions\DatabaseExce
  */
 final class InvalidCriteriaException extends DatabaseException
 {
-    private readonly string $method;
-
     /**
      * Constructor capturing the problematic method and reason.
      *
@@ -24,12 +22,11 @@ final class InvalidCriteriaException extends DatabaseException
      * @param string $reason Human-readable explanation of why the input is invalid
      */
     public function __construct(
-        string $method,
+        private readonly string $method,
         string $reason,
     )
     {
-        $this->method = $method;
-        parent::__construct(message: "Invalid criteria in [{$method}]: {$reason}");
+        parent::__construct(message: sprintf('Invalid criteria in [%s]: %s', $this->method, $reason));
     }
 
     /**

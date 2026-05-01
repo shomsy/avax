@@ -41,7 +41,7 @@ final class Cache
 
     private static function default() : CacheContract
     {
-        if (self::$cacheContract === null) {
+        if (! self::$cacheContract instanceof CacheContract) {
             throw new NotConfigured();
         }
 

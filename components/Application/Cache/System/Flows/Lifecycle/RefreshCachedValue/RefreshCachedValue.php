@@ -34,17 +34,16 @@ final readonly class RefreshCachedValue
         CacheKey      $cacheKey,
         callable      $loader,
         int|DateInterval|null $ttl = null,
-        RefreshPolicy $refreshPolicy = RefreshPolicy::DO_NOT_REFRESH,
     ) : mixed
     {
         $result = $this->cacheStore->read(key: $cacheKey, clock: $this->clock);
 
         if ($result instanceof CacheStoreRecordWasMissing) {
-            return $this->refresh(key: $cacheKey, loader: $loader, ttl: $ttl, policy: $refreshPolicy);
+            return $this->refresh(key: $cacheKey, loader: $loader, ttl: $ttl);
         }
 
         if ($this->shouldRefreshCachedValue->shouldRefresh(lifecycle: $result->record->lifecycle)) {
-            return $this->refresh(key: $cacheKey, loader: $loader, ttl: $ttl, policy: $refreshPolicy);
+            return $this->refresh(key: $cacheKey, loader: $loader, ttl: $ttl);
         }
 
         return $result->value();

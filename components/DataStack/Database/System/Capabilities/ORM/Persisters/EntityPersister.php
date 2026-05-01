@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Persisters;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Hydration\Hydrator;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\FieldMetadata;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
 use ReflectionException;
 use ReflectionProperty;
@@ -26,14 +27,14 @@ final readonly class EntityPersister
      */
     public function insert(object $entity, string|null $connectionName = null) : void
     {
-        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier = $metadata->identifierField();
-        $payload    = $this->payload(entity: $entity, metadata: $metadata, includeIdentifier: false);
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
+        $identifier     = $entityMetadata->identifierField();
+        $payload        = $this->payload(entity: $entity, metadata: $entityMetadata, includeIdentifier: false);
 
-        $builder     = $this->query->builder(connectionName: $connectionName)->from(table: $metadata->table);
+        $builder = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
         $generatedId = $builder->insertGetId(values: $payload);
 
-        if ($identifier !== null && $identifier->generated) {
+        if ($identifier instanceof FieldMetadata && $identifier->generated) {
             $this->setPropertyValue(entity: $entity, property: $identifier->property, value: $generatedId);
         }
     }
@@ -82,10 +83,10 @@ final readonly class EntityPersister
      */
     public function update(object $entity, string|null $connectionName = null) : void
     {
-        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier = $metadata->identifierField();
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
+        $identifier     = $entityMetadata->identifierField();
 
-        if ($identifier === null) {
+        if (! $identifier instanceof FieldMetadata) {
             throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
         }
 
@@ -94,10 +95,10 @@ final readonly class EntityPersister
             throw new RuntimeException(message: 'Cannot update an entity without an identifier value.');
         }
 
-        $payload = $this->payload(entity: $entity, metadata: $metadata, includeIdentifier: false);
+        $payload = $this->payload(entity: $entity, metadata: $entityMetadata, includeIdentifier: false);
 
         $this->query->builder(connectionName: $connectionName)
-            ->from(table: $metadata->table)
+            ->from(table: $entityMetadata->table)
             ->where(column: $identifier->column, operator: '=', value: $identifierValue)
             ->update(values: $payload);
     }
@@ -107,10 +108,10 @@ final readonly class EntityPersister
      */
     public function delete(object $entity, string|null $connectionName = null) : void
     {
-        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier = $metadata->identifierField();
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
+        $identifier     = $entityMetadata->identifierField();
 
-        if ($identifier === null) {
+        if (! $identifier instanceof FieldMetadata) {
             throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
         }
 
@@ -120,7 +121,7 @@ final readonly class EntityPersister
         }
 
         $this->query->builder(connectionName: $connectionName)
-            ->from(table: $metadata->table)
+            ->from(table: $entityMetadata->table)
             ->where(column: $identifier->column, operator: '=', value: $identifierValue)
             ->delete();
     }
@@ -130,10 +131,10 @@ final readonly class EntityPersister
      */
     public function refresh(object $entity, string|null $connectionName = null) : object
     {
-        $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
-        $identifier = $metadata->identifierField();
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
+        $identifier     = $entityMetadata->identifierField();
 
-        if ($identifier === null) {
+        if (! $identifier instanceof FieldMetadata) {
             throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
         }
 
@@ -147,7 +148,7 @@ final readonly class EntityPersister
             throw new RuntimeException(message: 'Entity could not be refreshed because it no longer exists.');
         }
 
-        foreach ($metadata->fields as $field) {
+        foreach ($entityMetadata->fields as $field) {
             $this->setPropertyValue(
                 entity  : $entity,
                 property: $field->property,
@@ -165,16 +166,16 @@ final readonly class EntityPersister
      */
     public function find(string $entityClass, mixed $id, string|null $connectionName = null) : object|null
     {
-        $metadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
-        $identifier = $metadata->identifierField();
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
+        $identifier     = $entityMetadata->identifierField();
 
-        if ($identifier === null) {
+        if (! $identifier instanceof FieldMetadata) {
             throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entityClass));
         }
 
         $row = $this->query
             ->builder(connectionName: $connectionName)
-            ->from(table: $metadata->table)
+            ->from(table: $entityMetadata->table)
             ->where(column: $identifier->column, operator: '=', value: $id)
             ->first();
 
@@ -182,7 +183,7 @@ final readonly class EntityPersister
             return null;
         }
 
-        return $this->hydrator->hydrate(entityClass: $entityClass, row: $row, metadata: $metadata);
+        return $this->hydrator->hydrate(entityClass: $entityClass, row: $row, metadata: $entityMetadata);
     }
 
     /**
@@ -215,16 +216,16 @@ final readonly class EntityPersister
         string|null $connectionName = null,
     ) : array
     {
-        $metadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
-        $query    = $this->query->builder(connectionName: $connectionName)->from(table: $metadata->table);
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
+        $query          = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
 
         foreach ($criteria as $column => $value) {
-            $actualColumn = $metadata->fields[$column]->column ?? $column;
+            $actualColumn = $entityMetadata->fields[$column]->column ?? $column;
             $query        = $query->where(column: $actualColumn, operator: '=', value: $value);
         }
 
         if ($orderBy !== null) {
-            $actualOrderBy = $metadata->fields[$orderBy]->column ?? $orderBy;
+            $actualOrderBy = $entityMetadata->fields[$orderBy]->column ?? $orderBy;
             $query         = $query->orderBy(column: $actualOrderBy, direction: $direction ?? 'ASC');
         }
 
@@ -240,7 +241,7 @@ final readonly class EntityPersister
             callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: $entityClass,
                 row        : $row,
-                metadata   : $metadata,
+                metadata   : $entityMetadata,
             ),
             array   : $query->get(),
         );

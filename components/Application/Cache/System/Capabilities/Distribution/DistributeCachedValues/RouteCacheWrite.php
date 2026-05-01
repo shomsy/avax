@@ -17,9 +17,9 @@ final readonly class RouteCacheWrite
         return $this->chooseCacheNodeForKey->choose(key: $cacheKey);
     }
 
-    public function routeToAll(CacheKey $cacheKey, int $replicaCount) : array
+    public function routeToAll(CacheKey $cacheKey) : array
     {
-        return $this->routeToReplicas(key: $cacheKey, replicaCount: $replicaCount);
+        return $this->routeToReplicas(key: $cacheKey);
     }
 
     public function routeToReplicas(CacheKey $cacheKey) : array

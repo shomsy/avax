@@ -20,8 +20,8 @@ final readonly class CheckCacheCapacity
         }
 
         return $this->cacheCapacity->canStore(
-            currentCount    : $this->getCurrentEntryCount(store: $cacheStore),
-            currentSizeBytes: $this->getCurrentSizeBytes(store: $cacheStore),
+            currentCount    : $this->getCurrentEntryCount(),
+            currentSizeBytes: $this->getCurrentSizeBytes(),
         );
     }
 

@@ -6,11 +6,11 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class FromNode
+final readonly class FromNode
 {
     public function __construct(
-        public readonly string $table,
-        public readonly string|null $alias = null,
+        public string      $table,
+        public string|null $alias = null,
     ) {}
 
     public function getSql(GrammarInterface $grammar) : string

@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\IR;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\QueryException;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes\FromNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
 
 final class IRValidator
 {
-    public function assertValid(QueryNode $query) : void
+    public function assertValid(QueryNode $queryNode) : void
     {
-        $errors = $this->validate(query: $query);
+        $errors = $this->validate(query: $queryNode);
 
         if ($errors !== []) {
             throw new QueryException(message: implode(separator: ' ', array: $errors), sql: '');
@@ -21,31 +22,31 @@ final class IRValidator
     /**
      * @return list<string>
      */
-    public function validate(QueryNode $query) : array
+    public function validate(QueryNode $queryNode) : array
     {
         $errors = [];
 
-        if ($query->getFrom() === null) {
+        if (! $queryNode->getFrom() instanceof FromNode) {
             $errors[] = 'QueryNode must define a FROM source.';
         }
 
-        if (($query->getLimit() ?? 0) < 0) {
+        if (($queryNode->getLimit() ?? 0) < 0) {
             $errors[] = 'QueryNode limit cannot be negative.';
         }
 
-        if (($query->getOffset() ?? 0) < 0) {
+        if (($queryNode->getOffset() ?? 0) < 0) {
             $errors[] = 'QueryNode offset cannot be negative.';
         }
 
-        foreach ($query->getOrders() as $order) {
+        foreach ($queryNode->getOrders() as $order) {
             if (! in_array(needle: strtoupper(string: $order->direction), haystack: ['ASC', 'DESC'], strict: true)) {
-                $errors[] = "Invalid order direction [{$order->direction}] for column [{$order->column}].";
+                $errors[] = sprintf('Invalid order direction [%s] for column [%s].', $order->direction, $order->column);
             }
         }
 
-        foreach ($query->getWheres() as $where) {
+        foreach ($queryNode->getWheres() as $where) {
             if (! in_array(needle: strtoupper(string: $where->boolean), haystack: ['AND', 'OR'], strict: true)) {
-                $errors[] = "Invalid boolean connector [{$where->boolean}] for column [{$where->column}].";
+                $errors[] = sprintf('Invalid boolean connector [%s] for column [%s].', $where->boolean, $where->column);
             }
         }
 

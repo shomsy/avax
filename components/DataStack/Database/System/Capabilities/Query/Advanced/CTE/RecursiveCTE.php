@@ -6,16 +6,16 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Advanced\
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
 
-final class RecursiveCTE
+final readonly class RecursiveCTE
 {
     public function __construct(
-        public readonly string $name,
-        public readonly QueryState $initial,
-        public readonly QueryState $recursive,
+        public string     $name,
+        public QueryState $initial,
+        public QueryState $recursive,
     ) {}
 
-    public function register(CTEBuilder $builder) : CTEBuilder
+    public function register(CTEBuilder $cteBuilder) : CTEBuilder
     {
-        return $builder->withRecursive(name: $this->name, initialQuery: $this->initial, recursiveQuery: $this->recursive);
+        return $cteBuilder->withRecursive(name: $this->name, initialQuery: $this->initial, recursiveQuery: $this->recursive);
     }
 }

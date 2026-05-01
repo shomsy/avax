@@ -10,13 +10,13 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes\JoinNo
 use Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes\QueryNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\IR\Nodes\WhereNode;
 
-final class IRBuilder
+final readonly class IRBuilder
 {
-    private QueryNode $query;
+    private QueryNode $queryNode;
 
     public function __construct(QueryNode|null $query = null)
     {
-        $this->query = $query ?? new QueryNode();
+        $this->queryNode = $query ?? new QueryNode();
     }
 
     public static function query() : self
@@ -26,14 +26,14 @@ final class IRBuilder
 
     public function select(string ...$columns) : self
     {
-        $this->query->select(...$columns);
+        $this->queryNode->select(...$columns);
 
         return $this;
     }
 
     public function from(string $table, string|null $alias = null) : self
     {
-        $this->query->from(table: $table, alias: $alias);
+        $this->queryNode->from(table: $table, alias: $alias);
 
         return $this;
     }
@@ -41,21 +41,21 @@ final class IRBuilder
     public function join(string $table, string|null $type = null, WhereNode|null $on = null, string|null $alias = null) : self
     {
         $type ??= 'inner';
-        $this->query->join(join: new JoinNode(type: $type, table: $table, alias: $alias, on: $on));
+        $this->queryNode->join(join: new JoinNode(type: $type, table: $table, alias: $alias, on: $on));
 
         return $this;
     }
 
     public function where(
         string $column,
-        ComparisonOperator $operator,
+        ComparisonOperator $comparisonOperator,
         mixed  $value = null,
         string $boolean = 'AND',
     ) : self
     {
-        $this->query->where(where: new WhereNode(
+        $this->queryNode->where(where: new WhereNode(
                                        column  : $column,
-                                       operator: $operator,
+                                       operator: $comparisonOperator,
                                        value   : $value,
                                        boolean : $boolean,
                                    ));
@@ -65,48 +65,48 @@ final class IRBuilder
 
     public function groupBy(string ...$columns) : self
     {
-        $this->query->groupBy(...$columns);
+        $this->queryNode->groupBy(...$columns);
 
         return $this;
     }
 
     public function orderBy(string $column, string $direction = 'ASC') : self
     {
-        $this->query->orderBy(column: $column, direction: $direction);
+        $this->queryNode->orderBy(column: $column, direction: $direction);
 
         return $this;
     }
 
     public function limit(int $limit) : self
     {
-        $this->query->limit(limit: $limit);
+        $this->queryNode->limit(limit: $limit);
 
         return $this;
     }
 
     public function offset(int $offset) : self
     {
-        $this->query->offset(offset: $offset);
+        $this->queryNode->offset(offset: $offset);
 
         return $this;
     }
 
     public function distinct() : self
     {
-        $this->query->distinct();
+        $this->queryNode->distinct();
 
         return $this;
     }
 
-    public function withCTE(CTENode $cte) : self
+    public function withCTE(CTENode $cteNode) : self
     {
-        $this->query->withCTE(cte: $cte);
+        $this->queryNode->withCTE(cte: $cteNode);
 
         return $this;
     }
 
     public function build() : QueryNode
     {
-        return $this->query;
+        return $this->queryNode;
     }
 }

@@ -10,10 +10,10 @@ final class CTEBuilder
 {
     private array $ctes = [];
 
-    public function with(string $name, QueryState $initialQuery) : self
+    public function with(string $name, QueryState $queryState) : self
     {
         $this->ctes[$name] = [
-            'query' => $initialQuery,
+            'query' => $queryState,
             'type'  => 'simple',
         ];
 
@@ -31,32 +31,29 @@ final class CTEBuilder
         return $this;
     }
 
-    public function getSQL(string $dialect) : string
+    public function getSQL() : string
     {
         $definitions = [];
         $isRecursive = false;
-
         foreach ($this->ctes as $name => $cte) {
             if ($cte['type'] === 'recursive') {
-                $definitions[] = "{$name} AS ({$this->buildCTE(query: $cte['initial'])} UNION ALL {$this->buildCTE(query: $cte['recursive'])})";
+                $definitions[] = sprintf('%s AS (%s UNION ALL %s)', $name, $this->buildCTE(query: $cte['initial']), $this->buildCTE(query: $cte['recursive']));
                 $isRecursive   = true;
             } else {
-                $definitions[] = "{$name} AS ({$this->buildCTE(query: $cte['query'])})";
+                $definitions[] = sprintf('%s AS (%s)', $name, $this->buildCTE(query: $cte['query']));
             }
         }
-
         if ($definitions === []) {
             return '';
         }
-
         return 'WITH ' . ($isRecursive ? 'RECURSIVE ' : '') . implode(separator: ', ', array: $definitions);
     }
 
-    private function buildCTE(QueryState $query) : string
+    private function buildCTE(QueryState $queryState) : string
     {
-        $columns = implode(separator: ', ', array: $query->columns ?: ['*']);
+        $columns = implode(separator: ', ', array: $queryState->columns !== [] ? $queryState->columns : ['*']);
 
-        return "SELECT {$columns} FROM {$query->from}";
+        return sprintf('SELECT %s FROM %s', $columns, $queryState->from);
     }
 
     public function getCTEs() : array

@@ -33,11 +33,11 @@ interface GrammarInterface
      * Compile a valid data retrieval instruction including projections,
      * relationships, filters, aggregations, and ordering.
      *
-     * @param QueryState $state The immutable container holding the current query metadata.
+     * @param QueryState $queryState The immutable container holding the current query metadata.
      *
      * @return string THE compiled dialect-specific SQL SELECT string.
      */
-    public function compileSelect(QueryState $state) : string;
+    public function compileSelect(QueryState $queryState) : string;
 
     /**
      * Coordinate the technical transformation of QueryState into an INSERT SQL statement.
@@ -46,11 +46,11 @@ interface GrammarInterface
      * Compile a valid data creation instruction based on the provided mutation
      * values within the state.
      *
-     * @param QueryState $state The technical state containing the mutation payload.
+     * @param QueryState $queryState The technical state containing the mutation payload.
      *
      * @return string THE compiled dialect-specific SQL INSERT string.
      */
-    public function compileInsert(QueryState $state) : string;
+    public function compileInsert(QueryState $queryState) : string;
 
     /**
      * Coordinate the technical transformation of QueryState into an UPDATE SQL statement.
@@ -59,11 +59,11 @@ interface GrammarInterface
      * Compile a data modification instruction that applies specific value
      * changes to records matching the state's filtering criteria.
      *
-     * @param QueryState $state The technical state containing both mutation values and filters.
+     * @param QueryState $queryState The technical state containing both mutation values and filters.
      *
      * @return string THE compiled dialect-specific SQL UPDATE string.
      */
-    public function compileUpdate(QueryState $state) : string;
+    public function compileUpdate(QueryState $queryState) : string;
 
     /**
      * Coordinate the technical transformation of QueryState into a DELETE SQL statement.
@@ -72,11 +72,11 @@ interface GrammarInterface
      * Compile a data removal instruction targeting records that satisfy
      * the state's filtering criteria.
      *
-     * @param QueryState $state The technical state defining the deletion boundary.
+     * @param QueryState $queryState The technical state defining the deletion boundary.
      *
      * @return string THE compiled dialect-specific SQL DELETE string.
      */
-    public function compileDelete(QueryState $state) : string;
+    public function compileDelete(QueryState $queryState) : string;
 
     /**
      * Coordinate the technical transformation of QueryState into an UPSERT SQL statement.
@@ -85,13 +85,13 @@ interface GrammarInterface
      * Provide a dialect-safe mechanism for "Insert or Update on Conflict"
      * operations, resolving row collisions based on specified unique columns.
      *
-     * @param QueryState $state    The technical state containing the mutation payload.
+     * @param QueryState $queryState The technical state containing the mutation payload.
      * @param array      $uniqueBy The collection of technical column identifiers used for conflict detection.
      * @param array      $update   The collection of technical column identifiers to be updated upon conflict.
      *
      * @return string THE compiled dialect-specific SQL UPSERT/ON DUPLICATE KEY string.
      */
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string;
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string;
 
     /**
      * Coordinate the technical generation of a TRUNCATE SQL statement.

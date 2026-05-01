@@ -9,8 +9,8 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final class WindowBuilder
 {
     public function __construct(
-        private GrammarInterface $grammar,
-        private string      $function,
+        private readonly GrammarInterface $grammar,
+        private readonly string           $function,
         private array|null  $partitionBy = null,
         private string|null $orderBy = null,
         private string      $frame = 'ROWS UNBOUNDED PRECEDING',
@@ -37,12 +37,12 @@ final class WindowBuilder
 
     public static function lag(GrammarInterface $grammar, string $column) : self
     {
-        return new self(grammar: $grammar, function: "LAG({$column})");
+        return new self(grammar: $grammar, function: sprintf('LAG(%s)', $column));
     }
 
     public static function lead(GrammarInterface $grammar, string $column) : self
     {
-        return new self(grammar: $grammar, function: "LEAD({$column})");
+        return new self(grammar: $grammar, function: sprintf('LEAD(%s)', $column));
     }
 
     public function partitionBy(string ...$columns) : self
@@ -54,7 +54,7 @@ final class WindowBuilder
 
     public function orderBy(string $column, string $direction = 'ASC') : self
     {
-        $this->orderBy = "{$column} {$direction}";
+        $this->orderBy = sprintf('%s %s', $column, $direction);
 
         return $this;
     }
@@ -75,10 +75,10 @@ final class WindowBuilder
 
     public function rowsBetween(int $start, int $end) : self
     {
-        $startExpr = $start < 0 ? "{$start} PRECEDING" : "{$start} FOLLOWING";
-        $endExpr = $end < 0 ? "{$end} PRECEDING" : "{$end} FOLLOWING";
+        $startExpr = $start < 0 ? $start . ' PRECEDING' : $start . ' FOLLOWING';
+        $endExpr   = $end < 0 ? $end . ' PRECEDING' : $end . ' FOLLOWING';
 
-        $this->frame = "ROWS BETWEEN {$startExpr} AND {$endExpr}";
+        $this->frame = sprintf('ROWS BETWEEN %s AND %s', $startExpr, $endExpr);
 
         return $this;
     }
@@ -88,10 +88,10 @@ final class WindowBuilder
         $sql   = $this->function . ' OVER';
         $parts = [];
 
-        if (! empty($this->partitionBy) || $this->orderBy !== '' || $this->frame !== '') {
-            if (! empty($this->partitionBy)) {
+        if ($this->partitionBy !== null && $this->partitionBy !== [] || $this->orderBy !== '' || $this->frame !== '') {
+            if ($this->partitionBy !== null && $this->partitionBy !== []) {
                 $partition = implode(separator: ', ', array: array_map(
-                    callback: fn ($col) => $this->grammar->wrap(value: $col),
+                    callback: fn ($col) : string => $this->grammar->wrap(value: $col),
                     array   : $this->partitionBy,
                 ));
                 $parts[]   = 'PARTITION BY ' . $partition;

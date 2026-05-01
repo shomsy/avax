@@ -6,13 +6,13 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Advanced\
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
 
-final class UpsertBuilder
+final readonly class UpsertBuilder
 {
     public function __construct(
-        private readonly GrammarInterface $grammar,
-        private readonly string     $table,
-        private readonly array      $columns,
-        private readonly OnConflict $conflict,
+        private GrammarInterface $grammar,
+        private string           $table,
+        private array            $columns,
+        private OnConflict       $onConflict,
     ) {}
 
     /**
@@ -35,30 +35,30 @@ final class UpsertBuilder
             . ' (' . $this->wrapList(values: $this->columns) . ') VALUES '
             . implode(separator: ', ', array: $groups);
 
-        $conflictColumns = $this->wrapList(values: $this->conflict->columns);
+        $conflictColumns = $this->wrapList(values: $this->onConflict->columns);
 
-        if ($this->conflict->doNothing) {
-            $sql .= " ON CONFLICT ({$conflictColumns}) DO NOTHING";
+        if ($this->onConflict->doNothing) {
+            $sql .= sprintf(' ON CONFLICT (%s) DO NOTHING', $conflictColumns);
 
             return ['sql' => $sql, 'bindings' => $bindings];
         }
 
-        $updateColumns = $this->conflict->updateColumns === []
-            ? array_values(array: array_diff($this->columns, $this->conflict->columns))
-            : $this->conflict->updateColumns;
+        $updateColumns = $this->onConflict->updateColumns === []
+            ? array_values(array: array_diff($this->columns, $this->onConflict->columns))
+            : $this->onConflict->updateColumns;
 
         $assignments = array_map(
-            callback: fn ($column) => $this->grammar->wrap(value: $column) . ' = EXCLUDED.' . $this->grammar->wrap(value: $column),
+            callback: fn ($column) : string => $this->grammar->wrap(value: $column) . ' = EXCLUDED.' . $this->grammar->wrap(value: $column),
             array   : $updateColumns,
         );
 
-        $sql .= " ON CONFLICT ({$conflictColumns}) DO UPDATE SET " . implode(separator: ', ', array: $assignments);
+        $sql .= sprintf(' ON CONFLICT (%s) DO UPDATE SET ', $conflictColumns) . implode(separator: ', ', array: $assignments);
 
         return ['sql' => $sql, 'bindings' => $bindings];
     }
 
     private function wrapList(array $values) : string
     {
-        return implode(separator: ', ', array: array_map(callback: fn ($value) => $this->grammar->wrap(value: $value), array: $values));
+        return implode(separator: ', ', array: array_map(callback: fn ($value) : string => $this->grammar->wrap(value: $value), array: $values));
     }
 }

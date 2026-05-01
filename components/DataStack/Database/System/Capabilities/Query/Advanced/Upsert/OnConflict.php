@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Advanced\Upsert;
 
-final class OnConflict
+final readonly class OnConflict
 {
     public function __construct(
-        public readonly array $columns,
-        public readonly array $updateColumns = [],
-        public readonly bool $doNothing = false,
+        public array $columns,
+        public array $updateColumns = [],
+        public bool  $doNothing = false,
     ) {}
 
     public static function columns(array $columns, array $updateColumns = []) : self

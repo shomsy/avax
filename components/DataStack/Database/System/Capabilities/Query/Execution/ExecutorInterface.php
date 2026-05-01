@@ -20,7 +20,7 @@ interface ExecutorInterface
      *
      * @param string              $sql      Pre-compiled SQL retrieval string.
      * @param array               $bindings Secure tokens for parameterization.
-     * @param ExecutionScope|null $scope    Optional context for correlation.
+     * @param ExecutionScope|null $executionScope Optional context for correlation.
      *
      * @return array<array-key, mixed>
      *
@@ -29,7 +29,7 @@ interface ExecutorInterface
     public function query(
         string $sql,
         array $bindings = [],
-        ExecutionScope $scope = null,
+        ?ExecutionScope $executionScope = null,
     ): array;
 
     /**
@@ -37,14 +37,14 @@ interface ExecutorInterface
      *
      * @param string              $sql      Pre-compiled SQL mutation string.
      * @param array               $bindings Secure tokens for parameterization.
-     * @param ExecutionScope|null $scope    Optional context for correlation.
+     * @param ExecutionScope|null $executionScope Optional context for correlation.
      *
      * @throws Throwable If technical modification fails.
      */
     public function execute(
         string $sql,
         array $bindings = [],
-        ExecutionScope $scope = null,
+        ?ExecutionScope $executionScope = null,
     ): ExecutionResult;
 
     /**

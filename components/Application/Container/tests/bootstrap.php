@@ -6,19 +6,17 @@ namespace Psr\Container {
 
     use Throwable;
 
-    interface ContainerInterface
-    {
-        public function get(string $id): mixed;
+    if (! interface_exists('Psr\\Container\\ContainerInterface')) {
+        interface ContainerInterface
+        {
+            public function get(string $id) : mixed;
 
-        public function has(string $id): bool;
-    }
+            public function has(string $id) : bool;
+        }
 
-    interface ContainerExceptionInterface extends Throwable
-    {
-    }
+        interface ContainerExceptionInterface extends Throwable {}
 
-    interface NotFoundExceptionInterface extends ContainerExceptionInterface
-    {
+        interface NotFoundExceptionInterface extends ContainerExceptionInterface {}
     }
 }
 
@@ -28,23 +26,23 @@ namespace {
     use Avax\Components\Application\Container\DI\Container;
     use Avax\Components\Application\Container\DI\Flows\CreateContainer\CreateContainer;
 
-    $root             = dirname(path: __DIR__) . '/DI';
-    $composerAutoload = dirname(path: __DIR__, levels: 2) . '/vendor/autoload.php';
-    if (is_file(filename: $composerAutoload)) {
+    $root             = dirname(__DIR__) . '/DI';
+    $composerAutoload = dirname(__DIR__, 2) . '/vendor/autoload.php';
+    if (is_file($composerAutoload)) {
         require_once $composerAutoload;
     }
 
     spl_autoload_register(
         callback: static function (string $class) use ($root): void {
             $prefix = 'Avax\\Container\\DI\\';
-            if (! str_starts_with(haystack: $class, needle: $prefix)) {
+            if (! str_starts_with($class, $prefix)) {
                 return;
             }
 
-            $relative = substr(string: $class, offset: strlen(string: $prefix));
-            $path     = $root . '/' . str_replace(search: '\\', replace: '/', subject: $relative) . '.php';
+            $relative = substr($class, strlen($prefix));
+            $path     = $root . '/' . str_replace('\\', '/', $relative) . '.php';
 
-            if (is_file(filename: $path)) {
+            if (is_file($path)) {
                 require_once $path;
             }
         },
@@ -53,7 +51,7 @@ namespace {
     function assertTrue(bool $condition, string $message): void
     {
         if (! $condition) {
-            throw new RuntimeException(message: $message);
+            throw new RuntimeException($message);
         }
     }
 
@@ -61,7 +59,7 @@ namespace {
     {
         if ($expected !== $actual) {
             throw new RuntimeException(
-                message: $message . ' Expected ' . var_export(value: $expected, return: true) . ' but got ' . var_export(value: $actual, return: true) . '.',
+                $message . ' Expected ' . var_export($expected, true) . ' but got ' . var_export($actual, true) . '.',
             );
         }
     }
@@ -69,14 +67,14 @@ namespace {
     function assertNotSame(mixed $expected, mixed $actual, string $message): void
     {
         if ($expected === $actual) {
-            throw new RuntimeException(message: $message);
+            throw new RuntimeException($message);
         }
     }
 
     function assertInstanceOf(string $expectedClass, mixed $value, string $message): void
     {
         if (! $value instanceof $expectedClass) {
-            throw new RuntimeException(message: $message . ' Expected instance of ' . $expectedClass . '.');
+            throw new RuntimeException($message . ' Expected instance of ' . $expectedClass . '.');
         }
     }
 
@@ -90,18 +88,20 @@ namespace {
             }
 
             throw new RuntimeException(
-                message : $message . ' Expected ' . $expectedClass . ' but got ' . $throwable::class . '.',
-                code    : 0,
-                previous: $throwable,
+                $message . ' Expected ' . $expectedClass . ' but got ' . $throwable::class . '.',
+                0,
+                $throwable,
             );
         }
 
-        throw new RuntimeException(message: $message . ' Expected ' . $expectedClass . ' but nothing was thrown.');
+        throw new RuntimeException(
+            $message . ' Expected ' . $expectedClass . ' but nothing was thrown.',
+        );
     }
 
     function makeTestContainer(
-        CreateContainerConfig $config = null,
+        ?CreateContainerConfig $config = null,
     ): Container {
-        return new CreateContainer()->create(config: $config);
+        return new CreateContainer()->create($config);
     }
 }

@@ -29,8 +29,8 @@ final readonly class Diagnostics
 
     public function explainStepUpRequired(
         string $action,
-        bool|null = null,
-        int|null = null,
+        bool|null $phishingResistantRequired = null,
+        int|null  $freshAfterSeconds = null,
     ) : AuthIssueExplanation
     {
         $phishingResistantRequired ??= false;

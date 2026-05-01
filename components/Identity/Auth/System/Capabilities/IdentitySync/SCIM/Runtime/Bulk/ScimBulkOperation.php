@@ -15,7 +15,7 @@ final readonly class ScimBulkOperation
     public function __construct(
         public string      $method,
         public string      $path,
-        array|null = null,
+        array $body = [],
         public string|null $bulkId = null,
     )
     {

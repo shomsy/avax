@@ -40,9 +40,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         private TokenRevocationStoreInterface|null $revocationStore = null,
         #[SensitiveParameter]
         private RefreshTokenStoreInterface|null    $refreshTokenStore = null,
-        int|null = null,
-        int|null = null,
-        string|null = null,
+        int|null    $tokenExpiry = null,
+        int|null    $refreshTokenExpiry = null,
+        string|null $issuer = null,
         private int                                $leeway = 60,
     )
     {
@@ -169,7 +169,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         string                $clientId,
         array                 $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
-        string|null = null,
+        string|null $audience = null,
     ) : IssuedToken
     {
         $normalizedSubject = trim(string: $subject);
@@ -307,9 +307,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      */
     public function issueRefreshToken(
         User                  $user,
-        DateTimeImmutable|null = null,
+        DateTimeImmutable|null $issuedAt = null,
         bool                  $phishingResistant = false,
-        string|null = null,
+        string|null            $audience = null,
         array                 $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedRefreshToken|null
@@ -337,12 +337,12 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      */
     public function issue(
         User                  $user,
-        DateTimeImmutable|null = null,
+        DateTimeImmutable|null $issuedAt = null,
         bool                  $phishingResistant = false,
-        string|null = null,
+        string|null            $audience = null,
         array                 $scopes = [],
         #[SensitiveParameter]
-        string|null = null,
+        string|null            $issuer = null,
         OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedToken
     {

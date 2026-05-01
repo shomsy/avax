@@ -23,7 +23,7 @@ final readonly class ScimDirectory
         public array                  $groupRoleMap,
         public DateTimeImmutable      $createdAt,
         public DateTimeImmutable|null $rotatedAt = null,
-        ScimDirectoryHealth|null = null,
+        ScimDirectoryHealth|null $health = null,
         public DateTimeImmutable|null $healthCheckedAt = null,
         public string|null            $outageReason = null,
         public DateTimeImmutable|null $outageStartedAt = null,

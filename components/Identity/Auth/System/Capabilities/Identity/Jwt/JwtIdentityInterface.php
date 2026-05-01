@@ -24,11 +24,11 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      */
     public function issue(
         User                  $user,
-        DateTimeImmutable|null = null,
+        DateTimeImmutable|null $issuedAt = null,
         bool                  $phishingResistant = false,
-        string|null = null,
+        string|null            $audience = null,
         array                 $scopes = [],
-        string|null = null,
+        string|null            $issuer = null,
         OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedToken;
 
@@ -42,7 +42,7 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         string                $clientId,
         array                 $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
-        string|null = null,
+        string|null $audience = null,
     ) : IssuedToken;
 
     public function resolveWorkloadToken(
@@ -56,9 +56,9 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      */
     public function issueRefreshToken(
         User                  $user,
-        DateTimeImmutable|null = null,
+        DateTimeImmutable|null $issuedAt = null,
         bool                  $phishingResistant = false,
-        string|null = null,
+        string|null            $audience = null,
         array                 $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedRefreshToken|null;

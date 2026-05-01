@@ -23,7 +23,7 @@ final readonly class ProvisionScimUserData
         #[SensitiveParameter]
         public string           $email,
         public string           $username,
-        array|null = null,
+        array $groups = [],
         public ScimAccountState $state = ScimAccountState::ACTIVE,
     )
     {

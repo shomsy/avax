@@ -62,7 +62,7 @@ final readonly class Identity implements IdentityInterface
         #[SensitiveParameter]
         SessionIdentityInterface|null $sessionIdentity = null,
         #[SensitiveParameter]
-        JwtIdentityInterface|null = null,
+        JwtIdentityInterface|null $jwtIdentity = null,
     ) : self
     {
         return new self(

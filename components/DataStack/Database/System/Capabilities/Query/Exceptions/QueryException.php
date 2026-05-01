@@ -34,7 +34,7 @@ final class QueryException extends DatabaseException
         private readonly string $sql,
         #[SensitiveParameter]
         private readonly array $rawBindings = [],
-        Throwable $previous = null,
+        ?Throwable $previous = null,
     ) {
         $this->redactedBindings = $this->redactBindings(bindings: $this->rawBindings);
         parent::__construct(message: $message, code: 0, previous: $previous);

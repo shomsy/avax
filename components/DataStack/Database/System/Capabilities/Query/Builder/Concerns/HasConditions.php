@@ -164,7 +164,7 @@ trait HasConditions
      *                                    membership
      *                                    filter.
      */
-    public function whereIn(string $column, array $values, string $boolean = null, bool $not = false): self
+    public function whereIn(string $column, array $values, ?string $boolean = null, bool $not = false) : self
     {
         $boolean ??= 'AND';
         $operator = $not ? 'NOT IN' : 'IN';
@@ -204,7 +204,7 @@ trait HasConditions
      *                                    range
      *                                    filter.
      */
-    public function whereBetween(string $column, array $values, string $boolean = null, bool $not = false): self
+    public function whereBetween(string $column, array $values, ?string $boolean = null, bool $not = false) : self
     {
         $boolean ??= 'AND';
         if (count(value: $values) !== 2) {

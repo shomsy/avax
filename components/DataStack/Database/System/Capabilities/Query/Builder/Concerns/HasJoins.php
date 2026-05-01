@@ -40,8 +40,8 @@ trait HasJoins
     public function join(
         string $table,
         string|Closure $first,
-        string         $operator = null,
-        string         $second = null,
+        ?string $operator = null,
+        ?string $second = null,
     ): self {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'inner');
     }
@@ -73,8 +73,8 @@ trait HasJoins
     protected function addJoin(
         string $table,
         string|Closure $first,
-        string         $operator = null,
-        string         $second = null,
+        ?string $operator = null,
+        ?string $second = null,
         string $type = 'inner',
     ): self {
         $clone = clone $this;
@@ -125,8 +125,8 @@ trait HasJoins
     public function leftJoin(
         string $table,
         string|Closure $first,
-        string         $operator = null,
-        string $second = null,
+        ?string $operator = null,
+        ?string $second = null,
     ): self {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'left');
     }
@@ -155,8 +155,8 @@ trait HasJoins
     public function rightJoin(
         string $table,
         string|Closure $first,
-        string         $operator = null,
-        string $second = null,
+        ?string $operator = null,
+        ?string $second = null,
     ): self {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'right');
     }

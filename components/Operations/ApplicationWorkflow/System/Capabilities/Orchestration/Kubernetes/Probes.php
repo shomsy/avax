@@ -62,7 +62,7 @@ final readonly class GracefulStop
     }
 }
 
-final readonly class ReadinessProbe
+final class ReadinessProbe
 {
     private static bool $ready = false;
 
@@ -82,7 +82,7 @@ final readonly class ReadinessProbe
     }
 }
 
-final readonly class LivenessProbe
+final class LivenessProbe
 {
     private static bool $alive = true;
 

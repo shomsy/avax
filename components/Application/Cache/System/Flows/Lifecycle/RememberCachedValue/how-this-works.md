@@ -90,14 +90,14 @@ final readonly class RememberCachedValue
 ```php
 // Simple usage
 $user = $cache->remember(
-    key: 'user:123',
+    cacheKey 'user:123',
     ttl: 3600,
     loader: fn() => $userRepository->find(123)
 );
 
 // With default for loader failure
 $user = $cache->remember(
-    key: 'user:123',
+    cacheKey 'user:123',
     ttl: 3600,
     loader: fn() => $userRepository->find(123),
     default: null

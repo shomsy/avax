@@ -27,7 +27,7 @@ final class TaggedCache
 
     public function get(string $key) : mixed
     {
-        return $this->cacheStore->get($this->scopedKey(key: $key));
+        return $this->cacheStore->get($this->scopedKey(cacheKey: $key));
     }
 
     public function set(string $key, mixed $value, int $ttl = 0) : bool
@@ -38,7 +38,7 @@ final class TaggedCache
             $this->cacheStore->getRedis()->sAdd($this->tagKey, $key);
         }
 
-        return $this->cacheStore->set($this->scopedKey(key: $key), $value, $ttl);
+        return $this->cacheStore->set($this->scopedKey(cacheKey: $key), $value, $ttl);
     }
 
     private function scopedKey(string $key) : string
@@ -59,7 +59,7 @@ final class TaggedCache
         }
 
         foreach ($keys as $key) {
-            $this->cacheStore->forget($this->scopedKey(key: $key));
+            $this->cacheStore->forget($this->scopedKey(cacheKey: $key));
         }
 
         $this->trackedKeys = [];

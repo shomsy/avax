@@ -60,13 +60,13 @@ final readonly class CreateRequestFromGlobals
 
             return new Request(
                 method: $server['REQUEST_METHOD'] ?? 'GET',
+                requestUri: $requestUri,
+                requestHeaders: $requestHeaders,
+                requestBody: $requestBody,
+                uploadedFiles: $uploadedFiles,
                 serverParams: $server,
                 cookieParams: $_COOKIE,
                 queryParams: $query,
-                uri: $requestUri,
-                headers: $requestHeaders,
-                body: $requestBody,
-                files: $uploadedFiles,
             );
         } catch (Exception $exception) {
             throw new GlobalsRequestCreationFailed('Failed to create request from globals: ' . $exception->getMessage(), 0, $exception);

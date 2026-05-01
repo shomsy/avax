@@ -26,7 +26,7 @@ final readonly class WarmCache
         $count = 0;
 
         foreach ($entries as $key => $loader) {
-            $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
+            $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(cacheKey $key)
             $value = is_callable($loader) ? $loader() : $loader;
 
             $expiresAt = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock)

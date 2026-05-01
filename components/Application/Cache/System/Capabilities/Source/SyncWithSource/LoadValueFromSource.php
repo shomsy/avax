@@ -14,7 +14,7 @@ final readonly class LoadValueFromSource
 
     public function loadOrFail(CacheKey $cacheKey) : mixed
     {
-        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
+        $cacheSourceKey = CacheSourceKey::create(cacheKey: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
         if (! $this->cacheSource->exists($cacheSourceKey)) {
             throw new CacheSourceFailed(
@@ -28,7 +28,7 @@ final readonly class LoadValueFromSource
 
     public function load(CacheKey $cacheKey) : mixed
     {
-        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
+        $cacheSourceKey = CacheSourceKey::create(cacheKey: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
         return $this->cacheSource->load($cacheSourceKey);
     }

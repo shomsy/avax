@@ -31,7 +31,7 @@ final readonly class RememberCachedValue
         $readCachedValue = $this->readCachedValue ?? new ReadCachedValue(cacheStore: $this->cacheStore, clock: $this->clock);
         $storeCachedValue = $this->storeCachedValue ?? new StoreCachedValue(cacheStore: $this->cacheStore, clock: $this->clock);
 
-        $value = $readCachedValue->read(default: null, key: $cacheKey);
+        $value = $readCachedValue->read(default: null, cacheKey: $cacheKey);
 
         if ($value !== null) {
             return $value;
@@ -43,7 +43,7 @@ final readonly class RememberCachedValue
             return $default;
         }
 
-        $storeCachedValue->store(value: $value, ttl: $ttl, key: $cacheKey);
+        $storeCachedValue->store(value: $value, ttl: $ttl, cacheKey: $cacheKey);
 
         return $value;
     }

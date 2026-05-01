@@ -22,6 +22,10 @@ final readonly class Access implements AccessInterface
 
     public function allows(string $permission, mixed $resource = null): bool
     {
+        if ($this->isElevated()) {
+            return true;
+        }
+
         return $this->authorizationEngine->check(permission: $permission, resource: $resource);
     }
 
@@ -49,6 +53,6 @@ final readonly class Access implements AccessInterface
 
     public function isElevated(): bool
     {
-        return false; // Implementation
+        return BeginAdminElevation::active();
     }
 }

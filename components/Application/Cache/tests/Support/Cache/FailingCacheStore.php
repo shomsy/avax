@@ -35,7 +35,7 @@ final class FailingCacheStore implements CacheStore
     {
         $this->maybeFail();
 
-        return new CacheStoreRecordWasMissing(key: $cacheKey);
+        return new CacheStoreRecordWasMissing(cacheKey $cacheKey)
     }
 
     /**

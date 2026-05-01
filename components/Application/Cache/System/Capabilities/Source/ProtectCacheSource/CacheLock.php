@@ -17,7 +17,7 @@ final readonly class CacheLock
 
     public function acquire(string $key, int $ttlSeconds = 30): bool
     {
-        return $this->cacheLockStore->acquire(key: $key, ttlSeconds: $ttlSeconds, owner: $this->owner);
+        return $this->cacheLockStore->acquire(cacheKey $key, ttlSeconds: $ttlSeconds, owner: $this->owner)
     }
 
     public function release(string $key): void

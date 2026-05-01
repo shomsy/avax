@@ -45,7 +45,7 @@ final readonly class StoreCachedValue
                 lifecycle: $lifecycle,
             );
 
-            $this->cacheStore->write(key: $cacheKey, record: $storedCacheRecord);
+            $this->cacheStore->write(cacheKey $cacheKey, record: $storedCacheRecord)
 
             $this->recordLatency(startTime: $startTime);
             $this->cacheMetrics?->recordWrite();

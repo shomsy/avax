@@ -35,14 +35,14 @@ final readonly class RefreshCachedValue
         int|DateInterval|null $ttl = null,
     ) : mixed
     {
-        $result = $this->cacheStore->read(clock: $this->clock, key: $cacheKey);
+        $result = $this->cacheStore->read(clock: $this->clock, cacheKey: $cacheKey);
 
         if ($result instanceof CacheStoreRecordWasMissing) {
-            return $this->refresh(loader: $loader, ttl: $ttl, key: $cacheKey);
+            return $this->refresh(loader: $loader, ttl: $ttl, cacheKey: $cacheKey);
         }
 
         if ($this->shouldRefreshCachedValue->shouldRefresh(lifecycle: $result->record->lifecycle)) {
-            return $this->refresh(loader: $loader, ttl: $ttl, key: $cacheKey);
+            return $this->refresh(loader: $loader, ttl: $ttl, cacheKey: $cacheKey);
         }
 
         return $result->value();

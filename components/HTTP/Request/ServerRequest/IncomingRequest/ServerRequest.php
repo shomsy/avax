@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use GuzzleHttp\Psr7\UploadedFile;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
-use RuntimeException;
 
 /**
  * Server-side HTTP request implementation.
@@ -58,7 +58,11 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     {
         $normalized = [];
         foreach ($headers as $name => $value) {
-            $normalized[$name] = is_array($value) ? $value : [$value];
+            $values                                         = is_array(value: $value) ? $value : [$value];
+            $normalized[strtolower(string: (string) $name)] = array_map(
+                callback: static fn (mixed $headerValue) : string => (string) $headerValue,
+                array   : array_values(array: $values),
+            );
         }
 
         return $normalized;
@@ -188,7 +192,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
             parsedBody   : $_POST,
             method       : $_SERVER['REQUEST_METHOD'] ?? 'GET',
             headers      : function_exists('getallheaders') ? getallheaders() : [],
-            body         : Utils::streamFor(file_get_contents('php://input')),
+            stream       : Utils::streamFor(file_get_contents('php://input')),
         );
     }
 
@@ -204,86 +208,24 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     private static function createUploadedFile(array $file) : UploadedFileInterface
     {
-        if (! isset($file['tmp_name'])) {
-            return new readonly class ($file['tmp_name'] ?? '', (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
-                public function __construct(
-                    private int $size,
-                    private int $error,
-                    private string $clientFilename,
-                    private string $clientMediaType,
-                ) {}
+        $tmpName         = $file['tmp_name'] ?? '';
+        $streamOrFile    = is_string(value: $tmpName) && $tmpName !== ''
+            ? $tmpName
+            : Utils::streamFor('');
+        $clientFilename  = isset($file['name']) && is_string(value: $file['name']) && $file['name'] !== ''
+            ? $file['name']
+            : null;
+        $clientMediaType = isset($file['type']) && is_string(value: $file['type']) && $file['type'] !== ''
+            ? $file['type']
+            : null;
 
-                public function getStream() : StreamInterface
-                {
-                    throw new RuntimeException('Not implemented');
-                }
-
-                public function moveTo($targetPath) : void
-                {
-                    throw new RuntimeException('Not implemented');
-                }
-
-                public function getSize() : ?int
-                {
-                    return $this->size > 0 ? $this->size : null;
-                }
-
-                public function getError() : int
-                {
-                    return $this->error;
-                }
-
-                public function getClientFilename() : ?string
-                {
-                    return $this->clientFilename !== '' ? $this->clientFilename : null;
-                }
-
-                public function getClientMediaType() : ?string
-                {
-                    return $this->clientMediaType !== '' ? $this->clientMediaType : null;
-                }
-            };
-        }
-
-        return new readonly class ($file['tmp_name'], (int) ($file['size'] ?? 0), (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE), $file['name'] ?? '', $file['type'] ?? '') implements UploadedFileInterface {
-            public function __construct(
-                private string $tmpName,
-                private int $size,
-                private int $error,
-                private string $clientFilename,
-                private string $clientMediaType,
-            ) {}
-
-            public function getStream() : StreamInterface
-            {
-                throw new RuntimeException('Not implemented');
-            }
-
-            public function moveTo($targetPath) : void
-            {
-                move_uploaded_file($this->tmpName, $targetPath);
-            }
-
-            public function getSize() : ?int
-            {
-                return $this->size > 0 ? $this->size : null;
-            }
-
-            public function getError() : int
-            {
-                return $this->error;
-            }
-
-            public function getClientFilename() : ?string
-            {
-                return $this->clientFilename !== '' ? $this->clientFilename : null;
-            }
-
-            public function getClientMediaType() : ?string
-            {
-                return $this->clientMediaType !== '' ? $this->clientMediaType : null;
-            }
-        };
+        return new UploadedFile(
+            $streamOrFile,
+            (int) ($file['size'] ?? 0),
+            (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE),
+            $clientFilename,
+            $clientMediaType,
+        );
     }
 
     // PSR-7 RequestInterface methods
@@ -308,7 +250,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function hasHeader($name) : bool
     {
-        return isset($this->headers[$name]) || isset($this->headers[strtolower($name)]);
+        return isset($this->headers[strtolower(string: (string) $name)]);
     }
 
     public function getHeaderLine($name) : string
@@ -318,13 +260,13 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     public function getHeader($name) : array
     {
-        return $this->headers[$name] ?? $this->headers[strtolower($name)] ?? [];
+        return $this->headers[strtolower(string: (string) $name)] ?? [];
     }
 
     public function withHeader($name, $value) : self
     {
         $new = clone $this;
-        $new->headers = [$name => is_array($value) ? $value : [$value]];
+        $new->headers[strtolower(string: (string) $name)] = is_array(value: $value) ? $value : [$value];
 
         return $new;
     }
@@ -333,7 +275,10 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     {
         $new      = clone $this;
         $existing = $this->getHeader($name);
-        $new->headers[$name] = array_merge($existing, is_array($value) ? $value : [$value]);
+        $new->headers[strtolower(string: (string) $name)] = array_merge(
+            $existing,
+            is_array(value: $value) ? $value : [$value],
+        );
 
         return $new;
     }
@@ -341,7 +286,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     public function withoutHeader($name) : self
     {
         $new = clone $this;
-        unset($new->headers[$name], $new->headers[strtolower($name)]);
+        unset($new->headers[strtolower(string: (string) $name)]);
 
         return $new;
     }

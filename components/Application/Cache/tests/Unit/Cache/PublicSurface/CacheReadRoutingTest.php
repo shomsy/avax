@@ -36,7 +36,7 @@ final class CacheReadRoutingTest extends TestCase
 
     public function test_read_method_exists(): void
     {
-        $this->assertTrue(condition: method_exists(Cache::class, 'read'));
+        $this->assertTrue(method_exists(Cache::class, 'read'));
     }
 
     /**
@@ -44,18 +44,18 @@ final class CacheReadRoutingTest extends TestCase
      */
     public function test_read_routes_string_to_runtime_cache(): void
     {
-        $this->cacheContract->set(key: 'test_key', value: 'test_value');
+        $this->cacheContract->set('test_key', 'test_value');
 
-        $result = Cache::read(target: 'test_key');
+        $result = Cache::read('test_key');
 
-        $this->assertSame(expected: 'test_value', actual: $result);
+        $this->assertSame('test_value', $result);
     }
 
     public function test_read_routes_string_with_default(): void
     {
-        $result = Cache::read(target: 'nonexistent', default: 'default_value');
+        $result = Cache::read('nonexistent', 'default_value');
 
-        $this->assertSame(expected: 'default_value', actual: $result);
+        $this->assertSame('default_value', $result);
     }
 
     /**
@@ -63,34 +63,34 @@ final class CacheReadRoutingTest extends TestCase
      */
     public function test_read_routes_runtime_cache_target_with_own_default(): void
     {
-        $this->cacheContract->set(key: 'runtime_key', value: 'runtime_value');
+        $this->cacheContract->set('runtime_key', 'runtime_value');
 
-        $runtimeCacheTarget = RuntimeCacheTarget::key('runtime_key', $default = 'target_default');
-        $result             = Cache::read(target: $runtimeCacheTarget);
+        $runtimeCacheTarget = RuntimeCacheTarget::key('runtime_key', 'target_default');
+        $result             = Cache::read($runtimeCacheTarget);
 
-        $this->assertSame(expected: 'runtime_value', actual: $result);
+        $this->assertSame('runtime_value', $result);
     }
 
     public function test_read_uses_target_default_when_key_missing(): void
     {
-        $runtimeCacheTarget = RuntimeCacheTarget::key('missing_key', $default = 'target_default');
-        $result             = Cache::read(target: $runtimeCacheTarget);
+        $runtimeCacheTarget = RuntimeCacheTarget::key('missing_key', 'target_default');
+        $result             = Cache::read($runtimeCacheTarget);
 
-        $this->assertSame(expected: 'target_default', actual: $result);
+        $this->assertSame('target_default', $result);
     }
 
     public function test_read_signature_accepts_cache_read_target(): void
     {
-        $param     = new ReflectionMethod(objectOrMethod: Cache::class, method: 'read')->getParameters()[0];
+        $param = new ReflectionMethod(Cache::class, 'read')->getParameters()[0];
         $type  = $param->getType();
 
-        $this->assertInstanceOf(expected: ReflectionUnionType::class, actual: $type);
+        $this->assertInstanceOf(ReflectionUnionType::class, $type);
 
         $types     = $type->getTypes();
         $typeNames = array_map(static fn (ReflectionIntersectionType|ReflectionNamedType $t) => $t->getName(), $types);
 
-        $this->assertContains(needle: \Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget::class, haystack: $typeNames);
-        $this->assertContains(needle: 'string', haystack: $typeNames);
+        $this->assertContains(\Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget::class, $typeNames);
+        $this->assertContains('string', $typeNames);
     }
 
     public function test_compiled_cache_read_has_correct_signature(): void
@@ -144,7 +144,7 @@ final class CacheReadRoutingTest extends TestCase
         Cache::reset();
 
         $this->expectException(exception: CacheNotConfigured::class);
-        Cache::get(key: 'test');
+        Cache::get(cacheKey: 'test');
     }
 
     public function test_cache_use_overrides_container(): void
@@ -154,13 +154,13 @@ final class CacheReadRoutingTest extends TestCase
 
         Cache::use(cache: $mockCache);
 
-        $this->assertSame(expected: 'mocked', actual: Cache::get(key: 'key'));
+        $this->assertSame(expected: 'mocked', actual: Cache::get(cacheKey: 'key'));
     }
 
     public function test_cache_reset_clears_instance(): void
     {
         Cache::use(cache: $this->cacheContract);
-        Cache::get(key: 'key');
+        Cache::get(cacheKey: 'key');
 
         Cache::reset();
 

@@ -45,7 +45,7 @@ final class CacheFailure extends RuntimeException
     public static function invalidKey(string $key, ?Throwable $throwable = null): self
     {
         return new self(
-            message : sprintf('Invalid cache key: "%s"', $key),
+            message : sprintf('Invalid cache cacheKey "%s"', $key),
             code    : self::CODE_KEY_INVALID,
             previous: $throwable,
         );

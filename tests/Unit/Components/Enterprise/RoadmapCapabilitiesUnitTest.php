@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Enterprise;
 
+use Avax\Components\DeveloperTools\Diagnostics\System\Flows\LivenessProbe\LivenessProbe;
 use Avax\Components\Operations\Concurrency\System\Capabilities\Cancellation\CancellationToken;
 use Avax\Components\Operations\Concurrency\System\Flows\AwaitTask\AwaitTask;
 use Avax\Components\Operations\Concurrency\System\Flows\RunConcurrentTasks\RunConcurrentTasks;
-use Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\Flows\LivenessProbe\LivenessProbe;
 use Avax\Components\Operations\Resilience\System\Capabilities\Backoff\BackoffSchedule;
 use Avax\Components\Operations\Resilience\System\Capabilities\CircuitBreaker\CircuitBreakerState;
 use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryResult;

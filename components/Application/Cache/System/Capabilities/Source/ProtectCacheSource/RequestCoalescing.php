@@ -21,11 +21,11 @@ final readonly class RequestCoalescing
     {
         $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
 
-        if ($cacheLock->acquire(key: $cacheKey->fullKey(), ttlSeconds: $this->cacheLockTimeout->seconds)) {
+        if ($cacheLock->acquire(cacheKey: $cacheKey->fullKey(), ttlSeconds: $this->cacheLockTimeout->seconds)) {
             try {
                 return $loader();
             } finally {
-                $cacheLock->release(key: $cacheKey->fullKey());
+                $cacheLock->release(cacheKey: $cacheKey->fullKey());
             }
         }
 

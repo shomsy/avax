@@ -17,8 +17,8 @@ final readonly class DeleteValueFromSource
         $count = 0;
 
         foreach ($keys as $key) {
-            $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
-            $this->delete(key: $cacheKey);
+            $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(cacheKey: $key);
+            $this->delete(cacheKey: $cacheKey);
             $count++;
         }
 
@@ -27,7 +27,7 @@ final readonly class DeleteValueFromSource
 
     public function delete(CacheKey $cacheKey): void
     {
-        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
+        $cacheSourceKey = CacheSourceKey::create(cacheKey: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
         $this->cacheSource->delete($cacheSourceKey);
     }
 }

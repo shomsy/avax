@@ -8,14 +8,14 @@ use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Str;
 use Override;
 
 /**
- * Generates service class stubs.
+ * Generates capability/action classes.
  */
-class ServiceGenerator extends CodeGenerator
+class CapabilityGenerator extends CodeGenerator
 {
     /**
-     * Generate a service class file.
+     * Generate a capability class file.
      *
-     * @param string $name Service name (e.g. "UserService" or "User")
+     * @param string $name Capability name (e.g. "RegisterUser" or "SendWelcomeMail")
      * @param array  $data Additional data (e.g. ['methods' => ['create', 'update']])
      *
      * @return string The generated file path
@@ -25,12 +25,11 @@ class ServiceGenerator extends CodeGenerator
     {
         $className = Str::studly($name);
 
-        // Ensure it ends with "Service"
-        if (! str_ends_with($className, 'Service')) {
-            $className .= 'Service';
+        if (! str_ends_with($className, 'Capability')) {
+            $className .= 'Capability';
         }
 
-        $subDir    = $data['subDir'] ?? 'Services';
+        $subDir = $data['subDir'] ?? 'Capabilities';
         $namespace = $this->getNamespace($subDir);
         $methods   = $data['methods'] ?? [];
 
@@ -43,14 +42,14 @@ class ServiceGenerator extends CodeGenerator
     }
 
     /**
-     * Build the service class stub.
+     * Build the capability class stub.
      */
     protected function buildStub(string $className, string $namespace, array $methods): string
     {
         $methodsCode = '';
 
         if ($methods === []) {
-            $methods = ['create', 'update', 'delete', 'find'];
+            $methods = ['execute'];
         }
 
         foreach ($methods as $method) {
@@ -63,6 +62,8 @@ class ServiceGenerator extends CodeGenerator
             declare(strict_types=1);
             
             namespace {$namespace};
+
+            use LogicException;
             
             class {$className}
             {
@@ -72,18 +73,12 @@ class ServiceGenerator extends CodeGenerator
     }
 
     /**
-     * Generate a single service method.
+     * Generate a single capability method.
      */
     protected function generateMethod(string $method): string
     {
         $methodName = Str::camel($method);
 
-        return match ($methodName) {
-            'create' => "\n    public function create(array \$data) : mixed\n    {\n        // TODO: Implement create\n    }\n",
-            'update' => "\n    public function update(int \$id, array \$data) : mixed\n    {\n        // TODO: Implement update\n    }\n",
-            'delete' => "\n    public function delete(int \$id) : void\n    {\n        // TODO: Implement delete\n    }\n",
-            'find'   => "\n    public function find(int \$id) : mixed\n    {\n        // TODO: Implement find\n    }\n",
-            default  => "\n    public function {$methodName}() : void\n    {\n        // TODO: Implement {$methodName}\n    }\n",
-        };
+        return "\n    public function {$methodName}() : void\n    {\n        throw new LogicException('Define {$methodName} behavior before wiring {$methodName} into production.');\n    }\n";
     }
 }

@@ -22,7 +22,7 @@ final class InMemoryLockStore implements CacheLockStore
     {
         $lockOwner = $owner ?? uniqid(more_entropy: true);
 
-        if ($this->isAcquired(key: $key)) {
+        if ($this->isAcquired(cacheKey: $key)) {
             $existingOwner = $this->locks[$key] ?? null;
 
             if ($existingOwner !== null && ! $existingOwner->isExpired(clock: $this->clock)) {
@@ -70,7 +70,7 @@ final class InMemoryLockStore implements CacheLockStore
     #[Override]
     public function getOwner(string $key): ?CacheLockOwner
     {
-        if (! $this->isAcquired(key: $key)) {
+        if (! $this->isAcquired(cacheKey: $key)) {
             return null;
         }
 

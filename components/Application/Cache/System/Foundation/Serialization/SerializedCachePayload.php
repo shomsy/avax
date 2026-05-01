@@ -19,7 +19,7 @@ final readonly class SerializedCachePayload implements Stringable
     public static function create(string $data, string $format, ?Clock $clock = null) : self
     {
         $clock ??= new SystemClock();
-        $checksum = hash_hmac(algo: 'sha256', data: $data, key: self::class);
+        $checksum = hash_hmac(algo: 'sha256', data: $data, cacheKey: self::class);
 
         return new self(
             data     : $data,
@@ -35,7 +35,7 @@ final readonly class SerializedCachePayload implements Stringable
             return true;
         }
 
-        return hash_equals($this->checksum, hash_hmac(algo: 'sha256', data: $this->data, key: self::class));
+        return hash_equals($this->checksum, hash_hmac(algo: 'sha256', data: $this->data, cacheKey: self::class));
     }
 
     public function isOlderThan(DateInterval $dateInterval) : bool

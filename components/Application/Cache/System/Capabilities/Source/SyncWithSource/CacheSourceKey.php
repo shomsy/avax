@@ -17,7 +17,8 @@ final readonly class CacheSourceKey implements Stringable
 
     public static function create(string $key, ?string $namespace = null): self
     {
-        return new self(key: $key, namespace: $namespace);
+        return new self(cacheKey $key, namespace:
+    $namespace)
     }
 
     #[Override]

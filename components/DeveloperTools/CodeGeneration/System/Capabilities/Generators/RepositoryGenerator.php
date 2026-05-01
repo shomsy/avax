@@ -77,6 +77,7 @@ class RepositoryGenerator extends CodeGenerator
             
             namespace {$namespace};
             
+            use LogicException;
             use {$entityNamespace}\\{$entityClass};
             
             /**
@@ -84,13 +85,15 @@ class RepositoryGenerator extends CodeGenerator
              */
             class {$className}
             {
+                /** @var array<int, {$entityClass}> */
+                private array \$items = [];
+
                 /**
                  * Find an entity by its ID.
                  */
                 public function findById(int \$id): ?{$entityClass}
                 {
-                    // TODO: Implement
-                    return null;
+                    return \$this->items[\$id] ?? null;
                 }
             
                 /**
@@ -100,8 +103,7 @@ class RepositoryGenerator extends CodeGenerator
                  */
                 public function findAll() : array
                 {
-                    // TODO: Implement
-                    return [];
+                    return array_values(\$this->items);
                 }
             
                 /**
@@ -109,7 +111,7 @@ class RepositoryGenerator extends CodeGenerator
                  */
                 public function save({$entityClass} \$entity) : void
                 {
-                    // TODO: Implement
+                    \$this->items[\$this->identifier(\$entity)] = \$entity;
                 }
             
                 /**
@@ -117,7 +119,7 @@ class RepositoryGenerator extends CodeGenerator
                  */
                 public function delete({$entityClass} \$entity) : void
                 {
-                    // TODO: Implement
+                    unset(\$this->items[\$this->identifier(\$entity)]);
                 }
             
                 /**
@@ -127,8 +129,10 @@ class RepositoryGenerator extends CodeGenerator
                  */
                 public function findBy(array \$criteria) : array
                 {
-                    // TODO: Implement
-                    return [];
+                    return array_values(array_filter(
+                        \$this->items,
+                        static fn ({$entityClass} \$entity): bool => self::matches(\$entity, \$criteria),
+                    ));
                 }
             
                 /**
@@ -136,8 +140,41 @@ class RepositoryGenerator extends CodeGenerator
                  */
                 public function findOneBy(array \$criteria): ?{$entityClass}
                 {
-                    // TODO: Implement
-                    return null;
+                    return \$this->findBy(\$criteria)[0] ?? null;
+                }
+
+                private function identifier({$entityClass} \$entity): int
+                {
+                    if (property_exists(\$entity, 'id') && is_int(\$entity->id)) {
+                        return \$entity->id;
+                    }
+
+                    if (method_exists(\$entity, 'getId')) {
+                        \$id = \$entity->getId();
+
+                        if (is_int(\$id)) {
+                            return \$id;
+                        }
+                    }
+
+                    throw new LogicException('Generated repository requires an integer id property or getId() method.');
+                }
+
+                private static function matches({$entityClass} \$entity, array \$criteria): bool
+                {
+                    foreach (\$criteria as \$field => \$expected) {
+                        if (! is_string(\$field)) {
+                            return false;
+                        }
+
+                        \$actual = property_exists(\$entity, \$field) ? \$entity->{\$field} : null;
+
+                        if (\$actual !== \$expected) {
+                            return false;
+                        }
+                    }
+
+                    return true;
                 }
             }
             PHP;

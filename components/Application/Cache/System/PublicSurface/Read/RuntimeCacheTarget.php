@@ -16,7 +16,7 @@ readonly class RuntimeCacheTarget implements CacheReadTarget
 
     public static function key(string $key, mixed $default = null, ?string $store = null) : self
     {
-        return new self(key: $key, default: $default, store: $store);
+        return new self(cacheKey $key, default: $default, store: $store)
     }
 
     #[Override]

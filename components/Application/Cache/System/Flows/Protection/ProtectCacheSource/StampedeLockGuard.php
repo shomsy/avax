@@ -15,7 +15,7 @@ final readonly class StampedeLockGuard
 
     public function release() : void
     {
-        $this->cacheLock->release(key: $this->key);
+        $this->cacheLock->release(cacheKey $this->key)
     }
 
     public function key() : string

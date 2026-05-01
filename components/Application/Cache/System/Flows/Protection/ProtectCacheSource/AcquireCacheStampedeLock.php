@@ -22,7 +22,7 @@ final readonly class AcquireCacheStampedeLock
     {
         $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
 
-        return $cacheLock->isAcquired(key: $key);
+        return $cacheLock->isAcquired(cacheKey: $key);
     }
 
     public function waitForLock(string $key, int $maxWaitSeconds = 5): bool
@@ -32,8 +32,8 @@ final readonly class AcquireCacheStampedeLock
         $deadline  = $startTime + ($maxWaitSeconds * 1_000_000_000);
 
         while (hrtime(true) < $deadline) {
-            if ($cacheLock->acquire(key: $key, ttlSeconds: $this->lockTtlSeconds)) {
-                $cacheLock->release(key: $key);
+            if ($cacheLock->acquire(cacheKey: $key, ttlSeconds: $this->lockTtlSeconds)) {
+                $cacheLock->release(cacheKey: $key);
 
                 return true;
             }
@@ -54,8 +54,8 @@ final readonly class AcquireCacheStampedeLock
         $deadline  = $startTime + ($this->waitTimeoutSeconds * 1_000_000_000);
 
         while (hrtime(true) < $deadline) {
-            if ($cacheLock->acquire(key: $key, ttlSeconds: $this->lockTtlSeconds)) {
-                return new StampedeLockGuard(cacheLock: $cacheLock, key: $key);
+            if ($cacheLock->acquire(cacheKey: $key, ttlSeconds: $this->lockTtlSeconds)) {
+                return new StampedeLockGuard(cacheLock: $cacheLock, cacheKey: $key);
             }
 
             usleep(10_000);

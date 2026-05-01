@@ -436,12 +436,10 @@ abstract class BaseGrammar implements GrammarInterface
     }
 
     /**
-     * Placeholder for the UPSERT (Insert or Update) command.
+     * Build an UPSERT command when the database dialect supports it.
      *
-     * -- intent:
-     * This is a "Hook". Because every database does Upsert differently,
-     * the Base class can't do it. Children (like MySQLGrammar) must
-     * provide the implementation.
+     * The base grammar rejects this deliberately because UPSERT syntax is
+     * vendor-specific; concrete grammars must own their dialect form.
      */
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {

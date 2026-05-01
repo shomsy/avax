@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Diagnostics\System\Capabilities\ScalingReadiness\System\Capabilities\Checks;
+namespace Avax\Components\DeveloperTools\Diagnostics\System\Capabilities\ScalingReadiness\Checks;
 
 final readonly class ScalingCheckResult
 {

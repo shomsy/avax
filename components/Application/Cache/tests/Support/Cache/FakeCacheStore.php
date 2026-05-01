@@ -28,7 +28,7 @@ final class FakeCacheStore implements CacheStore
         $fullKey = $cacheKey->fullKey();
 
         if (! isset($this->records[$fullKey])) {
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
         $record = $this->records[$fullKey];
@@ -36,10 +36,10 @@ final class FakeCacheStore implements CacheStore
         if ($record->lifecycle->isExpired(clock: $clock)) {
             unset($this->records[$fullKey]);
 
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
-        return new CacheStoreRecordWasFound(clock: $clock, key: $cacheKey, record: $record);
+        return new CacheStoreRecordWasFound(clock: $clock, cacheKey: $cacheKey, record: $record);
     }
 
     #[Override]

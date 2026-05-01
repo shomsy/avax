@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\Flows\LivenessProbe;
+namespace Avax\Components\DeveloperTools\Diagnostics\System\Flows\LivenessProbe;
 
-use Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\PublicSurface\HealthCheck;
-use Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\PublicSurface\HealthReport;
+use Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface\HealthCheck;
+use Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface\HealthReport;
 
 final readonly class LivenessProbe
 {

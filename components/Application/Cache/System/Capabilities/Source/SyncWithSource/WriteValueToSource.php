@@ -12,7 +12,8 @@ final readonly class WriteValueToSource
 
     public function write(CacheKey $cacheKey, mixed $value) : void
     {
-        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
+        $cacheSourceKey = CacheSourceKey::create(cacheKey $cacheKey->fullKey(), namespace:
+    $cacheKey->namespace)
         $this->cacheSource->write($cacheSourceKey, $value);
     }
 }

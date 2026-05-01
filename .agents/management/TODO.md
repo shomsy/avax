@@ -157,3 +157,14 @@ Iako su glavni taskovi "COMPLETED", sledeći propusti su detektovani tokom "Zero
 
 - [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: PHP Syntax Error:  Parse error: syntax error, unexpected end of file in /home/shomsy/projects/avax/test_good_file.php on line 2 Errors parsing /home/shomsy/projects/avax/test_good_file.php - Location: general - Ref: val-69f4d365279573.63923309
 
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: Security check failed - dangerous functions detected - Location: general - Ref:
+  val-69f4dd390ff9b7.30664035
+
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: PHP Syntax Error:  Parse error: syntax error, unexpected token "=",
+  expecting ")" in /home/shomsy/projects/avax/test_feature.php on line 1 Errors parsing
+  /home/shomsy/projects/avax/test_feature.php - Location: general - Ref: val-69f4de241c9995.89243926
+
+- [ ] [2026-05-01] [HIGH] [UNKNOWN] Fix: PHP Syntax Error:  Parse error: syntax error, unexpected token "=",
+  expecting ")" in /home/shomsy/projects/avax/test_feature.php on line 1 Errors parsing
+  /home/shomsy/projects/avax/test_feature.php - Location: general - Ref: val-69f4de42480a88.07801697
+

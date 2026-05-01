@@ -8,8 +8,8 @@ $classAliases = [
     'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\Hidden'                      => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\Attributes\\Hidden',
     'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\ListOf'                      => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\Attributes\\ListOf',
     'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\MapFrom'                     => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\Attributes\\MapFrom',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\ValueConversion\\ValueCasterInterface'   => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\ValueConversion\\ValueCasterInterface',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\ValueConversion\\ValueConversionContext' => 'Avax\\DataFoundation\\DataTransfer\\Capabilities\\ValueConversion\\ValueConversionContext',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\ValueConversion\\ValueCasterInterface'   => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Capabilities\\ValueConversion\\ValueCasterInterface',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\ValueConversion\\ValueConversionContext' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Capabilities\\ValueConversion\\ValueConversionContext',
     'Avax\\DataHandling\\DataTransfer\\InspectDataShape\\DataField'               => 'Avax\\Components\\Data\\System\\Capabilities\\DataShape\\DataField',
     'Avax\\DataHandling\\ObjectHandling\\DTO\\AbstractDTO'                        => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Foundation\\AbstractDTO',
     'Avax\\DataFoundation\\ObjectHandling\\DTO\\AbstractDTO'                      => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Foundation\\AbstractDTO',
@@ -126,6 +126,8 @@ $classAliases = [
     'Avax\\Presentation\\View\\View'            => 'Avax\\Components\\Presentation\\View\\System\\PublicSurface\\View',
     'Avax\\Application\\Filesystem\\Filesystem' => 'Avax\\Components\\Application\\Filesystem\\System\\PublicSurface\\Filesystem',
     'Avax\\Application\\Config\\Config'         => 'Avax\\Components\\Application\\Config\\System\\PublicSurface\\Config',
+    'Avax\\Components\\Application\\Container\\System\\ContainerInterface'                    => 'Avax\\Components\\Application\\Container\\System\\PublicSurface\\ContainerInterface',
+    'Avax\\Components\\Container\\ContainerInterface'                                         => 'Avax\\Components\\Application\\Container\\System\\PublicSurface\\ContainerInterface',
 ];
 
 foreach ($classAliases as $alias => $target) {

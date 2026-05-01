@@ -4,147 +4,117 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http;
 
-            if ($instance !== null) {
-                $container = $instance;
-            }
+use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Session\NullSession;
+use Avax\Components\HTTP\Session\Shared\Contracts\SessionInterface;
+use Avax\Tests\TestCase;
+use Override;
+use ReflectionProperty;
+use RuntimeException;
+use SensitiveParameter;
+use stdClass;
 
-            if ($container === null) {
-                throw new RuntimeException(
-                    message: 'Container instance is not initialized. Please set the container first.'
-                );
-            }
+final readonly class FakeContainer
+{
+    private mixed $session;
 
-            return $container;
-        }
+    private bool $hasSession;
+
+    public function __construct(
+        bool                        $hasSession,
+        #[SensitiveParameter] mixed $session
+    )
+    {
+        $this->hasSession = $hasSession;
+        $this->session    = $session;
     }
 
-    if (! function_exists(function: 'app')) {
-        function app(string|null $abstract = null) : mixed
-        {
-            $container = appInstance();
-            if ($abstract === null) {
-                return $container;
-            }
+    public function has(string $id) : bool
+    {
+        return $this->hasSession && $id === SessionInterface::class;
+    }
 
-            return $container->get($abstract);
+    public function get(string $id) : mixed
+    {
+        if ($id === SessionInterface::class && $this->hasSession) {
+            return $this->session;
         }
+
+        throw new RuntimeException(message: "Service {$id} not found");
     }
 }
 
-namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http {
+final class RequestFromGlobalsTest extends TestCase
+{
+    private array $serverBackup = [];
 
-    use Avax\Components\HTTP\Request\Request;
-    use Avax\Components\HTTP\Session\NullSession;
-    use Avax\Components\HTTP\Session\Shared\Contracts\SessionInterface;
-    use Avax\Tests\TestCase;
-    use Override;
-    use ReflectionProperty;
-    use RuntimeException;
-    use SensitiveParameter;
-    use stdClass;
+    private array $getBackup = [];
 
-    final readonly class FakeContainer
+    private array $postBackup = [];
+
+    private array $cookieBackup = [];
+
+    private array $filesBackup = [];
+
+    public function test_create_from_globals_ignores_invalid_session_binding() : void
     {
-        private mixed $session;
-        private bool  $hasSession;
+        appInstance(instance: new FakeContainer(hasSession: true, session: new stdClass));
 
-        public function __construct(
-            bool                        $hasSession,
-            #[SensitiveParameter] mixed $session
-        )
-        {
-            $this->hasSession = $hasSession;
-            $this->session    = $session;
-        }
+        $request = Request::createFromGlobals();
 
-        public function has(string $id) : bool
-        {
-            return $this->hasSession && $id === SessionInterface::class;
-        }
-
-        public function get(string $id) : mixed
-        {
-            if ($id === SessionInterface::class && $this->hasSession) {
-                return $this->session;
-            }
-
-            throw new RuntimeException(message: "Service {$id} not found");
-        }
+        $this->assertInstanceOf(expected: Request::class, actual: $request);
+        $this->assertInstanceOf(expected: NullSession::class, actual: $this->extractSession(request: $request));
     }
 
-    final class RequestFromGlobalsTest extends TestCase
+    private function extractSession(Request $request) : SessionInterface
     {
-        private array $serverBackup = [];
+        $property = new ReflectionProperty(class: Request::class, property: 'session');
+        $property->setAccessible(accessible: true);
 
-        private array $getBackup = [];
+        return $property->getValue(object: $request);
+    }
 
-        private array $postBackup = [];
+    public function test_create_from_globals_uses_session_interface() : void
+    {
+        $session = new NullSession;
+        appInstance(instance: new FakeContainer(hasSession: true, session: $session));
 
-        private array $cookieBackup = [];
+        $request = Request::createFromGlobals();
 
-        private array $filesBackup = [];
+        $this->assertSame(expected: $session, actual: $this->extractSession(request: $request));
+    }
 
-        public function test_create_from_globals_ignores_invalid_session_binding() : void
-        {
-            appInstance(instance: new FakeContainer(hasSession: true, session: new stdClass));
+    #[Override]
+    protected function setUp() : void
+    {
+        $this->serverBackup = $_SERVER ?? [];
+        $this->getBackup    = $_GET ?? [];
+        $this->postBackup   = $_POST ?? [];
+        $this->cookieBackup = $_COOKIE ?? [];
+        $this->filesBackup  = $_FILES ?? [];
 
-            $request = Request::createFromGlobals();
+        $_SERVER = [
+            'HTTP_HOST'       => 'components.test',
+            'REQUEST_URI'     => '/',
+            'REQUEST_METHOD'  => 'GET',
+            'SERVER_PROTOCOL' => '1.1',
+            'SERVER_PORT'     => '443',
+            'QUERY_STRING'    => '',
+        ];
+        $_GET    = [];
+        $_POST   = [];
+        $_COOKIE = [];
+        $_FILES  = [];
+    }
 
-            $this->assertInstanceOf(expected: Request::class, actual: $request);
-            $this->assertInstanceOf(expected: NullSession::class, actual: $this->extractSession(request: $request));
-        }
+    #[Override]
+    protected function tearDown() : void
+    {
+        $_SERVER = $this->serverBackup;
+        $_GET    = $this->getBackup;
+        $_POST   = $this->postBackup;
+        $_COOKIE = $this->cookieBackup;
+        $_FILES  = $this->filesBackup;
 
-        private function extractSession(Request $request) : SessionInterface
-        {
-            $property = new ReflectionProperty(class: Request::class, property: 'session');
-            $property->setAccessible(accessible: true);
-
-            return $property->getValue(object: $request);
-        }
-
-        public function test_create_from_globals_uses_session_interface() : void
-        {
-            $session = new NullSession;
-            appInstance(instance: new FakeContainer(hasSession: true, session: $session));
-
-            $request = Request::createFromGlobals();
-
-            $this->assertSame(expected: $session, actual: $this->extractSession(request: $request));
-        }
-
-        #[Override]
-        protected function setUp() : void
-        {
-
-            $this->serverBackup = $_SERVER ?? [];
-            $this->getBackup    = $_GET ?? [];
-            $this->postBackup   = $_POST ?? [];
-            $this->cookieBackup = $_COOKIE ?? [];
-            $this->filesBackup  = $_FILES ?? [];
-
-            $_SERVER = [
-                'HTTP_HOST'       => 'components.test',
-                'REQUEST_URI'     => '/',
-                'REQUEST_METHOD'  => 'GET',
-                'SERVER_PROTOCOL' => '1.1',
-                'SERVER_PORT'     => '443',
-                'QUERY_STRING'    => '',
-            ];
-            $_GET    = [];
-            $_POST   = [];
-            $_COOKIE = [];
-            $_FILES  = [];
-        }
-
-        #[Override]
-        protected function tearDown() : void
-        {
-            $_SERVER = $this->serverBackup;
-            $_GET    = $this->getBackup;
-            $_POST   = $this->postBackup;
-            $_COOKIE = $this->cookieBackup;
-            $_FILES  = $this->filesBackup;
-
-        }
     }
 }

@@ -86,7 +86,8 @@
     "psr/simple-cache": "^3.0",
     "ext-intl": "*",
     "ext-openssl": "*",
-    "ext-redis": "*"
+    "ext-redis": "*",
+    "psr/http-message": "^2.0"
   },
   "scripts": {
     "analyse": "phpstan analyse --memory-limit=1G",

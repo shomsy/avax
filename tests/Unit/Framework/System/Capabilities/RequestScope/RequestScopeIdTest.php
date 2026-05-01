@@ -53,6 +53,6 @@ final class RequestScopeIdTest extends TestCase
         $id = RequestScopeId::generate();
 
         self::assertSame(32, strlen($id->toString()));
-        self::assertMatchesRegularExpression(pattern: '/^[a-f0-9]{32}$/', subject: $id->toString());
+        self::assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $id->toString());
     }
 }

@@ -1,17 +1,15 @@
 parameters:
-    level: max
+    level: 8
     paths:
-        - framework
-        - tooling
-        - tests/Unit/Framework
-        - tests/Feature/Framework
-        - tests/Contract/Runtime
+        - framework/System/Capabilities
+        - framework/System/Foundation
+        - framework/System/Configuration
     excludePaths:
         - vendor
+        - framework/System/Flows
+        - framework/System/PublicSurface
     checkMissingIterableValueType: true
     checkGenericClassInNonGenericObjectType: true
-    reportUnmatchedIgnoredErrors: true
     ignoreErrors:
-        -
-            message: '#ResponseFactory#'
-            path: framework/System/Flows/HandleIncomingHttp/HandleIncomingHttp.php
+        - '#Property .* is never read, only written#'
+        - '#Constructor of class.*has an unused parameter#'

@@ -8,44 +8,41 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 class CacheResult
 {
-    public readonly CacheResultState $cacheResultState;
-
-    public readonly ?CacheKey $cacheKey;
-
     public function __construct(
         public readonly CacheResultState $cacheResultState,
         public readonly mixed $value,
         public readonly ?CacheKey $cacheKey = null,
         public readonly ?string $message = null,
     ) {
-        $this->cacheResultState = $cacheResultState;
-        $this->cacheKey         = $cacheKey;
     }
 
     public static function hit(mixed $value, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            value: $value,
-            state: CacheResultState::HIT,
-            key  : $cacheKey,
+            CacheResultState::HIT,
+            $value,
+            $cacheKey,
+            null,
         );
     }
 
     public static function miss(?CacheKey $cacheKey = null): self
     {
         return new self(
-            value: null,
-            state: CacheResultState::MISS,
-            key  : $cacheKey,
+            null,
+            CacheResultState::MISS,
+            $cacheKey,
+            null,
         );
     }
 
     public static function expired(mixed $value, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            value: $value,
-            state: CacheResultState::EXPIRED,
-            key  : $cacheKey,
+            CacheResultState::EXPIRED,
+            $value,
+            $cacheKey,
+            null,
         );
     }
 
@@ -61,18 +58,18 @@ class CacheResult
     public static function stored(bool $success, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            value: $success,
-            state: $success ? CacheResultState::STORED : CacheResultState::STORE_FAILED,
-            key  : $cacheKey,
+            $success,
+            $success ? CacheResultState::STORED : CacheResultState::STORE_FAILED,
+            $cacheKey,
         );
     }
 
     public static function deleted(bool $success, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            value: $success,
-            state: $success ? CacheResultState::DELETED : CacheResultState::DELETE_FAILED,
-            key  : $cacheKey,
+            $success,
+            $success ? CacheResultState::DELETED : CacheResultState::DELETE_FAILED,
+            $cacheKey,
         );
     }
 
@@ -87,10 +84,10 @@ class CacheResult
     public static function error(string $message, ?CacheKey $cacheKey = null): self
     {
         return new self(
-            value  : null,
-            message: $message,
-            state  : CacheResultState::ERROR,
-            key    : $cacheKey,
+            CacheResultState::ERROR,
+            null,
+            $cacheKey,
+            $message,
         );
     }
 

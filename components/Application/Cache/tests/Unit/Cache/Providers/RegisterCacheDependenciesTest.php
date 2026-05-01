@@ -45,7 +45,7 @@ final class RegisterCacheDependenciesTest extends TestCase
     {
         Cache::use(cache: $this->cacheContract);
 
-        $result = Cache::get(key: 'non_existent', default: 'default');
+        $result = Cache::get(cacheKey: 'non_existent', default: 'default');
         $this->assertSame(expected: 'default', actual: $result);
     }
 
@@ -58,10 +58,10 @@ final class RegisterCacheDependenciesTest extends TestCase
         $mockCache2->method('get')->with('key')->willReturn(value: 'value2');
 
         Cache::use(cache: $mockCache1);
-        $this->assertSame(expected: 'value1', actual: Cache::get(key: 'key'));
+        $this->assertSame(expected: 'value1', actual: Cache::get(cacheKey: 'key'));
 
         Cache::use(cache: $mockCache2);
-        $this->assertSame(expected: 'value2', actual: Cache::get(key: 'key'));
+        $this->assertSame(expected: 'value2', actual: Cache::get(cacheKey: 'key'));
     }
 
     public function test_cache_reset_clears_static_instance() : void
@@ -71,7 +71,7 @@ final class RegisterCacheDependenciesTest extends TestCase
         Cache::reset();
 
         $this->expectException(exception: CacheNotConfigured::class);
-        Cache::get(key: 'key');
+        Cache::get(cacheKey: 'key');
     }
 
     #[Override]

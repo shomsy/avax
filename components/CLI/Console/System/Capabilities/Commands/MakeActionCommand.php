@@ -5,27 +5,27 @@ declare(strict_types=1);
 namespace Avax\Components\CLI\Console\System\Capabilities\Commands;
 
 use Avax\Components\CLI\Console\System\PublicSurface\Command;
-use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\ServiceGenerator;
+use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\CapabilityGenerator;
 use Override;
 use RuntimeException;
 
 /**
- * Command to generate a new service class.
+ * Command to generate a new action/capability class.
  */
-class MakeServiceCommand extends Command
+class MakeActionCommand extends Command
 {
-    protected string $name = 'make:service';
+    protected string $name = 'make:action';
 
-    protected string $description = 'Create a new service class';
+    protected string $description = 'Create a new action/capability class';
 
-    protected string $signature = 'make:service {name} [--methods=]';
+    protected string $signature = 'make:action {name} [--methods=]';
 
     protected array $arguments = ['name'];
 
     protected array $options = ['methods'];
 
     public function __construct(
-        private readonly ServiceGenerator $serviceGenerator,
+        private readonly CapabilityGenerator $capabilityGenerator,
     ) {}
 
     #[Override]
@@ -37,7 +37,7 @@ class MakeServiceCommand extends Command
             $name = $this->ask('Enter service name');
 
             if ($name === '' || $name === '0') {
-                $this->error('Service name is required.');
+                $this->error('Action name is required.');
 
                 return self::INVALID;
             }
@@ -51,13 +51,13 @@ class MakeServiceCommand extends Command
         }
 
         try {
-            $path = $this->serviceGenerator->generate($name, ['methods' => $methods]);
+            $path = $this->capabilityGenerator->generate($name, ['methods' => $methods]);
 
-            $this->info('Service created successfully: ' . $path);
+            $this->info('Action created successfully: ' . $path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create service: ' . $runtimeException->getMessage());
+            $this->error('Failed to create action: ' . $runtimeException->getMessage());
 
             return self::FAILURE;
         }

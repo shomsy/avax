@@ -2,47 +2,73 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Observability\System\Capabilities\HealthCheck\System\PublicSurface;
+namespace Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface;
 
+use Closure;
 use Exception;
 
-final readonly class HealthCheck
+final class HealthCheck
 {
+    /** @var array<string, Closure(): CheckResult> */
+    private static array $readinessChecks = [];
+
+    public static function register(string $name, Closure $check) : void
+    {
+        self::$readinessChecks[$name] = $check;
+    }
+
+    public static function reset() : void
+    {
+        self::$readinessChecks = [];
+    }
+
     public static function liveness(): HealthReport
     {
-        return new HealthReport(status: 'ok', checks: []);
+        return new HealthReport(status: 'up', checks: [
+            'php'    => new CheckResult(status: 'up', latencyMs: 0.0),
+            'memory' => new CheckResult(status: 'up', latencyMs: 0.0, meta: [
+                'usage' => memory_get_usage(real_usage: true),
+                'peak'  => memory_get_peak_usage(real_usage: true),
+            ]),
+        ]);
     }
 
     public static function readiness(): HealthReport
     {
-        $checks = [
-            'database' => self::checkDatabase(),
-            'cache' => self::checkCache(),
-        ];
+        $checks  = self::$readinessChecks === []
+            ? ['process' => static fn () : CheckResult => new CheckResult(status: 'up')]
+            : self::$readinessChecks;
+        $results = [];
 
-        $allUp = ! in_array(false, array_column($checks, 'status'));
+        foreach ($checks as $name => $check) {
+            $results[$name] = self::runCheck(name: $name, check: $check);
+        }
+
+        $allUp = array_all(
+            array   : $results,
+            callback: static fn (CheckResult $checkResult) : bool => $checkResult->status === 'up',
+        );
 
         return new HealthReport(
             status: $allUp ? 'up' : 'degraded',
-            checks: $checks,
+            checks: $results,
         );
     }
 
-    private static function checkDatabase(): CheckResult
+    /**
+     * @param Closure(): CheckResult $check
+     */
+    private static function runCheck(string $name, Closure $check) : CheckResult
     {
-        try {
-            return new CheckResult(status: 'up', latencyMs: 0.0);
-        } catch (Exception $exception) {
-            return new CheckResult(status: 'down', error: $exception->getMessage());
-        }
-    }
+        $startedAt = hrtime(as_number: true);
 
-    private static function checkCache(): CheckResult
-    {
         try {
-            return new CheckResult(status: 'up', latencyMs: 0.0);
+            $result    = $check();
+            $latencyMs = (hrtime(as_number: true) - $startedAt) / 1_000_000;
+
+            return $result->withLatency(latencyMs: $result->latencyMs > 0.0 ? $result->latencyMs : $latencyMs);
         } catch (Exception $exception) {
-            return new CheckResult(status: 'down', error: $exception->getMessage());
+            return new CheckResult(status: 'down', error: sprintf('%s failed: %s', $name, $exception->getMessage()));
         }
     }
 }
@@ -70,11 +96,25 @@ final readonly class HealthReport
 
 final readonly class CheckResult
 {
+    /**
+     * @param array<string, mixed> $meta
+     */
     public function __construct(
         public string $status,
         public float $latencyMs = 0.0,
         public ?string $error = null,
+        public array $meta = [],
     ) {}
+
+    public function withLatency(float $latencyMs) : self
+    {
+        return new self(
+            status   : $this->status,
+            latencyMs: $latencyMs,
+            error    : $this->error,
+            meta     : $this->meta,
+        );
+    }
 
     public function toArray(): array
     {
@@ -82,6 +122,7 @@ final readonly class CheckResult
             'status' => $this->status,
             'latency_ms' => $this->latencyMs,
             'error'  => $this->error,
+            'meta' => $this->meta,
         ];
     }
 }

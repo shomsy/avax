@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Security\System\PublicSurface;
 
 use Avax\Components\Identity\Security\System\Capabilities\Configuration\SecurityConfigurationStore;
+use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\ApplySecurityChange;
 use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\ApproveSecurityChange;
 use Avax\Components\Identity\Security\System\Flows\ManageSecurityChange\BeginSecurityChange;
-use Avax\Framework\Foundation\Exception\NotImplementedException;
 use stdClass;
 
 /**
@@ -19,6 +19,7 @@ final readonly class Security implements SecurityInterface
         private SecurityConfigurationStore $securityConfigurationStore,
         private BeginSecurityChange        $beginSecurityChange,
         private ApproveSecurityChange      $approveSecurityChange,
+        private ApplySecurityChange $applySecurityChange,
     ) {}
 
     public function readConfiguration(string $tenantId) : stdClass
@@ -38,6 +39,6 @@ final readonly class Security implements SecurityInterface
 
     public function applyChange(string $requestId): void
     {
-        throw new NotImplementedException('Security change application workflow not yet implemented');
+        $this->applySecurityChange->execute(requestId: $requestId);
     }
 }

@@ -22,7 +22,7 @@ final readonly class ForgetCachedValue
         $count = 0;
 
         foreach ($keys as $key) {
-            if ($this->forget(key: $key instanceof CacheKey ? $key : CacheKey::create(key: $key))) {
+            if ($this->forget(cacheKey: $key instanceof CacheKey ? $key : CacheKey::create(cacheKey: $key))) {
                 $count++;
             }
         }
@@ -35,7 +35,7 @@ final readonly class ForgetCachedValue
         $startTime = hrtime(true);
 
         try {
-            $this->cacheStore->forget(key: $cacheKey);
+            $this->cacheStore->forget(cacheKey: $cacheKey);
 
             $this->recordLatency(startTime: $startTime);
             $this->cacheMetrics?->recordDelete();

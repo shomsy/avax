@@ -203,7 +203,7 @@ abstract class Repository
 
     protected function beforeSave(object $entity): void
     {
-        // Placeholder for pre-save logic.
+        // Optional extension hook for repositories that need pre-save behavior.
     }
 
     /**
@@ -217,7 +217,7 @@ abstract class Repository
 
     protected function afterSave(object $entity): void
     {
-        // Placeholder for post-save logic.
+        // Optional extension hook for repositories that need post-save behavior.
     }
 
     /**

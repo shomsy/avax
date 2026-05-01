@@ -12,39 +12,39 @@ final class TimestampTest extends TestCase
 {
     public function test_creates_from_unix_time() : void
     {
-        $timestamp = Timestamp::fromUnixTime(timestamp: 1700000000);
+        $timestamp = Timestamp::fromUnixTime(1700000000);
 
-        $this->assertSame(expected: 1700000000, actual: $timestamp->toUnixTime());
+        $this->assertSame(1700000000, $timestamp->toUnixTime());
     }
 
     public function test_calculates_difference() : void
     {
-        $timestamp = Timestamp::fromUnixTime(timestamp: 100);
-        $b = Timestamp::fromUnixTime(timestamp: 50);
+        $timestamp = Timestamp::fromUnixTime(100);
+        $b         = Timestamp::fromUnixTime(50);
 
-        $duration = $timestamp->difference(other: $b);
+        $duration = $timestamp->difference($b);
 
-        $this->assertSame(expected: 50, actual: $duration->toSeconds());
+        $this->assertSame(50, $duration->toSeconds());
     }
 
     public function test_adds_duration() : void
     {
-        $timestamp = Timestamp::fromUnixTime(timestamp: 100);
-        $duration = Duration::ofSeconds(seconds: 50);
+        $timestamp = Timestamp::fromUnixTime(100);
+        $duration  = Duration::ofSeconds(50);
 
-        $result = $timestamp->add(duration: $duration);
+        $result = $timestamp->add($duration);
 
-        $this->assertSame(expected: 150, actual: $result->toUnixTime());
+        $this->assertSame(150, $result->toUnixTime());
     }
 
     public function test_subtracts_duration() : void
     {
-        $timestamp = Timestamp::fromUnixTime(timestamp: 100);
-        $duration = Duration::ofSeconds(seconds: 30);
+        $timestamp = Timestamp::fromUnixTime(100);
+        $duration  = Duration::ofSeconds(30);
 
-        $result = $timestamp->subtract(duration: $duration);
+        $result = $timestamp->subtract($duration);
 
-        $this->assertSame(expected: 70, actual: $result->toUnixTime());
+        $this->assertSame(70, $result->toUnixTime());
     }
 
     public function test_compares_timestamps() : void

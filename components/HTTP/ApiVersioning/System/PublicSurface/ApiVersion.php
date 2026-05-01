@@ -15,7 +15,7 @@ final class ApiVersion
 
     public static function resolve(RequestInterface $request): ApiVersionResolved
     {
-        return VersionResolver::resolve($request);
+        return VersionResolver::resolve(request: $request, versionRegistry: self::registry());
     }
 
     public static function current(): int
@@ -48,7 +48,7 @@ final readonly class ApiVersionResolved
     public function __construct(
         public int $version,
         public bool $deprecated,
-        public ?DateTimeInterface $sunset = null,
+        public DateTimeInterface|null $sunset = null,
     ) {
     }
 }

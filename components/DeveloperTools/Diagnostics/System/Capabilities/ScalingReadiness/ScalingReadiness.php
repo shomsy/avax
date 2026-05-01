@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Diagnostics\System\Capabilities\ScalingReadiness\System\PublicSurface;
+namespace Avax\Components\DeveloperTools\Diagnostics\System\Capabilities\ScalingReadiness;
 
-use Avax\Components\DeveloperTools\Diagnostics\System\Capabilities\ScalingReadiness\System\Capabilities\Checks\ScalingCheckResult;
+use Avax\Components\DeveloperTools\Diagnostics\System\Capabilities\ScalingReadiness\Checks\ScalingCheckResult;
 
 final readonly class ScalingReadiness
 {

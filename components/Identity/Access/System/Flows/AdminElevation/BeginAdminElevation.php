@@ -4,15 +4,25 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Flows\AdminElevation;
 
-use Avax\Framework\Foundation\Exception\NotImplementedException;
-
 /**
  * BeginAdminElevation - Flow to initiate temporary admin privilege elevation.
  */
-final readonly class BeginAdminElevation
+final class BeginAdminElevation
 {
-    public function execute() : never
+    private static bool $elevated = false;
+
+    public function execute() : void
     {
-        throw new NotImplementedException('Admin elevation workflow not yet implemented');
+        self::$elevated = true;
+    }
+
+    public static function active() : bool
+    {
+        return self::$elevated;
+    }
+
+    public static function reset() : void
+    {
+        self::$elevated = false;
     }
 }

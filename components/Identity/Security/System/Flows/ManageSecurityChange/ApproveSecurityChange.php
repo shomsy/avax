@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Security\System\Flows\ManageSecurityChange;
 
-use Avax\Framework\Foundation\Exception\NotImplementedException;
+use Avax\Components\Identity\Security\System\Capabilities\Configuration\SecurityConfigurationStore;
 
 /**
  * ApproveSecurityChange - Approves a pending security configuration change.
  */
 final readonly class ApproveSecurityChange
 {
-    public function execute() : never
+    public function __construct(private SecurityConfigurationStore $securityConfigurationStore) {}
+
+    public function execute(string $requestId) : void
     {
-        throw new NotImplementedException('Security change approval workflow not yet implemented');
+        $this->securityConfigurationStore->approve(requestId: $requestId);
     }
 }

@@ -28,7 +28,7 @@ final class CompiledCache
 
     public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources): mixed
     {
-        return self::instance()->read(name: $name, build: $build, sources: $compiledCacheSources);
+        return self::instance()->read($name, $build, $compiledCacheSources);
     }
 
     private static function instance(): CompiledCacheContract
@@ -42,6 +42,6 @@ final class CompiledCache
 
     public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources): CompiledCacheArtifact
     {
-        return self::instance()->compile(name: $name, build: $build, sources: $compiledCacheSources);
+        return self::instance()->compile($name, $build, $compiledCacheSources);
     }
 }

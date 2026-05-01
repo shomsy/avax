@@ -23,7 +23,7 @@ final readonly class EvictCachedValue
     public function evict(CacheKey $cacheKey): bool
     {
         try {
-            $this->cacheStore->forget(key: $cacheKey);
+            $this->cacheStore->forget(cacheKey: $cacheKey);
             $this->cacheMetrics?->recordEviction();
 
             return true;
@@ -45,8 +45,8 @@ final readonly class EvictCachedValue
                 break;
             }
 
-            $cacheKey = CacheKey::create(key: $keyToEvict);
-            $this->cacheStore->forget(key: $cacheKey);
+            $cacheKey = CacheKey::create(cacheKey: $keyToEvict);
+            $this->cacheStore->forget(cacheKey: $cacheKey);
             $evicted++;
 
             unset($entries[$keyToEvict]);

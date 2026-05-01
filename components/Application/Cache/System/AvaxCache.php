@@ -78,61 +78,57 @@ final class AvaxCache implements CacheContract
     public function remember(string $key, int|DateInterval|null $ttl, callable $loader): mixed
     {
         $startTime = hrtime(true);
-        $cacheKey  = CacheKey::create(key: $key);
-        $result = $this->cacheStore->read(clock: $this->clock, key: $cacheKey);
+        $cacheKey = CacheKey::create(cacheKey: $key);
+        $result = $this->cacheStore->read($cacheKey, $this->clock);
 
         if ($result instanceof CacheStoreRecordWasFound) {
-            $record    = $result->record;
-            $lifecycle = $record->lifecycle;
+            $record    = $result->storedCacheRecord;
+            $lifecycle = $record->cachedValueLifecycle;
 
-            if ($this->shouldRefreshValue(lifecycle: $lifecycle)) {
-                return $this->loadWithStampedeProtection(key: $key, ttl: $ttl, loader: $loader);
+            if ($this->shouldRefreshValue($lifecycle)) {
+                return $this->loadWithStampedeProtection($key, $ttl, $loader);
             }
 
-            if ($lifecycle->isExpired(clock: $this->clock)) {
+            if ($lifecycle->isExpired($this->clock)) {
                 if ($this->decideStaleValueCanBeServed->canServeStale()) {
-                    $this->recordMetrics(
-                        startTime: $startTime,
-                        operation: 'stale_served',
-                    );
+                    $this->recordMetrics($startTime, 'stale_served');
 
-                    $this->loadInBackground(key: $key, ttl: $ttl, loader: $loader);
+                    $this->loadInBackground($key, $ttl, $loader);
 
                     return $record->value;
                 }
 
-                return $this->loadWithStampedeProtection(key: $key, ttl: $ttl, loader: $loader);
+                return $this->loadWithStampedeProtection($key, $ttl, $loader);
             }
 
-            $this->recordMetrics(
-                startTime: $startTime,
-                operation: 'hit',
-            );
+            $this->recordMetrics($startTime, 'hit');
 
             return $record->value;
         }
 
-        return $this->loadWithStampedeProtection(key: $key, ttl: $ttl, loader: $loader);
+        return $this->loadWithStampedeProtection(cacheKey: $key, ttl: $ttl, loader: $loader);
     }
 
     private function shouldRefreshValue(CachedValueLifecycle $cachedValueLifecycle): bool
     {
-        return $this->shouldRefreshCachedValue->shouldRefresh(lifecycle: $cachedValueLifecycle);
+        return $this->shouldRefreshCachedValue->shouldRefresh($cachedValueLifecycle);
     }
 
     private function loadWithStampedeProtection(string $key, int|DateInterval|null $ttl, callable $loader): mixed
     {
         if ($this->stampedeProtectionEnabled && $this->acquireCacheStampedeLock instanceof AcquireCacheStampedeLock) {
-            return $this->protectedLoad(key: $key, ttl: $ttl, loader: $loader);
+            return $this->protectedLoad(cacheKey: $key, ttl: $ttl, loader: $loader);
         }
 
-        return $this->directLoad(key: $key, ttl: $ttl, loader: $loader);
+        return $this->directLoad(cacheKey: $key, ttl: $ttl, loader: $loader);
     }
 
-    private function protectedLoad(string $key, int|DateInterval|null $ttl, callable $loader): mixed
+    private function protectedLoad(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
     {
+        /** @var AcquireCacheStampedeLock $lock */
+        $lock       = $this->acquireCacheStampedeLock;
         try {
-            $guard = $this->acquireCacheStampedeLock->acquire(key: $key);
+            $guard = $lock->acquire($key);
 
             try {
                 return $this->directLoad(key: $key, ttl: $ttl, loader: $loader);
@@ -141,7 +137,7 @@ final class AvaxCache implements CacheContract
             }
         } catch (CacheLockWasNotAcquired) {
             $cacheKey = CacheKey::create(key: $key);
-            $result = $this->cacheStore->read(clock: $this->clock, key: $cacheKey);
+            $result = $this->cacheStore->read($cacheKey, $this->clock);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 $this->recordMetrics(
@@ -149,7 +145,7 @@ final class AvaxCache implements CacheContract
                     operation: 'stale_served',
                 );
 
-                return $result->record->value;
+                return $result->value();
             }
 
             $this->recordMetrics(
@@ -191,11 +187,11 @@ final class AvaxCache implements CacheContract
             );
 
             $storedCacheRecord = new StoredCacheRecord(
-                value    : $value,
-                lifecycle: $lifecycle,
+                $value,
+                $lifecycle,
             );
 
-            $this->cacheStore->write(key: $cacheKey, record: $storedCacheRecord);
+            $this->cacheStore->write($cacheKey, $storedCacheRecord);
 
             $this->recordMetrics(
                 startTime: $startTime,
@@ -265,7 +261,7 @@ final class AvaxCache implements CacheContract
         try {
             $cacheKey = CacheKey::create(key: $key);
 
-            return $this->cacheStore->exists(key: $cacheKey);
+            return $this->cacheStore->exists($cacheKey);
         } catch (Throwable) {
             return false;
         }
@@ -291,32 +287,23 @@ final class AvaxCache implements CacheContract
 
         try {
             $cacheKey = CacheKey::create(key: $key);
-            $result = $this->cacheStore->read(clock: $this->clock, key: $cacheKey);
+            $result = $this->cacheStore->read($cacheKey, $this->clock);
 
             if ($result instanceof CacheStoreRecordWasMissing) {
-                $this->recordMetrics(
-                    startTime: $startTime,
-                    operation: 'miss',
-                );
+                $this->recordMetrics($startTime, 'miss');
 
                 return $default;
             }
 
-            if ($result->record->isExpired(clock: $this->clock)) {
-                $this->recordMetrics(
-                    startTime: $startTime,
-                    operation: 'miss',
-                );
+            if ($result->storedCacheRecord->isExpired($this->clock)) {
+                $this->recordMetrics($startTime, 'miss');
 
                 return $default;
             }
 
-            $this->recordMetrics(
-                startTime: $startTime,
-                operation: 'hit',
-            );
+            $this->recordMetrics($startTime, 'hit');
 
-            return $result->record->value;
+            return $result->storedCacheRecord->value;
         } catch (Throwable) {
             $this->cacheMetrics?->recordStoreFailure();
 
@@ -337,12 +324,12 @@ final class AvaxCache implements CacheContract
     }
 
     #[Override]
-    public function deleteMultiple(iterable $keys): bool
+    public function deleteMultiple(iterable $keys) : bool
     {
         $keys = $keys instanceof Traversable ? iterator_to_array($keys) : $keys;
 
         foreach ($keys as $key) {
-            $this->delete(key: $key);
+            $this->delete($key);
         }
 
         return true;
@@ -355,7 +342,7 @@ final class AvaxCache implements CacheContract
 
         try {
             $cacheKey = CacheKey::create(key: $key);
-            $this->cacheStore->forget(key: $cacheKey);
+            $this->cacheStore->forget($cacheKey);
 
             $this->recordMetrics(
                 startTime: $startTime,

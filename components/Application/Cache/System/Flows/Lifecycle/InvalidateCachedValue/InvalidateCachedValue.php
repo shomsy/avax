@@ -18,12 +18,12 @@ final readonly class InvalidateCachedValue
 
     public function invalidateByKey(CacheKey $cacheKey): void
     {
-        $this->invalidate(key: $cacheKey);
+        $this->invalidate(cacheKey: $cacheKey);
     }
 
     public function invalidate(CacheKey $cacheKey): void
     {
-        $this->cacheStore->forget(key: $cacheKey);
+        $this->cacheStore->forget(cacheKey: $cacheKey);
 
         $this->cacheMetrics?->recordInvalidation();
     }
@@ -33,8 +33,8 @@ final readonly class InvalidateCachedValue
         $count = 0;
 
         foreach ($keys as $key) {
-            $key = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
-            $this->cacheStore->forget(key: $key);
+            $key = $key instanceof CacheKey ? $key : CacheKey::create(cacheKey: $key);
+            $this->cacheStore->forget(cacheKey: $key);
             $count++;
         }
 

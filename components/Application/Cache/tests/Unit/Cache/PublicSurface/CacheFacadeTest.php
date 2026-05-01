@@ -14,19 +14,19 @@ final class CacheFacadeTest extends TestCase
 {
     public function test_it_throws_when_no_cache_configured(): void
     {
-        $this->expectException(exception: CacheNotConfigured::class);
+        $this->expectException(CacheNotConfigured::class);
 
-        Cache::get(key: 'key');
+        Cache::get('key');
     }
 
     public function test_it_reads_value_through_static_facade(): void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->method('get')->with('key', 'default')->willReturn(value: 'value');
+        $mockCache->method('get')->with('key', 'default')->willReturn('value');
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::get(key: 'key', default: 'default');
+        $result = Cache::get(cacheKey 'key', default: 'default')
 
         $this->assertSame(expected: 'value', actual: $result);
     }
@@ -38,7 +38,7 @@ final class CacheFacadeTest extends TestCase
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::set(key: 'key', value: 'value');
+        $result = Cache::set(cacheKey 'key', value: 'value')
 
         $this->assertTrue(condition: $result);
     }
@@ -50,7 +50,7 @@ final class CacheFacadeTest extends TestCase
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::put(key: 'key', value: 'value', ttl: 3600);
+        $result = Cache::put(cacheKey 'key', value: 'value', ttl: 3600)
 
         $this->assertTrue(condition: $result);
     }

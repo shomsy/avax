@@ -25,11 +25,11 @@ final class RememberNullRegressionTest extends TestCase
      */
     public function test_it_does_not_reload_when_cached_value_is_null() : void
     {
-        $this->avaxCache->set(key: 'nullable', value: null);
+        $this->avaxCache->set(cacheKey: 'nullable', value: null);
 
         $loadCount = 0;
 
-        $result = $this->avaxCache->remember(key: 'nullable', ttl: 3600, loader: static function () use (&$loadCount) : string {
+        $result = $this->avaxCache->remember(cacheKey: 'nullable', ttl: 3600, loader: static function () use (&$loadCount) : string {
             $loadCount++;
 
             return 'loaded';
@@ -43,7 +43,7 @@ final class RememberNullRegressionTest extends TestCase
     {
         $loadCount = 0;
 
-        $result = $this->avaxCache->remember(key: 'missing', ttl: 3600, loader: static function () use (&$loadCount) : string {
+        $result = $this->avaxCache->remember(cacheKey: 'missing', ttl: 3600, loader: static function () use (&$loadCount) : string {
             $loadCount++;
 
             return 'loaded';
@@ -58,11 +58,11 @@ final class RememberNullRegressionTest extends TestCase
      */
     public function test_it_reloads_when_value_is_not_null() : void
     {
-        $this->avaxCache->set(key: 'exists', value: 'not_null');
+        $this->avaxCache->set(cacheKey: 'exists', value: 'not_null');
 
         $loadCount = 0;
 
-        $result = $this->avaxCache->remember(key: 'exists', ttl: 3600, loader: static function () use (&$loadCount) : string {
+        $result = $this->avaxCache->remember(cacheKey: 'exists', ttl: 3600, loader: static function () use (&$loadCount) : string {
             $loadCount++;
 
             return 'loaded';

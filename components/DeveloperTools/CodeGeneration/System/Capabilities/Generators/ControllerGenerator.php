@@ -63,6 +63,8 @@ class ControllerGenerator extends CodeGenerator
             declare(strict_types=1);
             
             namespace {$namespace};
+
+            use LogicException;
             
             class {$className}
             {
@@ -78,6 +80,6 @@ class ControllerGenerator extends CodeGenerator
     {
         $methodName = Str::camel($method);
 
-        return "    public function {$methodName}() : void\n    {\n        // TODO: Implement {$methodName}\n    }\n";
+        return "    public function {$methodName}() : void\n    {\n        throw new LogicException('Define controller action {$methodName} before routing it.');\n    }\n";
     }
 }

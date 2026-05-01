@@ -61,7 +61,7 @@ if (! function_exists('secure_headers')) {
         $combined = array_merge($defaults, $headers);
 
         foreach ($combined as $name => $value) {
-            header("{$name}: {$value}");
+            header(sprintf('%s: %s', $name, $value));
         }
     }
 }

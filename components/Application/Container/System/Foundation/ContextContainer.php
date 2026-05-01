@@ -25,6 +25,7 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
 use Avax\Components\Application\Container\System\Flows\ExplainService\ExplainService;
 use Avax\Components\Application\Container\System\Flows\ExportGraph\ExportGraph;
 use Avax\Components\Application\Container\System\Flows\ValidateComposition\ValidateComposition;
+use Avax\Components\Application\Container\System\Foundation\Container as FoundationContainer;
 use Closure;
 use InvalidArgumentException;
 use ReflectionException;
@@ -38,7 +39,7 @@ readonly class ContextContainer implements ContainerInterface
     /**
      * @param array<string, mixed> $context
      */
-    public function __construct(private Container $container, private ResolveDependency $resolveDependency, private array $context) {
+    public function __construct(private FoundationContainer $foundationContainer, private ResolveDependency $resolveDependency, private array $context) {
     }
 
     public function has(string $id): bool
@@ -87,7 +88,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function canInject(object $target): bool
     {
-        return $this->container->canInject(target: $target);
+        return $this->foundationContainer->canInject(target: $target);
     }
 
     /**
@@ -95,13 +96,13 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function inspectInjection(object $target): InjectionReport
     {
-        return $this->container->inspectInjection(target: $target);
+        return $this->foundationContainer->inspectInjection(target: $target);
     }
 
     public function flush(): void
     {
         $this->assertGlobalMutationAllowed(action: 'flush runtime state');
-        $this->container->flush();
+        $this->foundationContainer->flush();
     }
 
     protected function assertGlobalMutationAllowed(string $action): void
@@ -129,7 +130,7 @@ readonly class ContextContainer implements ContainerInterface
     public function reset(): void
     {
         $this->assertGlobalMutationAllowed(action: 'reset runtime state');
-        $this->container->reset();
+        $this->foundationContainer->reset();
     }
 
     /**
@@ -138,7 +139,7 @@ readonly class ContextContainer implements ContainerInterface
     public function bootProviders(array $providers): void
     {
         $this->assertGlobalMutationAllowed(action: 'boot providers');
-        $this->container->bootProviders(providers: $providers);
+        $this->foundationContainer->bootProviders(providers: $providers);
     }
 
     /**
@@ -268,17 +269,17 @@ readonly class ContextContainer implements ContainerInterface
 
     public function env(string $key, mixed $default = null): mixed
     {
-        return $this->container->env(key: $key, default: $default);
+        return $this->foundationContainer->env(key: $key, default: $default);
     }
 
     public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void
     {
-        $this->container->openScope(kind: $kind, scopeId: $scopeId);
+        $this->foundationContainer->openScope(kind: $kind, scopeId: $scopeId);
     }
 
     public function closeScope(?string $kind = null) : void
     {
-        $this->container->closeScope(kind: $kind);
+        $this->foundationContainer->closeScope(kind: $kind);
     }
 
     /**
@@ -286,7 +287,7 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function compileContainer(array $serviceIds = []): void
     {
-        $this->container->compileContainer(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
+        $this->foundationContainer->compileContainer(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
     /**
@@ -330,13 +331,13 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function warmCompiled(array $serviceIds = []): void
     {
-        $this->container->warmCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
+        $this->foundationContainer->warmCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
     public function flushCompiled(): void
     {
         $this->assertGlobalMutationAllowed(action: 'flush compiled artifacts');
-        $this->container->flushCompiled();
+        $this->foundationContainer->flushCompiled();
     }
 
     /**
@@ -345,47 +346,47 @@ readonly class ContextContainer implements ContainerInterface
      */
     public function rebuildCompiled(array $serviceIds = []): void
     {
-        $this->container->rebuildCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
+        $this->foundationContainer->rebuildCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
     public function compileReport(array $serviceIds = []): ?CompileReport
     {
-        return $this->container->compileReport(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
+        return $this->foundationContainer->compileReport(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
     public function runtimeReport(): RuntimeReport
     {
-        return $this->container->runtimeReport();
+        return $this->foundationContainer->runtimeReport();
     }
 
     public function hasAlias(string $alias): bool
     {
-        return $this->container->hasAlias(alias: $alias);
+        return $this->foundationContainer->hasAlias(alias: $alias);
     }
 
     public function isDeferred(string $id): bool
     {
-        return $this->container->isDeferred(id: $id);
+        return $this->foundationContainer->isDeferred(id: $id);
     }
 
     public function isLazy(string $id): bool
     {
-        return $this->container->isLazy(id: $id);
+        return $this->foundationContainer->isLazy(id: $id);
     }
 
     public function isCompiled(string $id): bool
     {
-        return $this->container->isCompiled(id: $id);
+        return $this->foundationContainer->isCompiled(id: $id);
     }
 
     public function isWarmedUp(): bool
     {
-        return $this->container->isWarmedUp();
+        return $this->foundationContainer->isWarmedUp();
     }
 
     public function scopes(): ScopeInterface
     {
-        return $this->container->scopes();
+        return $this->foundationContainer->scopes();
     }
 
     /**
@@ -411,7 +412,7 @@ readonly class ContextContainer implements ContainerInterface
 
     public function exportMetrics(): string
     {
-        return $this->container->exportMetrics();
+        return $this->foundationContainer->exportMetrics();
     }
 
     public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = ''): string
@@ -469,13 +470,13 @@ readonly class ContextContainer implements ContainerInterface
     public function alias(string $alias, string $abstract): void
     {
         $this->assertGlobalMutationAllowed(action: 'register aliases');
-        $this->container->alias(alias: $alias, abstract: $abstract);
+        $this->foundationContainer->alias(alias: $alias, abstract: $abstract);
     }
 
     public function bind(string $abstract, mixed $concrete = null, bool $shared = false) : DependencyRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->container->bind(abstract: $abstract, concrete: $concrete),
+            registration: $this->foundationContainer->bind(abstract: $abstract, concrete: $concrete),
         );
     }
 
@@ -520,27 +521,27 @@ readonly class ContextContainer implements ContainerInterface
     public function defer(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->container->defer(abstract: $abstract, concrete: $concrete),
+            registration: $this->foundationContainer->defer(abstract: $abstract, concrete: $concrete),
         );
     }
 
     public function singleton(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->container->singleton(abstract: $abstract, concrete: $concrete),
+            registration: $this->foundationContainer->singleton(abstract: $abstract, concrete: $concrete),
         );
     }
 
     public function scoped(string $abstract, mixed $concrete = null): DependencyRegistration
     {
         return $this->applySliceMetadata(
-            registration: $this->container->scoped(abstract: $abstract, concrete: $concrete),
+            registration: $this->foundationContainer->scoped(abstract: $abstract, concrete: $concrete),
         );
     }
 
     public function instance(string $abstract, object $instance): void
     {
-        $this->container->instance(abstract: $abstract, instance: $instance);
+        $this->foundationContainer->instance(abstract: $abstract, instance: $instance);
         $registration = $this->resolveDependency->registrations()->get(abstract: $abstract);
         if ($registration instanceof DependencyRegistration) {
             $this->applySliceMetadata(registration: $registration);
@@ -558,7 +559,7 @@ readonly class ContextContainer implements ContainerInterface
     public function extend(string $abstract, callable $closure): void
     {
         $this->assertOwnedMutation(abstract: $abstract, action: 'extend');
-        $this->container->extend(abstract: $abstract, closure: $closure);
+        $this->foundationContainer->extend(abstract: $abstract, closure: $closure);
     }
 
     protected function assertOwnedMutation(string $abstract, string $action): void
@@ -587,14 +588,14 @@ readonly class ContextContainer implements ContainerInterface
     public function decorate(string $abstract, callable|DecoratorInterface|string $decorator): void
     {
         $this->assertOwnedMutation(abstract: $abstract, action: 'decorate');
-        $this->container->decorate(abstract: $abstract, decorator: $decorator);
+        $this->foundationContainer->decorate(abstract: $abstract, decorator: $decorator);
     }
 
     public function when(string $consumer): RegisterForTarget
     {
         $this->assertGlobalMutationAllowed(action: 'register contextual rules');
 
-        return $this->container->when(consumer: $consumer);
+        return $this->foundationContainer->when(consumer: $consumer);
     }
 
     public function tag(string|array $abstracts, string|array $tags): void
@@ -605,7 +606,7 @@ readonly class ContextContainer implements ContainerInterface
             }
         }
 
-        $this->container->tag(abstracts: $abstracts, tags: $tags);
+        $this->foundationContainer->tag(abstracts: $abstracts, tags: $tags);
     }
 
     /**
@@ -619,7 +620,7 @@ readonly class ContextContainer implements ContainerInterface
 
         return new self(
             context : array_replace($this->context, $context),
-            base    : $this->container,
+            base    : $this->foundationContainer,
             resolver: $this->resolveDependency,
         );
     }
@@ -627,7 +628,7 @@ readonly class ContextContainer implements ContainerInterface
     public function forSlice(string $slice): ContainerInterface
     {
         if (SliceContext::isRoot(slice: $slice)) {
-            return new RootCompositionView(context: [], base: $this->container, resolver: $this->resolveDependency);
+            return new RootCompositionView(context: [], base: $this->foundationContainer, resolver: $this->resolveDependency);
         }
 
         $context = SliceContext::with(context: $this->context, slice: $slice);
@@ -641,11 +642,11 @@ readonly class ContextContainer implements ContainerInterface
     protected function sliceView(array $context): ContainerInterface
     {
         return match (SliceContext::category(slice: SliceContext::from(context: $context))) {
-            'flow'          => new FlowSliceView(context: $context, base: $this->container, resolver: $this->resolveDependency),
-            'capability'    => new CapabilitySliceView(context: $context, base: $this->container, resolver: $this->resolveDependency),
-            'configuration' => new ConfigurationSliceView(context: $context, base: $this->container, resolver: $this->resolveDependency),
-            'foundation'    => new FoundationSliceView(context: $context, base: $this->container, resolver: $this->resolveDependency),
-            default         => new self(context: $context, base: $this->container, resolver: $this->resolveDependency),
+            'flow'          => new FlowSliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
+            'capability'    => new CapabilitySliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
+            'configuration' => new ConfigurationSliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
+            'foundation'    => new FoundationSliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
+            default         => new self(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
         };
     }
 }

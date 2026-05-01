@@ -9,32 +9,32 @@ use Avax\Components\HTTP\Session\System\Configuration\SessionCookieSettings;
 final readonly class SessionCookieWriter
 {
     public function __construct(
-        private SessionCookieSettings $settings,
+        private SessionCookieSettings $sessionCookieSettings,
     ) {}
 
     public function write(string $sessionId) : void
     {
-        $expires = $this->settings->lifetime > 0 ? time() + $this->settings->lifetime : 0;
+        $expires = $this->sessionCookieSettings->lifetime > 0 ? time() + $this->sessionCookieSettings->lifetime : 0;
 
-        setcookie($this->settings->name, $sessionId, [
+        setcookie($this->sessionCookieSettings->name, $sessionId, [
             'expires' => $expires,
-            'path'    => $this->settings->path,
-            'domain'  => $this->settings->domain,
-            'secure'  => $this->settings->secure,
-            'httponly' => $this->settings->httpOnly,
-            'samesite' => $this->settings->sameSite,
+            'path'     => $this->sessionCookieSettings->path,
+            'domain'   => $this->sessionCookieSettings->domain,
+            'secure'   => $this->sessionCookieSettings->secure,
+            'httponly' => $this->sessionCookieSettings->httpOnly,
+            'samesite' => $this->sessionCookieSettings->sameSite,
         ]);
     }
 
     public function expire() : void
     {
-        setcookie($this->settings->name, '', [
+        setcookie($this->sessionCookieSettings->name, '', [
             'expires' => time() - 3600,
-            'path'    => $this->settings->path,
-            'domain'  => $this->settings->domain,
-            'secure'  => $this->settings->secure,
-            'httponly' => $this->settings->httpOnly,
-            'samesite' => $this->settings->sameSite,
+            'path'     => $this->sessionCookieSettings->path,
+            'domain'   => $this->sessionCookieSettings->domain,
+            'secure'   => $this->sessionCookieSettings->secure,
+            'httponly' => $this->sessionCookieSettings->httpOnly,
+            'samesite' => $this->sessionCookieSettings->sameSite,
         ]);
     }
 }

@@ -11,6 +11,6 @@ final readonly class BuildSagaReport
 {
     public function build(SagaTimeline $sagaTimeline) : SagaReport
     {
-        return new SagaReport(instanceId: $sagaTimeline->instanceId, events: $sagaTimeline->events);
+        return new SagaReport(events: $sagaTimeline->events, instanceId: $sagaTimeline->instanceId);
     }
 }

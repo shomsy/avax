@@ -31,12 +31,12 @@ final class InspectSaga implements Countable, IteratorAggregate
     public function buildReport(string $sagaId): SagaReport
     {
         $events = $this->getEvents(sagaId: $sagaId);
-        $timeline = SagaTimeline::fromEvents(sagaId: $sagaId, events: $events);
+        $sagaTimeline = SagaTimeline::fromEvents(sagaId: $sagaId, events: $events);
 
         return new SagaReport(
-            events     : $events,
             sagaId     : $sagaId,
-            timeline   : $timeline,
+            timeline   : $sagaTimeline,
+            events     : $events,
             generatedAt: new DateTimeImmutable(),
         );
     }
@@ -101,13 +101,13 @@ final readonly class SagaRuntimeEvent
         $payload ??= [];
 
         return new self(
-            type      : $type,
-            payload   : $payload,
-            occurredAt: new DateTimeImmutable(),
             id        : self::generateId(),
             sagaId    : $sagaId,
             sagaName  : $sagaName,
+            type      : $type,
             stepName  : $stepName,
+            payload   : $payload,
+            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -204,8 +204,8 @@ final readonly class SagaTimeline
         }
 
         return new self(
-            events     : $events,
             sagaId     : $sagaId,
+            events     : $events,
             steps      : $steps,
             startedAt  : $startedAt,
             completedAt: $completedAt,

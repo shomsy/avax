@@ -8,9 +8,9 @@ use Avax\Components\Security\System\System\PublicSurface\ResponseFormatter;
 
 final readonly class SecurityHeaders
 {
-    public static function apply(ResponseFormatter $formatter): ResponseFormatter
+    public static function apply(ResponseFormatter $responseFormatter) : ResponseFormatter
     {
-        return $formatter
+        return $responseFormatter
             ->withHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
             ->withHeader('X-Content-Type-Options', 'nosniff')
             ->withHeader('X-Frame-Options', 'DENY')
@@ -19,8 +19,8 @@ final readonly class SecurityHeaders
             ->withHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
     }
 
-    public static function applyCsp(ResponseFormatter $formatter, string $policy): ResponseFormatter
+    public static function applyCsp(ResponseFormatter $responseFormatter, string $policy) : ResponseFormatter
     {
-        return $formatter->withHeader('Content-Security-Policy', $policy);
+        return $responseFormatter->withHeader('Content-Security-Policy', $policy);
     }
 }

@@ -6,7 +6,7 @@ namespace Avax\Components\Security\System\System\Capabilities\Csrf;
 
 final readonly class CsrfToken
 {
-    private const SESSION_KEY = '_token';
+    private const string SESSION_KEY = '_token';
 
     public static function token(): string
     {

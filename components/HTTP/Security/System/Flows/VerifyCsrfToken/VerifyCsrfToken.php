@@ -17,31 +17,31 @@ final readonly class VerifyCsrfToken
         private CsrfTokens $csrfTokens,
     ) {}
 
-    public function handle(ServerRequest $request, Closure $next): mixed
+    public function handle(ServerRequest $serverRequest, Closure $next) : mixed
     {
-        if (in_array($request->getMethod(), self::SAFE_METHODS, true)) {
-            return $next($request);
+        if (in_array($serverRequest->getMethod(), self::SAFE_METHODS, true)) {
+            return $next($serverRequest);
         }
 
-        $token = $this->extractToken($request);
+        $token = $this->extractToken($serverRequest);
 
         if (! $this->csrfTokens->validateToken($token)) {
             return $this->createErrorResponse();
         }
 
-        return $next($request);
+        return $next($serverRequest);
     }
 
-    private function extractToken(ServerRequest $request): ?string
+    private function extractToken(ServerRequest $serverRequest) : ?string
     {
-        $token = $request->headers()->get('X-CSRF-TOKEN')
-            ?? $request->headers()->get('X-XSRF-TOKEN');
+        $token = $serverRequest->headers()->get('X-CSRF-TOKEN')
+            ?? $serverRequest->headers()->get('X-XSRF-TOKEN');
 
         if ($token) {
             return $token;
         }
 
-        $body = $request->body()->parsed();
+        $body = $serverRequest->body()->parsed();
 
         return $body['_token'] ?? $body['_csrf_token'] ?? null;
     }

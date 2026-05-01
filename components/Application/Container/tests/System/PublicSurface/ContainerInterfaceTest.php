@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\Tests\System\PublicSurface;
 
+use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Foundation\DIContainer;
-use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
 use Avax\Components\Application\Container\System\PublicSurface\Container;
-use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Tests\TestCase;
 use DateTime;
 use DateTimeImmutable;
@@ -159,6 +158,6 @@ final class ContainerInterfaceTest extends TestCase
     {
         $engine = $this->publicContainer->engine();
 
-        $this->assertInstanceOf(DIContainerInterface::class, $engine);
+        $this->assertInstanceOf(ContainerInterface::class, $engine);
     }
 }

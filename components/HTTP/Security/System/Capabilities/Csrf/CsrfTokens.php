@@ -80,6 +80,7 @@ final readonly class CsrfTokens
         if (count($tokens) <= $this->maxTokensPerSession) {
             return $tokens;
         }
+
         asort($tokens);
 
         return array_slice($tokens, -$this->maxTokensPerSession, null, true);
@@ -90,14 +91,15 @@ final readonly class CsrfTokens
         $now = time();
         $expiry = $this->tokenExpirationMinutes * 60;
 
-        return array_filter($tokens, static fn ($ts) => $now - $ts <= $expiry);
+        return array_filter($tokens, static fn ($ts) : bool => $now - $ts <= $expiry);
     }
 
     private function readMostRecentToken(array $tokens): ?string
     {
-        if (empty($tokens)) {
+        if ($tokens === []) {
             return null;
         }
+
         arsort($tokens);
 
         return (string) array_key_first($tokens);

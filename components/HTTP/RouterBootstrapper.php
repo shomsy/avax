@@ -35,9 +35,9 @@ final class RouterBootstrapper
             }
         }
 
-    private RouterInterface $router;
+    private readonly RouterInterface $router;
 
-    private ?RouterRuntimeInterface $runtimeRouter;
+    private readonly ?RouterRuntimeInterface $routerRuntime;
 
     private array $routeMiddleware
         = [] {
@@ -57,10 +57,10 @@ final class RouterBootstrapper
     /**
      * Create bootstrapper with router and route collection.
      */
-    public function __construct(RouterInterface $router, RouterRuntimeInterface $runtimeRouter = null)
+    public function __construct(RouterInterface $router, ?RouterRuntimeInterface $routerRuntime = null)
     {
         $this->router = $router;
-        $this->runtimeRouter = $runtimeRouter ?? ($router instanceof RouterRuntimeInterface ? $router : null);
+        $this->routerRuntime = $routerRuntime ?? ($router instanceof RouterRuntimeInterface ? $router : null);
     }
 
     /**
@@ -83,11 +83,11 @@ final class RouterBootstrapper
         $method   = strtoupper(string: $method);
         $fullPath = $this->qualifyPath(path: $path);
         $routeKey = $this->routeKey(method: $method, path: $fullPath);
-        $proxy    = $this->registerWithDsl(method: $method, path: $fullPath, handler: $handler);
+        $routeRegistrarProxy = $this->registerWithDsl(method: $method, path: $fullPath, handler: $handler);
         $routeMiddleware = array_values(array_merge($this->activeMiddleware, $this->routeMiddleware[$routeKey] ?? []));
 
         if ($routeMiddleware !== []) {
-            $proxy->middleware(middleware: $routeMiddleware);
+            $routeRegistrarProxy->middleware(middleware: $routeMiddleware);
         }
 
         $this->routes[$routeKey] = [
@@ -109,7 +109,7 @@ final class RouterBootstrapper
                 continue;
             }
 
-            $prefix .= '/' . trim(string: $groupPrefix, characters: '/');
+            $prefix .= '/' . trim(string: (string) $groupPrefix, characters: '/');
         }
 
         $qualifiedPath = trim(string: $prefix . '/' . ltrim(string: $path, characters: '/'), characters: '/');
@@ -132,7 +132,7 @@ final class RouterBootstrapper
             'DELETE' => $this->router->delete(path: $path, action: $handler),
             'OPTIONS' => $this->router->options(path: $path, action: $handler),
             'HEAD'   => $this->router->head(path: $path, action: $handler),
-            default  => throw new InvalidArgumentException(message: "Unsupported HTTP method '{$method}'."),
+            default => throw new InvalidArgumentException(message: sprintf("Unsupported HTTP method '%s'.", $method)),
         };
     }
 
@@ -193,7 +193,7 @@ final class RouterBootstrapper
     /**
      * Group routes with common middleware or prefix.
      */
-    public function group(callable $routes, array $middleware = null, string $prefix = '') : self
+    public function group(callable $routes, ?array $middleware = null, string $prefix = '') : self
     {
         $middleware ??= [];
         $previousMiddleware = $this->activeMiddleware;
@@ -229,7 +229,7 @@ final class RouterBootstrapper
     public function useGroup(string $name) : self
     {
         if (! isset($this->middlewareGroups[$name])) {
-            throw new InvalidArgumentException(message: "Middleware group '{$name}' not defined.");
+            throw new InvalidArgumentException(message: sprintf("Middleware group '%s' not defined.", $name));
         }
 
         $this->activeMiddleware = array_values(array_merge(
@@ -264,15 +264,15 @@ final class RouterBootstrapper
      * @throws ReflectionException
      */
     public function createApp(
-        ControllerDispatcher $dispatcher,
+        ControllerDispatcher $controllerDispatcher,
         ResponseFactory $responseFactory,
     ) : AppKernel
     {
-        $router = $this->bootstrap();
+        $routerRuntime = $this->bootstrap();
 
         return new AppKernel(
-            router          : $router,
-            dispatcher      : $dispatcher,
+            router          : $routerRuntime,
+            dispatcher      : $controllerDispatcher,
             responseFactory : $responseFactory,
             globalMiddleware: $this->globalMiddleware,
         );
@@ -283,12 +283,12 @@ final class RouterBootstrapper
      */
     public function bootstrap() : RouterRuntimeInterface
     {
-        if ($this->runtimeRouter === null) {
+        if (! $this->routerRuntime instanceof RouterRuntimeInterface) {
             throw new LogicException(
                 message: 'RouterBootstrapper requires a runtime router instance to build an AppKernel.',
             );
         }
 
-        return $this->runtimeRouter;
+        return $this->routerRuntime;
     }
 }

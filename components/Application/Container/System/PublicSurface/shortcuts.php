@@ -6,21 +6,19 @@ declare(strict_types=1);
  * Container shortcuts for global access.
  */
 
-use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
+use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\PublicSurface\Container;
-use Avax\Components\Application\Container\System\PublicSurface\ContainerFacade;
 
 if (! function_exists('appInstance')) {
     /**
      * Get or set the global container instance.
      */
-    function appInstance(?DIContainerInterface $instance = null) : ?DIContainerInterface
+    function appInstance(?ContainerInterface $instance = null) : ?ContainerInterface
     {
         static $container = null;
 
-        if ($instance instanceof DIContainerInterface) {
+        if ($instance instanceof ContainerInterface) {
             $container = $instance;
-            ContainerFacade::setContainer($instance);
             Container::setContainer($instance);
         }
 

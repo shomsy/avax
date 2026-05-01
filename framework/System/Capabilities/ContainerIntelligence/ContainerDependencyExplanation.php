@@ -9,6 +9,9 @@ namespace Avax\Framework\System\Capabilities\ContainerIntelligence;
  */
 final readonly class ContainerDependencyExplanation
 {
+    /**
+     * @param list<string> $dependencies
+     */
     public function __construct(
         public string $serviceId,
         public string $scope,

@@ -23,6 +23,9 @@ final class EventFake
 
     private bool $preventingRealDispatch = true;
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public function dispatch(string $event, array $payload = []) : void
     {
         $this->dispatched[$event]           = ($this->dispatched[$event] ?? 0) + 1;

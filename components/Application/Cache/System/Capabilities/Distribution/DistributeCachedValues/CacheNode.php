@@ -9,17 +9,25 @@ use Stringable;
 
 final readonly class CacheNode implements Stringable
 {
+    public CacheNodeId $id;
+
+    public CacheNodeStatus $status;
+
     public function __construct(
         public CacheNodeId     $cacheNodeId,
         public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
         public float           $weight = 1.0,
-    ) {}
+    )
+    {
+        $this->id     = $cacheNodeId;
+        $this->status = $cacheNodeStatus;
+    }
 
-    public static function create(string $id, CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY) : self
+    public static function create(string $id, CacheNodeStatus $status = CacheNodeStatus::HEALTHY) : self
     {
         return new self(
-            id    : CacheNodeId::from(id: $id),
-            status: $cacheNodeStatus,
+            cacheNodeId    : CacheNodeId::from(id: $id),
+            cacheNodeStatus: $status,
         );
     }
 
@@ -28,14 +36,14 @@ final readonly class CacheNode implements Stringable
         return $this->cacheNodeStatus === CacheNodeStatus::HEALTHY;
     }
 
-    public function withStatus(CacheNodeStatus $cacheNodeStatus) : self
+    public function withStatus(CacheNodeStatus $status) : self
     {
-        return new self(id: $this->cacheNodeId, status: $cacheNodeStatus, weight: $this->weight);
+        return new self(cacheNodeId: $this->cacheNodeId, cacheNodeStatus: $status, weight: $this->weight);
     }
 
     public function withWeight(float $weight) : self
     {
-        return new self(id: $this->cacheNodeId, status: $this->cacheNodeStatus, weight: $weight);
+        return new self(cacheNodeId: $this->cacheNodeId, cacheNodeStatus: $this->cacheNodeStatus, weight: $weight);
     }
 
     #[Override]

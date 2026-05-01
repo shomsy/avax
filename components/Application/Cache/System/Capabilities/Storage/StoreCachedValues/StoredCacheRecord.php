@@ -14,7 +14,7 @@ final readonly class StoredCacheRecord
 {
     public function __construct(
         public mixed                $value,
-        public CachedValueLifecycle $cachedValueLifecycle,
+        public CachedValueLifecycle $lifecycle,
         public string|null          $serializedData = null,
         public string|null          $format = null,
     ) {}
@@ -39,16 +39,16 @@ final readonly class StoredCacheRecord
 
     public function isExpired(Clock $clock) : bool
     {
-        return $this->cachedValueLifecycle->isExpired(clock: $clock);
+        return $this->lifecycle->isExpired(clock: $clock);
     }
 
     public function timeToLive(Clock $clock) : int
     {
-        return $this->cachedValueLifecycle->timeToLive(clock: $clock);
+        return $this->lifecycle->timeToLive(clock: $clock);
     }
 
     public function age(Clock $clock) : int
     {
-        return $this->cachedValueLifecycle->age(clock: $clock);
+        return $this->lifecycle->age(clock: $clock);
     }
 }

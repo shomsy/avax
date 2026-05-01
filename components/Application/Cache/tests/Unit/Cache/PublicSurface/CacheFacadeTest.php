@@ -34,7 +34,7 @@ final class CacheFacadeTest extends TestCase
     public function test_it_writes_value_through_static_facade() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects(invocationRule: $this->once())->method(constraint: 'set')->with('key', 'value', null)->willReturn(value: true);
+        $mockCache->expects($this->once())->method('set')->with('key', 'value', null)->willReturn(value: true);
 
         Cache::use(cache: $mockCache);
 
@@ -46,7 +46,7 @@ final class CacheFacadeTest extends TestCase
     public function test_it_put_is_alias_for_set() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects(invocationRule: $this->once())->method(constraint: 'set')->with('key', 'value', 3600)->willReturn(value: true);
+        $mockCache->expects($this->once())->method('set')->with('key', 'value', 3600)->willReturn(value: true);
 
         Cache::use(cache: $mockCache);
 
@@ -58,7 +58,7 @@ final class CacheFacadeTest extends TestCase
     public function test_it_remembers_value_through_static_facade() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects(invocationRule: $this->once())->method(constraint: 'remember')->with('key', 3600, $this->isType(type: 'callable'))->willReturn(value: 'loaded');
+        $mockCache->expects($this->once())->method('remember')->with('key', 3600, $this->isType(type: 'callable'))->willReturn(value: 'loaded');
 
         Cache::use(cache: $mockCache);
 
@@ -70,7 +70,7 @@ final class CacheFacadeTest extends TestCase
     public function test_it_forgets_value_through_static_facade() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects(invocationRule: $this->once())->method(constraint: 'delete')->with('key')->willReturn(value: true);
+        $mockCache->expects($this->once())->method('delete')->with('key')->willReturn(value: true);
 
         Cache::use(cache: $mockCache);
 
@@ -82,7 +82,7 @@ final class CacheFacadeTest extends TestCase
     public function test_it_clears_through_static_facade() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects(invocationRule: $this->once())->method(constraint: 'clear')->willReturn(value: true);
+        $mockCache->expects($this->once())->method('clear')->willReturn(value: true);
 
         Cache::use(cache: $mockCache);
 

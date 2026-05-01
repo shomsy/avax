@@ -16,13 +16,13 @@ use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 
-abstract class CacheStoreContractTest extends TestCase
+abstract class CacheStoreContractCase extends TestCase
 {
     public function test_it_returns_missing_when_key_does_not_exist() : void
     {
-        $clock = $this->clock();
+        $clock      = $this->clock();
         $cacheStore = $this->createStore(clock: $clock);
-        $cacheKey = CacheKey::create(key: 'nonexistent-key');
+        $cacheKey   = CacheKey::create(key: 'nonexistent-key');
 
         $result = $cacheStore->read(key: $cacheKey, clock: $clock);
 
@@ -38,10 +38,10 @@ abstract class CacheStoreContractTest extends TestCase
 
     public function test_it_returns_stored_value_when_key_exists() : void
     {
-        $clock = $this->clock();
+        $clock      = $this->clock();
         $cacheStore = $this->createStore(clock: $clock);
-        $cacheKey = CacheKey::create(key: 'test-key');
-        $value = 'test-value';
+        $cacheKey   = CacheKey::create(key: 'test-key');
+        $value      = 'test-value';
 
         $storedCacheRecord = new StoredCacheRecord(
             value    : $value,
@@ -61,9 +61,9 @@ abstract class CacheStoreContractTest extends TestCase
 
     public function test_it_returns_stored_null_when_null_was_stored() : void
     {
-        $clock = $this->clock();
+        $clock      = $this->clock();
         $cacheStore = $this->createStore(clock: $clock);
-        $cacheKey = CacheKey::create(key: 'null-key');
+        $cacheKey   = CacheKey::create(key: 'null-key');
 
         $storedCacheRecord = new StoredCacheRecord(
             value    : null,
@@ -83,10 +83,10 @@ abstract class CacheStoreContractTest extends TestCase
 
     public function test_it_expires_value_when_ttl_has_passed() : void
     {
-        $clock = $this->clock();
+        $clock      = $this->clock();
         $cacheStore = $this->createStore(clock: $clock);
-        $cacheKey = CacheKey::create(key: 'expired-key');
-        $value = 'test-value';
+        $cacheKey   = CacheKey::create(key: 'expired-key');
+        $value      = 'test-value';
 
         $storedCacheRecord = new StoredCacheRecord(
             value    : $value,
@@ -106,10 +106,10 @@ abstract class CacheStoreContractTest extends TestCase
 
     public function test_it_forgets_value_when_key_exists() : void
     {
-        $clock = $this->clock();
+        $clock      = $this->clock();
         $cacheStore = $this->createStore(clock: $clock);
-        $cacheKey = CacheKey::create(key: 'forget-key');
-        $value = 'test-value';
+        $cacheKey   = CacheKey::create(key: 'forget-key');
+        $value      = 'test-value';
 
         $storedCacheRecord = new StoredCacheRecord(
             value    : $value,
@@ -130,7 +130,7 @@ abstract class CacheStoreContractTest extends TestCase
 
     public function test_it_clears_all_values() : void
     {
-        $clock = $this->clock();
+        $clock      = $this->clock();
         $cacheStore = $this->createStore(clock: $clock);
 
         $storedCacheRecord = new StoredCacheRecord(
@@ -155,9 +155,9 @@ abstract class CacheStoreContractTest extends TestCase
 
     public function test_it_exists_returns_true_for_existing_key() : void
     {
-        $clock = $this->clock();
+        $clock      = $this->clock();
         $cacheStore = $this->createStore(clock: $clock);
-        $cacheKey = CacheKey::create(key: 'exists-key');
+        $cacheKey   = CacheKey::create(key: 'exists-key');
 
         $storedCacheRecord = new StoredCacheRecord(
             value    : 'test-value',
@@ -175,9 +175,9 @@ abstract class CacheStoreContractTest extends TestCase
 
     public function test_it_exists_returns_false_for_nonexistent_key() : void
     {
-        $clock = $this->clock();
+        $clock      = $this->clock();
         $cacheStore = $this->createStore(clock: $clock);
-        $cacheKey = CacheKey::create(key: 'nonexistent-key');
+        $cacheKey   = CacheKey::create(key: 'nonexistent-key');
 
         $this->assertFalse(condition: $cacheStore->exists(key: $cacheKey));
     }

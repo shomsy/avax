@@ -25,15 +25,15 @@ final class ConsistentHashRing
         private readonly int $virtualNodes = self::VIRTUAL_NODES,
     ) {}
 
-    public function addNode(CacheNode $cacheNode) : self
+    public function addNode(CacheNode $node) : self
     {
-        $this->nodes[$cacheNode->id->toString()]         = $cacheNode;
-        $this->nodePositions[$cacheNode->id->toString()] = [];
+        $this->nodes[$node->id->toString()]         = $node;
+        $this->nodePositions[$node->id->toString()] = [];
 
         for ($i = 0; $i < $this->virtualNodes; $i++) {
-            $position                                          = $this->hash(value: sprintf('%s:%d', $cacheNode->id->toString(), $i));
-            $this->ring[$position]                             = $cacheNode;
-            $this->nodePositions[$cacheNode->id->toString()][] = $position;
+            $position                                     = $this->hash(value: sprintf('%s:%d', $node->id->toString(), $i));
+            $this->ring[$position]                        = $node;
+            $this->nodePositions[$node->id->toString()][] = $position;
         }
 
         $this->sortRing();
@@ -51,9 +51,9 @@ final class ConsistentHashRing
         ksort($this->ring, SORT_NUMERIC);
     }
 
-    public function removeNode(CacheNodeId $cacheNodeId) : self
+    public function removeNode(CacheNodeId $nodeId) : self
     {
-        $nodeIdStr = $cacheNodeId->toString();
+        $nodeIdStr = $nodeId->toString();
 
         if (! isset($this->nodes[$nodeIdStr])) {
             return $this;
@@ -79,13 +79,13 @@ final class ConsistentHashRing
         );
     }
 
-    public function getNodeForKey(CacheKey $cacheKey) : CacheNode|null
+    public function getNodeForKey(CacheKey $key) : CacheNode|null
     {
         if ($this->ring === []) {
             return null;
         }
 
-        $keyHash = $this->hash(value: $cacheKey->fullKey());
+        $keyHash = $this->hash(value: $key->fullKey());
 
         $closestNode     = null;
         $closestPosition = null;

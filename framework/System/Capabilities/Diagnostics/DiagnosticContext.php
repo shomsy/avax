@@ -6,6 +6,9 @@ namespace Avax\Framework\System\Capabilities\Diagnostics;
 
 final class DiagnosticContext
 {
+    /**
+     * @var array<string, mixed>
+     */
     private array $data = [];
 
     public function set(string $key, mixed $value) : void
@@ -23,6 +26,9 @@ final class DiagnosticContext
         return isset($this->data[$key]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function all() : array
     {
         return $this->data;

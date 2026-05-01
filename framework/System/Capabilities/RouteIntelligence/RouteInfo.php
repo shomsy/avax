@@ -9,6 +9,10 @@ namespace Avax\Framework\System\Capabilities\RouteIntelligence;
  */
 final readonly class RouteInfo
 {
+    /**
+     * @param list<string>          $middleware
+     * @param array<string, string> $constraints
+     */
     public function __construct(
         public string      $method,
         public string      $pattern,
@@ -30,7 +34,7 @@ final readonly class RouteInfo
     {
         preg_match_all('/\{(\w+)\??\}/', $this->pattern, $matches);
 
-        return $matches[1] ?? [];
+        return $matches[1];
     }
 
     public function fingerprint() : string

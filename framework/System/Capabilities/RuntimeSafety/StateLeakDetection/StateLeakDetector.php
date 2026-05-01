@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\RuntimeSafety\StateLeakDetection;
 
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
+use Closure;
 use ReflectionClass;
 use ReflectionObject;
 use ReflectionProperty;
-use Throwable;
 
 /**
  * Detects state leaks between requests in long-lived runtimes.
@@ -22,7 +22,7 @@ use Throwable;
 final class StateLeakDetector
 {
     /**
-     * @var list<callable>
+     * @var array<string, callable(): mixed>
      */
     private array $leakChecks = [];
 
@@ -39,6 +39,9 @@ final class StateLeakDetector
 
     /**
      * Add a custom leak check.
+     */
+    /**
+     * @param callable(): mixed $check
      */
     public function addCheck(string $name, callable $check) : self
     {
@@ -84,11 +87,12 @@ final class StateLeakDetector
                 continue;
             }
 
-            try {
-                $reflection = new ReflectionClass($className);
-            } catch (Throwable) {
+            if (! class_exists($className)) {
                 continue;
             }
+
+            /** @var class-string $className */
+            $reflection = new ReflectionClass($className);
 
             foreach ($reflection->getProperties(ReflectionProperty::IS_STATIC) as $property) {
                 if (! $property->isReadOnly() && ! $property->hasDefaultValue()) {
@@ -105,7 +109,7 @@ final class StateLeakDetector
                                          'Make $%s readonly or add a reset hook for worker mode',
                                          $property->getName(),
                                      ),
-                        location   : $property->getFileName() . ':' . $property->getStartLine(),
+                        location   : $this->propertyLocation(property: $property),
                     );
                 }
             }
@@ -126,12 +130,13 @@ final class StateLeakDetector
         if (function_exists('app')) {
             $container = app();
 
-            if ($container === null) {
+            if (! is_object($container)) {
                 return [];
             }
 
             if (method_exists($container, 'getSharedInstances')) {
-                $sharedInstances = $container->getSharedInstances();
+                /** @var array<string, object> $sharedInstances */
+                $sharedInstances = Closure::fromCallable([$container, 'getSharedInstances'])();
 
                 foreach ($sharedInstances as $abstract => $instance) {
                     $reflection = new ReflectionObject($instance);
@@ -164,5 +169,14 @@ final class StateLeakDetector
         }
 
         return $findings;
+    }
+
+    private function propertyLocation(ReflectionProperty $property) : string
+    {
+        $class = $property->getDeclaringClass();
+        $file  = $class->getFileName();
+        $line  = $class->getStartLine();
+
+        return ($file !== false ? $file : $class->getName()) . ':' . $line;
     }
 }

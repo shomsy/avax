@@ -48,18 +48,18 @@ final readonly class FileCacheStore implements CacheStore
      * @throws JsonException
      */
     #[Override]
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    public function write(CacheKey $key, StoredCacheRecord $record) : void
     {
-        $filePath = $this->getFilePath(key: $cacheKey);
+        $filePath = $this->getFilePath(key: $key);
         $this->ensureDirectoryExistsForKey(filePath: $filePath);
 
-        $serializedPayload = $this->jsonCacheSerializer->serialize(value: $storedCacheRecord->value);
+        $serializedPayload = $this->jsonCacheSerializer->serialize(value: $record->value);
 
         $data = [
             'value'          => $serializedPayload->data,
             'format'         => $serializedPayload->format,
-            'lifecycle'      => $this->serializeLifecycle(lifecycle: $storedCacheRecord->lifecycle),
-            'serializedData' => $storedCacheRecord->serializedData,
+            'lifecycle'      => $this->serializeLifecycle(lifecycle: $record->lifecycle),
+            'serializedData' => $record->serializedData,
         ];
 
         $content = json_encode($data, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE);
@@ -78,8 +78,8 @@ final readonly class FileCacheStore implements CacheStore
             }
 
             throw new StoreCachedValueFailed(
-                message: sprintf('Failed to write cache file for key "%s"', $cacheKey->fullKey()),
-                key    : $cacheKey->fullKey(),
+                message: sprintf('Failed to write cache file for key "%s"', $key->fullKey()),
+                key    : $key->fullKey(),
             );
         }
 
@@ -87,17 +87,17 @@ final readonly class FileCacheStore implements CacheStore
             @unlink($tempPath);
 
             throw new StoreCachedValueFailed(
-                message: sprintf('Failed to finalize cache file for key "%s"', $cacheKey->fullKey()),
-                key    : $cacheKey->fullKey(),
+                message: sprintf('Failed to finalize cache file for key "%s"', $key->fullKey()),
+                key    : $key->fullKey(),
             );
         }
 
         chmod($filePath, self::WRITE_MODE);
     }
 
-    private function getFilePath(CacheKey $cacheKey) : string
+    private function getFilePath(CacheKey $key) : string
     {
-        $keyHash = hash('xxh128', $cacheKey->fullKey());
+        $keyHash = hash('xxh128', $key->fullKey());
         $subDir  = substr($keyHash, 0, 2);
 
         return $this->basePath . '/' . $subDir . '/' . $keyHash . self::FILE_EXTENSION;
@@ -152,51 +152,51 @@ final readonly class FileCacheStore implements CacheStore
     }
 
     #[Override]
-    public function exists(CacheKey $cacheKey) : bool
+    public function exists(CacheKey $key) : bool
     {
-        $filePath = $this->getFilePath(key: $cacheKey);
+        $filePath = $this->getFilePath(key: $key);
 
         if (! file_exists($filePath)) {
             return false;
         }
 
-        $result = $this->read(key: $cacheKey, clock: $this->clock);
+        $result = $this->read(key: $key, clock: $this->clock);
 
         return $result instanceof CacheStoreRecordWasFound;
     }
 
     #[Override]
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $key, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        $filePath = $this->getFilePath(key: $cacheKey);
+        $filePath = $this->getFilePath(key: $key);
 
         if (! file_exists($filePath)) {
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(key: $key);
         }
 
         $content = file_get_contents($filePath);
 
         if ($content === false || $content === '') {
-            $this->forget(key: $cacheKey);
+            $this->forget(key: $key);
 
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(key: $key);
         }
 
         try {
             $data = json_decode($content, associative: true, depth: 512);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                $this->forget(key: $cacheKey);
+                $this->forget(key: $key);
 
-                return new CacheStoreRecordWasMissing(key: $cacheKey);
+                return new CacheStoreRecordWasMissing(key: $key);
             }
 
             $lifecycle = $this->deserializeLifecycle(data: $data['lifecycle'] ?? [], clock: $clock);
 
             if ($lifecycle->isExpired(clock: $clock)) {
-                $this->forget(key: $cacheKey);
+                $this->forget(key: $key);
 
-                return new CacheStoreRecordWasMissing(key: $cacheKey);
+                return new CacheStoreRecordWasMissing(key: $key);
             }
 
             $valuePayload = SerializedCachePayload::create(
@@ -222,18 +222,18 @@ final readonly class FileCacheStore implements CacheStore
                 format        : $record->format,
             );
 
-            return new CacheStoreRecordWasFound(key: $cacheKey, record: $record, clock: $clock);
+            return new CacheStoreRecordWasFound(key: $key, record: $record, clock: $clock);
         } catch (Throwable) {
-            $this->forget(key: $cacheKey);
+            $this->forget(key: $key);
 
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(key: $key);
         }
     }
 
     #[Override]
-    public function forget(CacheKey $cacheKey) : void
+    public function forget(CacheKey $key) : void
     {
-        $filePath = $this->getFilePath(key: $cacheKey);
+        $filePath = $this->getFilePath(key: $key);
 
         if (file_exists($filePath)) {
             @unlink($filePath);

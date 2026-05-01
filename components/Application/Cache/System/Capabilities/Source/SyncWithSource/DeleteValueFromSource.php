@@ -9,8 +9,13 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 final readonly class DeleteValueFromSource
 {
     public function __construct(
-        private CacheSource $cacheSource,
-    ) {}
+        CacheSource $source,
+    )
+    {
+        $this->cacheSource = $source;
+    }
+
+    private CacheSource $cacheSource;
 
     public function deleteMany(iterable $keys) : int
     {
@@ -25,9 +30,9 @@ final readonly class DeleteValueFromSource
         return $count;
     }
 
-    public function delete(CacheKey $cacheKey) : void
+    public function delete(CacheKey $key) : void
     {
-        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
-        $this->cacheSource->delete(key: $cacheSourceKey);
+        $cacheSourceKey = CacheSourceKey::create(key: $key->fullKey(), namespace: $key->namespace);
+        $this->cacheSource->delete($cacheSourceKey);
     }
 }

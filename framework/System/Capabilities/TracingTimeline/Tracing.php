@@ -20,6 +20,9 @@ final class Tracing
         return $this->currentTimeline;
     }
 
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function record(
         string      $name,
         float|null  $durationMS = null,

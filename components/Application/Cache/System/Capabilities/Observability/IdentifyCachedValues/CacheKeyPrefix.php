@@ -36,9 +36,9 @@ final readonly class CacheKeyPrefix implements Stringable
     public function prepend(string $key) : CacheKey
     {
         return CacheKey::create(
-            key      : $this->prefix . $key,
-            namespace: null,
-            version  : null,
+            key         : $this->prefix . $key,
+            namespace   : null,
+            cacheVersion: null,
         );
     }
 

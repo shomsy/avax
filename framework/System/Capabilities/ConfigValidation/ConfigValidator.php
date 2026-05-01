@@ -83,7 +83,7 @@ final class ConfigValidator
             $typeViolations = $this->validateType($dotKey, $value, $field);
             $violations     = [...$violations, ...$typeViolations];
 
-            if (! empty($field->allowed) && ! in_array($value, $field->allowed, true)) {
+            if ($field->allowed !== [] && ! in_array($value, $field->allowed, true)) {
                 $violations[] = new ConfigSchemaViolation(
                     severity   : ConfigSchemaViolation::SEVERITY_ERROR,
                     key        : $dotKey,
@@ -91,12 +91,12 @@ final class ConfigValidator
                                      "Config '%s' has invalid value '%s'. Allowed: %s",
                                      $dotKey,
                                      var_export($value, true),
-                                     implode(', ', array_map(fn ($v) => var_export($v, true), $field->allowed)),
+                                     implode(', ', array_map(static fn (mixed $value) : string => var_export($value, true), $field->allowed)),
                                  ),
                     remediation: sprintf(
                                      "Change %s to one of: %s",
                                      $dotKey,
-                                     implode(', ', $field->allowed),
+                                     implode(', ', array_map(static fn (mixed $value) : string => var_export($value, true), $field->allowed)),
                                  ),
                 );
             }

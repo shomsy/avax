@@ -16,7 +16,7 @@ use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
  */
 final class FrameworkProvider implements ComponentProviderInterface
 {
-    public function name() : string
+    public static function name() : string
     {
         return 'framework';
     }
@@ -44,6 +44,6 @@ final class FrameworkProvider implements ComponentProviderInterface
         $stateResetRegistry = $runtime->stateResetRegistry();
 
         // Register RuntimeSafety
-        $runtimeSafety = new RuntimeSafety(stateResetRegistry: $stateResetRegistry);
+        new RuntimeSafety(stateResetRegistry: $stateResetRegistry);
     }
 }

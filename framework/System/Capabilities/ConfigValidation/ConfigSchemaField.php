@@ -18,9 +18,12 @@ final readonly class ConfigSchemaField
     public const TYPE_URL              = 'url';
     public const TYPE_EMAIL            = 'email';
 
+    /**
+     * @param list<mixed> $allowed
+     */
     public function __construct(
         public string      $name,
-        public string      $type = 'string',
+        public string $type = self::TYPE_STRING,
         public bool        $required = true,
         public mixed       $default = null,
         public array       $allowed = [],

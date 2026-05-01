@@ -11,6 +11,9 @@ final readonly class Workers
 {
     public function __construct(private WorkerPool $pool) {}
 
+    /**
+     * @param array{max_memory?: int} $options
+     */
     public function start(int $processes = 1, array $options = []) : void
     {
         $this->pool->start($processes, $options);
@@ -43,6 +46,9 @@ final class WorkerPool
     private array $workers = [];
     private bool  $running = false;
 
+    /**
+     * @param array{max_memory?: int} $options
+     */
     public function start(int $processes, array $options) : void
     {
         $this->running = true;
@@ -148,6 +154,9 @@ final readonly class WorkerStatus
         public int $totalMemory,
     ) {}
 
+    /**
+     * @return array{total: int, running: int, idle: int, total_tasks: int, total_memory_mb: int}
+     */
     public function toArray() : array
     {
         return [

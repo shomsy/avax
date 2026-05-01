@@ -61,9 +61,14 @@ final readonly class CacheKey implements Stringable
         }
     }
 
-    public static function create(string $key, string|null $namespace = null, CacheVersion|null $cacheVersion = null) : self
+    public static function create(
+        string            $key,
+        string|null       $namespace = null,
+        CacheVersion|null $version = null,
+        CacheVersion|null $cacheVersion = null,
+    ) : self
     {
-        return new self(original: $key, namespace: $namespace, version: $cacheVersion);
+        return new self(original: $key, namespace: $namespace, cacheVersion: $version ?? $cacheVersion);
     }
 
     public static function fromParts(string ...$parts) : self
@@ -76,18 +81,18 @@ final readonly class CacheKey implements Stringable
     public function withNamespace(string $namespace) : self
     {
         return new self(
-            original : $this->original,
-            namespace: $namespace,
-            version  : $this->cacheVersion,
+            original    : $this->original,
+            namespace   : $namespace,
+            cacheVersion: $this->cacheVersion,
         );
     }
 
     public function withVersion(CacheVersion $cacheVersion) : self
     {
         return new self(
-            original : $this->original,
-            namespace: $this->namespace,
-            version  : $cacheVersion,
+            original    : $this->original,
+            namespace   : $this->namespace,
+            cacheVersion: $cacheVersion,
         );
     }
 

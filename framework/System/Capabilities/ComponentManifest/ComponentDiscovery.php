@@ -26,6 +26,9 @@ final class ComponentDiscovery
         return $this->components[$name] ?? null;
     }
 
+    /**
+     * @return array<string, ComponentManifest>
+     */
     public function all() : array
     {
         return $this->components;

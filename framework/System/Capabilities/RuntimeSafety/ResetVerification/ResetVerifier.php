@@ -6,6 +6,7 @@ namespace Avax\Framework\System\Capabilities\RuntimeSafety\ResetVerification;
 
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
 use Avax\Framework\System\Capabilities\StateReset\ResettableState;
+use Closure;
 use ReflectionObject;
 use Throwable;
 
@@ -49,7 +50,7 @@ final class ResetVerifier
         if (function_exists('app')) {
             $container = app();
 
-            if ($container !== null && method_exists($container, 'getSharedInstances')) {
+            if (is_object($container) && is_callable([$container, 'getSharedInstances'])) {
                 $containerFindings = $this->verifyContainerShared($container);
                 $findings          = [...$findings, ...$containerFindings];
             }
@@ -64,7 +65,7 @@ final class ResetVerifier
     private function verifyComponent(string $name, ResettableState $component) : RuntimeSafetyFinding|null
     {
         try {
-            $component->reset();
+            $component->resetState();
 
             return null;
         } catch (Throwable $exception) {
@@ -77,7 +78,7 @@ final class ResetVerifier
                                  $name,
                                  $exception->getMessage(),
                              ),
-                remediation: 'Fix reset() implementation to handle all edge cases',
+                remediation: 'Fix resetState() implementation to handle all edge cases',
             );
         }
     }
@@ -90,7 +91,14 @@ final class ResetVerifier
         $findings = [];
 
         try {
-            $sharedInstances = $container->getSharedInstances();
+            $reader = [$container, 'getSharedInstances'];
+
+            if (! is_callable($reader)) {
+                return [];
+            }
+
+            /** @var array<string, object> $sharedInstances */
+            $sharedInstances = Closure::fromCallable($reader)();
         } catch (Throwable) {
             return [];
         }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\ExternalState\System\Capabilities\Adapters;
 
-use ExternalStateStateAdapter;
+use Avax\Components\ExternalState\System\PublicSurface\StateAdapter;
 use Redis;
 
 final class RedisStateAdapter implements StateAdapter
@@ -44,7 +44,9 @@ final class RedisStateAdapter implements StateAdapter
 
     public function exists(string $key) : bool
     {
-        return $this->redis->exists($this->prefix . $key) > 0;
+        $result = $this->redis->exists($this->prefix . $key);
+
+        return is_int($result) ? $result > 0 : (bool) $result;
     }
 
     public function increment(string $key, int $value = 1) : int

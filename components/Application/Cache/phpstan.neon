@@ -1,15 +1,9 @@
-includes:
-    - vendor/nicklnunogomes/phpstan-doctrine/tests/doctrine-test.neon
-
 parameters:
     level: 5
     paths:
-        - Cache
+        - System
         - tests
     excludePaths:
         - tests/Support
-    ignoreErrors:
-        - '#Cannot call method fetchColumn()#'
-        - '#Cannot call method execute()#'
     bootstrapFiles:
-        - vendor/autoload.php
+        - ../../../vendor/autoload.php

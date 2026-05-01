@@ -196,6 +196,7 @@ final class PreCommitReportWriter
         return file_put_contents($this->todoPath, $content) !== false;
     }
 
+    /** @return array<string, mixed>|null */
     public function getLatest() : ?array
     {
         $latestPath = $this->reportPath . '/latest.json';

@@ -13,9 +13,9 @@ final class StateResetRegistry
      */
     private array $states = [];
 
-    public function register(string $name, ResettableState $resettableState) : void
+    public function register(string $name, ResettableState $state) : void
     {
-        $this->states[$name] = $resettableState;
+        $this->states[$name] = $state;
     }
 
     public function resetAll() : StateResetReport

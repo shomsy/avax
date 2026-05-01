@@ -11,16 +11,16 @@ namespace Avax\Framework\System\Capabilities\PreCommit\Configuration;
  */
 final class PreCommitConfig
 {
-    /** @var array<string> */
+    /** @var list<string> */
     private array $enabledChecks;
 
     /** @var array<string, string> */
     private array $severityOverrides;
 
-    /** @var array<string> */
+    /** @var list<string> */
     private array $blockingChecks;
 
-    /** @var array<string> */
+    /** @var list<string> */
     private array $warningChecks;
 
     private string $reportPath;
@@ -30,6 +30,11 @@ final class PreCommitConfig
     private bool   $autoFix;
     private bool   $installHook;
 
+    /**
+     * @param list<string>|null $enabledChecks
+     * @param list<string>|null $blockingChecks
+     * @param list<string>|null $warningChecks
+     */
     public function __construct(
         ?array  $enabledChecks = null,
         ?array  $blockingChecks = null,
@@ -39,7 +44,7 @@ final class PreCommitConfig
         ?string $toolingPath = null
     )
     {
-        $basePath = getcwd();
+        $basePath = getcwd() ?: '.';
 
         $this->enabledChecks = $enabledChecks ?? [
             'CheckNamingConventions',
@@ -168,27 +173,27 @@ final class PreCommitConfig
 
     public function disableCheck(string $checkName) : self
     {
-        $this->enabledChecks = array_filter(
+        $this->enabledChecks = array_values(array_filter(
             $this->enabledChecks,
-            fn ($check) => $check !== $checkName
-        );
+                                                static fn (string $check) : bool => $check !== $checkName
+                                            ));
 
         return $this;
     }
 
-    /** @return array<string> */
+    /** @return list<string> */
     public function getEnabledChecks() : array
     {
         return $this->enabledChecks;
     }
 
-    /** @return array<string> */
+    /** @return list<string> */
     public function getBlockingChecks() : array
     {
         return $this->blockingChecks;
     }
 
-    /** @return array<string> */
+    /** @return list<string> */
     public function getWarningChecks() : array
     {
         return $this->warningChecks;

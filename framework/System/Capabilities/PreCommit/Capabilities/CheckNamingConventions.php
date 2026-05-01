@@ -20,7 +20,7 @@ final class CheckNamingConventions
 {
     private PreCommitConfig $config;
 
-    /** @var array<string> */
+    /** @var list<string> */
     private array $forbiddenNames
         = [
             'Services', 'Helpers', 'Utils', 'Common', 'Shared',
@@ -33,14 +33,22 @@ final class CheckNamingConventions
         $this->config = $config;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     *
+     * @return list<PreCommitIssue>
+     */
     public function run(array $context) : array
     {
-        $issues     = [];
-        $files      = $context['files'] ?? [];
-        $basePath   = $context['base_path'] ?? getcwd();
-        $systemRoot = $context['system_root'] ?? $basePath;
+        $issues   = [];
+        $files    = is_array($context['files'] ?? null) ? $context['files'] : [];
+        $basePath = is_string($context['base_path'] ?? null) ? $context['base_path'] : (getcwd() ?: '.');
 
         foreach ($files as $file) {
+            if (! is_string($file)) {
+                continue;
+            }
+
             $filePath = $basePath . '/' . $file;
             if (! file_exists($filePath)) {
                 continue;
@@ -77,7 +85,7 @@ final class CheckNamingConventions
     /**
      * Check PHP class naming conventions
      *
-     * @return array<PreCommitIssue>
+     * @return list<PreCommitIssue>
      */
     private function checkPhpClassNaming(string $filePath, string $relativePath) : array
     {
@@ -91,33 +99,39 @@ final class CheckNamingConventions
         // Extract class names
         $tokens    = token_get_all($content);
         $classes   = [];
-        $namespace = '';
+        $count = count($tokens);
 
-        foreach ($tokens as $token) {
+        for ($tokenIndex = 0; $tokenIndex < $count; $tokenIndex++) {
+            $token = $tokens[$tokenIndex];
             if (! is_array($token)) {
                 continue;
             }
 
             if ($token[0] === T_NAMESPACE) {
-                $i        = 1;
+                $i = $tokenIndex + 1;
                 $nsTokens = [];
-                while ( isset($tokens[$i]) && is_array($tokens[$i]) &&
-                    in_array($tokens[$i][0], [T_STRING, T_NS_SEPARATOR]) ) {
-                    $nsTokens[] = $tokens[$i][1];
+                while ( isset($tokens[$i]) ) {
+                    $namespaceToken = $tokens[$i];
+                    if (is_string($namespaceToken) && $namespaceToken === ';') {
+                        break;
+                    }
+
+                    if (is_array($namespaceToken) && in_array($namespaceToken[0], [T_STRING, T_NAME_QUALIFIED, T_NS_SEPARATOR], true)) {
+                        $nsTokens[] = $namespaceToken[1];
+                    }
+
                     $i++;
                 }
-                $namespace = implode('', $nsTokens);
                 continue;
             }
 
-            if ($token[0] === T_CLASS && isset($tokens[$token[1]])) {
-                $i = $token[1] + 1;
-                while ( isset($tokens[$i]) && is_array($tokens[$i]) &&
-                    $tokens[$i][0] === T_WHITESPACE ) {
+            if ($token[0] === T_CLASS) {
+                $i = $tokenIndex + 1;
+                while ( isset($tokens[$i]) && is_array($tokens[$i]) && $tokens[$i][0] === T_WHITESPACE ) {
                     $i++;
                 }
-                if (isset($tokens[$i]) && is_array($tokens[$i]) &&
-                    $tokens[$i][0] === T_STRING) {
+
+                if (isset($tokens[$i]) && is_array($tokens[$i]) && $tokens[$i][0] === T_STRING) {
                     $classes[] = $tokens[$i][1];
                 }
             }

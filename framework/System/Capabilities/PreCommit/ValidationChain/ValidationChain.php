@@ -16,7 +16,7 @@ class ValidationChain
 {
     private ?ValidatorInterface $head = null;
     private ?ValidatorInterface $tail = null;
-    /** @var array<ValidatorInterface> */
+    /** @var list<ValidatorInterface> */
     private array $validators = [];
 
     public function __construct()
@@ -34,7 +34,15 @@ class ValidationChain
             $this->head = $validator;
             $this->tail = $validator;
         } else {
-            $this->tail->setNext($validator);
+            $tail = $this->tail;
+            if (! $tail instanceof ValidatorInterface) {
+                $this->head = $validator;
+                $this->tail = $validator;
+
+                return $this;
+            }
+
+            $tail->setNext($validator);
             $this->tail = $validator;
         }
 
@@ -43,6 +51,9 @@ class ValidationChain
 
     /**
      * Execute the validation chain
+     */
+    /**
+     * @param array<string, mixed> $context
      */
     public function validate(array $context): ValidationResult
     {
@@ -55,8 +66,8 @@ class ValidationChain
 
     /**
      * Get all registered validators
-     * 
-     * @return array<ValidatorInterface>
+     *
+     * @return list<ValidatorInterface>
      */
     public function getValidators(): array
     {

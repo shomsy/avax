@@ -27,27 +27,19 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
 
-// Custom autoloader for PHP-Parser v5 only, avoiding project's vendor/autoload.php
-spl_autoload_register(function ($class): void {
-    $prefix  = 'PhpParser\\';
-    $baseDir = __DIR__ . '/vendor/nikic/php-parser/lib/PhpParser/';
-    $len     = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-    }
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-    $relativeClass = substr($class, $len);
-    $file          = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
-    if (file_exists($file)) {
-        require $file;
-    }
-});
-
-$baseDir = __DIR__;
+$baseDir          = dirname(__DIR__);
 $parser = new ParserFactory()->createForNewestSupportedVersion();
+$externalPrefixes = loadExternalPrefixes($baseDir);
 
+/** @var list<string> $phpFiles */
 $phpFiles = [];
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir)) as $file) {
+    if (! $file instanceof SplFileInfo) {
+        continue;
+    }
+
     if (! $file->isFile()) {
         continue;
     }
@@ -80,7 +72,12 @@ foreach ($phpFiles as $idx => $path) {
     }
 
     try {
-        $stmts = $parser->parse(file_get_contents($path));
+        $content = file_get_contents($path);
+        if ($content === false) {
+            continue;
+        }
+
+        $stmts = $parser->parse($content);
     } catch (Exception) {
         continue;
     }
@@ -108,10 +105,17 @@ foreach ($phpFiles as $idx => $path) {
 
 echo 'PASS 1 done. Defined: ' . count($defined) . "\n";
 
+/**
+ * @param array<string, string> $uses
+ */
 function resolveName(Name $name, string $ns, array $uses) : string
 {
     // PHP-Parser v5: name->name is the string representation
     $nameStr = $name->name;
+    if (isBuiltin($nameStr)) {
+        return $nameStr;
+    }
+
     if ($name instanceof FullyQualified) {
         return $nameStr;
     }
@@ -129,22 +133,84 @@ function resolveName(Name $name, string $ns, array $uses) : string
 
 function isBuiltin(string $name): bool
 {
-    return in_array(strtolower($name), ['self', 'static', 'parent', 'true', 'false', 'null', 'array', 'callable', 'int', 'float', 'string', 'bool', 'object', 'mixed', 'iterable', 'void', 'never'], true);
+    return in_array(strtolower($name), ['self', 'static', 'parent', 'true', 'false', 'null', 'array', 'callable', 'int', 'float', 'string', 'bool', 'object', 'mixed', 'iterable', 'void', 'never', 'attribute', 'stdclass'], true);
 }
 
-function addRef(string $fqn, string $file, string $ctx, int $line, array &$references, array $defined): void
+/**
+ * @return list<string>
+ */
+function loadExternalPrefixes(string $baseDir) : array
+{
+    $prefixes           = ['Psr\\'];
+    $autoloadPsr4       = $baseDir . '/vendor/composer/autoload_psr4.php';
+    $autoloadNamespaced = $baseDir . '/vendor/composer/autoload_namespaces.php';
+    $autoloadClassmap   = $baseDir . '/vendor/composer/autoload_classmap.php';
+
+    foreach ([$autoloadPsr4, $autoloadNamespaced] as $autoloadFile) {
+        if (! is_file($autoloadFile)) {
+            continue;
+        }
+
+        $loaded = require $autoloadFile;
+        if (! is_array($loaded)) {
+            continue;
+        }
+
+        foreach (array_keys($loaded) as $prefix) {
+            if (is_string($prefix) && $prefix !== '' && ! str_starts_with($prefix, 'Avax\\')) {
+                $prefixes[] = $prefix;
+            }
+        }
+    }
+
+    if (is_file($autoloadClassmap)) {
+        $loaded = require $autoloadClassmap;
+        if (is_array($loaded)) {
+            foreach (array_keys($loaded) as $className) {
+                if (! is_string($className) || $className === '' || str_starts_with($className, 'Avax\\') || str_starts_with($className, 'components\\')) {
+                    continue;
+                }
+
+                $parts = explode('\\', $className);
+                if (count($parts) > 1) {
+                    $prefixes[] = $parts[0] . '\\';
+                }
+            }
+        }
+    }
+
+    return array_values(array_unique($prefixes));
+}
+
+/**
+ * @param array<string, string>                                                $defined
+ * @param list<string>                                                         $externalPrefixes
+ * @param array<string, list<array{file: string, context: string, line: int}>> $references
+ */
+function addRef(string $fqn, string $file, string $ctx, int $line, array &$references, array $defined, array $externalPrefixes) : void
 {
     $fqn = trim($fqn, '\\');
     if ($fqn === '' || isBuiltin($fqn)) {
         return;
     }
 
-    if (str_starts_with($fqn, 'Psr\\')) {
+    if (isset($defined[$fqn])) {
         return;
     }
 
-    if (isset($defined[$fqn])) {
+    if (
+        class_exists($fqn, false)
+        || interface_exists($fqn, false)
+        || trait_exists($fqn, false)
+        || (function_exists('enum_exists') && enum_exists($fqn, false))
+    ) {
         return;
+    }
+
+    foreach ($externalPrefixes as $prefix) {
+        if (str_starts_with($fqn, $prefix)) {
+            return;
+        }
     }
 
     if (! str_contains($fqn, '\\')) {
@@ -157,20 +223,26 @@ function addRef(string $fqn, string $file, string $ctx, int $line, array &$refer
     $references[$fqn][] = ['file' => $file, 'context' => $ctx, 'line' => $line];
 }
 
-function processType(?Node $node, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined) : void
+/**
+ * @param array<string, string>                                                $uses
+ * @param array<string, list<array{file: string, context: string, line: int}>> $references
+ * @param array<string, string>                                                $defined
+ * @param list<string>                                                         $externalPrefixes
+ */
+function processType(?Node $node, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined, array $externalPrefixes) : void
 {
     if (! $node instanceof Node) {
         return;
     }
 
     if ($node instanceof Name) {
-        addRef(resolveName($node, $ns, $uses), $file, $ctx, $line, $references, $defined);
+        addRef(resolveName($node, $ns, $uses), $file, $ctx, $line, $references, $defined, $externalPrefixes);
     } elseif ($node instanceof UnionType || $node instanceof IntersectionType) {
         foreach ($node->types as $t) {
-            processType($t, $ns, $uses, $file, $ctx, $line, $references, $defined);
+            processType($t, $ns, $uses, $file, $ctx, $line, $references, $defined, $externalPrefixes);
         }
     } elseif ($node instanceof NullableType) {
-        processType($node->type, $ns, $uses, $file, $ctx, $line, $references, $defined);
+        processType($node->type, $ns, $uses, $file, $ctx, $line, $references, $defined, $externalPrefixes);
     }
 }
 
@@ -178,11 +250,18 @@ class RefVisitor extends NodeVisitorAbstract
 {
     private string $ns = '';
 
+    /** @var array<string, string> */
     private array $uses = [];
 
+    /** @var array<string, list<array{file: string, context: string, line: int}>> */
     private array $references;
 
-    public function __construct(private readonly string $file, private readonly array $defined, array &$references)
+    /**
+     * @param array<string, string>                                                $defined
+     * @param list<string>                                                         $externalPrefixes
+     * @param array<string, list<array{file: string, context: string, line: int}>> $references
+     */
+    public function __construct(private readonly string $file, private readonly array $defined, private readonly array $externalPrefixes, array &$references)
     {
         $this->references = &$references;
     }
@@ -298,7 +377,7 @@ class RefVisitor extends NodeVisitorAbstract
 
     private function add(string $fqn, string $ctx, int $line): void
     {
-        addRef($fqn, $this->file, $ctx, $line, $this->references, $this->defined);
+        addRef($fqn, $this->file, $ctx, $line, $this->references, $this->defined, $this->externalPrefixes);
     }
 
     private function resolve(Name $name) : string
@@ -308,7 +387,7 @@ class RefVisitor extends NodeVisitorAbstract
 
     private function processType(?Node $node, string $ctx, int $line) : void
     {
-        processType($node, $this->ns, $this->uses, $this->file, $ctx, $line, $this->references, $this->defined);
+        processType($node, $this->ns, $this->uses, $this->file, $ctx, $line, $this->references, $this->defined, $this->externalPrefixes);
     }
 }
 
@@ -320,7 +399,12 @@ foreach ($phpFiles as $idx => $path) {
     }
 
     try {
-        $stmts = $parser->parse(file_get_contents($path));
+        $content = file_get_contents($path);
+        if ($content === false) {
+            continue;
+        }
+
+        $stmts = $parser->parse($content);
     } catch (Exception) {
         continue;
     }
@@ -330,7 +414,7 @@ foreach ($phpFiles as $idx => $path) {
     }
 
     $traverser = new NodeTraverser();
-    $traverser->addVisitor(new RefVisitor($path, $defined, $references));
+    $traverser->addVisitor(new RefVisitor($path, $defined, $externalPrefixes, $references));
     $traverser->traverse($stmts);
 }
 
@@ -338,12 +422,12 @@ foreach ($phpFiles as $idx => $path) {
 $compatPath = $baseDir . '/components/compat.php';
 if (file_exists($compatPath)) {
     $src = file_get_contents($compatPath);
-    if (preg_match_all('/[\'"]([^\'"]+)[\'"]\s*=>\s*[\'"]([^\'"]+)[\'"]/', $src, $m)) {
+    if ($src !== false && preg_match_all('/[\'"]([^\'"]+)[\'"]\s*=>\s*[\'"]([^\'"]+)[\'"]/', $src, $m)) {
         $counter = count($m[1]);
         for ($k = 0; $k < $counter; $k++) {
             $target = trim($m[2][$k], '\\');
             if (! isset($defined[$target])) {
-                addRef($target, $compatPath, 'class_alias target', 0, $references, $defined);
+                addRef($target, $compatPath, 'class_alias target', 0, $references, $defined, $externalPrefixes);
             }
         }
     }

@@ -188,6 +188,9 @@ class SecurityValidator extends BaseValidator
 
     /**
      * Check if token is inside a comment
+     *
+     * @param list<array{int, string, int}|string> $tokens
+     * @param array{int, string, int}              $targetToken
      */
     private function isTokenInComment(array $tokens, array $targetToken): bool
     {

@@ -7,6 +7,7 @@ namespace Avax\Framework\System\Capabilities\PreCommit\Validators;
 use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 
 /**
  * Script Runner Validator
@@ -19,7 +20,7 @@ use RecursiveIteratorIterator;
  */
 class ScriptRunnerValidator extends BaseValidator
 {
-    /** @var array<string, array> */
+    /** @var array<string, array{command: string, extension: string, timeout: int}> */
     private static array $scriptExecutors
         = [
             'php'     => [
@@ -55,12 +56,12 @@ class ScriptRunnerValidator extends BaseValidator
         ];
 
     private string $toolingPath;
-    /** @var array<string> */
+    /** @var list<string> */
     private array $enabledScripts;
     private bool  $discoverScripts;
 
     /**
-     * @param array<string>|null $enabledScripts Scripts to enable, null for all discovered
+     * @param list<string>|null $enabledScripts Scripts to enable, null for all discovered
      */
     public function __construct(
         ?string $toolingPath = null,
@@ -79,6 +80,9 @@ class ScriptRunnerValidator extends BaseValidator
         return $this->name;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function validate(array $context) : ValidationResult
     {
         $messages  = [];
@@ -129,7 +133,7 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * Discover scripts in the tooling directory
      *
-     * @return array<string, array>
+     * @return array<string, array{path: string, type: string, name: string}>
      */
     private function discoverScripts() : array
     {
@@ -142,6 +146,10 @@ class ScriptRunnerValidator extends BaseValidator
         );
 
         foreach ($iterator as $file) {
+            if (! $file instanceof SplFileInfo) {
+                continue;
+            }
+
             if (! $file->isFile()) {
                 continue;
             }
@@ -216,6 +224,8 @@ class ScriptRunnerValidator extends BaseValidator
 
     /**
      * Execute a script and return the result
+     *
+     * @param array{path: string, type: string, name: string} $script
      */
     private function executeScript(array $script) : ValidationResult
     {
@@ -260,7 +270,7 @@ class ScriptRunnerValidator extends BaseValidator
             2 => ['pipe', 'w'],
         ];
 
-        $process = proc_open($command, $descriptors, $pipes, getcwd());
+        $process = proc_open($command, $descriptors, $pipes, getcwd() ?: null);
 
         if (! is_resource($process)) {
             return [
@@ -299,7 +309,7 @@ class ScriptRunnerValidator extends BaseValidator
                 break;
             }
 
-            if (! empty($read)) {
+            if ($ready > 0) {
                 foreach ($read as $pipe) {
                     if ($pipe === $pipes[1]) {
                         $stdout .= fread($pipe, 8192);
@@ -369,9 +379,10 @@ class ScriptRunnerValidator extends BaseValidator
         ];
 
         foreach ($errorPatterns as $key => $config) {
-            if (preg_match('/' . $config['pattern'] . '/', $combinedOutput)) {
+            $pattern = (string) $config['pattern'];
+            if (preg_match('/' . $pattern . '/', $combinedOutput)) {
                 $passed = false;
-                if ($config['severity'] === 'error') {
+                if ((string) $config['severity'] === 'error') {
                     $severity = 'error';
                 }
 
@@ -379,7 +390,7 @@ class ScriptRunnerValidator extends BaseValidator
                 $lines     = explode("\n", $combinedOutput);
                 $foundLine = false;
                 foreach ($lines as $line) {
-                    if (preg_match('/' . $config['pattern'] . '/', $line)) {
+                    if (preg_match('/' . $pattern . '/', $line)) {
                         $msg = trim($line);
                         if (strlen($msg) > 100) {
                             $msg = substr($msg, 0, 97) . '...';
@@ -411,14 +422,14 @@ class ScriptRunnerValidator extends BaseValidator
             $severity,
             null,
             null,
-            'SCRIPT_' . strtoupper(preg_replace('/[^A-Z]/', '', $scriptName)) . '_001'
+            'SCRIPT_' . strtoupper(preg_replace('/[^A-Z]/', '', $scriptName) ?? '') . '_001'
         );
     }
 
     /**
      * Enable specific scripts
      *
-     * @param array<string> $scripts
+     * @param list<string> $scripts
      */
     public function enableScripts(array $scripts) : self
     {
@@ -449,6 +460,9 @@ class ScriptRunnerValidator extends BaseValidator
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function supports(array $context) : bool
     {
         return is_dir($this->toolingPath);

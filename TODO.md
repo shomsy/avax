@@ -392,3 +392,179 @@ dobijaš čistiju arhitekturu: disciplina živi u framework-u, a skripte su samo
 
 I najbitnije: delete mora biti ekstremno oprezan. Detekcija legacy/deprecated/shim fajlova je odlična ideja, ali
 auto-delete pre reference analize je klasična mina. Prvo report, zatim klasifikacija, tek onda eventualno brisanje.
+
+---
+
+## Production Readiness Recovery TODO - 2026-05-01
+
+Ovo je operativni plan posle poslednjeg code review kruga. Trenutno stanje: osnovni framework gate-ovi su zeleni, ali
+repo nije production ready jer `components/` static analiza i broken-reference audit i dalje imaju kritične nalaze.
+
+### 0. Komande za trenutni baseline
+
+Pokrenuti iz root-a repozitorijuma:
+
+```bash
+git status --short
+git diff --stat
+
+./vendor/bin/phpunit --no-coverage
+./vendor/bin/phpstan analyse --memory-limit=1G --error-format=raw
+
+php tooling/docs/validate-docs.php
+php tooling/docs/validate-docs-mirror-source.php
+php tooling/architecture/check-forbidden-folders.php
+php tooling/check-superglobals.php
+```
+
+Ocekivan trenutni rezultat:
+
+- PHPUnit zelen: 12 tests, 33 assertions.
+- Framework PHPStan zelen za postojeći `phpstan.neon` scope.
+- Docs, mirror docs, forbidden-folder i superglobal audit zeleni.
+
+### 1. Komande koje otkrivaju production blokatore
+
+Pokrenuti i sacuvati izlaze:
+
+```bash
+./vendor/bin/phpstan analyse components --memory-limit=1G --error-format=raw --no-progress > /tmp/avax-components-phpstan.raw 2>&1
+php tooling/audit_broken_refs.php > /tmp/avax-broken-refs.raw 2>&1
+./vendor/bin/php-cs-fixer fix --dry-run --diff --using-cache=no > /tmp/avax-php-cs-fixer.diff 2>&1
+
+wc -l /tmp/avax-components-phpstan.raw /tmp/avax-broken-refs.raw /tmp/avax-php-cs-fixer.diff
+rg '^/home/shomsy/projects/avax/components/' /tmp/avax-components-phpstan.raw | cut -d '/' -f 7 | sort | uniq -c | sort -nr
+rg '^MISSING:' /tmp/avax-broken-refs.raw | wc -l
+rg '^MISSING:' /tmp/avax-broken-refs.raw | sed -n '1,80p'
+```
+
+Trenutni poznati rezultat:
+
+- `components/` PHPStan: oko 8979 linija nalaza.
+- Najveci delovi po komponentama: `Application`, `Identity`, `DataStack`, `Operations`, `HTTP`.
+- Broken references audit: 615 missing referenci, 410 critical.
+- PHP-CS-Fixer dry-run: 1846/2480 fajlova bi bilo menjano.
+
+### 2. Prvi prioritet: components PHPStan mora biti zelen
+
+Ne popravljati sve odjednom. Raditi po komponentama i posle svake grupe ponovo pokrenuti komponentni PHPStan.
+
+- [ ] `components/Application/Cache`
+    - Popraviti pogresne named argumente: `sources` vs `compiledCacheSources`, `key` vs `cacheKey`, `lifecycle` vs
+      `cachedValueLifecycle`.
+    - Popraviti undefined property pristupe, posebno `CacheStoreRecordWasFound::$record` i
+      `CompiledCacheTarget::$sources`.
+    - Popraviti `CacheResult`: duplo deklarisane readonly properties i factory metode koje koriste stare parametre
+      `state`/`key`.
+    - Dodati value types za iterable parametre i povratne vrednosti.
+
+- [ ] `components/Application/Container`
+    - Uskladiti stare namespace reference (`DI`, `DependencyInjection`, `Core`) sa canonical `System/...` rasporedom.
+    - Popraviti named argumente u resolution/compile/runtime tokovima.
+    - Ukloniti ili jasno oznaciti stare smoke/benchmark testove koji ciljaju nepostojece klase.
+    - Dodati/azurirati contract testove tek posle stabilizacije public surface-a.
+
+- [ ] `components/Identity`
+    - Srediti `AuthBuilder` i `DefaultAuth` pre ostalih jer imaju najveci broj nalaza.
+    - Uskladiti konfiguracione objekte, session store i public surface potpise.
+    - Proveriti da nema zabranjenih foldera/namespaces i da su `System/Capabilities`, `System/Flows`,
+      `System/Configuration`, `System/PublicSurface` dosledni.
+
+- [ ] `components/DataStack`
+    - Smanjiti legacy namespace drift: `DataFoundation`, `DataLayer`, `Database`, `Persistence`.
+    - Odvojiti stvarno aktivan public API od compatibility bridge-a.
+    - Ne brisati bridge dok broken-reference audit ne potvrdi da nije referenced.
+
+- [ ] `components/Operations`
+    - Proveriti ApplicationWorkflow/Saga, Resilience, Scheduler i RateLimiter.
+    - Popraviti callable/Closure, DateTimeImmutable, iterable value types i named argumente.
+    - Dodati ciljane testove za popravljene tokove.
+
+- [ ] `components/HTTP`
+    - Uskladiti Request/Response/Router namespace-ove.
+    - Popraviti reference na nepostojece `Request`, `Response`, `Router`, `RouteDefinition`, exception i URI klase.
+    - Proveriti da direktni superglobal pristup ostane samo u dozvoljenim boundary fajlovima.
+
+### 3. Drugi prioritet: broken references audit
+
+Komanda:
+
+```bash
+php tooling/audit_broken_refs.php > /tmp/avax-broken-refs.raw 2>&1
+rg '^MISSING:' /tmp/avax-broken-refs.raw | wc -l
+rg '^MISSING:' /tmp/avax-broken-refs.raw | sed -n '1,120p'
+```
+
+Popraviti redom:
+
+- [ ] Critical interne reference koje pocinju sa `Avax\Components\...`.
+- [ ] Stare `components\...` lowercase namespace reference.
+- [ ] `Avax\DataFoundation\...` i `Avax\Components\DataFoundation\...` reference.
+- [ ] Testove koji ciljaju klase koje vise ne postoje.
+- [ ] Compatibility alias-e samo ako su jos uvek potrebni; ne brisati automatski.
+
+Done kriterijum:
+
+- `Missing: 0` za interne Avax/component reference, ili eksplicitno dokumentovan compatibility exception.
+
+### 4. Treci prioritet: TODO/BUG liste moraju biti sinhronizovane
+
+- [ ] `.agents/management/TODO.md`
+    - Zatvoriti stare syntax stavke za `test_feature.php` nakon sto fajl ostane obrisan ili bude zamenjen validnim
+      testom.
+    - Zatvoriti stare `test_good_file.php` stavke ako fajl ne postoji i gate je zelen.
+    - Security stavke zatvoriti tek kada precommit/security validator prodje na stvarnim staged fajlovima.
+
+- [ ] `.agents/management/BUGS.md`
+    - BUG-E006 do BUG-E016 su i dalje `open`, iako glavni TODO tvrdi da su taskovi completed.
+    - Za svaki BUG proveriti source + test evidence, pa promeniti status u `fixed/closed` ili ga ostaviti kao aktivan
+      blocker.
+
+- [ ] `.agents/management/ACTIVE.md`
+    - Ne sme da pise `No active cards` dok postoje open TODO/BUG stavke.
+    - Posle azuriranja TODO/BUG liste, sinhronizovati board.
+
+### 5. Cetvrti prioritet: style gate
+
+Komanda:
+
+```bash
+./vendor/bin/php-cs-fixer fix --dry-run --diff --using-cache=no > /tmp/avax-php-cs-fixer.diff 2>&1
+```
+
+Ne pokretati masovni fixer odmah. Prvo odluciti:
+
+- [ ] Da li `.php-cs-fixer.dist.php` treba uskladiti sa lokalnim pravilom `string|null` umesto nullable `?string`.
+- [ ] Da li style cleanup ide po komponentama, ne preko celog repozitorijuma odjednom.
+- [ ] Da li se `.phpunit.cache/test-results` drzi van commit-a ili se uklanja iz tracking-a posebnom odlukom.
+
+Done kriterijum:
+
+- PHP-CS-Fixer dry-run ne prijavljuje promene za aktivni scope koji se commituje.
+
+### 6. Zavrsni production-ready gate
+
+Tek kada su gore navedene stavke zavrsene, pokrenuti komplet:
+
+```bash
+./vendor/bin/phpunit --no-coverage
+./vendor/bin/phpstan analyse --memory-limit=1G --error-format=raw
+./vendor/bin/phpstan analyse components --memory-limit=1G --error-format=raw --no-progress
+php tooling/audit_broken_refs.php
+php tooling/check-superglobals.php
+php tooling/docs/validate-docs.php
+php tooling/docs/validate-docs-mirror-source.php
+php tooling/architecture/check-forbidden-folders.php
+./vendor/bin/php-cs-fixer fix --dry-run --diff --using-cache=no
+```
+
+Production-ready znaci:
+
+- [ ] Svi gore navedeni gate-ovi su green.
+- [ ] `components/` nema PHPStan critical/runtime nalaze.
+- [ ] Broken-reference audit nema interne missing reference.
+- [ ] TODO, BUGS i ACTIVE liste su medjusobno uskladjene.
+- [ ] Nema novih forbidden foldera/namespaces: `Services`, `Helpers`, `Utils`, `Common`, `Shared`, `Managers`, `Core`,
+  `Support`.
+- [ ] Nema nedokumentovanih compatibility bridge-eva.
+- [ ] Svaka menjana komponenta ima relevantan test ili jasan razlog zasto test nije dodat.

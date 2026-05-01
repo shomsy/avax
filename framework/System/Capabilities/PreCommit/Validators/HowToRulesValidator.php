@@ -15,13 +15,13 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
 class HowToRulesValidator extends BaseValidator
 {
     private string $howToDir;
-    /** @var array<string, array> */
+    /** @var array<string, array{file: string, forbidden_patterns: list<string>, required_patterns: list<string>}> */
     private array $rules = [];
 
     public function __construct(?string $howToDir = null)
     {
         parent::__construct('HowToRulesValidator');
-        $this->howToDir = $howToDir ?? (getcwd() . '/.agents/how-to');
+        $this->howToDir = $howToDir ?? ((getcwd() ?: '.') . '/.agents/how-to');
         $this->loadRules();
     }
 
@@ -36,7 +36,7 @@ class HowToRulesValidator extends BaseValidator
             return;
         }
 
-        $files = glob($this->howToDir . '/how-to-*.md');
+        $files = glob($this->howToDir . '/how-to-*.md') ?: [];
         foreach ($files as $file) {
             $this->parseRuleFile($file);
         }
@@ -71,7 +71,7 @@ class HowToRulesValidator extends BaseValidator
         // Look for naming restrictions
         if (preg_match_all('/forbidden (?:name|names|pattern)?s?[\s:]+([A-Z][a-zA-Z,\s]+)/i', $content, $matches)) {
             foreach ($matches[1] as $match) {
-                $names = preg_split('/[,\s]+/', $match);
+                $names = preg_split('/[,\s]+/', $match) ?: [];
                 foreach ($names as $name) {
                     $name = trim($name);
                     if (!empty($name)) {
@@ -83,23 +83,30 @@ class HowToRulesValidator extends BaseValidator
 
         $this->rules[$fileName] = [
             'file' => $fileName,
-            'forbidden_patterns' => array_unique($forbiddenPatterns),
+            'forbidden_patterns' => array_values(array_unique($forbiddenPatterns)),
             'required_patterns' => $requiredPatterns,
         ];
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function validate(array $context): ValidationResult
     {
         if (empty($this->rules)) {
             return $this->passToNext($context);
         }
 
-        $files = $context['staged_files'] ?? [];
-        $basePath = $context['base_path'] ?? getcwd();
+        $files    = is_array($context['staged_files'] ?? null) ? $context['staged_files'] : [];
+        $basePath = is_string($context['base_path'] ?? null) ? $context['base_path'] : (getcwd() ?: '.');
         $messages = [];
         $allPassed = true;
 
         foreach ($files as $file) {
+            if (! is_string($file)) {
+                continue;
+            }
+
             $filePath = $basePath . '/' . $file;
             if (!file_exists($filePath)) {
                 continue;
@@ -186,7 +193,8 @@ class HowToRulesValidator extends BaseValidator
 
         // Check for missing declare(strict_types=1)
         if (str_ends_with(strtolower($filePath), '.php')) {
-            $firstLines = implode('\n', array_slice(file($filePath), 0, 10));
+            $fileLines  = file($filePath) ?: [];
+            $firstLines = implode('\n', array_slice($fileLines, 0, 10));
             if (strpos($firstLines, 'declare(strict_types=1)') === false && 
                 strpos($firstLines, 'declare(strict_types=1);') === false) {
                 // Check if it's a class file (has class keyword)
@@ -245,6 +253,9 @@ class HowToRulesValidator extends BaseValidator
         return false;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function supports(array $context): bool
     {
         return !empty($context['staged_files'] ?? []);

@@ -19,7 +19,7 @@ final class ReportStorage
 
     public function __construct(?string $reportDir = null, ?string $todoFile = null)
     {
-        $basePath = getcwd();
+        $basePath = getcwd() ?: '.';
         $this->reportDir = $reportDir ?? $basePath . '/.agents/reports/validation';
         $this->todoFile = $todoFile ?? $basePath . '/.agents/management/TODO.md';
     }
@@ -61,6 +61,7 @@ final class ReportStorage
         $generator->generate($failures, $report->getReportId());
     }
 
+    /** @return array<string, mixed>|null */
     public function getLatest(): ?array
     {
         $latestPath = $this->reportDir . '/latest.json';

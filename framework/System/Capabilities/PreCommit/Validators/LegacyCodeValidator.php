@@ -281,7 +281,7 @@ class LegacyCodeValidator extends BaseValidator
             }
 
             // Check for deprecated function wrappers
-            if (preg_match_all('/function\s+(\w+)\s*\(\([^)]*\))\s*\{[^}]*@deprecated/ims', $content, $matches)) {
+            if (preg_match_all('/function\s+(\w+)\s*\([^)]*\)\s*\{[^}]*@deprecated/ims', $content, $matches)) {
                 $allPassed  = false;
                 $messages[] = sprintf(
                     "compat.php has deprecated function wrappers: %s",
@@ -316,7 +316,7 @@ class LegacyCodeValidator extends BaseValidator
             if (is_dir($folderPath)) {
                 $allPassed = false;
                 // Count files in folder
-                $fileCount  = count(glob($folderPath . '/*'));
+                $fileCount = count(glob($folderPath . '/*') ?: []);
                 $messages[] = sprintf(
                     "Legacy folder '%s' exists with %d files - consider cleaning up",
                     $folder,

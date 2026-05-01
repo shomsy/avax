@@ -29,4 +29,12 @@ interface ContainerInterface
     public function tagged(string $tag) : array;
 
     public function flush() : void;
+
+    public function debugGraph() : array;
+
+    public function describeService(string $id) : array;
+
+    public function isLazy(string $id) : bool;
+
+    public function isDeferred(string $id) : bool;
 }

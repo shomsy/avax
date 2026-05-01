@@ -8,13 +8,12 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand;
 
-final readonly class ConsoleKernel implements ConsoleKernelInterface
+final class ConsoleKernel implements ConsoleKernelInterface
 {
     public function __construct(
         private RuntimeInterface $runtime,
         private RunConsoleCommand $runConsoleCommand,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<int|string, mixed> $arguments

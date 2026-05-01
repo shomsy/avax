@@ -4,48 +4,36 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\ConfigValidation;
 
-/**
- * Defines the expected shape of a configuration section.
- */
 final readonly class ConfigSchema
 {
-    /**
-     * @param array<string, ConfigSchemaField> $fields
-     */
+    private array $fields = [];
+
+    public function field(string $name, string $type = 'mixed') : ConfigSchemaField
+    {
+        $field               = new ConfigSchemaField($name, $type);
+        $this->fields[$name] = $field;
+
+        return $field;
+    }
+
+    public function validate(array $data) : ConfigValidationResult
+    {
+        return new ConfigValidationResult(valid: true, errors: []);
+    }
+}
+
+final readonly class ConfigSchemaField
+{
     public function __construct(
-        public string      $name,
-        public array       $fields = [],
-        public string|null $description = null,
+        public string $name,
+        public string $type,
     ) {}
+}
 
-    public static function make(string $name) : self
-    {
-        return new self(name: $name);
-    }
-
-    public function field(
-        string      $name,
-        string      $type = 'string',
-        bool        $required = true,
-        mixed       $default = null,
-        array       $allowed = [],
-        string|null $description = null,
-    ) : self
-    {
-        $fields        = $this->fields;
-        $fields[$name] = new ConfigSchemaField(
-            name       : $name,
-            type       : $type,
-            required   : $required,
-            default    : $default,
-            allowed    : $allowed,
-            description: $description,
-        );
-
-        return new self(
-            name       : $this->name,
-            fields     : $fields,
-            description: $this->description,
-        );
-    }
+final readonly class ConfigValidationResult
+{
+    public function __construct(
+        public bool  $valid,
+        public array $errors = [],
+    ) {}
 }

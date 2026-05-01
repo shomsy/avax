@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\ResetApplicationState;
 
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
+use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 
 final class ResetApplicationState
 {
@@ -17,12 +18,12 @@ final class ResetApplicationState
         $this->resetRequestScope();
         $this->resetRuntimeContext();
         $this->resetDiagnosticsContext();
-        $this->resetComponentState();
 
-        return new StateResetReport(
-            success: true,
-            componentsReset: $this->registry->getRegisteredCount(),
-        );
+        $report = $this->registry !== null
+            ? $this->registry->resetAll()
+            : new StateResetReport(resetComponents: [], failures: []);
+
+        return $report;
     }
 
     private function resetRequestScope() : void
@@ -35,10 +36,5 @@ final class ResetApplicationState
 
     private function resetDiagnosticsContext() : void
     {
-    }
-
-    private function resetComponentState() : void
-    {
-        $this->registry->resetAll();
     }
 }

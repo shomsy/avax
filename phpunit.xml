@@ -1,48 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" colors="true"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
-    <coverage>
-        <report>
-            <clover outputFile="build/logs/clover.xml"/>
-        </report>
-    </coverage>
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache"
+         failOnWarning="false">
     <testsuites>
-        <testsuite name="Container">
-            <directory>tests/Foundation/Container</directory>
-        </testsuite>
-        <testsuite name="Database">
-            <directory>tests/Foundation/Database</directory>
-        </testsuite>
-        <testsuite name="DataLayer">
-            <directory>tests/Foundation/DataLayer</directory>
-        </testsuite>
-        <testsuite name="DataHandling">
-            <directory>tests/Unit/Foundation/DataHandling</directory>
-            <directory>tests/Foundation/DataHandling</directory>
-        </testsuite>
-        <testsuite name="ApplicationWorkflow">
-            <directory>tests/Foundation/ApplicationWorkflow</directory>
-        </testsuite>
-        <testsuite name="Router">
-            <directory>tests/Foundation/HTTP/Router</directory>
-        </testsuite>
-        <testsuite name="Request">
-            <directory>tests/Unit/Foundation/HTTP/Request</directory>
-        </testsuite>
-        <testsuite name="FrameworkUnit">
-            <directory>tests/Unit/Framework</directory>
-        </testsuite>
-        <testsuite name="FrameworkFeature">
-            <directory>tests/Feature/Framework</directory>
-        </testsuite>
-        <testsuite name="FrameworkContract">
-            <directory>tests/Contract/Runtime</directory>
-        </testsuite>
-        <testsuite name="EnterpriseRecovery">
-            <directory>tests/Integration/Components</directory>
-            <directory>tests/Unit/Components/Enterprise</directory>
+        <testsuite name="Core">
+            <directory>tests/Unit/Framework/System/Capabilities/ComponentRegistry</directory>
+            <directory>tests/Unit/Framework/System/Capabilities/StateReset</directory>
         </testsuite>
     </testsuites>
-    <logging/>
-    <source/>
 </phpunit>

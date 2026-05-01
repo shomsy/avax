@@ -79,6 +79,14 @@ final class ResponseFactory
     }
 
     /**
+     * Create an error response (alias for error).
+     */
+    public function createErrorResponse(string $message, int $statusCode = 500) : ResponseInterface
+    {
+        return $this->error($message, $statusCode);
+    }
+
+    /**
      * Create a no content response.
      */
     public function noContent() : ResponseInterface

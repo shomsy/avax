@@ -18,8 +18,6 @@ use Avax\DataHandling\Validation\Attributes\Rules\EmailRule;
 use Avax\DataHandling\Validation\Attributes\Rules\MinLengthRule;
 use JsonException;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
-use SensitiveParameter;
 
 final class DataTransferRuntimeTest extends TestCase
 {
@@ -220,7 +218,7 @@ final class RuntimeDocumentedListData
 
 final readonly class TrimStringCaster implements ValueCasterInterface
 {
-    public function cast(mixed $value, DataField $field, ValueConversionContext $context) : mixed
+    public function cast(mixed $value, \Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataField $field, \Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueConversionContext $context) : mixed
     {
         return is_string(value: $value) ? trim(string: $value) : $value;
     }

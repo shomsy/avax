@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 final class CacheCluster
 {
-    /** @var array<CacheNodeId, CacheNode> */
+    /** @var array<string, CacheNode> */
     private array $nodes = [];
 
     private readonly ConsistentHashRing $consistentHashRing;

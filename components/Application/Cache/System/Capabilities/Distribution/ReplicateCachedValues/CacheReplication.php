@@ -14,7 +14,6 @@ use InvalidArgumentException;
 use Throwable;
 
 
-
 /**
  * Manages cache replication between primary and replica nodes.
  *
@@ -25,13 +24,16 @@ final class CacheReplication
 {
     private bool $promoted = false;
 
+    /** @var list<CacheStore> */
+    private readonly array $replicas;
+
     public function __construct(
-        private readonly CacheStore           $cacheStore,
-        /** @var list<CacheStore> */
-        private readonly array                $replicas,
-        private readonly PrimaryReplicaPolicy $primaryReplicaPolicy
+        private readonly CacheStore           $primary,
+        array                                 $replicas,
+        private readonly PrimaryReplicaPolicy $policy
     )
     {
+        $this->replicas = $replicas;
     }
 
     /**
@@ -43,7 +45,7 @@ final class CacheReplication
      */
     public function sync(string $key) : SyncResult
     {
-        $primaryValue = $this->cacheStore->exists(new CacheKey($key));
+        $primaryValue = $this->primary->exists(new CacheKey($key));
 
         if (! $primaryValue) {
             return new SyncResult(
@@ -55,7 +57,7 @@ final class CacheReplication
 
         // Read from primary
         $systemClock = new SystemClock();
-        $readResult  = $this->cacheStore->read(
+        $readResult   = $this->primary->read(
             new CacheKey($key),
             $systemClock,
         );
@@ -102,8 +104,8 @@ final class CacheReplication
         $cacheKey = new CacheKey($key);
 
         // If we should read from replica on miss from primary
-        if ($this->primaryReplicaPolicy->readFromReplicaOnMiss) {
-            $primaryResult = $this->cacheStore->read($cacheKey, $systemClock);
+        if ($this->policy->readFromReplicaOnMiss) {
+            $primaryResult = $this->primary->read($cacheKey, $systemClock);
 
             if ($primaryResult instanceof CacheStoreRecordWasFound) {
                 return $primaryResult;
@@ -122,7 +124,7 @@ final class CacheReplication
         }
 
         // Default: read from primary
-        return $this->cacheStore->read($cacheKey, $systemClock);
+        return $this->primary->read($cacheKey, $systemClock);
     }
 
     /**
@@ -143,7 +145,7 @@ final class CacheReplication
             );
         }
 
-        $oldPrimary = $this->cacheStore;
+        $oldPrimary = $this->primary;
         $newPrimary = $this->replicas[$replicaIndex];
 
         $this->promoted = true;
@@ -162,12 +164,12 @@ final class CacheReplication
     public function write(string $key, mixed $value, int|null $ttl = null) : void
     {
         $storedCacheRecord = StoredCacheRecord::create($value, $ttl);
-        $this->cacheStore->write(
+        $this->primary->write(
             new CacheKey($key),
             $storedCacheRecord,
         );
 
-        if ($this->primaryReplicaPolicy->replicationPolicy === ReplicationPolicy::SYNCHRONOUS) {
+        if ($this->policy->replicationPolicy === ReplicationPolicy::SYNCHRONOUS) {
             $this->replicate($key, $value, $ttl);
         }
     }
@@ -178,15 +180,15 @@ final class CacheReplication
      * @param list<CacheStore> $replicas
      */
     public static function create(
-        CacheStore            $cacheStore,
-        array                 $replicas,
-        PrimaryReplicaPolicy|null $primaryReplicaPolicy = null,
+        CacheStore                $primary,
+        array                     $replicas,
+        PrimaryReplicaPolicy|null $policy = null,
     ) : self
     {
         return new self(
-            primary : $cacheStore,
+            primary : $primary,
             replicas: $replicas,
-            policy  : $primaryReplicaPolicy ?? PrimaryReplicaPolicy::default(),
+            policy  : $policy ?? PrimaryReplicaPolicy::default(),
         );
     }
 
@@ -211,7 +213,7 @@ final class CacheReplication
                 key           : $key,
                 primarySuccess: false,
                 replicaResults: [],
-                policy        : $this->primaryReplicaPolicy,
+                policy        : $this->policy,
             );
         }
 
@@ -226,7 +228,7 @@ final class CacheReplication
             key           : $key,
             primarySuccess: true,
             replicaResults: $replicaResults,
-            policy        : $this->primaryReplicaPolicy,
+            policy        : $this->policy,
         );
     }
 
@@ -237,7 +239,7 @@ final class CacheReplication
     {
         try {
             $record = StoredCacheRecord::create($value, $ttl);
-            $this->cacheStore->write(
+            $this->primary->write(
                 new CacheKey($key),
                 $record,
             );
@@ -281,7 +283,7 @@ final class CacheReplication
      */
     public function getPrimary() : CacheStore
     {
-        return $this->cacheStore;
+        return $this->primary;
     }
 
     /**
@@ -307,7 +309,7 @@ final class CacheReplication
      */
     public function getPolicy() : PrimaryReplicaPolicy
     {
-        return $this->primaryReplicaPolicy;
+        return $this->policy;
     }
 
     /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\PushAuthorizationRequest;
 
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\PkceMethod;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\PkceMethod;
 use DateTimeImmutable;
 use SensitiveParameter;
 

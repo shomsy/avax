@@ -10,15 +10,20 @@ use Stringable;
 
 final readonly class CacheOperation implements Stringable
 {
+    public CacheKey $cacheKey;
+
     public function __construct(
         public string      $operation,
-        public CacheKey    $cacheKey,
+        public CacheKey $key,
         public float       $timestamp,
         public int|null    $ttlSeconds = null,
         public int|null    $durationMicroseconds = null,
         public string|null $storeName = null,
         public string|null $tier = null,
-    ) {}
+    )
+    {
+        $this->cacheKey = $key;
+    }
 
     public static function read(
         CacheKey $cacheKey,

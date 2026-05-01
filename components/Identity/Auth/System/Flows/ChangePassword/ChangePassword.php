@@ -19,7 +19,7 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
-use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use SensitiveParameter;
 
 /**

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\ReadUserInfo;
 
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Support\OidcProviderInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcProviderInterface;
 use RuntimeException;
 use SensitiveParameter;
 

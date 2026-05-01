@@ -14,18 +14,23 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
  */
 final readonly class CacheHealthStatus
 {
+    public Timestamp $timestamp;
+
     public function __construct(
         public bool      $connected,
         public int       $latency,
         public float     $memoryUsage,
         public float     $hitRate,
-        public Timestamp $timestamp,
+        public Timestamp $lastCheck,
         public string|null $error = null,
         public int       $memoryLimit = 0,
         public int       $keyCount = 0,
         public int       $connectionCount = 0,
         public string    $version = '',
-    ) {}
+    )
+    {
+        $this->timestamp = $lastCheck;
+    }
 
     /**
      * Create a healthy status.
@@ -34,6 +39,7 @@ final readonly class CacheHealthStatus
         int        $latency = 0,
         float      $memoryUsage = 0.0,
         float      $hitRate = 1.0,
+        Timestamp|null $lastCheck = null,
         Timestamp|null $timestamp = null,
         int        $memoryLimit = 0,
         int        $keyCount = 0,
@@ -46,7 +52,7 @@ final readonly class CacheHealthStatus
             latency        : $latency,
             memoryUsage    : $memoryUsage,
             hitRate        : $hitRate,
-            lastCheck      : $timestamp ?? Timestamp::now(),
+            lastCheck      : $lastCheck ?? $timestamp ?? Timestamp::now(),
             error          : null,
             memoryLimit    : $memoryLimit,
             keyCount       : $keyCount,
@@ -63,6 +69,7 @@ final readonly class CacheHealthStatus
         int        $latency = 0,
         float      $memoryUsage = 0.0,
         float      $hitRate = 0.0,
+        Timestamp|null $lastCheck = null,
         Timestamp|null $timestamp = null,
     ) : self
     {
@@ -71,7 +78,7 @@ final readonly class CacheHealthStatus
             latency    : $latency,
             memoryUsage: $memoryUsage,
             hitRate    : $hitRate,
-            lastCheck  : $timestamp ?? Timestamp::now(),
+            lastCheck  : $lastCheck ?? $timestamp ?? Timestamp::now(),
             error      : $error,
         );
     }
@@ -84,7 +91,12 @@ final readonly class CacheHealthStatus
         int        $latency = 0,
         float      $memoryUsage = 0.0,
         float      $hitRate = 0.5,
+        Timestamp|null $lastCheck = null,
         Timestamp|null $timestamp = null,
+        int            $memoryLimit = 0,
+        int            $keyCount = 0,
+        int            $connectionCount = 0,
+        string         $version = '',
     ) : self
     {
         return new self(
@@ -92,8 +104,12 @@ final readonly class CacheHealthStatus
             latency    : $latency,
             memoryUsage: $memoryUsage,
             hitRate    : $hitRate,
-            lastCheck  : $timestamp ?? Timestamp::now(),
+            lastCheck  : $lastCheck ?? $timestamp ?? Timestamp::now(),
             error      : $error,
+            memoryLimit: $memoryLimit,
+            keyCount   : $keyCount,
+            connectionCount: $connectionCount,
+            version: $version,
         );
     }
 
@@ -186,7 +202,7 @@ final readonly class CacheHealthStatus
             'latency'            => $this->latency,
             'memoryUsage'        => $this->memoryUsage,
             'hitRate'            => $this->hitRate,
-            'lastCheck' => $this->timestamp->seconds,
+            'lastCheck' => $this->lastCheck->seconds,
             'error'              => $this->error,
             'memoryLimit'        => $this->memoryLimit,
             'keyCount'           => $this->keyCount,

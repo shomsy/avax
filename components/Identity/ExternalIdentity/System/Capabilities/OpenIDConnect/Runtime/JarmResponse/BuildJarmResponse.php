@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\JarmResponse;
 
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Support\OidcProviderInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcProviderInterface;
 use DateMalformedStringException;
 use Random\RandomException;
 

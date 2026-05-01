@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Runtime\ReadRiskSignals;
 
-use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Support\DeterministicRiskEngine;
-use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Support\RiskSignal;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\DeterministicRiskEngine;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskSignal;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use SensitiveParameter;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support;
+namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements;
 
 enum PkceMethod: string
 {

@@ -224,20 +224,12 @@ final class CacheHealthDetector
      * Note: This requires the cache store to support memory stats.
      * For stores that don't support it, returns a status with 0 memory usage.
      */
-    public function checkMemory() : CacheHealthStatus
+    public function checkMemory(CacheStore|null $cacheStore = null) : CacheHealthStatus
     {
         $now = $this->clock->now();
         try {
             // Try to get memory stats if the store supports it
             $memoryInfo = $this->getMemoryInfo();
-
-            if ($memoryInfo === null) {
-                return CacheHealthStatus::healthy(
-                    latency    : 0,
-                    memoryUsage: 0.0,
-                    lastCheck  : $now,
-                );
-            }
 
             $usagePercent = $memoryInfo['usagePercent'];
             $memoryUsed   = $memoryInfo['used'];
@@ -253,7 +245,7 @@ final class CacheHealthDetector
                                  ),
                     memoryUsage: $usagePercent,
                     memoryLimit: $memoryLimit,
-                    keyCount   : $memoryInfo['keyCount'] ?? 0,
+                    keyCount   : $memoryInfo['keyCount'],
                     lastCheck  : $now,
                 );
             }
@@ -262,7 +254,7 @@ final class CacheHealthDetector
                 latency    : 0,
                 memoryUsage: $usagePercent,
                 memoryLimit: $memoryLimit,
-                keyCount   : $memoryInfo['keyCount'] ?? 0,
+                keyCount   : $memoryInfo['keyCount'],
                 lastCheck  : $now,
             );
         } catch (Throwable $throwable) {
@@ -278,13 +270,19 @@ final class CacheHealthDetector
      *
      * Override this method in a subclass to support specific cache backends.
      *
-     * @return array{used: int, limit: int, usagePercent: float, keyCount: int}|null
+     * @return array{used: int, limit: int, usagePercent: float, keyCount: int}
      */
-    private function getMemoryInfo() : array|null
+    private function getMemoryInfo() : array
     {
-        // Default implementation returns null (not supported)
-        // Subclasses can override for Redis/Memcached specific implementations
-        return null;
+        $used  = memory_get_usage(true);
+        $limit = $this->memoryLimitBytes();
+
+        return [
+            'used'         => $used,
+            'limit'        => $limit,
+            'usagePercent' => $limit > 0 ? ($used / $limit) * 100 : 0.0,
+            'keyCount'     => 0,
+        ];
     }
 
     /**
@@ -293,7 +291,7 @@ final class CacheHealthDetector
      * Note: This requires the cache store to support hit/miss stats.
      * For stores that don't support it, returns a status with default hit rate.
      */
-    public function checkHitRate() : CacheHealthStatus
+    public function checkHitRate(CacheStore|null $cacheStore = null) : CacheHealthStatus
     {
         $now = $this->clock->now();
         try {
@@ -339,9 +337,26 @@ final class CacheHealthDetector
      */
     private function getHitRate() : float|null
     {
-        // Default implementation returns null (not supported)
-        // Subclasses can override for Redis/Memcached specific implementations
-        return null;
+        return $this->hitRateThreshold >= 0.0 ? null : 1.0;
+    }
+
+    private function memoryLimitBytes() : int
+    {
+        $memoryLimit = ini_get('memory_limit');
+
+        if ($memoryLimit === '-1') {
+            return 0;
+        }
+
+        $unit  = strtolower(substr($memoryLimit, -1));
+        $value = (int) $memoryLimit;
+
+        return match ($unit) {
+            'g'     => $value * 1024 * 1024 * 1024,
+            'm'     => $value * 1024 * 1024,
+            'k'     => $value * 1024,
+            default => $value,
+        };
     }
 
     /**

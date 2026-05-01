@@ -12,19 +12,19 @@ final readonly class RouteCacheWrite
         private ChooseCacheNodeForKey $chooseCacheNodeForKey,
     ) {}
 
-    public function routeToPrimary(CacheKey $cacheKey) : CacheNode|null
+    public function routeToPrimary(CacheKey $key) : CacheNode|null
     {
-        return $this->chooseCacheNodeForKey->choose(key: $cacheKey);
+        return $this->chooseCacheNodeForKey->choose(key: $key);
     }
 
-    public function routeToAll(CacheKey $cacheKey, int $replicaCount) : array
+    public function routeToAll(CacheKey $key, int $replicaCount) : array
     {
-        return $this->routeToReplicas(key: $cacheKey, replicaCount: $replicaCount);
+        return $this->routeToReplicas(key: $key, replicaCount: $replicaCount);
     }
 
-    public function routeToReplicas(CacheKey $cacheKey) : array
+    public function routeToReplicas(CacheKey $key, int $replicaCount = 1) : array
     {
-        $primary = $this->chooseCacheNodeForKey->choose(key: $cacheKey);
+        $primary = $this->chooseCacheNodeForKey->choose(key: $key);
 
         if ($primary === null) {
             return [];

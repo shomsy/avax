@@ -9,8 +9,6 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Au
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Recovery;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Verification;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Mfa;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Passkey;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Sessions;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
@@ -20,6 +18,8 @@ use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Mfa;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Passkey;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use SensitiveParameter;
@@ -62,7 +62,7 @@ final readonly class Identity implements IdentityInterface
         #[SensitiveParameter]
         SessionIdentityInterface|null $sessionIdentity = null,
         #[SensitiveParameter]
-        JwtIdentityInterface     $jwtIdentity = null,
+        JwtIdentityInterface|null = null,
     ) : self
     {
         return new self(

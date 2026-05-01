@@ -84,10 +84,6 @@ final class ConsistentHashRing
         // Wrap around to the first node
         $cacheNode = reset($this->ring);
 
-        if ($cacheNode === false) {
-            throw new RuntimeException('Cannot get node: hash ring is empty');
-        }
-
         return $cacheNode;
     }
 

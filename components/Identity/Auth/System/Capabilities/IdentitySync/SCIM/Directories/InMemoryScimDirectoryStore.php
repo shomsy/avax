@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support;
 
-use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use SensitiveParameter;
 
 final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface

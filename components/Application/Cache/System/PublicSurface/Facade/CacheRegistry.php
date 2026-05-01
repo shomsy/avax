@@ -39,7 +39,8 @@ class CacheRegistry
     {
         if (! isset($this->caches[$name])) {
             throw new NotFound(
-                name: sprintf('Cache "%s" not found in registry. Available: %s', $name, implode(', ', array_keys($this->caches))),
+                name     : $name,
+                available: array_keys($this->caches),
             );
         }
 

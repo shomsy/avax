@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt;
 
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\TokenCodecInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\IssuedRefreshToken;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\IssuedToken;
@@ -13,10 +17,6 @@ use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\Re
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\ResolvedWorkloadToken;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;
@@ -40,9 +40,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         private TokenRevocationStoreInterface|null $revocationStore = null,
         #[SensitiveParameter]
         private RefreshTokenStoreInterface|null    $refreshTokenStore = null,
-        int                                        $tokenExpiry = null,
-        int                                        $refreshTokenExpiry = null,
-        string                                     $issuer = null,
+        int|null = null,
+        int|null = null,
+        string|null = null,
         private int                                $leeway = 60,
     )
     {
@@ -169,7 +169,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         string                $clientId,
         array                 $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
-        string                $audience = null,
+        string|null = null,
     ) : IssuedToken
     {
         $normalizedSubject = trim(string: $subject);
@@ -307,9 +307,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      */
     public function issueRefreshToken(
         User                  $user,
-        DateTimeImmutable     $mfaVerifiedAt = null,
+        DateTimeImmutable|null = null,
         bool                  $phishingResistant = false,
-        string                $clientId = null,
+        string|null = null,
         array                 $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedRefreshToken|null
@@ -337,12 +337,12 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      */
     public function issue(
         User                  $user,
-        DateTimeImmutable     $mfaVerifiedAt = null,
+        DateTimeImmutable|null = null,
         bool                  $phishingResistant = false,
-        string                $clientId = null,
+        string|null = null,
         array                 $scopes = [],
         #[SensitiveParameter]
-        string                $refreshTokenFamilyId = null,
+        string|null = null,
         OAuthSenderConstraint|null $senderConstraint = null,
     ) : IssuedToken
     {

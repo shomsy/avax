@@ -15,14 +15,19 @@ final readonly class CacheNode implements Stringable
 {
     public const int DEFAULT_VIRTUAL_NODES = 150;
 
+    public CacheNodeStatus $cacheNodeStatus;
+
     public function __construct(
         public string $id,
         public string $host,
         public int $port,
         public int             $weight = 100,
-        public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
+        public CacheNodeStatus $status = CacheNodeStatus::HEALTHY,
         public int|null        $virtualNodeCount = null,
-    ) {}
+    )
+    {
+        $this->cacheNodeStatus = $status;
+    }
 
     /**
      * Create a new cache node with default values.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
@@ -18,7 +19,7 @@ final readonly class PromoteCachedValueToFasterTier
     public function promote(CacheKey $cacheKey, StoredCacheRecord|null $storedCacheRecord = null) : bool
     {
         if (! $storedCacheRecord instanceof StoredCacheRecord) {
-            foreach ($this->tieredCache->tiers as $store) {
+            foreach ($this->tieredCache->stores() as $store) {
                 if ($store === null) {
                     continue;
                 }

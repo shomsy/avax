@@ -11,8 +11,8 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectoryStoreInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationSupport\GroupRoleMappingValidator;
-use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\GroupRoleMappingValidator;
+use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Random\RandomException;
 use SensitiveParameter;
 

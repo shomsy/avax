@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
 
-use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
-
-
 
 /**
  * Value object representing the freshness status of a compiled cache entry.
  */
 final readonly class FreshnessStatus
 {
+    public Timestamp $timestamp;
+
     public function __construct(
         public string    $entryName,
         public bool      $isFresh,
         public string    $reason,
-        public Timestamp $timestamp,
+        public Timestamp $checkedAt,
         public int       $sourceFilesMtime,
         public int|false $compiledFileMtime,
-    ) {}
+    )
+    {
+        $this->timestamp = $checkedAt;
+    }
 
     /**
      * Convert to array representation.
@@ -45,7 +46,7 @@ final readonly class FreshnessStatus
             'entryName'         => $this->entryName,
             'isFresh'           => $this->isFresh,
             'reason'            => $this->reason,
-            'checkedAt' => $this->timestamp->seconds,
+            'checkedAt' => $this->checkedAt->seconds,
             'sourceFilesMtime'  => $this->sourceFilesMtime,
             'compiledFileMtime' => $this->compiledFileMtime,
             'isStale'           => $this->isStale(),
@@ -79,6 +80,6 @@ final readonly class FreshnessStatus
             return 0;
         }
 
-        return $this->timestamp->seconds - $this->compiledFileMtime;
+        return $this->checkedAt->seconds - $this->compiledFileMtime;
     }
 }

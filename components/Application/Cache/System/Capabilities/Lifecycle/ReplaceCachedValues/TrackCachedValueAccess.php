@@ -7,4 +7,8 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\Replac
 interface TrackCachedValueAccess
 {
     public function recordAccess(string $key) : void;
+
+    public function removeKey(string $key) : void;
+
+    public function reset() : void;
 }

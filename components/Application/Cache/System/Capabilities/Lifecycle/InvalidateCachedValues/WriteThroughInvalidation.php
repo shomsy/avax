@@ -15,7 +15,7 @@ final readonly class WriteThroughInvalidation implements InvalidationStrategy
             return true;
         }
 
-        return $context['operation'] ?? null === 'write';
+        return ($context['operation'] ?? null) === 'write';
     }
 
     #[Override]

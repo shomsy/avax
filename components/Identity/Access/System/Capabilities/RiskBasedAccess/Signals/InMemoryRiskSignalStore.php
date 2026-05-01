@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Support;
+namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals;
 
 final class InMemoryRiskSignalStore implements RiskSignalStoreInterface
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup;
 
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
-use Avax\Components\Security\System\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Random\RandomException;
 use SensitiveParameter;
 

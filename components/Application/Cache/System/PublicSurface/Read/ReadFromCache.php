@@ -10,10 +10,18 @@ use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 
 readonly class ReadFromCache
 {
+    private CacheRegistry $cacheRegistry;
+
+    private CompiledCacheContract|null $compiledCacheContract;
+
     public function __construct(
-        private CacheRegistry              $cacheRegistry,
-        private CompiledCacheContract|null $compiledCacheContract = null,
-    ) {}
+        CacheRegistry              $runtimeCaches,
+        CompiledCacheContract|null $compiledCache = null,
+    )
+    {
+        $this->cacheRegistry         = $runtimeCaches;
+        $this->compiledCacheContract = $compiledCache;
+    }
 
     public function read(CacheReadTarget|string $target, mixed $default = null) : mixed
     {
@@ -21,31 +29,36 @@ readonly class ReadFromCache
             return $this->cacheRegistry->default()->get($target, $default);
         }
 
-        return match ($target->kind()) {
-            CacheReadKind::RUNTIME  => $this->readRuntime(target: $target),
-            CacheReadKind::COMPILED => $this->readCompiled(target: $target),
-        };
+        if ($target instanceof RuntimeCacheTarget) {
+            return $this->readRuntime(target: $target);
+        }
+
+        if ($target instanceof CompiledCacheTarget) {
+            return $this->readCompiled(target: $target);
+        }
+
+        throw new CompiledNotConfigured();
     }
 
-    private function readRuntime(RuntimeCacheTarget $runtimeCacheTarget) : mixed
+    private function readRuntime(RuntimeCacheTarget $target) : mixed
     {
-        $cache = $runtimeCacheTarget->store === null
+        $cache = $target->store === null
             ? $this->cacheRegistry->default()
-            : $this->cacheRegistry->get($runtimeCacheTarget->store);
+            : $this->cacheRegistry->get($target->store);
 
-        return $cache->get($runtimeCacheTarget->key, $runtimeCacheTarget->default);
+        return $cache->get($target->key, $target->default);
     }
 
-    private function readCompiled(CompiledCacheTarget $compiledCacheTarget) : mixed
+    private function readCompiled(CompiledCacheTarget $target) : mixed
     {
         if ($this->compiledCacheContract === null) {
             throw new CompiledNotConfigured();
         }
 
         return $this->compiledCacheContract->read(
-            name   : $compiledCacheTarget->name,
-            build  : $compiledCacheTarget->builder(),
-            sources: $compiledCacheTarget->sources,
+            name   : $target->name,
+            build  : $target->builder(),
+            sources: $target->sources,
         );
     }
 }

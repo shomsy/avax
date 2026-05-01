@@ -6,22 +6,12 @@
          failOnWarning="true" cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="Unit">
-            <directory>tests/Capabilities</directory>
-            <directory>tests/Characterization</directory>
-            <directory>tests/Configuration</directory>
-            <directory>tests/Flows</directory>
-            <directory>tests/Foundation</directory>
-            <directory>tests/System</directory>
-        </testsuite>
-        <testsuite name="Integration">
-            <directory>tests/Integration</directory>
-            <directory>tests/Integrations</directory>
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
     <source>
         <include>
             <directory>System</directory>
-            <directory>integrations</directory>
         </include>
     </source>
 </phpunit>

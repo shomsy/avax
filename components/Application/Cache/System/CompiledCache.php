@@ -7,8 +7,8 @@ namespace Avax\Components\Application\Cache\System;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheArtifact;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
-use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
 
 final class CompiledCache
 {
@@ -16,9 +16,9 @@ final class CompiledCache
 
     private static string|null $defaultDirectory = null;
 
-    public static function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed
+    public static function read(string $name, callable $build, CompiledCacheSources $sources) : mixed
     {
-        return self::instance()->read(name: $name, build: $build, sources: $compiledCacheSources);
+        return self::instance()->read(name: $name, build: $build, sources: $sources);
     }
 
     private static function instance() : CompiledCacheContract
@@ -35,9 +35,9 @@ final class CompiledCache
         return self::$compiledCacheContract;
     }
 
-    public static function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : CompiledCacheArtifact
+    public static function compile(string $name, callable $build, CompiledCacheSources $sources) : CompiledCacheArtifact
     {
-        return self::instance()->compile(name: $name, build: $build, sources: $compiledCacheSources);
+        return self::instance()->compile(name: $name, build: $build, sources: $sources);
     }
 
     public static function clear(string $name) : void

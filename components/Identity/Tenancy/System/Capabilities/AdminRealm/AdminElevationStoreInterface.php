@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmSupport;
+namespace Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm;
 
 interface AdminElevationStoreInterface
 {

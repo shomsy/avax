@@ -9,9 +9,9 @@ use Avax\Components\Identity\Auth\Integrations\Http\VerifyDpopProof;
 use Avax\Components\Identity\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
 use Avax\Components\Identity\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\InMemoryDpopProofReplayStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\InMemoryDpopProofReplayStore;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\HmacTokenCodec;
 use SensitiveParameter;
 

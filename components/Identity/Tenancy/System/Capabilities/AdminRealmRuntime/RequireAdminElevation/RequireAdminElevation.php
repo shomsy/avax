@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
-use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\AdminElevationFailed;
-use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmSupport\AdminElevationStoreInterface;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface;
+use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\AdminElevationFailed;
 use SensitiveParameter;
 
 final readonly class RequireAdminElevation

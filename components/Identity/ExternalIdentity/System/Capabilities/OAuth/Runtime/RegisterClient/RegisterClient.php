@@ -6,9 +6,9 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Ru
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\OAuthClientRegistryInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\RegisteredOAuthClient;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\RegisteredOAuthClient;
 
 final readonly class RegisterClient
 {

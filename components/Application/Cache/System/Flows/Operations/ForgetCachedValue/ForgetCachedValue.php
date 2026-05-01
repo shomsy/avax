@@ -30,12 +30,12 @@ final readonly class ForgetCachedValue
         return $count;
     }
 
-    public function forget(CacheKey $cacheKey) : bool
+    public function forget(CacheKey $key) : bool
     {
-        $startTime = hrtime(as_integer: true);
+        $startTime = hrtime(true);
 
         try {
-            $this->cacheStore->forget(key: $cacheKey);
+            $this->cacheStore->forget(key: $key);
 
             $this->recordLatency(startTime: $startTime);
             $this->cacheMetrics?->recordDelete();
@@ -54,7 +54,7 @@ final readonly class ForgetCachedValue
             return;
         }
 
-        $endTime             = hrtime(as_integer: true);
+        $endTime = hrtime(true);
         $latencyMicroseconds = (int) (($endTime - $startTime) / 1000);
 
         $this->cacheMetrics->recordLatency(microseconds: $latencyMicroseconds);

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\UpdateClient;
 
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\OAuthClientType;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\OAuthGrantType;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\OAuthTokenEndpointAuthMethod;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientType;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthGrantType;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthTokenEndpointAuthMethod;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraintType;
 use SensitiveParameter;
 
 final readonly class UpdateClientData

@@ -24,9 +24,7 @@ final readonly class CacheTtl implements CacheExpiration
         }
 
         if ($ttl instanceof DateInterval) {
-            return (int) DateInterval::createFromDateString(
-                datetime: (string) $ttl->s + ($ttl->i * 60) + ($ttl->h * 3600) + ($ttl->d * 86400),
-            )->s;
+            return Duration::fromDateInterval(interval: $ttl)->toSeconds();
         }
 
         return $ttl > 0 ? $ttl : null;

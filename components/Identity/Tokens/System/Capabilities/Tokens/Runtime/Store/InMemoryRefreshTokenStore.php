@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Support\SenderConstraint\OAuthSenderConstraint;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraint;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\IssuedRefreshToken;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\RefreshTokenRecord;
 use DateTimeImmutable;

@@ -10,7 +10,6 @@ use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSou
 use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource\CacheLockWasNotAcquired;
 
 
-
 final readonly class AcquireCacheStampedeLock
 {
     public function __construct(
@@ -22,14 +21,14 @@ final readonly class AcquireCacheStampedeLock
 
     public function isLocked(string $key) : bool
     {
-        $cacheLock = new CacheLock(store: $this->cacheLockStore);
+        $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
 
         return $cacheLock->isAcquired(key: $key);
     }
 
     public function waitForLock(string $key, int $maxWaitSeconds = 5) : bool
     {
-        $cacheLock      = new CacheLock(store: $this->cacheLockStore);
+        $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
         $startTime = hrtime(true);
         $deadline  = $startTime + ($maxWaitSeconds * 1_000_000_000);
 
@@ -49,7 +48,7 @@ final readonly class AcquireCacheStampedeLock
     public function acquire(string $key) : StampedeLockGuard
     {
         $cacheLock = new CacheLock(
-            store: $this->cacheLockStore,
+            cacheLockStore: $this->cacheLockStore,
         );
 
         $startTime = hrtime(true);
@@ -57,7 +56,7 @@ final readonly class AcquireCacheStampedeLock
 
         while (hrtime(true) < $deadline) {
             if ($cacheLock->acquire(key: $key, ttlSeconds: $this->lockTtlSeconds)) {
-                return new StampedeLockGuard(lock: $cacheLock, key: $key);
+                return new StampedeLockGuard(cacheLock: $cacheLock, key: $key);
             }
 
             usleep(10_000);

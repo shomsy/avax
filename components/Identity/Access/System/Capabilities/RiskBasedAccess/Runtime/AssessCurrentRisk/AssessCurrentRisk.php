@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Runtime\AssessCurrentRisk;
 
-use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Support\DeterministicRiskEngine;
-use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Support\RiskDecision;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\DeterministicRiskEngine;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskDecision;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;

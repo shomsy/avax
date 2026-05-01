@@ -51,16 +51,17 @@ final readonly class RefreshCachedValue
     }
 
     public function refresh(
-        CacheKey $cacheKey,
-        callable $loader,
+        CacheKey      $key,
+        callable      $loader,
         int|DateInterval|null $ttl = null,
+        RefreshPolicy $policy = RefreshPolicy::DO_NOT_REFRESH,
     ) : mixed
     {
         try {
             $value = $loader();
 
             $this->cacheStore->write(
-                key   : $cacheKey,
+                key   : $key,
                 record: new StoredCacheRecord(
                             value    : $value,
                             lifecycle: CachedValueLifecycle::create(

@@ -9,9 +9,9 @@ final class DetectUnhealthyCacheNode
     public function __construct(
         private readonly int $failureThreshold = 3,
         private readonly int $recoveryThreshold = 5,
-        /** @var array<CacheNodeId, array<int, bool>> */
+        /** @var array<string, array<int, bool>> */
         private array        $failureHistory = [],
-        /** @var array<CacheNodeId, int> */
+        /** @var array<string, int> */
         private array        $successCount = []
     )
     {

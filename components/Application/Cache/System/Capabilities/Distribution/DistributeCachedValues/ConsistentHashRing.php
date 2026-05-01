@@ -15,10 +15,10 @@ final class ConsistentHashRing
     /** @var array<int, CacheNode> */
     private array $ring = [];
 
-    /** @var array<CacheNodeId, array<int>> */
+    /** @var array<string, array<int>> */
     private array $nodePositions = [];
 
-    /** @var array<CacheNodeId, CacheNode> */
+    /** @var array<string, CacheNode> */
     private array $nodes = [];
 
     public function __construct(

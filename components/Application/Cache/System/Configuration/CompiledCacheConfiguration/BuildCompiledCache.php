@@ -28,11 +28,10 @@ final readonly class BuildCompiledCache
         );
     }
 
-    public function fromConfiguration(CompiledCacheConfiguration $compiledCacheConfiguration) : CompiledCacheContract
+    public function fromConfiguration(CompiledCacheConfiguration $configuration) : CompiledCacheContract
     {
         return new class (
-            $compiledCacheConfiguration->directory,
-            $compiledCacheConfiguration,
+            $configuration->directory,
             $this->clock,
         ) implements CompiledCacheContract {
             public function __construct(
@@ -40,7 +39,7 @@ final readonly class BuildCompiledCache
                 private readonly Clock  $clock,
             ) {}
 
-            public function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : mixed
+            public function read(string $name, callable $build, CompiledCacheSources $sources) : mixed
             {
                 $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory);
                 $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
@@ -51,10 +50,10 @@ final readonly class BuildCompiledCache
                     clock    : $this->clock,
                 );
 
-                return $readCompiledCache->read(name: $name, build: $build, sources: $compiledCacheSources);
+                return $readCompiledCache->read(name: $name, build: $build, sources: $sources);
             }
 
-            public function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources) : CompiledCacheArtifact
+            public function compile(string $name, callable $build, CompiledCacheSources $sources) : CompiledCacheArtifact
             {
                 $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory);
                 $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
@@ -65,7 +64,7 @@ final readonly class BuildCompiledCache
                     clock    : $this->clock,
                 );
 
-                return $compileCache->compile(name: $name, build: $build, sources: $compiledCacheSources);
+                return $compileCache->compile(name: $name, build: $build, sources: $sources);
             }
 
             public function clear(string $name) : void

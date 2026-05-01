@@ -4,29 +4,23 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\ReplicateCachedValues;
 
-use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
-use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
-use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
-use InvalidArgumentException;
-use Throwable;
-
-
-
 /**
  * Value object representing the result of a replication operation.
  */
 final readonly class ReplicationResult
 {
+    public PrimaryReplicaPolicy $primaryReplicaPolicy;
+
     /** @param list<ReplicaWriteResult> $replicaResults */
     public function __construct(
-        public string               $key,
-        public bool                 $primarySuccess,
-        public array                $replicaResults,
-        public PrimaryReplicaPolicy $primaryReplicaPolicy,
-    ) {}
+        public string        $key,
+        public bool          $primarySuccess,
+        public array         $replicaResults,
+        PrimaryReplicaPolicy $policy,
+    )
+    {
+        $this->primaryReplicaPolicy = $policy;
+    }
 
     /**
      * Check if replication was fully successful (primary + all replicas).
@@ -55,7 +49,7 @@ final readonly class ReplicationResult
             return false;
         }
 
-        $successCount = 1; // Primary counts as 1
+        $successCount = 1;
 
         foreach ($this->replicaResults as $replicaResult) {
             if ($replicaResult->success) {

@@ -18,7 +18,7 @@ final class ConfigurationException extends AuthException
         private readonly string $errorCode = 'auth.configuration.invalid',
         private readonly array  $context = [],
         int                     $code = 0,
-        Throwable               $previous = null,
+        Throwable|null $previous = null,
     )
     {
         parent::__construct(message: $message, code: $code, previous: $previous);

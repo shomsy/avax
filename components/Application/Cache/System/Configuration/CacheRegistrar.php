@@ -8,11 +8,12 @@ use Avax\Components\Application\Cache\Cache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\Configuration\BuildCache;
+use Avax\Components\Application\Cache\System\Configuration\CacheConfiguration;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
-use Avax\Components\Application\Container\Providers\BaseRegisterDependency;
+use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
 
 final class RegisterCacheDependencies extends BaseRegisterDependency
 {
@@ -26,7 +27,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
             $this->namedCaches['default'] = ['store' => 'in_memory'];
         }
 
-        $this->app->singleton(id: CacheRegistry::class, implementation: function () : CacheRegistry {
+        $this->container->singleton(abstract: CacheRegistry::class, concrete: function () : CacheRegistry {
             $cacheRegistry = new CacheRegistry();
 
             foreach ($this->namedCaches as $name => $config) {
@@ -36,7 +37,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
             return $cacheRegistry;
         });
 
-        $this->app->singleton(id: CacheFacade::class, implementation: function ($app) : CacheFacade {
+        $this->container->singleton(abstract: CacheFacade::class, concrete: function ($app) : CacheFacade {
             $compiledCache = $this->compiledCacheDirectory !== null
                 ? $app->get(id: CompiledCacheContract::class)
                 : null;
@@ -44,7 +45,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
             return new CacheFacade($app->get(id: CacheRegistry::class), $compiledCache);
         });
 
-        $this->app->singleton(id: ReadFromCache::class, implementation: function ($app) : ReadFromCache {
+        $this->container->singleton(abstract: ReadFromCache::class, concrete: function ($app) : ReadFromCache {
             $compiledCache = $this->compiledCacheDirectory !== null
                 ? $app->get(id: CompiledCacheContract::class)
                 : null;
@@ -52,33 +53,37 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
             return new ReadFromCache($app->get(id: CacheRegistry::class), $compiledCache);
         });
 
-        $this->app->singleton(id: CacheContract::class, implementation: static fn ($app) => $app->get(id: CacheRegistry::class)->default());
+        $this->container->singleton(abstract: CacheContract::class, concrete: static fn ($app) => $app->get(id: CacheRegistry::class)->default());
 
         if ($this->compiledCacheDirectory !== null) {
-            $this->app->singleton(id: CompiledCacheContract::class, implementation: fn () : CompiledCacheContract => (new BuildCompiledCache())->inDirectory(directory: $this->compiledCacheDirectory));
+            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: fn () : CompiledCacheContract => (new BuildCompiledCache())->inDirectory(directory: $this->compiledCacheDirectory));
         }
 
-        Cache::use(cache: $this->app->get(id: CacheContract::class));
+        Cache::use(cache: $this->container->get(id: CacheContract::class));
     }
 
     private function buildNamedCache(string $name, array $config) : CacheContract
     {
         $buildCache = new BuildCache();
+        $cacheConfiguration = new CacheConfiguration(
+            name      : $name,
+            defaultTtl: is_int($config['ttl'] ?? null) ? $config['ttl'] : 3600,
+        );
 
         return match ($config['store']) {
             'in_memory' => $buildCache->inMemory(
-                $config['ttl'] ?? 3600,
+                config: $cacheConfiguration,
             ),
             'file'      => $buildCache->inDirectory(
-                $config['directory'] ?? sys_get_temp_dir() . '/cache_' . $name,
-                $config['ttl'] ?? 3600,
+                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir() . '/cache_' . $name,
+                config   : $cacheConfiguration,
             ),
             'redis'     => $buildCache->redis(
-                $config['host'] ?? '127.0.0.1',
-                $config['port'] ?? 6379,
-                $config['ttl'] ?? 3600,
+                host  : is_string($config['host'] ?? null) ? $config['host'] : '127.0.0.1',
+                port  : is_int($config['port'] ?? null) ? $config['port'] : 6379,
+                config: $cacheConfiguration,
             ),
-            default     => $buildCache->inMemory(config: $config['ttl'] ?? 3600),
+            default     => $buildCache->inMemory(config: $cacheConfiguration),
         };
     }
 

@@ -14,18 +14,18 @@ final readonly class RequestCoalescing
     ) {}
 
     public function execute(
-        CacheKey  $cacheKey,
+        CacheKey $key,
         callable  $loader,
         callable|null $onStale = null,
     ) : mixed
     {
-        $cacheLock = new CacheLock(store: $this->cacheLockStore, timeout: $this->cacheLockTimeout);
+        $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
 
-        if ($cacheLock->acquire(key: $cacheKey->fullKey())) {
+        if ($cacheLock->acquire(key: $key->fullKey(), ttlSeconds: $this->cacheLockTimeout->seconds)) {
             try {
                 return $loader();
             } finally {
-                $cacheLock->release(key: $cacheKey->fullKey());
+                $cacheLock->release(key: $key->fullKey());
             }
         }
 
@@ -35,19 +35,19 @@ final readonly class RequestCoalescing
 
         usleep($this->cacheLockTimeout->inMilliseconds() * 1000);
 
-        return $this->execute(key: $cacheKey, loader: $loader, onStale: $onStale);
+        return $this->execute(key: $key, loader: $loader, onStale: $onStale);
     }
 
     public function tryAcquireLock(CacheKey $cacheKey) : bool
     {
-        $cacheLock = new CacheLock(store: $this->cacheLockStore, timeout: $this->cacheLockTimeout);
+        $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
 
-        return $cacheLock->acquire(key: $cacheKey->fullKey());
+        return $cacheLock->acquire(key: $cacheKey->fullKey(), ttlSeconds: $this->cacheLockTimeout->seconds);
     }
 
     public function releaseLock(CacheKey $cacheKey) : void
     {
-        $cacheLock = new CacheLock(store: $this->cacheLockStore, timeout: $this->cacheLockTimeout);
+        $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
         $cacheLock->release(key: $cacheKey->fullKey());
     }
 }

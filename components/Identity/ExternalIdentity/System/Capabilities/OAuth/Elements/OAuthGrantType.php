@@ -10,6 +10,6 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\El
 enum OAuthGrantType: string
 {
     case AUTHORIZATION_CODE = 'authorization_code';
-    case REFRESH_TOKEN      = 'refresh_token';
+    case REFRESH_TOKEN = 'refresh_token';
     case CLIENT_CREDENTIALS = 'client_credentials';
 }

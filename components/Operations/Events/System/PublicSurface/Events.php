@@ -13,40 +13,41 @@ use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegis
 final class Events implements EventsInterface
 {
     private ListenerRegistry $registry;
+
     private EventDispatcher $dispatcher;
 
     public function __construct()
     {
-        $this->registry = new ListenerRegistry();
+        $this->registry = new ListenerRegistry;
         $this->dispatcher = new EventDispatcher($this->registry);
     }
 
-    public function dispatch(string|object $event, mixed $data = null) : void
+    public function dispatch(string|object $event, mixed $data = null): void
     {
         $this->dispatcher->dispatch($event, $data);
     }
 
-    public function listen(string $event, callable $listener, int $priority = 0) : void
+    public function listen(string $event, callable $listener, int $priority = 0): void
     {
         $this->registry->subscribe($event, $listener, $priority);
     }
 
-    public function flush() : void
+    public function flush(): void
     {
         $this->registry->clear();
     }
 
-    public function forget(string $event) : void
+    public function forget(string $event): void
     {
         $this->registry->remove($event);
     }
 
-    public function hasListeners(string $event) : bool
+    public function hasListeners(string $event): bool
     {
         return $this->registry->hasListeners($event);
     }
 
-    public function listenerCount(string $event) : int
+    public function listenerCount(string $event): int
     {
         return $this->registry->listenerCount($event);
     }

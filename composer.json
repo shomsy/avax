@@ -44,7 +44,8 @@
     "phpstan/phpdoc-parser": "^2.3",
     "phpunit/phpunit": "^10.5",
     "swoole/ide-helper": "^5.1",
-    "nikic/php-parser": "^5.7"
+    "nikic/php-parser": "^5.7",
+    "laravel/pint": "^1.29"
   },
   "config": {
     "allow-plugins": {

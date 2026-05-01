@@ -9,9 +9,11 @@ use Throwable;
 
 final class CircuitBreaker
 {
-    private CircuitBreakerState $state    = CircuitBreakerState::Closed;
-    private int                 $failures = 0;
-    private int|null            $openedAt = null;
+    private CircuitBreakerState $state = CircuitBreakerState::Closed;
+
+    private int $failures = 0;
+
+    private ?int $openedAt = null;
 
     public function __construct(
         private readonly int $failureThreshold = 3,
@@ -27,7 +29,7 @@ final class CircuitBreaker
      *
      * @throws Throwable
      */
-    public function run(callable $operation) : mixed
+    public function run(callable $operation): mixed
     {
         if (! $this->canRun()) {
             throw new RuntimeException('Circuit breaker is open.');
@@ -45,7 +47,7 @@ final class CircuitBreaker
         }
     }
 
-    private function canRun() : bool
+    private function canRun(): bool
     {
         return $this->state() !== CircuitBreakerState::Open;
     }
@@ -59,24 +61,24 @@ final class CircuitBreaker
         return $this->state;
     }
 
-    private function cooldownExpired() : bool
+    private function cooldownExpired(): bool
     {
         return $this->openedAt !== null && (time() - $this->openedAt) >= $this->cooldownSeconds;
     }
 
-    private function recordSuccess() : void
+    private function recordSuccess(): void
     {
         $this->failures = 0;
         $this->openedAt = null;
-        $this->state    = CircuitBreakerState::Closed;
+        $this->state = CircuitBreakerState::Closed;
     }
 
-    private function recordFailure() : void
+    private function recordFailure(): void
     {
         $this->failures++;
 
         if ($this->failures >= $this->failureThreshold) {
-            $this->state    = CircuitBreakerState::Open;
+            $this->state = CircuitBreakerState::Open;
             $this->openedAt = time();
         }
     }

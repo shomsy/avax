@@ -11,12 +11,12 @@ final class JobDefinition
 {
     public function __construct(
         public readonly string $handler,
-        public readonly array  $payload = [],
-        public readonly string|null $queue = null,
-        public readonly int    $maxAttempts = 3,
-        public readonly int    $timeout = 60,
-        public readonly int    $retryDelay = 0,
-        public readonly string|null $correlationId = null,
+        public readonly array   $payload = [],
+        public readonly ?string $queue = null,
+        public readonly int     $maxAttempts = 3,
+        public readonly int     $timeout = 60,
+        public readonly int     $retryDelay = 0,
+        public readonly ?string $correlationId = null,
     ) {}
 
     public static function fromArray(array $data) : self
@@ -113,14 +113,14 @@ final class JobDefinition
     public function toArray() : array
     {
         return [
-            'handler'       => $this->handler,
-            'payload'       => $this->payload,
-            'queue'         => $this->queue,
-            'maxAttempts'   => $this->maxAttempts,
-            'timeout'       => $this->timeout,
-            'retryDelay'    => $this->retryDelay,
+            'handler'     => $this->handler,
+            'payload'     => $this->payload,
+            'queue'       => $this->queue,
+            'maxAttempts' => $this->maxAttempts,
+            'timeout'     => $this->timeout,
+            'retryDelay'  => $this->retryDelay,
             'correlationId' => $this->correlationId ?? uniqid('corr-', true),
-            'createdAt'     => time(),
+            'createdAt'   => time(),
         ];
     }
 }

@@ -29,9 +29,9 @@ final readonly class ErrorLogger implements LoggerInterface
      */
     public function __construct(
         private Logging $logger,
-        private SecretRedactor $redactor = new SecretRedactor(),
-        private string|null $correlationId = null,
-        private string|null $traceId = null,
+        private SecretRedactor $redactor = new SecretRedactor,
+        private ?string        $correlationId = null,
+        private ?string        $traceId = null,
     ) {}
 
     public function emergency(Stringable|string $message, array $context = []) : void
@@ -41,7 +41,7 @@ final readonly class ErrorLogger implements LoggerInterface
 
     public function log($level, Stringable|string $message, array $context = []) : void
     {
-        $level   = (string) $level;
+        $level = (string) $level;
         $message = (string) $message;
 
         $context = $this->enrichContext($context);
@@ -57,7 +57,7 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * @return array<string, mixed>
      */
-    private function enrichContext(array $context) : array
+    private function enrichContext(array $context): array
     {
         if ($this->correlationId !== null) {
             $context['correlation_id'] = $this->correlationId;
@@ -79,42 +79,42 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * @return array<string, mixed>
      */
-    private function redactContext(array $context) : array
+    private function redactContext(array $context): array
     {
         return $this->redactor->redactArray($context);
     }
 
-    public function alert(Stringable|string $message, array $context = []) : void
+    public function alert(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::ALERT, $message, $context);
     }
 
-    public function critical(Stringable|string $message, array $context = []) : void
+    public function critical(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::CRITICAL, $message, $context);
     }
 
-    public function error(Stringable|string $message, array $context = []) : void
+    public function error(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::ERROR, $message, $context);
     }
 
-    public function warning(Stringable|string $message, array $context = []) : void
+    public function warning(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::WARNING, $message, $context);
     }
 
-    public function notice(Stringable|string $message, array $context = []) : void
+    public function notice(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::NOTICE, $message, $context);
     }
 
-    public function info(Stringable|string $message, array $context = []) : void
+    public function info(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::INFO, $message, $context);
     }
 
-    public function debug(Stringable|string $message, array $context = []) : void
+    public function debug(Stringable|string $message, array $context = []): void
     {
         $this->log(LogLevel::DEBUG, $message, $context);
     }
@@ -128,8 +128,7 @@ final readonly class ErrorLogger implements LoggerInterface
         string $level,
         Throwable $exception,
         array $additionalContext = [],
-    ) : void
-    {
+    ): void {
         $context = $this->buildExceptionContext($exception, $additionalContext);
 
         $message = sprintf(
@@ -148,7 +147,7 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * @return array<string, mixed>
      */
-    private function buildExceptionContext(Throwable $exception, array $additionalContext = []) : array
+    private function buildExceptionContext(Throwable $exception, array $additionalContext = []): array
     {
         $context = [
             'exception' => [
@@ -174,7 +173,7 @@ final readonly class ErrorLogger implements LoggerInterface
      * @return list<array{file: string, line: int, class: string|null, type: string|null, function: string, args:
      *                          list<string>}>
      */
-    private function formatTrace(Throwable $exception) : array
+    private function formatTrace(Throwable $exception): array
     {
         $trace = [];
 
@@ -190,10 +189,10 @@ final readonly class ErrorLogger implements LoggerInterface
             $trace[] = [
                 'file' => $frame['file'] ?? '[internal]',
                 'line' => $frame['line'] ?? 0,
-                'class'    => $frame['class'] ?? null,
+                'class' => $frame['class'] ?? null,
                 'type' => $frame['type'] ?? null,
                 'function' => $frame['function'],
-                'args'     => $args,
+                'args' => $args,
             ];
         }
 
@@ -203,7 +202,7 @@ final readonly class ErrorLogger implements LoggerInterface
     /**
      * Format a function argument for safe logging (redacted).
      */
-    private function formatArgument(mixed $arg) : string
+    private function formatArgument(mixed $arg): string
     {
         if ($arg === null) {
             return 'null';
@@ -218,7 +217,7 @@ final readonly class ErrorLogger implements LoggerInterface
         }
 
         if (is_string($arg)) {
-            $truncated = mb_strlen($arg) > 100 ? mb_substr($arg, 0, 100) . '...' : $arg;
+            $truncated = mb_strlen($arg) > 100 ? mb_substr($arg, 0, 100).'...' : $arg;
 
             return $this->redactor->redactString($truncated);
         }
@@ -236,7 +235,7 @@ final readonly class ErrorLogger implements LoggerInterface
         }
 
         if (is_resource($arg)) {
-            return get_resource_type($arg) . ' resource';
+            return get_resource_type($arg).' resource';
         }
 
         return gettype($arg);

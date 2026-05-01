@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\CircuitBreak
 
 enum CircuitBreakerState: string
 {
-    case Closed   = 'closed';
-    case Open     = 'open';
+    case Closed = 'closed';
+    case Open = 'open';
     case HalfOpen = 'half_open';
 }

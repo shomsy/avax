@@ -11,7 +11,7 @@ final readonly class SynchronousEventLoop
      *
      * @return list<mixed>
      */
-    public function run(array $tasks) : array
+    public function run(array $tasks): array
     {
         $results = [];
 

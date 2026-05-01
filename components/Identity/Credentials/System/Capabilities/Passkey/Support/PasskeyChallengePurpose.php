@@ -6,6 +6,6 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Suppo
 
 enum PasskeyChallengePurpose: string
 {
-    case REGISTRATION   = 'registration';
+    case REGISTRATION = 'registration';
     case AUTHENTICATION = 'authentication';
 }

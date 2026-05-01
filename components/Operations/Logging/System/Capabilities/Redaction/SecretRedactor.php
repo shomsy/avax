@@ -87,21 +87,21 @@ final readonly class SecretRedactor
      */
     private const STRING_PATTERNS
         = [
-            'bearer_token'         => '/Bearer\s+[A-Za-z0-9\-_\.]+\s*/i',
-            'api_key_header'       => '/(?:x-api-key|api-key)\s*[:=]\s*[A-Za-z0-9\-_\.]+\s*/i',
+            'bearer_token'      => '/Bearer\s+[A-Za-z0-9\-_\.]+\s*/i',
+            'api_key_header'    => '/(?:x-api-key|api-key)\s*[:=]\s*[A-Za-z0-9\-_\.]+\s*/i',
             'authorization_header' => '/Authorization\s*[:=]\s*[A-Za-z0-9\-_\.]+\s*/i',
-            'jwt_token'            => '/eyJ[A-Za-z0-9\-_]+\.eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+/',
-            'aws_access_key'       => '/AKIA[0-9A-Z]{16}/',
-            'aws_secret_key'       => '/(?<![A-Za-z0-9\/+])[A-Za-z0-9\/+=]{40}(?![A-Za-z0-9\/+=])/',
-            'credit_card'          => '/\b(?:\d{4}[\s\-]?){3}\d{4}\b/',
-            'ssn'                  => '/\b\d{3}-\d{2}-\d{4}\b/',
-            'private_key_block'    => '/-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----/',
-            'generic_api_key'      => '/(?:api[_-]?key|apikey)\s*[:=]\s*["\']?[A-Za-z0-9\-_\.]{16,}["\']?/i',
+            'jwt_token'         => '/eyJ[A-Za-z0-9\-_]+\.eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+/',
+            'aws_access_key'    => '/AKIA[0-9A-Z]{16}/',
+            'aws_secret_key'    => '/(?<![A-Za-z0-9\/+])[A-Za-z0-9\/+=]{40}(?![A-Za-z0-9\/+=])/',
+            'credit_card'       => '/\b(?:\d{4}[\s\-]?){3}\d{4}\b/',
+            'ssn'               => '/\b\d{3}-\d{2}-\d{4}\b/',
+            'private_key_block' => '/-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----/',
+            'generic_api_key'   => '/(?:api[_-]?key|apikey)\s*[:=]\s*["\']?[A-Za-z0-9\-_\.]{16,}["\']?/i',
         ];
 
     /**
-     * @param string $redactionMask The replacement string for redacted values
-     * @param bool $redactEmails Whether to redact email addresses
+     * @param string       $redactionMask           The replacement string for redacted values
+     * @param bool         $redactEmails            Whether to redact email addresses
      * @param list<string> $additionalSensitiveKeys Additional sensitive keys to redact
      */
     public function __construct(
@@ -119,7 +119,7 @@ final readonly class SecretRedactor
      *
      * @return array<string, mixed>
      */
-    public function redactArray(array $data) : array
+    public function redactArray(array $data): array
     {
         return $this->redactRecursive($data);
     }
@@ -131,7 +131,7 @@ final readonly class SecretRedactor
      *
      * @return array<string, mixed>
      */
-    private function redactRecursive(array $data) : array
+    private function redactRecursive(array $data): array
     {
         $redacted = [];
 
@@ -155,7 +155,7 @@ final readonly class SecretRedactor
     /**
      * Normalize a key for comparison (lowercase, replace separators).
      */
-    private function normalizeKey(string $key) : string
+    private function normalizeKey(string $key): string
     {
         $normalized = strtolower($key);
         $normalized = (string) preg_replace('/[\s\-_]+/', '_', $normalized);
@@ -166,7 +166,7 @@ final readonly class SecretRedactor
     /**
      * Check if a key indicates a sensitive value.
      */
-    private function isSensitiveKey(string $normalizedKey) : bool
+    private function isSensitiveKey(string $normalizedKey): bool
     {
         // Check exact matches
         if (in_array($normalizedKey, self::SENSITIVE_KEYS, true)) {
@@ -195,7 +195,7 @@ final readonly class SecretRedactor
      *
      * Scans for patterns like credit cards, SSNs, tokens, etc.
      */
-    public function redactString(string $value) : string
+    public function redactString(string $value): string
     {
         foreach (self::STRING_PATTERNS as $patternName => $pattern) {
             $value = (string) preg_replace_callback(
@@ -219,7 +219,7 @@ final readonly class SecretRedactor
     /**
      * Create a redacted placeholder that indicates what was redacted.
      */
-    private function createRedactedPlaceholder(string $source) : string
+    private function createRedactedPlaceholder(string $source): string
     {
         return sprintf('[%s: %s]', strtoupper($source), $this->redactionMask);
     }

@@ -26,7 +26,7 @@ final class GenerateUrl
     /**
      * Register a named route pattern.
      */
-    public function addRoute(string $name, string $pattern) : void
+    public function addRoute(string $name, string $pattern): void
     {
         $this->routes[$name] = $pattern;
     }
@@ -34,9 +34,9 @@ final class GenerateUrl
     /**
      * Set default parameters for URL generation.
      *
-     * @param array<string, mixed> $defaults
+     * @param  array<string, mixed>  $defaults
      */
-    public function setDefaults(array $defaults) : void
+    public function setDefaults(array $defaults): void
     {
         $this->defaults = $defaults;
     }
@@ -44,25 +44,25 @@ final class GenerateUrl
     /**
      * Generate a URL from a named route.
      *
-     * @param string $name Route name
-     * @param array<string, mixed> $params Route parameters to substitute
-     * @param array<string, mixed> $extra Query string parameters
+     * @param  string  $name  Route name
+     * @param  array<string, mixed>  $params  Route parameters to substitute
+     * @param  array<string, mixed>  $extra  Query string parameters
      *
      * @throws RouterFailure If the route is not found or parameters are missing
      */
-    public function execute(string $name, array $params = [], array $extra = []) : string
+    public function execute(string $name, array $params = [], array $extra = []): string
     {
         if (! isset($this->routes[$name])) {
             throw new RouterFailure("Route '{$name}' is not registered for URL generation");
         }
 
         $pattern = $this->routes[$name];
-        $params  = array_merge($this->defaults, $params);
+        $params = array_merge($this->defaults, $params);
 
         // Substitute path parameters
         $url = (string) preg_replace_callback(
             '/\{(\w+)\}/',
-            static function (array $matches) use ($params, $name) : string {
+            static function (array $matches) use ($params, $name): string {
                 $param = $matches[1];
                 if (! array_key_exists($param, $params)) {
                     throw new RouterFailure(
@@ -79,7 +79,7 @@ final class GenerateUrl
         if ($extra !== []) {
             $query = http_build_query($extra);
             if ($query !== '') {
-                $url .= '?' . $query;
+                $url .= '?'.$query;
             }
         }
 
@@ -89,7 +89,7 @@ final class GenerateUrl
     /**
      * Check if a route name exists.
      */
-    public function hasRoute(string $name) : bool
+    public function hasRoute(string $name): bool
     {
         return isset($this->routes[$name]);
     }
@@ -99,7 +99,7 @@ final class GenerateUrl
      *
      * @return array<string, string>
      */
-    public function getRoutes() : array
+    public function getRoutes(): array
     {
         return $this->routes;
     }

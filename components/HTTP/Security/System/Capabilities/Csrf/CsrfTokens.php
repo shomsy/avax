@@ -9,8 +9,10 @@ use Psr\Log\LoggerInterface;
 
 final readonly class CsrfTokens
 {
-    private const string SESSION_KEY            = '_csrf_tokens';
+    private const string SESSION_KEY = '_csrf_tokens';
+
     private const int TOKEN_EXPIRATION_MINUTES = 30;
+
     private const int    MAX_TOKENS_PER_SESSION = 5;
 
     public function __construct(
@@ -20,7 +22,7 @@ final readonly class CsrfTokens
         private int $maxTokensPerSession = self::MAX_TOKENS_PER_SESSION,
     ) {}
 
-    public function getToken() : string
+    public function getToken(): string
     {
         $tokens = $this->pruneExcessTokens($this->pruneExpiredTokens($this->getTokens()));
         $activeToken = $this->readMostRecentToken($tokens);
@@ -40,7 +42,7 @@ final readonly class CsrfTokens
         return $newToken;
     }
 
-    public function validateToken(string|null $token) : bool
+    public function validateToken(?string $token): bool
     {
         if ($token === null) {
             return false;
@@ -63,17 +65,17 @@ final readonly class CsrfTokens
         return true;
     }
 
-    private function getTokens() : array
+    private function getTokens(): array
     {
         return $this->session->get(self::SESSION_KEY, []);
     }
 
-    private function storeTokens(array $tokens) : void
+    private function storeTokens(array $tokens): void
     {
         $this->session->put(self::SESSION_KEY, $tokens);
     }
 
-    private function pruneExcessTokens(array $tokens) : array
+    private function pruneExcessTokens(array $tokens): array
     {
         if (count($tokens) <= $this->maxTokensPerSession) {
             return $tokens;
@@ -83,15 +85,15 @@ final readonly class CsrfTokens
         return array_slice($tokens, -$this->maxTokensPerSession, null, true);
     }
 
-    private function pruneExpiredTokens(array $tokens) : array
+    private function pruneExpiredTokens(array $tokens): array
     {
-        $now    = time();
+        $now = time();
         $expiry = $this->tokenExpirationMinutes * 60;
 
         return array_filter($tokens, static fn ($ts) => $now - $ts <= $expiry);
     }
 
-    private function readMostRecentToken(array $tokens) : string|null
+    private function readMostRecentToken(array $tokens): ?string
     {
         if (empty($tokens)) {
             return null;
@@ -101,7 +103,7 @@ final readonly class CsrfTokens
         return (string) array_key_first($tokens);
     }
 
-    private function generateToken() : string
+    private function generateToken(): string
     {
         return bin2hex(random_bytes(32));
     }

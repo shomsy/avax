@@ -6,10 +6,10 @@ namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Si
 
 enum RiskAction: string
 {
-    case ALLOW           = 'allow';
-    case REQUIRE_MFA     = 'require_mfa';
+    case ALLOW       = 'allow';
+    case REQUIRE_MFA = 'require_mfa';
     case REQUIRE_PASSKEY = 'require_passkey';
-    case SOFT_LOCK       = 'soft_lock';
+    case SOFT_LOCK   = 'soft_lock';
     case REVOKE_SESSIONS = 'revoke_sessions';
-    case OPEN_REVIEW     = 'open_review';
+    case OPEN_REVIEW = 'open_review';
 }

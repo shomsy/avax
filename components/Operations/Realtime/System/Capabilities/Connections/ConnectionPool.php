@@ -24,7 +24,7 @@ final class ConnectionPool
         return $connection instanceof Connection ? $connection->id : $connection;
     }
 
-    public function get(string $connectionId) : Connection|null
+    public function get(string $connectionId) : ?Connection
     {
         return $this->connections[$connectionId] ?? null;
     }

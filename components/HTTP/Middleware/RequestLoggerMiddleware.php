@@ -15,15 +15,15 @@ final readonly class RequestLoggerMiddleware implements MiddlewareInterface
 {
     public function __construct(private LoggerInterface $logger) {}
 
-    public function handle(RequestInterface $request, callable $next) : ResponseInterface
+    public function handle(RequestInterface $request, callable $next): ResponseInterface
     {
         $method = $request->getMethod();
-        $uri    = $request->getUri();
-        $ip     = $request->getServerParams()['REMOTE_ADDR'] ?? '-';
+        $uri = $request->getUri();
+        $ip = $request->getServerParams()['REMOTE_ADDR'] ?? '-';
 
         $this->logger->info("[HTTP] {$method} {$uri} from {$ip}");
 
-        $start    = microtime(true);
+        $start = microtime(true);
         $response = $next($request);
         $duration = round((microtime(true) - $start) * 1000, 2);
 

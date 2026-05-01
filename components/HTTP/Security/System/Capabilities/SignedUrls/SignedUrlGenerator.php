@@ -10,35 +10,36 @@ use Firebase\JWT\JWT;
 final class SignedUrlGenerator
 {
     private static string $secret = '';
-    private static string $algo   = 'HS256';
 
-    public static function configure(string $secret, string $algo = 'HS256') : void
+    private static string $algo = 'HS256';
+
+    public static function configure(string $secret, string $algo = 'HS256'): void
     {
         self::$secret = $secret;
-        self::$algo   = $algo;
+        self::$algo = $algo;
     }
 
-    public static function generate(string $path, DateInterval $ttl) : string
+    public static function generate(string $path, DateInterval $ttl): string
     {
         $expires = time() + ($ttl->i * 60 + $ttl->s);
 
         $payload = [
             'path' => $path,
-            'exp'  => $expires,
-            'iat'  => time(),
+            'exp' => $expires,
+            'iat' => time(),
         ];
 
         $token = JWT::encode($payload, self::secret(), self::$algo);
 
-        return $path . '?signature=' . $token;
+        return $path.'?signature='.$token;
     }
 
-    public static function secret() : string
+    public static function secret(): string
     {
         return self::$secret !== '' ? self::$secret : 'avax-signed-url';
     }
 
-    public static function algorithm() : string
+    public static function algorithm(): string
     {
         return self::$algo;
     }

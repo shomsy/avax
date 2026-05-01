@@ -12,7 +12,7 @@ final class RedisRateLimiter
     /** @var array<string, list<float>> */
     private array $windows = [];
 
-    private Redis|null $redis = null;
+    private ?Redis $redis = null;
 
     public function __construct(
         private readonly array $config = [],
@@ -32,7 +32,7 @@ final class RedisRateLimiter
         }
 
         try {
-            $redis = new Redis();
+            $redis = new Redis;
             $redis->connect(
                 host   : $this->config['host'] ?? '127.0.0.1',
                 port   : $this->config['port'] ?? 6379,
@@ -104,7 +104,7 @@ final class RedisRateLimiter
             return;
         }
 
-        $this->windows[$key]   = $this->activeWindow(key: $key, decaySeconds: $decaySeconds);
+        $this->windows[$key] = $this->activeWindow(key: $key, decaySeconds: $decaySeconds);
         $this->windows[$key][] = $now;
     }
 
@@ -133,7 +133,7 @@ final class RedisRateLimiter
         return max(0, (int) ceil(($oldest + $decaySeconds) - microtime(true)));
     }
 
-    private function oldestHit(string $key, int $decaySeconds) : float|null
+    private function oldestHit(string $key, int $decaySeconds) : ?float
     {
         if ($this->redis !== null) {
             $redisKey = $this->redisKey(key: $key);

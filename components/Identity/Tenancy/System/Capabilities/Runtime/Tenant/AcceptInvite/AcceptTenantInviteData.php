@@ -12,6 +12,5 @@ final readonly class AcceptTenantInviteData
         #[SensitiveParameter]
         public string $inviteToken,
         public int $userId,
-    ) {
-    }
+    ) {}
 }

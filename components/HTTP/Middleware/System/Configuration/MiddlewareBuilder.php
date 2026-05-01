@@ -21,14 +21,14 @@ final class MiddlewareBuilder
     /** @var list<MiddlewareInterface> */
     private array $middleware = [];
 
-    private MiddlewareInterface|null $fallback = null;
+    private ?MiddlewareInterface $fallback = null;
 
     /**
      * Add middleware to the pipeline (appended to the end).
      */
-    public function add(MiddlewareInterface $middleware) : self
+    public function add(MiddlewareInterface $middleware): self
     {
-        $self               = clone $this;
+        $self = clone $this;
         $self->middleware[] = $middleware;
 
         return $self;
@@ -37,9 +37,9 @@ final class MiddlewareBuilder
     /**
      * Add middleware at the beginning of the pipeline (highest priority).
      */
-    public function prepend(MiddlewareInterface $middleware) : self
+    public function prepend(MiddlewareInterface $middleware): self
     {
-        $self             = clone $this;
+        $self = clone $this;
         $self->middleware = [$middleware, ...$self->middleware];
 
         return $self;
@@ -48,11 +48,11 @@ final class MiddlewareBuilder
     /**
      * Add multiple middleware at once.
      *
-     * @param list<MiddlewareInterface> $middleware
+     * @param  list<MiddlewareInterface>  $middleware
      */
-    public function addMany(array $middleware) : self
+    public function addMany(array $middleware): self
     {
-        $self             = clone $this;
+        $self = clone $this;
         $self->middleware = [...$self->middleware, ...$middleware];
 
         return $self;
@@ -61,9 +61,9 @@ final class MiddlewareBuilder
     /**
      * Set a fallback handler for when no middleware matches.
      */
-    public function withFallback(MiddlewareInterface $fallback) : self
+    public function withFallback(MiddlewareInterface $fallback): self
     {
-        $self           = clone $this;
+        $self = clone $this;
         $self->fallback = $fallback;
 
         return $self;
@@ -74,7 +74,7 @@ final class MiddlewareBuilder
      *
      * @return list<MiddlewareInterface>
      */
-    public function build() : array
+    public function build(): array
     {
         return $this->middleware;
     }
@@ -82,7 +82,7 @@ final class MiddlewareBuilder
     /**
      * Get the registered middleware count.
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->middleware);
     }
@@ -90,7 +90,7 @@ final class MiddlewareBuilder
     /**
      * Get the fallback handler.
      */
-    public function fallback() : ?MiddlewareInterface
+    public function fallback(): ?MiddlewareInterface
     {
         return $this->fallback;
     }
@@ -98,7 +98,7 @@ final class MiddlewareBuilder
     /**
      * Check if the pipeline is empty.
      */
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->middleware === [];
     }

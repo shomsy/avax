@@ -8,7 +8,7 @@ interface QueueBroker
 {
     public function push(string $queue, array $job) : void;
 
-    public function pop(string $queue) : array|null;
+    public function pop(string $queue) : ?array;
 
     public function size(string $queue) : int;
 
@@ -26,7 +26,7 @@ final class SyncQueue implements QueueBroker
         $this->queues[$queue][] = $job;
     }
 
-    public function pop(string $queue) : array|null
+    public function pop(string $queue) : ?array
     {
         return array_shift($this->queues[$queue] ?? []) ?? null;
     }
@@ -62,11 +62,11 @@ final class ArrayQueue implements QueueBroker
 
     public function push(string $queue, array $job) : void
     {
-        $key                  = $this->prefix . $queue;
+        $key = $this->prefix . $queue;
         $this->queues[$key][] = $job;
     }
 
-    public function pop(string $queue) : array|null
+    public function pop(string $queue) : ?array
     {
         $key = $this->prefix . $queue;
 

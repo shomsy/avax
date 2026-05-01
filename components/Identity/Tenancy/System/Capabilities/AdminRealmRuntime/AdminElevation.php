@@ -8,7 +8,5 @@ use DateTimeImmutable;
 
 final readonly class AdminElevation
 {
-    public function __construct(public string $bindingId, public DateTimeImmutable $expiresAt)
-    {
-    }
+    public function __construct(public string $bindingId, public DateTimeImmutable $expiresAt) {}
 }

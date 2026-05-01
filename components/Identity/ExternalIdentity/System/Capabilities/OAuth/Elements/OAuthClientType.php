@@ -6,6 +6,6 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\El
 
 enum OAuthClientType: string
 {
-    case PUBLIC       = 'public';
+    case PUBLIC = 'public';
     case CONFIDENTIAL = 'confidential';
 }

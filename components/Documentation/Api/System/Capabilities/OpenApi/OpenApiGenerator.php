@@ -12,16 +12,16 @@ final readonly class OpenApiGenerator
     ) {}
 
     /**
-     * @param list<array{method:string,path:string,summary?:string,tags?:list<string>}> $routes
+     * @param  list<array{method:string,path:string,summary?:string,tags?:list<string>}>  $routes
      */
-    public function generate(array $routes) : array
+    public function generate(array $routes): array
     {
         $paths = [];
 
         foreach ($routes as $route) {
-            $method                         = strtolower(string: $route['method']);
+            $method = strtolower(string: $route['method']);
             $paths[$route['path']][$method] = [
-                'summary'   => $route['summary'] ?? $method . ' ' . $route['path'],
+                'summary' => $route['summary'] ?? $method.' '.$route['path'],
                 'tags' => $route['tags'] ?? ['Application'],
                 'responses' => [
                     '200' => [
@@ -35,8 +35,8 @@ final readonly class OpenApiGenerator
 
         return [
             'openapi' => '3.1.0',
-            'info'    => [
-                'title'   => $this->title,
+            'info' => [
+                'title' => $this->title,
                 'version' => $this->version,
             ],
             'paths' => $paths,

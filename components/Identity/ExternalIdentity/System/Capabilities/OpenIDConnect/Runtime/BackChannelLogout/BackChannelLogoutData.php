@@ -11,6 +11,5 @@ final readonly class BackChannelLogoutData
     public function __construct(
         #[SensitiveParameter]
         public string $logoutToken,
-    ) {
-    }
+    ) {}
 }

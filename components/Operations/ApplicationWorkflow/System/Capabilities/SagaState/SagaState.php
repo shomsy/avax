@@ -9,9 +9,9 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Sag
  */
 enum SagaState: string
 {
-    case Running      = 'running';
-    case Completed    = 'completed';
-    case Failed       = 'failed';
+    case Running     = 'running';
+    case Completed   = 'completed';
+    case Failed      = 'failed';
     case Compensating = 'compensating';
-    case Compensated  = 'compensated';
+    case Compensated = 'compensated';
 }

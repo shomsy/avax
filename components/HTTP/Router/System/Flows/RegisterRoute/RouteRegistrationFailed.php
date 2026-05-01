@@ -6,6 +6,4 @@ namespace Avax\Components\HTTP\Router\System\Flows\RegisterRoute;
 
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 
-final class RouteRegistrationFailed extends RouterFailure
-{
-}
+final class RouteRegistrationFailed extends RouterFailure {}

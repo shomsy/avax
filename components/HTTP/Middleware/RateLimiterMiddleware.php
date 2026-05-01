@@ -20,10 +20,10 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
         private int $decaySeconds = 60,
     ) {}
 
-    public function handle(RequestInterface $request, callable $next) : ResponseInterface
+    public function handle(RequestInterface $request, callable $next): ResponseInterface
     {
         $key = match ($this->keySource) {
-            'ip'    => $request->getServerParams()['REMOTE_ADDR'] ?? '0.0.0.0',
+            'ip' => $request->getServerParams()['REMOTE_ADDR'] ?? '0.0.0.0',
             default => 'global',
         };
 
@@ -34,78 +34,79 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
                 return $this->responseFactory->rateLimited($remaining);
             }
 
-            return new class ($remaining) implements ResponseInterface {
+            return new class($remaining) implements ResponseInterface
+            {
                 public function __construct(private int $retryAfter) {}
 
-                public function getStatusCode() : int
+                public function getStatusCode(): int
                 {
                     return 429;
                 }
 
-                public function withStatus(int $code, string $reasonPhrase = '') : self
+                public function withStatus(int $code, string $reasonPhrase = ''): self
                 {
                     return $this;
                 }
 
-                public function getReasonPhrase() : string
+                public function getReasonPhrase(): string
                 {
                     return 'Too Many Requests';
                 }
 
-                public function getProtocolVersion() : string
+                public function getProtocolVersion(): string
                 {
                     return '1.1';
                 }
 
-                public function withProtocolVersion(string $version) : self
+                public function withProtocolVersion(string $version): self
                 {
                     return $this;
                 }
 
-                public function getHeaders() : array
+                public function getHeaders(): array
                 {
                     return [
                         'Content-Type' => ['application/json'],
-                        'Retry-After'  => [(string) $this->retryAfter],
+                        'Retry-After' => [(string) $this->retryAfter],
                     ];
                 }
 
-                public function hasHeader(string $name) : bool
+                public function hasHeader(string $name): bool
                 {
                     return isset($this->getHeaders()[$name]);
                 }
 
-                public function getHeader(string $name) : array
+                public function getHeader(string $name): array
                 {
                     return $this->getHeaders()[$name] ?? [];
                 }
 
-                public function getHeaderLine(string $name) : string
+                public function getHeaderLine(string $name): string
                 {
                     return implode(', ', $this->getHeader($name));
                 }
 
-                public function withHeader(string $name, $value) : self
+                public function withHeader(string $name, $value): self
                 {
                     return $this;
                 }
 
-                public function withAddedHeader(string $name, $value) : self
+                public function withAddedHeader(string $name, $value): self
                 {
                     return $this;
                 }
 
-                public function withoutHeader(string $name) : self
+                public function withoutHeader(string $name): self
                 {
                     return $this;
                 }
 
-                public function getBody() : mixed
+                public function getBody(): mixed
                 {
                     return json_encode(['message' => 'Too Many Requests', 'retry_after' => $this->retryAfter]);
                 }
 
-                public function withBody(mixed $body) : self
+                public function withBody(mixed $body): self
                 {
                     return $this;
                 }

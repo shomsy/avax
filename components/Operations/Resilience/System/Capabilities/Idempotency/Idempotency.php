@@ -19,7 +19,7 @@ final class Idempotency
     private static function store() : IdempotencyStore
     {
         if (! isset(self::$store)) {
-            self::$store = new InMemoryIdempotencyStore();
+            self::$store = new InMemoryIdempotencyStore;
         }
 
         return self::$store;
@@ -38,7 +38,7 @@ final class Idempotency
         return (int) $ttl;
     }
 
-    public static function replay(string $key) : array|null
+    public static function replay(string $key) : ?array
     {
         return self::store()->get($key);
     }
@@ -48,7 +48,7 @@ final class Idempotency
         return bin2hex(random_bytes(16));
     }
 
-    public static function fromHeader(string $header) : string|null
+    public static function fromHeader(string $header) : ?string
     {
         return $header ?: null;
     }

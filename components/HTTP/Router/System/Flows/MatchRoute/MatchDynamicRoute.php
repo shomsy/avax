@@ -17,12 +17,11 @@ final class MatchDynamicRoute
     /**
      * Match a route pattern against a path.
      *
-     * @param string $pattern Route pattern (e.g., "/users/{id}")
-     * @param string $path Request path (e.g., "/users/42")
-     *
+     * @param  string  $pattern  Route pattern (e.g., "/users/{id}")
+     * @param  string  $path  Request path (e.g., "/users/42")
      * @return array<string, string>|null Matched parameters or null if no match
      */
-    public function match(string $pattern, string $path) : array|null
+    public function match(string $pattern, string $path): ?array
     {
         $regex = $this->compilePattern($pattern);
         if ($regex === null) {
@@ -49,20 +48,20 @@ final class MatchDynamicRoute
      *
      * @return string|null Regex pattern or null if invalid
      */
-    private function compilePattern(string $pattern) : string|null
+    private function compilePattern(string $pattern): ?string
     {
         // Replace named parameters with named capture groups
         $regex = preg_replace_callback(
             '/\{(\w+)(\?)?\}/',
-            static function (array $matches) : string {
-                $name     = $matches[1];
+            static function (array $matches): string {
+                $name = $matches[1];
                 $optional = isset($matches[2]);
 
                 if ($optional) {
-                    return '(?P<' . $name . '>[^/]*)?';
+                    return '(?P<'.$name.'>[^/]*)?';
                 }
 
-                return '(?P<' . $name . '>[^/]+)';
+                return '(?P<'.$name.'>[^/]+)';
             },
             $pattern,
         );
@@ -72,9 +71,9 @@ final class MatchDynamicRoute
         }
 
         // Escape remaining forward slashes and anchor the pattern
-        $regex = '^' . $regex . '$';
+        $regex = '^'.$regex.'$';
 
-        return '#' . $regex . '#';
+        return '#'.$regex.'#';
     }
 
     /**
@@ -82,7 +81,7 @@ final class MatchDynamicRoute
      *
      * @return list<string>
      */
-    public function extractParameters(string $pattern) : array
+    public function extractParameters(string $pattern): array
     {
         preg_match_all('/\{(\w+)\??\}/', $pattern, $matches);
 
@@ -92,7 +91,7 @@ final class MatchDynamicRoute
     /**
      * Check if a pattern has optional parameters.
      */
-    public function hasOptionalParameters(string $pattern) : bool
+    public function hasOptionalParameters(string $pattern): bool
     {
         return preg_match('/\{\w+\?\}/', $pattern) === 1;
     }

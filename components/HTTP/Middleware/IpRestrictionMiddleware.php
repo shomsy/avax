@@ -12,7 +12,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
  */
 abstract class IpRestrictionMiddleware implements MiddlewareInterface
 {
-    public function handle(RequestInterface $request, callable $next) : ResponseInterface
+    public function handle(RequestInterface $request, callable $next): ResponseInterface
     {
         $ip = $request->getServerParams()['REMOTE_ADDR'] ?? '0.0.0.0';
 
@@ -23,9 +23,9 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
         return $next($request);
     }
 
-    abstract protected function isAllowedIp(string $ipAddress) : bool;
+    abstract protected function isAllowedIp(string $ipAddress): bool;
 
-    protected function createForbiddenResponse() : ResponseInterface
+    protected function createForbiddenResponse(): ResponseInterface
     {
         // Return a minimal 403 response
         $responseClass = class_exists('Avax\Components\HTTP\Response\System\PublicSurface\Response')
@@ -37,73 +37,74 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
         }
 
         // Fallback: anonymous class implementing ResponseInterface
-        return new class () implements ResponseInterface {
-            public function getStatusCode() : int
+        return new class implements ResponseInterface
+        {
+            public function getStatusCode(): int
             {
                 return 403;
             }
 
-            public function withStatus(int $code, string $reasonPhrase = '') : self
+            public function withStatus(int $code, string $reasonPhrase = ''): self
             {
                 return $this;
             }
 
-            public function getReasonPhrase() : string
+            public function getReasonPhrase(): string
             {
                 return 'Forbidden';
             }
 
-            public function getProtocolVersion() : string
+            public function getProtocolVersion(): string
             {
                 return '1.1';
             }
 
-            public function withProtocolVersion(string $version) : self
+            public function withProtocolVersion(string $version): self
             {
                 return $this;
             }
 
-            public function getHeaders() : array
+            public function getHeaders(): array
             {
                 return ['Content-Type' => ['text/plain']];
             }
 
-            public function hasHeader(string $name) : bool
+            public function hasHeader(string $name): bool
             {
                 return isset($this->getHeaders()[$name]);
             }
 
-            public function getHeader(string $name) : array
+            public function getHeader(string $name): array
             {
                 return $this->getHeaders()[$name] ?? [];
             }
 
-            public function getHeaderLine(string $name) : string
+            public function getHeaderLine(string $name): string
             {
                 return implode(', ', $this->getHeader($name));
             }
 
-            public function withHeader(string $name, $value) : self
+            public function withHeader(string $name, $value): self
             {
                 return $this;
             }
 
-            public function withAddedHeader(string $name, $value) : self
+            public function withAddedHeader(string $name, $value): self
             {
                 return $this;
             }
 
-            public function withoutHeader(string $name) : self
+            public function withoutHeader(string $name): self
             {
                 return $this;
             }
 
-            public function getBody() : mixed
+            public function getBody(): mixed
             {
                 return 'Forbidden';
             }
 
-            public function withBody(mixed $body) : self
+            public function withBody(mixed $body): self
             {
                 return $this;
             }

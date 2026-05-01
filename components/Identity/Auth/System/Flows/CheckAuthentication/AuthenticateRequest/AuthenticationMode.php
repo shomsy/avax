@@ -9,8 +9,8 @@ namespace Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\Authent
  */
 enum AuthenticationMode: string
 {
-    case NONE    = 'none';
+    case NONE   = 'none';
     case SESSION = 'session';
-    case TOKEN   = 'token';
-    case HYBRID  = 'hybrid';
+    case TOKEN  = 'token';
+    case HYBRID = 'hybrid';
 }

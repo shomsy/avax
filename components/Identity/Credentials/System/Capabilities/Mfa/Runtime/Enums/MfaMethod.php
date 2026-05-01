@@ -9,6 +9,6 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\E
  */
 enum MfaMethod: string
 {
-    case TOTP        = 'totp';
+    case TOTP = 'totp';
     case BACKUP_CODE = 'backup_code';
 }

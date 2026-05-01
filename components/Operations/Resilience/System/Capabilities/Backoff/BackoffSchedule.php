@@ -14,7 +14,7 @@ final readonly class BackoffSchedule
     public function delayForAttempt(int $attempt) : int
     {
         $attempt = max(1, $attempt);
-        $delay   = $this->baseMilliseconds * (2 ** ($attempt - 1));
+        $delay = $this->baseMilliseconds * (2 ** ($attempt - 1));
 
         return min($this->maximumMilliseconds, $delay);
     }

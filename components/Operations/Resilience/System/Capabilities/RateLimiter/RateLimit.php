@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter;
 
 final class RateLimit
 {
-    private static RedisRateLimiter|null $limiter = null;
+    private static ?RedisRateLimiter $limiter = null;
 
     public static function setLimiter(RedisRateLimiter $limiter) : void
     {

@@ -12,9 +12,9 @@ use Psr\Http\Message\ServerRequestInterface;
 final readonly class RateLimitMiddleware
 {
     public function __construct(
-        private RedisRateLimiter $limiter = new RedisRateLimiter(),
-        private ResponseFactory $responses = new ResponseFactory(),
-        private array           $config = [],
+        private RedisRateLimiter $limiter = new RedisRateLimiter,
+        private ResponseFactory  $responses = new ResponseFactory,
+        private array            $config = [],
     ) {}
 
     public function process(ServerRequestInterface $request, object $handler) : ResponseInterface
@@ -60,12 +60,12 @@ final readonly class RateLimitMiddleware
     private function keyFor(ServerRequestInterface $request) : string
     {
         $server = $request->getServerParams();
-        $parts  = [];
+        $parts = [];
 
         foreach ($this->config['key_by'] ?? ['ip', 'path'] as $segment) {
             $parts[] = match ($segment) {
-                'user'  => (string) ($request->getAttribute('user_id') ?? 'guest'),
-                'path'  => $request->getUri()->getPath(),
+                'user' => (string) ($request->getAttribute('user_id') ?? 'guest'),
+                'path' => $request->getUri()->getPath(),
                 default => (string) ($server['REMOTE_ADDR'] ?? '0.0.0.0'),
             };
         }

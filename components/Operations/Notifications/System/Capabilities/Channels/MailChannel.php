@@ -32,7 +32,7 @@ final readonly class MailChannel implements NotificationChannel
         }
 
         $subject = $mailContent->subject ?: 'Notification';
-        $body    = $this->buildBody($mailContent);
+        $body = $this->buildBody($mailContent);
 
         $message = new MimeMessage(
             from       : $this->fromAddress,
@@ -43,7 +43,7 @@ final readonly class MailChannel implements NotificationChannel
         );
 
         // Create a minimal envelope
-        $envelope = new class ($this->fromAddress, $email) {
+        $envelope = new class($this->fromAddress, $email) {
             public function __construct(
                 public readonly string $from,
                 public readonly string $to,
@@ -53,7 +53,7 @@ final readonly class MailChannel implements NotificationChannel
         $this->transport->send($message, $envelope);
     }
 
-    private function resolveEmail(mixed $notifiable) : string|null
+    private function resolveEmail(mixed $notifiable) : ?string
     {
         if (is_string($notifiable)) {
             return $notifiable;

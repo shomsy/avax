@@ -10,5 +10,5 @@ namespace Avax\Components\Identity\Auth\System\Flows\Login;
 enum AuthenticationState: string
 {
     case AUTHENTICATED = 'authenticated';
-    case MFA_REQUIRED  = 'mfa_required';
+    case MFA_REQUIRED = 'mfa_required';
 }

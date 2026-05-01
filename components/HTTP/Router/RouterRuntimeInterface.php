@@ -7,7 +7,7 @@ namespace Avax\Components\HTTP\Router;
 // Re-export from canonical location for backward compatibility
 class_alias(
     System\PublicSurface\RouterRuntimeInterface::class,
-    __NAMESPACE__ . '\RouterRuntimeInterface',
+    __NAMESPACE__.'\RouterRuntimeInterface',
 );
 
 /**

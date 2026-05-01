@@ -42,6 +42,6 @@ final class ListenerRegistry
     public function clear() : void
     {
         $this->listeners = [];
-        $this->sorted    = [];
+        $this->sorted = [];
     }
 }

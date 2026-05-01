@@ -7,12 +7,15 @@ namespace Avax\Framework\System\Capabilities\PreCommit;
 use Avax\Framework\System\Capabilities\PreCommit\Report\ReportStorage;
 use Avax\Framework\System\Capabilities\PreCommit\Todo\TodoGenerator;
 use Avax\Framework\System\Capabilities\PreCommit\ValidationChain\ValidationChain;
-use Avax\Framework\System\Capabilities\PreCommit\ValidationReport;
-use Avax\Framework\System\Capabilities\PreCommit\Validators\NamingConventionValidator;
-use Avax\Framework\System\Capabilities\PreCommit\Validators\HowToRulesValidator;
-use Avax\Framework\System\Capabilities\PreCommit\Validators\PhpSyntaxValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\DeprecatedCodeValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\FileStructureValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\HowToRulesValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\LegacyCodeValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\NamingConventionValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\PhpSyntaxValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\SecurityValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\TodoCommentValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\ToolingIntegrationValidator;
 
 /**
  * Pre-Commit Validation CLI
@@ -72,7 +75,11 @@ class PreCommitValidator
                    ->add(new HowToRulesValidator())
                    ->add(new PhpSyntaxValidator())
                    ->add(new FileStructureValidator())
-                   ->add(new SecurityValidator());
+            ->add(new SecurityValidator())
+            ->add(new LegacyCodeValidator())
+            ->add(new DeprecatedCodeValidator())
+            ->add(new TodoCommentValidator())
+            ->add(new ToolingIntegrationValidator());
     }
 
     public function run(): int
@@ -224,7 +231,11 @@ class PreCommitValidator
         echo "  2. How-To Rules Validator\n";
         echo "  3. PHP Syntax Validator\n";
         echo "  4. File Structure Validator\n";
-        echo "  5. Security Validator\n\n";
+        echo "  5. Security Validator\n";
+        echo "  6. Legacy Code Validator\n";
+        echo "  7. Deprecated Code Validator\n";
+        echo "  8. TODO Comment Validator\n";
+        echo "  9. Tooling Integration Validator\n\n";
         echo "Reports: .agents/reports/validation/\n";
         echo "TODO items: .agents/management/TODO.md\n";
     }

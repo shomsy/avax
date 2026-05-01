@@ -37,26 +37,3 @@ fi
 
 echo "✅ Validation passed. Proceeding with commit."
 exit 0
-fi
-
-cd "${REPO_ROOT}"
-
-# Run validation with file list via temp file
-TMP_FILE=$(mktemp)
-echo "$STAGED_FILES" > "$TMP_FILE"
-
-php avax validate --staged-files-file="${TMP_FILE}" --format=text 2>&1
-VALIDATION_RESULT=$?
-
-rm -f "${TMP_FILE}"
-
-if [ ${VALIDATION_RESULT} -ne 0 ]; then
-    echo ""
-    echo "❌ Validation failed. Commit aborted."
-    echo "   Review the validation report above and fix issues."
-    echo "   Run 'php avax validate --staged-files-file=<file>' for details."
-    exit 1
-fi
-
-echo "✅ Validation passed. Proceeding with commit."
-exit 0

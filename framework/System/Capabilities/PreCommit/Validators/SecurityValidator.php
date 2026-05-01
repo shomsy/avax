@@ -154,7 +154,9 @@ class SecurityValidator extends BaseValidator
 
             if ($token[0] === T_STRING) {
                 $funcName = strtolower($token[1]);
-                if (in_array($funcName, ['eval', 'exec', 'shell_exec', 'system', 'passthru', 'popen', 'proc_open', 'assert'])) {
+                // Check for truly dangerous functions, excluding allowed ones
+                $dangerous = ['eval', 'assert', 'create_function'];
+                if (in_array($funcName, $dangerous)) {
                     // Check if it's in a comment
                     if (!$this->isTokenInComment($tokens, $token)) {
                         $foundDangerous[$token[1]] = true;

@@ -15,25 +15,26 @@ use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 final class Router implements RouterInterface
 {
     private RouteCollection $routes;
+
     private MatchRoute $matcher;
 
     public function __construct()
     {
-        $this->routes  = new RouteCollection();
-        $this->matcher = new MatchRoute();
+        $this->routes = new RouteCollection;
+        $this->matcher = new MatchRoute;
     }
 
-    public function get(string $u, $a) : void
+    public function get(string $u, $a): void
     {
         $this->routes->add(new RouteDefinition(new RouteMethod('GET'), $u, $a));
     }
 
-    public function post(string $u, $a) : void
+    public function post(string $u, $a): void
     {
         $this->routes->add(new RouteDefinition(new RouteMethod('POST'), $u, $a));
     }
 
-    public function dispatch(RequestInterface $r) : ResponseInterface
+    public function dispatch(RequestInterface $r): ResponseInterface
     {
         $route = $this->matcher->execute($this->routes, $r);
         if (! $route) {

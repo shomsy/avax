@@ -14,7 +14,7 @@ final class RunMiddlewarePipeline
         private MiddlewarePipeline $pipeline,
     ) {}
 
-    public function execute(RequestInterface $request, callable $core) : ResponseInterface
+    public function execute(RequestInterface $request, callable $core): ResponseInterface
     {
         return $this->pipeline->run($request, $core);
     }

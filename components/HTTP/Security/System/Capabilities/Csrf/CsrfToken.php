@@ -8,12 +8,12 @@ final readonly class CsrfToken
 {
     private const SESSION_KEY = '_token';
 
-    public static function token() : string
+    public static function token(): string
     {
         return self::generate();
     }
 
-    public static function generate() : string
+    public static function generate(): string
     {
         if (session_status() !== PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli') {
             session_start();
@@ -26,7 +26,7 @@ final readonly class CsrfToken
         return $_SESSION[self::SESSION_KEY];
     }
 
-    public static function rotate() : string
+    public static function rotate(): string
     {
         $_SESSION[self::SESSION_KEY] = bin2hex(random_bytes(length: 32));
 

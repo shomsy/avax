@@ -8,7 +8,7 @@ use Avax\Components\Security\System\System\PublicSurface\ResponseFormatter;
 
 final readonly class SecurityHeaders
 {
-    public static function apply(ResponseFormatter $formatter) : ResponseFormatter
+    public static function apply(ResponseFormatter $formatter): ResponseFormatter
     {
         return $formatter
             ->withHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
@@ -19,7 +19,7 @@ final readonly class SecurityHeaders
             ->withHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
     }
 
-    public static function applyCsp(ResponseFormatter $formatter, string $policy) : ResponseFormatter
+    public static function applyCsp(ResponseFormatter $formatter, string $policy): ResponseFormatter
     {
         return $formatter->withHeader('Content-Security-Policy', $policy);
     }

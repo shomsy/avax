@@ -5,14 +5,11 @@ declare(strict_types=1);
 /**
  * HTTP Security shortcuts for global access.
  */
-
 if (! function_exists('csrf_token')) {
     /**
      * Get or generate a CSRF token.
-     *
-     * @return string
      */
-    function csrf_token() : string
+    function csrf_token(): string
     {
         $session = session();
 
@@ -30,41 +27,35 @@ if (! function_exists('csrf_token')) {
 if (! function_exists('csrf_field')) {
     /**
      * Generate a CSRF token hidden form field.
-     *
-     * @return string
      */
-    function csrf_field() : string
+    function csrf_field(): string
     {
-        return '<input type="hidden" name="_csrf" value="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
+        return '<input type="hidden" name="_csrf" value="'.htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8').'">';
     }
 }
 
 if (! function_exists('csrf_method')) {
     /**
      * Generate a CSRF token meta tag.
-     *
-     * @return string
      */
-    function csrf_method() : string
+    function csrf_method(): string
     {
-        return '<meta name="csrf-token" content="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
+        return '<meta name="csrf-token" content="'.htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8').'">';
     }
 }
 
 if (! function_exists('secure_headers')) {
     /**
      * Set security headers on the response.
-     *
-     * @param array $headers
      */
-    function secure_headers(array $headers = []) : void
+    function secure_headers(array $headers = []): void
     {
         $defaults = [
             'X-Content-Type-Options' => 'nosniff',
-            'X-Frame-Options'        => 'SAMEORIGIN',
-            'X-XSS-Protection'       => '1; mode=block',
-            'Referrer-Policy'        => 'strict-origin-when-cross-origin',
-            'Permissions-Policy'     => 'camera=(), microphone=(), geolocation=()',
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'X-XSS-Protection' => '1; mode=block',
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+            'Permissions-Policy' => 'camera=(), microphone=(), geolocation=()',
         ];
 
         $combined = array_merge($defaults, $headers);

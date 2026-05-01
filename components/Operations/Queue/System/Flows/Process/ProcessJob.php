@@ -50,7 +50,7 @@ final class ProcessJob
 
     public function process(array $jobData, QueueBroker $broker) : JobResult
     {
-        $job      = JobDefinition::fromArray($jobData);
+        $job        = JobDefinition::fromArray($jobData);
         $attempts = ($jobData['attempts'] ?? 0) + 1;
 
         if ($attempts > $job->maxAttempts) {
@@ -61,14 +61,14 @@ final class ProcessJob
 
         try {
             $handler = $this->registry->resolve($job->handler);
-            $result  = $handler($job->payload);
+            $result = $handler($job->payload);
 
             $broker->remove($job->queue ?? 'default', $jobData['id']);
 
             return JobResult::success($result, $attempts);
         } catch (Throwable $e) {
             if ($job->retryDelay > 0 && $attempts < $job->maxAttempts) {
-                $jobData['attempts']  = $attempts;
+                $jobData['attempts'] = $attempts;
                 $jobData['executeAt'] = time() + $job->retryDelay;
                 $broker->push($job->queue ?? 'default', $jobData);
             }

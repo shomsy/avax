@@ -13,26 +13,26 @@ namespace Avax\Components\HTTP\Middleware\System\Configuration;
 final readonly class MiddlewareConfiguration
 {
     /**
-     * @param int          $timeoutMs       Maximum execution time for the entire pipeline in milliseconds
-     * @param bool         $stopOnException Whether to halt the pipeline on middleware exception
-     * @param list<string> $priorityOrder   Ordered list of middleware identifiers (first = highest priority)
-     * @param bool         $enableMetrics   Whether to collect per-middleware execution metrics
-     * @param list<string> $skipPaths       URL paths that bypass all middleware
+     * @param  int  $timeoutMs  Maximum execution time for the entire pipeline in milliseconds
+     * @param  bool  $stopOnException  Whether to halt the pipeline on middleware exception
+     * @param  list<string>  $priorityOrder  Ordered list of middleware identifiers (first = highest priority)
+     * @param  bool  $enableMetrics  Whether to collect per-middleware execution metrics
+     * @param  list<string>  $skipPaths  URL paths that bypass all middleware
      */
     public function __construct(
-        private int  $timeoutMs = 30000,
+        private int $timeoutMs = 30000,
         private bool $stopOnException = true,
         private array $priorityOrder = [],
         private bool $enableMetrics = false,
         private array $skipPaths = [],
     ) {}
 
-    public function timeoutMs() : int
+    public function timeoutMs(): int
     {
         return $this->timeoutMs;
     }
 
-    public function shouldStopOnException() : bool
+    public function shouldStopOnException(): bool
     {
         return $this->stopOnException;
     }
@@ -40,12 +40,12 @@ final readonly class MiddlewareConfiguration
     /**
      * @return list<string>
      */
-    public function priorityOrder() : array
+    public function priorityOrder(): array
     {
         return $this->priorityOrder;
     }
 
-    public function metricsEnabled() : bool
+    public function metricsEnabled(): bool
     {
         return $this->enableMetrics;
     }
@@ -53,7 +53,7 @@ final readonly class MiddlewareConfiguration
     /**
      * @return list<string>
      */
-    public function skipPaths() : array
+    public function skipPaths(): array
     {
         return $this->skipPaths;
     }
@@ -61,7 +61,7 @@ final readonly class MiddlewareConfiguration
     /**
      * Check if a path should skip middleware.
      */
-    public function shouldSkipPath(string $path) : bool
+    public function shouldSkipPath(string $path): bool
     {
         foreach ($this->skipPaths as $skipPattern) {
             if ($this->matchesPattern($skipPattern, $path)) {
@@ -75,14 +75,14 @@ final readonly class MiddlewareConfiguration
     /**
      * Simple glob-like pattern matching.
      */
-    private function matchesPattern(string $pattern, string $path) : bool
+    private function matchesPattern(string $pattern, string $path): bool
     {
         if ($pattern === $path) {
             return true;
         }
 
         // Convert glob pattern to regex
-        $regex = '#^' . str_replace('\*', '.*', preg_quote($pattern, '#')) . '$#';
+        $regex = '#^'.str_replace('\*', '.*', preg_quote($pattern, '#')).'$#';
 
         return preg_match($regex, $path) === 1;
     }
@@ -90,9 +90,9 @@ final readonly class MiddlewareConfiguration
     /**
      * Create a new configuration with merged overrides.
      *
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      */
-    public function with(array $overrides) : self
+    public function with(array $overrides): self
     {
         return new self(
             timeoutMs      : $overrides['timeout_ms'] ?? $this->timeoutMs,
@@ -106,9 +106,9 @@ final readonly class MiddlewareConfiguration
     /**
      * Create configuration from an array.
      *
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
-    public static function fromArray(array $config) : self
+    public static function fromArray(array $config): self
     {
         return new self(
             timeoutMs      : $config['timeout_ms'] ?? 30000,

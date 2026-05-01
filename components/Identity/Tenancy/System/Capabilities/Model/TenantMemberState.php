@@ -6,6 +6,6 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Model;
 
 enum TenantMemberState: string
 {
-    case ACTIVE    = 'active';
+    case ACTIVE = 'active';
     case SUSPENDED = 'suspended';
 }

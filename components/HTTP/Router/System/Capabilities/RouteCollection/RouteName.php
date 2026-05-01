@@ -10,7 +10,7 @@ final class RouteName
         private string $name,
     ) {}
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->name;
     }

@@ -20,20 +20,20 @@ final readonly class WriteErrorLog
 {
     public function __construct(
         private Logging $logger,
-        private SecretRedactor $redactor = new SecretRedactor(),
-        private string|null $correlationId = null,
-        private string|null $traceId = null,
+        private SecretRedactor $redactor = new SecretRedactor,
+        private ?string        $correlationId = null,
+        private ?string        $traceId = null,
     ) {}
 
     /**
      * Write a structured error log entry for an exception.
      *
-     * @param string $level PSR-3 log level
+     * @param string               $level             PSR-3 log level
      * @param array<string, mixed> $additionalContext Additional context beyond exception data
      *
      * @return array<string, mixed> The structured log record that was written
      */
-    public function writeException(string $level, Throwable $exception, array $additionalContext = []) : array
+    public function writeException(string $level, Throwable $exception, array $additionalContext = []): array
     {
         $context = array_merge($additionalContext, [
             'exception' => $this->buildExceptionData($exception),
@@ -53,7 +53,7 @@ final readonly class WriteErrorLog
      *
      * @return array<string, mixed>
      */
-    private function buildExceptionData(Throwable $exception) : array
+    private function buildExceptionData(Throwable $exception): array
     {
         $data = [
             'class'   => $exception::class,
@@ -76,7 +76,7 @@ final readonly class WriteErrorLog
      *
      * @return list<array{file: string, line: int, class: string|null, type: string|null, function: string}>
      */
-    private function buildTrace(Throwable $exception) : array
+    private function buildTrace(Throwable $exception): array
     {
         $trace = [];
 
@@ -84,7 +84,7 @@ final readonly class WriteErrorLog
             $trace[] = [
                 'file' => $frame['file'] ?? '[internal]',
                 'line' => $frame['line'] ?? 0,
-                'class'    => $frame['class'] ?? null,
+                'class' => $frame['class'] ?? null,
                 'type' => $frame['type'] ?? null,
                 'function' => $frame['function'],
             ];
@@ -96,14 +96,14 @@ final readonly class WriteErrorLog
     /**
      * Write a structured error log entry.
      *
-     * @param string $level PSR-3 log level (emergency, alert, critical, error, warning, notice, info,
-     *                      debug)
-     * @param string $message Log message
+     * @param string               $level   PSR-3 log level (emergency, alert, critical, error, warning, notice, info,
+     *                                      debug)
+     * @param string               $message Log message
      * @param array<string, mixed> $context Additional context data
      *
      * @return array<string, mixed> The structured log record that was written
      */
-    public function write(string $level, string $message, array $context = []) : array
+    public function write(string $level, string $message, array $context = []): array
     {
         $record = $this->buildRecord($level, $message, $context);
         $record = $this->redactRecord($record);
@@ -120,18 +120,18 @@ final readonly class WriteErrorLog
     /**
      * Build a structured log record.
      *
-     * @param string $level PSR-3 log level
-     * @param string $message Log message
+     * @param string               $level   PSR-3 log level
+     * @param string               $message Log message
      * @param array<string, mixed> $context Additional context
      *
      * @return array{level: string, message: string, context: array<string, mixed>}
      */
-    private function buildRecord(string $level, string $message, array $context) : array
+    private function buildRecord(string $level, string $message, array $context): array
     {
         $context = $this->enrichContext($context);
 
         return [
-            'level'   => strtolower($level),
+            'level' => strtolower($level),
             'message' => $message,
             'context' => $context,
         ];
@@ -140,16 +140,16 @@ final readonly class WriteErrorLog
     /**
      * Enrich context with system and request metadata.
      *
-     * @param array<string, mixed> $context
+     * @param array<string, mixed>  $context
      *
      * @return array<string, mixed>
      */
-    private function enrichContext(array $context) : array
+    private function enrichContext(array $context): array
     {
         $timestamp = new DateTimeImmutable('now', new DateTimeZone('UTC'));
 
         $enriched = [
-            'timestamp'      => $timestamp->format('Y-m-d\TH:i:s.uP'),
+            'timestamp' => $timestamp->format('Y-m-d\TH:i:s.uP'),
             'unix_timestamp' => (int) $timestamp->format('Uu'),
         ];
 
@@ -179,7 +179,7 @@ final readonly class WriteErrorLog
      *
      * @return array<string, mixed>
      */
-    private function getRequestInfo() : array
+    private function getRequestInfo(): array
     {
         $info = [];
 
@@ -211,11 +211,11 @@ final readonly class WriteErrorLog
      *
      * @return array<string, mixed>
      */
-    private function getServerInfo() : array
+    private function getServerInfo(): array
     {
         return [
             'php_version'  => PHP_VERSION,
-            'sapi'         => PHP_SAPI,
+            'sapi' => PHP_SAPI,
             'memory_usage' => memory_get_usage(true),
             'memory_peak'  => memory_get_peak_usage(true),
         ];
@@ -224,11 +224,11 @@ final readonly class WriteErrorLog
     /**
      * Redact sensitive data from the log record.
      *
-     * @param array{level: string, message: string, context: array<string, mixed>} $record
+     * @param array{level: string, message: string, context: array<string, mixed>}  $record
      *
      * @return array{level: string, message: string, context: array<string, mixed>}
      */
-    private function redactRecord(array $record) : array
+    private function redactRecord(array $record): array
     {
         $record['context'] = $this->redactor->redactArray($record['context']);
         $record['message'] = $this->redactor->redactString($record['message']);

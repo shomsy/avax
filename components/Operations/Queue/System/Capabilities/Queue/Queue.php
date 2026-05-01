@@ -17,11 +17,11 @@ final class Queue
         $jobId = uniqid(prefix: 'job_', more_entropy: true);
 
         self::$queues[$queue][$jobId] = [
-            'id'       => $jobId,
-            'job'      => $job,
-            'data'     => $data,
+            'id'     => $jobId,
+            'job'    => $job,
+            'data'   => $data,
             'attempts' => 0,
-            'run_at'   => time(),
+            'run_at' => time(),
             'created_at' => time(),
         ];
 
@@ -30,13 +30,13 @@ final class Queue
 
     public static function later(int $delay, callable|JobInterface|string $job, array $data = [], string $queue = 'default') : string
     {
-        $jobId                                  = self::push(job: $job, data: $data, queue: $queue);
+        $jobId = self::push(job: $job, data: $data, queue: $queue);
         self::$queues[$queue][$jobId]['run_at'] = time() + $delay;
 
         return $jobId;
     }
 
-    public static function pop(string $queue = 'default') : array|null
+    public static function pop(string $queue = 'default') : ?array
     {
         foreach (self::$queues[$queue] ?? [] as $jobId => $job) {
             if (($job['run_at'] ?? 0) > time()) {
@@ -69,8 +69,8 @@ final class Queue
 
     public static function release(string $queue, array $job, int $delay = 0) : void
     {
-        $jobId                        = $job['id'] ?? uniqid(prefix: 'job_', more_entropy: true);
-        $job['attempts']              = ($job['attempts'] ?? 0) + 1;
+        $jobId           = $job['id'] ?? uniqid(prefix: 'job_', more_entropy: true);
+        $job['attempts'] = ($job['attempts'] ?? 0) + 1;
         $job['run_at'] = time() + $delay;
         self::$queues[$queue][$jobId] = $job;
     }

@@ -12,7 +12,7 @@ final class CsrfTokenGenerator
 {
     private const string SESSION_KEY = '_csrf_token';
 
-    public function validate(string|null $token) : bool
+    public function validate(?string $token): bool
     {
         if ($token === null || $token === '') {
             return false;
@@ -21,7 +21,7 @@ final class CsrfTokenGenerator
         return hash_equals($this->token(), $token);
     }
 
-    public function token() : string
+    public function token(): string
     {
         if (isset($_SESSION[self::SESSION_KEY])) {
             return $_SESSION[self::SESSION_KEY];
@@ -30,7 +30,7 @@ final class CsrfTokenGenerator
         return $this->generate();
     }
 
-    public function generate() : string
+    public function generate(): string
     {
         $token = bin2hex(random_bytes(32));
         $this->storeToken($token);
@@ -38,14 +38,14 @@ final class CsrfTokenGenerator
         return $token;
     }
 
-    private function storeToken(string $token) : void
+    private function storeToken(string $token): void
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
             $_SESSION[self::SESSION_KEY] = $token;
         }
     }
 
-    public function regenerate() : string
+    public function regenerate(): string
     {
         return $this->generate();
     }

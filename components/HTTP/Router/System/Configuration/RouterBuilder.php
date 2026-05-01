@@ -30,9 +30,9 @@ final class RouterBuilder
     /**
      * Set a URL prefix for all routes.
      */
-    public function withPrefix(string $prefix) : self
+    public function withPrefix(string $prefix): self
     {
-        $self         = clone $this;
+        $self = clone $this;
         $self->prefix = $prefix;
 
         return $self;
@@ -41,9 +41,9 @@ final class RouterBuilder
     /**
      * Add middleware to apply to all routes.
      */
-    public function withMiddleware(callable $middleware) : self
+    public function withMiddleware(callable $middleware): self
     {
-        $self               = clone $this;
+        $self = clone $this;
         $self->middleware[] = $middleware;
 
         return $self;
@@ -52,11 +52,11 @@ final class RouterBuilder
     /**
      * Set default route parameters.
      *
-     * @param array<string, mixed> $defaults
+     * @param  array<string, mixed>  $defaults
      */
-    public function withDefaults(array $defaults) : self
+    public function withDefaults(array $defaults): self
     {
-        $self           = clone $this;
+        $self = clone $this;
         $self->defaults = $defaults;
 
         return $self;
@@ -65,9 +65,9 @@ final class RouterBuilder
     /**
      * Enable strict mode (exact method matching, no trailing slashes).
      */
-    public function withStrictMode(bool $strict = true) : self
+    public function withStrictMode(bool $strict = true): self
     {
-        $self             = clone $this;
+        $self = clone $this;
         $self->strictMode = $strict;
 
         return $self;
@@ -76,15 +76,15 @@ final class RouterBuilder
     /**
      * Build and return a configured Router instance.
      */
-    public function build() : Router
+    public function build(): Router
     {
-        return new Router();
+        return new Router;
     }
 
     /**
      * Get the configured prefix.
      */
-    public function getPrefix() : string
+    public function getPrefix(): string
     {
         return $this->prefix;
     }
@@ -94,7 +94,7 @@ final class RouterBuilder
      *
      * @return list<callable>
      */
-    public function getMiddleware() : array
+    public function getMiddleware(): array
     {
         return $this->middleware;
     }
@@ -104,7 +104,7 @@ final class RouterBuilder
      *
      * @return array<string, mixed>
      */
-    public function getDefaults() : array
+    public function getDefaults(): array
     {
         return $this->defaults;
     }
@@ -112,7 +112,7 @@ final class RouterBuilder
     /**
      * Check if strict mode is enabled.
      */
-    public function isStrictMode() : bool
+    public function isStrictMode(): bool
     {
         return $this->strictMode;
     }

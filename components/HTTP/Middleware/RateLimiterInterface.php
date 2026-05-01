@@ -12,25 +12,25 @@ interface RateLimiterInterface
     /**
      * Determine if a request can be attempted.
      */
-    public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool;
+    public function canAttempt(string $key, int $maxAttempts, int $decaySeconds): bool;
 
     /**
      * Record a failed attempt.
      */
-    public function recordFailedAttempt(string $key, int $maxAttempts, int $decaySeconds) : void;
+    public function recordFailedAttempt(string $key, int $maxAttempts, int $decaySeconds): void;
 
     /**
      * Get the remaining attempts.
      */
-    public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds) : int;
+    public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds): int;
 
     /**
      * Get seconds until the limiter resets.
      */
-    public function availableIn(string $key, int $maxAttempts, int $decaySeconds) : int;
+    public function availableIn(string $key, int $maxAttempts, int $decaySeconds): int;
 
     /**
      * Clear all attempts for a key.
      */
-    public function clear(string $key) : void;
+    public function clear(string $key): void;
 }

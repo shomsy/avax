@@ -9,9 +9,9 @@ namespace Avax\Components\Identity\Access\System\Capabilities\Policy;
  */
 enum RecoveryPath: string
 {
-    case PASSWORD_RESET        = 'password_reset';
-    case MFA_RECOVERY          = 'mfa_recovery';
+    case PASSWORD_RESET = 'password_reset';
+    case MFA_RECOVERY   = 'mfa_recovery';
     case FEDERATED_REPROVISION = 'federated_reprovision';
-    case ADMIN_APPROVAL        = 'admin_approval';
-    case NONE                  = 'none';
+    case ADMIN_APPROVAL = 'admin_approval';
+    case NONE           = 'none';
 }

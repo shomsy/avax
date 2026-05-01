@@ -13,9 +13,9 @@ use Closure;
 
 final class Realtime
 {
-    private static ConnectionPool|null $pool = null;
+    private static ?ConnectionPool $pool = null;
 
-    private static ChannelManager|null $channels = null;
+    private static ?ChannelManager $channels = null;
 
     public static function connect(Closure $sender) : Connection
     {
@@ -28,7 +28,7 @@ final class Realtime
     private static function pool() : ConnectionPool
     {
         if (self::$pool === null) {
-            self::$pool = new ConnectionPool();
+            self::$pool = new ConnectionPool;
         }
 
         return self::$pool;
@@ -42,7 +42,7 @@ final class Realtime
     private static function channels() : ChannelManager
     {
         if (self::$channels === null) {
-            self::$channels = new ChannelManager();
+            self::$channels = new ChannelManager;
         }
 
         return self::$channels;

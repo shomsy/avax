@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Config
 
 enum UnknownFieldPolicy: string
 {
-    case Reject  = 'reject';
-    case Ignore  = 'ignore';
+    case Reject = 'reject';
+    case Ignore = 'ignore';
     case Collect = 'collect';
 }

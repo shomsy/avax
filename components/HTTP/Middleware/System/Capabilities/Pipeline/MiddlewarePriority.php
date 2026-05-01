@@ -10,7 +10,7 @@ final class MiddlewarePriority
         private int $priority = 100,
     ) {}
 
-    public function value() : int
+    public function value(): int
     {
         return $this->priority;
     }

@@ -9,7 +9,7 @@ final readonly class RetryOptions
     public function __construct(
         public int $attempts,
         public int $backoffMs,
-        public int|null $timeoutMs = null,
+        public ?int $timeoutMs = null,
     ) {}
 
     public function withAttempts(int $attempts) : self

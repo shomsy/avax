@@ -9,5 +9,5 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
 interface MiddlewareInterface
 {
-    public function handle(RequestInterface $r, callable $n) : ResponseInterface;
+    public function handle(RequestInterface $r, callable $n): ResponseInterface;
 }

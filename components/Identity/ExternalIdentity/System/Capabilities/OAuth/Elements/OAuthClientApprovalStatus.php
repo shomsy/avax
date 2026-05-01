@@ -9,6 +9,6 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\El
  */
 enum OAuthClientApprovalStatus: string
 {
-    case APPROVED         = 'approved';
+    case APPROVED = 'approved';
     case PENDING_APPROVAL = 'pending_approval';
 }

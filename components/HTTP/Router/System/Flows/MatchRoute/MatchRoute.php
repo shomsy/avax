@@ -25,7 +25,7 @@ final class MatchRoute
         return null;
     }
 
-    private function matchUri(string $pattern, string $path) : bool
+    private function matchUri(string $pattern, string $path): bool
     {
         return $pattern === $path;
     }

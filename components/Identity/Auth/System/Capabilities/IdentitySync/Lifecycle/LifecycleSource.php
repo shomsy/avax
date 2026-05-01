@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecyc
 
 enum LifecycleSource: string
 {
-    case ADMIN      = 'admin';
+    case ADMIN = 'admin';
     case FEDERATION = 'federation';
-    case SCIM       = 'scim';
+    case SCIM  = 'scim';
 }

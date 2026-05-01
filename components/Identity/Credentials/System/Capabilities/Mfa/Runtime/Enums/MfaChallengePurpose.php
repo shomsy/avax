@@ -9,6 +9,6 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\E
  */
 enum MfaChallengePurpose: string
 {
-    case LOGIN   = 'login';
+    case LOGIN = 'login';
     case STEP_UP = 'step_up';
 }

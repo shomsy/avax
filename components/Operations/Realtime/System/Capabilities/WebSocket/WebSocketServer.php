@@ -34,16 +34,16 @@ final class WebSocketServer
         $oldChannel = self::$connections[$connectionId]['channel'];
         unset(self::$channels[$oldChannel][$connectionId]);
         self::$connections[$connectionId]['channel'] = $channel;
-        self::$channels[$channel][$connectionId]     = true;
+        self::$channels[$channel][$connectionId] = true;
     }
 
     public static function connect(string $connectionId, string $channel = 'default') : void
     {
         self::$connections[$connectionId] = [
-            'id'        => $connectionId,
-            'channel'   => $channel,
+            'id'       => $connectionId,
+            'channel'  => $channel,
             'joined_at' => time(),
-            'messages'  => [],
+            'messages' => [],
         ];
         self::$channels[$channel][$connectionId] = true;
     }
@@ -87,7 +87,7 @@ final class WebSocketServer
         return WebSocketClientScript::forEndpoint(endpoint: $endpoint);
     }
 
-    public static function connections(string $channel = null) : array
+    public static function connections(?string $channel = null) : array
     {
         if ($channel === null) {
             return array_keys(array: self::$connections);
@@ -104,7 +104,7 @@ final class WebSocketServer
     public static function reset() : void
     {
         self::$connections = [];
-        self::$channels    = [];
+        self::$channels = [];
         PresenceChannel::reset();
     }
 }

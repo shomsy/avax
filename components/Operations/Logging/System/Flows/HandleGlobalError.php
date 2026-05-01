@@ -15,8 +15,8 @@ final readonly class HandleGlobalError
     public function execute(Throwable $throwable) : void
     {
         $this->logger->error($throwable->getMessage(), [
-            'file'  => $throwable->getFile(),
-            'line'  => $throwable->getLine(),
+            'file' => $throwable->getFile(),
+            'line' => $throwable->getLine(),
             'trace' => $throwable->getTraceAsString(),
         ]);
 
@@ -26,9 +26,9 @@ final readonly class HandleGlobalError
         }
 
         echo json_encode([
-                             'status' => 500,
+                             'status'  => 500,
                              'message' => 'Internal Server Error',
-                             'error'  => $throwable->getMessage(),
+                             'error'   => $throwable->getMessage(),
         ]);
     }
 

@@ -18,7 +18,5 @@ final readonly class TableDefinition
      *
      * @param string $name Technical table identifier
      */
-    public function __construct(public string $name)
-    {
-    }
+    public function __construct(public string $name) {}
 }

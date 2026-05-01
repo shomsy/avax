@@ -13,7 +13,7 @@ final readonly class AwaitTask
      *
      * @return TResult
      */
-    public function await(callable $task) : mixed
+    public function await(callable $task): mixed
     {
         return $task();
     }

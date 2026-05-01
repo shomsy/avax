@@ -10,15 +10,14 @@ final readonly class Security
 {
     public function __construct(
         private CsrfTokens $csrfTokens,
-    ) {
-    }
+    ) {}
 
-    public function csrfToken() : string
+    public function csrfToken(): string
     {
         return $this->csrfTokens->getToken();
     }
 
-    public function validateCsrfToken(string|null $token) : bool
+    public function validateCsrfToken(?string $token): bool
     {
         return $this->csrfTokens->validateToken($token);
     }

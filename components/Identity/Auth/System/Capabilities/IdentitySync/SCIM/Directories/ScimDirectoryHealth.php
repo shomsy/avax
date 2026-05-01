@@ -9,7 +9,7 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Su
  */
 enum ScimDirectoryHealth: string
 {
-    case HEALTHY     = 'healthy';
-    case DEGRADED    = 'degraded';
+    case HEALTHY  = 'healthy';
+    case DEGRADED = 'degraded';
     case UNAVAILABLE = 'unavailable';
 }

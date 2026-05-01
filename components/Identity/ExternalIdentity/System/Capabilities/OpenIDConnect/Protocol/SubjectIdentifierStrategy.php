@@ -9,6 +9,6 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDCo
  */
 enum SubjectIdentifierStrategy: string
 {
-    case PUBLIC   = 'public';
+    case PUBLIC = 'public';
     case PAIRWISE = 'pairwise';
 }

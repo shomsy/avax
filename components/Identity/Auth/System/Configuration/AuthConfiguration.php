@@ -13,6 +13,5 @@ final readonly class AuthConfiguration
     public function __construct(
         public string $guard = 'web',
         public array $providers = [],
-    ) {
-    }
+    ) {}
 }

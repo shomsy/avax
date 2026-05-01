@@ -23,9 +23,9 @@ final class RotatingFileWriter
 
     public function write(string $message, string $level = 'info', array $context = []) : void
     {
-        $date      = (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d');
+        $date     = (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d');
         $directory = dirname($this->baseLogPath);
-        $filename  = basename($this->baseLogPath);
+        $filename = basename($this->baseLogPath);
 
         $filePath = "{$directory}/{$date}-{$filename}.log";
 
@@ -44,8 +44,8 @@ final class RotatingFileWriter
     private function rotate() : void
     {
         $directory = dirname($this->baseLogPath);
-        $filename  = basename($this->baseLogPath);
-        $files     = glob("{$directory}/*-{$filename}.log");
+        $filename = basename($this->baseLogPath);
+        $files = glob("{$directory}/*-{$filename}.log");
 
         if (count($files) <= $this->maxLogFiles) {
             return;

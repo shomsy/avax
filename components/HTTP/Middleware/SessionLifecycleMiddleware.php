@@ -19,7 +19,7 @@ final readonly class SessionLifecycleMiddleware implements MiddlewareInterface
         private SessionInterface|NullSession $session,
     ) {}
 
-    public function handle(RequestInterface $request, callable $next) : ResponseInterface
+    public function handle(RequestInterface $request, callable $next): ResponseInterface
     {
         if ($this->session instanceof SessionInterface) {
             $this->session->start();

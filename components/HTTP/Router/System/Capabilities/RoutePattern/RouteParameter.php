@@ -11,12 +11,12 @@ final class RouteParameter
         private mixed $value,
     ) {}
 
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function value() : mixed
+    public function value(): mixed
     {
         return $this->value;
     }

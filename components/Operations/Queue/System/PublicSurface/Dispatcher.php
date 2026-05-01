@@ -12,12 +12,13 @@ use DateTimeInterface;
 final class Dispatcher
 {
     private DispatchJob $dispatcher;
+
     private QueueBroker $broker;
 
     public function __construct(DispatchJob $dispatcher, QueueBroker $broker)
     {
         $this->dispatcher = $dispatcher;
-        $this->broker     = $broker;
+        $this->broker = $broker;
     }
 
     public function dispatch(JobDefinition $job) : JobId
@@ -45,10 +46,10 @@ final class JobId
 {
     public function __construct(
         public readonly string $value,
-        public readonly string|null $queue = null,
+        public readonly ?string $queue = null,
     ) {}
 
-    public static function generate(string $queue = null) : self
+    public static function generate(?string $queue = null) : self
     {
         return new self(
             value: uniqid('job-', true),
@@ -60,10 +61,10 @@ final class JobId
 final class JobResult
 {
     public function __construct(
-        public readonly bool  $success,
+        public readonly bool    $success,
         public readonly mixed $result = null,
-        public readonly string|null $error = null,
-        public readonly int|null $attempts = null,
+        public readonly ?string $error = null,
+        public readonly ?int    $attempts = null,
     ) {}
 
     public static function success(mixed $result = null, int $attempts = 1) : self

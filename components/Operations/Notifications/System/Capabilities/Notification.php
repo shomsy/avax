@@ -39,7 +39,7 @@ abstract class Notification
     /**
      * Get the database representation of the notification.
      */
-    public function toDatabase() : array|null
+    public function toDatabase() : ?array
     {
         return null;
     }
@@ -93,7 +93,7 @@ final class MailNotificationContent
     public function action(string $text, string $url) : self
     {
         $this->actionText = $text;
-        $this->actionUrl  = $url;
+        $this->actionUrl = $url;
 
         return $this;
     }

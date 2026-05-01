@@ -11,20 +11,20 @@ use SensitiveParameter;
 interface OidcProviderInterface
 {
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
      */
     public function issueIdToken(
         User $user,
         string $clientId,
         array $scopes,
-        ?string $nonce = null,
-        ?DateTimeImmutable $authenticatedAt = null,
-        ?string $sessionId = null,
+        string            $nonce = null,
+        DateTimeImmutable $authenticatedAt = null,
+        string            $sessionId = null,
         bool $phishingResistant = false,
     ): OidcIdToken;
 
     /**
-     * @param  array<string, mixed>  $claims
+     * @param array<string, mixed> $claims
      */
     public function issueJwt(array $claims): string;
 

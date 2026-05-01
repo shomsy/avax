@@ -16,7 +16,7 @@ final class InMemoryFederatedIdentityLinkStore implements FederatedIdentityLinkS
 
     private function key(string $connectionId, string $subject): string
     {
-        return $connectionId.'|'.$subject;
+        return $connectionId . '|' . $subject;
     }
 
     public function find(string $connectionId, string $subject): ?FederatedIdentityLink

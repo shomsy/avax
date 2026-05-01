@@ -75,10 +75,10 @@ final readonly class CompletePasskeyRegistration
             name      : 'auth.passkey.registered',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $user->id,
+                            'user_id'    => $user->id,
                 'credential_id' => $credential->credentialId,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'ip_address' => $data->ipAddress,
+                            'user_agent' => $data->userAgent,
             ],
         ));
 

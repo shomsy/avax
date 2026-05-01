@@ -31,7 +31,8 @@ interface MaterializedViewInterface
     /**
      * Reads data from the materialized view.
      *
-     * @param  array<string, mixed>  $filters  Optional filters to apply
+     * @param array<string, mixed> $filters Optional filters to apply
+     *
      * @return array<string, mixed>|list<mixed>
      */
     public function read(array $filters = []): array;
@@ -69,7 +70,8 @@ final readonly class MaterializedViewStats
         public float $refreshedAt = 0.0,
         public bool $success = true,
         public ?string $error = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a failure stats object.
@@ -129,15 +131,16 @@ final class MaterializedView implements MaterializedViewInterface
     private int $rowCount = 0;
 
     /**
-     * @param  Closure() : T  $query  Closure that produces the view data
-     * @param  float  $stalenessThreshold  Seconds before view is considered stale
+     * @param Closure() : T $query              Closure that produces the view data
+     * @param float         $stalenessThreshold Seconds before view is considered stale
      */
     public function __construct(
         string $name,
         Closure $query,
         float $stalenessThreshold = 3600.0,
-    ) {
-        $this->name = $name;
+    )
+    {
+        $this->name  = $name;
         $this->query = $query;
         $this->stalenessThreshold = $stalenessThreshold;
     }
@@ -152,10 +155,10 @@ final class MaterializedView implements MaterializedViewInterface
         $startTime = microtime(true);
 
         try {
-            $data = ($this->query)();
-            $this->data = $data;
+            $data                  = ($this->query)();
+            $this->data            = $data;
             $this->lastRefreshedAt = microtime(true);
-            $this->rowCount = is_array($data) ? count($data) : 0;
+            $this->rowCount        = is_array($data) ? count($data) : 0;
 
             $durationMs = (microtime(true) - $startTime) * 1000;
 
@@ -227,9 +230,9 @@ final class MaterializedView implements MaterializedViewInterface
      */
     public function clear(): void
     {
-        $this->data = null;
+        $this->data            = null;
         $this->lastRefreshedAt = null;
-        $this->rowCount = 0;
+        $this->rowCount        = 0;
     }
 
     /**

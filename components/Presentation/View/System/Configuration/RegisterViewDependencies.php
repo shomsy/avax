@@ -14,7 +14,7 @@ final class RegisterViewDependencies
         array $config = [],
     ): void {
         $defaults = [
-            'path' => base_path('resources/views'),
+            'path'      => base_path('resources/views'),
             'cache_path' => base_path('storage/views'),
             'extension' => '.php',
         ];

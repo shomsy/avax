@@ -36,7 +36,7 @@ final readonly class FrontChannelLogout
     public function execute(FrontChannelLogoutData $data): LogoutResult
     {
         $context = $this->currentAuthentication->read();
-        $now = $this->clock->now();
+        $now     = $this->clock->now();
         $sessionId = $data->sessionId ?? $context->sessionId();
 
         if ($sessionId === null && $data->idTokenHint !== null && $this->oidcProvider !== null) {
@@ -61,12 +61,12 @@ final readonly class FrontChannelLogout
                 name      : 'auth.oidc.front_channel_logout.succeeded',
                 occurredAt: $now,
                 context   : [
-                    'user_id' => $user->id,
-                    'session_id' => $sessionId,
-                    'state' => $data->state,
-                    'client_id' => $client?->clientId,
+                                'user_id'                       => $user->id,
+                                'session_id'                    => $sessionId,
+                                'state'                         => $data->state,
+                                'client_id'                     => $client?->clientId,
                     'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
-                    'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
+                                'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
                 ],
             ));
         }

@@ -28,12 +28,12 @@ class QueueFake implements QueueDriverInterface
         }
 
         $this->pushedLater[$job][] = [
-            'job' => $job,
+            'job'  => $job,
             'data' => $data,
             'delay' => $delay,
         ];
 
-        return 'fake-later-'.uniqid('', true);
+        return 'fake-later-' . uniqid('', true);
     }
 
     public function pop(): ?Job
@@ -85,7 +85,7 @@ class QueueFake implements QueueDriverInterface
         ];
 
         // Don't actually execute the job - just capture it
-        return 'fake-'.uniqid('', true);
+        return 'fake-' . uniqid('', true);
     }
 
     public function flush(): void

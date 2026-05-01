@@ -38,9 +38,9 @@ final readonly class RemoveTenantMember
             name      : 'auth.tenant.member.removed',
             occurredAt: $this->clock->now(),
             context   : [
-                'tenant_id' => $tenant->tenantId,
+                            'tenant_id' => $tenant->tenantId,
                 'tenant_slug' => $tenant->slug,
-                'user_id' => $data->userId,
+                            'user_id'   => $data->userId,
             ],
         ));
     }

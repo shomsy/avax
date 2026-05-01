@@ -84,7 +84,7 @@ final readonly class CheckResult
         return [
             'status' => $this->status,
             'latency_ms' => $this->latencyMs,
-            'error' => $this->error,
+            'error'  => $this->error,
         ];
     }
 }

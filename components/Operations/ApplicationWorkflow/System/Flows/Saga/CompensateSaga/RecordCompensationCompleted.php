@@ -46,7 +46,7 @@ final readonly class CompensationCompletedRecord
     public function toMetadata(): array
     {
         return [
-            'saga_id' => $this->sagaId,
+            'saga_id'     => $this->sagaId,
             'completed_steps' => $this->completedSteps,
             'recorded_at' => $this->recordedAt,
         ];

@@ -30,7 +30,7 @@ final readonly class RequirePermission
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         if (! $user->hasPermission(permission: $permission)) {

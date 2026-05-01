@@ -14,7 +14,7 @@ final class RegisterMailDependencies
     public function build(): Mailer
     {
         return new Mailer(
-            sendMail: new SendMail(transport: new LogTransport),
+            sendMail: new SendMail(transport: new LogTransport()),
             envelope: new Envelope(from: 'noreply@localhost'),
         );
     }

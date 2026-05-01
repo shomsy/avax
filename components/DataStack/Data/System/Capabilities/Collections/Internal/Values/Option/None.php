@@ -21,7 +21,7 @@ final class None extends Option
 
     public static function instance(): self
     {
-        return self::$instance ??= new self;
+        return self::$instance ??= new self();
     }
 
     #[Override]

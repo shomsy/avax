@@ -12,7 +12,7 @@ use SensitiveParameter;
 final readonly class PasswordHasher
 {
     /**
-     * @param  array<string, int|string|bool>  $options
+     * @param array<string, int|string|bool> $options
      */
     private string $algo;
 
@@ -20,11 +20,11 @@ final readonly class PasswordHasher
     private array $options;
 
     /**
-     * @param  array<string, int|string|bool>|null  $options
+     * @param array<string, int|string|bool>|null $options
      */
     public function __construct(
-        ?string $algo = null,
-        ?array $options = null,
+        string $algo = null,
+        array  $options = null,
     ) {
         $this->algo = $algo
             ?? $this->inferAlgorithmFromOptions(options: $options)
@@ -33,7 +33,7 @@ final readonly class PasswordHasher
     }
 
     /**
-     * @param  array<string, int|string|bool>|null  $options
+     * @param array<string, int|string|bool>|null $options
      */
     private function inferAlgorithmFromOptions(?array $options): ?string
     {
@@ -73,7 +73,7 @@ final readonly class PasswordHasher
             return [
                 'memory_cost' => PASSWORD_ARGON2_DEFAULT_MEMORY_COST,
                 'time_cost' => PASSWORD_ARGON2_DEFAULT_TIME_COST,
-                'threads' => PASSWORD_ARGON2_DEFAULT_THREADS,
+                'threads'   => PASSWORD_ARGON2_DEFAULT_THREADS,
             ];
         }
 

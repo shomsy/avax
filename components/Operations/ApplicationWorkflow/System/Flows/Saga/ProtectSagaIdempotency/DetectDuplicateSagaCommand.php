@@ -10,7 +10,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Prote
 final readonly class DetectDuplicateSagaCommand
 {
     /**
-     * @param  array<string, SagaCommandResult>  $results
+     * @param array<string, SagaCommandResult> $results
      */
     public function detect(array $results, SagaCommandKey $key): bool
     {

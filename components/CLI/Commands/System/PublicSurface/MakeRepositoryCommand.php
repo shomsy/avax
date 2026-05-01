@@ -30,7 +30,7 @@ final readonly class MakeRepositoryCommand
             $this->repositoryGenerator->create($name, $entity);
             $this->logger->info(sprintf("Repository '%s' created successfully.", $name));
         } catch (Throwable $throwable) {
-            $this->logger->error('Error creating repository: '.$throwable->getMessage());
+            $this->logger->error('Error creating repository: ' . $throwable->getMessage());
         }
     }
 }

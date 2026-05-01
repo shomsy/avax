@@ -76,7 +76,7 @@ final readonly class RotateScimToken
             return;
         }
 
-        $key = 'scim:'.$directoryId.':'.'rotate';
+        $key = 'scim:' . $directoryId . ':' . 'rotate';
 
         try {
             $this->attemptThrottle->check(key: $key);

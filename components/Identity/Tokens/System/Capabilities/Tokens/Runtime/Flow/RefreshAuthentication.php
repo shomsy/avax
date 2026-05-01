@@ -56,7 +56,7 @@ final readonly class RefreshAuthentication
                 name      : 'auth.refresh.failed',
                 occurredAt: $now,
                 context   : [
-                    'reason' => 'missing_or_expired',
+                                'reason' => 'missing_or_expired',
                     'ip_address' => $request->ipAddress,
                     'user_agent' => $request->userAgent,
                 ],
@@ -70,7 +70,7 @@ final readonly class RefreshAuthentication
                 name      : 'auth.refresh.failed',
                 occurredAt: $now,
                 context   : [
-                    'reason' => 'oauth_bound_token',
+                                'reason' => 'oauth_bound_token',
                     'ip_address' => $request->ipAddress,
                     'user_agent' => $request->userAgent,
                 ],
@@ -86,11 +86,11 @@ final readonly class RefreshAuthentication
                 name      : 'auth.refresh.reuse_detected',
                 occurredAt: $now,
                 context   : [
-                    'user_id' => $record->userId->value,
-                    'family_id' => $record->familyId,
+                                'user_id'    => $record->userId->value,
+                                'family_id'  => $record->familyId,
                     'risk_action' => $riskDecision?->action->value,
-                    'ip_address' => $request->ipAddress,
-                    'user_agent' => $request->userAgent,
+                                'ip_address' => $request->ipAddress,
+                                'user_agent' => $request->userAgent,
                 ],
             ));
 
@@ -139,8 +139,8 @@ final readonly class RefreshAuthentication
             name      : 'auth.refresh.succeeded',
             occurredAt: $now,
             context   : [
-                'user_id' => $user->getId()->value,
-                'family_id' => $refreshToken->familyId,
+                            'user_id'   => $user->getId()->value,
+                            'family_id' => $refreshToken->familyId,
                 'ip_address' => $request->ipAddress,
                 'user_agent' => $request->userAgent,
             ],

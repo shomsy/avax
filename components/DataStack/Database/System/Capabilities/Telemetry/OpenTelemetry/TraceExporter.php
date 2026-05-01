@@ -9,7 +9,7 @@ final class TraceExporter
     /** @var list<array<string, mixed>> */
     private array $exported = [];
 
-    public function export(QuerySpan $span, OtelConfig $config = new OtelConfig): void
+    public function export(QuerySpan $span, OtelConfig $config = new OtelConfig()) : void
     {
         if (! $config->enabled) {
             return;

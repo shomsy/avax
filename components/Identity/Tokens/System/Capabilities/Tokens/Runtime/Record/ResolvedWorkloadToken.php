@@ -11,7 +11,7 @@ use SensitiveParameter;
 final readonly class ResolvedWorkloadToken
 {
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
      */
     public function __construct(
         public string $subject,

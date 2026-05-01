@@ -9,7 +9,7 @@ use SensitiveParameter;
 final readonly class ScimBulkRequest
 {
     /**
-     * @param  list<ScimBulkOperation>  $operations
+     * @param list<ScimBulkOperation> $operations
      */
     public function __construct(
         public string $directoryId,

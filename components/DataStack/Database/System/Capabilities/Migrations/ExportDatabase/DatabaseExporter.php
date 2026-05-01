@@ -21,23 +21,24 @@ final readonly class DatabaseExporter
      *
      * -- intent: generate a SQL dump of the database.
      *
-     * @param  string  $path  Path to save the export
-     * @param  string|null  $table  Optional specific table to export
+     * @param string      $path  Path to save the export
+     * @param string|null $table Optional specific table to export
+     *
      * @return string Path to the exported file
      *
      * @throws Throwable If export fails
      */
     public function exportToSql(string $path, ?string $table = null): string
     {
-        $filename = ($table !== null && $table !== '' && $table !== '0' ? $table : 'full_db').'_export_'.date(format: 'Y_m_d_His').'.sql';
-        $fullPath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$filename;
+        $filename = ($table !== null && $table !== '' && $table !== '0' ? $table : 'full_db') . '_export_' . date(format: 'Y_m_d_His') . '.sql';
+        $fullPath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
 
         if (! is_dir(filename: $path)) {
             mkdir(directory: $path, permissions: 0o755, recursive: true);
         }
 
         $output = "-- Avax Database Export\n";
-        $output .= '-- Generated: '.date(format: 'Y-m-d H:i:s')."\n";
+        $output .= '-- Generated: ' . date(format: 'Y-m-d H:i:s') . "\n";
         $output .= $table !== null && $table !== '' && $table !== '0' ? "-- Table: {$table}\n\n" : "-- Scope: Full Database\n\n";
 
         $tables = $table === null ? $this->readTableNames() : [$table];
@@ -49,7 +50,7 @@ final readonly class DatabaseExporter
             $createTable = $this->readCreateTable(table: $table);
             // noinspection SqlNoDataSourceInspection
             $output .= "DROP TABLE IF EXISTS {$quotedTableName};\n";
-            $output .= $createTable.';
+            $output .= $createTable . ';
 
 ';
 
@@ -105,7 +106,7 @@ final readonly class DatabaseExporter
     {
         // noinspection SqlNoDataSourceInspection
         $statement = $this->pdo->query(query: $sql);
-        $rows = $statement === false ? [] : $statement->fetchAll(mode: PDO::FETCH_NUM);
+        $rows      = $statement === false ? [] : $statement->fetchAll(mode: PDO::FETCH_NUM);
 
         return array_values(array: array_filter(
             array   : array_map(callback: static fn (array $row): string => isset($row[0]) ? (string) $row[0] : '', array: $rows),
@@ -118,9 +119,9 @@ final readonly class DatabaseExporter
         $driver = (string) $this->pdo->getAttribute(attribute: PDO::ATTR_DRIVER_NAME);
 
         return match ($driver) {
-            'mysql' => '`'.str_replace(search: '`', replace: '``', subject: $name).'`',
-            'sqlsrv' => '['.str_replace(search: ']', replace: ']]', subject: $name).']',
-            default => '"'.str_replace(search: '"', replace: '""', subject: $name).'"',
+            'mysql'  => '`' . str_replace(search: '`', replace: '``', subject: $name) . '`',
+            'sqlsrv' => '[' . str_replace(search: ']', replace: ']]', subject: $name) . ']',
+            default  => '"' . str_replace(search: '"', replace: '""', subject: $name) . '"',
         };
     }
 
@@ -130,8 +131,8 @@ final readonly class DatabaseExporter
 
         return match ($driver) {
             'sqlite' => $this->readSqliteCreateTable(table: $table),
-            'mysql' => $this->readCreateTableFromShow(table: $table),
-            default => '-- Schema export is not implemented for driver '.$driver,
+            'mysql'  => $this->readCreateTableFromShow(table: $table),
+            default  => '-- Schema export is not implemented for driver ' . $driver,
         };
     }
 
@@ -152,8 +153,8 @@ final readonly class DatabaseExporter
         $quotedTableName = $this->quoteIdentifier(name: $table);
 
         // noinspection SqlNoDataSourceInspection
-        $statement = $this->pdo->query(query: 'SHOW CREATE TABLE '.$quotedTableName);
-        $row = $statement === false ? false : $statement->fetch(mode: PDO::FETCH_ASSOC);
+        $statement = $this->pdo->query(query: 'SHOW CREATE TABLE ' . $quotedTableName);
+        $row       = $statement === false ? false : $statement->fetch(mode: PDO::FETCH_ASSOC);
 
         if (! is_array(value: $row)) {
             return '';
@@ -174,7 +175,7 @@ final readonly class DatabaseExporter
     private function readRows(string $table): array
     {
         // noinspection SqlNoDataSourceInspection
-        $statement = $this->pdo->query(query: 'SELECT * FROM '.$this->quoteIdentifier(name: $table));
+        $statement = $this->pdo->query(query: 'SELECT * FROM ' . $this->quoteIdentifier(name: $table));
 
         return $statement === false ? [] : $statement->fetchAll();
     }

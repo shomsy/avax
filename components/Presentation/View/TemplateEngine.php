@@ -27,9 +27,9 @@ class TemplateEngine extends BladeOne
     /**
      * TemplateEngine constructor.
      *
-     * @param  string  $templatePath  The path to template files.
-     * @param  string  $compiledPath  The path where compiled templates are stored.
-     * @param  int  $mode  BladeOne mode (e.g., MODE_AUTO).
+     * @param string $templatePath The path to template files.
+     * @param string $compiledPath The path where compiled templates are stored.
+     * @param int    $mode         BladeOne mode (e.g., MODE_AUTO).
      *
      * @throws FoundationContainerException
      * @throws ContainerExceptionInterface
@@ -66,7 +66,7 @@ class TemplateEngine extends BladeOne
     private function initializeBaseAssetPath(): void
     {
         // Retrieve the base URL and append the asset directory from configuration
-        $this->baseAssetPath = $this->getBaseUrl().config(key: 'views.assets');
+        $this->baseAssetPath = $this->getBaseUrl() . config(key: 'views.assets');
     }
 
     /**

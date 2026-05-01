@@ -26,7 +26,7 @@ final readonly class ExecuteSagaStep
 
         return [
             'success' => true,
-            'output' => is_array($result) ? $result : ['result' => $result],
+            'output'  => is_array($result) ? $result : ['result' => $result],
             'duration_ms' => $duration,
         ];
     }

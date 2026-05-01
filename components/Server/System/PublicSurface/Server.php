@@ -53,7 +53,7 @@ final readonly class Server
         $basePath = dirname(path: __DIR__, levels: 4);
 
         foreach ($candidates as $candidate) {
-            $path = $basePath.'/'.$candidate;
+            $path = $basePath . '/' . $candidate;
             if (file_exists($path)) {
                 return $path;
             }
@@ -64,8 +64,8 @@ final readonly class Server
 
     public static function findPublicPath(): string
     {
-        $basePath = dirname(path: __DIR__, levels: 4);
-        $publicPath = $basePath.'/public';
+        $basePath   = dirname(path: __DIR__, levels: 4);
+        $publicPath = $basePath . '/public';
 
         if (! is_dir($publicPath)) {
             mkdir($publicPath, 0o755, true);
@@ -112,10 +112,10 @@ final class ServerResult
         return [
             'success' => $this->success,
             'message' => $this->message,
-            'host' => $this->host,
-            'port' => $this->port,
+            'host'   => $this->host,
+            'port'   => $this->port,
             'router' => $this->router,
-            'url' => $this->success ? "http://{$this->host}:{$this->port}" : null,
+            'url'    => $this->success ? "http://{$this->host}:{$this->port}" : null,
         ];
     }
 }

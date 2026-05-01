@@ -60,14 +60,14 @@ final readonly class QueryEntry
     public function formattedDuration(): string
     {
         if ($this->durationMs < 1) {
-            return number_format($this->durationMs * 1000, 2).'μs';
+            return number_format($this->durationMs * 1000, 2) . 'μs';
         }
 
         if ($this->durationMs < 1000) {
-            return number_format($this->durationMs, 2).'ms';
+            return number_format($this->durationMs, 2) . 'ms';
         }
 
-        return number_format($this->durationMs / 1000, 2).'s';
+        return number_format($this->durationMs / 1000, 2) . 's';
     }
 
     /**
@@ -76,14 +76,14 @@ final readonly class QueryEntry
     public function toArray(): array
     {
         return [
-            'sql' => $this->sql,
-            'bindings' => $this->bindings,
-            'timestamp' => $this->timestamp,
+            'sql'         => $this->sql,
+            'bindings'    => $this->bindings,
+            'timestamp'   => $this->timestamp,
             'duration_ms' => $this->durationMs,
-            'type' => $this->getType(),
-            'connection' => $this->connection,
+            'type'        => $this->getType(),
+            'connection'  => $this->connection,
             'affected_rows' => $this->affectedRows,
-            'error' => $this->error,
+            'error'       => $this->error,
         ];
     }
 
@@ -279,7 +279,7 @@ final class QueryTimeline
             return null;
         }
 
-        $slowest = null;
+        $slowest         = null;
         $maxDuration = -1.0;
 
         foreach ($this->entries as $entry) {

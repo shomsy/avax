@@ -16,12 +16,12 @@ final readonly class TableIdentifier
     public string $name;
 
     /**
-     * @param  string  $name  The technical identifier (physical name) of the database table.
-     * @param  string|null  $alias  The optional domain-specific label (alias) assigned to the table source.
+     * @param string      $name  The technical identifier (physical name) of the database table.
+     * @param string|null $alias The optional domain-specific label (alias) assigned to the table source.
      */
     public function __construct(
         string $name,
-        ?string $alias = null,
+        string $alias = null,
     ) {
         $this->name = $name;
         $this->alias = $alias;

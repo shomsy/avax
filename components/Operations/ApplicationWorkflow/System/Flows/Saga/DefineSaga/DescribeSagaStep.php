@@ -36,8 +36,8 @@ final readonly class DescribeSagaStep
     public function toMetadata(): array
     {
         return [
-            'name' => $this->name,
-            'description' => $this->description,
+            'name'         => $this->name,
+            'description'  => $this->description,
             'input_schema' => $this->inputSchema,
             'output_schema' => $this->outputSchema,
             'compensatable' => $this->compensatable,

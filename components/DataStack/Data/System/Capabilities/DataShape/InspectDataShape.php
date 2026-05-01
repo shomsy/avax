@@ -10,16 +10,16 @@ final readonly class InspectDataShape
 {
     public function __construct(
         private ?DataTransferConfig $config = null,
-        private CacheDataShape $cache = new CacheDataShape,
+        private CacheDataShape $cache = new CacheDataShape(),
     ) {}
 
     /**
-     * @param  class-string  $class
+     * @param class-string $class
      */
     public function inspect(string $class): DataShape
     {
-        $config = $this->config ?? DataTransferConfig::default();
-        $cacheKey = $class.':'.spl_object_id(object: $config);
+        $config   = $this->config ?? DataTransferConfig::default();
+        $cacheKey = $class . ':' . spl_object_id(object: $config);
 
         return $this->cache->remember(
             key    : $cacheKey,

@@ -29,12 +29,12 @@ final class QuerySpan
     public function toArray(): array
     {
         return [
-            'query' => $this->query,
-            'bindings' => $this->bindings,
+            'query'      => $this->query,
+            'bindings'   => $this->bindings,
             'duration_ms' => $this->getDurationMs(),
             'connection' => $this->connection,
-            'rows' => $this->rows,
-            'error' => $this->error,
+            'rows'       => $this->rows,
+            'error'      => $this->error,
             'fingerprint' => $this->getFingerprint(),
         ];
     }

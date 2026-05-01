@@ -23,30 +23,30 @@ final readonly class AuthenticatedUser
     public array $roles;
 
     /**
-     * @param  list<string>  $roles
-     * @param  list<string>  $permissions
+     * @param list<string> $roles
+     * @param list<string> $permissions
      */
     public function __construct(
         public int $id,
         #[SensitiveParameter]
         public string $email,
         public string $username,
-        ?array $roles = null,
-        ?array $permissions = null,
-        ?bool $emailVerified = null,
+        array $roles = null,
+        array $permissions = null,
+        bool  $emailVerified = null,
         public bool $mfaEnabled = false,
     ) {
-        $roles ??= [];
-        $permissions ??= [];
+        $roles             ??= [];
+        $permissions       ??= [];
         $emailVerified ??= false;
-        $this->roles = $roles;
+        $this->roles       = $roles;
         $this->permissions = $permissions;
         $this->emailVerified = $emailVerified;
     }
 
     public static function fromUser(
         User $user,
-        ?bool $emailVerified = null,
+        bool $emailVerified = null,
         bool $mfaEnabled = false,
     ): self {
         $emailVerified ??= false;

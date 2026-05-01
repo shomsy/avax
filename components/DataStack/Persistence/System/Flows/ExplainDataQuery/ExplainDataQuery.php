@@ -7,7 +7,6 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\ExplainDataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQueryPlan;
 use Avax\Components\DataStack\Persistence\System\Flows\CompileDataQuery\CompileDataQuery;
-
 use function count;
 use function in_array;
 use function is_array;
@@ -21,9 +20,9 @@ final class ExplainDataQuery
 {
     private CompileDataQuery $compiler;
 
-    public function __construct(?CompileDataQuery $compiler = null)
+    public function __construct(CompileDataQuery $compiler = null)
     {
-        $this->compiler = $compiler ?? new CompileDataQuery;
+        $this->compiler = $compiler ?? new CompileDataQuery();
     }
 
     /**

@@ -168,10 +168,10 @@ final readonly class ExchangeAuthorizationCode
             name      : 'auth.oauth.authorization_code.exchanged',
             occurredAt: $now,
             context   : [
-                'client_id' => $client->clientId,
-                'user_id' => $user->getId()->value,
-                'code_id' => $record->codeId,
-                'scope' => implode(separator: ' ', array: $record->scopes),
+                            'client_id' => $client->clientId,
+                            'user_id'   => $user->getId()->value,
+                            'code_id'   => $record->codeId,
+                            'scope'     => implode(separator: ' ', array: $record->scopes),
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],
@@ -203,11 +203,11 @@ final readonly class ExchangeAuthorizationCode
             name      : $name,
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $data->clientId,
+                            'client_id'  => $data->clientId,
                 'redirect_uri' => $data->redirectUri,
-                'reason' => $reason,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
+                            'reason'     => $reason,
+                            'ip_address' => $data->ipAddress,
+                            'user_agent' => $data->userAgent,
             ],
         ));
     }

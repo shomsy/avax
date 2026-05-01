@@ -13,9 +13,9 @@ final class RunDatabaseTransaction
         return $work();
     }
 
-    public function begin(): void {}
+    public function begin() : void {}
 
-    public function commit(): void {}
+    public function commit() : void {}
 
-    public function rollback(): void {}
+    public function rollback() : void {}
 }

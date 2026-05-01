@@ -10,7 +10,7 @@ namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Si
 final readonly class RiskDecision
 {
     /**
-     * @param  list<string>  $reasons
+     * @param list<string> $reasons
      */
     public function __construct(public RiskAction $action, public array $reasons = []) {}
 

@@ -85,7 +85,7 @@ final class MimeMessage
 
     public function withAttachment(string $filename, string $content, string $mimeType): self
     {
-        $attachments = $this->attachments;
+        $attachments   = $this->attachments;
         $attachments[] = [
             'filename' => $filename,
             'content' => $content,

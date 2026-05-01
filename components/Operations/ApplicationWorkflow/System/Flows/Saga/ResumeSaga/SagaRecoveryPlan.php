@@ -6,9 +6,9 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Resum
 
 enum SagaRecoveryStrategy: string
 {
-    case RETRY = 'retry';
+    case RETRY   = 'retry';
     case COMPENSATE = 'compensate';
-    case SKIP = 'skip';
+    case SKIP    = 'skip';
     case ABANDON = 'abandon';
 }
 
@@ -60,8 +60,8 @@ final readonly class SagaRecoveryPlan
     public function toMetadata(): array
     {
         return [
-            'strategy' => $this->strategy->value,
-            'max_retries' => $this->maxRetries,
+            'strategy'       => $this->strategy->value,
+            'max_retries'    => $this->maxRetries,
             'retry_delay_ms' => $this->retryDelayMs,
             'allow_skip_steps' => $this->allowSkipSteps,
         ];

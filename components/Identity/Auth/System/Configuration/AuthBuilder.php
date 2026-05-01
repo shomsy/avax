@@ -342,9 +342,9 @@ final class AuthBuilder
 
     public function withIdentityBackends(
         #[SensitiveParameter]
-        ?SessionIdentityInterface $sessionIdentity = null,
+        SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        ?JwtIdentityInterface $jwtIdentity = null,
+        JwtIdentityInterface     $jwtIdentity = null,
     ): self {
         $this->identity = Identity::fromBackends(
             sessionIdentity: $sessionIdentity,
@@ -660,9 +660,9 @@ final class AuthBuilder
             oidcProvider     : $this->oidcProvider,
         );
 
-        $identity = $this->identity;
-        $passwordHasher = $this->passwordHasher ?? new PasswordHasher;
-        $auditLog = $this->auditLog ?? new NullAuditLog;
+        $identity       = $this->identity;
+        $passwordHasher = $this->passwordHasher ?? new PasswordHasher();
+        $auditLog       = $this->auditLog ?? new NullAuditLog();
 
         if ($this->auditCorrelationId !== null) {
             $auditLog = new CorrelatingAuditLog(
@@ -670,46 +670,46 @@ final class AuthBuilder
                 correlationId: $this->auditCorrelationId,
             );
         }
-        $clock = $this->clock ?? new Clock;
-        $oauthClientRegistry = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry(passwordHasher: $passwordHasher);
-        $authorizationCodeStore = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore;
-        $lifecycleStore = $this->lifecycleStore ?? new InMemoryLifecycleStore;
-        $adminElevationStore = $this->adminElevationStore ?? new InMemoryAdminElevationStore;
-        $riskEngine = $this->riskEngine ?? new DeterministicRiskEngine(
-            knownEnvironments: new InMemoryKnownAuthenticationEnvironmentStore,
-            signals          : new InMemoryRiskSignalStore,
+        $clock                            = $this->clock ?? new Clock();
+        $oauthClientRegistry              = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry(passwordHasher: $passwordHasher);
+        $authorizationCodeStore           = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
+        $lifecycleStore                   = $this->lifecycleStore ?? new InMemoryLifecycleStore();
+        $adminElevationStore              = $this->adminElevationStore ?? new InMemoryAdminElevationStore();
+        $riskEngine                       = $this->riskEngine ?? new DeterministicRiskEngine(
+            knownEnvironments: new InMemoryKnownAuthenticationEnvironmentStore(),
+            signals          : new InMemoryRiskSignalStore(),
             clock            : $clock,
         );
-        $passkeyCredentialStore = $this->passkeyCredentialStore ?? new InMemoryPasskeyCredentialStore;
-        $passkeyChallengeStore = $this->passkeyChallengeStore ?? new InMemoryPasskeyChallengeStore;
-        $federationConnectionStore = $this->federationConnectionStore ?? new InMemoryFederationConnectionStore;
-        $federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore;
-        $groupRoleMappingValidator = new GroupRoleMappingValidator;
-        $passwordResetStore = $this->passwordResetStore ?? new InMemoryPasswordResetStore;
-        $emailVerificationStore = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore;
-        $emailChangeStore = $this->emailChangeStore ?? new InMemoryEmailChangeStore;
-        $emailVerificationState = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore;
-        $mfaStore = $this->mfaStore ?? new InMemoryMfaStore;
-        $mfaChallengeStore = $this->mfaChallengeStore ?? new InMemoryMfaChallengeStore;
-        $totp = $this->totp ?? new Totp;
-        $mfaAttemptLimit = $this->mfaAttemptLimit ?? new LimitMfaAttempts(
-            storage: new InMemoryAttemptLimitStorage,
+        $passkeyCredentialStore           = $this->passkeyCredentialStore ?? new InMemoryPasskeyCredentialStore();
+        $passkeyChallengeStore            = $this->passkeyChallengeStore ?? new InMemoryPasskeyChallengeStore();
+        $federationConnectionStore        = $this->federationConnectionStore ?? new InMemoryFederationConnectionStore();
+        $federatedIdentityLinkStore       = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore();
+        $groupRoleMappingValidator        = new GroupRoleMappingValidator();
+        $passwordResetStore               = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
+        $emailVerificationStore           = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
+        $emailChangeStore                 = $this->emailChangeStore ?? new InMemoryEmailChangeStore();
+        $emailVerificationState           = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
+        $mfaStore                         = $this->mfaStore ?? new InMemoryMfaStore();
+        $mfaChallengeStore                = $this->mfaChallengeStore ?? new InMemoryMfaChallengeStore();
+        $totp                             = $this->totp ?? new Totp();
+        $mfaAttemptLimit                  = $this->mfaAttemptLimit ?? new LimitMfaAttempts(
+            storage: new InMemoryAttemptLimitStorage(),
             clock  : $clock,
         );
         $passwordResetThrottle = $this->passwordResetThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore,
+            store       : new InMemoryAttemptThrottleStore(),
             clock       : $clock,
             maxAttempts : 5,
             decaySeconds: 900,
         );
         $mfaRecoveryThrottle = $this->mfaRecoveryThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore,
+            store       : new InMemoryAttemptThrottleStore(),
             clock       : $clock,
             maxAttempts : 3,
             decaySeconds: 1800,
         );
         $scimThrottle = $this->scimThrottle ?? new AttemptThrottle(
-            store       : new InMemoryAttemptThrottleStore,
+            store       : new InMemoryAttemptThrottleStore(),
             clock       : $clock,
             maxAttempts : 60,
             decaySeconds: 60,
@@ -718,8 +718,8 @@ final class AuthBuilder
             emailVerificationState: $emailVerificationState,
             mfaStore              : $mfaStore,
         );
-        $currentAuthentication = new CurrentAuthentication;
-        $requireFreshMfa = new RequireFreshMfa(
+        $currentAuthentication            = new CurrentAuthentication();
+        $requireFreshMfa                  = new RequireFreshMfa(
             currentAuthentication: $currentAuthentication,
             clock                : $clock,
         );
@@ -792,12 +792,12 @@ final class AuthBuilder
         $readOidcJsonWebKeySet = $this->oidcProvider !== null
             ? new ReadOidcJsonWebKeySet(oidcProvider: $this->oidcProvider)
             : null;
-        $jwtIdentity = $identity->jwtIdentity();
+        $jwtIdentity                      = $identity->jwtIdentity();
         $readOidcUserInfo = $jwtIdentity !== null && $this->oidcProvider !== null
             ? new ReadOidcUserInfo(jwtIdentity: $jwtIdentity, oidcProvider: $this->oidcProvider)
             : null;
         $oidcRequestObjectStore = $this->oidcProvider !== null
-            ? ($this->oidcRequestObjectStore ?? new InMemoryOidcRequestObjectStore)
+            ? ($this->oidcRequestObjectStore ?? new InMemoryOidcRequestObjectStore())
             : null;
         $pushOidcAuthorizationRequest = $oidcRequestObjectStore !== null
             ? new PushAuthorizationRequest(
@@ -897,13 +897,13 @@ final class AuthBuilder
                 clock     : $clock,
             )
             : null;
-        $scimDirectoryStore = $this->scimDirectoryStore ?? new InMemoryScimDirectoryStore(passwordHasher: $passwordHasher);
-        $scimProvisionedIdentityStore = $this->scimProvisionedIdentityStore ?? new InMemoryScimProvisionedIdentityStore;
-        $tenantStore = $this->tenantStore ?? new InMemoryTenantStore;
-        $tenantSecurityConfigurationStore = $this->tenantSecurityConfigurationStore ?? new InMemoryTenantSecurityConfigurationStore;
-        $tenantSecurityChangeRequestStore = $this->tenantSecurityChangeRequestStore ?? new InMemoryTenantSecurityChangeRequestStore;
-        $readTenantSecurityConfiguration = new ReadTenantSecurityConfiguration(configurationStore: $tenantSecurityConfigurationStore);
-        $beginTenantSecurityChange = new BeginTenantSecurityChange(
+        $scimDirectoryStore               = $this->scimDirectoryStore ?? new InMemoryScimDirectoryStore(passwordHasher: $passwordHasher);
+        $scimProvisionedIdentityStore     = $this->scimProvisionedIdentityStore ?? new InMemoryScimProvisionedIdentityStore();
+        $tenantStore                      = $this->tenantStore ?? new InMemoryTenantStore();
+        $tenantSecurityConfigurationStore = $this->tenantSecurityConfigurationStore ?? new InMemoryTenantSecurityConfigurationStore();
+        $tenantSecurityChangeRequestStore = $this->tenantSecurityChangeRequestStore ?? new InMemoryTenantSecurityChangeRequestStore();
+        $readTenantSecurityConfiguration  = new ReadTenantSecurityConfiguration(configurationStore: $tenantSecurityConfigurationStore);
+        $beginTenantSecurityChange        = new BeginTenantSecurityChange(
             configurationStore       : $tenantSecurityConfigurationStore,
             changeRequestStore       : $tenantSecurityChangeRequestStore,
             federationConnectionStore: $federationConnectionStore,
@@ -928,15 +928,15 @@ final class AuthBuilder
             auditLog          : $auditLog,
             clock             : $clock,
         );
-        $readTenantSecurityChangeRequest = new ReadTenantSecurityChangeRequest(changeRequestStore: $tenantSecurityChangeRequestStore);
+        $readTenantSecurityChangeRequest  = new ReadTenantSecurityChangeRequest(changeRequestStore: $tenantSecurityChangeRequestStore);
         $readTenantSecurityChangeRequests = new ReadTenantSecurityChangeRequests(changeRequestStore: $tenantSecurityChangeRequestStore);
-        $createTenant = new CreateTenant(
+        $createTenant                     = new CreateTenant(
             tenantStore: $tenantStore,
             userSource : $this->userSource,
             auditLog   : $auditLog,
             clock      : $clock,
         );
-        $readTenants = new ReadTenants(tenantStore: $tenantStore);
+        $readTenants                      = new ReadTenants(tenantStore: $tenantStore);
         $inviteTenantMember = new InviteTenantMember(
             tenantStore: $tenantStore,
             auditLog   : $auditLog,
@@ -948,7 +948,7 @@ final class AuthBuilder
             auditLog   : $auditLog,
             clock      : $clock,
         );
-        $readTenantMembers = new ReadTenantMembers(tenantStore: $tenantStore);
+        $readTenantMembers                = new ReadTenantMembers(tenantStore: $tenantStore);
         $removeTenantMember = new RemoveTenantMember(
             tenantStore: $tenantStore,
             auditLog   : $auditLog,
@@ -977,7 +977,7 @@ final class AuthBuilder
                 directoryStore : $scimDirectoryStore,
                 identityStore  : $scimProvisionedIdentityStore,
                 passwordHasher : $passwordHasher,
-                idGenerator    : $this->idGenerator ?? new IdGenerator,
+                idGenerator    : $this->idGenerator ?? new IdGenerator(),
                 auditLog       : $auditLog,
                 clock          : $clock,
                 lifecycle      : $lifecycle,
@@ -1114,7 +1114,7 @@ final class AuthBuilder
             register          : new Register(
                 userSource               : $this->userSource,
                 passwordHasher           : $passwordHasher,
-                idGenerator              : $this->idGenerator ?? new IdGenerator,
+                idGenerator              : $this->idGenerator ?? new IdGenerator(),
                 projectAuthenticatedUser : $projectAuthenticatedUser,
                 auditLog                 : $auditLog,
                 clock                    : $clock,
@@ -1509,7 +1509,7 @@ final class AuthBuilder
                                               projectAuthenticatedUser: $projectAuthenticatedUser,
                                               currentAuthentication   : $currentAuthentication,
                                               passwordHasher          : $passwordHasher,
-                                              idGenerator             : $this->idGenerator ?? new IdGenerator,
+                                              idGenerator             : $this->idGenerator ?? new IdGenerator(),
                                               auditLog                : $auditLog,
                                               clock                   : $clock,
                                               riskEngine              : $riskEngine,
@@ -1529,7 +1529,7 @@ final class AuthBuilder
                                             ? new RegisterScimDirectory(
                                                 directoryStore           : $scimDirectoryStore,
                                                 passwordHasher           : $passwordHasher,
-                                                groupRoleMappingValidator: new GroupRoleMappingValidator,
+                                                groupRoleMappingValidator: new GroupRoleMappingValidator(),
                                                 auditLog                 : $auditLog,
                                                 clock                    : $clock,
                                             )
@@ -1651,7 +1651,7 @@ final class AuthBuilder
         );
 
         $diagnostics = new Diagnostics(
-            authIssueExplainer: new AuthIssueExplainer,
+            authIssueExplainer: new AuthIssueExplainer(),
         );
 
         return new Auth(

@@ -16,13 +16,13 @@ final class LogTransport implements MailTransport
     {
         $this->messages[] = [
             'from' => $envelope->from,
-            'to' => $message->to,
+            'to'   => $message->to,
             'subject' => $message->subject,
         ];
 
         return new TransportResult(
             success  : true,
-            messageId: '<'.uniqid(prefix: 'msg-', more_entropy: true).'-logged@local>',
+            messageId: '<' . uniqid(prefix: 'msg-', more_entropy: true) . '-logged@local>',
         );
     }
 

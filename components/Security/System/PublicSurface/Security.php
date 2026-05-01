@@ -28,7 +28,7 @@ final class Security
         return CsrfToken::rotate();
     }
 
-    public static function verifyCsrfToken(string $token, ?string $sessionToken = null): bool
+    public static function verifyCsrfToken(string $token, string $sessionToken = null) : bool
     {
         $valid = CsrfVerifier::verify(token: $token, sessionToken: $sessionToken);
         self::audit(event: $valid ? 'csrf.accepted' : 'csrf.rejected');
@@ -53,7 +53,7 @@ final class Security
 
     public static function fillable(array $input, array $fillable): array
     {
-        return (new MassAssignmentGuard)->onlyFillable(input: $input, fillable: $fillable);
+        return (new MassAssignmentGuard())->onlyFillable(input: $input, fillable: $fillable);
     }
 
     public static function applySecurityHeaders(ResponseFormatter $responseFormatter): ResponseFormatter
@@ -99,7 +99,7 @@ final class Security
     private static function auditLog(): SecurityAuditLog
     {
         if (self::$auditLog === null) {
-            self::$auditLog = new SecurityAuditLog;
+            self::$auditLog = new SecurityAuditLog();
         }
 
         return self::$auditLog;

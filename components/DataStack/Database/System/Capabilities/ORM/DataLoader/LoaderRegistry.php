@@ -21,7 +21,7 @@ final class LoaderRegistry
     public function get(string $relation): DataLoaderInterface
     {
         return $this->loaders[$relation]
-            ?? throw new RuntimeException(message: 'No DataLoader registered for relation: '.$relation);
+            ?? throw new RuntimeException(message: 'No DataLoader registered for relation: ' . $relation);
     }
 
     public function has(string $relation): bool

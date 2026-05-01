@@ -39,7 +39,7 @@ final readonly class RunSagaStep
             );
         }
 
-        $policy = SagaStepExecutionPolicy::fromStep(step: $stepDef);
+        $policy  = SagaStepExecutionPolicy::fromStep(step: $stepDef);
         $attempt = 1;
         $startTime = microtime(true);
 

@@ -23,7 +23,7 @@ final readonly class Collection implements CollectionInterface
     public function __construct(
         private array $items = [],
     ) {
-        $this->guard = new MutationGuard;
+        $this->guard = new MutationGuard();
     }
 
     public static function make(iterable $items = []): static
@@ -268,7 +268,7 @@ final readonly class Collection implements CollectionInterface
         return new self(items: $filtered);
     }
 
-    public function sort(?callable $callback = null): static
+    public function sort(callable $callback = null) : static
     {
         return new self(
             items: new Order\SortValues(items: $this->items)->sort(callback: $callback),

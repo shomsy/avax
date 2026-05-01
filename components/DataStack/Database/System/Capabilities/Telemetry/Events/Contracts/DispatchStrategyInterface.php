@@ -32,8 +32,8 @@ interface DispatchStrategyInterface
      * implementation's performance strategy (e.g., executing all listeners
      * sequentially in the current process).
      *
-     * @param  Event  $event  The technical signal payload to be distributed.
-     * @param  iterable<callable>  $listeners  The collection of authorized technical handlers/observers to be triggered.
+     * @param Event              $event     The technical signal payload to be distributed.
+     * @param iterable<callable> $listeners The collection of authorized technical handlers/observers to be triggered.
      */
     public function handle(Event $event, iterable $listeners): void;
 }

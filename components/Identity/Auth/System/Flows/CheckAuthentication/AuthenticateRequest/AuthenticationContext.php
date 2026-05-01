@@ -40,7 +40,7 @@ final readonly class AuthenticationContext
         }
     }
 
-    public static function guest(?string $reason = null): self
+    public static function guest(string $reason = null) : self
     {
         return new self(
             authenticated: false,
@@ -53,16 +53,16 @@ final readonly class AuthenticationContext
         AuthenticatedUser $user,
         AuthenticationMode $mode,
         #[SensitiveParameter]
-        ?string $sessionId = null,
+        string            $sessionId = null,
         #[SensitiveParameter]
-        ?string $accessTokenId = null,
+        string            $accessTokenId = null,
         #[SensitiveParameter]
-        ?DateTimeImmutable $accessTokenExpiresAt = null,
+        DateTimeImmutable $accessTokenExpiresAt = null,
         #[SensitiveParameter]
-        ?string $refreshTokenId = null,
+        string            $refreshTokenId = null,
         #[SensitiveParameter]
-        ?string $refreshTokenFamilyId = null,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
+        string            $refreshTokenFamilyId = null,
+        DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): self {
         return new self(

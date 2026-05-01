@@ -25,7 +25,7 @@ final class BatchLoader
      */
     public function load(string $name, array $keys): array
     {
-        $cacheKey = $name.':'.md5(string: json_encode(value: array_values(array: $keys), flags: JSON_THROW_ON_ERROR));
+        $cacheKey = $name . ':' . md5(string: json_encode(value: array_values(array: $keys), flags: JSON_THROW_ON_ERROR));
 
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
@@ -34,7 +34,7 @@ final class BatchLoader
         $callback = $this->loaders[$name] ?? null;
 
         if ($callback === null) {
-            throw new RuntimeException(message: 'No loader registered for: '.$name);
+            throw new RuntimeException(message: 'No loader registered for: ' . $name);
         }
 
         $results = $callback($keys);

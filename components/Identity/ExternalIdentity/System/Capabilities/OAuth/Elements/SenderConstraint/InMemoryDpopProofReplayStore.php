@@ -16,7 +16,7 @@ final class InMemoryDpopProofReplayStore implements DpopProofReplayStoreInterfac
 
     public function remember(string $proofId, DateTimeImmutable $expiresAt): bool
     {
-        $now = new DateTimeImmutable;
+        $now = new DateTimeImmutable();
 
         foreach ($this->proofs as $storedId => $storedExpiry) {
             if ($storedExpiry <= $now) {

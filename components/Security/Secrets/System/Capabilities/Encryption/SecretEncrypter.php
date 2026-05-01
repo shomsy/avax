@@ -28,7 +28,7 @@ final readonly class SecretEncrypter
             throw new RuntimeException('Secret encryption failed.');
         }
 
-        return base64_encode($iv.$tag.$encrypted);
+        return base64_encode($iv . $tag . $encrypted);
     }
 
     public function decrypt(string $value): string
@@ -39,7 +39,7 @@ final readonly class SecretEncrypter
             throw new RuntimeException('Encrypted secret payload is invalid.');
         }
 
-        $iv = substr($data, 0, 16);
+        $iv  = substr($data, 0, 16);
         $tag = substr($data, 16, 16);
         $encrypted = substr($data, 32);
 

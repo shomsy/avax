@@ -9,7 +9,7 @@ use SensitiveParameter;
 final readonly class CompleteFederatedLoginData
 {
     /**
-     * @param  array<string, mixed>  $payload
+     * @param array<string, mixed> $payload
      */
     public function __construct(
         public string $connectionId,

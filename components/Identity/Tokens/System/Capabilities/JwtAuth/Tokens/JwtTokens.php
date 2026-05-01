@@ -28,11 +28,11 @@ final readonly class AccessToken
     public function toPayload(): array
     {
         return [
-            'sub' => $this->sub,
+            'sub'  => $this->sub,
             'scopes' => $this->scopes,
-            'exp' => $this->exp,
-            'iat' => $this->iat,
-            'jti' => $this->jti,
+            'exp'  => $this->exp,
+            'iat'  => $this->iat,
+            'jti'  => $this->jti,
             'type' => 'access',
         ];
     }
@@ -72,8 +72,8 @@ final readonly class TokenPair
         return [
             'access_token' => $this->accessToken,
             'refresh_token' => $this->refreshToken,
-            'expires_in' => $this->expiresIn,
-            'token_type' => $this->tokenType,
+            'expires_in'   => $this->expiresIn,
+            'token_type'   => $this->tokenType,
         ];
     }
 }

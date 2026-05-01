@@ -62,18 +62,18 @@ final readonly class SagaCommandKey
         string $action,
         ?string $tenantId,
     ) {
-        $this->value = $value;
+        $this->value       = $value;
         $this->aggregateType = $aggregateType;
         $this->aggregateId = $aggregateId;
-        $this->action = $action;
-        $this->tenantId = $tenantId;
+        $this->action      = $action;
+        $this->tenantId    = $tenantId;
     }
 
     public static function create(
         string $aggregateType,
         string $aggregateId,
         string $action,
-        ?string $tenantId = null,
+        string $tenantId = null,
     ): self {
         $parts = array_filter([$aggregateType, $aggregateId, $action, $tenantId]);
         $value = implode(':', $parts);
@@ -117,10 +117,10 @@ final readonly class SagaCommandResult
         ?string $error,
         DateTimeImmutable $occurredAt,
     ) {
-        $this->sagaId = $sagaId;
+        $this->sagaId  = $sagaId;
         $this->success = $success;
-        $this->output = $output;
-        $this->error = $error;
+        $this->output  = $output;
+        $this->error   = $error;
         $this->occurredAt = $occurredAt;
     }
 
@@ -131,7 +131,7 @@ final readonly class SagaCommandResult
             success   : true,
             output    : $output,
             error     : null,
-            occurredAt: new DateTimeImmutable,
+            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -142,7 +142,7 @@ final readonly class SagaCommandResult
             success   : false,
             output    : [],
             error     : $error,
-            occurredAt: new DateTimeImmutable,
+            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -151,8 +151,8 @@ final readonly class SagaCommandResult
         return [
             'saga_id' => $this->sagaId,
             'success' => $this->success,
-            'output' => $this->output,
-            'error' => $this->error,
+            'output'  => $this->output,
+            'error'   => $this->error,
             'occurred_at' => $this->occurredAt->format(format: DateTimeInterface::ISO8601),
         ];
     }
@@ -166,8 +166,8 @@ final class DuplicateSagaCommand extends Exception
 
     public function __construct(
         string $message = 'Duplicate saga command detected.',
-        ?string $sagaId = null,
-        ?SagaCommandResult $previousResult = null,
+        string            $sagaId = null,
+        SagaCommandResult $previousResult = null,
     ) {
         parent::__construct(message: $message);
         $this->sagaId = $sagaId;

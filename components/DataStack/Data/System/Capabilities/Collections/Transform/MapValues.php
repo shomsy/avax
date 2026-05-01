@@ -14,7 +14,8 @@ final readonly class MapValues
     ) {}
 
     /**
-     * @param  callable  $callback  fn(mixed $item, int|string $key) : mixed
+     * @param callable $callback fn(mixed $item, int|string $key) : mixed
+     *
      * @return array<mixed>
      */
     public function __invoke(callable $callback): array
@@ -23,7 +24,7 @@ final readonly class MapValues
     }
 
     /**
-     * @param  callable  $callback  fn(mixed $item, int|string $key) : mixed
+     * @param callable $callback fn(mixed $item, int|string $key) : mixed
      * @return array<mixed>
      */
     public function map(callable $callback): array

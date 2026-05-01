@@ -33,7 +33,8 @@ interface GrammarInterface
      * Compile a valid data retrieval instruction including projections,
      * relationships, filters, aggregations, and ordering.
      *
-     * @param  QueryState  $queryState  The immutable container holding the current query metadata.
+     * @param QueryState $queryState The immutable container holding the current query metadata.
+     *
      * @return string THE compiled dialect-specific SQL SELECT string.
      */
     public function compileSelect(QueryState $queryState): string;
@@ -45,7 +46,8 @@ interface GrammarInterface
      * Compile a valid data creation instruction based on the provided mutation
      * values within the state.
      *
-     * @param  QueryState  $queryState  The technical state containing the mutation payload.
+     * @param QueryState $queryState The technical state containing the mutation payload.
+     *
      * @return string THE compiled dialect-specific SQL INSERT string.
      */
     public function compileInsert(QueryState $queryState): string;
@@ -57,7 +59,8 @@ interface GrammarInterface
      * Compile a data modification instruction that applies specific value
      * changes to records matching the state's filtering criteria.
      *
-     * @param  QueryState  $queryState  The technical state containing both mutation values and filters.
+     * @param QueryState $queryState The technical state containing both mutation values and filters.
+     *
      * @return string THE compiled dialect-specific SQL UPDATE string.
      */
     public function compileUpdate(QueryState $queryState): string;
@@ -69,7 +72,8 @@ interface GrammarInterface
      * Compile a data removal instruction targeting records that satisfy
      * the state's filtering criteria.
      *
-     * @param  QueryState  $queryState  The technical state defining the deletion boundary.
+     * @param QueryState $queryState The technical state defining the deletion boundary.
+     *
      * @return string THE compiled dialect-specific SQL DELETE string.
      */
     public function compileDelete(QueryState $queryState): string;
@@ -81,9 +85,10 @@ interface GrammarInterface
      * Provide a dialect-safe mechanism for "Insert or Update on Conflict"
      * operations, resolving row collisions based on specified unique columns.
      *
-     * @param  QueryState  $queryState  The technical state containing the mutation payload.
-     * @param  array  $uniqueBy  The collection of technical column identifiers used for conflict detection.
-     * @param  array  $update  The collection of technical column identifiers to be updated upon conflict.
+     * @param QueryState $queryState The technical state containing the mutation payload.
+     * @param array      $uniqueBy   The collection of technical column identifiers used for conflict detection.
+     * @param array      $update     The collection of technical column identifiers to be updated upon conflict.
+     *
      * @return string THE compiled dialect-specific SQL UPSERT/ON DUPLICATE KEY string.
      */
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string;
@@ -95,7 +100,8 @@ interface GrammarInterface
      * Provide a high-performance instruction for purging all records from
      * a specific data source while bypassing individual row deletion triggers.
      *
-     * @param  string  $table  THE physical technical identifier of the database table.
+     * @param string $table THE physical technical identifier of the database table.
+     *
      * @return string THE compiled dialect-specific SQL TRUNCATE string.
      */
     public function compileTruncate(string $table): string;
@@ -106,7 +112,8 @@ interface GrammarInterface
      * -- intent:
      * Provide a defensive destruction command for schema-level data sources.
      *
-     * @param  string  $table  THE physical technical identifier of the database table.
+     * @param string $table THE physical technical identifier of the database table.
+     *
      * @return string THE compiled dialect-specific SQL DROP string.
      */
     public function compileDropIfExists(string $table): string;
@@ -114,7 +121,8 @@ interface GrammarInterface
     /**
      * Coordinate the technical generation of a CREATE DATABASE SQL statement.
      *
-     * @param  string  $name  THE physical technical identifier of the target database.
+     * @param string $name THE physical technical identifier of the target database.
+     *
      * @return string THE compiled dialect-specific SQL CREATE DATABASE string.
      */
     public function compileCreateDatabase(string $name): string;
@@ -122,7 +130,8 @@ interface GrammarInterface
     /**
      * Coordinate the technical generation of a DROP DATABASE SQL statement.
      *
-     * @param  string  $name  THE physical technical identifier of the target database.
+     * @param string $name THE physical technical identifier of the target database.
+     *
      * @return string THE compiled dialect-specific SQL DROP DATABASE string.
      */
     public function compileDropDatabase(string $name): string;
@@ -141,7 +150,8 @@ interface GrammarInterface
      * Protects SQL structural integrity and prevents reserved keyword
      * collisions by applying dialect-specific quote characters (e.g., backticks).
      *
-     * @param  mixed  $value  THE technical name (string) or an Expression object to be wrapped.
+     * @param mixed $value THE technical name (string) or an Expression object to be wrapped.
+     *
      * @return string THE securely wrapped technical SQL identifier.
      */
     public function wrap(mixed $value): string;

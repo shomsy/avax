@@ -64,7 +64,7 @@ class ConsoleOutput
      */
     public function line(string $message = ''): void
     {
-        echo $message.PHP_EOL;
+        echo $message . PHP_EOL;
     }
 
     /**
@@ -76,7 +76,7 @@ class ConsoleOutput
             return $message;
         }
 
-        return $color.$message.self::COLOR_RESET;
+        return $color . $message . self::COLOR_RESET;
     }
 
     /**

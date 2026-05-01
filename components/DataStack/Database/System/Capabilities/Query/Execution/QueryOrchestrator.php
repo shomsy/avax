@@ -26,14 +26,14 @@ final class QueryOrchestrator
     private readonly ExecutorInterface $executor;
 
     /**
-     * @param  ExecutorInterface  $executor  Low-level executor.
-     * @param  ExecutionScope|null  $scope  Correlation scope (optional).
+     * @param ExecutorInterface   $executor Low-level executor.
+     * @param ExecutionScope|null $scope    Correlation scope (optional).
      *
      * @throws RandomException
      */
     public function __construct(
         ExecutorInterface $executor,
-        ?ExecutionScope $scope = null,
+        ExecutionScope $scope = null,
     ) {
         $this->executor = $executor;
         $this->scope = $scope;
@@ -83,7 +83,7 @@ final class QueryOrchestrator
      */
     public function execute(
         string $sql,
-        ?array $bindings = null,
+        array $bindings = null,
     ): ExecutionResult {
         $bindings ??= [];
 

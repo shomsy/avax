@@ -32,7 +32,7 @@ final readonly class ExecuteCompensationStep
 
         return [
             'success' => true,
-            'output' => is_array($result) ? $result : ['result' => $result],
+            'output'  => is_array($result) ? $result : ['result' => $result],
             'duration_ms' => $duration,
         ];
     }
@@ -92,7 +92,7 @@ final readonly class PublishSagaCompensated
         $topic = sprintf('saga.%s.compensated', $definitionName);
 
         $this->messageBus->publish($topic, [
-            'saga_id' => $sagaId,
+            'saga_id'         => $sagaId,
             'definition_name' => $definitionName,
             'compensation_results' => $compensationResults,
         ]);
@@ -101,7 +101,7 @@ final readonly class PublishSagaCompensated
 
 class SagaCompensationFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga compensation failed.', ?Throwable $previous = null)
+    public function __construct(string $message = 'Saga compensation failed.', Throwable $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

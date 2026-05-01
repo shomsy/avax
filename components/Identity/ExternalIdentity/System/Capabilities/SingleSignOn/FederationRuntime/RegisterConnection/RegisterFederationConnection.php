@@ -40,7 +40,7 @@ final readonly class RegisterFederationConnection
         }
 
         $connection = new FederationConnection(
-            connectionId           : 'fed_'.bin2hex(string: random_bytes(length: 12)),
+            connectionId           : 'fed_' . bin2hex(string: random_bytes(length: 12)),
             tenantSlug             : trim(string: $data->tenantSlug),
             name                   : trim(string: $data->name),
             provider               : $data->provider,
@@ -58,10 +58,10 @@ final readonly class RegisterFederationConnection
             name      : 'auth.federation.connection.registered',
             occurredAt: $this->clock->now(),
             context   : [
-                'connection_id' => $connection->connectionId,
-                'tenant' => $connection->tenantSlug,
-                'domain' => $connection->domain,
-                'provider' => $connection->provider->value,
+                            'connection_id' => $connection->connectionId,
+                            'tenant'        => $connection->tenantSlug,
+                            'domain'        => $connection->domain,
+                            'provider'      => $connection->provider->value,
                 'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
             ],
         ));

@@ -32,7 +32,7 @@ final readonly class VerifyEmail
                 name      : 'auth.email_verification.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'reason' => 'invalid_token',
+                                'reason' => 'invalid_token',
                     'ip_address' => $data->ipAddress,
                     'user_agent' => $data->userAgent,
                 ],
@@ -46,7 +46,7 @@ final readonly class VerifyEmail
             name      : 'auth.email_verification.completed',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $userId->value,
+                            'user_id' => $userId->value,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],

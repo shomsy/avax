@@ -30,7 +30,7 @@ final class DataQueryBuilder
     /**
      * Sets the entity type to query.
      *
-     * @param  class-string  $entityType
+     * @param class-string $entityType
      */
     public function from(string $entityType): DataQueryBuilder
     {
@@ -42,7 +42,7 @@ final class DataQueryBuilder
     /**
      * Sets the fields to select.
      *
-     * @param  array<string>|string  $fields
+     * @param array<string>|string $fields
      */
     public function select(array|string $fields = ['*']): DataQueryBuilder
     {
@@ -110,14 +110,14 @@ final class DataQueryBuilder
     /**
      * Adds a JOIN clause.
      *
-     * @param  array{type: string, table: string, on: string}  $join
+     * @param array{type: string, table: string, on: string} $join
      */
     public function join(string $type, string $table, string $on): DataQueryBuilder
     {
         $this->joins[] = [
             'type' => $type,
             'table' => $table,
-            'on' => $on,
+            'on'   => $on,
         ];
 
         return $this;

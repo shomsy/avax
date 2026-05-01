@@ -48,7 +48,7 @@ final class PoolState
     private readonly int $maxConnections;
 
     /**
-     * @param  int  $maxConnections  The absolute maximum number of people allowed in at once.
+     * @param int $maxConnections The absolute maximum number of people allowed in at once.
      */
     public function __construct(int $maxConnections)
     {

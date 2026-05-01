@@ -32,9 +32,9 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
     private ?LoggerInterface $logger;
 
     /**
-     * @param  LoggerInterface|null  $logger  Optional technical logger for capturing observer execution failures.
+     * @param LoggerInterface|null $logger Optional technical logger for capturing observer execution failures.
      */
-    public function __construct(?LoggerInterface $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }
@@ -47,8 +47,8 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
      * the signal payload while providing a safety boundary to isolate
      * cross-observer side-effects.
      *
-     * @param  Event  $event  The technical signal payload to be distributed.
-     * @param  iterable<callable>  $listeners  The collection of authorized technical handlers to be triggered.
+     * @param Event              $event     The technical signal payload to be distributed.
+     * @param iterable<callable> $listeners The collection of authorized technical handlers to be triggered.
      */
     public function handle(Event $event, iterable $listeners): void
     {
@@ -58,9 +58,9 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
             } catch (Throwable $e) {
                 // Defensive capture: isolate observer failure from the producer's thread.
                 $this->logger?->error(
-                    message: 'Event listener execution failed: '.$e->getMessage(),
+                    message: 'Event listener execution failed: ' . $e->getMessage(),
                     context: [
-                        'event' => $event::class,
+                                 'event' => $event::class,
                         'exception' => $e,
                     ],
                 );

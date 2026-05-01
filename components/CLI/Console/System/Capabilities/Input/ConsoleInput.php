@@ -20,7 +20,7 @@ class ConsoleInput
      */
     public static function fromArgv(array $argv): self
     {
-        $input = new self;
+        $input = new self();
         $input->parse($argv);
 
         return $input;
@@ -35,7 +35,7 @@ class ConsoleInput
             if (str_starts_with((string) $arg, '--')) {
                 // Long option: --key=value or --key
                 $parts = explode('=', substr((string) $arg, 2), 2);
-                $key = $parts[0];
+                $key   = $parts[0];
                 $this->options[$key] = $parts[1] ?? true;
             } elseif (str_starts_with((string) $arg, '-') && strlen((string) $arg) > 1) {
                 // Short option: -k=value or -k or -abc
@@ -64,7 +64,7 @@ class ConsoleInput
      */
     public static function make(array $arguments = [], array $options = []): self
     {
-        $input = new self;
+        $input          = new self();
         $input->arguments = $arguments;
         $input->options = $options;
 

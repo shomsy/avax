@@ -40,7 +40,7 @@ final class DataTransfer
      *
      * @template T of object
      *
-     * @param  class-string<T>  $class
+     * @param class-string<T> $class
      */
     public static function tryCreate(string $class, array|object $input): DataTransferResult
     {
@@ -63,7 +63,8 @@ final class DataTransfer
      *
      * @template T of object
      *
-     * @param  class-string<T>  $class
+     * @param class-string<T> $class
+     *
      * @return T
      */
     public static function create(string $class, array|object $input): object
@@ -72,7 +73,7 @@ final class DataTransfer
         $inputData = is_array($input) ? $input : (array) $input;
 
         $reflectionClass = new ReflectionClass($class);
-        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
+        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 
         $values = [];
         $violations = [];
@@ -88,7 +89,7 @@ final class DataTransfer
 
             // Check if value exists in input
             $hasValue = array_key_exists($propertyName, $inputData);
-            $value = $inputData[$propertyName] ?? null;
+            $value    = $inputData[$propertyName] ?? null;
 
             // Handle missing required fields
             if ($isRequired && ! $hasValue && $value === null) {
@@ -154,12 +155,12 @@ final class DataTransfer
     ): ?DataTransferViolation {
         try {
             $rule = match ($ruleName) {
-                'EmailRule' => new EmailRule,
-                'IntegerRule' => new IntegerRule,
-                'MinLengthRule' => (new ReflectionClass(new MinLengthRule(1)))->newInstance()->args[0] ?? 1,
-                'MinRule' => new MinRule(1),
-                'PasswordComplexityRule' => new PasswordComplexityRule,
-                default => null,
+                'EmailRule'              => new EmailRule(),
+                'IntegerRule'            => new IntegerRule(),
+                'MinLengthRule'          => (new ReflectionClass(new MinLengthRule(1)))->newInstance()->args[0] ?? 1,
+                'MinRule'                => new MinRule(1),
+                'PasswordComplexityRule' => new PasswordComplexityRule(),
+                default                  => null,
             };
 
             if ($rule !== null) {

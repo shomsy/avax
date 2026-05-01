@@ -20,7 +20,7 @@ final readonly class CreateRegisteredUser
     public function execute(RegistrationData $data, string $hashedPassword): User
     {
         return $this->source->create([
-            'email' => $data->email,
+                                         'email' => $data->email,
             'password' => $hashedPassword,
             'username' => $data->username ?? $data->email,
         ]);

@@ -108,24 +108,24 @@ final readonly class CompensationStepResult
     private function __construct(
         string $stepName,
         bool $success,
-        ?array $output = null,
-        ?string $error = null,
-        ?float $durationMs = null,
-        ?DateTimeImmutable $completedAt = null,
+        array             $output = null,
+        string            $error = null,
+        float             $durationMs = null,
+        DateTimeImmutable $completedAt = null,
     ) {
-        $output ??= [];
+        $output           ??= [];
         $durationMs ??= 0.0;
-        $this->stepName = $stepName;
-        $this->success = $success;
-        $this->output = $output;
-        $this->error = $error;
+        $this->stepName   = $stepName;
+        $this->success    = $success;
+        $this->output     = $output;
+        $this->error      = $error;
         $this->durationMs = $durationMs;
         $this->completedAt = $completedAt;
     }
 
     public static function success(
         string $stepName,
-        ?array $output = null,
+        array $output = null,
         float $durationMs = 0.0,
     ): self {
         $output ??= [];
@@ -135,7 +135,7 @@ final readonly class CompensationStepResult
             success    : true,
             output     : $output,
             durationMs : $durationMs,
-            completedAt: new DateTimeImmutable,
+            completedAt: new DateTimeImmutable(),
         );
     }
 
@@ -149,17 +149,17 @@ final readonly class CompensationStepResult
             success    : false,
             error      : $error,
             durationMs : $durationMs,
-            completedAt: new DateTimeImmutable,
+            completedAt: new DateTimeImmutable(),
         );
     }
 
     public function toArray(): array
     {
         return [
-            'step_name' => $this->stepName,
-            'success' => $this->success,
-            'output' => $this->output,
-            'error' => $this->error,
+            'step_name'   => $this->stepName,
+            'success'     => $this->success,
+            'output'      => $this->output,
+            'error'       => $this->error,
             'duration_ms' => $this->durationMs,
             'completed_at' => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
         ];
@@ -182,8 +182,8 @@ final readonly class CompensationPlan
         ?string $failedOnStep,
         bool $isRecoverable,
     ) {
-        $this->sagaId = $sagaId;
-        $this->steps = $steps;
+        $this->sagaId       = $sagaId;
+        $this->steps        = $steps;
         $this->failedOnStep = $failedOnStep;
         $this->isRecoverable = $isRecoverable;
     }

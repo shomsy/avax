@@ -86,8 +86,8 @@ final readonly class ExchangeRefreshToken
                 name      : 'auth.oauth.refresh.review.opened',
                 occurredAt: $now,
                 context   : [
-                    'user_id' => $record->userId->value,
-                    'client_id' => $record->clientId,
+                                'user_id'   => $record->userId->value,
+                                'client_id' => $record->clientId,
                     'risk_action' => $riskDecision?->action->value,
                 ],
             ));
@@ -130,10 +130,10 @@ final readonly class ExchangeRefreshToken
             name      : 'auth.oauth.refresh.exchanged',
             occurredAt: $now,
             context   : [
-                'client_id' => $client->clientId,
-                'user_id' => $user->getId()->value,
-                'family_id' => $refreshToken->familyId,
-                'scope' => implode(separator: ' ', array: $record->scopes),
+                            'client_id' => $client->clientId,
+                            'user_id'   => $user->getId()->value,
+                            'family_id' => $refreshToken->familyId,
+                            'scope'     => implode(separator: ' ', array: $record->scopes),
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],
@@ -165,8 +165,8 @@ final readonly class ExchangeRefreshToken
             name      : $name,
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $data->clientId,
-                'reason' => $reason,
+                            'client_id' => $data->clientId,
+                            'reason'    => $reason,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],

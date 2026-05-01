@@ -61,17 +61,17 @@ final class Saga
 
     private function __construct(string $name)
     {
-        $this->name = $name;
-        $this->id = $this->generateId();
-        $this->status = SagaState::Running;
-        $this->steps = [];
-        $this->context = [];
-        $this->stepResults = [];
-        $this->completedSteps = [];
-        $this->failureReason = null;
-        $this->store = new InMemorySagaStore;
-        $this->stepRunner = new StepRunner;
-        $this->compensationExecutor = new CompensationExecutor;
+        $this->name                 = $name;
+        $this->id                   = $this->generateId();
+        $this->status               = SagaState::Running;
+        $this->steps                = [];
+        $this->context              = [];
+        $this->stepResults          = [];
+        $this->completedSteps       = [];
+        $this->failureReason        = null;
+        $this->store                = new InMemorySagaStore();
+        $this->stepRunner           = new StepRunner();
+        $this->compensationExecutor = new CompensationExecutor();
     }
 
     /**
@@ -111,11 +111,11 @@ final class Saga
     /**
      * Add a step to the saga definition.
      *
-     * @param  string  $name  The step name
-     * @param  Closure  $action  The action to execute
-     * @param  Closure|null  $compensation  The compensation to run on failure
+     * @param string       $name         The step name
+     * @param Closure      $action       The action to execute
+     * @param Closure|null $compensation The compensation to run on failure
      */
-    public function step(string $name, Closure $action, ?Closure $compensation = null): self
+    public function step(string $name, Closure $action, Closure $compensation = null) : self
     {
         $this->steps[] = new SagaStep(
             name        : $name,
@@ -180,7 +180,8 @@ final class Saga
     /**
      * Execute the saga with the given context.
      *
-     * @param  mixed  $context  The initial context/data for the saga
+     * @param mixed $context The initial context/data for the saga
+     *
      * @return SagaResult The result of the saga execution
      */
     public function execute(mixed $context = []): SagaResult
@@ -198,7 +199,7 @@ final class Saga
                 );
 
                 $this->stepResults[$step->name] = $result;
-                $this->completedSteps[] = $step->name;
+                $this->completedSteps[]         = $step->name;
 
                 // Update context with step result for next steps
                 if (is_array($result)) {
@@ -337,9 +338,9 @@ final class Saga
      */
     public function withStore(SagaStoreInterface $store): self
     {
-        $this->store = $store;
-        $this->stepRunner = new StepRunner;
-        $this->compensationExecutor = new CompensationExecutor;
+        $this->store                = $store;
+        $this->stepRunner           = new StepRunner();
+        $this->compensationExecutor = new CompensationExecutor();
 
         return $this;
     }
@@ -357,7 +358,8 @@ final readonly class SagaResult
         public array $completedSteps,
         public array $stepResults,
         public ?string $failureReason = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Check if the saga completed successfully.

@@ -26,7 +26,7 @@ final readonly class BeginPasswordReset
         private PasswordResetStoreInterface $passwordResetStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        ?int $expiresAfterSeconds = null,
+        int $expiresAfterSeconds = null,
         private ?AttemptThrottle $attemptThrottle = null,
     ) {
         $expiresAfterSeconds ??= 3600;
@@ -47,9 +47,9 @@ final readonly class BeginPasswordReset
                 name      : 'auth.password_reset.throttled',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'email' => strtolower(string: $data->email),
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
+                                'email'      => strtolower(string: $data->email),
+                                'ip_address' => $data->ipAddress,
+                                'user_agent' => $data->userAgent,
                     'retry_after' => $exception->retryAfter(),
                 ],
             ));
@@ -65,7 +65,7 @@ final readonly class BeginPasswordReset
                 name      : 'auth.password_reset.requested',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'email' => strtolower(string: $data->email),
+                                'email' => strtolower(string: $data->email),
                     'dispatched' => false,
                     'ip_address' => $data->ipAddress,
                     'user_agent' => $data->userAgent,
@@ -84,7 +84,7 @@ final readonly class BeginPasswordReset
             name      : 'auth.password_reset.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $user->getId()->value,
+                            'user_id' => $user->getId()->value,
                 'dispatched' => true,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
@@ -99,9 +99,9 @@ final readonly class BeginPasswordReset
         $normalizedEmail = strtolower(string: trim(string: $email));
 
         if ($ipAddress === null || $ipAddress === '') {
-            return 'password_reset:'.$normalizedEmail;
+            return 'password_reset:' . $normalizedEmail;
         }
 
-        return 'password_reset:'.$normalizedEmail.'|'.trim(string: $ipAddress);
+        return 'password_reset:' . $normalizedEmail . '|' . trim(string: $ipAddress);
     }
 }

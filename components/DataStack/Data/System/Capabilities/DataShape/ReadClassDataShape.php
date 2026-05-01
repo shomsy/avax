@@ -13,7 +13,7 @@ use ReflectionClass;
 final readonly class ReadClassDataShape
 {
     /**
-     * @param  class-string  $class
+     * @param class-string $class
      */
     public function read(string $class, DataTransferConfig $config): DataShape
     {

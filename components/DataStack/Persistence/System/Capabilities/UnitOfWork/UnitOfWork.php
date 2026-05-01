@@ -66,7 +66,7 @@ final class UnitOfWork implements UnitOfWorkInterface
         return $currentData !== $this->snapshots[$objectId];
     }
 
-    public function flush(?string $connectionName = null): void
+    public function flush(string $connectionName = null) : void
     {
         // Process inserts
         foreach ($this->new as $objectId => $entity) {
@@ -128,7 +128,7 @@ final class UnitOfWork implements UnitOfWorkInterface
 
     public function clear(): void
     {
-        $this->new = [];
+        $this->new   = [];
         $this->dirty = [];
         $this->removed = [];
         $this->identityMap->clear();
@@ -142,7 +142,7 @@ final class UnitOfWork implements UnitOfWorkInterface
     public function pendingSummary(): array
     {
         return [
-            'new' => count($this->new),
+            'new'   => count($this->new),
             'dirty' => count($this->dirty),
             'removed' => count($this->removed),
         ];

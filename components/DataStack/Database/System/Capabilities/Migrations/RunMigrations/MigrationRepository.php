@@ -66,7 +66,7 @@ final class MigrationRepository
     {
         $this->queryBuilder->from(table: $this->table)->insert(values: [
             'migration' => $name,
-            'batch' => $batch,
+            'batch'    => $batch,
             'checksum' => $checksum,
         ]);
     }

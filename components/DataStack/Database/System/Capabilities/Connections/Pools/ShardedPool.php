@@ -73,7 +73,7 @@ final class ShardedPool
         );
 
         foreach ($this->pools as $pool) {
-            $stats = $pool->stats();
+            $stats      = $pool->stats();
             $totalStats = new PoolStats(
                 totalConnections : $totalStats->totalConnections + $stats->totalConnections,
                 activeConnections: $totalStats->activeConnections + $stats->activeConnections,

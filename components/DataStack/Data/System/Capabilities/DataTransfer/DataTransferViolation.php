@@ -23,9 +23,9 @@ final readonly class DataTransferViolation implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'field' => $this->field,
+            'field'   => $this->field,
             'message' => $this->message,
-            'code' => $this->code,
+            'code'    => $this->code,
             'invalidValue' => $this->invalidValue,
         ];
     }

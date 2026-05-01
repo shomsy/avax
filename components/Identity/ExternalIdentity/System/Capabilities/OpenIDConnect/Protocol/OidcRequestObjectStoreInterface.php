@@ -9,15 +9,15 @@ use DateTimeImmutable;
 interface OidcRequestObjectStoreInterface
 {
     /**
-     * @param  array<string, mixed>  $claims
+     * @param array<string, mixed> $claims
      */
     public function store(
         string $requestUri,
         array $claims,
         DateTimeImmutable $expiresAt,
         bool $signatureVerified = false,
-        ?string $signingAlgorithm = null,
-        ?string $signingClientId = null,
+        string $signingAlgorithm = null,
+        string $signingClientId = null,
     ): OidcRequestObject;
 
     public function find(string $requestUri): ?OidcRequestObject;

@@ -26,17 +26,17 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
     private array $stepResults;
 
     public function __construct(
-        ?array $events = null,
-        ?array $data = null,
-        ?string $currentStep = null,
-        ?int $currentStepIndex = null,
+        array  $events = null,
+        array  $data = null,
+        string $currentStep = null,
+        int    $currentStepIndex = null,
         array $stepResults = [],
     ) {
-        $events ??= [];
-        $data ??= [];
+        $events            ??= [];
+        $data              ??= [];
         $currentStepIndex ??= 0;
-        $this->events = $events;
-        $this->data = $data;
+        $this->events      = $events;
+        $this->data        = $data;
         $this->currentStep = $currentStep;
         $this->currentStepIndex = $currentStepIndex;
         $this->stepResults = $stepResults;
@@ -190,8 +190,8 @@ final readonly class SagaEvent
         string $sagaId,
         string $sagaName,
         string $type,
-        ?array $payload = null,
-        ?string $stepName = null,
+        array  $payload = null,
+        string $stepName = null,
     ): self {
         $payload ??= [];
 
@@ -202,7 +202,7 @@ final readonly class SagaEvent
             sagaName  : $sagaName,
             stepName  : $stepName,
             payload   : $payload,
-            occurredAt: new DateTimeImmutable,
+            occurredAt: new DateTimeImmutable(),
         );
     }
 
@@ -250,12 +250,12 @@ final readonly class SagaEvent
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'type' => $this->type,
-            'saga_id' => $this->sagaId,
+            'id'        => $this->id,
+            'type'      => $this->type,
+            'saga_id'   => $this->sagaId,
             'saga_name' => $this->sagaName,
             'step_name' => $this->stepName,
-            'payload' => $this->payload,
+            'payload'   => $this->payload,
             'occurred_at' => $this->occurredAt->format(format: DateTimeInterface::ISO8601),
         ];
     }
@@ -277,7 +277,7 @@ final readonly class StoreSagaState
 
     public function save(SagaInstance $instance): void
     {
-        $store = $this->getStore(name: 'default');
+        $store                = $this->getStore(name: 'default');
         $store[$instance->id] = $instance;
         $this->stores['default'] = $store;
     }

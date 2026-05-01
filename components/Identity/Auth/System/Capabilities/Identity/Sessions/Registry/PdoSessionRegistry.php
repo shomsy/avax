@@ -46,7 +46,7 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
     }
 
     /**
-     * @param  array<string, mixed>  $row
+     * @param array<string, mixed> $row
      *
      * @throws DateMalformedStringException
      */
@@ -101,7 +101,7 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
     }
 
     /**
-     * @param  array<string, string|int|null>  $parameters
+     * @param array<string, string|int|null> $parameters
      */
     private function executeStatement(string $query, array $parameters): void
     {
@@ -118,16 +118,16 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
     private function mapRecord(SessionRecord $record): array
     {
         return [
-            'session_id' => $record->sessionId,
-            'user_id' => $record->userId->value,
-            'created_at' => $record->createdAt->format(format: DATE_ATOM),
-            'last_seen_at' => $record->lastSeenAt->format(format: DATE_ATOM),
-            'idle_expires_at' => $record->idleExpiresAt->format(format: DATE_ATOM),
+            'session_id'         => $record->sessionId,
+            'user_id'            => $record->userId->value,
+            'created_at'         => $record->createdAt->format(format: DATE_ATOM),
+            'last_seen_at'       => $record->lastSeenAt->format(format: DATE_ATOM),
+            'idle_expires_at'    => $record->idleExpiresAt->format(format: DATE_ATOM),
             'absolute_expires_at' => $record->absoluteExpiresAt->format(format: DATE_ATOM),
-            'ip_created' => $record->ipCreated,
+            'ip_created'         => $record->ipCreated,
             'user_agent_created' => $record->userAgentCreated,
-            'revoked_at' => $record->revokedAt?->format(format: DATE_ATOM),
-            'revoke_reason' => $record->revokeReason,
+            'revoked_at'         => $record->revokedAt?->format(format: DATE_ATOM),
+            'revoke_reason'      => $record->revokeReason,
         ];
     }
 
@@ -155,8 +155,8 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
         $this->executeStatement(
             query     : 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id',
             parameters: [
-                'session_id' => $sessionId,
-                'revoked_at' => $revokedAt->format(format: DATE_ATOM),
+                            'session_id' => $sessionId,
+                            'revoked_at' => $revokedAt->format(format: DATE_ATOM),
                 'revoke_reason' => $reason,
             ],
         );
@@ -168,8 +168,8 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
         $this->executeStatement(
             query     : 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id',
             parameters: [
-                'user_id' => $userId->value,
-                'revoked_at' => $revokedAt->format(format: DATE_ATOM),
+                            'user_id'    => $userId->value,
+                            'revoked_at' => $revokedAt->format(format: DATE_ATOM),
                 'revoke_reason' => $reason,
             ],
         );

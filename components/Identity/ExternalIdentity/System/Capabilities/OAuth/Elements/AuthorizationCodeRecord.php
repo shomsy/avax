@@ -14,7 +14,7 @@ use SensitiveParameter;
 final readonly class AuthorizationCodeRecord
 {
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
      */
     public function __construct(
         #[SensitiveParameter]

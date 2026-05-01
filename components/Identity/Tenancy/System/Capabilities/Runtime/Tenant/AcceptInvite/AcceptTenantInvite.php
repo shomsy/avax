@@ -59,7 +59,7 @@ final readonly class AcceptTenantInvite
             context   : [
                 'tenant_id' => $member->tenantId,
                 'user_id' => $member->userId,
-                'role' => $member->role->value,
+                'role'    => $member->role->value,
             ],
         ));
 

@@ -74,8 +74,8 @@ final class WindowBuilder
 
     public function rowsBetween(int $start, int $end): self
     {
-        $startExpr = $start < 0 ? $start.' PRECEDING' : $start.' FOLLOWING';
-        $endExpr = $end < 0 ? $end.' PRECEDING' : $end.' FOLLOWING';
+        $startExpr = $start < 0 ? $start . ' PRECEDING' : $start . ' FOLLOWING';
+        $endExpr   = $end < 0 ? $end . ' PRECEDING' : $end . ' FOLLOWING';
 
         $this->frame = sprintf('ROWS BETWEEN %s AND %s', $startExpr, $endExpr);
 
@@ -84,7 +84,7 @@ final class WindowBuilder
 
     public function getSql(string $alias = ''): string
     {
-        $sql = $this->function.' OVER';
+        $sql             = $this->function . ' OVER';
         $parts = [];
 
         if ($this->partitionBy !== null && $this->partitionBy !== [] || $this->orderBy !== '' || $this->frame !== '') {
@@ -93,11 +93,11 @@ final class WindowBuilder
                     callback: fn ($col): string => $this->grammar->wrap(value: $col),
                     array   : $this->partitionBy,
                 ));
-                $parts[] = 'PARTITION BY '.$partition;
+                $parts[] = 'PARTITION BY ' . $partition;
             }
 
             if ($this->orderBy !== '') {
-                $parts[] = 'ORDER BY '.$this->orderBy;
+                $parts[] = 'ORDER BY ' . $this->orderBy;
             }
 
             if ($this->frame !== '') {
@@ -105,10 +105,10 @@ final class WindowBuilder
             }
         }
 
-        $sql .= ' ('.implode(separator: ' ', array: $parts).')';
+        $sql .= ' (' . implode(separator: ' ', array: $parts) . ')';
 
         if ($alias !== '') {
-            $sql .= ' AS '.$this->grammar->wrap(value: $alias);
+            $sql .= ' AS ' . $this->grammar->wrap(value: $alias);
         }
 
         return $sql;

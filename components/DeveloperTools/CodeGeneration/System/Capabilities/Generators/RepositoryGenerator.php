@@ -15,8 +15,9 @@ class RepositoryGenerator extends CodeGenerator
     /**
      * Generate a repository class file.
      *
-     * @param  string  $name  Repository name (e.g. "UserRepository" or "User")
-     * @param  array  $data  Additional data (e.g. ['entity' => 'UserEntity'])
+     * @param string $name Repository name (e.g. "UserRepository" or "User")
+     * @param array  $data Additional data (e.g. ['entity' => 'UserEntity'])
+     *
      * @return string The generated file path
      */
     #[Override]
@@ -29,9 +30,9 @@ class RepositoryGenerator extends CodeGenerator
             $className .= 'Repository';
         }
 
-        $subDir = $data['subDir'] ?? 'Repositories';
+        $subDir    = $data['subDir'] ?? 'Repositories';
         $namespace = $this->getNamespace($subDir);
-        $entity = $data['entity'] ?? $this->inferEntity($className);
+        $entity    = $data['entity'] ?? $this->inferEntity($className);
         $entityNamespace = $data['entityNamespace'] ?? $this->getNamespace('Entities');
 
         $stub = $this->buildStub($className, $namespace, $entity, $entityNamespace);

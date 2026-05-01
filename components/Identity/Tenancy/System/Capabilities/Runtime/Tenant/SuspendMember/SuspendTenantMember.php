@@ -47,9 +47,9 @@ final readonly class SuspendTenantMember
             name      : 'auth.tenant.member.suspended',
             occurredAt: $this->clock->now(),
             context   : [
-                'tenant_id' => $tenant->tenantId,
+                            'tenant_id' => $tenant->tenantId,
                 'tenant_slug' => $tenant->slug,
-                'user_id' => $member->userId,
+                            'user_id'   => $member->userId,
             ],
         ));
 

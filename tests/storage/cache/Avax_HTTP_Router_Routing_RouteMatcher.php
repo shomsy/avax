@@ -9,8 +9,8 @@ use components\HTTP\Router\Routing\RouteMatcher;
 use components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => RouteMatcher::class,
-                                                'constructor'        => MethodPrototype::__set_state(array: [
+                                                'class'           => RouteMatcher::class,
+                                                'constructor'     => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
                                                                                             'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
@@ -26,7 +26,7 @@ return ServicePrototype::__set_state(array: [
                                                                                         ]),
                                                 'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    => [
+                                                'injectedMethods' => [
                                                     ],
-                                                'isInstantiable'     => true,
+                                                'isInstantiable'  => true,
                                             ]);

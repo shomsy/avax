@@ -23,7 +23,7 @@ final readonly class RebuildSagaState
     private function rebuildFromEvents(array $events): array
     {
         $state = [
-            'status' => 'pending',
+            'status'       => 'pending',
             'completed_steps' => [],
             'current_step' => null,
         ];

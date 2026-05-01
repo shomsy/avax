@@ -43,7 +43,7 @@ final readonly class CreateTenant
         }
 
         $tenant = new Tenant(
-            tenantId   : 'tenant_'.bin2hex(string: random_bytes(length: 12)),
+            tenantId   : 'tenant_' . bin2hex(string: random_bytes(length: 12)),
             slug       : $slug,
             name       : trim(string: $data->name),
             ownerUserId: $data->ownerUserId,
@@ -61,8 +61,8 @@ final readonly class CreateTenant
             name      : 'auth.tenant.created',
             occurredAt: $tenant->createdAt,
             context   : [
-                'tenant_id' => $tenant->tenantId,
-                'tenant_slug' => $tenant->slug,
+                            'tenant_id'   => $tenant->tenantId,
+                            'tenant_slug' => $tenant->slug,
                 'owner_user_id' => $tenant->ownerUserId,
             ],
         ));

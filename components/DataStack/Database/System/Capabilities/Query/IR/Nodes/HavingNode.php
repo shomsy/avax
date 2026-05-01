@@ -12,7 +12,7 @@ final class HavingNode
 
     public function getSql(GrammarInterface $grammar): string
     {
-        return 'HAVING '.preg_replace(
+        return 'HAVING ' . preg_replace(
             pattern    : '/^(AND|OR)\s+/i',
             replacement: '',
             subject    : $this->condition->getSql(grammar: $grammar),

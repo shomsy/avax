@@ -34,11 +34,11 @@ class ProgressBar
      */
     public function display(): void
     {
-        $percent = $this->total > 0 ? ($this->current / $this->total) : 0;
+        $percent   = $this->total > 0 ? ($this->current / $this->total) : 0;
         $filledBars = (int) round($percent * $this->barWidth);
         $emptyBars = $this->barWidth - $filledBars;
 
-        $bar = str_repeat('=', $filledBars).str_repeat(' ', $emptyBars);
+        $bar = str_repeat('=', $filledBars) . str_repeat(' ', $emptyBars);
         $percentStr = sprintf('%3d%%', (int) ($percent * 100));
 
         echo sprintf('

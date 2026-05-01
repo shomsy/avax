@@ -11,28 +11,28 @@ final readonly class ContractTesting
 {
     public static function verify(): ContractVerificationReport
     {
-        $verifier = new ContractVerifier;
+        $verifier = new ContractVerifier();
 
         return $verifier->verify();
     }
 
     public static function verifyComponent(string $componentClass): ComponentContractResult
     {
-        $verifier = new ContractVerifier;
+        $verifier = new ContractVerifier();
 
         return $verifier->verifyComponent($componentClass);
     }
 
     public static function breakingChanges(string $sinceVersion): BreakingChangesReport
     {
-        $detector = new BreakingChangeDetector;
+        $detector = new BreakingChangeDetector();
 
         return $detector->detect($sinceVersion);
     }
 
     public static function registerContract(string $componentClass, array $contract): void
     {
-        $verifier = new ContractVerifier;
+        $verifier = new ContractVerifier();
         $verifier->registerContract($componentClass, $contract);
     }
 }
@@ -85,7 +85,7 @@ final readonly class ComponentContractResult
             'component' => $this->component,
             'passed' => $this->passed,
             'checks' => $this->checks,
-            'error' => $this->error,
+            'error'  => $this->error,
         ];
     }
 }

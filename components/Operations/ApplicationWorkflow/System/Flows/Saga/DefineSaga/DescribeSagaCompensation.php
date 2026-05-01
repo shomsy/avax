@@ -34,10 +34,10 @@ final readonly class DescribeSagaCompensation
     public function toMetadata(): array
     {
         return [
-            'step_name' => $this->stepName,
+            'step_name'   => $this->stepName,
             'description' => $this->description,
             'rollback_schema' => $this->rollbackSchema,
-            'idempotent' => $this->idempotent,
+            'idempotent'  => $this->idempotent,
         ];
     }
 }

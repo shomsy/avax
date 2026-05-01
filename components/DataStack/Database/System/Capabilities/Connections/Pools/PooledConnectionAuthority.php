@@ -52,7 +52,7 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
     private ?DatabaseConnection $databaseConnection = null;
 
     /**
-     * @param  ConnectionPoolInterface  $connectionPool  The "Library" we borrow from.
+     * @param ConnectionPoolInterface $connectionPool The "Library" we borrow from.
      */
     public function __construct(private readonly ConnectionPoolInterface $connectionPool) {}
 

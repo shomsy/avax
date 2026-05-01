@@ -19,7 +19,7 @@ final readonly class RecordSagaStarted
     public function record(StoreSagaState $storeSagaState, SagaInstance $instance): SagaEvent
     {
         return $storeSagaState->appendEvent(event: new SagaEvent(
-            id           : 'saga-event-'.bin2hex(string: random_bytes(length: 8)),
+                                                       id: 'saga-event-' . bin2hex(string: random_bytes(length: 8)),
             instanceId   : $instance->id,
             type         : 'saga.started',
             payload      : ['definition' => $instance->definitionName, 'current_step' => $instance->currentStepName],

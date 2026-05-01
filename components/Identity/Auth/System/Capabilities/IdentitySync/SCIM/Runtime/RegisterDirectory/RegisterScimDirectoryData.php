@@ -7,7 +7,7 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Ru
 final readonly class RegisterScimDirectoryData
 {
     /**
-     * @param  array<string, list<string>>  $groupRoleMap
+     * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(public string $tenantSlug, public string $name, public array $groupRoleMap = []) {}
 }

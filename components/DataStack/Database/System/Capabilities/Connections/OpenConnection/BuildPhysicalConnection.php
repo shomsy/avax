@@ -17,7 +17,7 @@ use Throwable;
 final readonly class BuildPhysicalConnection
 {
     /**
-     * @param  array<string, mixed>  $config
+     * @param array<string, mixed> $config
      *
      * @throws ConnectionFailure
      */
@@ -37,9 +37,9 @@ final readonly class BuildPhysicalConnection
                 username: $connectionConfig->username,
                 password: $connectionConfig->password,
                 options : [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                              PDO::ATTR_ERRMODE          => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
+                              PDO::ATTR_EMULATE_PREPARES => false,
                 ],
             );
 

@@ -42,7 +42,7 @@ final class TokenVerifier
 
             return $payload;
         } catch (Exception $e) {
-            throw new RuntimeException('Invalid token: '.$e->getMessage());
+            throw new RuntimeException('Invalid token: ' . $e->getMessage());
         }
     }
 }

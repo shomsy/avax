@@ -14,7 +14,7 @@ final readonly class Expression implements Stringable
     public string $value;
 
     /**
-     * @param  string  $value  The raw technical SQL fragment to be injected literally.
+     * @param string $value The raw technical SQL fragment to be injected literally.
      */
     public function __construct(string $value)
     {

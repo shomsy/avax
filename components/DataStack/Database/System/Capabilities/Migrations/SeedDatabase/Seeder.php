@@ -23,7 +23,7 @@ abstract class Seeder
     {
         basename(path: $class);
         echo sprintf('[36mSeeding:[0m %s%s', $class, PHP_EOL);
-        (new $class)->withBuilder(builder: $this->builder())->run();
+        (new $class())->withBuilder(builder: $this->builder())->run();
     }
 
     /**

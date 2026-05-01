@@ -39,7 +39,7 @@ final readonly class RegisterScimDirectory
 
         $plainTextToken = bin2hex(string: random_bytes(length: 24));
         $directory = new ScimDirectory(
-            directoryId : 'scim_'.bin2hex(string: random_bytes(length: 12)),
+            directoryId : 'scim_' . bin2hex(string: random_bytes(length: 12)),
             tenantSlug  : trim(string: $data->tenantSlug),
             name        : trim(string: $data->name),
             tokenHash   : $this->passwordHasher->hash(password: $plainTextToken),
@@ -54,7 +54,7 @@ final readonly class RegisterScimDirectory
             context   : [
                 'directory_id' => $directory->directoryId,
                 'tenant' => $directory->tenantSlug,
-                'name' => $directory->name,
+                'name'   => $directory->name,
             ],
         ));
 

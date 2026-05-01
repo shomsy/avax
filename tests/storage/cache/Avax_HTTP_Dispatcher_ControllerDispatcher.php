@@ -8,8 +8,8 @@ use Avax\Components\Application\Container\Features\Think\Model\ServicePrototype;
 use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => ControllerDispatcher::class,
-                                                'constructor'        => MethodPrototype::__set_state(array: [
+                                                'class'           => ControllerDispatcher::class,
+                                                'constructor'     => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
                                                                                             'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
@@ -25,7 +25,7 @@ return ServicePrototype::__set_state(array: [
                                                                                         ]),
                                                 'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    => [
+                                                'injectedMethods' => [
                                                     ],
-                                                'isInstantiable'     => true,
+                                                'isInstantiable'  => true,
                                             ]);

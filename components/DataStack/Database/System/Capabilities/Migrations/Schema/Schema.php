@@ -20,7 +20,7 @@ final readonly class Schema
     /**
      * @throws Throwable
      */
-    public function create(string $table, callable $callback, ?string $connectionName = null): void
+    public function create(string $table, callable $callback, string $connectionName = null) : void
     {
         $blueprint = new Blueprint(table: $table);
         $callback($blueprint);
@@ -32,11 +32,11 @@ final readonly class Schema
     }
 
     /**
-     * @param  list<string>  $statements
+     * @param list<string> $statements
      *
      * @throws Throwable
      */
-    private function runStatements(array $statements, ?string $connectionName = null): void
+    private function runStatements(array $statements, string $connectionName = null) : void
     {
         $builder = $this->builder(connectionName: $connectionName);
 
@@ -48,7 +48,7 @@ final readonly class Schema
     /**
      * @throws Throwable
      */
-    private function builder(?string $connectionName = null): QueryBuilder
+    private function builder(string $connectionName = null) : QueryBuilder
     {
         return $this->query->builder(connectionName: $connectionName);
     }
@@ -56,7 +56,7 @@ final readonly class Schema
     /**
      * @throws Throwable
      */
-    private function grammar(?string $connectionName = null): GrammarInterface
+    private function grammar(string $connectionName = null) : GrammarInterface
     {
         return $this->builder(connectionName: $connectionName)->getGrammar();
     }
@@ -64,7 +64,7 @@ final readonly class Schema
     /**
      * @throws Throwable
      */
-    public function table(string $table, callable $callback, ?string $connectionName = null): void
+    public function table(string $table, callable $callback, string $connectionName = null) : void
     {
         $blueprint = new Blueprint(table: $table)->setAlterMode();
         $callback($blueprint);
@@ -78,18 +78,18 @@ final readonly class Schema
     /**
      * @throws Throwable
      */
-    public function drop(string $table, ?string $connectionName = null): void
+    public function drop(string $table, string $connectionName = null) : void
     {
         $grammar = $this->grammar(connectionName: $connectionName);
         $this->builder(connectionName: $connectionName)->statement(
-            query: 'DROP TABLE '.$grammar->wrap(value: $table),
+            query: 'DROP TABLE ' . $grammar->wrap(value: $table),
         );
     }
 
     /**
      * @throws Throwable
      */
-    public function dropIfExists(string $table, ?string $connectionName = null): void
+    public function dropIfExists(string $table, string $connectionName = null) : void
     {
         $this->builder(connectionName: $connectionName)->statement(
             query: $this->grammar(connectionName: $connectionName)->compileDropIfExists(table: $table),
@@ -99,7 +99,7 @@ final readonly class Schema
     /**
      * @throws Throwable
      */
-    public function truncate(string $table, ?string $connectionName = null): void
+    public function truncate(string $table, string $connectionName = null) : void
     {
         $this->builder(connectionName: $connectionName)->statement(
             query: $this->grammar(connectionName: $connectionName)->compileTruncate(table: $table),
@@ -109,7 +109,7 @@ final readonly class Schema
     /**
      * @throws Throwable
      */
-    public function createDatabase(string $name, ?string $connectionName = null): void
+    public function createDatabase(string $name, string $connectionName = null) : void
     {
         $this->builder(connectionName: $connectionName)->statement(
             query: $this->grammar(connectionName: $connectionName)->compileCreateDatabase(name: $name),
@@ -119,7 +119,7 @@ final readonly class Schema
     /**
      * @throws Throwable
      */
-    public function dropDatabase(string $name, ?string $connectionName = null): void
+    public function dropDatabase(string $name, string $connectionName = null) : void
     {
         $this->builder(connectionName: $connectionName)->statement(
             query: $this->grammar(connectionName: $connectionName)->compileDropDatabase(name: $name),

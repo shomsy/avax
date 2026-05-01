@@ -24,7 +24,7 @@ final readonly class Map implements Countable, IteratorAggregate
     private array $items;
 
     /**
-     * @param  iterable<array-key, mixed>  $items
+     * @param iterable<array-key, mixed> $items
      */
     public function __construct(
         iterable $items = [],

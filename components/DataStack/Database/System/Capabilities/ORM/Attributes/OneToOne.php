@@ -10,7 +10,7 @@ use Attribute;
 final readonly class OneToOne
 {
     /**
-     * @param  list<string>  $cascade
+     * @param list<string> $cascade
      */
     public function __construct(
         public string $targetEntity,

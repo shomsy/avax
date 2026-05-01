@@ -28,9 +28,9 @@ final readonly class AuthenticationResult
     public static function success(
         AuthenticationContext $context,
         #[SensitiveParameter]
-        ?string $accessToken = null,
+        string $accessToken = null,
         #[SensitiveParameter]
-        ?string $refreshToken = null,
+        string $refreshToken = null,
     ): self {
         return new self(
             state       : AuthenticationState::AUTHENTICATED,

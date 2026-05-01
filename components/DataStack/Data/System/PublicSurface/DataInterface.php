@@ -34,7 +34,8 @@ interface DataInterface
      * @template TKey of array-key
      * @template TValue
      *
-     * @param  array<TKey, TValue>  $items
+     * @param array<TKey, TValue> $items
+     *
      * @return Collection<TKey, TValue>
      */
     public function collect(array $items = []): Collection;

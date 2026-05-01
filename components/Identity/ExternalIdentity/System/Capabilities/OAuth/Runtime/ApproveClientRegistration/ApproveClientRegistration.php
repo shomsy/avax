@@ -30,9 +30,9 @@ final readonly class ApproveClientRegistration
             name      : 'auth.oauth.client.approved',
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $client->clientId,
-                'tenant_slug' => $client->tenantSlug,
-                'approved_by' => $client->approvedBy,
+                            'client_id'   => $client->clientId,
+                            'tenant_slug' => $client->tenantSlug,
+                            'approved_by' => $client->approvedBy,
                 'approval_status' => $client->approvalStatus->value,
             ],
         ));

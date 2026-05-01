@@ -53,11 +53,11 @@ class MakeControllerCommand extends Command
         try {
             $path = $this->controllerGenerator->generate($name, ['methods' => $methods]);
 
-            $this->info('Controller created successfully: '.$path);
+            $this->info('Controller created successfully: ' . $path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create controller: '.$runtimeException->getMessage());
+            $this->error('Failed to create controller: ' . $runtimeException->getMessage());
 
             return self::FAILURE;
         }

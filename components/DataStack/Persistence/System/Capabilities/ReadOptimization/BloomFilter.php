@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\ReadOptimization;
 
 use InvalidArgumentException;
-
 use function count;
 
 /**
@@ -62,19 +61,19 @@ final class BloomFilter
         float $falsePositiveRate,
         int $expectedItems,
     ) {
-        $this->bitCount = $bitCount;
-        $this->hashCount = $hashCount;
+        $this->bitCount      = $bitCount;
+        $this->hashCount     = $hashCount;
         $this->falsePositiveRate = $falsePositiveRate;
         $this->expectedItems = $expectedItems;
-        $this->bits = array_fill(0, $bitCount, false);
+        $this->bits          = array_fill(0, $bitCount, false);
     }
 
     /**
      * Creates a Bloom filter with optimal bit array size and hash count
      * based on the expected number of items and desired false positive rate.
      *
-     * @param  int  $expectedItems  Expected number of items to store
-     * @param  float  $falsePositiveRate  Desired false positive rate (0.0 to 1.0, exclusive)
+     * @param int   $expectedItems     Expected number of items to store
+     * @param float $falsePositiveRate Desired false positive rate (0.0 to 1.0, exclusive)
      */
     public static function create(int $expectedItems, float $falsePositiveRate = 0.01): self
     {
@@ -98,8 +97,8 @@ final class BloomFilter
     /**
      * Creates a Bloom filter with explicit size and hash count.
      *
-     * @param  int  $bitCount  Number of bits in the array
-     * @param  int  $hashCount  Number of hash functions
+     * @param int $bitCount  Number of bits in the array
+     * @param int $hashCount Number of hash functions
      */
     public static function withSize(int $bitCount, int $hashCount): self
     {
@@ -117,7 +116,7 @@ final class BloomFilter
     /**
      * Adds an item to the bloom filter.
      *
-     * @param  string  $item  The item to add
+     * @param string $item The item to add
      */
     public function add(string $item): void
     {
@@ -186,7 +185,7 @@ final class BloomFilter
      * Returns true if the item is PROBABLY in the set (possible false positive).
      * Returns false if the item is DEFINITELY NOT in the set (no false negatives).
      *
-     * @param  string  $item  The item to check
+     * @param string $item The item to check
      */
     public function mightContain(string $item): bool
     {

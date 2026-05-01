@@ -18,7 +18,7 @@ final readonly class FromNode
         $sql = $grammar->wrap(value: $this->table);
 
         if ($this->alias !== null) {
-            $sql .= ' AS '.$grammar->wrap(value: $this->alias);
+            $sql .= ' AS ' . $grammar->wrap(value: $this->alias);
         }
 
         return $sql;

@@ -18,8 +18,8 @@ final readonly class SubjectIdentifier
      */
     public function generate(
         string $localSubject,
-        ?string $sectorIdentifier = null,
-        ?string $pairwiseSalt = null,
+        string $sectorIdentifier = null,
+        string $pairwiseSalt = null,
     ): string {
         return match ($this->strategy) {
             SubjectIdentifierStrategy::PUBLIC => $this->publicIdentifier(localSubject: $localSubject),
@@ -53,7 +53,7 @@ final readonly class SubjectIdentifier
 
     private function hashPairwise(string $localSubject, string $sector, string $salt): string
     {
-        $input = $localSubject.'.'.$sector.'.'.$salt;
+        $input = $localSubject . '.' . $sector . '.' . $salt;
 
         return hash(algo: 'sha256', data: $input);
     }

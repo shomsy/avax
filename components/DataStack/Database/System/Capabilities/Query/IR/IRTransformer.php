@@ -33,7 +33,7 @@ final readonly class IRTransformer
                 callback: fn (CTENode $cteNode): string => $cteNode->getSql(grammar: $this->grammar),
                 array   : $ctes,
             );
-            $components[] = 'WITH '.($hasRecursive ? 'RECURSIVE ' : '').implode(separator: ', ', array: $cteSql);
+            $components[] = 'WITH ' . ($hasRecursive ? 'RECURSIVE ' : '') . implode(separator: ', ', array: $cteSql);
         }
 
         $components[] = $this->compileSelect(query: $queryNode);
@@ -49,20 +49,20 @@ final readonly class IRTransformer
         $columns = $queryNode->getSelect();
 
         if ($columns === []) {
-            $select = $distinct.'*';
+            $select = $distinct . '*';
         } else {
             $selectColumns = array_map(
                 callback: fn ($col): string => $this->grammar->wrap(value: $col),
                 array   : $columns,
             );
-            $select = $distinct.implode(separator: ', ', array: $selectColumns);
+            $select = $distinct . implode(separator: ', ', array: $selectColumns);
         }
 
         $components[] = $select;
 
         $from = $queryNode->getFrom();
         if ($from instanceof FromNode) {
-            $components[] = 'FROM '.$from->getSql(grammar: $this->grammar);
+            $components[] = 'FROM ' . $from->getSql(grammar: $this->grammar);
         }
 
         $joins = $queryNode->getJoins();
@@ -81,7 +81,7 @@ final readonly class IRTransformer
                 array   : $wheres,
             );
             $whereSql[0] = preg_replace(pattern: '/^(AND|OR)\s+/i', replacement: '', subject: $whereSql[0]);
-            $components[] = 'WHERE '.implode(separator: ' ', array: $whereSql);
+            $components[] = 'WHERE ' . implode(separator: ' ', array: $whereSql);
         }
 
         $groups = $queryNode->getGroups();
@@ -90,7 +90,7 @@ final readonly class IRTransformer
                 callback: fn ($col): string => $this->grammar->wrap(value: $col),
                 array   : $groups,
             );
-            $components[] = 'GROUP BY '.implode(separator: ', ', array: $groupColumns);
+            $components[] = 'GROUP BY ' . implode(separator: ', ', array: $groupColumns);
         }
 
         $orders = $queryNode->getOrders();
@@ -99,17 +99,17 @@ final readonly class IRTransformer
                 callback: fn (OrderByNode $orderByNode): string => $orderByNode->getSql(grammar: $this->grammar),
                 array   : $orders,
             );
-            $components[] = 'ORDER BY '.implode(separator: ', ', array: $orderSql);
+            $components[] = 'ORDER BY ' . implode(separator: ', ', array: $orderSql);
         }
 
         $limit = $queryNode->getLimit();
         if ($limit !== null) {
-            $components[] = 'LIMIT '.$limit;
+            $components[] = 'LIMIT ' . $limit;
         }
 
         $offset = $queryNode->getOffset();
         if ($offset !== null) {
-            $components[] = 'OFFSET '.$offset;
+            $components[] = 'OFFSET ' . $offset;
         }
 
         return implode(separator: ' ', array: array_filter(array: $components));
@@ -124,31 +124,31 @@ final readonly class IRTransformer
 
         $from = $queryNode->getFrom();
         if ($from instanceof FromNode) {
-            $parts[] = 'FROM '.$from->table;
+            $parts[] = 'FROM ' . $from->table;
         }
 
         $joins = $queryNode->getJoins();
         foreach ($joins as $join) {
-            $parts[] = 'JOIN '.$join->table;
+            $parts[] = 'JOIN ' . $join->table;
         }
 
         $wheres = $queryNode->getWheres();
         foreach ($wheres as $where) {
-            $parts[] = $where->column.$where->operator->value;
+            $parts[] = $where->column . $where->operator->value;
         }
 
         $groups = $queryNode->getGroups();
         if ($groups !== []) {
-            $parts[] = 'GROUP BY '.implode(separator: ',', array: $groups);
+            $parts[] = 'GROUP BY ' . implode(separator: ',', array: $groups);
         }
 
         $orders = $queryNode->getOrders();
         foreach ($orders as $order) {
-            $parts[] = $order->column.$order->direction;
+            $parts[] = $order->column . $order->direction;
         }
 
-        $parts[] = 'LIMIT '.($queryNode->getLimit() ?? '0');
-        $parts[] = 'OFFSET '.($queryNode->getOffset() ?? '0');
+        $parts[] = 'LIMIT ' . ($queryNode->getLimit() ?? '0');
+        $parts[] = 'OFFSET ' . ($queryNode->getOffset() ?? '0');
 
         return md5(string: implode(separator: '|', array: $parts));
     }

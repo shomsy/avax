@@ -30,19 +30,19 @@ final class PoolFactory
         $minConnections ??= 5;
 
         return match (Dialect::tryFrom(value: strtolower(string: $driver))) {
-            Dialect::MYSQL => new MySQLPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::POSTGRESQL => new PostgreSQLPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::SQLITE => new SQLitePool(config: $config, minConnections: $minConnections, maxConnections: min(5, $maxConnections)),
-            Dialect::SQLSERVER => new SQLServerPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::MONGODB => new MongoDBPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::REDIS => new RedisPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::MYSQL       => new MySQLPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::POSTGRESQL  => new PostgreSQLPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::SQLITE      => new SQLitePool(config: $config, minConnections: $minConnections, maxConnections: min(5, $maxConnections)),
+            Dialect::SQLSERVER   => new SQLServerPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::MONGODB     => new MongoDBPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::REDIS       => new RedisPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
             Dialect::ELASTICSEARCH => new ElasticsearchPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::CASSANDRA => new CassandraPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::NEO4J => new Neo4jPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::CLICKHOUSE => new ClickHousePool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::CASSANDRA   => new CassandraPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::NEO4J       => new Neo4jPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            Dialect::CLICKHOUSE  => new ClickHousePool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
             Dialect::COCKROACHDB => new CockroachDBPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            Dialect::YUGABYTEDB => new YugabyteDBPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
-            default => throw new InvalidArgumentException(message: 'Unsupported driver: '.$driver),
+            Dialect::YUGABYTEDB  => new YugabyteDBPool(config: $config, minConnections: $minConnections, maxConnections: $maxConnections),
+            default              => throw new InvalidArgumentException(message: 'Unsupported driver: ' . $driver),
         };
     }
 }

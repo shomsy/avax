@@ -11,9 +11,9 @@ use Closure;
  */
 final readonly class RegisterSagaMessageBus
 {
-    public function register(Closure $messageBus, ?SagaRuntimeConfig $config = null): SagaRuntimeConfig
+    public function register(Closure $messageBus, SagaRuntimeConfig $config = null) : SagaRuntimeConfig
     {
-        return ($config ?? new SagaRuntimeConfig)->withMessageBus(messageBus: $messageBus);
+        return ($config ?? new SagaRuntimeConfig())->withMessageBus(messageBus: $messageBus);
     }
 
     public function describeResponsibility(): string

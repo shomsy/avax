@@ -12,7 +12,7 @@ use SensitiveParameter;
 final readonly class RefreshTokenRecord
 {
     /**
-     * @param  list<string>  $scopes
+     * @param list<string> $scopes
      */
     public function __construct(
         #[SensitiveParameter]
@@ -31,7 +31,7 @@ final readonly class RefreshTokenRecord
 
     public function isExpired(): bool
     {
-        return $this->expiresAt < new DateTimeImmutable;
+        return $this->expiresAt < new DateTimeImmutable();
     }
 
     public function isExpiredAt(DateTimeImmutable $moment): bool

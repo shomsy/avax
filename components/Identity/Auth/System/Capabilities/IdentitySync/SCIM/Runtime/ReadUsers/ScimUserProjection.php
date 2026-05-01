@@ -10,8 +10,8 @@ use SensitiveParameter;
 final readonly class ScimUserProjection
 {
     /**
-     * @param  list<string>  $roles
-     * @param  list<string>  $groups
+     * @param list<string> $roles
+     * @param list<string> $groups
      */
     public function __construct(
         public string $externalId,

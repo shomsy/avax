@@ -47,7 +47,7 @@ final readonly class StartSaga
     public function start(
         SagaDefinition $definition,
         SagaStartCommand $command,
-        ?callable $correlationIdGenerator = null,
+        callable $correlationIdGenerator = null,
     ): SagaInstance {
         if (! $definition->isValid()) {
             throw new SagaStartFailure(
@@ -69,8 +69,8 @@ final readonly class StartSaga
             type          : $definition->type,
             initialData   : $command->initialData,
             options       : [
-                'correlation_id' => $correlationId,
-                'tenant_id' => $command->tenantId,
+                                'correlation_id' => $correlationId,
+                                'tenant_id'      => $command->tenantId,
                 'timeout_seconds' => $definition->timeoutSeconds,
             ],
         );
@@ -117,17 +117,17 @@ final readonly class SagaStartCommand
         ?string $tenantId,
         ?string $idempotencyKey,
     ) {
-        $this->sagaId = $sagaId;
+        $this->sagaId        = $sagaId;
         $this->definitionName = $definitionName;
-        $this->initialData = $initialData;
+        $this->initialData   = $initialData;
         $this->correlationId = $correlationId;
-        $this->tenantId = $tenantId;
+        $this->tenantId      = $tenantId;
         $this->idempotencyKey = $idempotencyKey;
     }
 
     public static function create(
         string $definitionName,
-        ?array $initialData = null,
+        array $initialData = null,
         array $options = [],
     ): self {
         $initialData ??= [];
@@ -166,7 +166,7 @@ final readonly class SagaCorrelationId
 
     public ?string $suffix;
 
-    private function __construct(string $value, ?string $prefix = null, ?string $suffix = null)
+    private function __construct(string $value, string $prefix = null, string $suffix = null)
     {
         $this->value = $value;
         $this->prefix = $prefix;

@@ -17,7 +17,7 @@ final readonly class Uuid implements Stringable
     public function __construct(public string $value)
     {
         if (in_array(preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $value), [0, false], true)) {
-            throw new InvalidArgumentException('Invalid UUID: '.$value);
+            throw new InvalidArgumentException('Invalid UUID: ' . $value);
         }
     }
 

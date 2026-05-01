@@ -7,7 +7,6 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\CompileDataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQueryPlan;
 use InvalidArgumentException;
-
 use function end;
 use function explode;
 use function is_array;
@@ -43,7 +42,7 @@ final class CompileDataQuery
     /**
      * Extracts a table name from an entity class name.
      *
-     * @param  class-string  $entityType
+     * @param class-string $entityType
      */
     private function extractTableName(string $entityType): string
     {
@@ -86,7 +85,7 @@ final class CompileDataQuery
             foreach ($query->orderBy as $field => $direction) {
                 $orderByParts[] = "{$field} {$direction}";
             }
-            $sql .= ' ORDER BY '.implode(', ', $orderByParts);
+            $sql .= ' ORDER BY ' . implode(', ', $orderByParts);
         }
 
         // Add LIMIT
@@ -105,7 +104,7 @@ final class CompileDataQuery
     /**
      * Builds the WHERE clause from conditions.
      *
-     * @param  array<array{field: string, value: mixed, operator: string}|mixed>  $conditions
+     * @param array<array{field: string, value: mixed, operator: string}|mixed> $conditions
      */
     private function buildWhereClause(array $conditions): string
     {

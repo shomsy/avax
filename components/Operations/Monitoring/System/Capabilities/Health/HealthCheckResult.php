@@ -17,7 +17,7 @@ final readonly class HealthCheckResult
         return [
             'status' => $this->status,
             'latency_ms' => $this->latencyMs,
-            'error' => $this->error,
+            'error'  => $this->error,
         ];
     }
 }

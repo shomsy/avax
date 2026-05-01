@@ -67,7 +67,7 @@ final class ElasticsearchGrammar extends BaseGrammar
     public function compileUpdate(QueryState $state): string
     {
         $index = $this->wrap(value: $state->from);
-        $id = $state->values['id'] ?? '';
+        $id    = $state->values['id'] ?? '';
         $document = json_encode(value: $state->values);
 
         return "{$index}/_doc/{$id} {$document}";
@@ -86,7 +86,7 @@ final class ElasticsearchGrammar extends BaseGrammar
     public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
     {
         $index = $this->wrap(value: $state->from);
-        $id = $state->values['id'] ?? '';
+        $id    = $state->values['id'] ?? '';
         $document = json_encode(value: $state->values);
 
         return "{$index}/_doc/{$id} {$document}";
@@ -117,7 +117,7 @@ final class ElasticsearchGrammar extends BaseGrammar
         return json_encode(value: ['range' => [$field => $range]]);
     }
 
-    public function compileBool(?array $must = null, ?array $mustNot = null, array $should = []): string
+    public function compileBool(array $must = null, array $mustNot = null, array $should = []) : string
     {
         $must ??= [];
         $mustNot ??= [];
@@ -143,6 +143,6 @@ final class ElasticsearchGrammar extends BaseGrammar
     #[Override]
     public function compileTruncate(string $table): string
     {
-        return "{$table}/_delete_by_query ".json_encode(value: ['query' => ['match_all' => (object) []]]);
+        return "{$table}/_delete_by_query " . json_encode(value: ['query' => ['match_all' => (object) []]]);
     }
 }

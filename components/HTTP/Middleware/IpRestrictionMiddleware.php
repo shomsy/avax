@@ -37,8 +37,7 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
         }
 
         // Fallback: anonymous class implementing ResponseInterface
-        return new class implements ResponseInterface
-        {
+        return new class () implements ResponseInterface {
             public function getStatusCode(): int
             {
                 return 403;

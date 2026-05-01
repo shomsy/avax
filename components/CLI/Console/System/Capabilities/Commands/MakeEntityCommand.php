@@ -43,7 +43,7 @@ class MakeEntityCommand extends Command
             }
         }
 
-        $table = $this->option('table');
+        $table  = $this->option('table');
         $fieldsInput = $this->option('fields');
         $fields = [];
 
@@ -64,11 +64,11 @@ class MakeEntityCommand extends Command
 
             $path = $this->entityGenerator->generate($name, $data);
 
-            $this->info('Entity created successfully: '.$path);
+            $this->info('Entity created successfully: ' . $path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create entity: '.$runtimeException->getMessage());
+            $this->error('Failed to create entity: ' . $runtimeException->getMessage());
 
             return self::FAILURE;
         }

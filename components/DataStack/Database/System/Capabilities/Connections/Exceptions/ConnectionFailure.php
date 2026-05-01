@@ -32,9 +32,9 @@ use Throwable;
 final class ConnectionFailure extends DatabaseException
 {
     /**
-     * @param  string  $name  The nickname of the connection that failed.
-     * @param  string  $message  The detailed explanation of the failure.
-     * @param  Throwable|null  $throwable  The raw technical error from the network or driver.
+     * @param string         $name      The nickname of the connection that failed.
+     * @param string         $message   The detailed explanation of the failure.
+     * @param Throwable|null $throwable The raw technical error from the network or driver.
      */
     public function __construct(
         public readonly string $name,

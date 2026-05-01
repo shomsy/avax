@@ -38,17 +38,17 @@ final class ConnectionPool implements ConnectionPoolInterface
     private readonly array $config;
 
     /**
-     * @param  array<string, mixed>  $config  The instructions for the garage (e.g., "Max 10 cars").
-     * @param  EventBus|null  $eventBus  The "Notification System" for reporting when a car is taken or returned.
+     * @param array<string, mixed> $config   The instructions for the garage (e.g., "Max 10 cars").
+     * @param EventBus|null        $eventBus The "Notification System" for reporting when a car is taken or returned.
      */
     public function __construct(
         array $config,
-        ?EventBus $eventBus = null,
+        EventBus $eventBus = null,
     ) {
         $this->config = $config;
         $this->eventBus = $eventBus;
-        $this->pool = new SplQueue;
-        $this->state = new PoolState(
+        $this->pool   = new SplQueue();
+        $this->state  = new PoolState(
             maxConnections: (int) ($this->config['pool']['max_connections'] ?? 10),
         );
     }
@@ -94,7 +94,7 @@ final class ConnectionPool implements ConnectionPoolInterface
         }
 
         $connection = new OpenConnection(
-            buildPhysicalConnection: new BuildPhysicalConnection,
+            buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
             scope                  : $this->scope,
         )->using(config: $this->config);
@@ -119,7 +119,7 @@ final class ConnectionPool implements ConnectionPoolInterface
         $currentTime = microtime(as_float: true);
         $prunedCount = 0;
 
-        $validConnections = new SplQueue;
+        $validConnections = new SplQueue();
 
         while (! $this->pool->isEmpty()) {
             $item = $this->pool->dequeue();
@@ -147,7 +147,7 @@ final class ConnectionPool implements ConnectionPoolInterface
     /**
      * Ask a connection "Are you alive?" (Ping).
      */
-    public function validateConnection(?DatabaseConnection $connection = null): bool
+    public function validateConnection(DatabaseConnection $connection = null) : bool
     {
         if ($connection === null) {
             return false;
@@ -182,7 +182,7 @@ final class ConnectionPool implements ConnectionPoolInterface
     /**
      * Return a used connection to the pool.
      *
-     * @param  DatabaseConnection  $connection  The connection to return.
+     * @param DatabaseConnection $connection The connection to return.
      */
     public function release(DatabaseConnection $connection): void
     {
@@ -206,7 +206,7 @@ final class ConnectionPool implements ConnectionPoolInterface
 
         $this->pool->enqueue(
             value: [
-                'connection' => $connection,
+                       'connection' => $connection,
                 'released_at' => microtime(as_float: true),
             ],
         );
@@ -248,11 +248,11 @@ final class ConnectionPool implements ConnectionPoolInterface
         return new ConnectionPoolMetrics(
             data: [
                 'spawnedConnections' => $this->state->spawnedCount,
-                'idleConnections' => $this->pool->count(),
+                'idleConnections'   => $this->pool->count(),
                 'activeConnections' => max(0, $this->state->spawnedCount - $this->pool->count()),
-                'maxConnections' => (int) ($this->config['pool']['max_connections'] ?? 10),
+                'maxConnections'    => (int) ($this->config['pool']['max_connections'] ?? 10),
                 'totalAcquisitions' => $this->state->totalAcquisitions,
-                'maxIdleTime' => $maxIdleTime,
+                'maxIdleTime'       => $maxIdleTime,
             ],
         );
     }

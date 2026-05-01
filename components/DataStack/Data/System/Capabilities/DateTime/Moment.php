@@ -29,7 +29,7 @@ final readonly class Moment
             try {
                 $this->dateTimeImmutable = new DateTimeImmutable($time, $timezone);
             } catch (Throwable $e) {
-                throw new InvalidArgumentException('Invalid date time string: '.$time, 0, $e);
+                throw new InvalidArgumentException('Invalid date time string: ' . $time, 0, $e);
             }
         }
     }
@@ -65,23 +65,23 @@ final readonly class Moment
         $diff = $this->dateTimeImmutable->diff($other->dateTimeImmutable);
 
         if ($diff->y > 0) {
-            return $diff->y.' years ago';
+            return $diff->y . ' years ago';
         }
 
         if ($diff->m > 0) {
-            return $diff->m.' months ago';
+            return $diff->m . ' months ago';
         }
 
         if ($diff->d > 0) {
-            return $diff->d.' days ago';
+            return $diff->d . ' days ago';
         }
 
         if ($diff->h > 0) {
-            return $diff->h.' hours ago';
+            return $diff->h . ' hours ago';
         }
 
         if ($diff->i > 0) {
-            return $diff->i.' minutes ago';
+            return $diff->i . ' minutes ago';
         }
 
         return 'just now';

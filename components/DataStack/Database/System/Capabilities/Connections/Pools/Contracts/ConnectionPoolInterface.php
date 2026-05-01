@@ -38,7 +38,7 @@ interface ConnectionPoolInterface
     /**
      * Hand a database connection back to the pool so others can use it.
      *
-     * @param  DatabaseConnection  $databaseConnection  The tool you are finished using.
+     * @param DatabaseConnection $databaseConnection The tool you are finished using.
      */
     public function release(DatabaseConnection $databaseConnection): void;
 

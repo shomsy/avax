@@ -43,14 +43,14 @@ final readonly class MfaEnrollment
     public function __debugInfo(): array
     {
         return [
-            'method' => $this->method->value,
-            'status' => $this->status->value,
+            'method'     => $this->method->value,
+            'status'     => $this->status->value,
             'accountLabel' => $this->accountLabel,
-            'issuer' => $this->issuer,
-            'secret' => '[REDACTED]',
+            'issuer'     => $this->issuer,
+            'secret'     => '[REDACTED]',
             'otpauthUri' => '[REDACTED]',
-            'startedAt' => $this->startedAt,
-            'expiresAt' => $this->expiresAt,
+            'startedAt'  => $this->startedAt,
+            'expiresAt'  => $this->expiresAt,
         ];
     }
 }

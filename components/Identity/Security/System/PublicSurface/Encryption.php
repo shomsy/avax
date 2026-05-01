@@ -28,7 +28,8 @@ final readonly class Encryption
     /**
      * Encrypt a value and return a serialized encrypted payload string.
      *
-     * @param  mixed  $value  The value to encrypt (string, array, object, etc.)
+     * @param mixed $value The value to encrypt (string, array, object, etc.)
+     *
      * @return string Serialized encrypted payload
      */
     public function encrypt(mixed $value): string
@@ -41,7 +42,8 @@ final readonly class Encryption
     /**
      * Decrypt a serialized encrypted payload string back to the original value.
      *
-     * @param  string  $serialized  The serialized encrypted payload
+     * @param string $serialized The serialized encrypted payload
+     *
      * @return mixed The decrypted value
      *
      * @throws DecryptionFailed if decryption fails or payload has been tampered with
@@ -74,7 +76,7 @@ final readonly class Encryption
     /**
      * Rotate encryption keys by adding a new key and setting it as current.
      *
-     * @param  EncryptionKey  $newKey  The new encryption key to use for future encryptions
+     * @param EncryptionKey $newKey The new encryption key to use for future encryptions
      */
     public function rotateKeys(EncryptionKey $newKey): void
     {

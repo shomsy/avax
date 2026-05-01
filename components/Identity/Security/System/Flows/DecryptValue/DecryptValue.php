@@ -8,7 +8,6 @@ use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptedPa
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncrypterInterface;
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\KeyResolver;
 use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed;
-
 use function is_string;
 
 /**
@@ -26,7 +25,8 @@ final readonly class DecryptValue
     /**
      * Execute the decryption flow.
      *
-     * @param  EncryptedPayload|string  $payload  The encrypted payload or serialized string
+     * @param EncryptedPayload|string $payload The encrypted payload or serialized string
+     *
      * @return string The decrypted plaintext
      *
      * @throws DecryptionFailed if decryption fails or payload has been tampered with

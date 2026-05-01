@@ -34,7 +34,7 @@ final readonly class CancelMfaEnrollment
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         $this->mfaStore->cancelEnrollment(userId: new UserId(value: $user->id));

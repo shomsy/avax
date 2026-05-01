@@ -23,7 +23,7 @@ class BladeTemplateEngine extends Blade
     private function initializeBaseAssetPath(): void
     {
         // Define the base asset path dynamically
-        $this->baseAssetPath = $this->getBaseUrl().'/assets';
+        $this->baseAssetPath = $this->getBaseUrl() . '/assets';
     }
 
     private function getBaseUrl(): string
@@ -33,7 +33,7 @@ class BladeTemplateEngine extends Blade
             return $context->baseUrl();
         }
 
-        $url = parse_url(url: (string) config(key: 'app.url', default: 'http://localhost'));
+        $url  = parse_url(url: (string) config(key: 'app.url', default: 'http://localhost'));
         $scheme = $url['scheme'] ?? 'http';
         $host = $url['host'] ?? 'localhost';
 
@@ -138,7 +138,7 @@ class BladeTemplateEngine extends Blade
         } catch (Throwable $throwable) {
             logger(message: 'View rendering to html failed.', context: ['view' => $view, 'exception' => $throwable]);
 
-            return '<div>View rendering error: '.$throwable->getMessage().'</div>';
+            return '<div>View rendering error: ' . $throwable->getMessage() . '</div>';
         }
     }
 }

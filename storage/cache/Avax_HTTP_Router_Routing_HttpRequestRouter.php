@@ -3,51 +3,51 @@
 declare(strict_types=1);
 
 return Avax\Container\Features\Think\Model\ServicePrototype::__set_state([
-                                                                             'class'              => 'Avax\\HTTP\\Router\\Routing\\HttpRequestRouter',
-                                                                             'constructor'        => Avax\Container\Features\Think\Model\MethodPrototype::__set_state([
+                                                                             'class'           => 'Avax\\HTTP\\Router\\Routing\\HttpRequestRouter',
+                                                                             'constructor'     => Avax\Container\Features\Think\Model\MethodPrototype::__set_state([
                                                                                                                                                                           'name'       => '__construct',
                                                                                                                                                                           'parameters' => [
                                                                                                                                                                               0 => Avax\Container\Features\Think\Model\ParameterPrototype::__set_state([
                                                                                                                                                                                                                                                            'name'     => 'constraintValidator',
                                                                                                                                                                                                                                                            'type'     => 'Avax\\HTTP\\Router\\Validation\\RouteConstraintValidator',
-         'hasDefault' => false,
+                                                                                                                                                                                                                                                           'hasDefault' => false,
                                                                                                                                                                                                                                                            'default'  => null,
-         'isVariadic' => false,
-         'allowsNull' => false,
+                                                                                                                                                                                                                                                           'isVariadic' => false,
+                                                                                                                                                                                                                                                           'allowsNull' => false,
                                                                                                                                                                                                                                                            'required' => true,
                                                                                                                                                                                                                                                        ]),
                                                                                                                                                                               1 => Avax\Container\Features\Think\Model\ParameterPrototype::__set_state([
                                                                                                                                                                                                                                                            'name'     => 'matcher',
                                                                                                                                                                                                                                                            'type'     => 'Avax\\HTTP\\Router\\Matching\\RouteMatcherInterface',
-         'hasDefault' => false,
+                                                                                                                                                                                                                                                           'hasDefault' => false,
                                                                                                                                                                                                                                                            'default'  => null,
-         'isVariadic' => false,
-         'allowsNull' => false,
+                                                                                                                                                                                                                                                           'isVariadic' => false,
+                                                                                                                                                                                                                                                           'allowsNull' => false,
                                                                                                                                                                                                                                                            'required' => true,
                                                                                                                                                                                                                                                        ]),
                                                                                                                                                                               2 => Avax\Container\Features\Think\Model\ParameterPrototype::__set_state([
                                                                                                                                                                                                                                                            'name'     => 'logger',
                                                                                                                                                                                                                                                            'type'     => 'Psr\\Log\\LoggerInterface',
-         'hasDefault' => true,
+                                                                                                                                                                                                                                                           'hasDefault' => true,
                                                                                                                                                                                                                                                            'default'  => null,
-         'isVariadic' => false,
-         'allowsNull' => true,
+                                                                                                                                                                                                                                                           'isVariadic' => false,
+                                                                                                                                                                                                                                                           'allowsNull' => true,
                                                                                                                                                                                                                                                            'required' => false,
                                                                                                                                                                                                                                                        ]),
                                                                                                                                                                               3 => Avax\Container\Features\Think\Model\ParameterPrototype::__set_state([
                                                                                                                                                                                                                                                            'name'     => 'trace',
                                                                                                                                                                                                                                                            'type'     => 'Avax\\HTTP\\Router\\Tracing\\RouterTrace',
-         'hasDefault' => true,
+                                                                                                                                                                                                                                                           'hasDefault' => true,
                                                                                                                                                                                                                                                            'default'  => null,
-         'isVariadic' => false,
-         'allowsNull' => true,
+                                                                                                                                                                                                                                                           'isVariadic' => false,
+                                                                                                                                                                                                                                                           'allowsNull' => true,
                                                                                                                                                                                                                                                            'required' => false,
                                                                                                                                                                                                                                                        ]),
                                                                                                                                                                           ],
                                                                                                                                                                       ]),
                                                                              'injectedProperties' => [
                                                                              ],
-                                                                             'injectedMethods'    => [
+                                                                             'injectedMethods' => [
                                                                              ],
    'isInstantiable' => true,
                                                                          ]);

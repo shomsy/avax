@@ -26,20 +26,20 @@ final readonly class JoinNode
     public string $table;
 
     /**
-     * @param  string  $table  The technical name of the target database table to be joined.
-     * @param  string  $type  The relational strategy for the join (e.g., 'inner', 'left', 'right', 'cross').
-     * @param  string|null  $first  The primary column label used in the comparison (Left-hand side).
-     * @param  string|null  $operator  The SQL comparison operator (e.g., '=', '!=', 'LIKE').
-     * @param  string|null  $second  The secondary column label used in the comparison (Right-hand side).
-     * @param  JoinClause|null  $clause  Optional container for complex, multi-condition join logic.
+     * @param string          $table    The technical name of the target database table to be joined.
+     * @param string          $type     The relational strategy for the join (e.g., 'inner', 'left', 'right', 'cross').
+     * @param string|null     $first    The primary column label used in the comparison (Left-hand side).
+     * @param string|null     $operator The SQL comparison operator (e.g., '=', '!=', 'LIKE').
+     * @param string|null     $second   The secondary column label used in the comparison (Right-hand side).
+     * @param JoinClause|null $clause   Optional container for complex, multi-condition join logic.
      */
     public function __construct(
         string $table,
-        ?string $type = null,
-        ?string $first = null,
-        ?string $operator = null,
-        ?string $second = null,
-        ?JoinClause $clause = null,
+        string     $type = null,
+        string     $first = null,
+        string     $operator = null,
+        string     $second = null,
+        JoinClause $clause = null,
     ) {
         $type ??= 'inner';
         $this->table = $table;

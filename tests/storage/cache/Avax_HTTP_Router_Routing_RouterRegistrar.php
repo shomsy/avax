@@ -13,8 +13,8 @@ use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRe
 use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 
 return ServicePrototype::__set_state(array: [
-                                                'class'              => RouterRegistrar::class,
-                                                'constructor'        => MethodPrototype::__set_state(array: [
+                                                'class'           => RouterRegistrar::class,
+                                                'constructor'     => MethodPrototype::__set_state(array: [
                                                                                             'name'       => '__construct',
                                                                                             'parameters' => [
                                                                                                     ParameterPrototype::__set_state(array: [
@@ -39,7 +39,7 @@ return ServicePrototype::__set_state(array: [
                                                                                         ]),
                                                 'injectedProperties' => [
                                                     ],
-                                                'injectedMethods'    => [
+                                                'injectedMethods' => [
                                                     ],
-                                                'isInstantiable'     => true,
+                                                'isInstantiable'  => true,
                                             ]);

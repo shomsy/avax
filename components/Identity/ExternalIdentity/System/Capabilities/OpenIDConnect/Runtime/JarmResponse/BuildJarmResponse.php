@@ -21,7 +21,7 @@ final readonly class BuildJarmResponse
     {
         $issuedAt = $this->clock->now();
         $expiresAt = $issuedAt->modify(modifier: '+5 minutes');
-        $claims = [
+        $claims   = [
             'iss' => $this->oidcProvider->readProviderMetadata()->issuer,
             'aud' => trim(string: $data->clientId),
             'code' => $data->code,

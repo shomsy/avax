@@ -67,12 +67,12 @@ final readonly class UpdateClient
             name      : 'auth.oauth.client.updated',
             occurredAt: $this->clock->now(),
             context   : [
-                'client_id' => $updated->clientId,
-                'tenant_slug' => $updated->tenantSlug,
-                'type' => $updated->type->value,
-                'active' => $updated->active ? 1 : 0,
+                            'client_id'       => $updated->clientId,
+                            'tenant_slug'     => $updated->tenantSlug,
+                            'type'            => $updated->type->value,
+                            'active'          => $updated->active ? 1 : 0,
                 'request_object_signature_required' => $updated->requestObjectSignatureRequired ? 1 : 0,
-                'approval_status' => $updated->approvalStatus->value,
+                            'approval_status' => $updated->approvalStatus->value,
             ],
         ));
 

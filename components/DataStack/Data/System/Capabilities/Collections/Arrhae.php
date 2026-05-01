@@ -19,7 +19,7 @@ final readonly class Arrhae
     public function __construct(
         private array $items = [],
     ) {
-        $this->guard = new MutationGuard;
+        $this->guard = new MutationGuard();
     }
 
     public static function from(iterable $items): static

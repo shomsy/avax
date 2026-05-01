@@ -62,7 +62,7 @@ final class PolicyEvaluator
         }
 
         return PolicyDecision::allow(
-            $reasons ? 'Matched '.count($reasons).' rules' : null,
+            $reasons ? 'Matched ' . count($reasons) . ' rules' : null,
         );
     }
 }

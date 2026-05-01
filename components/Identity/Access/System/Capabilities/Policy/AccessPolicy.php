@@ -22,23 +22,23 @@ final readonly class AccessPolicy
         public ?UserRole $requiredRole = null,
         public ?UserPermission $requiredPermission = null,
         public ?int $resourceOwnerUserId = null,
-        ?bool $freshMfa = null,
-        ?bool $adminElevation = null,
-        ?bool $phishingResistantRequired = null,
+        bool $freshMfa = null,
+        bool $adminElevation = null,
+        bool $phishingResistantRequired = null,
         public ?int $freshMfaMaxAgeSeconds = null,
         public ?IdentityPolicy $identityPolicy = null,
     ) {
-        $freshMfa ??= false;
-        $adminElevation ??= false;
+        $freshMfa             ??= false;
+        $adminElevation       ??= false;
         $phishingResistantRequired ??= false;
-        $this->freshMfa = $freshMfa;
+        $this->freshMfa       = $freshMfa;
         $this->adminElevation = $adminElevation;
         $this->phishingResistantRequired = $phishingResistantRequired;
     }
 
     public static function admin(
-        ?UserPermission $requiredPermission = null,
-        ?int $resourceOwnerUserId = null,
+        UserPermission $requiredPermission = null,
+        int            $resourceOwnerUserId = null,
     ): self {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::admin(),
@@ -50,9 +50,9 @@ final readonly class AccessPolicy
 
     public static function forIdentityPolicy(
         IdentityPolicy $identityPolicy,
-        ?UserRole $requiredRole = null,
-        ?UserPermission $requiredPermission = null,
-        ?int $resourceOwnerUserId = null,
+        UserRole       $requiredRole = null,
+        UserPermission $requiredPermission = null,
+        int            $resourceOwnerUserId = null,
     ): self {
         return new self(
             requiredRole             : $requiredRole,
@@ -67,8 +67,8 @@ final readonly class AccessPolicy
     }
 
     public static function tenantAdmin(
-        ?UserPermission $requiredPermission = null,
-        ?int $resourceOwnerUserId = null,
+        UserPermission $requiredPermission = null,
+        int            $resourceOwnerUserId = null,
     ): self {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::tenantAdmin(),

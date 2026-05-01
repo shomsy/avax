@@ -63,8 +63,8 @@ final readonly class BeginEmailChange
                 name      : 'auth.email_change.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'user_id' => $user->getId()->value,
-                    'reason' => 'invalid_password',
+                                'user_id' => $user->getId()->value,
+                                'reason'  => 'invalid_password',
                     'ip_address' => $data->ipAddress,
                     'user_agent' => $data->userAgent,
                 ],
@@ -88,8 +88,8 @@ final readonly class BeginEmailChange
             name      : 'auth.email_change.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $user->getId()->value,
-                'new_email' => $newEmail,
+                            'user_id'   => $user->getId()->value,
+                            'new_email' => $newEmail,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],

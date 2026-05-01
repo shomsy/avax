@@ -49,7 +49,7 @@ final readonly class SlowQueryReport
             $ratio >= 10.0 => 'CRITICAL',
             $ratio >= 5.0 => 'SEVERE',
             $ratio >= 2.0 => 'WARNING',
-            default => 'SLOW',
+            default       => 'SLOW',
         };
     }
 
@@ -71,16 +71,16 @@ final readonly class SlowQueryReport
     public function toArray(): array
     {
         return [
-            'sql' => $this->sql,
-            'bindings' => $this->bindings,
+            'sql'         => $this->sql,
+            'bindings'    => $this->bindings,
             'duration_ms' => $this->durationMs,
             'threshold_ms' => $this->thresholdMs,
             'fingerprint' => $this->fingerprint,
-            'connection' => $this->connection,
-            'timestamp' => $this->timestamp,
+            'connection'  => $this->connection,
+            'timestamp'   => $this->timestamp,
             'occurrences' => $this->occurrences,
-            'severity' => $this->severityLabel(),
-            'times_over' => $this->timesOverThreshold(),
+            'severity'    => $this->severityLabel(),
+            'times_over'  => $this->timesOverThreshold(),
         ];
     }
 }
@@ -103,12 +103,12 @@ final readonly class SlowQueryStatistics
     /**
      * Creates statistics from a list of slow query reports.
      *
-     * @param  list<SlowQueryReport>  $reports
+     * @param list<SlowQueryReport> $reports
      */
     public static function fromReports(array $reports): self
     {
         if ($reports === []) {
-            return new self;
+            return new self();
         }
 
         $totalDuration = 0.0;

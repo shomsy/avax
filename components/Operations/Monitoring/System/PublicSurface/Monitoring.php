@@ -26,7 +26,7 @@ final class Monitoring
     public static function metrics(): MetricsRegistry
     {
         if (self::$metrics === null) {
-            self::$metrics = new MetricsRegistry;
+            self::$metrics = new MetricsRegistry();
         }
 
         return self::$metrics;
@@ -34,11 +34,11 @@ final class Monitoring
 
     public static function health(array $checks = []): HealthReport
     {
-        return (new HealthEndpoint)->report(checks: $checks);
+        return (new HealthEndpoint())->report(checks: $checks);
     }
 
     public static function report(Throwable $throwable): void
     {
-        (new SentryReporter)->capture(throwable: $throwable);
+        (new SentryReporter())->capture(throwable: $throwable);
     }
 }

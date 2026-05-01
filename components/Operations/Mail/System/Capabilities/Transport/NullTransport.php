@@ -13,7 +13,7 @@ final readonly class NullTransport implements MailTransport
     {
         return new TransportResult(
             success  : true,
-            messageId: '<'.uniqid(prefix: 'msg-', more_entropy: true).'-null@local>',
+            messageId: '<' . uniqid(prefix: 'msg-', more_entropy: true) . '-null@local>',
         );
     }
 

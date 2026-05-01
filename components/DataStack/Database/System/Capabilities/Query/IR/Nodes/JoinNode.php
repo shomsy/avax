@@ -22,15 +22,15 @@ final class JoinNode
         $table = $grammar->wrap(value: $this->table);
 
         if ($this->alias !== null) {
-            $table .= ' AS '.$grammar->wrap(value: $this->alias);
+            $table .= ' AS ' . $grammar->wrap(value: $this->alias);
         }
 
         $sql = "{$type} JOIN {$table}";
 
         if ($this->using !== null) {
-            $sql .= ' USING ('.$grammar->wrap(value: $this->using).')';
+            $sql .= ' USING (' . $grammar->wrap(value: $this->using) . ')';
         } elseif ($this->on !== null) {
-            $sql .= ' ON '.$this->on->getSql(grammar: $grammar);
+            $sql .= ' ON ' . $this->on->getSql(grammar: $grammar);
         }
 
         return $sql;

@@ -29,7 +29,7 @@ final class SQLiteGrammar extends BaseGrammar
     {
         $this->supportsReturning = $this->checkVersion(required: '3.35.0');
         $this->supportsWindowFunctions = $this->checkVersion(required: '3.25.0');
-        $this->supportsCTE = $this->checkVersion(required: '3.26.0');
+        $this->supportsCTE       = $this->checkVersion(required: '3.26.0');
     }
 
     private function checkVersion(string $required): bool
@@ -56,7 +56,7 @@ final class SQLiteGrammar extends BaseGrammar
 
         $updates = [];
         foreach ($update as $column) {
-            $updates[] = $this->wrap(value: $column).' = excluded.'.$this->wrap(value: $column);
+            $updates[] = $this->wrap(value: $column) . ' = excluded.' . $this->wrap(value: $column);
         }
 
         $updateClause = implode(separator: ', ', array: $updates);
@@ -92,7 +92,7 @@ final class SQLiteGrammar extends BaseGrammar
             return $segment;
         }
 
-        return '"'.str_replace(search: '"', replace: '""', subject: $segment).'"';
+        return '"' . str_replace(search: '"', replace: '""', subject: $segment) . '"';
     }
 
     #[Override]
@@ -104,13 +104,13 @@ final class SQLiteGrammar extends BaseGrammar
     #[Override]
     public function compileTruncate(string $table): string
     {
-        return 'DELETE FROM '.$this->wrap(value: $table);
+        return 'DELETE FROM ' . $this->wrap(value: $table);
     }
 
     #[Override]
     public function compileDropIfExists(string $table): string
     {
-        return 'DROP TABLE IF EXISTS '.$this->wrap(value: $table);
+        return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
     }
 
     #[Override]
@@ -122,7 +122,7 @@ final class SQLiteGrammar extends BaseGrammar
     #[Override]
     public function compileDropDatabase(string $name): string
     {
-        return 'DETACH DATABASE '.$this->wrap(value: $name);
+        return 'DETACH DATABASE ' . $this->wrap(value: $name);
     }
 
     public function compileReturning(array $columns): string
@@ -133,7 +133,7 @@ final class SQLiteGrammar extends BaseGrammar
 
         $cols = array_map(callback: fn ($col) => $this->wrap(value: $col), array: $columns);
 
-        return 'RETURNING '.implode(separator: ', ', array: $cols);
+        return 'RETURNING ' . implode(separator: ', ', array: $cols);
     }
 
     public function supportsWindowFunctions(): bool
@@ -151,25 +151,25 @@ final class SQLiteGrammar extends BaseGrammar
         return $this->supportsReturning;
     }
 
-    public function compileWindowFunction(string $function, ?string $partitionBy = null, string $orderBy = ''): string
+    public function compileWindowFunction(string $function, string $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
         if (! $this->supportsWindowFunctions) {
             throw new RuntimeException(message: 'Window functions require SQLite 3.25.0+');
         }
 
-        $sql = $function.'(';
+        $sql     = $function . '(';
 
         if ($partitionBy !== '') {
             $partitionColumns = array_map(
                 callback: fn ($col) => $this->wrap(value: $col),
                 array   : explode(separator: ',', string: $partitionBy),
             );
-            $sql .= 'PARTITION BY '.implode(separator: ', ', array: $partitionColumns);
+            $sql .= 'PARTITION BY ' . implode(separator: ', ', array: $partitionColumns);
         }
 
         if ($orderBy !== '') {
-            $sql .= ' ORDER BY '.$orderBy;
+            $sql .= ' ORDER BY ' . $orderBy;
         }
 
         $sql .= ')';

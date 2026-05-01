@@ -52,17 +52,19 @@ final class Transactions
      *
      * @template T
      *
-     * @param  Closure(self) : T  $callback
+     * @param Closure(self) : T $callback
+     *
      * @return T
      *
      * @throws Throwable
      */
     public function transactionWithRetry(
         Closure $callback,
-        ?IsolationLevel $isolationLevel = null,
-        ?RetryPolicy $retryPolicy = null,
-    ): mixed {
-        $policy = $retryPolicy ?? RetryPolicy::forDeadlocks();
+        IsolationLevel $isolationLevel = null,
+        RetryPolicy $retryPolicy = null,
+    ): mixed
+    {
+        $policy  = $retryPolicy ?? RetryPolicy::forDeadlocks();
         $attempt = 0;
         $lastException = null;
 
@@ -92,12 +94,13 @@ final class Transactions
      *
      * @template T
      *
-     * @param  Closure(self) : T  $callback
+     * @param Closure(self) : T $callback
+     *
      * @return T
      *
      * @throws Throwable Re-throws the original exception after rollback
      */
-    public function transaction(Closure $callback, ?IsolationLevel $isolationLevel = null): mixed
+    public function transaction(Closure $callback, IsolationLevel $isolationLevel = null): mixed
     {
         $this->begin($isolationLevel);
 
@@ -124,7 +127,7 @@ final class Transactions
      *
      * @throws RuntimeException If a transaction is already active at the root level
      */
-    public function begin(?IsolationLevel $isolationLevel = null): void
+    public function begin(IsolationLevel $isolationLevel = null): void
     {
         if ($this->depth === 0) {
             $this->connection->beginTransaction();
@@ -147,7 +150,7 @@ final class Transactions
      */
     private function generateSavepointName(): string
     {
-        return 'avax_sp_'.$this->depth.'_'.spl_object_id($this).'_'.hrtime(true);
+        return 'avax_sp_' . $this->depth . '_' . spl_object_id($this) . '_' . hrtime(true);
     }
 
     /**
@@ -274,12 +277,12 @@ final class Transactions
      *
      * Use with caution - this does not interact with the database.
      */
-    public function reset(): void
+    public function reset() : void
     {
-        $this->depth = 0;
-        $this->active = false;
-        $this->savepoints = [];
-        $this->commitCallbacks = [];
+        $this->depth             = 0;
+        $this->active            = false;
+        $this->savepoints        = [];
+        $this->commitCallbacks   = [];
         $this->rollbackCallbacks = [];
     }
 }

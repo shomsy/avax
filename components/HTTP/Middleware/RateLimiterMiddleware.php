@@ -34,8 +34,7 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
                 return $this->responseFactory->rateLimited($remaining);
             }
 
-            return new class($remaining) implements ResponseInterface
-            {
+            return new class ($remaining) implements ResponseInterface {
                 public function __construct(private int $retryAfter) {}
 
                 public function getStatusCode(): int

@@ -73,10 +73,10 @@ final class RedisGrammar extends BaseGrammar
             $pairs[] = "{$field} {$value}";
         }
 
-        return "HSET {$key} ".implode(separator: ' ', array: $pairs);
+        return "HSET {$key} " . implode(separator: ' ', array: $pairs);
     }
 
-    public function compileHashGet(string $key, ?string $field = null): string
+    public function compileHashGet(string $key, string $field = null) : string
     {
         if ($field === null) {
             return "HGETALL {$key}";
@@ -97,7 +97,7 @@ final class RedisGrammar extends BaseGrammar
 
     public function compileSetAdd(string $key, string ...$members): string
     {
-        return "SADD {$key} ".implode(separator: ' ', array: $members);
+        return "SADD {$key} " . implode(separator: ' ', array: $members);
     }
 
     public function compileSetMembers(string $key): string
@@ -112,7 +112,7 @@ final class RedisGrammar extends BaseGrammar
             $pairs[] = "{$score} {$member}";
         }
 
-        return "ZADD {$key} ".implode(separator: ' ', array: $pairs);
+        return "ZADD {$key} " . implode(separator: ' ', array: $pairs);
     }
 
     public function compileSortedSetRange(string $key, int $start, int $stop): string

@@ -31,7 +31,7 @@ final readonly class ConvertCollectionToXml
             return $xml->asXML() ?: '';
         } catch (Exception $exception) {
             throw new LogicException(
-                message : 'Failed to convert collection to XML: '.$exception->getMessage(),
+                message : 'Failed to convert collection to XML: ' . $exception->getMessage(),
                 code    : $exception->getCode(),
                 previous: $exception,
             );

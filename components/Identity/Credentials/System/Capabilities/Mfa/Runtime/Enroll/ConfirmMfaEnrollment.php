@@ -46,7 +46,7 @@ final readonly class ConfirmMfaEnrollment
         $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         $userId = new UserId(value: $user->id);

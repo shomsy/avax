@@ -35,9 +35,9 @@ final readonly class EvaluateFederationBreakGlassBypass
                             : 'auth.federation.break_glass.denied',
             occurredAt: $this->clock->now(),
             context   : [
-                'connection_id' => $connection->connectionId,
-                'tenant' => $connection->tenantSlug,
-                'health' => $connection->health->value,
+                            'connection_id' => $connection->connectionId,
+                            'tenant'        => $connection->tenantSlug,
+                            'health'        => $connection->health->value,
                 'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
             ],
         ));

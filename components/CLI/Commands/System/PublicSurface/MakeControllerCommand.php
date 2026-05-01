@@ -28,7 +28,7 @@ final readonly class MakeControllerCommand
             $this->controllerGenerator->create($name);
             $this->logger->info(sprintf("Controller '%s' created successfully.", $name));
         } catch (Throwable $throwable) {
-            $this->logger->error('Error creating controller: '.$throwable->getMessage());
+            $this->logger->error('Error creating controller: ' . $throwable->getMessage());
         }
     }
 }

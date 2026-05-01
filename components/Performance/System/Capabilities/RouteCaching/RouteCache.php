@@ -18,7 +18,7 @@ final readonly class RouteCache
 
         file_put_contents(
             filename: $this->path,
-            data    : '<?php return '.var_export(value: $routes, return: true).';'.PHP_EOL,
+            data    : '<?php return ' . var_export(value: $routes, return: true) . ';' . PHP_EOL,
         );
     }
 

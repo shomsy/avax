@@ -13,28 +13,28 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions;
 enum IsolationLevel: string
 {
     case READ_UNCOMMITTED = 'READ UNCOMMITTED';
-    case READ_COMMITTED = 'READ COMMITTED';
+    case READ_COMMITTED  = 'READ COMMITTED';
     case REPEATABLE_READ = 'REPEATABLE READ';
-    case SERIALIZABLE = 'SERIALIZABLE';
+    case SERIALIZABLE    = 'SERIALIZABLE';
 
     /**
      * Returns the SQL statement to set this isolation level.
      */
-    public function toSql(?string $dialect = null): string
+    public function toSql(string $dialect = null) : string
     {
         $sql = match ($this) {
             self::READ_UNCOMMITTED => 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED',
-            self::READ_COMMITTED => 'SET TRANSACTION ISOLATION LEVEL READ COMMITTED',
+            self::READ_COMMITTED  => 'SET TRANSACTION ISOLATION LEVEL READ COMMITTED',
             self::REPEATABLE_READ => 'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ',
-            self::SERIALIZABLE => 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE',
+            self::SERIALIZABLE    => 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE',
         };
 
         return match ($dialect) {
-            'mysql' => $this->mysqlSetIsolationSql(),
+            'mysql'     => $this->mysqlSetIsolationSql(),
             'postgresql' => $this->postgresqlSetIsolationSql(),
-            'sqlite' => $this->sqliteSetIsolationSql(),
+            'sqlite'    => $this->sqliteSetIsolationSql(),
             'sqlserver' => $this->sqlserverSetIsolationSql(),
-            default => $sql,
+            default     => $sql,
         };
     }
 
@@ -45,9 +45,9 @@ enum IsolationLevel: string
     {
         $value = match ($this) {
             self::READ_UNCOMMITTED => 'READ UNCOMMITTED',
-            self::READ_COMMITTED => 'READ COMMITTED',
+            self::READ_COMMITTED  => 'READ COMMITTED',
             self::REPEATABLE_READ => 'REPEATABLE READ',
-            self::SERIALIZABLE => 'SERIALIZABLE',
+            self::SERIALIZABLE    => 'SERIALIZABLE',
         };
 
         return "SET SESSION TRANSACTION ISOLATION LEVEL {$value}";
@@ -60,9 +60,9 @@ enum IsolationLevel: string
     {
         $value = match ($this) {
             self::READ_UNCOMMITTED => 'READ UNCOMMITTED',
-            self::READ_COMMITTED => 'READ COMMITTED',
+            self::READ_COMMITTED  => 'READ COMMITTED',
             self::REPEATABLE_READ => 'REPEATABLE READ',
-            self::SERIALIZABLE => 'SERIALIZABLE',
+            self::SERIALIZABLE    => 'SERIALIZABLE',
         };
 
         return "SET TRANSACTION ISOLATION LEVEL {$value}";
@@ -87,9 +87,9 @@ enum IsolationLevel: string
     {
         return match ($this) {
             self::READ_UNCOMMITTED => 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED',
-            self::READ_COMMITTED => 'SET TRANSACTION ISOLATION LEVEL READ COMMITTED',
+            self::READ_COMMITTED  => 'SET TRANSACTION ISOLATION LEVEL READ COMMITTED',
             self::REPEATABLE_READ => 'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ',
-            self::SERIALIZABLE => 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE',
+            self::SERIALIZABLE    => 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE',
         };
     }
 
@@ -99,11 +99,11 @@ enum IsolationLevel: string
     public function supports(string $dialect): bool
     {
         return match ($dialect) {
-            'mysql' => true,
+            'mysql'     => true,
             'postgresql' => true,
-            'sqlite' => $this === self::READ_COMMITTED || $this === self::SERIALIZABLE || $this === self::READ_UNCOMMITTED,
+            'sqlite'    => $this === self::READ_COMMITTED || $this === self::SERIALIZABLE || $this === self::READ_UNCOMMITTED,
             'sqlserver' => true,
-            default => false,
+            default     => false,
         };
     }
 
@@ -114,9 +114,9 @@ enum IsolationLevel: string
     {
         return match ($this) {
             self::READ_UNCOMMITTED => 1,
-            self::READ_COMMITTED => 2,
+            self::READ_COMMITTED  => 2,
             self::REPEATABLE_READ => 3,
-            self::SERIALIZABLE => 4,
+            self::SERIALIZABLE    => 4,
         };
     }
 
@@ -135,9 +135,9 @@ enum IsolationLevel: string
     {
         return match ($this) {
             self::READ_UNCOMMITTED => 'Lowest isolation. Allows dirty reads. Use for non-critical analytics.',
-            self::READ_COMMITTED => 'Prevents dirty reads. Default for most databases. Good for general use.',
+            self::READ_COMMITTED  => 'Prevents dirty reads. Default for most databases. Good for general use.',
             self::REPEATABLE_READ => 'Prevents non-repeatable reads. Default for MySQL/InnoDB. Good for most transactions.',
-            self::SERIALIZABLE => 'Highest isolation. Full serializability. Use when consistency is critical.',
+            self::SERIALIZABLE    => 'Highest isolation. Full serializability. Use when consistency is critical.',
         };
     }
 }

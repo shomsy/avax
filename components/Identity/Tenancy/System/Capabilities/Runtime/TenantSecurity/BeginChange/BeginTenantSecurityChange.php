@@ -41,7 +41,7 @@ final readonly class BeginTenantSecurityChange
             rolloutVersion        : $before !== null ? $before->rolloutVersion + 1 : $data->after->rolloutVersion,
         );
         $changeRequest = new TenantSecurityChangeRequest(
-            changeId   : 'tenant_change_'.bin2hex(string: random_bytes(length: 12)),
+            changeId   : 'tenant_change_' . bin2hex(string: random_bytes(length: 12)),
             tenantSlug : $data->tenantSlug,
             requestedBy: trim(string: $data->requestedBy),
             reason     : trim(string: $data->reason),
@@ -57,10 +57,10 @@ final readonly class BeginTenantSecurityChange
             name      : 'auth.tenant_security.change.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                'change_id' => $changeRequest->changeId,
-                'tenant' => $changeRequest->tenantSlug,
+                            'change_id' => $changeRequest->changeId,
+                            'tenant'    => $changeRequest->tenantSlug,
                 'requested_by' => $changeRequest->requestedBy,
-                'diff' => $this->encodeDiff(value: $changeRequest->diff),
+                            'diff'      => $this->encodeDiff(value: $changeRequest->diff),
             ],
         ));
 
@@ -103,7 +103,7 @@ final readonly class BeginTenantSecurityChange
                 continue;
             }
 
-            $diff[$field] = $beforeValue.' => '.$afterValue;
+            $diff[$field] = $beforeValue . ' => ' . $afterValue;
         }
 
         ksort(array: $diff);
@@ -123,15 +123,15 @@ final readonly class BeginTenantSecurityChange
         return [
             'federation_connection_id' => (string) $configuration->federationConnectionId,
             'scim_directory_id' => (string) $configuration->scimDirectoryId,
-            'verified_domains' => implode(separator: ',', array: $configuration->verifiedDomains),
-            'group_role_map' => $this->encodeDiff(value: $configuration->groupRoleMap),
-            'policy_profile' => $configuration->policyProfile,
-            'rollout_version' => (string) $configuration->rolloutVersion,
+            'verified_domains'  => implode(separator: ',', array: $configuration->verifiedDomains),
+            'group_role_map'    => $this->encodeDiff(value: $configuration->groupRoleMap),
+            'policy_profile'    => $configuration->policyProfile,
+            'rollout_version'   => (string) $configuration->rolloutVersion,
         ];
     }
 
     /**
-     * @param  array<string, mixed>  $value
+     * @param array<string, mixed> $value
      */
     private function encodeDiff(array $value): string
     {

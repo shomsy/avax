@@ -18,7 +18,7 @@ final readonly class ConfigCache
 
         file_put_contents(
             filename: $this->path,
-            data    : '<?php return '.var_export(value: $config, return: true).';'.PHP_EOL,
+            data    : '<?php return ' . var_export(value: $config, return: true) . ';' . PHP_EOL,
         );
     }
 

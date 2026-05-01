@@ -22,8 +22,8 @@ abstract class CodeGenerator
     protected string $defaultNamespace;
 
     public function __construct(
-        ?string $baseDirectory = null,
-        ?string $defaultNamespace = null,
+        string $baseDirectory = null,
+        string $defaultNamespace = null,
     ) {
         $this->baseDirectory = $baseDirectory ?? $this->detectBaseDirectory();
         $this->defaultNamespace = $defaultNamespace ?? 'App';
@@ -36,8 +36,8 @@ abstract class CodeGenerator
     {
         // Try common project root indicators
         $candidates = [
-            getcwd().'/src',
-            getcwd().'/app',
+            getcwd() . '/src',
+            getcwd() . '/app',
             getcwd(),
         ];
 
@@ -53,8 +53,8 @@ abstract class CodeGenerator
     /**
      * Generate a class file.
      *
-     * @param  string  $name  Class name (StudlyCase)
-     * @param  array  $data  Additional data for the template
+     * @param string $name Class name (StudlyCase)
+     * @param array  $data Additional data for the template
      */
     abstract public function generate(string $name, array $data = []): string;
 
@@ -67,7 +67,7 @@ abstract class CodeGenerator
         $ns = $this->defaultNamespace;
 
         foreach ($parts as $part) {
-            $ns .= '\\'.Str::studly($part);
+            $ns .= '\\' . Str::studly($part);
         }
 
         return $ns;
@@ -89,7 +89,7 @@ abstract class CodeGenerator
         $result = file_put_contents($path, $content);
 
         if ($result === false) {
-            throw new RuntimeException('Failed to write file: '.$path);
+            throw new RuntimeException('Failed to write file: ' . $path);
         }
     }
 
@@ -106,18 +106,18 @@ abstract class CodeGenerator
     /**
      * Get the file path for a generated class.
      *
-     * @param  string  $name  Class name
-     * @param  string  $subDir  Subdirectory within the base (e.g. "Controllers")
+     * @param string $name   Class name
+     * @param string $subDir Subdirectory within the base (e.g. "Controllers")
      */
     protected function getFilePath(string $name, string $subDir): string
     {
-        $dir = rtrim($this->baseDirectory, '/').'/'.ltrim($subDir, '/');
+        $dir = rtrim($this->baseDirectory, '/') . '/' . ltrim($subDir, '/');
 
         if (! is_dir($dir)) {
             mkdir($dir, 0o755, true);
         }
 
-        return rtrim($dir, '/').'/'.$name.'.php';
+        return rtrim($dir, '/') . '/' . $name . '.php';
     }
 
     /**

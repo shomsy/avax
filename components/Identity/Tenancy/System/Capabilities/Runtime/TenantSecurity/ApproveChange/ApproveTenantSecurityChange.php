@@ -48,8 +48,8 @@ final readonly class ApproveTenantSecurityChange
             name      : 'auth.tenant_security.change.approved',
             occurredAt: $this->clock->now(),
             context   : [
-                'change_id' => $approved->changeId,
-                'tenant' => $approved->tenantSlug,
+                            'change_id' => $approved->changeId,
+                            'tenant'    => $approved->tenantSlug,
                 'approved_by' => $approved->approvedBy,
             ],
         ));

@@ -22,8 +22,8 @@ final readonly class IdentityPolicy
     public bool $phishingResistantRequired;
 
     /**
-     * @param  list<AuthenticationFactor>  $allowedFactors
-     * @param  list<AuthenticationFactor>  $requiredFactors
+     * @param list<AuthenticationFactor> $allowedFactors
+     * @param list<AuthenticationFactor> $requiredFactors
      */
     public function __construct(
         public IdentityActor $actor,
@@ -34,25 +34,25 @@ final readonly class IdentityPolicy
         public int $absoluteTimeoutSeconds,
         public ?int $freshMfaMaxAgeSeconds,
         public RecoveryPath $recoveryPath,
-        ?bool $phishingResistantRequired = null,
-        ?bool $adminElevationRequired = null,
-        ?bool $senderConstrainedTokensRequired = null,
-        ?bool $denyByDefault = null,
-        ?bool $resourceChecksRequired = null,
-        ?bool $separationOfDutiesRequired = null,
+        bool $phishingResistantRequired = null,
+        bool $adminElevationRequired = null,
+        bool $senderConstrainedTokensRequired = null,
+        bool $denyByDefault = null,
+        bool $resourceChecksRequired = null,
+        bool $separationOfDutiesRequired = null,
         public bool $privilegedApprovalRequired = false,
     ) {
-        $phishingResistantRequired ??= false;
-        $adminElevationRequired ??= false;
+        $phishingResistantRequired        ??= false;
+        $adminElevationRequired           ??= false;
         $senderConstrainedTokensRequired ??= false;
-        $denyByDefault ??= true;
-        $resourceChecksRequired ??= true;
-        $separationOfDutiesRequired ??= false;
-        $this->phishingResistantRequired = $phishingResistantRequired;
-        $this->adminElevationRequired = $adminElevationRequired;
+        $denyByDefault                    ??= true;
+        $resourceChecksRequired           ??= true;
+        $separationOfDutiesRequired       ??= false;
+        $this->phishingResistantRequired  = $phishingResistantRequired;
+        $this->adminElevationRequired     = $adminElevationRequired;
         $this->senderConstrainedTokensRequired = $senderConstrainedTokensRequired;
-        $this->denyByDefault = $denyByDefault;
-        $this->resourceChecksRequired = $resourceChecksRequired;
+        $this->denyByDefault              = $denyByDefault;
+        $this->resourceChecksRequired     = $resourceChecksRequired;
         $this->separationOfDutiesRequired = $separationOfDutiesRequired;
     }
 

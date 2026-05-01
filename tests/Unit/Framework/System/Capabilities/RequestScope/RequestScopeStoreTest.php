@@ -19,7 +19,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_has_no_current_scope_when_created(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
 
         self::assertFalse($store->hasCurrent());
     }
@@ -27,7 +27,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_opens_new_scope_and_sets_current(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
 
         $scope = $store->open();
 
@@ -39,7 +39,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_throws_when_opening_scope_while_another_is_active(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
         $store->open();
 
         $this->expectException(FrameworkMisconfigured::class);
@@ -51,7 +51,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_closes_current_scope_and_clears_reference(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
         $scope = $store->open();
 
         $store->closeCurrent();
@@ -63,7 +63,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_throws_when_getting_current_when_no_scope_exists(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
 
         $this->expectException(RequestScopeNotOpen::class);
 
@@ -73,7 +73,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_resets_state_and_closes_scope(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
         $scope = $store->open();
         $scope->write(key: 'data', value: 'value');
 
@@ -86,7 +86,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_can_open_new_scope_after_reset(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
         $store->open();
         $store->resetState();
 
@@ -99,7 +99,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_can_open_new_scope_after_close(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
         $firstScope = $store->open();
         $store->closeCurrent();
 
@@ -112,7 +112,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_generates_unique_scope_ids(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
 
         $scope1 = $store->open();
         $store->closeCurrent();
@@ -124,7 +124,7 @@ final class RequestScopeStoreTest extends TestCase
     #[Test]
     public function it_does_not_leak_value_between_two_scopes(): void
     {
-        $store = new RequestScopeStore;
+        $store = new RequestScopeStore();
 
         $store->open();
         $store->current()->write(key: 'secret', value: 'from-first');

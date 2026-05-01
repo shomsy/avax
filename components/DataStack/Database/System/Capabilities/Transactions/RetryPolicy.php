@@ -16,12 +16,12 @@ use Throwable;
 final readonly class RetryPolicy
 {
     /**
-     * @param  int  $maxAttempts  Maximum number of retry attempts (total attempts = maxAttempts)
-     * @param  int  $baseDelayMs  Base delay in milliseconds before first retry
-     * @param  int  $maxDelayMs  Maximum delay cap in milliseconds
-     * @param  float  $multiplier  Exponential backoff multiplier
-     * @param  list<class-string<Throwable>>  $retryOn  Exception classes that should trigger a retry
-     * @param  list<string>  $errorCodes  Database error codes that should trigger a retry
+     * @param int                           $maxAttempts Maximum number of retry attempts (total attempts = maxAttempts)
+     * @param int                           $baseDelayMs Base delay in milliseconds before first retry
+     * @param int                           $maxDelayMs  Maximum delay cap in milliseconds
+     * @param float                         $multiplier  Exponential backoff multiplier
+     * @param list<class-string<Throwable>> $retryOn     Exception classes that should trigger a retry
+     * @param list<string>                  $errorCodes  Database error codes that should trigger a retry
      */
     public function __construct(
         public int $maxAttempts = 3,
@@ -86,8 +86,8 @@ final readonly class RetryPolicy
     /**
      * Determines if the given exception should trigger a retry.
      *
-     * @param  Throwable  $exception  The exception to check
-     * @param  int  $attempt  The current attempt number (1-based, before retry)
+     * @param Throwable $exception The exception to check
+     * @param int       $attempt   The current attempt number (1-based, before retry)
      */
     public function shouldRetry(Throwable $exception, int $attempt): bool
     {
@@ -150,7 +150,8 @@ final readonly class RetryPolicy
      *
      * Uses exponential backoff: baseDelayMs * multiplier^attempt
      *
-     * @param  int  $attempt  The attempt number (0-based)
+     * @param int $attempt The attempt number (0-based)
+     *
      * @return int Delay in milliseconds, capped at maxDelayMs
      */
     public function getDelayMs(int $attempt): int

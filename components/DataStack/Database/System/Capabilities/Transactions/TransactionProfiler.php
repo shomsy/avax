@@ -12,7 +12,7 @@ final class TransactionProfiler
     public function start(string $name): int
     {
         $this->transactions[] = [
-            'name' => $name,
+            'name'       => $name,
             'started_at' => microtime(as_float: true),
             'finished_at' => null,
             'duration_ms' => null,

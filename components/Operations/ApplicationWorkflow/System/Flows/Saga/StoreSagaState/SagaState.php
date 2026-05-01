@@ -10,7 +10,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Store
 final readonly class SagaState
 {
     /**
-     * @param  list<string>  $completedStepNames
+     * @param list<string> $completedStepNames
      */
     public function __construct(
         public string $instanceId,

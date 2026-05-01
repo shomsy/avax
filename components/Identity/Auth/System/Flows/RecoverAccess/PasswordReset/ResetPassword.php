@@ -43,7 +43,7 @@ final readonly class ResetPassword
                 name      : 'auth.password_reset.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'reason' => 'invalid_token',
+                                'reason' => 'invalid_token',
                     'ip_address' => $data->ipAddress,
                     'user_agent' => $data->userAgent,
                 ],
@@ -64,7 +64,7 @@ final readonly class ResetPassword
             name      : 'auth.password_reset.completed',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $userId->value,
+                            'user_id' => $userId->value,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],

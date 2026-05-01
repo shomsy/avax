@@ -9,7 +9,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\ORM\Relations\Relatio
 final readonly class RelationMetadata
 {
     /**
-     * @param  list<string>  $cascade
+     * @param list<string> $cascade
      */
     public function __construct(
         public string $property,

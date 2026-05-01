@@ -49,7 +49,7 @@ final readonly class ConfirmEmailChange
                 name      : 'auth.email_change.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
-                    'reason' => 'invalid_token',
+                                'reason' => 'invalid_token',
                     'ip_address' => $data->ipAddress,
                     'user_agent' => $data->userAgent,
                 ],
@@ -81,8 +81,8 @@ final readonly class ConfirmEmailChange
             name      : 'auth.email_change.completed',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $record->userId->value,
-                'new_email' => $record->newEmail,
+                            'user_id'   => $record->userId->value,
+                            'new_email' => $record->newEmail,
                 'ip_address' => $data->ipAddress,
                 'user_agent' => $data->userAgent,
             ],

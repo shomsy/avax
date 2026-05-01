@@ -29,7 +29,7 @@ final readonly class EndAdminElevation
     public function execute(): void
     {
         $context = $this->currentAuthentication->read();
-        $user = $context->user();
+        $user    = $context->user();
         $bindingId = $this->bindingId(context: $context);
 
         if ($user === null || $bindingId === null) {
@@ -41,7 +41,7 @@ final readonly class EndAdminElevation
             name      : 'auth.admin.elevation.ended',
             occurredAt: $this->clock->now(),
             context   : [
-                'user_id' => $user->id,
+                            'user_id' => $user->id,
                 'binding_id' => $bindingId,
             ],
         ));

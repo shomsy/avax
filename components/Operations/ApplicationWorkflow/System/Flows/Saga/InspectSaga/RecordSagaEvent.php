@@ -10,7 +10,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Inspe
 final readonly class RecordSagaEvent
 {
     /**
-     * @param  list<SagaRuntimeEvent>  $events
+     * @param list<SagaRuntimeEvent> $events
      */
     public function record(array &$events, SagaRuntimeEvent $event): SagaRuntimeEvent
     {

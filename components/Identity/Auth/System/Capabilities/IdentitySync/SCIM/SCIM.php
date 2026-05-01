@@ -81,7 +81,7 @@ final readonly class SCIM
     /**
      * @return list<ScimDirectory>
      */
-    public function readDirectories(?string $tenantSlug = null): array
+    public function readDirectories(string $tenantSlug = null) : array
     {
         return $this->readScimDirectoriesOrFail()->execute(tenantSlug: $tenantSlug);
     }

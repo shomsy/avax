@@ -23,7 +23,7 @@ final class RedisQueue
         }
 
         try {
-            $redis = new Redis;
+            $redis = new Redis();
             $redis->connect(
                 host   : $this->config['host'] ?? '127.0.0.1',
                 port   : $this->config['port'] ?? 6379,
@@ -51,7 +51,7 @@ final class RedisQueue
 
     private function key(string $queue): string
     {
-        return ($this->config['prefix'] ?? 'avax:queue:').$queue;
+        return ($this->config['prefix'] ?? 'avax:queue:') . $queue;
     }
 
     public function pop(string $queue, int $timeout = 0): ?array

@@ -18,7 +18,7 @@ use ReflectionProperty;
 abstract class AbstractDTO implements DataObject
 {
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     public function __construct(array $data = [])
     {
@@ -41,7 +41,7 @@ abstract class AbstractDTO implements DataObject
      */
     public function toArray(): array
     {
-        $result = [];
+        $result     = [];
         $reflectionClass = new ReflectionClass($this);
         $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 

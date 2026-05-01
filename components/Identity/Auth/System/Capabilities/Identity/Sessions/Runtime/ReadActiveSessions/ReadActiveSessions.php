@@ -38,7 +38,7 @@ final readonly class ReadActiveSessions
         $user = $context->user();
 
         if ($user === null) {
-            throw new Unauthenticated;
+            throw new Unauthenticated();
         }
 
         if ($this->sessionRegistry === null) {

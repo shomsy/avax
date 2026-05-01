@@ -81,9 +81,11 @@ foreach ($scanRoots as $scanRoot) {
             if (! is_array(value: $token)) {
                 continue;
             }
+
             if ($token[0] !== T_VARIABLE) {
                 continue;
             }
+
             foreach ($patterns as $pattern) {
                 if ($token[1] === $pattern) {
                     $violations[] = sprintf('%s:%d uses %s', $relativePath, $token[2], $pattern);

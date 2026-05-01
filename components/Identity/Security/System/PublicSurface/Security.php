@@ -27,7 +27,7 @@ final readonly class Security implements SecurityInterface
         return $this->securityConfigurationStore->read($tenantId);
     }
 
-    public function beginChange(string $tenantId, array $data): object
+    public function beginChange(string $tenantId, array $data): \stdClass
     {
         return $this->beginSecurityChange->execute($tenantId, $data);
     }

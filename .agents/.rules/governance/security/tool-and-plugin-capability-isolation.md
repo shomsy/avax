@@ -46,13 +46,13 @@ The manifest should declare at least:
 
 Prefer the strongest practical boundary for the capability:
 
-| Level | Boundary                                                          | Typical Use                                    |
-|:------|:------------------------------------------------------------------|:-----------------------------------------------|
-| `L0`  | in-process, no side effects                                       | local formatting, parsing, pure transforms     |
-| `L1`  | child process with bounded workspace access                       | shell helpers and file utilities               |
-| `L2`  | dedicated worker or task runner                                   | long-running jobs, parallel execution, plugins |
-| `L3`  | sandboxed runtime with network and syscall restrictions           | untrusted code execution                       |
-| `L4`  | remote isolated service with separate credentials and audit trail | external integrations and high-risk automation |
+| Level | Boundary | Typical Use |
+|:---|:---|:---|
+| `L0` | in-process, no side effects | local formatting, parsing, pure transforms |
+| `L1` | child process with bounded workspace access | shell helpers and file utilities |
+| `L2` | dedicated worker or task runner | long-running jobs, parallel execution, plugins |
+| `L3` | sandboxed runtime with network and syscall restrictions | untrusted code execution |
+| `L4` | remote isolated service with separate credentials and audit trail | external integrations and high-risk automation |
 
 When two levels are possible, choose the more isolated one unless there is a
 clear operational reason not to.
@@ -98,14 +98,14 @@ possible.
 
 Capability class should align with trust and approval posture:
 
-| Capability            | Minimum Posture                                     |
-|:----------------------|:----------------------------------------------------|
-| read local context    | auto-allow if bounded                               |
-| write workspace files | scoped approval or trusted baseline                 |
-| external read         | consented integration                               |
-| external write        | per-invocation approval unless explicitly delegated |
-| secret use            | named secret class and audit trail                  |
-| untrusted code exec   | sandbox plus bounded inputs and outputs             |
+| Capability | Minimum Posture |
+|:---|:---|
+| read local context | auto-allow if bounded |
+| write workspace files | scoped approval or trusted baseline |
+| external read | consented integration |
+| external write | per-invocation approval unless explicitly delegated |
+| secret use | named secret class and audit trail |
+| untrusted code exec | sandbox plus bounded inputs and outputs |
 
 ## Audit Requirements
 
@@ -121,9 +121,9 @@ At minimum, log:
 
 ## Relationship To Other Standards
 
-| Standard                                                     | Relationship                        |
-|:-------------------------------------------------------------|:------------------------------------|
-| `../execution/approvals/approval-policy.md`                  | approval and trust posture          |
-| `../execution/sandbox/sandbox-boundary-policy.md`            | sandbox expectations                |
-| `../integrations/mcp/mcp-integration-policy.md`              | MCP-specific registration and trust |
-| `../delivery/operations/observability-and-error-envelope.md` | trace and audit evidence            |
+| Standard | Relationship |
+|:---|:---|
+| `../execution/approvals/approval-policy.md` | approval and trust posture |
+| `../execution/sandbox/sandbox-boundary-policy.md` | sandbox expectations |
+| `../integrations/mcp/mcp-integration-policy.md` | MCP-specific registration and trust |
+| `../delivery/operations/observability-and-error-envelope.md` | trace and audit evidence |

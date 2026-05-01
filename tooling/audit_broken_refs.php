@@ -170,15 +170,19 @@ function loadExternalPrefixes(string $baseDir) : array
                 if (! is_string($className)) {
                     continue;
                 }
+
                 if ($className === '') {
                     continue;
                 }
-                if (str_starts_with((string) $className, 'Avax\\')) {
+
+                if (str_starts_with($className, 'Avax\\')) {
                     continue;
                 }
-                if (str_starts_with((string) $className, 'components\\')) {
+
+                if (str_starts_with($className, 'components\\')) {
                     continue;
                 }
+
                 $parts = explode('\\', $className);
                 if (count($parts) > 1) {
                     $prefixes[] = $parts[0] . '\\';

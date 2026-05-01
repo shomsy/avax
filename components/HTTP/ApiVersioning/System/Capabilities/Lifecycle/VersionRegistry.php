@@ -18,7 +18,7 @@ final class VersionRegistry
     /**
      * @param list<int> $supportedVersions
      */
-    public function __construct(private int $currentVersion = 1, array $supportedVersions = [1])
+    public function __construct(private readonly int $currentVersion = 1, array $supportedVersions = [1])
     {
         if ($this->currentVersion < 1) {
             throw new InvalidArgumentException(message: 'Current API version must be greater than zero.');
@@ -26,8 +26,8 @@ final class VersionRegistry
 
         $this->supportedVersions = [];
 
-        foreach ($supportedVersions as $version) {
-            $this->support(version: $version);
+        foreach ($supportedVersions as $supportedVersion) {
+            $this->support(version: $supportedVersion);
         }
 
         $this->support(version: $this->currentVersion);

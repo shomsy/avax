@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\RunConsoleCommand;
 
+use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
+use Avax\Framework\System\Capabilities\PreCommit\PreCommit;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
@@ -104,17 +106,31 @@ final readonly class RunConsoleCommand
         return <<<'HELP'
             Avax Console
             ============
-            
+
             Usage: php avax <command> [options]
-            
+
             Commands:
               pre-commit     Run pre-commit discipline check
               help          Show this help
-            
+
             Examples:
               php avax pre-commit
               php avax help
             HELP;
+    }
+
+    private function handlePreCommit(array $args) : string
+    {
+        $dryRun = ! in_array('--fix', $args, true);
+        $full   = in_array('--full', $args, true);
+
+        $config = new PreCommitConfig();
+        $config->setDryRun($dryRun);
+
+        $preCommit = new PreCommit($config, [], ! $full);
+        $result    = $preCommit->run();
+
+        return $result->getSummaryText();
     }
 
     /**

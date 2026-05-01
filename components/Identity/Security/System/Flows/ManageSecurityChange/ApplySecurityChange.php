@@ -13,7 +13,7 @@ final readonly class ApplySecurityChange
 {
     public function __construct(private SecurityConfigurationStore $securityConfigurationStore) {}
 
-    public function execute(string $requestId) : object
+    public function execute(string $requestId) : \stdClass
     {
         return $this->securityConfigurationStore->apply(requestId: $requestId);
     }

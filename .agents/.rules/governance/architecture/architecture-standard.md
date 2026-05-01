@@ -2,8 +2,7 @@
 
 ## Purpose
 
-This document defines pragmatic architectural rules for organizing code, folders, files and functions so that the repo
-is predictable, readable and maintainable in any language, framework or project.
+This document defines pragmatic architectural rules for organizing code, folders, files and functions so that the repo is predictable, readable and maintainable in any language, framework or project.
 
 The goal is not for the architecture to look smart.
 The goal is for it to be banally clear, stable and easy to develop over time.
@@ -68,8 +67,7 @@ This standard treats the repo as a vertical slice system.
 - function names should communicate exact action
 - a reader should be able to predict the purpose of a folder, file or function before opening it
 - the same flow-first reading order must work for the product app and for the technical runtime
-- the reader should be able to follow the business flow from the first feature to the last feature without changing the
-  mental model
+- the reader should be able to follow the business flow from the first feature to the last feature without changing the mental model
 - root folder and slice names should feel intuitive enough that they can be
   explained at a table without jargon
 
@@ -98,15 +96,12 @@ This also means the same mental model works for both product-facing slices and t
 ## Three Types of Rules That Must Not Be Mixed
 
 ### 1. Structure Rules
-
 How the repo looks and how it reads.
 
 ### 2. Design Rules
-
 How responsibilities, dependencies, reuse and boundaries between modules are divided.
 
 ### 3. System Quality Rules
-
 Performance, security, scaling, observability, interoperability, cache, costs and similar.
 
 These must be separated.
@@ -115,9 +110,7 @@ For example:
 
 - SOLID, DRY, KISS, YAGNI are design rules
 - Composition over inheritance, Law of Demeter, clean code principles and LLD are design rules
-- OWASP, auth, authorization, encryption, vulnerability management, secure APIs, rate limiting, cache, CAP, consistency
-  patterns, latency vs throughput trade-offs, long polling vs WebSockets, usability, flexibility, scalability and cost
-  efficiency are quality and technical requirements
+- OWASP, auth, authorization, encryption, vulnerability management, secure APIs, rate limiting, cache, CAP, consistency patterns, latency vs throughput trade-offs, long polling vs WebSockets, usability, flexibility, scalability and cost efficiency are quality and technical requirements
 - folder structure is a separate discipline
 
 If everything is mixed into one rule, the document becomes too broad and stops guiding.
@@ -127,7 +120,6 @@ If everything is mixed into one rule, the document becomes too broad and stops g
 ## Main Architectural Rules
 
 ### 1. Top-level structure should shout what the system does
-
 Do not organize the repo by technical layers as the default rule.
 
 Good direction:
@@ -164,7 +156,6 @@ The former talks about what the system does.
 ---
 
 ### 2. Each feature slice must have one flow owner at the root
-
 At the root of each feature slice there must be one main entry that wraps the whole thing.
 
 This can be:
@@ -181,13 +172,11 @@ The point is to have one place that clearly says:
 **from here this feature begins**
 **from here this feature is fully owned**
 
-If none of the named patterns is the clearest answer, use the smallest construct that can still own the whole feature
-slice.
+If none of the named patterns is the clearest answer, use the smallest construct that can still own the whole feature slice.
 
 ---
 
 ### 3. Subfolder exists only if it represents a real step or real subfeature
-
 Subfolder is not introduced to make the architecture look serious.
 
 Subfolder exists only when:
@@ -219,7 +208,6 @@ If an extra folder doesn't help reading, it shouldn't exist.
 ---
 
 ### 4. Each file carries one responsibility
-
 File should not be a thematic bucket.
 It should carry one clear responsibility.
 
@@ -241,7 +229,6 @@ If the filename doesn't explain why it exists, the name is bad or the file is to
 ---
 
 ### 5. Each function does one exact action
-
 Function or method must have a verb name that tells exactly what they do.
 
 Good:
@@ -263,7 +250,6 @@ Generic names are allowed only when the context is extremely clear.
 ---
 
 ### 6. Shared is the last option, not the first
-
 The biggest enemy of this architecture is early extraction of everything into:
 
 ```text
@@ -298,7 +284,6 @@ If something still carries product meaning, it doesn't belong in shared.
 ---
 
 ### 7. Root feature must be small and readable
-
 When you open a root feature folder, it must immediately be clear:
 
 - what is the main entry
@@ -310,13 +295,11 @@ Root feature must not look like a registry chaos with a bunch of unrelated files
 ---
 
 ### 8. Pattern is chosen by the nature of the flow, not by fashion
-
 Pattern is not the goal. Clarity is the goal.
 
 Use:
 
 #### `pipeline`
-
 When there is a clear sequence of steps:
 
 - A then B then C
@@ -324,7 +307,6 @@ When there is a clear sequence of steps:
 - failure flow is mostly sequential
 
 #### `facade`
-
 When the feature is not one flow but one stable public entry into multiple internal things.
 
 Use it when:
@@ -338,7 +320,6 @@ It names and delegates.
 It does not become a second hidden implementation.
 
 #### `kernel`
-
 When one component must own the full ingress lifecycle, runtime coordination, or
 exception boundary for a surface.
 
@@ -352,11 +333,9 @@ Kernel is an ingress governor, not a business-logic dump.
 It should orchestrate and contain failure, then delegate the real work.
 
 #### `orchestrator`
-
 When there is coordination of multiple branches, events, parallel flows or multiple subflows.
 
 #### banal main name
-
 When the feature is small and a simpler name is better than a pattern name.
 
 If a pattern makes more noise than it helps, it shouldn't be used.
@@ -452,7 +431,6 @@ ingress, and other infrastructure-like components.
 ## Naming Convention
 
 ### Folder
-
 Folder should be capability, step or flow.
 
 Names should be banal, intuitive, descriptive and predictable.
@@ -469,7 +447,6 @@ Examples:
 - `runtime`
 
 ### File
-
 File should be verb plus object of responsibility.
 
 The filename should tell why the file exists, not merely what bucket it belongs to.
@@ -482,7 +459,6 @@ Examples:
 - `write_gateway_config`
 
 ### Function
-
 Function or method should be exact action.
 
 The function name should make the action obvious without opening the file.
@@ -495,7 +471,6 @@ Examples:
 - `writeGatewayConfig`
 
 ### Operation Vocabulary
-
 Before you choose the exact file or function name, classify the work in this order:
 
 1. CRUD
@@ -506,11 +481,9 @@ Before you choose the exact file or function name, classify the work in this ord
 
 These buckets are the first filter for file and function names.
 
-Pick the narrowest honest bucket first. If a more specific business or state verb exists, prefer it over a generic
-`update` or `change`.
+Pick the narrowest honest bucket first. If a more specific business or state verb exists, prefer it over a generic `update` or `change`.
 
 #### CRUD
-
 Use this when the code creates, reads, updates or deletes one concrete record.
 
 This is the "I touch one record" bucket.
@@ -525,7 +498,6 @@ Examples:
 Use it for simple record work, admin panels, small modules and generic storage tasks.
 
 #### Query
-
 Use this when the code finds, filters, sorts, paginates, groups or aggregates data without changing it.
 
 This is the "I look at data" bucket.
@@ -541,7 +513,6 @@ Examples:
 Use it for listing screens, search screens, reports and read-only views.
 
 #### Business
-
 Use this when the code performs a domain action the business cares about.
 
 This is the "I do the real business thing" bucket.
@@ -557,9 +528,7 @@ Examples:
 Use it when the verb should sound like the business, not like the database.
 
 #### System
-
-Use this when the code imports, exports, syncs, retries, queues, validates, transforms, backs up, restores, logs or
-notifies around the system.
+Use this when the code imports, exports, syncs, retries, queues, validates, transforms, backs up, restores, logs or notifies around the system.
 
 This is the "I help the system move" bucket.
 
@@ -574,7 +543,6 @@ Examples:
 Use it for integration jobs, background jobs, pipelines, adapters and maintenance flows.
 
 #### State transition
-
 Use this when the code moves an entity from one named state to another and that move matters to domain rules.
 
 This is the "I move the thing to the next state" bucket.
@@ -640,37 +608,28 @@ If a rule improves quality but makes the structure harder to read, it must be ju
 ## Modularity Rules
 
 ### 1. Composition over inheritance
-
 Give preference to composition and collaboration of small modules.
 
 ### 2. Law of Demeter
-
 Module should know as little as possible about the internals of other modules.
 
 ### 3. Tight coupling is prohibited
-
 Feature must not depend on another feature's internal implementation.
 
 ### 4. Reuse must not be premature
-
 Premature code sharing often produces bad abstractions.
 
 ### 5. Abstraction must reduce noise
-
 If an abstraction is not clearer than the concrete code it replaces, it's bad.
 
 ### 6. Over-engineering is a defect
-
 Every additional layer must justify its existence.
 
 ### 7. Reusability must be deliberate
-
 Do not ignore reusability when a primitive is stable, generic and clearly useful in more than one place.
 
 ### 8. Abstraction must be sufficient
-
-Insufficient abstraction is also a problem when it forces the same coupling, duplication or branching to repeat across
-slices.
+Insufficient abstraction is also a problem when it forces the same coupling, duplication or branching to repeat across slices.
 
 ---
 
@@ -701,9 +660,7 @@ The point is:
 This standard is general. It must not be applied blindly when it works against language, ecosystem or framework.
 
 ### General Exception Rule
-
-If the ecosystem is very idiomatic and has strong conventions that make reading, debugging, tool support and onboarding
-easier, those conventions take precedence over forcibly renaming everything.
+If the ecosystem is very idiomatic and has strong conventions that make reading, debugging, tool support and onboarding easier, those conventions take precedence over forcibly renaming everything.
 
 In other words:
 
@@ -734,7 +691,6 @@ architecture profile from `profiles/**` before writing a repo-specific
 `ARCHITECTURE.md`.
 
 ### Functional Programming and Non-OOP Languages
-
 Some languages and ecosystems are not class-first.
 
 In those cases, low-level design does not disappear.
@@ -754,7 +710,6 @@ Rules:
 **In non-OOP environments, LLD becomes functional clarity, not a weaker version of architecture.**
 
 ### Go
-
 Go likes small packages, short names and strong connection between package boundary and responsibility.
 
 Rules:
@@ -770,7 +725,6 @@ Rules:
 ---
 
 ### Java and C#
-
 These ecosystems like clear namespaces, types and often stronger connection between class and file.
 
 Rules:
@@ -785,7 +739,6 @@ Rules:
 ---
 
 ### Python
-
 Python likes readable modules, packages and often simpler hierarchy.
 
 Rules:
@@ -801,7 +754,6 @@ Rules:
 ---
 
 ### Rust
-
 Rust strongly ties structure to modules, crate boundaries and explicitness.
 
 Rules:
@@ -816,7 +768,6 @@ Rules:
 ---
 
 ### JavaScript and TypeScript
-
 These ecosystems easily go into chaos without good structure, so this standard often works very well here.
 
 Rules:
@@ -831,7 +782,6 @@ Rules:
 ---
 
 ### Ruby, Elixir, Phoenix, Rails and similar opinionated frameworks
-
 These ecosystems often come with strong conventions-over-configuration rules.
 
 Rules:
@@ -839,16 +789,13 @@ Rules:
 - don't break framework expectations without strong reason
 - introduce feature slice where it doesn't kill framework ergonomics
 - if framework strongly expects certain places for controller, view, model, job or channel, respect them
-- screaming architecture can be introduced through modules, namespaces and feature groups, not necessarily through
-  completely breaking framework layout
+- screaming architecture can be introduced through modules, namespaces and feature groups, not necessarily through completely breaking framework layout
 
-**When framework has strong operational conventions, first preserve team productivity, then introduce your own doctrine.
-**
+**When framework has strong operational conventions, first preserve team productivity, then introduce your own doctrine.**
 
 ---
 
 ### Frontend UI Projects and Component Systems
-
 For UI systems and design systems, you shouldn't force business flow where component capability naturally exists.
 
 Rules:
@@ -902,14 +849,12 @@ If you see this, the architecture is probably rotting:
 5. Each file has one responsibility.
 6. Each function does one exact action and carries a verb name.
 7. Shared is avoided and used only for truly generic technical primitives.
-8. Product or app layer tells the story of the system. Technical layers tell the story of execution. Foundation carries
-   boring primitives.
+8. Product or app layer tells the story of the system. Technical layers tell the story of execution. Foundation carries boring primitives.
 9. Pattern is chosen by the nature of the flow, not by fashion.
 10. If an extra folder, file or abstraction doesn't reduce mental noise, it is not introduced.
 11. Clean architecture, when used, lives inside the slice rather than replacing the feature-first story of the repo.
 12. Declaration, resolution, execution, and failure mapping stay separate when the system has those lanes.
-13. Language and framework idioms take precedence when rigid application of this standard would worsen readability or
-    tooling.
+13. Language and framework idioms take precedence when rigid application of this standard would worsen readability or tooling.
 14. The ultimate goal is not complexity. The ultimate goal is simplicity of top quality.
 
 ---

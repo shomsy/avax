@@ -237,6 +237,7 @@ class FileStructureValidator extends BaseValidator
         if (count($pathParts) < 2) {
             return ValidationResult::pass();
         }
+
         $parentFolder = $pathParts[count($pathParts) - 2] ?? '';
 
         // If file is in a Flow or Capability folder, it should relate to that flow/capability

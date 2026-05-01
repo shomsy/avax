@@ -125,7 +125,13 @@ final class RunExternalToolingScripts
     {
         $skipPatterns = ['/^_/', '/\.bak$/', '/^README/', '/^TODO/', '/\.md$/'];
 
-        return array_any($skipPatterns, fn ($pattern) : int|false => preg_match($pattern, $scriptName));
+        foreach ($skipPatterns as $pattern) {
+            if (preg_match($pattern, $scriptName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

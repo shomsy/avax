@@ -15,12 +15,12 @@ Map the codebase to identify relevant files, entry points, and dependencies for 
 
 ## Input
 
-| Field         | Description                                             |
-|:--------------|:--------------------------------------------------------|
-| `task_id`     | Unique task identifier                                  |
-| `session_id`  | Session identifier                                      |
-| `user_prompt` | Original user request                                   |
-| `focus_area`  | What area to focus on (e.g., "auth", "payments", "API") |
+| Field | Description |
+|:------|:------------|
+| `task_id` | Unique task identifier |
+| `session_id` | Session identifier |
+| `user_prompt` | Original user request |
+| `focus_area` | What area to focus on (e.g., "auth", "payments", "API") |
 
 ---
 
@@ -105,7 +105,6 @@ Your output MUST be a JSON artifact:
 ## Example
 
 **Input:**
-
 ```
 task_id: task-001
 session_id: session-001
@@ -114,7 +113,6 @@ focus_area: "auth"
 ```
 
 **Expected Output:**
-
 ```json
 {
   "artifact_version": "1.0.0",
@@ -170,7 +168,6 @@ focus_area: "auth"
 - [ ] Token budget NOT exceeded
 
 If token budget is exhausted:
-
 - Return `status: "partial"`
 - Include `remaining_work` in `status_reason`
 - Exit immediately
@@ -180,7 +177,6 @@ If token budget is exhausted:
 ## Anti-Patterns
 
 **DO NOT:**
-
 - Return more than 10 files
 - Edit any files
 - Create new files
@@ -188,7 +184,6 @@ If token budget is exhausted:
 - Skip the `relevant_files` field
 
 **DO:**
-
 - Be specific with file paths
 - Use relative paths from project root
 - Prioritize by relevance to task

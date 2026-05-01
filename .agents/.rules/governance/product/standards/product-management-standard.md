@@ -26,7 +26,6 @@ The PRD (Product Requirements Document) is the source of truth for the **"What"*
 A PRD is ready for implementation only when it passes a multi-perspective review.
 
 **Standard PRD Structure**:
-
 1. **Problem Statement**: What real pain are we solving?
 2. **Success Metrics (KPIs)**: How do we measure impact?
 3. **Proposed Solution**: High-level approach/flow.
@@ -37,18 +36,14 @@ A PRD is ready for implementation only when it passes a multi-perspective review
 ## 2) Discovery & Rituals
 
 ### Meeting Snapshot to Action
-
 Every meeting snapshot must be processed into:
-
 - **Triggers**: What events started the discussion?
 - **Decisions**: What was finalized?
 - **Actions**: Specific items for `TODO.md`.
 - **Context Updates**: Changes to the Persona or Strategy docs.
 
 ### User Interview Processing
-
 Raw interview notes must be distilled into:
-
 - **Pain Points**: Explicit frustrations.
 - **Quotes**: Direct evidence of need.
 - **Insights**: Non-obvious patterns across users.
@@ -66,7 +61,6 @@ simulate or solicit feedback from at least three specialized roles:
 ## Completion Criteria
 
 A ProdOps activity is complete only when:
-
 1. Artifacts follow the defined scaffolds (`PRD.md`, etc.).
 2. High-stakes PRDs have recorded multi-perspective feedback.
 3. The `.agent/context/` is updated with relevant findings.

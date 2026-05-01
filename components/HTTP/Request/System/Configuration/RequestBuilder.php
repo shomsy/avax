@@ -22,7 +22,7 @@ final class RequestBuilder
 
     private RequestBody $requestBody;
 
-    private UploadedFiles $uploadedFiles;
+    private readonly UploadedFiles $uploadedFiles;
 
     /** @var array<string, mixed> */
     private array $serverParams = [];

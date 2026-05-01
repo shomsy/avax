@@ -14,12 +14,12 @@ VSCode AI extensions to reduce token costs and improve task focus.
 The harness produces standardized sub-agent briefs (pruned context), which can
 be mapped to different clients depending on the task shape:
 
-| Client       | Best Fit                                                               | Harness Use                                                  |
-|:-------------|:-----------------------------------------------------------------------|:-------------------------------------------------------------|
-| **Cline**    | Read-only exploration, long research tasks, context trimming           | Use subagents for file mapping, inventory, and discovery.    |
+| Client | Best Fit | Harness Use |
+|:---|:---|:---|
+| **Cline** | Read-only exploration, long research tasks, context trimming | Use subagents for file mapping, inventory, and discovery. |
 | **OpenCode** | Primary/subagent orchestration, task permissions, hidden helper agents | Use briefs as inputs for restricted `mode: subagent` agents. |
-| **Blackbox** | Remote multi-agent execution and branch-level parallel work            | Use for branch-level autonomous execution.                   |
-| **Cursor**   | High-precision coding and in-line refactoring                          | Use `@` file references to the generated briefs.             |
+| **Blackbox** | Remote multi-agent execution and branch-level parallel work | Use for branch-level autonomous execution. |
+| **Cursor** | High-precision coding and in-line refactoring | Use `@` file references to the generated briefs. |
 
 ---
 
@@ -28,14 +28,14 @@ be mapped to different clients depending on the task shape:
 When the main session (Supervisor) is cluttered, use this workflow to delegate
 a task to a VSCode extension:
 
-1. **Generate Pruned Context**:
-   Run `./.agents/hooks/subagent-dispatch.sh` with specific files.
-   *Result: A new folder in `.agent/sessions/<ID>/tasks/`.*
+1.  **Generate Pruned Context**:
+    Run `./.agents/hooks/subagent-dispatch.sh` with specific files.
+    *Result: A new folder in `.agent/sessions/<ID>/tasks/`.*
 
-2. **Open the Pruned Context**:
-   Open `pruned-context.md` in VSCode.
+2.  **Open the Pruned Context**:
+    Open `pruned-context.md` in VSCode.
 
-3. **Start the Extension**:
+3.  **Start the Extension**:
     - **Cline**: Open a new Cline session and paste the content of
       `pruned-context.md` as the first message.
     - **OpenCode**: Map the brief to a `mode: subagent` agent. Ensure
@@ -43,26 +43,23 @@ a task to a VSCode extension:
     - **Blackbox/Cursor**: Highlight the content and ask the agent to
       "Solve this sub-task based on the context below."
 
-4. **Merge Result**:
-   Once the extension modifies the files, the Supervisor (Antigravity/Codex)
-   detects the changes and continues with the main task.
+4.  **Merge Result**:
+    Once the extension modifies the files, the Supervisor (Antigravity/Codex)
+    detects the changes and continues with the main task.
 
 ---
 
 ## 2) Extension-Specific Tips
 
 ### Cline (Recursive Delegation)
-
 Cline is particularly good at "Recursive Delegation". If you use Cline as your
 main agent, it can use the `subagent-dispatch.sh` tool to spawn *its own*
 sub-agents, keeping its own context window clean.
 
 ### Blackbox (Autonomous Parallelism)
-
 Use Blackbox when you want branch-level autonomous execution outside the local context loop.
 
 ### OpenCode (Hidden Helper Agents)
-
 OpenCode is ideal for "Background" sub-tasks where permissions are restricted
 (e.g., restricted to specific directory or `permission.task` flags).
 
@@ -73,10 +70,9 @@ OpenCode is ideal for "Background" sub-tasks where permissions are restricted
 We provide a `.vscode/tasks.json` that adds a "Dispatch Sub-Agent" action.
 
 **To run it**:
-
-1. Press `Ctrl + Shift + P`.
-2. Type `Tasks: Run Task`.
-3. Select `Dispatch Sub-Agent (Pruned Context)`.
+1.  Press `Ctrl + Shift + P`.
+2.  Type `Tasks: Run Task`.
+3.  Select `Dispatch Sub-Agent (Pruned Context)`.
 
 ---
 

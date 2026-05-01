@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\Flows\ExchangeToken;
 
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Code\AuthorizationCodeRecord;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Code\AuthorizationCodeStoreInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\TokenCodecInterface;
 use DateInterval;
@@ -23,12 +24,12 @@ final readonly class ExchangeAuthorizationCode
         private DateInterval                    $refreshTokenTtl = new DateInterval(duration: 'P30D'),
     ) {}
 
-    public function execute(#[SensitiveParameter] string $code) : object
+    public function execute(#[SensitiveParameter] string $code) : \stdClass
     {
         $now    = new DateTimeImmutable();
         $record = $this->authorizationCodeStore->consume(code: $code, moment: $now);
 
-        if ($record === null) {
+        if (!$record instanceof AuthorizationCodeRecord) {
             throw new RuntimeException(message: 'Authorization code is invalid or expired.');
         }
 

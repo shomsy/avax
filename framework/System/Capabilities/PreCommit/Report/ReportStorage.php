@@ -88,7 +88,7 @@ final readonly class ReportStorage
             return [];
         }
 
-        usort($files, fn ($a, $b) => filemtime($b) - filemtime($a));
+        usort($files, fn ($a, $b): int => filemtime($b) - filemtime($a));
 
         return $files;
     }

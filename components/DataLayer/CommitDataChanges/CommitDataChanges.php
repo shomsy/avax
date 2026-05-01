@@ -2,8 +2,8 @@
 declare(strict_types=1);
 namespace Avax\DataLayer\CommitDataChanges;
 
-use Avax\DataLayer\CommitDataChanges\DataTransactionFailure;
-use Avax\DataLayer\CommitDataChanges\DataTransactionPolicy;
+use Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure;
+use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface;
 use Throwable;
 
 final class CommitDataChanges

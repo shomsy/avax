@@ -14,7 +14,7 @@ final readonly class SessionLifetime
     public int $idleTimeoutSeconds;
 
     public function __construct(
-        int|null = null,
+        int|null $idleTimeoutSeconds = null,
         public int $absoluteTimeoutSeconds = 43200,
     )
     {

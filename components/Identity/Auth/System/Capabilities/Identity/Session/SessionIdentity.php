@@ -33,17 +33,17 @@ final class SessionIdentity implements SessionIdentityInterface
     private readonly SessionStoreInterface $store;
 
     public function __construct(
-        SessionStoreInterface|null = null,
-        Clock|null = null,
-        AuditLogInterface|null = null,
-        SessionLifetime|null = null,
+        SessionStoreInterface|null $store = null,
+        Clock|null                 $clock = null,
+        AuditLogInterface|null     $auditLog = null,
+        SessionLifetime|null       $lifetime = null,
         #[SensitiveParameter]
         private readonly SessionRegistryInterface|null $sessionRegistry = null,
         #[SensitiveParameter]
-        string|null = null,
-        string|null = null,
-        string|null = null,
-        string|null = null,
+        string|null                $sessionKey = null,
+        string|null                $mfaVerifiedAtKey = null,
+        string|null                $phishingResistantKey = null,
+        string|null                $issuedAtKey = null,
         private readonly string                        $lastSeenAtKey = 'auth_session_last_seen_at',
     )
     {

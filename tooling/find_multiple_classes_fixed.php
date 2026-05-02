@@ -45,7 +45,7 @@ foreach ($directories as $dir) {
                     }
 
                     if ($name !== null) {
-                        $declarations[] = token_name($type) . ' ' . $name;
+                        $declarations[] = token_name($type) . ' find_multiple_classes_fixed.php' . $name;
                     }
                 }
             }

@@ -11,11 +11,16 @@ parameters:
         - vendor
         - framework/System/Flows
         - framework/System/PublicSurface
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - '#Property .* is never read, only written#'
         - '#Constructor of class.*has an unused parameter#'
         - '#Parameters should have .* types as the only types passed to this method#'
-
+        - '#Mixed variable in a `\$file->\.\.\.\(\)` can skip important errors#'
+        -
+            identifier: 'method.returnType'
+            message: '#.*returns CheckInterface but returns CheckInterface\.#'
+            path: 'framework/System/Capabilities/PreCommit/PreCommit.php'
     type_perfect:
         narrow_param: true
         narrow_return: true

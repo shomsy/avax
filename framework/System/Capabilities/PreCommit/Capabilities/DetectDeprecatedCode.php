@@ -13,7 +13,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  * Detects deprecated methods and patterns.
  * WARNING - does not auto-delete, only reports.
  */
-final class DetectDeprecatedCode
+final class DetectDeprecatedCode implements CheckInterface
 {
     /** @var array<string, string> */
     private array $deprecatedPatterns

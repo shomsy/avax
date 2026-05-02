@@ -13,7 +13,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  * Runs external tooling scripts to detect architecture issues.
  * Uses check-*.php scripts from tooling/architecture/
  */
-final class DetectArchitectureViolations
+final class DetectArchitectureViolations implements CheckInterface
 {
     /** @var array<string, string> */
     private array $scripts

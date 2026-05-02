@@ -13,7 +13,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  * Detects TODO, FIXME, NOTE, HACK comments.
  * WARNING - does not auto-delete, only reports.
  */
-final class DetectTodoComments
+final class DetectTodoComments implements CheckInterface
 {
     /**
      * @param array<string, mixed> $context

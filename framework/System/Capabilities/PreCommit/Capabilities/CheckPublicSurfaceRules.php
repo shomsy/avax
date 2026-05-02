@@ -12,7 +12,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  *
  * Validates classes in System/PublicSurface are thin and delegate.
  */
-final class CheckPublicSurfaceRules
+final class CheckPublicSurfaceRules implements CheckInterface
 {
     /**
      * @param array<string, mixed> $context

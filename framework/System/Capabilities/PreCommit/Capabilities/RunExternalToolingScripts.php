@@ -16,7 +16,7 @@ use SplFileInfo;
  * Executes external tooling scripts as adapters.
  * Provides structured results from script outputs.
  */
-final class RunExternalToolingScripts
+final class RunExternalToolingScripts implements CheckInterface
 {
     /** @var array<string, array{command: string, extension: string, timeout: int}> */
     private static array    $scriptExecutors

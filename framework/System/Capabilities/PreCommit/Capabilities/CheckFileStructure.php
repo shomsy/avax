@@ -12,7 +12,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  *
  * Validates file/folder structure follows architectural pattern.
  */
-final class CheckFileStructure
+final class CheckFileStructure implements CheckInterface
 {
     /** @var array<string> */
     private array $forbiddenTopLevel

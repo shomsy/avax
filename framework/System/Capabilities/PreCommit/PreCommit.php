@@ -7,6 +7,7 @@ namespace Avax\Framework\System\Capabilities\PreCommit;
 use Avax\Framework\System\Capabilities\PreCommit\Capabilities\CheckFileStructure;
 use Avax\Framework\System\Capabilities\PreCommit\Capabilities\CheckForbiddenWords;
 use Avax\Framework\System\Capabilities\PreCommit\Capabilities\CheckHowToRules;
+use Avax\Framework\System\Capabilities\PreCommit\Capabilities\CheckInterface;
 use Avax\Framework\System\Capabilities\PreCommit\Capabilities\CheckNamingConventions;
 use Avax\Framework\System\Capabilities\PreCommit\Capabilities\CheckPhpSyntax;
 use Avax\Framework\System\Capabilities\PreCommit\Capabilities\CheckPublicSurfaceRules;

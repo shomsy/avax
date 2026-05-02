@@ -13,7 +13,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  * Detects class_alias usage and compat.php patterns.
  * WARNING - does not auto-delete, only reports.
  */
-final class DetectLegacyAliases
+final class DetectLegacyAliases implements CheckInterface
 {
     /**
      * @param array<string, mixed> $context

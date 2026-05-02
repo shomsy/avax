@@ -212,7 +212,7 @@ class ScriptRunnerValidator extends BaseValidator
             '/\.md$/',
         ];
 
-        return array_any($skipPatterns, fn ($pattern) : int|false => preg_match($pattern, $scriptName));
+        return array_any($skipPatterns, fn ($pattern) : bool => (bool) preg_match($pattern, $scriptName));
     }
 
     /**

@@ -13,7 +13,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  * Detects legacy code patterns that should be migrated.
  * WARNING - does not auto-delete, only reports.
  */
-final class DetectLegacyCode
+final class DetectLegacyCode implements CheckInterface
 {
     /** @var array<string> */
     private array $legacyFolders

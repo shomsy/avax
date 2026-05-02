@@ -12,7 +12,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  *
  * Detects and validates tooling scripts follow conventions.
  */
-final class DetectToolingScripts
+final class DetectToolingScripts implements CheckInterface
 {
     /**
      * @param array<string, mixed> $context

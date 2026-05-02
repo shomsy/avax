@@ -13,7 +13,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  * Reads .agents/how-to/*.md files and validates code changes
  * comply with documented rules.
  */
-final class CheckHowToRules
+final class CheckHowToRules implements CheckInterface
 {
     /** @var array<string, array{file: string, forbidden_patterns: list<string>}> */
     private array $rules = [];

@@ -16,7 +16,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  * - Functions say exact action
  * - No generic names (Services, Helpers, Utils, etc.)
  */
-final class CheckNamingConventions
+final class CheckNamingConventions implements CheckInterface
 {
     /** @var list<string> */
     private array $forbiddenNames
@@ -65,7 +65,7 @@ final class CheckNamingConventions
                 }
             }
 
-            // Check PHP class naming
+            // Check PHP class naming implements CheckInterface
             if (str_ends_with(strtolower($file), '.php')) {
                 $classIssues = $this->checkPhpClassNaming($filePath, $file);
                 $issues      = array_merge($issues, $classIssues);
@@ -76,7 +76,7 @@ final class CheckNamingConventions
     }
 
     /**
-     * Check PHP class naming conventions
+     * Check PHP class naming implements CheckInterface conventions
      *
      * @return list<PreCommitIssue>
      */
@@ -89,7 +89,7 @@ final class CheckNamingConventions
             return $issues;
         }
 
-        // Extract class names
+        // Extract class names implements CheckInterface
         $tokens    = token_get_all($content);
         $classes   = [];
         $count = count($tokens);

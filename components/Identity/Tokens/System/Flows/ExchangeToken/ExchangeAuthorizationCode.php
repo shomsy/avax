@@ -11,6 +11,7 @@ use DateInterval;
 use DateTimeImmutable;
 use RuntimeException;
 use SensitiveParameter;
+use stdClass;
 
 /**
  * ExchangeAuthorizationCode - OAuth2 flow to exchange code for tokens.
@@ -24,7 +25,7 @@ final readonly class ExchangeAuthorizationCode
         private DateInterval                    $refreshTokenTtl = new DateInterval(duration: 'P30D'),
     ) {}
 
-    public function execute(#[SensitiveParameter] string $code) : \stdClass
+    public function execute(#[SensitiveParameter] string $code) : stdClass
     {
         $now    = new DateTimeImmutable();
         $record = $this->authorizationCodeStore->consume(code: $code, moment: $now);

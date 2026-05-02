@@ -2,10 +2,9 @@
 declare(strict_types=1);
 namespace Avax\DataLayer\AccessPersistentData;
 
-use Avax\DataLayer\AccessPersistentData\PersistentDataFailure;
-use Avax\DataLayer\AccessPersistentData\PersistentDataResult;
-use Avax\DataLayer\AccessPersistentData\PersistentDataRequest;
-use Throwable;
+use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
+use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
+use Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure;
 
 final class AccessPersistentData
 {

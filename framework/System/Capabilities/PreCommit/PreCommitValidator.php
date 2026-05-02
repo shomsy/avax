@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit;
 
-use Avax\Framework\System\Capabilities\PreCommit\Validators\ValidatorInterface;
 use Avax\Framework\System\Capabilities\PreCommit\Report\ReportStorage;
 use Avax\Framework\System\Capabilities\PreCommit\Todo\TodoGenerator;
 use Avax\Framework\System\Capabilities\PreCommit\ValidationChain\ValidationChain;
@@ -18,6 +17,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Validators\ScriptRunnerValidato
 use Avax\Framework\System\Capabilities\PreCommit\Validators\SecurityValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\TodoCommentValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\ToolingIntegrationValidator;
+use Avax\Framework\System\Capabilities\PreCommit\Validators\ValidatorInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 

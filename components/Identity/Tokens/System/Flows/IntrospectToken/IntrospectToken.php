@@ -8,6 +8,7 @@ use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\Tok
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
 use DateTimeImmutable;
 use SensitiveParameter;
+use stdClass;
 
 final readonly class IntrospectToken
 {
@@ -16,7 +17,7 @@ final readonly class IntrospectToken
         private TokenRevocationStoreInterface $tokenRevocationStore,
     ) {}
 
-    public function execute(#[SensitiveParameter] string $token) : \stdClass
+    public function execute(#[SensitiveParameter] string $token) : stdClass
     {
         $claims = $this->tokenCodec->decode(token: $token);
         $now    = new DateTimeImmutable();

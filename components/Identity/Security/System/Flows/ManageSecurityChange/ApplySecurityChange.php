@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Security\System\Flows\ManageSecurityChange;
 
 use Avax\Components\Identity\Security\System\Capabilities\Configuration\SecurityConfigurationStore;
+use stdClass;
 
 /**
  * Applies an approved security configuration change to the tenant configuration.
@@ -13,7 +14,7 @@ final readonly class ApplySecurityChange
 {
     public function __construct(private SecurityConfigurationStore $securityConfigurationStore) {}
 
-    public function execute(string $requestId) : \stdClass
+    public function execute(string $requestId) : stdClass
     {
         return $this->securityConfigurationStore->apply(requestId: $requestId);
     }

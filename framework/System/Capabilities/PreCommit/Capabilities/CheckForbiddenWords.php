@@ -12,7 +12,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  *
  * Detects forbidden words that violate architectural standards.
  */
-final class CheckForbiddenWords
+final class CheckForbiddenWords implements CheckInterface
 {
     /** @var array<string> */
     private array $forbiddenWords
@@ -45,7 +45,7 @@ final class CheckForbiddenWords
             }
 
             foreach ($this->forbiddenWords as $forbiddenWord) {
-                // Check in class names
+                // Check in class names implements CheckInterface
                 if (preg_match_all('/class\s+(\w*' . preg_quote($forbiddenWord, '/') . '\w*)/i', $content, $matches)) {
                     foreach ($matches[1] as $className) {
                         $issues[] = new PreCommitIssue(

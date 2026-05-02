@@ -12,7 +12,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
  *
  * Validates PHP syntax for staged files.
  */
-final class CheckPhpSyntax
+final class CheckPhpSyntax implements CheckInterface
 {
     /**
      * @param array<string, mixed> $context

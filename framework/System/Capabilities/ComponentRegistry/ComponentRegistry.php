@@ -35,7 +35,7 @@ final class ComponentRegistry
         $name = $componentProvider::name();
 
         $this->register(
-            definition: new ComponentDefinition(
+            componentDefinition: new ComponentDefinition(
                 name: $name,
                 providerClass: $componentProvider::class,
             ),

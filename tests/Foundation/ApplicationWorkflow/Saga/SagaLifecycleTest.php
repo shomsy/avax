@@ -20,8 +20,8 @@ final class SagaLifecycleTest extends TestCase
         $definition = $this->definition();
         $command = new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-123');
 
-        $first = $saga->start()->start(definition: $definition, command: $command);
-        $second = $saga->start()->start(definition: $definition, command: $command);
+        $first = $saga->start()->start(componentDefinition: $definition, command: $command);
+        $second = $saga->start()->start(componentDefinition: $definition, command: $command);
 
         $state = $saga->state()->read(instanceId: $first->id);
         $events = $saga->state()->readEvents(instanceId: $first->id);
@@ -36,12 +36,12 @@ final class SagaLifecycleTest extends TestCase
         $saga     = Saga::inMemory();
         $definition = $this->definition();
         $instance = $saga->start()->start(
-            definition: $definition,
+            componentDefinition: $definition,
             command   : new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-456'),
         );
 
-        $firstStep = $saga->runStep()->run(definition: $definition, instanceId: $instance->id);
-        $secondStep = $saga->runStep()->run(definition: $definition, instanceId: $instance->id);
+        $firstStep = $saga->runStep()->run(componentDefinition: $definition, instanceId: $instance->id);
+        $secondStep = $saga->runStep()->run(componentDefinition: $definition, instanceId: $instance->id);
 
         $completion = $saga->complete()->complete(instanceId: $instance->id);
         $timeline  = $saga->inspect()->timeline(instanceId: $instance->id);
@@ -66,12 +66,12 @@ final class SagaLifecycleTest extends TestCase
                            ],
         );
         $instance = $saga->start()->start(
-            definition: $definition,
+            componentDefinition: $definition,
             command   : new SagaStartCommand(definitionName: 'checkout', commandKey: 'checkout-789'),
         );
 
         try {
-            $saga->runStep()->run(definition: $definition, instanceId: $instance->id);
+            $saga->runStep()->run(componentDefinition: $definition, instanceId: $instance->id);
             $this->fail(message: 'Expected saga step failure.');
         } catch (SagaStepFailure) {
             $state = $saga->state()->read(instanceId: $instance->id);

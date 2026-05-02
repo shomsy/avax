@@ -33,7 +33,7 @@ final class ComponentRegistryTest extends TestCase
         $componentRegistry = new ComponentRegistry();
 
         $componentRegistry->register(
-            definition: new ComponentDefinition(
+            componentDefinition: new ComponentDefinition(
                 name         : 'cache',
                 providerClass: 'CacheProvider',
             ),
@@ -50,14 +50,14 @@ final class ComponentRegistryTest extends TestCase
         $componentRegistry = new ComponentRegistry();
 
         $componentRegistry->register(
-            definition: new ComponentDefinition(name: 'cache'),
+            componentDefinition: new ComponentDefinition(name: 'cache'),
         );
 
         $this->expectException(FrameworkMisconfigured::class);
         $this->expectExceptionMessage('Component "cache" is already registered.');
 
         $componentRegistry->register(
-            definition: new ComponentDefinition(name: 'cache'),
+            componentDefinition: new ComponentDefinition(name: 'cache'),
         );
     }
 
@@ -67,7 +67,7 @@ final class ComponentRegistryTest extends TestCase
         $componentRegistry = new ComponentRegistry();
 
         $componentRegistry->register(
-            definition: new ComponentDefinition(
+            componentDefinition: new ComponentDefinition(
                 name         : 'events',
                 providerClass: 'EventsProvider',
             ),
@@ -82,7 +82,7 @@ final class ComponentRegistryTest extends TestCase
     {
         $componentRegistry = new ComponentRegistry();
 
-        $provider = new class () implements ComponentProviderInterface {
+        $componentProvider = new class () implements ComponentProviderInterface {
             public static function name(): string
             {
                 return 'test';
@@ -93,7 +93,7 @@ final class ComponentRegistryTest extends TestCase
             }
         };
 
-        $componentRegistry->registerProvider(provider: $provider);
+        $componentRegistry->registerProvider(componentProvider: $componentProvider);
 
         self::assertTrue($componentRegistry->has(name: 'test'));
     }
@@ -104,7 +104,7 @@ final class ComponentRegistryTest extends TestCase
         $componentRegistry = new ComponentRegistry();
         $booted   = [];
 
-        $provider = new class ($booted) implements ComponentProviderInterface {
+        $componentProvider = new class ($booted) implements ComponentProviderInterface {
             public function __construct(private array &$booted)
             {
             }
@@ -120,7 +120,7 @@ final class ComponentRegistryTest extends TestCase
             }
         };
 
-        $componentRegistry->registerProvider(provider: $provider);
+        $componentRegistry->registerProvider(componentProvider: $componentProvider);
 
         $runtime = $this->createMock(RuntimeInterface::class);
         $componentRegistry->boot(runtime: $runtime);
@@ -134,7 +134,7 @@ final class ComponentRegistryTest extends TestCase
         $componentRegistry = new ComponentRegistry();
 
         $componentRegistry->register(
-            definition: new ComponentDefinition(
+            componentDefinition: new ComponentDefinition(
                 name         : 'router',
                 providerClass: 'RouterProvider',
             ),

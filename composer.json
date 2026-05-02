@@ -1,5 +1,20 @@
 {
+    "name": "avax/framework",
+    "type": "project",
+    "description": "AvaX - capability-first PHP framework",
+    "keywords": ["php", "framework", "avax"],
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2"
+    },
     "autoload": {
-        "files": []
+        "psr-4": {
+            "Avax\\Framework\\": "framework/",
+            "Avax\\Components\\": "components/",
+            "Avax\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
     }
 }

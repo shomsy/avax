@@ -48,7 +48,7 @@ final class ContainerKernelTest extends TestCase
 
         $definition           = new ServiceDefinition(abstract: 'service');
         $definition->concrete = stdClass::class;
-        $this->definitions->add(definition: $definition);
+        $this->definitions->add(componentDefinition: $definition);
 
         $this->assertTrue(condition: $this->kernel->has(id: 'service'));
     }

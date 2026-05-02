@@ -1,5 +1,5 @@
 # AvaX V3 Master Plan — Executable System Design Framework
-
+ 
 Status: dedicated V3 roadmap  
 Depends on: V1 Production Kernel GREEN and V2 Enterprise Platform Engine at least YELLOW/GREEN  
 Purpose: make AvaX capable of modeling, validating, simulating, and demonstrating system-design-grade application

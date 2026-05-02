@@ -2,10 +2,10 @@
 declare(strict_types=1);
 namespace Avax\DataLayer;
 
-use Avax\DataLayer\AccessPersistentData\AccessPersistentData;
-use Avax\DataLayer\CommitDataChanges\CommitDataChanges;
-use Avax\DataLayer\ConfigureDataLayer\DataLayerConfig;
-use Avax\DataLayer\ConfigureDataLayer\RegisterDataLayerRuntime;
+use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
+use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork;
+use Avax\Components\Persistence\System\Configuration\PersistenceBuilder;
+use Avax\Components\Persistence\System\Configuration\PersistenceBuilder;
 
 final class DataLayer
 {

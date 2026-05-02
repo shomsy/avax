@@ -14,6 +14,7 @@ use Avax\Components\Identity\Tokens\System\Flows\AuthorizeToken\AuthorizeTokenRe
 use Avax\Components\Identity\Tokens\System\Flows\ExchangeToken\ExchangeAuthorizationCode;
 use Avax\Components\Identity\Tokens\System\Flows\IntrospectToken\IntrospectToken;
 use Avax\Components\Identity\Tokens\System\Flows\RevokeToken\RevokeToken;
+use stdClass;
 
 /**
  * Tokens - Main entry point for Identity/Tokens component.
@@ -63,17 +64,17 @@ final readonly class Tokens implements TokensInterface
         );
     }
 
-    public function authorize(array $request): \stdClass
+    public function authorize(array $request): stdClass
     {
         return $this->authorizeTokenRequest->execute(request: $request);
     }
 
-    public function exchangeCode(string $code): \stdClass
+    public function exchangeCode(string $code): stdClass
     {
         return $this->exchangeAuthorizationCode->execute($code);
     }
 
-    public function introspect(string $token): \stdClass
+    public function introspect(string $token): stdClass
     {
         return $this->introspectToken->execute(token: $token);
     }

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Avax\DataLayer\ConfigureDataLayer;
 
-use Avax\DataLayer\ConfigureDataLayer\DataLayerConfig;
+use Avax\Components\Persistence\System\Configuration\PersistenceBuilder;
 
 final class RegisterDataLayerRuntime
 {

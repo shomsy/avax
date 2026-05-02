@@ -8,6 +8,7 @@ use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Code\Auth
 use DateInterval;
 use DateTimeImmutable;
 use InvalidArgumentException;
+use stdClass;
 
 final readonly class AuthorizeTokenRequest
 {
@@ -19,7 +20,7 @@ final readonly class AuthorizeTokenRequest
     /**
      * @param array<string, mixed> $request
      */
-    public function execute(array $request) : \stdClass
+    public function execute(array $request) : stdClass
     {
         $subject = $request['subject'] ?? $request['sub'] ?? $request['user_id'] ?? null;
 

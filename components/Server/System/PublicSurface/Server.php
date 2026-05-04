@@ -107,6 +107,9 @@ final class ServerResult
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

@@ -104,6 +104,9 @@ echo "<p>Create routes/web.php to get started.</p>";
         return false;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function startWithOptions(array $options): bool
     {
         $host = $options['host'] ?? '0.0.0.0';

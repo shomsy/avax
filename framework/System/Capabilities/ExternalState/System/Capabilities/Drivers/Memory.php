@@ -11,6 +11,9 @@ use Avax\Framework\System\Capabilities\ExternalState\System\PublicSurface\State;
  */
 final class Memory implements State
 {
+    /**
+     * @var array<string, mixed>
+     */
     private array $data = [];
 
     public function get(string $key): mixed

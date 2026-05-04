@@ -11,6 +11,8 @@ final readonly class ApiDocumentation
 {
     /**
      * @param list<array{method:string,path:string,summary?:string,tags?:list<string>}> $routes
+     *
+     * @return array<string, mixed>
      */
     public static function openApi(array $routes = []): array
     {

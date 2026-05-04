@@ -13,6 +13,8 @@ final readonly class OpenApiGenerator
 
     /**
      * @param list<array{method:string,path:string,summary?:string,tags?:list<string>}> $routes
+     *
+     * @return array<string, mixed>
      */
     public function generate(array $routes): array
     {

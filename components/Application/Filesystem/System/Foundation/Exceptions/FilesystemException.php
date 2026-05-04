@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Filesystem\System\Foundation\Exceptions;
+namespace Avax\Components\Filesystem\System\Foundation\Exceptions;
 
 use Exception;
 use Throwable;

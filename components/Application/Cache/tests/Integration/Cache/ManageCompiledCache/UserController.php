@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\tests\Integration\Cache\ManageCompiledCache;
+namespace Avax\Components\Cache\tests\Integration\Cache\ManageCompiledCache;
 
 use Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;

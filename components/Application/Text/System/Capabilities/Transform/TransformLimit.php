@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Text\System\Capabilities\Transform;
+namespace Avax\Components\Text\System\Capabilities\Transform;
 
-use Avax\Components\Application\Text\System\PublicSurface\Text;
+use Avax\Components\Text\System\PublicSurface\Text;
 
 final class TransformLimit
 {

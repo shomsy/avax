@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
+namespace Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
 final class CompiledCacheSources
 {

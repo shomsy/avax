@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
+namespace Avax\Components\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
 
-use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
+use Avax\Components\Application\DateTime\System\PublicSurface\SystemClock;
 
 /**
  * Checks freshness of compiled cache entries.
@@ -83,9 +83,9 @@ final class CompiledCacheFreshness
                 entryName        : $compiledCacheManifestEntry->name,
                 isFresh          : false,
                 reason           : 'Compiled file does not exist',
+                checkedAt        : $this->clock->now(),
                 sourceFilesMtime : $this->getSourceFilesMtime($compiledCacheManifestEntry->sourceFiles),
                 compiledFileMtime: 0,
-                checkedAt        : $this->clock->now(),
             );
         }
 
@@ -97,9 +97,9 @@ final class CompiledCacheFreshness
                 entryName        : $compiledCacheManifestEntry->name,
                 isFresh          : false,
                 reason           : sprintf('Missing source files: %s', implode(', ', $missingSources)),
+                checkedAt        : $this->clock->now(),
                 sourceFilesMtime : $this->getSourceFilesMtime($compiledCacheManifestEntry->sourceFiles),
                 compiledFileMtime: $compiledCacheManifestEntry->getCompiledFileMtime(),
-                checkedAt        : $this->clock->now(),
             );
         }
 
@@ -111,9 +111,9 @@ final class CompiledCacheFreshness
                 entryName        : $compiledCacheManifestEntry->name,
                 isFresh          : false,
                 reason           : 'Source files have changed (fingerprint mismatch)',
+                checkedAt        : $this->clock->now(),
                 sourceFilesMtime : $this->getSourceFilesMtime($compiledCacheManifestEntry->sourceFiles),
                 compiledFileMtime: $compiledCacheManifestEntry->getCompiledFileMtime(),
-                checkedAt        : $this->clock->now(),
             );
         }
 
@@ -125,9 +125,9 @@ final class CompiledCacheFreshness
                 entryName        : $compiledCacheManifestEntry->name,
                 isFresh          : false,
                 reason           : 'Cannot determine compiled file modification time',
+                checkedAt        : $this->clock->now(),
                 sourceFilesMtime : $this->getSourceFilesMtime($compiledCacheManifestEntry->sourceFiles),
                 compiledFileMtime: 0,
-                checkedAt        : $this->clock->now(),
             );
         }
 
@@ -138,9 +138,9 @@ final class CompiledCacheFreshness
                 entryName        : $compiledCacheManifestEntry->name,
                 isFresh          : false,
                 reason           : 'Source files are newer than compiled file',
+                checkedAt        : $this->clock->now(),
                 sourceFilesMtime : $sourceMtime,
                 compiledFileMtime: $compiledMtime,
-                checkedAt        : $this->clock->now(),
             );
         }
 
@@ -148,9 +148,9 @@ final class CompiledCacheFreshness
             entryName        : $compiledCacheManifestEntry->name,
             isFresh          : true,
             reason           : 'All checks passed',
+            checkedAt        : $this->clock->now(),
             sourceFilesMtime : $sourceMtime,
             compiledFileMtime: $compiledMtime,
-            checkedAt        : $this->clock->now(),
         );
     }
 
@@ -221,9 +221,9 @@ final class CompiledCacheFreshness
             entryName        : $compiledCacheManifestEntry->name,
             isFresh          : false,
             reason           : 'Manually marked as dirty',
+            checkedAt        : $this->clock->now(),
             sourceFilesMtime : $this->getSourceFilesMtime($compiledCacheManifestEntry->sourceFiles),
             compiledFileMtime: $compiledCacheManifestEntry->compiledFileExists() ? $compiledCacheManifestEntry->getCompiledFileMtime() : 0,
-            checkedAt        : $this->clock->now(),
         );
 
         $cacheKey                     = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;
@@ -233,7 +233,7 @@ final class CompiledCacheFreshness
     }
 
     /**
-     * Mark an entry as fresh (no recompilation needed).
+     * Mark an entry as fresh (no recompilation needed)tion needed).
      */
     public function markFresh(CompiledCacheManifestEntry $compiledCacheManifestEntry): FreshnessStatus
     {
@@ -241,9 +241,9 @@ final class CompiledCacheFreshness
             entryName        : $compiledCacheManifestEntry->name,
             isFresh          : true,
             reason           : 'Manually marked as fresh',
+            checkedAt        : $this->clock->now(),
             sourceFilesMtime : $this->getSourceFilesMtime($compiledCacheManifestEntry->sourceFiles),
             compiledFileMtime: $compiledCacheManifestEntry->compiledFileExists() ? $compiledCacheManifestEntry->getCompiledFileMtime() : 0,
-            checkedAt        : $this->clock->now(),
         );
 
         $cacheKey                     = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;

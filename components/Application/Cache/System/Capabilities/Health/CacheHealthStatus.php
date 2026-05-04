@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Cache\System\Capabilities\Health;
+namespace Avax\Components\Application\Cache\System\Capabilities\Health;
 
-use Avax\Components\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 
 /**
  * Value object with cache health metrics.

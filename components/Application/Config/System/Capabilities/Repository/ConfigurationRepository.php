@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Config\System\Capabilities\Repository;
+namespace Avax\Components\Config\System\Capabilities\Repository;
 
 /**
  * Repository for application configuration with dot-notation support.

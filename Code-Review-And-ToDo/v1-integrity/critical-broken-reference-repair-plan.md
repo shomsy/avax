@@ -2,20 +2,18 @@
 
 | Missing symbol | Count | Referenced from (sample) | Likely canonical target | Fix type | Risk | Status |
 |---|---|---|---|---|---|---|
-| `Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing` | 88 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Distribution/DistributeCachedValues` | `?` | requires-human-decision | Low | PENDING |
-| `Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound` | 72 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Distribution/DistributeCachedValues` | `?` | requires-human-decision | Low | PENDING |
-| `Avax\Components\Application\Cache\System\Capabilities\Health\CacheHealthStatus` | 56 | `components/Application/Cache/System/Capabilities/Health` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\HTTP\Request\Request` | 45 | `tests/Integration` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition` | 41 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
-| `Avax\Components\Application\Cache\System\Capabilities\Distribution\CacheNode` | 41 | `components/Application/Cache/System/Capabilities/Distribution` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources` | 41 | `components/Application/Cache/tests/Integration/Cache/ManageCompiledCache` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Filesystem\Disks\Local\LocalDisk` | 40 | `tests/Foundation/Filesystem/Directories` | `Avax\Components\Operations\Filesystem\Disks\Local\LocalDisk` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Application\Cache\System\Capabilities\Distribution\CacheNode` | 38 | `components/Application/Cache/System/Capabilities/Distribution` | `?` | requires-human-decision | Low | PENDING |
 | `Redis` | 38 | `components/Identity/Auth/System/Capabilities/Identity/Sessions/Registry` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\HTTP\URI\Parts\Host` | 37 | `tests/Foundation/HTTP/URI/Parts` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope` | 37 | `components/DataStack/Database/System/Capabilities/Telemetry` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimDirectory` | 36 | `components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime/ReadDirectories` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\DI\ContainerInterface` | 34 | `components/DataStack/Database/System/Configuration` | `Avax\Components\Application\Container\System\ContainerInterface` | canonical-import-rewrite | Low | PENDING |
-| `Avax\Components\Application\Filesystem\Disks\Disk` | 31 | `components/Application/Filesystem/System/Flows/Directories` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataStack\Database\System\Capabilities\Transactions\TransactionManager` | 30 | `tests/Unit/Components/DataStack/Database` | `?` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Application\Filesystem\Disks\Disk` | 29 | `components/Application/Filesystem/System/Flows/Directories` | `?` | requires-human-decision | Low | PENDING |
 | `BenchSharedService` | 27 | `components/Application/Container/tests/benchmarks` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\URI\Parts\Scheme` | 26 | `tests/Foundation/HTTP/URI/Parts` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition` | 25 | `tests/Foundation/HTTP/Router/Unit` | `?` | requires-human-decision | Low | PENDING |
@@ -30,17 +28,23 @@
 | `Avax\Components\HTTP\URI\Parts\Authority` | 18 | `tests/Foundation/HTTP/URI/Parts` | `?` | test-only-postpone | Low | PENDING |
 | `components\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext` | 18 | `tests/Foundation/Container/Capabilities/Resolution/Kernel` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy` | 18 | `components/HTTP/Router/System/Configuration` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement\LeastFrequentlyUsedReplacement` | 16 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Lifecycle/ReplaceCachedValues` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\URI\Parts\Scheme` | 16 | `tests/Foundation/HTTP/URI/Parts` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\URI\Parts\UserInfo` | 16 | `tests/Foundation/HTTP/URI/Parts` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency` | 16 | `components/DataStack/Database/System/Configuration` | `Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency` | canonical-import-rewrite | Low | PENDING |
 | `Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies` | 16 | `components/Application/Container/System/Capabilities/Declaration/Blueprints` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\System\Capabilities\Resolution\ResolvePlan` | 16 | `components/Application/Container/System/Capabilities/Declaration/Blueprints` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\System\Container` | 16 | `components/Application/Container/System/Capabilities/Resolution/Resolution` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Cache\System\Foundation\Time\Timestamp` | 15 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Source/SyncWithSource/SourceSyncPolicies` | `?` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Reports\InjectionReport` | 14 | `components/Application/Container/System` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcher` | 14 | `tests/Foundation/HTTP/Router/Unit` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Text\System\PublicSurface\Text` | 14 | `components/Application/Text/System/Capabilities/Transform` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext` | 13 | `tests/Foundation/Container/Capabilities/Resolution/Engine` | `Avax\Components\Application\Container\System\Capability\Resolution\Kernel\KernelContext` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy` | 13 | `components/Application/Container/System/Capabilities/Composition/Assembly` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\System\Foundation\Time\Clock` | 13 | `components/Application/Container/System/Capabilities/Composition/Assembly` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Cache\System\Foundation\Time\FrozenClock` | 12 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Source/SyncWithSource/SourceSyncPolicies` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException` | 12 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache\FreshnessStatus` | 12 | `components/Application/Cache/System/Capabilities/CompiledCache/DistributedCompiledCache` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestHeaders\RequestHeaders` | 12 | `tests/Unit/Foundation/HTTP/Request/RequestHeaders` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinition` | 12 | `components/HTTP/Router/System/Flows/MatchRoute` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentityStoreInterface` | 12 | `components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime/ProvisionUser` | `?` | requires-human-decision | Low | PENDING |
@@ -54,6 +58,7 @@
 | `Avax\Components\HTTP\System\Capabilities\Response` | 10 | `components/HTTP/System/Flows/CreateResponse` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Tooling\Refactor\RecursiveIteratorIterator` | 10 | `tooling/Refactor` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\Container` | 9 | `tests/Foundation/Container/Capabilities/Resolution/Engine` | `?` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore` | 9 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Source/SyncWithSource/SourceSyncPolicies` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\RequestedInputs\Inputs\Examples\UserRegistrationDTO` | 9 | `tests/Foundation/HTTP/Request/ServerRequest/IncomingRequest/Inputs/Examples` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator` | 9 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\SystemDesign\Capacity\System\PublicSurface\CapacityModel` | 9 | `tests/SystemDesign/Capacity` | `?` | test-only-postpone | Low | PENDING |
@@ -62,7 +67,7 @@
 | `components\DataFoundation\Arrhae` | 9 | `tests/Foundation/DataFoundation/Arrhae` | `?` | test-only-postpone | Low | PENDING |
 | `components\Filesystem\Disks\Local\LocalDisk` | 9 | `tests/Foundation/Filesystem/Files` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext` | 9 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
-| `Avax\Components\Application\Cache\System\Capabilities\Distribution\NodeHealthRecord` | 9 | `components/Application/Cache/System/Capabilities/Distribution` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Cache\System\Capabilities\Distribution\NodeHealthRecord` | 9 | `components/Application/Cache/System/Capabilities/Distribution` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityManager` | 9 | `components/DataStack/Database/System/Capabilities/ORM/Repositories` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\RegisteredScimDirectory` | 9 | `components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime/RegisterDirectory` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentity` | 9 | `components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime/ProvisionUser` | `?` | requires-human-decision | Low | PENDING |
@@ -72,6 +77,7 @@
 | `components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest` | 9 | `framework/System/Flows/HandleIncomingHttp` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDeferredDependency` | 8 | `components/Application/Container/tests/Capabilities/Declaration/Providers` | `Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector` | 8 | `tests/Foundation/Container/Capabilities/Resolution/Kernel` | `Avax\Components\Application\Container\System\Capability\Injection\Properties\PropertyInjector` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Cache\System\AvaxCache` | 8 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Storage/StoreCachedValues` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteCacheManifest` | 8 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\DataHandling\ObjectHandling\DTO\DTOValidationException` | 8 | `tests/Foundation/DataHandling/DataTransfer` | `?` | test-only-postpone | Low | PENDING |
 | `ProviderState` | 8 | `components/Application/Container/tests/Flows/BootProviders` | `?` | test-only-postpone | Low | PENDING |
@@ -79,6 +85,7 @@
 | `components\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver` | 8 | `tests/Foundation/Container/Capabilities/Resolution/Engine` | `?` | test-only-postpone | Low | PENDING |
 | `components\Container\DependencyInjection\Capability\Resolution\Pipeline\ResolutionPipeline` | 8 | `tests/Foundation/Container/Capabilities/Resolution/Pipeline` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\Request\Request` | 8 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Application\Config\System\Capabilities\Repository\ConfigurationRepository` | 8 | `components/Application/Config/System/Flows/LoadConfig` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseConnection` | 8 | `components/DataStack/Database/System/Flows/RunDatabaseTransaction` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\HTTP\Middleware\System\Capabilities\Pipeline\MiddlewarePipeline` | 8 | `components/HTTP/Middleware/System/Flows/RunMiddlewarePipeline` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\HTTP\Response\Capabilities\Streams\ResponseStreamFactory` | 8 | `tests/Unit/Foundation/HTTP/Request` | `?` | requires-human-decision | Low | PENDING |
@@ -89,7 +96,6 @@
 | `GuzzleHttp\Psr7\Request` | 8 | `components/HTTP/Client/System/Capabilities/Transports` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface` | 7 | `components/Application/Container/tests/Flows/RegisterServices` | `Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing` | 7 | `components/Application/Cache/tests/Fakes/Cache` | `?` | test-only-postpone | Low | PENDING |
-| `Avax\Components\Cache\System\Foundation\Time\Timestamp` | 7 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Source/SyncWithSource/SourceSyncPolicies` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Filesystem\Configuration\FilesystemConfig` | 7 | `tests/Foundation/Filesystem/Disks` | `Avax\Components\Operations\Filesystem\Configuration\FilesystemConfig` | test-only-postpone | Low | PENDING |
 | `CompileReportDependency` | 7 | `components/Application/Container/tests/Flows/CreateContainer` | `?` | test-only-postpone | Low | PENDING |
 | `GuzzleHttp\Psr7\ServerRequest` | 7 | `tests/Unit/Components/Enterprise` | `?` | test-only-postpone | Low | PENDING |
@@ -116,10 +122,12 @@
 | `components\DataFoundation\Collection` | 6 | `tests/Foundation/DataFoundation/Collection` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\Request\ServerRequest\IncomingRequest\RequestTarget\ReadRequestTarget` | 6 | `tests/Unit/Foundation/HTTP/Request/RequestTarget` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Filesystem\Filesystem` | 6 | `components/Application/Filesystem/System/Configuration` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Cache\System\Capabilities\Source\SyncWithSource\CacheSourceKey` | 6 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Source/SyncWithSource/SourceSyncPolicies` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Cache\System\PublicSurface\Facade\CacheRegistry` | 6 | `components/Application/Cache/System/Configuration` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataStack\Database\Schema\Blueprint` | 6 | `components/DataStack/Database/System/Flows/BuildDatabaseSchema` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\ExternalState\System\Capabilities\Adapters\MemoryStateAdapter` | 6 | `framework/System/Capabilities/ExternalState/System/PublicSurface` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\ExternalState\System\Capabilities\Adapters\RedisStateAdapter` | 6 | `framework/System/Capabilities/ExternalState/System/PublicSurface` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Filesystem\System\Capabilities\Disks\Disk` | 6 | `components/Application/Filesystem/System/Capabilities/Disks/Local` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\GracefulShutdown\System\Capabilities\ShutdownSequence` | 6 | `framework/System/Capabilities/Runtime/GracefulShutdown/System/PublicSurface` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependencies` | 5 | `components/Application/Container/tests/Capabilities/Declaration/Blueprints` | `Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Flows\BootProviders\BootProviders` | 5 | `components/Application/Container/tests/Flows/BootProviders` | `Avax\Components\Application\Container\System\Flows\BootProviders\BootProviders` | test-only-postpone | Low | PENDING |
@@ -152,10 +160,10 @@
 | `Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition` | 4 | `tests/Foundation/ApplicationWorkflow/Saga` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition` | 4 | `tests/Foundation/ApplicationWorkflow/Saga` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\ApplicationWorkflow\Saga\StartSaga\SagaStartCommand` | 4 | `tests/Foundation/ApplicationWorkflow/Saga` | `?` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DependencyRegistry` | 4 | `components/Application/Container/tests/Capabilities/Declaration/Bindings` | `Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine` | 4 | `tests/Foundation/Container/Capabilities/Resolution/Engine` | `Avax\Components\Application\Container\System\Capability\Resolution\Engine\ResolutionEngine` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore` | 4 | `components/Application/Cache/tests/Fakes/Cache` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound` | 4 | `components/Application/Cache/tests/Fakes/Cache` | `?` | test-only-postpone | Low | PENDING |
-| `Avax\Components\Cache\System\Foundation\Time\FrozenClock` | 4 | `components/Application/Cache/tests/Unit/Cache/Capabilities/Source/SyncWithSource/SourceSyncPolicies` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\DataStack\Database\CommitDataChanges\CommitDataChanges` | 4 | `tests/Foundation/DataLayer/CommitDataChanges` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\Request\RequestDtoFactory` | 4 | `tests/Unit` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouterRegistrar` | 4 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
@@ -180,7 +188,7 @@
 | `components\Filesystem\Paths\PathIsWritable` | 4 | `tests/Foundation/Filesystem/Paths` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\Policies\EnvironmentConfig` | 4 | `components/Application/Config/System/Capabilities/EnvironmentAwareness/Policies` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Detection\EnvironmentDetector` | 4 | `components/Application/Config/System/Capabilities/EnvironmentAwareness` | `?` | requires-human-decision | Low | PENDING |
-| `Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources` | 4 | `components/Application/Cache/tests/Integration/Cache/ManageCompiledCache` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSource` | 4 | `components/Application/Cache/System/Capabilities/CompiledCache/ManageCompiledCache` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataLayer\AccessPersistentData` | 4 | `components/DataLayer` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataLayer\CommitDataChanges` | 4 | `components/DataLayer` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionManagerInterface` | 4 | `components/DataStack/Database/System/Capabilities/Transactions/RunTransaction` | `?` | requires-human-decision | Low | PENDING |
@@ -278,6 +286,7 @@
 | `components\HTTP\Session\Recovery\Recovery` | 3 | `tests/Foundation/HTTP/Session/Capabilities` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\Session\Shared\Contracts\Storage\StoreInterface` | 3 | `tests/Foundation/HTTP/Session/Capabilities` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\URI\Uri` | 3 | `tests/Regression/Foundation/HTTP/Request` | `?` | test-only-postpone | Low | PENDING |
+| `Avax\Components\Application\Config\System\Capabilities\ConfigLoader\ConfigLoaderInterface` | 3 | `components/Application/Config/System/Capabilities/ConfigLoader` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Policies\LocalPolicy` | 3 | `components/Application/Config/System/Capabilities/EnvironmentAwareness` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Container\System\Flows\RegisterDependencies\RegisterDependencies` | 3 | `components/Application/Container/System/Foundation` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Filesystem\Configuration\FilesystemConfig` | 3 | `components/Application/Filesystem/System/Capabilities/Disks` | `?` | requires-human-decision | Low | PENDING |
@@ -308,6 +317,7 @@
 | `Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\PolicyDecision` | 3 | `components/Identity/Access/System/Capabilities/Policy/Rules` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Dispatchers\DeferredDispatcher` | 3 | `components/Operations/Queue/System/Capabilities/TaskDispatch` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Response\System\PublicSurface\Response` | 3 | `components/HTTP/Security/System/Flows/VerifyCsrfToken` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Validation\System\Capabilities\Rules\ValidationFailure` | 3 | `components/Application/Validation/System/Capabilities/Rules` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Benchmarks\Performance\Capabilities\ConfigCaching\ConfigCache` | 3 | `benchmarks/Performance/System/PublicSurface` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Benchmarks\Performance\Capabilities\LazyLoading\LazyValue` | 3 | `benchmarks/Performance/System/PublicSurface` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Benchmarks\Performance\Capabilities\RouteCaching\RouteCache` | 3 | `benchmarks/Performance/System/PublicSurface` | `?` | requires-human-decision | Low | PENDING |
@@ -317,7 +327,6 @@
 | `Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime\SagaRuntimeConfig` | 2 | `tests/Foundation/ApplicationWorkflow/Saga/ConfigureSagaRuntime` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\ApplicationWorkflow\Saga\RunSagaStep\SagaStepFailure` | 2 | `tests/Foundation/ApplicationWorkflow/Saga` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\CompiledContainer` | 2 | `components/Application/Container/tests/Capabilities/Runtime` | `Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompiledContainer` | test-only-postpone | Low | PENDING |
-| `Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DependencyRegistry` | 2 | `components/Application/Container/tests/Flows/CreateContainer` | `Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Invocation\ResolveCallArguments` | 2 | `components/Application/Container/tests/Capabilities/Execution/Injection/Invocation` | `Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\ResolveCallArguments` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Capabilities\Runtime\DependencyPool` | 2 | `components/Application/Container/tests/Capabilities/Runtime` | `Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Container\DI\Capabilities\Runtime\HotPathInliner` | 2 | `components/Application/Container/tests/Capabilities/Runtime` | `Avax\Components\Application\Container\System\Capabilities\Runtime\HotPathInliner` | test-only-postpone | Low | PENDING |
@@ -430,7 +439,11 @@
 | `Avax\Components\Application\Filesystem\Files\ReadFile` | 2 | `components/Application/Filesystem/System/Foundation/Implementation` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Filesystem\Files\ReadFileLastModifiedAt` | 2 | `components/Application/Filesystem/System/Foundation/Implementation` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Filesystem\Files\WriteFile` | 2 | `components/Application/Filesystem/System/Foundation/Implementation` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Application\Filesystem\System\Flows\Files\FileCopyFailed` | 2 | `components/Application/Filesystem/System/Flows/CopyFile` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\PasswordComplexityRule` | 2 | `components/DataStack/Data/System/Capabilities/DataTransfer` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement` | 2 | `components/Application/Cache/System/Capabilities/Lifecycle/ReplaceCachedValues/LeastFrequentlyUsedReplacement` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement\FrequencyTracker` | 2 | `components/Application/Cache/System/Capabilities/Lifecycle/ReplaceCachedValues/LeastFrequentlyUsedReplacement` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\TrackCachedValueAccess` | 2 | `components/Application/Cache/System/Capabilities/Lifecycle/ReplaceCachedValues/LeastFrequentlyUsedReplacement` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Container\System\Capabilities\Declaration\Ownership\Views\CapabilitySliceView` | 2 | `components/Application/Container/System/Foundation` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Container\System\Capabilities\Declaration\Ownership\Views\ConfigurationSliceView` | 2 | `components/Application/Container/System/Foundation` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Container\System\Capabilities\Declaration\Ownership\Views\FlowSliceView` | 2 | `components/Application/Container/System/Foundation` | `?` | requires-human-decision | Low | PENDING |
@@ -486,6 +499,7 @@
 | `InlineSmokeCompiled` | 1 | `components/Application/Container/tests/Capabilities/Runtime` | `?` | test-only-postpone | Low | PENDING |
 | `ResolveGreeter` | 1 | `components/Application/Container/tests/Flows/ResolveService` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Cache\Examples\SystemClock` | 1 | `components/Application/Cache/examples` | `?` | requires-human-decision | Low | PENDING |
+| `Avax\Components\Application\Filesystem\System\Flows\Directories\EnsureDirectoryExists` | 1 | `components/Application/Filesystem/System/Flows/Directories` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataLayer\RegisterDataLayerRuntime` | 1 | `components/DataLayer` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataStack\Persistence\RegisterDataLayerRuntime` | 1 | `components/DataStack/Persistence` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Verification\JwtSigner` | 1 | `components/Identity/Tokens/System/Capabilities/JwtAuth/Verification` | `?` | requires-human-decision | Low | PENDING |

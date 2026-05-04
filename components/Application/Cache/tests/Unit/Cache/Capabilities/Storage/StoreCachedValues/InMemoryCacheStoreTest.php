@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\tests\Unit\Cache\Capabilities\Storage\StoreCachedValues;
+namespace Avax\Components\Cache\tests\Unit\Cache\Capabilities\Storage\StoreCachedValues;
 
-use Avax\Components\Application\Cache\System\AvaxCache;
-use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
-use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Cache\System\AvaxCache;
+use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\InvalidArgumentException;
 

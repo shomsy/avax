@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Validation\System\Capabilities\Rules;
+namespace Avax\Components\Validation\System\Capabilities\Rules;
 
 /**
  * Full-featured Validator with support for common validation rules.
@@ -23,21 +23,33 @@ final class ApplicationValidator
     /** @var array<string, string> Custom error messages */
     private array $messages = [];
 
-    public static function make(array $data, array $rules, array $messages = []): ValidationFailure
+    public function setData(array $data) : self
     {
-        return new self()
-            ->setData($data)
-            ->setRules($rules)
-            ->setMessages($messages)
-            ->validate();
+        $this->data = $data;
+
+        return $this;
     }
 
-    public function validate(): ValidationFailure
+    public function setRules(array $rules) : self
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function setMessages(array $messages) : self
+    {
+        $this->messages = $messages;
+
+        return $this;
+    }
+
+    public function validate() : ValidationFailure
     {
         $this->errors = [];
 
         foreach ($this->rules as $field => $ruleSet) {
-            $rules = is_array($ruleSet) ? $ruleSet : explode('|', (string)$ruleSet);
+            $rules = is_array($ruleSet) ? $ruleSet : explode('|', (string) $ruleSet);
             $value = $this->getValue($field);
 
             foreach ($rules as $rule) {
@@ -48,14 +60,23 @@ final class ApplicationValidator
         return new ValidationFailure($this->errors);
     }
 
-    private function getValue(string $field): mixed
+    public static function make(array $data, array $rules, array $messages = []) : ValidationFailure
+    {
+        return new self()
+            ->setData($data)
+            ->setRules($rules)
+            ->setMessages($messages)
+            ->validate();
+    }
+
+    private function getValue(string $field) : mixed
     {
         if (str_contains($field, '.')) {
             $keys = explode('.', $field);
             $value = $this->data;
 
             foreach ($keys as $key) {
-                if (!is_array($value) || !array_key_exists($key, $value)) {
+                if (! is_array($value) || ! array_key_exists($key, $value)) {
                     return null;
                 }
 
@@ -68,53 +89,53 @@ final class ApplicationValidator
         return $this->data[$field] ?? null;
     }
 
-    private function applyRule(string $field, mixed $value, string $rule): void
+    private function applyRule(string $field, mixed $value, string $rule) : void
     {
         // Parse rule and parameters
-        $parts = explode(':', $rule, 2);
+        $parts  = explode(':', $rule, 2);
         $ruleName = $parts[0];
         $params = isset($parts[1]) ? explode(',', $parts[1]) : [];
 
         // Skip validation if field is nullable and value is null/empty
         if ($ruleName !== 'required' && $ruleName !== 'nullable' && ($value === null || $value === '')) {
             // Check if nullable rule is present
-            $fieldRules = is_array($this->rules[$field]) ? $this->rules[$field] : explode('|', (string)$this->rules[$field]);
+            $fieldRules = is_array($this->rules[$field]) ? $this->rules[$field] : explode('|', (string) $this->rules[$field]);
             if (in_array('nullable', $fieldRules, true)) {
                 return;
             }
 
             // If no value and not explicitly nullable, skip non-required rules
-            if (!in_array('required', $fieldRules, true)) {
+            if (! in_array('required', $fieldRules, true)) {
                 return;
             }
         }
 
         $result = match ($ruleName) {
             'required' => $this->validateRequired($value),
-            'string' => $this->validateString($value),
-            'integer' => $this->validateInteger($value),
-            'numeric' => $this->validateNumeric($value),
-            'email' => $this->validateEmail($value),
-            'min' => $this->validateMin($value, (int)($params[0] ?? 0)),
-            'max' => $this->validateMax($value, (int)($params[0] ?? 0)),
-            'between' => $this->validateBetween($value, (int)($params[0] ?? 0), (int)($params[1] ?? 0)),
-            'in' => $this->validateIn($value, $params),
-            'array' => $this->validateArray($value),
+            'string'   => $this->validateString($value),
+            'integer'  => $this->validateInteger($value),
+            'numeric'  => $this->validateNumeric($value),
+            'email'    => $this->validateEmail($value),
+            'min'      => $this->validateMin($value, (int) ($params[0] ?? 0)),
+            'max'      => $this->validateMax($value, (int) ($params[0] ?? 0)),
+            'between'  => $this->validateBetween($value, (int) ($params[0] ?? 0), (int) ($params[1] ?? 0)),
+            'in'       => $this->validateIn($value, $params),
+            'array'    => $this->validateArray($value),
             'nullable' => true,
-            'url' => $this->validateUrl($value),
-            'uuid' => $this->validateUuid($value),
-            'date' => $this->validateDate($value),
+            'url'      => $this->validateUrl($value),
+            'uuid'     => $this->validateUuid($value),
+            'date'     => $this->validateDate($value),
             'bool', 'boolean' => $this->validateBool($value),
-            'regex' => $this->validateRegex($value, $params[0] ?? ''),
-            default => true,
+            'regex'    => $this->validateRegex($value, $params[0] ?? ''),
+            default    => true,
         };
 
-        if (!$result) {
+        if (! $result) {
             $this->addError($field, $ruleName, $params);
         }
     }
 
-    private function validateRequired(mixed $value): bool
+    private function validateRequired(mixed $value) : bool
     {
         if ($value === null || $value === '') {
             return false;
@@ -127,27 +148,27 @@ final class ApplicationValidator
         return $value !== [];
     }
 
-    private function validateString(mixed $value): bool
+    private function validateString(mixed $value) : bool
     {
         return is_string($value);
     }
 
-    private function validateInteger(mixed $value): bool
+    private function validateInteger(mixed $value) : bool
     {
         return is_int($value) || (is_string($value) && filter_var($value, FILTER_VALIDATE_INT) !== false);
     }
 
-    private function validateNumeric(mixed $value): bool
+    private function validateNumeric(mixed $value) : bool
     {
         return is_numeric($value);
     }
 
-    private function validateEmail(mixed $value): bool
+    private function validateEmail(mixed $value) : bool
     {
         return is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
     }
 
-    private function validateMin(mixed $value, int $min): bool
+    private function validateMin(mixed $value, int $min) : bool
     {
         if (is_string($value)) {
             return strlen($value) >= $min;
@@ -164,7 +185,7 @@ final class ApplicationValidator
         return false;
     }
 
-    private function validateMax(mixed $value, int $max): bool
+    private function validateMax(mixed $value, int $max) : bool
     {
         if (is_string($value)) {
             return strlen($value) <= $max;
@@ -181,7 +202,7 @@ final class ApplicationValidator
         return false;
     }
 
-    private function validateBetween(mixed $value, int $min, int $max): bool
+    private function validateBetween(mixed $value, int $min, int $max) : bool
     {
         if (is_string($value)) {
             $len = strlen($value);
@@ -202,98 +223,77 @@ final class ApplicationValidator
         return false;
     }
 
-    private function validateIn(mixed $value, array $allowed): bool
+    private function validateIn(mixed $value, array $allowed) : bool
     {
         return in_array($value, $allowed, true);
     }
 
-    private function validateArray(mixed $value): bool
+    private function validateArray(mixed $value) : bool
     {
         return is_array($value);
     }
 
-    private function validateUrl(mixed $value): bool
+    private function validateUrl(mixed $value) : bool
     {
         return is_string($value) && filter_var($value, FILTER_VALIDATE_URL) !== false;
     }
 
-    private function validateUuid(mixed $value): bool
+    private function validateUuid(mixed $value) : bool
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return false;
         }
 
         return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value) === 1;
     }
 
-    private function validateDate(mixed $value): bool
+    private function validateDate(mixed $value) : bool
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return false;
         }
 
         return strtotime($value) !== false;
     }
 
-    private function validateBool(mixed $value): bool
+    private function validateBool(mixed $value) : bool
     {
         return in_array($value, [true, false, 0, 1, '0', '1'], true);
     }
 
-    private function validateRegex(mixed $value, string $pattern): bool
+    private function validateRegex(mixed $value, string $pattern) : bool
     {
         return is_string($value) && preg_match($pattern, $value) === 1;
     }
 
-    private function addError(string $field, string $rule, array $params): void
+    private function addError(string $field, string $rule, array $params) : void
     {
         $message = $this->getErrorMessage($field, $rule, $params);
         $this->errors[$field][] = $message;
     }
 
-    private function getErrorMessage(string $field, string $rule, array $params): string
+    private function getErrorMessage(string $field, string $rule, array $params) : string
     {
         // Check custom message
         $key = sprintf('%s.%s', $field, $rule);
 
         return $this->messages[$key] ?? match ($rule) {
             'required' => sprintf('The %s field is required.', $field),
-            'string' => sprintf('The %s field must be a string.', $field),
-            'integer' => sprintf('The %s field must be an integer.', $field),
-            'numeric' => sprintf('The %s field must be a number.', $field),
-            'email' => sprintf('The %s field must be a valid email address.', $field),
-            'min' => sprintf('The %s field must be at least %s.', $field, $params[0]),
-            'max' => sprintf('The %s field must not exceed %s.', $field, $params[0]),
-            'between' => sprintf('The %s field must be between %s and %s.', $field, $params[0], $params[1]),
-            'in' => sprintf('The %s field must be one of: ', $field) . implode(', ', $params),
-            'array' => sprintf('The %s field must be an array.', $field),
-            'url' => sprintf('The %s field must be a valid URL.', $field),
-            'uuid' => sprintf('The %s field must be a valid UUID.', $field),
-            'date' => sprintf('The %s field must be a valid date.', $field),
+            'string'   => sprintf('The %s field must be a string.', $field),
+            'integer'  => sprintf('The %s field must be an integer.', $field),
+            'numeric'  => sprintf('The %s field must be a number.', $field),
+            'email'    => sprintf('The %s field must be a valid email address.', $field),
+            'min'      => sprintf('The %s field must be at least %s.', $field, $params[0]),
+            'max'      => sprintf('The %s field must not exceed %s.', $field, $params[0]),
+            'between'  => sprintf('The %s field must be between %s and %s.', $field, $params[0], $params[1]),
+            'in'       => sprintf('The %s field must be one of: ', $field) . implode(', ', $params),
+            'array'    => sprintf('The %s field must be an array.', $field),
+            'url'      => sprintf('The %s field must be a valid URL.', $field),
+            'uuid'     => sprintf('The %s field must be a valid UUID.', $field),
+            'date'     => sprintf('The %s field must be a valid date.', $field),
             'bool', 'boolean' => sprintf('The %s field must be true or false.', $field),
-            'regex' => sprintf('The %s field format is invalid.', $field),
-            default => sprintf('The %s field is invalid.', $field),
+            'regex'    => sprintf('The %s field format is invalid.', $field),
+            default    => sprintf('The %s field is invalid.', $field),
         };
-    }
-
-    public function setMessages(array $messages): self
-    {
-        $this->messages = $messages;
-
-        return $this;
-    }
-
-    public function setRules(array $rules): self
-    {
-        $this->rules = $rules;
-
-        return $this;
-    }
-
-    public function setData(array $data): self
-    {
-        $this->data = $data;
-
-        return $this;
     }
 }

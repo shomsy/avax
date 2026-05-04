@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\DateTime\System\Capabilities\Duration;
+namespace Avax\Components\DateTime\System\Capabilities\Duration;
 
 enum DurationUnit: string
 {

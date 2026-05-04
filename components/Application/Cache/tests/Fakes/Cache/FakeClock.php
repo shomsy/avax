@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\tests\Fakes\Cache;
+namespace Avax\Components\Cache\tests\Fakes\Cache;
 
 use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
 use Avax\Components\Cache\System\Foundation\Time\Duration;

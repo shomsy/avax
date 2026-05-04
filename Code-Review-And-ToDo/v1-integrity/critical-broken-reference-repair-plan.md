@@ -6,7 +6,6 @@
 | `Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition` | 41 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources` | 41 | `components/Application/Cache/tests/Integration/Cache/ManageCompiledCache` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Filesystem\Disks\Local\LocalDisk` | 40 | `tests/Foundation/Filesystem/Directories` | `Avax\Components\Operations\Filesystem\Disks\Local\LocalDisk` | test-only-postpone | Low | PENDING |
-| `Avax\Components\Application\Cache\System\Capabilities\Distribution\CacheNode` | 38 | `components/Application/Cache/System/Capabilities/Distribution` | `?` | requires-human-decision | Low | PENDING |
 | `Redis` | 38 | `components/Identity/Auth/System/Capabilities/Identity/Sessions/Registry` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\HTTP\URI\Parts\Host` | 37 | `tests/Foundation/HTTP/URI/Parts` | `?` | test-only-postpone | Low | PENDING |
 | `Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope` | 37 | `components/DataStack/Database/System/Capabilities/Telemetry` | `?` | requires-human-decision | Low | PENDING |
@@ -67,7 +66,6 @@
 | `components\DataFoundation\Arrhae` | 9 | `tests/Foundation/DataFoundation/Arrhae` | `?` | test-only-postpone | Low | PENDING |
 | `components\Filesystem\Disks\Local\LocalDisk` | 9 | `tests/Foundation/Filesystem/Files` | `?` | test-only-postpone | Low | PENDING |
 | `components\HTTP\Router\System\Flows\RegisterRoutes\Groups\RouteGroupContext` | 9 | `tests/Foundation/HTTP/Router/Unit` | `?` | test-only-postpone | Low | PENDING |
-| `Avax\Components\Cache\System\Capabilities\Distribution\NodeHealthRecord` | 9 | `components/Application/Cache/System/Capabilities/Distribution` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityManager` | 9 | `components/DataStack/Database/System/Capabilities/ORM/Repositories` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\RegisteredScimDirectory` | 9 | `components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime/RegisterDirectory` | `?` | requires-human-decision | Low | PENDING |
 | `Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimProvisionedIdentity` | 9 | `components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime/ProvisionUser` | `?` | requires-human-decision | Low | PENDING |

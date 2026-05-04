@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Cache\System\Capabilities\Distribution;
+namespace Avax\Components\Application\Cache\System\Capabilities\Distribution;
 
-use Avax\Components\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeStatus;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNode;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeStatus;
 use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
 use Avax\Components\Application\DateTime\System\PublicSurface\SystemClock;
 

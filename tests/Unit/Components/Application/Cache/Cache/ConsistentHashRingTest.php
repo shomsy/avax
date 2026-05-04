@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache\Cache;
 
-use Avax\Components\Application\Cache\System\Capabilities\Distribution\CacheNode;
+use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNode;
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\ConsistentHashRing;
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeStatus;
 use PHPUnit\Framework\TestCase;

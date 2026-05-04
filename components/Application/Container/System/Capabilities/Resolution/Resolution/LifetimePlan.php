@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
+namespace Avax\Components\Application\Container\System\Capabilities\Resolution\Resolution;
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\JobLifetime;

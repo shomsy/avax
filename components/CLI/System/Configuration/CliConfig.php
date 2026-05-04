@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\CLI\System\Configuration;
+namespace Avax\Components\CLI\System\Configuration;
 
 final readonly class CliConfig
 {

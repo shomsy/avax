@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\SystemDesignKit\Consistency;
+namespace Avax\Components\mDesign\Consistency;
 
 use Avax\Components\SystemDesign\Consistency\System\Flows\AnalyzeConsistency\AnalyzeConsistency;
 use Avax\Components\SystemDesign\Consistency\System\PublicSurface\ConsistencyLevel;

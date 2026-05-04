@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\Tests\Contract\Cache;
+namespace Avax\Components\Application\Cache\tests\Contract\Cache;
 
 require_once __DIR__ . '/CacheStoreContractCase.php';
 

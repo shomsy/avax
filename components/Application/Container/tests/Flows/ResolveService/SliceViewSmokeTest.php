@@ -13,7 +13,7 @@ interface SlicePaymentGateway
     public function label() : string;
 }
 
-final class ExportedSliceGateway implements SlicePaymentGateway
+final class SliceViewSmokeTest implements SlicePaymentGateway
 {
     public function label() : string
     {

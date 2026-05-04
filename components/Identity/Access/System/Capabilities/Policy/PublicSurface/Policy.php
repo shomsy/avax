@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Access\System\Capabilities\Policy\System\PublicSurface;
+namespace Avax\Components\Identity\Access\System\Capabilities\Policy\PublicSurface;
 
 use Avax\Components\Identity\Access\System\Capabilities\Policy\System\Capabilities\Engine\PolicyEvaluator;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\System\Capabilities\Rules\PolicyRule;

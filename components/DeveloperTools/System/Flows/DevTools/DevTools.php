@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DeveloperTools\System\Flows\DevTools;
+namespace Avax\Components\DeveloperTools\System\Flows\DevTools;
 
 final readonly class DevTools
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Server\System\Configuration;
+namespace Avax\Components\Server\System\Configuration;
 
 final readonly class ServerConfig
 {

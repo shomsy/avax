@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Security\System\System\PublicSurface;
+namespace Avax\Components\Security\System\PublicSurface;
 
 use Avax\Components\Security\System\System\Capabilities\Audit\SecurityAuditLog;
 use Avax\Components\Security\System\System\Capabilities\Csrf\CsrfToken;

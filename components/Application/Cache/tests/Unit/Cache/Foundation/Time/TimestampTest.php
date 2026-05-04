@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Foundation\Time;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\Foundation\Time;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;

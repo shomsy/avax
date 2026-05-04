@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Detection;
+namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\Detection;
 
 final class EnvironmentDetector
 {

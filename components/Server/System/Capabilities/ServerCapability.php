@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Server\System\Capabilities;
+namespace Avax\Components\Server\System\Capabilities;
 
 interface ServerCapability
 {

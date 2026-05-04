@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Tokens;
+namespace Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens;
 
-final readonly class AccessToken
+final readonly class JwtTokens
 {
     public function __construct(
         public string $sub,

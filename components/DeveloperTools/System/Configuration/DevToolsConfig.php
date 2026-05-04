@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DeveloperTools\System\Configuration;
+namespace Avax\Components\DeveloperTools\System\Configuration;
 
 final readonly class DevToolsConfig
 {

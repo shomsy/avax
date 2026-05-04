@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Contracts;
+namespace Avax\Components\ation\Container\Capabilities\Providers\Contracts;
 
 use Avax\Tests\TestCase;
 use components\Container\ContainerInterface;
 use components\Container\DependencyInjection\Capability\Providers\Contracts\RegisterDependency;
 use ReflectionMethod;
 
-final class BaseRegisterDependencyContractTest extends TestCase
+final class ServiceProviderContractTest extends TestCase
 {
     public function test_provider_contract_depends_on_public_container_interface() : void
     {

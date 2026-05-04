@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Filesystem\Configuration;
+namespace Avax\Components\Application\Filesystem\System\Configuration;
 
 readonly class FilesystemConfig
 {

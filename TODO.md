@@ -8,17 +8,21 @@ Current Source of Truth:
 
 ## Active Stage
 
-Stage: Resolve V1 Blockers
-Status: YELLOW (major blockers fixed, static analysis and refs remain)
-Goal: Achieve V1 Kernel Green
+Stage: Stage 00 — Current Truth Lock
+Status: RED
+Goal: Establish one trusted repository truth and resolve all V1 Kernel Green blockers
 
 ## Current Tasks
 
-[ ] Fix PHPStan static analysis errors
-[ ] Fix broken internal references
-[ ] Achieve static analysis GREEN
+[ ] Fix composer.json/composer.lock sync (phpstan ^1.10 vs 2.1.54, psalm missing from lock)
+[ ] Create tooling/refactor/categorize-phpstan-errors.php to parse and prioritize PHPStan fixes
+[ ] Expand phpstan.neon to cover full codebase (framework, components, tests) honestly
+[ ] Fix PHPStan errors by component — use audit_broken_refs.php output to prioritize
+[ ] Fix Cache component PSR-4 namespace violations (27+ autoload skips)
+[ ] Resolve 797 broken references (502 CRITICAL, 295 MINOR)
+[ ] Add meaningful tests beyond current 12 — map untested components first
+[ ] Achieve static analysis GREEN or create an honest baseline
 [ ] Prove V1 Kernel Green
-[ ] Unlock V2 implementation
 
 ## Locked
 
@@ -44,54 +48,52 @@ Locked until:
 [ ] no placeholders
 [ ] no broad refactor
 
-Allowed files:
+## Available Tooling
+
+Use existing tooling to accelerate blocker resolution (per how-to-write-avax.md):
 
 ```text
-CURRENT_TRUTH.md
-TODO.md
-EXECUTION.md
-AGENTS.md
-Code-Review-And-ToDo/management or equivalent report folders
+tooling/audit_broken_refs.php                         — prioritize broken ref fixes (797 missing)
+tooling/refactor/check-component-suite-structure.php  — verify suite structure (currently PASS)
+tooling/refactor/check-duplicate-owners.php           — verify no duplicates (currently PASS)
+tooling/refactor/check-namespace-drift.php            — verify no drift (currently PASS)
+tooling/refactor/check-public-surface.php             — verify public surface (currently PASS)
+tooling/refactor/check-runtime-leaks.php              — verify no leaks (currently PASS)
+tooling/check-superglobals.php                        — verify no superglobals (currently PASS)
+tooling/docs/validate-docs.php                        — verify docs (currently PASS)
+tooling/docs/validate-docs-mirror-source.php          — verify doc mirror (currently PASS)
 ```
 
-Forbidden:
+Create new tooling if needed:
 
 ```text
-[ ] production code changes
-[ ] namespace changes
-[ ] file moves
-[ ] feature work
-[ ] test repair
-[ ] V2 implementation
-[ ] V3 implementation
-[ ] compatibility bridge changes
-[ ] placeholder classes
+tooling/refactor/categorize-phpstan-errors.php — group PHPStan raw output by error type and component
+tooling/refactor/list-psr4-skips.php           — extract PSR-4 violations from composer dump output
+tooling/refactor/audit-test-coverage-map.php   — map which components have tests vs. which don't
 ```
 
-Recommended validation:
+## Validation Commands
 
 ```bash
 git status --short
 composer validate --no-check-publish
-find . -path '*/.agents/how-to/*' -name 'how-to-*.md' -print
-find . -name 'CURRENT_TRUTH.md' -o -name 'AGENTS.md' -o -name 'TODO.md' -o -name 'EXECUTION.md'
+composer dump-autoload -o
+vendor/bin/phpunit --no-coverage
+vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress
+vendor/bin/psalm --no-progress
+php tooling/refactor/check-component-suite-structure.php
+php tooling/refactor/check-duplicate-owners.php
+php tooling/refactor/check-namespace-drift.php
+php tooling/refactor/check-public-surface.php
+php tooling/refactor/check-runtime-leaks.php
+php tooling/audit_broken_refs.php
+php tooling/docs/validate-docs.php
+php tooling/docs/validate-docs-mirror-source.php
+php tooling/check-superglobals.php
+php avax runtime:doctor
 ```
 
-Done when:
-
-```text
-[ ] CURRENT_TRUTH.md is current.
-[ ] CURRENT_TRUTH.md defines RED/YELLOW/GREEN status.
-[ ] EXECUTION.md exists.
-[ ] TODO.md exists and points to EXECUTION.md.
-[ ] .agents/how-to/*.md documents are discovered.
-[ ] Next allowed stage is named.
-[ ] Stage 00 report is written.
-```
-
----
-
-## 3. Next Stage Queue
+## Next Stage Queue
 
 Do not start these until Stage 00 is GREEN.
 
@@ -109,13 +111,9 @@ Do not start these until Stage 00 is GREEN.
 [ ] Stage 11: Golden Path App
 ```
 
----
+## Locked Planning Sections
 
-## 4. Locked Planning Sections
-
-These may be planned, reviewed, or documented.
-
-They must not be implemented until V1 Kernel Green.
+These may be planned, reviewed, or documented. They must not be implemented until V1 Kernel Green.
 
 ### V2 Locked
 
@@ -153,53 +151,7 @@ They must not be implemented until V1 Kernel Green.
 [ ] Tradeoff reports
 ```
 
----
-
-## 5. Component Work Rule
-
-When component work becomes allowed, every component must follow:
-
-```text
-.agents/how-to/how-to-design-components.md
-```
-
-If the file exists, it is mandatory.
-
-No component may be marked complete unless it has:
-
-```text
-[ ] public contract
-[ ] internal runtime behavior
-[ ] fake/local adapter
-[ ] production adapter boundary
-[ ] configuration schema
-[ ] health/doctor check
-[ ] failure model
-[ ] retry/timeout/circuit/backoff policy when external I/O exists
-[ ] observability events
-[ ] contract tests
-[ ] failure tests
-[ ] runtime-safety rules
-[ ] example usage
-[ ] documentation
-[ ] operator diagnostics
-```
-
-If these are missing, mark the component as:
-
-```text
-draft
-experimental
-internal
-planned
-partial
-```
-
-Never mark it production-ready.
-
----
-
-## 6. Agent Completion Report Template
+## Agent Completion Report Template
 
 Every agent must finish work with:
 
@@ -214,22 +166,22 @@ Remaining risks:
 Next allowed action:
 ```
 
-No evidence means incomplete.
+No evidence means incomplete. No validation means incomplete. No TODO update means incomplete.
 
-No validation means incomplete.
-
-No TODO update means incomplete.
-
----
-
-## 7. Current Instruction For The Next Agent
+## Current Instruction For The Next Agent
 
 ```text
+Read CURRENT_TRUTH.md.
 Read EXECUTION.md.
 Read this TODO.md.
+Read how-to-write-avax.md.
 Discover .agents/how-to/*.md.
-Execute Stage 00 only.
+Use tooling/ scripts to optimize work.
+Execute Stage 00 blocker fixes only.
+First priority: fix composer.json/composer.lock sync.
+Second priority: create PHPStan error categorization tooling.
+Third priority: fix PHPStan errors by component.
 Do not implement any V2/V3 feature.
-Do not touch production code.
+Do not touch production code outside blocker scope.
 Return a Stage 00 report with evidence.
 ```

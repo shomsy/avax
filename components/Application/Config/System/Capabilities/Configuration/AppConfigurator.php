@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Config\Configurator;
+namespace Avax\Components\Application\Config\System\Capabilities\Configuration;
 
 use Avax\Components\Application\Config\Configurator\FileLoader\ConfigLoaderInterface;
 use Avax\Components\DataFoundation\Collection;
@@ -11,7 +11,7 @@ use RuntimeException;
 use WeakMap;
 
 /**
- * Abstract base class for managing application configuration.
+ * Abstract base class AppConfigurator managing application configuration.
  *
  * This class provides a foundational structure for configuration management,
  * using a `WeakMap` for in-memory caching, which allows for lightweight and

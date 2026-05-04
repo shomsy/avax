@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Filesystem\Paths;
+namespace Avax\Components\Application\Filesystem\System\Capabilities\Paths;
 
 class PathIsDirectory
 {

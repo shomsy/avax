@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Security\System\System\Capabilities\Csrf;
+namespace Avax\Components\HTTP\Security\System\Capabilities\Csrf;
 
 final readonly class CsrfVerifier
 {

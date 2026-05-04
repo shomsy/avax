@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Auth\Examples\Policies;
+namespace Avax\Components\Identity\Auth\examples\policies;
 
 use Avax\Components\Identity\Access\System\Capabilities\Policy\IdentityPolicyCatalog;
 

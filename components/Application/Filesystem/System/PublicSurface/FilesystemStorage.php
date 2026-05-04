@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Filesystem\System\PublicSurface;
+namespace Avax\Components\Application\Filesystem\System\PublicSurface;
 
 use Avax\Components\Filesystem\System\Capabilities\Storage\StorageInterface;
 use RuntimeException;

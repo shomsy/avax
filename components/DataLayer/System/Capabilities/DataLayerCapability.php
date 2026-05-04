@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DataLayer\System\Capabilities;
+namespace Avax\Components\DataLayer\System\Capabilities;
 
 interface DataLayerCapability
 {

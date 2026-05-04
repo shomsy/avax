@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DeveloperTools\System\PublicSurface;
+namespace Avax\Components\DeveloperTools\System\PublicSurface;
 
 final readonly class DeveloperTools
 {

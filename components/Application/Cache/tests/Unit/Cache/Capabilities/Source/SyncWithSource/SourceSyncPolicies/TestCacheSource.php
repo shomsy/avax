@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Cache\tests\Unit\Cache\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
 
 use Avax\Components\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Validation\System\Capabilities\Rules;
+namespace Avax\Components\Application\Validation\System\Capabilities\Rules;
 
 /**
  * ValidationFailure DTO - represents the result of a validation operation.

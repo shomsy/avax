@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\System\Capabilities\Keys;
+namespace Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\Keys;
 
 interface IdempotencyStore
 {
@@ -13,7 +13,7 @@ interface IdempotencyStore
     public function has(string $key): bool;
 }
 
-final class InMemoryIdempotencyStore implements IdempotencyStore
+final class IdempotencyStore implements IdempotencyStore
 {
     /** @var array<string, array{value: array, expires_at: int}> */
     private array $store = [];

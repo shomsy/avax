@@ -6,7 +6,7 @@ require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-final class PrunedDependency {}
+final class PruningSmokeTest {}
 
 final class PrunedFlowEntry
 {

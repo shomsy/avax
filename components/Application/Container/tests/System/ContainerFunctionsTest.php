@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Container\Tests\System;
+namespace Avax\Components\Application\Container\tests\System;
 
 use Avax\Components\Application\Container\System\Foundation\DIContainer;
 use Avax\Tests\TestCase;

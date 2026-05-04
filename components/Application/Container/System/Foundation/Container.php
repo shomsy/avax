@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Container\System\Foundation;
+namespace Avax\Components\Application\Container\System\Foundation;
 
 use Avax\Components\Container\System\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Components\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;

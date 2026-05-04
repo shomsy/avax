@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Documentation\System\Configuration;
+namespace Avax\Components\Documentation\System\Configuration;
 
 final readonly class DocConfig
 {

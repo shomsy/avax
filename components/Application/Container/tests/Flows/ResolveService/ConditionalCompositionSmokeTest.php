@@ -12,7 +12,7 @@ interface ConditionalGateway
     public function name(): string;
 }
 
-final class ActiveConditionalGateway implements ConditionalGateway
+final class ConditionalCompositionSmokeTest implements ConditionalGateway
 {
     #[Override]
     public function name(): string

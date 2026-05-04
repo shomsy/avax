@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Flows\Compiled\WarmCompiledCa
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Closure;
 
-final class CompiledCacheArtifactDefinition
+final class WarmCompiledCache
 {
     public CompiledCacheSources $sources;
 

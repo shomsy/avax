@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\System\PublicSurface;
+namespace Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance;
 
 use Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\System\Capabilities\Detection\NPlusOneDetector;
 use Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\System\Capabilities\Detection\SlowQueryDetector;

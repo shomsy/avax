@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Filesystem\Configuration;
+namespace Avax\Components\Application\Filesystem\System\Configuration;
 
 use Avax\Components\Application\Container\Core\Capabilities\Binding\Binders\Binder;
 use Avax\Components\Application\Container\Core\Capabilities\Binding\BindingRepository;

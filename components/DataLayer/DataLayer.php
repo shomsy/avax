@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Avax\DataLayer;
+namespace Avax\Components\DataLayer;
 
 use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
 use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork;

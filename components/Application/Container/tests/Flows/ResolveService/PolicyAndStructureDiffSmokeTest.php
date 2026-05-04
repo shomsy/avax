@@ -7,7 +7,7 @@ require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\ContainerInterface;
 
-final class PolicyDependencyA {}
+final class PolicyAndStructureDiffSmokeTest {}
 
 final class PolicyDependencyB {}
 

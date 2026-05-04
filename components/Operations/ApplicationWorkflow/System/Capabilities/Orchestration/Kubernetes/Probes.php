@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\System\Capabilities\Kubernetes;
+namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\Kubernetes;
 
-final readonly class GracefulStop
+final readonly class Probes
 {
     public static function execute() : never
     {

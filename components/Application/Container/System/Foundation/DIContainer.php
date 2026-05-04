@@ -38,7 +38,7 @@ use Throwable;
 /**
  * Stable public facade for the container component.
  */
-final readonly class Container implements ContainerInterface
+final readonly class DIContainer implements ContainerInterface
 {
     public function __construct(private ResolveDependency $resolveDependency)
     {

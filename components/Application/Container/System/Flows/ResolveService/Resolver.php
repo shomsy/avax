@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Container\System\Flows\ResolveService;
 
 use Avax\Components\Application\Container\System\PublicSurface\Container;
 
-final class ResolveService
+final class Resolver
 {
     public function resolve(Container $container, string $id) : mixed
     {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Performance\System\Flows\Profile;
+namespace Avax\Components\Performance\System\Flows\Profile;
 
 final readonly class Profile
 {

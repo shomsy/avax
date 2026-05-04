@@ -19,7 +19,7 @@ interface BenchDeferredProviderContract
     public function value() : string;
 }
 
-final class BenchSharedService
+final class run
 {
     public function value() : string
     {

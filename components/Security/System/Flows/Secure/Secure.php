@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Security\System\Flows\Secure;
+namespace Avax\Components\Security\System\Flows\Secure;
 
 final readonly class Secure
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting\System\PublicSurface;
+namespace Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting;
 
 use Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting\System\Capabilities\Verification\BreakingChangeDetector;
 use Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting\System\Capabilities\Verification\ContractVerifier;

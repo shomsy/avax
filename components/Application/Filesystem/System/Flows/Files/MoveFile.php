@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Filesystem\Files;
+namespace Avax\Components\Application\Filesystem\System\Flows\Files;
 
 use Avax\Components\Application\Filesystem\Disks\Disk;
 

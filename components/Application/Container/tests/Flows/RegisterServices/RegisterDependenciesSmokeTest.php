@@ -12,7 +12,7 @@ interface RegisterLoggerContract
     public function channel() : string;
 }
 
-final class DefaultRegisterLogger implements RegisterLoggerContract
+final class RegisterDependenciesSmokeTest implements RegisterLoggerContract
 {
     #[Override]
     public function channel() : string

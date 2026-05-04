@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\HTTP\Response;
+namespace Avax\Components\HTTP\Response;
 
 use Avax\Components\HTTP\Response\Responses;
 use PHPUnit\Framework\Attributes\Test;
@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for the Responses.
  */
-final class ResponsesTest extends TestCase
+final class ResponseFactoryTest extends TestCase
 {
     private Responses $factory;
 

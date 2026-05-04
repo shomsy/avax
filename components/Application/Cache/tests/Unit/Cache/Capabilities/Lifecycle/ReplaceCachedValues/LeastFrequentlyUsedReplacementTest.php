@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Lifecycle\ReplaceCachedValues;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\Capabilities\Lifecycle\ReplaceCachedValues;
 
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement\LeastFrequentlyUsedReplacement;

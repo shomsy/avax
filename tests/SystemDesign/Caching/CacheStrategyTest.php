@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\SystemDesignKit\Caching;
+namespace Avax\Components\mDesign\Caching;
 
 use Avax\Components\SystemDesign\Caching\System\Flows\AnalyzeCacheStrategy\AnalyzeCacheStrategy;
 use Avax\Components\SystemDesign\Caching\System\PublicSurface\CacheStrategy;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Operations\System\PublicSurface;
+namespace Avax\Components\Operations\System\PublicSurface;
 
 final readonly class Operations
 {

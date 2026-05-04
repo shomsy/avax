@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Avax\DataLayer\CommitDataChanges;
+namespace Avax\Components\DataLayer\CommitDataChanges;
 
 use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface;
 use Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure;

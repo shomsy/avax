@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\SystemDesignKit\Capacity;
+namespace Avax\Components\mDesign\Capacity;
 
 use Avax\Components\SystemDesign\Capacity\System\Flows\EstimateTrafficLoad\EstimateTrafficLoad;
 use Avax\Components\SystemDesign\Capacity\System\PublicSurface\CapacityModel;

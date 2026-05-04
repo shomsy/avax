@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Providers;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\Providers;
 
 use Avax\Components\Application\Cache\Cache;
 use Avax\Components\Application\Cache\CompiledCache;

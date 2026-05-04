@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\System\Foundation\Randomness;
+namespace Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Random\RandomException;

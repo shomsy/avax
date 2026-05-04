@@ -14,7 +14,7 @@ interface OwnershipGateway
     public function label() : string;
 }
 
-final class SharedOwnershipGateway implements OwnershipGateway
+final class OwnershipCompositionSmokeTest implements OwnershipGateway
 {
     public function label() : string
     {

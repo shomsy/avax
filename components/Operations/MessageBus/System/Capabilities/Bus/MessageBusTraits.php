@@ -8,7 +8,7 @@ use Avax\Components\Operations\MessageBus\System\PublicSurface\Command;
 use Closure;
 use RuntimeException;
 
-final class CommandBus
+final class MessageBusTraits
 {
     private array $handlers = [];
 

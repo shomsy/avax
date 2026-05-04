@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\HTTP\Response;
+namespace Avax\Components\ation\HTTP\Response;
 
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-final class ResponsesTest extends TestCase
+final class ResponseFactoryTest extends TestCase
 {
     public function test_creates_html_response_with_expected_content_type() : void
     {

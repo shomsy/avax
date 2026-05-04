@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Resilience\System\Capabilities\Fallback\System\PublicSurface;
+namespace Avax\Components\Operations\Resilience\System\Capabilities\Fallback;
 
 use RuntimeException;
 use Throwable;

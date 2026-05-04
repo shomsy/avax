@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilatio
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Observability\RuntimeReport;
 
-final class DiagnosticsSchemaDependency
+final class validate-report-schemas-report-schemas
 {
     public function value() : string
     {

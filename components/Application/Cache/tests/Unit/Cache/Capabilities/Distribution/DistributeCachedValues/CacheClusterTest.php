@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Distribution\DistributeCachedValues;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\Capabilities\Distribution\DistributeCachedValues;
 
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheCluster;
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNode;

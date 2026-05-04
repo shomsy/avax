@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Application\System\Configuration;
+namespace Avax\Components\Application\System\Configuration;
 
 final readonly class ApplicationConfig
 {

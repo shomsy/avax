@@ -13,7 +13,7 @@ interface CreateGreeterContract
     public function message(): string;
 }
 
-final class CreateGreeter implements CreateGreeterContract
+final class CreateContainerSmokeTest implements CreateGreeterContract
 {
     #[Override]
     public function message(): string

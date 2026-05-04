@@ -16,7 +16,7 @@ interface DeferredProvidedContract
     public function id(): string;
 }
 
-final class ProviderState
+final class BootProvidersSmokeTest
 {
     /** @var list<string> */
     public static array $events = [];

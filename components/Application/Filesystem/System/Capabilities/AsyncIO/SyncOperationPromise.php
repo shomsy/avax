@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Filesystem\System\Capabilities\AsyncIO;
+namespace Avax\Components\Application\Filesystem\System\Capabilities\AsyncIO;
 
 use Override;
 use Throwable;
@@ -13,7 +13,7 @@ use Throwable;
  * This is a private, immediately-resolved/rejected promise. It exists
  * ONLY to fulfill the AsyncOperationPromise contract for the sync adapter.
  *
- * DO NOT use this class outside of SyncAsyncFilesystemAdapter. When a real
+ * DO NOT use this class SyncOperationPromise of SyncAsyncFilesystemAdapter. When a real
  * async runtime adapter is implemented, it should provide its own promise
  * class that integrates with the event loop or fiber scheduler.
  *

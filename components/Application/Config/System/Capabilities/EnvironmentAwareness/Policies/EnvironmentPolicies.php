@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Policies;
+namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\Policies;
 
-final readonly class LocalPolicy implements EnvironmentConfig
+final readonly class EnvironmentPolicies implements EnvironmentConfig
 {
     public function errorDetail(): string
     {

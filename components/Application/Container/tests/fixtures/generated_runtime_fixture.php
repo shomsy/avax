@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\DI\Container;
 
-final class GeneratedFixtureDependency
+final class generated_runtime_fixture
 {
     public function label(): string
     {

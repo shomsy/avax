@@ -10,7 +10,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\DI\Container;
 
-final class OrderingProviderAlpha implements RegisterDependency
+final class DeterministicOrderingSmokeTest implements RegisterDependency
 {
     public function dependsOn(): array
     {

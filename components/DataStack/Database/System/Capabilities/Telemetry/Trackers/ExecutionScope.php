@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support;
+namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers;
 
 use Random\RandomException;
 

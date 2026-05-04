@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DataStack\Database\Integrations\AvaxContainer;
+namespace Avax\Components\DataStack\Database\System\Configuration;
 
 use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\DI\ContainerInterface;

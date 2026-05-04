@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http;
+namespace Avax\Components\ation\Container\Capabilities\Providers\Runtime\Http;
 
 use Avax\Tests\TestCase;
 use components\Container\BindingBuilderInterface;
@@ -11,7 +11,7 @@ use components\Container\DependencyInjection\Capability\Providers\Runtime\Http\V
 use components\Container\DependencyInjection\Configuration\Settings;
 use components\View\BladeTemplateEngine;
 
-final class ViewBaseRegisterDependencyTest extends TestCase
+final class ViewServiceProviderTest extends TestCase
 {
     public function test_register_uses_defaults_without_base_path_helper() : void
     {

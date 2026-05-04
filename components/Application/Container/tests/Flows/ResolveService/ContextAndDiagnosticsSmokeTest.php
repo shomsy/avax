@@ -11,7 +11,7 @@ interface DiagnosticsContract
     public function label(): string;
 }
 
-final class DiagnosticsService implements DiagnosticsContract
+final class ContextAndDiagnosticsSmokeTest implements DiagnosticsContract
 {
     #[Override]
     public function label(): string

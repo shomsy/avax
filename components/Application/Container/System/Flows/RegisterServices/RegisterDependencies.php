@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Container\System\Flows\RegisterDependencies;
+namespace Avax\Components\Application\Container\System\Flows\RegisterServices;
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;

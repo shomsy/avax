@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Performance\System\Configuration;
+namespace Avax\Components\Performance\System\Configuration;
 
 final readonly class PerformanceConfig
 {

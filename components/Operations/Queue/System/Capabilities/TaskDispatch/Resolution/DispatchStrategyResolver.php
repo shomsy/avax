@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Resolution;
+namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\Resolution;
 
 final readonly class DispatchStrategyResolver
 {

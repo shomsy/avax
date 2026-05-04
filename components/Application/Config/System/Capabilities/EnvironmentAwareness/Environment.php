@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\PublicSurface;
+namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness;
 
 use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Detection\EnvironmentDetector;
 use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Policies\LocalPolicy;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Documentation\System\Flows\GenerateDocs;
+namespace Avax\Components\Documentation\System\Flows\GenerateDocs;
 
 final readonly class GenerateDocs
 {

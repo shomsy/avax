@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Presentation\System\Flows\Render;
+namespace Avax\Components\Presentation\System\Flows\Render;
 
 final readonly class Render
 {

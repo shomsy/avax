@@ -13,7 +13,7 @@ interface CallArgumentGreeterContract
     public function message() : string;
 }
 
-final class CallArgumentGreeter implements CallArgumentGreeterContract
+final class ResolveCallArgumentsSmokeTest implements CallArgumentGreeterContract
 {
     #[Override]
     public function message() : string

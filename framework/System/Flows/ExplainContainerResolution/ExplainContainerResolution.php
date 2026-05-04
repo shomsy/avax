@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Framework\System\Flows\ExplainContainerService;
+namespace Avax\Components\ystem\Flows\ExplainContainerResolution;
 
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Framework\System\Capabilities\ContainerIntelligence\ContainerAnalyzer;
 use Avax\Framework\System\Capabilities\ContainerIntelligence\ContainerDependencyExplanation;
 
-final readonly class ExplainContainerService
+final readonly class ExplainContainerResolution
 {
     public function __construct(
         private ContainerInterface $container,

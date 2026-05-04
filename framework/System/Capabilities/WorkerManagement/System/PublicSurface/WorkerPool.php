@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\WorkerManager\System\PublicSurface;
+namespace Avax\Components\ystem\Capabilities\WorkerManagement\System\PublicSurface;
 
 use Avax\Components\WorkerManager\System\Capabilities\Workers\WorkerProcess;
 use Stringable;
 
-final readonly class Workers
+final readonly class WorkerPool
 {
     public function __construct(private WorkerPool $workerPool) {}
 

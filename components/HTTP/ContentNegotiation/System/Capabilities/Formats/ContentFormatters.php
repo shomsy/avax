@@ -13,7 +13,7 @@ interface ContentFormatterInterface
     public function mimeType(): string;
 }
 
-final class JsonFormat implements ContentFormatterInterface
+final class ContentFormatters implements ContentFormatterInterface
 {
     public function format(mixed $data): string
     {

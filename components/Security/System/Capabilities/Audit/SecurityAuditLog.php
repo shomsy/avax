@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Security\System\System\Capabilities\Audit;
+namespace Avax\Components\Security\System\Capabilities\Audit;
 
 final class SecurityAuditLog
 {

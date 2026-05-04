@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Identity\System\Flows\Authenticate;
+namespace Avax\Components\Identity\System\Flows\Authenticate;
 
 final readonly class Authenticate
 {

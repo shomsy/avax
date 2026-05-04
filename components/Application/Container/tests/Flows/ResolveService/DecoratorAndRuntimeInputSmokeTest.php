@@ -14,7 +14,7 @@ interface DecoratedContract
     public function label(): string;
 }
 
-final class DecoratedService implements DecoratedContract
+final class DecoratorAndRuntimeInputSmokeTest implements DecoratedContract
 {
     public bool $decorated = false;
 

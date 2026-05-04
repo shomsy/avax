@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Server\System\Flows\StartServer;
+namespace Avax\Components\Server\System\Flows\StartServer;
 
 final readonly class StartServer
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Operations\System\Configuration;
+namespace Avax\Components\Operations\System\Configuration;
 
 final readonly class OperationsConfig
 {

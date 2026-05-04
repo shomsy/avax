@@ -9,7 +9,7 @@ interface CallGreeterContract
     public function message(): string;
 }
 
-final class CallGreeter implements CallGreeterContract
+final class CallFunctionSmokeTest implements CallGreeterContract
 {
     #[Override]
     public function message(): string

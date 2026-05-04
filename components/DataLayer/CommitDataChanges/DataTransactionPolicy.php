@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Avax\DataLayer\CommitDataChanges;
+namespace Avax\Components\DataLayer\CommitDataChanges;
 
 final class DataTransactionPolicy
 {

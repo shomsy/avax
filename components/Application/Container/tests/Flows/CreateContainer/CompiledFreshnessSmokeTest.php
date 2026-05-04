@@ -11,7 +11,7 @@ interface FreshnessDependencyContract
     public function version(): string;
 }
 
-final class FreshnessDependencyV1 implements FreshnessDependencyContract
+final class CompiledFreshnessSmokeTest implements FreshnessDependencyContract
 {
     #[Override]
     public function version(): string

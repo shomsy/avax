@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Filesystem\Disks;
+namespace Avax\Components\Application\Filesystem\System\Capabilities\Disks;
 
 use Avax\Components\Application\Filesystem\Configuration\FilesystemConfig;
 use Avax\Components\Application\Filesystem\Disks\Local\LocalDisk;

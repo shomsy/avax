@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Container\Tests\System\PublicSurface;
+namespace Avax\Components\Application\Container\tests\System\PublicSurface;
 
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Foundation\DIContainer;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Tasks\System\Foundation;
+namespace Avax\Components\Operations\Queue\System\Foundation;
 
 interface JobInterface
 {

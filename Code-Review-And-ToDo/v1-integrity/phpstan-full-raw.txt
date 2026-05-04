@@ -1,0 +1,2 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+File '/home/shomsy/projects/avax/vendor/rector/type-perfect/config/extension.neon' is missing or is not readable.

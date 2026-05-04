@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DataLayer\System\Foundation\Failure;
+namespace Avax\Components\DataLayer\System\Foundation;
 
 use RuntimeException;
 

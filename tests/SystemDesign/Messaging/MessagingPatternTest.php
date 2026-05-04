@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\SystemDesignKit\Messaging;
+namespace Avax\Components\mDesign\Messaging;
 
 use Avax\Components\SystemDesign\Messaging\System\Flows\AnalyzeMessaging\AnalyzeMessaging;
 use Avax\Components\SystemDesign\Messaging\System\PublicSurface\MessagingPattern;

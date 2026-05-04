@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
+namespace Avax\Components\Application\Container\System\Capabilities\Resolution\Resolution;
 
 use SensitiveParameter;
 

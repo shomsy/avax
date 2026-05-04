@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DataLayer\System\PublicSurface;
+namespace Avax\Components\DataLayer\System\PublicSurface;
 
 final readonly class DataLayer
 {

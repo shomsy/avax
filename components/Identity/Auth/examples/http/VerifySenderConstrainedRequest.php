@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Auth\Examples\Http;
+namespace Avax\Components\Identity\Auth\examples\http;
 
 use Avax\Components\Identity\Auth\Integrations\Http\HttpOAuthProofInput;
 use Avax\Components\Identity\Auth\Integrations\Http\VerifyDpopProof;

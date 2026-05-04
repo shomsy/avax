@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Tasks\System\Capabilities\Queue;
+namespace Avax\Components\Operations\Queue\System\Capabilities\Queue;
 
 use Redis;
 use Throwable;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Source\ProtectCacheSource;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\Capabilities\Source\ProtectCacheSource;
 
 use Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource\InMemoryLockStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;

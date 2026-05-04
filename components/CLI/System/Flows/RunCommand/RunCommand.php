@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\CLI\System\Flows\RunCommand;
+namespace Avax\Components\CLI\System\Flows\RunCommand;
 
 final readonly class RunCommand
 {

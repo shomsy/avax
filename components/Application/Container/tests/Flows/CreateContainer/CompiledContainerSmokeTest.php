@@ -11,7 +11,7 @@ interface CompiledGreeterContract
     public function message(): string;
 }
 
-final class CompiledGreeter implements CompiledGreeterContract
+final class CompiledContainerSmokeTest implements CompiledGreeterContract
 {
     #[Override]
     public function message(): string

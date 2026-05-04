@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DataLayer\System\Configuration;
+namespace Avax\Components\DataLayer\System\Configuration;
 
 final readonly class DataLayerConfig
 {

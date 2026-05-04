@@ -18,7 +18,7 @@ interface DeferredPoolingContract
     public function id() : int;
 }
 
-final class PoolingSequence
+final class PoolingSemanticsSmokeTest
 {
     public static int $ids = 0;
 }

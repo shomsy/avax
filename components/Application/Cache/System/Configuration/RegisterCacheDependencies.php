@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Cache\System\Configuration;
+namespace Avax\Components\Application\Cache\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
 use Avax\Components\Cache\Cache;

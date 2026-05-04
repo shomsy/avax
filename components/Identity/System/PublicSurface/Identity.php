@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Identity\System\PublicSurface;
+namespace Avax\Components\Identity\System\PublicSurface;
 
 final readonly class Identity
 {

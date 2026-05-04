@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Security\System\System\Capabilities\Headers;
+namespace Avax\Components\HTTP\Security\System\Capabilities\Headers;
 
 use Avax\Components\Security\System\System\PublicSurface\ResponseFormatter;
 

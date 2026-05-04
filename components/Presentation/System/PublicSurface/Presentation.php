@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Presentation\System\PublicSurface;
+namespace Avax\Components\Presentation\System\PublicSurface;
 
 final readonly class Presentation
 {

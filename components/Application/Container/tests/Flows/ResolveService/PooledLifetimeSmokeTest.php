@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\DisposableInterface;
 use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 
-final class PooledLifetimeSequence
+final class PooledLifetimeSmokeTest
 {
     public static int $created = 0;
 

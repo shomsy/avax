@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Application\System\Capabilities;
+namespace Avax\Components\Application\System\Capabilities;
 
 interface ApplicationCapability
 {

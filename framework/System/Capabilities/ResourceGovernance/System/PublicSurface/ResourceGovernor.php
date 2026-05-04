@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ResourceGovernor\System\PublicSurface;
+namespace Avax\Components\ystem\Capabilities\ResourceGovernance\System\PublicSurface;
 
 use Avax\Components\ResourceGovernor\System\Capabilities\Memory\MemoryBudget;
 use Avax\Components\ResourceGovernor\System\Capabilities\Memory\MemorySnapshot;

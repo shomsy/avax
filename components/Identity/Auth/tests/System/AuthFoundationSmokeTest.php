@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Auth\Tests\System;
+namespace Avax\Components\Identity\Auth\tests\System;
 
 use Avax\Components\Identity\Auth\System\Foundation\Text\NormalizeEmail;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;

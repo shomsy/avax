@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\PublicSurface;
+namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch;
 
 use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Dispatchers\AsyncDispatcher;
 use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Dispatchers\DeferredDispatcher;

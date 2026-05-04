@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ExternalState\System\PublicSurface;
+namespace Avax\Components\ystem\Capabilities\ExternalState\System\PublicSurface;
 
 use Avax\Components\ExternalState\System\Capabilities\Adapters\MemoryStateAdapter;
 use Avax\Components\ExternalState\System\Capabilities\Adapters\RedisStateAdapter;

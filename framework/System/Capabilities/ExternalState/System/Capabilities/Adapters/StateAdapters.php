@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ExternalState\System\Capabilities\Adapters;
+namespace Avax\Components\ystem\Capabilities\ExternalState\System\Capabilities\Adapters;
 
 use Avax\Components\ExternalState\System\PublicSurface\StateAdapter;
 use Redis;
 
-final readonly class RedisStateAdapter implements StateAdapter
+final readonly class StateAdapters implements StateAdapter
 {
     private Redis $redis;
 

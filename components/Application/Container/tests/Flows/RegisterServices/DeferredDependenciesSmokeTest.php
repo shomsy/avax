@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 
-final class DeferredRegularService
+final class DeferredDependenciesSmokeTest
 {
     public function id(): string
     {

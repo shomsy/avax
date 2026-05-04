@@ -25,7 +25,7 @@ use Random\RandomException;
 /**
  * Optional Avax Container adapter for assembling the Database system.
  */
-final readonly class RegisterDatabaseDependencies implements RegisterDependency
+final readonly class DatabaseRegistrar implements RegisterDependency
 {
     public function __construct(private ContainerInterface $container) {}
 

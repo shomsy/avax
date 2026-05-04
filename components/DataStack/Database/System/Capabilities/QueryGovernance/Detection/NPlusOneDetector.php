@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\System\Capabilities\Detection;
+namespace Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\Detection;
 
 final readonly class NPlusOneDetector
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 
-final class ResolveGreeter
+final class ResolveDependencySmokeTest
 {
     public function message() : string
     {

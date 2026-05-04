@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Performance\System\Capabilities;
+namespace Avax\Components\Performance\System\Capabilities;
 
 interface PerformanceCapability
 {

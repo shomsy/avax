@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\DataLayer\System\Flows\AccessData;
+namespace Avax\Components\DataLayer\System\Flows\AccessData;
 
 final readonly class AccessData
 {

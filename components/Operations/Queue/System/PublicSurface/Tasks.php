@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Tasks\System\PublicSurface;
+namespace Avax\Components\Operations\Queue\System\PublicSurface;
 
 use Avax\Components\Operations\Tasks\System\Capabilities\TaskBus;
 use DateInterval;

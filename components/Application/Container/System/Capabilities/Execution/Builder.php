@@ -14,7 +14,7 @@ use Throwable;
 /**
  * Builds one object from its blueprint and resolved constructor dependencies.
  */
-final readonly class BuildService
+final readonly class Builder
 {
     public function __construct(private CreateDependencyBlueprint $createDependencyBlueprint, private ResolveDependencies $resolveDependencies) {
     }

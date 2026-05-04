@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Support;
+namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Outcomes;
 
 /**
  * Represents the result of a data operation.

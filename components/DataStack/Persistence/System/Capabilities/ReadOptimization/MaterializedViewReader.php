@@ -61,7 +61,7 @@ interface MaterializedViewInterface
 /**
  * Statistics about a materialized view refresh operation.
  */
-final readonly class MaterializedViewStats
+final readonly class MaterializedViewReader
 {
     public function __construct(
         public string $viewName,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Application\System\Flows\BootApplication;
+namespace Avax\Components\Application\System\Flows\BootApplication;
 
 final readonly class BootApplication
 {

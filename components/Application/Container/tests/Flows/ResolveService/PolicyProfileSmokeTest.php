@@ -6,7 +6,7 @@ require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-final class StrictSharedFlowService {}
+final class PolicyProfileSmokeTest {}
 
 final class ConditionalInternalService {}
 

@@ -6,7 +6,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateCont
 
 require_once dirname(path: __DIR__) . '/bootstrap.php';
 
-final class GraphToolIdentityService
+final class graph_tool_fixture
 {
 }
 

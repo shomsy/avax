@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ResourceGovernor\System\Capabilities\Memory;
+namespace Avax\Components\ystem\Capabilities\ResourceGovernance\System\Capabilities\Memory;
 
 final class MemoryBudget
 {

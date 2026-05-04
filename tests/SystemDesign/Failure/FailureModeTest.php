@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\SystemDesignKit\Failure;
+namespace Avax\Components\mDesign\Failure;
 
 use Avax\Components\SystemDesign\Failure\System\Flows\AnalyzeFailureMode\AnalyzeFailureMode;
 use Avax\Components\SystemDesign\Failure\System\PublicSurface\FailureMode;

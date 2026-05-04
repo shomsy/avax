@@ -116,3 +116,47 @@ Do **NOT** use the following names for directories or namespaces:
     - `.agents/review/`
 7. **Project-Specific Exceptions**:
     - None. Follow the Screaming Architecture rules strictly.
+
+## 5. Source of Truth
+
+1. CURRENT_TRUTH.md
+2. Code-Review-And-ToDo/EXECUTION.md
+3. TODO.md
+4. .agents/how-to/*.md
+5. Code-Review-And-ToDo/master-plan/*.md
+6. Older review/archive files
+
+## 6. Execution Rule
+
+Only one stage may be active at a time.
+
+No V2 implementation before V1 Kernel Green is proven.
+No V3 implementation before V1 Kernel Green and V2 platform baseline are proven.
+
+## 7. Required Validation
+
+```bash
+composer validate --no-check-publish
+composer dump-autoload -o
+vendor/bin/phpunit --no-coverage
+vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress
+php tooling/refactor/check-component-suite-structure.php
+php tooling/refactor/check-duplicate-owners.php
+php tooling/refactor/check-namespace-drift.php
+php tooling/refactor/check-public-surface.php
+php tooling/refactor/check-runtime-leaks.php
+php tooling/audit_broken_refs.php
+php avax runtime:doctor
+```
+
+## 8. Agent Output Contract
+
+Every agent execution must end with:
+
+* Stage
+* Status
+* Files changed
+* Validation commands
+* Validation summary
+* Remaining risks
+* Next allowed action

@@ -11,7 +11,7 @@ interface LifecycleContract
     public function id(): string;
 }
 
-final class LifecycleService implements LifecycleContract
+final class ContainerLifecycleSmokeTest implements LifecycleContract
 {
     #[Override]
     public function id(): string

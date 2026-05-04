@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Container\System;
+namespace Avax\Components\Application\Container\System\Foundation;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;

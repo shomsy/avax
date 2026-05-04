@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Components\Application\Cache\Unit\Cache\Providers;
+namespace Avax\Components\Components\Application\Cache\Unit\Cache\Providers;
 
 use Avax\Components\Application\Cache\Cache;
 use Avax\Components\Application\Cache\CompiledCache;
@@ -12,7 +12,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use PHPUnit\Framework\TestCase;
 
-final class RegisterCacheDependenciesTest extends TestCase
+final class CacheServiceProviderTest extends TestCase
 {
     private FrozenClock $clock;
 

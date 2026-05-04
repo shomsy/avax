@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Text;
+namespace Avax\Components\Application\Text\System\Foundation;
 
 /**
  * Immutable result of regex match operation.

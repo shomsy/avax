@@ -11,7 +11,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\ScopeKi
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-final class AdvancedLifetimeSequence
+final class AdvancedLifetimeSmokeTest
 {
     public static int $warmSingletons = 0;
 

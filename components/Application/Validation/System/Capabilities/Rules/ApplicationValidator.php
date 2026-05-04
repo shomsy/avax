@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Validation\System\Capabilities\Rules;
+namespace Avax\Components\Application\Validation\System\Capabilities\Rules;
 
 /**
  * Full-featured Validator with support for common validation rules.

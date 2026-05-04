@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Presentation\System\Configuration;
+namespace Avax\Components\Presentation\System\Configuration;
 
 final readonly class PresentationConfig
 {

@@ -11,7 +11,7 @@ interface CompileReportContract
     public function dependency(): CompileReportDependency;
 }
 
-final class CompileReportDependency
+final class CompileReportSmokeTest
 {
     public function value(): string
     {

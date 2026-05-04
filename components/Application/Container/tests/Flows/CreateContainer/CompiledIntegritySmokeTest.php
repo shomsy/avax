@@ -9,7 +9,7 @@ use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\Con
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-final class IntegrityDependency
+final class CompiledIntegritySmokeTest
 {
     public function value(): string
     {

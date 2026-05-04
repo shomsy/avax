@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Verification;
+namespace Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Verification;
 
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Tokens\AccessToken;
 use Exception;

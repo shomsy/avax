@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Auth\Examples\Http;
+namespace Avax\Components\Identity\Auth\examples\http;
 
 use SensitiveParameter;
 

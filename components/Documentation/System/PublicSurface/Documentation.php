@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Documentation\System\PublicSurface;
+namespace Avax\Components\Documentation\System\PublicSurface;
 
 final readonly class Documentation
 {

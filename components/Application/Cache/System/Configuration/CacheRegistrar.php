@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\Providers;
+namespace Avax\Components\Application\Cache\System\Configuration;
 
 use Avax\Components\Application\Cache\Cache;
 use Avax\Components\Application\Cache\System\CacheContract;
@@ -16,7 +16,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
 use Override;
 
-final class RegisterCacheDependencies extends BaseRegisterDependency
+final class CacheRegistrar extends BaseRegisterDependency
 {
     private array $namedCaches = [];
 

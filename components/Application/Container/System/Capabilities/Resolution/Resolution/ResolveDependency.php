@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
+namespace Avax\Components\Application\Container\System\Capabilities\Resolution\Resolution;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompiledContainer;
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;

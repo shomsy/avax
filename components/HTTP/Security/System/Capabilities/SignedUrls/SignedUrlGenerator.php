@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Security\System\System\Capabilities\SignedUrls;
+namespace Avax\Components\HTTP\Security\System\Capabilities\SignedUrls;
 
 use DateInterval;
 use Firebase\JWT\JWT;

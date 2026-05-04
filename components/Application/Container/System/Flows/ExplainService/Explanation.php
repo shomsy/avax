@@ -10,7 +10,7 @@ use ReflectionException;
 /**
  * Public diagnostics flow for service and slice explainability.
  */
-final readonly class ExplainService
+final readonly class Explanation
 {
     public function __construct(private ResolveDependency $resolveDependency)
     {

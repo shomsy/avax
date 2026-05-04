@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Dispatchers;
+namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\Dispatchers;
 
 use DateInterval;
 
-final class SyncDispatcher
+final class TaskDispatchers
 {
     public function dispatch(object $task): void
     {

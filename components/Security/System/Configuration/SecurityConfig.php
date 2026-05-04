@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Security\System\Configuration;
+namespace Avax\Components\Security\System\Configuration;
 
 final readonly class SecurityConfig
 {

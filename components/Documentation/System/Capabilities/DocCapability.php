@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Documentation\System\Capabilities;
+namespace Avax\Components\Documentation\System\Capabilities;
 
 interface DocCapability
 {

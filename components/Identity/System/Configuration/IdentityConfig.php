@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Identity\System\Configuration;
+namespace Avax\Components\Identity\System\Configuration;
 
 final readonly class IdentityConfig
 {

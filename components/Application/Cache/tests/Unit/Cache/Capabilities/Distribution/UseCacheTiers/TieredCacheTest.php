@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\Tests\Unit\Cache\Capabilities\Distribution\UseCacheTiers;
+namespace Avax\Components\Application\Cache\tests\Unit\Cache\Capabilities\Distribution\UseCacheTiers;
 
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers\CacheTier;
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers\CacheTierName;

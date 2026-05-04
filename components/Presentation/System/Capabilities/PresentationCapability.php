@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Presentation\System\Capabilities;
+namespace Avax\Components\Presentation\System\Capabilities;
 
 interface PresentationCapability
 {

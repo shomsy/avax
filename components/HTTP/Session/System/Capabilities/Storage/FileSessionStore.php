@@ -8,6 +8,9 @@ final readonly class FileSessionStore implements SessionStoreInterface
 {
     private string $path;
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->path = $config['path'] ?? sys_get_temp_dir() . '/avax-sessions';
@@ -17,6 +20,9 @@ final readonly class FileSessionStore implements SessionStoreInterface
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(string $id): array
     {
         $file = $this->filePath(sessionId: $id);
@@ -30,6 +36,9 @@ final readonly class FileSessionStore implements SessionStoreInterface
         return is_array(value: $payload['data'] ?? null) ? $payload['data'] : [];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function write(string $id, array $data): bool
     {
         $file      = $this->filePath(sessionId: $id);

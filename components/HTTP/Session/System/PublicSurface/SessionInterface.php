@@ -29,4 +29,10 @@ interface SessionInterface
     public function regenerate(bool $destroy = false) : bool;
 
     public function save() : void;
+
+    public function flash(string $key, mixed $value) : void;
+
+    public function ageFlash() : void;
+
+    public function getFlash(string $key, mixed $default = null) : mixed;
 }

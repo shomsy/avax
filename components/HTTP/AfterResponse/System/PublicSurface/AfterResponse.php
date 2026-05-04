@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\AfterResponse\System\PublicSurface;
 
+use Avax\Components\HTTP\AfterResponse\System\Capabilities\Tasks\AfterResponseQueue;
 use Avax\Components\HTTP\AfterResponse\System\Capabilities\Tasks\AfterResponseTask;
-use Avax\Components\HTTP\AfterResponse\System\Capabilities\Tasks\AfterResponseTask\AfterResponseQueue;
 use Closure;
 
 final class AfterResponse

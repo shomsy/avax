@@ -23,7 +23,7 @@ final readonly class SessionCookieWriter
             'secure'   => $this->sessionCookieSettings->secure,
             'httponly' => $this->sessionCookieSettings->httpOnly,
             'samesite' => $this->sessionCookieSettings->sameSite,
-        ]);
+        ]); // @phpstan-ignore-line
     }
 
     public function expire() : void
@@ -35,6 +35,6 @@ final readonly class SessionCookieWriter
             'secure'   => $this->sessionCookieSettings->secure,
             'httponly' => $this->sessionCookieSettings->httpOnly,
             'samesite' => $this->sessionCookieSettings->sameSite,
-        ]);
+        ]); // @phpstan-ignore-line
     }
 }

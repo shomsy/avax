@@ -7,12 +7,12 @@ namespace Avax\Components\HTTP;
 use Avax\Components\HTTP\Dispatcher\System\PublicSurface\ControllerDispatcher;
 use Avax\Components\HTTP\Middleware\MiddlewareInterface;
 use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
-use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
+use Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel;
 use InvalidArgumentException;
 use LogicException;
-use ReflectionException;
 
 /**
  * Router Bootstrapper - Route Registration and Middleware Configuration
@@ -122,7 +122,7 @@ final class RouterBootstrapper
         return $method . ' ' . $path;
     }
 
-    private function registerWithDsl(string $method, string $path, callable|array|string $handler) : RouteRegistrarProxy
+    private function registerWithDsl(string $method, string $path, callable|array|string $handler) : Registrar
     {
         return match ($method) {
             'GET'    => $this->router->get(path: $path, action: $handler),
@@ -178,6 +178,9 @@ final class RouterBootstrapper
 
     /**
      * Assign middleware to a specific route.
+     *
+     * @param string                                        $routeKey
+     * @param MiddlewareInterface|list<MiddlewareInterface> $middleware
      */
     public function middleware(string $routeKey, MiddlewareInterface|array $middleware) : self
     {
@@ -192,6 +195,9 @@ final class RouterBootstrapper
 
     /**
      * Group routes with common middleware or prefix.
+     *
+     * @param callable(self): void           $routes
+     * @param list<MiddlewareInterface>|null $middleware
      */
     public function group(callable $routes, ?array $middleware = null, string $prefix = '') : self
     {
@@ -215,6 +221,8 @@ final class RouterBootstrapper
 
     /**
      * Define a middleware group for reuse.
+     *
+     * @param list<MiddlewareInterface> $middleware
      */
     public function middlewareGroup(string $name, array $middleware) : self
     {
@@ -242,6 +250,8 @@ final class RouterBootstrapper
 
     /**
      * Set global middleware applied to all routes.
+     *
+     * @param list<MiddlewareInterface> $middleware
      */
     public function globalMiddleware(array $middleware) : self
     {
@@ -252,6 +262,8 @@ final class RouterBootstrapper
 
     /**
      * Get all registered routes.
+     *
+     * @return list<array<string, mixed>>
      */
     public function getRoutes() : array
     {
@@ -260,19 +272,15 @@ final class RouterBootstrapper
 
     /**
      * Create a complete HTTP application with routes and middleware.
-     *
-     * @throws ReflectionException
      */
     public function createApp(
-        ControllerDispatcher $controllerDispatcher,
         ResponseFactory $responseFactory,
     ) : AppKernel
     {
         $routerRuntime = $this->bootstrap();
 
         return new AppKernel(
-            router          : $routerRuntime,
-            dispatcher      : $controllerDispatcher,
+            routerRuntime   : $routerRuntime,
             responseFactory : $responseFactory,
             globalMiddleware: $this->globalMiddleware,
         );

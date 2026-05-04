@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Context\System\PublicSurface;
 
 use Avax\Components\HTTP\Context\System\Capabilities\Globals\GlobalsProviderInterface;
+use Avax\Components\HTTP\Context\System\Capabilities\Globals\PhpGlobalsProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -16,6 +17,11 @@ use Psr\Http\Message\UriInterface;
  */
 final readonly class HttpContext implements HttpContextInterface
 {
+    public static function fromGlobals() : self
+    {
+        return new self(null, new PhpGlobalsProvider());
+    }
+
     public function __construct(
         private ?ServerRequestInterface  $serverRequest,
         private GlobalsProviderInterface $globalsProvider,

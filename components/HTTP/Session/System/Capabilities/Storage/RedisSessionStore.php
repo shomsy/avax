@@ -18,6 +18,9 @@ final class RedisSessionStore implements SessionStoreInterface
 
     private readonly int $ttl;
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(private array $config = [])
     {
         $this->prefix = $config['prefix'] ?? 'sess_';
@@ -25,6 +28,9 @@ final class RedisSessionStore implements SessionStoreInterface
         $this->connect();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(string $id) : array
     {
         if (! $this->redis instanceof Redis) {
@@ -42,6 +48,9 @@ final class RedisSessionStore implements SessionStoreInterface
         return is_array(value: $decoded['data'] ?? null) ? $decoded['data'] : [];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function write(string $id, array $data) : bool
     {
         if (! $this->redis instanceof Redis) {

@@ -9,6 +9,7 @@ use RuntimeException;
 
 final class SessionTransaction
 {
+    /** @var array<string, mixed>|null */
     private ?array $backup = null;
 
     private bool $active = false;

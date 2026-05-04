@@ -10,6 +10,9 @@ final readonly class Query implements Stringable
 {
     private string $query;
 
+    /**
+     * @param string|array<string, mixed> $query
+     */
     public function __construct(string|array $query)
     {
         if (is_array($query)) {

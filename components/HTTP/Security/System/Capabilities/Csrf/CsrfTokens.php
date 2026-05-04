@@ -65,16 +65,27 @@ final readonly class CsrfTokens
         return true;
     }
 
+    /**
+     * @return array<string, int>
+     */
     private function getTokens(): array
     {
         return $this->session->get(self::SESSION_KEY, []);
     }
 
+    /**
+     * @param array<string, int> $tokens
+     */
     private function storeTokens(array $tokens): void
     {
         $this->session->put(self::SESSION_KEY, $tokens);
     }
 
+    /**
+     * @param array<string, int> $tokens
+     *
+     * @return array<string, int>
+     */
     private function pruneExcessTokens(array $tokens): array
     {
         if (count($tokens) <= $this->maxTokensPerSession) {
@@ -86,6 +97,10 @@ final readonly class CsrfTokens
         return array_slice($tokens, -$this->maxTokensPerSession, null, true);
     }
 
+    /**
+     * @param array<string, int> $tokens
+     * @return array<string, int>
+     */
     private function pruneExpiredTokens(array $tokens): array
     {
         $now = time();
@@ -94,6 +109,9 @@ final readonly class CsrfTokens
         return array_filter($tokens, static fn ($ts) : bool => $now - $ts <= $expiry);
     }
 
+    /**
+     * @param array<string, int> $tokens
+     */
     private function readMostRecentToken(array $tokens): ?string
     {
         if ($tokens === []) {

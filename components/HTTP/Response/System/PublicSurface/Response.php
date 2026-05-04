@@ -111,4 +111,24 @@ final class Response implements ResponseInterface
     {
         return $this->responseData->reasonPhrase;
     }
+
+    public static function text(string $content, int $status = 200) : self
+    {
+        return new self($status, ['Content-Type' => ['text/plain; charset=utf-8']], Utils::streamFor($content));
+    }
+
+    public static function json(mixed $data, int $status = 200) : self
+    {
+        return new self($status, ['Content-Type' => ['application/json']], Utils::streamFor(json_encode($data, JSON_THROW_ON_ERROR)));
+    }
+
+    public static function html(string $content, int $status = 200) : self
+    {
+        return new self($status, ['Content-Type' => ['text/html; charset=utf-8']], Utils::streamFor($content));
+    }
+
+    public static function redirect(string $url, int $status = 302) : self
+    {
+        return new self($status, ['Location' => [$url]], Utils::streamFor('Redirecting to ' . $url));
+    }
 }

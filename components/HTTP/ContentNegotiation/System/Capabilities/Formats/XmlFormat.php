@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Formats;
 
+use SimpleXMLElement;
+
 final class XmlFormat implements ContentFormatterInterface
 {
     public function format(mixed $data): string

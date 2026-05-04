@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\AfterResponse\System\Capabilities\Tasks;
 
-use Closure;
 use Throwable;
 
 final class AfterResponseQueue
@@ -36,17 +35,5 @@ final class AfterResponseQueue
     public function count(): int
     {
         return count($this->tasks);
-    }
-}
-
-final readonly class AfterResponseTask
-{
-    public function __construct(private Closure $task)
-    {
-    }
-
-    public function execute(): void
-    {
-        ($this->task)();
     }
 }

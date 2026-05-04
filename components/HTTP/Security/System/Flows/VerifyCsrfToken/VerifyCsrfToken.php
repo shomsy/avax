@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Security\System\Flows\VerifyCsrfToken;
 
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfTokens;
-use Avax\Components\Request\System\PublicSurface\ServerRequest;
-use Avax\Components\Response\System\PublicSurface\Response;
 use Closure;
+use GuzzleHttp\Psr7\Utils;
 
 final readonly class VerifyCsrfToken
 {
@@ -17,7 +18,7 @@ final readonly class VerifyCsrfToken
         private CsrfTokens $csrfTokens,
     ) {}
 
-    public function handle(ServerRequest $serverRequest, Closure $next) : mixed
+    public function handle(RequestInterface $serverRequest, Closure $next) : mixed
     {
         if (in_array($serverRequest->getMethod(), self::SAFE_METHODS, true)) {
             return $next($serverRequest);
@@ -32,29 +33,30 @@ final readonly class VerifyCsrfToken
         return $next($serverRequest);
     }
 
-    private function extractToken(ServerRequest $serverRequest) : ?string
+    private function extractToken(RequestInterface $serverRequest) : ?string
     {
-        $token = $serverRequest->headers()->get('X-CSRF-TOKEN')
-            ?? $serverRequest->headers()->get('X-XSRF-TOKEN');
+        $token = $serverRequest->getHeaderLine('X-CSRF-TOKEN')
+            ?: $serverRequest->getHeaderLine('X-XSRF-TOKEN');
 
         if ($token) {
             return $token;
         }
 
-        $body = $serverRequest->body()->parsed();
+        $body = $serverRequest->getParsedBody();
 
-        return $body['_token'] ?? $body['_csrf_token'] ?? null;
+        if (is_array($body)) {
+            return (string) ($body['_token'] ?? $body['_csrf_token'] ?? '');
+        }
+
+        return null;
     }
 
     private function createErrorResponse(): Response
     {
-        $response = new Response();
-        $response->withStatus(403);
-        $response->body()->write(json_encode([
-                                                 'error' => 'CSRF_TOKEN_MISMATCH',
-            'message' => 'The CSRF token is invalid or expired.',
-        ]));
-
-        return $response->withHeader('Content-Type', 'application/json');
+        return (new Response(403, ['Content-Type' => 'application/json']))
+            ->withBody(Utils::streamFor(json_encode([
+                                                        'error'   => 'CSRF_TOKEN_MISMATCH',
+                                                        'message' => 'The CSRF token is invalid or expired.',
+                                                    ])));
     }
 }

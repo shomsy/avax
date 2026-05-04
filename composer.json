@@ -27,7 +27,10 @@
       "psr-4": {
         "Avax\\Framework\\": "framework/",
         "Avax\\Components\\": "components/"
-      }
+      },
+      "files": [
+        "components/Application/Container/System/PublicSurface/shortcuts.php"
+      ]
     },
   "autoload-dev": {
     "psr-4": {

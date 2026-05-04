@@ -21,6 +21,9 @@ final readonly class DatabaseSessionStore implements SessionStoreInterface
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(string $id): array
     {
         $stmt = $this->pdo->prepare(sprintf('SELECT payload FROM %s WHERE id = ?', $this->table));
@@ -37,6 +40,9 @@ final readonly class DatabaseSessionStore implements SessionStoreInterface
         return [];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function write(string $id, array $data): bool
     {
         $payload = json_encode($data, JSON_THROW_ON_ERROR);

@@ -12,11 +12,17 @@ final class ArraySessionStore implements SessionStoreInterface
     /** @var array<string, array<string, mixed>> */
     private array $sessions = [];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(string $id): array
     {
         return $this->sessions[$id] ?? [];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function write(string $id, array $data): bool
     {
         $this->sessions[$id] = $data;

@@ -13,11 +13,17 @@ final class SessionDriver
         self::$sessionStore = $sessionStore;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function read(string $sessionId) : array
     {
         return self::get()->read(id: $sessionId);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function write(string $sessionId, array $data) : bool
     {
         return self::get()->write(id: $sessionId, data: $data);
@@ -33,7 +39,7 @@ final class SessionDriver
         $sessionStore = self::get();
 
         return method_exists(object_or_class: $sessionStore, method: 'exists')
-            ? $sessionStore->exists(sessionId: $sessionId)
+            ? $sessionStore->exists($sessionId)
             : $sessionStore->read(id: $sessionId) !== [];
     }
 
@@ -46,6 +52,9 @@ final class SessionDriver
         return self::$sessionStore;
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public static function make(array $config = []) : SessionStoreInterface
     {
         $driver = $config['driver'] ?? 'file';

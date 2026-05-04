@@ -8,6 +8,9 @@ final readonly class RouteCache
 {
     public function __construct(private string $path) {}
 
+    /**
+     * @param array<string, mixed> $routes
+     */
     public function write(array $routes): void
     {
         $directory = dirname(path: $this->path);
@@ -22,6 +25,9 @@ final readonly class RouteCache
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(): array
     {
         if (! is_file(filename: $this->path)) {

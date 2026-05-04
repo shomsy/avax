@@ -14,21 +14,36 @@ use Avax\Components\HTTP\Session\System\PublicSurface\SessionInterface;
 use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Psr\Log\LoggerInterface;
 
 final class SessionProvider implements ComponentProviderInterface
 {
+    public static function name() : string
+    {
+        return 'session';
+    }
+
+    public function boot(RuntimeInterface $runtime) : void
+    {
+        $this->register(componentRegistry: $runtime->components());
+    }
+
     public function register(ComponentRegistry $componentRegistry) : void
     {
-        $componentRegistry->singleton(SessionStoreInterface::class, NativeSessionStore::class);
-        $componentRegistry->singleton(SessionScope::class, static fn ($container) : SessionScope => new SessionScope($container->get(SessionStoreInterface::class)));
-        $componentRegistry->singleton(SessionInterface::class, static fn ($container) : Session => new Session(
-            logger  : $container->has(LoggerInterface::class) ? $container->get(LoggerInterface::class) : null,
-            scope   : $container->get(SessionScope::class),
-            metadata: $container->has(SessionMetadata::class) ? $container->get(SessionMetadata::class) : null,
-            audit   : $container->has(SessionAudit::class) ? $container->get(SessionAudit::class) : null,
-            events  : $container->has(SessionEventBus::class) ? $container->get(SessionEventBus::class) : null,
+        $componentRegistry->single(SessionStoreInterface::class, static fn () : NativeSessionStore => new NativeSessionStore());
+
+        $componentRegistry->single(SessionScope::class, static fn (ComponentRegistry $registry) : SessionScope => new SessionScope($registry->get(SessionStoreInterface::class)));
+
+        $componentRegistry->single(SessionInterface::class, static fn (ComponentRegistry $registry) : Session => new Session(
+            sessionScope   : $registry->get(SessionScope::class),
+            sessionMetadata: $registry->has(SessionMetadata::class) ? $registry->get(SessionMetadata::class) : null,
+            sessionAudit   : $registry->has(SessionAudit::class) ? $registry->get(SessionAudit::class) : null,
+            sessionEventBus: $registry->has(SessionEventBus::class) ? $registry->get(SessionEventBus::class) : null,
+            logger         : $registry->has(LoggerInterface::class) ? $registry->get(LoggerInterface::class) : null,
         ));
-        $componentRegistry->alias(Session::class, SessionInterface::class);
+
+        // Use name 'session' as per name() method
+        $componentRegistry->single('session', static fn (ComponentRegistry $registry) : SessionInterface => $registry->get(SessionInterface::class));
     }
 }

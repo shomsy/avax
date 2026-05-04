@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\Security\System\PublicSurface;
 
-use Avax\Components\Security\System\System\Capabilities\Audit\SecurityAuditLog;
-use Avax\Components\Security\System\System\Capabilities\Csrf\CsrfToken;
-use Avax\Components\Security\System\System\Capabilities\Csrf\CsrfVerifier;
-use Avax\Components\Security\System\System\Capabilities\Escape\OutputEscaper;
-use Avax\Components\Security\System\System\Capabilities\Headers\SecurityHeaders;
-use Avax\Components\Security\System\System\Capabilities\MassAssignment\MassAssignmentGuard;
-use Avax\Components\Security\System\System\Capabilities\SignedUrls\SignedUrlGenerator;
-use Avax\Components\Security\System\System\Capabilities\SignedUrls\SignedUrlVerifier;
+use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfToken;
+use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfVerifier;
+use Avax\Components\HTTP\Security\System\Capabilities\Headers\SecurityHeaders;
+use Avax\Components\HTTP\Security\System\Capabilities\SignedUrls\SignedUrlGenerator;
+use Avax\Components\HTTP\Security\System\Capabilities\SignedUrls\SignedUrlVerifier;
+use Avax\Components\Security\System\Capabilities\Audit\SecurityAuditLog;
+use Avax\Components\Security\System\Capabilities\Escape\OutputEscaper;
+use Avax\Components\Security\System\Capabilities\MassAssignment\MassAssignmentGuard;
 use DateInterval;
 
 final class Security
@@ -51,6 +51,12 @@ final class Security
         return OutputEscaper::json(value: $value);
     }
 
+    /**
+     * @param array<string, mixed> $input
+     * @param list<string>         $fillable
+     *
+     * @return array<string, mixed>
+     */
     public static function fillable(array $input, array $fillable): array
     {
         return new MassAssignmentGuard()->onlyFillable(input: $input, fillable: $fillable);
@@ -58,12 +64,12 @@ final class Security
 
     public static function applySecurityHeaders(ResponseFormatter $responseFormatter): ResponseFormatter
     {
-        return SecurityHeaders::apply(formatter: $responseFormatter);
+        return SecurityHeaders::apply(responseFormatter: $responseFormatter);
     }
 
     public static function generateSignedUrl(string $path, DateInterval $dateInterval) : string
     {
-        return SignedUrlGenerator::generate(path: $path, ttl: $dateInterval);
+        return SignedUrlGenerator::generate(path: $path, dateInterval: $dateInterval);
     }
 
     public static function verifySignedUrl(string $url): bool
@@ -83,14 +89,24 @@ final class Security
 
     public static function generateToken(int $length = 32): string
     {
-        return bin2hex(random_bytes(length: intdiv(num1: $length, num2: 2)));
+        $length = max(2, $length);
+        /** @var int<1, max> $bytes */
+        $bytes = intdiv(num1: $length, num2: 2);
+
+        return bin2hex(random_bytes(length: $bytes));
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public static function audit(string $event, array $context = []): void
     {
         self::auditLog()->record(event: $event, context: $context);
     }
 
+    /**
+     * @return list<array{event:string,context:array<string,mixed>,recorded_at:string}>
+     */
     public static function auditEvents(): array
     {
         return self::auditLog()->all();
@@ -103,24 +119,5 @@ final class Security
         }
 
         return self::$securityAuditLog;
-    }
-}
-
-final class ResponseFormatter
-{
-    /** @var array<string, string> */
-    private array $headers = [];
-
-    public function withHeader(string $name, string $value): self
-    {
-        $clone = clone $this;
-        $clone->headers[$name] = $value;
-
-        return $clone;
-    }
-
-    public function headers(): array
-    {
-        return $this->headers;
     }
 }

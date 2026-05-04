@@ -6,6 +6,7 @@ namespace Avax\Components\HTTP\System\Capabilities\Headers;
 
 final class ResponseHeaders
 {
+    /** @var array<string, list<string>> */
     private array $headers = [];
 
     public function set(string $name, string $value) : self
@@ -22,6 +23,9 @@ final class ResponseHeaders
         return $this;
     }
 
+    /**
+     * @return list<string>|null
+     */
     public function get(string $name) : ?array
     {
         return $this->headers[$name] ?? null;
@@ -32,6 +36,9 @@ final class ResponseHeaders
         return isset($this->headers[$name]);
     }
 
+    /**
+     * @return array<string, list<string>>
+     */
     public function all() : array
     {
         return $this->headers;

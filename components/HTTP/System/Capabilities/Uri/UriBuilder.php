@@ -20,6 +20,7 @@ final class UriBuilder implements Stringable
 
     private string $path = '';
 
+    /** @var array<int|string, mixed> */
     private array $queryParams = [];
 
     private string $fragment = '';
@@ -100,6 +101,9 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
+    /**
+     * @param array<int|string, mixed> $params
+     */
     public function withQueryParams(array $params) : self
     {
         $clone = clone $this;

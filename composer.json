@@ -14,7 +14,8 @@
     "php": ">=8.5",
     "eftec/bladeone": "^4.16",
     "erusev/parsedown": "^1.7",
-    "firebase/php-jwt": "^6.10"
+    "firebase/php-jwt": "^6.10",
+    "guzzlehttp/psr7": "^2.9"
   },
   "require-dev": {
     "phpstan/phpstan": "^2.1",

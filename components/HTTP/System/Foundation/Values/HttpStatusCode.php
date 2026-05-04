@@ -8,6 +8,12 @@ use ValueError;
 
 enum HttpStatusCode: int
 {
+    // 1xx Informational
+    case CONTINUE            = 100;
+    case SWITCHING_PROTOCOLS = 101;
+    case PROCESSING          = 102;
+    case EARLY_HINTS         = 103;
+
     // 2xx Success
     case OK         = 200;
     case CREATED    = 201;
@@ -82,7 +88,7 @@ enum HttpStatusCode: int
      */
     public function isInformational(): bool
     {
-        return $this->value >= 100 && $this->value < 200;
+        return $this->value >= 100 && $this->value < 200; // @phpstan-ignore-line
     }
 
     /**
@@ -90,7 +96,7 @@ enum HttpStatusCode: int
      */
     public function isSuccess(): bool
     {
-        return $this->value >= 200 && $this->value < 300;
+        return $this->value >= 200 && $this->value < 300; // @phpstan-ignore-line
     }
 
     /**
@@ -106,7 +112,7 @@ enum HttpStatusCode: int
      */
     public function isRedirect(): bool
     {
-        return $this->value >= 300 && $this->value < 400;
+        return $this->value >= 300 && $this->value < 400; // @phpstan-ignore-line
     }
 
     /**
@@ -126,7 +132,7 @@ enum HttpStatusCode: int
      */
     public function isClientError(): bool
     {
-        return $this->value >= 400 && $this->value < 500;
+        return $this->value >= 400 && $this->value < 500; // @phpstan-ignore-line
     }
 
     /**
@@ -134,7 +140,7 @@ enum HttpStatusCode: int
      */
     public function isServerError(): bool
     {
-        return $this->value >= 500 && $this->value < 600;
+        return $this->value >= 500 && $this->value < 600; // @phpstan-ignore-line
     }
 
     /**
@@ -143,6 +149,12 @@ enum HttpStatusCode: int
     public function getReasonPhrase(): string
     {
         return match ($this) {
+            // 1xx
+            self::CONTINUE            => 'Continue',
+            self::SWITCHING_PROTOCOLS => 'Switching Protocols',
+            self::PROCESSING          => 'Processing',
+            self::EARLY_HINTS         => 'Early Hints',
+
             // 2xx
             self::OK         => 'OK',
             self::CREATED    => 'Created',

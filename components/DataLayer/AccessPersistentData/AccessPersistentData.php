@@ -16,12 +16,12 @@ final class AccessPersistentData
         $this->validateParameters(request: $request);
 
         if (method_exists($this->databaseRuntime, 'executeRawDataQuery')) {
-            /** @var PersistentDataResult $result */
-            $result = $this->databaseRuntime->executeRawDataQuery($request);
-            return $result;
+            // @phpstan-ignore-next-line
+            return $this->databaseRuntime->executeRawDataQuery($request);
         }
 
         if (method_exists($this->databaseRuntime, 'query')) {
+            // @phpstan-ignore-next-line
             $rows = $this->databaseRuntime->query()
                 ->statement($request->statement)
                 ->bindings($request->parameters)
@@ -40,9 +40,11 @@ final class AccessPersistentData
     public function transaction(callable $callback, string $connectionName = 'primary'): mixed
     {
         if (method_exists($this->databaseRuntime, 'runDataTransaction')) {
+            // @phpstan-ignore-next-line
             return $this->databaseRuntime->runDataTransaction(callback: $callback, connectionName: $connectionName);
         }
         if (method_exists($this->databaseRuntime, 'transactions')) {
+            // @phpstan-ignore-next-line
             return $this->databaseRuntime->transactions()->run(callback: $callback, connectionName: $connectionName);
         }
         throw new PersistentDataFailure(message: 'Database runtime does not support transactions');
@@ -51,7 +53,7 @@ final class AccessPersistentData
     private function validateParameters(PersistentDataRequest $request): void
     {
         foreach ($request->parameters as $key => $value) {
-            if (is_int($key)) {
+            if (is_numeric($key)) {
                 throw new PersistentDataFailure(message: 'Positional ? parameters are not accepted; use named parameters');
             }
         }

@@ -9,6 +9,9 @@ final class SecurityAuditLog
     /** @var list<array{event:string,context:array<string,mixed>,recorded_at:string}> */
     private array $events = [];
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function record(string $event, array $context = []): void
     {
         $this->events[] = [
@@ -18,6 +21,11 @@ final class SecurityAuditLog
         ];
     }
 
+    /**
+     * @param array<string, mixed> $context
+     *
+     * @return array<string, mixed>
+     */
     private function redact(array $context): array
     {
         foreach (['password', 'token', 'secret'] as $key) {
@@ -29,6 +37,9 @@ final class SecurityAuditLog
         return $context;
     }
 
+    /**
+     * @return list<array{event:string,context:array<string,mixed>,recorded_at:string}>
+     */
     public function all(): array
     {
         return $this->events;

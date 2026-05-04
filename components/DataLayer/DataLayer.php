@@ -2,16 +2,16 @@
 declare(strict_types=1);
 namespace Avax\Components\DataLayer;
 
-use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
-use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork;
-use Avax\Components\Persistence\System\Configuration\PersistenceBuilder;
+use Avax\Components\DataLayer\AccessPersistentData\AccessPersistentData;
+use Avax\Components\DataLayer\CommitDataChanges\CommitDataChanges;
+use Avax\Components\DataLayer\ConfigureDataLayer\DataLayerConfig;
+use Avax\Components\DataLayer\ConfigureDataLayer\RegisterDataLayerRuntime;
 
 final class DataLayer
 {
     private AccessPersistentData $access;
     private CommitDataChanges $commit;
     private DataLayerConfig $config;
-
     private function __construct(AccessPersistentData $access, CommitDataChanges $commit, DataLayerConfig $config)
     {
         $this->access = $access;

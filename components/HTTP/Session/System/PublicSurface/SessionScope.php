@@ -16,6 +16,7 @@ final class SessionScope
 
     private string $id = '';
 
+    /** @var array<string, mixed> */
     private array $data = [];
 
     public function __construct(
@@ -59,6 +60,9 @@ final class SessionScope
         return $this->data[$key] ?? $default;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function all() : array
     {
         return $this->data;

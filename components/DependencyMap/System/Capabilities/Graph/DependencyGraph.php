@@ -9,6 +9,9 @@ final class DependencyGraph
     /** @var array<string, DependencyNode> */
     private array $nodes = [];
 
+    /**
+     * @param list<string> $dependsOn
+     */
     public function add(string $dependency, array $dependsOn = []): void
     {
         $this->nodes[$dependency] = new DependencyNode($dependency, $dependsOn);
@@ -24,7 +27,7 @@ final class DependencyGraph
      */
     public function dependsOn(string $dependency): array
     {
-        return $this->nodes[$dependency]?->dependsOn ?? [];
+        return ($this->nodes[$dependency] ?? null)?->dependsOn ?? [];
     }
 
     /**
@@ -39,13 +42,17 @@ final class DependencyGraph
             $visited = [];
 
             if ($this->findCycle($dependency, $path, $visited)) {
-                $cycles[] = $path;
+                $cycles[] = array_values($path);
             }
         }
 
         return $cycles;
     }
 
+    /**
+     * @param array<string, string> $path
+     * @param array<string, bool>   $visited
+     */
     private function findCycle(string $dependency, array &$path, array &$visited): bool
     {
         if (isset($visited[$dependency])) {

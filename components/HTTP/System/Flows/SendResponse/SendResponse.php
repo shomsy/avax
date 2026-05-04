@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Flows\SendResponse;
 
-use Avax\Components\HTTP\System\Capabilities\Body\StreamBody;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Components\HTTP\System\Capabilities\Body\StreamBody;
 
 final class SendResponse
 {
@@ -23,9 +23,6 @@ final class SendResponse
             }
         }
 
-        $body = $response->getBody();
-        if ($body instanceof StreamBody) {
-            echo $body->getContents();
-        }
+        echo (string) $response->getBody();
     }
 }

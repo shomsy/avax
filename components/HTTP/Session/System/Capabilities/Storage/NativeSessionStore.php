@@ -9,6 +9,9 @@ namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
  */
 final class NativeSessionStore implements SessionStoreInterface
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function read(string $id) : array
     {
         $this->ensureStarted();
@@ -16,6 +19,9 @@ final class NativeSessionStore implements SessionStoreInterface
         return $_SESSION ?? [];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function write(string $id, array $data) : bool
     {
         $this->ensureStarted();
@@ -32,7 +38,7 @@ final class NativeSessionStore implements SessionStoreInterface
             if (ini_get('session.use_cookies')) {
                 $params = session_get_cookie_params();
                 setcookie(
-                    session_name(),
+                    (string) session_name(),
                     '',
                     ['expires' => time() - 42000, 'path' => $params['path'], 'domain' => $params['domain'], 'secure' => $params['secure'], 'httponly' => $params['httponly']],
                 );

@@ -6,6 +6,7 @@ namespace Avax\Framework\System\Capabilities\ComponentRegistry;
 
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
+use Closure;
 
 final class ComponentRegistry
 {
@@ -19,6 +20,11 @@ final class ComponentRegistry
      */
     private array $providers = [];
 
+    /**
+     * @var array<string, mixed>
+     */
+    private array $instances = [];
+
     public function register(ComponentDefinition $definition): void
     {
         if ($this->has(name: $definition->name())) {
@@ -28,6 +34,24 @@ final class ComponentRegistry
         }
 
         $this->definitions[$definition->name()] = $definition;
+    }
+
+    public function single(string $name, Closure $factory) : void
+    {
+        if (! isset($this->instances[$name])) {
+            $this->instances[$name] = $factory($this);
+        }
+    }
+
+    public function get(string $name) : mixed
+    {
+        if (! isset($this->instances[$name])) {
+            throw new FrameworkMisconfigured(
+                message: sprintf('Component "%s" not found in registry.', $name),
+            );
+        }
+
+        return $this->instances[$name];
     }
 
     public function registerDefinition(string $name, ComponentDefinition $componentDefinition): void

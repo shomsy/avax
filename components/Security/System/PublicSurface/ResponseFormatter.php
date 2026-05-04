@@ -26,6 +26,9 @@ final class ResponseFormatter
         return $clone;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function headers(): array
     {
         return $this->headers;

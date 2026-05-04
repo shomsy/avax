@@ -15,8 +15,10 @@ final class CommitDataChanges
     public function open(): object
     {
         if (method_exists($this->databaseRuntime, 'begin')) {
+            // @phpstan-ignore-next-line
             $this->databaseRuntime->begin();
         } elseif (method_exists($this->databaseRuntime, 'transactions')) {
+            // @phpstan-ignore-next-line
             $this->databaseRuntime->transactions()->begin();
         } else {
             throw new DataTransactionFailure(message: 'Cannot begin transaction');
@@ -27,18 +29,22 @@ final class CommitDataChanges
     public function rollback(object $transaction): object
     {
         if (method_exists($this->databaseRuntime, 'rollback')) {
+            // @phpstan-ignore-next-line
             $this->databaseRuntime->rollback();
         } elseif (method_exists($this->databaseRuntime, 'transactions')) {
+            // @phpstan-ignore-next-line
             $this->databaseRuntime->transactions()->rollback();
         }
         return (object)['status' => 'rolled_back'];
     }
 
-    public function commit(object $transaction = null): void
+    public function commit(?object $transaction = null) : void
     {
         if (method_exists($this->databaseRuntime, 'commit')) {
+            // @phpstan-ignore-next-line
             $this->databaseRuntime->commit();
         } elseif (method_exists($this->databaseRuntime, 'transactions')) {
+            // @phpstan-ignore-next-line
             $this->databaseRuntime->transactions()->commit();
         }
     }

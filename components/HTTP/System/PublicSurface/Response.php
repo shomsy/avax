@@ -6,6 +6,9 @@ namespace Avax\Components\HTTP\System\PublicSurface;
 
 final readonly class Response
 {
+    /**
+     * @param array<string, string> $headers
+     */
     public function __construct(
         private int $statusCode = 200,
         private array $headers = [],
@@ -17,6 +20,9 @@ final readonly class Response
         return $this->statusCode;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function headers() : array
     {
         return $this->headers;

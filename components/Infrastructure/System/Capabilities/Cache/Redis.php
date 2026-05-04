@@ -38,7 +38,7 @@ final class Redis implements Driver
 
     public function set(string $key, mixed $value, ?int $ttl = null): bool
     {
-        return $this->ensureConnected()->set($key, $value, $ttl);
+        return $this->ensureConnected()->set($key, $value, $ttl ?? 0);
     }
 
     public function get(string $key): mixed
@@ -51,11 +51,17 @@ final class Redis implements Driver
         return (int) $this->ensureConnected()->del($key);
     }
 
+    /**
+     * @param array<string, mixed> $dictionary
+     */
     public function hMSet(string $key, array $dictionary): bool
     {
         return $this->ensureConnected()->hMSet($key, $dictionary);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function hGetAll(string $key): array
     {
         return $this->ensureConnected()->hGetAll($key);
@@ -76,6 +82,9 @@ final class Redis implements Driver
         return (int) $this->ensureConnected()->sRem($key, $value);
     }
 
+    /**
+     * @return list<string>
+     */
     public function sMembers(string $key): array
     {
         return $this->ensureConnected()->sMembers($key);

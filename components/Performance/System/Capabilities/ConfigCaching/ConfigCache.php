@@ -8,6 +8,9 @@ final readonly class ConfigCache
 {
     public function __construct(private string $path) {}
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function write(array $config): void
     {
         $directory = dirname(path: $this->path);
@@ -22,6 +25,9 @@ final readonly class ConfigCache
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(): array
     {
         if (! is_file(filename: $this->path)) {

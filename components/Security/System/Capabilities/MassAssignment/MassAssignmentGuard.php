@@ -9,7 +9,10 @@ use InvalidArgumentException;
 final readonly class MassAssignmentGuard
 {
     /**
+     * @param array<string, mixed> $input
      * @param list<string> $fillable
+     *
+     * @return array<string, mixed>
      */
     public function onlyFillable(array $input, array $fillable): array
     {

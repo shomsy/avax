@@ -7,14 +7,14 @@ namespace Avax\Components\HTTP\Router\System\PublicSurface;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
-use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 use Override;
 
-final readonly class Router implements RouterInterface
+final readonly class Router implements RouterInterface, RouterRuntimeInterface
 {
     private RouteCollection $routeCollection;
 
@@ -82,9 +82,13 @@ final readonly class Router implements RouterInterface
         if (! $route instanceof RouteDefinition) {
             throw new RouterFailure('Route not found');
         }
-
         $a = $route->action();
-
         return is_callable($a) ? $a($request) : throw new RouterFailure('Invalid action');
+    }
+
+    #[Override]
+    public function resolve(RequestInterface $request) : ResponseInterface
+    {
+        return $this->dispatch(request: $request);
     }
 }

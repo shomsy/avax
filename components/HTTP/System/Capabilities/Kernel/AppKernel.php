@@ -31,11 +31,13 @@ use Stringable;
  */
 final readonly class AppKernel implements HttpInterface, Kernel
 {
+    /** @var list<MiddlewareInterface> */
     private array $middlewareStack;
 
     public function __construct(
         private RouterRuntimeInterface $routerRuntime,
         private ResponseFactory $responseFactory,
+        /** @var list<MiddlewareInterface> */
         private array $globalMiddleware = [],
     ) {
         $this->middlewareStack = $this->globalMiddleware === []
@@ -43,6 +45,9 @@ final readonly class AppKernel implements HttpInterface, Kernel
             : $this->globalMiddleware;
     }
 
+    /**
+     * @return list<MiddlewareInterface>
+     */
     private function createDefaultMiddlewareStack(): array
     {
         $middleware = [];
@@ -96,12 +101,12 @@ final readonly class AppKernel implements HttpInterface, Kernel
         };
     }
 
-    private function createSessionMiddleware(): MiddlewareInterface
+    private function createSessionMiddleware() : SessionLifecycleMiddleware
     {
         return new SessionLifecycleMiddleware(new NullSession());
     }
 
-    private function createRequestLogger(): MiddlewareInterface
+    private function createRequestLogger() : RequestLoggerMiddleware
     {
         return new RequestLoggerMiddleware(
             new class () implements LoggerInterface {
@@ -153,7 +158,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
         );
     }
 
-    private function createRateLimiter(): MiddlewareInterface
+    private function createRateLimiter() : RateLimiterMiddleware
     {
         return new RateLimiterMiddleware(
             new class () implements RateLimiterInterface {
@@ -192,6 +197,9 @@ final readonly class AppKernel implements HttpInterface, Kernel
         );
     }
 
+    /**
+     * @return array<string, int>
+     */
     public static function getMiddlewarePriorityHints(): array
     {
         return MiddlewareRegistry::getPriorityHints();

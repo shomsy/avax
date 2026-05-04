@@ -51,8 +51,9 @@ final class Session implements SessionInterface
                 $this->createNewRecord();
             } else {
                 $this->touch();
-                $this->sessionAudit?->record('session.started', ['id' => $this->sessionRecord->sessionId]);
-                $this->sessionEventBus?->dispatch('session.started', ['id' => $this->sessionRecord->sessionId]);
+                $id = $this->sessionRecord?->sessionId ?? '';
+                $this->sessionAudit?->record('session.started', ['id' => $id]);
+                $this->sessionEventBus?->dispatch('session.started', ['id' => $id]);
             }
         } else {
             $this->createNewRecord();
@@ -91,9 +92,13 @@ final class Session implements SessionInterface
 
         $now = new DateTimeImmutable();
         $this->sessionRecord = new SessionRecord(
-            ...((array) $this->sessionRecord),
-            lastSeenAt   : $now,
-            idleExpiresAt: $now->modify('+30 minutes'),
+            sessionId        : $this->sessionRecord->sessionId,
+            createdAt        : $this->sessionRecord->createdAt,
+            lastSeenAt       : $now,
+            idleExpiresAt    : $now->modify('+30 minutes'),
+            absoluteExpiresAt: $this->sessionRecord->absoluteExpiresAt,
+            ipCreated        : $this->sessionRecord->ipCreated,
+            userAgentCreated : $this->sessionRecord->userAgentCreated,
         );
         $this->saveRecord();
     }

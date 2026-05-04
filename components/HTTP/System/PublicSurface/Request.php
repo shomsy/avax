@@ -6,6 +6,12 @@ namespace Avax\Components\HTTP\System\PublicSurface;
 
 final readonly class Request
 {
+    /**
+     * @param array<string, mixed> $server
+     * @param array<string, mixed> $get
+     * @param array<string, mixed> $post
+     * @param array<string, mixed> $files
+     */
     public function __construct(
         public array $server,
         public array $get,

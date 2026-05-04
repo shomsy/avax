@@ -122,6 +122,18 @@ If any item is RED, V2/V3 implementation is forbidden.
 
 ---
 
+## Current Execution Lock
+
+V1 Kernel Green: NOT PROVEN
+
+V2 Implementation: LOCKED
+
+V3 Implementation: LOCKED
+
+This status is derived from CURRENT_TRUTH.md and the latest truth-reconciliation report.
+
+---
+
 ## 4. Stage Discipline
 
 Each stage must have:

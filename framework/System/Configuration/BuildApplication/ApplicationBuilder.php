@@ -9,6 +9,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Flows\HandleIncomingHttp\ConfiguredRoutesHttpHandler;
+use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\Foundation\Time\Clock;
@@ -35,6 +36,16 @@ final class ApplicationBuilder
         private Clock $clock = new SystemClock(),
         private string $runtimeName = 'avax',
     ) {
+        $this->registerConsoleCommand(
+            name   : 'runtime:doctor',
+            command: static function (array $args) : string {
+                $workerMode = in_array('--worker', $args, true);
+                $runDoctor  = new RunDoctor();
+                $exitCode   = $runDoctor->handle(workerMode: $workerMode);
+
+                return $exitCode === 0 ? "Runtime doctor passed\n" : "Runtime doctor failed\n";
+            },
+        );
     }
 
     public function projectPath(): ProjectPath

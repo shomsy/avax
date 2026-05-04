@@ -42,14 +42,7 @@ final class Saga
     /**
      * @var array<string, mixed>
      */
-    private array $stepResults = [];
-
-    /**
-     * @var array<int, string>
-     */
-    private array $completedSteps = [];
-
-    private ?string $failureReason = null;
+    protected array $stepResults = [];
 
     private SagaStoreInterface $sagaStore;
 
@@ -118,29 +111,25 @@ final class Saga
     public function fail(string $reason): SagaResult
     {
         $this->sagaState = SagaState::Failed;
-        $this->failureReason = $reason;
         $this->sagaStore->save($this);
 
         return new SagaResult(
             success       : false,
             sagaId        : $this->id,
             data          : $this->context,
-            completedSteps: $this->completedSteps,
+            completedSteps: array_keys($this->stepResults),
             stepResults   : $this->stepResults,
             failureReason : $reason,
         );
     }
 
-    /**
-     * Run compensation for all completed steps in reverse order.
-     */
     public function compensate(): SagaResult
     {
         $this->sagaState = SagaState::Compensating;
 
         $compensationResult = $this->compensationExecutor->execute(
             steps         : $this->steps,
-            completedSteps: $this->completedSteps,
+            completedSteps: array_keys($this->stepResults),
             context       : $this->context,
         );
 
@@ -148,7 +137,6 @@ final class Saga
             $this->sagaState = SagaState::Compensated;
         } else {
             $this->sagaState     = SagaState::Failed;
-            $this->failureReason = $compensationResult->failureReason;
         }
 
         $this->sagaStore->save($this);
@@ -157,7 +145,7 @@ final class Saga
             success       : $compensationResult->success,
             sagaId        : $this->id,
             data          : $this->context,
-            completedSteps: $this->completedSteps,
+            completedSteps: array_keys($this->stepResults),
             stepResults   : $this->stepResults,
             failureReason : $compensationResult->failureReason,
         );
@@ -185,7 +173,6 @@ final class Saga
                 );
 
                 $this->stepResults[$step->name] = $result;
-                $this->completedSteps[]         = $step->name;
 
                 // Update context with step result for next steps
                 if (is_array($result)) {

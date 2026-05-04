@@ -1,5 +1,37 @@
 {
+  "name": "avax/avax",
+  "description": "Capability-first, runtime-agnostic PHP framework for building, testing, and evolving system-design-grade application architectures",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "framework",
+    "php",
+    "system-design",
+    "architecture",
+    "enterprise"
+  ],
+  "require": {
+    "php": ">=8.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5",
+    "phpstan/phpstan": "^1.10",
+    "vimeo/psalm": "^5.0"
+  },
     "autoload": {
-        "files": []
+      "psr-4": {
+        "Avax\\Framework\\": "framework/",
+        "Avax\\Components\\": "components/"
+      }
+    },
+  "autoload-dev": {
+    "psr-4": {
+      "Avax\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true
     }
 }

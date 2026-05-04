@@ -31,6 +31,7 @@ $allowedFiles = [
     'components/Identity/Auth/System/Capabilities/Identity/Sessions/Runtime/NativeSessionStore.php',
     'components/Operations/Logging/System/Flows/WriteErrorLog/WriteErrorLog.php',
     'components/Presentation/View/System/PublicSurface/shortcuts.php',
+    'framework/System/Capabilities/RuntimeSafety/StatelessBoundary/Capabilities/Enforcement/StatelessGuard.php',
     'framework/System/Capabilities/RuntimeSafety/StatelessBoundary/System/Capabilities/Enforcement/StatelessGuard.php',
     'framework/System/Flows/HandleRuntimeFailure/RenderRuntimeFailure.php',
     'framework/System/Flows/HandleRuntimeFailure/ReportRuntimeFailure.php',

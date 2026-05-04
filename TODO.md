@@ -1,96 +1,48 @@
-# AvaX TODO
+# TODO
 
-Status: active execution queue  
-Purpose: tell agents what to do next without letting them jump across the master roadmap.  
-Mandatory reading: `EXECUTION.md`
+Current Source of Truth:
 
----
+- CURRENT_TRUTH.md
+- Code-Review-And-ToDo/EXECUTION.md
+- Code-Review-And-ToDo/truth-reconciliation/truth-reconciliation-report.md
 
-## 0. Mandatory Rule
+## Active Stage
 
-Before doing any work, read:
+Stage: Resolve V1 Blockers
+Status: YELLOW (major blockers fixed, static analysis and refs remain)
+Goal: Achieve V1 Kernel Green
 
-```text
-1. CURRENT_TRUTH.md
-2. EXECUTION.md
-3. TODO.md
-4. .agents/how-to/*.md
-```
+## Current Tasks
 
-All software design, refactoring, implementation, testing, documentation, and review work must comply with every
-applicable `how-to-*.md` document located in:
+[ ] Fix PHPStan static analysis errors
+[ ] Fix broken internal references
+[ ] Achieve static analysis GREEN
+[ ] Prove V1 Kernel Green
+[ ] Unlock V2 implementation
 
-```text
-.agents/how-to/
-```
+## Locked
 
-Do not cherry-pick rules.
+### V2
 
-Do not ignore naming, architecture, testing, PublicSurface, component design, documentation, or review rules.
+Locked until:
 
-If a rule conflicts with the active stage, stop and report the conflict.
+- V1 Kernel Green proven
 
----
+### V3
 
-## 1. Current Active Stage
+Locked until:
 
-```text
-Stage 00: Current Truth Lock
-```
+- V1 Kernel Green proven
+- V2 platform baseline at least YELLOW/GREEN
+- labs/SystemDesignKit MVP approved
 
-Only Stage 00 is active.
+## Forbidden
 
-Everything else is read-only context.
-
-Do not implement V2 or V3 features.
-
-Do not move files.
-
-Do not repair namespaces.
-
-Do not repair tests.
-
-Do not add new components.
-
-Start by reading `EXECUTION.md` and executing Stage 00 exactly.
-
----
-
-## 2. Stage 00 TODO: Current Truth Lock
-
-Goal:
-
-```text
-Establish one trusted repository truth before any code movement, taxonomy repair, namespace repair, test repair, or feature work.
-```
-
-Tasks:
-
-```text
-[ ] Read CURRENT_TRUTH.md if it exists.
-[ ] Read AGENTS.md if it exists.
-[ ] Read EXECUTION.md.
-[ ] Read this TODO.md.
-[ ] Discover every .agents/how-to/*.md document.
-[ ] Check whether current reports/plans disagree.
-[ ] Update or create CURRENT_TRUTH.md with current date and status.
-[ ] Record architecture status.
-[ ] Record taxonomy status.
-[ ] Record autoload status.
-[ ] Record namespace integrity status.
-[ ] Record test status.
-[ ] Record static analysis status.
-[ ] Record runtime safety status.
-[ ] Record public surface integrity status.
-[ ] Record production readiness status.
-[ ] List blockers.
-[ ] List forbidden work while RED.
-[ ] List next 5 allowed actions.
-[ ] Ensure CURRENT_TRUTH.md points to EXECUTION.md.
-[ ] Ensure TODO.md points to EXECUTION.md.
-[ ] Ensure AGENTS.md, if present, tells agents to read CURRENT_TRUTH.md first.
-[ ] Produce Stage 00 report.
-```
+[ ] no production code changes outside active stage
+[ ] no V2 implementation while locked
+[ ] no V3 implementation while locked
+[ ] no placeholders
+[ ] no broad refactor
 
 Allowed files:
 

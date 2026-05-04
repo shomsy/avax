@@ -236,7 +236,7 @@ final readonly class PreCommit
      *
      * @param class-string $checkClass
      *
-     * @return CheckPhpSyntax|CheckNamingConventions|CheckHowToRules|CheckForbiddenWords|CheckFileStructure|DetectLegacyCode|DetectDeprecatedCode|DetectLegacyAliases|DetectTodoComments|DetectToolingScripts|CheckPublicSurfaceRules|DetectArchitectureViolations|RunExternalToolingScripts
+     * @return object
      */
     private function createCheck(string $checkClass): object
     {
@@ -281,6 +281,7 @@ final readonly class PreCommit
             }
 
             try {
+                /** @var CheckInterface $check */
                 $check = $this->createCheck($checkClass);
                 $issues = $check->run($context);
 

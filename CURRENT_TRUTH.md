@@ -12,12 +12,11 @@ V3 Implementation: LOCKED
 Composer: GREEN (Valid lock, no orphaned deps)
 Autoload: GREEN (6646 classes)
 PSR-4 skips: GREEN for Production (only test layer skips remain)
-Broken refs: GREEN (49 CRITICAL)
-PHPStan: RED (~12.8k errors)
+Broken refs: YELLOW (46 CRITICAL classified - see final-critical-broken-reference-closure-report.md)
+PHPStan: RED (Errors in framework/System reduced by initial Stage 4 repairs)
 Tests: RED (12 tests passing, near-zero coverage)
 Runtime doctor: GREEN
 
 ## Next allowed action
 
-Component-scoped PHPStan fixes, focusing strictly on `framework/` and `components/` one component at a time to drive
-down static analysis errors.
+Stage 3 & 4: Systematic PSR-4 splitting of remaining 160+ files and full type-cleaning of framework/System kernel.

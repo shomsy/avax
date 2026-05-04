@@ -25,6 +25,12 @@ final class RequestScope implements RequestScopeInterface
         return $this->open;
     }
 
+    public function open() : void
+    {
+        $this->open = true;
+        $this->values = [];
+    }
+
     public function has(string $key) : bool
     {
         $this->guardOpen();

@@ -11,6 +11,7 @@ final readonly class RegisteredHttpRoutes
 {
     /**
      * @param array<string, list<RouteDefinition>> $routesByMethod
+     * @param Closure|array<mixed>|string|null $fallback
      */
     public function __construct(
         private array $routesByMethod,
@@ -30,6 +31,9 @@ final readonly class RegisteredHttpRoutes
         return $this->fallback !== null;
     }
 
+    /**
+     * @return Closure|array<mixed>|string|null
+     */
     public function fallback() : Closure|array|string|null
     {
         return $this->fallback;

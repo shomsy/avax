@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Resilience\System\Capabilities\Idempotency;
 
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Idempotency\IdempotencyStore;
 use Closure;
 
 final readonly class IdempotencyMiddleware
@@ -23,7 +22,7 @@ final readonly class IdempotencyMiddleware
 
         $response = $next($request);
 
-        Idempotency::record($key, (array)$response);
+        Idempotency::record($key, (array) $response);
 
         return $response;
     }

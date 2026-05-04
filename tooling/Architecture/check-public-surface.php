@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 /**
  * Check for business logic in PublicSurface.
  * Ensures classes in System/PublicSurface are thin and delegate behavior.

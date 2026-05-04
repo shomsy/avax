@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 /**
  * Check for forbidden folders (dumping grounds).
  * Ensures no Core/, Shared/, Helpers/ folders exist, and DataLayer/DataFoundation are empty of real code.

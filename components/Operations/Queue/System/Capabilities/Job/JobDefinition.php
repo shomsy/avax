@@ -126,35 +126,3 @@ final readonly class JobDefinition
     }
 }
 
-abstract class JobHandler
-{
-    abstract public function handle(array $payload): mixed;
-
-    public function failed(Throwable $throwable, array $payload) : void
-    {
-    }
-}
-
-final class JobRegistry
-{
-    private array $handlers = [];
-
-    public function register(string $name, callable $handler): void
-    {
-        $this->handlers[$name] = $handler;
-    }
-
-    public function resolve(string $name): callable
-    {
-        if (! isset($this->handlers[$name])) {
-            throw new RuntimeException('No handler registered for job: ' . $name);
-        }
-
-        return $this->handlers[$name];
-    }
-
-    public function has(string $name): bool
-    {
-        return isset($this->handlers[$name]);
-    }
-}

@@ -7,11 +7,9 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Resum
 final readonly class SagaRecoveryResult
 {
     public function __construct(
-        public string             $sagaId,
-        public bool               $recoverable,
+        public string $sagaId,
+        public bool $recoverable,
         public SagaRecoveryAction $action,
-        public string             $reason,
-    )
-    {
-    }
+        public string $reason,
+    ) {}
 }

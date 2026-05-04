@@ -7,16 +7,16 @@ declare(strict_types=1);
 namespace Avax\Components\Presentation\View;
 
 use Avax\Components\HTTP\Context\System\PublicSurface\HttpContextInterface;
-use Jenssegers\Blade\Blade;
+use eftec\bladeone\BladeOne;
 use Throwable;
 
-class BladeTemplateEngine extends Blade
+class BladeTemplateEngine extends BladeOne
 {
     public string $baseAssetPath;
 
     public function __construct(string $viewsPath, string $cachePath)
     {
-        parent::__construct(viewPaths: $viewsPath, cachePath: $cachePath);
+        parent::__construct(templatePath: $viewsPath, compiledPath: $cachePath);
         $this->initializeBaseAssetPath();
         $this->configureCustomDirectives();
     }
@@ -44,7 +44,7 @@ class BladeTemplateEngine extends Blade
     private function configureCustomDirectives(): void
     {
         // Asset directive
-        $this->compiler()->directive(name: 'asset', handler: fn (string $expression) : string => sprintf(
+        $this->directive(name: 'asset', handler: fn (string $expression) : string => sprintf(
             "<?php echo preg_match('/^public/', %s) ? '%s/' . ltrim(%s, '\"\\'/') : '%s/' . ltrim(%s, '\"\\'/'); ?>",
             $expression,
             $this->getBaseUrl(),
@@ -54,34 +54,34 @@ class BladeTemplateEngine extends Blade
         ));
 
         // Datetime directive
-        $this->compiler()->directive(name: 'datetime', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'datetime', handler: static fn (string $expression) : string => sprintf(
             "<?php echo with(%s)->format('Y-m-d H:i:s'); ?>",
             $expression,
         ));
 
         // CSRF directive
-        $this->compiler()->directive(name: 'csrf', handler: static fn (): string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
+        $this->directive(name: 'csrf', handler: static fn (): string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
 
         // Route directive
-        $this->compiler()->directive(name: 'route', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'route', handler: static fn (string $expression) : string => sprintf(
             '<?php echo route(%s); ?>',
             $expression,
         ));
 
         // Checked directive
-        $this->compiler()->directive(name: 'checked', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'checked', handler: static fn (string $expression) : string => sprintf(
             "<?php echo %s ? 'checked' : ''; ?>",
             $expression,
         ));
 
         // Selected directive
-        $this->compiler()->directive(name: 'selected', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'selected', handler: static fn (string $expression) : string => sprintf(
             "<?php echo %s ? 'selected' : ''; ?>",
             $expression,
         ));
 
         // Dump directive
-        $this->compiler()->directive(
+        $this->directive(
             name   : 'dump',
             handler: static fn (string $expression) : string => sprintf(
                 '<?php var_dump(%s); ?>',
@@ -90,43 +90,43 @@ class BladeTemplateEngine extends Blade
         );
 
         // Die and dump directive
-        $this->compiler()->directive(name: 'dd', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'dd', handler: static fn (string $expression) : string => sprintf(
             '<?php die(var_dump(%s)); ?>',
             $expression,
         ));
 
         // Markdown directive
-        $this->compiler()->directive(name: 'markdown', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'markdown', handler: static fn (string $expression) : string => sprintf(
             '<?php echo (new Parsedown())->text(%s); ?>',
             $expression,
         ));
 
         // AuthFacadeService directives
-        $this->compiler()->directive(name: 'auth', handler: static fn (): string => '<?php if (auth()->check()): ?>');
+        $this->directive(name: 'auth', handler: static fn (): string => '<?php if (auth()->check()): ?>');
 
-        $this->compiler()->directive(name: 'endauth', handler: static fn (): string => '<?php endif; ?>');
+        $this->directive(name: 'endauth', handler: static fn (): string => '<?php endif; ?>');
 
-        $this->compiler()->directive(name: 'guest', handler: static fn (): string => '<?php if (!auth()->check()): ?>');
+        $this->directive(name: 'guest', handler: static fn (): string => '<?php if (!auth()->check()): ?>');
 
-        $this->compiler()->directive(name: 'endguest', handler: static fn (): string => '<?php endif; ?>');
+        $this->directive(name: 'endguest', handler: static fn (): string => '<?php endif; ?>');
 
         // Environment directive
-        $this->compiler()->directive(name: 'ifenv', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'ifenv', handler: static fn (string $expression) : string => sprintf(
             "<?php if (config('cashback.env') === %s): ?>",
             $expression,
         ));
 
-        $this->compiler()->directive(name: 'endifenv', handler: static fn (): string => '<?php endif; ?>');
+        $this->directive(name: 'endifenv', handler: static fn (): string => '<?php endif; ?>');
 
         // IncludeWhen directive
-        $this->compiler()->directive(name: 'includeWhen', handler: static fn ($expression): string => sprintf(
+        $this->directive(name: 'includeWhen', handler: static fn ($expression): string => sprintf(
             "<?php if (%s) { include '%s'; } ?>",
             $expression[0],
             $expression[1],
         ));
 
         // HTTP method directive
-        $this->compiler()->directive(name: 'method', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'method', handler: static fn (string $expression) : string => sprintf(
             "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . %s . '\">'; ?>",
             $expression,
         ));
@@ -135,7 +135,7 @@ class BladeTemplateEngine extends Blade
     public function toHtml(string $view, array $data = []): string
     {
         try {
-            return $this->render(view: $view, data: $data);
+            return $this->run(view: $view, variables: $data);
         } catch (Throwable $throwable) {
             logger(message: 'View rendering to html failed.', context: ['view' => $view, 'exception' => $throwable]);
 

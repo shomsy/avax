@@ -27,7 +27,7 @@ final readonly class ReadIncomingHttpRequest
         $parsedBody   = $this->parseBody(headers: $runtimeRequest->headers(), body: $body);
 
         return new ServerRequest(
-            serverParams   : $this->buildServerParams(uri: $uri, request: $runtimeRequest),
+            serverParams   : $this->buildServerParams(uri: $uri, runtimeRequest: $runtimeRequest),
             queryParams    : $queryParams,
             parsedBody     : $parsedBody,
             method         : $runtimeRequest->method(),
@@ -52,6 +52,7 @@ final readonly class ReadIncomingHttpRequest
 
     /**
      * @param array<string, list<string>> $headers
+     * @return array<mixed>|null
      */
     private function parseBody(array $headers, string $body) : ?array
     {
@@ -77,7 +78,10 @@ final readonly class ReadIncomingHttpRequest
         return null;
     }
 
-    private function parseQueryParams(UriInterface $uri) : array
+    /**
+     * @return array<mixed>
+     */
+    private function parseQueryParams(Uri $uri) : array
     {
         $queryParams = [];
         parse_str(string: $uri->getQuery(), result: $queryParams);
@@ -100,10 +104,9 @@ final readonly class ReadIncomingHttpRequest
     }
 
     /**
-     * @param array<string, list<string>> $headers
      * @return array<string, mixed>
      */
-    private function buildServerParams(UriInterface $uri, RuntimeRequest $runtimeRequest) : array
+    private function buildServerParams(Uri $uri, RuntimeRequest $runtimeRequest) : array
     {
         $serverParams = [
             'REQUEST_METHOD' => $runtimeRequest->method(),

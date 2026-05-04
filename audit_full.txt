@@ -1,0 +1,990 @@
+PASS 1: Parsing 3119 files for definitions...
+  500 / 3119
+  1000 / 3119
+  1500 / 3119
+  2000 / 3119
+  2500 / 3119
+  3000 / 3119
+PASS 1 done. Defined: 3126
+PASS 2: Parsing 3119 files for references...
+  500 / 3119
+  1000 / 3119
+  1500 / 3119
+  2000 / 3119
+  2500 / 3119
+  3000 / 3119
+
+=== BROKEN REFERENCES AUDIT REPORT ===
+
+MISSING: ActiveConditionalGateway  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/ConditionalCompositionSmokeTest.php:44  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/ConditionalCompositionSmokeTest.php:77  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/ConditionalCompositionSmokeTest.php:119  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Cache\CompiledCache  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicCacheClassesAutoloadTest.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicCacheClassesAutoloadTest.php:24  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:78  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:98  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/Providers/RegisterCacheDependenciesTest.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/Providers/RegisterCacheDependenciesTest.php:81  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/Providers/RegisterCacheDependenciesTest.php:96  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:98  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:108  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:120  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:127  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:212  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:226  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/NoTimeFunctionInSystemTest.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/NoTimeFunctionInSystemTest.php:53  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Cache/Cache.php:86  (static-call)
+
+MISSING: Avax\Components\Application\Cache\System\Cache  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicCacheClassesAutoloadTest.php:9  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/PublicCacheClassesAutoloadTest.php:40  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheOperation  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Observability/ObserveCache/CacheTrace.php:9  (param-type)
+
+MISSING: Avax\Components\Application\Cache\tests\Unit\Cache\Providers\CacheNotConfigured  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:27  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:71  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Config\Architecture\DDD\AppPath  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Config/System/PublicSurface/shortcuts.php:9  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Config/System/PublicSurface/shortcuts.php:31  (static-call)
+  - /home/shomsy/projects/avax/components/Application/Config/functions.php:5  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Config/functions.php:33  (static-call)
+
+MISSING: Avax\Components\Application\Config\Service\Config  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Config/System/PublicSurface/shortcuts.php:10  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Config/System/PublicSurface/shortcuts.php:18  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Config/functions.php:6  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Config/functions.php:19  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Core\AppFactory  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:7  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:75  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:268  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:7  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:236  (static-call)
+
+MISSING: Avax\Components\Application\Container\Core\Capabilities\Binding\Binders\Binder  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/Configuration/RegisterFilesystem.php:7  (use-statement)
+
+MISSING: Avax\Components\Application\Container\Core\Capabilities\Binding\BindingRepository  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/Configuration/RegisterFilesystem.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/Configuration/RegisterFilesystem.php:16  (param-type)
+
+MISSING: Avax\Components\Application\Container\Core\Exceptions\FoundationContainerException  [MINOR]
+  - /home/shomsy/projects/avax/components/Presentation/View/TemplateEngine.php:14  (use-statement)
+
+MISSING: Avax\Components\Application\Container\Providers\Auth\AuthenticationBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:8  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:62  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:254  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:8  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:222  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\Auth\SecurityBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:9  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:63  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:255  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:9  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:223  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\Core\ConfigurationBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:10  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:59  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:251  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:10  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:219  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\Core\FilesystemBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:11  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:60  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:252  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:11  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:220  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\Core\LoggingBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:12  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:61  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:253  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:12  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:221  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\Database\RegisterDatabaseDependencies  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:13  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:64  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:256  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:13  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:224  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\HTTP\HTTPBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:14  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:65  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:257  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:14  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:225  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\HTTP\HttpClientBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:15  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:70  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:262  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:15  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:230  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\HTTP\MiddlewareBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:16  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:66  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:258  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:16  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:226  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\HTTP\RouterBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:17  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:67  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:259  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:17  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:227  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\HTTP\SessionBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:18  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:68  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:260  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:18  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:228  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\Providers\HTTP\ViewBaseRegisterDependency  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:19  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:69  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:261  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:19  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:229  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/System/ContainerInterface.php:14  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Container/System/ContainerInterface.php:281  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Container/System/Foundation/DIContainer.php:21  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Container/System/Foundation/DIContainer.php:493  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Container/System/ContextContainer.php:22  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Container/System/ContextContainer.php:408  (return-type)
+
+MISSING: Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\SharedLifetime  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:11  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:183  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:195  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:204  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Container\System\ContainerFacade  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/functions.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Container/functions.php:19  (static-call)
+
+MISSING: Avax\Components\Application\Container\System\Foundation\DIContainerInterface  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/functions.php:5  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Container/functions.php:13  (param-type)
+  - /home/shomsy/projects/avax/components/Application/Container/functions.php:13  (return-type)
+
+MISSING: Avax\Components\Application\Filesystem\System\PublicSurface\FilesystemInterfaceInterface  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/Configuration/RegisterFilesystem.php:12  (use-statement)
+
+MISSING: Avax\Components\Application\Text\Pattern  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Validation/System/Capabilities/Standard/Email/ValidateEmail.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Validation/System/Capabilities/Standard/Email/ValidateEmail.php:32  (static-call)
+
+MISSING: Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\DefaultValue  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:111  (class-const-fetch)
+
+MISSING: Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Optional  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:12  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:88  (class-const-fetch)
+
+MISSING: Avax\Components\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:12  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:34  (class-const-fetch)
+
+MISSING: Avax\Components\DataFoundation\Collection  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:26  (property-type)
+  - /home/shomsy/projects/avax/components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:63  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:81  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:137  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:164  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Config/Configurator/AppConfigurator.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Config/Configurator/AppConfigurator.php:25  (property-type)
+  - /home/shomsy/projects/avax/components/Application/Config/Configurator/AppConfigurator.php:65  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Config/Configurator/AppConfigurator.php:83  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Config/Configurator/AppConfigurator.php:138  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Config/Configurator/AppConfigurator.php:163  (return-type)
+
+MISSING: Avax\Components\DataStack\Data\Exceptions\InvalidFlowException  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Window/Window.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Window/Window.php:30  (static-call)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Window/Window.php:34  (static-call)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Batch/Batch.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Batch/Batch.php:30  (static-call)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Pipeline/Pipeline.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Pipeline/Pipeline.php:32  (static-call)
+
+MISSING: Avax\Components\DataStack\Data\Exceptions\InvalidValueException  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/Collections/Internal/Composites/RecordField.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/Collections/Internal/Composites/RecordField.php:19  (static-call)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/Collections/Internal/Values/Result/Success.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/Collections/Internal/Values/Result/Success.php:34  (static-call)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/Collections/Internal/Values/Result/Failure.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/Collections/Internal/Values/Result/Failure.php:28  (static-call)
+
+MISSING: Avax\Components\DataStack\Data\Internal\Iteration\NormalizedIterable  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Window/Window.php:9  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Window/Window.php:37  (static-call)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Batch/Batch.php:9  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Flows/Batch/Batch.php:35  (static-call)
+
+MISSING: Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Compatibility\LegacyAbstractDTO  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataShape/ReadConstructorDataFields.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataShape/ReadConstructorDataFields.php:35  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataShape/ReadConstructorDataFields.php:36  (class-const-fetch)
+
+MISSING: Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\DataTransferConfig  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:31  (property-type)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:33  (param-type)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:72  (static-call)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:179  (return-type)
+  - /home/shomsy/projects/avax/components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:181  (static-call)
+
+MISSING: Avax\Components\DataStack\Data\System\Capabilities\ObjectHandling\DTO\AbstractDTO  [MINOR]
+  - /home/shomsy/projects/avax/components/compat.php:26  (use-statement)
+  - /home/shomsy/projects/avax/components/compat.php:46  (class-const-fetch)
+
+MISSING: Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\BaseMigration  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:56  (instanceof)
+  - /home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:89  (return-type)
+  - /home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:93  (instanceof)
+
+MISSING: Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\System\Capabilities\Detection\NPlusOneDetector  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/QueryGovernance/QueryGovernance.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/QueryGovernance/QueryGovernance.php:31  (static-call)
+
+MISSING: Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\System\Capabilities\Detection\SlowQueryDetector  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/QueryGovernance/QueryGovernance.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/QueryGovernance/QueryGovernance.php:36  (static-call)
+
+MISSING: Avax\Components\Filesystem\System\Capabilities\Storage\StorageInterface  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:18  (property-type)
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:20  (param-type)
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:30  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:32  (instanceof)
+
+MISSING: Avax\Components\HTTP\Middleware\CorsMiddleware  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:13  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:31  (class-const-fetch)
+
+MISSING: Avax\Components\HTTP\Middleware\ExceptionHandlerMiddleware  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:14  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:24  (class-const-fetch)
+
+MISSING: Avax\Components\HTTP\Middleware\JsonResponseMiddleware  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:15  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:33  (class-const-fetch)
+
+MISSING: Avax\Components\HTTP\Middleware\SecurityHeadersMiddleware  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:18  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:25  (class-const-fetch)
+
+MISSING: Avax\Components\HTTP\Response\Response  [MINOR]
+  - /home/shomsy/projects/avax/components/Presentation/View/System/PublicSurface/shortcuts.php:9  (use-statement)
+  - /home/shomsy/projects/avax/components/Presentation/View/System/PublicSurface/shortcuts.php:25  (static-call)
+  - /home/shomsy/projects/avax/tests/fixtures/routes_with_null_callable.php:6  (use-statement)
+  - /home/shomsy/projects/avax/tests/fixtures/routes_with_null_callable.php:22  (static-call)
+
+MISSING: Avax\Components\HTTP\Router\RouterInterface  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/Framework/HandleIncomingHttpIntegrationTest.php:7  (use-statement)
+
+MISSING: Avax\Components\HTTP\Router\RouterRuntimeInterface  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:21  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:98  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:21  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:78  (class-const-fetch)
+
+MISSING: Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\DomainPatternCompiler  [MINOR]
+  - /home/shomsy/projects/avax/framework/System/Flows/HandleIncomingHttp/MatchHttpRoute.php:7  (use-statement)
+  - /home/shomsy/projects/avax/framework/System/Flows/HandleIncomingHttp/MatchHttpRoute.php:119  (static-call)
+  - /home/shomsy/projects/avax/framework/System/Flows/HandleIncomingHttp/MatchHttpRoute.php:121  (static-call)
+
+MISSING: Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Request\RouteRequestInjector  [MINOR]
+  - /home/shomsy/projects/avax/framework/System/Flows/HandleIncomingHttp/MatchHttpRoute.php:11  (use-statement)
+  - /home/shomsy/projects/avax/framework/System/Flows/HandleIncomingHttp/MatchHttpRoute.php:36  (static-call)
+
+MISSING: Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:15  (use-statement)
+
+MISSING: Avax\Components\Identity\Access\System\Capabilities\Policy\System\Capabilities\Rules\PolicyRule  [MINOR]
+  - /home/shomsy/projects/avax/components/Identity/Access/System/Capabilities/Policy/Engine/PolicyEvaluator.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Access/System/Capabilities/Policy/Engine/PolicyEvaluator.php:14  (param-type)
+  - /home/shomsy/projects/avax/components/Identity/Access/System/Capabilities/Policy/Capabilities/Engine/PolicyEvaluator.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Access/System/Capabilities/Policy/Capabilities/Engine/PolicyEvaluator.php:14  (param-type)
+  - /home/shomsy/projects/avax/components/Identity/Access/System/Capabilities/Policy/PublicSurface/Policy.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Access/System/Capabilities/Policy/PublicSurface/Policy.php:50  (param-type)
+  - /home/shomsy/projects/avax/components/Identity/Access/System/Capabilities/Policy/Policy.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Access/System/Capabilities/Policy/Policy.php:50  (param-type)
+
+MISSING: Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Tokens\AccessToken  [MINOR]
+  - /home/shomsy/projects/avax/components/Identity/Tokens/System/Capabilities/JwtAuth/Verification/TokenVerifier.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Tokens/System/Capabilities/JwtAuth/Verification/TokenVerifier.php:19  (return-type)
+  - /home/shomsy/projects/avax/components/Identity/Tokens/System/Capabilities/JwtAuth/Verification/TokenVerifier.php:23  (static-call)
+  - /home/shomsy/projects/avax/components/Identity/Tokens/System/Capabilities/JwtAuth/JwtAuth.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Tokens/System/Capabilities/JwtAuth/JwtAuth.php:29  (return-type)
+
+MISSING: Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\System\Capabilities\Kubernetes\GracefulStop  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/ApplicationWorkflow/System/Capabilities/Orchestration/Orchestration.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Operations/ApplicationWorkflow/System/Capabilities/Orchestration/Orchestration.php:40  (static-call)
+
+MISSING: Avax\Components\Operations\Events\System\Capabilities\EventDispatcherInterface  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/Events/System/Configuration/RegisterEventDependencies.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Operations/Events/System/Configuration/RegisterEventDependencies.php:12  (param-type)
+
+MISSING: Avax\Components\Operations\MessageBus\System\Capabilities\Bus\Closure  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/MessageBus/System/Capabilities/Bus/CommandBus.php:37  (return-type)
+
+MISSING: Avax\Components\Operations\MessageBus\System\Capabilities\Bus\Command  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/MessageBus/System/Capabilities/Bus/CommandBus.php:23  (param-type)
+  - /home/shomsy/projects/avax/components/Operations/MessageBus/System/Capabilities/Bus/CommandBus.php:50  (param-type)
+
+MISSING: Avax\Components\Operations\Notifications\System\Configuration\NotificationChannel  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/Notifications/System/Configuration/RegisterNotificationDependencies.php:11  (param-type)
+
+MISSING: Avax\Components\Operations\Resilience\System\Capabilities\Fallback\System\PublicSurface\Fallback  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/GoldenPath/GoldenPathTest.php:11  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/GoldenPath/GoldenPathTest.php:72  (static-call)
+
+MISSING: Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\System\Capabilities\Keys\IdempotencyStore  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/Idempotency/Idempotency.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/Idempotency/Idempotency.php:12  (property-type)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/Idempotency/Idempotency.php:19  (return-type)
+
+MISSING: Avax\Components\Operations\Tasks\System\Capabilities\Queue\Queue  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/Mail/System/Capabilities/Queue/MailQueue.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Operations/Mail/System/Capabilities/Queue/MailQueue.php:13  (static-call)
+  - /home/shomsy/projects/avax/components/Operations/Mail/System/Capabilities/Queue/MailQueue.php:22  (static-call)
+  - /home/shomsy/projects/avax/components/Operations/Mail/System/Capabilities/Queue/MailQueue.php:39  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/Components/QueueTest.php:7  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/Components/QueueTest.php:15  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/Components/QueueTest.php:19  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/Components/QueueTest.php:28  (static-call)
+
+MISSING: Avax\Components\Operations\Tasks\System\Foundation\JobInterface  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/Queue.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/Queue.php:15  (param-type)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/Queue.php:31  (param-type)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/Queue.php:107  (instanceof)
+
+MISSING: Avax\Components\Persistence\System\Capabilities\Repositories\Repository  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Persistence/AccessPersistentData/AccessPersistentData.php:6  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Persistence/DataLayer.php:6  (use-statement)
+  - /home/shomsy/projects/avax/components/DataLayer/AccessPersistentData/AccessPersistentData.php:5  (use-statement)
+
+MISSING: Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Persistence/DataLayer.php:7  (use-statement)
+
+MISSING: Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Persistence/CommitDataChanges/CommitDataChanges.php:6  (use-statement)
+  - /home/shomsy/projects/avax/components/DataLayer/CommitDataChanges/CommitDataChanges.php:5  (use-statement)
+
+MISSING: Avax\Components\Persistence\System\Configuration\PersistenceBuilder  [MINOR]
+  - /home/shomsy/projects/avax/components/DataStack/Persistence/ConfigureDataLayer/RegisterDataLayerRuntime.php:6  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Persistence/ConfigureDataLayer/ResolveDataLayerRuntime.php:6  (use-statement)
+  - /home/shomsy/projects/avax/components/DataStack/Persistence/DataLayer.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/DataLayer/ConfigureDataLayer/RegisterDataLayerRuntime.php:5  (use-statement)
+  - /home/shomsy/projects/avax/components/DataLayer/ConfigureDataLayer/ResolveDataLayerRuntime.php:5  (use-statement)
+
+MISSING: Avax\Components\Presentation\View\System\Capabilities\TemplateEngineInterface  [MINOR]
+  - /home/shomsy/projects/avax/components/Presentation/View/System/Configuration/RegisterViewDependencies.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Presentation/View/System/Configuration/RegisterViewDependencies.php:13  (param-type)
+
+MISSING: Avax\Components\Security\System\System\PublicSurface\Security  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/GoldenPath/GoldenPathTest.php:12  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/GoldenPath/GoldenPathTest.php:97  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/GoldenPath/GoldenPathTest.php:99  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/GoldenPath/GoldenPathTest.php:100  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/GoldenPath/GoldenPathTest.php:108  (static-call)
+
+MISSING: Avax\Components\Server\System\Capabilities\PhpBuiltInServer  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/Components/ComponentIntegrationTest.php:12  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/Components/ComponentIntegrationTest.php:19  (static-call)
+  - /home/shomsy/projects/avax/tests/Integration/Components/ComponentIntegrationTest.php:27  (static-call)
+
+MISSING: Avax\Config\Architecture\DDD\AppPath  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/views.php:7  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/views.php:18  (static-call)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/views.php:19  (class-const-fetch)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/filesystems.php:5  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/filesystems.php:13  (static-call)
+
+MISSING: Avax\Container\ContainerInterface  [MINOR]
+  - /home/shomsy/projects/avax/components/compat.php:143  (class-const-fetch)
+
+MISSING: Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO  [MINOR]
+  - /home/shomsy/projects/avax/components/compat.php:47  (class-const-fetch)
+
+MISSING: Avax\Docs\Components\Api\Capabilities\OpenApi\OpenApiGenerator  [CRITICAL]
+  - /home/shomsy/projects/avax/docs/Components/PublicSurface/ApiDocumentation.php:7  (use-statement)
+  - /home/shomsy/projects/avax/docs/Components/PublicSurface/ApiDocumentation.php:17  (new)
+
+MISSING: Avax\Docs\Components\Api\Capabilities\Swagger\SwaggerUi  [CRITICAL]
+  - /home/shomsy/projects/avax/docs/Components/PublicSurface/ApiDocumentation.php:8  (use-statement)
+  - /home/shomsy/projects/avax/docs/Components/PublicSurface/ApiDocumentation.php:22  (new)
+
+MISSING: Avax\Facade\Facades\Route  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:5  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:20  (static-call)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:23  (static-call)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:26  (static-call)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:30  (static-call)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:36  (static-call)
+  - /home/shomsy/projects/avax/tests/fixtures/routes_with_null_callable.php:7  (use-statement)
+  - /home/shomsy/projects/avax/tests/fixtures/routes_with_null_callable.php:10  (static-call)
+  - /home/shomsy/projects/avax/tests/fixtures/routes_with_null_callable.php:15  (static-call)
+
+MISSING: Avax\HTTP\AppKernel  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:8  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:138  (class-const-fetch)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:147  (static-call)
+
+MISSING: Avax\HTTP\Dispatcher\ControllerDispatcher  [CRITICAL]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:9  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:30  (property-type)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:175  (new)
+
+MISSING: Avax\HTTP\Middleware\CsrfVerificationMiddleware  [CRITICAL]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:10  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:69  (new)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:99  (new)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:121  (new)
+
+MISSING: Avax\HTTP\Response\Response  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:6  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:30  (static-call)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/app/HTTP/routes/web.routes.php:36  (static-call)
+
+MISSING: Avax\HTTP\RouterBootstrapper  [CRITICAL]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:13  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:34  (property-type)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:181  (new)
+
+MISSING: Avax\HTTP\Router\RouterInterface  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:11  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:28  (property-type)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:173  (class-const-fetch)
+
+MISSING: Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection  [CRITICAL]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:12  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:174  (new)
+
+MISSING: Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder  [MINOR]
+  - /home/shomsy/projects/avax/examples/golden-path-app/routes/web.php:5  (use-statement)
+  - /home/shomsy/projects/avax/routes/web.php:7  (use-statement)
+
+MISSING: Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort  [CRITICAL]
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:7  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:14  (implements)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:7  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:10  (implements)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:7  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:10  (implements)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/Health/ObjectStorageHealthReport.php:7  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/Health/CheckObjectStorageHealth.php:7  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/Health/CheckObjectStorageHealth.php:13  (constructor-param)
+
+MISSING: Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult  [MINOR]
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:8  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:33  (return-type)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:43  (static-call)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:45  (static-call)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:8  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:17  (return-type)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:21  (static-call)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:8  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:22  (return-type)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:34  (static-call)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:37  (static-call)
+
+MISSING: Avax\Integration\ObjectStorage\System\Foundation\Failure\ObjectStorageUnavailable  [MINOR]
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:9  (use-statement)
+
+MISSING: Avax\Operations\RuntimeSupervision\System\Capabilities\Health\SupervisorHealthReport  [MINOR]
+  - /home/shomsy/projects/avax/components/Operations/RuntimeSupervision/System/PublicSurface/RuntimeSupervision.php:9  (use-statement)
+
+MISSING: Avax\Tests\Integration\InvalidArgumentException  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:162  (class-const-fetch)
+
+MISSING: Avax\Tests\Integration\Override  [MINOR]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:247  (attribute)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:168  (attribute)
+  - /home/shomsy/projects/avax/tests/Integration/RouterIntegrationTest.php:215  (attribute)
+
+MISSING: Avax\Tests\Integration\Throwable  [CRITICAL]
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:116  (catch)
+  - /home/shomsy/projects/avax/tests/Integration/RouterHardeningTest.php:118  (class-const-fetch)
+
+MISSING: Avax\Tooling\Architecture\DirectoryIterator  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/Architecture/check-docs-mirror.php:21  (new)
+
+MISSING: Avax\Tooling\Architecture\FilesystemIterator  [MINOR]
+  - /home/shomsy/projects/avax/tooling/Architecture/check-runtime-leaks.php:30  (class-const-fetch)
+
+MISSING: Avax\Tooling\Architecture\RecursiveDirectoryIterator  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/Architecture/check-duplicate-owners.php:18  (new)
+  - /home/shomsy/projects/avax/tooling/Architecture/check-namespace-drift.php:18  (new)
+  - /home/shomsy/projects/avax/tooling/Architecture/check-forbidden-folders.php:39  (new)
+  - /home/shomsy/projects/avax/tooling/Architecture/check-public-surface.php:18  (new)
+  - /home/shomsy/projects/avax/tooling/Architecture/check-runtime-leaks.php:30  (new)
+
+MISSING: Avax\Tooling\Architecture\RecursiveIteratorIterator  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/Architecture/check-duplicate-owners.php:18  (new)
+  - /home/shomsy/projects/avax/tooling/Architecture/check-namespace-drift.php:18  (new)
+  - /home/shomsy/projects/avax/tooling/Architecture/check-forbidden-folders.php:39  (new)
+  - /home/shomsy/projects/avax/tooling/Architecture/check-public-surface.php:18  (new)
+  - /home/shomsy/projects/avax/tooling/Architecture/check-runtime-leaks.php:29  (new)
+
+MISSING: Avax\Tooling\Architecture\SplFileInfo  [MINOR]
+  - /home/shomsy/projects/avax/tooling/Architecture/check-runtime-leaks.php:34  (instanceof)
+
+MISSING: Avax\Tooling\DependencyMap\Capabilities\Graph\DependencyGraph  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/DependencyMap/System/PublicSurface/DependencyMap.php:7  (use-statement)
+  - /home/shomsy/projects/avax/tooling/DependencyMap/System/PublicSurface/DependencyMap.php:11  (constructor-param)
+
+MISSING: Avax\Tooling\Exception  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/RefVisitor.php:83  (catch)
+  - /home/shomsy/projects/avax/tooling/RefVisitor.php:422  (catch)
+
+MISSING: Avax\Tooling\FilesystemIterator  [MINOR]
+  - /home/shomsy/projects/avax/tooling/generate-class-map.php:21  (class-const-fetch)
+
+MISSING: Avax\Tooling\PreCommit\RuntimeException  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/PreCommit/HookInstallerException.php:6  (extends)
+
+MISSING: Avax\Tooling\RecursiveDirectoryIterator  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/RefVisitor.php:40  (new)
+  - /home/shomsy/projects/avax/tooling/generate-class-map.php:21  (new)
+
+MISSING: Avax\Tooling\RecursiveIteratorIterator  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/RefVisitor.php:40  (new)
+  - /home/shomsy/projects/avax/tooling/generate-class-map.php:20  (new)
+  - /home/shomsy/projects/avax/tooling/generate-class-map.php:22  (class-const-fetch)
+
+MISSING: Avax\Tooling\Refactor\FilesystemIterator  [MINOR]
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeComponentTaxonomy.php:728  (class-const-fetch)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:476  (class-const-fetch)
+  - /home/shomsy/projects/avax/tooling/Refactor/RepairTestLayer.php:182  (class-const-fetch)
+
+MISSING: Avax\Tooling\Refactor\RecursiveDirectoryIterator  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeComponentTaxonomy.php:728  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/fix-namespaces-remove-system.php:19  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/fix-moved-files-namespaces.php:26  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/fix-all-namespaces.php:113  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/check-component-gates.php:65  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/NamespaceReconstructor.php:25  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/NamespaceReconstructor.php:62  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:476  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/RepairTestLayer.php:182  (new)
+
+MISSING: Avax\Tooling\Refactor\RecursiveIteratorIterator  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeComponentTaxonomy.php:727  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/fix-namespaces-remove-system.php:18  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/fix-moved-files-namespaces.php:25  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/fix-all-namespaces.php:112  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/fix-all-namespaces.php:114  (class-const-fetch)
+  - /home/shomsy/projects/avax/tooling/Refactor/check-component-gates.php:64  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/NamespaceReconstructor.php:25  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/NamespaceReconstructor.php:62  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:475  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/RepairTestLayer.php:181  (new)
+
+MISSING: Avax\Tooling\Refactor\RuntimeException  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeComponentTaxonomy.php:29  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeComponentTaxonomy.php:398  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeComponentTaxonomy.php:654  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:29  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:164  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:402  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/RepairTestLayer.php:40  (new)
+  - /home/shomsy/projects/avax/tooling/Refactor/RepairTestLayer.php:112  (new)
+
+MISSING: Avax\Tooling\Refactor\SplFileInfo  [MINOR]
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeComponentTaxonomy.php:732  (instanceof)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:480  (instanceof)
+  - /home/shomsy/projects/avax/tooling/Refactor/RepairTestLayer.php:186  (instanceof)
+
+MISSING: Avax\Tooling\Refactor\Throwable  [CRITICAL]
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeComponentTaxonomy.php:741  (catch)
+  - /home/shomsy/projects/avax/tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:535  (catch)
+  - /home/shomsy/projects/avax/tooling/Refactor/RepairTestLayer.php:293  (catch)
+
+MISSING: Avax\Tooling\SplFileInfo  [MINOR]
+  - /home/shomsy/projects/avax/tooling/RefVisitor.php:41  (instanceof)
+
+MISSING: Aws\PresignUrlMiddleware  [CRITICAL]
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:10  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:115  (new)
+
+MISSING: Aws\S3\S3Client  [CRITICAL]
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:11  (use-statement)
+  - /home/shomsy/projects/avax/labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:134  (new)
+
+MISSING: BenchSharedService  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:126  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:147  (property-type)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:149  (property-type)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:152  (param-type)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:276  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:277  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:285  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:286  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:294  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:295  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:296  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:307  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:310  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:410  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:419  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:428  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:440  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:443  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:463  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:464  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:467  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:481  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:482  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:485  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:500  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:501  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/benchmarks/run.php:504  (class-const-fetch)
+
+MISSING: BlueprintTarget  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Declaration/Blueprints/CreateDependencyBlueprintSmokeTest.php:39  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Declaration/Blueprints/CreateDependencyBlueprintSmokeTest.php:40  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Declaration/Blueprints/CreateDependencyBlueprintSmokeTest.php:44  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Declaration/Blueprints/CreateDependencyBlueprintSmokeTest.php:57  (class-const-fetch)
+
+MISSING: CallArgumentGreeter  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Execution/Injection/Invocation/ResolveCallArgumentsSmokeTest.php:34  (class-const-fetch)
+
+MISSING: CallGreeter  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CallFunction/CallFunctionSmokeTest.php:44  (class-const-fetch)
+
+MISSING: CloseScopedService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CloseScope/CloseScopeSmokeTest.php:12  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CloseScope/CloseScopeSmokeTest.php:15  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CloseScope/CloseScopeSmokeTest.php:19  (class-const-fetch)
+
+MISSING: CompatibilityDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php:19  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php:33  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php:34  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php:44  (class-const-fetch)
+
+MISSING: CompileReportDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:11  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:32  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:36  (return-type)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:55  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:56  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:57  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:90  (class-const-fetch)
+
+MISSING: CompiledCacheDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledCacheSmokeTest.php:19  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledCacheSmokeTest.php:30  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledCacheSmokeTest.php:38  (class-const-fetch)
+
+MISSING: CompiledGreeter  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledContainerSmokeTest.php:50  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledContainerSmokeTest.php:70  (class-const-fetch)
+
+MISSING: CreateGreeter  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CreateContainerSmokeTest.php:33  (class-const-fetch)
+
+MISSING: Cron\CronExpression  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:14  (new)
+  - /home/shomsy/projects/avax/components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:21  (new)
+  - /home/shomsy/projects/avax/components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:28  (static-call)
+
+MISSING: DecoratedService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php:32  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php:79  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php:115  (instanceof)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php:173  (class-const-fetch)
+
+MISSING: DefaultRegisterLogger  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/RegisterServices/RegisterDependenciesSmokeTest.php:63  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/RegisterServices/RegisterDependenciesSmokeTest.php:66  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/RegisterServices/RegisterDependenciesSmokeTest.php:68  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/RegisterServices/RegisterDependenciesSmokeTest.php:113  (class-const-fetch)
+
+MISSING: DeferredRegularService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/RegisterServices/DeferredDependenciesSmokeTest.php:25  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/RegisterServices/DeferredDependenciesSmokeTest.php:29  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/RegisterServices/DeferredDependenciesSmokeTest.php:31  (class-const-fetch)
+
+MISSING: DiagnosticsSchemaDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/diagnostics/validate-report-schemas.php:21  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/diagnostics/validate-report-schemas.php:43  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/diagnostics/validate-report-schemas.php:44  (class-const-fetch)
+
+MISSING: DiagnosticsService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php:48  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php:77  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php:164  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php:174  (class-const-fetch)
+
+MISSING: ExecutionModeDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/ExecutionModeSmokeTest.php:15  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/ExecutionModeSmokeTest.php:26  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/ExecutionModeSmokeTest.php:60  (class-const-fetch)
+
+MISSING: ExportedSliceGateway  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/SliceViewSmokeTest.php:45  (class-const-fetch)
+
+MISSING: FreshnessDependencyV1  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php:48  (class-const-fetch)
+
+MISSING: GeneratedFixtureDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/fixtures/generated_runtime_fixture.php:18  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/fixtures/generated_runtime_fixture.php:32  (class-const-fetch)
+
+MISSING: GraphToolIdentityService  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/fixtures/graph_tool_fixture.php:19  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/fixtures/graph_tool_fixture.php:39  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/fixtures/graph_tool_fixture.php:69  (class-const-fetch)
+
+MISSING: HintIdentityService  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/fixtures/analysis_hints_fixture.php:23  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/fixtures/analysis_hints_fixture.php:35  (class-const-fetch)
+
+MISSING: InlineSmokeCompiled  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/HotPathInlinerSmokeTest.php:28  (new)
+
+MISSING: IntegrityDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:22  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:39  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:40  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:52  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:90  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:91  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:95  (class-const-fetch)
+
+MISSING: Jenssegers\Blade\Blade  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Presentation/View/System/Capabilities/Engines/BladeTemplateEngine.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Presentation/View/System/Capabilities/Engines/BladeTemplateEngine.php:10  (extends)
+  - /home/shomsy/projects/avax/components/Presentation/View/BladeTemplateEngine.php:10  (use-statement)
+  - /home/shomsy/projects/avax/components/Presentation/View/BladeTemplateEngine.php:13  (extends)
+
+MISSING: LazyCounter  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/LazyProxySmokeTest.php:18  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/LazyProxySmokeTest.php:20  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/LazyProxySmokeTest.php:22  (class-const-fetch)
+
+MISSING: LifecycleService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/ContainerLifecycleSmokeTest.php:36  (class-const-fetch)
+
+MISSING: Memcached  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:13  (property-type)
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:19  (new)
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:62  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:70  (class-const-fetch)
+
+MISSING: Nyholm\Psr7\Factory\Psr17Factory  [CRITICAL]
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:16  (use-statement)
+  - /home/shomsy/projects/avax/tests/Integration/AppKernelIntegrationTest.php:171  (new)
+
+MISSING: OpenScopedService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/OpenScope/OpenScopeSmokeTest.php:10  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/OpenScope/OpenScopeSmokeTest.php:13  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/OpenScope/OpenScopeSmokeTest.php:14  (class-const-fetch)
+
+MISSING: OrderingProviderAlpha  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:25  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:33  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:97  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:97  (new)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:102  (class-const-fetch)
+
+MISSING: PhpCsFixer\Config  [CRITICAL]
+  - /home/shomsy/projects/avax/.php-cs-fixer.dist.php:14  (new)
+
+MISSING: PhpCsFixer\Finder  [MINOR]
+  - /home/shomsy/projects/avax/.php-cs-fixer.dist.php:3  (static-call)
+
+MISSING: PolicyDependencyA  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/PolicyAndStructureDiffSmokeTest.php:49  (class-const-fetch)
+
+MISSING: PoolBucketService  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/DependencyPoolSmokeTest.php:39  (new)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/DependencyPoolSmokeTest.php:48  (class-const-fetch)
+
+MISSING: Presentation\HTTP\Middleware\OfficeIpRestrictionMiddleware  [MINOR]
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:20  (use-statement)
+  - /home/shomsy/projects/avax/examples/minimal-http-app/config/middleware.php:37  (class-const-fetch)
+
+MISSING: ProviderState  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:43  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:43  (new)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:53  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:77  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:80  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:92  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:95  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:186  (class-const-fetch)
+
+MISSING: PrunedDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/PruningSmokeTest.php:13  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/PruningSmokeTest.php:35  (class-const-fetch)
+
+MISSING: Rector\Config\RectorConfig  [MINOR]
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:5  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:7  (use-statement)
+  - /home/shomsy/projects/avax/rector.php:5  (use-statement)
+
+MISSING: Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector  [MINOR]
+  - /home/shomsy/projects/avax/rector.php:6  (use-statement)
+  - /home/shomsy/projects/avax/rector.php:39  (class-const-fetch)
+
+MISSING: Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector  [MINOR]
+  - /home/shomsy/projects/avax/rector.php:7  (use-statement)
+  - /home/shomsy/projects/avax/rector.php:41  (class-const-fetch)
+
+MISSING: Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector  [MINOR]
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:6  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:21  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:23  (class-const-fetch)
+
+MISSING: Rector\Set\ValueObject\LevelSetList  [MINOR]
+  - /home/shomsy/projects/avax/rector.php:8  (use-statement)
+  - /home/shomsy/projects/avax/rector.php:23  (class-const-fetch)
+
+MISSING: Rector\Set\ValueObject\SetList  [MINOR]
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:32  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:33  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:34  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:35  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:36  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:37  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:9  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:34  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:35  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:36  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:37  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:38  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:39  (class-const-fetch)
+  - /home/shomsy/projects/avax/rector.php:9  (use-statement)
+  - /home/shomsy/projects/avax/rector.php:24  (class-const-fetch)
+  - /home/shomsy/projects/avax/rector.php:25  (class-const-fetch)
+  - /home/shomsy/projects/avax/rector.php:26  (class-const-fetch)
+  - /home/shomsy/projects/avax/rector.php:27  (class-const-fetch)
+  - /home/shomsy/projects/avax/rector.php:28  (class-const-fetch)
+  - /home/shomsy/projects/avax/rector.php:29  (class-const-fetch)
+  - /home/shomsy/projects/avax/rector.php:30  (class-const-fetch)
+  - /home/shomsy/projects/avax/rector.php:31  (class-const-fetch)
+
+MISSING: Rector\ValueObject\PhpVersion  [MINOR]
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:8  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Auth/rector.php:30  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:10  (use-statement)
+  - /home/shomsy/projects/avax/components/Identity/Auth/phpVersion.php:32  (class-const-fetch)
+
+MISSING: Redis  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Infrastructure/System/Capabilities/Cache/Redis.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Infrastructure/System/Capabilities/Cache/Redis.php:14  (property-type)
+  - /home/shomsy/projects/avax/components/Infrastructure/System/Capabilities/Cache/Redis.php:24  (return-type)
+  - /home/shomsy/projects/avax/components/Infrastructure/System/Capabilities/Cache/Redis.php:27  (new)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:12  (property-type)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:21  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:26  (new)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:43  (instanceof)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:59  (instanceof)
+  - /home/shomsy/projects/avax/components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:78  (instanceof)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:15  (property-type)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:30  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:35  (new)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:65  (instanceof)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:99  (instanceof)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:118  (instanceof)
+  - /home/shomsy/projects/avax/components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:138  (instanceof)
+  - /home/shomsy/projects/avax/components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:7  (use-statement)
+  - /home/shomsy/projects/avax/components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:15  (property-type)
+  - /home/shomsy/projects/avax/components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:36  (instanceof)
+  - /home/shomsy/projects/avax/components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:56  (instanceof)
+  - /home/shomsy/projects/avax/components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:69  (instanceof)
+  - /home/shomsy/projects/avax/components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:80  (instanceof)
+  - /home/shomsy/projects/avax/components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:99  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:104  (new)
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:9  (use-statement)
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:14  (property-type)
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:24  (new)
+  - /home/shomsy/projects/avax/components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:103  (return-type)
+  - /home/shomsy/projects/avax/framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:8  (use-statement)
+  - /home/shomsy/projects/avax/framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:15  (property-type)
+  - /home/shomsy/projects/avax/framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:25  (new)
+
+MISSING: ResolveGreeter  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/ResolveDependencySmokeTest.php:17  (constructor-param)
+
+MISSING: SchemaCompatibilityDependency  [CRITICAL]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php:15  (constructor-param)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php:29  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php:30  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php:41  (class-const-fetch)
+
+MISSING: ScopedService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:14  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:29  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:35  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:36  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:45  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:49  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:52  (class-const-fetch)
+
+MISSING: SecurityFailure  [CRITICAL]
+  - /home/shomsy/projects/avax/test_decrypt_tmp.php:3  (extends)
+
+MISSING: SharedOwnershipGateway  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/OwnershipCompositionSmokeTest.php:60  (class-const-fetch)
+
+MISSING: StrictSharedFlowService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/PolicyProfileSmokeTest.php:16  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/PolicyProfileSmokeTest.php:30  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/PolicyProfileSmokeTest.php:42  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/ResolveService/PolicyProfileSmokeTest.php:43  (class-const-fetch)
+
+MISSING: Symfony\Component\VarDumper\VarDumper  [MINOR]
+  - /home/shomsy/projects/avax/components/DeveloperTools/DumpDebugger/System/PublicSurface/shortcuts.php:9  (use-statement)
+  - /home/shomsy/projects/avax/components/DeveloperTools/DumpDebugger/System/PublicSurface/shortcuts.php:32  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/DeveloperTools/DumpDebugger/System/PublicSurface/shortcuts.php:33  (static-call)
+  - /home/shomsy/projects/avax/components/DeveloperTools/DumpDebugger/System/PublicSurface/shortcuts.php:57  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/DeveloperTools/DumpDebugger/System/PublicSurface/shortcuts.php:58  (static-call)
+
+MISSING: WorkerSharedService  [MINOR]
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:21  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:23  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:26  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:41  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:52  (class-const-fetch)
+  - /home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:53  (class-const-fetch)
+
+=== SUMMARY ===
+Defined: 3126
+Missing: 166
+  CRITICAL: 46
+  MINOR: 120

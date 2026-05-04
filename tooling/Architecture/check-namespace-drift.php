@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 /**
  * Check for namespace drift.
  * Ensures all files in components/ follow the Avax\Components\<Component>\System pattern

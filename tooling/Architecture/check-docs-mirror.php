@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+use DirectoryIterator;
+
 /**
  * Check for docs mirror.
  * Ensures that components/ structure is mirrored in docs/components/ without obsolete namespaces.

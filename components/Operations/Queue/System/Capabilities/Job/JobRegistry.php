@@ -17,7 +17,7 @@ final class JobRegistry
 
     public function resolve(string $name): callable
     {
-        if (!isset($this->handlers[$name])) {
+        if (! isset($this->handlers[$name])) {
             throw new RuntimeException('No handler registered for job: ' . $name);
         }
 

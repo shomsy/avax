@@ -65,21 +65,3 @@ final class StatelessBoundary
         return [];
     }
 }
-
-final readonly class BoundaryAudit
-{
-    /**
-     * @param list<string> $statelessRoutes
-     * @param list<string> $statefulViolations
-     */
-    public function __construct(
-        public string $mode,
-        public array $statelessRoutes,
-        public array $statefulViolations,
-    ) {}
-
-    public function isCompliant() : bool
-    {
-        return $this->statefulViolations === [];
-    }
-}

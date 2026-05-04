@@ -4,24 +4,37 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ConfigureSagaRuntime;
 
-/**
- * ValidateSagaRuntimeConfig - validates saga runtime dependencies before execution.
- */
 final readonly class ValidateSagaRuntimeConfig
 {
-    public function validate(SagaRuntimeConfig $sagaRuntimeConfig) : void
+    public function __construct(
+        private SagaRuntimeConfig $sagaRuntimeConfig,
+        private array $errors = [],
+    ) {
+        $this->validate();
+    }
+
+    private function validate(): void
     {
-        if ($sagaRuntimeConfig->store === null) {
-            throw SagaRuntimeConfigurationFailure::missingSagaStore();
+        if ($this->sagaRuntimeConfig->storeType === '' || $this->sagaRuntimeConfig->storeType === '0') {
+            $this->errors[] = 'Store type is required.';
         }
 
-        if ($sagaRuntimeConfig->stepRunner === null) {
-            throw SagaRuntimeConfigurationFailure::missingSagaStepRunner();
+        if ($this->sagaRuntimeConfig->timeoutSeconds !== null && $this->sagaRuntimeConfig->timeoutSeconds <= 0) {
+            $this->errors[] = 'Timeout must be positive.';
+        }
+
+        if ($this->sagaRuntimeConfig->maxRetries !== null && $this->sagaRuntimeConfig->maxRetries < 0) {
+            $this->errors[] = 'Max retries must be non-negative.';
         }
     }
 
-    public function describeResponsibility(): string
+    public function isValid(): bool
     {
-        return 'validates saga runtime dependencies before execution.';
+        return $this->errors === [];
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 }

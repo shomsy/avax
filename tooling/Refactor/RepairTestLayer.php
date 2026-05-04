@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Avax\Tooling\Refactor;
 
 use Generator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
+use Throwable;
 
 /**
  * AvaX Test Layer Repair.

@@ -6,14 +6,6 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Resum
 
 use InvalidArgumentException;
 
-enum SagaRecoveryAction: string
-{
-    case RETRY   = 'retry';
-    case COMPENSATE = 'compensate';
-    case ABANDON = 'abandon';
-    case MANUAL  = 'manual';
-}
-
 final readonly class MarkSagaAsUnrecoverable
 {
     public function __construct(
@@ -59,14 +51,4 @@ final readonly class MarkSagaAsUnrecoverable
     {
         return ['recovery_action' => $this->sagaRecoveryAction->value];
     }
-}
-
-final readonly class SagaRecoveryResult
-{
-    public function __construct(
-        public string $sagaId,
-        public bool $recoverable,
-        public SagaRecoveryAction $action,
-        public string $reason,
-    ) {}
 }

@@ -4,13 +4,11 @@ includes:
 parameters:
     level: 8
     paths:
-        - framework/System/Capabilities
-        - framework/System/Foundation
-        - framework/System/Configuration
+        - framework
+        - components
+        - tests
     excludePaths:
         - vendor
-        - framework/System/Flows
-        - framework/System/PublicSurface
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - '#Property .* is never read, only written#'

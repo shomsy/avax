@@ -17,7 +17,7 @@ final class XmlFormat implements ContentFormatterInterface
             return $xml->asXML();
         }
 
-        return (string)$data;
+        return (string) $data;
     }
 
     private function toXmlRecursive(array $data, SimpleXMLElement $xml): void
@@ -27,7 +27,7 @@ final class XmlFormat implements ContentFormatterInterface
                 $child = $xml->addChild(is_numeric($key) ? 'item' : $key);
                 $this->toXmlRecursive($value, $child);
             } else {
-                $xml->addChild(is_numeric($key) ? 'item' : $key, (string)$value);
+                $xml->addChild(is_numeric($key) ? 'item' : $key, (string) $value);
             }
         }
     }

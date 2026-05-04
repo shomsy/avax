@@ -4,62 +4,71 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
-use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteRegistry;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Closure;
+use RuntimeException;
 
 final class FrameworkRouteRegistrar implements RouterInterface
 {
+    /** @var Closure|array<mixed>|string|null */
     private Closure|array|string|null $fallback = null;
 
-    public function __construct(private readonly RouteRegistry $routeRegistry = new RouteRegistry())
+    /** @var list<RouteDefinition> */
+    private array $routes = [];
+
+    public function __construct()
     {
     }
 
-    public function get(string $path, callable|array|string $action): Registrar
+    public function get(string $path, mixed $action): Registrar
     {
         return $this->register(method: 'GET', path: $path, action: $action);
     }
 
-    public function post(string $path, callable|array|string $action): Registrar
+    public function post(string $path, mixed $action): Registrar
     {
         return $this->register(method: 'POST', path: $path, action: $action);
     }
 
-    public function put(string $path, callable|array|string $action): Registrar
+    public function put(string $path, mixed $action): Registrar
     {
         return $this->register(method: 'PUT', path: $path, action: $action);
     }
 
-    public function patch(string $path, callable|array|string $action): Registrar
+    public function patch(string $path, mixed $action): Registrar
     {
         return $this->register(method: 'PATCH', path: $path, action: $action);
     }
 
-    public function delete(string $path, callable|array|string $action): Registrar
+    public function delete(string $path, mixed $action): Registrar
     {
         return $this->register(method: 'DELETE', path: $path, action: $action);
     }
 
-    public function options(string $path, callable|array|string $action): Registrar
+    public function options(string $path, mixed $action): Registrar
     {
         return $this->register(method: 'OPTIONS', path: $path, action: $action);
     }
 
-    public function head(string $path, callable|array|string $action): Registrar
+    public function head(string $path, mixed $action): Registrar
     {
         return $this->register(method: 'HEAD', path: $path, action: $action);
     }
 
-    public function any(string $path, callable|array|string $action): Registrar
+    public function any(string $path, mixed $action): Registrar
     {
         return $this->register(method: 'ANY', path: $path, action: $action);
     }
 
-    public function anyExpanded(string $path, callable|array|string $action): array
+    /**
+     * @return list<Registrar>
+     */
+    public function anyExpanded(string $path, mixed $action): array
     {
         $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
         $proxies = [];
@@ -71,21 +80,19 @@ final class FrameworkRouteRegistrar implements RouterInterface
         return $proxies;
     }
 
-    public function fallback(callable|array|string $handler): void
+    public function fallback(mixed $handler): void
     {
-        $this->fallback = is_string($handler) || is_array($handler)
+        $this->fallback = is_string(value: $handler) || is_array(value: $handler)
             ? $handler
             : Closure::fromCallable(callback: $handler);
-
-        $this->routeRegistry->setFallback(fallback: $this->fallback);
     }
 
     public function collectRoutes(): RegisteredHttpRoutes
     {
         $routesByMethod = [];
 
-        foreach ($this->routeRegistry->flush() as $definition) {
-            $method = strtoupper(string: (string) $definition->method);
+        foreach ($this->routes as $definition) {
+            $method = strtoupper(string: $definition->method()->toString());
 
             $routesByMethod[$method] ??= [];
             $routesByMethod[$method][] = $definition;
@@ -97,13 +104,17 @@ final class FrameworkRouteRegistrar implements RouterInterface
         );
     }
 
-    private function register(string $method, string $path, callable|array|string $action): Registrar
+    private function register(string $method, string $path, mixed $action): Registrar
     {
-        $definition = new RouteDefinition(method: new RouteMethod($method), path: $path, action: $action);
+        $definition = new RouteDefinition(method: new RouteMethod($method), uri: $path, action: $action);
 
-        $this->routeRegistry->add(routeDefinition: $definition);
+        $this->routes[] = $definition;
 
         return new Registrar(route: $definition);
     }
-}
 
+    public function dispatch(RequestInterface $request) : ResponseInterface
+    {
+        throw new RuntimeException('FrameworkRouteRegistrar is purely for configuration and does not support dispatching directly.');
+    }
+}

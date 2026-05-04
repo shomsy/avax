@@ -28,6 +28,8 @@ use PhpParser\Node\UnionType;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 

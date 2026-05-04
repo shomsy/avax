@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 /**
  * NamespaceReconstructor - The Nuclear Option V2 (Enhanced Auto-Fix).
  */

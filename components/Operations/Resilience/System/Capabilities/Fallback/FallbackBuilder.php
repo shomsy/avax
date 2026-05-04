@@ -8,11 +8,10 @@ final readonly class FallbackBuilder
 {
     public function __construct(
         private string $dependency,
-    )
-    {
+    ) {
     }
 
-    public function when(): self
+    public function when() : self
     {
         return $this;
     }

@@ -6,7 +6,10 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Resum
 
 use RuntimeException;
 
-/**
- * SagaRecoveryFailure - reports failed saga recovery.
- */
-final class SagaRecoveryFailure extends RuntimeException {}
+class SagaRecoveryFailure extends RuntimeException
+{
+    public function __construct(string $message = 'Saga recovery failed.')
+    {
+        parent::__construct(message: $message);
+    }
+}

@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 $root = getcwd();
-$map = [];
+$map  = [];
 
 $dirs = [
     'framework/System' => 'Avax\\Framework\\System',

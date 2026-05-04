@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 /**
  * Check for duplicate owners.
  * Ensures the same class name is not defined in multiple components as a real class.

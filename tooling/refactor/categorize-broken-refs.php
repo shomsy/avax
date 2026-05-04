@@ -25,6 +25,7 @@ foreach ($lines as $line) {
 $categories = [
     'test-only' => [],
     'docs-only' => [],
+    'non-production' => [],
     'vendor-external' => [],
     'stale-namespace' => [],
     'real-production' => [],
@@ -36,7 +37,7 @@ foreach ($missingRefs as $ref => $data) {
     $isDocOnly = true;
 
     foreach ($usages as $usage) {
-        if (!str_contains($usage['file'], '/tests/')) {
+        if (!str_contains($usage['file'], '/tests/') && !str_starts_with($usage['file'], 'tests/')) {
             $isTestOnly = false;
         }
         if (!str_contains($usage['type'], 'docblock') && !str_contains($usage['type'], 'comment')) {
@@ -44,11 +45,41 @@ foreach ($missingRefs as $ref => $data) {
         }
     }
 
+    $isNonProduction = false;
+    foreach ($usages as $usage) {
+        $file = $usage['file'];
+        if (
+            str_contains($file, '/tests/') || str_starts_with($file, 'tests/') ||
+            str_contains($file, '/docs/') || str_starts_with($file, 'docs/') ||
+            str_contains($file, '/examples/') || str_starts_with($file, 'examples/') ||
+            str_contains($file, '/labs/') || str_starts_with($file, 'labs/') ||
+            str_contains($file, '/tooling/') || str_starts_with($file, 'tooling/') ||
+            str_contains($file, 'test_') || str_contains($file, 'benchmarks')
+        ) {
+            $isNonProduction = true;
+        } else {
+            $isNonProduction = false;
+            break;
+        }
+    }
+
     if ($isTestOnly) {
         $categories['test-only'][$ref] = $data;
     } elseif ($isDocOnly) {
         $categories['docs-only'][$ref] = $data;
-    } elseif (str_starts_with($ref, 'Psr\\') || str_starts_with($ref, 'Symfony\\') || str_starts_with($ref, 'Illuminate\\')) {
+    } elseif ($isNonProduction) {
+        $categories['non-production'][$ref] = $data;
+    } elseif (
+        str_starts_with($ref, 'Psr\\') || 
+        str_starts_with($ref, 'Symfony\\') || 
+        str_starts_with($ref, 'Illuminate\\') ||
+        str_starts_with($ref, 'Aws\\') ||
+        str_starts_with($ref, 'Cron\\') ||
+        str_starts_with($ref, 'Nyholm\\') ||
+        str_starts_with($ref, 'PhpCsFixer\\') ||
+        str_starts_with($ref, 'Jenssegers\\') ||
+        in_array($ref, ['Redis', 'Memcached', 'SecurityFailure'])
+    ) {
         $categories['vendor-external'][$ref] = $data;
     } elseif (str_contains($ref, 'Avax\\Components\\') && count($usages) > 0) {
         $categories['stale-namespace'][$ref] = $data;

@@ -6,48 +6,49 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Resum
 
 final readonly class RebuildSagaState
 {
-    public function describeResponsibility(): string
-    {
-        return 'rebuilds saga state from stored state or event history.';
-    }
-
-    public function rebuild(array $storedState, array $events): array
-    {
-        if ($storedState !== []) {
-            return $storedState;
-        }
-
-        return $this->rebuildFromEvents(events: $events);
-    }
-
-    private function rebuildFromEvents(array $events): array
-    {
-        $state = [
-            'status'       => 'pending',
-            'completed_steps' => [],
-            'current_step' => null,
-        ];
+    public function rebuild(
+        string $sagaId,
+        array $events,
+    ): array {
+        $data            = [];
+        $completedSteps  = [];
+        $stepResults     = [];
+        $currentStepIndex = 0;
+        $currentStepName = null;
 
         foreach ($events as $event) {
-            $state = $this->applyEvent(state: $state, event: $event);
+            $type = $event['type'] ?? '';
+
+            switch ($type) {
+                case 'saga_started':
+                    $data = $event['payload'] ?? [];
+                    $currentStepIndex = 0;
+
+                    break;
+
+                case 'step_completed':
+                    $stepName         = $event['step_name'] ?? '';
+                    $completedSteps[] = $stepName;
+                    $stepResults[$stepName] = $event['payload'] ?? [];
+                    $currentStepName  = $stepName;
+                    $currentStepIndex++;
+
+                    break;
+
+                case 'step_failed':
+
+                case 'saga_completed':
+                case 'saga_compensated':
+                    break 2;
+            }
         }
 
-        return $state;
-    }
-
-    private function applyEvent(array $state, array $event): array
-    {
-        $type = $event['type'] ?? '';
-
-        if ($type === 'step_completed') {
-            $state['completed_steps'][] = $event['step'];
-            $state['current_step'] = $event['next_step'] ?? null;
-        }
-
-        if ($type === 'step_failed') {
-            $state['status'] = 'failed';
-        }
-
-        return $state;
+        return [
+            'data'              => $data,
+            'completed_steps'   => $completedSteps,
+            'step_results'      => $stepResults,
+            'current_step_index' => $currentStepIndex,
+            'current_step_name' => $currentStepName,
+        ];
     }
 }

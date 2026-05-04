@@ -6,8 +6,8 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Resum
 
 enum SagaRecoveryAction: string
 {
-    case RETRY = 'retry';
+    case RETRY   = 'retry';
     case COMPENSATE = 'compensate';
     case ABANDON = 'abandon';
-    case MANUAL = 'manual';
+    case MANUAL  = 'manual';
 }

@@ -16,16 +16,19 @@ final readonly class RunHttpRoute
     public function run(MatchedHttpRoute $matchedHttpRoute) : ResponseInterface
     {
         return $this->controllerDispatcher->dispatch(
-            action : $matchedHttpRoute->route()->action,
-            request: $matchedHttpRoute->request(),
+            action       : $matchedHttpRoute->route()->action(),
+            serverRequest: $matchedHttpRoute->request(),
         );
     }
 
+    /**
+     * @param Closure|array<mixed>|string $fallback
+     */
     public function runFallback(Closure|array|string $fallback, ServerRequest $serverRequest) : ResponseInterface
     {
         return $this->controllerDispatcher->dispatch(
-            action  : $fallback,
-            request : $serverRequest,
+            action       : $fallback,
+            serverRequest: $serverRequest,
         );
     }
 }

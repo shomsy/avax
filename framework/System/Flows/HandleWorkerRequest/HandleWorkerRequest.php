@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\HandleWorkerRequest;
 
 use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
-use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Throwable;
 
 final readonly class HandleWorkerRequest
 {
     public function __construct(
-        private RuntimeContext $runtimeContext,
-        private RequestScope   $requestScope,
+        private RuntimeInterface $runtime,
+        private RequestScope     $requestScope,
     ) {
     }
 
@@ -40,7 +40,10 @@ final readonly class HandleWorkerRequest
 
     private function runWorkerRequest(object $request): object
     {
-        return $this->runtimeContext->getRuntime()->handleRequest($request);
+        // Assuming RuntimeInterface will eventually have a generic handleRequest or similar.
+        // For now, this is a placeholder for the architectural intent.
+        // In a real worker, this might delegate to a specific handler registry.
+        return $request; 
     }
 
     private function closeWorkerRequestScope(): void

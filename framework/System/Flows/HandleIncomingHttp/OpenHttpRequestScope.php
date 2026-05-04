@@ -23,7 +23,10 @@ final readonly class OpenHttpRequestScope
     public function open(RuntimeRequest $runtimeRequest) : RequestScope
     {
         $requestScope = $this->requestScopeStore->open();
-        $this->runtimeContext->startRequest(scopeId: $requestScope->id(), request: $runtimeRequest);
+        $this->runtimeContext->startRequest(
+            requestScopeId: $requestScope->id(),
+            runtimeRequest: $runtimeRequest,
+        );
 
         return $requestScope;
     }

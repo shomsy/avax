@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
+use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Container;
 use Avax\Components\Application\Container\System\ContainerFacade;
 
@@ -10,7 +10,7 @@ if (!function_exists('appInstance')) {
     /**
      * Get or set the global container instance.
      */
-    function appInstance(DIContainerInterface|null $instance = null): DIContainerInterface|null
+    function appInstance(ContainerInterface|null $instance = null): ContainerInterface|null
     {
         static $container = null;
 

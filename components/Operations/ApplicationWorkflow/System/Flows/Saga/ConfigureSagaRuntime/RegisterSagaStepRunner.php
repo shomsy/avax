@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ConfigureSagaRuntime;
 
-use Closure;
+use RuntimeException;
 
-/**
- * RegisterSagaStepRunner - registers the saga step runner dependency.
- */
 final readonly class RegisterSagaStepRunner
 {
-    public function register(Closure $stepRunner, ?SagaRuntimeConfig $sagaRuntimeConfig = null) : SagaRuntimeConfig
+    public function register(): object
     {
-        return ($sagaRuntimeConfig ?? new SagaRuntimeConfig())->withStepRunner(stepRunner: $stepRunner);
-    }
+        return new class () {
+            public function run(array $stepDefinition, array $sagaData): mixed
+            {
+                throw new RuntimeException(message: 'Step runner not configured.');
+            }
 
-    public function describeResponsibility(): string
-    {
-        return 'registers the saga step runner dependency.';
+            public function compensate(array $compensationDefinition, array $previousResult): mixed
+            {
+                throw new RuntimeException(message: 'Compensation runner not configured.');
+            }
+        };
     }
 }

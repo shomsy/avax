@@ -50,15 +50,3 @@ final readonly class ContainerAnalyzer
         return [];
     }
 }
-
-final readonly class SafetyAssessment
-{
-    /**
-     * @param list<string> $violations
-     */
-    public function __construct(
-        public bool $safe,
-        public array $violations = [],
-    ) {
-    }
-}

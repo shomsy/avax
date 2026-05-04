@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 /**
  * Check for runtime leaks.
  * Ensures Swoole, FrankenPHP, etc. do not leak outside Runtime adapters.

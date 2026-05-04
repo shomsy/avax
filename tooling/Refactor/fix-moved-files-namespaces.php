@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 $replacements = [
     'Avax\Components\API' => 'Avax\Labs\API',
     'Avax\Components\Integration' => 'Avax\Labs\Integration',

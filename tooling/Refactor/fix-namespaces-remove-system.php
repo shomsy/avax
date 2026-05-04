@@ -2,6 +2,9 @@
 
 
 namespace Avax\Tooling\Refactor;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 $dirs = [
     __DIR__ . '/../../tooling/dependency-map',
     __DIR__ . '/../../benchmarks/performance',

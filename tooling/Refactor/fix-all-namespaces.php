@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 $psr4Map = [
     'Avax\Framework\\' => 'framework/',
     'Avax\Components\\' => 'components/',

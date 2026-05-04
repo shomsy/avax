@@ -54,24 +54,3 @@ final class Idempotency
     }
 }
 
-final readonly class IdempotencyMiddleware
-{
-    public function __construct(private string $headerName = 'Idempotency-Key')
-    {
-    }
-
-    public function handle(object $request, Closure $next): mixed
-    {
-        $key = $request->getHeader($this->headerName) ?: Idempotency::generate();
-
-        if (Idempotency::check($key)) {
-            return Idempotency::replay($key);
-        }
-
-        $response = $next($request);
-
-        Idempotency::record($key, (array) $response);
-
-        return $response;
-    }
-}

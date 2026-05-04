@@ -9,9 +9,8 @@ final class FallbackStrategyItem
     public function __construct(
         public string $dependency,
         public string $fallbackClass,
-        public bool   $active = false,
-    )
-    {
+        public bool $active = false,
+    ) {
     }
 
     public function isActive(): bool

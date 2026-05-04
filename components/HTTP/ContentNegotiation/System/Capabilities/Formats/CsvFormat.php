@@ -8,8 +8,8 @@ final class CsvFormat implements ContentFormatterInterface
 {
     public function format(mixed $data): string
     {
-        if (!is_array($data)) {
-            return (string)$data;
+        if (! is_array($data)) {
+            return (string) $data;
         }
 
         $handle = fopen('php://temp', 'r+');

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
 use Closure;
-use components\HTTP\Dispatcher\ControllerDispatcher;
-use components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Dispatcher\System\PublicSurface\ControllerDispatcher;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 
 final readonly class RunHttpRoute

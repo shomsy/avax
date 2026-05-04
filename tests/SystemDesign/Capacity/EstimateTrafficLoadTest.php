@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\mDesign\Capacity;
 
-use Avax\Components\SystemDesign\Capacity\System\Flows\EstimateTrafficLoad\EstimateTrafficLoad;
-use Avax\Components\SystemDesign\Capacity\System\PublicSurface\CapacityModel;
+use Avax\Components\Application\SystemDesign\Capacity\System\Flows\EstimateTrafficLoad\EstimateTrafficLoad;
+use Avax\Components\Application\SystemDesign\Capacity\System\PublicSurface\CapacityModel;
 use Avax\Tests\TestCase;
 
 final class EstimateTrafficLoadTest extends TestCase

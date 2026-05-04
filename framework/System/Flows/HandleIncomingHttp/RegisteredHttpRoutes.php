@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
 use Closure;
-use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 
 final readonly class RegisteredHttpRoutes
 {

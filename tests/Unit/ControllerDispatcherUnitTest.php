@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit;
 
 use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
-use Avax\Components\HTTP\Request\Request;
-use Avax\Components\HTTP\Request\RequestDtoFactory;
+use Avax\Components\HTTP\Request\System\Request;
+use Avax\Components\HTTP\Request\System\RequestDtoFactory;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\AssembleIncomingRequest;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\Configuration\PrepareRequest;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;

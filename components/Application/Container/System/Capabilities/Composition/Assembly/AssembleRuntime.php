@@ -16,7 +16,7 @@ use Avax\Components\Application\Container\System\Capabilities\Execution\Injectio
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Methods\InjectMethods;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Properties\InjectProperties;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\CompiledRuntime;

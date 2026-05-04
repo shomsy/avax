@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Text\System\Capabilities\Extract;
+namespace Avax\Components\Application\Text\System\Capabilities\Extract;
 
-use Avax\Components\Text\System\PublicSurface\Text;
+use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class ExtractLetters
 {

@@ -8,7 +8,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Redis;
+use Avax\Components\Infrastructure\System\Capabilities\Cache\Driver;
 use SensitiveParameter;
 
 class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegistryInterface
@@ -17,7 +17,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
 
     private const string USER_KEY_PREFIX = 'auth:user_sessions:';
 
-    public function __construct(private readonly Redis $redis, private readonly int $ttlSeconds = 86400) {}
+    public function __construct(private readonly Driver $redis, private readonly int $ttlSeconds = 86400) {}
 
     public function save(SessionRecord $sessionRecord) : void
     {

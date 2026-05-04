@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP;
 
-use Avax\Components\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\Components\HTTP\Dispatcher\System\PublicSurface\ControllerDispatcher;
 use Avax\Components\HTTP\Middleware\MiddlewareInterface;
 use Avax\Components\HTTP\Response\ResponseFactory;
-use Avax\Components\HTTP\Router\RouterInterface;
-use Avax\Components\HTTP\Router\RouterRuntimeInterface;
-use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\RouteRegistrarProxy;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionException;

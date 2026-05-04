@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ystem\Capabilities\RuntimeSafety\StatelessBoundary\System\PublicSurface;
+namespace Avax\Framework\System\Capabilities\RuntimeSafety\StatelessBoundary\System\PublicSurface;
 
 use Avax\Components\StatelessBoundary\System\Capabilities\Enforcement\StatelessGuard;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Flows\CreateResponse;
 
-use Avax\Components\HTTP\System\Capabilities\Response;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\System\Flows\BuildResponse\BuildResponse;
 
 final class CreateResponse

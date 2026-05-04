@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\ArchitectureTests;
 
-use Avax\Components\SystemDesign\ArchitectureTests\System\PublicSurface\ArchitectureTest;
+use Avax\Components\Application\SystemDesign\ArchitectureTests\System\PublicSurface\ArchitectureTest;
 use Avax\Tests\TestCase;
 
 final class ArchitectureTestTest extends TestCase

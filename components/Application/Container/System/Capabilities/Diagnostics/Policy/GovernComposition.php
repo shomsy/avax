@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Container\System\Capabilities\Diagnostics\
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use ReflectionException;
 
 /**

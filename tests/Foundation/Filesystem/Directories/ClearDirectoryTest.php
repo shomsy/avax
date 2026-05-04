@@ -6,7 +6,7 @@ namespace Avax\Tests\Foundation\Filesystem\Directories;
 
 use Avax\Filesystem\Directories\ClearDirectory;
 use Avax\Filesystem\Directories\DirectoryClearFailed;
-use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local\LocalDisk;
 use Avax\Tests\TestCase;
 
 class ClearDirectoryTest extends TestCase

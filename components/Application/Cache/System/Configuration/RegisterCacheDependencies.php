@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
-use Avax\Components\Cache\Cache;
-use Avax\Components\Cache\System\CacheContract;
-use Avax\Components\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
-use Avax\Components\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
-use Avax\Components\Cache\System\PublicSurface\Facade\CacheFacade;
-use Avax\Components\Cache\System\PublicSurface\Facade\CacheRegistry;
-use Avax\Components\Cache\System\PublicSurface\Read\ReadFromCache;
+use Avax\Components\Application\Cache\Cache;
+use Avax\Components\Application\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
+use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
+use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use Override;
 
 final class RegisterCacheDependencies extends BaseRegisterDependency

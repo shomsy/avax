@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadPdo;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\RunWithConnection\RunWithConnection;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use PDO;
 use Throwable;
 

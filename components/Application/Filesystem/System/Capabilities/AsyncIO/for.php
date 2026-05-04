@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Filesystem\System\Capabilities\AsyncIO;
+namespace Avax\Components\Application\Filesystem\System\Capabilities\AsyncIO;
 
 use Throwable;
 

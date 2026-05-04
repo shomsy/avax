@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\LoadModel;
 
-use Avax\Components\SystemDesign\LoadModel\System\Flows\EstimateLoad\EstimateLoad;
-use Avax\Components\SystemDesign\LoadModel\System\PublicSurface\LoadModel;
+use Avax\Components\Application\SystemDesign\LoadModel\System\Flows\EstimateLoad\EstimateLoad;
+use Avax\Components\Application\SystemDesign\LoadModel\System\PublicSurface\LoadModel;
 use Avax\Tests\TestCase;
 
 final class LoadModelTest extends TestCase

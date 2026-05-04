@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
-use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
-use Avax\Components\Application\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;
+use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Attributes\RuntimeInput;
+use Avax\Components\Application\Container\System\ContainerInterface;
 
 interface DecoratedContract
 {

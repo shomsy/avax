@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\mDesign\Consistency;
 
-use Avax\Components\SystemDesign\Consistency\System\Flows\AnalyzeConsistency\AnalyzeConsistency;
-use Avax\Components\SystemDesign\Consistency\System\PublicSurface\ConsistencyLevel;
+use Avax\Components\Application\SystemDesign\Consistency\System\Flows\AnalyzeConsistency\AnalyzeConsistency;
+use Avax\Components\Application\SystemDesign\Consistency\System\PublicSurface\ConsistencyLevel;
 use Avax\Tests\TestCase;
 
 final class ConsistencyLevelTest extends TestCase

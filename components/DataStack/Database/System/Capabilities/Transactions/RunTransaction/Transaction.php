@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTransaction;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionManagerInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionsInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
 use Throwable;
 
@@ -14,7 +14,7 @@ use Throwable;
  *
  * @see /docs/Foundation/Database/DSL/Transactions.md
  */
-final class Transaction implements TransactionManagerInterface
+final class Transaction implements TransactionsInterface
 {
     /** @var int How many bubbles deep are we currently? (0 = no transaction active). */
     private int $transactions = 0;

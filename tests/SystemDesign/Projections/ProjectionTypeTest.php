@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\Projections;
 
-use Avax\Components\SystemDesign\Projections\System\Flows\DesignProjection\DesignProjection;
-use Avax\Components\SystemDesign\Projections\System\PublicSurface\ProjectionType;
+use Avax\Components\Application\SystemDesign\Projections\System\Flows\DesignProjection\DesignProjection;
+use Avax\Components\Application\SystemDesign\Projections\System\PublicSurface\ProjectionType;
 use Avax\Tests\TestCase;
 
 final class ProjectionTypeTest extends TestCase

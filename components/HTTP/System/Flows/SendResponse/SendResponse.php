@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\System\Flows\SendResponse;
 
 use Avax\Components\HTTP\System\Capabilities\Body\StreamBody;
-use Avax\Components\HTTP\System\Capabilities\Response;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 
 final class SendResponse
 {

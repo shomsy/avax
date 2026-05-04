@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
-use components\HTTP\URI\Parts\Scheme;
+use Avax\Components\HTTP\URI\System\Capabilities\Parts\Scheme;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

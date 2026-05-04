@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\Replication;
 
-use Avax\Components\SystemDesign\Replication\System\Flows\AnalyzeReplication\AnalyzeReplication;
-use Avax\Components\SystemDesign\Replication\System\PublicSurface\ReplicationStrategy;
+use Avax\Components\Application\SystemDesign\Replication\System\Flows\AnalyzeReplication\AnalyzeReplication;
+use Avax\Components\Application\SystemDesign\Replication\System\PublicSurface\ReplicationStrategy;
 use Avax\Tests\TestCase;
 
 final class ReplicationStrategyTest extends TestCase

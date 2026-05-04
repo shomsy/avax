@@ -7,10 +7,12 @@ namespace Avax\Components\HTTP\Router\System\PublicSurface;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
-use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
+use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
+use Override;
 
 final readonly class Router implements RouterInterface
 {
@@ -24,16 +26,56 @@ final readonly class Router implements RouterInterface
         $this->matchRoute      = new MatchRoute();
     }
 
-    public function get(string $u, $a): void
+    #[Override]
+    public function get(string $path, mixed $action): Registrar
     {
-        $this->routeCollection->add(new RouteDefinition(new RouteMethod('GET'), $u, $a));
+        return $this->addRoute('GET', $path, $action);
     }
 
-    public function post(string $u, $a): void
+    #[Override]
+    public function post(string $path, mixed $action): Registrar
     {
-        $this->routeCollection->add(new RouteDefinition(new RouteMethod('POST'), $u, $a));
+        return $this->addRoute('POST', $path, $action);
     }
 
+    #[Override]
+    public function put(string $path, mixed $action): Registrar
+    {
+        return $this->addRoute('PUT', $path, $action);
+    }
+
+    #[Override]
+    public function patch(string $path, mixed $action): Registrar
+    {
+        return $this->addRoute('PATCH', $path, $action);
+    }
+
+    #[Override]
+    public function delete(string $path, mixed $action): Registrar
+    {
+        return $this->addRoute('DELETE', $path, $action);
+    }
+
+    #[Override]
+    public function options(string $path, mixed $action): Registrar
+    {
+        return $this->addRoute('OPTIONS', $path, $action);
+    }
+
+    #[Override]
+    public function head(string $path, mixed $action): Registrar
+    {
+        return $this->addRoute('HEAD', $path, $action);
+    }
+
+    private function addRoute(string $method, string $path, mixed $action): Registrar
+    {
+        $route = new RouteDefinition(new RouteMethod($method), $path, $action);
+        $this->routeCollection->add($route);
+        return new Registrar($route);
+    }
+
+    #[Override]
     public function dispatch(RequestInterface $request) : ResponseInterface
     {
         $route = $this->matchRoute->execute($this->routeCollection, $request);

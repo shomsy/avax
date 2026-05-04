@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Cache\tests\Fakes\Cache;
+namespace Avax\Components\Application\Cache\tests\Fakes\Cache;
 
 use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
-use Avax\Components\Cache\System\Foundation\Time\Duration;
-use Avax\Components\Cache\System\Foundation\Time\FrozenClock;
-use Avax\Components\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
+use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use Override;
 
 final class FakeClock implements Clock

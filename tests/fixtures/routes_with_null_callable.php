@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Request\System\Request;
 use Avax\Components\HTTP\Response\Response;
 use Avax\Facade\Facades\Route;
 use Psr\Http\Message\ResponseInterface;

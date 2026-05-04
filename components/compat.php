@@ -2,36 +2,37 @@
 
 declare(strict_types=1);
 
-use Avax\Application\Config\Config;
-use Avax\Application\Filesystem\Filesystem;
+use Avax\Components\Application\Config\System\PublicSurface\Config;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Application\Container\System\ContainerInterface;
-use Avax\Database\System\Capabilities\Connections\Connections;
-use Avax\Database\System\Capabilities\Connections\Pools\ConnectionPool;
-use Avax\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
-use Avax\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
-use Avax\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
-use Avax\Database\System\Capabilities\ORM\Attributes\Column;
-use Avax\Database\System\Capabilities\ORM\Attributes\Entity;
-use Avax\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
-use Avax\Database\System\Capabilities\ORM\Attributes\Id;
-use Avax\Database\System\Capabilities\ORM\Attributes\Table;
-use Avax\Database\System\Capabilities\ORM\Repositories\EntityRepository;
-use Avax\Database\System\Capabilities\Query\Builder\QueryBuilder;
-use Avax\Database\System\Capabilities\Query\Exceptions\QueryException;
-use Avax\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
-use Avax\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
-use Avax\DataHandling\DataTransfer\Capabilities\ValueConversion\ValueCasterInterface;
-use Avax\DataHandling\DataTransfer\Capabilities\ValueConversion\ValueConversionContext;
-use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
-use Avax\HTTP\AppKernel;
-use Avax\HTTP\Context\HttpContext;
-use Avax\HTTP\HttpKernel;
+use Avax\Components\Application\Container\System\Container;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPool;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Column\Render\ColumnSQLRenderer;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Column;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Entity;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Id;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Table;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Repositories\EntityRepository;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\QueryException;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueCasterInterface;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueConversionContext;
+use Avax\Components\DataStack\Data\System\Capabilities\ObjectHandling\DTO\AbstractDTO;
+use Avax\Framework\System\PublicSurface\AppKernel;
+use Avax\Components\HTTP\Context\System\PublicSurface\HttpContext;
+use Avax\Framework\System\PublicSurface\HttpKernel;
 use Avax\HTTP\ResolveRouteFromHttpRequest;
-use Avax\HTTP\Router\Router;
-use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\RouterRuntimeInterface;
-use Avax\HTTP\Session\Session;
-use Avax\Presentation\View\View;
+use Avax\Components\HTTP\Router\System\PublicSurface\Router;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
+use Avax\Components\Identity\Sessions\System\PublicSurface\Session;
+use Avax\Components\Presentation\Views\System\PublicSurface\View;
 
 $classAliases = [
     'Avax\\DataHandling\\DataTransfer\\DataTransfer'                                        => 'Avax\\DataFoundation\\DataTransfer\\DataTransfer',
@@ -135,9 +136,10 @@ $classAliases = [
     'Avax\\HTTP\\Request\\Request'                                                              => 'Avax\\Components\\HTTP\\Request\\Request',
     'Avax\\HTTP\\Request\\RequestDtoFactory'                                                    => 'Avax\\HTTP\\Request\\RequestDtoFactory',
     'Avax\\Logging\\LoggerFactory'                                                              => 'Avax\\Components\\Logging\\System\\Configuration\\RegisterLogging',
-    'Avax\\Cache\\Cache'                                                                        => 'Avax\\Components\\Cache\\System\\PublicSurface\\Cache',
+    'Avax\\Cache\\Cache'                                                                        => 'Avax\\Components\\Application\\Cache\\System\\PublicSurface\\Cache',
     'Avax\\Config\\Architecture\\DDD\\AppPath'                                                  => 'Avax\\Components\\Config\\System\\Capabilities\\Architecture\\AppPath',
     'Avax\\DumpDebugger\\DumpDebugger'                                                          => 'Avax\\Components\\DumpDebugger\\System\\PublicSurface\\Dump',
+    'Avax\\Components\\Application\\Container\\System\\PublicSurface\\Container'                => 'Avax\\Components\\Application\\Container\\System\\Container',
     HttpKernel::class                                             => \Avax\Components\HTTP\System\Capabilities\Kernel\HttpKernel::class,
     AppKernel::class                                              => \Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel::class,
     ResolveRouteFromHttpRequest::class                            => \Avax\Components\HTTP\System\Flows\Routing\ResolveRouteFromHttpRequest::class,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
 use Avax\Tests\TestCase;
-use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use components\HTTP\Router\System\Flows\BootstrapRoutes\Cache\RouteExportValidator;
 use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Psr\Log\LoggerInterface;

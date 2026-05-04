@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDeferredDependency;
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
-use Avax\Components\Application\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
+use Avax\Components\Application\Container\System\ContainerInterface;
 
 $reflection = new ReflectionClass(objectOrClass: RegisterDependency::class);
 $constructor = $reflection->getMethod(name: '__construct');

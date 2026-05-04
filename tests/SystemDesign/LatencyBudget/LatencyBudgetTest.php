@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\LatencyBudget;
 
-use Avax\Components\SystemDesign\LatencyBudget\System\Flows\AllocateLatency\AllocateLatency;
-use Avax\Components\SystemDesign\LatencyBudget\System\PublicSurface\LatencyBudget;
+use Avax\Components\Application\SystemDesign\LatencyBudget\System\Flows\AllocateLatency\AllocateLatency;
+use Avax\Components\Application\SystemDesign\LatencyBudget\System\PublicSurface\LatencyBudget;
 use Avax\Tests\TestCase;
 
 final class LatencyBudgetTest extends TestCase

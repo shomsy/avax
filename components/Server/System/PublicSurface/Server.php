@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Server\System\PublicSurface;
 
-use Avax\Components\Server\System\Capabilities\PhpBuiltInServer;
+use Avax\Components\Server\System\Capabilities\RunApplicationOnRunApplicationOnPhpBuiltInServer;
 use RuntimeException;
 
 final readonly class Server
@@ -23,7 +23,7 @@ final readonly class Server
             return ServerResult::error('Router file not found: ' . $routerFile);
         }
 
-        $started = PhpBuiltInServer::start(
+        $started = RunApplicationOnRunApplicationOnPhpBuiltInServer::start(
             host  : $host,
             port  : $port,
             router: $routerFile,

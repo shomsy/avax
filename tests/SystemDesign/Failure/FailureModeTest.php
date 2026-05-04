@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\mDesign\Failure;
 
-use Avax\Components\SystemDesign\Failure\System\Flows\AnalyzeFailureMode\AnalyzeFailureMode;
-use Avax\Components\SystemDesign\Failure\System\PublicSurface\FailureMode;
+use Avax\Components\Application\SystemDesign\Failure\System\Flows\AnalyzeFailureMode\AnalyzeFailureMode;
+use Avax\Components\Application\SystemDesign\Failure\System\PublicSurface\FailureMode;
 use Avax\Tests\TestCase;
 
 final class FailureModeTest extends TestCase

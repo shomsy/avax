@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\Availability;
 
-use Avax\Components\SystemDesign\Availability\System\Flows\CalculateAvailability\CalculateAvailability;
-use Avax\Components\SystemDesign\Availability\System\PublicSurface\AvailabilityModel;
+use Avax\Components\Application\SystemDesign\Availability\System\Flows\CalculateAvailability\CalculateAvailability;
+use Avax\Components\Application\SystemDesign\Availability\System\PublicSurface\AvailabilityModel;
 use Avax\Tests\TestCase;
 
 final class AvailabilityModelTest extends TestCase

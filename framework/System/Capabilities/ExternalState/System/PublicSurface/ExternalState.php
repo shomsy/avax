@@ -2,143 +2,128 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ystem\Capabilities\ExternalState\System\PublicSurface;
+namespace Avax\Framework\System\Capabilities\ExternalState\System\PublicSurface;
 
-use Avax\Components\ExternalState\System\Capabilities\Adapters\MemoryStateAdapter;
-use Avax\Components\ExternalState\System\Capabilities\Adapters\RedisStateAdapter;
-
-interface StateAdapter
-{
-    public function get(string $key): mixed;
-
-    public function set(string $key, mixed $value, int $ttl = 0): void;
-
-    public function delete(string $key): void;
-
-    public function exists(string $key): bool;
-
-    public function increment(string $key, int $value = 1): int;
-
-    public function expire(string $key, int $ttl): void;
-}
+use Avax\Framework\System\Capabilities\ExternalState\System\Capabilities\ReadApiDescriptions\Memory;
+use Avax\Framework\System\Capabilities\ExternalState\System\Capabilities\ReadApiDescriptions\Redis;
 
 final class ExternalState
 {
-    private static ?StateAdapter $session = null;
+    private static ?State $session = null;
 
-    private static ?StateAdapter $cache = null;
+    private static ?State $cache = null;
 
-    private static ?StateAdapter $lock = null;
+    private static ?State $lock = null;
 
-    private static ?StateAdapter $rateLimit = null;
+    private static ?State $rateLimit = null;
 
-    public static function session(): StateAdapter
+    public static function session(): State
     {
-        if (! self::$session instanceof StateAdapter) {
+        if (! self::$session instanceof State) {
             self::$session = self::defaultSessionAdapter();
         }
 
         return self::$session;
     }
 
-    private static function defaultSessionAdapter(): StateAdapter
+    private static function defaultSessionAdapter(): State
     {
         $url = getenv('REDIS_URL') ?: (getenv('SESSION_STORE') ?: '');
 
         if ($url !== '' && $url !== '0') {
-            return new RedisStateAdapter($url);
+            return new Redis($url);
         }
 
-        return new MemoryStateAdapter();
+        return new Memory();
     }
 
-    public static function cache(): StateAdapter
+    public static function cache(): State
     {
-        if (! self::$cache instanceof StateAdapter) {
+        if (! self::$cache instanceof State) {
             self::$cache = self::defaultCacheAdapter();
         }
 
         return self::$cache;
     }
 
-    private static function defaultCacheAdapter(): StateAdapter
+    private static function defaultCacheAdapter(): State
     {
         $url = getenv('REDIS_URL') ?: (getenv('CACHE_STORE') ?: '');
 
         if ($url !== '' && $url !== '0') {
-            return new RedisStateAdapter($url);
+            return new Redis($url);
         }
 
-        return new MemoryStateAdapter();
+        return new Memory();
     }
 
-    public static function lock(): StateAdapter
+    public static function lock(): State
     {
-        if (! self::$lock instanceof StateAdapter) {
+        if (! self::$lock instanceof State) {
             self::$lock = self::defaultLockAdapter();
         }
 
         return self::$lock;
     }
 
-    private static function defaultLockAdapter(): StateAdapter
+    private static function defaultLockAdapter(): State
     {
         $url = getenv('REDIS_URL') ?: (getenv('LOCK_STORE') ?: '');
 
         if ($url !== '' && $url !== '0') {
-            return new RedisStateAdapter($url);
+            return new Redis($url);
         }
 
-        return new MemoryStateAdapter();
+        return new Memory();
     }
 
-    public static function rateLimit(): StateAdapter
+    public static function rateLimit(): State
     {
-        if (! self::$rateLimit instanceof StateAdapter) {
+        if (! self::$rateLimit instanceof State) {
             self::$rateLimit = self::defaultRateLimitAdapter();
         }
 
         return self::$rateLimit;
     }
 
-    private static function defaultRateLimitAdapter(): StateAdapter
+    private static function defaultRateLimitAdapter(): State
     {
         $url = getenv('REDIS_URL') ?: (getenv('RATE_LIMIT_STORE') ?: '');
 
         if ($url !== '' && $url !== '0') {
-            return new RedisStateAdapter($url);
+            return new Redis($url);
         }
 
-        return new MemoryStateAdapter();
+        return new Memory();
     }
 
-    public static function setSession(StateAdapter $stateAdapter) : void
+    public static function setSession(State $state) : void
     {
-        self::$session = $stateAdapter;
+        self::$session = $state;
     }
 
-    public static function setCache(StateAdapter $stateAdapter) : void
+    public static function setCache(State $state) : void
     {
-        self::$cache = $stateAdapter;
+        self::$cache = $state;
     }
 
     public static function audit(): StateAudit
     {
         return new StateAudit(
-            session  : self::adapterType(stateAdapter: self::session()),
-            cache    : self::adapterType(stateAdapter: self::cache()),
-            lock     : self::adapterType(stateAdapter: self::lock()),
-            rateLimit: self::adapterType(stateAdapter: self::rateLimit()),
+            session  : self::adapterType(state: self::session()),
+            cache    : self::adapterType(state: self::cache()),
+            lock     : self::adapterType(state: self::lock()),
+            rateLimit: self::adapterType(state: self::rateLimit()),
         );
     }
 
-    private static function adapterType(?StateAdapter $stateAdapter) : string
+    private static function adapterType(?State $state) : string
     {
-        if ($stateAdapter instanceof RedisStateAdapter) {
+        if ($state instanceof Redis) {
             return 'Redis';
         }
 
-        if ($stateAdapter instanceof MemoryStateAdapter) {
+        if ($state instanceof Memory) {
             return 'Memory';
         }
 

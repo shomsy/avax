@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\System\Capabilities\Architecture;
+namespace Avax\Components\Application\Config\System\Capabilities\Architecture;
 
 /**
  * Enum AppPath.

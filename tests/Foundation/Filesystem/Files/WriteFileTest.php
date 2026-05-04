@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Filesystem\Files;
 
-use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local\LocalDisk;
 use Avax\Filesystem\Files\WriteFile;
 use Avax\Tests\TestCase;
 

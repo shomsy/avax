@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Avax\Components\Application\Container\System\ContainerInterface;
-use Avax\Components\Application\Container\System\PublicSurface\Container;
+use Avax\Components\Application\Container\System\Container;
 
 if (! function_exists('appInstance')) {
     /**

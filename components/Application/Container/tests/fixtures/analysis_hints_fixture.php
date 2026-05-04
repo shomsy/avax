@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
+use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Attributes\RuntimeInput;
 
 final class analysis_hints_fixture
 {

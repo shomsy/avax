@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\Simulation;
 
-use Avax\Components\SystemDesign\Simulation\System\PublicSurface\SimulationConfig;
+use Avax\Components\Application\SystemDesign\Simulation\System\PublicSurface\SimulationConfig;
 use Avax\Tests\TestCase;
 
 final class SimulationConfigTest extends TestCase

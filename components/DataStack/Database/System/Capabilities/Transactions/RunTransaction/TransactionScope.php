@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTransaction;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionManagerInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionsInterface;
 use Throwable;
 
 /**
@@ -32,10 +32,10 @@ final class TransactionScope
     private bool $completed = false;
 
     /**
-     * @param TransactionManagerInterface $transactionManager The active technical authority responsible for atomicity and
+     * @param TransactionsInterface $transactionManager The active technical authority responsible for atomicity and
      *                                             persistence.
      */
-    public function __construct(private readonly TransactionManagerInterface $transactionManager)
+    public function __construct(private readonly TransactionsInterface $transactionManager)
     {
         $this->transactionManager->begin();
     }

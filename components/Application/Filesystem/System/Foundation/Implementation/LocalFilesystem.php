@@ -10,7 +10,7 @@ use Avax\Components\Application\Filesystem\Directories\DeleteDirectory;
 use Avax\Components\Application\Filesystem\Directories\EnsureDirectoryExists;
 use Avax\Components\Application\Filesystem\Directories\EnsureDirectoryIsWritable;
 use Avax\Components\Application\Filesystem\Directories\ListDirectoryFiles;
-use Avax\Components\Application\Filesystem\Disks\Disk;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
 use Avax\Components\Application\Filesystem\Disks\ResolveDisk;
 use Avax\Components\Application\Filesystem\Files\AppendToFile;
 use Avax\Components\Application\Filesystem\Files\CopyFile;

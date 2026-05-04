@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Scopes;
 
-use Avax\Components\Application\Container\System\PublicSurface\Container;
+use Avax\Components\Application\Container\System\Container;
 
 final class ContainerScope
 {

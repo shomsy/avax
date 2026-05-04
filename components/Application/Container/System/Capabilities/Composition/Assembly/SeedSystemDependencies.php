@@ -12,7 +12,7 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observ
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTelemetry;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTimeline;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\FunctionCaller;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ManageScopes;

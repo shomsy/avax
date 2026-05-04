@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\System\Flows\Routing;
 
 use Avax\Components\HTTP\Middleware\RequestHandlerInterface;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
-use Avax\Components\HTTP\Router\RouterRuntimeInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;

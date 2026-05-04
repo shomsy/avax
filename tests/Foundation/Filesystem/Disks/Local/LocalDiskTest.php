@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Filesystem\Disks\Local;
 
 use Avax\Filesystem\Directories\DirectoryClearFailed;
-use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local\LocalDisk;
 use Avax\Filesystem\Files\FileNotFound;
 use Avax\Tests\TestCase;
 

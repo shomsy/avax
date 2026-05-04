@@ -6,7 +6,7 @@ namespace Avax\Tests\Foundation\Filesystem\Disks;
 
 use Avax\Filesystem\Configuration\FilesystemConfig;
 use Avax\Filesystem\Disks\InvalidDiskDriver;
-use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local\LocalDisk;
 use Avax\Filesystem\Disks\ResolveDisk;
 use Avax\Tests\TestCase;
 

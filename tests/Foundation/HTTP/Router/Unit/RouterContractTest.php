@@ -8,7 +8,7 @@ use Avax\Tests\TestCase;
 use components\HTTP\Request\Request;
 use components\HTTP\Router\Router;
 use components\HTTP\Router\RouterInterface;
-use components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Psr\Http\Message\UriInterface;
 

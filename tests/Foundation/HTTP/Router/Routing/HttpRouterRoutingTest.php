@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Router\Routing;
 
-use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Request\System\Request;
 use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
 use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\HttpRequestRouter;
 use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Matching\RouteMatcherRegistry;

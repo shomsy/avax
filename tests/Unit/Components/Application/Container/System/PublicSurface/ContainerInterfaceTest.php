@@ -6,7 +6,7 @@ namespace Avax\Tests\Unit\Components\Application\Container\System\PublicSurface;
 
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Foundation\DIContainer;
-use Avax\Components\Application\Container\System\PublicSurface\Container;
+use Avax\Components\Application\Container\System\Container;
 use Avax\Tests\TestCase;
 use DateTime;
 use DateTimeImmutable;

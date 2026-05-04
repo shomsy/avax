@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Request\Characterization;
 
-use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Request\System\Request;
 use Avax\Components\HTTP\URI\UriBuilder;
 use Avax\Tests\TestCase;
 

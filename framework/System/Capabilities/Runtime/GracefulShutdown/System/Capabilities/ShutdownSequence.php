@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ystem\Capabilities\Runtime\GracefulShutdown\System\Capabilities;
+namespace Avax\Framework\System\Capabilities\Runtime\GracefulShutdown\System\Capabilities;
 
 use Closure;
 use Throwable;

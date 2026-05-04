@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\DI\Container;
+use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\System\Container;
 
 assertInstanceOf(
     expectedClass: Container::class,

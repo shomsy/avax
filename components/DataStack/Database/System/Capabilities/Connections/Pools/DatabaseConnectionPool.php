@@ -11,7 +11,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\OpenConne
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\DTO\ConnectionPoolMetrics;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\ConnectionAcquired;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\EventBus;
 use ReflectionException;
 use SplQueue;

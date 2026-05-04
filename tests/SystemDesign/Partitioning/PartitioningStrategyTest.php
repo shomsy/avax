@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\Partitioning;
 
-use Avax\Components\SystemDesign\Partitioning\System\Flows\DesignPartitioning\DesignPartitioning;
-use Avax\Components\SystemDesign\Partitioning\System\PublicSurface\PartitioningStrategy;
+use Avax\Components\Application\SystemDesign\Partitioning\System\Flows\DesignPartitioning\DesignPartitioning;
+use Avax\Components\Application\SystemDesign\Partitioning\System\PublicSurface\PartitioningStrategy;
 use Avax\Tests\TestCase;
 
 final class PartitioningStrategyTest extends TestCase

@@ -14,7 +14,7 @@ use Avax\Components\HTTP\Middleware\SessionLifecycleMiddleware;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
-use Avax\Components\HTTP\Router\RouterRuntimeInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Avax\Components\HTTP\Session\NullSession;
 use Avax\Components\HTTP\System\PublicSurface\HttpInterface;
 use Override;

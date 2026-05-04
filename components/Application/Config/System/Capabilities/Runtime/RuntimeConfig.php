@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\System\Capabilities\Runtime;
+namespace Avax\Components\Application\Config\System\Capabilities\Runtime;
 
-use Avax\Components\Config\System\Capabilities\Repository\ConfigurationRepository;
+use Avax\Components\Application\Config\System\Capabilities\Repository\ConfigurationRepository;
 
 /**
  * RuntimeConfig handles per-request overrides in long-lived processes (workers).

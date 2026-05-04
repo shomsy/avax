@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Config\System\Capabilities\Configuration\FileLoader;
+namespace Avax\Components\Application\Config\System\Capabilities\Configuration\FileLoader;
 
 use Override;
 use RuntimeException;

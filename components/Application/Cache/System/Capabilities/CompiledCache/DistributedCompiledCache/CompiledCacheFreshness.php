@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
+namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
 
 use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
 use Avax\Components\Application\DateTime\System\PublicSurface\SystemClock;

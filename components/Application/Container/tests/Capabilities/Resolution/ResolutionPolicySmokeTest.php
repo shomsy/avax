@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 
 $strict = new ResolutionPolicy(strict: true, debug: false);
 $relaxed = new ResolutionPolicy(strict: false, debug: false);

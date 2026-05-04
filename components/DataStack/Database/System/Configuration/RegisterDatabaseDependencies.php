@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Configuration;
 
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Providers\RegisterDependency;
-use Avax\Components\Application\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
+use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\DataStack\Database\Database;
 use Avax\Components\DataStack\Database\EntityManager;
 use Avax\Components\DataStack\Database\Migrations;

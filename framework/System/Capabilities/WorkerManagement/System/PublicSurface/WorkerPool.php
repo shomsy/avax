@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ystem\Capabilities\WorkerManagement\System\PublicSurface;
+namespace Avax\Framework\System\Capabilities\WorkerManagement\System\PublicSurface;
 
 use Avax\Components\WorkerManager\System\Capabilities\Workers\WorkerProcess;
 use Stringable;

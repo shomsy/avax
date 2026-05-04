@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\tests\Fakes\Cache;
 
 use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
-use Avax\Components\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
-use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
-use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
-use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
-use Avax\Components\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Override;
 use Random\RandomException;
 use RuntimeException;

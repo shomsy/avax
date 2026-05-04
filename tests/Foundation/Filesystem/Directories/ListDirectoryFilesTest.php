@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Filesystem\Directories;
 
 use Avax\Filesystem\Directories\ListDirectoryFiles;
-use Avax\Filesystem\Disks\Local\LocalDisk;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local\LocalDisk;
 use Avax\Tests\TestCase;
 
 final class ListDirectoryFilesTest extends TestCase

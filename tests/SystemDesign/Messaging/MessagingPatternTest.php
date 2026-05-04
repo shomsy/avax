@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\mDesign\Messaging;
 
-use Avax\Components\SystemDesign\Messaging\System\Flows\AnalyzeMessaging\AnalyzeMessaging;
-use Avax\Components\SystemDesign\Messaging\System\PublicSurface\MessagingPattern;
+use Avax\Components\Application\SystemDesign\Messaging\System\Flows\AnalyzeMessaging\AnalyzeMessaging;
+use Avax\Components\Application\SystemDesign\Messaging\System\PublicSurface\MessagingPattern;
 use Avax\Tests\TestCase;
 
 final class MessagingPatternTest extends TestCase

@@ -11,7 +11,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use ReflectionException;
 use Throwable;
 

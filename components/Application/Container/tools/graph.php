@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Components\Application\Container\DI\ContainerInterface;
+use Avax\Components\Application\Container\System\ContainerInterface;
 
 if ($argc < 3) {
     fwrite(stream: STDERR, data: "Usage: php tools/graph.php <command> <fixture> [args...]\n");

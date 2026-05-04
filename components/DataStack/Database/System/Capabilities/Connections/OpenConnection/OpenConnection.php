@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\ConnectionFailed;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\ConnectionOpened;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Throwable;
 
 /**

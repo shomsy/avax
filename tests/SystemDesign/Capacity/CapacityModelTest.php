@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\mDesign\Capacity;
 
-use Avax\Components\SystemDesign\Capacity\System\Flows\ValidateCapacityModel\ValidateCapacityModel;
-use Avax\Components\SystemDesign\Capacity\System\PublicSurface\CapacityBudget;
-use Avax\Components\SystemDesign\Capacity\System\PublicSurface\CapacityModel;
-use Avax\Components\SystemDesign\Capacity\System\PublicSurface\CapacityReport;
+use Avax\Components\Application\SystemDesign\Capacity\System\Flows\ValidateCapacityModel\ValidateCapacityModel;
+use Avax\Components\Application\SystemDesign\Capacity\System\PublicSurface\CapacityBudget;
+use Avax\Components\Application\SystemDesign\Capacity\System\PublicSurface\CapacityModel;
+use Avax\Components\Application\SystemDesign\Capacity\System\PublicSurface\CapacityReport;
 use Avax\Tests\TestCase;
 
 final class CapacityModelTest extends TestCase

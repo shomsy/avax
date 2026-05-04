@@ -11,7 +11,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\OpenConne
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPool;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PooledConnectionAuthority;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Random\RandomException;
 use Throwable;
 

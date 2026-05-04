@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints\BlueprintCache;
-use Avax\Components\Application\Container\DI\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
-use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
-use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependencies;
-use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolvePlan;
-use Avax\Components\Application\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\BlueprintCache;
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
+use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Attributes\Inject;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolvePlan;
+use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton;
 
 #[Singleton]
 final class CreateDependencyBlueprintSmokeTest

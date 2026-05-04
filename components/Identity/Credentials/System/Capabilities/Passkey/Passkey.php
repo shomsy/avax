@@ -20,7 +20,7 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\Pas
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskey;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskeyData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RevokePasskey\RevokePasskey;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Support\PasskeyCredential;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;

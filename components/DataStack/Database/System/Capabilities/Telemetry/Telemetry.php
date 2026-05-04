@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Config\Config;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 
 /**
  * Public capability owner for database telemetry and correlation state.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ystem\Flows\ExplainContainerResolution;
+namespace Avax\Framework\System\Flows\ExplainContainerResolution;
 
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Framework\System\Capabilities\ContainerIntelligence\ContainerAnalyzer;

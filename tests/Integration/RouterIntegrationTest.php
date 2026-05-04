@@ -17,7 +17,7 @@ use Avax\Components\Application\Container\Providers\HTTP\MiddlewareBaseRegisterD
 use Avax\Components\Application\Container\Providers\HTTP\RouterBaseRegisterDependency;
 use Avax\Components\Application\Container\Providers\HTTP\SessionBaseRegisterDependency;
 use Avax\Components\Application\Container\Providers\HTTP\ViewBaseRegisterDependency;
-use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Request\System\Request;
 use Avax\Components\HTTP\Router\RouterRuntimeInterface;
 use Avax\Components\HTTP\URI\UriBuilder;
 use Avax\Tests\TestCase;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
-use components\HTTP\URI\Parts\Fragment;
+use Avax\Components\HTTP\URI\System\Capabilities\Parts\Fragment;
 use PHPUnit\Framework\TestCase;
 
 /**

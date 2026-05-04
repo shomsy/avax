@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\Router\Unit;
 
-use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Request\System\Request;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Flows\ResolveRequest\Constraints\RouteConstraintValidator;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\InvalidConstraintException;

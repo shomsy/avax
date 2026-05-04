@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\mDesign\Caching;
 
-use Avax\Components\SystemDesign\Caching\System\Flows\AnalyzeCacheStrategy\AnalyzeCacheStrategy;
-use Avax\Components\SystemDesign\Caching\System\PublicSurface\CacheStrategy;
+use Avax\Components\Application\SystemDesign\Caching\System\Flows\AnalyzeCacheStrategy\AnalyzeCacheStrategy;
+use Avax\Components\Application\SystemDesign\Caching\System\PublicSurface\CacheStrategy;
 use Avax\Tests\TestCase;
 
 final class CacheStrategyTest extends TestCase

@@ -12,7 +12,7 @@ namespace Avax\Components\Application\Filesystem\System\Capabilities\AsyncIO;
  * (ReactPHP, Amp, Swoole, Workerman) when available.
  *
  * IMPORTANT: This is an interface-only capability boundary. No concrete
- * implementation is provided here. The SyncAsyncFilesystemAdapter exists
+ * implementation is provided here. The RunFilesystemIoSynchronously exists
  * as a stopgap that wraps sync calls under this interface, but it should
  * be replaced with a true async adapter when the runtime supports it.
  *

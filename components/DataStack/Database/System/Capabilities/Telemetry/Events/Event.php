@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\SequenceTracker;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\SequenceTracker;
 
 /**
  * Abstract base class for all database telemetry events.

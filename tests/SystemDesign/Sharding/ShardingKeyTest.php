@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesign\Sharding;
 
-use Avax\Components\SystemDesign\Sharding\System\Flows\AnalyzeSharding\AnalyzeSharding;
-use Avax\Components\SystemDesign\Sharding\System\PublicSurface\ShardingKey;
+use Avax\Components\Application\SystemDesign\Sharding\System\Flows\AnalyzeSharding\AnalyzeSharding;
+use Avax\Components\Application\SystemDesign\Sharding\System\PublicSurface\ShardingKey;
 use Avax\Tests\TestCase;
 
 final class ShardingKeyTest extends TestCase

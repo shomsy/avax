@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Router\System\Flows\DispatchRoute;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
-use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 
 final readonly class DispatchRoute
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Filesystem\System\Capabilities\Disks\Local;
+namespace Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local;
 
-use Avax\Components\Filesystem\System\Capabilities\Disks\Disk;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
 use FilesystemIterator;
 use Override;
 use RuntimeException;

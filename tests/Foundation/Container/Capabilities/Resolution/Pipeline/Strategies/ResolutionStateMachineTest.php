@@ -6,7 +6,7 @@ namespace Avax\Tests\Foundation\Container\Capabilities\Resolution\Pipeline\Strat
 
 use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
 use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionStateMachine;
-use Avax\Components\Application\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Tests\TestCase;
 
 final class ResolutionStateMachineTest extends TestCase

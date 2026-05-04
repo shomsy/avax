@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Execution;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Support\ExecutionScope;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Random\RandomException;
 use Throwable;
 

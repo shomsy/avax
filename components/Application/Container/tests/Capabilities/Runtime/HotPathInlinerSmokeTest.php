@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once dirname(2, path: __DIR__) . '/bootstrap.php';
 
-use Avax\Components\Application\Container\DI\Capabilities\Composition\Compilation\CompiledContainer;
-use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveDependency;
-use Avax\Components\Application\Container\DI\Capabilities\Resolution\ResolveRequest;
-use Avax\Components\Application\Container\DI\Capabilities\Runtime\HotPathInliner;
+use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompiledContainer;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
+use Avax\Components\Application\Container\System\Capabilities\Runtime\HotPathInliner;
 
 final class HotPathInlinerSmokeTest extends CompiledContainer
 {

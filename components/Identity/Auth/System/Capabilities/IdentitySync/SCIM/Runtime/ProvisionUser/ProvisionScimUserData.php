@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser;
 
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Support\ScimAccountState;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimAccountState;
 use SensitiveParameter;
 
 final readonly class ProvisionScimUserData

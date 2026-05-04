@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
-use components\HTTP\URI\Parts\UserInfo;
+use Avax\Components\HTTP\URI\System\Capabilities\Parts\UserInfo;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ystem\Capabilities\WorkerManagement\System\Capabilities\Workers;
+namespace Avax\Framework\System\Capabilities\WorkerManagement\System\Capabilities\Workers;
 
 use Closure;
 use RuntimeException;

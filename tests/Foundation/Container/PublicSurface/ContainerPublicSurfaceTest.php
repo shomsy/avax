@@ -9,7 +9,7 @@ use Avax\Components\Application\Container\Container;
 use Avax\Components\Application\Container\ContainerInterface;
 use Avax\Components\Application\Container\ContextBuilderInterface;
 use Avax\Components\Application\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Components\Application\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
+use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Components\Application\Container\ScopeManagerInterface;
 use Avax\Tests\TestCase;
 use ReflectionMethod;

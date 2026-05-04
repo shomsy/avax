@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\HTTP\URI\Parts;
 
-use Avax\Components\HTTP\URI\Parts\Query;
+use Avax\Components\HTTP\URI\System\Capabilities\Parts\Query;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\ystem\Capabilities\RuntimeSafety\StatelessBoundary\System\Capabilities\Enforcement;
+namespace Avax\Framework\System\Capabilities\RuntimeSafety\StatelessBoundary\System\Capabilities\Enforcement;
 
 use Closure;
 use RuntimeException;

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Avax\Components\Application\Container\System\Foundation\DIContainerInterface;
-use Avax\Components\Application\Container\System\PublicSurface\Container;
-use Avax\Components\Application\Container\System\PublicSurface\ContainerFacade;
+use Avax\Components\Application\Container\System\Container;
+use Avax\Components\Application\Container\System\ContainerFacade;
 
 if (!function_exists('appInstance')) {
     /**

@@ -13,7 +13,7 @@ use Avax\Components\Application\Container\System\Capabilities\Declaration\Owners
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\RegistrationMetadata;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\RegistrationVisibility;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\LifetimePlan;
-use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Components\Application\Container\System\Container;

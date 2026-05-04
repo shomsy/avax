@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\Container\Capabilities\Providers\Runtime\Http;
 
-use Avax\Components\HTTP\Request\Request;
+use Avax\Components\HTTP\Request\System\Request;
 use Avax\Components\HTTP\Session\NullSession;
 use Avax\Components\HTTP\Session\Shared\Contracts\SessionInterface;
 use Avax\Tests\TestCase;

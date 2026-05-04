@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\ConfigureRuntime;
 
-use Avax\Framework\System\Capabilities\Runtime\Adapters\FrankenPhp\FrankenPhpRuntime;
-use Avax\Framework\System\Capabilities\Runtime\Adapters\RoadRunner\RoadRunnerRuntime;
-use Avax\Framework\System\Capabilities\Runtime\Adapters\Swoole\SwooleRuntime;
-use Avax\Framework\System\Capabilities\Runtime\Adapters\Workerman\WorkermanRuntime;
+use Avax\Framework\System\Capabilities\Runtime\RunApplication\FrankenPhp\FrankenPhpRuntime;
+use Avax\Framework\System\Capabilities\Runtime\RunApplication\RoadRunner\RoadRunnerRuntime;
+use Avax\Framework\System\Capabilities\Runtime\RunApplication\Swoole\SwooleRuntime;
+use Avax\Framework\System\Capabilities\Runtime\RunApplication\Workerman\WorkermanRuntime;
 use Avax\Framework\System\Capabilities\Runtime\Cli\CliRuntime;
 use Avax\Framework\System\Capabilities\Runtime\PhpFpm\PhpFpmRuntime;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRequest;

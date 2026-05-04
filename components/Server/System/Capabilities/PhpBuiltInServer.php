@@ -6,7 +6,7 @@ namespace Avax\Components\Server\System\Capabilities;
 
 use RuntimeException;
 
-final class PhpBuiltInServer
+final class RunApplicationOnRunApplicationOnPhpBuiltInServer
 {
     public static function start(
         string $host,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Text;
 
 use Avax\Tests\TestCase;
-use components\Text\Pattern;
+use Avax\Components\Text\Pattern;
 
 final class MatchResultGroupsTest extends TestCase
 {

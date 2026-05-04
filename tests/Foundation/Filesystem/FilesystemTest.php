@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Filesystem;
 
 use Avax\Tests\TestCase;
-use components\Filesystem\Disks\Local\LocalDisk;
-use components\Filesystem\Filesystem;
+use Avax\Components\Filesystem\Disks\Local\LocalDisk;
+use Avax\Components\Filesystem\Filesystem;
 
 final class FilesystemTest extends TestCase
 {

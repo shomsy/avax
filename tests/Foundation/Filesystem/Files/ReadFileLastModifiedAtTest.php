@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Filesystem\Files;
 
 use Avax\Tests\TestCase;
-use components\Filesystem\Disks\Local\LocalDisk;
-use components\Filesystem\Files\ReadFileLastModifiedAt;
+use Avax\Components\Filesystem\Disks\Local\LocalDisk;
+use Avax\Components\Filesystem\Files\ReadFileLastModifiedAt;
 
 class ReadFileLastModifiedAtTest extends TestCase
 {

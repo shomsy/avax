@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness;
 
 use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\Detection\EnvironmentDetector;
-use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Policies\LocalPolicy;
-use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Policies\ProductionPolicy;
-use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Policies\StagingPolicy;
-use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\System\Capabilities\Policies\TestingPolicy;
+use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\LocalPolicy;
+use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\ProductionPolicy;
+use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\StagingPolicy;
+use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\TestingPolicy;
 
 interface EnvironmentConfig
 {

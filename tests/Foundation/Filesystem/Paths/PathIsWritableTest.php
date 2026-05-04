@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Filesystem\Paths;
 
 use Avax\Tests\TestCase;
-use components\Filesystem\Paths\PathIsWritable;
+use Avax\Components\Filesystem\Paths\PathIsWritable;
 
 class PathIsWritableTest extends TestCase
 {

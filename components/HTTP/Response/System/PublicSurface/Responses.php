@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Response\System\PublicSurface;
 
-use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildEmptyResponse;
-use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildHtmlResponse;
-use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildJsonResponse;
-use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildRedirectResponse;
-use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildResponse;
-use Avax\Components\HTTP\Response\Flows\BuildResponse\BuildTextResponse;
-use Avax\Components\HTTP\Response\Response;
+use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildEmptyResponse;
+use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildHtmlResponse;
+use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildJsonResponse;
+use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildRedirectResponse;
+use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildResponse;
+use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildTextResponse;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use JsonSerializable;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -45,20 +45,19 @@ final class Responses implements ResponseFactoryInterface
 
     public function createJsonResponse(array $data, int $status = 200) : ResponseInterface
     {
-        return new BuildJsonResponse(data: $data, status: $status);
+        return BuildJsonResponse::execute(data: $data, status: $status);
     }
 
     public function createTextResponse(string $content, int $status = 200) : ResponseInterface
     {
-        return new BuildTextResponse(content: $content, status: $status);
+        return BuildTextResponse::execute(content: $content, status: $status);
     }
 
     public function createResponseWithBody(string $content, int $status, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
-        return new BuildResponse(
-            status : $status,
-            headers: $headers,
-            body   : $content,
+        return new Response(
+            statusCode: $status,
+            headers   : $headers,
         );
     }
 
@@ -69,7 +68,7 @@ final class Responses implements ResponseFactoryInterface
 
     public function createResponse(int $code = 200, string $reasonPhrase = '') : ResponseInterface
     {
-        return new BuildEmptyResponse(
+        return BuildEmptyResponse::execute(
             status      : $code,
             reasonPhrase: $reasonPhrase,
         );
@@ -77,11 +76,11 @@ final class Responses implements ResponseFactoryInterface
 
     public function createRedirectResponse(string $url, int $status = 302) : ResponseInterface
     {
-        return new BuildRedirectResponse(target: $url, status: $status);
+        return BuildRedirectResponse::execute(target: $url, status: $status);
     }
 
     public function createHtmlResponse(string $html, int $status = 200) : ResponseInterface
     {
-        return new BuildHtmlResponse(content: $html, status: $status);
+        return BuildHtmlResponse::execute(content: $html, status: $status);
     }
 }

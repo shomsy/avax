@@ -13,7 +13,7 @@ interface IdempotencyStore
     public function has(string $key): bool;
 }
 
-final class IdempotencyStore implements IdempotencyStore
+final class ArrayIdempotencyStore implements IdempotencyStore
 {
     /** @var array<string, array{value: array, expires_at: int}> */
     private array $store = [];

@@ -11,11 +11,15 @@
     "enterprise"
   ],
   "require": {
-    "php": ">=8.5"
+    "php": ">=8.5",
+    "eftec/bladeone": "^4.16",
+    "erusev/parsedown": "^1.7",
+    "firebase/php-jwt": "^6.10"
   },
   "require-dev": {
     "phpstan/phpstan": "^2.1",
     "phpunit/phpunit": "^10.5",
+    "rector/type-perfect": "^2.1",
     "vimeo/psalm": "^6.16"
   },
     "autoload": {
@@ -32,6 +36,9 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "audit": {
+      "block-insecure": false
+    }
     }
 }

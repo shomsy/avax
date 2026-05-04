@@ -14,5 +14,4 @@ final readonly class PasswordComplexity
     ) {}
 }
 
-    ) {}
-}
+

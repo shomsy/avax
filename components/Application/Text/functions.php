@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Avax\Components\Application\Text\MatchResult;
-use Avax\Components\Application\Text\Pattern;
-use Avax\Components\Application\Text\Text;
+use Avax\Components\Application\Text\System\Foundation\MatchResult;
+use Avax\Components\Application\Text\System\Foundation\Pattern;
+use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 /**
  * Create Text instance from string.

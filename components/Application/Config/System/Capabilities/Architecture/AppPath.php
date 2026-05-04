@@ -45,6 +45,4 @@ enum AppPath: string
         return $currentDir . DIRECTORY_SEPARATOR;
     }
 }
-OR
-}
-}
+

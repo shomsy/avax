@@ -28,9 +28,9 @@ foreach ($files as $file) {
     }
     
     // Fix Disk reference (missing System\Capabilities)
-    if (str_contains($content, 'Avax\Components\Application\Filesystem\Disks\Disk')) {
+    if (str_contains($content, 'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk')) {
         $content = str_replace(
-            'Avax\Components\Application\Filesystem\Disks\Disk', 
+            'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk', 
             'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk', 
             $content
         );

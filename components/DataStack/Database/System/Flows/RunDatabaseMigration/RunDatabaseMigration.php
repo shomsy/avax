@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Flows\RunDatabaseMigration;
 
-use Avax\Components\DataStack\Database\System\Capabilities\MigrationRunner;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 
 final readonly class RunDatabaseMigration
 {

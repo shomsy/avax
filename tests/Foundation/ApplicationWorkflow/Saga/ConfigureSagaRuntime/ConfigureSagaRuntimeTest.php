@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\ApplicationWorkflow\Saga\ConfigureSagaRuntime;
 
-use Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime\ConfigureSagaRuntime;
-use Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime\SagaRuntimeConfig;
-use Avax\ApplicationWorkflow\Saga\ConfigureSagaRuntime\SagaRuntimeConfigurationFailure;
-use Avax\ApplicationWorkflow\Saga\StoreSagaState\StoreSagaState;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ConfigureSagaRuntime\ConfigureSagaRuntime;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ConfigureSagaRuntime\SagaRuntimeConfig;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ConfigureSagaRuntime\SagaRuntimeConfigurationFailure;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaState\StoreSagaState;
 use Avax\Tests\TestCase;
 
 final class ConfigureSagaRuntimeTest extends TestCase

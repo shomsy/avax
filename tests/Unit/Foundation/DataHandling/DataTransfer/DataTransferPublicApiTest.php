@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Foundation\DataHandling\DataTransfer;
 
-use components\DataHandling\DataTransfer\Capabilities\Attributes\Hidden;
-use components\DataHandling\DataTransfer\Capabilities\Attributes\ListOf;
-use components\DataHandling\DataTransfer\Capabilities\Attributes\MapFrom;
-use components\DataHandling\DataTransfer\Capabilities\ErrorReporting\DataTransferFailure;
-use components\DataHandling\DataTransfer\Configuration\DataTransferConfig;
-use components\DataHandling\DataTransfer\Configuration\UnknownFieldPolicy;
-use components\DataHandling\DataTransfer\DataTransfer;
+use Avax\Components\DataHandling\DataTransfer\Capabilities\Attributes\Hidden;
+use Avax\Components\DataHandling\DataTransfer\Capabilities\Attributes\ListOf;
+use Avax\Components\DataHandling\DataTransfer\Capabilities\Attributes\MapFrom;
+use Avax\Components\DataHandling\DataTransfer\Capabilities\ErrorReporting\DataTransferFailure;
+use Avax\Components\DataHandling\DataTransfer\Configuration\DataTransferConfig;
+use Avax\Components\DataHandling\DataTransfer\Configuration\UnknownFieldPolicy;
+use Avax\Components\DataHandling\DataTransfer\DataTransfer;
 use PHPUnit\Framework\TestCase;
 use SensitiveParameter;
 

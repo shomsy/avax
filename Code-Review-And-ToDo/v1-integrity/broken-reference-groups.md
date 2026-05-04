@@ -3147,7 +3147,7 @@
   - framework/System/Capabilities/WorkerManagement/System/PublicSurface/WorkerPool.php:7 (use-statement)
   - framework/System/Capabilities/WorkerManagement/System/PublicSurface/WorkerPool.php:58 (new)
 
-## REAL-PRODUCTION (161)
+## REAL-PRODUCTION (160)
 
 - **Avax\Benchmarks\Performance\Capabilities\ConfigCaching\ConfigCache** [CRITICAL]
   - benchmarks/Performance/System/PublicSurface/Performance.php:7 (use-statement)
@@ -3193,14 +3193,14 @@
   - tests/fixtures/routes_with_null_callable.php:7 (use-statement)
   - tests/fixtures/routes_with_null_callable.php:10 (static-call)
   - tests/fixtures/routes_with_null_callable.php:15 (static-call)
-- **Avax\Framework\System\Capabilities\ExternalState\System\Capabilities\Adapters\Memory** [CRITICAL]
+- **Avax\Framework\System\Capabilities\ExternalState\System\Capabilities\ReadApiDescriptions\Memory** [CRITICAL]
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:7 (use-statement)
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:37 (new)
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:57 (new)
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:77 (new)
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:97 (new)
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:126 (instanceof)
-- **Avax\Framework\System\Capabilities\ExternalState\System\Capabilities\Adapters\Redis** [CRITICAL]
+- **Avax\Framework\System\Capabilities\ExternalState\System\Capabilities\ReadApiDescriptions\Redis** [CRITICAL]
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:8 (use-statement)
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:34 (new)
   - framework/System/Capabilities/ExternalState/System/PublicSurface/ExternalState.php:54 (new)
@@ -3247,7 +3247,7 @@
 - **Avax\Framework\System\PublicSurface\HttpKernel** [MINOR]
   - components/compat.php:29 (use-statement)
   - components/compat.php:143 (class-const-fetch)
-- **Avax\Framework\System\Runtime\RunApplication\Capabilities\RunApplicationOnPhpBuiltInServer** [MINOR]
+- **Avax\Framework\System\Runtime\RunApplication\Capabilities\RunApplicationOnRunApplicationOnPhpBuiltInServer** [MINOR]
   - framework/System/Runtime/RunApplication/PublicSurface/ServerResult.php:7 (use-statement)
   - framework/System/Runtime/RunApplication/PublicSurface/Server.php:7 (use-statement)
   - framework/System/Runtime/RunApplication/PublicSurface/Server.php:27 (static-call)
@@ -3285,12 +3285,6 @@
   - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:37 (static-call)
 - **Avax\Integration\ObjectStorage\System\Foundation\Failure\ObjectStorageUnavailable** [MINOR]
   - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:9 (use-statement)
-- **Avax\Labs\API\DescribeApi\System\Capabilities\ReadApiDescriptions\ApiContractsAdapterInterface** [CRITICAL]
-  - labs/API/DescribeApi/System/Capabilities/ReadApiDescriptions/ReadFakeApiDescriptions.php:10 (implements)
-  - labs/API/DescribeApi/System/Flows/DescribeHttpContracts/DescribeHttpContracts.php:7 (use-statement)
-  - labs/API/DescribeApi/System/Flows/DescribeHttpContracts/DescribeHttpContracts.php:12 (constructor-param)
-  - labs/API/DescribeApi/System/PublicSurface/ApiContracts.php:7 (use-statement)
-  - labs/API/DescribeApi/System/PublicSurface/ApiContracts.php:20 (constructor-param)
 - **Avax\Operations\RuntimeSupervision\System\Capabilities\Health\SupervisorHealthReport** [MINOR]
   - components/Operations/RuntimeSupervision/System/PublicSurface/RuntimeSupervision.php:9 (use-statement)
 - **Avax\Tests\Foundation\Database\Unit\Attributes\Column** [MINOR]

@@ -7,9 +7,9 @@ namespace Avax\Components\Application\Filesystem\System\Configuration;
 use Avax\Components\Application\Container\Core\Capabilities\Binding\Binders\Binder;
 use Avax\Components\Application\Container\Core\Capabilities\Binding\BindingRepository;
 use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
-use Avax\Components\Application\Filesystem\Disks\ResolveDisk;
-use Avax\Components\Application\Filesystem\Filesystem;
-use Avax\Components\Application\Filesystem\FilesystemInterface;
+use Avax\Components\Application\Filesystem\System\Capabilities\Disks\ResolveDisk;
+use Avax\Components\Application\Filesystem\System\PublicSurface\FilesystemInterface;
+use Avax\Components\Application\Filesystem\System\PublicSurface\FilesystemInterfaceInterface;
 
 final class RegisterFilesystem
 {

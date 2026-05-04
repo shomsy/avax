@@ -23,12 +23,12 @@ $map = [
     'Avax\Database\System\Capabilities\Transactions\Exceptions\TransactionException' => 'Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException',
     'Avax\DataHandling\DataTransfer' => 'Avax\Components\DataStack\Data\System\Capabilities\DataTransfer',
     'Avax\DataHandling\ObjectHandling' => 'Avax\Components\DataStack\Data\System\Capabilities\ObjectHandling',
-    'Avax\HTTP\AppKernel' => 'Avax\Framework\System\PublicSurface\AppKernel',
-    'Avax\HTTP\HttpKernel' => 'Avax\Framework\System\PublicSurface\HttpKernel',
+    'Avax\HTTP\AppKernel' => 'Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel',
+    'Avax\HTTP\HttpKernel' => 'Avax\Components\HTTP\System\Capabilities\Kernel\HttpKernel',
     'Avax\HTTP\Context\HttpContext' => 'Avax\Components\HTTP\Context\System\PublicSurface\HttpContext',
     'Avax\HTTP\Router\Router' => 'Avax\Components\HTTP\Router\System\PublicSurface\Router',
-    'Avax\HTTP\Session\Session' => 'Avax\Components\Identity\Sessions\System\PublicSurface\Session',
-    'Avax\Presentation\View\View' => 'Avax\Components\Presentation\Views\System\PublicSurface\View',
+    'Avax\HTTP\Session\Session' => 'Avax\Components\HTTP\Session\System\PublicSurface\Session',
+    'Avax\Presentation\View\View' => 'Avax\Components\Presentation\View\System\PublicSurface\View',
 ];
 
 foreach ($map as $old => $new) {

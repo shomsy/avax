@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\Policies;
+namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness;
 
 final readonly class EnvironmentPolicies implements EnvironmentConfig
 {

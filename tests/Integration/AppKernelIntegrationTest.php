@@ -12,7 +12,7 @@ use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\System\Capabilities\RouteDefinition\RouteCollection;
 use Avax\HTTP\RouterBootstrapper;
 use Avax\Tests\TestCase;
-use components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
+use Avax\Components\HTTP\Router\System\Foundation\Exceptions\ReservedRouteNameException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;

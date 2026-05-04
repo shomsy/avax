@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\Filesystem\Paths;
 
 use Avax\Tests\TestCase;
-use components\Filesystem\Paths\PathIsDirectory;
+use Avax\Components\Filesystem\Paths\PathIsDirectory;
 
 class PathIsDirectoryTest extends TestCase
 {

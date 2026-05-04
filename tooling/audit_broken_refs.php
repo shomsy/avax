@@ -437,7 +437,7 @@ if (file_exists($compatPath)) {
     if ($src !== false && preg_match_all('/[\'"]([^\'"]+)[\'"]\s*=>\s*[\'"]([^\'"]+)[\'"]/', $src, $m)) {
         $counter = count($m[1]);
         for ($k = 0; $k < $counter; $k++) {
-            $target = trim($m[2][$k], '\\');
+            $target = trim(str_replace('\\\\', '\\', $m[2][$k]), '\\');
             if (! isset($defined[$target])) {
                 addRef($target, $compatPath, 'class_alias target', 0, $references, $defined, $externalPrefixes);
             }

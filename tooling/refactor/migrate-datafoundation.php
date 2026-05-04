@@ -48,7 +48,7 @@ foreach ($migrations as $srcRel => $dstRel) {
     if ($count === 0) {
         $content = "namespace {$newNs};\n\n" . $content;
     }
-    $content = str_replace(['use Avax\DataFoundation\\', 'use components\DataFoundation\\'], 'use Avax\\Components\\Data\\', $content);
+    $content = str_replace(['use Avax\DataFoundation\\', 'use Avax\Components\DataFoundation\\'], 'use Avax\\Components\\Data\\', $content);
     file_put_contents($dst, $content);
     echo sprintf('Migrated: %s -> %s%s', $srcRel, $dstRel, PHP_EOL);
     $copied++;
@@ -82,7 +82,7 @@ if (is_dir($valSrc)) {
         if ($c === 0) {
             $content = "namespace {$newNs};\n\n" . $content;
         }
-        $content = str_replace(['use Avax\DataFoundation\\', 'use components\DataFoundation\\'], 'use Avax\\Components\\Data\\', $content);
+        $content = str_replace(['use Avax\DataFoundation\\', 'use Avax\Components\DataFoundation\\'], 'use Avax\\Components\\Data\\', $content);
         file_put_contents($dst, $content);
         echo sprintf('Migrated Validation/Rules: %s%s', $rel, PHP_EOL);
         $copied++;

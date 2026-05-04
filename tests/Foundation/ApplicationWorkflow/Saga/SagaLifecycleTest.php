@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Foundation\ApplicationWorkflow\Saga;
 
-use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
-use Avax\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
-use Avax\ApplicationWorkflow\Saga\RunSagaStep\SagaStepFailure;
-use Avax\ApplicationWorkflow\Saga\Saga;
-use Avax\ApplicationWorkflow\Saga\StartSaga\SagaStartCommand;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaStepDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\RunSagaStep\SagaStepFailure;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Saga;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\SagaStartCommand;
 use Avax\Tests\TestCase;
 use RuntimeException;
 

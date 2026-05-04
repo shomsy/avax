@@ -6,9 +6,9 @@ declare(strict_types=1);
  * Text processing shortcuts for global access.
  */
 
-use Avax\Components\Application\Text\MatchResult;
-use Avax\Components\Application\Text\Pattern;
-use Avax\Components\Application\Text\Text;
+use Avax\Components\Application\Text\System\Foundation\MatchResult;
+use Avax\Components\Application\Text\System\Foundation\Pattern;
+use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 if (! function_exists('text')) {
     /**

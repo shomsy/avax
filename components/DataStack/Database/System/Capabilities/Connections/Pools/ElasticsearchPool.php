@@ -11,7 +11,7 @@ use Override;
  *
  * @todo Implement real Elasticsearch driver integration (elasticsearch-php client)
  */
-class ElasticsearchPool extends BaseConnectionPool
+class ElasticsearchPool extends DatabaseConnectionPool
 {
     public function __construct(
         protected array $config = [],

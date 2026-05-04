@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Avax\Tests\Foundation\ApplicationWorkflow\Saga\DefineSaga;
 
 use Avax\Tests\TestCase;
-use components\ApplicationWorkflow\Saga\DefineSaga\DefineSaga;
-use components\ApplicationWorkflow\Saga\DefineSaga\InvalidSagaDefinition;
-use components\ApplicationWorkflow\Saga\DefineSaga\SagaCompensationDefinition;
-use components\ApplicationWorkflow\Saga\DefineSaga\SagaDefinition;
-use components\ApplicationWorkflow\Saga\DefineSaga\SagaStepDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\DefineSaga;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\InvalidSagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaCompensationDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaStepDefinition;
 
 final class DefineSagaTest extends TestCase
 {

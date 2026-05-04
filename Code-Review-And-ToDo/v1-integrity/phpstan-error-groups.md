@@ -2,15 +2,15 @@
 
 ## Top Error Families
 
-- **Other**: 3951
-- **wrong named argument**: 1936
-- **wrong constructor/method call**: 1646
-- **unknown method**: 582
-- **wrong parameter type**: 282
+- **Other**: 3875
+- **wrong named argument**: 1907
+- **wrong constructor/method call**: 1618
+- **unknown method**: 539
+- **wrong parameter type**: 260
 - **nullable mismatch**: 248
 - **unknown class/method/property**: 238
-- **unknown property**: 139
-- **wrong return type**: 74
+- **unknown property**: 137
+- **wrong return type**: 72
 - **generic/PHPDoc drift**: 36
 
 ## Errors by Component
@@ -44,13 +44,13 @@
 
 ### components/Application/Container
 
-- Other: 637
+- Other: 635
 - unknown method: 370
 - wrong named argument: 235
 - nullable mismatch: 172
 - unknown class/method/property: 157
 - wrong constructor/method call: 156
-- wrong parameter type: 81
+- wrong parameter type: 76
 - unknown property: 21
 - wrong return type: 8
 - generic/PHPDoc drift: 6
@@ -202,9 +202,9 @@
 
 ### components/HTTP/ContentNegotiation
 
-- wrong parameter type: 28
-- Other: 8
-- wrong return type: 4
+- wrong parameter type: 14
+- Other: 5
+- wrong return type: 2
 - wrong constructor/method call: 2
 - wrong named argument: 2
 
@@ -312,11 +312,11 @@
 
 ### components/Operations/ApplicationWorkflow
 
-- Other: 314
-- wrong constructor/method call: 54
-- wrong named argument: 45
+- Other: 300
+- wrong constructor/method call: 55
+- wrong named argument: 46
 - unknown property: 23
-- unknown method: 22
+- unknown method: 20
 - wrong return type: 7
 - generic/PHPDoc drift: 4
 - wrong parameter type: 4
@@ -379,7 +379,7 @@
 
 ### components/Operations/Notifications
 
-- Other: 10
+- Other: 8
 - wrong parameter type: 1
 
 ### components/Operations/Observability
@@ -388,9 +388,9 @@
 
 ### components/Operations/Queue
 
-- Other: 67
+- Other: 58
 - unknown method: 8
-- wrong parameter type: 6
+- wrong parameter type: 4
 - wrong constructor/method call: 2
 - unknown class/method/property: 1
 - wrong named argument: 1
@@ -407,7 +407,7 @@
 - Other: 24
 - wrong named argument: 8
 - wrong constructor/method call: 7
-- unknown method: 3
+- unknown method: 2
 
 ### components/Operations/RuntimeSupervision
 
@@ -426,18 +426,19 @@
 
 ### components/Presentation/View
 
-- unknown method: 33
-- Other: 22
+- Other: 16
+- wrong parameter type: 1
+- unknown method: 1
 
 ### framework/System
 
-- Other: 62
-- wrong named argument: 37
-- wrong constructor/method call: 35
-- unknown method: 10
-- wrong parameter type: 8
+- Other: 22
+- wrong named argument: 7
+- wrong constructor/method call: 6
+- wrong parameter type: 6
 - wrong return type: 5
-- unknown property: 5
+- unknown property: 3
+- unknown method: 2
 - unknown class/method/property: 1
 
 ### tests

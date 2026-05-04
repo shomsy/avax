@@ -19,29 +19,39 @@ final class ComponentRegistry
      */
     private array $providers = [];
 
-    public function register(ComponentDefinition $componentDefinition) : void
+    public function register(ComponentDefinition $definition): void
     {
-        if ($this->has(name: $componentDefinition->name())) {
+        if ($this->has(name: $definition->name())) {
             throw new FrameworkMisconfigured(
-                message: sprintf('Component "%s" is already registered.', $componentDefinition->name()),
+                message: sprintf('Component "%s" is already registered.', $definition->name()),
             );
         }
 
-        $this->definitions[$componentDefinition->name()] = $componentDefinition;
+        $this->definitions[$definition->name()] = $definition;
     }
 
-    public function registerProvider(ComponentProviderInterface $componentProvider) : void
+    public function registerDefinition(string $name, ComponentDefinition $componentDefinition): void
     {
-        $name = $componentProvider::name();
+        $this->register(definition: $componentDefinition);
+    }
+
+    public function registerProvider(ComponentProviderInterface $provider): void
+    {
+        $this->registerProviderInstance(provider: $provider);
+    }
+
+    public function registerProviderInstance(ComponentProviderInterface $provider): void
+    {
+        $name = $provider::name();
 
         $this->register(
-            componentDefinition: new ComponentDefinition(
+            definition: new ComponentDefinition(
                 name: $name,
-                providerClass: $componentProvider::class,
+                providerClass: $provider::class,
             ),
         );
 
-        $this->providers[$name] = $componentProvider;
+        $this->providers[$name] = $provider;
     }
 
     public function has(string $name): bool
@@ -66,6 +76,11 @@ final class ComponentRegistry
     }
 
     public function boot(RuntimeInterface $runtime): void
+    {
+        $this->bootRuntime(runtime: $runtime);
+    }
+
+    public function bootRuntime(RuntimeInterface $runtime): void
     {
         foreach ($this->providers as $provider) {
             $provider->boot(runtime: $runtime);

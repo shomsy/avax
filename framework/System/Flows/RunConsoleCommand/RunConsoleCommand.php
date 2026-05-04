@@ -14,11 +14,14 @@ use Closure;
 final readonly class RunConsoleCommand
 {
     /** @var array<string, Closure> */
-    private array $commandOverrides = [];
+    private array $commandOverrides;
 
     public function __construct(
         private RuntimeInterface $runtime,
-    ) {}
+    )
+    {
+        $this->commandOverrides = [];
+    }
 
     /**
      * @param array<string, Closure> $commands

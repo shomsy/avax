@@ -26,7 +26,7 @@ final class CacheFacadeTest extends TestCase
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::get(cacheKey 'key', default: 'default')
+        $result = Cache::get(cacheKey: 'key', default: 'default');
 
         $this->assertSame(expected: 'value', actual: $result);
     }
@@ -38,7 +38,7 @@ final class CacheFacadeTest extends TestCase
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::set(cacheKey 'key', value: 'value')
+        $result = Cache::set(cacheKey: 'key', value: 'value');
 
         $this->assertTrue(condition: $result);
     }
@@ -50,7 +50,7 @@ final class CacheFacadeTest extends TestCase
 
         Cache::use(cache: $mockCache);
 
-        $result = Cache::put(cacheKey 'key', value: 'value', ttl: 3600)
+        $result = Cache::put(cacheKey: 'key', value: 'value', ttl: 3600);
 
         $this->assertTrue(condition: $result);
     }

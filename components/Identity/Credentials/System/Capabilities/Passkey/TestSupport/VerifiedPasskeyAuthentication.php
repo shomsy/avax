@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\TestSupport;
+
+use SensitiveParameter;
+
+final readonly class VerifiedPasskeyAuthentication
+{
+    public function __construct(
+        public int    $userId,
+        #[SensitiveParameter]
+        public string $credentialId,
+    )
+    {
+    }
+}

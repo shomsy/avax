@@ -59,22 +59,6 @@ class Container
         return $this->engine ?? self::$container;
     }
 
-    /**
-     * Create container facade from underlying engine.
-     */
-    public static function fromEngine(ContainerInterface $container) : self
-    {
-        return new self($container);
-    }
-
-    /**
-     * Get the underlying container engine.
-     */
-    public function engine() : ContainerInterface
-    {
-        return self::$container;
-    }
-
     public static function make(string $abstract, array $parameters = []): object
     {
         return self::getContainer()->make($abstract, $parameters);

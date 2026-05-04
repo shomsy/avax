@@ -5,7 +5,6 @@ namespace Avax\DataLayer;
 use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
 use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork;
 use Avax\Components\Persistence\System\Configuration\PersistenceBuilder;
-use Avax\Components\Persistence\System\Configuration\PersistenceBuilder;
 
 final class DataLayer
 {

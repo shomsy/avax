@@ -11,8 +11,6 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
  */
 final readonly class FreshnessStatus
 {
-    public Timestamp $timestamp;
-
     public function __construct(public string $entryName, public bool $isFresh, public string $reason, public Timestamp $timestamp, public int $sourceFilesMtime, public int|false $compiledFileMtime) {
     }
 

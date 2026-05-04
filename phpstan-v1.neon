@@ -1,0 +1,11 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - framework
+    excludePaths:
+        - vendor
+        - components
+    reportUnmatchedIgnoredErrors: false

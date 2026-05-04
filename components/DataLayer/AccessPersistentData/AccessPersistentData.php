@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Avax\DataLayer\AccessPersistentData;
 
 use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
-use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
 use Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure;
 
 final class AccessPersistentData

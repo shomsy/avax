@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\PublicSurface;
 
-use Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityManager as EntitiesCapability;
-use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
-use Avax\Components\DataStack\Database\System\Capabilities\ORM\Repositories\EntityRepository;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Entities as EntitiesCapability;
+use Throwable;
 
 /**
- * Entities - Public surface for the Entity Persistence (ORM).
- * Renamed from EntityManager to comply with "No Managers" rule.
+ * Public surface for entity persistence.
  */
 final readonly class Entities
 {
@@ -18,48 +16,93 @@ final readonly class Entities
         private EntitiesCapability $entitiesCapability,
     ) {}
 
-    public function metadata(string $entityClass): EntityMetadata
+    /**
+     * @param class-string $entityClass
+     */
+    public function find(string $entityClass, mixed $id, ?string $connectionName = null): ?object
     {
-        return $this->entitiesCapability->metadata($entityClass);
+        return $this->entitiesCapability->find(
+            entityClass: $entityClass,
+            id: $id,
+            connection: $connectionName,
+        );
     }
 
-    public function find(string $entityClass, mixed $id, ?string $connectionName = null) : ?object
-    {
-        return $this->entitiesCapability->find($entityClass, $id, $connectionName);
+    /**
+     * @param class-string         $entityClass
+     * @param array<string, mixed> $criteria
+     *
+     * @return list<object>
+     */
+    public function findBy(
+        string $entityClass,
+        array $criteria,
+        ?string $orderBy = null,
+        ?string $direction = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?string $connectionName = null,
+    ): array {
+        return $this->entitiesCapability->findBy(
+            entityClass: $entityClass,
+            criteria: $criteria,
+            orderBy: $orderBy,
+            direction: $direction,
+            limit: $limit,
+            offset: $offset,
+            connection: $connectionName,
+        );
     }
 
-    public function persist(object $entity): void
+    /**
+     * @throws Throwable
+     */
+    public function insert(object $entity, ?string $connectionName = null): void
     {
-        $this->entitiesCapability->persist($entity);
+        $this->entitiesCapability->insert(entity: $entity, connection: $connectionName);
     }
 
-    public function remove(object $entity): void
+    /**
+     * Alias kept for a natural public persistence API.
+     *
+     * @throws Throwable
+     */
+    public function persist(object $entity, ?string $connectionName = null): void
     {
-        $this->entitiesCapability->remove($entity);
+        $this->insert(entity: $entity, connectionName: $connectionName);
     }
 
-    public function flush(?string $connectionName = null) : void
+    /**
+     * @throws Throwable
+     */
+    public function update(object $entity, ?string $connectionName = null): void
     {
-        $this->entitiesCapability->flush($connectionName);
+        $this->entitiesCapability->update(entity: $entity, connection: $connectionName);
     }
 
-    public function clear(): void
+    /**
+     * @throws Throwable
+     */
+    public function delete(object $entity, ?string $connectionName = null): void
     {
-        $this->entitiesCapability->clear();
+        $this->entitiesCapability->delete(entity: $entity, connection: $connectionName);
     }
 
-    public function refresh(object $entity, ?string $connectionName = null) : object
+    /**
+     * Alias kept for a natural public persistence API.
+     *
+     * @throws Throwable
+     */
+    public function remove(object $entity, ?string $connectionName = null): void
     {
-        return $this->entitiesCapability->refresh($entity, $connectionName);
+        $this->delete(entity: $entity, connectionName: $connectionName);
     }
 
-    public function repository(string $entityClass): EntityRepository
+    /**
+     * @throws Throwable
+     */
+    public function refresh(object $entity, ?string $connectionName = null): object
     {
-        return $this->entitiesCapability->repository($entityClass);
-    }
-
-    public function transactional(callable $callback, ?string $connectionName = null) : mixed
-    {
-        return $this->entitiesCapability->transactional($callback, $connectionName);
+        return $this->entitiesCapability->refresh(entity: $entity, connection: $connectionName);
     }
 }

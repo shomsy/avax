@@ -1,0 +1,87 @@
+== Branch / commit ==
+master
+4a876aa2c
+
+== Git status ==
+?? Code-Review-And-ToDo/recovery-reports/database-v1-proof-checkpoint.md
+?? Code-Review-And-ToDo/recovery-reports/database-v1-proof-sanity-check.log
+?? Framework.txt
+
+== Expected tests exist ==
+-rw-rw-r-- 1 shomsy shomsy 6.3K May  5 16:36 tests/Unit/Components/DataStack/Database/QueryBuilderReadHelpersTest.php
+-rw-rw-r-- 1 shomsy shomsy 4.0K May  5 16:36 tests/Unit/Components/DataStack/Database/QueryBuilderSelectTest.php
+-rw-rw-r-- 1 shomsy shomsy 4.4K May  5 16:36 tests/Unit/Components/DataStack/Database/QueryBuilderWriteTest.php
+-rw-rw-r-- 1 shomsy shomsy 2.5K May  5 16:36 tests/Unit/Components/DataStack/Database/SchemaBlueprintTest.php
+-rw-rw-r-- 1 shomsy shomsy 5.3K May  5 19:21 tests/Unit/Components/DataStack/Database/SchemaFacadeSqliteTest.php
+
+== Expected source patches check ==
+342:            ...[...get_object_vars(object: $this), 'bindingBag' => $this->bindingBag->with(value: $value)],
+60:        $clone->state = $clone->state->addOrder(orderNode: new OrderNode(
+86:        $clone->state = $clone->state->addOrder(orderNode: new OrderNode(
+88:            $clone->state = $clone->state->addJoin(joinNode: new JoinNode(
+94:            $clone->state = $clone->state->addJoin(joinNode: new JoinNode(
+components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasAdvancedMutations.php:65:        $sql = $this->grammar->compileUpsert(queryState: $state,
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:271:        $sql = $instance->grammar->compileSelect(queryState: $instance->limit(limit: 1)->state);
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:309:        $sql = $clone->grammar->compileInsert(queryState: $clone->state);
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:363:        $sql = $clone->grammar->compileInsert(queryState: $clone->state);
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:402:        $sql = $instance->grammar->compileUpdate(queryState: $instance->state);
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:428:        $sql = $instance->grammar->compileDelete(queryState: $instance->state);
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:480:        $sql = $instance->grammar->compileSelect(queryState: $instance->state);
+components/DataStack/Database/System/Capabilities/Query/Grammar/Grammar.php:231:                $nestedSql = $this->compileWheres(queryState: $node->query->state);
+components/DataStack/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:42:            executionScope: $this->executionScope,
+components/DataStack/Database/System/Capabilities/Query/Execution/PDOExecutor.php:48:                executionScope: $executionScope,
+components/DataStack/Database/System/Capabilities/Query/Execution/PDOExecutor.php:88:                executionScope: $executionScope,
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:65:        return $this->executor->query(sql: $sql, bindings: $bindings, executionScope: $this->executionScope);
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:90:        return $this->executor->execute(sql: $sql, bindings: $bindings, executionScope: $this->executionScope);
+components/DataStack/Database/System/Capabilities/Query/Query.php:36:            executionScope: $this->executionScope,
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:95:        $pool->withScope(executionScope: $this->executionScope);
+components/DataStack/Database/System/Capabilities/Connections/Connections.php:59:        return new self(readConnection: $this->readConnection->withScope(executionScope: $executionScope));
+components/DataStack/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:40:                databaseConnection: $connection,
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:79:            databaseConnection: $this->open(config: $config),
+853:            callback: static fn (ColumnDefinition $columnDefinition) : string => $columnSQLRenderer->render(columnDefinition: $columnDefinition, grammar: $grammar),
+876:            $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $columnSQLRenderer->render(columnDefinition: $column, grammar: $grammar);
+
+== Framework.txt info ==
+-rw-rw-r-- 1 shomsy shomsy 1.8M May  5 19:28 Framework.txt
+=== Auth/Application/Action/LoginAction.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Auth\Application\Action;
+
+
+use Gemini\Auth\Application\Service\AuthenticationService;
+use Gemini\Auth\Application\Service\RateLimiterService;
+use Gemini\Auth\Domain\Exception\AuthenticationException;
+use Gemini\Auth\Domain\ValueObject\Credentials;
+use Gemini\Auth\DTO\AuthenticationDTO;
+use Gemini\Exceptions\ValidationException;
+use Gemini\HTTP\Request\Request;
+use Psr\Http\Message\ResponseInterface;
+
+/**
+ * LoginAction handles user login requests, combining validation, authentication, and response generation.
+ */
+final readonly class LoginAction
+{
+    /**
+     * @param RateLimiterService    $rateLimiter           Action to prevent brute-force attacks.
+     * @param AuthenticationService $authenticationService Action handling authentication logic.
+     */
+    public function __construct(
+        private RateLimiterService    $rateLimiter,
+        private AuthenticationService $authenticationService
+    ) {}
+
+== Full proof tests ==
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+...........                                                       11 / 11 (100%)
+
+Time: 00:00.018, Memory: 12.00 MB
+
+OK (11 tests, 67 assertions)

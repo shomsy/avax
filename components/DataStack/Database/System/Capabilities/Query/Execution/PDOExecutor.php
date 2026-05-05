@@ -25,6 +25,10 @@ final readonly class PDOExecutor implements ExecutorInterface
 
     /**
      * Execute a "Read" query (SELECT) and get the rows back.
+     *
+     * @param list<mixed> $bindings
+     *
+     * @return list<array<string, mixed>>
      */
     #[Override]
     public function query(
@@ -66,6 +70,8 @@ final readonly class PDOExecutor implements ExecutorInterface
 
     /**
      * Execute a "Change" query (INSERT/UPDATE/DELETE/DDL).
+     *
+     * @param list<mixed> $bindings
      */
     #[Override]
     public function execute(
@@ -104,6 +110,8 @@ final readonly class PDOExecutor implements ExecutorInterface
     }
 
     /**
+     * @param list<mixed> $bindings
+     *
      * @throws RandomException
      */
     private function dispatch(
@@ -118,15 +126,15 @@ final readonly class PDOExecutor implements ExecutorInterface
             return;
         }
 
-        $correlationId = $executionScope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
+        $correlationId = $executionScope->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
 
         $this->eventBus->dispatch(event: new QueryExecuted(
             sql           : $sql,
             timeMs        : (microtime(as_float: true) - $start) * 1000,
             connectionName: $this->connectionName,
             correlationId : $correlationId,
-            bindings      : $bindings,
-            redactBindings: $redactBindings,
+            rawBindings: $bindings,
+            bindingsRedacted: $redactBindings,
         ));
     }
 
@@ -139,7 +147,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         return strtolower(string: (string) $flag) !== 'raw';
     }
 
-    private function resolveLastInsertId(string $sql): int|string|null
+    private function resolveLastInsertId(string $sql): string|null
     {
         if (preg_match(pattern: '/^\s*insert\b/i', subject: $sql) !== 1) {
             return null;

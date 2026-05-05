@@ -41,32 +41,32 @@ final readonly class Database
 
     public function query(): Query
     {
-        return new Query(query: $this->queryCapability);
+        return new Query(queryCapability: $this->queryCapability);
     }
 
     public function entities(): Entities
     {
-        return new Entities(entities: $this->entitiesCapability);
+        return new Entities(entitiesCapability: $this->entitiesCapability);
     }
 
     public function schema(): Schema
     {
-        return new Schema(schema: $this->schemaCapability);
+        return new Schema(schemaCapability: $this->schemaCapability);
     }
 
     public function migrations(): Migrations
     {
-        return new Migrations(migrations: $this->migrationsCapability);
+        return new Migrations(migrationsCapability: $this->migrationsCapability);
     }
 
     public function transactions(): Transactions
     {
-        return new Transactions(transactions: $this->transactionsCapability);
+        return new Transactions(transactionsCapability: $this->transactionsCapability);
     }
 
     public function telemetry(): Telemetry
     {
-        return new Telemetry(telemetry: $this->telemetryCapability);
+        return new Telemetry(telemetryCapability: $this->telemetryCapability);
     }
 
     public function table(string $table, ?string $connectionName = null) : QueryBuilder

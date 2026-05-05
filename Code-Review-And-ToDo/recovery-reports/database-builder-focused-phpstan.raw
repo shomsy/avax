@@ -1,0 +1,1 @@
+/home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/Query/Execution/PDOExecutor.php:55:Method Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\PDOExecutor::query() should return list<array<string, mixed>> but returns array.

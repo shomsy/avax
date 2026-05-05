@@ -50,10 +50,9 @@ final class MySQLGrammar extends BaseGrammar
      * @param array      $uniqueBy Ignored in MySQL (MySQL figures this out from your DB keys).
      * @param array      $update   The list of columns to change if a conflict happens.
      */
-    #[Override]
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $sql = $this->compileInsert(state: $queryState);
+        $sql = $this->compileInsert($queryState);
         $sql .= ' ON DUPLICATE KEY UPDATE ';
 
         $updates = [];
@@ -74,7 +73,6 @@ final class MySQLGrammar extends BaseGrammar
      *
      * @param mixed $value The name (e.g., 'users.name').
      */
-    #[Override]
     public function wrap(mixed $value): string
     {
         parent::wrap(value: $value);

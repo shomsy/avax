@@ -12,16 +12,14 @@ use Override;
  */
 final class ElasticsearchGrammar extends BaseGrammar
 {
-    #[Override]
     public function compileSelect(QueryState $queryState) : string
     {
         $index = $this->wrap(value: $queryState->from);
-        $query = $this->compileElasticsearchQuery(state: $queryState);
+        $query = $this->compileElasticsearchQuery($queryState);
 
         return sprintf('%s/_search %s', $index, $query);
     }
 
-    #[Override]
     public function wrap(mixed $value): string
     {
         return (string) $value;

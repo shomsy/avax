@@ -13,16 +13,15 @@ use Override;
  */
 final class MongoDBGrammar extends BaseGrammar
 {
-    #[Override]
     public function compileSelect(QueryState $queryState) : string
     {
-        return $this->compileMongoQuery(state: $queryState);
+        return $this->compileMongoQuery($queryState);
     }
 
     private function compileMongoQuery(QueryState $queryState) : string
     {
         $collection = $this->wrap(value: $queryState->from);
-        $filter     = $queryState->wheres === [] ? '{}' : $this->compileMongoFilter(state: $queryState);
+        $filter = $queryState->wheres === [] ? '{}' : $this->compileMongoFilter($queryState);
         $queryState->columns === [] ? '' : $this->compileMongoProjection(columns: $queryState->columns);
 
         $options = [];
@@ -126,7 +125,7 @@ final class MongoDBGrammar extends BaseGrammar
     public function compileUpdate(QueryState $queryState) : string
     {
         $collection = $this->wrap(value: $queryState->from);
-        $filter     = $this->compileMongoFilter(state: $queryState);
+        $filter = $this->compileMongoFilter($queryState);
         $update     = $this->compileMongoUpdate(values: $queryState->values);
 
         return sprintf('db.%s.updateOne(%s, %s)', $collection, $filter, $update);
@@ -146,7 +145,7 @@ final class MongoDBGrammar extends BaseGrammar
     public function compileDelete(QueryState $queryState) : string
     {
         $collection = $this->wrap(value: $queryState->from);
-        $filter     = $this->compileMongoFilter(state: $queryState);
+        $filter = $this->compileMongoFilter($queryState);
 
         return sprintf('db.%s.deleteOne(%s)', $collection, $filter);
     }
@@ -155,7 +154,7 @@ final class MongoDBGrammar extends BaseGrammar
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
         $collection = $this->wrap(value: $queryState->from);
-        $filter     = $this->compileMongoFilter(state: $queryState);
+        $filter = $this->compileMongoFilter($queryState);
         $this->compileMongoDocument(values: $queryState->values);
         $setUpdate = $this->compileMongoUpdate(values: $queryState->values);
 

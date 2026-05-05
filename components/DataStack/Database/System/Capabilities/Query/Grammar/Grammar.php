@@ -60,18 +60,17 @@ abstract class Grammar implements GrammarInterface
     public function compileSelect(QueryState $queryState) : string
     {
         $components = [
-            'ctes'   => $this->compileCtes(state: $queryState),
-            'select' => $this->compileColumns(state: $queryState),
-            'from'   => $this->compileFrom(state: $queryState),
-            'joins'  => $this->compileJoins(state: $queryState),
-            'wheres' => $this->compileWheres(state: $queryState),
-            'groups' => $this->compileGroups(state: $queryState),
-            'orders' => $this->compileOrders(state: $queryState),
-            'limit'  => $this->compileLimit(state: $queryState),
-            'offset' => $this->compileOffset(state: $queryState),
+            'ctes'   => $this->compileCtes($queryState),
+            'select' => $this->compileColumns($queryState),
+            'from'   => $this->compileFrom($queryState),
+            'joins'  => $this->compileJoins($queryState),
+            'wheres' => $this->compileWheres($queryState),
+            'groups' => $this->compileGroups($queryState),
+            'orders' => $this->compileOrders($queryState),
+            'limit'  => $this->compileLimit($queryState),
+            'offset' => $this->compileOffset($queryState),
         ];
 
-        // We filter out empty strings and join the pieces with spaces.
         return implode(separator: ' ', array: array_filter(array: $components));
     }
 
@@ -225,11 +224,11 @@ abstract class Grammar implements GrammarInterface
         $sql = [];
         foreach ($queryState->wheres as $i => $node) {
             $prefix  = $i === 0 ? 'WHERE ' : '';
-            $boolean = $i === 0 ? '' : ($this->getWhereBoolean(node: $node) . ' ');
+            $boolean = $i === 0 ? '' : ($this->getWhereBoolean($node) . ' ');
 
             // If this is a nested block: (condition1 OR condition2).
             if ($node instanceof NestedWhereNode) {
-                $nestedSql = $this->compileWheres(state: $node->query);
+                $nestedSql = $this->compileWheres($node->query);
                 if ($nestedSql !== '') {
                     $sql[] = $prefix . $boolean . '(' . ltrim(string: $nestedSql, characters: 'WHERE ') . ')';
                 }
@@ -417,7 +416,7 @@ abstract class Grammar implements GrammarInterface
         }
 
         $setClause = 'SET ' . implode(separator: ', ', array: $sets);
-        $wheres = $this->compileWheres(state: $queryState);
+        $wheres = $this->compileWheres($queryState);
 
         // noinspection SqlNoDataSourceInspection
         return trim(string: sprintf('UPDATE %s %s %s', $table, $setClause, $wheres));
@@ -429,7 +428,7 @@ abstract class Grammar implements GrammarInterface
     public function compileDelete(QueryState $queryState) : string
     {
         $table  = $this->wrap(value: $queryState->from);
-        $wheres = $this->compileWheres(state: $queryState);
+        $wheres = $this->compileWheres($queryState);
 
         // noinspection SqlNoDataSourceInspection
         return trim(string: sprintf('DELETE FROM %s %s', $table, $wheres));

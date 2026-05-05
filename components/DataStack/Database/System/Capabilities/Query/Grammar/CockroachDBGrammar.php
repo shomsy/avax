@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
-use Override;
 
 /**
  * CockroachDB Grammar - Distributed PostgreSQL.
@@ -13,10 +12,9 @@ use Override;
  */
 final class CockroachDBGrammar extends PostgreSQLGrammar
 {
-    #[Override]
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $sql = $this->compileInsert(state: $queryState);
+        $sql = $this->compileInsert($queryState);
 
         $conflictColumns = array_map(
             callback: fn ($col) : string => $this->wrap(value: $col),

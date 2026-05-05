@@ -20,7 +20,6 @@ use RuntimeException;
  */
 final class SQLServerGrammar extends BaseGrammar
 {
-    #[Override]
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
         $table = $this->wrap(value: $queryState->from);

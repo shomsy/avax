@@ -13,29 +13,27 @@ use RuntimeException;
  */
 final class ClickHouseGrammar extends BaseGrammar
 {
-    #[Override]
     public function compileSelect(QueryState $queryState) : string
     {
-        parent::compileSelect(state: $queryState);
+        parent::compileSelect($queryState);
 
         $components = [
-            'select' => $this->compileColumns(state: $queryState),
-            'from'   => $this->compileFrom(state: $queryState),
-            'joins'  => $this->compileJoins(state: $queryState),
-            'wheres' => $this->compileWheres(state: $queryState),
-            'groups' => $this->compileGroups(state: $queryState),
-            'having' => $this->compileHaving(state: $queryState),
-            'orders' => $this->compileOrders(state: $queryState),
-            'limit'  => $this->compileLimit(state: $queryState),
+            'select' => $this->compileColumns($queryState),
+            'from'   => $this->compileFrom($queryState),
+            'joins'  => $this->compileJoins($queryState),
+            'wheres' => $this->compileWheres($queryState),
+            'groups' => $this->compileGroups($queryState),
+            'having' => $this->compileHaving($queryState),
+            'orders' => $this->compileOrders($queryState),
+            'limit'  => $this->compileLimit($queryState),
         ];
 
         return implode(separator: ' ', array: array_filter(array: $components));
     }
 
-    #[Override]
     protected function compileColumns(QueryState $queryState) : string
     {
-        parent::compileColumns(state: $queryState);
+        parent::compileColumns($queryState);
 
         $select = $queryState->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
 
@@ -44,7 +42,6 @@ final class ClickHouseGrammar extends BaseGrammar
         return $select . implode(separator: ', ', array: $columns);
     }
 
-    #[Override]
     public function wrap(mixed $value): string
     {
         parent::wrap(value: $value);
@@ -57,10 +54,9 @@ final class ClickHouseGrammar extends BaseGrammar
         return '';
     }
 
-    #[Override]
     public function compileUpdate(QueryState $queryState) : string
     {
-        parent::compileUpdate(state: $queryState);
+        parent::compileUpdate($queryState);
 
         $table = $this->wrap(value: $queryState->from);
 
@@ -72,38 +68,35 @@ final class ClickHouseGrammar extends BaseGrammar
         $sql = sprintf('ALTER TABLE %s UPDATE ', $table) . implode(separator: ', ', array: $sets);
 
         if ($queryState->wheres !== []) {
-            $sql .= ' WHERE ' . $this->compileWheres(state: $queryState);
+            $sql .= ' WHERE ' . $this->compileWheres($queryState);
         }
 
         return $sql;
     }
 
-    #[Override]
     public function compileDelete(QueryState $queryState) : string
     {
-        parent::compileDelete(state: $queryState);
+        parent::compileDelete($queryState);
 
         $table  = $this->wrap(value: $queryState->from);
-        $wheres = $this->compileWheres(state: $queryState);
+        $wheres = $this->compileWheres($queryState);
 
         return sprintf('ALTER TABLE %s DELETE %s', $table, $wheres);
     }
 
-    #[Override]
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
         try {
-            parent::compileUpsert(uniqueBy: $uniqueBy, update: $update, state: $queryState);
+            parent::compileUpsert($queryState, $uniqueBy, $update);
         } catch (RuntimeException) {
         }
 
-        return $this->compileInsert(state: $queryState);
+        return $this->compileInsert($queryState);
     }
 
-    #[Override]
     public function compileInsert(QueryState $queryState) : string
     {
-        parent::compileInsert(state: $queryState);
+        parent::compileInsert($queryState);
 
         $table   = $this->wrap(value: $queryState->from);
         $columns = implode(separator: ', ', array: array_keys(array: $queryState->values));

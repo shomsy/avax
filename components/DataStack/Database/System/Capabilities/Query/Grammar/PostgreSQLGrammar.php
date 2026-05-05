@@ -19,10 +19,9 @@ use Override;
  */
 final class PostgreSQLGrammar extends BaseGrammar
 {
-    #[Override]
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $sql = $this->compileInsert(state: $queryState);
+        $sql = $this->compileInsert($queryState);
 
         $conflictColumns = array_map(
             callback: fn ($col) : string => $this->wrap(value: $col),
@@ -40,7 +39,6 @@ final class PostgreSQLGrammar extends BaseGrammar
         return sprintf('%s ON CONFLICT (%s) DO UPDATE SET %s', $sql, $conflictClause, $updateClause);
     }
 
-    #[Override]
     public function wrap(mixed $value): string
     {
         if ($value instanceof Expression) {

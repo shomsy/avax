@@ -43,10 +43,9 @@ final class SQLiteGrammar extends BaseGrammar
         return version_compare(version1: $version['versionString'], version2: $required, operator: '>=');
     }
 
-    #[Override]
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $sql = $this->compileInsert(state: $queryState);
+        $sql = $this->compileInsert($queryState);
 
         $conflictColumns = array_map(
             callback: fn ($col) : string => $this->wrap(value: $col),

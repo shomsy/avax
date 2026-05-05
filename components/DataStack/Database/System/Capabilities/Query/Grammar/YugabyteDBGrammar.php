@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
-use Override;
 
 /**
  * YugabyteDB Grammar - Distributed PostgreSQL.
@@ -13,10 +12,9 @@ use Override;
  */
 final class YugabyteDBGrammar extends PostgreSQLGrammar
 {
-    #[Override]
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        return parent::compileUpsert(uniqueBy: $uniqueBy, update: $update, state: $queryState);
+        return parent::compileUpsert($queryState, $uniqueBy, $update);
     }
 
     public function createTableDistributed(string $table, string $strategy = 'REPLICAS 3'): string

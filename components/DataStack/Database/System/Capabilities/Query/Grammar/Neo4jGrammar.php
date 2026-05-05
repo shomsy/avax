@@ -5,29 +5,27 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
-use Override;
 
 /**
  * Neo4j Grammar - Graph Cypher queries.
  */
 final class Neo4jGrammar extends BaseGrammar
 {
-    #[Override]
     public function compileSelect(QueryState $queryState) : string
     {
-        $pattern = $this->compileCypherPattern(state: $queryState);
+        $pattern = $this->compileCypherPattern($queryState);
 
         $sql = 'MATCH ' . $pattern;
 
         if ($queryState->wheres !== []) {
-            $sql .= ' WHERE ' . $this->compileCypherWhere(state: $queryState);
+            $sql .= ' WHERE ' . $this->compileCypherWhere($queryState);
         }
 
         $return = $queryState->columns === [] ? '*' : implode(separator: ', ', array: $queryState->columns);
         $sql    .= ' RETURN ' . $return;
 
         if ($queryState->orders !== []) {
-            $sql .= ' ORDER BY ' . $this->compileCypherOrder(state: $queryState);
+            $sql .= ' ORDER BY ' . $this->compileCypherOrder($queryState);
         }
 
         if ($queryState->limit) {
@@ -77,11 +75,10 @@ final class Neo4jGrammar extends BaseGrammar
         return implode(separator: ', ', array: $orders);
     }
 
-    #[Override]
     public function compileInsert(QueryState $queryState) : string
     {
-        $pattern = $this->compileCypherPattern(state: $queryState);
-        $props   = $this->compileCypherProperties(values: $queryState->values);
+        $pattern = $this->compileCypherPattern($queryState);
+        $props   = $this->compileCypherProperties($queryState->values);
 
         return sprintf('CREATE (%s %s)', $pattern, $props);
     }
@@ -97,34 +94,31 @@ final class Neo4jGrammar extends BaseGrammar
         return '{' . implode(separator: ', ', array: $props) . '}';
     }
 
-    #[Override]
     public function compileUpdate(QueryState $queryState) : string
     {
-        $pattern = $this->compileCypherPattern(state: $queryState);
-        $props   = $this->compileCypherProperties(values: $queryState->values);
+        $pattern = $this->compileCypherPattern($queryState);
+        $props   = $this->compileCypherProperties($queryState->values);
 
         $sql = 'MATCH ' . $pattern;
 
         if ($queryState->wheres !== []) {
-            $sql .= ' WHERE ' . $this->compileCypherWhere(state: $queryState);
+            $sql .= ' WHERE ' . $this->compileCypherWhere($queryState);
         }
 
         return $sql . (' SET ' . $props);
     }
 
-    #[Override]
     public function compileDelete(QueryState $queryState) : string
     {
-        $pattern = $this->compileCypherPattern(state: $queryState);
+        $pattern = $this->compileCypherPattern($queryState);
 
         return 'DETACH DELETE ' . $pattern;
     }
 
-    #[Override]
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
     {
-        $pattern = $this->compileCypherPattern(state: $queryState);
-        $props   = $this->compileCypherProperties(values: $queryState->values);
+        $pattern = $this->compileCypherPattern($queryState);
+        $props   = $this->compileCypherProperties($queryState->values);
 
         return sprintf('MERGE (%s %s)', $pattern, $props);
     }
@@ -154,13 +148,11 @@ final class Neo4jGrammar extends BaseGrammar
         return sprintf('shortestPath((%s)-[*]->(%s))', $start, $end);
     }
 
-    #[Override]
     public function wrap(mixed $value): string
     {
         return (string) $value;
     }
 
-    #[Override]
     public function compileTruncate(string $table): string
     {
         return sprintf('MATCH (n:%s) DETACH DELETE n', $table);

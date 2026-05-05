@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Composites;
 
-use Avax\Components\DataStack\Data\Exceptions\InvalidValueException;
+use Avax\Components\DataStack\Data\System\Foundation\Exceptions\InvalidValueException;
 
 /**
  * One named field inside a record.

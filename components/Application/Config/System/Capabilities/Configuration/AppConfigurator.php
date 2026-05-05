@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Config\System\Capabilities\Configuration;
 
 use Avax\Components\Application\Config\Configurator\FileLoader\ConfigLoaderInterface;
-use Avax\Components\DataFoundation\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 use Override;
 use RuntimeException;
 use WeakMap;
@@ -86,7 +86,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
             $configData[$namespace] = $this->configLoader->loadConfigFile(filePath: $filePath);
         }
 
-        return collect(items: $configData);
+        return Collection::make(items: $configData);
     }
 
     /**

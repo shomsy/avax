@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Capabilities\DataShape;
 
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\FieldMapping\ReadMappedInputName;
-use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Compatibility\LegacyAbstractDTO;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Configuration\DataTransferConfig;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO;
 use ReflectionClass;
 use ReflectionException;
 
@@ -32,8 +32,8 @@ final readonly class ReadConstructorDataFields
 
         // Special case for legacy DTOs that might have a base constructor we want to ignore
         if (
-            is_a(object_or_class: $reflectionClass->getName(), class: LegacyAbstractDTO::class, allow_string: true)
-            && $constructor->getDeclaringClass()->getName() === LegacyAbstractDTO::class
+            is_a(object_or_class: $reflectionClass->getName(), class: AbstractDTO::class, allow_string: true)
+            && $constructor->getDeclaringClass()->getName() === AbstractDTO::class
         ) {
             return [];
         }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Flows\Window;
 
 use ArrayIterator;
-use Avax\Components\DataStack\Data\Exceptions\InvalidFlowException;
-use Avax\Components\DataStack\Data\Internal\Iteration\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Iteration\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Foundation\Exceptions\InvalidFlowException;
 use Countable;
 use IteratorAggregate;
 use Override;

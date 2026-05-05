@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Values\Result;
 
-use Avax\Components\DataStack\Data\Exceptions\InvalidValueException;
+use Avax\Components\DataStack\Data\System\Foundation\Exceptions\InvalidValueException;
 use Override;
 
 /**

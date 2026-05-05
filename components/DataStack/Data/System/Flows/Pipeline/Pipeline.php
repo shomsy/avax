@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Flows\Pipeline;
 
-use Avax\Components\DataStack\Data\Exceptions\InvalidFlowException;
+use Avax\Components\DataStack\Data\System\Foundation\Exceptions\InvalidFlowException;
 
 /**
  * Immutable ordered pipeline of callables.

@@ -132,6 +132,30 @@ final class Str
     }
 
     /**
+     * Convert a string to lower case.
+     */
+    public static function lower(string $value) : string
+    {
+        if (function_exists('mb_strtolower')) {
+            return mb_strtolower($value, 'UTF-8');
+        }
+
+        return strtolower($value);
+    }
+
+    /**
+     * Convert a string to UPPER CASE.
+     */
+    public static function upper(string $value) : string
+    {
+        if (function_exists('mb_strtoupper')) {
+            return mb_strtoupper($value, 'UTF-8');
+        }
+
+        return strtoupper($value);
+    }
+
+    /**
      * Convert a string to StudlyCase (PascalCase).
      */
     public static function studly(string $value) : string

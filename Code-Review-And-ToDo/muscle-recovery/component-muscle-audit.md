@@ -4,48 +4,51 @@
 **Stage**: V1-02  
 **Source**: Current components vs backup inventory
 
+**Updated**: 2026-05-05 (after Text + Database fixes)
+
 ---
 
 ## Audit Summary
 
-| Component | Current State | Backup Muscle | Missing Behavior | Target Version | Target Path | Priority | Risk |
-|------------|----------------|---------------|-------------------|----------------|-------------|----------|-------|
-| Application/Text | partial | Str-like | Case, Search, Replace, Slug, Normalize | V1 | Application/Text/Capabilities/ | high | medium |
-| DataStack/Data | partial | Arr, Collection | Full array ops, lazy collections | V1 | DataStack/Data/Capabilities/ | high | medium |
-| Application/DateTime | partial | Carbon-like | Travel, Freeze, Humanize | V1 | Application/DateTime/Capabilities/ | high | medium |
-| Application/Config | skeleton | Config | Load, Read, Validate | V1 | Application/Config/ | high | low |
-| Application/Facade | partial | Facade | Resolve, Bind, Reset | V1 | Application/Facade/ | medium | medium |
-| Application/Container | partial | DI/Container | Autowiring, resolution, scopes | V1 | Application/Container/ | high | high |
-| DataStack/Database | missing | QueryBuilder | Full query, schema, migrations | V1 | DataStack/Database/ | high | high |
-| DataStack/Persistence | missing | ORM | UnitOfWork, Repo, Hydration | V1 | DataStack/Persistence/ | high | high |
-| HTTP/Router | partial | Router | Full registration, matching | V1 | HTTP/Router/ | high | medium |
-| HTTP/Session | partial | Session | Full lifecycle | V1 | HTTP/Session/ | medium | medium |
-| Identity/Auth | partial | Auth | Credentials, tokens | V1 | Identity/Auth/ | high | high |
-| Operations/Queue | partial | Queue | Jobs, workers, broker | V1 | Operations/Queue/ | medium | medium |
-| Operations/Mail | partial | Mail | SMTP, templates | V1 | Operations/Mail/ | medium | medium |
-| Presentation/View | missing | View | Template engine | V1 | Presentation/View/ | medium | high |
-| Operations/Events | missing | Events | Dispatching | V1 | Operations/Events/ | low | medium |
-| HTTP/Client | missing | HTTP Client | External calls | V1 | HTTP/Client/ | low | medium |
-| Application/Filesystem | partial | Filesystem | Disks, paths | V1 | Application/Filesystem/ | low | medium |
-| Operations/Observability | missing | Logging | Structured logs, metrics | V1 | Operations/Observability/ | high | high |
-| Application/Localization | missing | i18n | Translation | V1 | Application/Localization/ | high | high |
-| Operations/Notifications | missing | Notifications | Channels | V1 | Operations/Notifications/ | high | high |
-| HTTP/Security | partial | Security | Encryption, CSRF | V1 | HTTP/Security/ | medium | medium |
+| Component                | Current State | Backup Muscle   | Missing Behavior                       | Target Version | Target Path                        | Priority | Risk       |
+|--------------------------|---------------|-----------------|----------------------------------------|----------------|------------------------------------|----------|------------|
+| Application/Text         | RESTORED      | Str-like        | Case, Search, Replace, Slug, Normalize | V1             | Application/Text/Capabilities/     | high     | **✅ DONE** |
+| DataStack/Data           | partial       | Arr, Collection | Full array ops, lazy collections       | V1             | DataStack/Data/Capabilities/       | high     | medium     |
+| Application/DateTime     | partial       | Carbon-like     | Travel, Freeze, Humanize               | V1             | Application/DateTime/Capabilities/ | high     | medium     |
+| Application/Config       | skeleton      | Config          | Load, Read, Validate                   | V1             | Application/Config/                | high     | low        |
+| Application/Facade       | partial       | Facade          | Resolve, Bind, Reset                   | V1             | Application/Facade/                | medium   | medium     |
+| Application/Container    | partial       | DI/Container    | Autowiring, resolution, scopes         | V1             | Application/Container/             | high     | high       |
+| DataStack/Database       | **RESTORED**  | QueryBuilder    | Full query, schema, migrations         | V1             | DataStack/Database/                | high     | **✅ DONE** |
+| DataStack/Persistence    | missing       | ORM             | UnitOfWork, Repo, Hydration            | V1             | DataStack/Persistence/             | high     | high       |
+| HTTP/Router              | partial       | Router          | Full registration, matching            | V1             | HTTP/Router/                       | high     | medium     |
+| HTTP/Session             | partial       | Session         | Full lifecycle                         | V1             | HTTP/Session/                      | medium   | medium     |
+| Identity/Auth            | partial       | Auth            | Credentials, tokens                    | V1             | Identity/Auth/                     | high     | high       |
+| Operations/Queue         | partial       | Queue           | Jobs, workers, broker                  | V1             | Operations/Queue/                  | medium   | medium     |
+| Operations/Mail          | partial       | Mail            | SMTP, templates                        | V1             | Operations/Mail/                   | medium   | medium     |
+| Presentation/View        | missing       | View            | Template engine                        | V1             | Presentation/View/                 | medium   | high       |
+| Operations/Events        | missing       | Events          | Dispatching                            | V1             | Operations/Events/                 | low      | medium     |
+| HTTP/Client              | missing       | HTTP Client     | External calls                         | V1             | HTTP/Client/                       | low      | medium     |
+| Application/Filesystem   | partial       | Filesystem      | Disks, paths                           | V1             | Application/Filesystem/            | low      | medium     |
+| Operations/Observability | missing       | Logging         | Structured logs, metrics               | V1             | Operations/Observability/          | high     | high       |
+| Application/Localization | missing       | i18n            | Translation                            | V1             | Application/Localization/          | high     | high       |
+| Operations/Notifications | missing       | Notifications   | Channels                               | V1             | Operations/Notifications/          | high     | high       |
+| HTTP/Security            | partial       | Security        | Encryption, CSRF                       | V1             | HTTP/Security/                     | medium   | medium     |
 
 ---
 
 ## Current Component States
 
-| State | Count |
-|-------|-------|
-| muscular | 5 |
-| partial | 12 |
-| skeleton | 2 |
-| missing | 8 |
-| stale | 0 |
-| unknown | 0 |
+| State    | Count |
+|----------|-------|
+| muscular | 7     | ✅
+| partial  | 10    |
+| skeleton | 2     |
+| missing  | 8     |
+| stale    | 0     |
+| unknown  | 0     |
 
 **Total V1 Components**: 27
+**Restored This Session**: 2 (Application/Text, DataStack/Database)
 
 ---
 

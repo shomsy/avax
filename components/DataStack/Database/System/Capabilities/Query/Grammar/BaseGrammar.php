@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar;
 
-class BaseGrammar {}
+class BaseGrammar extends Grammar {}

@@ -4,44 +4,44 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\Configuration;
 
-use Avax\Components\Application\Container\Core\Capabilities\Binding\Binders\Binder;
-use Avax\Components\Application\Container\Core\Capabilities\Binding\BindingRepository;
+use Avax\Components\Application\Container\System\Capabilities\Bindings\BindingRegistry;
+use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
 use Avax\Components\Application\Filesystem\System\Capabilities\Disks\ResolveDisk;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Application\Filesystem\System\PublicSurface\FilesystemInterface;
-use Avax\Components\Application\Filesystem\System\PublicSurface\FilesystemInterfaceInterface;
 
 final class RegisterFilesystem
 {
-    public function execute(BindingRepository $bindingRepository) : void
+    public function execute(BindingRegistry $bindingRegistry) : void
     {
-        $bindingRepository->singleton(
+        $bindingRegistry->singleton(
             abstract: FilesystemConfig::class,
             concrete: static fn () : FilesystemConfig => FilesystemConfig::defaults(),
         );
 
-        $bindingRepository->singleton(
+        $bindingRegistry->singleton(
             abstract: ResolveDisk::class,
-            concrete: static fn (Binder $binder) : ResolveDisk => new ResolveDisk(
-                config: $binder->make(abstract: FilesystemConfig::class),
+            concrete: static fn (ResolveDependency $resolver) : ResolveDisk => new ResolveDisk(
+                filesystemConfig: $resolver->resolve(abstract: FilesystemConfig::class),
             ),
         );
 
-        $bindingRepository->singleton(
+        $bindingRegistry->singleton(
             abstract: Disk::class,
-            concrete: static fn (Binder $binder) => $binder->make(abstract: ResolveDisk::class)->execute(),
+            concrete: static fn (ResolveDependency $resolver) => $resolver->resolve(abstract: ResolveDisk::class)->execute(),
         );
 
-        $bindingRepository->singleton(
+        $bindingRegistry->singleton(
             abstract: Filesystem::class,
-            concrete: static fn (Binder $binder) : Filesystem => new Filesystem(
-                disk: $binder->make(abstract: Disk::class),
+            concrete: static fn (ResolveDependency $resolver) : Filesystem => new Filesystem(
+                disk: $resolver->resolve(abstract: Disk::class),
             ),
         );
 
-        $bindingRepository->singleton(
+        $bindingRegistry->singleton(
             abstract: FilesystemInterface::class,
-            concrete: static fn (Binder $binder) => $binder->make(abstract: Filesystem::class),
+            concrete: static fn (ResolveDependency $resolver) => $resolver->resolve(abstract: Filesystem::class),
         );
     }
 }

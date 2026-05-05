@@ -30,6 +30,12 @@
       },
       "files": [
         "components/Application/Container/System/PublicSurface/shortcuts.php"
+      ],
+      "exclude-from-classmap": [
+        "components/compat.php",
+        "components/Application/Container/tests/",
+        "components/Application/Container/tests/**",
+        "tests/Support/Identity/Credentials/Passkey/"
       ]
     },
   "autoload-dev": {

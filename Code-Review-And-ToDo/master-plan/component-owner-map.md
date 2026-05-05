@@ -1,15 +1,15 @@
 # AvaX Component Owner Map
 
 Date: 2026-05-05  
-Status: FROZEN TARGET / CURRENT COMPONENT TREE RED  
+Status: FROZEN TARGET / STAGE 02 TAXONOMY GREEN / REPOSITORY RED  
 Source: `CURRENT_TRUTH.md`, `Code-Review-And-ToDo/EXECUTION.md`, `.agents/how-to/*.md`
 
 ## Stage 01 Decision
 
 This file freezes the V1 component ownership map.
 
-It does not mark the physical component tree green. Stage 01 observed non-canonical roots under `components/`; Stage 02
-must repair or classify them before taxonomy integrity can be GREEN.
+Stage 02 has now removed the observed non-canonical roots from production `components/` ownership and archived them as
+non-production recovery material. This does not mark any component complete and does not prove V1 Kernel Green.
 
 ## Canonical V1 Component Owners
 
@@ -30,28 +30,28 @@ behavior, adapters where needed, configuration, health/doctor checks, failure mo
 documentation,
 and diagnostics.
 
-## Non-Canonical Top-Level Component Roots
+## Archived Non-Canonical Top-Level Component Roots
 
-| Existing Path                  | Classification                                           | Required Stage 02 Action                                                                                    |
+| Old Path                       | Classification                                           | Stage 02 Result                                                                                              |
 |--------------------------------|----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| `components/.idea`             | Editor metadata inside production tree                   | Remove from `components/` or quarantine outside production ownership.                                       |
-| `components/Data`              | Duplicate or legacy data owner                           | Fold into `components/DataStack/Data` or classify as non-production recovery material.                      |
-| `components/DataLayer`         | Forbidden owner; DataLayer is not a V1 suite             | Fold into `components/DataStack/Persistence` or `components/DataStack/System` according to actual behavior. |
-| `components/DependencyMap`     | Tooling/developer diagnostics owner                      | Move or classify under `tooling/DependencyMap` or `components/DeveloperTools`.                              |
-| `components/Documentation`     | Documentation/code-generation concern in production tree | Move documentation truth under `docs/` or classify executable behavior under `DeveloperTools`.              |
-| `components/DumpDebugger`      | Developer diagnostics concern                            | Fold into `components/DeveloperTools/DumpDebugger` or remove duplicate owner.                               |
-| `components/GracefulShutdown`  | Runtime lifecycle concern                                | Fold into `framework/System/Capabilities/Runtime/GracefulShutdown` or an approved Operations owner.         |
-| `components/Infrastructure`    | Generic forbidden platform bucket                        | Slice into real component owners or labs/recovery; do not keep as production owner.                         |
-| `components/Logging`           | Operational logging concern                              | Fold into `components/Operations/Logging`.                                                                  |
-| `components/Performance`       | Benchmark/performance concern                            | Move to `benchmarks/` or approved Operations/DeveloperTools owner.                                          |
-| `components/Persistence`       | Data persistence concern                                 | Fold into `components/DataStack/Persistence`.                                                               |
-| `components/ResourceGovernor`  | Runtime resource governance concern                      | Fold into `framework/System/Capabilities/ResourceGovernance` or `components/Operations/RuntimeSupervision`. |
-| `components/Response`          | HTTP response concern                                    | Fold into `components/HTTP/Response`.                                                                       |
-| `components/Server`            | Runtime/server adapter concern                           | Fold into `framework/System/Capabilities/Runtime` or `framework/System/Flows` as appropriate.               |
-| `components/StatelessBoundary` | Runtime safety concern                                   | Fold into `framework/System/Capabilities/RuntimeSafety` or approved HTTP boundary ownership.                |
-| `components/WorkerManager`     | Worker lifecycle concern                                 | Fold into `framework/System/Capabilities/WorkerManagement` or `components/Operations/RuntimeSupervision`.   |
+| `components/.idea`             | Editor metadata inside production tree                   | Archived under `Code-Review-And-ToDo/archive/noncanonical-components/stage-02/`.                            |
+| `components/Data`              | Duplicate or legacy data owner                           | Archived as non-production recovery material.                                                               |
+| `components/DataLayer`         | Forbidden owner; DataLayer is not a V1 suite             | Archived as non-production recovery material.                                                               |
+| `components/DependencyMap`     | Tooling/developer diagnostics owner                      | Archived as non-production recovery material.                                                               |
+| `components/Documentation`     | Documentation/code-generation concern in production tree | Archived as non-production recovery material.                                                               |
+| `components/DumpDebugger`      | Developer diagnostics concern                            | Archived as non-production recovery material.                                                               |
+| `components/GracefulShutdown`  | Runtime lifecycle concern                                | Archived as non-production recovery material.                                                               |
+| `components/Infrastructure`    | Generic forbidden platform bucket                        | Archived as non-production recovery material.                                                               |
+| `components/Logging`           | Operational logging concern                              | Archived as non-production recovery material.                                                               |
+| `components/Performance`       | Benchmark/performance concern                            | Archived as non-production recovery material.                                                               |
+| `components/Persistence`       | Data persistence concern                                 | Archived as non-production recovery material.                                                               |
+| `components/ResourceGovernor`  | Runtime resource governance concern                      | Archived as non-production recovery material.                                                               |
+| `components/Response`          | HTTP response concern                                    | Archived as non-production recovery material.                                                               |
+| `components/Server`            | Runtime/server adapter concern                           | Archived as non-production recovery material.                                                               |
+| `components/StatelessBoundary` | Runtime safety concern                                   | Archived as non-production recovery material.                                                               |
+| `components/WorkerManager`     | Worker lifecycle concern                                 | Archived as non-production recovery material.                                                               |
 
-These roots are blockers. They must not be counted as V1 proof until Stage 02 repairs or explicitly classifies them.
+These archived roots are not production owners and must not be counted as V1 proof.
 
 ## Suite-Level Notes
 
@@ -81,13 +81,11 @@ Validation
 Current observed children:
 
 ```text
-Commands
 Console
 System
-UI
 ```
 
-`CLI/Commands` and `CLI/UI` are taxonomy risks until folded into `CLI/Console` or explicitly justified.
+`CLI/Commands` and `CLI/UI` are no longer top-level CLI children in the production tree.
 
 ### DataStack
 
@@ -173,7 +171,6 @@ Logging
 Mail
 MemoryLifecycle
 MessageBus
-Monitoring
 Notifications
 Observability
 Queue
@@ -185,8 +182,8 @@ System
 Tasks
 ```
 
-`Monitoring` must be folded into `Observability` or explicitly classified. Operational components must include failure
-models, diagnostics, and tests before completion can be claimed.
+`Monitoring` is no longer a top-level Operations child in the production tree. Operational components must include
+failure models, diagnostics, and tests before completion can be claimed.
 
 ### Presentation
 
@@ -209,25 +206,26 @@ Secrets
 System
 ```
 
-Stage 02 must resolve duplicated shapes such as `Security/Hashing` and `Security/System/Hashing`, and `Security/Secrets`
-and `Security/System/Secrets`.
+Stage 02 archived duplicate `Security/System/Hashing` and `Security/System/Secrets` ownership material. Current
+production ownership is `Security/Hashing`, `Security/Secrets`, and the suite-level `Security/System` boundary.
 
 ## Stage 02 Blockers
 
 ```text
-[ ] No extra top-level components outside final suites.
-[ ] DataLayer is not a real owner.
-[ ] CLI/Commands is not a separate runtime owner unless explicitly approved.
-[ ] CLI/UI is folded into CLI/Console or explicitly approved.
-[ ] Operations/Monitoring is folded into Operations/Observability or explicitly approved.
-[ ] Security/Hashing and Security/System/Hashing ownership is singular.
-[ ] Security/Secrets and Security/System/Secrets ownership is singular.
+[x] No extra top-level components outside final suites.
+[x] DataLayer is not a real owner.
+[x] CLI/Commands is not a separate runtime owner.
+[x] CLI/UI is folded out of top-level CLI ownership.
+[x] Operations/Monitoring is folded out of top-level Operations ownership.
+[x] Security/Hashing and Security/System/Hashing ownership is singular for production.
+[x] Security/Secrets and Security/System/Secrets ownership is singular for production.
 [ ] composer dump-autoload -o has no skipped production classes.
-[ ] check-component-suite-structure.php passes.
+[x] check-component-suite-structure.php passes.
 ```
 
 ## Verdict
 
 The owner map is frozen.
 
-The physical component tree is RED until Stage 02 repairs or explicitly classifies the non-canonical roots listed above.
+The Stage 02 physical component taxonomy is GREEN. Repository readiness remains RED until autoload, tests, PHPStan,
+broken refs, and component completion are proven.

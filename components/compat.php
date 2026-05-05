@@ -144,6 +144,10 @@ $classAliases = [
 ];
 
 foreach ($classAliases as $alias => $target) {
+    if ($alias === $target) {
+        continue;
+    }
+
     if (class_exists($alias, false)) {
         continue;
     }

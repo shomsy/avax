@@ -1,7 +1,8 @@
 # AvaX Muscular System Lockdown Plan — V1 / V2 / V3
 
 Status: canonical AI TODO plan  
-Purpose: restore and preserve AvaX “muscle” from `avax-backup.txt`, but implement it under the new architecture, governance, and V1/V2/V3 roadmap.  
+Purpose: restore and preserve AvaX “muscle” from `avax-backup.txt`, `Framework.txt`, `components/components.txt`, and
+local Git history, but implement it under the new architecture, governance, and V1/V2/V3 roadmap.  
 Execution rule: V1 must be proven before V2 implementation. V2 platform baseline must be proven before V3 production implementation.
 Execution control: `Code-Review-And-ToDo/EXECUTION.md` is the active stage lock. If this file and `EXECUTION.md`
 disagree, `EXECUTION.md` wins.
@@ -11,9 +12,12 @@ Current active result:
 ```text
 Stage 00: Current Truth Lock — COMPLETE
 Stage 01: Final Project Tree Freeze — COMPLETE
-Stage 02: Taxonomy Integrity Green — ACTIVE
+Stage 02: Taxonomy Integrity Green — COMPLETE
+Stage V1-01: Backup Muscle Inventory — COMPLETE
+Stage V1-02: Current Component Muscle Audit — COMPLETE
+Stage V1-03: Static Integrity Closure — ACTIVE
 Current repository readiness: RED
-Next allowed action: Stage 02 taxonomy repair/classification
+Next allowed action: Stage V1-03 static integrity closure
 V2 Implementation: LOCKED
 V3 Implementation: LOCKED
 ```
@@ -63,10 +67,10 @@ Runtime doctor: GREEN
 Broken refs: RED / not fully classified
 PHPStan: RED
 Tests: RED
-Component suite structure: RED
-Superglobal audit: RED
+Component suite structure: GREEN
+Superglobal audit: GREEN
 Component completion: not proven
-Muscle restoration: incomplete
+Muscle restoration: inventory and current component audit complete / implementation locked
 ```
 
 Important correction:
@@ -84,13 +88,12 @@ Broken refs must not be called GREEN while critical refs remain unless every cri
 Current next priority:
 
 ```text
-1. Stage 02: Reconcile component taxonomy and forbidden roots.
-2. Repair autoload, test configuration, broken refs, superglobal boundary, and PHPStan in locked stage order.
-3. Audit old backup muscle only when the active stage permits it.
-4. Restore V1 muscles under canonical architecture only after integrity gates allow production changes.
-5. Prove V1 with tests/static analysis.
-6. Only then unlock V2.
-7. Only after V2 baseline, start V3.
+1. Stage V1-03: repair or classify static integrity blockers.
+2. Repair autoload, test configuration, broken refs, and PHPStan in locked stage order.
+3. Restore V1 muscles under canonical architecture only after audit and integrity gates allow production changes.
+4. Prove V1 with tests/static analysis.
+5. Only then unlock V2.
+6. Only after V2 baseline, start V3.
 ```
 
 ---
@@ -227,17 +230,17 @@ Do not implement code in this stage.
 Tasks:
 
 ```text
-[ ] Parse avax-backup.txt file headers.
-[ ] Extract old components.
-[ ] Extract public APIs.
-[ ] Extract tests.
-[ ] Extract known feature reports.
-[ ] Extract legacy monoliths.
-[ ] Extract old facades.
-[ ] Extract old helpers.
-[ ] Extract old runtime flows.
-[ ] Extract old database/query/migration behavior.
-[ ] Extract old auth/session/cache/mail/queue/view behavior.
+[x] Parse avax-backup.txt file headers.
+[x] Extract old components.
+[x] Extract public APIs.
+[x] Extract tests.
+[x] Extract known feature reports.
+[x] Extract legacy monoliths.
+[x] Extract old facades.
+[x] Extract old helpers.
+[x] Extract old runtime flows.
+[x] Extract old database/query/migration behavior.
+[x] Extract old auth/session/cache/mail/queue/view behavior.
 ```
 
 Output:
@@ -281,10 +284,10 @@ postpone
 Acceptance:
 
 ```text
-[ ] Every meaningful backup feature is listed.
-[ ] Every old monolith is listed.
-[ ] Every old test family is listed.
-[ ] Nothing is implemented yet.
+[x] Every meaningful backup feature is listed.
+[x] Every old monolith is listed.
+[x] Every old test family is listed.
+[x] Nothing is implemented yet.
 ```
 
 ---
@@ -300,12 +303,12 @@ Compare current repo against backup inventory and identify lost muscles.
 Tasks:
 
 ```text
-[ ] Read current components tree.
-[ ] Read component-completion matrix if present.
-[ ] Compare current files against backup inventory.
-[ ] Mark current component as muscular, partial, skeleton, missing, or stale.
-[ ] Identify code that exists but is disconnected.
-[ ] Identify tests that exist but are stale namespace/test-only.
+[x] Read current components tree.
+[x] Read component-completion matrix if present.
+[x] Compare current files against backup inventory.
+[x] Mark current component as muscular, partial, skeleton, missing, or stale.
+[x] Identify code that exists but is disconnected.
+[x] Identify tests that exist but are stale namespace/test-only.
 ```
 
 Output:
@@ -335,10 +338,10 @@ unknown
 Acceptance:
 
 ```text
-[ ] Every component has a state.
-[ ] Every missing V1 muscle has a target path.
-[ ] Every V2/V3 muscle remains locked.
-[ ] No code changed.
+[x] Every component has a state.
+[x] Every missing V1 muscle has a target path.
+[x] Every V2/V3 muscle remains locked.
+[x] No production code changed.
 ```
 
 ---

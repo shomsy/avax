@@ -1,15 +1,15 @@
 # AvaX Master Project Tree
 
 Date: 2026-05-05  
-Status: FROZEN TARGET / CURRENT TREE RED  
+Status: FROZEN TARGET / COMPONENT TAXONOMY GREEN / REPOSITORY RED  
 Source: `CURRENT_TRUTH.md`, `Code-Review-And-ToDo/EXECUTION.md`, `.agents/how-to/*.md`
 
 ## Stage 01 Decision
 
 This file freezes the target project tree for V1 repair work.
 
-It does not claim the physical tree is green. The current repository still contains forbidden production roots, PSR-4
-skips, broken references, and test configuration drift. Those are Stage 02+ repair inputs.
+Stage 02 has made the physical component taxonomy match the frozen top-level component suite list. The repository still
+has PSR-4 skips, broken references, PHPStan/test drift, and incomplete component proof.
 
 ## Frozen Root Ownership Tree
 
@@ -159,9 +159,10 @@ Nested capability-specific folders may exist only when they describe real flows 
 generic
 `Services`, `Helpers`, `Utils`, `Common`, `Shared`, `Managers`, `Core`, or `Support` buckets.
 
-## Current Forbidden Production Component Roots
+## Archived Forbidden Production Component Roots
 
-Stage 01 observed these non-canonical roots directly under `components/`:
+Stage 01 observed these non-canonical roots directly under `components/`. Stage 02 archived them under
+`Code-Review-And-ToDo/archive/noncanonical-components/stage-02/` as non-production recovery material:
 
 ```text
 components/.idea/
@@ -182,7 +183,8 @@ components/StatelessBoundary/
 components/WorkerManager/
 ```
 
-These roots block Stage 02 taxonomy integrity. They are not V1 component suites.
+These roots no longer block Stage 02 taxonomy integrity. They are not V1 component suites and must not be counted as V1
+proof.
 
 ## Frozen Tests Tree
 
@@ -271,7 +273,7 @@ tooling/Refactor/
 tooling/Refactor_tmp/
 ```
 
-These are Stage 02+ taxonomy/namespace inputs. Stage 01 does not move them.
+These are still later taxonomy/namespace cleanup inputs outside the completed component-suite Stage 02 gate.
 
 ## Labs, Benchmarks, Examples, and Recovery
 
@@ -288,10 +290,9 @@ Code-Review-And-ToDo/recovery-reports/
 
 `labs/SystemDesignKit` remains planning-only until V1 Kernel Green and the V2 platform baseline gates allow V3 work.
 
-## Stage 01 Verdict
+## Current Verdict
 
 The final target tree is frozen.
 
-The physical repository tree is RED until Stage 02 makes component taxonomy match this frozen target or records
-explicit,
-accepted exceptions.
+The physical component suite taxonomy is GREEN. The full repository remains RED until autoload, broken refs, tests,
+PHPStan, and component completion are proven.

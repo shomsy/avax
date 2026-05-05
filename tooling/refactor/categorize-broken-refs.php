@@ -31,6 +31,32 @@ $categories = [
     'real-production' => [],
 ];
 
+function brokenRefUsageIsNonProduction(string $file): bool
+{
+    $relativeFile = str_replace(getcwd() . '/', '', $file);
+
+    if (
+        str_starts_with($relativeFile, 'tests/') ||
+        str_contains($relativeFile, '/tests/') ||
+        str_starts_with($relativeFile, 'docs/') ||
+        str_contains($relativeFile, '/docs/') ||
+        str_starts_with($relativeFile, 'examples/') ||
+        str_contains($relativeFile, '/examples/') ||
+        str_starts_with($relativeFile, 'labs/') ||
+        str_contains($relativeFile, '/labs/') ||
+        str_starts_with($relativeFile, 'tooling/') ||
+        str_contains($relativeFile, '/tooling/') ||
+        str_starts_with($relativeFile, 'Code-Review-And-ToDo/') ||
+        str_contains($relativeFile, '/Code-Review-And-ToDo/') ||
+        str_contains($relativeFile, 'test_') ||
+        str_contains($relativeFile, 'benchmarks')
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
 foreach ($missingRefs as $ref => $data) {
     $usages = $data['usages'];
     $isTestOnly = true;
@@ -47,15 +73,7 @@ foreach ($missingRefs as $ref => $data) {
 
     $isNonProduction = false;
     foreach ($usages as $usage) {
-        $file = $usage['file'];
-        if (
-            str_contains($file, '/tests/') || str_starts_with($file, 'tests/') ||
-            str_contains($file, '/docs/') || str_starts_with($file, 'docs/') ||
-            str_contains($file, '/examples/') || str_starts_with($file, 'examples/') ||
-            str_contains($file, '/labs/') || str_starts_with($file, 'labs/') ||
-            str_contains($file, '/tooling/') || str_starts_with($file, 'tooling/') ||
-            str_contains($file, 'test_') || str_contains($file, 'benchmarks')
-        ) {
+        if (brokenRefUsageIsNonProduction($usage['file'])) {
             $isNonProduction = true;
         } else {
             $isNonProduction = false;

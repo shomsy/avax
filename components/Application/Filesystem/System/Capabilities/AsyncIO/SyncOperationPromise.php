@@ -58,7 +58,7 @@ final class SyncOperationPromise implements AsyncOperationPromise
 
                 return new self(result: $newResult);
             } catch (Throwable $e) {
-                return new self(rejection: $e);
+                return new self(throwable: $e);
             }
         }
 
@@ -75,7 +75,7 @@ final class SyncOperationPromise implements AsyncOperationPromise
 
                 return new self(result: $newResult);
             } catch (Throwable $e) {
-                return new self(rejection: $e);
+                return new self(throwable: $e);
             }
         }
 

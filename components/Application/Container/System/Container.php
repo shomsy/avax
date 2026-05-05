@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System;
 
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use RuntimeException;
 
 /**
@@ -19,11 +19,17 @@ use RuntimeException;
  *   Container::get('service');
  *   Container::has('service');
  */
-class Container
+class Container implements ResettableState
 {
     private static ?ContainerInterface $container = null;
 
     private ?ContainerInterface $engine = null;
+
+    public function resetState(): void
+    {
+        self::$container = null;
+        $this->engine = null;
+    }
 
     public static function setContainer(ContainerInterface $container) : void
     {

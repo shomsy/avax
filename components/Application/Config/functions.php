@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Avax\Components\Application\Config\Architecture\DDD\AppPath;
-use Avax\Components\Application\Config\Service\Config;
+use Avax\Components\Application\Config\System\Capabilities\Architecture\AppPath;
+use Avax\Components\Application\Config\System\PublicSurface\Config;
 
 if (!function_exists(function: 'config')) {
     /**

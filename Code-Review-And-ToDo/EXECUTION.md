@@ -165,88 +165,89 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-Stage 02: Taxonomy Integrity Green
+Stage V1-03: Static Integrity Closure
 ```
 
 Last completed stage:
 
 ```text
-Stage 01: Final Project Tree Freeze
+Stage V1-02: Current Component Muscle Audit
 ```
 
-Stage 01 evidence:
+Recent completed evidence:
 
 ```text
 Code-Review-And-ToDo/master-plan/stage-01-final-project-tree-freeze-report.md
+Code-Review-And-ToDo/component-taxonomy/stage-02-taxonomy-integrity-report.md
+Code-Review-And-ToDo/muscle-recovery/stage-v1-01-backup-muscle-inventory-report.md
+Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md
+Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json
+Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.md
+Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.json
 ```
 
-All other stages are read-only context until Stage 02 is GREEN.
+All other stages are read-only context until Stage V1-03 is complete.
 
-### Stage 02 Goal
+### Stage V1-03 Goal
 
-Make the physical repo match the final component taxonomy frozen in Stage 01.
+Remove or classify static integrity blockers before any V1 muscle restoration.
 
-### Stage 02 Allowed Work
+### Stage V1-03 Allowed Work
 
 ```text
-[ ] Repair or explicitly classify forbidden top-level component roots.
-[ ] Move files only when the target owner is clear from Stage 01.
-[ ] Preserve behavior while moving taxonomy.
-[ ] Update namespaces only when required by the moved owner.
-[ ] Update master-plan taxonomy evidence.
-[ ] Run taxonomy, duplicate-owner, namespace-drift, and autoload checks.
-[ ] Record Stage 02 report.
+[ ] Close or classify remaining critical broken refs.
+[ ] Split remaining multi-class production files when the owner is clear.
+[ ] Repair production PSR-4 skips that are local filename/namespace mismatches.
+[ ] Keep test-layer skips classified unless the repair is needed for static integrity.
+[ ] Run targeted PHPStan checks listed in TODO.md.
+[ ] Record Code-Review-And-ToDo/v1-integrity/static-integrity-closure-report.md.
 ```
 
-### Stage 02 Forbidden Work
+### Stage V1-03 Forbidden Work
 
 ```text
-[ ] No feature work.
-[ ] No new public APIs unless required by a move.
+[ ] No V1 muscle restoration beyond static integrity fallout.
 [ ] No V2 implementation.
 [ ] No V3 implementation.
-[ ] No muscle restoration.
-[ ] No broad static-analysis repair outside taxonomy fallout.
-[ ] No test behavior repair outside taxonomy fallout.
-[ ] No compatibility bridge changes.
+[ ] No placeholder classes.
+[ ] No dummy classes to silence tools.
+[ ] No type weakening to make PHPStan green.
+[ ] No broad test-layer refactor outside explicitly classified static integrity needs.
 ```
 
-### Stage 02 Validation
+### Stage V1-03 Validation
 
 ```bash
-git status --short
-find components -maxdepth 4 -type d | sort
-find components -type d -path '*System/Capabilities/*/System*' | sort
-find components -type d -path '*System/Foundation/*/System*' | sort
-find components -type d -path '*System/PublicSurface/*/System*' | sort
+composer validate --no-check-publish
 composer dump-autoload -o
+php tooling/audit_broken_refs.php
+php tooling/refactor/categorize-broken-refs.php
 php tooling/refactor/check-component-suite-structure.php
 php tooling/refactor/check-duplicate-owners.php
 php tooling/refactor/check-namespace-drift.php
+php tooling/refactor/check-public-surface.php
+php tooling/refactor/check-runtime-leaks.php
+vendor/bin/phpstan analyse framework/System --memory-limit=1G --error-format=raw --no-progress
+vendor/bin/phpstan analyse components/Application/Cache --memory-limit=1G --error-format=raw --no-progress
+vendor/bin/phpstan analyse components/HTTP/Request components/HTTP/Response --memory-limit=1G --error-format=raw --no-progress
+vendor/bin/phpstan analyse components/DataStack/Database --memory-limit=1G --error-format=raw --no-progress
 ```
 
-### Stage 02 Done Definition
+### Stage V1-03 Done Definition
 
 ```text
-[ ] No extra top-level components outside final suites remain unclassified.
-[ ] No nested System folders exist inside Capabilities/Foundation/PublicSurface unless explicitly classified as non-production.
-[ ] Security/Hashing and Security/System/Hashing ownership is singular.
-[ ] Security/Secrets and Security/System/Secrets ownership is singular.
-[ ] DataLayer is not a real owner.
-[ ] CLI/Commands is not a separate runtime owner unless explicitly approved.
-[ ] CLI/UI is folded into CLI/Console or explicitly approved.
-[ ] Operations/Monitoring is folded into Operations/Observability or explicitly approved.
-[ ] composer dump-autoload -o has no skipped production classes caused by taxonomy drift.
-[ ] suite checker passes or every failure is explicitly classified.
-[ ] duplicate owner checker passes.
-[ ] namespace drift checker passes.
+[ ] Composer remains GREEN.
+[ ] Autoload production skips are zero or fully classified.
+[ ] Unresolved production-critical broken refs are zero or fully classified.
+[ ] Targeted PHPStan areas are green or remaining errors are fully classified.
+[ ] No V2/V3 implementation happened.
 [ ] Final report declares GREEN/YELLOW/RED.
 [ ] Next stage is explicitly named.
 ```
 
-### Stage 02 Stop Condition
+### Stage V1-03 Stop Condition
 
-Stop if a forbidden root cannot be safely mapped to a frozen Stage 01 owner without a human architecture decision.
+Stop if a static repair requires unclear architecture ownership or would restore behavior beyond integrity fallout.
 
 ---
 

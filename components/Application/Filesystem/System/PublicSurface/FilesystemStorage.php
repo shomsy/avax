@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\PublicSurface;
 
-use Avax\Components\Filesystem\System\Capabilities\Storage\StorageInterface;
+use Avax\Components\Application\Filesystem\System\Capabilities\Storage\StorageInterface;
 use RuntimeException;
 
 /**
@@ -91,5 +91,3 @@ final class FilesystemStorage
         return self::getStorage()->listFiles($path);
     }
 }
-
-ge;

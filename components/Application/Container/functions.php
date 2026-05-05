@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Container;
-use Avax\Components\Application\Container\System\ContainerFacade;
 
 if (!function_exists('appInstance')) {
     /**
@@ -16,7 +15,6 @@ if (!function_exists('appInstance')) {
 
         if ($instance !== null) {
             $container = $instance;
-            ContainerFacade::setContainer($instance);
             Container::setContainer($instance);
         }
 

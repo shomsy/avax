@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Framework\System\Runtime\RunApplication\Capabilities;
+namespace Avax\Framework\System\Capabilities\Runtime\Capabilities;
 
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRequest;

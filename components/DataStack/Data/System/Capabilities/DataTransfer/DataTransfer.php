@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer;
 
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\DefaultValue;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\EmailRule;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\IntegerRule;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\MinLengthRule;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\MinRule;
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Optional;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\PasswordComplexityRule;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Required;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\Attributes\DefaultValue;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\Attributes\Optional;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Configuration\DataTransferConfig;
+use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionProperty;
@@ -26,9 +28,14 @@ use Throwable;
  * - Supports field visibility control
  * - Integrates with Collections for complex types
  */
-final class DataTransfer
+final class DataTransfer implements ResettableState
 {
     private static ?DataTransferConfig $dataTransferConfig = null;
+
+    public function resetState(): void
+    {
+        self::$dataTransferConfig = null;
+    }
 
     public static function configure(DataTransferConfig $dataTransferConfig): void
     {
@@ -69,7 +76,7 @@ final class DataTransfer
      */
     public static function create(string $class, array|object $input): object
     {
-        self::$dataTransferConfig ?? DataTransferConfig::default();
+        self::$dataTransferConfig ??= DataTransferConfig::default();
         $inputData = is_array($input) ? $input : (array) $input;
 
         $reflectionClass = new ReflectionClass($class);

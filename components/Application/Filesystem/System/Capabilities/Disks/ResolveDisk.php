@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\Capabilities\Disks;
 
-use Avax\Components\Application\Filesystem\Configuration\FilesystemConfig;
+use Avax\Components\Application\Filesystem\System\Configuration\FilesystemConfig;
 use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local\LocalDisk;
 
 final readonly class ResolveDisk

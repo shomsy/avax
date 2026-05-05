@@ -1,0 +1,16 @@
+python3 tooling/recovery/assert_not_report_only_complete.py
+Changed files:
+- .phpunit.cache/test-results
+- Code-Review-And-ToDo/recovery-reports/
+- Code-Review-And-ToDo/recovery-staging/
+- Makefile.recovery
+- components/Application/Localization/
+- components/Operations/Events/how-this-works.md
+- components/Operations/Notifications/how-this-works.md
+- components/Operations/Observability/how-this-works.md
+- tests/Unit/Generated/
+- tooling/recovery/
+
+Production-impacting files detected:
+- components/Application/Localization/
+- tests/Unit/Generated/

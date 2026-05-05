@@ -228,7 +228,7 @@ abstract class Grammar implements GrammarInterface
 
             // If this is a nested block: (condition1 OR condition2).
             if ($node instanceof NestedWhereNode) {
-                $nestedSql = $this->compileWheres($node->query);
+                $nestedSql = $this->compileWheres(queryState: $node->query->state);
                 if ($nestedSql !== '') {
                     $sql[] = $prefix . $boolean . '(' . ltrim(string: $nestedSql, characters: 'WHERE ') . ')';
                 }
@@ -255,7 +255,7 @@ abstract class Grammar implements GrammarInterface
                 }
 
                 // Handle "IN" clauses: column IN (?, ?, ?).
-                if (in_array(true, needle: $operator, haystack: ['IN', 'NOT IN']) && is_array(value: $node->value)) {
+                if (in_array(needle: $operator, haystack: ['IN', 'NOT IN'], strict: true) && is_array(value: $node->value)) {
                     $count        = count(value: $node->value);
                     $placeholders = $count > 0 ? implode(separator: ', ', array: array_fill(start_index: 0, count: $count, value: '?')) : '';
                     $sql[] = $prefix . $boolean . sprintf('%s %s (%s)', $column, $operator, $placeholders);
@@ -264,7 +264,7 @@ abstract class Grammar implements GrammarInterface
                 }
 
                 // Handle "BETWEEN" clauses: column BETWEEN ? AND ?.
-                if (in_array(true, needle: $operator, haystack: ['BETWEEN', 'NOT BETWEEN']) && is_array(value: $node->value)) {
+                if (in_array(needle: $operator, haystack: ['BETWEEN', 'NOT BETWEEN'], strict: true) && is_array(value: $node->value)) {
                     $sql[] = $prefix . $boolean . sprintf('%s %s ? AND ?', $column, $operator);
 
                     continue;

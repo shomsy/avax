@@ -1,0 +1,47 @@
+.PHONY: recovery-database recovery-persistence recovery-all recovery-origin-main recovery-stamp-missing-v1 recovery-proof-guard
+
+recovery-database:
+	bash tooling/recovery/run_database_recovery_audit.sh
+
+recovery-persistence:
+	bash tooling/recovery/run_persistence_recovery_audit.sh
+
+recovery-all:
+	bash tooling/recovery/run_database_recovery_audit.sh
+	bash tooling/recovery/run_persistence_recovery_audit.sh
+
+recovery-origin-main:
+	bash tooling/recovery/run_origin_main_extract.sh
+
+recovery-stamp-missing-v1:
+	bash tooling/recovery/run_v1_missing_structure_stamp.sh
+
+recovery-proof-guard:
+	python3 tooling/recovery/assert_not_report_only_complete.py
+
+recovery-smoke-database:
+	python3 tooling/recovery/stamp_public_surface_smoke_tests.py --component-root components/DataStack/Database --test-dir tests/Unit/Generated --test-class DataStackDatabasePublicSurfaceSmokeTest
+	vendor/bin/phpunit tests/Unit/Generated/DataStackDatabasePublicSurfaceSmokeTest.php --no-coverage
+
+recovery-smoke-persistence:
+	python3 tooling/recovery/stamp_public_surface_smoke_tests.py --component-root components/DataStack/Persistence --test-dir tests/Unit/Generated --test-class DataStackPersistencePublicSurfaceSmokeTest
+	vendor/bin/phpunit tests/Unit/Generated/DataStackPersistencePublicSurfaceSmokeTest.php --no-coverage
+
+recovery-summary:
+	@echo "== Recovery reports =="
+	@ls -lah Code-Review-And-ToDo/recovery-reports || true
+	@echo ""
+	@echo "== Database extracted =="
+	@grep -c '^|' Code-Review-And-ToDo/recovery-reports/database-extracted-backup-files.md || true
+	@echo ""
+	@echo "== Persistence extracted =="
+	@grep -c '^|' Code-Review-And-ToDo/recovery-reports/persistence-extracted-backup-files.md || true
+	@echo ""
+	@echo "== Database PHPStan top families =="
+	@sed -n '1,80p' Code-Review-And-ToDo/recovery-reports/database-phpstan-families.md || true
+	@echo ""
+	@echo "== Persistence PHPStan top families =="
+	@sed -n '1,80p' Code-Review-And-ToDo/recovery-reports/persistence-phpstan-families.md || true
+	@echo ""
+	@echo "== Git status =="
+	@git status --short

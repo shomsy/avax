@@ -26,7 +26,7 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator (defaults to '=' if second is provided).
      * @param string|null    $second   The right-hand field name belonging to the target table.
      *
-     * @return HasJoins|QueryBuilder A
+     * @return QueryBuilder A
      *                               fresh,
      *                               cloned
      *                               builder
@@ -42,7 +42,8 @@ trait HasJoins
         string|Closure $first,
         ?string $operator = null,
         ?string $second = null,
-    ): self {
+    ) : QueryBuilder
+    {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'inner');
     }
 
@@ -59,7 +60,7 @@ trait HasJoins
      * @param string|null    $second   The target comparison field label.
      * @param string         $type     The join strategy type (inner/left/right/cross).
      *
-     * @return HasJoins|QueryBuilder A
+     * @return QueryBuilder A
      *                               fresh,
      *                               cloned
      *                               builder
@@ -76,20 +77,21 @@ trait HasJoins
         ?string $operator = null,
         ?string $second = null,
         string $type = 'inner',
-    ): self {
+    ) : QueryBuilder
+    {
         $clone = clone $this;
 
         if ($first instanceof Closure) {
             $joinClause = new JoinClause(grammar: $this->grammar);
             $first($joinClause);
 
-            $clone->state = $clone->state->addJoin(join: new JoinNode(
+            $clone->state = $clone->state->addJoin(joinNode: new JoinNode(
                 table : $table,
                 type  : $type,
                 clause: $joinClause,
             ));
         } else {
-            $clone->state = $clone->state->addJoin(join: new JoinNode(
+            $clone->state = $clone->state->addJoin(joinNode: new JoinNode(
                 table   : $table,
                 type    : $type,
                 first   : $first,
@@ -111,7 +113,7 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator.
      * @param string|null    $second   The right-hand field name.
      *
-     * @return HasJoins|QueryBuilder A
+     * @return QueryBuilder A
      *                               fresh,
      *                               cloned
      *                               builder
@@ -127,7 +129,8 @@ trait HasJoins
         string|Closure $first,
         ?string $operator = null,
         ?string $second = null,
-    ): self {
+    ) : QueryBuilder
+    {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'left');
     }
 
@@ -141,7 +144,7 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator.
      * @param string|null    $second   The right-hand field name.
      *
-     * @return HasJoins|QueryBuilder A
+     * @return QueryBuilder A
      *                               fresh,
      *                               cloned
      *                               builder
@@ -157,7 +160,8 @@ trait HasJoins
         string|Closure $first,
         ?string $operator = null,
         ?string $second = null,
-    ): self {
+    ) : QueryBuilder
+    {
         return $this->addJoin(table: $table, first: $first, operator: $operator, second: $second, type: 'right');
     }
 
@@ -168,7 +172,7 @@ trait HasJoins
      *
      * @param string $table The technical name of the target database table to cross-link.
      *
-     * @return HasJoins|QueryBuilder A
+     * @return QueryBuilder A
      *                               fresh,
      *                               cloned
      *                               builder
@@ -179,7 +183,7 @@ trait HasJoins
      *                               join
      *                               applied.
      */
-    public function crossJoin(string $table): self
+    public function crossJoin(string $table) : QueryBuilder
     {
         return $this->addJoin(table: $table, first: '', type: 'cross');
     }

@@ -73,7 +73,7 @@ trait Macroable
 
         if ($macro instanceof Closure) {
             return call_user_func_array(
-                callback: $macro->bindTo(newThis: $this, newscope: static::class),
+                callback: $macro->bindTo(newThis: $this, newScope: static::class),
                 args    : $parameters,
             );
         }

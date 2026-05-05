@@ -62,8 +62,7 @@ trait HasAdvancedMutations
             ->withValues(values: $values)
             ->withUpdateColumns(columns: $update);
 
-        $sql = $this->grammar->compileUpsert(
-            state   : $state,
+        $sql = $this->grammar->compileUpsert(queryState: $state,
             uniqueBy: (array) $uniqueBy,
             update  : $state->updateColumns,
         );

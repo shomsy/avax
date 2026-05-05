@@ -132,7 +132,9 @@ final readonly class PDOExecutor implements ExecutorInterface
 
     private function shouldRedactBindings(): bool
     {
-        $flag = config(key: 'database.log_bindings', default: 'redacted');
+        $flag = function_exists(function: 'config')
+            ? config(key: 'database.log_bindings', default: 'redacted')
+            : 'redacted';
 
         return strtolower(string: (string) $flag) !== 'raw';
     }

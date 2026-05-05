@@ -850,7 +850,7 @@ final class Blueprint
     {
         $columnSQLRenderer = new ColumnSQLRenderer();
         $columns           = array_map(
-            callback: static fn (ColumnDefinition $columnDefinition) : string => $columnSQLRenderer->render(grammar: $grammar, column: $columnDefinition),
+            callback: static fn (ColumnDefinition $columnDefinition) : string => $columnSQLRenderer->render(columnDefinition: $columnDefinition, grammar: $grammar),
             array   : $this->columns,
         );
 
@@ -873,7 +873,7 @@ final class Blueprint
         // Handle new columns (ADD)
         foreach ($this->columns as $column) {
             // noinspection SqlNoDataSourceInspection
-            $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $columnSQLRenderer->render(grammar: $grammar, column: $column);
+            $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $columnSQLRenderer->render(columnDefinition: $column, grammar: $grammar);
         }
 
         // Handle commands (DROP, RENAME)

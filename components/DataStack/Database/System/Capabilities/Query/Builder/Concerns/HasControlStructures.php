@@ -40,7 +40,7 @@ trait HasControlStructures
      * @param callable      $callback The logic to execute if the condition evaluates to false.
      * @param callable|null $default  Optional alternative logic to execute if the condition is true.
      *
-     * @return QueryBuilder|HasControlStructures The
+     * @return QueryBuilder The
      *                                           resulting
      *                                           builder
      *                                           instance
@@ -55,7 +55,7 @@ trait HasControlStructures
      * /docs/Foundation/Database/DSL/Transactions.md#transaction logic
      * when a specific flag is absent.
      */
-    public function unless(mixed $condition, callable $callback, ?callable $default = null) : self
+    public function unless(mixed $condition, callable $callback, ?callable $default = null) : QueryBuilder
     {
         return $this->when(condition: ! $condition, callback: $callback, default: $default);
     }
@@ -71,7 +71,7 @@ trait HasControlStructures
      * @param callable      $callback  The logic to execute if the condition evaluates to true.
      * @param callable|null $default   Optional alternative logic to execute if the condition is false.
      *
-     * @return QueryBuilder|HasControlStructures The
+     * @return QueryBuilder The
      *                                           resulting
      *                                           builder
      *                                           instance
@@ -81,7 +81,7 @@ trait HasControlStructures
      *                                           conditional
      *                                           logic.
      */
-    public function when(mixed $condition, callable $callback, ?callable $default = null) : self
+    public function when(mixed $condition, callable $callback, ?callable $default = null) : QueryBuilder
     {
         if ($condition) {
             return $callback($this, $condition) ?: $this;
@@ -103,12 +103,12 @@ trait HasControlStructures
      *
      * @param Closure $callback A logic hook receiving the current builder instance.
      *
-     * @return QueryBuilder|HasControlStructures The
+     * @return QueryBuilder The
      *                                           current
      *                                           builder
      *                                           instance.
      */
-    public function tap(Closure $callback): self
+    public function tap(Closure $callback) : QueryBuilder
     {
         $callback($this);
 

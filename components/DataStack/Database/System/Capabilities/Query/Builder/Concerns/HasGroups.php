@@ -24,7 +24,7 @@ trait HasGroups
      *
      * @param string|array ...$columns A variable list of field names or arrays of names to group by.
      *
-     * @return HasGroups|QueryBuilder A
+     * @return QueryBuilder A
      *                                fresh,
      *                                cloned
      *                                builder
@@ -35,7 +35,7 @@ trait HasGroups
      *                                criteria
      *                                applied.
      */
-    public function groupBy(string|array ...$columns): self
+    public function groupBy(string|array ...$columns) : QueryBuilder
     {
         $clone = clone $this;
         $groups = $this->state->groups;
@@ -59,7 +59,7 @@ trait HasGroups
      * @param mixed  $value    The comparison target value, which will be safely parameterized.
      * @param string $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
      *
-     * @return HasGroups|QueryBuilder A
+     * @return QueryBuilder A
      *                                fresh,
      *                                cloned
      *                                builder
@@ -70,7 +70,7 @@ trait HasGroups
      *                                filter
      *                                applied.
      */
-    public function having(string $column, string $operator, mixed $value, string $boolean = 'AND') : self
+    public function having(string $column, string $operator, mixed $value, string $boolean = 'AND') : QueryBuilder
     {
         $clone = clone $this;
         $clone->state = $clone->state->addHaving(having: ['column' => $column, 'operator' => $operator, 'value' => $value, 'boolean' => $boolean]);

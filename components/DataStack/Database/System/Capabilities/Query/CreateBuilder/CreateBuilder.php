@@ -39,7 +39,7 @@ final readonly class CreateBuilder
                 connectionName: $connection->getName(),
                 connection    : $connection,
             ),
-            scope   : $this->executionScope,
+            executionScope: $this->executionScope,
         );
 
         return new QueryBuilder(

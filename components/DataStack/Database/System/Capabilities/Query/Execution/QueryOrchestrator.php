@@ -62,7 +62,7 @@ final class QueryOrchestrator
             return [];
         }
 
-        return $this->executor->query(sql: $sql, bindings: $bindings, scope: $this->executionScope);
+        return $this->executor->query(sql: $sql, bindings: $bindings, executionScope: $this->executionScope);
     }
 
     private function logPretend(string $sql): void
@@ -87,13 +87,13 @@ final class QueryOrchestrator
             return ExecutionResult::success(affectedRows: 1);
         }
 
-        return $this->executor->execute(sql: $sql, bindings: $bindings, scope: $this->executionScope);
+        return $this->executor->execute(sql: $sql, bindings: $bindings, executionScope: $this->executionScope);
     }
 
     public function withScope(ExecutionScope $executionScope) : self
     {
         return clone (object: $this, withProperties: [
-            'scope' => $executionScope,
+            'executionScope' => $executionScope,
         ]);
     }
 }

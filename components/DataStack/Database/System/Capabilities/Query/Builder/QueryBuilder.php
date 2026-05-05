@@ -268,7 +268,7 @@ class QueryBuilder
             $instance = $instance->withSoftDeleteFilter();
         }
 
-        $sql = $instance->grammar->compileSelect(state: $instance->limit(limit: 1)->state);
+        $sql = $instance->grammar->compileSelect(queryState: $instance->limit(limit: 1)->state);
         $result = $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());
 
         return $result !== [];
@@ -306,7 +306,7 @@ class QueryBuilder
         $clone = clone (object: $this, withProperties: [
             'state' => $this->state->withValues(values: $values),
         ]);
-        $sql = $clone->grammar->compileInsert(state: $clone->state);
+        $sql = $clone->grammar->compileInsert(queryState: $clone->state);
 
         return $clone->orchestrator->execute(
             sql     : $sql,
@@ -360,7 +360,7 @@ class QueryBuilder
         $clone = clone (object: $this, withProperties: [
             'state' => $this->state->withValues(values: $values),
         ]);
-        $sql   = $clone->grammar->compileInsert(state: $clone->state);
+        $sql = $clone->grammar->compileInsert(queryState: $clone->state);
         $executionResult = $clone->orchestrator->execute(
             sql     : $sql,
             bindings: $clone->extractMutationBindings(values: $values),
@@ -399,7 +399,7 @@ class QueryBuilder
         $instance        = $instance->withSoftDeleteFilter();
         $instance->state = $instance->state->withValues(values: $values);
 
-        $sql             = $instance->grammar->compileUpdate(state: $instance->state);
+        $sql = $instance->grammar->compileUpdate(queryState: $instance->state);
 
         return $instance->orchestrator->execute(
             sql     : $sql,
@@ -425,7 +425,7 @@ class QueryBuilder
             $instance = $instance->withSoftDeleteFilter();
         }
 
-        $sql = $instance->grammar->compileDelete(state: $instance->state);
+        $sql = $instance->grammar->compileDelete(queryState: $instance->state);
 
         return $instance->orchestrator->execute(
             sql     : $sql,
@@ -477,7 +477,7 @@ class QueryBuilder
             $instance = $instance->withSoftDeleteFilter();
         }
 
-        $sql = $instance->grammar->compileSelect(state: $instance->state);
+        $sql = $instance->grammar->compileSelect(queryState: $instance->state);
 
         return $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());
     }

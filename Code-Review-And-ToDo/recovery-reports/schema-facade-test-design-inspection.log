@@ -1,0 +1,379 @@
+== Query capability full file ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\CreateBuilder\CreateBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
+use ReflectionException;
+use Throwable;
+
+/**
+ * Public capability owner for Laravel-like query DSL and SQL execution.
+ */
+final readonly class Query
+{
+    private CreateBuilder $createBuilder;
+
+    public function __construct(
+        private Connections $connections,
+        private ?EventBus $eventBus = null,
+        private GrammarInterface $grammar = new MySQLGrammar(),
+        private ?ExecutionScope  $executionScope = null,
+        ?CreateBuilder           $createBuilder = null,
+    ) {
+        $this->createBuilder = $createBuilder ?? new CreateBuilder(
+            connections: $this->connections,
+            grammar    : $this->grammar,
+            eventBus   : $this->eventBus,
+            scope      : $this->executionScope,
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function from(string $table, ?string $connectionName = null) : QueryBuilder
+    {
+        return $this->builder(connectionName: $connectionName)->from(table: $table);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function builder(?string $connectionName = null) : QueryBuilder
+    {
+        return $this->createBuilder->for(connectionName: $connectionName);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function raw(string $value, ?string $connectionName = null) : Expression
+    {
+        return $this->builder(connectionName: $connectionName)->raw(value: $value);
+    }
+
+    public function grammar(): GrammarInterface
+    {
+        return $this->grammar;
+    }
+}
+
+== QueryBuilder statement area ==
+    }
+
+    /**
+     * Execute a raw SQL "Statement" that doesn't return data (e.g., cleanup commands).
+     *
+     * @param string $query    SQL command to run.
+     * @param array  $bindings Parameter bindings for the command.
+     *
+     * @return bool True if the database accepted the command.
+     *
+     * @throws Throwable
+     */
+    public function statement(string $query, array $bindings = []): bool
+    {
+        return $this->orchestrator->execute(sql: $query, bindings: $bindings)->isSuccessful();
+    }
+
+    /**
+     * Set the target table.
+     *
+     * @param string $table Table name.
+     */
+    public function from(string $table): self
+    {
+        return clone (object: $this, withProperties: [
+            'state' => $this->state->withFrom(table: $table),
+        ]);
+    }
+
+    /**
+     * Mix raw SQL into your column selection.
+
+== QueryBuilder getGrammar area ==
+
+        return (int) ($result['aggregate'] ?? 0);
+    }
+
+    /**
+     * Retrieve a single record by its primary identity.
+     *
+     * @param mixed  $id     Identity value.
+     * @param string $column Field name for the identity (defaults to 'id').
+     *
+     * @throws Throwable
+     */
+    public function find(mixed $id, string $column = 'id'): mixed
+    {
+        return $this->where(column: $column, operator: '=', value: $id)->first();
+    }
+
+    public function getGrammar(): GrammarInterface
+    {
+        return $this->grammar;
+    }
+}
+
+== QueryOrchestrator full file ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Execution;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
+use Random\RandomException;
+use Throwable;
+
+/**
+ * Coordinates query execution and pretend mode for the Query capability.
+ */
+final class QueryOrchestrator
+{
+    private bool $isPretending = false;
+
+    /**
+     * @param ExecutorInterface   $executor Low-level executor.
+     * @param ExecutionScope|null $executionScope Correlation scope (optional).
+     *
+     * @throws RandomException
+     */
+    public function __construct(
+        private readonly ExecutorInterface $executor,
+        private ?ExecutionScope            $executionScope
+        = null {
+            get {
+                return $this->executionScope;
+            }
+        },
+    ) {
+        $this->executionScope ??= ExecutionScope::fresh();
+    }
+
+    public function __clone()
+    {
+        if ($this->executionScope instanceof ExecutionScope) {
+            $this->executionScope = clone $this->executionScope;
+        }
+    }
+
+    /**
+     * Switch to pretend (dry-run) mode.
+     */
+    public function pretend(bool $value = true): void
+    {
+        $this->isPretending = $value;
+    }
+
+    /**
+     * Execute a SELECT and return rows.
+     *
+     * @throws Throwable
+     */
+    public function query(string $sql, array $bindings = []): array
+    {
+        if ($this->isPretending) {
+            $this->logPretend(sql: $sql);
+
+            return [];
+        }
+
+        return $this->executor->query(sql: $sql, bindings: $bindings, scope: $this->executionScope);
+    }
+
+    private function logPretend(string $sql): void
+    {
+        echo "\033[33m[DRY RUN]\033[0m SQL: {$sql}\n";
+    }
+
+    /**
+     * Execute a mutation (INSERT/UPDATE/DELETE/DDL) and return an execution result.
+     *
+     * @throws Throwable
+     */
+    public function execute(
+        string $sql,
+        ?array $bindings = null,
+    ): ExecutionResult {
+        $bindings ??= [];
+
+        if ($this->isPretending) {
+            $this->logPretend(sql: $sql);
+
+            return ExecutionResult::success(affectedRows: 1);
+        }
+
+        return $this->executor->execute(sql: $sql, bindings: $bindings, scope: $this->executionScope);
+    }
+
+    public function withScope(ExecutionScope $executionScope) : self
+    {
+        return clone (object: $this, withProperties: [
+            'scope' => $executionScope,
+        ]);
+    }
+}
+
+== ExecutorInterface ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Execution;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
+use Throwable;
+
+/**
+ * Interface defining capabilities for the physical execution of database operations.
+ *
+ * @see /docs/Foundation/Database/DSL/QueryExecution.md
+ */
+interface ExecutorInterface
+{
+    /**
+     * Dispatch a retrieval instruction (SELECT) to the persistence driver.
+     *
+     * @param string              $sql      Pre-compiled SQL retrieval string.
+     * @param array               $bindings Secure tokens for parameterization.
+     * @param ExecutionScope|null $executionScope Optional context for correlation.
+     *
+     * @return array<array-key, mixed>
+     *
+     * @throws Throwable If persistence connection failure occurs.
+     */
+    public function query(
+        string $sql,
+        array $bindings = [],
+        ?ExecutionScope $executionScope = null,
+    ): array;
+
+    /**
+     * Dispatch a mutation instruction (INSERT/UPDATE/DELETE/DDL) to the persistence driver.
+     *
+     * @param string              $sql      Pre-compiled SQL mutation string.
+     * @param array               $bindings Secure tokens for parameterization.
+     * @param ExecutionScope|null $executionScope Optional context for correlation.
+     *
+     * @throws Throwable If technical modification fails.
+     */
+    public function execute(
+        string $sql,
+        array $bindings = [],
+        ?ExecutionScope $executionScope = null,
+    ): ExecutionResult;
+
+    /**
+     * Retrieve the authoritative technical identifier of the underlying persistence driver.
+     *
+     * -- intent:
+     * Enables high-level components to adapt their behavior based on the specific
+     * characteristics and capabilities of the active persistence engine.
+     *
+     * @return string THE technical identifier of the driver (e.g., 'mysql').
+     */
+    public function getDriverName(): string;
+}
+
+== ExecutionResult ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\DTO;
+
+/**
+ * The "Operation Result" (Execution Result).
+ *
+ * -- what is it?
+ * This is a standardized report that tells you whether a database operation
+ * succeeded and how many rows were affected. Unlike a simple boolean, it
+ * carries both the success status and the physical impact (count).
+ *
+ * -- why this exists:
+ * 1. DDL Support: DDL statements (like CREATE TABLE) often return 0 affected
+ *    rows but are still successful. A separate 'success' flag handles this.
+ * 2. Enterprise Patterns: It provides a consistent, immutable object for
+ *    checking any "Change" query.
+ */
+final readonly class ExecutionResult
+{
+    private int $affectedRows;
+
+    /**
+     * @param bool $success      Whether the database accepted and performed the instruction.
+     * @param int  $affectedRows The number of records touched (if applicable).
+     */
+    public function __construct(
+        private bool $success,
+        ?int $affectedRows = null,
+        private int|string|null $lastInsertId = null,
+    ) {
+        $affectedRows ??= 0;
+        $this->affectedRows = $affectedRows;
+    }
+
+    /**
+     * Create a success report.
+     */
+    public static function success(?int $affectedRows = null, int|string|null $lastInsertId = null) : self
+    {
+        $affectedRows ??= 0;
+
+        return new self(success: true, affectedRows: $affectedRows, lastInsertId: $lastInsertId);
+    }
+
+    /**
+     * Create a failure report.
+     */
+    public static function failure(): self
+    {
+        return new self(success: false, affectedRows: 0);
+    }
+
+    /**
+     * Was the operation successful?
+     */
+    public function isSuccessful(): bool
+    {
+        return $this->success;
+    }
+
+    /**
+     * Get the number of affected rows.
+     */
+    public function getAffectedRows(): int
+    {
+        return $this->affectedRows;
+    }
+
+    /**
+     * Get the database-generated identifier for a successful INSERT when available.
+     */
+    public function getLastInsertId(): int|string|null
+    {
+        return $this->lastInsertId;
+    }
+}
+
+== Search builder factory usages ==
+components/DataStack/Database/System/Configuration/DatabaseBuilder.php:45:            query       : new Query(),
+components/DataStack/Database/System/PublicSurface/Database.php:44:        return new Query(query: $this->queryCapability);
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:44:        return new Query($this->query);
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Database.php:43:        return new Query(query: $this->query);

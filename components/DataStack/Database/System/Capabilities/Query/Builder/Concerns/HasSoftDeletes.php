@@ -48,7 +48,7 @@ trait HasSoftDeletes
      * @see /docs/Foundation/Database/DSL/SoftDeletes.md#including-deleted-records
      *      domain records.
      *
-     * @return QueryBuilder|HasSoftDeletes A
+     * @return QueryBuilder A
      *                                     fresh,
      *                                     cloned
      *                                     builder
@@ -58,7 +58,7 @@ trait HasSoftDeletes
      *                                     inclusion
      *                                     active.
      */
-    public function withTrashed(): self
+    public function withTrashed() : QueryBuilder
     {
         return clone (object: $this, withProperties: [
             'usesSoftDeletes' => true,
@@ -69,7 +69,7 @@ trait HasSoftDeletes
     /**
      * Filter the results     *
      *
-     * @return HasSoftDeletes|QueryBuilder \Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
+     * @return QueryBuilder \Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
      *                                     \Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder|\Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes
      *                                     A
      *                                     fresh,
@@ -89,7 +89,7 @@ trait HasSoftDeletes
      * Isolate domain records that have been logically removed from the active
      * set, typically for recovery, permanent destruction, or auditing.
      */
-    public function onlyTrashed(): self
+    public function onlyTrashed() : QueryBuilder
     {
         return clone (object: $this, withProperties: [
             'usesSoftDeletes' => true,
@@ -100,7 +100,7 @@ trait HasSoftDeletes
     /**
      * Explicitly opt the current query into soft-delete filtering semantics.
      */
-    public function usingSoftDeletes(): self
+    public function usingSoftDeletes() : QueryBuilder
     {
         return clone (object: $this, withProperties: [
             'usesSoftDeletes' => true,
@@ -138,7 +138,7 @@ trait HasSoftDeletes
      *
      * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
      *
-     * @return QueryBuilder|HasSoftDeletes A
+     * @return QueryBuilder A
      *                                     fresh,
      *                                     cloned
      *                                     builder
@@ -150,7 +150,7 @@ trait HasSoftDeletes
      *                                     filters
      *                                     injected.
      */
-    public function withSoftDeleteFilter(string $column = 'deleted_at'): self
+    public function withSoftDeleteFilter(string $column = 'deleted_at') : QueryBuilder
     {
         if (! $this->usesSoftDeletes) {
             return $this;
@@ -177,7 +177,7 @@ trait HasSoftDeletes
      * @param string $column  The technical field name to target for the non-null check.
      * @param string $boolean The logical joiner used to attach this condition ('AND' or 'OR').
      *
-     * @return QueryBuilder|HasSoftDeletes A
+     * @return QueryBuilder A
      *                                     fresh,
      *                                     cloned
      *                                     builder
@@ -187,7 +187,7 @@ trait HasSoftDeletes
      *                                     non-null
      *                                     filter.
      */
-    public function whereNotNull(string $column, string $boolean = 'AND'): self
+    public function whereNotNull(string $column, string $boolean = 'AND') : QueryBuilder
     {
         return $this->whereNull(column: $column, boolean: $boolean, not: true);
     }
@@ -203,7 +203,7 @@ trait HasSoftDeletes
      * @param string|null $boolean The logical joiner used to attach this condition ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to check for existence (IS NOT NULL) instead.
      *
-     * @return QueryBuilder|HasSoftDeletes A
+     * @return QueryBuilder A
      *                                     fresh,
      *                                     cloned
      *                                     builder
@@ -213,7 +213,7 @@ trait HasSoftDeletes
      *                                     null
      *                                     filter.
      */
-    public function whereNull(string $column, ?string $boolean = null, bool $not = false) : self
+    public function whereNull(string $column, ?string $boolean = null, bool $not = false) : QueryBuilder
     {
         $boolean ??= 'AND';
         $operator = $not ? 'IS NOT NULL' : 'IS NULL';

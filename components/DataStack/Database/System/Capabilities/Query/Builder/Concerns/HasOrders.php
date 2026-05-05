@@ -21,7 +21,7 @@ trait HasOrders
      *
      * @param string $column The technical field name to target for descending sort.
      *
-     * @return HasOrders|QueryBuilder A
+     * @return QueryBuilder A
      *                                fresh,
      *                                cloned
      *                                builder
@@ -31,7 +31,7 @@ trait HasOrders
      *                                descending
      *                                order.
      */
-    public function orderByDesc(string $column): self
+    public function orderByDesc(string $column) : QueryBuilder
     {
         return $this->orderBy(column: $column, direction: 'DESC');
     }
@@ -44,7 +44,7 @@ trait HasOrders
      * @param string $column    The technical field name to target for sorting.
      * @param string $direction The sorting orientation ('ASC' or 'DESC').
      *
-     * @return HasOrders|QueryBuilder A
+     * @return QueryBuilder A
      *                                fresh,
      *                                cloned
      *                                builder
@@ -54,10 +54,10 @@ trait HasOrders
      *                                applied
      *                                order.
      */
-    public function orderBy(string $column, string $direction = 'ASC') : self
+    public function orderBy(string $column, string $direction = 'ASC') : QueryBuilder
     {
         $clone = clone $this;
-        $clone->state = $clone->state->addOrder(order: new OrderNode(
+        $clone->state = $clone->state->addOrder(orderNode: new OrderNode(
             column   : $column,
             direction: strtoupper(string: $direction),
         ));
@@ -70,7 +70,7 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#inrandomorder
      *
-     * @return HasOrders|QueryBuilder A
+     * @return QueryBuilder A
      *                                fresh,
      *                                cloned
      *                                builder
@@ -80,10 +80,10 @@ trait HasOrders
      *                                ordering
      *                                active.
      */
-    public function inRandomOrder() : self
+    public function inRandomOrder() : QueryBuilder
     {
         $clone = clone $this;
-        $clone->state = $clone->state->addOrder(order: new OrderNode(
+        $clone->state = $clone->state->addOrder(orderNode: new OrderNode(
             sql : $this->grammar->compileRandomOrder(),
             type: 'Raw',
         ));
@@ -98,7 +98,7 @@ trait HasOrders
      *
      * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
      *
-     * @return HasOrders|QueryBuilder A
+     * @return QueryBuilder A
      *                                fresh,
      *                                cloned
      *                                builder
@@ -108,7 +108,7 @@ trait HasOrders
      *                                newest
      *                                first.
      */
-    public function latest(string $column = 'created_at'): self
+    public function latest(string $column = 'created_at') : QueryBuilder
     {
         return $this->orderBy(column: $column, direction: 'DESC');
     }
@@ -120,7 +120,7 @@ trait HasOrders
      *
      * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
      *
-     * @return HasOrders|QueryBuilder A
+     * @return QueryBuilder A
      *                                fresh,
      *                                cloned
      *                                builder
@@ -130,7 +130,7 @@ trait HasOrders
      *                                oldest
      *                                first.
      */
-    public function oldest(string $column = 'created_at'): self
+    public function oldest(string $column = 'created_at') : QueryBuilder
     {
         return $this->orderBy(column: $column, direction: 'ASC');
     }

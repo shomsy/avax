@@ -1,0 +1,665 @@
+== ConnectionConfig full file ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\ValueObjects;
+
+use SensitiveParameter;
+
+/**
+ * Immutable value object containing database connection credentials.
+ *
+ * @see /docs/Foundation/Database/Concepts/Connections.md
+ */
+final readonly class ConnectionConfig
+{
+    public string $charset;
+
+    public string $password;
+
+    public string $username;
+
+    public string $database;
+
+    public string $host;
+
+    public string $driver;
+
+    /**
+     * @param string $driver   The type of engine (e.g., 'mysql' or 'sqlite').
+     * @param string $host     The "Home Address" (IP or hostname) of the server.
+     * @param string $database The specific name of the database file or schema.
+     * @param string $username The "User Identity" used to log in.
+     * @param string $password The "Secret Key" (Hidden from accidental logging).
+     * @param string $charset  The "Language" the database speaks (e.g., utf8).
+     * @param string $name     A simple nickname to identify this specific config.
+     */
+    public function __construct(
+        ?string $driver = null,
+        ?string $host = null,
+        ?string $database = null,
+        ?string $username = null,
+        #[SensitiveParameter]
+        ?string $password = null,
+        ?string $charset = null,
+        public string $name = 'default',
+    ) {
+        $driver        ??= 'mysql';
+        $host          ??= '127.0.0.1';
+        $database ??= '';
+        $username ??= 'root';
+        $password ??= '';
+        $charset       ??= 'utf8mb4';
+        $this->driver  = $driver;
+        $this->host    = $host;
+        $this->database = $database;
+        $this->username = $username;
+        $this->password = $password;
+        $this->charset = $charset;
+    }
+
+    /**
+     * Build an ID Card from a raw list of setttings.
+     *
+     * @param array{
+     *     driver?: string,
+     *     host?: string,
+     *     database?: string,
+     *     username?: string,
+     *     password?: string,
+     *     charset?: string,
+     *     name?: string
+     * } $config The raw dictionary of details.
+     * @return self A fresh, perfectly structured ID Card.
+     */
+    public static function from(array $config): self
+    {
+        return new self(
+            driver  : $config['driver'] ?? 'mysql',
+            host    : $config['host'] ?? '127.0.0.1',
+            database: $config['database'] ?? '',
+            username: $config['username'] ?? 'root',
+            password: $config['password'] ?? '',
+            charset : $config['charset'] ?? 'utf8mb4',
+            name    : $config['name'] ?? 'default',
+        );
+    }
+}
+
+== Dsn full file ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\ValueObjects;
+
+/**
+ * Immutable value object encapsulating a PDO Data Source Name string.
+ *
+ * @see /docs/Foundation/Database/Concepts/Connections.md
+ */
+final readonly class Dsn
+{
+    /**
+     * Private constructor — use `Dsn::for()` to create one.
+     *
+     * @param string $dsn The final, "Computer-Ready" address string.
+     */
+    private function __construct(private string $dsn) {}
+
+    /**
+     * Build a technical address from simple settings.
+     *
+     * @param string $driver   The type of database (e.g., 'mysql', 'sqlite').
+     * @param string $host     The computer's address (e.g., '127.0.0.1').
+     * @param string $database The name of the specific database (e.g., 'users_db').
+     * @param string $charset  The "Language" (Encoding) to use (e.g., 'utf8').
+     *
+     * @return self An immutable object holding the perfectly formatted address.
+     */
+    public static function for(
+        string $driver,
+        string $host,
+        string $database,
+        string $charset,
+    ): self {
+        // Different drivers have different "Address Formats".
+        // SQLite:   "sqlite:/path/to/db.sqlite"
+        // MySQL:    "mysql:host=127.0.0.1;dbname=test;charset=utf8"
+        $dsn = match ($driver) {
+            'sqlite' => sprintf('sqlite:%s', $database),
+            default  => sprintf('%s:host=%s;dbname=%s;charset=%s', $driver, $host, $database, $charset),
+        };
+
+        return new self(dsn: $dsn);
+    }
+
+    /**
+     * Get the compiled DSN string for PDO.
+     */
+    public function toString(): string
+    {
+        return $this->dsn;
+    }
+}
+
+== Existing database configs / sqlite mentions ==
+components/components.txt:130097: * Public capability owner for database connections and pools.
+components/components.txt:130214:owner: foundation-database-connections
+components/components.txt:130439:owner: foundation-database-connections
+components/components.txt:130771:owner: foundation-database-connections
+components/components.txt:131258: * Connection pool implementation for managing a set of reusable database connections.
+components/components.txt:131564:owner: foundation-database-connections
+components/components.txt:131681:owner: foundation-database-connections
+components/components.txt:132159: * databases; it just keeps track of the numbers (How many connections are open?
+components/components.txt:132300: * The "Personal Assistant" for picking up and returning database connections.
+components/components.txt:132797:owner: foundation-database-connections
+components/components.txt:133083:owner: foundation-database-connections
+components/components.txt:133195:owner: foundation-database-connections
+components/components.txt:133277:     * @param string $driver   The type of engine (e.g., 'mysql' or 'sqlite').
+components/components.txt:133361:     * @param string $driver   The type of database (e.g., 'mysql', 'sqlite').
+components/components.txt:133375:        // SQLite:   "sqlite:/path/to/db.sqlite"
+components/components.txt:133378:            'sqlite' => sprintf('sqlite:%s', $database),
+components/components.txt:133397:owner: foundation-database-connections
+components/components.txt:133455:owner: foundation-database-connections
+components/components.txt:133576:        return new PDO('sqlite::memory:');
+components/components.txt:136437:            'sqlite' => $this->readFirstColumn(
+components/components.txt:136438:                sql: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
+components/components.txt:136481:            'sqlite' => $this->readSqliteCreateTable(table: $table),
+components/components.txt:136490:            query: "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :name LIMIT 1",
+components/components.txt:145770:    case SQLITE      = 'sqlite';
+components/components.txt:147233:        if (! extension_loaded(extension: 'sqlite3')) {
+components/components.txt:151935:            'sqlite'    => $this->sqliteSetIsolationSql(),
+components/components.txt:151975:    private function sqliteSetIsolationSql(): string
+components/components.txt:152004:            'sqlite' => in_array($this, [self::READ_COMMITTED, self::SERIALIZABLE, self::READ_UNCOMMITTED], true),
+components/components.txt:153295:    public function usingConfig(array $config): self
+components/components.txt:153302:    public function addConnection(string $name, array $config): self
+components/components.txt:153403:            ->usingConfig(config: $this->resolveDatabaseConfig())
+components/components.txt:153511:            ->usingConfig(config: $this->resolveDatabaseConfig())
+components/components.txt:220241:        echo "Closing database connections\n";
+components/DataStack/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:89:            'sqlite' => $this->readFirstColumn(
+components/DataStack/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:90:                sql: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
+components/DataStack/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:133:            'sqlite' => $this->readSqliteCreateTable(table: $table),
+components/DataStack/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:142:            query: "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :name LIMIT 1",
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:58:        return new PDO('sqlite::memory:');
+components/DataStack/Database/System/Capabilities/Query/Grammar/Dialect.php:11:    case SQLITE      = 'sqlite';
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:37:        if (! extension_loaded(extension: 'sqlite3')) {
+components/DataStack/Database/System/Capabilities/Transactions/IsolationLevel.php:35:            'sqlite'    => $this->sqliteSetIsolationSql(),
+components/DataStack/Database/System/Capabilities/Transactions/IsolationLevel.php:75:    private function sqliteSetIsolationSql(): string
+components/DataStack/Database/System/Capabilities/Transactions/IsolationLevel.php:104:            'sqlite' => in_array($this, [self::READ_COMMITTED, self::SERIALIZABLE, self::READ_UNCOMMITTED], true),
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/Pools/DTO/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:21: * Connection pool implementation for managing a set of reusable database connections.
+components/DataStack/Database/System/Capabilities/Connections/Pools/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolState.php:12: * databases; it just keeps track of the numbers (How many connections are open?
+components/DataStack/Database/System/Capabilities/Connections/Pools/Contracts/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:13: * The "Personal Assistant" for picking up and returning database connections.
+components/DataStack/Database/System/Capabilities/Connections/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/Contracts/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/RunWithConnection/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/Connections.php:16: * Public capability owner for database connections and pools.
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/ConnectionConfig.php:29:     * @param string $driver   The type of engine (e.g., 'mysql' or 'sqlite').
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/how-this-works.md:3:owner: foundation-database-connections
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:24:     * @param string $driver   The type of database (e.g., 'mysql', 'sqlite').
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:38:        // SQLite:   "sqlite:/path/to/db.sqlite"
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:41:            'sqlite' => sprintf('sqlite:%s', $database),
+components/DataStack/Database/System/Configuration/DatabaseRegistrar.php:74:            ->usingConfig(config: $this->resolveDatabaseConfig())
+components/DataStack/Database/System/Configuration/DatabaseBuilder.php:20:    public function usingConfig(array $config): self
+components/DataStack/Database/System/Configuration/DatabaseBuilder.php:27:    public function addConnection(string $name, array $config): self
+components/DataStack/Database/System/Configuration/RegisterDatabaseDependencies.php:79:            ->usingConfig(config: $this->resolveDatabaseConfig())
+components/Operations/ApplicationWorkflow/System/Capabilities/Orchestration/Kubernetes/GracefulStop.php:60:        echo "Closing database connections\n";
+components/Operations/ApplicationWorkflow/System/Capabilities/Orchestration/Kubernetes/Probes.php:60:        echo "Closing database connections\n";
+examples/minimal-http-app/config/database.php:33:        'sqlite' => [
+examples/minimal-http-app/config/database.php:34:            'connection' => 'sqlite:' . env(key: 'SQLITE_DB_PATH', default: 'database.sqlite'),
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/AvaxContainer/DatabaseServiceProvider.php:107:            ->usingConfig(config: $this->resolveDatabaseConfig())
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:49:            'sqlite' => $pdo->exec(statement: 'PRAGMA foreign_keys = OFF'),
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:60:            'sqlite' => $pdo->exec(statement: 'PRAGMA foreign_keys = ON'),
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:72:            'sqlite' => "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:86:            'sqlite' => $this->readFirstColumn(
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:87:                sql: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:130:            'sqlite' => $this->readSqliteCreateTable(table: $table),
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:139:            query: "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :name LIMIT 1"
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/Dialect.php:11:    case SQLITE        = 'sqlite';
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:37:        if (! extension_loaded(extension: 'sqlite3')) {
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevel.php:31:            'sqlite'     => $this === self::READ_COMMITTED || $this === self::SERIALIZABLE,
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:21: * Connection pool implementation for managing a set of reusable database connections.
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PoolState.php:12: * databases; it just keeps track of the numbers (How many connections are open?
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:12: * The "Personal Assistant" for picking up and returning database connections.
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Contracts/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/RunWithConnection/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:16: * Public capability owner for database connections and pools.
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Exceptions/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/ConnectionConfig.php:25:     * @param string $driver   The type of engine (e.g., 'mysql' or 'sqlite').
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/how-this-works.md:3:owner: foundation-database-connections
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:26:     * @param string $driver   The type of database (e.g., 'mysql', 'sqlite').
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:41:        // SQLite:   "sqlite:/path/to/db.sqlite"
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:44:            'sqlite' => sprintf('sqlite:%s', $database),
+Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Configuration/DatabaseBuilder.php:11:    public function addConnection(string $name, array $config): self
+
+== Database public surface constructor ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\PublicSurface;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Entities as EntitiesCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Query as QueryCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transactions as TransactionsCapability;
+use Avax\Components\DataStack\Database\System\Configuration\DatabaseBuilder;
+
+/**
+ * Public surface for the Database component.
+ */
+final readonly class Database
+{
+    public function __construct(
+        private Connections $connections,
+        private QueryCapability $queryCapability,
+        private EntitiesCapability $entitiesCapability,
+        private SchemaCapability $schemaCapability,
+        private MigrationsCapability $migrationsCapability,
+        private TransactionsCapability $transactionsCapability,
+        private TelemetryCapability $telemetryCapability,
+    ) {}
+
+    public static function configuration(): DatabaseBuilder
+    {
+        return new DatabaseBuilder();
+    }
+
+    public function connections(): Connections
+    {
+        return $this->connections;
+    }
+
+    public function query(): Query
+    {
+        return new Query(query: $this->queryCapability);
+    }
+
+    public function entities(): Entities
+    {
+        return new Entities(entities: $this->entitiesCapability);
+    }
+
+    public function schema(): Schema
+    {
+        return new Schema(schema: $this->schemaCapability);
+    }
+
+    public function migrations(): Migrations
+    {
+        return new Migrations(migrations: $this->migrationsCapability);
+    }
+
+    public function transactions(): Transactions
+    {
+        return new Transactions(transactions: $this->transactionsCapability);
+    }
+
+    public function telemetry(): Telemetry
+    {
+        return new Telemetry(telemetry: $this->telemetryCapability);
+    }
+
+    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    {
+        return $this->queryCapability->from(table: $table, connectionName: $connectionName);
+    }
+}
+
+== Migrations capability constructor ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\LoadMigrations\MigrationLoader;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RollbackMigrations\RollbackMigrations;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\SeedDatabase\Seeder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transactions;
+use InvalidArgumentException;
+use ReflectionException;
+use Throwable;
+
+/**
+ * Laravel-style migration capability layered over the Database system.
+ */
+final readonly class Migrations
+{
+    public function __construct(
+        private Query $query,
+        private Connections $connections,
+        private Transactions $transactions,
+        private ?Schema $schema = null,
+    ) {}
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function create(string $table, callable $callback, ?string $connectionName = null) : void
+    {
+        $this->schema()->create(table: $table, callback: $callback, connectionName: $connectionName);
+    }
+
+    public function schema(): Schema
+    {
+        return $this->schema ?? new Schema(query: $this->query);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function dropIfExists(string $table, ?string $connectionName = null) : void
+    {
+        $this->schema()->dropIfExists(table: $table, connectionName: $connectionName);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function truncate(string $table, ?string $connectionName = null) : void
+    {
+        $this->schema()->truncate(table: $table, connectionName: $connectionName);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function createDatabase(string $name, ?string $connectionName = null) : void
+    {
+        $this->schema()->createDatabase(name: $name, connectionName: $connectionName);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function dropDatabase(string $name, ?string $connectionName = null) : void
+    {
+        $this->schema()->dropDatabase(name: $name, connectionName: $connectionName);
+    }
+
+    public function generator(): MigrationGenerator
+    {
+        return new MigrationGenerator();
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function exporter(?string $connectionName = null) : DatabaseExporter
+    {
+        return new DatabaseExporter(pdo: $this->connections->pdo(name: $connectionName));
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function rollbacker(?string $connectionName = null) : RollbackMigrations
+    {
+        return new RollbackMigrations(
+            repository: $this->repository(connectionName: $connectionName),
+            runner    : $this->runner(connectionName: $connectionName),
+            loader    : $this->loader(),
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function repository(?string $connectionName = null) : MigrationRepository
+    {
+        return new MigrationRepository(
+            schema : $this->schema(),
+            builder: $this->builder(connectionName: $connectionName),
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function builder(?string $connectionName = null) : QueryBuilder
+    {
+        return $this->query->builder(connectionName: $connectionName);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function runner(?string $connectionName = null) : MigrationRunner
+    {
+        return new MigrationRunner(
+            transactions  : $this->transactions,
+            connectionName: $connectionName,
+            repository    : $this->repository(connectionName: $connectionName),
+            builder       : $this->builder(connectionName: $connectionName),
+        );
+    }
+
+    public function loader(): MigrationLoader
+    {
+        return new MigrationLoader();
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function status(?string $connectionName = null) : ReadMigrationStatus
+    {
+        return new ReadMigrationStatus(
+            repository: $this->repository(connectionName: $connectionName),
+            loader    : $this->loader(),
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function seed(Seeder|string $seeder, ?string $connectionName = null) : void
+    {
+        $instance = is_string(value: $seeder) ? new $seeder() : $seeder;
+
+        if (! $instance instanceof Seeder) {
+            throw new InvalidArgumentException(message: 'Seed target must extend the base Seeder class.');
+        }
+
+        $instance->withBuilder(builder: $this->builder(connectionName: $connectionName))->run();
+    }
+}
+
+== Transactions capability constructor ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Closure;
+use RuntimeException;
+use Throwable;
+
+/**
+ * Manages database transactions with isolation level support,
+ * begin/commit/rollback, and nested transaction support via savepoints.
+ */
+final class Transactions
+{
+    /**
+     * @var int Current nesting depth (0 = no active transaction)
+     */
+    private int $depth = 0;
+
+    /**
+     * @var list<string> Stack of savepoint names for nested transactions
+     */
+    private array $savepoints = [];
+
+    /**
+     * @var bool Whether a transaction is currently active
+     */
+    private bool $active = false;
+
+    /**
+     * @var list<Closure() : void> Callbacks to execute on successful commit
+     */
+    private array $commitCallbacks = [];
+
+    /**
+     * @var list<Closure() : void> Callbacks to execute on rollback
+     */
+    private array $rollbackCallbacks = [];
+
+    public function __construct(private readonly DatabaseConnection $databaseConnection)
+    {
+    }
+
+    /**
+     * Executes a closure within a transaction with retry logic for deadlocks.
+     *
+     * @template T
+     *
+     * @param Closure(self) : T $callback
+     *
+     * @return T
+     *
+     * @throws Throwable
+     */
+    public function transactionWithRetry(
+        Closure $callback,
+        ?IsolationLevel $isolationLevel = null,
+        ?RetryPolicy    $retryPolicy = null,
+    ): mixed
+    {
+        $policy  = $retryPolicy ?? RetryPolicy::forDeadlocks();
+        $attempt = 0;
+        $lastException = null;
+
+        while ($attempt < $policy->maxAttempts) {
+            try {
+                return $this->transaction($callback, $isolationLevel);
+            } catch (Throwable $e) {
+                $lastException = $e;
+                $attempt++;
+
+                if (! $policy->shouldRetry($e, $attempt)) {
+                    throw $e;
+                }
+
+                $delayUs = $policy->getDelayMs($attempt - 1) * 1000;
+                usleep($delayUs);
+            }
+        }
+
+        throw $lastException;
+    }
+
+    /**
+     * Executes a closure within a transaction context.
+     *
+     * Automatically handles begin/commit/rollback and supports nesting.
+     *
+     * @template T
+     *
+     * @param Closure(self) : T $callback
+     *
+     * @return T
+     *
+     * @throws Throwable Re-throws the original exception after rollback
+     */
+    public function transaction(Closure $callback, ?IsolationLevel $isolationLevel = null) : mixed
+    {
+        $this->begin($isolationLevel);
+
+        try {
+            $result = $callback($this);
+            $this->commit();
+
+            return $result;
+        } catch (Throwable $throwable) {
+            try {
+                $this->rollback();
+            } catch (Throwable $rollbackError) {
+                // If rollback fails, we still throw the original exception
+                // but log the rollback failure
+                error_log('Rollback failed: ' . $rollbackError->getMessage());
+            }
+
+            throw $throwable;
+        }
+    }
+
+== Telemetry capability constructor ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Config\Config;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
+
+/**
+ * Public capability owner for database telemetry and correlation state.
+ */
+final readonly class Telemetry
+{
+    public function __construct(
+        private EventBus $eventBus,
+        private ?Config $config = null,
+        private ExecutionScope $executionScope = new ExecutionScope(correlationId: 'database'),
+    ) {}
+
+    public function eventBus(): EventBus
+    {
+        return $this->eventBus;
+    }
+
+    public function config(): ?Config
+    {
+        return $this->config;
+    }
+
+    public function scope(): ExecutionScope
+    {
+        return $this->executionScope;
+    }
+}

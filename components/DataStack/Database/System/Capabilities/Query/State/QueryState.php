@@ -339,7 +339,7 @@ final readonly class QueryState
     public function addBinding(mixed $value): self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => $this->bindingBag->with(value: $value)],
+            ...[...get_object_vars(object: $this), 'bindingBag' => $this->bindingBag->with(value: $value)],
         );
     }
 
@@ -357,7 +357,7 @@ final readonly class QueryState
     public function mergeBindings(array $values): self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => $this->bindingBag->merge(parameters: $values)],
+            ...[...get_object_vars(object: $this), 'bindingBag' => $this->bindingBag->merge(parameters: $values)],
         );
     }
 
@@ -373,7 +373,7 @@ final readonly class QueryState
     public function resetBindings() : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => new BindingBag()],
+            ...[...get_object_vars(object: $this), 'bindingBag' => new BindingBag()],
         );
     }
 

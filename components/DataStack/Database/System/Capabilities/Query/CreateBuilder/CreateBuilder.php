@@ -37,7 +37,7 @@ final readonly class CreateBuilder
             executor: new PDOExecutor(
                 eventBus      : $this->eventBus,
                 connectionName: $connection->getName(),
-                connection    : $connection,
+                databaseConnection: $connection,
             ),
             executionScope: $this->executionScope,
         );

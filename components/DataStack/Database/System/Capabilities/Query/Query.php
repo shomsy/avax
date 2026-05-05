@@ -33,7 +33,7 @@ final readonly class Query
             connections: $this->connections,
             grammar    : $this->grammar,
             eventBus   : $this->eventBus,
-            scope      : $this->executionScope,
+            executionScope: $this->executionScope,
         );
     }
 

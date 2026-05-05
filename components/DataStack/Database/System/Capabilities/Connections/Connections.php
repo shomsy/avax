@@ -56,6 +56,6 @@ final readonly class Connections
 
     public function withScope(ExecutionScope $executionScope): self
     {
-        return new self(readConnection: $this->readConnection->withScope(scope: $executionScope));
+        return new self(readConnection: $this->readConnection->withScope(executionScope: $executionScope));
     }
 }

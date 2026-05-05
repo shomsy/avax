@@ -52,9 +52,38 @@ final class SchemaFacadeSqliteTest extends TestCase
         $schema->dropIfExists(table: 'users', connectionName: 'sqlite');
 
         self::assertFalse(
-            actual: $pdo
-                        ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
-                        ->fetchColumn(),
+            condition: $pdo
+                           ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
+                           ->fetchColumn(),
+        );
+    }
+
+    public function test_schema_table_adds_column_against_sqlite() : void
+    {
+        [$schema, $connections] = self::schemaForSqliteMemory();
+
+        $schema->dropIfExists(table: 'users', connectionName: 'sqlite');
+
+        $schema->create(
+            table         : 'users',
+            callback      : static function (Blueprint $table) : void {
+                $table->integer(name: 'id')->primary();
+                $table->string(name: 'name', length: 120);
+            },
+            connectionName: 'sqlite',
+        );
+
+        $schema->table(
+            table         : 'users',
+            callback      : static function (Blueprint $table) : void {
+                $table->string(name: 'nickname', length: 80)->nullable();
+            },
+            connectionName: 'sqlite',
+        );
+
+        self::assertContains(
+            needle  : 'nickname',
+            haystack: self::columnNames($connections->pdo(name: 'sqlite'), table: 'users'),
         );
     }
 
@@ -102,32 +131,5 @@ final class SchemaFacadeSqliteTest extends TestCase
                                 callback: static fn (array $column) : string => (string) $column['name'],
                                 array   : $columns,
                             ));
-    }
-
-    public function test_schema_table_adds_column_against_sqlite() : void
-    {
-        [$schema, $connections] = self::schemaForSqliteMemory();
-
-        $schema->create(
-            table         : 'users',
-            callback      : static function (Blueprint $table) : void {
-                $table->integer(name: 'id')->primary();
-                $table->string(name: 'name', length: 120);
-            },
-            connectionName: 'sqlite',
-        );
-
-        $schema->table(
-            table         : 'users',
-            callback      : static function (Blueprint $table) : void {
-                $table->string(name: 'nickname', length: 80)->nullable();
-            },
-            connectionName: 'sqlite',
-        );
-
-        self::assertContains(
-            needle  : 'nickname',
-            haystack: self::columnNames($connections->pdo(name: 'sqlite'), table: 'users'),
-        );
     }
 }

@@ -45,7 +45,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                 bindings      : $bindings,
                 start         : $start,
                 redactBindings: $this->shouldRedactBindings(),
-                scope         : $executionScope,
+                executionScope: $executionScope,
             );
 
             return $results;
@@ -54,7 +54,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                 message    : 'Query execution failed: ' . $throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
-                previous   : $throwable,
+                throwable  : $throwable,
             );
         }
     }
@@ -85,7 +85,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                 bindings      : $bindings,
                 start         : $start,
                 redactBindings: $this->shouldRedactBindings(),
-                scope         : $executionScope,
+                executionScope: $executionScope,
             );
 
             return new ExecutionResult(
@@ -98,7 +98,7 @@ final readonly class PDOExecutor implements ExecutorInterface
                 message    : 'Execution failed: ' . $throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
-                previous   : $throwable,
+                throwable  : $throwable,
             );
         }
     }

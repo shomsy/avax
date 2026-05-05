@@ -70,13 +70,13 @@ final class ReadConnection
         $config['name'] = $resolvedName;
 
         if (isset($config['pool'])) {
-            return new PooledConnectionAuthority(pool: $this->pool(name: $resolvedName, config: $config));
+            return new PooledConnectionAuthority(connectionPool: $this->pool(name: $resolvedName, config: $config));
         }
 
         return $this->rememberConnection->remember(
             connections: $this->connections,
             name       : $resolvedName,
-            connection : $this->open(config: $config),
+            databaseConnection: $this->open(config: $config),
         );
     }
 
@@ -89,10 +89,10 @@ final class ReadConnection
             ?? $this->rememberConnection->rememberPool(
                 pools: $this->pools,
                 name : $name,
-                pool : new ConnectionPool(config: $config, eventBus: $this->eventBus),
+                connectionPool: new ConnectionPool(config: $config, eventBus: $this->eventBus),
             );
 
-        $pool->withScope(scope: $this->executionScope);
+        $pool->withScope(executionScope: $this->executionScope);
 
         return $pool;
     }
@@ -100,7 +100,7 @@ final class ReadConnection
     public function withScope(ExecutionScope $executionScope) : self
     {
         return clone (object: $this, withProperties: [
-            'scope' => $executionScope,
+            'executionScope' => $executionScope,
         ]);
     }
 
@@ -114,7 +114,7 @@ final class ReadConnection
         return new OpenConnection(
             buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus               : $this->eventBus,
-            scope                  : $this->executionScope,
+            executionScope         : $this->executionScope,
         )->using(config: $config);
     }
 }

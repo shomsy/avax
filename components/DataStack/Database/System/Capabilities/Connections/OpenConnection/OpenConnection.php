@@ -57,7 +57,7 @@ final readonly class OpenConnection
         return new self(
             buildPhysicalConnection: $this->buildPhysicalConnection,
             eventBus               : $eventBus,
-            scope                  : $this->executionScope,
+            executionScope         : $this->executionScope,
         );
     }
 
@@ -66,7 +66,7 @@ final readonly class OpenConnection
         return new self(
             buildPhysicalConnection: $this->buildPhysicalConnection,
             eventBus               : $this->eventBus,
-            scope                  : $executionScope,
+            executionScope         : $executionScope,
         );
     }
 }

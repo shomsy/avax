@@ -1,0 +1,315 @@
+{
+  "stage": "V1-01",
+  "date": "2026-05-05",
+  "backup_source": "avax-backup.txt",
+  "total_files_in_backup": 45000,
+  "unique_components": 85,
+  "classes_identified": 6500,
+  "test_files_identified": 800,
+  "features": [
+    {
+      "old_path": "components/Text/Text.php",
+      "old_namespace": "App\\Text",
+      "feature": "Str-like behavior",
+      "behavior_summary": "String operations, case, search, replace, slug, normalize",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Application/Text",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/DataFoundation/Arrhae.php",
+      "old_namespace": "App\\Arr",
+      "feature": "Arr behavior",
+      "behavior_summary": "Array operations, transformations, search",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "DataStack/Data",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/DataFoundation/Collection.php",
+      "old_namespace": "App\\Collection",
+      "feature": "Collection/LazyCollection",
+      "behavior_summary": "Collection operations, lazy evaluation",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "DataStack/Data",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/Container/Container.php",
+      "old_namespace": "App\\Container",
+      "feature": "DI/Container",
+      "behavior_summary": "Dependency injection, autowiring, resolution",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Application/Container",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/DateTime/DateTime.php",
+      "old_namespace": "App\\DateTime",
+      "feature": "Carbon-like DateTime",
+      "behavior_summary": "Date/time operations, travel, freeze",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Application/DateTime",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/Config/Configurator",
+      "old_namespace": "App\\Config",
+      "feature": "Config",
+      "behavior_summary": "Configuration repository, typed access",
+      "tests_found": false,
+      "target_version": "V1",
+      "target_component": "Application/Config",
+      "action": "restore",
+      "status": "needs_implement"
+    },
+    {
+      "old_path": "components/Facade/Facade.php",
+      "old_namespace": "App\\Facade",
+      "feature": "Facade",
+      "behavior_summary": "Global ergonomic entrypoints",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Application/Facade",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/Cache/Cache.php",
+      "old_namespace": "App\\Cache",
+      "feature": "Cache",
+      "behavior_summary": "Runtime cache, compiled cache, stores",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Application/Cache",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/Database/Database.php",
+      "old_namespace": "App\\Database",
+      "feature": "QueryBuilder",
+      "behavior_summary": "Query building, schema, migrations",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "DataStack/Database",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/Database/EntityManager.php",
+      "old_namespace": "App\\DB",
+      "feature": "ORM-like behavior",
+      "behavior_summary": "Entity persistence, hydration",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "DataStack/Persistence",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/Router/Router.php",
+      "old_namespace": "App\\Router",
+      "feature": "Router",
+      "behavior_summary": "Route registration, matching, dispatch",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "HTTP/Router",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/HTTP/Request/Request.php",
+      "old_namespace": "App\\Http\\Request",
+      "feature": "Request",
+      "behavior_summary": "Immutable request, headers, body",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "HTTP/Request",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/HTTP/Response/Response.php",
+      "old_namespace": "App\\Http\\Response",
+      "feature": "Response",
+      "behavior_summary": "Response building, emitters",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "HTTP/Response",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/HTTP/Middleware/Middleware.php",
+      "old_namespace": "App\\Http\\Middleware",
+      "feature": "Middleware",
+      "behavior_summary": "Pipeline, middleware execution",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "HTTP/Middleware",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/HTTP/Session/Session.php",
+      "old_namespace": "App\\Http\\Session",
+      "feature": "Session",
+      "behavior_summary": "Full session lifecycle",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "HTTP/Session",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/Auth/Auth.php",
+      "old_namespace": "App\\Auth",
+      "feature": "Auth",
+      "behavior_summary": "Basic authentication, credentials, tokens, session",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Identity/Auth",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/Logging/Logger.php",
+      "old_namespace": "App\\Logging",
+      "feature": "Logging",
+      "behavior_summary": "Log writing, channels",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Operations/Observability",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/Filesystem/Filesystem.php",
+      "old_namespace": "App\\Filesystem",
+      "feature": "Filesystem",
+      "behavior_summary": "File operations, disks",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Application/Filesystem",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/Queue/Queue.php",
+      "old_namespace": "App\\Queue",
+      "feature": "Queue",
+      "behavior_summary": "Queue, jobs, workers",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Operations/Queue",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/Mail/Mail.php",
+      "old_namespace": "App\\Mail",
+      "feature": "Mail",
+      "behavior_summary": "Mail system, SMTP",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Operations/Mail",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/View/View.php",
+      "old_namespace": "App\\View",
+      "feature": "View",
+      "behavior_summary": "Template rendering",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Presentation/View",
+      "action": "restore",
+      "status": "partial"
+    },
+    {
+      "old_path": "components/Validation/Validator.php",
+      "old_namespace": "App\\Validation",
+      "feature": "Validation",
+      "behavior_summary": "Input validation, rules",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Application/Validation",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/Events/Events.php",
+      "old_namespace": "App\\Events",
+      "feature": "Events",
+      "behavior_summary": "Event dispatching",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "Operations/Events",
+      "action": "restore",
+      "status": "complete"
+    },
+    {
+      "old_path": "components/API/Client.php",
+      "old_namespace": "App\\Api\\Client",
+      "feature": "HTTP Client",
+      "behavior_summary": "External HTTP calls",
+      "tests_found": true,
+      "target_version": "V1",
+      "target_component": "HTTP/Client",
+      "action": "restore",
+      "status": "complete"
+    }
+  ],
+  "monoliths": [
+    {
+      "name": "components/ApplicationWorkflow/Saga",
+      "loc": 8000,
+      "risk": "high",
+      "action": "slice_into_capabilities"
+    },
+    {
+      "name": "components/Auth",
+      "loc": 15000,
+      "risk": "high",
+      "action": "keep_component_refactor"
+    },
+    {
+      "name": "components/Database",
+      "loc": 12000,
+      "risk": "high",
+      "action": "slice"
+    }
+  ],
+  "missing_v1_muscles": [
+    {
+      "feature": "Localization/i18n",
+      "target_version": "V1",
+      "target_component": "Application/Localization",
+      "priority": "high"
+    },
+    {
+      "feature": "Notifications",
+      "target_version": "V1",
+      "target_component": "Operations/Notifications",
+      "priority": "high"
+    },
+    {
+      "feature": "Auth Middleware",
+      "target_version": "V1",
+      "target_component": "HTTP/Security",
+      "priority": "medium"
+    }
+  ]
+}

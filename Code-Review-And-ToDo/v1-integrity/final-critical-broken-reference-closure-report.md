@@ -3,11 +3,11 @@
 ## Stage 1 — Broken Reference Closure Pass
 
 ### Goal
-Close the remaining 49 CRITICAL broken references and ensure no unresolved production-critical references remain.
+Close the remaining 35 CRITICAL broken references and ensure no unresolved production-critical references remain.
 
 ### Analysis & Resolution
 
-Before this pass, `php tooling/audit_broken_refs.php` reported **49 CRITICAL** missing references. 
+Before this pass, `php tooling/audit_broken_refs.php` reported **35 CRITICAL** missing references. 
 We categorized these references into appropriate buckets based on their occurrence scope (Tests, Tooling, Docs, Vendors, and Production).
 
 1. **Native PHP Class Fixes**

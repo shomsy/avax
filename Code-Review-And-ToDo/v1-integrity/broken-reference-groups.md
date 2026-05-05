@@ -328,7 +328,7 @@
 ## DOCS-ONLY (0)
 
 
-## NON-PRODUCTION (27)
+## NON-PRODUCTION (25)
 
 - **Avax\Components\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware** [MINOR]
   - examples/minimal-http-app/config/middleware.php:12 (use-statement)
@@ -396,31 +396,27 @@
 - **Avax\Integration\ObjectStorage\System\Foundation\Failure\ObjectStorageUnavailable** [MINOR]
   - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:9 (use-statement)
 - **Avax\Tooling\Architecture\FilesystemIterator** [MINOR]
-  - tooling/Architecture/check-runtime-leaks.php:30 (class-const-fetch)
+  - tooling/Architecture/check-runtime-leaks.php:33 (class-const-fetch)
 - **Avax\Tooling\Architecture\SplFileInfo** [MINOR]
-  - tooling/Architecture/check-runtime-leaks.php:34 (instanceof)
+  - tooling/Architecture/check-runtime-leaks.php:37 (instanceof)
 - **Avax\Tooling\DependencyMap\Capabilities\Graph\DependencyGraph** [CRITICAL]
   - tooling/DependencyMap/System/PublicSurface/DependencyMap.php:7 (use-statement)
   - tooling/DependencyMap/System/PublicSurface/DependencyMap.php:11 (constructor-param)
 - **Avax\Tooling\Exception** [CRITICAL]
-  - tooling/RefVisitor.php:83 (catch)
-  - tooling/RefVisitor.php:422 (catch)
+  - tooling/RefVisitor.php:85 (catch)
+  - tooling/RefVisitor.php:424 (catch)
 - **Avax\Tooling\FilesystemIterator** [MINOR]
-  - tooling/generate-class-map.php:21 (class-const-fetch)
-- **Avax\Tooling\RecursiveIteratorIterator** [MINOR]
-  - tooling/generate-class-map.php:22 (class-const-fetch)
+  - tooling/generate-class-map.php:24 (class-const-fetch)
 - **Avax\Tooling\Refactor\FilesystemIterator** [MINOR]
-  - tooling/Refactor/FreezeComponentTaxonomy.php:728 (class-const-fetch)
-  - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:476 (class-const-fetch)
-  - tooling/Refactor/RepairTestLayer.php:182 (class-const-fetch)
-- **Avax\Tooling\Refactor\RecursiveIteratorIterator** [MINOR]
-  - tooling/Refactor/fix-all-namespaces.php:114 (class-const-fetch)
+  - tooling/Refactor/FreezeComponentTaxonomy.php:732 (class-const-fetch)
+  - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:480 (class-const-fetch)
+  - tooling/Refactor/RepairTestLayer.php:186 (class-const-fetch)
 - **Avax\Tooling\Refactor\SplFileInfo** [MINOR]
-  - tooling/Refactor/FreezeComponentTaxonomy.php:732 (instanceof)
-  - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:480 (instanceof)
-  - tooling/Refactor/RepairTestLayer.php:186 (instanceof)
+  - tooling/Refactor/FreezeComponentTaxonomy.php:736 (instanceof)
+  - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:484 (instanceof)
+  - tooling/Refactor/RepairTestLayer.php:190 (instanceof)
 - **Avax\Tooling\SplFileInfo** [MINOR]
-  - tooling/RefVisitor.php:41 (instanceof)
+  - tooling/RefVisitor.php:43 (instanceof)
 - **Aws\PresignUrlMiddleware** [CRITICAL]
   - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:10 (use-statement)
   - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:115 (new)

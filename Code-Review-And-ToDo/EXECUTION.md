@@ -165,69 +165,88 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-Stage 00: Current Truth Lock
+Stage 02: Taxonomy Integrity Green
 ```
 
-All other stages are read-only context until Stage 00 is GREEN.
-
-### Stage 00 Goal
-
-Establish one trusted repository truth before any code movement, taxonomy repair, namespace repair, test repair, or
-feature work.
-
-### Stage 00 Allowed Work
+Last completed stage:
 
 ```text
-[ ] Read current plans and reports.
-[ ] Update CURRENT_TRUTH.md.
-[ ] Mark stale review documents as archive-only if needed.
-[ ] Ensure AGENTS.md points to CURRENT_TRUTH.md and EXECUTION.md.
-[ ] Ensure TODO.md points to EXECUTION.md.
-[ ] Record current RED/YELLOW/GREEN state.
-[ ] List next allowed stage.
+Stage 01: Final Project Tree Freeze
 ```
 
-### Stage 00 Forbidden Work
+Stage 01 evidence:
 
 ```text
-[ ] No production code changes.
-[ ] No namespace changes.
-[ ] No file moves.
+Code-Review-And-ToDo/master-plan/stage-01-final-project-tree-freeze-report.md
+```
+
+All other stages are read-only context until Stage 02 is GREEN.
+
+### Stage 02 Goal
+
+Make the physical repo match the final component taxonomy frozen in Stage 01.
+
+### Stage 02 Allowed Work
+
+```text
+[ ] Repair or explicitly classify forbidden top-level component roots.
+[ ] Move files only when the target owner is clear from Stage 01.
+[ ] Preserve behavior while moving taxonomy.
+[ ] Update namespaces only when required by the moved owner.
+[ ] Update master-plan taxonomy evidence.
+[ ] Run taxonomy, duplicate-owner, namespace-drift, and autoload checks.
+[ ] Record Stage 02 report.
+```
+
+### Stage 02 Forbidden Work
+
+```text
 [ ] No feature work.
+[ ] No new public APIs unless required by a move.
 [ ] No V2 implementation.
 [ ] No V3 implementation.
-[ ] No test repair except reading and classification.
+[ ] No muscle restoration.
+[ ] No broad static-analysis repair outside taxonomy fallout.
+[ ] No test behavior repair outside taxonomy fallout.
 [ ] No compatibility bridge changes.
 ```
 
-### Stage 00 Validation
-
-Run only read-safe or metadata-safe commands unless CURRENT_TRUTH.md permits more.
-
-Recommended:
+### Stage 02 Validation
 
 ```bash
 git status --short
-composer validate --no-check-publish
-find . -name 'how-to-*.md' -print
-find . -name 'CURRENT_TRUTH.md' -o -name 'AGENTS.md' -o -name 'TODO.md' -o -name 'EXECUTION.md'
+find components -maxdepth 4 -type d | sort
+find components -type d -path '*System/Capabilities/*/System*' | sort
+find components -type d -path '*System/Foundation/*/System*' | sort
+find components -type d -path '*System/PublicSurface/*/System*' | sort
+composer dump-autoload -o
+php tooling/refactor/check-component-suite-structure.php
+php tooling/refactor/check-duplicate-owners.php
+php tooling/refactor/check-namespace-drift.php
 ```
 
-### Stage 00 Done Definition
+### Stage 02 Done Definition
 
 ```text
-[ ] CURRENT_TRUTH.md exists.
-[ ] CURRENT_TRUTH.md has date, status, blockers, forbidden work, next actions.
-[ ] EXECUTION.md exists.
-[ ] TODO.md exists and points to EXECUTION.md.
-[ ] AGENTS.md or equivalent execution contract points to CURRENT_TRUTH.md.
-[ ] Next stage is explicitly named.
+[ ] No extra top-level components outside final suites remain unclassified.
+[ ] No nested System folders exist inside Capabilities/Foundation/PublicSurface unless explicitly classified as non-production.
+[ ] Security/Hashing and Security/System/Hashing ownership is singular.
+[ ] Security/Secrets and Security/System/Secrets ownership is singular.
+[ ] DataLayer is not a real owner.
+[ ] CLI/Commands is not a separate runtime owner unless explicitly approved.
+[ ] CLI/UI is folded into CLI/Console or explicitly approved.
+[ ] Operations/Monitoring is folded into Operations/Observability or explicitly approved.
+[ ] composer dump-autoload -o has no skipped production classes caused by taxonomy drift.
+[ ] suite checker passes or every failure is explicitly classified.
+[ ] duplicate owner checker passes.
+[ ] namespace drift checker passes.
 [ ] Final report declares GREEN/YELLOW/RED.
+[ ] Next stage is explicitly named.
 ```
 
-### Stage 00 Stop Condition
+### Stage 02 Stop Condition
 
-Stop if CURRENT_TRUTH.md cannot be made trustworthy.
+Stop if a forbidden root cannot be safely mapped to a frozen Stage 01 owner without a human architecture decision.
 
 ---
 

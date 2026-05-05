@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch;
 
-use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Dispatchers\AsyncDispatcher;
-use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Dispatchers\DeferredDispatcher;
-use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Dispatchers\SyncDispatcher;
-use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Resolution\DispatchStrategyResolver;
-use Closure;
+use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\Dispatchers\AsyncDispatcher;
+use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\Dispatchers\DeferredDispatcher;
+use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\Dispatchers\SyncDispatcher;
+use Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\Resolution\DispatchStrategyResolver;
 use DateInterval;
 
 final class TaskDispatch
@@ -65,4 +64,3 @@ final class TaskDispatch
         return new TaskBatch($tasks);
     }
 }
-

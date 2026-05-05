@@ -3,6 +3,20 @@
 Status: canonical AI TODO plan  
 Purpose: restore and preserve AvaX “muscle” from `avax-backup.txt`, but implement it under the new architecture, governance, and V1/V2/V3 roadmap.  
 Execution rule: V1 must be proven before V2 implementation. V2 platform baseline must be proven before V3 production implementation.
+Execution control: `Code-Review-And-ToDo/EXECUTION.md` is the active stage lock. If this file and `EXECUTION.md`
+disagree, `EXECUTION.md` wins.
+
+Current active result:
+
+```text
+Stage 00: Current Truth Lock — COMPLETE
+Stage 01: Final Project Tree Freeze — COMPLETE
+Stage 02: Taxonomy Integrity Green — ACTIVE
+Current repository readiness: RED
+Next allowed action: Stage 02 taxonomy repair/classification
+V2 Implementation: LOCKED
+V3 Implementation: LOCKED
+```
 
 ---
 
@@ -41,14 +55,16 @@ V1 Kernel Green: NOT PROVEN
 V2 Implementation: LOCKED
 V3 Implementation: LOCKED
 
-Composer: GREEN
-Autoload: GREEN
-Production PSR-4 skips: GREEN
+Composer validate: GREEN
+Autoload integrity: RED
+Production PSR-4 skips: RED
 Runtime doctor: GREEN
 
-Broken refs: YELLOW / not fully closed
+Broken refs: RED / not fully classified
 PHPStan: RED
 Tests: RED
+Component suite structure: RED
+Superglobal audit: RED
 Component completion: not proven
 Muscle restoration: incomplete
 ```
@@ -68,12 +84,13 @@ Broken refs must not be called GREEN while critical refs remain unless every cri
 Current next priority:
 
 ```text
-1. Lock V1 integrity.
-2. Audit old backup muscle.
-3. Restore V1 muscles under canonical architecture.
-4. Prove V1 with tests/static analysis.
-5. Only then unlock V2.
-6. Only after V2 baseline, start V3.
+1. Stage 02: Reconcile component taxonomy and forbidden roots.
+2. Repair autoload, test configuration, broken refs, superglobal boundary, and PHPStan in locked stage order.
+3. Audit old backup muscle only when the active stage permits it.
+4. Restore V1 muscles under canonical architecture only after integrity gates allow production changes.
+5. Prove V1 with tests/static analysis.
+6. Only then unlock V2.
+7. Only after V2 baseline, start V3.
 ```
 
 ---

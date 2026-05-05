@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Verification;
 
-use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Tokens\AccessToken;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Signing\JwtSigner;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\AccessToken;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;

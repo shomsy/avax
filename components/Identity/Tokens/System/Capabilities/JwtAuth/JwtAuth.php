@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth;
 
-use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Signing\JwtSigner;
-use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Tokens\AccessToken;
-use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Tokens\TokenPair;
-use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\System\Capabilities\Verification\TokenVerifier;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Signing\JwtSigner;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\AccessToken;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\TokenPair;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Verification\TokenVerifier;
 use RuntimeException;
 use Throwable;
 

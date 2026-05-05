@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Capabilities\Policy\Engine;
 
-use Avax\Components\Identity\Access\System\Capabilities\Policy\System\Capabilities\Rules\PolicyRule;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\PolicyRule;
 
 final class PolicyEvaluator
 {

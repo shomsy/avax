@@ -42,7 +42,9 @@ final readonly class PDOExecutor implements ExecutorInterface
         try {
             $statement = $this->getPdo()->prepare(query: $sql);
             $statement->execute(params: $bindings);
-            $results = $statement->fetchAll();
+
+            /** @var list<array<string, mixed>> $results */
+            $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
             $this->dispatch(
                 sql           : $sql,

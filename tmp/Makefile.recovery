@@ -1,0 +1,20 @@
+.PHONY: recovery-database recovery-persistence recovery-all recovery-origin-main recovery-stamp-missing-v1 recovery-proof-guard
+
+recovery-database:
+	bash tooling/recovery/run_database_recovery_audit.sh
+
+recovery-persistence:
+	bash tooling/recovery/run_persistence_recovery_audit.sh
+
+recovery-all:
+	bash tooling/recovery/run_database_recovery_audit.sh
+	bash tooling/recovery/run_persistence_recovery_audit.sh
+
+recovery-origin-main:
+	bash tooling/recovery/run_origin_main_extract.sh
+
+recovery-stamp-missing-v1:
+	bash tooling/recovery/run_v1_missing_structure_stamp.sh
+
+recovery-proof-guard:
+	python3 tooling/recovery/assert_not_report_only_complete.py

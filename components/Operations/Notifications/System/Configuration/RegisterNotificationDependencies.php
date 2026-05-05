@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Notifications\System\Configuration;
 
+use Avax\Components\Operations\Notifications\System\Capabilities\NotificationChannel;
 use Avax\Components\Operations\Notifications\System\PublicSurface\Notifier;
 
 final class RegisterNotificationDependencies

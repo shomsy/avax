@@ -47,7 +47,7 @@ readonly class ReadFromCache
         return $this->compiledCacheContract->read(
             name   : $compiledCacheTarget->name,
             build  : $compiledCacheTarget->builder(),
-            compiledCacheSources: $compiledCacheTarget->compiledCacheSources,
+            sources: $compiledCacheTarget->compiledCacheSources,
         );
     }
 }

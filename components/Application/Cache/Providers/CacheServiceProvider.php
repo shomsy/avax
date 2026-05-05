@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\Providers;
 
 use Avax\Components\Application\Cache\Cache;
+use Avax\Components\Application\Cache\CompiledCache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\Configuration\BuildCache;
+use Avax\Components\Application\Cache\System\Configuration\CacheConfiguration;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
@@ -62,27 +64,34 @@ final class CacheServiceProvider extends ServiceProvider
         }
 
         Cache::use(cache: $this->app->get(id: CacheContract::class));
+
+        if ($this->compiledCacheDirectory !== null) {
+            CompiledCache::use(compiledCacheContract: $this->app->get(id: CompiledCacheContract::class));
+        }
     }
 
     private function buildNamedCache(string $name, array $config): CacheContract
     {
-        $builder = new BuildCache();
+        $builder            = new BuildCache();
+        $cacheConfiguration = new CacheConfiguration(
+            name      : $name,
+            defaultTtl: is_int($config['ttl'] ?? null) ? $config['ttl'] : 3600,
+        );
 
         return match ($config['store']) {
             'in_memory' => $builder->inMemory(
-                $config['ttl'] ?? 3600,
-                $config['max_entries'] ?? 1000
+                config: $cacheConfiguration,
             ),
             'file' => $builder->inDirectory(
-                $config['directory'] ?? sys_get_temp_dir() . '/cache_' . $name,
-                $config['ttl'] ?? 3600
+                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir() . '/cache_' . $name,
+                config   : $cacheConfiguration,
             ),
             'redis' => $builder->redis(
-                $config['host'] ?? '127.0.0.1',
-                $config['port'] ?? 6379,
-                $config['ttl'] ?? 3600
+                host  : is_string($config['host'] ?? null) ? $config['host'] : '127.0.0.1',
+                port  : is_int($config['port'] ?? null) ? $config['port'] : 6379,
+                config: $cacheConfiguration,
             ),
-            default => $builder->inMemory(config: $config['ttl'] ?? 3600),
+            default     => $builder->inMemory(config: $cacheConfiguration),
         };
     }
 

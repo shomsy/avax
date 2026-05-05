@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\MessageBus\System\Capabilities\Bus;
 
+use Avax\Components\Operations\MessageBus\System\PublicSurface\Command;
+use Closure;
+
 final class CommandBus
 {
     private array $handlers = [];

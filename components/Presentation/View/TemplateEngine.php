@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View;
 
-use Avax\Components\Application\Container\Core\Exceptions\FoundationContainerException;
 use Avax\Components\HTTP\Context\System\PublicSurface\HttpContextInterface;
 use eftec\bladeone\BladeOne;
 use Override;
@@ -32,7 +31,6 @@ class TemplateEngine extends BladeOne
      * @param string $compiledPath The path where compiled templates are stored.
      * @param int    $mode         BladeOne mode (e.g., MODE_AUTO).
      *
-     * @throws FoundationContainerException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */

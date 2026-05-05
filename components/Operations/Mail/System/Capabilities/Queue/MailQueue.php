@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Mail\System\Capabilities\Queue;
 
-use Avax\Components\Operations\Tasks\System\Capabilities\Queue\Queue;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\Queue;
 
 final readonly class MailQueue
 {

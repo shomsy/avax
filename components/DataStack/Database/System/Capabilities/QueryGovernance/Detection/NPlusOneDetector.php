@@ -20,16 +20,3 @@ final readonly class NPlusOneDetector
         return $executionCount > 10;
     }
 }
-
-final readonly class SlowQueryDetector
-{
-    public static function isSlow(float $durationMs, float $thresholdMs = 100.0): bool
-    {
-        return $durationMs > $thresholdMs;
-    }
-
-    public static function threshold(float $ms): float
-    {
-        return $ms;
-    }
-}

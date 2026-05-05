@@ -8,12 +8,6 @@ use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\CommandBus;
 use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\EventBus;
 use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\QueryBus;
 
-interface Command {}
-
-interface Query {}
-
-interface DomainEvent {}
-
 final class MessageBus
 {
     private static CommandBus $commandBus;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration;
 
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\System\Capabilities\Kubernetes\GracefulStop;
+use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\Kubernetes\GracefulStop;
 use Throwable;
 
 final readonly class Orchestration

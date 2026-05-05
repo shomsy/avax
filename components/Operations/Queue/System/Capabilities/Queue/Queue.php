@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\Capabilities\Queue;
 
-use Avax\Components\Operations\Tasks\System\Foundation\JobInterface;
+use Avax\Components\Operations\Queue\System\Foundation\JobInterface;
 use Throwable;
 
 final class Queue

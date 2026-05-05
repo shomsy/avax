@@ -19,9 +19,9 @@ final class Cache
 {
     private static ?CacheContract $cacheContract = null;
 
-    public static function use(CacheContract $cacheContract) : void
+    public static function use(CacheContract $cache) : void
     {
-        self::$cacheContract = $cacheContract;
+        self::$cacheContract = $cache;
     }
 
     public static function reset() : void

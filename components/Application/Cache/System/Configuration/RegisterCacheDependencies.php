@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Configuration;
 
-use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
 use Avax\Components\Application\Cache\Cache;
+use Avax\Components\Application\Cache\CompiledCache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
+use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
 use Override;
 
 final class RegisterCacheDependencies extends BaseRegisterDependency
@@ -60,6 +61,10 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
         }
 
         Cache::use(cache: $this->container->get(id: CacheContract::class));
+
+        if ($this->compiledCacheDirectory !== null) {
+            CompiledCache::use(compiledCacheContract: $this->container->get(id: CompiledCacheContract::class));
+        }
     }
 
     private function buildNamedCache(string $name, array $config): CacheContract

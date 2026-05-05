@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer;
 
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\EmailRule;
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\IntegerRule;
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\MinLengthRule;
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\MinRule;
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\PasswordComplexityRule;
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Required;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\Attributes\DefaultValue;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\Attributes\Optional;
@@ -124,11 +119,8 @@ final class DataTransfer implements ResettableState
             // Validate value if present and rules exist
             if ($value !== null) {
                 foreach ($property->getAttributes() as $attribute) {
-                    $attrName = $attribute->getName();
-                    $shortName = substr($attrName, strrpos($attrName, '\\') + 1);
-
                     $validationResult = self::validatePropertyValue(
-                        $shortName,
+                        $attribute->newInstance(),
                         $value,
                         $propertyName,
                     );
@@ -156,21 +148,12 @@ final class DataTransfer implements ResettableState
      * Validate a single property value
      */
     private static function validatePropertyValue(
-        string $ruleName,
+        object $rule,
         mixed $value,
         string $propertyName,
     ): ?DataTransferViolation {
         try {
-            $rule = match ($ruleName) {
-                'EmailRule'              => new EmailRule(),
-                'IntegerRule'            => new IntegerRule(),
-                'MinLengthRule' => new ReflectionClass(new MinLengthRule(1))->newInstance()->args[0] ?? 1,
-                'MinRule'                => new MinRule(1),
-                'PasswordComplexityRule' => new PasswordComplexityRule(),
-                default                  => null,
-            };
-
-            if ($rule !== null) {
+            if (method_exists($rule, 'validate')) {
                 $rule->validate($value, $propertyName);
             }
 

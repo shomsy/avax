@@ -35,7 +35,7 @@ final readonly class BuildCompiledCache
             ) {
             }
 
-            public function read(string $name, callable $build, CompiledCacheSources $compiledCacheSources): mixed
+            public function read(string $name, callable $build, CompiledCacheSources $sources) : mixed
             {
                 $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory);
                 $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
@@ -46,10 +46,10 @@ final readonly class BuildCompiledCache
                     $this->clock,
                 );
 
-                return $readCompiledCache->read($name, $build, $compiledCacheSources);
+                return $readCompiledCache->read(name: $name, build: $build, compiledCacheSources: $sources);
             }
 
-            public function compile(string $name, callable $build, CompiledCacheSources $compiledCacheSources): CompiledCacheArtifact
+            public function compile(string $name, callable $build, CompiledCacheSources $sources) : CompiledCacheArtifact
             {
                 $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory);
                 $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
@@ -60,7 +60,7 @@ final readonly class BuildCompiledCache
                     $this->clock,
                 );
 
-                return $compileCache->compile($name, $build, $compiledCacheSources);
+                return $compileCache->compile(name: $name, build: $build, compiledCacheSources: $sources);
             }
 
             public function clear(string $name): void

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Resilience\System\Capabilities\Idempotency;
 
-use Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\System\Capabilities\Keys\IdempotencyStore;
-use Closure;
+use Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\Keys\IdempotencyStore;
+use Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\Keys\InMemoryIdempotencyStore;
 
 final class Idempotency
 {
@@ -53,4 +53,3 @@ final class Idempotency
         return $header ?: null;
     }
 }
-

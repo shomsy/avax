@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View\System\Configuration;
 
-use Avax\Components\Presentation\View\System\Capabilities\TemplateEngineInterface;
+use Avax\Components\Presentation\View\System\Capabilities\Engines\TemplateEngineInterface;
 use Avax\Components\Presentation\View\System\PublicSurface\View;
 
 final class RegisterViewDependencies

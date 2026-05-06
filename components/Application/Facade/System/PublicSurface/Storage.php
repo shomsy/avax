@@ -9,5 +9,5 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\FilesystemInterf
 
 final class Storage extends BaseFacade
 {
-    protected static string $accessor = FilesystemInterface::class;
+    protected static string|null $accessor = FilesystemInterface::class;
 }

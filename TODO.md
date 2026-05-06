@@ -15,9 +15,11 @@ Stage 01: Final Project Tree Freeze — COMPLETE
 Stage 02: Taxonomy Integrity Green — COMPLETE
 Stage V1-01: Backup Muscle Inventory — COMPLETE
 Stage V1-02: Current Component Muscle Audit — COMPLETE
-Stage V1-03: Static Integrity Closure — ACTIVE
+Stage V1-03: Static Integrity Closure — COMPLETE
+Stage 03: API Classification and Evolution Rules — COMPLETE
+Stage 04: Component Completion — ACTIVE
 Current repository readiness: RED
-Next allowed action: Fix PHPStan baseline or component errors
+Next allowed action: Rerun Application/Facade PHPStan and relevant facade tests after approval/tooling is available
 V2 Implementation: LOCKED
 V3 Implementation: LOCKED
 ```

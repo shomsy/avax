@@ -17,7 +17,7 @@ use Override;
  * - JSONB, ARRAY, HSTORE types
  * - advisory locks
  */
-final class PostgreSQLGrammar extends BaseGrammar
+class PostgreSQLGrammar extends BaseGrammar
 {
     public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string
     {

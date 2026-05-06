@@ -9,5 +9,5 @@ use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 
 final class Route extends BaseFacade
 {
-    protected static string $accessor = RouterInterface::class;
+    protected static string|null $accessor = RouterInterface::class;
 }

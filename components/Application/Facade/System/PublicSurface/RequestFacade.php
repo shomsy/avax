@@ -9,5 +9,5 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
 final class RequestFacade extends BaseFacade
 {
-    protected static string $accessor = RequestInterface::class;
+    protected static string|null $accessor = RequestInterface::class;
 }

@@ -66,6 +66,7 @@ e.g. deprecated in 2.3 → must work at least through 2.x → removable in 3.0
 ### Phase 3 — Removal
 
 - Announce removal in changelog with migration path
+- Mark documentation and migration notes with `@removed-in <version>`
 - Remove the deprecated code only in a major version bump
 - Ensure the replacement API has been available since at least one minor version before removal
 

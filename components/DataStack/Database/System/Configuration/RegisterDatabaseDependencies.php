@@ -72,6 +72,8 @@ final readonly class RegisterDatabaseDependencies implements RegisterDependency
         $this->container->singleton(abstract: DatabaseExporter::class, concrete: fn () => $this->container->get(id: Migrations::class)->exporter());
     }
 
+    public function boot() : void {}
+
     /**
      * @throws RandomException
      */

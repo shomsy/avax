@@ -165,13 +165,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-Stage V1-03: Static Integrity Closure
+Stage 04: Component Completion
 ```
 
 Last completed stage:
 
 ```text
-Stage V1-02: Current Component Muscle Audit
+Stage 03: API Classification and Evolution Rules
 ```
 
 Recent completed evidence:
@@ -184,70 +184,75 @@ EVIDENCE/muscle-recovery/backup-muscle-inventory.md
 EVIDENCE/muscle-recovery/backup-muscle-inventory.json
 EVIDENCE/muscle-recovery/component-muscle-audit.md
 EVIDENCE/muscle-recovery/component-muscle-audit.json
+EVIDENCE/recovery-reports/static-integrity-closure-report.md
+EVIDENCE/v1-integrity/static-integrity-closure-report.md
+EVIDENCE/master-plan/api-classification-matrix.md
+EVIDENCE/master-plan/stage-03-api-classification-report.md
 ```
 
-All other stages are read-only context until Stage V1-03 is complete.
+All other stages are read-only context until Stage 04 is complete.
 
-### Stage V1-03 Goal
+### Stage 04 Goal
 
-Remove or classify static integrity blockers before any V1 muscle restoration.
+Complete components with real lanes, not placeholder folders.
 
-### Stage V1-03 Allowed Work
+### Stage 04 Allowed Work
 
 ```text
-[ ] Close or classify remaining critical broken refs.
-[ ] Split remaining multi-class production files when the owner is clear.
-[ ] Repair production PSR-4 skips that are local filename/namespace mismatches.
-[ ] Keep test-layer skips classified unless the repair is needed for static integrity.
-[ ] Run targeted PHPStan checks listed in TODO.md.
-[ ] Record EVIDENCE/v1-integrity/static-integrity-closure-report.md.
+[ ] Update and verify EVIDENCE/master-plan/component-completion-matrix.md.
+[ ] Classify each component as complete, partial, draft, experimental, planned, or blocked.
+[ ] Verify correct suite and canonical namespace.
+[ ] Verify meaningful PublicSurface when public API exists.
+[ ] Verify meaningful Capabilities and Flows/Configuration/Foundation where applicable.
+[ ] Identify placeholder classes and describeResponsibility-only classes.
+[ ] Verify duplicate owner and stale namespace status.
+[ ] Record tests planned or present under root tests/.
+[ ] Record a Stage 04 report.
 ```
 
-### Stage V1-03 Forbidden Work
+### Stage 04 Forbidden Work
 
 ```text
-[ ] No V1 muscle restoration beyond static integrity fallout.
 [ ] No V2 implementation.
 [ ] No V3 implementation.
+[ ] No V4 implementation.
+[ ] No new feature behavior beyond documenting/classifying completion state.
 [ ] No placeholder classes.
-[ ] No dummy classes to silence tools.
-[ ] No type weakening to make PHPStan green.
-[ ] No broad test-layer refactor outside explicitly classified static integrity needs.
+[ ] No skeleton classes to make a component look complete.
+[ ] No broad component implementation while completing the matrix.
+[ ] No optimistic production-readiness update.
 ```
 
-### Stage V1-03 Validation
+### Stage 04 Validation
 
 ```bash
 composer validate --no-check-publish
 composer dump-autoload -o
-php tooling/audit_broken_refs.php
-php tooling/refactor/categorize-broken-refs.php
+php tooling/governance/check-stage-lock.php
 php tooling/refactor/check-component-suite-structure.php
 php tooling/refactor/check-duplicate-owners.php
 php tooling/refactor/check-namespace-drift.php
 php tooling/refactor/check-public-surface.php
 php tooling/refactor/check-runtime-leaks.php
-vendor/bin/phpstan analyse framework/System --memory-limit=1G --error-format=raw --no-progress
-vendor/bin/phpstan analyse components/Application/Cache --memory-limit=1G --error-format=raw --no-progress
-vendor/bin/phpstan analyse components/HTTP/Request components/HTTP/Response --memory-limit=1G --error-format=raw --no-progress
-vendor/bin/phpstan analyse components/DataStack/Database --memory-limit=1G --error-format=raw --no-progress
 ```
 
-### Stage V1-03 Done Definition
+If a governance command does not exist, record it as PLANNED / NOT IMPLEMENTED.
+
+### Stage 04 Done Definition
 
 ```text
-[ ] Composer remains GREEN.
-[ ] Autoload production skips are zero or fully classified.
-[ ] Unresolved production-critical broken refs are zero or fully classified.
-[ ] Targeted PHPStan areas are green or remaining errors are fully classified.
-[ ] No V2/V3 implementation happened.
+[ ] Component completion matrix is current.
+[ ] Every current component has status and evidence.
+[ ] No component is marked complete only because folders exist.
+[ ] Placeholder/skeleton risks are named.
+[ ] Required checkers pass or blockers are recorded.
 [ ] Final report declares GREEN/YELLOW/RED.
 [ ] Next stage is explicitly named.
 ```
 
-### Stage V1-03 Stop Condition
+### Stage 04 Stop Condition
 
-Stop if a static repair requires unclear architecture ownership or would restore behavior beyond integrity fallout.
+Stop if marking a component complete would require implementing new production behavior outside matrix verification.
 
 ---
 

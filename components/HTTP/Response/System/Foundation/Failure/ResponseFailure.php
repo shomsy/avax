@@ -6,6 +6,6 @@ namespace Avax\Components\HTTP\Response\System\Foundation\Failure;
 
 use RuntimeException;
 
-final class ResponseFailure extends RuntimeException
+class ResponseFailure extends RuntimeException
 {
 }

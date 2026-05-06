@@ -67,6 +67,8 @@ final readonly class DatabaseRegistrar implements RegisterDependency
         $this->container->singleton(abstract: ReadMigrationStatus::class, concrete: fn () => $this->container->get(id: Migrations::class)->status());
     }
 
+    public function boot() : void {}
+
     /**
      * @throws RandomException
      */

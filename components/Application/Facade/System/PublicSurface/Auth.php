@@ -9,5 +9,5 @@ use Avax\Components\Identity\Auth\System\Auth as AuthContract;
 
 final class Auth extends BaseFacade
 {
-    protected static string $accessor = AuthContract::class;
+    protected static string|null $accessor = AuthContract::class;
 }

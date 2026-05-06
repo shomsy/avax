@@ -9,5 +9,5 @@ use Avax\Components\HTTP\Session\System\PublicSurface\SessionInterface;
 
 final class Session extends BaseFacade
 {
-    protected static string $accessor = SessionInterface::class;
+    protected static string|null $accessor = SessionInterface::class;
 }

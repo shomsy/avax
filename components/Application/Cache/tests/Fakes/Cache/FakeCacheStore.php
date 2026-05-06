@@ -9,8 +9,8 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
-use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
-use Avax\Components\Application\DateTime\System\PublicSurface\SystemClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Override;
 
 final class FakeCacheStore implements CacheStore

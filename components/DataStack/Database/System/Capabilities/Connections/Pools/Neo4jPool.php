@@ -11,8 +11,11 @@ use Override;
  *
  * @todo Implement real Neo4j driver integration (graphaware/neo4j-php-client or bolt protocol)
  */
-class Neo4jPool extends DatabaseConnectionPool
+class Neo4jPool extends BaseConnectionPool
 {
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(
         protected array $config = [],
         int $minConnections = 5,

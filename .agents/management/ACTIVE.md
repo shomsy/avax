@@ -20,11 +20,11 @@ Recommended card format:
 ```mermaid
 flowchart LR
     subgraph Ready["Ready"]
-        R0["No active cards"]
+        R0["Stage 04+ locked"]
     end
 
     subgraph InProgress["In Progress"]
-        P0["No active cards"]
+        P0["Stage 04 | component completion | updated 2026-05-06"]
     end
 
     subgraph Blocked["Blocked"]
@@ -40,4 +40,6 @@ flowchart LR
     InProgress --> Blocked
     Blocked --> InProgress
 ```
-HTTP Suite Normalization Completed. Component stabilized.
+
+Stage V1-03 Static Integrity Closure and Stage 03 API Classification completed with current evidence. Stage 04 Component
+Completion is active.

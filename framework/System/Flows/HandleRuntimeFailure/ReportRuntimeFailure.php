@@ -6,7 +6,6 @@ namespace Avax\Framework\System\Flows\HandleRuntimeFailure;
 
 use Avax\Components\Operations\Logging\System\PublicSurface\Logging;
 use Throwable;
-use function Sentry\captureException;
 
 /**
  * Reports runtime failures to the logging system and external error trackers.
@@ -35,8 +34,6 @@ final readonly class ReportRuntimeFailure
                 context: $context,
             );
         }
-
-        $this->reportToExternalTrackers($throwable);
     }
 
     /**
@@ -169,19 +166,4 @@ final readonly class ReportRuntimeFailure
         return $message;
     }
 
-    /**
-     * Report to external error tracking services (e.g., Sentry).
-     */
-    private function reportToExternalTrackers(Throwable $throwable) : void
-    {
-        // Integration point for external error trackers like Sentry.
-        // Example:
-        // if (function_exists('Sentry\captureException')) {
-        //     \Sentry\captureException($throwable);
-        // }
-
-        if (function_exists('Sentry\captureException')) {
-            captureException($throwable);
-        }
-    }
 }

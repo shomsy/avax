@@ -14,6 +14,9 @@ final readonly class ExplainRouteMatch
     ) {
     }
 
+    /**
+     * @param list<array{method: string, path: string, handler: mixed, middleware?: list<string>}> $routes
+     */
     public function loadRoutes(array $routes): self
     {
         $this->routeAnalyzer->setRoutes($routes);

@@ -10,10 +10,6 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final readonly class CacheStoreRecordWasFound
 {
-    public CacheKey $cacheKey;
-
-    public StoredCacheRecord $storedCacheRecord;
-
     public function __construct(public CacheKey $cacheKey, public StoredCacheRecord $storedCacheRecord, public Clock $clock) {
     }
 
@@ -34,6 +30,6 @@ final readonly class CacheStoreRecordWasFound
 
     public function lifecycle(): CachedValueLifecycle
     {
-        return $this->storedCacheRecord->lifecycle;
+        return $this->storedCacheRecord->cachedValueLifecycle;
     }
 }

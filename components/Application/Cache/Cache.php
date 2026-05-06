@@ -55,7 +55,7 @@ final class Cache
 
     public static function forget(string $key) : bool
     {
-        return self::default()->delete(cacheKey: $key);
+        return self::default()->delete(key: $key);
     }
 
     public static function clear() : bool
@@ -65,21 +65,21 @@ final class Cache
 
     public static function has(string $key) : bool
     {
-        return self::default()->has(cacheKey: $key);
+        return self::default()->has(key: $key);
     }
 
     public static function read(CacheReadTarget|string $target, mixed $default = null) : mixed
     {
         if (is_string($target)) {
-            return self::get(default: $default, cacheKey: $target);
+            return self::get(key: $target, default: $default);
         }
 
         if ($target instanceof RuntimeCacheTarget) {
             if ($target->store !== null) {
-                return self::store(name: $target->store)->get(default: $target->default, cacheKey: $target->key);
+                return self::store(name: $target->store)->get(key: $target->key, default: $target->default);
             }
 
-            return self::default()->get(default: $target->default ?? $default, cacheKey: $target->key);
+            return self::default()->get(key: $target->key, default: $target->default ?? $default);
         }
 
         if ($target instanceof CompiledCacheTarget) {
@@ -91,7 +91,7 @@ final class Cache
 
     public static function get(string $key, mixed $default = null) : mixed
     {
-        return self::default()->get(default: $default, cacheKey: $key);
+        return self::default()->get(key: $key, default: $default);
     }
 
     public static function store(?string $name = null) : CacheContract

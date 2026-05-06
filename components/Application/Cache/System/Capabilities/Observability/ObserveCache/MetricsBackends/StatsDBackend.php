@@ -14,13 +14,13 @@ final class StatsDBackend implements MetricsBackend
     /** @var array<string, float> */
     private array $gauges = [];
 
-    /** @var array<string, array<float>> */
+    /** @var array<string, list<float>> */
     private array $histograms = [];
 
-    /** @var array<string, array<int>> */
+    /** @var array<string, list<int>> */
     private array $timings = [];
 
-    /** @var array<string> */
+    /** @var list<string> */
     private array $messages = [];
 
     #[Override]
@@ -71,26 +71,41 @@ final class StatsDBackend implements MetricsBackend
         $this->messages = [];
     }
 
+    /**
+     * @return list<string>
+     */
     public function getMessages() : array
     {
         return $this->messages;
     }
 
+    /**
+     * @return array<string, int>
+     */
     public function getCounters() : array
     {
         return $this->counters;
     }
 
+    /**
+     * @return array<string, float>
+     */
     public function getGauges() : array
     {
         return $this->gauges;
     }
 
+    /**
+     * @return array<string, list<int>>
+     */
     public function getTimings() : array
     {
         return $this->timings;
     }
 
+    /**
+     * @return array<string, int>
+     */
     public function getPercentile(float $percentile) : array
     {
         $result = [];

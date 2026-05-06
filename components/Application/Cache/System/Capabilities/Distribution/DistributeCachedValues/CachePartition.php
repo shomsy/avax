@@ -9,11 +9,14 @@ final readonly class CachePartition
     public function __construct(
         public int $index,
         public CacheNodeId $cacheNodeId,
-        /** @var array<CacheNodeId> */
+        /** @var list<CacheNodeId> */
         public array $replicaNodeIds = [],
     ) {
     }
 
+    /**
+     * @return list<CacheNodeId>
+     */
     public function allNodeIds(): array
     {
         return [$this->cacheNodeId, ...$this->replicaNodeIds];

@@ -70,7 +70,11 @@ final readonly class ConfiguredRoutesHttpHandler
         // but for now we skip global assignment to avoid errors.
 
         try {
-            require $routesFile;
+            $routeDefinitions = require $routesFile;
+
+            if (is_callable(value: $routeDefinitions)) {
+                $routeDefinitions($frameworkRouteRegistrar);
+            }
         } finally {
             if ($previousContainer !== null) {
                 appInstance(instance: $previousContainer);

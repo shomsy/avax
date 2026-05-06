@@ -2,11 +2,6 @@
 
 declare(strict_types=1);
 
-use Closure;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use SplFileInfo;
-
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 final class StaticIntegrityRule

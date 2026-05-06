@@ -8,12 +8,13 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Throwable;
 
 final readonly class RepairDivergedReplica
 {
-    /** @var array<CacheStore> */
+    /** @var list<CacheStore> */
     private array $stores;
 
     public function __construct(
@@ -28,10 +29,16 @@ final readonly class RepairDivergedReplica
     {
         $repaired = 0;
 
-        foreach ($this->stores[$referenceReplicaIndex] ?? [] as $key => $record) {
-            $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
+        $referenceStore = $this->stores[$referenceReplicaIndex] ?? null;
 
-            if ($this->repair(referenceReplicaIndex: $referenceReplicaIndex, key: $cacheKey)) {
+        if (! $referenceStore instanceof InMemoryCacheStore) {
+            return 0;
+        }
+
+        foreach ($referenceStore->getAllKeys() as $key) {
+            $cacheKey = CacheKey::create(key: $key);
+
+            if ($this->repair(cacheKey: $cacheKey, referenceReplicaIndex: $referenceReplicaIndex)) {
                 $repaired++;
             }
         }
@@ -46,13 +53,13 @@ final readonly class RepairDivergedReplica
         }
 
         $referenceStore = $this->stores[$referenceReplicaIndex];
-        $referenceResult = $referenceStore->read(clock: $this->clock, key: $cacheKey);
+        $referenceResult = $referenceStore->read(cacheKey: $cacheKey, clock: $this->clock);
 
         if (! $referenceResult instanceof CacheStoreRecordWasFound) {
             return false;
         }
 
-        $referenceRecord = $referenceResult->record;
+        $referenceRecord = $referenceResult->storedCacheRecord;
         $repaired       = false;
 
         foreach ($this->stores as $index => $store) {
@@ -61,13 +68,13 @@ final readonly class RepairDivergedReplica
             }
 
             try {
-                $result = $store->read(clock: $this->clock, key: $cacheKey);
+                $result = $store->read(cacheKey: $cacheKey, clock: $this->clock);
 
                 if ($result instanceof CacheStoreRecordWasMissing) {
-                    $store->write(key: $cacheKey, record: $referenceRecord);
+                    $store->write(cacheKey: $cacheKey, storedCacheRecord: $referenceRecord);
                     $repaired = true;
-                } elseif ($result->record !== $referenceRecord) {
-                    $store->write(key: $cacheKey, record: $referenceRecord);
+                } elseif ($result->storedCacheRecord !== $referenceRecord) {
+                    $store->write(cacheKey: $cacheKey, storedCacheRecord: $referenceRecord);
                     $repaired = true;
                 }
             } catch (Throwable) {

@@ -33,7 +33,7 @@ final readonly class StoredCacheRecord
 
         return new self(
             value    : $value,
-            lifecycle: CachedValueLifecycle::create($now, $expiresAt, $clock),
+            cachedValueLifecycle: CachedValueLifecycle::create($now, $expiresAt, $clock),
         );
     }
 

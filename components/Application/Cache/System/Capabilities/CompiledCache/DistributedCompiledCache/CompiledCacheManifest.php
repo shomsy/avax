@@ -123,6 +123,8 @@ final class CompiledCacheManifest
 
     /**
      * Add an entry to the manifest.
+     *
+     * @param list<string> $sourceFiles
      */
     public function addEntry(
         string $name,

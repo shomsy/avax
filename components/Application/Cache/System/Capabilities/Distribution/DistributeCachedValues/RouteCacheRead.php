@@ -14,12 +14,15 @@ final readonly class RouteCacheRead
 
     public function route(CacheKey $cacheKey) : ?CacheNode
     {
-        return $this->chooseCacheNodeForKey->choose(key: $cacheKey);
+        return $this->chooseCacheNodeForKey->choose(cacheKey: $cacheKey);
     }
 
+    /**
+     * @param list<CacheNode> $availableNodes
+     */
     public function getPreferredNode(CacheKey $cacheKey, array $availableNodes) : ?CacheNode
     {
-        $preferred = $this->chooseCacheNodeForKey->choose(key: $cacheKey);
+        $preferred = $this->chooseCacheNodeForKey->choose(cacheKey: $cacheKey);
 
         if (! $preferred instanceof CacheNode) {
             return $availableNodes[0] ?? null;

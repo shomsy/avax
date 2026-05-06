@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution;
 
+use Avax\Components\Application\Cache\System\CacheContract;
+
 final readonly class PrimaryReplicaCache
 {
+    /**
+     * @param list<CacheContract> $replicas
+     */
     public function __construct(
-        private mixed $primary,
+        private CacheContract $primary,
         private array $replicas,
     ) {}
 

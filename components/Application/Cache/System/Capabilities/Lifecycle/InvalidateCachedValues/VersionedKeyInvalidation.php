@@ -19,6 +19,9 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
         $this->cacheVersion = $currentVersion ?? $initialVersion;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     #[Override]
     public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
     {
@@ -40,7 +43,9 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
     public function bumpVersion() : self
     {
         $new = clone $this;
-        $new->cacheVersion = $this->cacheVersion->incrementMajor();
+        $new->cacheVersion = $this->cacheVersion instanceof CacheVersion
+            ? $this->cacheVersion->incrementMajor()
+            : new CacheVersion(major: 1);
 
         return $new;
     }

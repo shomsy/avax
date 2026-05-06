@@ -11,17 +11,23 @@ final readonly class RebalanceCachePartitions
         private int $partitionCount = 256,
     ) {}
 
+    /**
+     * @return array<int, array{from: string|null, to: string}>
+     */
     public function addNode(CacheNode $cacheNode) : array
     {
         $oldDistribution = $this->rebalance();
 
-        $this->consistentHashRing->addNode(node: $cacheNode);
+        $this->consistentHashRing->addNode(cacheNode: $cacheNode);
 
         $newDistribution = $this->rebalance();
 
         return $this->calculateMoves(old: $oldDistribution, new: $newDistribution);
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function rebalance() : array
     {
         $moves = [];
@@ -37,6 +43,12 @@ final readonly class RebalanceCachePartitions
         return $moves;
     }
 
+    /**
+     * @param array<int, string> $old
+     * @param array<int, string> $new
+     *
+     * @return array<int, array{from: string|null, to: string}>
+     */
     private function calculateMoves(array $old, array $new) : array
     {
         $moves = [];
@@ -53,11 +65,14 @@ final readonly class RebalanceCachePartitions
         return $moves;
     }
 
+    /**
+     * @return array<int, array{from: string|null, to: string}>
+     */
     public function removeNode(CacheNodeId $cacheNodeId) : array
     {
         $oldDistribution = $this->rebalance();
 
-        $this->consistentHashRing->removeNode(nodeId: $cacheNodeId);
+        $this->consistentHashRing->removeNode(cacheNodeId: $cacheNodeId);
 
         $newDistribution = $this->rebalance();
 

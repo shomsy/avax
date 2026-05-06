@@ -244,6 +244,11 @@ final readonly class RenderRuntimeFailure
             'session' => $_SESSION ?? [],
         ];
 
+        $encodedContext = json_encode($contextData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        if ($encodedContext === false) {
+            $encodedContext = '{}';
+        }
+
         return sprintf(
             self::DEVELOPMENT_TEMPLATE,
             htmlspecialchars($throwable::class, ENT_QUOTES, 'UTF-8'),
@@ -251,7 +256,7 @@ final readonly class RenderRuntimeFailure
             htmlspecialchars($throwable->getFile(), ENT_QUOTES, 'UTF-8'),
             $throwable->getLine(),
             $traceHtml,
-            htmlspecialchars(json_encode($contextData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($encodedContext, ENT_QUOTES, 'UTF-8'),
             $this->correlationId ?? 'N/A',
             $this->traceId ?? 'N/A',
             date('Y-m-d H:i:s'),

@@ -8,6 +8,9 @@ use Override;
 
 final readonly class WriteThroughInvalidation implements InvalidationStrategy
 {
+    /**
+     * @param array<string, mixed> $context
+     */
     #[Override]
     public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
     {

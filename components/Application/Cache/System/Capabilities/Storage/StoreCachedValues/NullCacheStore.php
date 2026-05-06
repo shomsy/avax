@@ -13,7 +13,7 @@ final class NullCacheStore implements CacheStore
     #[Override]
     public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasMissing
     {
-        return new CacheStoreRecordWasMissing(key: $cacheKey);
+        return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
     }
 
     #[Override]

@@ -15,6 +15,6 @@ final readonly class WriteCachedValueToAllTiers
 
     public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
-        $this->tieredCache->write(key: $cacheKey, record: $storedCacheRecord);
+        $this->tieredCache->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
     }
 }

@@ -18,6 +18,9 @@ final readonly class CompiledCacheManifestEntry
     ) {
     }
 
+    /**
+     * @param array{name: string, path: string, createdAt: int, sourceFingerprint: string} $data
+     */
     public static function fromArray(array $data): self
     {
         return self::create(
@@ -35,13 +38,23 @@ final readonly class CompiledCacheManifestEntry
         string $sourceFingerprint,
     ): self {
         return new self(
+            compiledCacheName: new CompiledCacheName(name: $name),
+            compiledCachePath: new CompiledCachePath(path: $path),
+            timestamp        : Timestamp::fromUnixTime(timestamp: $createdAt),
             sourceFingerprint: $sourceFingerprint,
-            name             : new CompiledCacheName(name: $name),
-            path             : new CompiledCachePath(path: $path),
-            createdAt        : Timestamp::fromUnixTime(timestamp: $createdAt),
         );
     }
 
+    /**
+     * @return array{
+     *     name: string,
+     *     path: string,
+     *     createdAt: int,
+     *     sourceFingerprint: string,
+     *     phpVersion: string|null,
+     *     frameworkVersion: string|null
+     * }
+     */
     public function toArray(): array
     {
         return [

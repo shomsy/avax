@@ -14,12 +14,12 @@ final readonly class LoadValueFromSource
 
     public function loadOrFail(CacheKey $cacheKey) : mixed
     {
-        $cacheSourceKey = CacheSourceKey::create(namespace: $cacheKey->namespace, cacheKey: $cacheKey->fullKey());
+        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
         if (! $this->cacheSource->exists($cacheSourceKey)) {
             throw new CacheSourceFailed(
                 message  : sprintf('Source key "%s" does not exist', $cacheKey->fullKey()),
-                sourceKey: $cacheSourceKey,
+                cacheSourceKey: $cacheSourceKey,
             );
         }
 
@@ -28,7 +28,7 @@ final readonly class LoadValueFromSource
 
     public function load(CacheKey $cacheKey) : mixed
     {
-        $cacheSourceKey = CacheSourceKey::create(namespace: $cacheKey->namespace, cacheKey: $cacheKey->fullKey());
+        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
         return $this->cacheSource->load($cacheSourceKey);
     }

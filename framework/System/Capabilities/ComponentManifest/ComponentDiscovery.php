@@ -11,9 +11,11 @@ final class ComponentDiscovery
      */
     private array $components = [];
 
-    public function discover() : self
+    /**
+     * @param list<string> $searchPaths
+     */
+    public function discover(array $searchPaths = []) : void
     {
-        return $this;
     }
 
     public function register(ComponentManifest $componentManifest) : void
@@ -32,5 +34,13 @@ final class ComponentDiscovery
     public function all(): array
     {
         return $this->components;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function detectMissingDependencies(): array
+    {
+        return [];
     }
 }

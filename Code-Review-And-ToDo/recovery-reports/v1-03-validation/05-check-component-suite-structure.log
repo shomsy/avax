@@ -1,4 +1,1 @@
-Script started on 2026-05-06 01:35:57+02:00 [COMMAND="php tooling/refactor/check-component-suite-structure.php" <not executed on terminal>]
-^@PASS
-
-Script done on 2026-05-06 01:35:57+02:00 [COMMAND_EXIT_CODE="0"]
+PASS

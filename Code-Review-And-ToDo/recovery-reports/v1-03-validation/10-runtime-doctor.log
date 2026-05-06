@@ -1,7 +1,4 @@
-Script started on 2026-05-06 01:36:35+02:00 [COMMAND="php avax runtime:doctor" <not executed on terminal>]
-^@[33mAvax Runtime Doctor[0m
+[33mAvax Runtime Doctor[0m
 Mode: development
 
 [32mNo runtime safety issues detected.[0m
-
-Script done on 2026-05-06 01:36:36+02:00 [COMMAND_EXIT_CODE="0"]

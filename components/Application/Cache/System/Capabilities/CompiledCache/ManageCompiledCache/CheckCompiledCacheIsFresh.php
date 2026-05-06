@@ -12,13 +12,13 @@ final readonly class CheckCompiledCacheIsFresh
 
     public function requiresRebuild(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources): bool
     {
-        return $this->check(name: $compiledCacheName, sources: $compiledCacheSources) !== CompiledCacheFreshness::FRESH;
+        return $this->check(compiledCacheName: $compiledCacheName, compiledCacheSources: $compiledCacheSources) !== CompiledCacheFreshness::FRESH;
     }
 
     public function check(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources): CompiledCacheFreshness
     {
-        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
         if (! file_exists($compiledCachePath->toString())) {
             return CompiledCacheFreshness::MISSING;
@@ -28,7 +28,7 @@ final readonly class CheckCompiledCacheIsFresh
             return CompiledCacheFreshness::STALE;
         }
 
-        if (! $this->compiledCacheManifest->isFresh(name: $compiledCacheName->toString(), sources: $compiledCacheSources)) {
+        if (! $this->compiledCacheManifest->isFresh(name: $compiledCacheName->toString(), compiledCacheSources: $compiledCacheSources)) {
             return CompiledCacheFreshness::STALE;
         }
 

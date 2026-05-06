@@ -10,6 +10,9 @@ final readonly class SoftThenRefreshInvalidation implements InvalidationStrategy
 {
     public function __construct(private bool $allowSoft = true, private int $staleRefreshWindowSeconds = 300) {}
 
+    /**
+     * @param array<string, mixed> $context
+     */
     #[Override]
     public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
     {
@@ -19,7 +22,7 @@ final readonly class SoftThenRefreshInvalidation implements InvalidationStrategy
 
         $staleAge = $context['stale_age_seconds'] ?? 0;
 
-        return $staleAge > $this->staleRefreshWindowSeconds;
+        return is_int($staleAge) && $staleAge > $this->staleRefreshWindowSeconds;
     }
 
     #[Override]

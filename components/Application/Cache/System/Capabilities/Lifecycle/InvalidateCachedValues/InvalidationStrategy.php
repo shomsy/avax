@@ -6,6 +6,9 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\Invali
 
 interface InvalidationStrategy
 {
+    /**
+     * @param array<string, mixed> $context
+     */
     public function shouldInvalidate(
         string $key,
         string $reason,

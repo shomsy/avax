@@ -48,6 +48,9 @@ final class BuildCompiledPhpPayload
         }
     }
 
+    /**
+     * @param array<array-key, mixed> $data
+     */
     private function validateArray(array $data): void
     {
         foreach ($data as $key => $value) {

@@ -16,7 +16,7 @@ final class L1MemoryCache
         $inMemoryCacheStore = self::create(clock: $clock);
 
         $tieredCache = new TieredCache($clock, $cacheTier);
-        $tieredCache->registerTier(tier: $cacheTier, store: $inMemoryCacheStore);
+        $tieredCache->registerTier(cacheTier: $cacheTier, cacheStore: $inMemoryCacheStore);
 
         return $tieredCache;
     }

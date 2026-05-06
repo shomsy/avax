@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\ResourceGovernance\System\PublicSurface;
 
-use Avax\Components\ResourceGovernor\System\Capabilities\Memory\MemoryBudget;
-use Avax\Components\ResourceGovernor\System\Capabilities\Memory\MemorySnapshot;
+use Avax\Framework\System\Capabilities\ResourceGovernance\System\Capabilities\Memory\MemoryBudget;
+use Avax\Framework\System\Capabilities\ResourceGovernance\System\Capabilities\Memory\MemorySnapshot;
 use Stringable;
 
 final class ResourceGovernor

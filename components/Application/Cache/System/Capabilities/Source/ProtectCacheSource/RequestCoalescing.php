@@ -21,11 +21,11 @@ final readonly class RequestCoalescing
     {
         $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
 
-        if ($cacheLock->acquire(ttlSeconds: $this->cacheLockTimeout->seconds, cacheKey: $cacheKey->fullKey())) {
+        if ($cacheLock->acquire(key: $cacheKey->fullKey(), ttlSeconds: $this->cacheLockTimeout->seconds)) {
             try {
                 return $loader();
             } finally {
-                $cacheLock->release(cacheKey: $cacheKey->fullKey());
+                $cacheLock->release(key: $cacheKey->fullKey());
             }
         }
 
@@ -35,7 +35,7 @@ final readonly class RequestCoalescing
 
         usleep($this->cacheLockTimeout->inMilliseconds() * 1000);
 
-        return $this->execute(loader: $loader, onStale: $onStale, key: $cacheKey);
+        return $this->execute(cacheKey: $cacheKey, loader: $loader, onStale: $onStale);
     }
 
     public function tryAcquireLock(CacheKey $cacheKey) : bool

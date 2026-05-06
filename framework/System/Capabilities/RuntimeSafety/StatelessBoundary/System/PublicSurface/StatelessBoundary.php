@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\RuntimeSafety\StatelessBoundary\System\PublicSurface;
 
-use Avax\Components\StatelessBoundary\System\Capabilities\Enforcement\StatelessGuard;
+use Avax\Framework\System\Capabilities\RuntimeSafety\StatelessBoundary\System\Capabilities\Enforcement\StatelessGuard;
 
 final class StatelessBoundary
 {

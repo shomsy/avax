@@ -24,10 +24,10 @@ final readonly class PromoteCachedValueToFasterTier
                     continue;
                 }
 
-                $result = $store->read(clock: $this->clock, key: $cacheKey);
+                $result = $store->read(cacheKey: $cacheKey, clock: $this->clock);
 
                 if ($result instanceof CacheStoreRecordWasFound) {
-                    $storedCacheRecord = $result->record;
+                    $storedCacheRecord = $result->storedCacheRecord;
 
                     break;
                 }
@@ -38,8 +38,8 @@ final readonly class PromoteCachedValueToFasterTier
             }
         }
 
-        $this->tieredCache->forget(key: $cacheKey);
-        $this->tieredCache->write(key: $cacheKey, record: $storedCacheRecord);
+        $this->tieredCache->forget(cacheKey: $cacheKey);
+        $this->tieredCache->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
 
         return true;
     }

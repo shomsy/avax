@@ -13,13 +13,16 @@ final readonly class ForgetCachedValueFromAllTiers
     ) {
     }
 
+    /**
+     * @param iterable<CacheKey|string> $keys
+     */
     public function forgetMany(iterable $keys): int
     {
         $count = 0;
 
         foreach ($keys as $key) {
             $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
-            $this->tieredCache->forget(key: $cacheKey);
+            $this->tieredCache->forget(cacheKey: $cacheKey);
             $count++;
         }
 
@@ -28,6 +31,6 @@ final readonly class ForgetCachedValueFromAllTiers
 
     public function forget(CacheKey $cacheKey): void
     {
-        $this->tieredCache->forget(key: $cacheKey);
+        $this->tieredCache->forget(cacheKey: $cacheKey);
     }
 }

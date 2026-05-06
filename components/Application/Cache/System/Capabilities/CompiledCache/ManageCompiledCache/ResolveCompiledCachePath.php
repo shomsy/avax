@@ -15,7 +15,7 @@ final readonly class ResolveCompiledCachePath
 
     public function resolveWithinBase(string $artifactName) : CompiledCachePath
     {
-        return $this->resolveArtifactPath(name: new CompiledCacheName(name: $artifactName));
+        return $this->resolveArtifactPath(compiledCacheName: new CompiledCacheName(name: $artifactName));
     }
 
     public function resolveArtifactPath(CompiledCacheName $compiledCacheName) : CompiledCachePath

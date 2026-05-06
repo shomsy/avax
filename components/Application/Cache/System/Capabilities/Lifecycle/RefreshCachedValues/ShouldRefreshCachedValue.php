@@ -20,9 +20,9 @@ final readonly class ShouldRefreshCachedValue
     {
         return match ($this->refreshPolicy) {
             RefreshPolicy::DO_NOT_REFRESH     => false,
-            RefreshPolicy::REFRESH_ON_READ    => $this->shouldRefreshOnRead(lifecycle: $cachedValueLifecycle),
-            RefreshPolicy::REFRESH_AHEAD      => $this->shouldRefreshAhead(lifecycle: $cachedValueLifecycle),
-            RefreshPolicy::REFRESH_WHEN_STALE => $this->shouldRefreshWhenStale(lifecycle: $cachedValueLifecycle),
+            RefreshPolicy::REFRESH_ON_READ    => $this->shouldRefreshOnRead(cachedValueLifecycle: $cachedValueLifecycle),
+            RefreshPolicy::REFRESH_AHEAD      => $this->shouldRefreshAhead(cachedValueLifecycle: $cachedValueLifecycle),
+            RefreshPolicy::REFRESH_WHEN_STALE => $this->shouldRefreshWhenStale(cachedValueLifecycle: $cachedValueLifecycle),
             RefreshPolicy::REFRESH_AFTER_WRITE => true,
         };
     }

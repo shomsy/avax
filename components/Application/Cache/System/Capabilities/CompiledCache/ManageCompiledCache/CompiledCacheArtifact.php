@@ -33,6 +33,6 @@ final readonly class CompiledCacheArtifact
 
     public function toString() : string
     {
-        return (string) $this->path;
+        return $this->path->toString();
     }
 }

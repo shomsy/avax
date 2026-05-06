@@ -37,11 +37,16 @@ final readonly class CompiledCacheSource
             throw new InvalidArgumentException(message: sprintf('Source file does not exist: %s', $path));
         }
 
-        $stat = stat($path);
+        $stat  = stat($path);
+        $mtime = $stat !== false ? $stat['mtime'] : filemtime($path);
+
+        if (! is_int($mtime)) {
+            throw new InvalidArgumentException(message: sprintf('Cannot read source mtime: %s', $path));
+        }
 
         return new self(
             path    : $path,
-            mtime   : $stat !== false ? $stat['mtime'] : filemtime($path),
+            mtime   : $mtime,
         );
     }
 

@@ -67,6 +67,9 @@ final class CompiledCacheSources
         return md5(implode('|', $fingerprints));
     }
 
+    /**
+     * @return array<string, CompiledCacheSource>
+     */
     public function all(): array
     {
         return $this->sources;

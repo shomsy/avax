@@ -15,8 +15,14 @@ use IteratorAggregate;
 use Override;
 use Traversable;
 
+/**
+ * @implements IteratorAggregate<string, CacheStore>
+ */
 final readonly class DistributedCacheStore implements CacheStore, IteratorAggregate
 {
+    /**
+     * @param array<string, CacheStore> $nodeStores
+     */
     public function __construct(
         private ConsistentHashRing $consistentHashRing,
         private Clock $clock,
@@ -27,28 +33,28 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     public function registerNodeStore(CacheNodeId $cacheNodeId, CacheStore $cacheStore): self
     {
         return new self(
-            clock     : $this->clock,
-            nodeStores: array_merge($this->nodeStores, [$cacheNodeId->toString() => $cacheStore]),
-            ring      : $this->consistentHashRing,
+            consistentHashRing: $this->consistentHashRing,
+            clock             : $this->clock,
+            nodeStores        : array_merge($this->nodeStores, [$cacheNodeId->toString() => $cacheStore]),
         );
     }
 
     #[Override]
     public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
+        $node = $this->consistentHashRing->getNodeForKey(cacheKey: $cacheKey);
 
         if (! $node instanceof CacheNode) {
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
-        $store = $this->getNodeStore(nodeId: $node->id);
+        $store = $this->getNodeStore(cacheNodeId: $node->id);
 
         if (! $store instanceof CacheStore) {
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
-        return $store->read(clock: $clock, key: $cacheKey);
+        return $store->read(cacheKey: $cacheKey, clock: $clock);
     }
 
     public function getNodeStore(CacheNodeId $cacheNodeId): ?CacheStore
@@ -59,16 +65,16 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     #[Override]
     public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void
     {
-        $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
+        $node = $this->consistentHashRing->getNodeForKey(cacheKey: $cacheKey);
 
         if (! $node instanceof CacheNode) {
             return;
         }
 
-        $store = $this->resolveNodeStore(node: $node);
+        $store = $this->resolveNodeStore(cacheNode: $node);
 
         if ($store instanceof CacheStore) {
-            $store->write(key: $cacheKey, record: $storedCacheRecord);
+            $store->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
         }
     }
 
@@ -80,16 +86,16 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     #[Override]
     public function forget(CacheKey $cacheKey): void
     {
-        $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
+        $node = $this->consistentHashRing->getNodeForKey(cacheKey: $cacheKey);
 
         if (! $node instanceof CacheNode) {
             return;
         }
 
-        $store = $this->resolveNodeStore(node: $node);
+        $store = $this->resolveNodeStore(cacheNode: $node);
 
         if ($store instanceof CacheStore) {
-            $store->forget(key: $cacheKey);
+            $store->forget(cacheKey: $cacheKey);
         }
     }
 
@@ -104,19 +110,19 @@ final readonly class DistributedCacheStore implements CacheStore, IteratorAggreg
     #[Override]
     public function exists(CacheKey $cacheKey): bool
     {
-        $node = $this->consistentHashRing->getNodeForKey(key: $cacheKey);
+        $node = $this->consistentHashRing->getNodeForKey(cacheKey: $cacheKey);
 
         if (! $node instanceof CacheNode) {
             return false;
         }
 
-        $store = $this->resolveNodeStore(node: $node);
+        $store = $this->resolveNodeStore(cacheNode: $node);
 
         if (! $store instanceof CacheStore) {
             return false;
         }
 
-        return $store->exists(key: $cacheKey);
+        return $store->exists(cacheKey: $cacheKey);
     }
 
     #[Override]

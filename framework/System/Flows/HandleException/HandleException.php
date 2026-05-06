@@ -34,7 +34,7 @@ final class HandleException
     {
         return new RuntimeResponse(
             statusCode: 500,
-            headers: ['Content-Type' => 'text/plain'],
+            headers: ['Content-Type' => ['text/plain']],
             body      : $throwable->getMessage(),
         );
     }

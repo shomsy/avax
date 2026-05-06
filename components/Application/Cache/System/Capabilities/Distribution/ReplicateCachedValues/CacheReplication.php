@@ -181,9 +181,9 @@ final class CacheReplication
         ?PrimaryReplicaPolicy $primaryReplicaPolicy = null,
     ): self {
         return new self(
-            replicas: $replicas,
-            primary : $cacheStore,
-            policy  : $primaryReplicaPolicy ?? PrimaryReplicaPolicy::default(),
+            cacheStore          : $cacheStore,
+            replicas            : $replicas,
+            primaryReplicaPolicy: $primaryReplicaPolicy ?? PrimaryReplicaPolicy::default(),
         );
     }
 
@@ -205,10 +205,10 @@ final class CacheReplication
 
         if (! $primarySuccess) {
             return new ReplicationResult(
-                key           : $key,
-                primarySuccess: false,
-                replicaResults: [],
-                policy        : $this->primaryReplicaPolicy,
+                key                 : $key,
+                primarySuccess      : false,
+                replicaResults      : [],
+                primaryReplicaPolicy: $this->primaryReplicaPolicy,
             );
         }
 
@@ -220,10 +220,10 @@ final class CacheReplication
         }
 
         return new ReplicationResult(
-            key           : $key,
-            primarySuccess: true,
-            replicaResults: $replicaResults,
-            policy        : $this->primaryReplicaPolicy,
+            key                 : $key,
+            primarySuccess      : true,
+            replicaResults      : $replicaResults,
+            primaryReplicaPolicy: $this->primaryReplicaPolicy,
         );
     }
 

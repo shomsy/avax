@@ -87,6 +87,9 @@ final class FrequencyTracker
         unset($this->frequencies[$key], $this->lastDecayTimes[$key]);
     }
 
+    /**
+     * @param list<string> $keys
+     */
     public function getLeastFrequent(array $keys): ?string
     {
         if ($keys === []) {

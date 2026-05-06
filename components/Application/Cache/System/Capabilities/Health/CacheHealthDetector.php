@@ -86,7 +86,7 @@ final class CacheHealthDetector
         }
 
         $status = $this->statusCache[$storeId];
-        $age    = $timestamp->difference($status->lastCheck)->seconds;
+        $age    = $timestamp->difference($status->timestamp)->seconds;
 
         if ($age > $this->statusCacheTtlSeconds) {
             unset($this->statusCache[$storeId]);
@@ -117,7 +117,7 @@ final class CacheHealthDetector
             // If we got here, the connection is working
             return CacheHealthStatus::healthy(
                 latency  : $latencyMs,
-                lastCheck: $now,
+                timestamp: $now,
             );
         } catch (Throwable $throwable) {
             $latencyMs = (int) ((microtime(true) - $startTime) * 1000);
@@ -125,7 +125,7 @@ final class CacheHealthDetector
             return CacheHealthStatus::unhealthy(
                 error    : sprintf('Connection check failed: %s', $throwable->getMessage()),
                 latency  : $latencyMs,
-                lastCheck: $now,
+                timestamp: $now,
             );
         }
     }
@@ -180,7 +180,7 @@ final class CacheHealthDetector
         if ($latencies === []) {
             return CacheHealthStatus::degraded(
                 error    : sprintf('Latency check failed: %s', implode(', ', $errors)),
-                lastCheck: $now,
+                timestamp: $now,
             );
         }
 
@@ -191,13 +191,13 @@ final class CacheHealthDetector
             return CacheHealthStatus::degraded(
                 error    : sprintf('High latency detected: %dms (threshold: %dms)', $maxLatency, $this->latencyThresholdMs),
                 latency  : $avgLatency,
-                lastCheck: $now,
+                timestamp: $now,
             );
         }
 
         return CacheHealthStatus::healthy(
             latency  : $avgLatency,
-            lastCheck: $now,
+            timestamp: $now,
         );
     }
 
@@ -245,7 +245,7 @@ final class CacheHealthDetector
                         $memoryLimit,
                     ),
                     memoryUsage: $usagePercent,
-                    lastCheck  : $now,
+                    timestamp  : $now,
                     memoryLimit: $memoryLimit,
                     keyCount   : $memoryInfo['keyCount'],
                 );
@@ -254,14 +254,14 @@ final class CacheHealthDetector
             return CacheHealthStatus::healthy(
                 latency    : 0,
                 memoryUsage: $usagePercent,
-                lastCheck  : $now,
+                timestamp  : $now,
                 memoryLimit: $memoryLimit,
                 keyCount   : $memoryInfo['keyCount'],
             );
         } catch (Throwable $throwable) {
             return CacheHealthStatus::degraded(
                 error    : sprintf('Memory check failed: %s', $throwable->getMessage()),
-                lastCheck: $now,
+                timestamp: $now,
             );
         }
     }
@@ -303,7 +303,7 @@ final class CacheHealthDetector
                 return CacheHealthStatus::healthy(
                     latency  : 0,
                     hitRate  : 1.0,
-                    lastCheck: $now,
+                    timestamp: $now,
                 );
             }
 
@@ -315,19 +315,19 @@ final class CacheHealthDetector
                         $this->hitRateThreshold * 100,
                     ),
                     hitRate  : $hitRate,
-                    lastCheck: $now,
+                    timestamp: $now,
                 );
             }
 
             return CacheHealthStatus::healthy(
                 latency  : 0,
                 hitRate  : $hitRate,
-                lastCheck: $now,
+                timestamp: $now,
             );
         } catch (Throwable $throwable) {
             return CacheHealthStatus::degraded(
                 error    : sprintf('Hit rate check failed: %s', $throwable->getMessage()),
-                lastCheck: $now,
+                timestamp: $now,
             );
         }
     }
@@ -409,7 +409,7 @@ final class CacheHealthDetector
             latency        : max($latency->latency, $connection->latency),
             memoryUsage    : $memory->memoryUsage,
             hitRate        : $hitRate->hitRate,
-            lastCheck      : $connection->lastCheck,
+            timestamp      : $connection->timestamp,
             memoryLimit    : $memory->memoryLimit,
             keyCount       : $memory->keyCount,
             connectionCount: $connection->connectionCount,

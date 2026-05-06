@@ -6,8 +6,8 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution;
 
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNode;
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\CacheNodeStatus;
-use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
-use Avax\Components\Application\DateTime\System\PublicSurface\SystemClock;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 /**
  * Health checking for cache nodes.
@@ -34,7 +34,7 @@ final class CacheNodeHealth
      */
     public function check(CacheNode $cacheNode): NodeHealthRecord
     {
-        $nodeId = $cacheNode->id;
+        $nodeId = $cacheNode->id->toString();
         $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
@@ -62,7 +62,7 @@ final class CacheNodeHealth
      */
     public function markHealthy(CacheNode $cacheNode): NodeHealthRecord
     {
-        $nodeId = $cacheNode->id;
+        $nodeId = $cacheNode->id->toString();
         $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
@@ -106,7 +106,7 @@ final class CacheNodeHealth
      */
     public function markUnhealthy(CacheNode $cacheNode): NodeHealthRecord
     {
-        $nodeId = $cacheNode->id;
+        $nodeId = $cacheNode->id->toString();
         $now    = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {

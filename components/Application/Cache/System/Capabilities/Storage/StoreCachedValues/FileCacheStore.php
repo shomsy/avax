@@ -15,6 +15,7 @@ use JsonException;
 use Override;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 use Throwable;
 
 final readonly class FileCacheStore implements CacheStore
@@ -48,7 +49,7 @@ final readonly class FileCacheStore implements CacheStore
     #[Override]
     public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void
     {
-        $filePath = $this->getFilePath(key: $cacheKey);
+        $filePath = $this->getFilePath(cacheKey: $cacheKey);
         $this->ensureDirectoryExistsForKey(filePath: $filePath);
 
         $serializedCachePayload = $this->jsonCacheSerializer->serialize(value: $storedCacheRecord->value);
@@ -56,7 +57,7 @@ final readonly class FileCacheStore implements CacheStore
         $data = [
             'value'          => $serializedCachePayload->data,
             'format'         => $serializedCachePayload->format,
-            'lifecycle'      => $this->serializeLifecycle(lifecycle: $storedCacheRecord->lifecycle),
+            'lifecycle'      => $this->serializeLifecycle(cachedValueLifecycle: $storedCacheRecord->cachedValueLifecycle),
             'serializedData' => $storedCacheRecord->serializedData,
         ];
 
@@ -110,6 +111,16 @@ final readonly class FileCacheStore implements CacheStore
         }
     }
 
+    /**
+     * @return array{
+     *     createdAt: int,
+     *     lastAccessedAt: int,
+     *     expiresAt: int,
+     *     refreshedAt: int,
+     *     hitCount: int,
+     *     refreshCount: int
+     * }
+     */
     private function serializeLifecycle(CachedValueLifecycle $cachedValueLifecycle): array
     {
         return [
@@ -141,10 +152,20 @@ final readonly class FileCacheStore implements CacheStore
         );
 
         foreach ($items as $item) {
+            if (! $item instanceof SplFileInfo) {
+                continue;
+            }
+
+            $path = $item->getRealPath();
+
+            if ($path === false) {
+                continue;
+            }
+
             if ($item->isDir()) {
-                @rmdir($item->getRealPath());
+                @rmdir($path);
             } else {
-                @unlink($item->getRealPath());
+                @unlink($path);
             }
         }
     }
@@ -152,13 +173,13 @@ final readonly class FileCacheStore implements CacheStore
     #[Override]
     public function exists(CacheKey $cacheKey): bool
     {
-        $filePath = $this->getFilePath(key: $cacheKey);
+        $filePath = $this->getFilePath(cacheKey: $cacheKey);
 
         if (! file_exists($filePath)) {
             return false;
         }
 
-        $result = $this->read(clock: $this->clock, key: $cacheKey);
+        $result = $this->read(cacheKey: $cacheKey, clock: $this->clock);
 
         return $result instanceof CacheStoreRecordWasFound;
     }
@@ -166,89 +187,108 @@ final readonly class FileCacheStore implements CacheStore
     #[Override]
     public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        $filePath = $this->getFilePath(key: $cacheKey);
+        $filePath = $this->getFilePath(cacheKey: $cacheKey);
 
         if (! file_exists($filePath)) {
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
         $content = file_get_contents($filePath);
 
         if ($content === false || $content === '') {
-            $this->forget(key: $cacheKey);
+            $this->forget(cacheKey: $cacheKey);
 
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
         try {
             $data = json_decode($content, associative: true, depth: 512);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $this->forget(key: $cacheKey);
+            if (json_last_error() !== JSON_ERROR_NONE || ! is_array($data)) {
+                $this->forget(cacheKey: $cacheKey);
 
-                return new CacheStoreRecordWasMissing(key: $cacheKey);
+                return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
             }
 
-            $lifecycle = $this->deserializeLifecycle(data: $data['lifecycle'] ?? [], clock: $clock);
+            $lifecycleData = is_array($data['lifecycle'] ?? null) ? $data['lifecycle'] : [];
+            $lifecycle = $this->deserializeLifecycle(data: $lifecycleData, clock: $clock);
 
             if ($lifecycle->isExpired(clock: $clock)) {
-                $this->forget(key: $cacheKey);
+                $this->forget(cacheKey: $cacheKey);
 
-                return new CacheStoreRecordWasMissing(key: $cacheKey);
+                return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
             }
 
+            $serializedValue = is_string($data['value'] ?? null) ? $data['value'] : '';
+            $format = is_string($data['format'] ?? null) ? $data['format'] : 'json';
+
             $valuePayload = SerializedCachePayload::create(
-                data  : $data['value']  ?? '',
-                format: $data['format'] ?? 'json',
+                data  : $serializedValue,
+                format: $format,
                 clock : $clock,
             );
 
-            $value = $this->jsonCacheSerializer->unserialize(payload: $valuePayload);
+            $value = $this->jsonCacheSerializer->unserialize(serializedCachePayload: $valuePayload);
+
+            $serializedData = is_string($data['serializedData'] ?? null) ? $data['serializedData'] : null;
 
             $record = new StoredCacheRecord(
-                value         : $value,
-                serializedData: $data['serializedData'] ?? null,
-                format        : $data['format']         ?? null,
-                lifecycle     : $lifecycle,
+                value               : $value,
+                serializedData      : $serializedData,
+                format              : $format,
+                cachedValueLifecycle: $lifecycle,
             );
 
             $updatedLifecycle = $lifecycle->withAccessed(clock: $clock);
             $record           = new StoredCacheRecord(
-                value         : $record->value,
-                serializedData: $record->serializedData,
-                format        : $record->format,
-                lifecycle     : $updatedLifecycle,
+                value               : $record->value,
+                serializedData      : $record->serializedData,
+                format              : $record->format,
+                cachedValueLifecycle: $updatedLifecycle,
             );
 
-            return new CacheStoreRecordWasFound(clock: $clock, key: $cacheKey, record: $record);
+            return new CacheStoreRecordWasFound(
+                cacheKey: $cacheKey,
+                storedCacheRecord: $record,
+                clock: $clock,
+            );
         } catch (Throwable) {
-            $this->forget(key: $cacheKey);
+            $this->forget(cacheKey: $cacheKey);
 
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
     }
 
     #[Override]
     public function forget(CacheKey $cacheKey): void
     {
-        $filePath = $this->getFilePath(key: $cacheKey);
+        $filePath = $this->getFilePath(cacheKey: $cacheKey);
 
         if (file_exists($filePath)) {
             @unlink($filePath);
         }
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function deserializeLifecycle(array $data, Clock $clock): CachedValueLifecycle
     {
         $now = $clock->now();
+        $createdAt = is_int($data['createdAt'] ?? null) ? $data['createdAt'] : $now->seconds;
+        $lastAccessedAt = is_int($data['lastAccessedAt'] ?? null) ? $data['lastAccessedAt'] : $now->seconds;
+        $expiresAt = is_int($data['expiresAt'] ?? null) ? $data['expiresAt'] : $now->seconds;
+        $refreshedAt = is_int($data['refreshedAt'] ?? null) ? $data['refreshedAt'] : $now->seconds;
+        $hitCount = is_int($data['hitCount'] ?? null) ? $data['hitCount'] : 0;
+        $refreshCount = is_int($data['refreshCount'] ?? null) ? $data['refreshCount'] : 0;
 
         return new CachedValueLifecycle(
-            createdAt     : Timestamp::fromUnixTime(timestamp: $data['createdAt'] ?? $now->seconds),
-            lastAccessedAt: Timestamp::fromUnixTime(timestamp: $data['lastAccessedAt'] ?? $now->seconds),
-            expiresAt     : Timestamp::fromUnixTime(timestamp: $data['expiresAt'] ?? $now->seconds),
-            refreshedAt   : Timestamp::fromUnixTime(timestamp: $data['refreshedAt'] ?? $now->seconds),
-            hitCount      : $data['hitCount']     ?? 0,
-            refreshCount  : $data['refreshCount'] ?? 0,
+            createdAt     : Timestamp::fromUnixTime(timestamp: $createdAt),
+            lastAccessedAt: Timestamp::fromUnixTime(timestamp: $lastAccessedAt),
+            expiresAt     : Timestamp::fromUnixTime(timestamp: $expiresAt),
+            refreshedAt   : Timestamp::fromUnixTime(timestamp: $refreshedAt),
+            hitCount      : $hitCount,
+            refreshCount  : $refreshCount,
         );
     }
 }

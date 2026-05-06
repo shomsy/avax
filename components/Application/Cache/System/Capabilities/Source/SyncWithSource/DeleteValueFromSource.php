@@ -12,6 +12,9 @@ final readonly class DeleteValueFromSource
     {
     }
 
+    /**
+     * @param iterable<CacheKey|string> $keys
+     */
     public function deleteMany(iterable $keys): int
     {
         $count = 0;
@@ -27,7 +30,7 @@ final readonly class DeleteValueFromSource
 
     public function delete(CacheKey $cacheKey): void
     {
-        $cacheSourceKey = CacheSourceKey::create(namespace: $cacheKey->namespace, cacheKey: $cacheKey->fullKey());
+        $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
         $this->cacheSource->delete($cacheSourceKey);
     }
 }

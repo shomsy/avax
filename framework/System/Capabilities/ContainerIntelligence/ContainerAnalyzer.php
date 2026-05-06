@@ -8,13 +8,17 @@ use Avax\Components\Application\Container\System\ContainerInterface;
 
 final readonly class ContainerAnalyzer
 {
+    public function __construct(private ContainerInterface|null $container = null)
+    {
+    }
+
     public function assessWorkerSafety(): SafetyAssessment
     {
         return new SafetyAssessment(safe: true, violations: []);
     }
 
     /**
-     * @return list<string>
+     * @return list<ScopeViolation>
      */
     public function detectScopeViolations(): array
     {
@@ -29,9 +33,18 @@ final readonly class ContainerAnalyzer
         return [];
     }
 
-    public function why(string $id): string
+    public function why(string $id): ContainerDependencyExplanation
     {
-        return sprintf('Service %s is available.', $id);
+        return new ContainerDependencyExplanation(
+            serviceId: $id,
+            scope: 'unknown',
+            isShared: false,
+            isLazy: false,
+            isDeferred: false,
+            dependencies: $this->getServiceDependencies(),
+            workerSafe: true,
+            explanation: sprintf('Service %s is available.', $id),
+        );
     }
 
     /**

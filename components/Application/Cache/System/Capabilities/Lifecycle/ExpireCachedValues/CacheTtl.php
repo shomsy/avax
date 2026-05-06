@@ -25,7 +25,7 @@ final readonly class CacheTtl implements CacheExpiration
         }
 
         if ($ttl instanceof DateInterval) {
-            return Duration::fromDateInterval(interval: $ttl)->toSeconds();
+            return Duration::fromDateInterval(dateInterval: $ttl)->toSeconds();
         }
 
         return $ttl > 0 ? $ttl : null;
@@ -44,7 +44,7 @@ final readonly class CacheTtl implements CacheExpiration
 
         if ($ttl instanceof DateInterval) {
             return $clock->now()->add(
-                duration: Duration::fromDateInterval(interval: $ttl),
+                duration: Duration::fromDateInterval(dateInterval: $ttl),
             );
         }
 

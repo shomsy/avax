@@ -6,6 +6,7 @@ namespace Avax\Components\Application\Cache\System\Configuration;
 
 use Avax\Components\Application\Cache\Cache;
 use Avax\Components\Application\Cache\CompiledCache;
+use Avax\Components\Application\Cache\System\AvaxCache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
@@ -13,10 +14,13 @@ use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
+use Avax\Components\Application\Container\System\ContainerInterface;
+use LogicException;
 use Override;
 
 final class CacheRegistrar extends BaseRegisterDependency
 {
+    /** @var array<string, array<string, mixed>> */
     private array $namedCaches = [];
 
     private ?string $compiledCacheDirectory = null;
@@ -38,36 +42,70 @@ final class CacheRegistrar extends BaseRegisterDependency
             return $cacheRegistry;
         });
 
-        $this->container->singleton(abstract: CacheFacade::class, concrete: function ($app): CacheFacade {
+        $this->container->singleton(abstract: CacheFacade::class, concrete: function (ContainerInterface $app): CacheFacade {
+            /** @var CacheRegistry $cacheRegistry */
+            $cacheRegistry = $app->get(id: CacheRegistry::class);
+
+            /** @var CompiledCacheContract|null $compiledCache */
             $compiledCache = $this->compiledCacheDirectory !== null
                 ? $app->get(id: CompiledCacheContract::class)
                 : null;
 
-            return new CacheFacade($app->get(id: CacheRegistry::class), $compiledCache);
+            return new CacheFacade($cacheRegistry, $compiledCache);
         });
 
-        $this->container->singleton(abstract: ReadFromCache::class, concrete: function ($app): ReadFromCache {
+        $this->container->singleton(abstract: ReadFromCache::class, concrete: function (ContainerInterface $app): ReadFromCache {
+            /** @var CacheRegistry $cacheRegistry */
+            $cacheRegistry = $app->get(id: CacheRegistry::class);
+
+            /** @var CompiledCacheContract|null $compiledCache */
             $compiledCache = $this->compiledCacheDirectory !== null
                 ? $app->get(id: CompiledCacheContract::class)
                 : null;
 
-            return new ReadFromCache($app->get(id: CacheRegistry::class), $compiledCache);
+            return new ReadFromCache($cacheRegistry, $compiledCache);
         });
 
-        $this->container->singleton(abstract: CacheContract::class, concrete: static fn ($app) => $app->get(id: CacheRegistry::class)->default());
+        $this->container->singleton(abstract: CacheContract::class, concrete: static function (ContainerInterface $app): CacheContract {
+            /** @var CacheRegistry $cacheRegistry */
+            $cacheRegistry = $app->get(id: CacheRegistry::class);
+
+            return $cacheRegistry->default();
+        });
 
         if ($this->compiledCacheDirectory !== null) {
-            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: fn () : CompiledCacheContract => new BuildCompiledCache()->inDirectory(directory: $this->compiledCacheDirectory));
+            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: function () : CompiledCacheContract {
+                if ($this->compiledCacheDirectory === null) {
+                    throw new LogicException('Compiled cache directory was not configured.');
+                }
+
+                return (new BuildCompiledCache())->inDirectory(directory: $this->compiledCacheDirectory);
+            });
         }
 
-        Cache::use(cache: $this->container->get(id: CacheContract::class));
+        $cacheContract = $this->container->get(id: CacheContract::class);
+
+        if (! $cacheContract instanceof CacheContract) {
+            throw new LogicException('Cache contract registration did not resolve to a cache contract.');
+        }
+
+        Cache::use(cache: $cacheContract);
 
         if ($this->compiledCacheDirectory !== null) {
-            CompiledCache::use(compiledCacheContract: $this->container->get(id: CompiledCacheContract::class));
+            $compiledCacheContract = $this->container->get(id: CompiledCacheContract::class);
+
+            if (! $compiledCacheContract instanceof CompiledCacheContract) {
+                throw new LogicException('Compiled cache registration did not resolve to a compiled cache contract.');
+            }
+
+            CompiledCache::use(compiledCacheContract: $compiledCacheContract);
         }
     }
 
-    private function buildNamedCache(string $name, array $config): CacheContract
+    /**
+     * @param array<string, mixed> $config
+     */
+    private function buildNamedCache(string $name, array $config): AvaxCache
     {
         $buildCache         = new BuildCache();
         $cacheConfiguration = new CacheConfiguration(
@@ -92,6 +130,9 @@ final class CacheRegistrar extends BaseRegisterDependency
         };
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function defaultStore(string $store = 'in_memory', array $options = []): self
     {
         $this->namedCaches['default'] = array_merge(['store' => $store], $options);
@@ -99,6 +140,9 @@ final class CacheRegistrar extends BaseRegisterDependency
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function store(string $name, string $store = 'in_memory', array $options = []): self
     {
         $this->namedCaches[$name] = array_merge(['store' => $store], $options);

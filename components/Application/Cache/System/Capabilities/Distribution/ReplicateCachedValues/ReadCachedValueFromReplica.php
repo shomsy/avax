@@ -13,7 +13,7 @@ use Throwable;
 
 final readonly class ReadCachedValueFromReplica
 {
-    /** @var array<CacheStore> */
+    /** @var list<CacheStore> */
     private array $stores;
 
     public function __construct(
@@ -31,28 +31,28 @@ final readonly class ReadCachedValueFromReplica
     ) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         return match ($replicationPolicy) {
-            ReplicationPolicy::SYNCHRONOUS => $this->readFromPrimary(key: $cacheKey),
-            ReplicationPolicy::ASYNCHRONOUS => $this->readFromClosest(key: $cacheKey),
-            ReplicationPolicy::QUORUM      => $this->readWithQuorum(key: $cacheKey),
+            ReplicationPolicy::SYNCHRONOUS => $this->readFromPrimary(cacheKey: $cacheKey),
+            ReplicationPolicy::ASYNCHRONOUS => $this->readFromClosest(cacheKey: $cacheKey),
+            ReplicationPolicy::QUORUM      => $this->readWithQuorum(cacheKey: $cacheKey),
         };
     }
 
     private function readFromPrimary(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        return $this->stores[0]->read(clock: $this->clock, key: $cacheKey);
+        return $this->stores[0]->read(cacheKey: $cacheKey, clock: $this->clock);
     }
 
     private function readFromClosest(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         foreach ($this->stores as $store) {
-            $result = $store->read(clock: $this->clock, key: $cacheKey);
+            $result = $store->read(cacheKey: $cacheKey, clock: $this->clock);
 
             if ($result instanceof CacheStoreRecordWasFound) {
                 return $result;
             }
         }
 
-        return new CacheStoreRecordWasMissing(key: $cacheKey);
+        return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
     }
 
     private function readWithQuorum(CacheKey $cacheKey) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
@@ -62,7 +62,7 @@ final readonly class ReadCachedValueFromReplica
 
         foreach ($this->stores as $store) {
             try {
-                $result = $store->read(clock: $this->clock, key: $cacheKey);
+                $result = $store->read(cacheKey: $cacheKey, clock: $this->clock);
 
                 if ($result instanceof CacheStoreRecordWasFound) {
                     $results[] = $result;
@@ -73,9 +73,9 @@ final readonly class ReadCachedValueFromReplica
         }
 
         if (count($results) >= $this->chooseReplicaForRead->replicaCount()->quorumSize()) {
-            return $found ?? new CacheStoreRecordWasMissing(key: $cacheKey);
+            return $found ?? new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
-        return new CacheStoreRecordWasMissing(key: $cacheKey);
+        return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
     }
 }

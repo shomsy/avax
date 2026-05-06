@@ -12,8 +12,8 @@ final readonly class DeleteCompiledCacheFile
 
     public function delete(CompiledCacheName $compiledCacheName): void
     {
-        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
         if (file_exists($compiledCachePath->toString())) {
             unlink($compiledCachePath->toString());
@@ -22,8 +22,8 @@ final readonly class DeleteCompiledCacheFile
 
     public function deleteIfExists(CompiledCacheName $compiledCacheName): bool
     {
-        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
         if (! file_exists($compiledCachePath->toString())) {
             return false;

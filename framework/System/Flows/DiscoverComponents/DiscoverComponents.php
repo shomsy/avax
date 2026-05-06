@@ -14,7 +14,8 @@ final readonly class DiscoverComponents
     }
 
     /**
-     * @param list<string> $missingDeps
+     * @param array<string, mixed> $manifests
+     * @param list<string>        $missingDeps
      */
     public static function printReport(array $manifests, array $missingDeps): int
     {

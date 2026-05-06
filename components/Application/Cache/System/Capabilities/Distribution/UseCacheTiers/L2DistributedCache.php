@@ -16,7 +16,7 @@ final class L2DistributedCache
         $fileCacheStore = self::create(basePath: $basePath, clock: $clock);
 
         $tieredCache = new TieredCache($clock, $cacheTier);
-        $tieredCache->registerTier(tier: $cacheTier, store: $fileCacheStore);
+        $tieredCache->registerTier(cacheTier: $cacheTier, cacheStore: $fileCacheStore);
 
         return $tieredCache;
     }

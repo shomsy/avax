@@ -27,12 +27,14 @@ final class ConsistentHashRing
      */
     public function addNode(CacheNode $cacheNode): self
     {
-        $this->physicalNodes[$cacheNode->id] = $cacheNode;
+        $nodeId = $cacheNode->id->toString();
 
-        $virtualNodeCount = $cacheNode->virtualNodeCount();
+        $this->physicalNodes[$nodeId] = $cacheNode;
+
+        $virtualNodeCount = max(1, (int) round(150 * $cacheNode->weight));
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
-            $hash              = $this->hash($cacheNode->id . '#' . $i);
+            $hash              = $this->hash($nodeId . '#' . $i);
             $this->ring[$hash] = $cacheNode;
         }
 
@@ -51,7 +53,7 @@ final class ConsistentHashRing
         }
 
         $node             = $this->physicalNodes[$nodeId];
-        $virtualNodeCount = $node->virtualNodeCount();
+        $virtualNodeCount = max(1, (int) round(150 * $node->weight));
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
             $hash = $this->hash($nodeId . '#' . $i);
@@ -147,8 +149,10 @@ final class ConsistentHashRing
         while (count($selected) < $count && $iterations < $maxIterations) {
             $node = $this->ring[$ringKeys[$position]];
 
-            if (! isset($seen[$node->id])) {
-                $seen[$node->id] = true;
+            $nodeId = $node->id->toString();
+
+            if (! isset($seen[$nodeId])) {
+                $seen[$nodeId] = true;
                 $selected[]      = $node;
             }
 

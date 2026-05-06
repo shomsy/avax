@@ -31,30 +31,34 @@ final class InMemoryCacheStore implements CacheStore
         $fullKey = $cacheKey->fullKey();
 
         if (! isset($this->records[$fullKey])) {
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
         $record = $this->records[$fullKey];
 
-        if ($record->lifecycle->isExpired(clock: $clock)) {
+        if ($record->cachedValueLifecycle->isExpired(clock: $clock)) {
             unset($this->records[$fullKey]);
 
-            return new CacheStoreRecordWasMissing(key: $cacheKey);
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
         if ($this->chooseCachedValueForReplacement instanceof TrackCachedValueAccess) {
             $this->chooseCachedValueForReplacement->recordAccess(key: $fullKey);
         }
 
-        $cachedValueLifecycle    = $record->lifecycle->withAccessed(clock: $clock);
+        $cachedValueLifecycle    = $record->cachedValueLifecycle->withAccessed(clock: $clock);
         $this->records[$fullKey] = new StoredCacheRecord(
             value         : $record->value,
             serializedData: $record->serializedData,
             format        : $record->format,
-            lifecycle     : $cachedValueLifecycle,
+            cachedValueLifecycle: $cachedValueLifecycle,
         );
 
-        return new CacheStoreRecordWasFound(clock: $clock, key: $cacheKey, record: $this->records[$fullKey]);
+        return new CacheStoreRecordWasFound(
+            cacheKey: $cacheKey,
+            storedCacheRecord: $this->records[$fullKey],
+            clock: $clock,
+        );
     }
 
     #[Override]
@@ -80,13 +84,13 @@ final class InMemoryCacheStore implements CacheStore
         $entries = [];
 
         foreach ($this->records as $fullKey => $record) {
-            if ($record->lifecycle->isExpired(clock: $this->clock)) {
+            if ($record->cachedValueLifecycle->isExpired(clock: $this->clock)) {
                 unset($this->records[$fullKey]);
 
                 return;
             }
 
-            $entries[$fullKey] = $record->lifecycle;
+            $entries[$fullKey] = $record->cachedValueLifecycle;
         }
 
         if (count($this->records) >= $this->maxEntries) {
@@ -131,7 +135,7 @@ final class InMemoryCacheStore implements CacheStore
             return false;
         }
 
-        return ! $this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
+        return ! $this->records[$fullKey]->cachedValueLifecycle->isExpired(clock: $this->clock);
     }
 
     public function count(): int
@@ -139,6 +143,9 @@ final class InMemoryCacheStore implements CacheStore
         return count($this->records);
     }
 
+    /**
+     * @return list<string>
+     */
     public function getAllKeys(): array
     {
         return array_keys($this->records);
@@ -147,18 +154,18 @@ final class InMemoryCacheStore implements CacheStore
     public function withCapacity(int $maxEntries): self
     {
         return new self(
-            clock            : $this->clock,
-            maxEntries       : $maxEntries,
-            replacementPolicy: $this->chooseCachedValueForReplacement,
+            clock: $this->clock,
+            maxEntries: $maxEntries,
+            chooseCachedValueForReplacement: $this->chooseCachedValueForReplacement,
         );
     }
 
     public function withReplacementPolicy(ChooseCachedValueForReplacement $chooseCachedValueForReplacement): self
     {
         return new self(
-            clock            : $this->clock,
-            maxEntries       : $this->maxEntries,
-            replacementPolicy: $chooseCachedValueForReplacement,
+            clock: $this->clock,
+            maxEntries: $this->maxEntries,
+            chooseCachedValueForReplacement: $chooseCachedValueForReplacement,
         );
     }
 }

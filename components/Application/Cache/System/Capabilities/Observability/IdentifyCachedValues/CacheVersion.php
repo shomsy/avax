@@ -28,7 +28,7 @@ final readonly class CacheVersion implements Stringable
     public static function fromString(string $version): self
     {
         $parts = explode('.', $version);
-        $major = (int) ($parts[0] ?? '0');
+        $major = (int) $parts[0];
         $minor = (int) ($parts[1] ?? '0');
         $patch = (int) ($parts[2] ?? '0');
 

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\StartWorker;
 
-use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRuntimeInterface;
 
 final readonly class StartWorker
 {
     public function __construct(
-        private RuntimeContext $runtimeContext,
+        private WorkerRuntimeInterface|null $workerRuntime = null,
     ) {}
 
     public function start(callable $bootstrap) : void
@@ -26,6 +26,6 @@ final readonly class StartWorker
 
     private function startWorkerLoop() : void
     {
-        $this->runtimeContext->getRuntime()->run();
+        $this->workerRuntime?->run();
     }
 }

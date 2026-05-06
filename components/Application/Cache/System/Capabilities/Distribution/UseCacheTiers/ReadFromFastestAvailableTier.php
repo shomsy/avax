@@ -17,6 +17,6 @@ final readonly class ReadFromFastestAvailableTier
 
     public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
-        return $this->tieredCache->read(clock: $clock, key: $cacheKey);
+        return $this->tieredCache->read(cacheKey: $cacheKey, clock: $clock);
     }
 }

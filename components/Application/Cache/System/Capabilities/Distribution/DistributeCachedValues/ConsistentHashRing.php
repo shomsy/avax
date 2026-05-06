@@ -74,7 +74,7 @@ final class ConsistentHashRing
         $partitionHash = $this->hash(value: (string) $partitionIndex);
 
         return $this->getNodeForKey(
-            key: CacheKey::create(key: (string) $partitionHash),
+            cacheKey: CacheKey::create(key: (string) $partitionHash),
         );
     }
 

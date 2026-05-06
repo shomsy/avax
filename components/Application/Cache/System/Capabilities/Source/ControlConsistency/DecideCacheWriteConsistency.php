@@ -34,6 +34,8 @@ final readonly class DecideCacheWriteConsistency
 
     public function propagationDelayMs(): int
     {
-        return $this->consistencyWindow?->propagationDelayMs ?? 100;
+        return $this->consistencyWindow instanceof ConsistencyWindow
+            ? $this->consistencyWindow->propagationDelayMs
+            : 100;
     }
 }

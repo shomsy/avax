@@ -32,7 +32,7 @@ final readonly class SlidingExpiration implements CacheExpiration
         }
 
         if ($ttl instanceof DateInterval) {
-            $duration = Duration::fromDateInterval(interval: $ttl);
+            $duration = Duration::fromDateInterval(dateInterval: $ttl);
         } else {
             $duration = Duration::ofSeconds(seconds: $ttl);
         }

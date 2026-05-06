@@ -24,7 +24,6 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use DateInterval;
 use Override;
-use Psr\SimpleCache\InvalidArgumentException;
 use Throwable;
 use Traversable;
 
@@ -158,9 +157,6 @@ final class AvaxCache implements CacheContract
         }
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     private function directLoad(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
     {
         $value = $loader();
@@ -169,9 +165,6 @@ final class AvaxCache implements CacheContract
         return $value;
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     #[Override]
     public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
@@ -269,6 +262,11 @@ final class AvaxCache implements CacheContract
         }
     }
 
+    /**
+     * @param iterable<string> $keys
+     *
+     * @return iterable<string, mixed>
+     */
     #[Override]
     public function getMultiple(iterable $keys, mixed $default = null) : iterable
     {
@@ -313,6 +311,9 @@ final class AvaxCache implements CacheContract
         }
     }
 
+    /**
+     * @param iterable<string, mixed> $values
+     */
     #[Override]
     public function setMultiple(iterable $values, int|DateInterval|null $ttl = null) : bool
     {
@@ -325,6 +326,9 @@ final class AvaxCache implements CacheContract
         return true;
     }
 
+    /**
+     * @param iterable<string> $keys
+     */
     #[Override]
     public function deleteMultiple(iterable $keys) : bool
     {

@@ -14,10 +14,10 @@ final class PrometheusBackend implements MetricsBackend
     /** @var array<string, float> */
     private array $gauges = [];
 
-    /** @var array<string, array<float>> */
+    /** @var array<string, list<float>> */
     private array $histograms = [];
 
-    /** @var array<string, array<int>> */
+    /** @var array<string, list<int>> */
     private array $timings = [];
 
     #[Override]
@@ -59,21 +59,33 @@ final class PrometheusBackend implements MetricsBackend
     #[Override]
     public function flush() : void {}
 
+    /**
+     * @return array<string, float>
+     */
     public function getCounters() : array
     {
         return $this->counters;
     }
 
+    /**
+     * @return array<string, float>
+     */
     public function getGauges() : array
     {
         return $this->gauges;
     }
 
+    /**
+     * @return array<string, list<float>>
+     */
     public function getHistograms() : array
     {
         return $this->histograms;
     }
 
+    /**
+     * @return array<string, list<int>>
+     */
     public function getTimings() : array
     {
         return $this->timings;

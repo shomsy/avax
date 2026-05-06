@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System;
 
 use DateInterval;
-use Psr\SimpleCache\CacheInterface;
 
-interface CacheContract extends CacheInterface
+interface CacheContract
 {
     public function get(string $key, mixed $default = null): mixed;
 
@@ -21,12 +20,20 @@ interface CacheContract extends CacheInterface
 
     public function has(string $key): bool;
 
+    /**
+     * @param iterable<string> $keys
+     *
+     * @return iterable<string, mixed>
+     */
     public function getMultiple(iterable $keys, mixed $default = null): iterable;
 
     /**
-     * @param iterable<mixed> $values
+     * @param iterable<string, mixed> $values
      */
     public function setMultiple(iterable $values, int|DateInterval|null $ttl = null): bool;
 
+    /**
+     * @param iterable<string> $keys
+     */
     public function deleteMultiple(iterable $keys): bool;
 }

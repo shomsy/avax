@@ -17,8 +17,8 @@ final readonly class AtomicCompiledCacheWrite
         CompiledCacheName $compiledCacheName,
         string $payload,
     ): CompiledCacheArtifact {
-        $resolveCompiledCachePath = new ResolveCompiledCachePath(directory: $this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(name: $compiledCacheName);
+        $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
+        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
         $temporaryPath = $compiledCachePath->toTemporaryPath();
 

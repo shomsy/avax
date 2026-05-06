@@ -31,6 +31,9 @@ final readonly class ChooseReplicaForRead
         return new PrimaryReplica(index: 0);
     }
 
+    /**
+     * @return non-empty-list<PrimaryReplica|SecondaryReplica>
+     */
     public function getAllReplicas(): array
     {
         $replicas = [new PrimaryReplica(index: 0)];

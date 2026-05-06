@@ -8,6 +8,9 @@ interface CacheTrace
 {
     public function trace(CacheOperation $cacheOperation): void;
 
+    /**
+     * @return list<CacheOperation>
+     */
     public function getOperations(?string $key = null): array;
 
     public function clear(): void;

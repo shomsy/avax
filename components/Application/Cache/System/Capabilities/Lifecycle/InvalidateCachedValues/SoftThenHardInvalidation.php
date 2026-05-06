@@ -13,16 +13,19 @@ final readonly class SoftThenHardInvalidation implements InvalidationStrategy
         private int $hardTtlSeconds = 86400,
     ) {}
 
+    /**
+     * @param array<string, mixed> $context
+     */
     #[Override]
     public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
     {
         $age = $context['age_seconds'] ?? 0;
 
-        if ($age >= $this->hardTtlSeconds) {
+        if (is_int($age) && $age >= $this->hardTtlSeconds) {
             return true;
         }
 
-        return $age >= $this->softTtlSeconds;
+        return is_int($age) && $age >= $this->softTtlSeconds;
     }
 
     #[Override]

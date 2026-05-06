@@ -41,7 +41,7 @@ final readonly class CacheHealthStatus
             keyCount       : $keyCount,
             connectionCount: $connectionCount,
             version        : $version,
-            lastCheck      : $lastCheck ?? $timestamp ?? Timestamp::now(),
+            timestamp      : $lastCheck ?? $timestamp ?? Timestamp::now(),
         );
     }
 
@@ -62,7 +62,7 @@ final readonly class CacheHealthStatus
             memoryUsage: $memoryUsage,
             hitRate    : $hitRate,
             error      : $error,
-            lastCheck  : $lastCheck ?? $timestamp ?? Timestamp::now(),
+            timestamp  : $lastCheck ?? $timestamp ?? Timestamp::now(),
         );
     }
 
@@ -91,7 +91,7 @@ final readonly class CacheHealthStatus
             keyCount   : $keyCount,
             connectionCount: $connectionCount,
             version: $version,
-            lastCheck: $lastCheck ?? $timestamp ?? Timestamp::now(),
+            timestamp: $lastCheck ?? $timestamp ?? Timestamp::now(),
         );
     }
 

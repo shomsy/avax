@@ -12,7 +12,7 @@ use Throwable;
 
 final readonly class WriteCachedValueToReplicas
 {
-    /** @var array<CacheStore> */
+    /** @var list<CacheStore> */
     private array $stores;
 
     public function __construct(
@@ -31,28 +31,28 @@ final readonly class WriteCachedValueToReplicas
 
     public function writePrimary(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
-        $this->stores[0]->write(key: $cacheKey, record: $storedCacheRecord);
+        $this->stores[0]->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
     }
 
     public function writeAll(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord, ReplicationPolicy $replicationPolicy) : void
     {
         match ($replicationPolicy) {
-            ReplicationPolicy::SYNCHRONOUS => $this->writeSynchronously(key: $cacheKey, record: $storedCacheRecord),
-            ReplicationPolicy::ASYNCHRONOUS => $this->writeAsynchronously(key: $cacheKey, record: $storedCacheRecord),
-            ReplicationPolicy::QUORUM      => $this->writeWithQuorum(key: $cacheKey, record: $storedCacheRecord),
+            ReplicationPolicy::SYNCHRONOUS => $this->writeSynchronously(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord),
+            ReplicationPolicy::ASYNCHRONOUS => $this->writeAsynchronously(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord),
+            ReplicationPolicy::QUORUM      => $this->writeWithQuorum(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord),
         };
     }
 
     private function writeSynchronously(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
         foreach ($this->stores as $store) {
-            $store->write(key: $cacheKey, record: $storedCacheRecord);
+            $store->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
         }
     }
 
     private function writeAsynchronously(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
     {
-        $this->stores[0]->write(key: $cacheKey, record: $storedCacheRecord);
+        $this->stores[0]->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
     }
 
     private function writeWithQuorum(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
@@ -66,7 +66,7 @@ final readonly class WriteCachedValueToReplicas
 
         foreach ($this->stores as $store) {
             try {
-                $store->write(key: $cacheKey, record: $storedCacheRecord);
+                $store->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
                 $written++;
 
                 if ($written >= $quorumSize) {

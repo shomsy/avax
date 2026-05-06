@@ -19,7 +19,7 @@ final readonly class ExpiresAt implements CacheExpiration
     public static function secondsFromNow(int $seconds, Clock $clock): self
     {
         return new self(
-            expiresAt: $clock->now()->add(
+            timestamp: $clock->now()->add(
                 duration: Duration::ofSeconds(seconds: $seconds),
             ),
         );
@@ -28,7 +28,7 @@ final readonly class ExpiresAt implements CacheExpiration
     public static function atTimestamp(int $timestamp): self
     {
         return new self(
-            expiresAt: Timestamp::fromUnixTime(timestamp: $timestamp),
+            timestamp: Timestamp::fromUnixTime(timestamp: $timestamp),
         );
     }
 

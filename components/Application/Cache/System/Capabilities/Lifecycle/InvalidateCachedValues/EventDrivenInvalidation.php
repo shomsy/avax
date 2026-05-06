@@ -11,6 +11,10 @@ final class EventDrivenInvalidation implements InvalidationStrategy
     /** @var array<string, string> */
     private array $eventMapping = [];
 
+    /**
+     * @param array<string, string> $eventRules
+     * @param array<string, string> $eventMapping
+     */
     public function __construct(
         array $eventRules = [],
         array $eventMapping = [],
@@ -24,6 +28,9 @@ final class EventDrivenInvalidation implements InvalidationStrategy
         }
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     #[Override]
     public function shouldInvalidate(string $key, string $reason, array $context = []): bool
     {

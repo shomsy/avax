@@ -6,6 +6,9 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Source\ControlCo
 
 final class ReadYourWritesConsistency
 {
+    /**
+     * @param array<string, int> $writtenKeys
+     */
     public function __construct(
         private array $writtenKeys = [],
     ) {}

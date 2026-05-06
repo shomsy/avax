@@ -93,6 +93,25 @@ final class CacheMetrics
         $this->operationCount++;
     }
 
+    /**
+     * @return array{
+     *     hits: int,
+     *     misses: int,
+     *     writes: int,
+     *     deletes: int,
+     *     evictions: int,
+     *     invalidations: int,
+     *     refreshes: int,
+     *     stale_served: int,
+     *     lock_waits: int,
+     *     source_failures: int,
+     *     store_failures: int,
+     *     hit_rate: float,
+     *     miss_rate: float,
+     *     average_latency_ms: float,
+     *     total_operations: int
+     * }
+     */
     public function toArray(): array
     {
         return [

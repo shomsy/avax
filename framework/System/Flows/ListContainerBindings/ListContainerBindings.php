@@ -44,6 +44,6 @@ final readonly class ListContainerBindings
      */
     public function list() : array
     {
-        return $this->container->debugGraph(kind: 'dependency');
+        return $this->container->debugGraph(id: '');
     }
 }

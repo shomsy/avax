@@ -22,14 +22,14 @@ final readonly class WarmCache
     ) {}
 
     /**
-     * @param iterable<string|int, mixed> $entries
+     * @param iterable<string, mixed> $entries
      */
     public function warm(iterable $entries, int|DateInterval|null $ttl = null) : int
     {
         $count = 0;
 
         foreach ($entries as $key => $loader) {
-            $cacheKey = $key instanceof CacheKey ? $key : CacheKey::create(key: $key);
+            $cacheKey = CacheKey::create(key: $key);
             $value = is_callable($loader) ? $loader() : $loader;
 
             $expiresAt = $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock)

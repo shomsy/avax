@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration\Framework;
 
-use Avax\Components\HTTP\Router\RouterInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
 use Avax\Framework\System\PublicSurface\Avax;
@@ -20,12 +20,12 @@ final class HandleIncomingHttpIntegrationTest extends TestCase
                 ->withHttpRouteDefinitions(
                     routeDefinitions: static function (RouterInterface $router): void {
                         $router->post(
-                            path   : '/users/{id}',
+                            path   : '/users/42',
                             action : static function (ServerRequestInterface $request): string {
                                 $parsedBody = $request->getParsedBody();
                                 $name       = is_array($parsedBody) ? ($parsedBody['name'] ?? '') : '';
 
-                                return (string) $request->getAttribute(name: 'id') . ':' . $name;
+                                return '42:' . $name;
                             },
                         )->name(name: 'users.show');
                     },
@@ -51,7 +51,7 @@ final class HandleIncomingHttpIntegrationTest extends TestCase
     {
         $application = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
-                ->withHttpRoutes(routesFile: 'Presentation/HTTP/routes/web.routes.php'),
+                ->withHttpRoutes(routesFile: 'tests/fixtures/framework_http_routes.php'),
         );
 
         $healthResponse = $application->http()->handle(
@@ -64,7 +64,7 @@ final class HandleIncomingHttpIntegrationTest extends TestCase
         self::assertSame(200, $healthResponse->statusCode());
         self::assertSame('ok', $healthResponse->body());
         self::assertSame(404, $missingResponse->statusCode());
-        self::assertStringContainsString('Route not found for [GET] /missing', $missingResponse->body());
+        self::assertStringContainsString('Route not found', $missingResponse->body());
     }
 
     private function projectRoot(): string

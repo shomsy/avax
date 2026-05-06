@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration\Components;
 
-use Avax\Components\Operations\Tasks\System\Capabilities\Queue\Queue;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\Queue;
 use Avax\Tests\TestCase;
 
 final class QueueTest extends TestCase

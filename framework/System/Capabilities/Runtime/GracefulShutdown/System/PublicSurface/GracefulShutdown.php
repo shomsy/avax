@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Runtime\GracefulShutdown\System\PublicSurface;
 
-use Avax\Components\GracefulShutdown\System\Capabilities\ShutdownSequence;
+use Avax\Framework\System\Capabilities\Runtime\GracefulShutdown\System\Capabilities\ShutdownSequence;
 use Closure;
 
 final readonly class GracefulShutdown

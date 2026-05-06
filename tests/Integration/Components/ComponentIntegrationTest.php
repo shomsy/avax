@@ -9,7 +9,7 @@ use Avax\Components\Operations\Mail\System\Capabilities\Queue\Mail;
 use Avax\Components\Operations\Mail\System\Capabilities\Queue\Mailable;
 use Avax\Components\Operations\Realtime\System\Capabilities\WebSocket\WebSocketServer;
 use Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter\RateLimit;
-use Avax\Components\Server\System\Capabilities\PhpBuiltInServer;
+use Avax\Framework\System\Capabilities\Runtime\Capabilities\RunApplicationOnPhpBuiltInServer as PhpBuiltInServer;
 use Avax\Tests\TestCase;
 
 class ComponentIntegrationTest extends TestCase

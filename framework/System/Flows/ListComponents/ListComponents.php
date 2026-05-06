@@ -30,9 +30,9 @@ final readonly class ListComponents
         echo str_repeat('=', $width) . "\n";
 
         foreach ($manifests as $manifest) {
-            $provides = implode(', ', array_slice($manifest->provides, 0, 3));
-            $depends  = implode(', ', $manifest->dependsOn);
-            $resettable = implode(', ', $manifest->resettable);
+            $provides = $manifest->path ?? $manifest->name;
+            $depends  = implode(', ', $manifest->dependencies);
+            $resettable = 'no';
 
             if (strlen($provides) > 30) {
                 $provides = substr($provides, 0, 27) . '...';

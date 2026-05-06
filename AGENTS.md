@@ -762,6 +762,7 @@ Project-specific agent workspace:
 .agents/hooks/
 .agents/review/
 .agents/how-to/
+.agents/skills/
 ```
 
 Reusable mounted rules:
@@ -778,6 +779,33 @@ Code-Review-And-ToDo/recovery-reports/
 Code-Review-And-ToDo/master-plan/
 Code-Review-And-ToDo/templates/
 ```
+
+## 16. Agent Workspace Routing
+
+The `.agents/` folder is the project-local agent workspace.
+
+Agents must use it as follows:
+
+| Area                             | Purpose                | When to Read                                         |
+|----------------------------------|------------------------|------------------------------------------------------|
+| `.agents/how-to/`                | local governance rules | before implementation, refactor, review, docs, tests |
+| `.agents/skills/**`              | task playbooks         | when task matches a skill                            |
+| `.agents/business-logic/`        | project meaning        | before domain, architecture, naming                  |
+| `.agents/management/`            | active stage, evidence | before any execution                                 |
+| `.agents/management/memories/**` | durable context        | before architecture, recovery                        |
+| `.agents/management/learning/**` | lessons                | before repeating similar work                        |
+| `.agents/review/`                | prior findings         | before review                                        |
+
+## Local Agent Workspace Rule
+
+The `.agents/` folder is part of the execution contract.
+
+Agents must not treat `.agents/skills`, `.agents/management/memories`, `.agents/management/learning`,
+`.agents/business-logic`, or `.agents/review` as optional notes when the task matches their scope.
+
+**If a matching skill exists, read it.**
+
+**Memory and learning guide execution. Validation proves execution.**
 
 ---
 

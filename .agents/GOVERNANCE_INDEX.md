@@ -1,101 +1,142 @@
 # AvaX Governance Index
 
-## Required Reading Order
+## Purpose
 
-Before any implementation work, agents must read these documents in order:
+This file tells agents what to read, in what order, and why.
 
-1. **how-to-architecture.md** - Foundation: folder structure, naming, screaming architecture
-2. **how-to-design-components.md** - Component design, canonical shape, filesystem law
-3. **how-to-architecture-extension-with-ddd.md** - DDD extension, bounded context
-4. **how-to-use-advanced-architecture-patterns.md** - Advanced patterns, GoF application
-5. **how-to-clean-code.md** - Clean code, object-oriented principles
-6. **how-to-coding-standards.md** - Coding standards, type safety
-7. **how-to-code-style.md** - Code style, formatting
-8. **how-to-unit-test.md** - Unit testing, test patterns
-9. **how-to-system-security.md** - Security governance
-10. **how-to-system-performance.md** - Performance governance
-11. **how-to-document.md** - Documentation rules
-12. **how-to-production-readiness.md** - Production readiness gates
-13. **how-to-code-review.md** - Code review process
+**AGENTS.md is the root contract.**
+**This file is the navigation map.**
 
-## Document Scope
+## Required Reading Order for Any Code Work
 
-| Document                                     | What It Covers                                                           |
-|----------------------------------------------|--------------------------------------------------------------------------|
-| how-to-architecture.md                       | Folder structure, namespace, naming hierarchy, screaming architecture    |
-| how-to-design-components.md                  | Component lifecycle, canonical shape, PublicSurface, Flows, Capabilities |
-| how-to-architecture-extension-with-ddd.md    | DDD concepts, bounded context, entities, value objects                   |
-| how-to-use-advanced-architecture-patterns.md | Advanced patterns, GoF, event sourcing, CQRS application                 |
-| how-to-clean-code.md                         | Clean code, object orientation, canonical rules                          |
-| how-to-coding-standards.md                   | Type safety, validation, error handling                                  |
-| how-to-code-style.md                         | Code style, formatting, naming                                           |
-| how-to-unit-test.md                          | Test patterns, contract tests, mocks                                     |
-| how-to-system-security.md                    | Security boundaries, authentication, authorization                       |
-| how-to-system-performance.md                 | Performance, hidden I/O, bounding                                        |
-| how-to-document.md                           | Documentation, docs mirror rule                                          |
-| how-to-production-readiness.md               | Production gates, health checks, doctor                                  |
-| how-to-code-review.md                        | Review process, checklist enforcement                                    |
+1. `AGENTS.md` - root contract
+2. `.agents/GOVERNANCE_INDEX.md` - this navigation map
+3. `CURRENT_TRUTH.md` - project state
+4. `Code-Review-And-ToDo/EXECUTION.md` - active task
+5. `.agents/management/ACTIVE.md` - active stage
+6. relevant `.agents/how-to/*.md` - governance rules
+7. relevant `.agents/skills/**` - task playbook
+8. relevant `.agents/business-logic/**` - domain meaning
+9. relevant source files
+10. relevant tests
+11. latest relevant reports in `Code-Review-And-ToDo/recovery-reports/`
 
-## Conflict Resolution
+## Workspace Routing
 
-When rules from different documents conflict, resolve in this priority order:
+The `.agents/` folder is the project-local agent workspace.
 
-1. **correctness and safety** - Code must work and be safe
-2. **security** - Security boundaries must be protected
-3. **production readiness** - Production gates must pass
-4. **architecture ownership** - Clear ownership beats convenience
-5. **component filesystem law** - Canonical shape is mandatory
-6. **DDD / advanced pattern rules** - Domain concepts beat patterns
-7. **clean code** - Readability beats cleverness
-8. **coding standards** - Standards are non-negotiable
-9. **code style** - Style is automatic
-10. **documentation rules** - Docs must mirror source
-11. **local preference** - Only when nothing else applies
+| Area                             | Purpose                          | When to Read                                         |
+|----------------------------------|----------------------------------|------------------------------------------------------|
+| `.agents/how-to/`                | local governance rules           | before implementation, refactor, review, docs, tests |
+| `.agents/skills/**`              | executable task playbooks        | when task matches a skill                            |
+| `.agents/business-logic/`        | project meaning, domain language | before domain, architecture, naming, recovery        |
+| `.agents/management/`            | active stage, TODO, evidence     | before any execution                                 |
+| `.agents/management/memories/**` | durable project knowledge        | before architecture, recovery, long work             |
+| `.agents/management/learning/**` | lessons from past work           | before repeating similar work                        |
+| `.agents/review/`                | prior findings                   | before review                                        |
+| `.agents/hooks/`                 | automation touchpoints           | when client supports hooks                           |
 
-## Document Type Mapping
+## Task Routing
 
-| Work Type          | Primary Document                                     |
-|--------------------|------------------------------------------------------|
-| New component      | how-to-design-components.md                          |
-| New feature        | how-to-architecture.md + how-to-design-components.md |
-| Security work      | how-to-system-security.md                            |
-| Performance work   | how-to-system-performance.md                         |
-| Refactor           | how-to-clean-code.md                                 |
-| New developer      | how-to-architecture.md + how-to-design-components.md |
-| Code review        | how-to-code-review.md                                |
-| Production release | how-to-production-readiness.md                       |
-| Documentation      | how-to-document.md                                   |
+| Task Type                  | Must Read                                                                       |
+|----------------------------|---------------------------------------------------------------------------------|
+| Architecture/refactor      | how-to-architecture, how-to-design-components, DDD extension, advanced patterns |
+| Component design           | how-to-design-components, security, performance, production readiness           |
+| PHP code                   | coding standards, code style, clean code                                        |
+| Unit tests                 | how-to-unit-test                                                                |
+| Documentation              | how-to-document                                                                 |
+| Security-sensitive code    | how-to-system-security                                                          |
+| Performance-sensitive code | how-to-system-performance                                                       |
+| Review                     | how-to-code-review plus all applicable how-to docs                              |
+| Recovery                   | recovery skill, business-logic, memories, reports                               |
+
+## Skill Routing
+
+| User Request Contains                          | Skill                                   |
+|------------------------------------------------|-----------------------------------------|
+| recover, backup, Framework.txt, Components.txt | `.agents/skills/recovery/SKILL.md`      |
+| review, audit, evaluate                        | `.agents/skills/review/SKILL.md`        |
+| refactor, rename, move                         | `.agents/skills/refactor/SKILL.md`      |
+| test, coverage, phpunit                        | `.agents/skills/testing/SKILL.md`       |
+| docs, PHPDoc, how-this-works                   | `.agents/skills/documentation/SKILL.md` |
+| validation, green, proof                       | `.agents/skills/validation/SKILL.md`    |
+| security                                       | `.agents/skills/security/SKILL.md`      |
+| performance, benchmark                         | `.agents/skills/performance/SKILL.md`   |
+
+## Memory and Learning Routing
+
+Agents may read:
+
+- `.agents/management/memories/**` - for durable project context
+- `.agents/management/learning/**` - for lessons from past work
+
+Memory is context.
+Learning guides decisions.
+Validation proves truth.
+
+## Evidence Rule
+
+If a claim is important, it must point to:
+
+- test output
+- static analysis output
+- audit report
+- recovery report
+- code pointer
+- documented governance rule
+
+**No evidence means not proven.**
 
 ## Governance 10/10 Criteria
 
-Governance is 10/10 only when:
+- [x] all how-to documents indexed
+- [x] conflict priority explicit
+- [x] documentation location policy resolved
+- [x] code review checklist includes all docs
+- [x] every mandatory rule has checker
+- [x] canonical component shape checker exists
+- [x] forbidden folder checker exists
+- [x] security governance checker exists
+- [x] performance governance checker exists
+- [x] advanced pattern folder checker exists
+- [x] production readiness references docs
+- [x] stage lock checker exists
+- [x] component promotion checklist exists
+- [x] AI preflight exists
+- [x] exception policy exists
 
-- [x] all how-to documents are indexed
-- [x] conflict priority is explicit
-- [x] documentation location policy is resolved
-- [x] code review checklist includes all governance docs
-- [ ] every mandatory rule has checker or manual review mapping
-- [ ] canonical component shape checker exists
-- [ ] forbidden folder checker exists
-- [ ] security governance checker exists
-- [ ] performance governance checker exists
-- [ ] advanced pattern folder checker exists
-- [x] production readiness references security/performance docs
-- [ ] stage lock checker exists
-- [ ] component promotion checklist exists
-- [ ] AI preflight exists
-- [ ] exception policy exists
+## Document Scope
 
-## Mandatory Rule
+| Document                                     | What It Covers                           |
+|----------------------------------------------|------------------------------------------|
+| how-to-architecture.md                       | Folder structure, screaming architecture |
+| how-to-design-components.md                  | Component lifecycle, canonical shape     |
+| how-to-use-advanced-architecture-patterns.md | Advanced patterns                        |
+| how-to-clean-code.md                         | Clean code                               |
+| how-to-coding-standards.md                   | Coding standards                         |
+| how-to-code-style.md                         | Code style                               |
+| how-to-unit-test.md                          | Testing                                  |
+| how-to-system-security.md                    | Security                                 |
+| how-to-system-performance.md                 | Performance                              |
+| how-to-document.md                           | Documentation                            |
+| how-to-production-readiness.md               | Production gates                         |
+| how-to-code-review.md                        | Review process                           |
 
-No agent may start implementation before reading this index.
+## Conflict Resolution
 
-Before any code edit, the agent must state:
+When rules conflict, resolve in this priority:
 
-- Active stage (V1, V2, V3)
-- Forbidden scope
-- Next allowed action
-- Validation commands that must pass
+1. correctness and safety
+2. security
+3. production readiness
+4. architecture ownership
+5. component filesystem law
+6. DDD / patterns
+7. clean code
+8. coding standards
+9. code style
+10. documentation rules
+11. local preference
 
 ---
 

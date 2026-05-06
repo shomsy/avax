@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\AccessPersistentData;
 
-use Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure;
+use Avax\Components\DataStack\Persistence\System\Foundation\Failure\PersistenceFailure;
 
 final class AccessPersistentData
 {

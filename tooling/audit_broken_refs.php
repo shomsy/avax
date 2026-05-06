@@ -240,7 +240,7 @@ function addRef(string $fqn, string $file, string $ctx, int $line, array &$refer
     }
 
     if (! str_contains($fqn, '\\')) {
-        $globals = ['arrayiterator', 'runtimeexception', 'invalidargumentexception', 'logicexception', 'exception', 'throwable', 'datetime', 'datetimeimmutable', 'dateinterval', 'closure', 'generator', 'arrayobject', 'splfileinfo', 'splfileobject', 'countable', 'iterator', 'iteratoraggregate', 'arrayaccess', 'serializable', 'jsonserializable', 'traversable', 'seekableiterator', 'recursiveiterator', 'pdostatement', 'pdoexception', 'reflectionclass', 'reflectionfunction', 'reflectionmethod', 'reflectionproperty', 'reflectionparameter', 'reflector', 'phpunit_framework_testcase', 'testcase'];
+        $globals = ['arrayiterator', 'runtimeexception', 'invalidargumentexception', 'logicexception', 'exception', 'throwable', 'datetime', 'datetimeimmutable', 'dateinterval', 'closure', 'generator', 'arrayobject', 'splfileinfo', 'splfileobject', 'countable', 'iterator', 'iteratoraggregate', 'arrayaccess', 'serializable', 'jsonserializable', 'traversable', 'seekableiterator', 'recursiveiterator', 'recursivedirectoryiterator', 'filesystemiterator', 'pdostatement', 'pdoexception', 'reflectionclass', 'reflectionfunction', 'reflectionmethod', 'reflectionproperty', 'reflectionparameter', 'reflector', 'phpunit_framework_testcase', 'testcase'];
         if (in_array(strtolower($fqn), $globals, true)) {
             return;
         }

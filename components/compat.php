@@ -123,9 +123,8 @@ $classAliases = [
 
     'Avax\\HTTP\\Request\\ServerRequest\\IncomingRequest\\ServerRequest' => 'Avax\\Components\\HTTP\\Request\\ServerRequest\\IncomingRequest\\ServerRequest',
     'Avax\\HTTP\\Request\\Request' => 'Avax\\Components\\HTTP\\Request\\System\\PublicSurface\\RequestInterface',
-    'Avax\\Logging\\LoggerFactory' => 'Avax\\Components\\Logging\\System\\Configuration\\RegisterLogging',
     'Avax\\Cache\\Cache' => 'Avax\\Components\\Application\\Cache\\System\\PublicSurface\\Cache',
-    'Avax\\DumpDebugger\\DumpDebugger' => 'Avax\\Components\\DumpDebugger\\System\\PublicSurface\\Dump',
+
     'Avax\\Components\\Application\\Container\\System\\PublicSurface\\Container' => 'Avax\\Components\\Application\\Container\\System\\Container',
     HttpKernel::class => HttpKernel::class,
     AppKernel::class => AppKernel::class,

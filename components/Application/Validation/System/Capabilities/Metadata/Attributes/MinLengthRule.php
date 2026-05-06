@@ -16,9 +16,10 @@ final readonly class MinLengthRule
     public function __construct(
         private int $minLength,
         private string $message = 'Field "{property}" must be at least {min} characters.',
-    ) {}
+    ) {
+    }
 
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if ($value === null || $value === '') {
             return;

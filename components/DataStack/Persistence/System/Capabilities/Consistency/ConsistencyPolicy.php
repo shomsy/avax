@@ -22,26 +22,25 @@ interface ConsistencyPolicy
     /**
      * Determines if a read is allowed given the current state.
      *
-     * @param mixed $currentValue The current value
-     * @param mixed $pendingWrite Any pending write
+     * @param  mixed  $currentValue  The current value
+     * @param  mixed  $pendingWrite  Any pending write
      */
     public function canRead(mixed $currentValue, mixed $pendingWrite = null): bool;
 
     /**
      * Determines if a write should be accepted.
      *
-     * @param mixed $currentValue The current value
-     * @param mixed $newValue     The proposed new value
+     * @param  mixed  $currentValue  The current value
+     * @param  mixed  $newValue  The proposed new value
      */
     public function canWrite(mixed $currentValue, mixed $newValue): bool;
 
     /**
      * Resolves a conflict between two values.
      *
-     * @param mixed                $valueA  First conflicting value
-     * @param mixed                $valueB  Second conflicting value
-     * @param array<string, mixed> $context Additional context for resolution
-     *
+     * @param  mixed  $valueA  First conflicting value
+     * @param  mixed  $valueB  Second conflicting value
+     * @param  array<string, mixed>  $context  Additional context for resolution
      * @return mixed The resolved value
      */
     public function resolveConflict(mixed $valueA, mixed $valueB, array $context = []): mixed;
@@ -70,8 +69,7 @@ final class VectorClock implements Stringable
          * @var array<string, int> Map of node ID to logical timestamp
          */
         private array $clock = []
-    )
-    {
+    ) {
     }
 
     /**
@@ -140,7 +138,7 @@ final class VectorClock implements Stringable
         $atLeastOneLess = false;
 
         foreach ($allNodes as $allNode) {
-            $thisValue  = $this->clock[$allNode] ?? 0;
+            $thisValue = $this->clock[$allNode] ?? 0;
             $otherValue = $other->clock[$allNode] ?? 0;
 
             if ($thisValue > $otherValue) {
@@ -198,6 +196,6 @@ final class VectorClock implements Stringable
             $parts[] = sprintf('%s:%d', $nodeId, $timestamp);
         }
 
-        return '{' . implode(', ', $parts) . '}';
+        return '{'.implode(', ', $parts).'}';
     }
 }

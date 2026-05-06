@@ -25,9 +25,9 @@ final class QueryException extends DatabaseException
      *
      * -- intent: capture the full state of the failure for debugging and logging.
      *
-     * @param string         $message  Technical failure description
-     * @param string         $sql      The dialect-specific SQL string that failed
-     * @param Throwable|null $throwable The underlying driver exception
+     * @param  string  $message  Technical failure description
+     * @param  string  $sql  The dialect-specific SQL string that failed
+     * @param  Throwable|null  $throwable  The underlying driver exception
      */
     public function __construct(
         string $message,

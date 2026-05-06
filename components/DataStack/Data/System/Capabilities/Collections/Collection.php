@@ -295,7 +295,7 @@ final readonly class Collection implements CollectionInterface
         return new self(items: $filtered);
     }
 
-    public function sort(?callable $callback = null) : static
+    public function sort(?callable $callback = null): static
     {
         return new self(
             items: new SortValues(items: $this->items)->sort(callback: $callback),

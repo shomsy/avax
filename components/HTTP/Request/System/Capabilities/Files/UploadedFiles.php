@@ -9,11 +9,10 @@ final readonly class UploadedFiles
     public function __construct(
         /** @var UploadedFile[] */
         private array $files = []
-    )
-    {
+    ) {
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->files;
     }

@@ -17,14 +17,15 @@ final readonly class WarmCache
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private Clock    $clock,
+        private Clock $clock,
         private CacheTtl $cacheTtl = new CacheTtl(),
-    ) {}
+    ) {
+    }
 
     /**
-     * @param iterable<string, mixed> $entries
+     * @param  iterable<string, mixed>  $entries
      */
-    public function warm(iterable $entries, int|DateInterval|null $ttl = null) : int
+    public function warm(iterable $entries, int|DateInterval|null $ttl = null): int
     {
         $count = 0;
 

@@ -9,7 +9,7 @@ use Override;
 final class SystemClock implements Clock
 {
     #[Override]
-    public function now() : Timestamp
+    public function now(): Timestamp
     {
         return Timestamp::now();
     }

@@ -8,7 +8,7 @@ use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
 
 final class WriteFile
 {
-    public function write(Disk $disk, string $path, string $contents) : void
+    public function write(Disk $disk, string $path, string $contents): void
     {
         $fullPath = $disk->path($path);
 

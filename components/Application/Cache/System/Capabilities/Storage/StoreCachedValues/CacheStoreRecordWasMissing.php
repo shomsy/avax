@@ -8,6 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 final readonly class CacheStoreRecordWasMissing
 {
-    public function __construct(public CacheKey $cacheKey) {
+    public function __construct(public CacheKey $cacheKey)
+    {
     }
 }

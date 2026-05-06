@@ -40,7 +40,7 @@ final readonly class TokenVerifier
 
             return $payload;
         } catch (Exception $exception) {
-            throw new RuntimeException('Invalid token: ' . $exception->getMessage(), $exception->getCode(), $exception);
+            throw new RuntimeException('Invalid token: '.$exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 }

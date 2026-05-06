@@ -10,7 +10,6 @@ final readonly class FailureRecord
         public string $workflow,
         public string $message,
         public string $type,
-    )
-    {
+    ) {
     }
 }

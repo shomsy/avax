@@ -8,12 +8,12 @@ use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class TransformToSnake
 {
-    public function __invoke(Text $text, string $delimiter = '_') : Text
+    public function __invoke(Text $text, string $delimiter = '_'): Text
     {
         $value = $text->toString();
-        $value = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $delimiter . '$2', $value);
+        $value = preg_replace('/([a-z0-9])([A-Z])/', '$1'.$delimiter.'$2', $value);
         $value = preg_replace('/[\s\-]+/', $delimiter, (string) $value);
 
-        return new Text(strtolower((string) $value));
+        return Text::of(strtolower((string) $value));
     }
 }

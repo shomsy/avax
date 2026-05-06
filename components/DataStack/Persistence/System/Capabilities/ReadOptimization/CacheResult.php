@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\ReadOptimization;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Observability\QueryFingerprinter;
-
 /**
  * Result of a cache operation.
  */
 final readonly class CacheResult
 {
     public function __construct(
-        public bool   $hit,
-        public mixed  $value = null,
+        public bool $hit,
+        public mixed $value = null,
         public string $key = '',
-        public float  $ttl = 0.0,
-    )
-    {
+        public float $ttl = 0.0,
+    ) {
     }
 
     /**

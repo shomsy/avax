@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\Capabilities\Job;
 
-use RuntimeException;
-use Throwable;
-
 final readonly class JobDefinition
 {
     public function __construct(
-        public string  $handler,
-        public array   $payload = [],
+        public string $handler,
+        public array $payload = [],
         public ?string $queue = null,
-        public int     $maxAttempts = 3,
-        public int     $timeout = 60,
-        public int     $retryDelay = 0,
+        public int $maxAttempts = 3,
+        public int $timeout = 60,
+        public int $retryDelay = 0,
         public ?string $correlationId = null,
     ) {
     }
@@ -24,11 +21,11 @@ final readonly class JobDefinition
     {
         return new self(
             handler      : $data['handler'],
-            payload      : $data['payload']       ?? [],
-            queue        : $data['queue']         ?? null,
-            maxAttempts  : $data['maxAttempts']   ?? 3,
-            timeout      : $data['timeout']       ?? 60,
-            retryDelay   : $data['retryDelay']    ?? 0,
+            payload      : $data['payload'] ?? [],
+            queue        : $data['queue'] ?? null,
+            maxAttempts  : $data['maxAttempts'] ?? 3,
+            timeout      : $data['timeout'] ?? 60,
+            retryDelay   : $data['retryDelay'] ?? 0,
             correlationId: $data['correlationId'] ?? null,
         );
     }
@@ -114,15 +111,14 @@ final readonly class JobDefinition
     public function toArray(): array
     {
         return [
-            'handler'       => $this->handler,
-            'payload'       => $this->payload,
-            'queue'         => $this->queue,
-            'maxAttempts'   => $this->maxAttempts,
-            'timeout'       => $this->timeout,
-            'retryDelay'    => $this->retryDelay,
+            'handler' => $this->handler,
+            'payload' => $this->payload,
+            'queue' => $this->queue,
+            'maxAttempts' => $this->maxAttempts,
+            'timeout' => $this->timeout,
+            'retryDelay' => $this->retryDelay,
             'correlationId' => $this->correlationId ?? uniqid('corr-', true),
-            'createdAt'     => time(),
+            'createdAt' => time(),
         ];
     }
 }
-

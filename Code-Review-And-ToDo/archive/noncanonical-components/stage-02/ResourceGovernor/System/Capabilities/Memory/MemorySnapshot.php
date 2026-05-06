@@ -10,5 +10,6 @@ final readonly class MemorySnapshot
         public int $requestNumber,
         public int $memoryUsed,
         public int $workerMemory,
-    ) {}
+    ) {
+    }
 }

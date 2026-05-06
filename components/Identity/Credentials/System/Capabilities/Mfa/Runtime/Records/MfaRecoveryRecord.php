@@ -18,7 +18,8 @@ final readonly class MfaRecoveryRecord
         public string $tokenHash,
         public UserId $userId,
         public DateTimeImmutable $expiresAt,
-    ) {}
+    ) {
+    }
 
     public function isExpiredAt(DateTimeImmutable $moment): bool
     {

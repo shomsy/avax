@@ -25,7 +25,7 @@ abstract class Facade implements FacadeInterface
         $instance = static::resolveInstance();
 
         if ($instance === null) {
-            throw new RuntimeException("Facade accessor '" . static::getFacadeAccessor() . "' could not be resolved.");
+            throw new RuntimeException("Facade accessor '".static::getFacadeAccessor()."' could not be resolved.");
         }
 
         return $instance->{$method}(...$args);
@@ -62,7 +62,7 @@ abstract class Facade implements FacadeInterface
             $callback = static fn (): null => null;
         }
 
-        $instance                                               = is_callable($callback) && ! is_object($callback) ? $callback() : $callback;
+        $instance = is_callable($callback) && ! is_object($callback) ? $callback() : $callback;
         static::$resolvedInstances[static::getFacadeAccessor()] = $instance;
 
         return $instance;

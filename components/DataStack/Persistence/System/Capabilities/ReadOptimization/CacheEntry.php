@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\ReadOptimization;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Observability\QueryFingerprinter;
-
 /**
  * A single cache entry with TTL support.
  */
 final readonly class CacheEntry
 {
     public function __construct(
-        public mixed  $value,
-        public float  $createdAt,
-        public float  $ttl,
+        public mixed $value,
+        public float $createdAt,
+        public float $ttl,
         public string $fingerprint = '',
         public string $key = '',
-    )
-    {
+    ) {
     }
 
     /**

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\PreCommit;
 
 use Avax\Framework\System\Capabilities\PreCommit\Report\ReportStorage;
-use Avax\Framework\System\Capabilities\PreCommit\Todo\TodoGenerator;
 use Avax\Framework\System\Capabilities\PreCommit\ValidationChain\ValidationChain;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\DeprecatedCodeValidator;
 use Avax\Framework\System\Capabilities\PreCommit\Validators\FileStructureValidator;
@@ -23,7 +22,7 @@ use RecursiveIteratorIterator;
 
 /**
  * Pre-Commit Validation CLI
- * 
+ *
  * Entry point for pre-commit validation chain.
  * Validates staged files against architectural and coding standards.
  */
@@ -39,7 +38,7 @@ class PreCommitValidator
     private array $options;
 
     /**
-     * @param list<string> $argv
+     * @param  list<string>  $argv
      */
     public function __construct(array $argv)
     {
@@ -51,8 +50,7 @@ class PreCommitValidator
     }
 
     /**
-     * @param list<string> $argv
-     *
+     * @param  list<string>  $argv
      * @return array<string, mixed>
      */
     private function parseOptions(array $argv): array
@@ -89,9 +87,9 @@ class PreCommitValidator
     private function configureChain(): void
     {
         $this->validationChain->add(new NamingConventionValidator())
-                   ->add(new HowToRulesValidator())
-                   ->add(new PhpSyntaxValidator())
-                   ->add(new FileStructureValidator())
+            ->add(new HowToRulesValidator())
+            ->add(new PhpSyntaxValidator())
+            ->add(new FileStructureValidator())
             ->add(new SecurityValidator())
             ->add(new LegacyCodeValidator())
             ->add(new DeprecatedCodeValidator())
@@ -104,6 +102,7 @@ class PreCommitValidator
     {
         if ($this->options['help']) {
             $this->printHelp();
+
             return 0;
         }
 
@@ -112,17 +111,18 @@ class PreCommitValidator
 
         if (empty($context['staged_files'])) {
             echo "ℹ No staged files to validate.\n";
+
             return 0;
         }
 
         echo "🔍 Running pre-commit validation...\n";
-        echo "   Files to validate: " . count($context['staged_files']) . "\n\n";
-        fwrite(STDERR, "DEBUG: Got here with " . count($context['staged_files']) . " files\n");
+        echo '   Files to validate: '.count($context['staged_files'])."\n\n";
+        fwrite(STDERR, 'DEBUG: Got here with '.count($context['staged_files'])." files\n");
 
         $validationResult = $this->validationChain->validate($context);
         $this->validationReport->addResult($validationResult);
         $this->validationReport->addMetadata('context', $context);
-        $this->validationReport->addMetadata('validators', array_map(fn (ValidatorInterface $validator) : string => $validator->getName(), $this->validationChain->getValidators()));
+        $this->validationReport->addMetadata('validators', array_map(fn (ValidatorInterface $validator): string => $validator->getName(), $this->validationChain->getValidators()));
         $this->validationReport->setExecutionTime(microtime(true) - $startTime);
 
         if ($this->options['save-report']) {
@@ -130,6 +130,7 @@ class PreCommitValidator
         }
 
         $this->outputResults();
+
         return $validationResult->isPassed() ? 0 : 1;
     }
 
@@ -138,7 +139,7 @@ class PreCommitValidator
      */
     private function buildContext(): array
     {
-        $files    = [];
+        $files = [];
         $basePath = getcwd() ?: '.';
 
         if (isset($this->options['files'])) {
@@ -155,13 +156,13 @@ class PreCommitValidator
             $files = $this->detectAllProjectFiles($basePath);
         } elseif ($this->options['staged']) {
             $gitBin = $this->findGitBinary();
-            exec($gitBin . ' diff --cached --name-only --diff-filter=ACM 2>/dev/null', $output, $returnVar);
+            exec($gitBin.' diff --cached --name-only --diff-filter=ACM 2>/dev/null', $output, $returnVar);
             if ($returnVar === 0 && $output !== []) {
                 $files = array_values(array_filter($output));
             }
         } else {
             $gitBin = $this->findGitBinary();
-            exec($gitBin . ' diff --name-only 2>/dev/null', $output, $returnVar);
+            exec($gitBin.' diff --name-only 2>/dev/null', $output, $returnVar);
             if ($returnVar === 0) {
                 $files = $output;
             }
@@ -187,7 +188,7 @@ class PreCommitValidator
         $files = [];
 
         foreach ($directories as $dir) {
-            $dirPath = $basePath . '/' . $dir;
+            $dirPath = $basePath.'/'.$dir;
             if (! is_dir($dirPath)) {
                 continue;
             }
@@ -206,7 +207,7 @@ class PreCommitValidator
                     continue;
                 }
 
-                $relativePath = $dir . '/' . $iterator->getSubPathName();
+                $relativePath = $dir.'/'.$iterator->getSubPathName();
                 $files[] = $relativePath;
             }
         }
@@ -217,13 +218,14 @@ class PreCommitValidator
     private function getGitBranch(): string
     {
         $gitBin = $this->findGitBinary();
-        exec($gitBin . ' rev-parse --abbrev-ref HEAD 2>/dev/null', $output, $returnVar);
+        exec($gitBin.' rev-parse --abbrev-ref HEAD 2>/dev/null', $output, $returnVar);
+
         return $returnVar === 0 ? ($output[0] ?? 'unknown') : 'unknown';
     }
 
     private function findGitBinary(): string
     {
-        if (!empty($_ENV['GIT_BINARY'])) {
+        if (! empty($_ENV['GIT_BINARY'])) {
             return $_ENV['GIT_BINARY'];
         }
 
@@ -249,8 +251,8 @@ class PreCommitValidator
     {
         $candidates = ['src', 'system', 'System', 'product', 'app', 'framework'];
         foreach ($candidates as $candidate) {
-            if (is_dir($basePath . '/' . $candidate)) {
-                return $basePath . '/' . $candidate;
+            if (is_dir($basePath.'/'.$candidate)) {
+                return $basePath.'/'.$candidate;
             }
         }
 
@@ -263,10 +265,10 @@ class PreCommitValidator
             $data = $this->validationReport->toArray();
             $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
             if ($json === false) {
-                fwrite(STDERR, "JSON encoding failed: " . json_last_error_msg() . "\n");
-                fwrite(STDERR, var_export($data, true) . "\n");
+                fwrite(STDERR, 'JSON encoding failed: '.json_last_error_msg()."\n");
+                fwrite(STDERR, var_export($data, true)."\n");
             } else {
-                echo $json . "\n";
+                echo $json."\n";
             }
         } else {
             echo $this->validationReport->getSummaryText();

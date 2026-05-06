@@ -59,7 +59,8 @@ final readonly class OAuth
         private ?RevokeToken $revokeToken,
         #[SensitiveParameter]
         private ?IntrospectToken $introspectToken,
-    ) {}
+    ) {
+    }
 
     public function isConfigured(): bool
     {
@@ -78,7 +79,7 @@ final readonly class OAuth
             && $this->introspectToken instanceof IntrospectToken;
     }
 
-    public function registerClient(RegisterClientData $registerClientData) : RegisteredOAuthClient
+    public function registerClient(RegisterClientData $registerClientData): RegisteredOAuthClient
     {
         return $this->registerClientOrFail()->execute(data: $registerClientData);
     }
@@ -88,7 +89,7 @@ final readonly class OAuth
         return $this->registerClient ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'register_client');
     }
 
-    public function approveClientRegistration(ApproveClientRegistrationData $approveClientRegistrationData) : OAuthClient
+    public function approveClientRegistration(ApproveClientRegistrationData $approveClientRegistrationData): OAuthClient
     {
         return $this->approveClientRegistrationOrFail()->execute(data: $approveClientRegistrationData);
     }
@@ -98,7 +99,7 @@ final readonly class OAuth
         return $this->approveClientRegistration ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'approve_client_registration');
     }
 
-    public function updateClient(UpdateClientData $updateClientData) : OAuthClient
+    public function updateClient(UpdateClientData $updateClientData): OAuthClient
     {
         return $this->updateClientOrFail()->execute(data: $updateClientData);
     }
@@ -157,7 +158,7 @@ final readonly class OAuth
     /**
      * @throws DateMalformedStringException
      */
-    public function authorizeCode(AuthorizeCodeData $authorizeCodeData) : IssuedAuthorizationCode
+    public function authorizeCode(AuthorizeCodeData $authorizeCodeData): IssuedAuthorizationCode
     {
         return $this->authorizeCodeOrFail()->execute(data: $authorizeCodeData);
     }
@@ -170,7 +171,7 @@ final readonly class OAuth
     /**
      * @throws DateMalformedStringException
      */
-    public function exchangeAuthorizationCode(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData) : OAuthTokenGrant
+    public function exchangeAuthorizationCode(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData): OAuthTokenGrant
     {
         return $this->exchangeAuthorizationCodeOrFail()->execute(data: $exchangeAuthorizationCodeData);
     }
@@ -180,7 +181,7 @@ final readonly class OAuth
         return $this->exchangeAuthorizationCode ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'exchange_authorization_code');
     }
 
-    public function exchangeClientCredentials(ExchangeClientCredentialsData $exchangeClientCredentialsData) : OAuthTokenGrant
+    public function exchangeClientCredentials(ExchangeClientCredentialsData $exchangeClientCredentialsData): OAuthTokenGrant
     {
         return $this->exchangeClientCredentialsOrFail()->execute(data: $exchangeClientCredentialsData);
     }
@@ -193,7 +194,7 @@ final readonly class OAuth
     /**
      * @throws DateMalformedStringException
      */
-    public function exchangeRefreshToken(ExchangeRefreshTokenData $exchangeRefreshTokenData) : OAuthTokenGrant
+    public function exchangeRefreshToken(ExchangeRefreshTokenData $exchangeRefreshTokenData): OAuthTokenGrant
     {
         return $this->exchangeRefreshTokenOrFail()->execute(data: $exchangeRefreshTokenData);
     }
@@ -203,7 +204,7 @@ final readonly class OAuth
         return $this->exchangeRefreshToken ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'exchange_refresh_token');
     }
 
-    public function revokeToken(RevokeTokenData $revokeTokenData) : void
+    public function revokeToken(RevokeTokenData $revokeTokenData): void
     {
         $this->revokeTokenOrFail()->execute(data: $revokeTokenData);
     }
@@ -213,7 +214,7 @@ final readonly class OAuth
         return $this->revokeToken ?? throw ExternalIdentityCapabilityUnavailable::oauth(operation: 'revoke_token');
     }
 
-    public function introspectToken(IntrospectTokenData $introspectTokenData) : TokenIntrospection
+    public function introspectToken(IntrospectTokenData $introspectTokenData): TokenIntrospection
     {
         return $this->introspectTokenOrFail()->execute(data: $introspectTokenData);
     }

@@ -13,24 +13,23 @@ use Avax\Labs\API\DescribeApi\System\Capabilities\ResponseContracts\ResponseDtoC
 final class EndpointContract
 {
     /**
-     * @param list<ErrorResponseContract> $errorResponses
-     * @param list<RequiredPermission> $requiredPermissions
+     * @param  list<ErrorResponseContract>  $errorResponses
+     * @param  list<RequiredPermission>  $requiredPermissions
      */
     public function __construct(
-        public readonly string                      $path,
-        public readonly string                      $method,
-        public readonly string                      $summary,
-        public readonly string|null                 $description,
-        public readonly EndpointVersion             $version,
-        public readonly EndpointDeprecation|null    $deprecation,
-        public readonly RequestDtoContract|null     $requestBody,
-        public readonly ResponseDtoContract|null    $successResponse,
-        public readonly RequiredAuthentication|null $authentication,
-        public readonly string|null                 $operationId,
-        public readonly array                       $errorResponses = [],
-        public readonly array                       $requiredPermissions = [],
-    )
-    {
+        public readonly string $path,
+        public readonly string $method,
+        public readonly string $summary,
+        public readonly ?string $description,
+        public readonly EndpointVersion $version,
+        public readonly ?EndpointDeprecation $deprecation,
+        public readonly ?RequestDtoContract $requestBody,
+        public readonly ?ResponseDtoContract $successResponse,
+        public readonly ?RequiredAuthentication $authentication,
+        public readonly ?string $operationId,
+        public readonly array $errorResponses = [],
+        public readonly array $requiredPermissions = [],
+    ) {
     }
 
     public function requiresAuthentication(): bool
@@ -43,7 +42,7 @@ final class EndpointContract
         return $this->requiredPermissions !== [];
     }
 
-    public function getErrorResponse(int $statusCode): ErrorResponseContract|null
+    public function getErrorResponse(int $statusCode): ?ErrorResponseContract
     {
         foreach ($this->errorResponses as $response) {
             if ($response->statusCode === $statusCode) {

@@ -19,7 +19,8 @@ final readonly class GenerateBackupCodes
         private PasswordHasher $passwordHasher,
         private Clock $clock,
         private int $count = 10,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws RandomException
@@ -27,11 +28,11 @@ final readonly class GenerateBackupCodes
     public function execute(): GeneratedBackupCodes
     {
         $plainCodes = [];
-        $records    = [];
+        $records = [];
         $generatedAt = $this->clock->now();
 
         for ($index = 0; $index < $this->count; $index++) {
-            $plain     = strtoupper(string: bin2hex(string: random_bytes(length: 4)) . '-' . bin2hex(string: random_bytes(length: 4)));
+            $plain = strtoupper(string: bin2hex(string: random_bytes(length: 4)).'-'.bin2hex(string: random_bytes(length: 4)));
             $plainCodes[] = new BackupCode(value: $plain);
             $records[] = new BackupCodeRecord(
                 backupCodeId: bin2hex(string: random_bytes(length: 16)),

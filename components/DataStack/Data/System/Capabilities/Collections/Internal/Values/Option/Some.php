@@ -13,7 +13,8 @@ final class Some extends Option
 {
     public function __construct(
         private readonly mixed $value,
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function isSome(): bool

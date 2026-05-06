@@ -8,13 +8,15 @@ use Override;
 
 final readonly class SoftThenRefreshInvalidation implements InvalidationStrategy
 {
-    public function __construct(private bool $allowSoft = true, private int $staleRefreshWindowSeconds = 300) {}
+    public function __construct(private bool $allowSoft = true, private int $staleRefreshWindowSeconds = 300)
+    {
+    }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     #[Override]
-    public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
+    public function shouldInvalidate(string $key, string $reason, array $context = []): bool
     {
         if (! $this->allowSoft) {
             return true;
@@ -26,7 +28,7 @@ final readonly class SoftThenRefreshInvalidation implements InvalidationStrategy
     }
 
     #[Override]
-    public function strategyName() : string
+    public function strategyName(): string
     {
         return 'soft_then_refresh';
     }

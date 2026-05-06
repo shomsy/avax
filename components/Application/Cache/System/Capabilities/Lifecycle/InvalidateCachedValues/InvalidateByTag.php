@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 interface InvalidateByTag
 {
-    public function invalidateByTag(CacheTag $cacheTag) : int;
+    public function invalidateByTag(CacheTag $cacheTag): int;
 
-    public function isTagInvalidated(CacheTag $cacheTag) : bool;
+    public function isTagInvalidated(CacheTag $cacheTag): bool;
 }

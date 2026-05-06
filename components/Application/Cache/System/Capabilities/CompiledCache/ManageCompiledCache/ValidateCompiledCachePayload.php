@@ -8,7 +8,7 @@ use Closure;
 
 final readonly class ValidateCompiledCachePayload
 {
-    public function validate(string $name, mixed $payload) : void
+    public function validate(string $name, mixed $payload): void
     {
         if ($payload instanceof Closure) {
             throw new CompiledCachePayloadWasInvalid(
@@ -37,7 +37,7 @@ final readonly class ValidateCompiledCachePayload
         );
     }
 
-    private function isExportableObject() : bool
+    private function isExportableObject(): bool
     {
         return false;
     }

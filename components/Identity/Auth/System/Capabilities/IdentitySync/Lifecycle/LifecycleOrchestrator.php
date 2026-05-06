@@ -13,14 +13,16 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class LifecycleOrchestrator
 {
-    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private LifecycleStoreInterface $lifecycleStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private LifecycleStoreInterface $lifecycleStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function activate(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null) : LifecycleRecord
+    public function activate(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null): LifecycleRecord
     {
         return $this->transition(userId: $userId, reason: $reason, target: LifecycleState::ACTIVE, source: $lifecycleSource);
     }
 
-    private function transition(UserId $userId, LifecycleState $lifecycleState, LifecycleSource $lifecycleSource, ?string $reason) : LifecycleRecord
+    private function transition(UserId $userId, LifecycleState $lifecycleState, LifecycleSource $lifecycleSource, ?string $reason): LifecycleRecord
     {
         $user = $this->provisionableUserSource->findById(id: $userId);
 
@@ -29,14 +31,14 @@ final readonly class LifecycleOrchestrator
         }
 
         $currentRecord = $this->lifecycleStore->find(userId: $userId);
-        $current       = $currentRecord instanceof LifecycleRecord ? $currentRecord->state : ($user->isActive() ? LifecycleState::ACTIVE : LifecycleState::SUSPENDED);
+        $current = $currentRecord instanceof LifecycleRecord ? $currentRecord->state : ($user->isActive() ? LifecycleState::ACTIVE : LifecycleState::SUSPENDED);
 
         if (! $this->isAllowedTransition(from: $current, to: $lifecycleState)) {
             throw LifecycleFailed::transitionNotAllowed(from: $current, to: $lifecycleState);
         }
 
         match ($lifecycleState) {
-            LifecycleState::ACTIVE    => $this->provisionableUserSource->activate(id: $userId),
+            LifecycleState::ACTIVE => $this->provisionableUserSource->activate(id: $userId),
             LifecycleState::SUSPENDED => $this->provisionableUserSource->deactivate(id: $userId),
             LifecycleState::DEPROVISIONED => $this->deprovisionUser(userId: $userId),
         };
@@ -54,10 +56,10 @@ final readonly class LifecycleOrchestrator
             name      : 'auth.lifecycle.transitioned',
             occurredAt: $lifecycleRecord->changedAt,
             context   : [
-                            'user_id' => $lifecycleRecord->userId,
-                            'state'   => $lifecycleRecord->state->value,
-                            'source'  => $lifecycleRecord->source->value,
-                            'reason'  => $lifecycleRecord->reason,
+                'user_id' => $lifecycleRecord->userId,
+                'state' => $lifecycleRecord->state->value,
+                'source' => $lifecycleRecord->source->value,
+                'reason' => $lifecycleRecord->reason,
             ],
         ));
 
@@ -79,12 +81,12 @@ final readonly class LifecycleOrchestrator
         $this->provisionableUserSource->deactivate(id: $userId);
     }
 
-    public function suspend(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null) : LifecycleRecord
+    public function suspend(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null): LifecycleRecord
     {
         return $this->transition(userId: $userId, reason: $reason, target: LifecycleState::SUSPENDED, source: $lifecycleSource);
     }
 
-    public function deprovision(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null) : LifecycleRecord
+    public function deprovision(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null): LifecycleRecord
     {
         return $this->transition(userId: $userId, reason: $reason, target: LifecycleState::DEPROVISIONED, source: $lifecycleSource);
     }

@@ -9,7 +9,9 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Operato
  */
 final readonly class FlattenValues
 {
-    public function __construct(private array $items = []) {}
+    public function __construct(private array $items = [])
+    {
+    }
 
     public function __invoke(int $depth = INF): array
     {

@@ -12,9 +12,11 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements
 
 final readonly class RegisterClient
 {
-    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function execute(RegisterClientData $registerClientData) : RegisteredOAuthClient
+    public function execute(RegisterClientData $registerClientData): RegisteredOAuthClient
     {
         $registeredOAuthClient = $this->oAuthClientRegistry->register(
             name                           : $registerClientData->name,
@@ -40,16 +42,16 @@ final readonly class RegisterClient
             name      : 'auth.oauth.client.registered',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'                         => $registeredOAuthClient->client->clientId,
-                            'tenant_slug'                       => $registeredOAuthClient->client->tenantSlug,
-                            'name'                              => $registeredOAuthClient->client->name,
-                            'type'                              => $registeredOAuthClient->client->type->value,
-                            'workload_identity'                 => $registeredOAuthClient->client->workloadIdentity ? 1 : 0,
-                            'allowed_audiences'                 => implode(separator: ' ', array: $registeredOAuthClient->client->allowedAudiences),
-                            'sender_constraint'                 => $registeredOAuthClient->client->requiredSenderConstraint?->value,
-                            'request_object_signature_required' => $registeredOAuthClient->client->requestObjectSignatureRequired ? 1 : 0,
-                            'approval_status'                   => $registeredOAuthClient->client->approvalStatus->value,
-                            'approval_required'                 => $registeredOAuthClient->client->isPendingApproval() ? 1 : 0,
+                'client_id' => $registeredOAuthClient->client->clientId,
+                'tenant_slug' => $registeredOAuthClient->client->tenantSlug,
+                'name' => $registeredOAuthClient->client->name,
+                'type' => $registeredOAuthClient->client->type->value,
+                'workload_identity' => $registeredOAuthClient->client->workloadIdentity ? 1 : 0,
+                'allowed_audiences' => implode(separator: ' ', array: $registeredOAuthClient->client->allowedAudiences),
+                'sender_constraint' => $registeredOAuthClient->client->requiredSenderConstraint?->value,
+                'request_object_signature_required' => $registeredOAuthClient->client->requestObjectSignatureRequired ? 1 : 0,
+                'approval_status' => $registeredOAuthClient->client->approvalStatus->value,
+                'approval_required' => $registeredOAuthClient->client->isPendingApproval() ? 1 : 0,
             ],
         ));
 

@@ -10,7 +10,7 @@ use Attribute;
 final readonly class ManyToMany
 {
     /**
-     * @param list<string> $cascade
+     * @param  list<string>  $cascade
      */
     public function __construct(
         public string $targetEntity,
@@ -19,5 +19,6 @@ final readonly class ManyToMany
         public ?string $joinTable = null,
         public array $cascade = [],
         public bool $lazy = true,
-    ) {}
+    ) {
+    }
 }

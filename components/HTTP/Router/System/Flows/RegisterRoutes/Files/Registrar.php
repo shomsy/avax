@@ -11,7 +11,9 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinit
  */
 final class Registrar
 {
-    public function __construct(private readonly RouteDefinition $route) {}
+    public function __construct(private readonly RouteDefinition $route)
+    {
+    }
 
     /**
      * Assign middleware to the route.

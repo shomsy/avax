@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompiledContainer;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
@@ -20,11 +20,11 @@ final class HotPathInlinerSmokeTest extends CompiledContainer
 
     public function resolveInlineService(mixed $resolver, ResolveRequest $resolveRequest, array $overrides): string
     {
-        return 'compiled:' . $resolveRequest->serviceId . ':' . ($overrides['suffix'] ?? 'none');
+        return 'compiled:'.$resolveRequest->serviceId.':'.($overrides['suffix'] ?? 'none');
     }
 }
 
-$inliner  = new HotPathInliner();
+$inliner = new HotPathInliner();
 $compiled = new InlineSmokeCompiled();
 $resolver = makeTestContainer()->get(id: ResolveDependency::class);
 
@@ -50,4 +50,4 @@ $inliner->detach();
 assertTrue(condition: ! $inliner->isAttached(), message: 'HotPathInliner should detach the compiled runtime.');
 assertSame(expected: 'no compiled runtime is attached', actual: $inliner->state(serviceId: 'inline.service')['reason'], message: 'Detached hot path should explain the missing compiled runtime.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

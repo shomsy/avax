@@ -28,17 +28,17 @@ final readonly class AccessPolicy
         public ?int $freshMfaMaxAgeSeconds = null,
         public ?IdentityPolicy $identityPolicy = null,
     ) {
-        $freshMfa             ??= false;
-        $adminElevation       ??= false;
+        $freshMfa ??= false;
+        $adminElevation ??= false;
         $phishingResistantRequired ??= false;
-        $this->freshMfa       = $freshMfa;
+        $this->freshMfa = $freshMfa;
         $this->adminElevation = $adminElevation;
         $this->phishingResistantRequired = $phishingResistantRequired;
     }
 
     public static function admin(
         ?UserPermission $userPermission = null,
-        ?int            $resourceOwnerUserId = null,
+        ?int $resourceOwnerUserId = null,
     ): self {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::admin(),
@@ -50,9 +50,9 @@ final readonly class AccessPolicy
 
     public static function forIdentityPolicy(
         IdentityPolicy $identityPolicy,
-        ?UserRole       $userRole = null,
+        ?UserRole $userRole = null,
         ?UserPermission $userPermission = null,
-        ?int            $resourceOwnerUserId = null,
+        ?int $resourceOwnerUserId = null,
     ): self {
         return new self(
             requiredRole             : $userRole,
@@ -68,7 +68,7 @@ final readonly class AccessPolicy
 
     public static function tenantAdmin(
         ?UserPermission $userPermission = null,
-        ?int            $resourceOwnerUserId = null,
+        ?int $resourceOwnerUserId = null,
     ): self {
         return self::forIdentityPolicy(
             identityPolicy     : IdentityPolicyCatalog::tenantAdmin(),

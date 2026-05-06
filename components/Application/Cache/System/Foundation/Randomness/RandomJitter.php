@@ -12,12 +12,13 @@ final readonly class RandomJitter
 
     public function __construct(
         private float $jitterPercentage = self::DEFAULT_JITTER_PERCENTAGE,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws RandomException
      */
-    public function apply(int $ttlInSeconds) : int
+    public function apply(int $ttlInSeconds): int
     {
         if ($ttlInSeconds <= 0) {
             return $ttlInSeconds;
@@ -32,7 +33,7 @@ final readonly class RandomJitter
     /**
      * @throws RandomException
      */
-    public function applyToDuration(int $ttlInMilliseconds) : int
+    public function applyToDuration(int $ttlInMilliseconds): int
     {
         if ($ttlInMilliseconds <= 0) {
             return $ttlInMilliseconds;

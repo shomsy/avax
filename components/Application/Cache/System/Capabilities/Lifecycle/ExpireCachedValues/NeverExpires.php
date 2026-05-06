@@ -15,8 +15,7 @@ final readonly class NeverExpires implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ) : ?Timestamp
-    {
+    ): ?Timestamp {
         return null;
     }
 
@@ -24,8 +23,7 @@ final readonly class NeverExpires implements CacheExpiration
     public function isExpired(
         ?Timestamp $timestamp,
         Clock $clock,
-    ) : bool
-    {
+    ): bool {
         return false;
     }
 }

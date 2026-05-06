@@ -10,9 +10,9 @@ final readonly class RebuildSagaState
         string $sagaId,
         array $events,
     ): array {
-        $data            = [];
-        $completedSteps  = [];
-        $stepResults     = [];
+        $data = [];
+        $completedSteps = [];
+        $stepResults = [];
         $currentStepIndex = 0;
         $currentStepName = null;
 
@@ -27,10 +27,10 @@ final readonly class RebuildSagaState
                     break;
 
                 case 'step_completed':
-                    $stepName         = $event['step_name'] ?? '';
+                    $stepName = $event['step_name'] ?? '';
                     $completedSteps[] = $stepName;
                     $stepResults[$stepName] = $event['payload'] ?? [];
-                    $currentStepName  = $stepName;
+                    $currentStepName = $stepName;
                     $currentStepIndex++;
 
                     break;
@@ -44,9 +44,9 @@ final readonly class RebuildSagaState
         }
 
         return [
-            'data'              => $data,
-            'completed_steps'   => $completedSteps,
-            'step_results'      => $stepResults,
+            'data' => $data,
+            'completed_steps' => $completedSteps,
+            'step_results' => $stepResults,
             'current_step_index' => $currentStepIndex,
             'current_step_name' => $currentStepName,
         ];

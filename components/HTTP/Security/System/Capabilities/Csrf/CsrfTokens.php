@@ -20,7 +20,8 @@ final readonly class CsrfTokens
         private LoggerInterface $logger,
         private int $tokenExpirationMinutes = self::TOKEN_EXPIRATION_MINUTES,
         private int $maxTokensPerSession = self::MAX_TOKENS_PER_SESSION,
-    ) {}
+    ) {
+    }
 
     public function getToken(): string
     {
@@ -74,7 +75,7 @@ final readonly class CsrfTokens
     }
 
     /**
-     * @param array<string, int> $tokens
+     * @param  array<string, int>  $tokens
      */
     private function storeTokens(array $tokens): void
     {
@@ -82,8 +83,7 @@ final readonly class CsrfTokens
     }
 
     /**
-     * @param array<string, int> $tokens
-     *
+     * @param  array<string, int>  $tokens
      * @return array<string, int>
      */
     private function pruneExcessTokens(array $tokens): array
@@ -98,7 +98,7 @@ final readonly class CsrfTokens
     }
 
     /**
-     * @param array<string, int> $tokens
+     * @param  array<string, int>  $tokens
      * @return array<string, int>
      */
     private function pruneExpiredTokens(array $tokens): array
@@ -106,11 +106,11 @@ final readonly class CsrfTokens
         $now = time();
         $expiry = $this->tokenExpirationMinutes * 60;
 
-        return array_filter($tokens, static fn ($ts) : bool => $now - $ts <= $expiry);
+        return array_filter($tokens, static fn ($ts): bool => $now - $ts <= $expiry);
     }
 
     /**
-     * @param array<string, int> $tokens
+     * @param  array<string, int>  $tokens
      */
     private function readMostRecentToken(array $tokens): ?string
     {

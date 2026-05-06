@@ -48,7 +48,7 @@ final class InMemoryMfaStore implements MfaStoreInterface
         return $this->methods[$userId->value] ?? null;
     }
 
-    public function saveMethod(MfaMethodRecord $mfaMethodRecord) : void
+    public function saveMethod(MfaMethodRecord $mfaMethodRecord): void
     {
         $this->methods[$mfaMethodRecord->userId->value] = $mfaMethodRecord;
         unset($this->pendingEnrollments[$mfaMethodRecord->userId->value]);
@@ -74,7 +74,7 @@ final class InMemoryMfaStore implements MfaStoreInterface
         return $this->pendingEnrollments[$userId->value] ?? null;
     }
 
-    public function startEnrollment(MfaEnrollmentRecord $mfaEnrollmentRecord) : void
+    public function startEnrollment(MfaEnrollmentRecord $mfaEnrollmentRecord): void
     {
         $this->pendingEnrollments[$mfaEnrollmentRecord->userId->value] = $mfaEnrollmentRecord;
     }
@@ -84,7 +84,7 @@ final class InMemoryMfaStore implements MfaStoreInterface
         unset($this->pendingEnrollments[$userId->value]);
     }
 
-    public function saveRecovery(MfaRecoveryRecord $mfaRecoveryRecord) : void
+    public function saveRecovery(MfaRecoveryRecord $mfaRecoveryRecord): void
     {
         $this->forgetRecoveryForUser(userId: $mfaRecoveryRecord->userId);
         $this->recoveryTokens[$mfaRecoveryRecord->tokenHash] = $mfaRecoveryRecord;

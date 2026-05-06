@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Request\System\Capabilities\Headers;
 
 final class NormalizeHeaders
 {
-    public function normalize(array $raw) : array
+    public function normalize(array $raw): array
     {
         $norm = [];
         foreach ($raw as $n => $v) {

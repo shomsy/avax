@@ -13,5 +13,6 @@ final readonly class DeleteScimUserData
         #[SensitiveParameter]
         public string $directoryToken,
         public string $externalId,
-    ) {}
+    ) {
+    }
 }

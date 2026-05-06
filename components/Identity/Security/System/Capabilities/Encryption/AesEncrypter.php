@@ -25,7 +25,7 @@ final readonly class AesEncrypter implements EncrypterInterface
      *
      * @throws RuntimeException if encryption fails
      */
-    public function encrypt(mixed $value, EncryptionKey $encryptionKey) : string
+    public function encrypt(mixed $value, EncryptionKey $encryptionKey): string
     {
         $ivLen = openssl_cipher_iv_length($this->cipher);
         $iv = random_bytes($ivLen);
@@ -38,7 +38,7 @@ final readonly class AesEncrypter implements EncrypterInterface
         }
 
         // IV + tag (16 bytes for GCM) + ciphertext
-        return base64_encode($iv . $tag . $ciphertext);
+        return base64_encode($iv.$tag.$ciphertext);
     }
 
     /**
@@ -46,7 +46,7 @@ final readonly class AesEncrypter implements EncrypterInterface
      *
      * @throws RuntimeException if decryption fails or payload is tampered
      */
-    public function decrypt(string $payload, EncryptionKey $encryptionKey) : mixed
+    public function decrypt(string $payload, EncryptionKey $encryptionKey): mixed
     {
         $payload = base64_decode($payload, true);
         if ($payload === false) {
@@ -60,7 +60,7 @@ final readonly class AesEncrypter implements EncrypterInterface
             throw new RuntimeException('Invalid encrypted payload.');
         }
 
-        $iv  = substr($payload, 0, $ivLen);
+        $iv = substr($payload, 0, $ivLen);
         $tag = substr($payload, $ivLen, $tagLen);
         $ciphertext = substr($payload, $ivLen + $tagLen);
 

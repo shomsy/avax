@@ -22,15 +22,15 @@ final readonly class CreateDependencyBlueprint
     private BlueprintCache $blueprintCache;
 
     public function __construct(
-        ?BlueprintCache              $blueprintCache = null,
+        ?BlueprintCache $blueprintCache = null,
         private ?ResolveDependencies $resolveDependencies = null,
     ) {
-        $this->blueprintCache      = $blueprintCache ?? new BlueprintCache();
+        $this->blueprintCache = $blueprintCache ?? new BlueprintCache();
         $this->resolveDependencies ??= new ResolveDependencies();
     }
 
     /**
-     * @param list<string> $classes
+     * @param  list<string>  $classes
      *
      * @throws ReflectionException
      */
@@ -53,39 +53,39 @@ final readonly class CreateDependencyBlueprint
         $fingerprint = $this->blueprintCache->shouldValidateSource()
             ? $this->cacheFingerprintFor(class: $class)
             : '';
-        $cached      = $this->blueprintCache->get(class: $class, fingerprint: $fingerprint);
+        $cached = $this->blueprintCache->get(class: $class, fingerprint: $fingerprint);
         if ($cached instanceof DependencyBlueprint) {
             return $cached;
         }
 
         $reflectionClass = new ReflectionClass(objectOrClass: $class);
-        $fingerprint     = $fingerprint !== '' ? $fingerprint : $this->cacheFingerprintForReflection(reflection: $reflectionClass);
+        $fingerprint = $fingerprint !== '' ? $fingerprint : $this->cacheFingerprintForReflection(reflection: $reflectionClass);
 
         $properties = array_values(array: array_filter(
-                                              array   : $reflectionClass->getProperties(),
-                                              callback: static fn (ReflectionProperty $reflectionProperty) : bool => $reflectionProperty->getAttributes(name: Inject::class) !== [] && ! $reflectionProperty->isStatic(),
+            array   : $reflectionClass->getProperties(),
+            callback: static fn (ReflectionProperty $reflectionProperty): bool => $reflectionProperty->getAttributes(name: Inject::class) !== [] && ! $reflectionProperty->isStatic(),
         ));
         $methods = array_values(array: array_filter(
-                                           array   : $reflectionClass->getMethods(),
-                                           callback: static fn (ReflectionMethod $reflectionMethod) : bool => $reflectionMethod->getAttributes(name: Inject::class) !== [] && ! $reflectionMethod->isStatic(),
+            array   : $reflectionClass->getMethods(),
+            callback: static fn (ReflectionMethod $reflectionMethod): bool => $reflectionMethod->getAttributes(name: Inject::class) !== [] && ! $reflectionMethod->isStatic(),
         ));
 
         return $this->blueprintCache->put(blueprint: new DependencyBlueprint(
             class               : $class,
             instantiable        : $reflectionClass->isInstantiable(),
             injectableProperties: array_map(
-                                      callback: fn (ReflectionProperty $reflectionProperty) : array => [
-                                          'name'      => $reflectionProperty->getName(),
-                                          'serviceId' => $this->serviceIdFor(property: $reflectionProperty),
-                                          'readonly'  => $reflectionProperty->isReadOnly(),
-                                                                          ],
+                callback: fn (ReflectionProperty $reflectionProperty): array => [
+                    'name' => $reflectionProperty->getName(),
+                    'serviceId' => $this->serviceIdFor(property: $reflectionProperty),
+                    'readonly' => $reflectionProperty->isReadOnly(),
+                ],
                 array   : $properties,
             ),
             injectableMethods   : array_map(
-                                      callback: fn (ReflectionMethod $reflectionMethod) : array => [
-                                          'name' => $reflectionMethod->getName(),
-                                          'plan' => $this->resolveDependencies->createPlan(parameters: $reflectionMethod->getParameters()),
-                                                                          ],
+                callback: fn (ReflectionMethod $reflectionMethod): array => [
+                    'name' => $reflectionMethod->getName(),
+                    'plan' => $this->resolveDependencies->createPlan(parameters: $reflectionMethod->getParameters()),
+                ],
                 array   : $methods,
             ),
             shared              : $reflectionClass->getAttributes(name: Singleton::class) !== [],
@@ -107,19 +107,19 @@ final readonly class CreateDependencyBlueprint
     /**
      * @throws ReflectionException
      */
-    private function cacheFingerprintForReflection(ReflectionClass $reflectionClass) : string
+    private function cacheFingerprintForReflection(ReflectionClass $reflectionClass): string
     {
         $files = $this->filesFor(reflection: $reflectionClass);
         $parts = [];
 
         foreach ($files as $file) {
             $timestamp = is_file(filename: $file) ? (string) filemtime(filename: $file) : 'missing';
-            $parts[]   = $file . ':' . $timestamp;
+            $parts[] = $file.':'.$timestamp;
         }
 
         sort(array: $parts);
 
-        return sha1(string: $reflectionClass->getName() . '|' . implode(separator: '|', array: $parts));
+        return sha1(string: $reflectionClass->getName().'|'.implode(separator: '|', array: $parts));
     }
 
     /**
@@ -139,7 +139,7 @@ final readonly class CreateDependencyBlueprint
 
         foreach (class_parents(object_or_class: $reflection->getName()) ?: [] as $parent) {
             $parentReflection = new ReflectionClass(objectOrClass: $parent);
-            $parentFile       = $parentReflection->getFileName();
+            $parentFile = $parentReflection->getFileName();
             if (is_string(value: $parentFile) && $parentFile !== '') {
                 $files[] = $parentFile;
             }
@@ -149,7 +149,7 @@ final readonly class CreateDependencyBlueprint
 
         foreach (class_implements(object_or_class: $reflection->getName()) ?: [] as $interface) {
             $interfaceReflection = new ReflectionClass(objectOrClass: $interface);
-            $interfaceFile       = $interfaceReflection->getFileName();
+            $interfaceFile = $interfaceReflection->getFileName();
             if (is_string(value: $interfaceFile) && $interfaceFile !== '') {
                 $files[] = $interfaceFile;
             }
@@ -163,7 +163,7 @@ final readonly class CreateDependencyBlueprint
     /**
      * @return list<string>
      */
-    private function traitFilesFor(ReflectionClass $reflectionClass) : array
+    private function traitFilesFor(ReflectionClass $reflectionClass): array
     {
         $files = [];
 
@@ -182,7 +182,7 @@ final readonly class CreateDependencyBlueprint
     /**
      * Infers one service id from the property attribute or object type.
      */
-    private function serviceIdFor(ReflectionProperty $reflectionProperty) : ?string
+    private function serviceIdFor(ReflectionProperty $reflectionProperty): ?string
     {
         $attributes = $reflectionProperty->getAttributes(name: Inject::class);
         if ($attributes !== []) {

@@ -17,10 +17,12 @@ use Throwable;
 final readonly class PdoConnection implements DatabaseConnection
 {
     /**
-     * @param string $name The nickname for this connection (e.g., 'primary').
-     * @param PDO    $pdo  The active technical engine already plugged into the DB.
+     * @param  string  $name  The nickname for this connection (e.g., 'primary').
+     * @param  PDO  $pdo  The active technical engine already plugged into the DB.
      */
-    public function __construct(private string $name, private PDO $pdo) {}
+    public function __construct(private string $name, private PDO $pdo)
+    {
+    }
 
     /**
      * Get the actual technical engine (PDO) to run your SQL.

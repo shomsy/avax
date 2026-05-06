@@ -1,18 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\CommitDataChanges;
 
-use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface;
-use Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure;
 use Throwable;
 
 final class CommitDataChanges
 {
     public function __construct(
         private object $databaseRuntime
-    )
-    {
+    ) {
     }
 
     public function open(): object
@@ -25,7 +23,7 @@ final class CommitDataChanges
             throw new DataTransactionFailure(message: 'Cannot begin transaction');
         }
 
-        return (object)['status' => 'open'];
+        return (object) ['status' => 'open'];
     }
 
     public function rollback(object $transaction): object
@@ -36,10 +34,10 @@ final class CommitDataChanges
             $this->databaseRuntime->transactions()->rollback();
         }
 
-        return (object)['status' => 'rolled_back'];
+        return (object) ['status' => 'rolled_back'];
     }
 
-    public function commit(object $transaction = null): void
+    public function commit(?object $transaction = null): void
     {
         if (method_exists($this->databaseRuntime, 'commit')) {
             $this->databaseRuntime->commit();
@@ -50,7 +48,7 @@ final class CommitDataChanges
 
     public function retryTransientFailure(callable $work, DataTransactionPolicy $policy): mixed
     {
-        if (!$policy->idempotent) {
+        if (! $policy->idempotent) {
             throw new DataTransactionFailure(message: 'Work is not idempotent and policy forbids retry');
         }
 
@@ -63,7 +61,7 @@ final class CommitDataChanges
             } catch (Throwable $e) {
                 $msg = strtolower($e->getMessage());
                 $isTransient = str_contains($msg, 'deadlock') || str_contains($msg, '40001') || str_contains($msg, 'sqlstate');
-                if (!$isTransient || !$policy->retryTransientFailures) {
+                if (! $isTransient || ! $policy->retryTransientFailures) {
                     throw $e;
                 }
                 if ($attempt >= $policy->maxAttempts) {

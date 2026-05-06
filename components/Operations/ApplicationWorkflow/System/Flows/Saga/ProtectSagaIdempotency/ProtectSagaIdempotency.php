@@ -20,7 +20,7 @@ final readonly class ProtectSagaIdempotency
         return new self(commandKeys: []);
     }
 
-    public function record(string $key, SagaCommandResult $sagaCommandResult) : void
+    public function record(string $key, SagaCommandResult $sagaCommandResult): void
     {
         $this->commandKeys[$key] = $sagaCommandResult;
     }
@@ -43,7 +43,8 @@ final readonly class ProtectSagaIdempotency
 
 final readonly class SagaCommandKey implements Stringable
 {
-    private function __construct(public string $value, public string $aggregateType, public string $aggregateId, public string $action, public ?string $tenantId) {
+    private function __construct(public string $value, public string $aggregateType, public string $aggregateId, public string $action, public ?string $tenantId)
+    {
     }
 
     public static function create(
@@ -77,7 +78,8 @@ final readonly class SagaCommandKey implements Stringable
 
 final readonly class SagaCommandResult
 {
-    private function __construct(public string $sagaId, public bool $success, public array $output, public ?string $error, public DateTimeImmutable $occurredAt) {
+    private function __construct(public string $sagaId, public bool $success, public array $output, public ?string $error, public DateTimeImmutable $occurredAt)
+    {
     }
 
     public static function success(string $sagaId, array $output = []): self
@@ -107,8 +109,8 @@ final readonly class SagaCommandResult
         return [
             'saga_id' => $this->sagaId,
             'success' => $this->success,
-            'output'  => $this->output,
-            'error'   => $this->error,
+            'output' => $this->output,
+            'error' => $this->error,
             'occurred_at' => $this->occurredAt->format(format: DateTimeInterface::ISO8601),
         ];
     }
@@ -118,7 +120,7 @@ final class DuplicateSagaCommand extends Exception
 {
     public function __construct(
         string $message = 'Duplicate saga command detected.',
-        public ?string            $sagaId = null,
+        public ?string $sagaId = null,
         public ?SagaCommandResult $previousResult = null,
     ) {
         parent::__construct(message: $message);

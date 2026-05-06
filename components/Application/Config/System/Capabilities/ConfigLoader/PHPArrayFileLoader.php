@@ -13,16 +13,16 @@ use RuntimeException;
 final class PHPArrayFileLoader implements ConfigLoaderInterface
 {
     #[Override]
-    public function loadConfigFile(string $filePath) : array
+    public function loadConfigFile(string $filePath): array
     {
         if (! file_exists($filePath)) {
-            throw new RuntimeException('Configuration file not found: ' . $filePath);
+            throw new RuntimeException('Configuration file not found: '.$filePath);
         }
 
         $config = require $filePath;
 
         if (! is_array($config)) {
-            throw new RuntimeException('Configuration file must return an array: ' . $filePath);
+            throw new RuntimeException('Configuration file must return an array: '.$filePath);
         }
 
         return $config;

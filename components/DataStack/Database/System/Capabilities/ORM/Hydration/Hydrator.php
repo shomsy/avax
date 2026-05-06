@@ -12,13 +12,15 @@ use ReflectionProperty;
 
 final readonly class Hydrator
 {
-    public function __construct(private IdentityMap $identityMap) {}
+    public function __construct(private IdentityMap $identityMap)
+    {
+    }
 
     /**
-     * @param class-string         $entityClass
-     * @param array<string, mixed> $row
+     * @param  class-string  $entityClass
+     * @param  array<string, mixed>  $row
      */
-    public function hydrate(string $entityClass, array $row, EntityMetadata $entityMetadata) : object
+    public function hydrate(string $entityClass, array $row, EntityMetadata $entityMetadata): object
     {
         $identifier = $entityMetadata->identifierField();
         $entity = null;

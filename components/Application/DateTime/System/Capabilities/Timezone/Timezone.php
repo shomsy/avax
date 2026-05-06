@@ -9,11 +9,11 @@ use DateTimeZone;
 
 interface Timezone
 {
-    public function getName() : string;
+    public function getName(): string;
 
-    public function toPhpTimezone() : DateTimeZone;
+    public function toPhpTimezone(): DateTimeZone;
 
-    public function getOffset(DateTimeInterface $dateTime) : int;
+    public function getOffset(DateTimeInterface $dateTime): int;
 
-    public function isUtc() : bool;
+    public function isUtc(): bool;
 }

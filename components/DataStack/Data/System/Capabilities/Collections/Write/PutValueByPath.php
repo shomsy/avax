@@ -13,7 +13,8 @@ final readonly class PutValueByPath
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(string $path, mixed $value): array
     {

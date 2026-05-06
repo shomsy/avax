@@ -11,7 +11,9 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDCo
  */
 final readonly class SubjectIdentifier
 {
-    public function __construct(private SubjectIdentifierStrategy $subjectIdentifierStrategy = SubjectIdentifierStrategy::PUBLIC) {}
+    public function __construct(private SubjectIdentifierStrategy $subjectIdentifierStrategy = SubjectIdentifierStrategy::PUBLIC)
+    {
+    }
 
     /**
      * Generates a subject identifier for a user.
@@ -53,7 +55,7 @@ final readonly class SubjectIdentifier
 
     private function hashPairwise(string $localSubject, string $sector, string $salt): string
     {
-        $input = $localSubject . '.' . $sector . '.' . $salt;
+        $input = $localSubject.'.'.$sector.'.'.$salt;
 
         return hash(algo: 'sha256', data: $input);
     }

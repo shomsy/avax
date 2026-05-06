@@ -17,7 +17,7 @@ Stage V1-01: Backup Muscle Inventory — COMPLETE
 Stage V1-02: Current Component Muscle Audit — COMPLETE
 Stage V1-03: Static Integrity Closure — ACTIVE
 Current repository readiness: RED
-Next allowed action: Stage V1-03 static integrity closure
+Next allowed action: Fix PHPStan baseline or component errors
 V2 Implementation: LOCKED
 V3 Implementation: LOCKED
 ```

@@ -10,9 +10,11 @@ use stdClass;
 
 final readonly class SerializeDataObject
 {
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null)
+    {
+    }
 
-    public function toArray(object $object, ?int $depth = null, bool $excludeHidden = true) : array
+    public function toArray(object $object, ?int $depth = null, bool $excludeHidden = true): array
     {
         return new ConvertDataObjectToArray(config: $this->dataTransferConfig)->convert(
             object       : $object,
@@ -24,7 +26,7 @@ final readonly class SerializeDataObject
     /**
      * @throws JsonException
      */
-    public function toJson(object $object, ?int $flags = null, int $depth = 512) : string
+    public function toJson(object $object, ?int $flags = null, int $depth = 512): string
     {
         $flags ??= 0;
 

@@ -9,7 +9,7 @@ use Override;
 final readonly class NoReplacement implements ChooseCachedValueForReplacement
 {
     #[Override]
-    public function choose(array $entries) : ?string
+    public function choose(array $entries): ?string
     {
         return null;
     }

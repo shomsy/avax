@@ -13,14 +13,15 @@ final readonly class Mailer
     public function __construct(
         private SendMail $sendMail,
         private Envelope $envelope = new Envelope(from: 'noreply@localhost'),
-    ) {}
+    ) {
+    }
 
-    public function send(MimeMessage $mimeMessage) : SendResult
+    public function send(MimeMessage $mimeMessage): SendResult
     {
         return $this->sendMail->send(envelope: $this->envelope, message: $mimeMessage);
     }
 
-    public function queue(MimeMessage $mimeMessage) : void
+    public function queue(MimeMessage $mimeMessage): void
     {
         $this->sendMail->queue(envelope: $this->envelope, message: $mimeMessage);
     }
@@ -37,7 +38,8 @@ final readonly class SendResult
         public bool $success,
         public ?string $messageId = null,
         public ?string $error = null,
-    ) {}
+    ) {
+    }
 
     public static function success(string $messageId): self
     {
@@ -66,16 +68,17 @@ final class RawMailBuilder
     public function __construct(
         private readonly SendMail $sendMail,
         private readonly Envelope $envelope,
-    ) {}
+    ) {
+    }
 
-    public function from(string $address, ?string $name = null) : self
+    public function from(string $address, ?string $name = null): self
     {
         $this->from = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
 
         return $this;
     }
 
-    public function to(string $address, ?string $name = null) : self
+    public function to(string $address, ?string $name = null): self
     {
         $this->to = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
 

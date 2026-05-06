@@ -9,7 +9,9 @@ final class ProjectionBuilder implements Projection
     /** @var array<string, string> */
     private array $fieldMappings = [];
 
-    public function __construct(private readonly string $targetClass) {}
+    public function __construct(private readonly string $targetClass)
+    {
+    }
 
     public static function for(string $targetClass): self
     {

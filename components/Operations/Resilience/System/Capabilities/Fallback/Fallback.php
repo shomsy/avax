@@ -11,7 +11,7 @@ final class Fallback
 {
     private static array $strategies = [];
 
-    public static function register(string $dependency, FallbackStrategyItem $fallbackStrategyItem) : void
+    public static function register(string $dependency, FallbackStrategyItem $fallbackStrategyItem): void
     {
         self::$strategies[$dependency] = $fallbackStrategyItem;
     }

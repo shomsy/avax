@@ -19,14 +19,15 @@ use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class ReadCompiledCache
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest, private Clock $clock = new SystemClock()) {}
+    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest, private Clock $clock = new SystemClock())
+    {
+    }
 
     public function read(
         string $name,
         callable $build,
         CompiledCacheSources $compiledCacheSources,
-    ) : mixed
-    {
+    ): mixed {
         $compiledCacheName = new CompiledCacheName(name: $name);
 
         $checkCompiledCacheIsFresh = new CheckCompiledCacheIsFresh($this->compiledCacheDirectory, $this->compiledCacheManifest);
@@ -43,8 +44,7 @@ final readonly class ReadCompiledCache
         CompiledCacheName $compiledCacheName,
         callable $build,
         CompiledCacheSources $compiledCacheSources,
-    ) : mixed
-    {
+    ): mixed {
         $compileCache = new CompileCache(
             compiledCacheDirectory: $this->compiledCacheDirectory,
             compiledCacheManifest : $this->compiledCacheManifest,
@@ -56,7 +56,7 @@ final readonly class ReadCompiledCache
         return $this->requireCompiledArtifact($compiledCacheName);
     }
 
-    private function requireCompiledArtifact(CompiledCacheName $compiledCacheName) : mixed
+    private function requireCompiledArtifact(CompiledCacheName $compiledCacheName): mixed
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);

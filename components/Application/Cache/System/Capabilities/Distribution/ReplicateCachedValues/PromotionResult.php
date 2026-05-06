@@ -16,5 +16,6 @@ final readonly class PromotionResult
         public CacheStore $newPrimary,
         public int $promotedReplicaIndex,
         public bool $success,
-    ) {}
+    ) {
+    }
 }

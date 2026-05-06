@@ -11,5 +11,6 @@ final readonly class SagaRecoveryResult
         public bool $recoverable,
         public SagaRecoveryAction $action,
         public string $reason,
-    ) {}
+    ) {
+    }
 }

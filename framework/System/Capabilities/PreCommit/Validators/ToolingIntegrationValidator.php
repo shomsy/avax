@@ -13,21 +13,21 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
  */
 class ToolingIntegrationValidator extends BaseValidator
 {
-    public function getName() : string
+    public function getName(): string
     {
         return 'ToolingIntegrationValidator';
     }
 
-    public function validate(array $context) : ValidationResult
+    public function validate(array $context): ValidationResult
     {
-        $files    = $context['staged_files'] ?? [];
+        $files = $context['staged_files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
         $messages = [];
 
         foreach ($files as $file) {
             // Check tooling directory files follow .sh extension
             if (str_starts_with((string) $file, 'tooling/') && preg_match('/\.(php|sh)$/', (string) $file)) {
-                $filePath = $basePath . '/' . $file;
+                $filePath = $basePath.'/'.$file;
                 if (! file_exists($filePath)) {
                     continue;
                 }
@@ -37,7 +37,7 @@ class ToolingIntegrationValidator extends BaseValidator
                     $content = file_get_contents($filePath);
                     if ($content !== false && ! str_starts_with(trim($content), '#!/')) {
                         $messages[] = sprintf(
-                            "Shell script %s missing shebang",
+                            'Shell script %s missing shebang',
                             $file
                         );
                     }

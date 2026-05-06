@@ -18,7 +18,7 @@ final class StateResetRegistry
         $this->states[$name] = $state;
     }
 
-    public function resetAll() : StateResetReport
+    public function resetAll(): StateResetReport
     {
         $resetComponents = [];
         $failures = [];

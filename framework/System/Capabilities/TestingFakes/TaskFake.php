@@ -9,12 +9,12 @@ final class TaskFake
     /** @var list<object> */
     private array $dispatched = [];
 
-    public function dispatch(object $task) : void
+    public function dispatch(object $task): void
     {
         $this->dispatched[] = $task;
     }
 
-    public function assertDispatched(string $taskClass) : self
+    public function assertDispatched(string $taskClass): self
     {
         foreach ($this->dispatched as $task) {
             if ($task instanceof $taskClass) {
@@ -28,12 +28,12 @@ final class TaskFake
     /**
      * @return list<object>
      */
-    public function dispatched() : array
+    public function dispatched(): array
     {
         return $this->dispatched;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->dispatched = [];
     }

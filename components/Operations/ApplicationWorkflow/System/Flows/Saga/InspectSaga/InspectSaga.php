@@ -23,7 +23,7 @@ final class InspectSaga implements Countable, IteratorAggregate
         return new self(events: []);
     }
 
-    public function record(SagaRuntimeEvent $sagaRuntimeEvent) : void
+    public function record(SagaRuntimeEvent $sagaRuntimeEvent): void
     {
         $this->events[] = $sagaRuntimeEvent;
     }
@@ -45,7 +45,7 @@ final class InspectSaga implements Countable, IteratorAggregate
     {
         return array_filter(
             $this->events,
-            static fn ($e) : bool => $e->sagaId === $sagaId,
+            static fn ($e): bool => $e->sagaId === $sagaId,
         );
     }
 
@@ -83,7 +83,8 @@ final class InspectSaga implements Countable, IteratorAggregate
 
 final readonly class SagaRuntimeEvent
 {
-    private function __construct(public string $id, public string $sagaId, public string $sagaName, public string $type, public ?string $stepName, public array $payload, public DateTimeImmutable $occurredAt) {
+    private function __construct(public string $id, public string $sagaId, public string $sagaName, public string $type, public ?string $stepName, public array $payload, public DateTimeImmutable $occurredAt)
+    {
     }
 
     public static function started(string $sagaId, string $sagaName): self
@@ -95,7 +96,7 @@ final readonly class SagaRuntimeEvent
         string $sagaId,
         string $sagaName,
         string $type,
-        ?array  $payload = null,
+        ?array $payload = null,
         ?string $stepName = null,
     ): self {
         $payload ??= [];
@@ -150,12 +151,12 @@ final readonly class SagaRuntimeEvent
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'saga_id'   => $this->sagaId,
+            'id' => $this->id,
+            'saga_id' => $this->sagaId,
             'saga_name' => $this->sagaName,
-            'type'      => $this->type,
+            'type' => $this->type,
             'step_name' => $this->stepName,
-            'payload'   => $this->payload,
+            'payload' => $this->payload,
             'occurred_at' => $this->occurredAt->format(format: DateTimeInterface::ISO8601),
         ];
     }
@@ -163,7 +164,8 @@ final readonly class SagaRuntimeEvent
 
 final readonly class SagaTimeline
 {
-    private function __construct(public string $sagaId, public array $events, public array $steps, public ?string $startedAt, public ?string $completedAt, public ?float $durationMs, public ?string $finalStatus) {
+    private function __construct(public string $sagaId, public array $events, public array $steps, public ?string $startedAt, public ?string $completedAt, public ?float $durationMs, public ?string $finalStatus)
+    {
     }
 
     /**
@@ -171,7 +173,7 @@ final readonly class SagaTimeline
      */
     public static function fromEvents(string $sagaId, array $events): self
     {
-        $steps     = [];
+        $steps = [];
         $startedAt = null;
         $completedAt = null;
         $finalStatus = null;
@@ -199,7 +201,7 @@ final readonly class SagaTimeline
         $durationMs = null;
         if ($startedAt && $completedAt) {
             $start = new DateTimeImmutable(datetime: $startedAt);
-            $end   = new DateTimeImmutable(datetime: $completedAt);
+            $end = new DateTimeImmutable(datetime: $completedAt);
             $durationMs = ($end->getTimestamp() - $start->getTimestamp()) * 1000;
         }
 
@@ -217,9 +219,9 @@ final readonly class SagaTimeline
     public function toArray(): array
     {
         return [
-            'saga_id'     => $this->sagaId,
-            'steps'       => $this->steps,
-            'started_at'  => $this->startedAt,
+            'saga_id' => $this->sagaId,
+            'steps' => $this->steps,
+            'started_at' => $this->startedAt,
             'completed_at' => $this->completedAt,
             'duration_ms' => $this->durationMs,
             'final_status' => $this->finalStatus,
@@ -229,14 +231,15 @@ final readonly class SagaTimeline
 
 final readonly class SagaReport
 {
-    public function __construct(public string $sagaId, public SagaTimeline $timeline, public array $events, public DateTimeImmutable $generatedAt) {
+    public function __construct(public string $sagaId, public SagaTimeline $timeline, public array $events, public DateTimeImmutable $generatedAt)
+    {
     }
 
     public function toArray(): array
     {
         return [
-            'saga_id'     => $this->sagaId,
-            'timeline'    => $this->timeline->toArray(),
+            'saga_id' => $this->sagaId,
+            'timeline' => $this->timeline->toArray(),
             'event_count' => count($this->events),
             'generated_at' => $this->generatedAt->format(format: DateTimeInterface::ISO8601),
         ];

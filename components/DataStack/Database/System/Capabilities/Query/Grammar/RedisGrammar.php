@@ -14,11 +14,11 @@ use Override;
 final class RedisGrammar extends BaseGrammar
 {
     #[Override]
-    public function compileSelect(QueryState $queryState) : string
+    public function compileSelect(QueryState $queryState): string
     {
         $key = $this->wrap(value: $queryState->from);
 
-        return 'GET ' . $key;
+        return 'GET '.$key;
     }
 
     #[Override]
@@ -32,35 +32,35 @@ final class RedisGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileInsert(QueryState $queryState) : string
+    public function compileInsert(QueryState $queryState): string
     {
-        $key   = $this->wrap(value: $queryState->from);
+        $key = $this->wrap(value: $queryState->from);
         $value = json_encode(value: $queryState->values);
 
         return sprintf('SET %s %s', $key, $value);
     }
 
     #[Override]
-    public function compileUpdate(QueryState $queryState) : string
+    public function compileUpdate(QueryState $queryState): string
     {
-        $key   = $this->wrap(value: $queryState->from);
+        $key = $this->wrap(value: $queryState->from);
         $value = json_encode(value: $queryState->values);
 
         return sprintf('SET %s %s', $key, $value);
     }
 
     #[Override]
-    public function compileDelete(QueryState $queryState) : string
+    public function compileDelete(QueryState $queryState): string
     {
         $key = $this->wrap(value: $queryState->from);
 
-        return 'DEL ' . $key;
+        return 'DEL '.$key;
     }
 
     #[Override]
-    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string
     {
-        $key   = $this->wrap(value: $queryState->from);
+        $key = $this->wrap(value: $queryState->from);
         $value = json_encode(value: $queryState->values);
 
         return sprintf('SET %s %s', $key, $value);
@@ -73,13 +73,13 @@ final class RedisGrammar extends BaseGrammar
             $pairs[] = sprintf('%s %s', $field, $value);
         }
 
-        return sprintf('HSET %s ', $key) . implode(separator: ' ', array: $pairs);
+        return sprintf('HSET %s ', $key).implode(separator: ' ', array: $pairs);
     }
 
-    public function compileHashGet(string $key, ?string $field = null) : string
+    public function compileHashGet(string $key, ?string $field = null): string
     {
         if ($field === null) {
-            return 'HGETALL ' . $key;
+            return 'HGETALL '.$key;
         }
 
         return sprintf('HGET %s %s', $key, $field);
@@ -92,17 +92,17 @@ final class RedisGrammar extends BaseGrammar
 
     public function compileListPop(string $key): string
     {
-        return 'LPOP ' . $key;
+        return 'LPOP '.$key;
     }
 
     public function compileSetAdd(string $key, string ...$members): string
     {
-        return sprintf('SADD %s ', $key) . implode(separator: ' ', array: $members);
+        return sprintf('SADD %s ', $key).implode(separator: ' ', array: $members);
     }
 
     public function compileSetMembers(string $key): string
     {
-        return 'SMEMBERS ' . $key;
+        return 'SMEMBERS '.$key;
     }
 
     public function compileSortedSet(string $key, array $scores): string
@@ -112,7 +112,7 @@ final class RedisGrammar extends BaseGrammar
             $pairs[] = sprintf('%s %s', $score, $member);
         }
 
-        return sprintf('ZADD %s ', $key) . implode(separator: ' ', array: $pairs);
+        return sprintf('ZADD %s ', $key).implode(separator: ' ', array: $pairs);
     }
 
     public function compileSortedSetRange(string $key, int $start, int $stop): string
@@ -127,7 +127,7 @@ final class RedisGrammar extends BaseGrammar
 
     public function compileTtl(string $key): string
     {
-        return 'TTL ' . $key;
+        return 'TTL '.$key;
     }
 
     #[Override]

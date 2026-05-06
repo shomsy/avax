@@ -8,5 +8,5 @@ enum LifecycleSource: string
 {
     case ADMIN = 'admin';
     case FEDERATION = 'federation';
-    case SCIM  = 'scim';
+    case SCIM = 'scim';
 }

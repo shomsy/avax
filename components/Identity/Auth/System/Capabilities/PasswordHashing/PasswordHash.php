@@ -12,5 +12,6 @@ final readonly class PasswordHash
 {
     public function __construct(
         public string $value,
-    ) {}
+    ) {
+    }
 }

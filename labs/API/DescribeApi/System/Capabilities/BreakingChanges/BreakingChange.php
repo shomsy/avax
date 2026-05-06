@@ -8,12 +8,11 @@ final class BreakingChange
 {
     public function __construct(
         public readonly BreakingChangeType $type,
-        public readonly string             $path,
-        public readonly string             $description,
-        public readonly string|null        $before,
-        public readonly string|null        $after,
-    )
-    {
+        public readonly string $path,
+        public readonly string $description,
+        public readonly ?string $before,
+        public readonly ?string $after,
+    ) {
     }
 
     public function severity(): string

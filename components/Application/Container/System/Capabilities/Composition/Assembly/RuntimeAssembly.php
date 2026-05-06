@@ -7,8 +7,8 @@ namespace Avax\Components\Application\Container\System\Capabilities\Composition\
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileContainer;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\FunctionCaller;
-use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ManageScopes;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeStore;

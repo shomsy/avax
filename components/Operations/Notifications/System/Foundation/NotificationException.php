@@ -6,4 +6,6 @@ namespace Avax\Components\Operations\Notifications\System\Foundation;
 
 use Exception;
 
-final class NotificationException extends Exception {}
+final class NotificationException extends Exception
+{
+}

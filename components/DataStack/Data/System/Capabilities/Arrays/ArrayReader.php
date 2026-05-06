@@ -205,7 +205,7 @@ final readonly class ArrayReader
      */
     public function undot(array $data): array
     {
-        $result      = [];
+        $result = [];
         $arrayWriter = new ArrayWriter();
 
         foreach ($data as $key => $value) {

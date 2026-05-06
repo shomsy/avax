@@ -17,7 +17,8 @@ final readonly class ReadOidcUserInfo
         #[SensitiveParameter]
         private JwtIdentityInterface $jwtIdentity,
         private ?OidcProviderInterface $oidcProvider = null,
-    ) {}
+    ) {
+    }
 
     public function execute(#[SensitiveParameter] string $accessToken): OidcUserInfo
     {

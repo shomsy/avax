@@ -12,7 +12,9 @@ use Throwable;
  */
 final readonly class ReadPdo
 {
-    public function __construct(private ReadConnection $readConnection) {}
+    public function __construct(private ReadConnection $readConnection)
+    {
+    }
 
     /**
      * @throws Throwable

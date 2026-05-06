@@ -8,7 +8,6 @@ final readonly class DevToolsConfig
 {
     public function __construct(
         public bool $enabled = true,
-    )
-    {
+    ) {
     }
 }

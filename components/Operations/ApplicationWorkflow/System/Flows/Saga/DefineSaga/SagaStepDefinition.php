@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 enum SagaStepKind: string
 {
-    case ACTION   = 'action';
+    case ACTION = 'action';
     case COMPENSATION = 'compensation';
     case APPROVAL = 'approval';
     case NOTIFICATION = 'notification';
@@ -16,10 +16,10 @@ enum SagaStepKind: string
 
 enum SagaStepRetryPolicy: string
 {
-    case NONE      = 'none';
+    case NONE = 'none';
     case IMMEDIATE = 'immediate';
     case EXPONENTIAL = 'exponential';
-    case LINEAR    = 'linear';
+    case LINEAR = 'linear';
 }
 
 final readonly class SagaStepDefinition
@@ -37,31 +37,31 @@ final readonly class SagaStepDefinition
     public bool $optional;
 
     private function __construct(
-        public string        $name,
-        public string        $component,
-        public SagaStepKind  $kind,
-        ?array               $input = null,
-        public ?string       $compensationComponent = null,
-        public ?array        $compensationInput = null,
-        ?int                 $maxRetries = null,
-        ?int                 $retryDelayMs = null,
+        public string $name,
+        public string $component,
+        public SagaStepKind $kind,
+        ?array $input = null,
+        public ?string $compensationComponent = null,
+        public ?array $compensationInput = null,
+        ?int $maxRetries = null,
+        ?int $retryDelayMs = null,
         ?SagaStepRetryPolicy $sagaStepRetryPolicy = null,
-        ?int                 $timeoutSeconds = null,
-        ?bool                $optional = null,
-        public ?string       $description = null,
+        ?int $timeoutSeconds = null,
+        ?bool $optional = null,
+        public ?string $description = null,
     ) {
-        $input                   ??= [];
-        $maxRetries              ??= 0;
-        $retryDelayMs            ??= 1000;
+        $input ??= [];
+        $maxRetries ??= 0;
+        $retryDelayMs ??= 1000;
         $sagaStepRetryPolicy ??= SagaStepRetryPolicy::NONE;
         $timeoutSeconds ??= 30;
-        $optional                ??= false;
-        $this->input             = $input;
-        $this->maxRetries        = $maxRetries;
-        $this->retryDelayMs      = $retryDelayMs;
+        $optional ??= false;
+        $this->input = $input;
+        $this->maxRetries = $maxRetries;
+        $this->retryDelayMs = $retryDelayMs;
         $this->retryPolicy = $sagaStepRetryPolicy;
-        $this->timeoutSeconds    = $timeoutSeconds;
-        $this->optional          = $optional;
+        $this->timeoutSeconds = $timeoutSeconds;
+        $this->optional = $optional;
     }
 
     public static function action(
@@ -115,7 +115,7 @@ final readonly class SagaStepDefinition
         array $options = [],
     ): self {
         return self::create(name: $name, component: $component, options: array_merge($options, [
-            'input'        => $input,
+            'input' => $input,
             'compensation' => $compensationComponent,
             'compensation_input' => $compensationInput,
         ]));
@@ -134,18 +134,18 @@ final readonly class SagaStepDefinition
     public function toArray(): array
     {
         return [
-            'name'         => $this->name,
-            'component'    => $this->component,
-            'kind'         => $this->kind->value,
-            'input'        => $this->input,
+            'name' => $this->name,
+            'component' => $this->component,
+            'kind' => $this->kind->value,
+            'input' => $this->input,
             'compensation' => $this->compensationComponent,
             'compensation_input' => $this->compensationInput,
-            'max_retries'  => $this->maxRetries,
-            'retry_delay'  => $this->retryDelayMs,
+            'max_retries' => $this->maxRetries,
+            'retry_delay' => $this->retryDelayMs,
             'retry_policy' => $this->retryPolicy->value,
-            'timeout'      => $this->timeoutSeconds,
-            'optional'     => $this->optional,
-            'description'  => $this->description,
+            'timeout' => $this->timeoutSeconds,
+            'optional' => $this->optional,
+            'description' => $this->description,
         ];
     }
 }

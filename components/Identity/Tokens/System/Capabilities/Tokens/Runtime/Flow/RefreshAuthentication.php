@@ -38,13 +38,14 @@ final readonly class RefreshAuthentication
         #[SensitiveParameter]
         private ?JwtIdentityInterface $jwtIdentity = null,
         private ?DeterministicRiskEngine $deterministicRiskEngine = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws RefreshAuthenticationFailed
      * @throws DateMalformedStringException
      */
-    public function execute(RefreshAuthenticationRequest $refreshAuthenticationRequest) : AuthenticationResult
+    public function execute(RefreshAuthenticationRequest $refreshAuthenticationRequest): AuthenticationResult
     {
         if (! $this->refreshTokenStore instanceof RefreshTokenStoreInterface || ! $this->jwtIdentity instanceof JwtIdentityInterface) {
             throw RefreshAuthenticationFailed::invalidToken();
@@ -58,9 +59,9 @@ final readonly class RefreshAuthentication
                 name      : 'auth.refresh.failed',
                 occurredAt: $now,
                 context   : [
-                                'reason' => 'missing_or_expired',
-                                'ip_address' => $refreshAuthenticationRequest->ipAddress,
-                                'user_agent' => $refreshAuthenticationRequest->userAgent,
+                    'reason' => 'missing_or_expired',
+                    'ip_address' => $refreshAuthenticationRequest->ipAddress,
+                    'user_agent' => $refreshAuthenticationRequest->userAgent,
                 ],
             ));
 
@@ -72,9 +73,9 @@ final readonly class RefreshAuthentication
                 name      : 'auth.refresh.failed',
                 occurredAt: $now,
                 context   : [
-                                'reason' => 'oauth_bound_token',
-                                'ip_address' => $refreshAuthenticationRequest->ipAddress,
-                                'user_agent' => $refreshAuthenticationRequest->userAgent,
+                    'reason' => 'oauth_bound_token',
+                    'ip_address' => $refreshAuthenticationRequest->ipAddress,
+                    'user_agent' => $refreshAuthenticationRequest->userAgent,
                 ],
             ));
 
@@ -88,11 +89,11 @@ final readonly class RefreshAuthentication
                 name      : 'auth.refresh.reuse_detected',
                 occurredAt: $now,
                 context   : [
-                                'user_id'    => $record->userId->value,
-                                'family_id'  => $record->familyId,
+                    'user_id' => $record->userId->value,
+                    'family_id' => $record->familyId,
                     'risk_action' => $riskDecision?->action->value,
-                                'ip_address' => $refreshAuthenticationRequest->ipAddress,
-                                'user_agent' => $refreshAuthenticationRequest->userAgent,
+                    'ip_address' => $refreshAuthenticationRequest->ipAddress,
+                    'user_agent' => $refreshAuthenticationRequest->userAgent,
                 ],
             ));
 
@@ -107,7 +108,7 @@ final readonly class RefreshAuthentication
             throw RefreshAuthenticationFailed::invalidToken();
         }
 
-        $issuedToken        = $this->jwtIdentity->issue(
+        $issuedToken = $this->jwtIdentity->issue(
             user                : $user,
             phishingResistant   : $record->phishingResistant,
             scopes              : $record->scopes,
@@ -141,10 +142,10 @@ final readonly class RefreshAuthentication
             name      : 'auth.refresh.succeeded',
             occurredAt: $now,
             context   : [
-                            'user_id'   => $user->getId()->value,
-                            'family_id'  => $issuedRefreshToken->familyId,
-                            'ip_address' => $refreshAuthenticationRequest->ipAddress,
-                            'user_agent' => $refreshAuthenticationRequest->userAgent,
+                'user_id' => $user->getId()->value,
+                'family_id' => $issuedRefreshToken->familyId,
+                'ip_address' => $refreshAuthenticationRequest->ipAddress,
+                'user_agent' => $refreshAuthenticationRequest->userAgent,
             ],
         ));
 

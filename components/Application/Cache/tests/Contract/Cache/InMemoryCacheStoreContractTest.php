@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\tests\Contract\Cache;
 
-require_once __DIR__ . '/CacheStoreContractCase.php';
+require_once __DIR__.'/CacheStoreContractCase.php';
 
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;

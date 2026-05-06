@@ -31,7 +31,7 @@ use ReflectionClass;
 final class RequestScopeIsolationFeatureTest extends TestCase
 {
     #[Test]
-    public function request_scoped_services_reset_properly() : void
+    public function request_scoped_services_reset_properly(): void
     {
         $requestScopeStore = new RequestScopeStore();
 
@@ -75,12 +75,12 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     }
 
     #[Test]
-    public function session_state_is_request_bound() : void
+    public function session_state_is_request_bound(): void
     {
         $arraySessionStore = new ArraySessionStore();
 
         // --- Session A (Request A) ---
-        $scopeA             = new SessionScope(store: $arraySessionStore);
+        $scopeA = new SessionScope(store: $arraySessionStore);
 
         // Manually set started state (avoiding native session_start in tests)
         $reflectionA = new ReflectionClass($scopeA);
@@ -141,10 +141,10 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     }
 
     #[Test]
-    public function auth_current_user_resets_between_requests() : void
+    public function auth_current_user_resets_between_requests(): void
     {
-        $runtimeContext     = new RuntimeContext();
-        $requestScopeStore  = new RequestScopeStore();
+        $runtimeContext = new RuntimeContext();
+        $requestScopeStore = new RequestScopeStore();
         $stateResetRegistry = new StateResetRegistry();
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
@@ -208,17 +208,17 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     }
 
     #[Test]
-    public function request_scope_id_is_unique_per_request() : void
+    public function request_scope_id_is_unique_per_request(): void
     {
         $requestScopeStore = new RequestScopeStore();
 
         $requestScope = $requestScopeStore->open();
-        $id1          = $requestScope->id();
+        $id1 = $requestScope->id();
 
         $requestScope->close();
         $requestScopeStore->resetState();
 
-        $scope2         = $requestScopeStore->open();
+        $scope2 = $requestScopeStore->open();
         $requestScopeId = $scope2->id();
 
         $scope2->close();
@@ -232,7 +232,7 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     }
 
     #[Test]
-    public function closed_scope_throws_on_access() : void
+    public function closed_scope_throws_on_access(): void
     {
         $requestScope = new RequestScope(id: RequestScopeId::generate());
         $requestScope->write(key: 'data', value: 'sensitive');
@@ -243,7 +243,7 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     }
 
     #[Test]
-    public function request_scope_operations_throw_when_no_scope_open() : void
+    public function request_scope_operations_throw_when_no_scope_open(): void
     {
         $requestScopeStore = new RequestScopeStore();
 
@@ -253,12 +253,12 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     }
 
     #[Test]
-    public function concurrent_like_sequential_requests_maintain_isolation() : void
+    public function concurrent_like_sequential_requests_maintain_isolation(): void
     {
         // Simulates what happens in a worker-loop runtime where
         // requests are handled sequentially in the same process
-        $runtimeContext     = new RuntimeContext();
-        $requestScopeStore  = new RequestScopeStore();
+        $runtimeContext = new RuntimeContext();
+        $requestScopeStore = new RequestScopeStore();
         $stateResetRegistry = new StateResetRegistry();
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
@@ -290,17 +290,17 @@ final class RequestScopeIsolationFeatureTest extends TestCase
             self::assertSame(
                 $requestData['user_id'],
                 $scope->read(key: 'current_user_id'),
-                'User ID mismatch for ' . $requestData['uri'],
+                'User ID mismatch for '.$requestData['uri'],
             );
             self::assertSame(
                 $requestData['role'],
                 $scope->read(key: 'current_role'),
-                'Role mismatch for ' . $requestData['uri'],
+                'Role mismatch for '.$requestData['uri'],
             );
             self::assertSame(
                 $requestData['uri'],
                 $scope->read(key: 'request_uri'),
-                'URI mismatch for ' . $requestData['uri'],
+                'URI mismatch for '.$requestData['uri'],
             );
 
             // Close and reset (simulating worker loop behavior)
@@ -321,7 +321,7 @@ final class RequestScopeIsolationFeatureTest extends TestCase
     }
 
     #[Test]
-    public function state_reset_registry_tracks_component_count() : void
+    public function state_reset_registry_tracks_component_count(): void
     {
         $stateResetRegistry = new StateResetRegistry();
 

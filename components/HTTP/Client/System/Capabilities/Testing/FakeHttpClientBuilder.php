@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Client\System\Capabilities\Testing;
 
-use Avax\Components\HTTP\Client\System\Capabilities\Requests\OutboundRequest;
-use Avax\Components\HTTP\Client\System\Capabilities\Responses\ClientResponse;
-use Avax\Components\HTTP\Client\System\Foundation\Failure\HttpRequestFailed;
-use Avax\Components\HTTP\Client\System\PublicSurface\HttpClientInterface;
 use Throwable;
 
 /**
@@ -94,8 +90,8 @@ final class FakeHttpClientBuilder
     /**
      * Respond with a JSON response.
      *
-     * @param mixed $data Data to JSON encode
-     * @param int $status HTTP status code
+     * @param  mixed  $data  Data to JSON encode
+     * @param  int  $status  HTTP status code
      */
     public function respondWithJson(mixed $data = [], int $status = 200): self
     {
@@ -146,7 +142,7 @@ final class FakeHttpClientBuilder
     /**
      * Add a raw response mapping.
      *
-     * @param array<string, RecordedHttpResponse> $responses
+     * @param  array<string, RecordedHttpResponse>  $responses
      */
     public function withResponses(array $responses): self
     {

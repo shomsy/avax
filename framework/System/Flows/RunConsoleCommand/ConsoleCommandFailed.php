@@ -6,4 +6,6 @@ namespace Avax\Framework\System\Flows\RunConsoleCommand;
 
 use RuntimeException;
 
-final class ConsoleCommandFailed extends RuntimeException {}
+final class ConsoleCommandFailed extends RuntimeException
+{
+}

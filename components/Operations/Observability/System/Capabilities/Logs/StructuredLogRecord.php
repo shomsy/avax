@@ -7,13 +7,12 @@ namespace Avax\Components\Operations\Observability\System\Capabilities\Logs;
 class StructuredLogRecord
 {
     public function __construct(
-        public readonly string  $level,
-        public readonly string  $message,
-        public readonly array   $context = [],
+        public readonly string $level,
+        public readonly string $message,
+        public readonly array $context = [],
         public readonly ?string $timestamp = null,
         public readonly ?string $requestId = null,
-    )
-    {
+    ) {
     }
 
     public function withContext(array $context): self

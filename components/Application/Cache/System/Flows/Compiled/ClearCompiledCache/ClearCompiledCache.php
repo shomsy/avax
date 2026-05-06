@@ -29,7 +29,7 @@ final class ClearCompiledCache
         $this->compiledCacheManifest->remove($compiledCacheName->toString());
 
         $resolveCompiledCachePath = new ResolveCompiledCachePath($this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveManifestPath();
+        $compiledCachePath = $resolveCompiledCachePath->resolveManifestPath();
 
         $writeCompiledCacheManifest = new WriteCompiledCacheManifest();
         $writeCompiledCacheManifest->write($this->compiledCacheManifest, $compiledCachePath);
@@ -45,7 +45,7 @@ final class ClearCompiledCache
         $this->compiledCacheManifest = CompiledCacheManifest::empty();
 
         $resolveCompiledCachePath = new ResolveCompiledCachePath($this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveManifestPath();
+        $compiledCachePath = $resolveCompiledCachePath->resolveManifestPath();
 
         if (file_exists($compiledCachePath->toString())) {
             unlink($compiledCachePath->toString());
@@ -62,7 +62,7 @@ final class ClearCompiledCache
             return;
         }
 
-        $files = glob($dir . '/*.php');
+        $files = glob($dir.'/*.php');
 
         if ($files === false) {
             return;

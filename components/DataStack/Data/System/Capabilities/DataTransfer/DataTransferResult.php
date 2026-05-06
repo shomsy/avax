@@ -11,7 +11,8 @@ final readonly class DataTransferResult
     private function __construct(
         private ?object $object,
         private ?DataTransferFailure $dataTransferFailure,
-    ) {}
+    ) {
+    }
 
     public static function success(object $object): self
     {

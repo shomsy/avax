@@ -27,7 +27,7 @@ use Closure;
 final readonly class ClientMiddlewarePipeline
 {
     /**
-     * @param list<ClientMiddlewareInterface> $middlewares Ordered list of middleware
+     * @param  list<ClientMiddlewareInterface>  $middlewares  Ordered list of middleware
      */
     public function __construct(
         public array $middlewares = [],
@@ -39,7 +39,7 @@ final readonly class ClientMiddlewarePipeline
      *
      * Returns a new pipeline instance (immutable).
      */
-    public function with(ClientMiddlewareInterface $clientMiddleware) : self
+    public function with(ClientMiddlewareInterface $clientMiddleware): self
     {
         return new self([...$this->middlewares, $clientMiddleware]);
     }
@@ -49,10 +49,10 @@ final readonly class ClientMiddlewarePipeline
      *
      * Convenience method that resolves and executes in one call.
      *
-     * @param OutboundRequest $outboundRequest The outbound request
-     * @param Closure(OutboundRequest) : ClientResponse $finalHandler The terminal handler
+     * @param  OutboundRequest  $outboundRequest  The outbound request
+     * @param  Closure(OutboundRequest) : ClientResponse  $finalHandler  The terminal handler
      */
-    public function execute(OutboundRequest $outboundRequest, Closure $finalHandler) : ClientResponse
+    public function execute(OutboundRequest $outboundRequest, Closure $finalHandler): ClientResponse
     {
         $handler = $this->resolve($finalHandler);
 
@@ -65,8 +65,7 @@ final readonly class ClientMiddlewarePipeline
      * Wraps each middleware around the final handler, creating
      * a composed function that processes requests through the entire chain.
      *
-     * @param Closure(OutboundRequest) : ClientResponse $finalHandler The terminal handler
-     *
+     * @param  Closure(OutboundRequest) : ClientResponse  $finalHandler  The terminal handler
      * @return Closure(OutboundRequest) : ClientResponse The composed handler
      */
     public function resolve(Closure $finalHandler): Closure
@@ -77,7 +76,7 @@ final readonly class ClientMiddlewarePipeline
         // Wrap each middleware around the handler in reverse order
         // (so the first middleware executes first)
         for ($i = count($this->middlewares) - 1; $i >= 0; $i--) {
-            $middleware     = $this->middlewares[$i];
+            $middleware = $this->middlewares[$i];
             $currentHandler = $handler;
             $handler = static fn (OutboundRequest $outboundRequest) => $middleware->handle($outboundRequest, $currentHandler);
         }

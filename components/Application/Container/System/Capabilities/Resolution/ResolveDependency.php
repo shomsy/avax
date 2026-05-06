@@ -23,9 +23,10 @@ final class ResolveDependency
 
     public function __construct(
         private readonly BindingRegistry $bindingRegistry,
-    ) {}
+    ) {
+    }
 
-    public function call(callable $callback, array $parameters = []) : mixed
+    public function call(callable $callback, array $parameters = []): mixed
     {
         if (is_string($callback) && str_contains($callback, '::')) {
             $callback = explode('::', $callback);
@@ -41,7 +42,7 @@ final class ResolveDependency
         return call_user_func_array($callback, $dependencies);
     }
 
-    public function resolve(string $abstract, array $parameters = []) : mixed
+    public function resolve(string $abstract, array $parameters = []): mixed
     {
         $abstract = $this->bindingRegistry->resolveAlias($abstract);
 
@@ -52,7 +53,7 @@ final class ResolveDependency
 
         // 2. Detect circular dependencies
         if (isset($this->resolving[$abstract])) {
-            throw new RuntimeException('Circular dependency detected for service: ' . $abstract);
+            throw new RuntimeException('Circular dependency detected for service: '.$abstract);
         }
 
         $this->resolving[$abstract] = true;
@@ -81,7 +82,7 @@ final class ResolveDependency
         }
     }
 
-    private function build(string $concrete, array $parameters) : object
+    private function build(string $concrete, array $parameters): object
     {
         if (! class_exists($concrete)) {
             throw new RuntimeException(sprintf('Target class [%s] does not exist.', $concrete));
@@ -104,7 +105,7 @@ final class ResolveDependency
         return $reflectionClass->newInstanceArgs($dependencies);
     }
 
-    private function resolveDependencies(array $parameters, array $overrides) : array
+    private function resolveDependencies(array $parameters, array $overrides): array
     {
         $dependencies = [];
 
@@ -126,7 +127,7 @@ final class ResolveDependency
                     continue;
                 }
 
-                throw new RuntimeException(sprintf('Cannot resolve parameter [$%s] of type ', $name) . ($type ? $type->getName() : 'unknown'));
+                throw new RuntimeException(sprintf('Cannot resolve parameter [$%s] of type ', $name).($type ? $type->getName() : 'unknown'));
             }
 
             $dependencies[] = $this->resolve($type->getName());
@@ -135,7 +136,7 @@ final class ResolveDependency
         return $dependencies;
     }
 
-    private function getCallReflector(callable $callback) : ReflectionFunctionAbstract
+    private function getCallReflector(callable $callback): ReflectionFunctionAbstract
     {
         if (is_array($callback)) {
             return new ReflectionMethod($callback[0], $callback[1]);

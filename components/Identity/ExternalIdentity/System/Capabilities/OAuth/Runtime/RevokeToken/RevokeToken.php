@@ -27,12 +27,13 @@ final readonly class RevokeToken
         private JwtIdentityInterface $jwtIdentity,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
      */
-    public function execute(RevokeTokenData $revokeTokenData) : void
+    public function execute(RevokeTokenData $revokeTokenData): void
     {
         $client = $this->oAuthClientRegistry->find(clientId: $revokeTokenData->clientId);
 
@@ -71,11 +72,11 @@ final readonly class RevokeToken
             name      : 'auth.oauth.token.revoked',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'       => $revokeTokenData->clientId,
-                            'token_type_hint' => $revokeTokenData->tokenTypeHint,
-                            'revoked'    => $revoked ? 1 : 0,
-                            'ip_address'      => $revokeTokenData->ipAddress,
-                            'user_agent'      => $revokeTokenData->userAgent,
+                'client_id' => $revokeTokenData->clientId,
+                'token_type_hint' => $revokeTokenData->tokenTypeHint,
+                'revoked' => $revoked ? 1 : 0,
+                'ip_address' => $revokeTokenData->ipAddress,
+                'user_agent' => $revokeTokenData->userAgent,
             ],
         ));
     }

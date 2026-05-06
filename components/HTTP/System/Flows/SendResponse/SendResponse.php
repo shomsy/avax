@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\System\Flows\SendResponse;
 
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
-use Avax\Components\HTTP\System\Capabilities\Body\StreamBody;
 
 final class SendResponse
 {
-    public static function execute(Response $response) : void
+    public static function execute(Response $response): void
     {
         $status = $response->getStatusCode();
         $reason = $response->getReasonPhrase();

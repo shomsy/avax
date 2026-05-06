@@ -12,7 +12,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryStat
  */
 final class YugabyteDBGrammar extends PostgreSQLGrammar
 {
-    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string
     {
         return parent::compileUpsert($queryState, $uniqueBy, $update);
     }

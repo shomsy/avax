@@ -10,24 +10,22 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\Consistency;
 final readonly class VersionedValue
 {
     public function __construct(
-        public mixed       $value,
+        public mixed $value,
         public VectorClock $clock,
-        public string      $nodeId,
-        public float       $timestamp,
-    )
-    {
+        public string $nodeId,
+        public float $timestamp,
+    ) {
     }
 
     /**
      * Creates a new versioned value.
      */
     public static function create(
-        mixed        $value,
-        string       $nodeId,
+        mixed $value,
+        string $nodeId,
         ?VectorClock $vectorClock = null,
-        ?float       $timestamp = null,
-    ): self
-    {
+        ?float $timestamp = null,
+    ): self {
         $vectorClock ??= VectorClock::initial($nodeId);
         $timestamp ??= microtime(true);
 

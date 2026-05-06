@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 
@@ -14,4 +14,4 @@ assertTrue(condition: $strict->isAllowed(abstract: Countable::class), message: '
 assertTrue(condition: ! $strict->isAllowed(abstract: 'custom-alias'), message: 'Strict policy should reject unknown aliases.');
 assertTrue(condition: $relaxed->isAllowed(abstract: 'custom-alias'), message: 'Relaxed policy should allow unknown aliases.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

@@ -34,7 +34,7 @@ final readonly class EncryptedCache
             $tag,
         );
 
-        return $iv . $tag . $ciphertext;
+        return $iv.$tag.$ciphertext;
     }
 
     public function decrypt(string $encrypted): string
@@ -43,9 +43,9 @@ final readonly class EncryptedCache
             return $encrypted;
         }
 
-        $ivLength   = openssl_cipher_iv_length('aes-256-gcm');
-        $iv         = substr($encrypted, 0, $ivLength);
-        $tag        = substr($encrypted, $ivLength, 16);
+        $ivLength = openssl_cipher_iv_length('aes-256-gcm');
+        $iv = substr($encrypted, 0, $ivLength);
+        $tag = substr($encrypted, $ivLength, 16);
         $ciphertext = substr($encrypted, $ivLength + 16);
 
         $plaintext = openssl_decrypt(

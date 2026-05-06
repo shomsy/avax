@@ -17,7 +17,8 @@ use ReflectionFunction;
  */
 final readonly class DependencyCompiler
 {
-    public function __construct(private DependencyRegistry $dependencyRegistry, private CreateDependencyBlueprint $createDependencyBlueprint, private MethodEmitter $methodEmitter = new MethodEmitter()) {
+    public function __construct(private DependencyRegistry $dependencyRegistry, private CreateDependencyBlueprint $createDependencyBlueprint, private MethodEmitter $methodEmitter = new MethodEmitter())
+    {
     }
 
     /**
@@ -58,9 +59,9 @@ final readonly class DependencyCompiler
 
         return [
             'serviceId' => $description['serviceId'],
-            'method'    => $description['method'],
+            'method' => $description['method'],
             'signature' => $description['signature'],
-            'source'    => $source,
+            'source' => $source,
         ];
     }
 
@@ -80,56 +81,56 @@ final readonly class DependencyCompiler
      */
     public function describe(string $serviceId): array
     {
-        $methodName   = $this->methodEmitter->methodNameFor(serviceId: $serviceId);
+        $methodName = $this->methodEmitter->methodNameFor(serviceId: $serviceId);
         $registration = $this->dependencyRegistry->get(abstract: $serviceId);
-        $candidate             = $this->candidateFor(serviceId: $serviceId, registration: $registration);
+        $candidate = $this->candidateFor(serviceId: $serviceId, registration: $registration);
         $registrationArguments = $registration?->arguments ?? [];
 
         if (is_string(value: $candidate) && class_exists(class: $candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
-            $blueprint   = $this->createDependencyBlueprint->createFor(class: $candidate);
+            $blueprint = $this->createDependencyBlueprint->createFor(class: $candidate);
             $needsFinish = $blueprint->injectableProperties !== []
-                || $blueprint->injectableMethods            !== []
+                || $blueprint->injectableMethods !== []
                 || $this->dependencyRegistry->hasExtenders(abstract: $serviceId);
 
             return [
                 'serviceId' => $serviceId,
-                'method'    => $methodName,
+                'method' => $methodName,
                 'signature' => sha1(string: serialize(value: [
-                                                                 'serviceId' => $serviceId,
-                                                                 'candidate' => $candidate,
-                                                                 'lifetime'  => $registration?->lifetime,
-                                                                 'deferred'  => $registration?->deferred ?? false,
-                                                                 'arguments' => $registrationArguments,
-                                                                 'blueprint' => $blueprint->fingerprint,
-                                                                 'finish'    => $needsFinish,
-                                                             ])),
-                'direct'                => true,
-                'class'                 => $candidate,
-                'plan'                  => $blueprint->constructor,
+                    'serviceId' => $serviceId,
+                    'candidate' => $candidate,
+                    'lifetime' => $registration?->lifetime,
+                    'deferred' => $registration?->deferred ?? false,
+                    'arguments' => $registrationArguments,
+                    'blueprint' => $blueprint->fingerprint,
+                    'finish' => $needsFinish,
+                ])),
+                'direct' => true,
+                'class' => $candidate,
+                'plan' => $blueprint->constructor,
                 'registrationArguments' => $registrationArguments,
-                'needsFinish'           => $needsFinish,
+                'needsFinish' => $needsFinish,
             ];
         }
 
         return [
             'serviceId' => $serviceId,
-            'method'    => $methodName,
+            'method' => $methodName,
             'signature' => sha1(string: serialize(value: [
-                                                             'serviceId' => $serviceId,
-                                                             'candidate' => $this->dynamicSignature(candidate: $candidate),
-                                                             'lifetime'  => $registration?->lifetime,
-                                                             'deferred'  => $registration?->deferred ?? false,
-                                                             'arguments' => $registrationArguments,
-                                                         ])),
-            'direct'                => false,
-            'class'                 => null,
-            'plan'                  => null,
+                'serviceId' => $serviceId,
+                'candidate' => $this->dynamicSignature(candidate: $candidate),
+                'lifetime' => $registration?->lifetime,
+                'deferred' => $registration?->deferred ?? false,
+                'arguments' => $registrationArguments,
+            ])),
+            'direct' => false,
+            'class' => null,
+            'plan' => null,
             'registrationArguments' => $registrationArguments,
-            'needsFinish'           => false,
+            'needsFinish' => false,
         ];
     }
 
-    private function candidateFor(string $serviceId, ?DependencyRegistration $dependencyRegistration) : mixed
+    private function candidateFor(string $serviceId, ?DependencyRegistration $dependencyRegistration): mixed
     {
         if ($dependencyRegistration instanceof DependencyRegistration) {
             return $dependencyRegistration->concrete;
@@ -139,11 +140,11 @@ final readonly class DependencyCompiler
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     private function supportsCompiledArguments(array $arguments): bool
     {
-        return array_all($arguments, fn ($value) : bool => $this->supportsCompiledValue(value: $value));
+        return array_all($arguments, fn ($value): bool => $this->supportsCompiledValue(value: $value));
     }
 
     private function supportsCompiledValue(mixed $value): bool
@@ -156,7 +157,7 @@ final readonly class DependencyCompiler
             return false;
         }
 
-        return array_all($value, fn ($item) : bool => $this->supportsCompiledValue(value: $item));
+        return array_all($value, fn ($item): bool => $this->supportsCompiledValue(value: $item));
     }
 
     /**
@@ -167,15 +168,15 @@ final readonly class DependencyCompiler
         if ($candidate instanceof Closure) {
             $reflectionFunction = new ReflectionFunction(function: $candidate);
 
-            return 'closure:' . ($reflectionFunction->getFileName() ?: 'internal')
-                . ':' . $reflectionFunction->getStartLine()
-                . ':' . $reflectionFunction->getEndLine();
+            return 'closure:'.($reflectionFunction->getFileName() ?: 'internal')
+                .':'.$reflectionFunction->getStartLine()
+                .':'.$reflectionFunction->getEndLine();
         }
 
         if (is_object(value: $candidate)) {
-            return 'object:' . $candidate::class;
+            return 'object:'.$candidate::class;
         }
 
-        return get_debug_type(value: $candidate) . ':' . var_export(value: $candidate, return: true);
+        return get_debug_type(value: $candidate).':'.var_export(value: $candidate, return: true);
     }
 }

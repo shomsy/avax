@@ -17,10 +17,10 @@ final readonly class BroadcastMessage
     {
         return json_encode(
             value: [
-                       'event'   => $this->event,
-                       'data'    => $this->data,
-                       'channel' => $this->channel,
-                   ],
+                'event' => $this->event,
+                'data' => $this->data,
+                'channel' => $this->channel,
+            ],
             flags: JSON_THROW_ON_ERROR,
         );
     }

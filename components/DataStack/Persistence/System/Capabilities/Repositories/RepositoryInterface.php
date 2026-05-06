@@ -27,28 +27,26 @@ interface RepositoryInterface
      *
      * @return array<T>
      */
-    public function findAll(?int $limit = null, int $offset = 0) : array;
+    public function findAll(?int $limit = null, int $offset = 0): array;
 
     /**
      * Find entities matching the given criteria.
      *
-     * @param array<string, mixed>       $criteria
-     * @param array<string, string>|null $orderBy Column => direction (ASC/DESC)
-     *
+     * @param  array<string, mixed>  $criteria
+     * @param  array<string, string>|null  $orderBy  Column => direction (ASC/DESC)
      * @return array<T>
      */
     public function findBy(
         array $criteria,
         ?array $orderBy = null,
-        ?int   $limit = null,
-        ?int   $offset = null,
+        ?int $limit = null,
+        ?int $offset = null,
     ): array;
 
     /**
      * Find a single entity matching the given criteria.
      *
-     * @param array<string, mixed> $criteria
-     *
+     * @param  array<string, mixed>  $criteria
      * @return T|null
      */
     public function findOneBy(array $criteria): ?object;
@@ -56,28 +54,28 @@ interface RepositoryInterface
     /**
      * Persist an entity (schedule for insert or update via UnitOfWork).
      *
-     * @param T $entity
+     * @param  T  $entity
      */
     public function save(object $entity): void;
 
     /**
      * Remove an entity (schedule for deletion via UnitOfWork).
      *
-     * @param T $entity
+     * @param  T  $entity
      */
     public function delete(object $entity): void;
 
     /**
      * Check if an entity exists matching the given criteria.
      *
-     * @param array<string, mixed> $criteria
+     * @param  array<string, mixed>  $criteria
      */
     public function exists(array $criteria): bool;
 
     /**
      * Count entities matching the given criteria.
      *
-     * @param array<string, mixed> $criteria
+     * @param  array<string, mixed>  $criteria
      */
     public function count(array $criteria = []): int;
 }

@@ -17,17 +17,18 @@ final readonly class Security implements SecurityInterface
 {
     public function __construct(
         private SecurityConfigurationStore $securityConfigurationStore,
-        private BeginSecurityChange        $beginSecurityChange,
-        private ApproveSecurityChange      $approveSecurityChange,
+        private BeginSecurityChange $beginSecurityChange,
+        private ApproveSecurityChange $approveSecurityChange,
         private ApplySecurityChange $applySecurityChange,
-    ) {}
+    ) {
+    }
 
-    public function readConfiguration(string $tenantId) : stdClass
+    public function readConfiguration(string $tenantId): stdClass
     {
         return $this->securityConfigurationStore->read($tenantId);
     }
 
-    public function beginChange(string $tenantId, array $data): \stdClass
+    public function beginChange(string $tenantId, array $data): stdClass
     {
         return $this->beginSecurityChange->execute($tenantId, $data);
     }

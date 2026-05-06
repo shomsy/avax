@@ -45,30 +45,29 @@ final readonly class PreCommit
     private PreCommitReportWriter $preCommitReportWriter;
 
     /** @var list<string> */
-    private array                 $files;
+    private array $files;
 
     /**
-     * @param list<string>|null $files
+     * @param  list<string>|null  $files
      */
     public function __construct(
         ?PreCommitConfig $preCommitConfig = null,
-        ?array           $files = null,
-        private bool     $touchedOnly = true
-    )
-    {
-        $this->preCommitConfig       = $preCommitConfig ?? new PreCommitConfig();
-        $this->preCommitResult       = new PreCommitResult();
+        ?array $files = null,
+        private bool $touchedOnly = true
+    ) {
+        $this->preCommitConfig = $preCommitConfig ?? new PreCommitConfig();
+        $this->preCommitResult = new PreCommitResult();
         $this->preCommitReportWriter = new PreCommitReportWriter(
             $this->preCommitConfig->getReportPath(),
             $this->preCommitConfig->getTodoPath()
         );
-        $this->files        = $files ?? [];
+        $this->files = $files ?? [];
     }
 
     /**
      * Run the PreCommit discipline check
      */
-    public function run() : PreCommitResult
+    public function run(): PreCommitResult
     {
         $startTime = microtime(true);
 
@@ -96,7 +95,7 @@ final readonly class PreCommit
      *
      * @return array<string, mixed>
      */
-    private function buildContext() : array
+    private function buildContext(): array
     {
         $basePath = getcwd() ?: '.';
 
@@ -112,13 +111,13 @@ final readonly class PreCommit
         }
 
         return [
-            'files'        => $files,
-            'base_path'    => $basePath,
-            'system_root'  => $this->detectSystemRoot($basePath),
+            'files' => $files,
+            'base_path' => $basePath,
+            'system_root' => $this->detectSystemRoot($basePath),
             'touched_only' => $this->touchedOnly,
-            'config'       => $this->preCommitConfig,
-            'timestamp'    => date('c'),
-            'git_branch'  => $this->getGitBranch(),
+            'config' => $this->preCommitConfig,
+            'timestamp' => date('c'),
+            'git_branch' => $this->getGitBranch(),
         ];
     }
 
@@ -127,13 +126,13 @@ final readonly class PreCommit
      *
      * @return list<string>
      */
-    private function detectStagedFiles() : array
+    private function detectStagedFiles(): array
     {
         $gitBin = $this->findGitBinary();
         if ($this->touchedOnly) {
-            exec($gitBin . ' diff --cached --name-only --diff-filter=ACM 2>/dev/null', $output, $returnVar);
+            exec($gitBin.' diff --cached --name-only --diff-filter=ACM 2>/dev/null', $output, $returnVar);
         } else {
-            exec($gitBin . ' diff --name-only 2>/dev/null', $output, $returnVar);
+            exec($gitBin.' diff --name-only 2>/dev/null', $output, $returnVar);
         }
 
         if ($returnVar !== 0 || $output === []) {
@@ -148,7 +147,7 @@ final readonly class PreCommit
      *
      * @return list<string>
      */
-    private function detectAllProjectFiles() : array
+    private function detectAllProjectFiles(): array
     {
         $basePath = getcwd() ?: '.';
 
@@ -157,7 +156,7 @@ final readonly class PreCommit
 
         $files = [];
         foreach ($directories as $dir) {
-            $dirPath = $basePath . '/' . $dir;
+            $dirPath = $basePath.'/'.$dir;
             if (! is_dir($dirPath)) {
                 continue;
             }
@@ -176,7 +175,7 @@ final readonly class PreCommit
                     continue;
                 }
 
-                $relativePath = $dir . '/' . $iterator->getSubPathName();
+                $relativePath = $dir.'/'.$iterator->getSubPathName();
                 $files[] = $relativePath;
             }
         }
@@ -187,7 +186,7 @@ final readonly class PreCommit
     /**
      * Find git binary
      */
-    private function findGitBinary() : string
+    private function findGitBinary(): string
     {
         $locations = ['/usr/bin/git', '/usr/local/bin/git', '/bin/git', 'git'];
         foreach ($locations as $location) {
@@ -207,12 +206,12 @@ final readonly class PreCommit
     /**
      * Detect system root directory
      */
-    private function detectSystemRoot(string $basePath) : string
+    private function detectSystemRoot(string $basePath): string
     {
         $candidates = ['components', 'framework', 'src', 'system', 'System', 'app'];
 
         foreach ($candidates as $candidate) {
-            $path = $basePath . '/' . $candidate;
+            $path = $basePath.'/'.$candidate;
             if (is_dir($path)) {
                 return $path;
             }
@@ -224,19 +223,18 @@ final readonly class PreCommit
     /**
      * Get current git branch
      */
-    private function getGitBranch() : string
+    private function getGitBranch(): string
     {
         $gitBin = $this->findGitBinary();
-        exec($gitBin . ' rev-parse --abbrev-ref HEAD 2>/dev/null', $output, $returnVar);
+        exec($gitBin.' rev-parse --abbrev-ref HEAD 2>/dev/null', $output, $returnVar);
+
         return $returnVar === 0 ? ($output[0] ?? 'unknown') : 'unknown';
     }
 
     /**
      * Create a check instance.
      *
-     * @param class-string $checkClass
-     *
-     * @return object
+     * @param  class-string  $checkClass
      */
     private function createCheck(string $checkClass): object
     {
@@ -250,29 +248,29 @@ final readonly class PreCommit
     /**
      * Run all enabled checks in order.
      *
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    private function runChecks(array $context) : void
+    private function runChecks(array $context): void
     {
         $checks = [
             // Blocking checks first
-            'CheckPhpSyntax'               => CheckPhpSyntax::class,
-            'CheckNamingConventions'       => CheckNamingConventions::class,
-            'CheckHowToRules'              => CheckHowToRules::class,
-            'CheckForbiddenWords'          => CheckForbiddenWords::class,
-            'CheckFileStructure'           => CheckFileStructure::class,
+            'CheckPhpSyntax' => CheckPhpSyntax::class,
+            'CheckNamingConventions' => CheckNamingConventions::class,
+            'CheckHowToRules' => CheckHowToRules::class,
+            'CheckForbiddenWords' => CheckForbiddenWords::class,
+            'CheckFileStructure' => CheckFileStructure::class,
 
             // Warnings next
-            'DetectLegacyCode'             => DetectLegacyCode::class,
-            'DetectDeprecatedCode'         => DetectDeprecatedCode::class,
-            'DetectLegacyAliases'          => DetectLegacyAliases::class,
-            'DetectTodoComments'           => DetectTodoComments::class,
-            'DetectToolingScripts'         => DetectToolingScripts::class,
-            'CheckPublicSurfaceRules'      => CheckPublicSurfaceRules::class,
+            'DetectLegacyCode' => DetectLegacyCode::class,
+            'DetectDeprecatedCode' => DetectDeprecatedCode::class,
+            'DetectLegacyAliases' => DetectLegacyAliases::class,
+            'DetectTodoComments' => DetectTodoComments::class,
+            'DetectToolingScripts' => DetectToolingScripts::class,
+            'CheckPublicSurfaceRules' => CheckPublicSurfaceRules::class,
 
             // Architecture and external tools last
             'DetectArchitectureViolations' => DetectArchitectureViolations::class,
-            'RunExternalToolingScripts'    => RunExternalToolingScripts::class,
+            'RunExternalToolingScripts' => RunExternalToolingScripts::class,
         ];
 
         foreach ($checks as $checkName => $checkClass) {
@@ -295,28 +293,28 @@ final readonly class PreCommit
             } catch (Throwable $e) {
                 // Log error but continue with other checks
                 $this->preCommitResult->addIssue(new PreCommitIssue(
-                                            $checkName,
-                                            PreCommitIssue::SEVERITY_ERROR,
-                                            "Check failed: " . $e->getMessage(),
-                                            null,
-                                            null,
-                                            'CHECK_ERROR'
-                                        ));
+                    $checkName,
+                    PreCommitIssue::SEVERITY_ERROR,
+                    'Check failed: '.$e->getMessage(),
+                    null,
+                    null,
+                    'CHECK_ERROR'
+                ));
             }
         }
     }
 
-    public function getResult() : PreCommitResult
+    public function getResult(): PreCommitResult
     {
         return $this->preCommitResult;
     }
 
-    public function getReportWriter() : PreCommitReportWriter
+    public function getReportWriter(): PreCommitReportWriter
     {
         return $this->preCommitReportWriter;
     }
 
-    public function getConfig() : PreCommitConfig
+    public function getConfig(): PreCommitConfig
     {
         return $this->preCommitConfig;
     }

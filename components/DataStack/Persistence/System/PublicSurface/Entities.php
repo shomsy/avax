@@ -18,7 +18,8 @@ final readonly class Entities
         private UnitOfWorkInterface $unitOfWork,
         private RepositoryRegistry $repositoryRegistry,
         private IdentityMap $identityMap,
-    ) {}
+    ) {
+    }
 
     public function find(string $entityClass, mixed $id): ?object
     {
@@ -35,7 +36,7 @@ final readonly class Entities
         $this->unitOfWork->remove($entity);
     }
 
-    public function flush(?string $connectionName = null) : void
+    public function flush(?string $connectionName = null): void
     {
         $this->unitOfWork->flush($connectionName);
     }

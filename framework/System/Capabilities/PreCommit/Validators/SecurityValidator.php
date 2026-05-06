@@ -9,7 +9,7 @@ use Override;
 
 /**
  * Security Validator
- * 
+ *
  * Detects potential security issues in staged files.
  */
 class SecurityValidator extends BaseValidator
@@ -21,16 +21,16 @@ class SecurityValidator extends BaseValidator
         '/(secret[_-]?key|secret)\s*[=:]\s*["\']?[a-zA-Z0-9_\-]{20,}["\']?/i',
         '/(access[_-]?token|access_token)\s*[=:]\s*["\']?[a-zA-Z0-9_\-\.]{20,}["\']?/i',
         '/(auth[_-]?token|auth_token)\s*[=:]\s*["\']?[a-zA-Z0-9_\-\.]{20,}["\']?/i',
-        
+
         // Passwords in code
         '/(password|passwd)\s*[=:]\s*["\'][^"\'\s]{3,}["\']/i',
-        
+
         // AWS keys
         '/(aws[_-]?secret|aws[_-]?key)\s*[=:]\s*["\']?[A-Z0-9\/+=]{20,}["\']?/i',
-        
+
         // Private keys (simplified)
         '/-----BEGIN (RSA |DSA |EC |OPENSSH |PGP )?PRIVATE KEY-----/i',
-        
+
         // Database connection strings with credentials
         '/(mysql|pgsql|sqlite|mongodb):\/\/[^\s]+:[^\s]+@[^\s]+/i',
     ];
@@ -53,13 +53,13 @@ class SecurityValidator extends BaseValidator
         $allPassed = true;
 
         foreach ($files as $file) {
-            $filePath = $basePath . '/' . $file;
-            if (!file_exists($filePath)) {
+            $filePath = $basePath.'/'.$file;
+            if (! file_exists($filePath)) {
                 continue;
             }
 
             // Skip binary files
-            if (!$this->isTextFile($filePath)) {
+            if (! $this->isTextFile($filePath)) {
                 continue;
             }
 
@@ -70,7 +70,7 @@ class SecurityValidator extends BaseValidator
 
             // Check for secrets
             $secretResult = $this->checkForSecrets($content, $file);
-            if (!$secretResult->isPassed()) {
+            if (! $secretResult->isPassed()) {
                 $allPassed = false;
                 $messages = array_merge($messages, $secretResult->getMessages());
             }
@@ -78,7 +78,7 @@ class SecurityValidator extends BaseValidator
             // Check for dangerous functions (only in PHP files)
             if (str_ends_with(strtolower((string) $file), '.php')) {
                 $securityResult = $this->checkPhpSecurity($content, $file);
-                if (!$securityResult->isPassed()) {
+                if (! $securityResult->isPassed()) {
                     $allPassed = false;
                     $messages = array_merge($messages, $securityResult->getMessages());
                 }
@@ -109,7 +109,7 @@ class SecurityValidator extends BaseValidator
                 foreach ($matches[0] as $match) {
                     $lineNum = substr_count(substr($content, 0, $match[1]), "\n") + 1;
                     $messages[] = sprintf(
-                        "Potential secret/hardcoded credential detected in %s at line %d: %s",
+                        'Potential secret/hardcoded credential detected in %s at line %d: %s',
                         $file,
                         $lineNum,
                         substr($match[0], 0, 50)
@@ -141,7 +141,7 @@ class SecurityValidator extends BaseValidator
 
         $foundDangerous = [];
         foreach ($tokens as $token) {
-            if (!is_array($token)) {
+            if (! is_array($token)) {
                 continue;
             }
 
@@ -180,8 +180,8 @@ class SecurityValidator extends BaseValidator
     /**
      * Check if token is inside a comment
      *
-     * @param list<array{int, string, int}|string> $tokens
-     * @param array{int, string, int}              $targetToken
+     * @param  list<array{int, string, int}|string>  $tokens
+     * @param  array{int, string, int}  $targetToken
      */
     private function isTokenInComment(array $tokens, array $targetToken): bool
     {
@@ -229,7 +229,7 @@ class SecurityValidator extends BaseValidator
      */
     private function isTextFile(string $filePath): bool
     {
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             return false;
         }
 
@@ -242,6 +242,6 @@ class SecurityValidator extends BaseValidator
     #[Override]
     public function supports(array $context): bool
     {
-        return !empty($context['staged_files'] ?? []);
+        return ! empty($context['staged_files'] ?? []);
     }
 }

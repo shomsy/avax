@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class SchemaBlueprintTest extends TestCase
 {
-    public function test_blueprint_compiles_create_table_sql_for_common_columns() : void
+    public function test_blueprint_compiles_create_table_sql_for_common_columns(): void
     {
         $blueprint = new Blueprint(table: 'users');
 
@@ -36,12 +36,12 @@ final class SchemaBlueprintTest extends TestCase
         self::assertMatchesRegularExpression('/updated_at/i', $joinedSql);
     }
 
-    private static function normalizeSql(string $sql) : string
+    private static function normalizeSql(string $sql): string
     {
         return preg_replace('/\s+/', ' ', trim($sql)) ?? $sql;
     }
 
-    public function test_blueprint_compiles_alter_table_sql_for_drop_and_rename_column() : void
+    public function test_blueprint_compiles_alter_table_sql_for_drop_and_rename_column(): void
     {
         $blueprint = new Blueprint(table: 'users');
 

@@ -11,7 +11,9 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Saga\Saga
  */
 final readonly class ApplicationWorkflow
 {
-    public function __construct(private Saga $saga) {}
+    public function __construct(private Saga $saga)
+    {
+    }
 
     public static function inMemory(): self
     {

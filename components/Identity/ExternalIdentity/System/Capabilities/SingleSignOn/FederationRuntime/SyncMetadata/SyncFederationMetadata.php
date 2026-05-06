@@ -15,7 +15,9 @@ use JsonException;
 
 final readonly class SyncFederationMetadata
 {
-    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private FederationMetadataRuntimeInterface $federationMetadataRuntime, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private FederationMetadataRuntimeInterface $federationMetadataRuntime, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws FederationFailed
@@ -33,13 +35,13 @@ final readonly class SyncFederationMetadata
             throw FederationFailed::metadataUrlMissing();
         }
 
-        $federationMetadata   = $this->federationMetadataRuntime->readMetadata(connection: $connection);
+        $federationMetadata = $this->federationMetadataRuntime->readMetadata(connection: $connection);
         $federationConnection = $connection->withMetadata(
             metadataIssuer: $federationMetadata->issuer,
             metadataHash  : hash(algo: 'sha256', data: json_encode(value: [
-                                                                              'issuer'             => $federationMetadata->issuer,
-                                                                              'single_sign_on_url' => $federationMetadata->singleSignOnUrl,
-                                                                              'claims'             => $federationMetadata->claims,
+                'issuer' => $federationMetadata->issuer,
+                'single_sign_on_url' => $federationMetadata->singleSignOnUrl,
+                'claims' => $federationMetadata->claims,
             ], flags: JSON_THROW_ON_ERROR)),
             syncedAt      : $this->clock->now(),
         );
@@ -48,9 +50,9 @@ final readonly class SyncFederationMetadata
             name      : 'auth.federation.metadata.synced',
             occurredAt: $this->clock->now(),
             context   : [
-                            'connection_id'   => $federationConnection->connectionId,
-                            'tenant'          => $federationConnection->tenantSlug,
-                            'metadata_issuer' => $federationConnection->metadataIssuer,
+                'connection_id' => $federationConnection->connectionId,
+                'tenant' => $federationConnection->tenantSlug,
+                'metadata_issuer' => $federationConnection->metadataIssuer,
             ],
         ));
 

@@ -8,7 +8,7 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
 
 /**
  * Abstract Base Validator
- * 
+ *
  * Provides common functionality for all validators.
  */
 abstract class Validator implements ValidatorInterface
@@ -22,7 +22,7 @@ abstract class Validator implements ValidatorInterface
         $this->name = $name ?: static::class;
     }
 
-    public function setNext(ValidatorInterface $validator) : ValidatorInterface
+    public function setNext(ValidatorInterface $validator): ValidatorInterface
     {
         $this->next = $validator;
 
@@ -30,7 +30,7 @@ abstract class Validator implements ValidatorInterface
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     abstract public function validate(array $context): ValidationResult;
 
@@ -40,7 +40,7 @@ abstract class Validator implements ValidatorInterface
      * Check if this validator should run for given context
      */
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function supports(array $context): bool
     {
@@ -51,7 +51,7 @@ abstract class Validator implements ValidatorInterface
      * Pass to next validator in chain
      */
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     protected function passToNext(array $context): ValidationResult
     {
@@ -66,9 +66,9 @@ abstract class Validator implements ValidatorInterface
      * Combine current result with next validator
      */
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    protected function combineWithNext(array $context, ValidationResult $validationResult) : ValidationResult
+    protected function combineWithNext(array $context, ValidationResult $validationResult): ValidationResult
     {
         if ($this->next instanceof ValidatorInterface && $this->next->supports($context)) {
             $nextResult = $this->next->validate($context);

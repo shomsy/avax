@@ -11,7 +11,8 @@ final readonly class PullValue
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(string $key): mixed
     {

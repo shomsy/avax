@@ -14,17 +14,17 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
     public function __construct(string $basePath = '/tmp/avax-object-storage')
     {
         $this->basePath = $basePath;
-        if (!is_dir($this->basePath)) {
+        if (! is_dir($this->basePath)) {
             mkdir($this->basePath, 0755, true);
         }
     }
 
     public function store(string $key, string $content, array $options = []): ObjectStorageResult
     {
-        $path = $this->basePath . '/' . $key;
+        $path = $this->basePath.'/'.$key;
         $dir = dirname($path);
 
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
 
@@ -39,9 +39,9 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
 
     public function read(string $key): ?string
     {
-        $path = $this->basePath . '/' . $key;
+        $path = $this->basePath.'/'.$key;
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return null;
         }
 
@@ -50,9 +50,9 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
 
     public function delete(string $key): bool
     {
-        $path = $this->basePath . '/' . $key;
+        $path = $this->basePath.'/'.$key;
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return false;
         }
 
@@ -61,7 +61,7 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
 
     public function exists(string $key): bool
     {
-        return file_exists($this->basePath . '/' . $key);
+        return file_exists($this->basePath.'/'.$key);
     }
 
     public function generatePresignedUrl(string $key, int $expiresInSeconds): string

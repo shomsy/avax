@@ -13,5 +13,6 @@ final readonly class IssuedTenantInvite
         public TenantInvite $invite,
         #[SensitiveParameter]
         public string $plainTextToken,
-    ) {}
+    ) {
+    }
 }

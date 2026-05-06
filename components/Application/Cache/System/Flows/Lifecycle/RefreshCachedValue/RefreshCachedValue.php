@@ -21,20 +21,20 @@ final readonly class RefreshCachedValue
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private Clock                    $clock,
+        private Clock $clock,
         private ShouldRefreshCachedValue $shouldRefreshCachedValue
         = new ShouldRefreshCachedValue(
             clock: new SystemClock(),
         ),
-        private CacheTtl                 $cacheTtl = new CacheTtl(),
-    ) {}
+        private CacheTtl $cacheTtl = new CacheTtl(),
+    ) {
+    }
 
     public function refreshIfNeeded(
-        CacheKey         $cacheKey,
-        callable         $loader,
+        CacheKey $cacheKey,
+        callable $loader,
         int|DateInterval|null $ttl = null,
-    ) : mixed
-    {
+    ): mixed {
         $result = $this->cacheStore->read(cacheKey: $cacheKey, clock: $this->clock);
 
         if ($result instanceof CacheStoreRecordWasMissing) {
@@ -50,10 +50,9 @@ final readonly class RefreshCachedValue
 
     public function refresh(
         CacheKey $cacheKey,
-        callable         $loader,
+        callable $loader,
         int|DateInterval|null $ttl = null,
-    ) : mixed
-    {
+    ): mixed {
         try {
             $value = $loader();
 
@@ -65,8 +64,8 @@ final readonly class RefreshCachedValue
                         createdAt: $this->clock->now(),
                         expiresAt: $this->cacheTtl->calculateExpiresAt(ttl: $ttl, clock: $this->clock)
                                        ?? $this->clock->now()->add(
-                            duration: Duration::ofSeconds(seconds: 3600),
-                        ),
+                                           duration: Duration::ofSeconds(seconds: 3600),
+                                       ),
                         clock    : $this->clock,
                     ),
                 ),

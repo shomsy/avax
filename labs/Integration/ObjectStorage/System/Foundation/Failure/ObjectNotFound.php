@@ -10,8 +10,7 @@ class ObjectNotFound extends Exception
 {
     public function __construct(
         public readonly string $key,
-    )
-    {
+    ) {
         parent::__construct("Object not found: {$key}");
     }
 }

@@ -20,20 +20,22 @@ use Stringable;
  */
 final readonly class Text implements Stringable
 {
-    private function __construct(public string $value) {}
+    private function __construct(public string $value)
+    {
+    }
 
-    public static function of(string $value) : self
+    public static function of(string $value): self
     {
         return new self($value);
     }
 
-    public static function fromNullable(?string $value, string $default = '') : self
+    public static function fromNullable(?string $value, string $default = ''): self
     {
         return new self($value ?? $default);
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -42,57 +44,57 @@ final readonly class Text implements Stringable
     // Transformations (Delegated to Capabilities)
     // ──────────────────────────────────────────────
 
-    public function plural(int $count = 2) : self
+    public function plural(int $count = 2): self
     {
         return new self(new ToPlural()->execute($this->value, $count));
     }
 
-    public function singular() : self
+    public function singular(): self
     {
         return new self(new ToSingular()->execute($this->value));
     }
 
-    public function lower() : self
+    public function lower(): self
     {
         return new self(mb_strtolower($this->value, 'UTF-8'));
     }
 
-    public function upper() : self
+    public function upper(): self
     {
         return new self(mb_strtoupper($this->value, 'UTF-8'));
     }
 
-    public function slug(string $separator = '-') : self
+    public function slug(string $separator = '-'): self
     {
         return new self(Str::slug($this->value, $separator));
     }
 
-    public function camel() : self
+    public function camel(): self
     {
         return new self(Str::camel($this->value));
     }
 
-    public function snake(string $delimiter = '_') : self
+    public function snake(string $delimiter = '_'): self
     {
         return new self(Str::snake($this->value, $delimiter));
     }
 
-    public function kebab() : self
+    public function kebab(): self
     {
         return new self(Str::kebab($this->value));
     }
 
-    public function studly() : self
+    public function studly(): self
     {
         return new self(Str::studly($this->value));
     }
 
-    public function headline() : self
+    public function headline(): self
     {
         return new self(Str::headline($this->value));
     }
 
-    public function limit(int $max, string $suffix = '…') : self
+    public function limit(int $max, string $suffix = '…'): self
     {
         return new self(Str::limit($this->value, $max, $suffix));
     }
@@ -101,7 +103,7 @@ final readonly class Text implements Stringable
     // Validation (Delegated to Capabilities)
     // ──────────────────────────────────────────────
 
-    public function isValidEmail() : bool
+    public function isValidEmail(): bool
     {
         return new IsValidEmail()->execute($this->value);
     }
@@ -110,37 +112,37 @@ final readonly class Text implements Stringable
     // Core DSL
     // ──────────────────────────────────────────────
 
-    public function pipe(Closure $fn) : self
+    public function pipe(Closure $fn): self
     {
         return new self($fn($this->value));
     }
 
-    public function contains(string $needle) : bool
+    public function contains(string $needle): bool
     {
         return str_contains($this->value, $needle);
     }
 
-    public function startsWith(string $prefix) : bool
+    public function startsWith(string $prefix): bool
     {
         return str_starts_with($this->value, $prefix);
     }
 
-    public function endsWith(string $suffix) : bool
+    public function endsWith(string $suffix): bool
     {
         return str_ends_with($this->value, $suffix);
     }
 
-    public function trim(string $chars = " \t\n\r\0\x0B") : self
+    public function trim(string $chars = " \t\n\r\0\x0B"): self
     {
         return new self(trim($this->value, $chars));
     }
 
-    public function length() : int
+    public function length(): int
     {
         return mb_strlen($this->value, 'UTF-8');
     }
 
-    public function before(string $needle) : self
+    public function before(string $needle): self
     {
         $pos = strpos($this->value, $needle);
         if ($pos === false) {
@@ -150,7 +152,7 @@ final readonly class Text implements Stringable
         return new self(substr($this->value, 0, $pos));
     }
 
-    public function after(string $needle) : self
+    public function after(string $needle): self
     {
         $pos = strpos($this->value, $needle);
         if ($pos === false) {
@@ -160,7 +162,7 @@ final readonly class Text implements Stringable
         return new self(substr($this->value, $pos + strlen($needle)));
     }
 
-    public function between(string $left, string $right) : self
+    public function between(string $left, string $right): self
     {
         $leftPos = strpos($this->value, $left);
         if ($leftPos === false) {
@@ -175,26 +177,26 @@ final readonly class Text implements Stringable
         return new self(substr($this->value, $leftPos + strlen($left), $rightPos - $leftPos - strlen($left)));
     }
 
-    public function ensurePrefix(string $prefix) : self
+    public function ensurePrefix(string $prefix): self
     {
         return str_starts_with($this->value, $prefix)
             ? $this
-            : new self($prefix . $this->value);
+            : new self($prefix.$this->value);
     }
 
-    public function ensureSuffix(string $suffix) : self
+    public function ensureSuffix(string $suffix): self
     {
         return str_ends_with($this->value, $suffix)
             ? $this
-            : new self($this->value . $suffix);
+            : new self($this->value.$suffix);
     }
 
-    public function excerpt(int $length = 200, string $suffix = '...') : self
+    public function excerpt(int $length = 200, string $suffix = '...'): self
     {
         return new self(Str::excerpt($this->value, $length, $suffix));
     }
 
-    public function toAscii() : self
+    public function toAscii(): self
     {
         $v = $this->value;
         if (function_exists('iconv')) {
@@ -209,7 +211,7 @@ final readonly class Text implements Stringable
         return new self(is_string($v) ? $v : $this->value);
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value;
     }

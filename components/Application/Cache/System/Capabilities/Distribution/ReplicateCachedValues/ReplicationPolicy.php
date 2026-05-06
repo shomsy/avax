@@ -8,5 +8,5 @@ enum ReplicationPolicy: string
 {
     case SYNCHRONOUS = 'synchronous';
     case ASYNCHRONOUS = 'asynchronous';
-    case QUORUM      = 'quorum';
+    case QUORUM = 'quorum';
 }

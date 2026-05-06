@@ -12,5 +12,6 @@ final readonly class Permission
 {
     public function __construct(
         public string $name,
-    ) {}
+    ) {
+    }
 }

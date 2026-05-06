@@ -48,17 +48,18 @@ final readonly class ChangePassword
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         private ?LoginRateLimit $loginRateLimit = null,
         private ?RequireFreshMfa $requireFreshMfa = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PasswordChangeFailed
      * @throws Unauthenticated
      * @throws RateLimitException
      */
-    public function execute(ChangePasswordData $changePasswordData) : void
+    public function execute(ChangePasswordData $changePasswordData): void
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $currentUser           = $authenticationContext->user();
+        $currentUser = $authenticationContext->user();
 
         if (! $currentUser instanceof AuthenticatedUser) {
             throw new Unauthenticated();

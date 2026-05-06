@@ -10,9 +10,10 @@ final readonly class ReadSessionValue
 {
     public function __construct(
         private SessionScope $sessionScope,
-    ) {}
+    ) {
+    }
 
-    public function execute(string $key, mixed $default = null) : mixed
+    public function execute(string $key, mixed $default = null): mixed
     {
         return $this->sessionScope->get($key, $default);
     }

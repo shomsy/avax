@@ -12,12 +12,13 @@ final readonly class ValidateConfig
 {
     public function __construct(
         private ConfigValidator $configValidator = new ConfigValidator(),
-    ) {}
+    ) {
+    }
 
     /**
-     * @param list<ConfigSchemaViolation> $violations
+     * @param  list<ConfigSchemaViolation>  $violations
      */
-    public static function printReport(array $violations) : int
+    public static function printReport(array $violations): int
     {
         if ($violations === []) {
             echo "\033[32mConfig validation passed.\033[0m\n";
@@ -55,7 +56,7 @@ final readonly class ValidateConfig
         return $errorCount > 0 ? 1 : 0;
     }
 
-    public function registerSchema(ConfigSchema $configSchema) : self
+    public function registerSchema(ConfigSchema $configSchema): self
     {
         $this->configValidator->register($configSchema);
 
@@ -63,7 +64,7 @@ final readonly class ValidateConfig
     }
 
     /**
-     * @param array<string, array<string, mixed>> $config
+     * @param  array<string, array<string, mixed>>  $config
      * @return list<ConfigSchemaViolation>
      */
     public function validate(array $config): array

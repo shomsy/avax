@@ -14,15 +14,15 @@ final class MethodEmitter
     /**
      * Derives one stable method name from one service id.
      */
-    public function methodNameFor(string $serviceId) : string
+    public function methodNameFor(string $serviceId): string
     {
-        return 'service_' . substr(string: sha1(string: $serviceId), offset: 0, length: 16);
+        return 'service_'.substr(string: sha1(string: $serviceId), offset: 0, length: 16);
     }
 
     /**
      * Emits a fallback method that delegates back to dynamic resolution.
      */
-    public function emitDynamicMethod(string $methodName) : string
+    public function emitDynamicMethod(string $methodName): string
     {
         return <<<PHP
             public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ResolveDependency \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
@@ -35,7 +35,7 @@ final class MethodEmitter
     /**
      * Emits one direct service-construction method for the compiled artifact.
      *
-     * @param array<string, mixed> $registrationArguments
+     * @param  array<string, mixed>  $registrationArguments
      */
     public function emitDirectMethod(
         string $methodName,
@@ -44,9 +44,8 @@ final class MethodEmitter
         ?ResolvePlan $resolvePlan,
         array $registrationArguments,
         bool $needsFinish,
-    ) : string
-    {
-        $className = '\\' . ltrim(string: $class, characters: '\\');
+    ): string {
+        $className = '\\'.ltrim(string: $class, characters: '\\');
         $arguments = $this->emitArguments(serviceId: $serviceId, plan: $resolvePlan);
         $compiledRegistrationArguments = $registrationArguments
                 |> serialize(...)
@@ -63,20 +62,20 @@ final class MethodEmitter
             PHP;
 
         if ($arguments === []) {
-            $body .= PHP_EOL . sprintf('        $instance = new %s();', $className) . PHP_EOL;
+            $body .= PHP_EOL.sprintf('        $instance = new %s();', $className).PHP_EOL;
         } else {
-            $body .= PHP_EOL . sprintf('        $instance = new %s(', $className) . PHP_EOL;
+            $body .= PHP_EOL.sprintf('        $instance = new %s(', $className).PHP_EOL;
 
             foreach ($arguments as $index => $argument) {
                 $suffix = $index === array_key_last(array: $arguments) ? '' : ',';
-                $body .= '            ' . $argument . $suffix . PHP_EOL;
+                $body .= '            '.$argument.$suffix.PHP_EOL;
             }
 
-            $body .= '        );' . PHP_EOL;
+            $body .= '        );'.PHP_EOL;
         }
 
         if ($needsFinish) {
-            return $body . <<<PHP
+            return $body.<<<PHP
                     return \$resolver->finishCompiledService(
                         {$this->export(value: $serviceId)},
                         \$instance,
@@ -88,7 +87,7 @@ final class MethodEmitter
                 PHP;
         }
 
-        return $body . <<<'PHP'
+        return $body.<<<'PHP'
                 return $instance;
             }
             PHP;
@@ -97,7 +96,7 @@ final class MethodEmitter
     /**
      * @return list<string>
      */
-    private function emitArguments(?ResolvePlan $resolvePlan, string $serviceId) : array
+    private function emitArguments(?ResolvePlan $resolvePlan, string $serviceId): array
     {
         if (! $resolvePlan instanceof ResolvePlan || $resolvePlan->isEmpty()) {
             return [];
@@ -106,24 +105,24 @@ final class MethodEmitter
         $arguments = [];
 
         foreach ($resolvePlan->parameters as $parameter) {
-            $expression = 'array_key_exists(' . $this->export(value: $parameter['name']) . ', $arguments)'
-                . ' ? $arguments[' . $this->export(value: $parameter['name']) . ']';
+            $expression = 'array_key_exists('.$this->export(value: $parameter['name']).', $arguments)'
+                .' ? $arguments['.$this->export(value: $parameter['name']).']';
 
             if ($parameter['serviceId'] === null) {
-                $expression .= ' : (array_key_exists(' . $this->export(value: $parameter['name']) . ', $request->context)'
-                    . ' ? $request->context[' . $this->export(value: $parameter['name']) . ']'
-                    . ' : ' . $this->fallbackExpression(parameter: $parameter, serviceId: $serviceId) . ')';
+                $expression .= ' : (array_key_exists('.$this->export(value: $parameter['name']).', $request->context)'
+                    .' ? $request->context['.$this->export(value: $parameter['name']).']'
+                    .' : '.$this->fallbackExpression(parameter: $parameter, serviceId: $serviceId).')';
             } else {
-                $expression .= ' : ' . $this->fallbackExpression(parameter: $parameter, serviceId: $serviceId);
+                $expression .= ' : '.$this->fallbackExpression(parameter: $parameter, serviceId: $serviceId);
             }
 
-            $arguments[] = '(' . $expression . ')';
+            $arguments[] = '('.$expression.')';
         }
 
         return $arguments;
     }
 
-    private function export(mixed $value) : string
+    private function export(mixed $value): string
     {
         return var_export(value: $value, return: true);
     }
@@ -132,18 +131,18 @@ final class MethodEmitter
      * @param array{name: string, serviceId: string|null, hasDefault: bool, default: string, allowsNull: bool}
      * $parameter
      */
-    private function fallbackExpression(array $parameter, string $serviceId) : string
+    private function fallbackExpression(array $parameter, string $serviceId): string
     {
         if ($parameter['serviceId'] !== null) {
             return '$resolver->resolveCompiledDependency('
-                . $this->export(value: $parameter['serviceId'])
-                . ', $request)';
+                .$this->export(value: $parameter['serviceId'])
+                .', $request)';
         }
 
         if ($parameter['hasDefault']) {
             return '\\unserialize(\\base64_decode('
-                . $this->export(value: $parameter['default'])
-                . "), ['allowed_classes' => false])";
+                .$this->export(value: $parameter['default'])
+                ."), ['allowed_classes' => false])";
         }
 
         if ($parameter['allowsNull']) {
@@ -151,7 +150,7 @@ final class MethodEmitter
         }
 
         return 'throw new \\Avax\\Container\\Capabilities\\Diagnostics\\Errors\\ContainerException('
-            . $this->export(value: sprintf('Cannot resolve parameter [$%s] for service [%s].', $parameter['name'], $serviceId))
-            . ')';
+            .$this->export(value: sprintf('Cannot resolve parameter [$%s] for service [%s].', $parameter['name'], $serviceId))
+            .')';
     }
 }

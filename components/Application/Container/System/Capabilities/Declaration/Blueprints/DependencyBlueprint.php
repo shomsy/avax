@@ -17,8 +17,8 @@ final readonly class DependencyBlueprint
     public bool $instantiable;
 
     /**
-     * @param list<array{name: string, serviceId: string|null, readonly: bool}> $injectableProperties
-     * @param list<array{name: string, plan: ResolvePlan}> $injectableMethods
+     * @param  list<array{name: string, serviceId: string|null, readonly: bool}>  $injectableProperties
+     * @param  list<array{name: string, plan: ResolvePlan}>  $injectableMethods
      */
     public function __construct(
         public string $class,
@@ -29,25 +29,25 @@ final readonly class DependencyBlueprint
         ?bool $shared = null,
         public string $fingerprint = '',
     ) {
-        $instantiable         ??= false;
+        $instantiable ??= false;
         $injectableProperties ??= [];
-        $injectableMethods    ??= [];
-        $shared               ??= false;
-        $this->instantiable         = $instantiable;
+        $injectableMethods ??= [];
+        $shared ??= false;
+        $this->instantiable = $instantiable;
         $this->injectableProperties = $injectableProperties;
-        $this->injectableMethods    = $injectableMethods;
-        $this->shared               = $shared;
+        $this->injectableMethods = $injectableMethods;
+        $this->shared = $shared;
     }
 
     public static function __set_state(array $state): self
     {
         return new self(
             class               : $state['class'],
-            instantiable        : $state['instantiable']         ?? false,
+            instantiable        : $state['instantiable'] ?? false,
             injectableProperties: $state['injectableProperties'] ?? [],
-            injectableMethods   : $state['injectableMethods']    ?? [],
-            shared              : $state['shared']               ?? false,
-            fingerprint         : $state['fingerprint']          ?? '',
+            injectableMethods   : $state['injectableMethods'] ?? [],
+            shared              : $state['shared'] ?? false,
+            fingerprint         : $state['fingerprint'] ?? '',
             constructor         : $state['constructor'] ?? null,
         );
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
@@ -27,10 +27,10 @@ final class LifecycleScopedService
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-lifecycle-' . uniqid();
-$version  = 'lifecycle-smoke';
-$config   = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
-$artifact = $cacheDir . '/container/' . rawurlencode(string: $version) . '/compiled/container.php';
+$cacheDir = sys_get_temp_dir().'/container-lifecycle-'.uniqid();
+$version = 'lifecycle-smoke';
+$config = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
+$artifact = $cacheDir.'/container/'.rawurlencode(string: $version).'/compiled/container.php';
 
 $container = makeTestContainer(config: $config);
 $container->singleton(abstract: LifecycleContract::class, concrete: LifecycleService::class);
@@ -68,4 +68,4 @@ assertSame(expected: [], actual: $container->debugScope()['shared'], message: 'R
 assertSame(expected: [], actual: $container->debugScope()['scoped'], message: 'Reset should also leave scoped runtime storage empty.');
 assertSame(expected: 'lifecycle', actual: $container->get(id: LifecycleContract::class)->id(), message: 'Reset should preserve canonical registrations.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

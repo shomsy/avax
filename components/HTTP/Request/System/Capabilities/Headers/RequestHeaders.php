@@ -15,12 +15,12 @@ final class RequestHeaders
         }
     }
 
-    public function set(string $name, string|array $values) : void
+    public function set(string $name, string|array $values): void
     {
         $this->headers[strtolower($name)] = new HeaderValue($values);
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->headers[strtolower($name)]);
     }
@@ -30,7 +30,7 @@ final class RequestHeaders
         return $this->headers[strtolower($name)] ?? null;
     }
 
-    public function all() : array
+    public function all(): array
     {
         $result = [];
         foreach ($this->headers as $name => $value) {

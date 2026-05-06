@@ -16,12 +16,12 @@ use Throwable;
 class HttpRequestFailed extends RuntimeException
 {
     /**
-     * @param string $message The error message
-     * @param int $code The error code
-     * @param string|null $url The URL that failed
-     * @param string|null $method The HTTP method used
-     * @param string|null $reason Human-readable reason for the failure
-     * @param Throwable|null $previous Previous exception for chaining
+     * @param  string  $message  The error message
+     * @param  int  $code  The error code
+     * @param  string|null  $url  The URL that failed
+     * @param  string|null  $method  The HTTP method used
+     * @param  string|null  $reason  Human-readable reason for the failure
+     * @param  Throwable|null  $previous  Previous exception for chaining
      */
     public function __construct(
         string $message = 'HTTP request failed',

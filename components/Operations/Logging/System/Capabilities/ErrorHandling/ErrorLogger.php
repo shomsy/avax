@@ -22,13 +22,13 @@ use Throwable;
 final readonly class ErrorLogger implements LoggerInterface
 {
     /**
-     * @param Logging        $logging        The underlying logging facade
-     * @param SecretRedactor $secretRedactor Redactor for sensitive data in context
-     * @param string|null $correlationId Current correlation ID for request tracking
-     * @param string|null $traceId Current trace ID for distributed tracing
+     * @param  Logging  $logging  The underlying logging facade
+     * @param  SecretRedactor  $secretRedactor  Redactor for sensitive data in context
+     * @param  string|null  $correlationId  Current correlation ID for request tracking
+     * @param  string|null  $traceId  Current trace ID for distributed tracing
      */
     public function __construct(
-        private Logging        $logging,
+        private Logging $logging,
         private SecretRedactor $secretRedactor = new SecretRedactor(),
         private ?string $correlationId = null,
         private ?string $traceId = null,
@@ -42,7 +42,7 @@ final readonly class ErrorLogger implements LoggerInterface
 
     public function log($level, Stringable|string $message, array $context = []): void
     {
-        $level   = (string) $level;
+        $level = (string) $level;
         $message = (string) $message;
 
         $context = $this->enrichContext($context);
@@ -54,8 +54,7 @@ final readonly class ErrorLogger implements LoggerInterface
     /**
      * Enrich context with correlation and trace IDs.
      *
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     private function enrichContext(array $context): array
@@ -76,8 +75,7 @@ final readonly class ErrorLogger implements LoggerInterface
     /**
      * Redact sensitive data from context.
      *
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     private function redactContext(array $context): array
@@ -123,7 +121,7 @@ final readonly class ErrorLogger implements LoggerInterface
     /**
      * Log an exception with full structured context.
      *
-     * @param array<string, mixed> $additionalContext
+     * @param  array<string, mixed>  $additionalContext
      */
     public function logException(
         string $level,
@@ -144,20 +142,19 @@ final readonly class ErrorLogger implements LoggerInterface
     /**
      * Build a structured context array from an exception.
      *
-     * @param array<string, mixed> $additionalContext
-     *
+     * @param  array<string, mixed>  $additionalContext
      * @return array<string, mixed>
      */
-    private function buildExceptionContext(Throwable $throwable, array $additionalContext = []) : array
+    private function buildExceptionContext(Throwable $throwable, array $additionalContext = []): array
     {
         $context = [
             'exception' => [
-                'class'   => $throwable::class,
+                'class' => $throwable::class,
                 'message' => $throwable->getMessage(),
-                'code'    => $throwable->getCode(),
-                'file'    => $throwable->getFile(),
-                'line'    => $throwable->getLine(),
-                'trace'   => $this->formatTrace($throwable),
+                'code' => $throwable->getCode(),
+                'file' => $throwable->getFile(),
+                'line' => $throwable->getLine(),
+                'trace' => $this->formatTrace($throwable),
             ],
         ];
 
@@ -174,7 +171,7 @@ final readonly class ErrorLogger implements LoggerInterface
      * @return list<array{file: string, line: int, class: string|null, type: string|null, function: string, args:
      *                          list<string>}>
      */
-    private function formatTrace(Throwable $throwable) : array
+    private function formatTrace(Throwable $throwable): array
     {
         $trace = [];
 
@@ -188,12 +185,12 @@ final readonly class ErrorLogger implements LoggerInterface
             }
 
             $trace[] = [
-                'file'     => $frame['file']   ?? '[internal]',
-                'line'     => $frame['line']   ?? 0,
-                'class'    => $frame['class'] ?? null,
-                'type'     => $frame['type']   ?? null,
+                'file' => $frame['file'] ?? '[internal]',
+                'line' => $frame['line'] ?? 0,
+                'class' => $frame['class'] ?? null,
+                'type' => $frame['type'] ?? null,
                 'function' => $frame['function'],
-                'args'     => $args,
+                'args' => $args,
             ];
         }
 
@@ -218,7 +215,7 @@ final readonly class ErrorLogger implements LoggerInterface
         }
 
         if (is_string($arg)) {
-            $truncated = mb_strlen($arg) > 100 ? mb_substr($arg, 0, 100) . '...' : $arg;
+            $truncated = mb_strlen($arg) > 100 ? mb_substr($arg, 0, 100).'...' : $arg;
 
             return $this->secretRedactor->redactString($truncated);
         }
@@ -236,7 +233,7 @@ final readonly class ErrorLogger implements LoggerInterface
         }
 
         if (is_resource($arg)) {
-            return get_resource_type($arg) . ' resource';
+            return get_resource_type($arg).' resource';
         }
 
         return gettype($arg);

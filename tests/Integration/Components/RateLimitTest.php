@@ -9,7 +9,7 @@ use Avax\Tests\TestCase;
 
 final class RateLimitTest extends TestCase
 {
-    public function test_rate_limiter_blocks_after_configured_attempts() : void
+    public function test_rate_limiter_blocks_after_configured_attempts(): void
     {
         $limiter = new RedisRateLimiter(config: ['driver' => 'array']);
 

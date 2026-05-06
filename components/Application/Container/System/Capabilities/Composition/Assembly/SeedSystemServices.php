@@ -12,8 +12,8 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observ
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTelemetry;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTimeline;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\FunctionCaller;
-use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ManageScopes;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeInterface;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeStore;
@@ -29,13 +29,12 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 final class SeedSystemServices
 {
     public function seed(
-        RuntimeAssembly       $runtime,
+        RuntimeAssembly $runtime,
         ObservabilityAssembly $observability,
-        Container             $container,
+        Container $container,
         CreateContainerConfig $config,
-        ResolutionTelemetry   $telemetry
-    ): void
-    {
+        ResolutionTelemetry $telemetry
+    ): void {
         $settings = new ContainerSettings(items: $config->settings);
         $registrations = $runtime->registrations;
 

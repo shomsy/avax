@@ -15,12 +15,13 @@ final readonly class OpenHttpRequestScope
     public function __construct(
         private RequestScopeStore $requestScopes,
         private RuntimeContext $runtimeContext,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws RandomException
      */
-    public function open(RuntimeRequest $request) : RequestScope
+    public function open(RuntimeRequest $request): RequestScope
     {
         $requestScope = $this->requestScopes->open();
         $this->runtimeContext->startRequest(

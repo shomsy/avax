@@ -10,7 +10,7 @@ use Throwable;
 final class ConfigurationException extends AuthException
 {
     /**
-     * @param array<string, scalar|list<string>|null> $context
+     * @param  array<string, scalar|list<string>|null>  $context
      */
     public function __construct(
         string $message,
@@ -26,7 +26,7 @@ final class ConfigurationException extends AuthException
     public static function missingUserSource(string $buildPath = 'AuthBuilder::ready()'): self
     {
         return new self(
-            message  : $buildPath . ' requires a user source. Call forUser() before ready().',
+            message  : $buildPath.' requires a user source. Call forUser() before ready().',
             errorCode: 'auth.configuration.user_source_missing',
             context  : [
                 'build_path' => $buildPath,
@@ -38,7 +38,7 @@ final class ConfigurationException extends AuthException
     public static function missingIdentity(string $buildPath = 'AuthBuilder::ready()'): self
     {
         return new self(
-            message  : $buildPath . ' requires an identity coordinator. Call withIdentity() or withIdentityBackends() before ready().',
+            message  : $buildPath.' requires an identity coordinator. Call withIdentity() or withIdentityBackends() before ready().',
             errorCode: 'auth.configuration.identity_missing',
             context  : [
                 'build_path' => $buildPath,
@@ -66,13 +66,13 @@ final class ConfigurationException extends AuthException
     public static function enterpriseSessionRegistryRequired(string $buildPath = 'AuthBuilder::ready()'): self
     {
         return new self(
-            message  : $buildPath . ' cannot enable [enterprise_mode] because [session_registry] is missing. Use withSessionRegistry() to provide a SQL or Redis session registry.',
+            message  : $buildPath.' cannot enable [enterprise_mode] because [session_registry] is missing. Use withSessionRegistry() to provide a SQL or Redis session registry.',
             errorCode: 'auth.configuration.dependency_missing',
             context  : [
-                           'build_path' => $buildPath,
-                           'capability' => 'enterprise_mode',
+                'build_path' => $buildPath,
+                'capability' => 'enterprise_mode',
                 'requirement' => 'session_registry',
-                           'option'     => 'withSessionRegistry()',
+                'option' => 'withSessionRegistry()',
             ],
         );
     }
@@ -88,11 +88,11 @@ final class ConfigurationException extends AuthException
             message  : sprintf('%s cannot enable [%s] because [%s] is missing. %s Provide %s or remove the capability-specific configuration.', $buildPath, $capability, $requirement, $cause, $option),
             errorCode: 'auth.configuration.dependency_missing',
             context  : [
-                           'build_path' => $buildPath,
-                           'capability' => $capability,
+                'build_path' => $buildPath,
+                'capability' => $capability,
                 'requirement' => $requirement,
-                           'option'     => $option,
-                           'cause'      => $cause,
+                'option' => $option,
+                'cause' => $cause,
             ],
         );
     }

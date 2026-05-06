@@ -12,10 +12,12 @@ final readonly class PhpCacheSerializer implements CacheSerializer
 {
     public const string FORMAT = 'php-serialized';
 
-    public function __construct(private Clock $clock = new SystemClock()) {}
+    public function __construct(private Clock $clock = new SystemClock())
+    {
+    }
 
     #[Override]
-    public function serialize(mixed $value) : SerializedCachePayload
+    public function serialize(mixed $value): SerializedCachePayload
     {
         $serialized = serialize(value: $value);
 
@@ -27,7 +29,7 @@ final readonly class PhpCacheSerializer implements CacheSerializer
     }
 
     #[Override]
-    public function unserialize(SerializedCachePayload $serializedCachePayload) : mixed
+    public function unserialize(SerializedCachePayload $serializedCachePayload): mixed
     {
         if (! $this->canUnserialize($serializedCachePayload)) {
             throw new CachePayloadCouldNotBeSerialized(
@@ -52,13 +54,13 @@ final readonly class PhpCacheSerializer implements CacheSerializer
         return $result;
     }
 
-    public function canUnserialize(SerializedCachePayload $serializedCachePayload) : bool
+    public function canUnserialize(SerializedCachePayload $serializedCachePayload): bool
     {
         return $serializedCachePayload->format === self::FORMAT;
     }
 
     #[Override]
-    public function supportedType() : string
+    public function supportedType(): string
     {
         return self::FORMAT;
     }

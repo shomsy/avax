@@ -27,8 +27,8 @@ final class CommandBus
     {
         $class = $command::class;
 
-        if (!isset($this->handlers[$class])) {
-            throw new RuntimeException('No handler registered for command: ' . $class);
+        if (! isset($this->handlers[$class])) {
+            throw new RuntimeException('No handler registered for command: '.$class);
         }
 
         $handler = $this->handlers[$class];
@@ -40,11 +40,11 @@ final class CommandBus
     private function buildPipeline(object $handler): Closure
     {
         $middlewares = array_reverse($this->middleware);
-        $final = fn(Command $command): mixed => $this->execute($handler, $command);
+        $final = fn (Command $command): mixed => $this->execute($handler, $command);
 
         foreach ($middlewares as $middleware) {
             $next = $final;
-            $final = static fn(Command $command) => $middleware->process($command, $next);
+            $final = static fn (Command $command) => $middleware->process($command, $next);
         }
 
         return $final;

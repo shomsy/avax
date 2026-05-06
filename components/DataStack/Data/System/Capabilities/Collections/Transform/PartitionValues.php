@@ -11,11 +11,11 @@ final readonly class PartitionValues
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     /**
-     * @param callable $callback fn(mixed $item) : bool
-     *
+     * @param  callable  $callback  fn(mixed $item) : bool
      * @return array{0: array, 1: array}
      */
     public function __invoke(callable $callback): array
@@ -24,7 +24,7 @@ final readonly class PartitionValues
     }
 
     /**
-     * @param callable $callback fn(mixed $item) : bool
+     * @param  callable  $callback  fn(mixed $item) : bool
      * @return array{0: array, 1: array}
      */
     public function partition(callable $callback): array

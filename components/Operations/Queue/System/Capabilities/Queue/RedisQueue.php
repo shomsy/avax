@@ -51,7 +51,7 @@ final class RedisQueue
 
     private function key(string $queue): string
     {
-        return ($this->config['prefix'] ?? 'avax:queue:') . $queue;
+        return ($this->config['prefix'] ?? 'avax:queue:').$queue;
     }
 
     public function pop(string $queue, int $timeout = 0): ?array

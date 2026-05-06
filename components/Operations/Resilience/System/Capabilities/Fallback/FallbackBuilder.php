@@ -11,7 +11,7 @@ final readonly class FallbackBuilder
     ) {
     }
 
-    public function when() : self
+    public function when(): self
     {
         return $this;
     }

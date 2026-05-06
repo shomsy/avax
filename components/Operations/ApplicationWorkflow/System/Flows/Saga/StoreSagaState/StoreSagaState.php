@@ -17,9 +17,9 @@ final readonly class StoreSagaState
         return new self(stores: ['default' => []]);
     }
 
-    public function save(SagaInstance $sagaInstance) : void
+    public function save(SagaInstance $sagaInstance): void
     {
-        $store                = $this->getStore(name: 'default');
+        $store = $this->getStore(name: 'default');
         $store[$sagaInstance->id] = $sagaInstance;
         $this->stores['default'] = $store;
     }
@@ -36,9 +36,9 @@ final readonly class StoreSagaState
         return $store[$id] ?? null;
     }
 
-    public function appendEvent(string $sagaId, SagaEvent $sagaEvent) : void
+    public function appendEvent(string $sagaId, SagaEvent $sagaEvent): void
     {
-        $key = 'events_' . $sagaId;
+        $key = 'events_'.$sagaId;
         $store = $this->getStore(name: $key);
 
         if (! isset($store['events'])) {
@@ -52,7 +52,7 @@ final readonly class StoreSagaState
 
     public function getEvents(string $sagaId): array
     {
-        $key = 'events_' . $sagaId;
+        $key = 'events_'.$sagaId;
         $store = $this->getStore(name: $key);
 
         return $store['events'] ?? [];

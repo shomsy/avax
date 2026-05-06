@@ -14,9 +14,10 @@ final readonly class PromoteCachedValueToFasterTier
     public function __construct(
         private TieredCache $tieredCache,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
-    public function promote(CacheKey $cacheKey, ?StoredCacheRecord $storedCacheRecord = null) : bool
+    public function promote(CacheKey $cacheKey, ?StoredCacheRecord $storedCacheRecord = null): bool
     {
         if (! $storedCacheRecord instanceof StoredCacheRecord) {
             foreach ($this->tieredCache->stores() as $store) {

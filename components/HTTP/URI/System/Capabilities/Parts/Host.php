@@ -32,8 +32,8 @@ final readonly class Host implements Stringable
         }
 
         // IPv6 detection (simple)
-        if (str_contains($normalized, ':') && !str_starts_with($normalized, '[')) {
-             throw new InvalidArgumentException('IPv6 host must be enclosed in square brackets');
+        if (str_contains($normalized, ':') && ! str_starts_with($normalized, '[')) {
+            throw new InvalidArgumentException('IPv6 host must be enclosed in square brackets');
         }
 
         $this->host = $normalized;

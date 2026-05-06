@@ -13,6 +13,8 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Explainability
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\ActiveSession;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\IdentitySync;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\RegisteredScimDirectory;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkRequest;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkResponse;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser\DeleteScimUserData;
@@ -25,8 +27,6 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotatedScimToken;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\RegisteredScimDirectory;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\EmailChangeChallenge;
@@ -52,13 +52,13 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\MfaChal
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover\BeginMfaRecoveryData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover\ConfirmMfaRecoveryData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover\MfaRecoveryChallenge;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\BeginAuthentication\BeginPasskeyAuthenticationData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\CompleteAuthentication\CompletePasskeyAuthenticationData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\CompleteRegistration\CompletePasskeyRegistrationData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyAuthenticationChallenge;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyRegistration;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskeyData;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentity;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\IssuedAuthorizationCode;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClient;
@@ -123,7 +123,7 @@ interface Auth
 
     public function logout(): void;
 
-    public function authenticateRequest(AuthenticationRequest $authenticationRequest) : AuthenticationContext;
+    public function authenticateRequest(AuthenticationRequest $authenticationRequest): AuthenticationContext;
 
     public function current(): AuthenticationContext;
 
@@ -131,7 +131,7 @@ interface Auth
 
     public function user(): ?AuthenticatedUser;
 
-    public function refresh(RefreshAuthenticationRequest $refreshAuthenticationRequest) : AuthenticationResult;
+    public function refresh(RefreshAuthenticationRequest $refreshAuthenticationRequest): AuthenticationResult;
 
     public function logoutAllSessions(): void;
 
@@ -142,62 +142,62 @@ interface Auth
 
     public function revokeSession(string $sessionId): void;
 
-    public function register(RegistrationData $registrationData) : RegistrationResult;
+    public function register(RegistrationData $registrationData): RegistrationResult;
 
-    public function changePassword(ChangePasswordData $changePasswordData) : void;
+    public function changePassword(ChangePasswordData $changePasswordData): void;
 
-    public function beginEmailChange(BeginEmailChangeData $beginEmailChangeData) : EmailChangeChallenge;
+    public function beginEmailChange(BeginEmailChangeData $beginEmailChangeData): EmailChangeChallenge;
 
-    public function confirmEmailChange(ConfirmEmailChangeData $confirmEmailChangeData) : bool;
+    public function confirmEmailChange(ConfirmEmailChangeData $confirmEmailChangeData): bool;
 
-    public function beginPasswordReset(BeginPasswordResetData $beginPasswordResetData) : PasswordResetChallenge;
+    public function beginPasswordReset(BeginPasswordResetData $beginPasswordResetData): PasswordResetChallenge;
 
-    public function resetPassword(ResetPasswordData $resetPasswordData) : bool;
+    public function resetPassword(ResetPasswordData $resetPasswordData): bool;
 
-    public function beginEmailVerification(BeginEmailVerificationData $beginEmailVerificationData) : EmailVerificationChallenge;
+    public function beginEmailVerification(BeginEmailVerificationData $beginEmailVerificationData): EmailVerificationChallenge;
 
-    public function verifyEmail(VerifyEmailData $verifyEmailData) : bool;
+    public function verifyEmail(VerifyEmailData $verifyEmailData): bool;
 
     public function startMfaEnrollment(): MfaEnrollment;
 
-    public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $confirmMfaEnrollmentData) : BackupCodeSet;
+    public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $confirmMfaEnrollmentData): BackupCodeSet;
 
     public function cancelMfaEnrollment(): void;
 
     public function beginMfaChallenge(): MfaChallenge;
 
-    public function verifyMfaChallenge(VerifyMfaChallengeData $verifyMfaChallengeData) : AuthenticationResult;
+    public function verifyMfaChallenge(VerifyMfaChallengeData $verifyMfaChallengeData): AuthenticationResult;
 
     public function regenerateBackupCodes(): BackupCodeSet;
 
     public function disableMfa(): void;
 
-    public function beginMfaRecovery(BeginMfaRecoveryData $beginMfaRecoveryData) : MfaRecoveryChallenge;
+    public function beginMfaRecovery(BeginMfaRecoveryData $beginMfaRecoveryData): MfaRecoveryChallenge;
 
-    public function confirmMfaRecovery(ConfirmMfaRecoveryData $confirmMfaRecoveryData) : void;
+    public function confirmMfaRecovery(ConfirmMfaRecoveryData $confirmMfaRecoveryData): void;
 
     public function beginPasskeyRegistration(): PasskeyRegistration;
 
-    public function completePasskeyRegistration(CompletePasskeyRegistrationData $completePasskeyRegistrationData) : PasskeyCredential;
+    public function completePasskeyRegistration(CompletePasskeyRegistrationData $completePasskeyRegistrationData): PasskeyCredential;
 
-    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $beginPasskeyAuthenticationData) : PasskeyAuthenticationChallenge;
+    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $beginPasskeyAuthenticationData): PasskeyAuthenticationChallenge;
 
-    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData) : AuthenticationResult;
+    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData): AuthenticationResult;
 
     /**
      * @return list<PasskeyCredential>
      */
     public function readPasskeys(): array;
 
-    public function renamePasskey(RenamePasskeyData $renamePasskeyData) : PasskeyCredential;
+    public function renamePasskey(RenamePasskeyData $renamePasskeyData): PasskeyCredential;
 
     public function revokePasskey(string $credentialId): void;
 
-    public function registerOAuthClient(RegisterClientData $registerClientData) : RegisteredOAuthClient;
+    public function registerOAuthClient(RegisterClientData $registerClientData): RegisteredOAuthClient;
 
-    public function approveOAuthClientRegistration(ApproveClientRegistrationData $approveClientRegistrationData) : OAuthClient;
+    public function approveOAuthClientRegistration(ApproveClientRegistrationData $approveClientRegistrationData): OAuthClient;
 
-    public function updateOAuthClient(UpdateClientData $updateClientData) : OAuthClient;
+    public function updateOAuthClient(UpdateClientData $updateClientData): OAuthClient;
 
     public function disableOAuthClient(string $clientId): OAuthClient;
 
@@ -213,17 +213,17 @@ interface Auth
      */
     public function readWorkloadIdentities(): array;
 
-    public function authorizeOAuthCode(AuthorizeCodeData $authorizeCodeData) : IssuedAuthorizationCode;
+    public function authorizeOAuthCode(AuthorizeCodeData $authorizeCodeData): IssuedAuthorizationCode;
 
-    public function exchangeOAuthCode(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData) : OAuthTokenGrant;
+    public function exchangeOAuthCode(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData): OAuthTokenGrant;
 
-    public function exchangeOAuthClientCredentials(ExchangeClientCredentialsData $exchangeClientCredentialsData) : OAuthTokenGrant;
+    public function exchangeOAuthClientCredentials(ExchangeClientCredentialsData $exchangeClientCredentialsData): OAuthTokenGrant;
 
-    public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $exchangeRefreshTokenData) : OAuthTokenGrant;
+    public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $exchangeRefreshTokenData): OAuthTokenGrant;
 
-    public function revokeOAuthToken(RevokeTokenData $revokeTokenData) : void;
+    public function revokeOAuthToken(RevokeTokenData $revokeTokenData): void;
 
-    public function introspectOAuthToken(IntrospectTokenData $introspectTokenData) : TokenIntrospection;
+    public function introspectOAuthToken(IntrospectTokenData $introspectTokenData): TokenIntrospection;
 
     public function readOidcProviderMetadata(): OidcProviderMetadata;
 
@@ -231,20 +231,20 @@ interface Auth
 
     public function readOidcUserInfo(string $accessToken): OidcUserInfo;
 
-    public function pushOidcAuthorizationRequest(PushAuthorizationRequestData $pushAuthorizationRequestData) : PushedAuthorizationRequest;
+    public function pushOidcAuthorizationRequest(PushAuthorizationRequestData $pushAuthorizationRequestData): PushedAuthorizationRequest;
 
-    public function oidcLogout(LogoutData $logoutData) : LogoutResult;
+    public function oidcLogout(LogoutData $logoutData): LogoutResult;
 
-    public function buildOidcJarmResponse(BuildJarmResponseData $buildJarmResponseData) : JarmResponse;
+    public function buildOidcJarmResponse(BuildJarmResponseData $buildJarmResponseData): JarmResponse;
 
-    public function registerFederationConnection(RegisterFederationConnectionData $registerFederationConnectionData) : FederationConnection;
+    public function registerFederationConnection(RegisterFederationConnectionData $registerFederationConnectionData): FederationConnection;
 
     /**
      * @return list<FederationConnection>
      */
     public function readFederationConnections(): array;
 
-    public function verifyFederationDomain(VerifyFederationDomainData $verifyFederationDomainData) : FederationConnection;
+    public function verifyFederationDomain(VerifyFederationDomainData $verifyFederationDomainData): FederationConnection;
 
     public function syncFederationMetadata(string $connectionId): FederationConnection;
 
@@ -254,26 +254,26 @@ interface Auth
 
     public function discoverFederationConnection(string $email): ?FederationConnection;
 
-    public function startFederatedLogin(StartFederatedLoginData $startFederatedLoginData) : StartedFederatedLogin;
+    public function startFederatedLogin(StartFederatedLoginData $startFederatedLoginData): StartedFederatedLogin;
 
-    public function completeFederatedLogin(CompleteFederatedLoginData $completeFederatedLoginData) : AuthenticationResult;
+    public function completeFederatedLogin(CompleteFederatedLoginData $completeFederatedLoginData): AuthenticationResult;
 
-    public function registerScimDirectory(RegisterScimDirectoryData $registerScimDirectoryData) : RegisteredScimDirectory;
+    public function registerScimDirectory(RegisterScimDirectoryData $registerScimDirectoryData): RegisteredScimDirectory;
 
     /**
      * @return list<ScimDirectory>
      */
-    public function readScimDirectories(?string $tenantSlug = null) : array;
+    public function readScimDirectories(?string $tenantSlug = null): array;
 
     public function rotateScimToken(string $directoryId): RotatedScimToken;
 
-    public function markScimDirectoryOutage(MarkScimDirectoryOutageData $markScimDirectoryOutageData) : ScimDirectory;
+    public function markScimDirectoryOutage(MarkScimDirectoryOutageData $markScimDirectoryOutageData): ScimDirectory;
 
-    public function recoverScimDirectoryOutage(RecoverScimDirectoryOutageData $recoverScimDirectoryOutageData) : ScimDirectory;
+    public function recoverScimDirectoryOutage(RecoverScimDirectoryOutageData $recoverScimDirectoryOutageData): ScimDirectory;
 
-    public function provisionScimUser(ProvisionScimUserData $provisionScimUserData) : ScimProvisioningResult;
+    public function provisionScimUser(ProvisionScimUserData $provisionScimUserData): ScimProvisioningResult;
 
-    public function deleteScimUser(DeleteScimUserData $deleteScimUserData) : void;
+    public function deleteScimUser(DeleteScimUserData $deleteScimUserData): void;
 
     /**
      * @return list<ScimUserProjection>
@@ -285,9 +285,9 @@ interface Auth
      */
     public function readScimGroups(string $directoryId): array;
 
-    public function syncScimGroups(SyncScimGroupsData $syncScimGroupsData) : ScimProvisioningResult;
+    public function syncScimGroups(SyncScimGroupsData $syncScimGroupsData): ScimProvisioningResult;
 
-    public function runScimBulk(ScimBulkRequest $scimBulkRequest) : ScimBulkResponse;
+    public function runScimBulk(ScimBulkRequest $scimBulkRequest): ScimBulkResponse;
 
     public function suspendUser(int $userId): void;
 
@@ -295,27 +295,27 @@ interface Auth
 
     public function deprovisionUser(int $userId): void;
 
-    public function createTenant(CreateTenantData $createTenantData) : Tenant;
+    public function createTenant(CreateTenantData $createTenantData): Tenant;
 
     /**
      * @return list<Tenant>
      */
     public function readTenants(): array;
 
-    public function inviteTenantMember(InviteTenantMemberData $inviteTenantMemberData) : IssuedTenantInvite;
+    public function inviteTenantMember(InviteTenantMemberData $inviteTenantMemberData): IssuedTenantInvite;
 
-    public function acceptTenantInvite(AcceptTenantInviteData $acceptTenantInviteData) : TenantMember;
+    public function acceptTenantInvite(AcceptTenantInviteData $acceptTenantInviteData): TenantMember;
 
     /**
      * @return list<TenantMember>
      */
     public function readTenantMembers(string $tenantSlug): array;
 
-    public function removeTenantMember(RemoveTenantMemberData $removeTenantMemberData) : void;
+    public function removeTenantMember(RemoveTenantMemberData $removeTenantMemberData): void;
 
-    public function suspendTenantMember(SuspendTenantMemberData $suspendTenantMemberData) : TenantMember;
+    public function suspendTenantMember(SuspendTenantMemberData $suspendTenantMemberData): TenantMember;
 
-    public function transferTenantOwnership(TransferTenantOwnershipData $transferTenantOwnershipData) : Tenant;
+    public function transferTenantOwnership(TransferTenantOwnershipData $transferTenantOwnershipData): Tenant;
 
     public function readTenantSecurityConfiguration(string $tenantSlug): ?TenantSecurityConfiguration;
 
@@ -326,7 +326,7 @@ interface Auth
      */
     public function readTenantSecurityChangeRequests(string $tenantSlug): array;
 
-    public function beginTenantSecurityChange(BeginTenantSecurityChangeData $beginTenantSecurityChangeData) : TenantSecurityChangeRequest;
+    public function beginTenantSecurityChange(BeginTenantSecurityChangeData $beginTenantSecurityChangeData): TenantSecurityChangeRequest;
 
     public function approveTenantSecurityChange(string $changeId, string $approvedBy): TenantSecurityChangeRequest;
 
@@ -347,22 +347,22 @@ interface Auth
      */
     public function requireAdminElevation(): void;
 
-    public function assessCurrentRisk(?string $ipAddress = null, ?string $userAgent = null) : ?RiskDecision;
+    public function assessCurrentRisk(?string $ipAddress = null, ?string $userAgent = null): ?RiskDecision;
 
     /**
      * @return list<RiskSignal>
      */
-    public function readRiskSignals(?int $userId = null) : array;
+    public function readRiskSignals(?int $userId = null): array;
 
-    public function explainAccessDenied(string $resource, ?string $requiredPermission = null, ?string $tenant = null, ?string $resourceTenant = null) : AuthIssueExplanation;
+    public function explainAccessDenied(string $resource, ?string $requiredPermission = null, ?string $tenant = null, ?string $resourceTenant = null): AuthIssueExplanation;
 
-    public function explainStepUpRequired(string $action, ?bool $phishingResistantRequired = null, ?int $freshAfterSeconds = null) : AuthIssueExplanation;
+    public function explainStepUpRequired(string $action, ?bool $phishingResistantRequired = null, ?int $freshAfterSeconds = null): AuthIssueExplanation;
 
-    public function explainSenderConstraintFailure(string $reason, ?string $requiredConstraint = null) : AuthIssueExplanation;
+    public function explainSenderConstraintFailure(string $reason, ?string $requiredConstraint = null): AuthIssueExplanation;
 
-    public function explainSessionRevocation(string $status, ?string $sessionId = null) : AuthIssueExplanation;
+    public function explainSessionRevocation(string $status, ?string $sessionId = null): AuthIssueExplanation;
 
-    public function explainTrustedDeviceDecision(?string $deviceId = null) : AuthIssueExplanation;
+    public function explainTrustedDeviceDecision(?string $deviceId = null): AuthIssueExplanation;
 
     // ── Capability accessors ──
 

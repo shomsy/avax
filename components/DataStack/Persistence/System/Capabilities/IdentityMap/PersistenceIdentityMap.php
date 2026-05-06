@@ -24,7 +24,7 @@ final class PersistenceIdentityMap
      */
     public function get(string $entityClass, string|int $id): ?object
     {
-        return $this->entities[$entityClass][(string)$id] ?? null;
+        return $this->entities[$entityClass][(string) $id] ?? null;
     }
 
     /**
@@ -32,7 +32,7 @@ final class PersistenceIdentityMap
      */
     public function put(string $entityClass, string|int $id, object $entity): void
     {
-        $this->entities[$entityClass][(string)$id] = $entity;
+        $this->entities[$entityClass][(string) $id] = $entity;
     }
 
     /**
@@ -40,7 +40,7 @@ final class PersistenceIdentityMap
      */
     public function remove(string $entityClass, string|int $id): void
     {
-        unset($this->entities[$entityClass][(string)$id]);
+        unset($this->entities[$entityClass][(string) $id]);
     }
 
     /**
@@ -48,7 +48,7 @@ final class PersistenceIdentityMap
      */
     public function has(string $entityClass, string|int $id): bool
     {
-        return isset($this->entities[$entityClass][(string)$id]);
+        return isset($this->entities[$entityClass][(string) $id]);
     }
 
     /**

@@ -25,7 +25,7 @@ final class HttpKernel implements HttpInterface
 
     public function __construct(
         private readonly RouterInterface $router,
-        private readonly BootHttpKernel      $bootHttpKernel = new BootHttpKernel(),
+        private readonly BootHttpKernel $bootHttpKernel = new BootHttpKernel(),
         private readonly TerminateHttpKernel $terminateHttpKernel = new TerminateHttpKernel(),
     ) {
     }
@@ -65,7 +65,7 @@ final class HttpKernel implements HttpInterface
     {
         $this->boot();
 
-        $handler = fn (RequestInterface $request) : ResponseInterface => $this->router->dispatch($request);
+        $handler = fn (RequestInterface $request): ResponseInterface => $this->router->dispatch($request);
 
         // Build middleware pipeline in reverse order so first middleware runs first
         $pipeline = $this->middleware;
@@ -98,7 +98,7 @@ final class HttpKernel implements HttpInterface
     /**
      * Wrap a handler with middleware execution.
      *
-     * @param callable(RequestInterface) : ResponseInterface $next
+     * @param  callable(RequestInterface) : ResponseInterface  $next
      * @return callable(RequestInterface) : ResponseInterface
      */
     private function wrapMiddleware(MiddlewareInterface $middleware, callable $next): callable

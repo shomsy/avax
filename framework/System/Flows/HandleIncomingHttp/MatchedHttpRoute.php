@@ -11,15 +11,16 @@ final readonly class MatchedHttpRoute
 {
     public function __construct(
         private RouteDefinition $routeDefinition,
-        private ServerRequest   $serverRequest,
-    ) {}
+        private ServerRequest $serverRequest,
+    ) {
+    }
 
-    public function route() : RouteDefinition
+    public function route(): RouteDefinition
     {
         return $this->routeDefinition;
     }
 
-    public function request() : ServerRequest
+    public function request(): ServerRequest
     {
         return $this->serverRequest;
     }

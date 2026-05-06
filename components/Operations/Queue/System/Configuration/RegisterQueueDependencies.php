@@ -17,7 +17,7 @@ final class RegisterQueueDependencies
     {
         return new Dispatcher(
             dispatchJob: new DispatchJob(
-                             broker: new SyncQueue(),
+                broker: new SyncQueue(),
             ),
         );
     }

@@ -15,9 +15,11 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFa
 
 final readonly class RemoveTenantMember
 {
-    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function execute(RemoveTenantMemberData $removeTenantMemberData) : void
+    public function execute(RemoveTenantMemberData $removeTenantMemberData): void
     {
         $tenant = $this->tenantStore->findTenantBySlug(slug: $removeTenantMemberData->tenantSlug);
 
@@ -40,9 +42,9 @@ final readonly class RemoveTenantMember
             name      : 'auth.tenant.member.removed',
             occurredAt: $this->clock->now(),
             context   : [
-                            'tenant_id' => $tenant->tenantId,
+                'tenant_id' => $tenant->tenantId,
                 'tenant_slug' => $tenant->slug,
-                            'user_id' => $removeTenantMemberData->userId,
+                'user_id' => $removeTenantMemberData->userId,
             ],
         ));
     }

@@ -13,26 +13,27 @@ final class WorkerLoop
     private bool $running = false;
 
     public function __construct(
-        private readonly ?RuntimeInterface       $runtime = null,
+        private readonly ?RuntimeInterface $runtime = null,
         private readonly ?WorkerRuntimeInterface $workerRuntime = null,
-    ) {}
+    ) {
+    }
 
-    public function start() : void
+    public function start(): void
     {
         $this->running = true;
     }
 
-    public function isRunning() : bool
+    public function isRunning(): bool
     {
         return $this->running;
     }
 
-    public function stop() : void
+    public function stop(): void
     {
         $this->running = false;
     }
 
-    public function run() : WorkerLifecycle
+    public function run(): WorkerLifecycle
     {
         $runtime = $this->runtime;
         $workerRuntime = $this->workerRuntime;
@@ -71,11 +72,10 @@ final class WorkerLoop
         RuntimeInterface $runtime,
         WorkerRuntimeInterface $workerRuntime,
         WorkerLifecycle $workerLifecycle,
-    ) : void
-    {
+    ): void {
         $handleIncomingHttp = new HandleIncomingHttp();
 
-        while ( ($request = $workerRuntime->receive()) instanceof WorkerRequest ) {
+        while (($request = $workerRuntime->receive()) instanceof WorkerRequest) {
             $response = $handleIncomingHttp->handle(
                 runtime: $runtime,
                 runtimeRequest: $request->request(),
@@ -83,9 +83,9 @@ final class WorkerLoop
 
             $workerRuntime->send(
                 workerResponse: WorkerResponse::fromRuntimeResponse(
-                            requestId: $request->id(),
-                            runtimeResponse: $response,
-                        ),
+                    requestId: $request->id(),
+                    runtimeResponse: $response,
+                ),
             );
 
             $workerLifecycle->recordHandledRequest(requestId: $request->id());

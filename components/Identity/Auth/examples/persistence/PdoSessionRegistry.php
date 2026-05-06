@@ -17,7 +17,9 @@ use SensitiveParameter;
  */
 final readonly class PdoSessionRegistry implements SessionRegistryInterface
 {
-    public function __construct(private PDO $pdo) {}
+    public function __construct(private PDO $pdo)
+    {
+    }
 
     /**
      * @throws DateMalformedStringException
@@ -34,7 +36,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     }
 
     /**
-     * @param array<string, mixed> $row
+     * @param  array<string, mixed>  $row
      *
      * @throws DateMalformedStringException
      */
@@ -56,12 +58,12 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         );
     }
 
-    public function save(SessionRecord $sessionRecord) : void
+    public function save(SessionRecord $sessionRecord): void
     {
         $this->track(record: $sessionRecord);
     }
 
-    public function track(SessionRecord $sessionRecord) : void
+    public function track(SessionRecord $sessionRecord): void
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(
@@ -88,19 +90,19 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     /**
      * @return array<string, string|int|null>
      */
-    private function mapRecord(SessionRecord $sessionRecord) : array
+    private function mapRecord(SessionRecord $sessionRecord): array
     {
         return [
-            'session_id'          => $sessionRecord->sessionId,
-            'user_id'             => $sessionRecord->userId->value,
-            'created_at'          => $sessionRecord->createdAt->format(format: DATE_ATOM),
-            'last_seen_at'        => $sessionRecord->lastSeenAt->format(format: DATE_ATOM),
-            'idle_expires_at'     => $sessionRecord->idleExpiresAt->format(format: DATE_ATOM),
+            'session_id' => $sessionRecord->sessionId,
+            'user_id' => $sessionRecord->userId->value,
+            'created_at' => $sessionRecord->createdAt->format(format: DATE_ATOM),
+            'last_seen_at' => $sessionRecord->lastSeenAt->format(format: DATE_ATOM),
+            'idle_expires_at' => $sessionRecord->idleExpiresAt->format(format: DATE_ATOM),
             'absolute_expires_at' => $sessionRecord->absoluteExpiresAt->format(format: DATE_ATOM),
-            'ip_created'          => $sessionRecord->ipCreated,
-            'user_agent_created'  => $sessionRecord->userAgentCreated,
-            'revoked_at'          => $sessionRecord->revokedAt?->format(format: DATE_ATOM),
-            'revoke_reason'       => $sessionRecord->revokeReason,
+            'ip_created' => $sessionRecord->ipCreated,
+            'user_agent_created' => $sessionRecord->userAgentCreated,
+            'revoked_at' => $sessionRecord->revokedAt?->format(format: DATE_ATOM),
+            'revoke_reason' => $sessionRecord->revokeReason,
         ];
     }
 
@@ -130,8 +132,8 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id',
         );
         $statement->execute(params: [
-                                        'session_id' => $sessionId,
-                                        'revoked_at' => $revokedAt->format(format: DATE_ATOM),
+            'session_id' => $sessionId,
+            'revoked_at' => $revokedAt->format(format: DATE_ATOM),
             'revoke_reason' => $reason,
         ]);
     }
@@ -143,8 +145,8 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id',
         );
         $statement->execute(params: [
-                                        'user_id'    => $userId->value,
-                                        'revoked_at' => $revokedAt->format(format: DATE_ATOM),
+            'user_id' => $userId->value,
+            'revoked_at' => $revokedAt->format(format: DATE_ATOM),
             'revoke_reason' => $reason,
         ]);
     }

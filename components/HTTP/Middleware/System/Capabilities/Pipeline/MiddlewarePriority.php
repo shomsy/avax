@@ -8,7 +8,8 @@ final readonly class MiddlewarePriority
 {
     public function __construct(
         private int $priority = 100,
-    ) {}
+    ) {
+    }
 
     public function value(): int
     {

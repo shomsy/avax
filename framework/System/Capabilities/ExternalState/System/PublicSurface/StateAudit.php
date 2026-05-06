@@ -20,18 +20,18 @@ final readonly class StateAudit
     public function toArray(): array
     {
         return [
-            'session'    => $this->session,
-            'cache'      => $this->cache,
-            'lock'       => $this->lock,
+            'session' => $this->session,
+            'cache' => $this->cache,
+            'lock' => $this->lock,
             'rate_limit' => $this->rateLimit,
         ];
     }
 
     public function isHorizontalReady(): bool
     {
-        return $this->session   === 'Redis'
-            && $this->cache     === 'Redis'
-            && $this->lock      === 'Redis'
+        return $this->session === 'Redis'
+            && $this->cache === 'Redis'
+            && $this->lock === 'Redis'
             && $this->rateLimit === 'Redis';
     }
 }

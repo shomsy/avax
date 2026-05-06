@@ -23,7 +23,8 @@ final readonly class Authentication
         private Logout $logout,
         #[SensitiveParameter]
         private RefreshAuthentication $refreshAuthentication,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws AuthenticationFailed
@@ -43,7 +44,7 @@ final readonly class Authentication
      * @throws RefreshAuthenticationFailed
      * @throws DateMalformedStringException
      */
-    public function refresh(RefreshAuthenticationRequest $refreshAuthenticationRequest) : AuthenticationResult
+    public function refresh(RefreshAuthenticationRequest $refreshAuthenticationRequest): AuthenticationResult
     {
         return $this->refreshAuthentication->execute(request: $refreshAuthenticationRequest);
     }

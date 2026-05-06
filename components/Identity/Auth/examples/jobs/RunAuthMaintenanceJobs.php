@@ -27,7 +27,8 @@ final readonly class RunAuthMaintenanceJobs
         private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
         private CleanupExpiredPasskeyChallenges $cleanupExpiredPasskeyChallenges,
         private ExportAuditEvents $exportAuditEvents,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, int>
@@ -35,11 +36,11 @@ final readonly class RunAuthMaintenanceJobs
     public function execute(): array
     {
         return [
-            'sessions'            => $this->cleanupExpiredSessions->execute(),
-            'password_resets'     => $this->cleanupExpiredPasswordResets->execute(),
-            'mfa_challenges'      => $this->cleanupExpiredMfaChallenges->execute(),
+            'sessions' => $this->cleanupExpiredSessions->execute(),
+            'password_resets' => $this->cleanupExpiredPasswordResets->execute(),
+            'mfa_challenges' => $this->cleanupExpiredMfaChallenges->execute(),
             'authorization_codes' => $this->cleanupExpiredAuthorizationCodes->execute(),
-            'passkey_challenges'  => $this->cleanupExpiredPasskeyChallenges->execute(),
+            'passkey_challenges' => $this->cleanupExpiredPasskeyChallenges->execute(),
             'audit_events_exported' => $this->exportAuditEvents->execute(),
         ];
     }

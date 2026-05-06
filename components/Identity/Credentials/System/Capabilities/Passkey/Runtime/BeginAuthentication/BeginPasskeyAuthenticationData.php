@@ -13,5 +13,6 @@ final readonly class BeginPasskeyAuthenticationData
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

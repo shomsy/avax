@@ -40,9 +40,10 @@ final readonly class Access
         private RequireAdminElevation $requireAdminElevation,
         private AssessCurrentRisk $assessCurrentRisk,
         private ReadRiskSignals $readRiskSignals,
-    ) {}
+    ) {
+    }
 
-    public function authenticateRequest(AuthenticationRequest $authenticationRequest) : AuthenticationContext
+    public function authenticateRequest(AuthenticationRequest $authenticationRequest): AuthenticationContext
     {
         return $this->authenticateRequest->execute(request: $authenticationRequest);
     }
@@ -89,7 +90,7 @@ final readonly class Access
         $this->requireAdminElevation->execute();
     }
 
-    public function assessCurrentRisk(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : ?RiskDecision
+    public function assessCurrentRisk(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): ?RiskDecision
     {
         return $this->assessCurrentRisk->execute(ipAddress: $ipAddress, userAgent: $userAgent);
     }
@@ -97,7 +98,7 @@ final readonly class Access
     /**
      * @return list<RiskSignal>
      */
-    public function readRiskSignals(?int $userId = null) : array
+    public function readRiskSignals(?int $userId = null): array
     {
         return $this->readRiskSignals->execute(userId: $userId);
     }

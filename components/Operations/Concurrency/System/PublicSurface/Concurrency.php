@@ -11,7 +11,7 @@ final readonly class Concurrency
     /**
      * Run multiple tasks concurrently and return the first result.
      *
-     * @param list<callable(): mixed> $tasks
+     * @param  list<callable(): mixed>  $tasks
      */
     public static function race(array $tasks): mixed
     {
@@ -23,11 +23,10 @@ final readonly class Concurrency
     /**
      * Alias for all() with maxConcurrent parameter.
      *
-     * @param list<callable(): mixed> $tasks
-     *
+     * @param  list<callable(): mixed>  $tasks
      * @return list<mixed>
      */
-    public static function run(array $tasks, int|null $maxConcurrent = null) : array
+    public static function run(array $tasks, ?int $maxConcurrent = null): array
     {
         return self::all(tasks: $tasks);
     }
@@ -35,11 +34,10 @@ final readonly class Concurrency
     /**
      * Run multiple tasks concurrently and wait for all to complete.
      *
-     * @param list<callable(): mixed> $tasks
-     *
+     * @param  list<callable(): mixed>  $tasks
      * @return list<mixed>
      */
-    public static function all(array $tasks) : array
+    public static function all(array $tasks): array
     {
         $taskRunner = new TaskRunner();
 

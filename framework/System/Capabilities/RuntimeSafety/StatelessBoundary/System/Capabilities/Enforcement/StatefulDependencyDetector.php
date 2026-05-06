@@ -11,12 +11,12 @@ final class StatefulDependencyDetector
     /** @var array<string, Closure> */
     private array $detectors = [];
 
-    public function register(string $dependency, Closure $detector) : void
+    public function register(string $dependency, Closure $detector): void
     {
         $this->detectors[$dependency] = $detector;
     }
 
-    public function isStateful(string $dependency) : bool
+    public function isStateful(string $dependency): bool
     {
         $detector = $this->detectors[$dependency] ?? null;
 

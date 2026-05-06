@@ -13,13 +13,13 @@ final class Inflector
     /** @var array<string, string> Irregular word mappings */
     private array $irregular
         = [
-            'person'     => 'people', 'man' => 'men', 'woman' => 'women',
-            'child'      => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
-            'goose'      => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
-            'datum'      => 'data', 'medium' => 'media', 'analysis' => 'analyses',
-            'basis'      => 'bases', 'crisis' => 'crises', 'diagnosis' => 'diagnoses',
-            'ellipsis'   => 'ellipses', 'hypothesis' => 'hypotheses',
-            'oasis'      => 'oases', 'parenthesis' => 'parentheses',
+            'person' => 'people', 'man' => 'men', 'woman' => 'women',
+            'child' => 'children', 'foot' => 'feet', 'tooth' => 'teeth',
+            'goose' => 'geese', 'mouse' => 'mice', 'ox' => 'oxen',
+            'datum' => 'data', 'medium' => 'media', 'analysis' => 'analyses',
+            'basis' => 'bases', 'crisis' => 'crises', 'diagnosis' => 'diagnoses',
+            'ellipsis' => 'ellipses', 'hypothesis' => 'hypotheses',
+            'oasis' => 'oases', 'parenthesis' => 'parentheses',
             'phenomenon' => 'phenomena', 'criterion' => 'criteria',
         ];
 
@@ -75,7 +75,7 @@ final class Inflector
             }
         }
 
-        return $word . 's';
+        return $word.'s';
     }
 
     private function preserveCase(string $original, string $replacement): string
@@ -134,8 +134,8 @@ final class Inflector
 
     public function snakeCase(string $value, string $delimiter = '_'): string
     {
-        $value = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $delimiter . '$2', $value);
-        $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1' . $delimiter . '$2', (string) $value);
+        $value = preg_replace('/([a-z0-9])([A-Z])/', '$1'.$delimiter.'$2', $value);
+        $value = preg_replace('/([A-Z]+)([A-Z][a-z])/', '$1'.$delimiter.'$2', (string) $value);
         $value = preg_replace('/[\s\-]+/', $delimiter, (string) $value);
 
         return strtolower((string) $value);

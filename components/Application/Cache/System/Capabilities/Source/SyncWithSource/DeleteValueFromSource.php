@@ -13,7 +13,7 @@ final readonly class DeleteValueFromSource
     }
 
     /**
-     * @param iterable<CacheKey|string> $keys
+     * @param  iterable<CacheKey|string>  $keys
      */
     public function deleteMany(iterable $keys): int
     {

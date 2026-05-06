@@ -43,7 +43,7 @@ final class CompiledCacheManifest
      */
     public static function load(string $path, ?Clock $clock = null): self
     {
-        $manifest               = new self(clock: $clock ?? new SystemClock());
+        $manifest = new self(clock: $clock ?? new SystemClock());
         $manifest->manifestPath = $path;
 
         if (! file_exists($path)) {
@@ -67,7 +67,7 @@ final class CompiledCacheManifest
         }
 
         foreach ($data['entries'] ?? [] as $name => $entryData) {
-            $entry                    = CompiledCacheManifestEntry::fromArray($entryData);
+            $entry = CompiledCacheManifestEntry::fromArray($entryData);
             $manifest->entries[$name] = $entry;
         }
 
@@ -96,9 +96,9 @@ final class CompiledCacheManifest
         }
 
         $data = [
-            'version'     => '1.0',
+            'version' => '1.0',
             'generatedAt' => $this->clock->now()->seconds,
-            'entries'     => array_map(
+            'entries' => array_map(
                 static fn (CompiledCacheManifestEntry $compiledCacheManifestEntry): array => $compiledCacheManifestEntry->toArray(),
                 $this->entries,
             ),
@@ -124,7 +124,7 @@ final class CompiledCacheManifest
     /**
      * Add an entry to the manifest.
      *
-     * @param list<string> $sourceFiles
+     * @param  list<string>  $sourceFiles
      */
     public function addEntry(
         string $name,
@@ -159,14 +159,14 @@ final class CompiledCacheManifest
     /**
      * Calculate a fingerprint for a set of source files.
      *
-     * @param list<string> $sourceFiles
+     * @param  list<string>  $sourceFiles
      */
     private function calculateFingerprint(array $sourceFiles): string
     {
         $hashParts = [];
 
         foreach ($sourceFiles as $sourceFile) {
-            $hashParts[] = file_exists($sourceFile) ? $sourceFile . ':' . filemtime($sourceFile) : $sourceFile . ':missing';
+            $hashParts[] = file_exists($sourceFile) ? $sourceFile.':'.filemtime($sourceFile) : $sourceFile.':missing';
         }
 
         return hash('sha256', implode('|', $hashParts));
@@ -297,7 +297,7 @@ final class CompiledCacheManifest
             return false;
         }
 
-        $entry                = $this->entries[$name];
+        $entry = $this->entries[$name];
         $this->entries[$name] = $entry->withUpdatedAt($this->clock->now());
 
         return true;

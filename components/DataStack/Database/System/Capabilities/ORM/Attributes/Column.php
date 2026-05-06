@@ -13,5 +13,6 @@ final readonly class Column
         public ?string $name = null,
         public ?string $type = null,
         public bool $nullable = false,
-    ) {}
+    ) {
+    }
 }

@@ -23,7 +23,7 @@ final class ResetVerifier
     /**
      * Register a component that should reset between requests.
      */
-    public function register(string $name, ResettableState $resettableState) : self
+    public function register(string $name, ResettableState $resettableState): self
     {
         $this->registeredComponents[$name] = $resettableState;
 
@@ -35,7 +35,7 @@ final class ResetVerifier
      *
      * @return list<RuntimeSafetyFinding>
      */
-    public function verify() : array
+    public function verify(): array
     {
         $findings = [];
 
@@ -62,7 +62,7 @@ final class ResetVerifier
     /**
      * Verify a single component resets cleanly.
      */
-    private function verifyComponent(string $name, ResettableState $resettableState) : ?RuntimeSafetyFinding
+    private function verifyComponent(string $name, ResettableState $resettableState): ?RuntimeSafetyFinding
     {
         try {
             $resettableState->resetState();
@@ -74,10 +74,10 @@ final class ResetVerifier
                 severity   : RuntimeSafetyFinding::SEVERITY_CRITICAL,
                 component  : $name,
                 message    : sprintf(
-                                 'Component %s failed to reset: %s',
-                                 $name,
-                                 $throwable->getMessage(),
-                             ),
+                    'Component %s failed to reset: %s',
+                    $name,
+                    $throwable->getMessage(),
+                ),
                 remediation: 'Fix resetState() implementation to handle all edge cases',
             );
         }
@@ -86,7 +86,7 @@ final class ResetVerifier
     /**
      * @return list<RuntimeSafetyFinding>
      */
-    private function verifyContainerShared(object $container) : array
+    private function verifyContainerShared(object $container): array
     {
         $findings = [];
 
@@ -119,14 +119,14 @@ final class ResetVerifier
                 severity   : RuntimeSafetyFinding::SEVERITY_CRITICAL,
                 component  : $abstract,
                 message    : sprintf(
-                                 'Shared service %s (%s) has request-local state but does not implement ResettableState',
-                                 $abstract,
-                                 $className,
-                             ),
+                    'Shared service %s (%s) has request-local state but does not implement ResettableState',
+                    $abstract,
+                    $className,
+                ),
                 remediation: sprintf(
-                                 'Implement ResettableState on %s',
-                                 $className,
-                             ),
+                    'Implement ResettableState on %s',
+                    $className,
+                ),
             );
         }
 
@@ -136,7 +136,7 @@ final class ResetVerifier
     /**
      * Check if an object appears to hold request-local state.
      */
-    private function hasRequestLocalState(object $instance) : bool
+    private function hasRequestLocalState(object $instance): bool
     {
         $reflectionObject = new ReflectionObject($instance);
 

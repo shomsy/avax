@@ -19,7 +19,7 @@ final readonly class Events implements EventsInterface
     public function __construct()
     {
         $this->listenerRegistry = new ListenerRegistry();
-        $this->eventDispatcher  = new EventDispatcher($this->listenerRegistry);
+        $this->eventDispatcher = new EventDispatcher($this->listenerRegistry);
     }
 
     public function dispatch(string|object $event, mixed $data = null): void

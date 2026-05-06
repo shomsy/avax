@@ -20,12 +20,14 @@ use Random\RandomException;
 
 final readonly class CreateTenant
 {
-    public function __construct(private TenantStoreInterface $tenantStore, private UserSourceInterface $userSource, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantStoreInterface $tenantStore, private UserSourceInterface $userSource, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws RandomException
      */
-    public function execute(CreateTenantData $createTenantData) : Tenant
+    public function execute(CreateTenantData $createTenantData): Tenant
     {
         $slug = strtolower(string: trim(string: $createTenantData->slug));
 
@@ -44,7 +46,7 @@ final readonly class CreateTenant
         }
 
         $tenant = new Tenant(
-            tenantId   : 'tenant_' . bin2hex(string: random_bytes(length: 12)),
+            tenantId   : 'tenant_'.bin2hex(string: random_bytes(length: 12)),
             slug       : $slug,
             name       : trim(string: $createTenantData->name),
             ownerUserId: $createTenantData->ownerUserId,
@@ -62,8 +64,8 @@ final readonly class CreateTenant
             name      : 'auth.tenant.created',
             occurredAt: $tenant->createdAt,
             context   : [
-                            'tenant_id'   => $tenant->tenantId,
-                            'tenant_slug' => $tenant->slug,
+                'tenant_id' => $tenant->tenantId,
+                'tenant_slug' => $tenant->slug,
                 'owner_user_id' => $tenant->ownerUserId,
             ],
         ));

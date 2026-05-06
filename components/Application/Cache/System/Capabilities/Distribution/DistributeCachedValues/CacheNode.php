@@ -18,7 +18,7 @@ final readonly class CacheNode implements Stringable
         public CacheNodeStatus $cacheNodeStatus = CacheNodeStatus::HEALTHY,
         public float $weight = 1.0,
     ) {
-        $this->id     = $cacheNodeId;
+        $this->id = $cacheNodeId;
         $this->status = $cacheNodeStatus;
     }
 

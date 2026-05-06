@@ -16,5 +16,6 @@ final readonly class IntrospectTokenData
         public ?string $clientSecret = null,
         public ?string $expectedAudience = null,
         public ?string $expectedIssuer = null,
-    ) {}
+    ) {
+    }
 }

@@ -11,17 +11,17 @@ final class DatabaseIdentityMap
 
     public function get(string $entityClass, mixed $id): ?object
     {
-        return $this->entities[$entityClass][(string)$id] ?? null;
+        return $this->entities[$entityClass][(string) $id] ?? null;
     }
 
     public function put(string $entityClass, mixed $id, object $entity): void
     {
-        $this->entities[$entityClass][(string)$id] = $entity;
+        $this->entities[$entityClass][(string) $id] = $entity;
     }
 
     public function remove(string $entityClass, mixed $id): void
     {
-        unset($this->entities[$entityClass][(string)$id]);
+        unset($this->entities[$entityClass][(string) $id]);
     }
 
     public function clear(): void

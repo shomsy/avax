@@ -26,7 +26,8 @@ class MakeActionCommand extends Command
 
     public function __construct(
         private readonly CapabilityGenerator $capabilityGenerator,
-    ) {}
+    ) {
+    }
 
     #[Override]
     protected function handle(): int
@@ -53,11 +54,11 @@ class MakeActionCommand extends Command
         try {
             $path = $this->capabilityGenerator->generate($name, ['methods' => $methods]);
 
-            $this->info('Action created successfully: ' . $path);
+            $this->info('Action created successfully: '.$path);
 
             return self::SUCCESS;
         } catch (RuntimeException $runtimeException) {
-            $this->error('Failed to create action: ' . $runtimeException->getMessage());
+            $this->error('Failed to create action: '.$runtimeException->getMessage());
 
             return self::FAILURE;
         }

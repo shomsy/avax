@@ -10,7 +10,7 @@ namespace Avax\Framework\System\Foundation\Result;
 final readonly class Failure
 {
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function __construct(
         public string $code,

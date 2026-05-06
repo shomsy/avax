@@ -22,17 +22,19 @@ use Random\RandomException;
 
 final readonly class BeginTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private ?FederationConnectionStoreInterface $federationConnectionStore, private ?ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private ?FederationConnectionStoreInterface $federationConnectionStore, private ?ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws TenantSecurityFailed
      * @throws RandomException
      */
-    public function execute(BeginTenantSecurityChangeData $beginTenantSecurityChangeData) : TenantSecurityChangeRequest
+    public function execute(BeginTenantSecurityChangeData $beginTenantSecurityChangeData): TenantSecurityChangeRequest
     {
         $this->assertKnownReferences(after: $beginTenantSecurityChangeData->after);
 
-        $before                      = $this->tenantSecurityConfigurationStore->find(tenantSlug: $beginTenantSecurityChangeData->tenantSlug);
+        $before = $this->tenantSecurityConfigurationStore->find(tenantSlug: $beginTenantSecurityChangeData->tenantSlug);
         $tenantSecurityConfiguration = new TenantSecurityConfiguration(
             tenantSlug            : $beginTenantSecurityChangeData->tenantSlug,
             federationConnectionId: $beginTenantSecurityChangeData->after->federationConnectionId,
@@ -43,7 +45,7 @@ final readonly class BeginTenantSecurityChange
             rolloutVersion        : $before instanceof TenantSecurityConfiguration ? $before->rolloutVersion + 1 : $beginTenantSecurityChangeData->after->rolloutVersion,
         );
         $tenantSecurityChangeRequest = new TenantSecurityChangeRequest(
-            changeId   : 'tenant_change_' . bin2hex(string: random_bytes(length: 12)),
+            changeId   : 'tenant_change_'.bin2hex(string: random_bytes(length: 12)),
             tenantSlug : $beginTenantSecurityChangeData->tenantSlug,
             requestedBy: trim(string: $beginTenantSecurityChangeData->requestedBy),
             reason     : trim(string: $beginTenantSecurityChangeData->reason),
@@ -59,10 +61,10 @@ final readonly class BeginTenantSecurityChange
             name      : 'auth.tenant_security.change.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                            'change_id'    => $tenantSecurityChangeRequest->changeId,
-                            'tenant'       => $tenantSecurityChangeRequest->tenantSlug,
-                            'requested_by' => $tenantSecurityChangeRequest->requestedBy,
-                            'diff'         => $this->encodeDiff(value: $tenantSecurityChangeRequest->diff),
+                'change_id' => $tenantSecurityChangeRequest->changeId,
+                'tenant' => $tenantSecurityChangeRequest->tenantSlug,
+                'requested_by' => $tenantSecurityChangeRequest->requestedBy,
+                'diff' => $this->encodeDiff(value: $tenantSecurityChangeRequest->diff),
             ],
         ));
 
@@ -72,7 +74,7 @@ final readonly class BeginTenantSecurityChange
     /**
      * @throws TenantSecurityFailed
      */
-    private function assertKnownReferences(TenantSecurityConfiguration $tenantSecurityConfiguration) : void
+    private function assertKnownReferences(TenantSecurityConfiguration $tenantSecurityConfiguration): void
     {
         if (
             $tenantSecurityConfiguration->federationConnectionId !== null
@@ -105,7 +107,7 @@ final readonly class BeginTenantSecurityChange
                 continue;
             }
 
-            $diff[$field] = $beforeValue . ' => ' . $afterValue;
+            $diff[$field] = $beforeValue.' => '.$afterValue;
         }
 
         ksort(array: $diff);
@@ -116,7 +118,7 @@ final readonly class BeginTenantSecurityChange
     /**
      * @return array<string, string>
      */
-    private function snapshot(?TenantSecurityConfiguration $tenantSecurityConfiguration) : array
+    private function snapshot(?TenantSecurityConfiguration $tenantSecurityConfiguration): array
     {
         if (! $tenantSecurityConfiguration instanceof TenantSecurityConfiguration) {
             return [];
@@ -124,16 +126,16 @@ final readonly class BeginTenantSecurityChange
 
         return [
             'federation_connection_id' => (string) $tenantSecurityConfiguration->federationConnectionId,
-            'scim_directory_id'        => (string) $tenantSecurityConfiguration->scimDirectoryId,
-            'verified_domains'         => implode(separator: ',', array: $tenantSecurityConfiguration->verifiedDomains),
-            'group_role_map'           => $this->encodeDiff(value: $tenantSecurityConfiguration->groupRoleMap),
-            'policy_profile'           => $tenantSecurityConfiguration->policyProfile,
-            'rollout_version'          => (string) $tenantSecurityConfiguration->rolloutVersion,
+            'scim_directory_id' => (string) $tenantSecurityConfiguration->scimDirectoryId,
+            'verified_domains' => implode(separator: ',', array: $tenantSecurityConfiguration->verifiedDomains),
+            'group_role_map' => $this->encodeDiff(value: $tenantSecurityConfiguration->groupRoleMap),
+            'policy_profile' => $tenantSecurityConfiguration->policyProfile,
+            'rollout_version' => (string) $tenantSecurityConfiguration->rolloutVersion,
         ];
     }
 
     /**
-     * @param array<string, mixed> $value
+     * @param  array<string, mixed>  $value
      */
     private function encodeDiff(array $value): string
     {

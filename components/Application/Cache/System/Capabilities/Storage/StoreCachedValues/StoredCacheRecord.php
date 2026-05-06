@@ -17,18 +17,19 @@ final readonly class StoredCacheRecord
         public CachedValueLifecycle $cachedValueLifecycle,
         public ?string $serializedData = null,
         public ?string $format = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a new stored cache record with a lifecycle.
      *
-     * @param mixed    $value The cached value
-     * @param int|null $ttl   Time-to-live in seconds (null for no expiration)
+     * @param  mixed  $value  The cached value
+     * @param  int|null  $ttl  Time-to-live in seconds (null for no expiration)
      */
-    public static function create(mixed $value, ?int $ttl = null, ?Clock $clock = null) : self
+    public static function create(mixed $value, ?int $ttl = null, ?Clock $clock = null): self
     {
         $clock ??= new SystemClock();
-        $now   = $clock->now();
+        $now = $clock->now();
         $expiresAt = $ttl !== null ? $now->add(Duration::ofSeconds($ttl)) : Timestamp::fromUnixTime(PHP_INT_MAX);
 
         return new self(
@@ -37,17 +38,17 @@ final readonly class StoredCacheRecord
         );
     }
 
-    public function isExpired(Clock $clock) : bool
+    public function isExpired(Clock $clock): bool
     {
         return $this->cachedValueLifecycle->isExpired(clock: $clock);
     }
 
-    public function timeToLive(Clock $clock) : int
+    public function timeToLive(Clock $clock): int
     {
         return $this->cachedValueLifecycle->timeToLive(clock: $clock);
     }
 
-    public function age(Clock $clock) : int
+    public function age(Clock $clock): int
     {
         return $this->cachedValueLifecycle->age(clock: $clock);
     }

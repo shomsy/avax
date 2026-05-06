@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Quality;
-require_once __DIR__ . '/canonical-tree-definition.php';
+
+require_once __DIR__.'/canonical-tree-definition.php';
 
 final class ValidateProjectStructure
 {
@@ -27,7 +28,7 @@ final class ValidateProjectStructure
         echo "=== AvaX Project Structure Validation ===\n\n";
 
         if ($r['passed']) {
-            echo "✅ PASSED (" . count($r['passed']) . "):\n";
+            echo '✅ PASSED ('.count($r['passed'])."):\n";
             foreach ($r['passed'] as $p) {
                 echo sprintf('  ✓ %s%s', $p, PHP_EOL);
             }
@@ -36,7 +37,7 @@ final class ValidateProjectStructure
         }
 
         if ($r['warnings']) {
-            echo "⚠️  WARNINGS (" . count($r['warnings']) . "):\n";
+            echo '⚠️  WARNINGS ('.count($r['warnings'])."):\n";
             foreach ($r['warnings'] as $w) {
                 echo sprintf('  ⚠ %s%s', $w, PHP_EOL);
             }
@@ -45,7 +46,7 @@ final class ValidateProjectStructure
         }
 
         if ($r['errors']) {
-            echo "❌ ERRORS (" . count($r['errors']) . "):\n";
+            echo '❌ ERRORS ('.count($r['errors'])."):\n";
             foreach ($r['errors'] as $e) {
                 echo sprintf('  ✗ %s%s', $e, PHP_EOL);
             }
@@ -86,20 +87,20 @@ final class ValidateProjectStructure
     private function checkRequiredFiles(): void
     {
         foreach (AvaxCanonicalTree::getRequiredFiles() as $file) {
-            $path = $this->basePath . '/' . $file;
+            $path = $this->basePath.'/'.$file;
             if (file_exists($path)) {
-                $this->passed[] = 'Required file exists: ' . $file;
+                $this->passed[] = 'Required file exists: '.$file;
             } else {
-                $this->errors[] = 'Missing required file: ' . $file;
+                $this->errors[] = 'Missing required file: '.$file;
             }
         }
     }
 
     private function checkV1Components(): void
     {
-        $componentsPath = $this->basePath . '/components';
-        if (!is_dir($componentsPath)) {
-            $this->errors[] = "components/ directory not found";
+        $componentsPath = $this->basePath.'/components';
+        if (! is_dir($componentsPath)) {
+            $this->errors[] = 'components/ directory not found';
 
             return;
         }
@@ -115,7 +116,7 @@ final class ValidateProjectStructure
                 continue;
             }
 
-            if (!is_dir($componentsPath . '/' . $item)) {
+            if (! is_dir($componentsPath.'/'.$item)) {
                 continue;
             }
 
@@ -131,24 +132,24 @@ final class ValidateProjectStructure
         sort($expected);
 
         if ($found === $expected) {
-            $this->passed[] = "V1 components canonical: " . implode(', ', $expected);
+            $this->passed[] = 'V1 components canonical: '.implode(', ', $expected);
         } else {
             $missing = array_diff($expected, $found);
             $extra = array_diff($found, $expected);
             if ($missing !== []) {
-                $this->errors[] = "Missing V1: " . implode(', ', $missing);
+                $this->errors[] = 'Missing V1: '.implode(', ', $missing);
             }
 
             if ($extra !== []) {
-                $this->errors[] = "Extra in components/: " . implode(', ', $extra);
+                $this->errors[] = 'Extra in components/: '.implode(', ', $extra);
             }
         }
     }
 
     private function checkForbiddenInComponents(): void
     {
-        $componentsPath = $this->basePath . '/components';
-        if (!is_dir($componentsPath)) {
+        $componentsPath = $this->basePath.'/components';
+        if (! is_dir($componentsPath)) {
             return;
         }
 
@@ -165,7 +166,7 @@ final class ValidateProjectStructure
             }
 
             if (in_array($item, $forbidden, true)) {
-                $this->errors[] = 'Forbidden in components/: ' . $item;
+                $this->errors[] = 'Forbidden in components/: '.$item;
             }
         }
     }
@@ -176,8 +177,8 @@ final class ValidateProjectStructure
         $dirs = ['components', 'framework', 'labs', 'benchmarks'];
 
         foreach ($dirs as $dir) {
-            $path = $this->basePath . '/' . $dir;
-            if (!is_dir($path)) {
+            $path = $this->basePath.'/'.$dir;
+            if (! is_dir($path)) {
                 continue;
             }
 
@@ -197,21 +198,21 @@ final class ValidateProjectStructure
                 continue;
             }
 
-            if (is_dir($dirPath . '/' . $item)) {
+            if (is_dir($dirPath.'/'.$item)) {
                 if (in_array($item, $forbidden, true)) {
                     $this->errors[] = sprintf("Forbidden name '%s' in %s/%s", $item, $relative, $item);
                 }
 
-                $this->scanDir($dirPath . '/' . $item, $relative . '/' . $item, $forbidden);
+                $this->scanDir($dirPath.'/'.$item, $relative.'/'.$item, $forbidden);
             }
         }
     }
 
     private function checkLabsStructure(): void
     {
-        $labsPath = $this->basePath . '/labs';
-        if (!is_dir($labsPath)) {
-            $this->warnings[] = "labs/ not found (V2 locked)";
+        $labsPath = $this->basePath.'/labs';
+        if (! is_dir($labsPath)) {
+            $this->warnings[] = 'labs/ not found (V2 locked)';
 
             return;
         }
@@ -228,14 +229,14 @@ final class ValidateProjectStructure
                 continue;
             }
 
-            if (!is_dir($labsPath . '/' . $item)) {
+            if (! is_dir($labsPath.'/'.$item)) {
                 continue;
             }
 
-            if (!in_array($item, $v2Labs, true)) {
-                $this->warnings[] = 'Unknown lab: ' . $item;
+            if (! in_array($item, $v2Labs, true)) {
+                $this->warnings[] = 'Unknown lab: '.$item;
             } else {
-                $this->passed[] = 'V2 lab: ' . $item;
+                $this->passed[] = 'V2 lab: '.$item;
             }
         }
     }
@@ -244,17 +245,21 @@ final class ValidateProjectStructure
     {
         $roots = AvaxCanonicalTree::getExtraRoots();
         foreach ($roots as $root) {
-            $path = $this->basePath . '/' . $root;
+            $path = $this->basePath.'/'.$root;
             if (is_dir($path)) {
-                $this->passed[] = 'Extra root exists: ' . $root;
+                $this->passed[] = 'Extra root exists: '.$root;
             }
         }
     }
 
     private function getSummary(): string
     {
-        return sprintf("Passed: %d | Errors: %d | Warnings: %d",
-            count($this->passed), count($this->errors), count($this->warnings));
+        return sprintf(
+            'Passed: %d | Errors: %d | Warnings: %d',
+            count($this->passed),
+            count($this->errors),
+            count($this->warnings)
+        );
     }
 }
 

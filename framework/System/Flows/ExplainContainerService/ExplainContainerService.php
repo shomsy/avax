@@ -12,8 +12,7 @@ final readonly class ExplainContainerService
 {
     public function __construct(
         private ContainerInterface $container,
-    )
-    {
+    ) {
     }
 
     public static function printExplanation(ContainerDependencyExplanation $containerDependencyExplanation): void

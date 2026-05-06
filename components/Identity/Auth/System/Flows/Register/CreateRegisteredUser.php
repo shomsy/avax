@@ -15,14 +15,15 @@ final readonly class CreateRegisteredUser
 {
     public function __construct(
         private UserSource $userSource,
-    ) {}
+    ) {
+    }
 
-    public function execute(RegistrationData $registrationData, string $hashedPassword) : User
+    public function execute(RegistrationData $registrationData, string $hashedPassword): User
     {
         return $this->userSource->create([
-                                             'email'    => $registrationData->email,
+            'email' => $registrationData->email,
             'password' => $hashedPassword,
-                                             'username' => $registrationData->username ?? $registrationData->email,
+            'username' => $registrationData->username ?? $registrationData->email,
         ]);
     }
 }

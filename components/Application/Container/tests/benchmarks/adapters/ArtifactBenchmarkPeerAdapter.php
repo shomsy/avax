@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/BenchmarkPeerAdapter.php';
+require_once __DIR__.'/BenchmarkPeerAdapter.php';
 
 /**
  * Loads one peer comparison target from an existing JSON artifact.
@@ -48,7 +48,7 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
         $results = $decoded['results'];
 
         return [
-            'meta'    => $meta,
+            'meta' => $meta,
             'results' => $results,
         ];
     }

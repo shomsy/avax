@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\DependencyNotFoundException;
 use Psr\Container\ContainerExceptionInterface;
@@ -52,4 +52,4 @@ assertThrows(
     message      : 'Missing services must use the not-found contract.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

@@ -9,5 +9,6 @@ final readonly class ValidationConfiguration
     public function __construct(
         public bool $stopOnFirstFailure = false,
         public bool $trimStrings = true,
-    ) {}
+    ) {
+    }
 }

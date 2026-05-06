@@ -12,7 +12,7 @@ use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
  */
 final class RegisterDateTimeDependencies
 {
-    public function build() : Clock
+    public function build(): Clock
     {
         return new Clock(
             timezone: new Timezone('UTC'),

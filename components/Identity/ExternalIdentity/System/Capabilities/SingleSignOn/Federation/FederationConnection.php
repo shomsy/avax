@@ -17,7 +17,7 @@ final readonly class FederationConnection
     public bool $ssoOnly;
 
     /**
-     * @param array<string, list<string>> $groupRoleMap
+     * @param  array<string, list<string>>  $groupRoleMap
      */
     public function __construct(
         public string $connectionId,
@@ -25,8 +25,8 @@ final readonly class FederationConnection
         public string $name,
         public FederationProvider $provider,
         public string $domain,
-        ?bool                       $ssoOnly = null,
-        ?array                      $groupRoleMap = null,
+        ?bool $ssoOnly = null,
+        ?array $groupRoleMap = null,
         public ?string $metadataUrl = null,
         public ?string $metadataIssuer = null,
         #[SensitiveParameter]
@@ -39,7 +39,7 @@ final readonly class FederationConnection
         public ?DateTimeImmutable $healthCheckedAt = null,
         public bool $breakGlassAllowed = false,
     ) {
-        $ssoOnly       ??= false;
+        $ssoOnly ??= false;
         $groupRoleMap ??= [];
         $federationConnectionHealth ??= FederationConnectionHealth::UNKNOWN;
         $this->ssoOnly = $ssoOnly;

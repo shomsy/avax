@@ -10,14 +10,16 @@ namespace Avax\Components\Application\Text\System\Foundation;
 final readonly class MatchResult
 {
     /**
-     * @param array<int|string, string> $matches
+     * @param  array<int|string, string>  $matches
      */
-    public function __construct(public bool $matched, public array $matches) {}
+    public function __construct(public bool $matched, public array $matches)
+    {
+    }
 
     /**
      * Get named group value or null if not found.
      */
-    public function group(string $name) : ?string
+    public function group(string $name): ?string
     {
         return $this->matches[$name] ?? null;
     }
@@ -25,15 +27,15 @@ final readonly class MatchResult
     /**
      * Get all named groups as associative array.
      */
-    public function namedGroups() : array
+    public function namedGroups(): array
     {
-        return array_filter(array: $this->matches, callback: static fn ($key) : bool => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
+        return array_filter(array: $this->matches, callback: static fn ($key): bool => ! is_int(value: $key), mode: ARRAY_FILTER_USE_KEY);
     }
 
     /**
      * Get full match (index 0).
      */
-    public function fullMatch() : ?string
+    public function fullMatch(): ?string
     {
         return $this->matches[0] ?? null;
     }

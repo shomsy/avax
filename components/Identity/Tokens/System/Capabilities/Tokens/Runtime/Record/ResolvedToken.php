@@ -12,7 +12,7 @@ use SensitiveParameter;
 final readonly class ResolvedToken
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
         public User $user,
@@ -25,7 +25,8 @@ final readonly class ResolvedToken
         public array $scopes = [],
         public ?OAuthSenderConstraint $senderConstraint = null,
         public ?string $familyId = null,
-    ) {}
+    ) {
+    }
 
     public function isExpired(): bool
     {

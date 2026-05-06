@@ -10,7 +10,8 @@ final readonly class ReadCurrentUser
 {
     public function __construct(
         private Auth $auth,
-    ) {}
+    ) {
+    }
 
     public function user(): mixed
     {

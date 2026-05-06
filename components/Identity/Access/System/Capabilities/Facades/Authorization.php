@@ -28,11 +28,12 @@ final readonly class Authorization implements AccessInterface
     public function __construct(
         #[SensitiveParameter]
         private RequireAuthenticationBoundary $requireAuthenticationBoundary,
-        private RequireRoleBoundary           $requireRoleBoundary,
-        private RequirePermissionBoundary     $requirePermissionBoundary,
+        private RequireRoleBoundary $requireRoleBoundary,
+        private RequirePermissionBoundary $requirePermissionBoundary,
         #[SensitiveParameter]
-        private RequireAccessPolicyBoundary   $requireAccessPolicyBoundary,
-    ) {}
+        private RequireAccessPolicyBoundary $requireAccessPolicyBoundary,
+    ) {
+    }
 
     /**
      * @throws Unauthenticated
@@ -46,7 +47,7 @@ final readonly class Authorization implements AccessInterface
      * @throws Unauthenticated
      * @throws RoleDenied
      */
-    public function requireRole(UserRole $userRole) : void
+    public function requireRole(UserRole $userRole): void
     {
         $this->requireRoleBoundary->execute(requiredRole: $userRole);
     }
@@ -55,7 +56,7 @@ final readonly class Authorization implements AccessInterface
      * @throws Unauthenticated
      * @throws PermissionDenied
      */
-    public function requirePermission(UserPermission $userPermission) : void
+    public function requirePermission(UserPermission $userPermission): void
     {
         $this->requirePermissionBoundary->execute(permission: $userPermission);
     }
@@ -68,7 +69,7 @@ final readonly class Authorization implements AccessInterface
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function requirePolicy(AccessPolicy $accessPolicy) : void
+    public function requirePolicy(AccessPolicy $accessPolicy): void
     {
         $this->requireAccessPolicyBoundary->execute(policy: $accessPolicy);
     }

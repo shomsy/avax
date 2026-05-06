@@ -6,7 +6,9 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Prote
 
 final readonly class DetectDuplicateSagaCommand
 {
-    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency) {}
+    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency)
+    {
+    }
 
     public function detect(string $key): ?SagaCommandResult
     {
@@ -21,7 +23,9 @@ final readonly class DetectDuplicateSagaCommand
 
 final readonly class RecordSagaCommandKey
 {
-    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency) {}
+    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency)
+    {
+    }
 
     public function recordSuccess(string $key, string $sagaId, array $output = []): void
     {
@@ -31,7 +35,7 @@ final readonly class RecordSagaCommandKey
         );
     }
 
-    public function record(string $key, SagaCommandResult $sagaCommandResult) : void
+    public function record(string $key, SagaCommandResult $sagaCommandResult): void
     {
         $this->protectSagaIdempotency->record(key: $key, result: $sagaCommandResult);
     }
@@ -47,7 +51,9 @@ final readonly class RecordSagaCommandKey
 
 final readonly class ReadPreviousSagaCommandResult
 {
-    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency) {}
+    public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency)
+    {
+    }
 
     public function maybeReplay(string $key): ?array
     {

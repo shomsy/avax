@@ -7,4 +7,6 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabi
 use Attribute;
 
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class Hidden {}
+final readonly class Hidden
+{
+}

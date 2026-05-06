@@ -9,12 +9,14 @@ namespace Avax\Components\Application\Container\System\Capabilities\Diagnostics\
  */
 final readonly class ResolutionTelemetry
 {
-    public function __construct(private ResolutionMetrics $resolutionMetrics = new ResolutionMetrics(), private ResolutionTimeline $resolutionTimeline = new ResolutionTimeline()) {}
+    public function __construct(private ResolutionMetrics $resolutionMetrics = new ResolutionMetrics(), private ResolutionTimeline $resolutionTimeline = new ResolutionTimeline())
+    {
+    }
 
     /**
      * Returns the metrics sink for container events.
      */
-    public function metrics() : ResolutionMetrics
+    public function metrics(): ResolutionMetrics
     {
         return $this->resolutionMetrics;
     }
@@ -22,7 +24,7 @@ final readonly class ResolutionTelemetry
     /**
      * Returns the timeline sink for detailed resolution traces.
      */
-    public function timeline() : ResolutionTimeline
+    public function timeline(): ResolutionTimeline
     {
         return $this->resolutionTimeline;
     }
@@ -30,7 +32,7 @@ final readonly class ResolutionTelemetry
     /**
      * Exports metrics in a machine-readable format.
      */
-    public function exportMetrics() : string
+    public function exportMetrics(): string
     {
         return $this->resolutionMetrics->export();
     }
@@ -38,7 +40,7 @@ final readonly class ResolutionTelemetry
     /**
      * Clears all collected observability state.
      */
-    public function reset() : void
+    public function reset(): void
     {
         $this->resolutionMetrics->reset();
         $this->resolutionTimeline->reset();

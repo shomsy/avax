@@ -12,7 +12,7 @@ final readonly class ParseUriString
     {
         $parts = parse_url($uri);
         if ($parts === false) {
-            throw new InvalidArgumentException('Invalid URI: ' . $uri);
+            throw new InvalidArgumentException('Invalid URI: '.$uri);
         }
 
         return new Uri(

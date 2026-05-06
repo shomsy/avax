@@ -14,8 +14,7 @@ final readonly class ConflictPair
         public mixed $valueB,
         public array $context = [],
         public float $createdAt = 0.0,
-    )
-    {
+    ) {
     }
 
     /**

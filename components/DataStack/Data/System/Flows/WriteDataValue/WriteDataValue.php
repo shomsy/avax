@@ -10,7 +10,8 @@ final readonly class WriteDataValue
 {
     public function __construct(
         private ArrayWriter $arrayWriter,
-    ) {}
+    ) {
+    }
 
     public function write(array &$data, string $key, mixed $value): void
     {

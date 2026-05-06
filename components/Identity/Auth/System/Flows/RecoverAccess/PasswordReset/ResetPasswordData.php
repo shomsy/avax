@@ -19,5 +19,6 @@ final readonly class ResetPasswordData
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

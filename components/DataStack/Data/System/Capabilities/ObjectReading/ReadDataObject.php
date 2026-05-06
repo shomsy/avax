@@ -4,4 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\ObjectReading;
 
-class ReadDataObject {}
+class ReadDataObject
+{
+}

@@ -6,9 +6,9 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runti
 
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredentialStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use SensitiveParameter;
 
 final readonly class RenamePasskey
@@ -18,12 +18,13 @@ final readonly class RenamePasskey
         private CurrentAuthentication $currentAuthentication,
         #[SensitiveParameter]
         private PasskeyCredentialStoreInterface $passkeyCredentialStore,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PasskeyOperationFailed
      */
-    public function execute(RenamePasskeyData $renamePasskeyData) : PasskeyCredential
+    public function execute(RenamePasskeyData $renamePasskeyData): PasskeyCredential
     {
         $user = $this->currentAuthentication->read()->user();
         $credential = $this->passkeyCredentialStore->find(credentialId: $renamePasskeyData->credentialId);

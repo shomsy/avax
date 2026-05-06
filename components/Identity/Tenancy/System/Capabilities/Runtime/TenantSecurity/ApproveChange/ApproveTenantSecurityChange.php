@@ -14,7 +14,9 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class ApproveTenantSecurityChange
 {
-    public function __construct(private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws TenantSecurityFailed
@@ -48,9 +50,9 @@ final readonly class ApproveTenantSecurityChange
             name      : 'auth.tenant_security.change.approved',
             occurredAt: $this->clock->now(),
             context   : [
-                            'change_id'   => $tenantSecurityChangeRequest->changeId,
-                            'tenant'      => $tenantSecurityChangeRequest->tenantSlug,
-                            'approved_by' => $tenantSecurityChangeRequest->approvedBy,
+                'change_id' => $tenantSecurityChangeRequest->changeId,
+                'tenant' => $tenantSecurityChangeRequest->tenantSlug,
+                'approved_by' => $tenantSecurityChangeRequest->approvedBy,
             ],
         ));
 

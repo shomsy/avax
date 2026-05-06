@@ -6,5 +6,7 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\Tr
 
 final readonly class TransferTenantOwnershipData
 {
-    public function __construct(public string $tenantSlug, public int $newOwnerUserId) {}
+    public function __construct(public string $tenantSlug, public int $newOwnerUserId)
+    {
+    }
 }

@@ -349,7 +349,7 @@ final class FreezeComponentTaxonomy
 
         uksort(
             $this->namespaceRewrites,
-            static fn(string $left, string $right): int => strlen($right) <=> strlen($left),
+            static fn (string $left, string $right): int => strlen($right) <=> strlen($left),
         );
     }
 
@@ -386,7 +386,7 @@ final class FreezeComponentTaxonomy
 
         echo "Report: Code-Review-And-ToDo/component-taxonomy/component-taxonomy-freeze-report.md\n";
 
-        if (!$this->apply) {
+        if (! $this->apply) {
             echo PHP_EOL;
             echo "Ako je report čist, pokreni:\n";
             echo "php tooling/refactor/freeze-component-taxonomy.php --apply\n";
@@ -398,7 +398,7 @@ final class FreezeComponentTaxonomy
     private function assertRepoRoot(): void
     {
         foreach (['components', 'framework'] as $required) {
-            if (!is_dir($this->path($required))) {
+            if (! is_dir($this->path($required))) {
                 throw new RuntimeException(sprintf('Run from AvaX repo root. Missing %s/', $required));
             }
         }
@@ -406,23 +406,23 @@ final class FreezeComponentTaxonomy
 
     private function path(string $path): string
     {
-        return $this->root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
+        return $this->root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
     private function ensureFinalSuites(): void
     {
         foreach ([
-                     'components/Application',
-                     'components/HTTP',
-                     'components/CLI',
-                     'components/DataStack',
-                     'components/Identity',
-                     'components/Security',
-                     'components/Operations',
-                     'components/Presentation',
-                     'components/DeveloperTools',
-                 ] as $directory) {
-            if ($this->apply && !is_dir($this->path($directory))) {
+            'components/Application',
+            'components/HTTP',
+            'components/CLI',
+            'components/DataStack',
+            'components/Identity',
+            'components/Security',
+            'components/Operations',
+            'components/Presentation',
+            'components/DeveloperTools',
+        ] as $directory) {
+            if ($this->apply && ! is_dir($this->path($directory))) {
                 mkdir($this->path($directory), 0o777, true);
             }
         }
@@ -431,7 +431,7 @@ final class FreezeComponentTaxonomy
     private function printHeader(): void
     {
         echo "AvaX Component Taxonomy Freeze\n";
-        echo 'Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN') . "\n";
+        echo 'Mode: '.($this->apply ? 'APPLY' : 'DRY-RUN')."\n";
         echo "Tests: untouched\n";
         echo "Production namespace rewrite: yes\n\n";
     }
@@ -442,7 +442,7 @@ final class FreezeComponentTaxonomy
             $from = $this->path($move['from']);
             $to = $this->path($move['to']);
 
-            if (!is_dir($from)) {
+            if (! is_dir($from)) {
                 continue;
             }
 
@@ -468,14 +468,14 @@ final class FreezeComponentTaxonomy
                 return;
             }
 
-            if (is_file($to) && !$this->sameFile($from, $to)) {
+            if (is_file($to) && ! $this->sameFile($from, $to)) {
                 $this->conflicts[] = sprintf('Different target file exists: %s -> %s', $this->relative($from), $this->relative($to));
             }
 
             return;
         }
 
-        if (!is_dir($from)) {
+        if (! is_dir($from)) {
             return;
         }
 
@@ -486,7 +486,7 @@ final class FreezeComponentTaxonomy
         }
 
         foreach ($this->children($from) as $child) {
-            $this->detectMoveConflict($from . DIRECTORY_SEPARATOR . $child, $to . DIRECTORY_SEPARATOR . $child);
+            $this->detectMoveConflict($from.DIRECTORY_SEPARATOR.$child, $to.DIRECTORY_SEPARATOR.$child);
         }
     }
 
@@ -497,7 +497,7 @@ final class FreezeComponentTaxonomy
 
     private function sameFile(string $left, string $right): bool
     {
-        if (!is_file($left) || !is_file($right)) {
+        if (! is_file($left) || ! is_file($right)) {
             return false;
         }
 
@@ -513,7 +513,7 @@ final class FreezeComponentTaxonomy
             return [];
         }
 
-        return array_values(array_filter($items, static fn(string $item): bool => $item !== '.' && $item !== '..'));
+        return array_values(array_filter($items, static fn (string $item): bool => $item !== '.' && $item !== '..'));
     }
 
     private function writeReport(string $status): void
@@ -521,16 +521,16 @@ final class FreezeComponentTaxonomy
         $report = $this->path('Code-Review-And-ToDo/component-taxonomy/component-taxonomy-freeze-report.md');
         $directory = dirname($report);
 
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0o777, true);
         }
 
         $lines = [
             '# Component Taxonomy Freeze Report',
             '',
-            '- Date: ' . date('Y-m-d H:i:s'),
-            '- Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN'),
-            '- Status: ' . $status,
+            '- Date: '.date('Y-m-d H:i:s'),
+            '- Mode: '.($this->apply ? 'APPLY' : 'DRY-RUN'),
+            '- Status: '.$status,
             '',
             '## Operations',
             '',
@@ -540,7 +540,7 @@ final class FreezeComponentTaxonomy
             $lines[] = '- none';
         } else {
             foreach ($this->operations as $operation) {
-                $lines[] = '- ' . $operation;
+                $lines[] = '- '.$operation;
             }
         }
 
@@ -552,7 +552,7 @@ final class FreezeComponentTaxonomy
             $lines[] = '- none';
         } else {
             foreach ($this->conflicts as $conflict) {
-                $lines[] = '- ' . $conflict;
+                $lines[] = '- '.$conflict;
             }
         }
 
@@ -564,25 +564,25 @@ final class FreezeComponentTaxonomy
         $lines[] = '- Run composer dump-autoload after apply.';
         $lines[] = '- Run architecture checkers after apply.';
 
-        file_put_contents($report, implode(PHP_EOL, $lines) . PHP_EOL);
+        file_put_contents($report, implode(PHP_EOL, $lines).PHP_EOL);
     }
 
     private function printConflicts(): void
     {
         echo PHP_EOL;
-        echo '❌ Conflicts found. Nothing was moved.' . PHP_EOL;
+        echo '❌ Conflicts found. Nothing was moved.'.PHP_EOL;
 
         foreach ($this->conflicts as $conflict) {
-            echo ' - ' . $conflict . PHP_EOL;
+            echo ' - '.$conflict.PHP_EOL;
         }
 
         echo PHP_EOL;
-        echo 'Fix conflicts manually or inspect the report before applying.' . PHP_EOL;
+        echo 'Fix conflicts manually or inspect the report before applying.'.PHP_EOL;
     }
 
     private function moveDirectory(string $from, string $to, string $reason): void
     {
-        if (!is_dir($from)) {
+        if (! is_dir($from)) {
             return;
         }
 
@@ -600,9 +600,9 @@ final class FreezeComponentTaxonomy
 
         $this->operations[] = $operation;
 
-        echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
+        echo ($this->apply ? '' : '[dry-run] ').$operation.PHP_EOL;
 
-        if (!$this->apply) {
+        if (! $this->apply) {
             return;
         }
 
@@ -617,14 +617,14 @@ final class FreezeComponentTaxonomy
             return;
         }
 
-        if (!is_dir($from)) {
+        if (! is_dir($from)) {
             return;
         }
 
-        if (!is_dir($to)) {
+        if (! is_dir($to)) {
             $parent = dirname($to);
 
-            if (!is_dir($parent)) {
+            if (! is_dir($parent)) {
                 mkdir($parent, 0o777, true);
             }
 
@@ -634,7 +634,7 @@ final class FreezeComponentTaxonomy
         }
 
         foreach ($this->children($from) as $child) {
-            $this->mergeMove($from . DIRECTORY_SEPARATOR . $child, $to . DIRECTORY_SEPARATOR . $child);
+            $this->mergeMove($from.DIRECTORY_SEPARATOR.$child, $to.DIRECTORY_SEPARATOR.$child);
         }
 
         $this->removeDirectoryIfEmpty($from);
@@ -644,7 +644,7 @@ final class FreezeComponentTaxonomy
     {
         $parent = dirname($to);
 
-        if (!is_dir($parent)) {
+        if (! is_dir($parent)) {
             mkdir($parent, 0o777, true);
         }
 
@@ -655,7 +655,7 @@ final class FreezeComponentTaxonomy
                 return;
             }
 
-            throw new RuntimeException('Refusing to overwrite different file: ' . $this->relative($to));
+            throw new RuntimeException('Refusing to overwrite different file: '.$this->relative($to));
         }
 
         rename($from, $to);
@@ -680,7 +680,7 @@ final class FreezeComponentTaxonomy
         $changed = 0;
 
         foreach ($paths as $path) {
-            if (!file_exists($path)) {
+            if (! file_exists($path)) {
                 continue;
             }
 
@@ -694,7 +694,7 @@ final class FreezeComponentTaxonomy
                 $updated = $content;
 
                 foreach ($this->namespaceRewrites as $old => $new) {
-                    $pattern = '/(?<![A-Za-z0-9_\\\\])' . preg_quote($old, '/') . '(?=\\\\|;|,|\\)|\\s|$)/';
+                    $pattern = '/(?<![A-Za-z0-9_\\\\])'.preg_quote($old, '/').'(?=\\\\|;|,|\\)|\\s|$)/';
                     $updated = preg_replace($pattern, str_replace('\\', '\\\\', $new), $updated) ?? $updated;
                 }
 
@@ -702,10 +702,10 @@ final class FreezeComponentTaxonomy
                     continue;
                 }
 
-                $operation = 'REWRITE `' . $this->relative($file) . '`';
+                $operation = 'REWRITE `'.$this->relative($file).'`';
                 $this->operations[] = $operation;
 
-                echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
+                echo ($this->apply ? '' : '[dry-run] ').$operation.PHP_EOL;
 
                 if ($this->apply) {
                     file_put_contents($file, $updated);
@@ -715,7 +715,7 @@ final class FreezeComponentTaxonomy
             }
         }
 
-        echo PHP_EOL . ('Namespace rewrite candidates: ' . $changed) . PHP_EOL;
+        echo PHP_EOL.('Namespace rewrite candidates: '.$changed).PHP_EOL;
     }
 
     private function phpFiles(string $path): Generator
@@ -743,6 +743,6 @@ final class FreezeComponentTaxonomy
 try {
     exit(new FreezeComponentTaxonomy($argv)->run());
 } catch (Throwable $throwable) {
-    fwrite(STDERR, 'ERROR: ' . $throwable->getMessage() . PHP_EOL);
+    fwrite(STDERR, 'ERROR: '.$throwable->getMessage().PHP_EOL);
     exit(1);
 }

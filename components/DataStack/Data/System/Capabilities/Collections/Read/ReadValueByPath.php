@@ -13,7 +13,8 @@ final readonly class ReadValueByPath
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(string $path, mixed $default = null): mixed
     {

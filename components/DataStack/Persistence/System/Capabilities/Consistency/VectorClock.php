@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\Consistency;
 
-
 use Stringable;
 
 /**
@@ -20,8 +19,7 @@ final class VectorClock implements Stringable
          * @var array<string, int> Map of node ID to logical timestamp
          */
         private array $clock = []
-    )
-    {
+    ) {
     }
 
     /**
@@ -114,8 +112,8 @@ final class VectorClock implements Stringable
      */
     public function isConcurrent(self $other): bool
     {
-        return !$this->happenedBefore($other)
-            && !$other->happenedBefore($this)
+        return ! $this->happenedBefore($other)
+            && ! $other->happenedBefore($this)
             && $this->clock !== $other->clock;
     }
 
@@ -148,6 +146,6 @@ final class VectorClock implements Stringable
             $parts[] = sprintf('%s:%d', $nodeId, $timestamp);
         }
 
-        return '{' . implode(', ', $parts) . '}';
+        return '{'.implode(', ', $parts).'}';
     }
 }

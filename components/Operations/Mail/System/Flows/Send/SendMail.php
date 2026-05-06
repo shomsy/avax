@@ -17,7 +17,7 @@ final class SendMail
     {
     }
 
-    public function queue(MimeMessage $mimeMessage, Envelope $envelope) : void
+    public function queue(MimeMessage $mimeMessage, Envelope $envelope): void
     {
         $this->queue[] = ['message' => $mimeMessage, 'envelope' => $envelope];
     }
@@ -35,7 +35,7 @@ final class SendMail
         return $results;
     }
 
-    public function send(MimeMessage $mimeMessage, Envelope $envelope) : SendResult
+    public function send(MimeMessage $mimeMessage, Envelope $envelope): SendResult
     {
         $transportResult = $this->mailTransport->send($mimeMessage, $envelope);
 

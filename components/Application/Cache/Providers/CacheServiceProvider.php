@@ -23,7 +23,8 @@ final class CacheServiceProvider extends ServiceProvider
 {
     /** @var array<string, array<string, mixed>> */
     private array $namedCaches = [];
-    private string|null $compiledCacheDirectory = null;
+
+    private ?string $compiledCacheDirectory = null;
 
     public function register(): void
     {
@@ -102,11 +103,11 @@ final class CacheServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private function buildNamedCache(string $name, array $config): AvaxCache
     {
-        $builder            = new BuildCache();
+        $builder = new BuildCache();
         $cacheConfiguration = new CacheConfiguration(
             name      : $name,
             defaultTtl: is_int($config['ttl'] ?? null) ? $config['ttl'] : 3600,
@@ -117,7 +118,7 @@ final class CacheServiceProvider extends ServiceProvider
                 config: $cacheConfiguration,
             ),
             'file' => $builder->inDirectory(
-                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir() . '/cache_' . $name,
+                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir().'/cache_'.$name,
                 config   : $cacheConfiguration,
             ),
             'redis' => $builder->redis(
@@ -125,12 +126,12 @@ final class CacheServiceProvider extends ServiceProvider
                 port  : is_int($config['port'] ?? null) ? $config['port'] : 6379,
                 config: $cacheConfiguration,
             ),
-            default     => $builder->inMemory(config: $cacheConfiguration),
+            default => $builder->inMemory(config: $cacheConfiguration),
         };
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function defaultStore(string $store = 'in_memory', array $options = []): self
     {
@@ -140,7 +141,7 @@ final class CacheServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function store(string $name, string $store = 'in_memory', array $options = []): self
     {

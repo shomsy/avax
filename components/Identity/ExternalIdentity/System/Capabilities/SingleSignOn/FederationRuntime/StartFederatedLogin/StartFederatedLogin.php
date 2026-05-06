@@ -16,12 +16,14 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\F
 
 final readonly class StartFederatedLogin
 {
-    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private FederationRuntimeInterface $federationRuntime, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private FederationRuntimeInterface $federationRuntime, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws FederationFailed
      */
-    public function execute(StartFederatedLoginData $startFederatedLoginData) : StartedFederatedLogin
+    public function execute(StartFederatedLoginData $startFederatedLoginData): StartedFederatedLogin
     {
         $connection = $this->federationConnectionStore->find(connectionId: $startFederatedLoginData->connectionId);
 

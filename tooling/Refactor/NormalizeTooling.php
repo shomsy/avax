@@ -32,12 +32,12 @@ final class NormalizeTooling
         ];
 
         foreach ($renames as $old => $new) {
-            $oldPath = $this->root . '/' . $old;
-            $newPath = $this->root . '/' . $new;
+            $oldPath = $this->root.'/'.$old;
+            $newPath = $this->root.'/'.$new;
 
             if (is_dir($oldPath) && $old !== $new) {
                 // On case-insensitive filesystems, we might need a temp name
-                $tmpPath = $newPath . '_tmp';
+                $tmpPath = $newPath.'_tmp';
                 rename($oldPath, $tmpPath);
                 rename($tmpPath, $newPath);
                 echo "  [RENAMED DIR] $old -> $new\n";
@@ -45,7 +45,7 @@ final class NormalizeTooling
         }
 
         // Now update namespaces in all tooling files
-        $this->updateNamespaces($this->root . '/tooling');
+        $this->updateNamespaces($this->root.'/tooling');
     }
 
     private function updateNamespaces(string $path): void
@@ -56,22 +56,24 @@ final class NormalizeTooling
         );
 
         foreach ($iterator as $file) {
-            if ($file->getExtension() !== 'php') continue;
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
 
             $content = file_get_contents($file->getPathname());
-            $relativePath = str_replace($this->root . '/tooling/', '', $file->getPathname());
+            $relativePath = str_replace($this->root.'/tooling/', '', $file->getPathname());
             $parts = explode('/', $relativePath);
             array_pop($parts); // remove filename
 
-            $subNamespace = implode('\\', array_map(fn($p) => str_replace('-', '', ucfirst($p)), $parts));
-            $expectedNs = 'Avax\Tooling' . ($subNamespace ? '\\' . $subNamespace : '');
+            $subNamespace = implode('\\', array_map(fn ($p) => str_replace('-', '', ucfirst($p)), $parts));
+            $expectedNs = 'Avax\Tooling'.($subNamespace ? '\\'.$subNamespace : '');
 
             if (preg_match('/^namespace\s+([A-Za-z0-9_\\\\]+);/m', $content, $matches)) {
                 $currentNs = $matches[1];
                 if ($currentNs !== $expectedNs) {
                     $newContent = preg_replace('/^namespace\s+[A-Za-z0-9_\\\\]+;/m', "namespace $expectedNs;", $content);
                     file_put_contents($file->getPathname(), $newContent);
-                    echo "  [UPDATED NS] " . $relativePath . " ($expectedNs)\n";
+                    echo '  [UPDATED NS] '.$relativePath." ($expectedNs)\n";
                 }
             }
         }

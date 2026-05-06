@@ -17,7 +17,7 @@ function text(string $value): Text
 /**
  * Create Text instance from nullable string.
  */
-function t(string|null $value, string $default = ''): Text
+function t(?string $value, string $default = ''): Text
 {
     return Text::fromNullable(value: $value, default: $default);
 }
@@ -121,9 +121,9 @@ function rx(string $pattern, string $flags = ''): Pattern
 /**
  * Test regex pattern against string.
  *
- * @param string $pattern Raw regex pattern (without delimiters)
- * @param string $subject String to test against
- * @param string $flags PCRE flags (e.g., 'i', 'u', 'm')
+ * @param  string  $pattern  Raw regex pattern (without delimiters)
+ * @param  string  $subject  String to test against
+ * @param  string  $flags  PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_test(string $pattern, string $subject, string $flags = ''): bool
 {
@@ -133,9 +133,9 @@ function rx_test(string $pattern, string $subject, string $flags = ''): bool
 /**
  * Match regex pattern against string.
  *
- * @param string $pattern Raw regex pattern (without delimiters)
- * @param string $subject String to match against
- * @param string $flags PCRE flags (e.g., 'i', 'u', 'm')
+ * @param  string  $pattern  Raw regex pattern (without delimiters)
+ * @param  string  $subject  String to match against
+ * @param  string  $flags  PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_match(string $pattern, string $subject, string $flags = ''): MatchResult
 {
@@ -145,10 +145,10 @@ function rx_match(string $pattern, string $subject, string $flags = ''): MatchRe
 /**
  * Replace with regex pattern.
  *
- * @param string $pattern Raw regex pattern (without delimiters)
- * @param string $replacement Replacement string
- * @param string $subject String to replace in
- * @param string $flags PCRE flags (e.g., 'i', 'u', 'm')
+ * @param  string  $pattern  Raw regex pattern (without delimiters)
+ * @param  string  $replacement  Replacement string
+ * @param  string  $subject  String to replace in
+ * @param  string  $flags  PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_replace(string $pattern, string $replacement, string $subject, string $flags = ''): string
 {
@@ -158,10 +158,10 @@ function rx_replace(string $pattern, string $replacement, string $subject, strin
 /**
  * Replace with regex pattern using callback.
  *
- * @param string $pattern Raw regex pattern (without delimiters)
- * @param string $subject String to replace in
- * @param callable $fn Callback function receiving matches
- * @param string $flags PCRE flags (e.g., 'i', 'u', 'm')
+ * @param  string  $pattern  Raw regex pattern (without delimiters)
+ * @param  string  $subject  String to replace in
+ * @param  callable  $fn  Callback function receiving matches
+ * @param  string  $flags  PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_replace_callback(string $pattern, string $subject, callable $fn, string $flags = ''): string
 {
@@ -171,22 +171,20 @@ function rx_replace_callback(string $pattern, string $subject, callable $fn, str
 /**
  * Split string by regex pattern.
  *
- * @param string $pattern Raw regex pattern (without delimiters)
- * @param string $subject String to split
- * @param string $flags PCRE flags (e.g., 'i', 'u', 'm')
+ * @param  string  $pattern  Raw regex pattern (without delimiters)
+ * @param  string  $subject  String to split
+ * @param  string  $flags  PCRE flags (e.g., 'i', 'u', 'm')
  */
 function rx_split(string $pattern, string $subject, string $flags = ''): array
 {
     return Pattern::of(raw: $pattern, flags: $flags)->split(subject: $subject);
 }
 
-if (!function_exists(function: 'preview_text')) {
+if (! function_exists(function: 'preview_text')) {
     /**
      * Shortens the given text for preview purposes.
      *
-     * @param string $text
-     * @param int $limit Number of characters to show
-     *
+     * @param  int  $limit  Number of characters to show
      * @return string Truncated text with ellipsis if necessary.
      */
     function preview_text(string $text, int $limit = 80): string
@@ -194,7 +192,7 @@ if (!function_exists(function: 'preview_text')) {
         $text = strip_tags(string: $text);
 
         return mb_strlen(string: $text) > $limit
-            ? mb_substr(string: $text, start: 0, length: $limit - 3) . '...'
+            ? mb_substr(string: $text, start: 0, length: $limit - 3).'...'
             : $text;
     }
 }

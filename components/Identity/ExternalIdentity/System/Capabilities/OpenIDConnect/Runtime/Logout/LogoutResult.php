@@ -14,5 +14,6 @@ final readonly class LogoutResult
         public ?string $sessionId = null,
         public ?string $postLogoutRedirectUri = null,
         public ?string $state = null,
-    ) {}
+    ) {
+    }
 }

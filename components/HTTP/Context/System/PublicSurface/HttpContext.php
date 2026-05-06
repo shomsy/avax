@@ -17,13 +17,13 @@ use Psr\Http\Message\UriInterface;
  */
 final readonly class HttpContext implements HttpContextInterface
 {
-    public static function fromGlobals() : self
+    public static function fromGlobals(): self
     {
         return new self(null, new PhpGlobalsProvider());
     }
 
     public function __construct(
-        private ?ServerRequestInterface  $serverRequest,
+        private ?ServerRequestInterface $serverRequest,
         private GlobalsProviderInterface $globalsProvider,
     ) {
     }
@@ -36,12 +36,12 @@ final readonly class HttpContext implements HttpContextInterface
     public function baseUrl(): string
     {
         $scheme = $this->scheme();
-        $host   = $this->host();
-        $port   = $this->port();
+        $host = $this->host();
+        $port = $this->port();
 
         $authority = $host;
         if ($port !== null && ! $this->isStandardPort($scheme, $port)) {
-            $authority = $host . ':' . $port;
+            $authority = $host.':'.$port;
         }
 
         return sprintf('%s://%s', $scheme, $authority);
@@ -84,7 +84,7 @@ final readonly class HttpContext implements HttpContextInterface
         }
 
         $server = $this->serverParams();
-        $value  = $server['SERVER_PORT'] ?? null;
+        $value = $server['SERVER_PORT'] ?? null;
 
         return ($value !== null && $value !== '') ? (int) $value : null;
     }

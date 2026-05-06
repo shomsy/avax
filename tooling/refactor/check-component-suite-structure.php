@@ -55,7 +55,7 @@ final class CheckComponentSuiteStructure
 
     private function checkComponentsRootContainsOnlySuites(): void
     {
-        $componentsPath = dirname(__DIR__, 2) . '/components';
+        $componentsPath = dirname(__DIR__, 2).'/components';
 
         if (! is_dir($componentsPath)) {
             $this->errors[] = 'components/ directory not found';
@@ -77,7 +77,7 @@ final class CheckComponentSuiteStructure
                 continue;
             }
 
-            $path = $componentsPath . '/' . $item;
+            $path = $componentsPath.'/'.$item;
             if (! is_dir($path)) {
                 continue;
             }
@@ -99,45 +99,45 @@ final class CheckComponentSuiteStructure
                 continue;
             }
 
-            $this->errors[] = 'Forbidden item at components/' . $item;
+            $this->errors[] = 'Forbidden item at components/'.$item;
         }
 
         foreach ($this->allowedSuites as $allowedSuite) {
-            if (! is_dir($componentsPath . '/' . $allowedSuite)) {
-                $this->errors[] = 'Missing required suite: components/' . $allowedSuite;
+            if (! is_dir($componentsPath.'/'.$allowedSuite)) {
+                $this->errors[] = 'Missing required suite: components/'.$allowedSuite;
             }
         }
     }
 
     private function checkEachSuiteHasSystemRoot(): void
     {
-        $componentsPath = dirname(__DIR__, 2) . '/components';
+        $componentsPath = dirname(__DIR__, 2).'/components';
 
         // Only check actual component directories, not all folders
         $componentDirs = [
-            'Application'    => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
-            'HTTP'           => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
-            'CLI'            => ['Console'],
-            'DataStack'      => ['Data', 'Database', 'Persistence'],
-            'Identity'       => ['Auth', 'Access', 'Security', 'Tokens'],
-            'Operations'     => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
-            'Presentation'   => ['View'],
+            'Application' => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
+            'HTTP' => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
+            'CLI' => ['Console'],
+            'DataStack' => ['Data', 'Database', 'Persistence'],
+            'Identity' => ['Auth', 'Access', 'Security', 'Tokens'],
+            'Operations' => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
+            'Presentation' => ['View'],
             'DeveloperTools' => ['Diagnostics', 'DumpDebugger'],
         ];
 
         foreach ($componentDirs as $suite => $components) {
-            $suitePath = $componentsPath . '/' . $suite;
+            $suitePath = $componentsPath.'/'.$suite;
             if (! is_dir($suitePath)) {
                 continue;
             }
 
             foreach ($components as $component) {
-                $componentPath = $suitePath . '/' . $component;
+                $componentPath = $suitePath.'/'.$component;
                 if (! is_dir($componentPath)) {
                     continue;
                 }
 
-                $systemPath = $componentPath . '/System';
+                $systemPath = $componentPath.'/System';
                 if (! is_dir($systemPath)) {
                     $this->errors[] = sprintf('components/%s/%s missing System/ root', $suite, $component);
                 }
@@ -148,12 +148,12 @@ final class CheckComponentSuiteStructure
 
 if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckComponentSuiteStructure();
-    $result  = $checker->check();
+    $result = $checker->check();
 
-    echo $result['status'] . "\n";
+    echo $result['status']."\n";
 
     if (! empty($result['errors'])) {
-        echo implode("\n", $result['errors']) . "\n";
+        echo implode("\n", $result['errors'])."\n";
         exit(1);
     }
 

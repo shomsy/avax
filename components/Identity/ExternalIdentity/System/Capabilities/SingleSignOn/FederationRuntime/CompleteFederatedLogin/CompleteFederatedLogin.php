@@ -34,8 +34,8 @@ use SensitiveParameter;
 final readonly class CompleteFederatedLogin
 {
     public function __construct(
-        private FederationConnectionStoreInterface  $federationConnectionStore,
-        private FederationRuntimeInterface          $federationRuntime,
+        private FederationConnectionStoreInterface $federationConnectionStore,
+        private FederationRuntimeInterface $federationRuntime,
         private FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore,
         private UserSourceInterface $userSource,
         private IdentityInterface $identity,
@@ -47,15 +47,16 @@ final readonly class CompleteFederatedLogin
         private IdGeneratorInterface $idGenerator,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private ?DeterministicRiskEngine            $deterministicRiskEngine = null,
-        private ?LifecycleOrchestrator              $lifecycleOrchestrator = null,
-    ) {}
+        private ?DeterministicRiskEngine $deterministicRiskEngine = null,
+        private ?LifecycleOrchestrator $lifecycleOrchestrator = null,
+    ) {
+    }
 
     /**
      * @throws FederationFailed
      * @throws RandomException
      */
-    public function execute(CompleteFederatedLoginData $completeFederatedLoginData) : AuthenticationResult
+    public function execute(CompleteFederatedLoginData $completeFederatedLoginData): AuthenticationResult
     {
         $connection = $this->federationConnectionStore->find(connectionId: $completeFederatedLoginData->connectionId);
 
@@ -68,8 +69,8 @@ final readonly class CompleteFederatedLogin
         }
 
         $federatedIdentity = $this->federationRuntime->completeLogin(payload: $completeFederatedLoginData->payload, connection: $connection);
-        $link              = $this->federatedIdentityLinkStore->find(connectionId: $connection->connectionId, subject: $federatedIdentity->subject);
-        $user              = $link instanceof FederatedIdentityLink
+        $link = $this->federatedIdentityLinkStore->find(connectionId: $connection->connectionId, subject: $federatedIdentity->subject);
+        $user = $link instanceof FederatedIdentityLink
             ? $this->userSource->findById(id: new UserId(value: $link->userId))
             : null;
 
@@ -101,7 +102,7 @@ final readonly class CompleteFederatedLogin
             userId      : $user->getId()->value,
         ));
 
-        $decision             = $this->deterministicRiskEngine?->assessSuccessfulAuthentication(user: $user, ipAddress: $completeFederatedLoginData->ipAddress, userAgent: $completeFederatedLoginData->userAgent);
+        $decision = $this->deterministicRiskEngine?->assessSuccessfulAuthentication(user: $user, ipAddress: $completeFederatedLoginData->ipAddress, userAgent: $completeFederatedLoginData->userAgent);
         $issuedAuthentication = $this->identity->issue(user: $user);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $completeFederatedLoginData->ipAddress,
@@ -124,8 +125,8 @@ final readonly class CompleteFederatedLogin
             occurredAt: $this->clock->now(),
             context   : [
                 'connection_id' => $connection->connectionId,
-                'tenant'      => $connection->tenantSlug,
-                'user_id'     => $user->getId()->value,
+                'tenant' => $connection->tenantSlug,
+                'user_id' => $user->getId()->value,
                 'risk_action' => $decision?->action->value,
                 'ip_address' => $completeFederatedLoginData->ipAddress,
                 'user_agent' => $completeFederatedLoginData->userAgent,
@@ -172,16 +173,15 @@ final readonly class CompleteFederatedLogin
 
         while ($this->userSource->usernameExists(username: $username)) {
             $suffix++;
-            $username = $candidate . '-' . $suffix;
+            $username = $candidate.'-'.$suffix;
         }
 
         return $username;
     }
 
     /**
-     * @param array<string, list<string>> $groupRoleMap
-     * @param list<string>                $groups
-     *
+     * @param  array<string, list<string>>  $groupRoleMap
+     * @param  list<string>  $groups
      * @return list<UserRole>
      */
     private function mapRoles(array $groupRoleMap, array $groups): array

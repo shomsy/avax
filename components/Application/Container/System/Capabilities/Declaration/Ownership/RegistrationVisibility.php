@@ -17,7 +17,7 @@ final class RegistrationVisibility
 
     public const string INTERNAL = 'internal';
 
-    public static function normalize(string $visibility) : string
+    public static function normalize(string $visibility): string
     {
         $normalized = strtolower(string: trim(string: $visibility));
 
@@ -29,7 +29,7 @@ final class RegistrationVisibility
     /**
      * @return list<string>
      */
-    public static function all() : array
+    public static function all(): array
     {
         return [
             self::PRIVATE,

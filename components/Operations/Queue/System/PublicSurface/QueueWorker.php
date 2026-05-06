@@ -14,9 +14,10 @@ final class QueueWorker
 
     public function __construct(
         private readonly QueueDriverInterface $queueDriver,
-        private readonly int                  $sleep = 3,
-        private readonly int                  $maxTries = 3,
-    ) {}
+        private readonly int $sleep = 3,
+        private readonly int $maxTries = 3,
+    ) {
+    }
 
     public function daemon(string $queue = 'default'): void
     {

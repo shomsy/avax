@@ -9,16 +9,16 @@ use Override;
 final readonly class ManualInvalidation implements InvalidationStrategy
 {
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     #[Override]
-    public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
+    public function shouldInvalidate(string $key, string $reason, array $context = []): bool
     {
         return $reason === 'explicit';
     }
 
     #[Override]
-    public function strategyName() : string
+    public function strategyName(): string
     {
         return 'manual';
     }

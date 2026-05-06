@@ -6,5 +6,7 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDCo
 
 final readonly class OidcJsonWebKey
 {
-    public function __construct(public string $keyType, public string $keyId, public string $algorithm, public string $use, public string $modulus, public string $exponent) {}
+    public function __construct(public string $keyType, public string $keyId, public string $algorithm, public string $use, public string $modulus, public string $exponent)
+    {
+    }
 }

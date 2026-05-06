@@ -31,7 +31,7 @@ class Container implements ResettableState
         $this->engine = null;
     }
 
-    public static function setContainer(ContainerInterface $container) : void
+    public static function setContainer(ContainerInterface $container): void
     {
         self::$container = $container;
     }
@@ -39,7 +39,7 @@ class Container implements ResettableState
     /**
      * Set a container instance (alias).
      */
-    public static function initialize(ContainerInterface $container) : void
+    public static function initialize(ContainerInterface $container): void
     {
         self::$container = $container;
     }
@@ -47,9 +47,9 @@ class Container implements ResettableState
     /**
      * Create container facade from underlying engine.
      */
-    public static function fromEngine(ContainerInterface $container) : self
+    public static function fromEngine(ContainerInterface $container): self
     {
-        $instance         = new self();
+        $instance = new self();
         $instance->engine = $container;
 
         self::$container = $container;
@@ -60,7 +60,7 @@ class Container implements ResettableState
     /**
      * Get the underlying container engine.
      */
-    public function engine() : ContainerInterface
+    public function engine(): ContainerInterface
     {
         return $this->engine ?? self::$container;
     }
@@ -125,7 +125,7 @@ class Container implements ResettableState
         self::getContainer()->flush();
     }
 
-    private static function getContainer() : ContainerInterface
+    private static function getContainer(): ContainerInterface
     {
         if (! self::$container instanceof ContainerInterface) {
             throw new RuntimeException('Container not set. Call Container::setContainer() first.');

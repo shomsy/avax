@@ -9,10 +9,10 @@ if ($argc < 3) {
     exit(1);
 }
 
-require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
+require_once dirname(path: __DIR__).'/tests/bootstrap.php';
 
-$fixturePath                   = $argv[1] ?? '';
-$outputDir                     = rtrim(string: $argv[2] ?? '', characters: '/');
+$fixturePath = $argv[1] ?? '';
+$outputDir = rtrim(string: $argv[2] ?? '', characters: '/');
 
 if (! is_file(filename: $fixturePath)) {
     fwrite(stream: STDERR, data: "Fixture [{$fixturePath}] was not found.\n");
@@ -34,21 +34,21 @@ if (! $loaded instanceof ContainerInterface) {
     exit(1);
 }
 
-$container  = $loaded;
-$graph      = $container->debugGraph();
+$container = $loaded;
+$graph = $container->debugGraph();
 $serviceIds = array_keys(array: $graph['graph'] ?? []);
 sort(array: $serviceIds);
 
 $runtimeInputs = [];
-$conditionals  = [];
+$conditionals = [];
 foreach ($serviceIds as $serviceId) {
-    $plan                      = $container->debugPlan(id: $serviceId);
+    $plan = $container->debugPlan(id: $serviceId);
     $runtimeInputs[$serviceId] = array_filter(
         array   : $plan['constructor'] ?? [],
         callback: static fn (array $parameter): bool => ($parameter['source'] ?? '') === 'runtime',
     )
             |> array_values(...)
-            |> (static fn ($x) : array => array_map(callback: static fn (array $parameter) : string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''), array: $x))
+            |> (static fn ($x): array => array_map(callback: static fn (array $parameter): string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''), array: $x))
             |> array_values(...);
 
     foreach ($plan['methods'] ?? [] as $method) {
@@ -69,14 +69,14 @@ foreach ($serviceIds as $serviceId) {
             |> array_values(...);
 
     $description = $container->describeService(id: $serviceId);
-    $conditions  = $description['ownership'] ?? [];
+    $conditions = $description['ownership'] ?? [];
     if (($description['conditions']['active'] ?? true) === false || ($conditions['profiles'] ?? []) !== [] || ($conditions['flags'] ?? []) !== [] || ($conditions['tenants'] ?? []) !== [] || ($conditions['regions'] ?? []) !== [] || ($conditions['modes'] ?? []) !== []) {
         $conditionals[$serviceId] = [
             'profiles' => $conditions['profiles'] ?? [],
-            'flags'    => $conditions['flags']       ?? [],
-            'tenants'  => $conditions['tenants']   ?? [],
-            'regions'  => $conditions['regions']   ?? [],
-            'modes'    => $conditions['modes']       ?? [],
+            'flags' => $conditions['flags'] ?? [],
+            'tenants' => $conditions['tenants'] ?? [],
+            'regions' => $conditions['regions'] ?? [],
+            'modes' => $conditions['modes'] ?? [],
             'fallback' => (bool) ($conditions['fallback'] ?? false),
         ];
     }
@@ -84,8 +84,8 @@ foreach ($serviceIds as $serviceId) {
 
 $payload = [
     'schemaVersion' => 1,
-    'serviceIds'    => $serviceIds,
-    'sliceExports'  => array_map(
+    'serviceIds' => $serviceIds,
+    'sliceExports' => array_map(
         callback: static fn (array $slice): array => $slice['exports'] ?? [],
         array   : $graph['slices'] ?? [],
     ),
@@ -101,7 +101,7 @@ $payload = [
         array   : $graph['groups'] ?? [],
     ),
     'runtimeInputs' => $runtimeInputs,
-    'conditionals'  => $conditionals,
+    'conditionals' => $conditionals,
 ];
 
 if (! is_dir(filename: $outputDir) && ! mkdir(directory: $outputDir, permissions: 0o775, recursive: true) && ! is_dir(filename: $outputDir)) {
@@ -109,21 +109,21 @@ if (! is_dir(filename: $outputDir) && ! mkdir(directory: $outputDir, permissions
     exit(1);
 }
 
-$jsonPath = $outputDir . '/container-static-hints.json';
-$stubPath = $outputDir . '/container-static-hints.stub.php';
+$jsonPath = $outputDir.'/container-static-hints.json';
+$stubPath = $outputDir.'/container-static-hints.stub.php';
 
 $serviceIdUnion = implode(separator: '|', array: array_map(
-    callback: static fn (string $serviceId): string => "'" . str_replace(search: "'", replace: "\\'", subject: $serviceId) . "'",
+    callback: static fn (string $serviceId): string => "'".str_replace(search: "'", replace: "\\'", subject: $serviceId)."'",
     array   : $serviceIds,
 ));
 $groupUnion = $payload['groups']
         |> array_keys(...)
-        |> (static fn ($x) : array => array_map(callback: static fn (string $group) : string => "'" . str_replace(search: "'", replace: "\\'", subject: $group) . "'", array: $x))
-        |> (static fn ($x) : string => implode(separator: '|', array: $x));
+        |> (static fn ($x): array => array_map(callback: static fn (string $group): string => "'".str_replace(search: "'", replace: "\\'", subject: $group)."'", array: $x))
+        |> (static fn ($x): string => implode(separator: '|', array: $x));
 $sliceUnion = $payload['sliceExports']
         |> array_keys(...)
-        |> (static fn ($x) : array => array_map(callback: static fn (string $slice) : string => "'" . str_replace(search: "'", replace: "\\'", subject: $slice) . "'", array: $x))
-        |> (static fn ($x) : string => implode(separator: '|', array: $x));
+        |> (static fn ($x): array => array_map(callback: static fn (string $slice): string => "'".str_replace(search: "'", replace: "\\'", subject: $slice)."'", array: $x))
+        |> (static fn ($x): string => implode(separator: '|', array: $x));
 
 $stub = <<<PHP
     <?php
@@ -143,11 +143,11 @@ $stub = <<<PHP
     return %s;
     PHP;
 
-$json = json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
-$stub = sprintf($stub, var_export(value: $payload, return: true)) . PHP_EOL;
+$json = json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL;
+$stub = sprintf($stub, var_export(value: $payload, return: true)).PHP_EOL;
 
 file_put_contents(filename: $jsonPath, data: $json, flags: LOCK_EX);
 file_put_contents(filename: $stubPath, data: $stub, flags: LOCK_EX);
 
-echo $jsonPath . PHP_EOL;
-echo $stubPath . PHP_EOL;
+echo $jsonPath.PHP_EOL;
+echo $stubPath.PHP_EOL;

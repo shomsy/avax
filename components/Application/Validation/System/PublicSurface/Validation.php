@@ -19,17 +19,17 @@ final readonly class Validation implements ValidationInterface
     }
 
     #[Override]
-    public function validate(array $data, array $rules, array $messages = []) : ValidationFailure
+    public function validate(array $data, array $rules, array $messages = []): ValidationFailure
     {
         return $this->validateData->execute($data, $rules, $messages);
     }
 
-    public function validateOrFail(array $data, array $rules, array $messages = []) : array
+    public function validateOrFail(array $data, array $rules, array $messages = []): array
     {
         return $this->validateData->executeOrFail($data, $rules, $messages);
     }
 
-    public static function make(array $data, array $rules, array $messages = []) : ValidationFailure
+    public static function make(array $data, array $rules, array $messages = []): ValidationFailure
     {
         return Validator::make($data, $rules, $messages);
     }

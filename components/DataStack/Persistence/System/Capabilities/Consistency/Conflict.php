@@ -12,10 +12,9 @@ final readonly class Conflict
     public function __construct(
         public VersionedValue $valueA,
         public VersionedValue $valueB,
-        public string         $key,
-        public float          $detectedAt,
-    )
-    {
+        public string $key,
+        public float $detectedAt,
+    ) {
     }
 
     /**
@@ -24,9 +23,8 @@ final readonly class Conflict
     public static function fromValues(
         VersionedValue $a,
         VersionedValue $b,
-        string         $key,
-    ): self
-    {
+        string $key,
+    ): self {
         return new self(
             valueA: $a,
             valueB: $b,

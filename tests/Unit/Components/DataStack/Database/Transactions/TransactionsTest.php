@@ -9,42 +9,42 @@ use PHPUnit\Framework\TestCase;
 
 final class TransactionsTest extends TestCase
 {
-    public function testTransactionsClassExists() : void
+    public function test_transactions_class_exists(): void
     {
         $this->assertTrue(class_exists(Transactions::class));
     }
 
-    public function testTransactionsHasBeginMethod() : void
+    public function test_transactions_has_begin_method(): void
     {
         $this->assertTrue(method_exists(Transactions::class, 'begin'));
     }
 
-    public function testTransactionsHasCommitMethod() : void
+    public function test_transactions_has_commit_method(): void
     {
         $this->assertTrue(method_exists(Transactions::class, 'commit'));
     }
 
-    public function testTransactionsHasRollbackMethod() : void
+    public function test_transactions_has_rollback_method(): void
     {
         $this->assertTrue(method_exists(Transactions::class, 'rollback'));
     }
 
-    public function testTransactionsHasTransactionMethod() : void
+    public function test_transactions_has_transaction_method(): void
     {
         $this->assertTrue(method_exists(Transactions::class, 'transaction'));
     }
 
-    public function testTransactionsHasResetMethod() : void
+    public function test_transactions_has_reset_method(): void
     {
         $this->assertTrue(method_exists(Transactions::class, 'reset'));
     }
 
-    public function testTransactionsHasDepthMethod() : void
+    public function test_transactions_has_depth_method(): void
     {
         $this->assertTrue(method_exists(Transactions::class, 'depth'));
     }
 
-    public function testTransactionsHasIsActiveMethod() : void
+    public function test_transactions_has_is_active_method(): void
     {
         $this->assertTrue(method_exists(Transactions::class, 'isActive'));
     }

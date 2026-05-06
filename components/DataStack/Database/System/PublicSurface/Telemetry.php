@@ -13,7 +13,8 @@ final readonly class Telemetry
 {
     public function __construct(
         private TelemetryCapability $telemetryCapability,
-    ) {}
+    ) {
+    }
 
     public function profile(callable $callback, string $label = 'database_operation'): mixed
     {

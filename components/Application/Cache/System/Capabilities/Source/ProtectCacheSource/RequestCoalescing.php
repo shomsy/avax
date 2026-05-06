@@ -11,14 +11,14 @@ final readonly class RequestCoalescing
     public function __construct(
         private CacheLockStore $cacheLockStore,
         private CacheLockTimeout $cacheLockTimeout = new CacheLockTimeout(seconds: 5),
-    ) {}
+    ) {
+    }
 
     public function execute(
         CacheKey $cacheKey,
         callable $loader,
         ?callable $onStale = null,
-    ) : mixed
-    {
+    ): mixed {
         $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
 
         if ($cacheLock->acquire(key: $cacheKey->fullKey(), ttlSeconds: $this->cacheLockTimeout->seconds)) {
@@ -38,14 +38,14 @@ final readonly class RequestCoalescing
         return $this->execute(cacheKey: $cacheKey, loader: $loader, onStale: $onStale);
     }
 
-    public function tryAcquireLock(CacheKey $cacheKey) : bool
+    public function tryAcquireLock(CacheKey $cacheKey): bool
     {
         $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
 
         return $cacheLock->acquire(key: $cacheKey->fullKey(), ttlSeconds: $this->cacheLockTimeout->seconds);
     }
 
-    public function releaseLock(CacheKey $cacheKey) : void
+    public function releaseLock(CacheKey $cacheKey): void
     {
         $cacheLock = new CacheLock(cacheLockStore: $this->cacheLockStore);
         $cacheLock->release(key: $cacheKey->fullKey());

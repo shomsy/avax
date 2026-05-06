@@ -12,13 +12,13 @@ final class ComponentDiscovery
     private array $components = [];
 
     /**
-     * @param list<string> $searchPaths
+     * @param  list<string>  $searchPaths
      */
-    public function discover(array $searchPaths = []) : void
+    public function discover(array $searchPaths = []): void
     {
     }
 
-    public function register(ComponentManifest $componentManifest) : void
+    public function register(ComponentManifest $componentManifest): void
     {
         $this->components[$componentManifest->name] = $componentManifest;
     }

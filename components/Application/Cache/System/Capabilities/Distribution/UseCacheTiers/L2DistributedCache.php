@@ -12,7 +12,7 @@ final class L2DistributedCache
 {
     public static function withCapacity(Clock $clock, string $basePath, int $maxSize): TieredCache
     {
-        $cacheTier      = CacheTier::l2(maxSize: $maxSize);
+        $cacheTier = CacheTier::l2(maxSize: $maxSize);
         $fileCacheStore = self::create(basePath: $basePath, clock: $clock);
 
         $tieredCache = new TieredCache($clock, $cacheTier);

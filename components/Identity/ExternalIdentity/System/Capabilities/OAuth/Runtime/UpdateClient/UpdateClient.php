@@ -15,9 +15,11 @@ use RuntimeException;
 
 final readonly class UpdateClient
 {
-    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function execute(UpdateClientData $updateClientData) : OAuthClient
+    public function execute(UpdateClientData $updateClientData): OAuthClient
     {
         $existing = $this->oAuthClientRegistry->find(clientId: $updateClientData->clientId);
 
@@ -31,7 +33,7 @@ final readonly class UpdateClient
             workloadIdentity: $updateClientData->workloadIdentity,
             type            : $updateClientData->type,
         );
-        $approvalRequired             = $updateClientData->approvalRequired;
+        $approvalRequired = $updateClientData->approvalRequired;
         $approvalStatus = $approvalRequired
             ? OAuthClientApprovalStatus::PENDING_APPROVAL
             : $existing->approvalStatus;
@@ -67,12 +69,12 @@ final readonly class UpdateClient
             name      : 'auth.oauth.client.updated',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'                         => $oAuthClient->clientId,
-                            'tenant_slug'                       => $oAuthClient->tenantSlug,
-                            'type'                              => $oAuthClient->type->value,
-                            'active'                            => $oAuthClient->active ? 1 : 0,
-                            'request_object_signature_required' => $oAuthClient->requestObjectSignatureRequired ? 1 : 0,
-                            'approval_status'                   => $oAuthClient->approvalStatus->value,
+                'client_id' => $oAuthClient->clientId,
+                'tenant_slug' => $oAuthClient->tenantSlug,
+                'type' => $oAuthClient->type->value,
+                'active' => $oAuthClient->active ? 1 : 0,
+                'request_object_signature_required' => $oAuthClient->requestObjectSignatureRequired ? 1 : 0,
+                'approval_status' => $oAuthClient->approvalStatus->value,
             ],
         ));
 

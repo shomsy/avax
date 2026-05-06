@@ -8,8 +8,9 @@ final readonly class QueryResult
 {
     public function __construct(
         public array $rows = [],
-        public int   $affected = 0,
-    ) {}
+        public int $affected = 0,
+    ) {
+    }
 
     public function first(): ?array
     {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
@@ -17,8 +17,8 @@ final class ExecutionModeService
     }
 }
 
-$generatedCacheDir = sys_get_temp_dir() . '/container-generated-mode-' . uniqid(prefix: '', more_entropy: true);
-$generated         = makeTestContainer(config: CreateContainerConfig::create(
+$generatedCacheDir = sys_get_temp_dir().'/container-generated-mode-'.uniqid(prefix: '', more_entropy: true);
+$generated = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir     : $generatedCacheDir,
     cacheVersion : 'generated-mode-smoke',
     executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED,
@@ -28,7 +28,7 @@ $generated->get(id: ExecutionModeService::class);
 
 $generatedCompileReport = $generated->compileReport(serviceIds: [ExecutionModeService::class]);
 $generatedRuntimeReport = $generated->runtimeReport();
-$generatedDescription   = $generated->describeService(id: ExecutionModeService::class);
+$generatedDescription = $generated->describeService(id: ExecutionModeService::class);
 
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_GENERATED,
@@ -51,8 +51,8 @@ assertSame(
     message : 'Generated mode should remain explainable.',
 );
 
-$dynamicCacheDir = sys_get_temp_dir() . '/container-dynamic-mode-' . uniqid(prefix: '', more_entropy: true);
-$dynamic         = makeTestContainer(config: CreateContainerConfig::create(
+$dynamicCacheDir = sys_get_temp_dir().'/container-dynamic-mode-'.uniqid(prefix: '', more_entropy: true);
+$dynamic = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir     : $dynamicCacheDir,
     cacheVersion : 'dynamic-mode-smoke',
     executionMode: CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
@@ -62,7 +62,7 @@ $dynamic->get(id: ExecutionModeService::class);
 
 $dynamicCompileReport = $dynamic->compileReport(serviceIds: [ExecutionModeService::class]);
 $dynamicRuntimeReport = $dynamic->runtimeReport();
-$dynamicDescription   = $dynamic->describeService(id: ExecutionModeService::class);
+$dynamicDescription = $dynamic->describeService(id: ExecutionModeService::class);
 
 assertSame(
     expected: CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
@@ -95,4 +95,4 @@ assertSame(
     message : 'Dynamic mode should still preserve compiled artifacts as derived outputs.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

@@ -42,7 +42,7 @@ final class DataTransfer implements ResettableState
      *
      * @template T of object
      *
-     * @param class-string<T> $class
+     * @param  class-string<T>  $class
      */
     public static function tryCreate(string $class, array|object $input): DataTransferResult
     {
@@ -65,8 +65,7 @@ final class DataTransfer implements ResettableState
      *
      * @template T of object
      *
-     * @param class-string<T> $class
-     *
+     * @param  class-string<T>  $class
      * @return T
      */
     public static function create(string $class, array|object $input): object
@@ -75,7 +74,7 @@ final class DataTransfer implements ResettableState
         $inputData = is_array($input) ? $input : (array) $input;
 
         $reflectionClass = new ReflectionClass($class);
-        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
+        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
 
         $values = [];
         $violations = [];
@@ -91,7 +90,7 @@ final class DataTransfer implements ResettableState
 
             // Check if value exists in input
             $hasValue = array_key_exists($propertyName, $inputData);
-            $value    = $inputData[$propertyName] ?? null;
+            $value = $inputData[$propertyName] ?? null;
 
             // Handle missing required fields
             if ($isRequired && ! $hasValue && $value === null) {

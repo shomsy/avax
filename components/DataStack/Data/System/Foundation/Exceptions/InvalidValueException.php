@@ -9,7 +9,7 @@ namespace Avax\Components\DataStack\Data\System\Foundation\Exceptions;
  */
 final class InvalidValueException extends DataException
 {
-    public static function because(string $message) : self
+    public static function because(string $message): self
     {
         return new self(message: $message);
     }

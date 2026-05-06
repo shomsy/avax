@@ -13,14 +13,14 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
  */
 class TodoCommentValidator extends BaseValidator
 {
-    public function getName() : string
+    public function getName(): string
     {
         return 'TodoCommentValidator';
     }
 
-    public function validate(array $context) : ValidationResult
+    public function validate(array $context): ValidationResult
     {
-        $files    = $context['staged_files'] ?? [];
+        $files = $context['staged_files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
         $messages = [];
 
@@ -29,7 +29,7 @@ class TodoCommentValidator extends BaseValidator
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
@@ -43,7 +43,7 @@ class TodoCommentValidator extends BaseValidator
             // Don't flag if in .agents directory or test files
             if ((stripos($content, 'TODO') !== false || stripos($content, 'FIXME') !== false || stripos($content, 'NOTE:') !== false || stripos($content, 'HACK') !== false) && (! str_contains((string) $file, '.agents') && ! str_contains((string) $file, '/tests/'))) {
                 $messages[] = sprintf(
-                    "TODO/FIXME/NOTE/HACK comment found in %s",
+                    'TODO/FIXME/NOTE/HACK comment found in %s',
                     $file
                 );
             }

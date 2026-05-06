@@ -9,4 +9,6 @@ use Avax\Components\Application\Container\System\ContextContainer;
 /**
  * Logical foundation-scoped view over the assembled container.
  */
-final readonly class FoundationSliceView extends ContextContainer {}
+final readonly class FoundationSliceView extends ContextContainer
+{
+}

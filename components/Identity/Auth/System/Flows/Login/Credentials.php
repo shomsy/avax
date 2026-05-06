@@ -21,5 +21,6 @@ final readonly class Credentials
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

@@ -11,7 +11,7 @@ final readonly class Query implements Stringable
     private string $query;
 
     /**
-     * @param string|array<string, mixed> $query
+     * @param  string|array<string, mixed>  $query
      */
     public function __construct(string|array $query)
     {

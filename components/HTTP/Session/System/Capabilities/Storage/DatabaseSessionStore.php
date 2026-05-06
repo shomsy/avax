@@ -17,7 +17,7 @@ final readonly class DatabaseSessionStore implements SessionStoreInterface
     ) {
         // Validate table name to prevent SQL injection
         if (! preg_match(self::ALLOWED_TABLE_PATTERN, $this->table)) {
-            throw new InvalidArgumentException('Invalid session table name: ' . $this->table);
+            throw new InvalidArgumentException('Invalid session table name: '.$this->table);
         }
     }
 
@@ -41,7 +41,7 @@ final readonly class DatabaseSessionStore implements SessionStoreInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function write(string $id, array $data): bool
     {

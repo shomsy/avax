@@ -14,19 +14,19 @@ final readonly class ConfigCache
     {
         $directory = dirname(path: $this->path);
 
-        if (!is_dir(filename: $directory)) {
+        if (! is_dir(filename: $directory)) {
             mkdir(directory: $directory, permissions: 0o755, recursive: true);
         }
 
         file_put_contents(
             filename: $this->path,
-            data: '<?php return ' . var_export(value: $config, return: true) . ';' . PHP_EOL,
+            data: '<?php return '.var_export(value: $config, return: true).';'.PHP_EOL,
         );
     }
 
     public function read(): array
     {
-        if (!is_file(filename: $this->path)) {
+        if (! is_file(filename: $this->path)) {
             return [];
         }
 

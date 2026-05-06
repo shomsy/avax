@@ -29,7 +29,7 @@ final readonly class InvalidateCachedValue
     }
 
     /**
-     * @param iterable<CacheKey|string> $keys
+     * @param  iterable<CacheKey|string>  $keys
      */
     public function invalidateByKeys(iterable $keys): int
     {

@@ -9,12 +9,12 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 interface InvalidateByKeys
 {
     /**
-     * @param iterable<CacheKey> $keys
+     * @param  iterable<CacheKey>  $keys
      */
     public function invalidateMany(iterable $keys): int;
 
     /**
-     * @param iterable<CacheKey> $keys
+     * @param  iterable<CacheKey>  $keys
      */
     public function areAllInvalidated(iterable $keys): bool;
 }

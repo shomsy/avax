@@ -14,8 +14,7 @@ interface ConfigLoaderInterface
     /**
      * Load and parse the configuration from the specified file path.
      *
-     * @param string $filePath The path to the configuration file.
-     *
+     * @param  string  $filePath  The path to the configuration file.
      * @return array Parsed configuration data as an associative array.
      *
      * The method signature implies that the implementation should:

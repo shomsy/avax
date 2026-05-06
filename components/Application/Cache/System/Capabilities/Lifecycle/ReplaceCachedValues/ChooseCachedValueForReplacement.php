@@ -9,7 +9,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues
 interface ChooseCachedValueForReplacement
 {
     /**
-     * @param array<string, CachedValueLifecycle> $entries
+     * @param  array<string, CachedValueLifecycle>  $entries
      */
     public function choose(array $entries): ?string;
 }

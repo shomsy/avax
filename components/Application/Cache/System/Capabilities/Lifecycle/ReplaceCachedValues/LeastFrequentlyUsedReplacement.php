@@ -15,13 +15,13 @@ final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValue
             return null;
         }
 
-        $leastUsed   = null;
+        $leastUsed = null;
         $lowestCount = PHP_INT_MAX;
 
         foreach ($entries as $key => $lifecycle) {
             if ($lifecycle->hitCount < $lowestCount) {
                 $lowestCount = $lifecycle->hitCount;
-                $leastUsed   = $key;
+                $leastUsed = $key;
             }
         }
 

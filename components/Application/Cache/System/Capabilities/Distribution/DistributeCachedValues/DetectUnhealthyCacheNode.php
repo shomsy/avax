@@ -25,7 +25,7 @@ final class DetectUnhealthyCacheNode
         }
 
         $this->failureHistory[$nodeIdStr][] = true;
-        $this->successCount[$nodeIdStr]     = 0;
+        $this->successCount[$nodeIdStr] = 0;
 
         if (count($this->failureHistory[$nodeIdStr]) >= $this->failureThreshold) {
             return CacheNodeStatus::UNHEALTHY;

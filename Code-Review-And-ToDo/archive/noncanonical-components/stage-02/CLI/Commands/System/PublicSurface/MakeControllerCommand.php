@@ -12,10 +12,11 @@ final readonly class MakeControllerCommand
 {
     public function __construct(
         private ControllerGeneratorInterface $controllerGenerator,
-        private LoggerInterface              $logger,
-    ) {}
+        private LoggerInterface $logger,
+    ) {
+    }
 
-    public function execute(array $arguments) : void
+    public function execute(array $arguments): void
     {
         $name = $arguments['name'] ?? null;
         if (empty($name)) {
@@ -28,7 +29,7 @@ final readonly class MakeControllerCommand
             $this->controllerGenerator->create($name);
             $this->logger->info(sprintf("Controller '%s' created successfully.", $name));
         } catch (Throwable $throwable) {
-            $this->logger->error('Error creating controller: ' . $throwable->getMessage());
+            $this->logger->error('Error creating controller: '.$throwable->getMessage());
         }
     }
 }

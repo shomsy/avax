@@ -8,7 +8,7 @@ use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class TransformToAscii
 {
-    public function __invoke(Text $text) : Text
+    public function __invoke(Text $text): Text
     {
         $v = $text->toString();
         if (function_exists('iconv')) {
@@ -20,6 +20,6 @@ final class TransformToAscii
 
         $v = preg_replace('/[^\x20-\x7E]/', '', $v);
 
-        return new Text(is_string($v) ? $v : $text->toString());
+        return Text::of(is_string($v) ? $v : $text->toString());
     }
 }

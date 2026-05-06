@@ -13,12 +13,12 @@ use Override;
  */
 final class MongoDBGrammar extends BaseGrammar
 {
-    public function compileSelect(QueryState $queryState) : string
+    public function compileSelect(QueryState $queryState): string
     {
         return $this->compileMongoQuery($queryState);
     }
 
-    private function compileMongoQuery(QueryState $queryState) : string
+    private function compileMongoQuery(QueryState $queryState): string
     {
         $collection = $this->wrap(value: $queryState->from);
         $filter = $queryState->wheres === [] ? '{}' : $this->compileMongoFilter($queryState);
@@ -26,19 +26,19 @@ final class MongoDBGrammar extends BaseGrammar
 
         $options = [];
         if ($queryState->limit) {
-            $options[] = 'limit: ' . $queryState->limit;
+            $options[] = 'limit: '.$queryState->limit;
         }
 
         if ($queryState->offset) {
-            $options[] = 'skip: ' . $queryState->offset;
+            $options[] = 'skip: '.$queryState->offset;
         }
 
         if ($queryState->orders !== []) {
-            $sort      = $this->compileMongoSort(orders: $queryState->orders);
-            $options[] = 'sort: ' . $sort;
+            $sort = $this->compileMongoSort(orders: $queryState->orders);
+            $options[] = 'sort: '.$sort;
         }
 
-        $optionsStr = $options === [] ? '' : ', {' . implode(separator: ', ', array: $options) . '}';
+        $optionsStr = $options === [] ? '' : ', {'.implode(separator: ', ', array: $options).'}';
 
         return sprintf('db.%s.find(%s%s)', $collection, $filter, $optionsStr);
     }
@@ -53,7 +53,7 @@ final class MongoDBGrammar extends BaseGrammar
         return (string) $value;
     }
 
-    private function compileMongoFilter(QueryState $queryState) : string
+    private function compileMongoFilter(QueryState $queryState): string
     {
         if ($queryState->wheres === []) {
             return '{}';
@@ -63,21 +63,21 @@ final class MongoDBGrammar extends BaseGrammar
         foreach ($queryState->wheres as $where) {
             $column = $where->column;
             $operator = $where->operator;
-            $value  = $where->value;
+            $value = $where->value;
 
             $mongoOp = match ($operator) {
-                '='       => $value,
-                '!='      => ['$ne' => $value],
-                '>'       => ['$gt' => $value],
-                '>='      => ['$gte' => $value],
-                '<'       => ['$lt' => $value],
-                '<='      => ['$lte' => $value],
-                'LIKE'    => ['$regex' => str_replace(search: '%', replace: '.*', subject: $value)],
-                'IN'      => ['$in' => $value],
-                'NOT IN'  => ['$nin' => $value],
+                '=' => $value,
+                '!=' => ['$ne' => $value],
+                '>' => ['$gt' => $value],
+                '>=' => ['$gte' => $value],
+                '<' => ['$lt' => $value],
+                '<=' => ['$lte' => $value],
+                'LIKE' => ['$regex' => str_replace(search: '%', replace: '.*', subject: $value)],
+                'IN' => ['$in' => $value],
+                'NOT IN' => ['$nin' => $value],
                 'IS NULL' => ['$exists' => false],
                 'IS NOT NULL' => ['$exists' => true, '$ne' => null],
-                default   => $value,
+                default => $value,
             };
 
             $conditions[$column] = $mongoOp;
@@ -93,7 +93,7 @@ final class MongoDBGrammar extends BaseGrammar
             $projection[$column] = 1;
         }
 
-        return ', ' . json_encode(value: $projection);
+        return ', '.json_encode(value: $projection);
     }
 
     private function compileMongoSort(array $orders): string
@@ -108,10 +108,10 @@ final class MongoDBGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileInsert(QueryState $queryState) : string
+    public function compileInsert(QueryState $queryState): string
     {
         $collection = $this->wrap(value: $queryState->from);
-        $values     = $this->compileMongoDocument(values: $queryState->values);
+        $values = $this->compileMongoDocument(values: $queryState->values);
 
         return sprintf('db.%s.insertOne(%s)', $collection, $values);
     }
@@ -122,11 +122,11 @@ final class MongoDBGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileUpdate(QueryState $queryState) : string
+    public function compileUpdate(QueryState $queryState): string
     {
         $collection = $this->wrap(value: $queryState->from);
         $filter = $this->compileMongoFilter($queryState);
-        $update     = $this->compileMongoUpdate(values: $queryState->values);
+        $update = $this->compileMongoUpdate(values: $queryState->values);
 
         return sprintf('db.%s.updateOne(%s, %s)', $collection, $filter, $update);
     }
@@ -142,7 +142,7 @@ final class MongoDBGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileDelete(QueryState $queryState) : string
+    public function compileDelete(QueryState $queryState): string
     {
         $collection = $this->wrap(value: $queryState->from);
         $filter = $this->compileMongoFilter($queryState);
@@ -151,7 +151,7 @@ final class MongoDBGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string
     {
         $collection = $this->wrap(value: $queryState->from);
         $filter = $this->compileMongoFilter($queryState);

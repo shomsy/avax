@@ -12,4 +12,6 @@ use Avax\Components\Presentation\View\TemplateEngine as RealTemplateEngine;
  * Delegates to the real TemplateEngine implementation which includes
  * robust base URL handling and comprehensive custom directives.
  */
-class TemplateEngine extends RealTemplateEngine {}
+class TemplateEngine extends RealTemplateEngine
+{
+}

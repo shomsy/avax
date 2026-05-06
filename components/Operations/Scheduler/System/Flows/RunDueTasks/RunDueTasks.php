@@ -9,7 +9,7 @@ use Avax\Components\Operations\Scheduler\System\PublicSurface\SchedulerReport;
 
 final readonly class RunDueTasks
 {
-    public function run() : SchedulerReport
+    public function run(): SchedulerReport
     {
         return Scheduler::runDueTasks();
     }

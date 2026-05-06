@@ -12,7 +12,7 @@ if (! function_exists('context')) {
     /**
      * Get the HTTP context instance.
      */
-    function context() : HttpContext
+    function context(): HttpContext
     {
         return HttpContext::fromGlobals();
     }
@@ -22,7 +22,7 @@ if (! function_exists('server')) {
     /**
      * Get a value from $_SERVER.
      */
-    function server(string $key, mixed $default = null) : mixed
+    function server(string $key, mixed $default = null): mixed
     {
         return $_SERVER[$key] ?? $default;
     }
@@ -32,7 +32,7 @@ if (! function_exists('env')) {
     /**
      * Get an environment variable value.
      */
-    function env(string $key, mixed $default = null) : mixed
+    function env(string $key, mixed $default = null): mixed
     {
         $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
 
@@ -45,7 +45,7 @@ if (! function_exists('env')) {
             'false', '(false)' => false,
             'null', '(null)' => null,
             'empty', '(empty)' => '',
-            default          => $value,
+            default => $value,
         };
     }
 }

@@ -19,23 +19,23 @@ use Psr\Log\LoggerInterface;
 
 final class SessionProvider implements ComponentProviderInterface
 {
-    public static function name() : string
+    public static function name(): string
     {
         return 'session';
     }
 
-    public function boot(RuntimeInterface $runtime) : void
+    public function boot(RuntimeInterface $runtime): void
     {
         $this->register(componentRegistry: $runtime->components());
     }
 
-    public function register(ComponentRegistry $componentRegistry) : void
+    public function register(ComponentRegistry $componentRegistry): void
     {
-        $componentRegistry->single(SessionStoreInterface::class, static fn () : NativeSessionStore => new NativeSessionStore());
+        $componentRegistry->single(SessionStoreInterface::class, static fn (): NativeSessionStore => new NativeSessionStore());
 
-        $componentRegistry->single(SessionScope::class, static fn (ComponentRegistry $registry) : SessionScope => new SessionScope(store: $registry->get(SessionStoreInterface::class)));
+        $componentRegistry->single(SessionScope::class, static fn (ComponentRegistry $registry): SessionScope => new SessionScope(store: $registry->get(SessionStoreInterface::class)));
 
-        $componentRegistry->single(SessionInterface::class, static fn (ComponentRegistry $registry) : Session => new Session(
+        $componentRegistry->single(SessionInterface::class, static fn (ComponentRegistry $registry): Session => new Session(
             sessionScope   : $registry->get(SessionScope::class),
             sessionMetadata: $registry->has(SessionMetadata::class) ? $registry->get(SessionMetadata::class) : null,
             sessionAudit   : $registry->has(SessionAudit::class) ? $registry->get(SessionAudit::class) : null,
@@ -44,6 +44,6 @@ final class SessionProvider implements ComponentProviderInterface
         ));
 
         // Use name 'session' as per name() method
-        $componentRegistry->single('session', static fn (ComponentRegistry $registry) : SessionInterface => $registry->get(SessionInterface::class));
+        $componentRegistry->single('session', static fn (ComponentRegistry $registry): SessionInterface => $registry->get(SessionInterface::class));
     }
 }

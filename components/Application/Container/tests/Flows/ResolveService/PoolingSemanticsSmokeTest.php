@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency;
@@ -10,12 +10,12 @@ use Avax\Components\Application\Container\System\ContainerInterface;
 
 interface PoolingContract
 {
-    public function id() : int;
+    public function id(): int;
 }
 
 interface DeferredPoolingContract
 {
-    public function id() : int;
+    public function id(): int;
 }
 
 final class PoolingSemanticsSmokeTest
@@ -33,7 +33,7 @@ final class PoolingService implements PoolingContract
     }
 
     #[Override]
-    public function id() : int
+    public function id(): int
     {
         return $this->id;
     }
@@ -41,7 +41,7 @@ final class PoolingService implements PoolingContract
 
 final class PoolingDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null): mixed
     {
         assertInstanceOf(expectedClass: PoolingService::class, value: $instance, message: 'Pooling decorators should receive the resolved singleton instance.');
         $instance->decorated = true;
@@ -60,7 +60,7 @@ final readonly class DeferredPoolingService implements DeferredPoolingContract
     }
 
     #[Override]
-    public function id() : int
+    public function id(): int
     {
         return $this->id;
     }
@@ -68,24 +68,26 @@ final readonly class DeferredPoolingService implements DeferredPoolingContract
 
 final readonly class DeferredPoolingProvider implements RegisterDeferredDependency
 {
-    public function __construct(private ContainerInterface $container) {}
+    public function __construct(private ContainerInterface $container)
+    {
+    }
 
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [];
     }
 
-    public function deferred() : bool
+    public function deferred(): bool
     {
         return true;
     }
 
-    public function provides() : array
+    public function provides(): array
     {
         return [DeferredPoolingContract::class];
     }
 
-    public function register() : void
+    public function register(): void
     {
         $this->container->singleton(abstract: DeferredPoolingContract::class, concrete: DeferredPoolingService::class);
     }
@@ -97,8 +99,8 @@ $container->alias(alias: 'pooling.alias', abstract: PoolingContract::class);
 $container->decorate(abstract: PoolingContract::class, decorator: new PoolingDecorator());
 $container->bootProviders(providers: [DeferredPoolingProvider::class]);
 
-$first         = $container->get(id: PoolingContract::class);
-$aliased       = $container->get(id: 'pooling.alias');
+$first = $container->get(id: PoolingContract::class);
+$aliased = $container->get(id: 'pooling.alias');
 $deferredFirst = $container->get(id: DeferredPoolingContract::class);
 $deferredSecond = $container->get(id: DeferredPoolingContract::class);
 
@@ -108,7 +110,7 @@ assertSame(expected: $deferredFirst, actual: $deferredSecond, message: 'Deferred
 
 $container->reset();
 
-$afterReset      = $container->get(id: PoolingContract::class);
+$afterReset = $container->get(id: PoolingContract::class);
 $afterResetAlias = $container->get(id: 'pooling.alias');
 $afterResetDeferred = $container->get(id: DeferredPoolingContract::class);
 
@@ -117,4 +119,4 @@ assertSame(expected: $afterReset, actual: $afterResetAlias, message: 'Alias reso
 assertNotSame(expected: $deferredFirst, actual: $afterResetDeferred, message: 'Reset should also clear deferred-provider singleton instances from the pool.');
 assertTrue(condition: $afterReset->decorated, message: 'Rebuilt pooled singletons should keep decoration semantics after reset.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

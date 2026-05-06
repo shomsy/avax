@@ -28,7 +28,7 @@ final class FrequencyTracker
     {
         $this->maybeDecay();
 
-        $this->frequencies[$key]    = ($this->frequencies[$key] ?? 0) + 1;
+        $this->frequencies[$key] = ($this->frequencies[$key] ?? 0) + 1;
         $this->lastDecayTimes[$key] = $this->now();
     }
 
@@ -50,12 +50,12 @@ final class FrequencyTracker
     private function applyGlobalDecay(int $now): void
     {
         foreach ($this->frequencies as $key => $freq) {
-            $lastDecay          = $this->lastDecayTimes[$key] ?? $now;
+            $lastDecay = $this->lastDecayTimes[$key] ?? $now;
             $timeSinceLastDecay = $now - $lastDecay;
-            $decayPeriods       = (int) floor($timeSinceLastDecay / self::DECAY_INTERVAL_SECONDS);
+            $decayPeriods = (int) floor($timeSinceLastDecay / self::DECAY_INTERVAL_SECONDS);
 
             if ($decayPeriods > 0) {
-                $this->frequencies[$key]    = (int) ($freq * $this->decayFactor ** $decayPeriods);
+                $this->frequencies[$key] = (int) ($freq * $this->decayFactor ** $decayPeriods);
                 $this->lastDecayTimes[$key] = $now;
             }
         }
@@ -77,7 +77,7 @@ final class FrequencyTracker
         $now = $this->now();
 
         if ($now - $this->lastDecayTimes[$key] >= self::DECAY_INTERVAL_SECONDS) {
-            $this->frequencies[$key]    = (int) ($this->frequencies[$key] * $this->decayFactor);
+            $this->frequencies[$key] = (int) ($this->frequencies[$key] * $this->decayFactor);
             $this->lastDecayTimes[$key] = $now;
         }
     }
@@ -88,7 +88,7 @@ final class FrequencyTracker
     }
 
     /**
-     * @param list<string> $keys
+     * @param  list<string>  $keys
      */
     public function getLeastFrequent(array $keys): ?string
     {
@@ -98,7 +98,7 @@ final class FrequencyTracker
 
         $this->maybeDecay();
 
-        $leastKey  = null;
+        $leastKey = null;
         $leastFreq = PHP_INT_MAX;
 
         foreach ($keys as $key) {
@@ -106,7 +106,7 @@ final class FrequencyTracker
 
             if ($freq < $leastFreq) {
                 $leastFreq = $freq;
-                $leastKey  = $key;
+                $leastKey = $key;
             }
         }
 
@@ -115,8 +115,8 @@ final class FrequencyTracker
 
     public function reset(): void
     {
-        $this->frequencies     = [];
-        $this->lastDecayTimes  = [];
+        $this->frequencies = [];
+        $this->lastDecayTimes = [];
         $this->lastGlobalDecay = $this->now();
     }
 }

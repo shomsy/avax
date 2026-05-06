@@ -32,7 +32,8 @@ final readonly class Security
         private ApplyTenantSecurityChange $applyTenantSecurityChange,
         #[SensitiveParameter]
         private RollbackTenantSecurityChange $rollbackTenantSecurityChange,
-    ) {}
+    ) {
+    }
 
     public function readConfiguration(string $tenantSlug): ?TenantSecurityConfiguration
     {
@@ -55,7 +56,7 @@ final readonly class Security
     /**
      * @throws RandomException
      */
-    public function beginChange(BeginTenantSecurityChangeData $beginTenantSecurityChangeData) : TenantSecurityChangeRequest
+    public function beginChange(BeginTenantSecurityChangeData $beginTenantSecurityChangeData): TenantSecurityChangeRequest
     {
         return $this->beginTenantSecurityChange->execute(data: $beginTenantSecurityChangeData);
     }

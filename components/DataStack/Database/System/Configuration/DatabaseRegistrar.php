@@ -27,7 +27,9 @@ use Random\RandomException;
  */
 final readonly class DatabaseRegistrar implements RegisterDependency
 {
-    public function __construct(private ContainerInterface $container) {}
+    public function __construct(private ContainerInterface $container)
+    {
+    }
 
     public function dependsOn(): array
     {

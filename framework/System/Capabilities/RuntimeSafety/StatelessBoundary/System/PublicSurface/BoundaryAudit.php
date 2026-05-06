@@ -7,16 +7,17 @@ namespace Avax\Framework\System\Capabilities\RuntimeSafety\StatelessBoundary\Sys
 final readonly class BoundaryAudit
 {
     /**
-     * @param list<string> $statelessRoutes
-     * @param list<string> $statefulViolations
+     * @param  list<string>  $statelessRoutes
+     * @param  list<string>  $statefulViolations
      */
     public function __construct(
         public string $mode,
         public array $statelessRoutes,
         public array $statefulViolations,
-    ) {}
+    ) {
+    }
 
-    public function isCompliant() : bool
+    public function isCompliant(): bool
     {
         return $this->statefulViolations === [];
     }

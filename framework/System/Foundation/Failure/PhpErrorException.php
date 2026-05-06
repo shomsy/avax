@@ -15,38 +15,37 @@ use Throwable;
 final class PhpErrorException extends FrameworkFailure
 {
     public function __construct(
-        string    $message,
+        string $message,
         private readonly int $severity,
         private readonly string $errorName,
         private readonly string $errorFile = '',
         private readonly int $errorLine = 0,
         ?Throwable $previous = null,
-    )
-    {
+    ) {
         parent::__construct($message, 0, $previous);
     }
 
-    public function getSeverity() : int
+    public function getSeverity(): int
     {
         return $this->severity;
     }
 
-    public function getErrorName() : string
+    public function getErrorName(): string
     {
         return $this->errorName;
     }
 
-    public function getErrorFile() : string
+    public function getErrorFile(): string
     {
         return $this->errorFile;
     }
 
-    public function getErrorLine() : int
+    public function getErrorLine(): int
     {
         return $this->errorLine;
     }
 
-    public function isFatal() : bool
+    public function isFatal(): bool
     {
         return in_array($this->severity, [
             E_ERROR,
@@ -54,6 +53,6 @@ final class PhpErrorException extends FrameworkFailure
             E_CORE_ERROR,
             E_COMPILE_ERROR,
             E_USER_ERROR,
-        ],              true);
+        ], true);
     }
 }

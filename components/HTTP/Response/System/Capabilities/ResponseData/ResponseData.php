@@ -14,9 +14,10 @@ final readonly class ResponseData
         public StreamInterface $body,
         public string $reasonPhrase,
         public string $protocolVersion,
-    ) {}
+    ) {
+    }
 
-    public function withProtocolVersion(string $version) : self
+    public function withProtocolVersion(string $version): self
     {
         return new self(
             statusCode     : $this->statusCode,
@@ -27,7 +28,7 @@ final readonly class ResponseData
         );
     }
 
-    public function withHeader(string $name, array $values) : self
+    public function withHeader(string $name, array $values): self
     {
         $headers = $this->headers;
         $headers[strtolower($name)] = $values;
@@ -41,7 +42,7 @@ final readonly class ResponseData
         );
     }
 
-    public function withoutHeader(string $name) : self
+    public function withoutHeader(string $name): self
     {
         $headers = $this->headers;
         unset($headers[strtolower($name)]);
@@ -55,7 +56,7 @@ final readonly class ResponseData
         );
     }
 
-    public function withBody(StreamInterface $stream) : self
+    public function withBody(StreamInterface $stream): self
     {
         return new self(
             statusCode     : $this->statusCode,
@@ -66,7 +67,7 @@ final readonly class ResponseData
         );
     }
 
-    public function withStatus(int $code, string $reasonPhrase) : self
+    public function withStatus(int $code, string $reasonPhrase): self
     {
         return new self(
             statusCode     : $code,

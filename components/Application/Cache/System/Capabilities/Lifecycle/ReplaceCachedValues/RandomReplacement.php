@@ -13,7 +13,7 @@ final readonly class RandomReplacement implements ChooseCachedValueForReplacemen
      * @throws RandomException
      */
     #[Override]
-    public function choose(array $entries) : ?string
+    public function choose(array $entries): ?string
     {
         if ($entries === []) {
             return null;

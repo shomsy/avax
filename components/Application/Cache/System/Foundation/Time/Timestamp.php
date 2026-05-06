@@ -12,9 +12,10 @@ final readonly class Timestamp implements Stringable
     public function __construct(
         public int $seconds,
         public int $nanoseconds = 0,
-    ) {}
+    ) {
+    }
 
-    public static function now() : self
+    public static function now(): self
     {
         return new self(
             seconds    : (int) floor(microtime(true)),
@@ -22,25 +23,25 @@ final readonly class Timestamp implements Stringable
         );
     }
 
-    public static function fromUnixTime(int $timestamp) : self
+    public static function fromUnixTime(int $timestamp): self
     {
         return new self(seconds: $timestamp);
     }
 
-    public static function fromMilliseconds(int $milliseconds) : self
+    public static function fromMilliseconds(int $milliseconds): self
     {
         return new self(seconds: (int) floor($milliseconds / 1000));
     }
 
-    public function toMilliseconds() : int
+    public function toMilliseconds(): int
     {
         return ($this->seconds * 1000) + (int) floor($this->nanoseconds / 1_000_000);
     }
 
-    public function add(Duration $duration) : self
+    public function add(Duration $duration): self
     {
         $totalSeconds = $this->seconds + $duration->seconds;
-        $totalNanos   = $this->nanoseconds + $duration->nanoseconds;
+        $totalNanos = $this->nanoseconds + $duration->nanoseconds;
 
         if ($totalNanos >= 1_000_000_000) {
             $totalSeconds += (int) floor($totalNanos / 1_000_000_000);
@@ -50,10 +51,10 @@ final readonly class Timestamp implements Stringable
         return new self(seconds: $totalSeconds, nanoseconds: $totalNanos);
     }
 
-    public function subtract(Duration $duration) : self
+    public function subtract(Duration $duration): self
     {
         $totalSeconds = $this->seconds - $duration->seconds;
-        $totalNanos   = $this->nanoseconds - $duration->nanoseconds;
+        $totalNanos = $this->nanoseconds - $duration->nanoseconds;
 
         if ($totalNanos < 0) {
             $totalSeconds--;
@@ -67,22 +68,22 @@ final readonly class Timestamp implements Stringable
         return new self(seconds: $totalSeconds, nanoseconds: $totalNanos);
     }
 
-    public function isAfter(self $other) : bool
+    public function isAfter(self $other): bool
     {
         return $this->seconds > $other->seconds
             || ($this->seconds === $other->seconds && $this->nanoseconds > $other->nanoseconds);
     }
 
-    public function isBefore(self $other) : bool
+    public function isBefore(self $other): bool
     {
         return $this->seconds < $other->seconds
             || ($this->seconds === $other->seconds && $this->nanoseconds < $other->nanoseconds);
     }
 
-    public function difference(self $other) : Duration
+    public function difference(self $other): Duration
     {
-        $diffSeconds   = $this->seconds - $other->seconds;
-        $diffNanos     = $this->nanoseconds - $other->nanoseconds;
+        $diffSeconds = $this->seconds - $other->seconds;
+        $diffNanos = $this->nanoseconds - $other->nanoseconds;
 
         if ($diffNanos < 0) {
             $diffSeconds--;
@@ -98,12 +99,12 @@ final readonly class Timestamp implements Stringable
     }
 
     #[Override]
-    public function __toString() : string
+    public function __toString(): string
     {
         return (string) $this->seconds;
     }
 
-    public function toUnixTime() : int
+    public function toUnixTime(): int
     {
         return $this->seconds;
     }

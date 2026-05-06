@@ -18,7 +18,7 @@ final readonly class CheckCompiledCacheIsFresh
     public function check(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources): CompiledCacheFreshness
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
+        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
         if (! file_exists($compiledCachePath->toString())) {
             return CompiledCacheFreshness::MISSING;

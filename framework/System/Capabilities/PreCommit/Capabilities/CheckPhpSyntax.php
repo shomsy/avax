@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit\Capabilities;
 
-use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 
 /**
@@ -15,14 +14,13 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 final class CheckPhpSyntax implements CheckInterface
 {
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array
+    public function run(array $context): array
     {
-        $issues   = [];
-        $files    = $context['files'] ?? [];
+        $issues = [];
+        $files = $context['files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
 
         foreach ($files as $file) {
@@ -30,21 +28,21 @@ final class CheckPhpSyntax implements CheckInterface
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
 
             // PHP lint check
-            $output    = [];
+            $output = [];
             $returnVar = 0;
-            exec('php -l ' . escapeshellarg($filePath) . ' 2>&1', $output, $returnVar);
+            exec('php -l '.escapeshellarg($filePath).' 2>&1', $output, $returnVar);
 
             if ($returnVar !== 0) {
                 $issues[] = new PreCommitIssue(
                     'CheckPhpSyntax',
                     PreCommitIssue::SEVERITY_ERROR,
-                    'PHP syntax error: ' . implode(' ', $output),
+                    'PHP syntax error: '.implode(' ', $output),
                     $file,
                     null,
                     'PHP_SYNTAX_ERROR'

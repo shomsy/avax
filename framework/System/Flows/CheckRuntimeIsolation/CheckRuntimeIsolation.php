@@ -14,8 +14,7 @@ final readonly class CheckRuntimeIsolation
     }
 
     /**
-     * @param array<string, string> $files
-     *
+     * @param  array<string, string>  $files
      * @return array<string, list<string>>
      */
     public function check(array $files): array

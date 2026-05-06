@@ -15,12 +15,13 @@ final readonly class ReadRiskSignals
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
         private DeterministicRiskEngine $deterministicRiskEngine,
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<RiskSignal>
      */
-    public function execute(?int $userId = null) : array
+    public function execute(?int $userId = null): array
     {
         $resolvedUserId = $userId ?? $this->currentAuthentication->read()->user()?->id;
 

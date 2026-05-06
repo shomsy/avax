@@ -26,7 +26,7 @@ final readonly class ConfigSchemaField
     public const string TYPE_EMAIL = 'email';
 
     /**
-     * @param list<mixed> $allowed
+     * @param  list<mixed>  $allowed
      */
     public function __construct(
         public string $name,

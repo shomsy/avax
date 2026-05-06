@@ -1,16 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence;
 
-use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
-use Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork;
-use Avax\Components\Persistence\System\Configuration\PersistenceBuilder;
-
 final class DataLayer
 {
     private AccessPersistentData $access;
+
     private CommitDataChanges $commit;
+
     private DataLayerConfig $config;
 
     private function __construct(AccessPersistentData $access, CommitDataChanges $commit, DataLayerConfig $config)

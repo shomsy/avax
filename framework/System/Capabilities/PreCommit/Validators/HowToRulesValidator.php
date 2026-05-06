@@ -9,7 +9,7 @@ use Override;
 
 /**
  * How-To Rules Validator
- * 
+ *
  * Reads .agents/how-to/*.md files and validates that
  * code changes comply with documented rules.
  */
@@ -23,7 +23,7 @@ class HowToRulesValidator extends BaseValidator
     public function __construct(?string $howToDir = null)
     {
         parent::__construct('HowToRulesValidator');
-        $this->howToDir = $howToDir ?? ((getcwd() ?: '.') . '/.agents/how-to');
+        $this->howToDir = $howToDir ?? ((getcwd() ?: '.').'/.agents/how-to');
         $this->loadRules();
     }
 
@@ -34,11 +34,11 @@ class HowToRulesValidator extends BaseValidator
 
     private function loadRules(): void
     {
-        if (!is_dir($this->howToDir)) {
+        if (! is_dir($this->howToDir)) {
             return;
         }
 
-        $files = glob($this->howToDir . '/how-to-*.md') ?: [];
+        $files = glob($this->howToDir.'/how-to-*.md') ?: [];
         foreach ($files as $file) {
             $this->parseRuleFile($file);
         }
@@ -91,7 +91,7 @@ class HowToRulesValidator extends BaseValidator
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function validate(array $context): ValidationResult
     {
@@ -99,7 +99,7 @@ class HowToRulesValidator extends BaseValidator
             return $this->passToNext($context);
         }
 
-        $files    = is_array($context['staged_files'] ?? null) ? $context['staged_files'] : [];
+        $files = is_array($context['staged_files'] ?? null) ? $context['staged_files'] : [];
         $basePath = is_string($context['base_path'] ?? null) ? $context['base_path'] : (getcwd() ?: '.');
         $messages = [];
         $allPassed = true;
@@ -109,13 +109,13 @@ class HowToRulesValidator extends BaseValidator
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
-            if (!file_exists($filePath)) {
+            $filePath = $basePath.'/'.$file;
+            if (! file_exists($filePath)) {
                 continue;
             }
 
             // Only check source files
-            if (!preg_match('/\.(php|js|ts|py|go)$/', $file)) {
+            if (! preg_match('/\.(php|js|ts|py|go)$/', $file)) {
                 continue;
             }
 
@@ -148,7 +148,7 @@ class HowToRulesValidator extends BaseValidator
             // PHP-specific checks from how-to-coding-standards.md
             if (str_ends_with(strtolower($file), '.php')) {
                 $phpResult = $this->checkPhpStandards($filePath, $file, $content);
-                if (!$phpResult->isPassed()) {
+                if (! $phpResult->isPassed()) {
                     $allPassed = false;
                     $messages = array_merge($messages, $phpResult->getMessages());
                 }
@@ -178,7 +178,7 @@ class HowToRulesValidator extends BaseValidator
         $tokens = token_get_all($content);
 
         foreach ($tokens as $token) {
-            if (!is_array($token)) {
+            if (! is_array($token)) {
                 continue;
             }
 
@@ -195,11 +195,11 @@ class HowToRulesValidator extends BaseValidator
 
         // Check for missing declare(strict_types=1)
         if (str_ends_with(strtolower($filePath), '.php')) {
-            $fileLines  = file($filePath) ?: [];
+            $fileLines = file($filePath) ?: [];
             $firstLines = implode('\n', array_slice($fileLines, 0, 10));
             // Check if it's a class file (has class keyword)
             if (! str_contains($firstLines, 'declare(strict_types=1)') && ! str_contains($firstLines, 'declare(strict_types=1);') && (str_contains($content, 'class ') || str_contains($content, 'interface '))) {
-                $allPassed  = false;
+                $allPassed = false;
                 $messages[] = sprintf(
                     "Missing 'declare(strict_types=1)' in PHP file %s",
                     $relativePath
@@ -250,11 +250,11 @@ class HowToRulesValidator extends BaseValidator
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     #[Override]
     public function supports(array $context): bool
     {
-        return !empty($context['staged_files'] ?? []);
+        return ! empty($context['staged_files'] ?? []);
     }
 }

@@ -12,7 +12,7 @@ final readonly class HandleWorkerRequest
 {
     public function __construct(
         private RuntimeInterface $runtime,
-        private RequestScope     $requestScope,
+        private RequestScope $requestScope,
     ) {
     }
 
@@ -43,7 +43,7 @@ final readonly class HandleWorkerRequest
         // Assuming RuntimeInterface will eventually have a generic handleRequest or similar.
         // For now, this is a placeholder for the architectural intent.
         // In a real worker, this might delegate to a specific handler registry.
-        return $request; 
+        return $request;
     }
 
     private function closeWorkerRequestScope(): void

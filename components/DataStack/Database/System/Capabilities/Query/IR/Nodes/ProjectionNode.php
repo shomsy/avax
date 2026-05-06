@@ -8,6 +8,7 @@ final readonly class ProjectionNode
 {
     public function __construct(
         public string $className,
-        public array  $columnMap = [],
-    ) {}
+        public array $columnMap = [],
+    ) {
+    }
 }

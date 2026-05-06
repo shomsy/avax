@@ -13,7 +13,8 @@ final readonly class AuthCapabilityRequests
         private bool $passkey,
         private bool $federation,
         private bool $scim,
-    ) {}
+    ) {
+    }
 
     public static function from(
         bool $enterpriseMode,

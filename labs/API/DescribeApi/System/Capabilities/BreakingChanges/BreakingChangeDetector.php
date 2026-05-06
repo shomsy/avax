@@ -37,8 +37,8 @@ final class BreakingChangeDetector
                 BreakingChangeType::CHANGED_STATUS_CODE,
                 $old->path,
                 'Success status code changed',
-                (string)$old->successResponse?->statusCode,
-                (string)$new->successResponse?->statusCode,
+                (string) $old->successResponse?->statusCode,
+                (string) $new->successResponse?->statusCode,
             );
         }
 

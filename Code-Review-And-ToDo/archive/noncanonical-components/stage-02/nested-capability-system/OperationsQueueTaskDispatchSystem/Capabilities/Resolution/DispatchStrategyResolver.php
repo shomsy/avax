@@ -4,4 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\Capabilities\TaskDispatch\System\Capabilities\Resolution;
 
-class DispatchStrategyResolver {}
+class DispatchStrategyResolver
+{
+}

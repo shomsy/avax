@@ -11,7 +11,9 @@ final class PartitionBuilder
     /** @var list<string> */
     private array $columns = [];
 
-    public function __construct(private readonly GrammarInterface $grammar) {}
+    public function __construct(private readonly GrammarInterface $grammar)
+    {
+    }
 
     public function by(string ...$columns): self
     {
@@ -26,7 +28,7 @@ final class PartitionBuilder
             return '';
         }
 
-        return 'PARTITION BY ' . implode(
+        return 'PARTITION BY '.implode(
             separator: ', ',
             array    : array_map(callback: fn ($column): string => $this->grammar->wrap(value: $column), array: $this->columns),
         );

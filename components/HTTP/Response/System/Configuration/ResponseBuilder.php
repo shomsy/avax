@@ -34,9 +34,9 @@ final class ResponseBuilder
     /**
      * Set the HTTP status code.
      */
-    public function withStatus(int $code, string $reasonPhrase = '') : self
+    public function withStatus(int $code, string $reasonPhrase = ''): self
     {
-        $self             = clone $this;
+        $self = clone $this;
         $self->statusCode = $code;
         $self->reasonPhrase = $reasonPhrase;
 
@@ -46,7 +46,7 @@ final class ResponseBuilder
     /**
      * Add a header value (appends to existing values for the same header).
      */
-    public function withHeader(string $name, string $value) : self
+    public function withHeader(string $name, string $value): self
     {
         $self = clone $this;
         $key = strtolower($name);
@@ -59,9 +59,9 @@ final class ResponseBuilder
     /**
      * Replace all values for a header.
      *
-     * @param list<string> $values
+     * @param  list<string>  $values
      */
-    public function withHeaders(string $name, array $values) : self
+    public function withHeaders(string $name, array $values): self
     {
         $self = clone $this;
         $self->headers[strtolower($name)] = $values;
@@ -72,7 +72,7 @@ final class ResponseBuilder
     /**
      * Set the response body as a string.
      */
-    public function withBody(string $body) : self
+    public function withBody(string $body): self
     {
         $self = clone $this;
         $self->body = $body;
@@ -83,7 +83,7 @@ final class ResponseBuilder
     /**
      * Set the HTTP protocol version.
      */
-    public function withProtocolVersion(string $version) : self
+    public function withProtocolVersion(string $version): self
     {
         $self = clone $this;
         $self->protocolVersion = $version;
@@ -94,11 +94,11 @@ final class ResponseBuilder
     /**
      * Convenience: build a JSON response.
      */
-    public function json(mixed $data, int $statusCode = 200, int $jsonFlags = JSON_THROW_ON_ERROR) : self
+    public function json(mixed $data, int $statusCode = 200, int $jsonFlags = JSON_THROW_ON_ERROR): self
     {
-        $self             = clone $this;
+        $self = clone $this;
         $self->statusCode = $statusCode;
-        $self->body       = json_encode($data, $jsonFlags);
+        $self->body = json_encode($data, $jsonFlags);
         $self->headers['content-type'] = ['application/json; charset=utf-8'];
 
         return $self;
@@ -107,7 +107,7 @@ final class ResponseBuilder
     /**
      * Build and return the Response instance.
      */
-    public function build() : ResponseInterface
+    public function build(): ResponseInterface
     {
         $response = new Response(
             statusCode     : $this->statusCode,
@@ -127,7 +127,7 @@ final class ResponseBuilder
     /**
      * Get the configured status code.
      */
-    public function getStatusCode() : int
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
@@ -137,7 +137,7 @@ final class ResponseBuilder
      *
      * @return array<string, list<string>>
      */
-    public function getHeaders() : array
+    public function getHeaders(): array
     {
         return $this->headers;
     }

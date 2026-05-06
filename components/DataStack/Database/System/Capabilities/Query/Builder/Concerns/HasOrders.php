@@ -19,19 +19,18 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#orderbydesc
      *
-     * @param string $column The technical field name to target for descending sort.
-     *
+     * @param  string  $column  The technical field name to target for descending sort.
      * @return QueryBuilder A
-     *                                fresh,
-     *                                cloned
-     *                                builder
-     *                                instance
-     *                                with
-     *                                the
-     *                                descending
-     *                                order.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      with
+     *                      the
+     *                      descending
+     *                      order.
      */
-    public function orderByDesc(string $column) : QueryBuilder
+    public function orderByDesc(string $column): QueryBuilder
     {
         return $this->orderBy(column: $column, direction: 'DESC');
     }
@@ -41,20 +40,19 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#orderby
      *
-     * @param string $column    The technical field name to target for sorting.
-     * @param string $direction The sorting orientation ('ASC' or 'DESC').
-     *
+     * @param  string  $column  The technical field name to target for sorting.
+     * @param  string  $direction  The sorting orientation ('ASC' or 'DESC').
      * @return QueryBuilder A
-     *                                fresh,
-     *                                cloned
-     *                                builder
-     *                                instance
-     *                                with
-     *                                the
-     *                                applied
-     *                                order.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      with
+     *                      the
+     *                      applied
+     *                      order.
      */
-    public function orderBy(string $column, string $direction = 'ASC') : QueryBuilder
+    public function orderBy(string $column, string $direction = 'ASC'): QueryBuilder
     {
         $clone = clone $this;
         $clone->state = $clone->state->addOrder(orderNode: new OrderNode(
@@ -71,16 +69,16 @@ trait HasOrders
      * @see /docs/Foundation/Database/DSL/Ordering.md#inrandomorder
      *
      * @return QueryBuilder A
-     *                                fresh,
-     *                                cloned
-     *                                builder
-     *                                instance
-     *                                with
-     *                                random
-     *                                ordering
-     *                                active.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      with
+     *                      random
+     *                      ordering
+     *                      active.
      */
-    public function inRandomOrder() : QueryBuilder
+    public function inRandomOrder(): QueryBuilder
     {
         $clone = clone $this;
         $clone->state = $clone->state->addOrder(orderNode: new OrderNode(
@@ -96,19 +94,18 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#latest
      *
-     * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
-     *
+     * @param  string  $column  The timestamp or sequence field to target (defaults to 'created_at').
      * @return QueryBuilder A
-     *                                fresh,
-     *                                cloned
-     *                                builder
-     *                                instance
-     *                                sorted
-     *                                by
-     *                                newest
-     *                                first.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      sorted
+     *                      by
+     *                      newest
+     *                      first.
      */
-    public function latest(string $column = 'created_at') : QueryBuilder
+    public function latest(string $column = 'created_at'): QueryBuilder
     {
         return $this->orderBy(column: $column, direction: 'DESC');
     }
@@ -118,19 +115,18 @@ trait HasOrders
      *
      * @see /docs/Foundation/Database/DSL/Ordering.md#oldest
      *
-     * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
-     *
+     * @param  string  $column  The timestamp or sequence field to target (defaults to 'created_at').
      * @return QueryBuilder A
-     *                                fresh,
-     *                                cloned
-     *                                builder
-     *                                instance
-     *                                sorted
-     *                                by
-     *                                oldest
-     *                                first.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      sorted
+     *                      by
+     *                      oldest
+     *                      first.
      */
-    public function oldest(string $column = 'created_at') : QueryBuilder
+    public function oldest(string $column = 'created_at'): QueryBuilder
     {
         return $this->orderBy(column: $column, direction: 'ASC');
     }

@@ -17,40 +17,39 @@ use Throwable;
 final readonly class BuildService
 {
     private ResolveDependencies $dependencies;
+
     private CreateServiceBlueprint $blueprints;
 
     public function __construct(
         CreateServiceBlueprint $blueprints,
-        ResolveDependencies    $dependencies
-    )
-    {
+        ResolveDependencies $dependencies
+    ) {
         $this->blueprints = $blueprints;
         $this->dependencies = $dependencies;
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      *
      * @throws ContainerException
      */
     public function build(
-        string              $class,
-        ServiceResolver     $resolver,
-        array|null          $overrides = null,
-        ResolveRequest|null $request = null
-    ): object
-    {
+        string $class,
+        ServiceResolver $resolver,
+        ?array $overrides = null,
+        ?ResolveRequest $request = null
+    ): object {
         $overrides ??= [];
         $serviceId = $request?->serviceId ?? $class;
         $path = $request?->getPath() ?? $serviceId;
 
         try {
             $blueprint = $this->blueprints->createFor(class: $class);
-            if (!$blueprint->instantiable) {
+            if (! $blueprint->instantiable) {
                 throw new ContainerException(
                     message: "Class [{$class}] is not instantiable for service [{$serviceId}]. "
-                    . "Dependency path [{$path}]. "
-                    . 'Likely fix: bind an instantiable concrete class or replace the abstract target.'
+                    ."Dependency path [{$path}]. "
+                    .'Likely fix: bind an instantiable concrete class or replace the abstract target.'
                 );
             }
 
@@ -71,9 +70,9 @@ final readonly class BuildService
 
             throw new ContainerException(
                 message: "Failed to build service [{$serviceId}] with class [{$class}]. "
-                . "Dependency path [{$path}]. "
-                . "Failure: {$exception->getMessage()}. "
-                . 'Likely fix: fix the constructor graph, provide missing runtime input, or replace the concrete class.',
+                ."Dependency path [{$path}]. "
+                ."Failure: {$exception->getMessage()}. "
+                .'Likely fix: fix the constructor graph, provide missing runtime input, or replace the concrete class.',
                 previous: $exception
             );
         }

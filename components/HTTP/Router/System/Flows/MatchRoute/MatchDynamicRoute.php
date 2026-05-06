@@ -17,9 +17,8 @@ final class MatchDynamicRoute
     /**
      * Match a route pattern against a path.
      *
-     * @param string $pattern Route pattern (e.g., "/users/{id}")
-     * @param string $path    Request path (e.g., "/users/42")
-     *
+     * @param  string  $pattern  Route pattern (e.g., "/users/{id}")
+     * @param  string  $path  Request path (e.g., "/users/42")
      * @return array<string, string>|null Matched parameters or null if no match
      */
     public function match(string $pattern, string $path): ?array
@@ -59,10 +58,10 @@ final class MatchDynamicRoute
                 $optional = isset($matches[2]);
 
                 if ($optional) {
-                    return '(?P<' . $name . '>[^/]*)?';
+                    return '(?P<'.$name.'>[^/]*)?';
                 }
 
-                return '(?P<' . $name . '>[^/]+)';
+                return '(?P<'.$name.'>[^/]+)';
             },
             $pattern,
         );
@@ -72,9 +71,9 @@ final class MatchDynamicRoute
         }
 
         // Escape remaining forward slashes and anchor the pattern
-        $regex = '^' . $regex . '$';
+        $regex = '^'.$regex.'$';
 
-        return '#' . $regex . '#';
+        return '#'.$regex.'#';
     }
 
     /**

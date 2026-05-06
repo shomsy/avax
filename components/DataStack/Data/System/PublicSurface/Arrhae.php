@@ -10,7 +10,9 @@ namespace Avax\Components\DataStack\Data\System\PublicSurface;
  */
 final readonly class Arrhae
 {
-    public function __construct(private array $items = []) {}
+    public function __construct(private array $items = [])
+    {
+    }
 
     public static function from(array $items): self
     {

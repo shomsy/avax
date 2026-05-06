@@ -43,7 +43,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
     }
 
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
     public function encode(array $claims): string
     {
@@ -75,7 +75,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
     }
 
     /**
-     * @param array<string, mixed> $value
+     * @param  array<string, mixed>  $value
      */
     private function jsonEncode(array $value): string
     {
@@ -99,8 +99,8 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             }
 
             [$encodedHeader, $encodedClaims, $encodedSignature] = $parts;
-            $header      = $this->jsonDecode(json: $this->base64UrlDecode(value: $encodedHeader));
-            $claims      = $this->jsonDecode(json: $this->base64UrlDecode(value: $encodedClaims));
+            $header = $this->jsonDecode(json: $this->base64UrlDecode(value: $encodedHeader));
+            $claims = $this->jsonDecode(json: $this->base64UrlDecode(value: $encodedClaims));
 
             $headerAlgorithm = $header['alg'] ?? null;
             $headerKeyId = $header['kid'] ?? null;
@@ -157,7 +157,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
     {
         $padding = (4 - (strlen(string: $value) % 4)) % 4;
         $decoded = base64_decode(
-            string: strtr($value . str_repeat(string: '=', times: $padding), '-_', '+/'),
+            string: strtr($value.str_repeat(string: '=', times: $padding), '-_', '+/'),
             strict: true,
         );
 

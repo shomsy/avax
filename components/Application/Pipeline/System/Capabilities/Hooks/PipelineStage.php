@@ -8,10 +8,9 @@ final readonly class PipelineStage
 {
     public function __construct(
         public string $name,
-        public bool   $stopped = false,
-        public mixed  $data = null,
-    )
-    {
+        public bool $stopped = false,
+        public mixed $data = null,
+    ) {
     }
 
     public function stop(mixed $data = null): self

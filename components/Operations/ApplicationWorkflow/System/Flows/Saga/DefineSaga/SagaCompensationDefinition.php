@@ -14,5 +14,6 @@ final readonly class SagaCompensationDefinition
     public function __construct(
         public string $name,
         public ?Closure $runCompensation = null,
-    ) {}
+    ) {
+    }
 }

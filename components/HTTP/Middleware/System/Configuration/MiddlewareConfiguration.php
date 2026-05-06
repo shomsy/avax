@@ -13,11 +13,11 @@ namespace Avax\Components\HTTP\Middleware\System\Configuration;
 final readonly class MiddlewareConfiguration
 {
     /**
-     * @param int          $timeoutMs       Maximum execution time for the entire pipeline in milliseconds
-     * @param bool         $stopOnException Whether to halt the pipeline on middleware exception
-     * @param list<string> $priorityOrder   Ordered list of middleware identifiers (first = highest priority)
-     * @param bool         $enableMetrics   Whether to collect per-middleware execution metrics
-     * @param list<string> $skipPaths       URL paths that bypass all middleware
+     * @param  int  $timeoutMs  Maximum execution time for the entire pipeline in milliseconds
+     * @param  bool  $stopOnException  Whether to halt the pipeline on middleware exception
+     * @param  list<string>  $priorityOrder  Ordered list of middleware identifiers (first = highest priority)
+     * @param  bool  $enableMetrics  Whether to collect per-middleware execution metrics
+     * @param  list<string>  $skipPaths  URL paths that bypass all middleware
      */
     public function __construct(
         private int $timeoutMs = 30000,
@@ -25,7 +25,8 @@ final readonly class MiddlewareConfiguration
         private array $priorityOrder = [],
         private bool $enableMetrics = false,
         private array $skipPaths = [],
-    ) {}
+    ) {
+    }
 
     public function timeoutMs(): int
     {
@@ -63,7 +64,7 @@ final readonly class MiddlewareConfiguration
      */
     public function shouldSkipPath(string $path): bool
     {
-        return array_any($this->skipPaths, fn (string $skipPattern) : bool => $this->matchesPattern($skipPattern, $path));
+        return array_any($this->skipPaths, fn (string $skipPattern): bool => $this->matchesPattern($skipPattern, $path));
     }
 
     /**
@@ -76,7 +77,7 @@ final readonly class MiddlewareConfiguration
         }
 
         // Convert glob pattern to regex
-        $regex = '#^' . str_replace('\*', '.*', preg_quote($pattern, '#')) . '$#';
+        $regex = '#^'.str_replace('\*', '.*', preg_quote($pattern, '#')).'$#';
 
         return preg_match($regex, $path) === 1;
     }
@@ -84,7 +85,7 @@ final readonly class MiddlewareConfiguration
     /**
      * Create a new configuration with merged overrides.
      *
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      */
     public function with(array $overrides): self
     {
@@ -100,7 +101,7 @@ final readonly class MiddlewareConfiguration
     /**
      * Create configuration from an array.
      *
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config): self
     {

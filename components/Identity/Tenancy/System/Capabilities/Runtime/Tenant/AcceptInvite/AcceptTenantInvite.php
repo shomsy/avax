@@ -18,9 +18,11 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFa
 
 final readonly class AcceptTenantInvite
 {
-    public function __construct(private TenantStoreInterface $tenantStore, private UserSourceInterface $userSource, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantStoreInterface $tenantStore, private UserSourceInterface $userSource, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function execute(AcceptTenantInviteData $acceptTenantInviteData) : TenantMember
+    public function execute(AcceptTenantInviteData $acceptTenantInviteData): TenantMember
     {
         $invite = $this->tenantStore->findInviteByToken(plainToken: $acceptTenantInviteData->inviteToken);
 
@@ -59,9 +61,9 @@ final readonly class AcceptTenantInvite
             name      : 'auth.tenant.member.invite_accepted',
             occurredAt: $tenantMember->joinedAt,
             context   : [
-                            'tenant_id' => $tenantMember->tenantId,
-                            'user_id'   => $tenantMember->userId,
-                            'role'      => $tenantMember->role->value,
+                'tenant_id' => $tenantMember->tenantId,
+                'user_id' => $tenantMember->userId,
+                'role' => $tenantMember->role->value,
             ],
         ));
 

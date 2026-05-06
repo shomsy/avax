@@ -12,9 +12,10 @@ final readonly class PolicyRule
         public string $action,
         public Closure $condition,
         public string $reason,
-    ) {}
+    ) {
+    }
 
-    public function applies(string $action) : bool
+    public function applies(string $action): bool
     {
         return $this->action === $action;
     }
@@ -52,7 +53,7 @@ final readonly class AttributeCondition
         return $userRole === $requiredRole;
     }
 
-    public static function withinHours(int $startHour, int $endHour) : bool
+    public static function withinHours(int $startHour, int $endHour): bool
     {
         $hour = (int) date('H');
 

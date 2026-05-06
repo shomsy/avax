@@ -22,7 +22,7 @@ class Date extends DateTimeImmutable
      */
     public static function fromTimestamp(int $timestamp, DateTimeZone|string|null $tz = null): self
     {
-        return self::parse('@' . $timestamp, $tz);
+        return self::parse('@'.$timestamp, $tz);
     }
 
     /**
@@ -35,7 +35,7 @@ class Date extends DateTimeImmutable
         try {
             return new self($datetime, $dateTimeZone);
         } catch (Exception $exception) {
-            throw new InvalidArgumentException('Failed to parse date: ' . $datetime, 0, $exception);
+            throw new InvalidArgumentException('Failed to parse date: '.$datetime, 0, $exception);
         }
     }
 
@@ -84,14 +84,14 @@ class Date extends DateTimeImmutable
     {
         $other ??= self::now($this->getTimezone());
 
-        $diff   = $this->diff($other);
+        $diff = $this->diff($other);
         $isPast = $other > $this;
 
         $units = [
-            'year'   => $diff->y,
-            'month'  => $diff->m,
-            'day'    => $diff->d,
-            'hour'   => $diff->h,
+            'year' => $diff->y,
+            'month' => $diff->m,
+            'day' => $diff->d,
+            'hour' => $diff->h,
             'minute' => $diff->i,
             'second' => $diff->s,
         ];
@@ -100,7 +100,7 @@ class Date extends DateTimeImmutable
         foreach ($units as $unit => $value) {
             if ($value > 0) {
                 $suffix = $isPast ? ' ago' : ' from now';
-                $label  = $value === 1 ? $unit : $unit . 's';
+                $label = $value === 1 ? $unit : $unit.'s';
 
                 return sprintf('%d %s%s', $value, $label, $suffix);
             }

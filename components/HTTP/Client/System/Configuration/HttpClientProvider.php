@@ -35,7 +35,7 @@ final class HttpClientProvider
     private array $clients = [];
 
     /**
-     * @param array<string, mixed> $config Default configuration
+     * @param  array<string, mixed>  $config  Default configuration
      */
     public function __construct(private array $config = [])
     {
@@ -151,25 +151,25 @@ final class HttpClientProvider
     /**
      * Get or create an HTTP client with the given configuration.
      *
-     * @param string|null $baseUrl Base URL for requests
-     * @param RequestOptions|null         $requestOptions Default request options
-     * @param HttpTransportInterface|null $httpTransport  Custom transport
-     * @param array<ClientMiddlewareInterface> $middlewares Middleware to apply
-     * @param string|null $name Named client identifier (for caching)
+     * @param  string|null  $baseUrl  Base URL for requests
+     * @param  RequestOptions|null  $requestOptions  Default request options
+     * @param  HttpTransportInterface|null  $httpTransport  Custom transport
+     * @param  array<ClientMiddlewareInterface>  $middlewares  Middleware to apply
+     * @param  string|null  $name  Named client identifier (for caching)
      */
     public function client(
-        ?string                 $baseUrl = null,
-        ?RequestOptions         $requestOptions = null,
+        ?string $baseUrl = null,
+        ?RequestOptions $requestOptions = null,
         ?HttpTransportInterface $httpTransport = null,
         array $middlewares = [],
-        ?string                 $name = null,
+        ?string $name = null,
     ): HttpClient {
         // Use name-based caching if a name is provided
         if ($name !== null && isset($this->clients[$name])) {
             return $this->clients[$name];
         }
 
-        $resolvedOptions   = $requestOptions ?? $this->resolveOptions();
+        $resolvedOptions = $requestOptions ?? $this->resolveOptions();
         $resolvedTransport = $httpTransport ?? new CurlTransport();
 
         $httpClient = new HttpClient(
@@ -191,12 +191,12 @@ final class HttpClientProvider
      */
     private function resolveOptions(): RequestOptions
     {
-        $timeout         = $this->config['timeout']          ?? RequestOptions::DEFAULT_TIMEOUT;
-        $connectTimeout  = $this->config['connect_timeout']  ?? RequestOptions::DEFAULT_CONNECT_TIMEOUT;
-        $verifySsl       = $this->config['verify_ssl']       ?? true;
-        $proxy           = $this->config['proxy']            ?? null;
+        $timeout = $this->config['timeout'] ?? RequestOptions::DEFAULT_TIMEOUT;
+        $connectTimeout = $this->config['connect_timeout'] ?? RequestOptions::DEFAULT_CONNECT_TIMEOUT;
+        $verifySsl = $this->config['verify_ssl'] ?? true;
+        $proxy = $this->config['proxy'] ?? null;
         $followRedirects = $this->config['follow_redirects'] ?? true;
-        $maxRedirects    = $this->config['max_redirects']    ?? 5;
+        $maxRedirects = $this->config['max_redirects'] ?? 5;
 
         $retryPolicy = null;
         if ($this->config['retry_attempts'] ?? 0 > 0) {

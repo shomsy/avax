@@ -19,7 +19,7 @@ final class SignedUrlGenerator
         self::$algo = $algo;
     }
 
-    public static function generate(string $path, DateInterval $dateInterval) : string
+    public static function generate(string $path, DateInterval $dateInterval): string
     {
         $expires = time() + ($dateInterval->i * 60 + $dateInterval->s);
 
@@ -31,7 +31,7 @@ final class SignedUrlGenerator
 
         $token = JWT::encode($payload, self::secret(), self::$algo);
 
-        return $path . '?signature=' . $token;
+        return $path.'?signature='.$token;
     }
 
     public static function secret(): string

@@ -8,7 +8,8 @@ final readonly class RecordCompensationFailed
 {
     public function __construct(
         private string $sagaType,
-    ) {}
+    ) {
+    }
 
     public function describeResponsibility(): string
     {
@@ -44,5 +45,6 @@ final readonly class RecordCompensationFailedResult
         public string $error,
         public array $context,
         public float $recordedAt,
-    ) {}
+    ) {
+    }
 }

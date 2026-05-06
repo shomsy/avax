@@ -52,7 +52,7 @@ final class CacheReplication
 
         // Read from primary
         $systemClock = new SystemClock();
-        $readResult  = $this->cacheStore->read(
+        $readResult = $this->cacheStore->read(
             new CacheKey($key),
             $systemClock,
         );
@@ -96,7 +96,7 @@ final class CacheReplication
     public function read(string $key): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $systemClock = new SystemClock();
-        $cacheKey    = new CacheKey($key);
+        $cacheKey = new CacheKey($key);
 
         // If we should read from replica on miss from primary
         if ($this->primaryReplicaPolicy->readFromReplicaOnMiss) {
@@ -127,8 +127,7 @@ final class CacheReplication
      *
      * Used during failover scenarios when the primary node is unavailable.
      *
-     * @param int $replicaIndex Index of the replica to promote
-     *
+     * @param  int  $replicaIndex  Index of the replica to promote
      * @return PromotionResult Result of the promotion
      *
      * @throws InvalidArgumentException if the replica index is invalid
@@ -173,7 +172,7 @@ final class CacheReplication
     /**
      * Create a new replication manager.
      *
-     * @param list<CacheStore> $replicas
+     * @param  list<CacheStore>  $replicas
      */
     public static function create(
         CacheStore $cacheStore,
@@ -193,9 +192,8 @@ final class CacheReplication
      * In synchronous mode, waits for all replicas to confirm.
      * In asynchronous mode, initiates replication and returns immediately.
      *
-     * @param mixed $value The value to replicate
-     * @param int|null $ttl Time-to-live in seconds
-     *
+     * @param  mixed  $value  The value to replicate
+     * @param  int|null  $ttl  Time-to-live in seconds
      * @return ReplicationResult Result of the replication operation
      */
     public function replicate(string $key, mixed $value, ?int $ttl = null): ReplicationResult
@@ -215,7 +213,7 @@ final class CacheReplication
         $replicaResults = [];
 
         foreach ($this->replicas as $index => $replica) {
-            $result           = $this->writeToReplica($replica, $key, $value, $ttl, $index);
+            $result = $this->writeToReplica($replica, $key, $value, $ttl, $index);
             $replicaResults[] = $result;
         }
 

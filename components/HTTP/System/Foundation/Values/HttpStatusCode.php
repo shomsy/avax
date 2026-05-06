@@ -9,59 +9,59 @@ use ValueError;
 enum HttpStatusCode: int
 {
     // 1xx Informational
-    case CONTINUE            = 100;
+    case CONTINUE = 100;
     case SWITCHING_PROTOCOLS = 101;
-    case PROCESSING          = 102;
-    case EARLY_HINTS         = 103;
+    case PROCESSING = 102;
+    case EARLY_HINTS = 103;
 
     // 2xx Success
-    case OK         = 200;
-    case CREATED    = 201;
-    case ACCEPTED   = 202;
+    case OK = 200;
+    case CREATED = 201;
+    case ACCEPTED = 202;
     case NO_CONTENT = 204;
 
     // 3xx Redirection
-    case MOVED_PERMANENTLY  = 301;
-    case FOUND              = 302;
-    case SEE_OTHER          = 303;
-    case NOT_MODIFIED       = 304;
+    case MOVED_PERMANENTLY = 301;
+    case FOUND = 302;
+    case SEE_OTHER = 303;
+    case NOT_MODIFIED = 304;
     case TEMPORARY_REDIRECT = 307;
     case PERMANENT_REDIRECT = 308;
 
     // 4xx Client Error
-    case BAD_REQUEST            = 400;
-    case UNAUTHORIZED           = 401;
-    case FORBIDDEN              = 403;
-    case NOT_FOUND              = 404;
-    case METHOD_NOT_ALLOWED     = 405;
-    case NOT_ACCEPTABLE         = 406;
-    case CONFLICT               = 409;
-    case GONE                   = 410;
-    case LENGTH_REQUIRED        = 411;
-    case PRECONDITION_FAILED    = 412;
-    case PAYLOAD_TOO_LARGE      = 413;
-    case URI_TOO_LONG           = 414;
+    case BAD_REQUEST = 400;
+    case UNAUTHORIZED = 401;
+    case FORBIDDEN = 403;
+    case NOT_FOUND = 404;
+    case METHOD_NOT_ALLOWED = 405;
+    case NOT_ACCEPTABLE = 406;
+    case CONFLICT = 409;
+    case GONE = 410;
+    case LENGTH_REQUIRED = 411;
+    case PRECONDITION_FAILED = 412;
+    case PAYLOAD_TOO_LARGE = 413;
+    case URI_TOO_LONG = 414;
     case UNSUPPORTED_MEDIA_TYPE = 415;
-    case RANGE_NOT_SATISFIABLE  = 416;
-    case EXPECTATION_FAILED     = 417;
-    case UNPROCESSABLE_ENTITY   = 422;
-    case LOCKED                 = 423;
-    case FAILED_DEPENDENCY      = 424;
-    case TOO_EARLY              = 425;
-    case UPGRADE_REQUIRED       = 426;
-    case PRECONDITION_REQUIRED  = 428;
-    case TOO_MANY_REQUESTS      = 429;
+    case RANGE_NOT_SATISFIABLE = 416;
+    case EXPECTATION_FAILED = 417;
+    case UNPROCESSABLE_ENTITY = 422;
+    case LOCKED = 423;
+    case FAILED_DEPENDENCY = 424;
+    case TOO_EARLY = 425;
+    case UPGRADE_REQUIRED = 426;
+    case PRECONDITION_REQUIRED = 428;
+    case TOO_MANY_REQUESTS = 429;
 
     // 5xx Server Error
-    case INTERNAL_SERVER_ERROR           = 500;
-    case NOT_IMPLEMENTED                 = 501;
-    case BAD_GATEWAY                     = 502;
-    case SERVICE_UNAVAILABLE             = 503;
-    case GATEWAY_TIMEOUT                 = 504;
-    case HTTP_VERSION_NOT_SUPPORTED      = 505;
-    case INSUFFICIENT_STORAGE            = 507;
-    case LOOP_DETECTED                   = 508;
-    case NOT_EXTENDED                    = 510;
+    case INTERNAL_SERVER_ERROR = 500;
+    case NOT_IMPLEMENTED = 501;
+    case BAD_GATEWAY = 502;
+    case SERVICE_UNAVAILABLE = 503;
+    case GATEWAY_TIMEOUT = 504;
+    case HTTP_VERSION_NOT_SUPPORTED = 505;
+    case INSUFFICIENT_STORAGE = 507;
+    case LOOP_DETECTED = 508;
+    case NOT_EXTENDED = 510;
     case NETWORK_AUTHENTICATION_REQUIRED = 511;
 
     /**
@@ -150,59 +150,59 @@ enum HttpStatusCode: int
     {
         return match ($this) {
             // 1xx
-            self::CONTINUE            => 'Continue',
+            self::CONTINUE => 'Continue',
             self::SWITCHING_PROTOCOLS => 'Switching Protocols',
-            self::PROCESSING          => 'Processing',
-            self::EARLY_HINTS         => 'Early Hints',
+            self::PROCESSING => 'Processing',
+            self::EARLY_HINTS => 'Early Hints',
 
             // 2xx
-            self::OK         => 'OK',
-            self::CREATED    => 'Created',
-            self::ACCEPTED   => 'Accepted',
+            self::OK => 'OK',
+            self::CREATED => 'Created',
+            self::ACCEPTED => 'Accepted',
             self::NO_CONTENT => 'No Content',
 
             // 3xx
-            self::MOVED_PERMANENTLY  => 'Moved Permanently',
-            self::FOUND              => 'Found',
-            self::SEE_OTHER          => 'See Other',
-            self::NOT_MODIFIED       => 'Not Modified',
+            self::MOVED_PERMANENTLY => 'Moved Permanently',
+            self::FOUND => 'Found',
+            self::SEE_OTHER => 'See Other',
+            self::NOT_MODIFIED => 'Not Modified',
             self::TEMPORARY_REDIRECT => 'Temporary Redirect',
             self::PERMANENT_REDIRECT => 'Permanent Redirect',
 
             // 4xx
-            self::BAD_REQUEST            => 'Bad Request',
-            self::UNAUTHORIZED           => 'Unauthorized',
-            self::FORBIDDEN              => 'Forbidden',
-            self::NOT_FOUND              => 'Not Found',
-            self::METHOD_NOT_ALLOWED     => 'Method Not Allowed',
-            self::NOT_ACCEPTABLE         => 'Not Acceptable',
-            self::CONFLICT               => 'Conflict',
-            self::GONE                   => 'Gone',
-            self::LENGTH_REQUIRED        => 'Length Required',
-            self::PRECONDITION_FAILED    => 'Precondition Failed',
-            self::PAYLOAD_TOO_LARGE      => 'Payload Too Large',
-            self::URI_TOO_LONG           => 'URI Too Long',
+            self::BAD_REQUEST => 'Bad Request',
+            self::UNAUTHORIZED => 'Unauthorized',
+            self::FORBIDDEN => 'Forbidden',
+            self::NOT_FOUND => 'Not Found',
+            self::METHOD_NOT_ALLOWED => 'Method Not Allowed',
+            self::NOT_ACCEPTABLE => 'Not Acceptable',
+            self::CONFLICT => 'Conflict',
+            self::GONE => 'Gone',
+            self::LENGTH_REQUIRED => 'Length Required',
+            self::PRECONDITION_FAILED => 'Precondition Failed',
+            self::PAYLOAD_TOO_LARGE => 'Payload Too Large',
+            self::URI_TOO_LONG => 'URI Too Long',
             self::UNSUPPORTED_MEDIA_TYPE => 'Unsupported Media Type',
-            self::RANGE_NOT_SATISFIABLE  => 'Range Not Satisfiable',
-            self::EXPECTATION_FAILED     => 'Expectation Failed',
-            self::UNPROCESSABLE_ENTITY   => 'Unprocessable Entity',
-            self::LOCKED                 => 'Locked',
-            self::FAILED_DEPENDENCY      => 'Failed Dependency',
-            self::TOO_EARLY              => 'Too Early',
-            self::UPGRADE_REQUIRED       => 'Upgrade Required',
-            self::PRECONDITION_REQUIRED  => 'Precondition Required',
-            self::TOO_MANY_REQUESTS      => 'Too Many Requests',
+            self::RANGE_NOT_SATISFIABLE => 'Range Not Satisfiable',
+            self::EXPECTATION_FAILED => 'Expectation Failed',
+            self::UNPROCESSABLE_ENTITY => 'Unprocessable Entity',
+            self::LOCKED => 'Locked',
+            self::FAILED_DEPENDENCY => 'Failed Dependency',
+            self::TOO_EARLY => 'Too Early',
+            self::UPGRADE_REQUIRED => 'Upgrade Required',
+            self::PRECONDITION_REQUIRED => 'Precondition Required',
+            self::TOO_MANY_REQUESTS => 'Too Many Requests',
 
             // 5xx
-            self::INTERNAL_SERVER_ERROR           => 'Internal Server Error',
-            self::NOT_IMPLEMENTED                 => 'Not Implemented',
-            self::BAD_GATEWAY                     => 'Bad Gateway',
-            self::SERVICE_UNAVAILABLE             => 'Service Unavailable',
-            self::GATEWAY_TIMEOUT                 => 'Gateway Timeout',
-            self::HTTP_VERSION_NOT_SUPPORTED      => 'HTTP Version Not Supported',
-            self::INSUFFICIENT_STORAGE            => 'Insufficient Storage',
-            self::LOOP_DETECTED                   => 'Loop Detected',
-            self::NOT_EXTENDED                    => 'Not Extended',
+            self::INTERNAL_SERVER_ERROR => 'Internal Server Error',
+            self::NOT_IMPLEMENTED => 'Not Implemented',
+            self::BAD_GATEWAY => 'Bad Gateway',
+            self::SERVICE_UNAVAILABLE => 'Service Unavailable',
+            self::GATEWAY_TIMEOUT => 'Gateway Timeout',
+            self::HTTP_VERSION_NOT_SUPPORTED => 'HTTP Version Not Supported',
+            self::INSUFFICIENT_STORAGE => 'Insufficient Storage',
+            self::LOOP_DETECTED => 'Loop Detected',
+            self::NOT_EXTENDED => 'Not Extended',
             self::NETWORK_AUTHENTICATION_REQUIRED => 'Network Authentication Required',
         };
     }

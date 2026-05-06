@@ -8,5 +8,6 @@ final readonly class PerformanceConfig
 {
     public function __construct(
         public bool $enabled = false,
-    ) {}
+    ) {
+    }
 }

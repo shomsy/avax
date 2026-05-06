@@ -23,7 +23,7 @@ final readonly class Totp implements TotpInterface
         ?int $periodSeconds = null,
         private int $allowedSkewSteps = 1,
     ) {
-        $digits       ??= 6;
+        $digits ??= 6;
         $periodSeconds ??= 30;
         $this->digits = $digits;
         $this->periodSeconds = $periodSeconds;
@@ -58,7 +58,7 @@ final readonly class Totp implements TotpInterface
             $binary .= str_pad(string: decbin(num: ord(character: $bytes[$index])), length: 8, pad_string: '0', pad_type: STR_PAD_LEFT);
         }
 
-        $chunks        = str_split(string: $binary, length: 5);
+        $chunks = str_split(string: $binary, length: 5);
         $encoded = '';
 
         foreach ($chunks as $chunk) {

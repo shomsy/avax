@@ -14,24 +14,25 @@ final class WarmCompiledCacheFlow
     /** @var array<string, CompiledCacheArtifactDefinition> */
     private array $definitions = [];
 
-    public function __construct(private readonly CompiledCacheDirectory $compiledCacheDirectory, private readonly CompiledCacheManifest $compiledCacheManifest) {}
+    public function __construct(private readonly CompiledCacheDirectory $compiledCacheDirectory, private readonly CompiledCacheManifest $compiledCacheManifest)
+    {
+    }
 
     public static function create(
         CompiledCacheDirectory $compiledCacheDirectory,
         CompiledCacheManifest $compiledCacheManifest,
-    ) : self
-    {
+    ): self {
         return new self(compiledCacheDirectory: $compiledCacheDirectory, compiledCacheManifest: $compiledCacheManifest);
     }
 
-    public function add(CompiledCacheArtifactDefinition $compiledCacheArtifactDefinition) : self
+    public function add(CompiledCacheArtifactDefinition $compiledCacheArtifactDefinition): self
     {
         $this->definitions[$compiledCacheArtifactDefinition->name] = $compiledCacheArtifactDefinition;
 
         return $this;
     }
 
-    public function warm() : array
+    public function warm(): array
     {
         $results = [];
 

@@ -11,15 +11,15 @@ final class DateTimeFormatter
 {
     private const array FORMAT_PRESETS
         = [
-            'date'      => 'Y-m-d',
-            'time'      => 'H:i:s',
-            'datetime'  => 'Y-m-d H:i:s',
+            'date' => 'Y-m-d',
+            'time' => 'H:i:s',
+            'datetime' => 'Y-m-d H:i:s',
             'timestamp' => 'U',
-            'iso8601'   => 'c',
-            'rfc2822'   => 'D, d M Y H:i:s O',
-            'human'     => 'F j, Y g:i a',
-            'short'     => 'm/d/Y',
-            'file'      => 'Y-m-d_H-i-s',
+            'iso8601' => 'c',
+            'rfc2822' => 'D, d M Y H:i:s O',
+            'human' => 'F j, Y g:i a',
+            'short' => 'm/d/Y',
+            'file' => 'Y-m-d_H-i-s',
         ];
 
     public function format(DateTimeInterface $datetime, string $format): string
@@ -76,34 +76,34 @@ final class DateTimeFormatter
     private function formatPast(int $seconds): string
     {
         if ($seconds < 60) {
-            return $seconds . ' seconds ago';
+            return $seconds.' seconds ago';
         }
 
         if ($seconds < 3600) {
-            return floor($seconds / 60) . ' minutes ago';
+            return floor($seconds / 60).' minutes ago';
         }
 
         if ($seconds < 86400) {
-            return floor($seconds / 3600) . ' hours ago';
+            return floor($seconds / 3600).' hours ago';
         }
 
-        return floor($seconds / 86400) . ' days ago';
+        return floor($seconds / 86400).' days ago';
     }
 
     private function formatFuture(int $seconds): string
     {
         if ($seconds < 60) {
-            return 'in ' . $seconds . ' seconds';
+            return 'in '.$seconds.' seconds';
         }
 
         if ($seconds < 3600) {
-            return 'in ' . floor($seconds / 60) . ' minutes';
+            return 'in '.floor($seconds / 60).' minutes';
         }
 
         if ($seconds < 86400) {
-            return 'in ' . floor($seconds / 3600) . ' hours';
+            return 'in '.floor($seconds / 3600).' hours';
         }
 
-        return 'in ' . floor($seconds / 86400) . ' days';
+        return 'in '.floor($seconds / 86400).' days';
     }
 }

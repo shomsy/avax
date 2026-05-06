@@ -10,7 +10,8 @@ final readonly class RunDatabaseMigration
 {
     public function __construct(
         private MigrationRunner $migrationRunner,
-    ) {}
+    ) {
+    }
 
     public function execute(): void
     {

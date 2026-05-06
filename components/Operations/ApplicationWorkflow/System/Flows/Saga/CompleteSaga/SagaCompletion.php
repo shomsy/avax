@@ -9,5 +9,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Compl
  */
 final readonly class SagaCompletion
 {
-    public function __construct(public string $instanceId, public string $status = 'completed') {}
+    public function __construct(public string $instanceId, public string $status = 'completed')
+    {
+    }
 }

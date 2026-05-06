@@ -9,7 +9,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
 final class TerminateHttpKernel
 {
-    public function terminate(RequestInterface $request, ResponseInterface $response) : void
+    public function terminate(RequestInterface $request, ResponseInterface $response): void
     {
         // Termination logic
     }

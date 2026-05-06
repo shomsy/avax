@@ -12,5 +12,6 @@ final readonly class Column
     public function __construct(
         public ?string $name = null,
         public ?string $type = null,
-    ) {}
+    ) {
+    }
 }

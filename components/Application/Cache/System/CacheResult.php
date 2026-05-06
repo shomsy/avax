@@ -103,7 +103,7 @@ class CacheResult
             CacheResultState::STORED,
             CacheResultState::DELETED,
             CacheResultState::CLEARED,
-        ], strict:      true);
+        ], strict: true);
     }
 
     public function getValueOrDefault(mixed $default = null): mixed

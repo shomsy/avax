@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Di
 
 enum ScimAccountState: string
 {
-    case ACTIVE   = 'active';
+    case ACTIVE = 'active';
     case SUSPENDED = 'suspended';
     case DISABLED = 'disabled';
 }

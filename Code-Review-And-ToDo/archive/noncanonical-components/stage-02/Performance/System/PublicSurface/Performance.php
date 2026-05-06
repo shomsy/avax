@@ -14,7 +14,7 @@ final class Performance
 {
     private static ?QueryCache $queryCache = null;
 
-    public static function queryCache() : QueryCache
+    public static function queryCache(): QueryCache
     {
         if (! self::$queryCache instanceof QueryCache) {
             self::$queryCache = new QueryCache();
@@ -23,17 +23,17 @@ final class Performance
         return self::$queryCache;
     }
 
-    public static function routes(string $path) : RouteCache
+    public static function routes(string $path): RouteCache
     {
         return new RouteCache(path: $path);
     }
 
-    public static function config(string $path) : ConfigCache
+    public static function config(string $path): ConfigCache
     {
         return new ConfigCache(path: $path);
     }
 
-    public static function lazy(Closure $resolver) : LazyValue
+    public static function lazy(Closure $resolver): LazyValue
     {
         return new LazyValue(resolver: $resolver);
     }

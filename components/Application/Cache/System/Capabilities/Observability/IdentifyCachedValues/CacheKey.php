@@ -111,7 +111,7 @@ final readonly class CacheKey implements Stringable
             $escaped,
         );
 
-        return '/^' . $escaped . '$/';
+        return '/^'.$escaped.'$/';
     }
 
     public function fullKey(): string
@@ -125,7 +125,7 @@ final readonly class CacheKey implements Stringable
         $parts[] = $this->normalized;
 
         if ($this->cacheVersion instanceof CacheVersion) {
-            $parts[] = 'v' . $this->cacheVersion->toString();
+            $parts[] = 'v'.$this->cacheVersion->toString();
         }
 
         return implode(separator: ':', array: $parts);

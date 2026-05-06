@@ -10,14 +10,15 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Interna
 final readonly class Record
 {
     /**
-     * @param array<string, mixed> $fields
+     * @param  array<string, mixed>  $fields
      */
     private function __construct(
         private array $fields,
-    ) {}
+    ) {
+    }
 
     /**
-     * @param array<string, mixed> $fields
+     * @param  array<string, mixed>  $fields
      */
     public static function fromArray(array $fields): self
     {

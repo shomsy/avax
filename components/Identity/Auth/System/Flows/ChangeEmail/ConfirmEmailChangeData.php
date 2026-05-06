@@ -14,5 +14,6 @@ final readonly class ConfirmEmailChangeData
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

@@ -8,5 +8,6 @@ final readonly class TokenState
 {
     public function __construct(
         public string $value,
-    ) {}
+    ) {
+    }
 }

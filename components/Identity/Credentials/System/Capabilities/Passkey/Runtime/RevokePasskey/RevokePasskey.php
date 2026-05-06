@@ -11,9 +11,9 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredentialStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use SensitiveParameter;
 
 final readonly class RevokePasskey
@@ -26,7 +26,8 @@ final readonly class RevokePasskey
         private PasskeyCredentialStoreInterface $passkeyCredentialStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PasskeyOperationFailed

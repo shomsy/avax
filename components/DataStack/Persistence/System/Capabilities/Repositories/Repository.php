@@ -21,7 +21,8 @@ abstract class Repository implements RepositoryInterface
     public function __construct(
         private readonly RepositoryStorageInterface $repositoryStorage,
         private readonly UnitOfWorkInterface $unitOfWork,
-    ) {}
+    ) {
+    }
 
     public function findById(string|int $id): ?object
     {
@@ -36,7 +37,7 @@ abstract class Repository implements RepositoryInterface
      */
     abstract protected function entityClass(): string;
 
-    public function findAll(?int $limit = null, int $offset = 0) : array
+    public function findAll(?int $limit = null, int $offset = 0): array
     {
         return $this->findBy(criteria: [], limit: $limit ?? 100, offset: $offset);
     }
@@ -44,8 +45,8 @@ abstract class Repository implements RepositoryInterface
     public function findBy(
         array $criteria,
         ?array $orderBy = null,
-        ?int   $limit = null,
-        ?int   $offset = null,
+        ?int $limit = null,
+        ?int $offset = null,
     ): array {
         return $this->repositoryStorage->findBy(
             entityClass: $this->entityClass(),

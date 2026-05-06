@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 final class SchemaFacadeSqliteTest extends TestCase
 {
-    public function test_schema_create_table_and_drop_if_exists_execute_against_sqlite() : void
+    public function test_schema_create_table_and_drop_if_exists_execute_against_sqlite(): void
     {
         [$schema, $connections] = self::schemaForSqliteMemory();
 
@@ -24,7 +24,7 @@ final class SchemaFacadeSqliteTest extends TestCase
 
         $schema->create(
             table         : 'users',
-            callback      : static function (Blueprint $table) : void {
+            callback      : static function (Blueprint $table): void {
                 $table->integer(name: 'id')->primary();
                 $table->string(name: 'name', length: 120);
                 $table->string(name: 'email')->unique();
@@ -38,8 +38,8 @@ final class SchemaFacadeSqliteTest extends TestCase
         self::assertSame(
             expected: 'users',
             actual  : $pdo
-                          ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
-                          ->fetchColumn(),
+                ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
+                ->fetchColumn(),
         );
 
         $columnNames = self::columnNames($pdo, table: 'users');
@@ -53,12 +53,12 @@ final class SchemaFacadeSqliteTest extends TestCase
 
         self::assertFalse(
             condition: $pdo
-                           ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
-                           ->fetchColumn(),
+                ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
+                ->fetchColumn(),
         );
     }
 
-    public function test_schema_table_adds_column_against_sqlite() : void
+    public function test_schema_table_adds_column_against_sqlite(): void
     {
         [$schema, $connections] = self::schemaForSqliteMemory();
 
@@ -66,7 +66,7 @@ final class SchemaFacadeSqliteTest extends TestCase
 
         $schema->create(
             table         : 'users',
-            callback      : static function (Blueprint $table) : void {
+            callback      : static function (Blueprint $table): void {
                 $table->integer(name: 'id')->primary();
                 $table->string(name: 'name', length: 120);
             },
@@ -75,7 +75,7 @@ final class SchemaFacadeSqliteTest extends TestCase
 
         $schema->table(
             table         : 'users',
-            callback      : static function (Blueprint $table) : void {
+            callback      : static function (Blueprint $table): void {
                 $table->string(name: 'nickname', length: 80)->nullable();
             },
             connectionName: 'sqlite',
@@ -90,22 +90,22 @@ final class SchemaFacadeSqliteTest extends TestCase
     /**
      * @return array{0: Schema, 1: Connections}
      */
-    private static function schemaForSqliteMemory() : array
+    private static function schemaForSqliteMemory(): array
     {
         $readConnection = new ReadConnection(config: [
-                                                         'default'     => 'sqlite',
-                                                         'connections' => [
-                                                             'sqlite' => [
-                                                                 'driver'   => 'sqlite',
-                                                                 'database' => ':memory:',
-                                                                 'name'     => 'sqlite',
-                                                                 'host'     => '',
-                                                                 'username' => '',
-                                                                 'password' => '',
-                                                                 'charset'  => 'utf8',
-                                                             ],
-                                                         ],
-                                                     ]);
+            'default' => 'sqlite',
+            'connections' => [
+                'sqlite' => [
+                    'driver' => 'sqlite',
+                    'database' => ':memory:',
+                    'name' => 'sqlite',
+                    'host' => '',
+                    'username' => '',
+                    'password' => '',
+                    'charset' => 'utf8',
+                ],
+            ],
+        ]);
 
         $connections = new Connections(readConnection: $readConnection);
 
@@ -123,13 +123,13 @@ final class SchemaFacadeSqliteTest extends TestCase
     /**
      * @return list<string>
      */
-    private static function columnNames(PDO $pdo, string $table) : array
+    private static function columnNames(PDO $pdo, string $table): array
     {
         $columns = $pdo->query(sprintf('PRAGMA table_info(%s)', $table))->fetchAll(PDO::FETCH_ASSOC);
 
         return array_values(array_map(
-                                callback: static fn (array $column) : string => (string) $column['name'],
-                                array   : $columns,
-                            ));
+            callback: static fn (array $column): string => (string) $column['name'],
+            array   : $columns,
+        ));
     }
 }

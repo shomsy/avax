@@ -20,18 +20,18 @@ class Span
     private array $attributes = [];
 
     public function __construct(
-        public readonly string   $name,
-        public readonly string   $operation,
+        public readonly string $name,
+        public readonly string $operation,
         public readonly ?TraceId $traceId = null,
-        public readonly ?SpanId  $parentSpanId = null,
-    )
-    {
+        public readonly ?SpanId $parentSpanId = null,
+    ) {
         $this->startTime = hrtime(true) / 1e9;
     }
 
     public function setAttribute(string $key, mixed $value): self
     {
         $this->attributes[$key] = $value;
+
         return $this;
     }
 

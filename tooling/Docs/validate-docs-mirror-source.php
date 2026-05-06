@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Docs;
+
 $root = dirname(__DIR__, 2);
 
 $sourceToDocs = [
@@ -28,17 +29,17 @@ $sourceToDocs = [
 $missing = [];
 
 foreach ($sourceToDocs as $source => $docs) {
-    if (!is_dir($root . '/' . $source)) {
+    if (! is_dir($root.'/'.$source)) {
         continue;
     }
 
-    if (!is_dir($root . '/' . $docs)) {
+    if (! is_dir($root.'/'.$docs)) {
         $missing[] = sprintf('Missing docs mirror for %s -> %s', $source, $docs);
     }
 }
 
 if ($missing !== []) {
-    fwrite(STDERR, implode(PHP_EOL, $missing) . PHP_EOL);
+    fwrite(STDERR, implode(PHP_EOL, $missing).PHP_EOL);
 
     exit(1);
 }

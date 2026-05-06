@@ -9,9 +9,9 @@ if ($argc < 3) {
     exit(1);
 }
 
-require_once dirname(path: __DIR__) . '/tests/bootstrap.php';
+require_once dirname(path: __DIR__).'/tests/bootstrap.php';
 
-$command     = $argv[1] ?? '';
+$command = $argv[1] ?? '';
 $fixturePath = $argv[2] ?? '';
 
 if (! is_file(filename: $fixturePath)) {
@@ -41,26 +41,26 @@ $print = static function (mixed $payload): void {
         return;
     }
 
-    echo json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
+    echo json_encode(value: $payload, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL;
 };
 
 switch ($command) {
     case 'graph:export':
         $format = $argv[3] ?? 'json';
-        $kind   = $argv[4] ?? 'dependency';
-        $id     = $argv[5] ?? '';
+        $kind = $argv[4] ?? 'dependency';
+        $id = $argv[5] ?? '';
         $print(payload: $container->exportGraph(format: $format, kind: $kind, id: $id));
         exit(0);
 
     case 'graph:explore':
         $kind = $argv[3] ?? 'dependency';
-        $id   = $argv[4] ?? '';
+        $id = $argv[4] ?? '';
         $print(payload: $container->exportGraph(format: 'html', kind: $kind, id: $id));
         exit(0);
 
     case 'graph:diff':
         $format = $argv[3] ?? 'json';
-        $id     = $argv[4] ?? '';
+        $id = $argv[4] ?? '';
         $print(payload: $container->diffGraph(format: $format, id: $id));
         exit(0);
 
@@ -71,13 +71,13 @@ switch ($command) {
 
     case 'graph:policy':
         $format = $argv[3] ?? 'json';
-        $id     = $argv[4] ?? '';
+        $id = $argv[4] ?? '';
         $print(payload: $container->exportGraph(format: $format, kind: 'policy', id: $id));
         exit(0);
 
     case 'graph:architecture':
         $format = $argv[3] ?? 'json';
-        $id     = $argv[4] ?? '';
+        $id = $argv[4] ?? '';
         $print(payload: $container->exportGraph(format: $format, kind: 'architecture', id: $id));
         exit(0);
 

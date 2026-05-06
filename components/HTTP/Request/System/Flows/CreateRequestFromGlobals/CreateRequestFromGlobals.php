@@ -20,35 +20,35 @@ use Exception;
 final readonly class CreateRequestFromGlobals
 {
     public function __construct(
-        private ReadServerParameters   $readServerParameters,
-        private ReadQueryParameters    $readQueryParameters,
-        private ReadUploadedFiles      $readUploadedFiles,
-        private ReadRequestBody        $readRequestBody,
-        private NormalizeHeaders       $normalizeHeaders,
+        private ReadServerParameters $readServerParameters,
+        private ReadQueryParameters $readQueryParameters,
+        private ReadUploadedFiles $readUploadedFiles,
+        private ReadRequestBody $readRequestBody,
+        private NormalizeHeaders $normalizeHeaders,
         private NormalizeUploadedFiles $normalizeUploadedFiles,
-        private ParseJsonBody          $parseJsonBody,
-        private ParseFormBody          $parseFormBody,
+        private ParseJsonBody $parseJsonBody,
+        private ParseFormBody $parseFormBody,
     ) {
     }
 
     public function execute(): Request
     {
         try {
-            $server  = $this->readServerParameters->read();
-            $query   = $this->readQueryParameters->read();
-            $files   = $this->readUploadedFiles->read();
+            $server = $this->readServerParameters->read();
+            $query = $this->readQueryParameters->read();
+            $files = $this->readUploadedFiles->read();
             $rawBody = $this->readRequestBody->read();
 
             $requestHeaders = new RequestHeaders($this->normalizeHeaders->normalize($server));
 
             $contentType = $requestHeaders->get('Content-Type')?->first() ?? '';
-            $parsedData  = match (true) {
-                str_contains($contentType, 'application/json')                  => $this->parseJsonBody->parse($rawBody),
+            $parsedData = match (true) {
+                str_contains($contentType, 'application/json') => $this->parseJsonBody->parse($rawBody),
                 str_contains($contentType, 'application/x-www-form-urlencoded') => $this->parseFormBody->parse($rawBody),
-                default                                                         => $_POST
+                default => $_POST
             };
 
-            $requestBody   = new RequestBody(new RawBody($rawBody), new ParsedBody($parsedData));
+            $requestBody = new RequestBody(new RawBody($rawBody), new ParsedBody($parsedData));
             $uploadedFiles = new UploadedFiles($this->normalizeUploadedFiles->normalize($files));
 
             $requestUri = new RequestUri(
@@ -69,7 +69,7 @@ final readonly class CreateRequestFromGlobals
                 queryParams: $query,
             );
         } catch (Exception $exception) {
-            throw new GlobalsRequestCreationFailed('Failed to create request from globals: ' . $exception->getMessage(), 0, $exception);
+            throw new GlobalsRequestCreationFailed('Failed to create request from globals: '.$exception->getMessage(), 0, $exception);
         }
     }
 }

@@ -14,7 +14,8 @@ final class Success extends Result
 {
     public function __construct(
         private readonly mixed $value,
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function isOk(): bool

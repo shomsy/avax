@@ -15,5 +15,6 @@ final readonly class FrontChannelLogoutData
         public ?string $idTokenHint = null,
         public ?string $postLogoutRedirectUri = null,
         public ?string $state = null,
-    ) {}
+    ) {
+    }
 }

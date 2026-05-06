@@ -20,13 +20,14 @@ final readonly class RequireRole
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated
      * @throws RoleDenied
      */
-    public function execute(UserRole $userRole) : void
+    public function execute(UserRole $userRole): void
     {
         $user = $this->currentAuthentication->read()->user();
 

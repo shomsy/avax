@@ -10,15 +10,14 @@ use Avax\Labs\API\DescribeApi\System\Capabilities\EndpointContracts\EndpointVers
 final class ApiContract
 {
     /**
-     * @param list<EndpointContract> $endpoints
+     * @param  list<EndpointContract>  $endpoints
      */
     public function __construct(
         public readonly array $endpoints = [],
-    )
-    {
+    ) {
     }
 
-    public function findEndpoint(string $path, string $method): EndpointContract|null
+    public function findEndpoint(string $path, string $method): ?EndpointContract
     {
         foreach ($this->endpoints as $endpoint) {
             if ($endpoint->path === $path && $endpoint->method === $method) {
@@ -37,7 +36,7 @@ final class ApiContract
         return array_values(
             array_filter(
                 $this->endpoints,
-                static fn(EndpointContract $endpoint): bool => $endpoint->version === $version,
+                static fn (EndpointContract $endpoint): bool => $endpoint->version === $version,
             ),
         );
     }
@@ -50,7 +49,7 @@ final class ApiContract
         return array_values(
             array_filter(
                 $this->endpoints,
-                static fn(EndpointContract $endpoint): bool => $endpoint->deprecation !== null,
+                static fn (EndpointContract $endpoint): bool => $endpoint->deprecation !== null,
             ),
         );
     }

@@ -12,7 +12,7 @@ final class Validator
 {
     public static function validate(array $data, array $rules): bool
     {
-        return array_all($rules, fn ($rule, $field) : bool => ! (! isset($data[$field]) && str_contains((string) $rule, 'required')));
+        return array_all($rules, fn ($rule, $field): bool => ! (! isset($data[$field]) && str_contains((string) $rule, 'required')));
     }
 
     public static function fails(array $data, array $rules): bool

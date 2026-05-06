@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Lifecycle\Invali
 interface InvalidateByPattern
 {
     /**
-     * @param string $pattern Unix shell-style wildcards: * matches everything, ? matches single char
+     * @param  string  $pattern  Unix shell-style wildcards: * matches everything, ? matches single char
      */
     public function invalidateByPattern(string $pattern): int;
 

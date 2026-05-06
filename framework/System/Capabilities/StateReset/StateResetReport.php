@@ -9,18 +9,19 @@ use Throwable;
 final readonly class StateResetReport
 {
     /**
-     * @param list<string> $resetComponents
-     * @param array<string, Throwable> $failures
+     * @param  list<string>  $resetComponents
+     * @param  array<string, Throwable>  $failures
      */
     public function __construct(
         private array $resetComponents,
         private array $failures = [],
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<string>
      */
-    public function resetComponents() : array
+    public function resetComponents(): array
     {
         return $this->resetComponents;
     }
@@ -28,12 +29,12 @@ final readonly class StateResetReport
     /**
      * @return array<string, Throwable>
      */
-    public function failures() : array
+    public function failures(): array
     {
         return $this->failures;
     }
 
-    public function wasSuccessful() : bool
+    public function wasSuccessful(): bool
     {
         return $this->failures === [];
     }

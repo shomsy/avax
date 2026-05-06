@@ -19,7 +19,7 @@ final readonly class NodeHealthRecord
     /**
      * Create a new record with an updated last check time.
      */
-    public function withLastCheck(Timestamp $timestamp) : self
+    public function withLastCheck(Timestamp $timestamp): self
     {
         return new self(
             nodeId              : $this->nodeId,
@@ -35,7 +35,7 @@ final readonly class NodeHealthRecord
     /**
      * Check if the node was checked within the given number of seconds.
      */
-    public function wasCheckedWithin(int $seconds) : bool
+    public function wasCheckedWithin(int $seconds): bool
     {
         $now = Timestamp::now();
         $duration = $now->difference($this->lastCheck);
@@ -56,16 +56,16 @@ final readonly class NodeHealthRecord
      *     lastSuccess: int|null
      * }
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
-            'nodeId'              => $this->nodeId,
-            'status'              => $this->cacheNodeStatus->value,
-            'lastCheck'           => $this->lastCheck->seconds,
+            'nodeId' => $this->nodeId,
+            'status' => $this->cacheNodeStatus->value,
+            'lastCheck' => $this->lastCheck->seconds,
             'consecutiveFailures' => $this->consecutiveFailures,
             'consecutiveSuccesses' => $this->consecutiveSuccesses,
-            'lastFailure'         => $this->lastFailure?->seconds,
-            'lastSuccess'         => $this->lastSuccess?->seconds,
+            'lastFailure' => $this->lastFailure?->seconds,
+            'lastSuccess' => $this->lastSuccess?->seconds,
         ];
     }
 }

@@ -19,33 +19,33 @@ final class User implements Stringable, UserInterface
     public array $roles;
 
     public function __construct(
-        public UserId    $id,
+        public UserId $id,
         #[SensitiveParameter]
         public UserEmail $email,
-        public string    $username,
+        public string $username,
         #[SensitiveParameter]
-        public string    $passwordHash,
-        ?array           $roles = null,
-        ?array           $permissions = null,
-        public bool      $isActive = true,
+        public string $passwordHash,
+        ?array $roles = null,
+        ?array $permissions = null,
+        public bool $isActive = true,
     ) {
-        $this->roles       = array_values(array: $roles ?? []);
+        $this->roles = array_values(array: $roles ?? []);
         $this->permissions = array_values(array: $permissions ?? []);
     }
 
     /**
-     * @param list<UserRole>|null       $roles
-     * @param list<UserPermission>|null $permissions
+     * @param  list<UserRole>|null  $roles
+     * @param  list<UserPermission>|null  $permissions
      */
     public static function create(
-        UserId    $userId,
+        UserId $userId,
         #[SensitiveParameter]
         UserEmail $userEmail,
         string $username,
         #[SensitiveParameter]
         string $passwordHash,
-        ?array    $roles = null,
-        ?array    $permissions = null,
+        ?array $roles = null,
+        ?array $permissions = null,
         bool $isActive = true,
     ): self {
         return new self(
@@ -59,17 +59,17 @@ final class User implements Stringable, UserInterface
         );
     }
 
-    public function hasRole(UserRole $userRole) : bool
+    public function hasRole(UserRole $userRole): bool
     {
-        return array_any($this->roles, fn ($existingRole) : bool => $existingRole === $userRole);
+        return array_any($this->roles, fn ($existingRole): bool => $existingRole === $userRole);
     }
 
-    public function hasPermission(UserPermission $userPermission) : bool
+    public function hasPermission(UserPermission $userPermission): bool
     {
         return array_any($this->permissions, fn ($existingPermission) => $existingPermission->equals(other: $userPermission));
     }
 
-    public function canAccessRole(UserRole $userRole) : bool
+    public function canAccessRole(UserRole $userRole): bool
     {
         return array_any($this->roles, fn ($role) => $role->canAccess(required: $userRole));
     }

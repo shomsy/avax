@@ -15,12 +15,13 @@ use Throwable;
 class EntityRepository
 {
     /**
-     * @param class-string<TEntity> $entityClass
+     * @param  class-string<TEntity>  $entityClass
      */
     public function __construct(
         protected readonly EntityManager $entityManager,
         protected readonly string $entityClass,
-    ) {}
+    ) {
+    }
 
     /**
      * @return TEntity|null
@@ -37,8 +38,7 @@ class EntityRepository
     }
 
     /**
-     * @param array<string, mixed> $criteria
-     *
+     * @param  array<string, mixed>  $criteria
      * @return TEntity|null
      *
      * @throws Throwable
@@ -49,7 +49,7 @@ class EntityRepository
     }
 
     /**
-     * @param array<string, mixed> $criteria
+     * @param  array<string, mixed>  $criteria
      * @return list<TEntity>
      *
      * @throws Throwable

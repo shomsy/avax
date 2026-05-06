@@ -12,9 +12,10 @@ final readonly class SessionLifecycleMiddleware
 {
     public function __construct(
         private Session $session,
-    ) {}
+    ) {
+    }
 
-    public function handle(RequestInterface $serverRequest, Closure $next) : mixed
+    public function handle(RequestInterface $serverRequest, Closure $next): mixed
     {
         $this->session->start();
         $this->session->ageFlash();

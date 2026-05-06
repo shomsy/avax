@@ -11,7 +11,8 @@ final readonly class SumValues
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(string|callable $key): float|int
     {

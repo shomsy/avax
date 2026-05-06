@@ -11,9 +11,11 @@ final class SlowQueryDetector
     /** @var list<QuerySpan> */
     private array $slowQueries = [];
 
-    public function __construct(private readonly int $thresholdMs = 1000) {}
+    public function __construct(private readonly int $thresholdMs = 1000)
+    {
+    }
 
-    public function record(QuerySpan $querySpan) : bool
+    public function record(QuerySpan $querySpan): bool
     {
         if (! $querySpan->isSlow(thresholdMs: $this->thresholdMs)) {
             return false;

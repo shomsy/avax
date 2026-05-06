@@ -33,7 +33,7 @@ $categories = [
 
 function brokenRefUsageIsNonProduction(string $file): bool
 {
-    $relativeFile = str_replace(getcwd() . '/', '', $file);
+    $relativeFile = str_replace(getcwd().'/', '', $file);
 
     if (
         str_starts_with($relativeFile, 'tests/') ||
@@ -63,10 +63,10 @@ foreach ($missingRefs as $ref => $data) {
     $isDocOnly = true;
 
     foreach ($usages as $usage) {
-        if (!str_contains($usage['file'], '/tests/') && !str_starts_with($usage['file'], 'tests/')) {
+        if (! str_contains($usage['file'], '/tests/') && ! str_starts_with($usage['file'], 'tests/')) {
             $isTestOnly = false;
         }
-        if (!str_contains($usage['type'], 'docblock') && !str_contains($usage['type'], 'comment')) {
+        if (! str_contains($usage['type'], 'docblock') && ! str_contains($usage['type'], 'comment')) {
             $isDocOnly = false;
         }
     }
@@ -88,8 +88,8 @@ foreach ($missingRefs as $ref => $data) {
     } elseif ($isNonProduction) {
         $categories['non-production'][$ref] = $data;
     } elseif (
-        str_starts_with($ref, 'Psr\\') || 
-        str_starts_with($ref, 'Symfony\\') || 
+        str_starts_with($ref, 'Psr\\') ||
+        str_starts_with($ref, 'Symfony\\') ||
         str_starts_with($ref, 'Illuminate\\') ||
         str_starts_with($ref, 'Aws\\') ||
         str_starts_with($ref, 'Cron\\') ||
@@ -108,12 +108,12 @@ foreach ($missingRefs as $ref => $data) {
 
 $markdown = "# Broken Reference Groups\n\n";
 foreach ($categories as $cat => $refs) {
-    $markdown .= "## " . strtoupper($cat) . " (" . count($refs) . ")\n\n";
+    $markdown .= '## '.strtoupper($cat).' ('.count($refs).")\n\n";
     foreach ($refs as $ref => $data) {
         $markdown .= "- **$ref** [{$data['severity']}]\n";
         foreach ($data['usages'] as $usage) {
             // Strip absolute path prefix for brevity
-            $relFile = str_replace(getcwd() . '/', '', $usage['file']);
+            $relFile = str_replace(getcwd().'/', '', $usage['file']);
             $markdown .= "  - {$relFile}:{$usage['line']} ({$usage['type']})\n";
         }
     }

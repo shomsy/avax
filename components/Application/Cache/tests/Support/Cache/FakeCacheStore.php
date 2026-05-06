@@ -89,6 +89,6 @@ final class FakeCacheStore implements CacheStore
 
     public function containsValue(mixed $value): bool
     {
-        return array_any($this->records, fn ($record) : bool => $record->value === $value);
+        return array_any($this->records, fn ($record): bool => $record->value === $value);
     }
 }

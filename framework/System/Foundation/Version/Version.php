@@ -20,17 +20,17 @@ final readonly class Version
         }
     }
 
-    public static function from(string $value) : self
+    public static function from(string $value): self
     {
         return new self(value: trim(string: $value));
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value;
     }
 
-    public function isCompatibleWith(self $other) : bool
+    public function isCompatibleWith(self $other): bool
     {
         return version_compare($this->value, $other->value, '>=');
     }

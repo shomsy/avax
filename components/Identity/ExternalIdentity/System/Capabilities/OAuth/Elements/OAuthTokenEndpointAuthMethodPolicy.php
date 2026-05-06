@@ -12,13 +12,13 @@ use InvalidArgumentException;
 final readonly class OAuthTokenEndpointAuthMethodPolicy
 {
     public function resolve(
-        OAuthClientType               $oAuthClientType,
+        OAuthClientType $oAuthClientType,
         ?OAuthTokenEndpointAuthMethod $requested = null,
         ?OAuthTokenEndpointAuthMethod $current = null,
         bool $workloadIdentity = false,
     ): OAuthTokenEndpointAuthMethod {
         $oAuthTokenEndpointAuthMethod = $this->defaultForType(type: $oAuthClientType);
-        $method                       = $requested ?? $current ?? $oAuthTokenEndpointAuthMethod;
+        $method = $requested ?? $current ?? $oAuthTokenEndpointAuthMethod;
 
         if (! $requested instanceof OAuthTokenEndpointAuthMethod && $current instanceof OAuthTokenEndpointAuthMethod && ! $this->isCompatible(workloadIdentity: $workloadIdentity, type: $oAuthClientType, method: $current)) {
             $method = $oAuthTokenEndpointAuthMethod;
@@ -34,7 +34,7 @@ final readonly class OAuthTokenEndpointAuthMethodPolicy
         return $method;
     }
 
-    private function defaultForType(OAuthClientType $oAuthClientType) : OAuthTokenEndpointAuthMethod
+    private function defaultForType(OAuthClientType $oAuthClientType): OAuthTokenEndpointAuthMethod
     {
         return $oAuthClientType === OAuthClientType::PUBLIC
             ? OAuthTokenEndpointAuthMethod::NONE
@@ -42,7 +42,7 @@ final readonly class OAuthTokenEndpointAuthMethodPolicy
     }
 
     private function isCompatible(
-        OAuthClientType              $oAuthClientType,
+        OAuthClientType $oAuthClientType,
         OAuthTokenEndpointAuthMethod $oAuthTokenEndpointAuthMethod,
         bool $workloadIdentity,
     ): bool {

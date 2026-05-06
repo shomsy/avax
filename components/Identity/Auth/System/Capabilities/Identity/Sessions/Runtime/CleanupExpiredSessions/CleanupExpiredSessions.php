@@ -14,7 +14,8 @@ final readonly class CleanupExpiredSessions
         #[SensitiveParameter]
         private ?PruneExpiredSessionsInterface $pruneExpiredSessions,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     public function execute(): int
     {

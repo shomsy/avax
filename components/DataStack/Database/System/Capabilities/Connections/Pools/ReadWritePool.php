@@ -10,7 +10,8 @@ final class ReadWritePool
         private readonly ConnectionPoolInterface $readPool,
         private readonly ConnectionPoolInterface $writePool,
         private bool $enableReadWriteSplit = true,
-    ) {}
+    ) {
+    }
 
     public function getRead(): PooledConnection
     {

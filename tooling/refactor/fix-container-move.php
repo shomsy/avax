@@ -13,25 +13,27 @@ foreach ($dirs as $dir) {
 
 $count = 0;
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     $changed = false;
-    
+
     // Fix PublicSurface\Container to System\Container
     if (str_contains($content, 'Avax\Components\Application\Container\System\PublicSurface\Container')) {
         $content = str_replace(
-            'Avax\Components\Application\Container\System\PublicSurface\Container', 
-            'Avax\Components\Application\Container\System\Container', 
+            'Avax\Components\Application\Container\System\PublicSurface\Container',
+            'Avax\Components\Application\Container\System\Container',
             $content
         );
         $changed = true;
     }
-    
+
     // Also fix any remaining DI\ references just in case
     if (str_contains($content, 'Avax\Components\Application\Container\DI\\')) {
         $content = str_replace(
-            'Avax\Components\Application\Container\DI\\', 
-            'Avax\Components\Application\Container\System\\', 
+            'Avax\Components\Application\Container\DI\\',
+            'Avax\Components\Application\Container\System\\',
             $content
         );
         $changed = true;

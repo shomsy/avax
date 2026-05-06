@@ -19,12 +19,14 @@ class Supervisor
     public function withFailureThreshold(int $threshold): self
     {
         $this->failureThreshold = $threshold;
+
         return $this;
     }
 
     public function withCooldown(int $seconds): self
     {
         $this->cooldownSeconds = $seconds;
+
         return $this;
     }
 

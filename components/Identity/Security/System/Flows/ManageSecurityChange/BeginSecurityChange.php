@@ -12,12 +12,14 @@ use stdClass;
  */
 final readonly class BeginSecurityChange
 {
-    public function __construct(private SecurityConfigurationStore $securityConfigurationStore) {}
+    public function __construct(private SecurityConfigurationStore $securityConfigurationStore)
+    {
+    }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
-    public function execute(string $tenantId, array $data) : stdClass
+    public function execute(string $tenantId, array $data): stdClass
     {
         return $this->securityConfigurationStore->begin(tenantId: $tenantId, data: $data);
     }

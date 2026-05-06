@@ -24,35 +24,35 @@ class ScriptRunnerValidator extends BaseValidator
     /** @var array<string, array{command: string, extension: string, timeout: int}> */
     private static array $scriptExecutors
         = [
-            'php'     => [
-                'command'   => 'php',
+            'php' => [
+                'command' => 'php',
                 'extension' => '.php',
-                'timeout'   => 30,
+                'timeout' => 30,
             ],
-            'python'  => [
-                'command'   => 'python3',
+            'python' => [
+                'command' => 'python3',
                 'extension' => '.py',
-                'timeout'   => 30,
+                'timeout' => 30,
             ],
             'python2' => [
-                'command'   => 'python',
+                'command' => 'python',
                 'extension' => '.py',
-                'timeout'   => 30,
+                'timeout' => 30,
             ],
-            'shell'   => [
-                'command'   => 'bash',
+            'shell' => [
+                'command' => 'bash',
                 'extension' => '.sh',
-                'timeout'   => 30,
+                'timeout' => 30,
             ],
-            'go'      => [
-                'command'   => 'go run',
+            'go' => [
+                'command' => 'go run',
                 'extension' => '.go',
-                'timeout'   => 60,
+                'timeout' => 60,
             ],
-            'nodejs'  => [
-                'command'   => 'node',
+            'nodejs' => [
+                'command' => 'node',
                 'extension' => '.js',
-                'timeout'   => 30,
+                'timeout' => 30,
             ],
         ];
 
@@ -62,30 +62,29 @@ class ScriptRunnerValidator extends BaseValidator
     private array $enabledScripts;
 
     /**
-     * @param list<string>|null $enabledScripts Scripts to enable, null for all discovered
+     * @param  list<string>|null  $enabledScripts  Scripts to enable, null for all discovered
      */
     public function __construct(
         ?string $toolingPath = null,
-        ?array  $enabledScripts = null,
+        ?array $enabledScripts = null,
         private bool $discoverScripts = true
-    )
-    {
+    ) {
         parent::__construct('ScriptRunnerValidator');
-        $this->toolingPath     = $toolingPath ?? (getcwd() . '/tooling');
-        $this->enabledScripts  = $enabledScripts ?? [];
+        $this->toolingPath = $toolingPath ?? (getcwd().'/tooling');
+        $this->enabledScripts = $enabledScripts ?? [];
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    public function validate(array $context) : ValidationResult
+    public function validate(array $context): ValidationResult
     {
-        $messages  = [];
+        $messages = [];
         $allPassed = true;
 
         if (! is_dir($this->toolingPath)) {
@@ -95,7 +94,7 @@ class ScriptRunnerValidator extends BaseValidator
         $scripts = $this->discoverScripts();
 
         if ($scripts === []) {
-            $messages[] = "No scripts found in tooling/ directory";
+            $messages[] = 'No scripts found in tooling/ directory';
 
             return new ValidationResult(
                 true,
@@ -112,7 +111,7 @@ class ScriptRunnerValidator extends BaseValidator
 
             if (! $result->isPassed()) {
                 $allPassed = false;
-                $messages  = array_merge($messages, $result->getMessages());
+                $messages = array_merge($messages, $result->getMessages());
             } else {
                 $messages = array_merge($messages, $result->getMessages());
             }
@@ -135,9 +134,9 @@ class ScriptRunnerValidator extends BaseValidator
      *
      * @return array<string, array{path: string, type: string, name: string}>
      */
-    private function discoverScripts() : array
+    private function discoverScripts(): array
     {
-        $scripts    = [];
+        $scripts = [];
 
         // Scan tooling directory recursively
         $iterator = new RecursiveIteratorIterator(
@@ -153,7 +152,7 @@ class ScriptRunnerValidator extends BaseValidator
                 continue;
             }
 
-            $pathname  = $file->getPathname();
+            $pathname = $file->getPathname();
             $extension = $file->getExtension();
 
             // Check if file extension matches our executors
@@ -187,11 +186,11 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * Match file extension to executor type
      */
-    private function matchExtension(string $extension) : ?string
+    private function matchExtension(string $extension): ?string
     {
         foreach (self::$scriptExecutors as $type => $config) {
             $ext = ltrim($config['extension'], '.');
-            if ($extension === $ext || $extension === $ext . '3') {
+            if ($extension === $ext || $extension === $ext.'3') {
                 return $type;
             }
         }
@@ -202,7 +201,7 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * Check if script should be skipped
      */
-    private function shouldSkip(string $scriptName) : bool
+    private function shouldSkip(string $scriptName): bool
     {
         $skipPatterns = [
             '/^_/',
@@ -212,15 +211,15 @@ class ScriptRunnerValidator extends BaseValidator
             '/\.md$/',
         ];
 
-        return array_any($skipPatterns, fn ($pattern) : bool => (bool) preg_match($pattern, $scriptName));
+        return array_any($skipPatterns, fn ($pattern): bool => (bool) preg_match($pattern, $scriptName));
     }
 
     /**
      * Execute a script and return the result
      *
-     * @param array{path: string, type: string, name: string} $script
+     * @param  array{path: string, type: string, name: string}  $script
      */
-    private function executeScript(array $script) : ValidationResult
+    private function executeScript(array $script): ValidationResult
     {
         $scriptType = $script['type'];
         $scriptPath = $script['path'];
@@ -228,7 +227,7 @@ class ScriptRunnerValidator extends BaseValidator
 
         if (! isset(self::$scriptExecutors[$scriptType])) {
             return ValidationResult::fail(
-                'Unknown script type: ' . $scriptType,
+                'Unknown script type: '.$scriptType,
                 'error',
                 $scriptName,
                 null,
@@ -237,14 +236,14 @@ class ScriptRunnerValidator extends BaseValidator
         }
 
         $executor = self::$scriptExecutors[$scriptType];
-        $command  = $executor['command'] . ' ' . escapeshellarg($scriptPath);
-        $timeout  = $executor['timeout'];
+        $command = $executor['command'].' '.escapeshellarg($scriptPath);
+        $timeout = $executor['timeout'];
 
         // Execute the script
-        $output   = $this->runCommand($command, $timeout);
+        $output = $this->runCommand($command, $timeout);
         $exitCode = $output['exit_code'];
-        $stdout   = $output['stdout'];
-        $stderr   = $output['stderr'];
+        $stdout = $output['stdout'];
+        $stderr = $output['stderr'];
 
         // Analyze the output
         return $this->analyzeOutput($scriptName, $exitCode, $stdout, $stderr);
@@ -255,7 +254,7 @@ class ScriptRunnerValidator extends BaseValidator
      *
      * @return array{stdout: string, stderr: string, exit_code: int}
      */
-    private function runCommand(string $command, int $timeout) : array
+    private function runCommand(string $command, int $timeout): array
     {
         $descriptors = [
             0 => ['pipe', 'r'],
@@ -267,8 +266,8 @@ class ScriptRunnerValidator extends BaseValidator
 
         if (! is_resource($process)) {
             return [
-                'stdout'    => '',
-                'stderr'    => 'Failed to execute command',
+                'stdout' => '',
+                'stderr' => 'Failed to execute command',
                 'exit_code' => 1,
             ];
         }
@@ -277,24 +276,24 @@ class ScriptRunnerValidator extends BaseValidator
         stream_set_blocking($pipes[1], false);
         stream_set_blocking($pipes[2], false);
 
-        $stdout    = '';
-        $stderr    = '';
+        $stdout = '';
+        $stderr = '';
         $startTime = time();
 
-        while ( ! feof($pipes[1]) || ! feof($pipes[2]) ) {
+        while (! feof($pipes[1]) || ! feof($pipes[2])) {
             // Check timeout
             if (time() - $startTime > $timeout) {
                 proc_terminate($process, SIGTERM);
 
                 return [
-                    'stdout'    => $stdout,
+                    'stdout' => $stdout,
                     'stderr' => sprintf('Script execution timed out after %ds', $timeout),
                     'exit_code' => 124,
                 ];
             }
 
-            $read   = [$pipes[1], $pipes[2]];
-            $write  = [];
+            $read = [$pipes[1], $pipes[2]];
+            $write = [];
             $except = null;
 
             $ready = @stream_select($read, $write, $except, 0, 200000);
@@ -326,8 +325,8 @@ class ScriptRunnerValidator extends BaseValidator
         proc_close($process);
 
         return [
-            'stdout'    => $stdout,
-            'stderr'    => $stderr,
+            'stdout' => $stdout,
+            'stderr' => $stderr,
             'exit_code' => $status['exitcode'] ?? 0,
         ];
     }
@@ -337,24 +336,23 @@ class ScriptRunnerValidator extends BaseValidator
      */
     private function analyzeOutput(
         string $scriptName,
-        int    $exitCode,
+        int $exitCode,
         string $stdout,
         string $stderr
-    ) : ValidationResult
-    {
+    ): ValidationResult {
         $messages = [];
-        $passed   = true;
+        $passed = true;
         $severity = 'info';
 
         // Combine stdout and stderr for analysis
-        $combinedOutput = $stdout . "\n" . $stderr;
+        $combinedOutput = $stdout."\n".$stderr;
 
         // Check exit code
         if ($exitCode !== 0) {
-            $passed     = false;
-            $severity   = 'error';
+            $passed = false;
+            $severity = 'error';
             $messages[] = sprintf(
-                "[%s] Script failed with exit code %d",
+                '[%s] Script failed with exit code %d',
                 $scriptName,
                 $exitCode
             );
@@ -362,42 +360,42 @@ class ScriptRunnerValidator extends BaseValidator
 
         // Check for error patterns in output
         $errorPatterns = [
-            'CRITICAL'  => ['pattern' => 'CRITICAL', 'severity' => 'error'],
-            'ERROR'     => ['pattern' => '\bERROR\b', 'severity' => 'error'],
-            'FAIL'      => ['pattern' => 'FAIL', 'severity' => 'error'],
-            'MISSING'   => ['pattern' => 'MISSING', 'severity' => 'warning'],
+            'CRITICAL' => ['pattern' => 'CRITICAL', 'severity' => 'error'],
+            'ERROR' => ['pattern' => '\bERROR\b', 'severity' => 'error'],
+            'FAIL' => ['pattern' => 'FAIL', 'severity' => 'error'],
+            'MISSING' => ['pattern' => 'MISSING', 'severity' => 'warning'],
             'EXCEPTION' => ['pattern' => 'Exception', 'severity' => 'error'],
-            'WARNING'   => ['pattern' => '\bWARNING\b', 'severity' => 'warning'],
-            '❌'         => ['pattern' => '❌', 'severity' => 'error'],
+            'WARNING' => ['pattern' => '\bWARNING\b', 'severity' => 'warning'],
+            '❌' => ['pattern' => '❌', 'severity' => 'error'],
         ];
 
         foreach ($errorPatterns as $key => $config) {
             $pattern = (string) $config['pattern'];
-            if (preg_match('/' . $pattern . '/', $combinedOutput)) {
+            if (preg_match('/'.$pattern.'/', $combinedOutput)) {
                 $passed = false;
                 if ((string) $config['severity'] === 'error') {
                     $severity = 'error';
                 }
 
                 // Extract relevant line for message
-                $lines     = explode("\n", $combinedOutput);
+                $lines = explode("\n", $combinedOutput);
                 $foundLine = false;
                 foreach ($lines as $line) {
-                    if (preg_match('/' . $pattern . '/', $line)) {
+                    if (preg_match('/'.$pattern.'/', $line)) {
                         $msg = trim($line);
                         if (strlen($msg) > 100) {
-                            $msg = substr($msg, 0, 97) . '...';
+                            $msg = substr($msg, 0, 97).'...';
                         }
 
-                        $messages[] = sprintf("[%s] %s", $scriptName, $msg);
-                        $foundLine  = true;
+                        $messages[] = sprintf('[%s] %s', $scriptName, $msg);
+                        $foundLine = true;
                         break;
                     }
                 }
 
                 if (! $foundLine) {
                     $messages[] = sprintf(
-                        "[%s] %s detected in output",
+                        '[%s] %s detected in output',
                         $scriptName,
                         $key
                     );
@@ -407,7 +405,7 @@ class ScriptRunnerValidator extends BaseValidator
 
         // If passed, add success message
         if ($passed) {
-            $messages[] = sprintf("[%s] ✅ Passed", $scriptName);
+            $messages[] = sprintf('[%s] ✅ Passed', $scriptName);
         }
 
         return new ValidationResult(
@@ -416,16 +414,16 @@ class ScriptRunnerValidator extends BaseValidator
             $severity,
             null,
             null,
-            'SCRIPT_' . strtoupper(preg_replace('/[^A-Z]/', '', $scriptName) ?? '') . '_001'
+            'SCRIPT_'.strtoupper(preg_replace('/[^A-Z]/', '', $scriptName) ?? '').'_001'
         );
     }
 
     /**
      * Enable specific scripts
      *
-     * @param list<string> $scripts
+     * @param  list<string>  $scripts
      */
-    public function enableScripts(array $scripts) : self
+    public function enableScripts(array $scripts): self
     {
         $this->enabledScripts = $scripts;
 
@@ -435,7 +433,7 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * Disable script discovery, use only enabled scripts
      */
-    public function disableDiscovery() : self
+    public function disableDiscovery(): self
     {
         $this->discoverScripts = false;
 
@@ -445,9 +443,9 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * Add custom script executor
      *
-     * @param array{command: string, extension: string, timeout: int} $config
+     * @param  array{command: string, extension: string, timeout: int}  $config
      */
-    public function addExecutor(string $type, array $config) : self
+    public function addExecutor(string $type, array $config): self
     {
         self::$scriptExecutors[$type] = $config;
 
@@ -455,10 +453,10 @@ class ScriptRunnerValidator extends BaseValidator
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     #[Override]
-    public function supports(array $context) : bool
+    public function supports(array $context): bool
     {
         return is_dir($this->toolingPath);
     }

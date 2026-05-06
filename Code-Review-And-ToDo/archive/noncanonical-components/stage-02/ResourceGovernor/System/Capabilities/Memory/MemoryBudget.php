@@ -9,9 +9,10 @@ final readonly class MemoryBudget
     public function __construct(
         public int $workerLimit,
         public int $requestLimit,
-    ) {}
+    ) {
+    }
 
-    public static function fromString(string $worker, string $request) : self
+    public static function fromString(string $worker, string $request): self
     {
         return new self(
             workerLimit : self::toBytes($worker),
@@ -19,16 +20,18 @@ final readonly class MemoryBudget
         );
     }
 
-    private static function toBytes(string $memory) : int
+    private static function toBytes(string $memory): int
     {
-        $val  = trim($memory);
+        $val = trim($memory);
         $last = strtolower($val[strlen($val) - 1]);
-        $val  = (int) $val;
+        $val = (int) $val;
         switch ($last) {
             case 'g':
                 $val *= 1024;
+                // no break
             case 'm':
                 $val *= 1024;
+                // no break
             case 'k':
                 $val *= 1024;
         }

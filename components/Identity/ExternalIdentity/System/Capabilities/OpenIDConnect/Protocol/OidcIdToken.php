@@ -13,5 +13,6 @@ final readonly class OidcIdToken
         #[SensitiveParameter]
         public string $token,
         public DateTimeImmutable $expiresAt,
-    ) {}
+    ) {
+    }
 }

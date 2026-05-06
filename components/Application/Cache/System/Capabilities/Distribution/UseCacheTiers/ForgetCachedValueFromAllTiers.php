@@ -14,7 +14,7 @@ final readonly class ForgetCachedValueFromAllTiers
     }
 
     /**
-     * @param iterable<CacheKey|string> $keys
+     * @param  iterable<CacheKey|string>  $keys
      */
     public function forgetMany(iterable $keys): int
     {

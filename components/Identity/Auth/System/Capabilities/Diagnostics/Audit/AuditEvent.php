@@ -15,7 +15,7 @@ final readonly class AuditEvent
     public array $context;
 
     /**
-     * @param array<string, scalar|null> $context
+     * @param  array<string, scalar|null>  $context
      */
     public function __construct(
         public string $name,

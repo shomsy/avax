@@ -19,7 +19,8 @@ final readonly class QueryFingerprintEntry implements Stringable
         public string $pattern,
         public string $hash,
         public string $originalQuery,
-    ) {}
+    ) {
+    }
 
     /**
      * Checks if this fingerprint matches another query.
@@ -67,7 +68,8 @@ final readonly class QueryFingerprinter
          * @var bool Whether to include the original query in the fingerprint entry
          */
         private bool $includeOriginal = false,
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a fingerprint with the original query preserved.
@@ -173,8 +175,7 @@ final readonly class QueryFingerprinter
     /**
      * Groups queries by their fingerprints.
      *
-     * @param list<string> $queries
-     *
+     * @param  list<string>  $queries
      * @return array<string, list<string>> Hash => [queries...]
      */
     public function groupByFingerprint(array $queries): array
@@ -192,7 +193,7 @@ final readonly class QueryFingerprinter
     /**
      * Returns the number of unique fingerprints in a list of queries.
      *
-     * @param list<string> $queries
+     * @param  list<string>  $queries
      */
     public function uniqueCount(array $queries): int
     {

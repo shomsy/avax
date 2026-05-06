@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$directories    = ['components', 'framework'];
+$directories = ['components', 'framework'];
 $forbiddenWords = [
     'manager', 'service', 'helper', 'util', 'common', 'shared', 'core', 'support',
 ];
@@ -27,7 +27,7 @@ foreach ($directories as $dir) {
 
             foreach ($forbiddenWords as $word) {
                 if (str_contains($name, $word)) {
-                    $violations['folders'][] = "[FORBIDDEN WORD: $word] " . $file->getPathname();
+                    $violations['folders'][] = "[FORBIDDEN WORD: $word] ".$file->getPathname();
                 }
             }
         } else {
@@ -40,14 +40,14 @@ foreach ($directories as $dir) {
             // Check forbidden words
             foreach ($forbiddenWords as $word) {
                 if (str_contains($name, $word)) {
-                    $violations['files_forbidden'][] = "[FORBIDDEN WORD: $word] " . $file->getPathname();
+                    $violations['files_forbidden'][] = "[FORBIDDEN WORD: $word] ".$file->getPathname();
                 }
             }
 
             // Check suffixes
             foreach ($suspiciousSuffixes as $suffix) {
                 if (str_ends_with($name, $suffix)) {
-                    $violations['files_suffix'][] = "[SUSPICIOUS SUFFIX: $suffix] " . $file->getPathname();
+                    $violations['files_suffix'][] = "[SUSPICIOUS SUFFIX: $suffix] ".$file->getPathname();
                 }
             }
         }
@@ -83,7 +83,7 @@ if (! empty($violations['files_suffix'])) {
 if (empty($violations)) {
     echo "✨ PERFECT! No naming violations found!\n";
 } else {
-    echo 'Total Folder Violations: ' . count(array_unique($violations['folders'] ?? [])) . "\n";
-    echo 'Total File Violations: ' . count(array_unique($violations['files_forbidden'] ?? [])) . "\n";
-    echo 'Total Suffix Warnings: ' . count(array_unique($violations['files_suffix'] ?? [])) . "\n";
+    echo 'Total Folder Violations: '.count(array_unique($violations['folders'] ?? []))."\n";
+    echo 'Total File Violations: '.count(array_unique($violations['files_forbidden'] ?? []))."\n";
+    echo 'Total Suffix Warnings: '.count(array_unique($violations['files_suffix'] ?? []))."\n";
 }

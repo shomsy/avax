@@ -14,11 +14,12 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 final readonly class Login
 {
     public function __construct(
-        private FindUserByCredentials     $findUserByCredentials,
+        private FindUserByCredentials $findUserByCredentials,
         private VerifyPassword $verifyPassword,
         private StartAuthenticatedSession $startAuthenticatedSession,
         private Identity $identity,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws AuthenticationFailed

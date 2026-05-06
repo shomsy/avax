@@ -23,7 +23,7 @@ final readonly class MultiMap implements Countable, IteratorAggregate
     private array $items;
 
     /**
-     * @param iterable<array-key, iterable<mixed>> $items
+     * @param  iterable<array-key, iterable<mixed>>  $items
      */
     public function __construct(
         iterable $items = [],

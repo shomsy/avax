@@ -9,7 +9,9 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\B
  */
 final readonly class BackupCode
 {
-    public function __construct(private string $value) {}
+    public function __construct(private string $value)
+    {
+    }
 
     public function value(): string
     {
@@ -31,6 +33,6 @@ final readonly class BackupCode
     {
         $tail = substr(string: $this->value, offset: -4);
 
-        return '****-****-' . $tail;
+        return '****-****-'.$tail;
     }
 }

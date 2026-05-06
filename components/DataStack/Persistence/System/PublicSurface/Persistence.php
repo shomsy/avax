@@ -22,7 +22,8 @@ final readonly class Persistence implements PersistenceInterface
         private IdentityMap $identityMap,
         private Entities $entities,
         private RunUnitOfWork $runUnitOfWork,
-    ) {}
+    ) {
+    }
 
     public function run(callable $operation): mixed
     {
@@ -69,7 +70,7 @@ final readonly class Persistence implements PersistenceInterface
         $this->unitOfWork->remove($entity);
     }
 
-    public function flush(?string $connectionName = null) : void
+    public function flush(?string $connectionName = null): void
     {
         $this->unitOfWork->flush($connectionName);
     }

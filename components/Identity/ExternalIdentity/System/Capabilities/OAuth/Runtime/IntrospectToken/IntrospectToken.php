@@ -23,12 +23,13 @@ final readonly class IntrospectToken
         private JwtIdentityInterface $jwtIdentity,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
      */
-    public function execute(IntrospectTokenData $introspectTokenData) : TokenIntrospection
+    public function execute(IntrospectTokenData $introspectTokenData): TokenIntrospection
     {
         $client = $this->oAuthClientRegistry->find(clientId: $introspectTokenData->clientId);
 
@@ -77,7 +78,7 @@ final readonly class IntrospectToken
             name      : 'auth.oauth.token.introspected',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id' => $introspectTokenData->clientId,
+                'client_id' => $introspectTokenData->clientId,
                 'active' => $result->active ? 1 : 0,
             ],
         ));

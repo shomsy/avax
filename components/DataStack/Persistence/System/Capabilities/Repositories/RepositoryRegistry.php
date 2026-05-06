@@ -18,7 +18,7 @@ final class RepositoryRegistry
     /** @var array<string, RepositoryStorageInterface> */
     private array $backends = [];
 
-    public function register(string $entityClass, RepositoryStorageInterface $repositoryStorage) : void
+    public function register(string $entityClass, RepositoryStorageInterface $repositoryStorage): void
     {
         $this->backends[$entityClass] = $repositoryStorage;
     }
@@ -26,7 +26,7 @@ final class RepositoryRegistry
     public function get(string $entityClass): RepositoryStorageInterface
     {
         return $this->backends[$entityClass] ?? throw new RuntimeException(
-            message: 'No storage backend registered for entity: ' . $entityClass,
+            message: 'No storage backend registered for entity: '.$entityClass,
         );
     }
 

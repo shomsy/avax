@@ -29,9 +29,9 @@ final class CheckRuntimeLeaks
 
     private function checkNoRuntimeLeaksOutsideFramework(): void
     {
-        $componentsPath = dirname(__DIR__, 2) . '/components';
+        $componentsPath = dirname(__DIR__, 2).'/components';
 
-        if (!is_dir($componentsPath)) {
+        if (! is_dir($componentsPath)) {
             return;
         }
 
@@ -48,8 +48,8 @@ final class CheckRuntimeLeaks
 
             $content = file_get_contents($file->getPathname());
             foreach ($this->forbiddenRuntimeImports as $forbiddenRuntimeImport) {
-                if (str_contains($content, 'use ' . $forbiddenRuntimeImport)) {
-                    $this->errors[] = $file->getPathname() . ': imports runtime adapter outside framework/System';
+                if (str_contains($content, 'use '.$forbiddenRuntimeImport)) {
+                    $this->errors[] = $file->getPathname().': imports runtime adapter outside framework/System';
                 }
             }
         }
@@ -60,10 +60,10 @@ if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckRuntimeLeaks();
     $result = $checker->check();
 
-    echo $result['status'] . "\n";
+    echo $result['status']."\n";
 
-    if (!empty($result['errors'])) {
-        echo implode("\n", $result['errors']) . "\n";
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors'])."\n";
         exit(1);
     }
 

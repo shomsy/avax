@@ -13,25 +13,27 @@ foreach ($dirs as $dir) {
 
 $count = 0;
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     $changed = false;
-    
+
     // Fix RouteCollection\RouteDefinition to RouteDefinition\RouteDefinition
     if (str_contains($content, 'Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinition')) {
         $content = str_replace(
-            'Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinition', 
-            'Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition', 
+            'Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteDefinition',
+            'Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition',
             $content
         );
         $changed = true;
     }
-    
+
     // Fix lowercase components
     if (str_contains($content, 'components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition')) {
         $content = str_replace(
-            'components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition', 
-            'Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition', 
+            'components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition',
+            'Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition',
             $content
         );
         $changed = true;

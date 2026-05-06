@@ -15,19 +15,19 @@ use Throwable;
 final readonly class RememberCachedValue
 {
     public function __construct(
-        private CacheStore       $cacheStore,
-        private Clock            $clock,
+        private CacheStore $cacheStore,
+        private Clock $clock,
         private ?ReadCachedValue $readCachedValue = null,
         private ?StoreCachedValue $storeCachedValue = null,
-    ) {}
+    ) {
+    }
 
     public function remember(
         CacheKey $cacheKey,
         int|DateInterval|null $ttl,
         callable $loader,
         mixed $default = null,
-    ) : mixed
-    {
+    ): mixed {
         $readCachedValue = $this->readCachedValue ?? new ReadCachedValue(cacheStore: $this->cacheStore, clock: $this->clock);
         $storeCachedValue = $this->storeCachedValue ?? new StoreCachedValue(cacheStore: $this->cacheStore, clock: $this->clock);
 

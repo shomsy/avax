@@ -6,5 +6,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabi
 
 final readonly class FieldInputName
 {
-    public function __construct(public string $value) {}
+    public function __construct(public string $value)
+    {
+    }
 }

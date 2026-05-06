@@ -7,7 +7,7 @@ namespace Avax\Framework\System\Capabilities\ContainerIntelligence;
 final readonly class SafetyAssessment
 {
     /**
-     * @param list<string> $violations
+     * @param  list<string>  $violations
      */
     public function __construct(
         public bool $safe,

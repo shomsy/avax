@@ -11,13 +11,14 @@ $files = array_slice($argv, 1);
 $fixed = 0;
 
 foreach ($files as $file) {
-    if (!is_file($file)) {
+    if (! is_file($file)) {
         continue;
     }
 
     $lines = file($file, FILE_IGNORE_NEW_LINES);
     if ($lines === false) {
         fwrite(STDERR, "Error reading: $file\n");
+
         continue;
     }
 
@@ -49,9 +50,9 @@ foreach ($files as $file) {
         // Truncate array and write back
         $newLines = array_slice($lines, 0, $garbageStart);
         // Ensure file ends with newline
-        $newContent = implode("\n", $newLines) . "\n";
+        $newContent = implode("\n", $newLines)."\n";
         file_put_contents($file, $newContent);
-        echo "Fixed trailing garbage in $file (removed " . ($count - $garbageStart) . " lines)\n";
+        echo "Fixed trailing garbage in $file (removed ".($count - $garbageStart)." lines)\n";
         $fixed++;
     }
 }

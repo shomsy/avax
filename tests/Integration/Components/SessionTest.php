@@ -10,7 +10,7 @@ use Avax\Tests\TestCase;
 
 final class SessionTest extends TestCase
 {
-    public function test_session_driver_reads_written_data() : void
+    public function test_session_driver_reads_written_data(): void
     {
         SessionDriver::setStore(store: new ArraySessionStore());
 

@@ -19,77 +19,77 @@ final class SQLToPHPTypeMapper
     private const array TYPE_MAP
         = [
             // NUMERIC TYPES
-            'TINYINT'    => 'int',
-            'SMALLINT'   => 'int',
+            'TINYINT' => 'int',
+            'SMALLINT' => 'int',
             'MEDIUMINT' => 'int',
-            'INT'        => 'int',
-            'INTEGER'    => 'int',
-            'BIGINT'     => 'int',
-            'SERIAL'     => 'int',
+            'INT' => 'int',
+            'INTEGER' => 'int',
+            'BIGINT' => 'int',
+            'SERIAL' => 'int',
             'BIGSERIAL' => 'int',
-            'DECIMAL'    => 'string',
-            'NUMERIC'    => 'string',
-            'FLOAT'      => 'float',
-            'REAL'       => 'float',
-            'DOUBLE'     => 'float',
-            'BOOLEAN'    => 'bool',
-            'BOOL'       => 'bool',
-            'BIT'        => 'int',
+            'DECIMAL' => 'string',
+            'NUMERIC' => 'string',
+            'FLOAT' => 'float',
+            'REAL' => 'float',
+            'DOUBLE' => 'float',
+            'BOOLEAN' => 'bool',
+            'BOOL' => 'bool',
+            'BIT' => 'int',
 
             // STRING TYPES
-            'CHAR'       => 'string',
-            'VARCHAR'    => 'string',
-            'TEXT'       => 'string',
-            'TINYTEXT'   => 'string',
+            'CHAR' => 'string',
+            'VARCHAR' => 'string',
+            'TEXT' => 'string',
+            'TINYTEXT' => 'string',
             'MEDIUMTEXT' => 'string',
-            'LONGTEXT'   => 'string',
-            'NCHAR'      => 'string',
-            'NVARCHAR'   => 'string',
-            'NTEXT'      => 'string',
+            'LONGTEXT' => 'string',
+            'NCHAR' => 'string',
+            'NVARCHAR' => 'string',
+            'NTEXT' => 'string',
 
             // BINARY TYPES
-            'BINARY'     => 'string',
-            'VARBINARY'  => 'string',
-            'BLOB'       => 'string',
-            'TINYBLOB'   => 'string',
+            'BINARY' => 'string',
+            'VARBINARY' => 'string',
+            'BLOB' => 'string',
+            'TINYBLOB' => 'string',
             'MEDIUMBLOB' => 'string',
-            'LONGBLOB'   => 'string',
-            'BYTEA'      => 'string',
+            'LONGBLOB' => 'string',
+            'BYTEA' => 'string',
 
             // DATE/TIME TYPES
-            'DATE'       => 'DateTimeImmutable',
-            'DATETIME'   => 'DateTimeImmutable',
+            'DATE' => 'DateTimeImmutable',
+            'DATETIME' => 'DateTimeImmutable',
             'TIMESTAMP' => 'DateTimeImmutable',
-            'TIME'       => 'DateTimeImmutable',
-            'YEAR'       => 'int',
-            'INTERVAL'   => 'DateInterval',
+            'TIME' => 'DateTimeImmutable',
+            'YEAR' => 'int',
+            'INTERVAL' => 'DateInterval',
 
             // JSON TYPES
-            'JSON'       => 'array',
+            'JSON' => 'array',
             'JSONB' => 'array',
 
             // SPECIAL TYPES
             'ENUM' => 'string',
-            'SET'        => 'array',
+            'SET' => 'array',
             'UUID' => 'string',
-            'XML'        => 'string',
+            'XML' => 'string',
 
             // GIS / SPATIAL TYPES
-            'POINT'      => 'array',
+            'POINT' => 'array',
             'LINESTRING' => 'array',
-            'POLYGON'    => 'array',
-            'GEOMETRY'   => 'array',
-            'GEOGRAPHY'  => 'array',
+            'POLYGON' => 'array',
+            'GEOMETRY' => 'array',
+            'GEOGRAPHY' => 'array',
 
             // POSTGRESQL SPECIFIC
-            'INET'       => 'string',
-            'CIDR'       => 'string',
-            'MACADDR'    => 'string',
+            'INET' => 'string',
+            'CIDR' => 'string',
+            'MACADDR' => 'string',
             'TSVECTOR' => 'string',
-            'TSQUERY'    => 'string',
+            'TSQUERY' => 'string',
 
             // SQL SERVER SPECIFIC
-            'MONEY'      => 'string',
+            'MONEY' => 'string',
             'SMALLMONEY' => 'string',
             'UNIQUEIDENTIFIER' => 'string',
             'ROWVERSION' => 'string',
@@ -107,7 +107,7 @@ final class SQLToPHPTypeMapper
             default => $phpType,
         };
 
-        return $nullable ? $enhancedType . '|null' : $enhancedType;
+        return $nullable ? $enhancedType.'|null' : $enhancedType;
     }
 
     /**
@@ -133,11 +133,11 @@ final class SQLToPHPTypeMapper
 
         return match ($baseType) {
             'JSON', 'JSONB' => 'array<string, mixed>',
-            'SET'        => 'array<int, string>',
-            'POINT'      => 'array{x: float, y: float}',
+            'SET' => 'array<int, string>',
+            'POINT' => 'array{x: float, y: float}',
             'LINESTRING' => 'array<int, array{x: float, y: float}>',
-            'POLYGON'    => 'array<int, array<int, array{x: float, y: float}>>',
-            default      => 'array',
+            'POLYGON' => 'array<int, array<int, array{x: float, y: float}>>',
+            default => 'array',
         };
     }
 
@@ -150,16 +150,16 @@ final class SQLToPHPTypeMapper
         $baseType = $this->extractBaseType(sqlType: $sqlType);
 
         return match ($baseType) {
-            'UUID'      => 'Uuid',
-            'INET'      => 'IpAddress',
-            'CIDR'      => 'NetworkRange',
-            'MACADDR'   => 'MacAddress',
+            'UUID' => 'Uuid',
+            'INET' => 'IpAddress',
+            'CIDR' => 'NetworkRange',
+            'MACADDR' => 'MacAddress',
             'MONEY', 'SMALLMONEY' => 'Money',
-            'POINT'     => 'GeoPoint',
-            'POLYGON'   => 'GeoPolygon',
-            'GEOMETRY'  => 'Geometry',
+            'POINT' => 'GeoPoint',
+            'POLYGON' => 'GeoPolygon',
+            'GEOMETRY' => 'Geometry',
             'GEOGRAPHY' => 'Geography',
-            default     => null,
+            default => null,
         };
     }
 

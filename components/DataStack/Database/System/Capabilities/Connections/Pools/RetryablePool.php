@@ -11,7 +11,8 @@ final readonly class RetryablePool
     public function __construct(
         private BaseConnectionPool $baseConnectionPool,
         private int $maxRetries = 3,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Exception

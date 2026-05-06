@@ -28,6 +28,6 @@ final readonly class CachePartition
             return true;
         }
 
-        return in_array($cacheNodeId->toString(), array_map(static fn (CacheNodeId $cacheNodeId) : string => $cacheNodeId->toString(), $this->replicaNodeIds), true);
+        return in_array($cacheNodeId->toString(), array_map(static fn (CacheNodeId $cacheNodeId): string => $cacheNodeId->toString(), $this->replicaNodeIds), true);
     }
 }

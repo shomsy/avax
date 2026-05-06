@@ -26,7 +26,7 @@ final class SyncDriver implements QueueDriverInterface
 
     public function push(string $job, array $data = []): string
     {
-        $id = 'sync-' . (++$this->counter);
+        $id = 'sync-'.(++$this->counter);
 
         // Execute immediately
         if (class_exists($job)) {
@@ -54,7 +54,7 @@ final class SyncDriver implements QueueDriverInterface
         $item = array_shift($this->pending);
 
         return new SyncJob(
-            id  : 'sync-' . $this->counter,
+            id  : 'sync-'.$this->counter,
             job : $item['job'],
             data: $item['data'],
         );
@@ -98,7 +98,8 @@ final readonly class SyncJob implements Job
         private string $job,
         private array $data,
         private int $attempts = 1,
-    ) {}
+    ) {
+    }
 
     public function getId(): string
     {

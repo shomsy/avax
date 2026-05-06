@@ -9,14 +9,14 @@ final class ResponseHeaders
     /** @var array<string, list<string>> */
     private array $headers = [];
 
-    public function set(string $name, string $value) : self
+    public function set(string $name, string $value): self
     {
         $this->headers[$name] = [$value];
 
         return $this;
     }
 
-    public function add(string $name, string $value) : self
+    public function add(string $name, string $value): self
     {
         $this->headers[$name][] = $value;
 
@@ -26,12 +26,12 @@ final class ResponseHeaders
     /**
      * @return list<string>|null
      */
-    public function get(string $name) : ?array
+    public function get(string $name): ?array
     {
         return $this->headers[$name] ?? null;
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->headers[$name]);
     }
@@ -39,7 +39,7 @@ final class ResponseHeaders
     /**
      * @return array<string, list<string>>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->headers;
     }

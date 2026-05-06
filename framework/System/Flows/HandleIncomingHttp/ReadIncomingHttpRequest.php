@@ -8,7 +8,6 @@ use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Utils;
-use Psr\Http\Message\UriInterface;
 
 /**
  * Converts a lightweight RuntimeRequest into a full ServerRequest.
@@ -19,12 +18,12 @@ use Psr\Http\Message\UriInterface;
  */
 final readonly class ReadIncomingHttpRequest
 {
-    public function read(RuntimeRequest $runtimeRequest) : ServerRequest
+    public function read(RuntimeRequest $runtimeRequest): ServerRequest
     {
-        $uri          = new Uri(uri: $this->normalizeUri(uri: $runtimeRequest->uri()));
-        $body         = $runtimeRequest->body() ?? '';
-        $queryParams  = $this->parseQueryParams(uri: $uri);
-        $parsedBody   = $this->parseBody(headers: $runtimeRequest->headers(), body: $body);
+        $uri = new Uri(uri: $this->normalizeUri(uri: $runtimeRequest->uri()));
+        $body = $runtimeRequest->body() ?? '';
+        $queryParams = $this->parseQueryParams(uri: $uri);
+        $parsedBody = $this->parseBody(headers: $runtimeRequest->headers(), body: $body);
 
         return new ServerRequest(
             serverParams   : $this->buildServerParams(uri: $uri, runtimeRequest: $runtimeRequest),
@@ -37,7 +36,7 @@ final readonly class ReadIncomingHttpRequest
         );
     }
 
-    private function normalizeUri(string $uri) : string
+    private function normalizeUri(string $uri): string
     {
         if (str_contains(haystack: $uri, needle: '://')) {
             return $uri;
@@ -45,16 +44,16 @@ final readonly class ReadIncomingHttpRequest
 
         $normalizedPath = str_starts_with(haystack: $uri, needle: '/')
             ? $uri
-            : '/' . ltrim(string: $uri, characters: '/');
+            : '/'.ltrim(string: $uri, characters: '/');
 
-        return 'http://localhost' . $normalizedPath;
+        return 'http://localhost'.$normalizedPath;
     }
 
     /**
-     * @param array<string, list<string>> $headers
+     * @param  array<string, list<string>>  $headers
      * @return array<mixed>|null
      */
-    private function parseBody(array $headers, string $body) : ?array
+    private function parseBody(array $headers, string $body): ?array
     {
         if ($body === '') {
             return null;
@@ -81,7 +80,7 @@ final readonly class ReadIncomingHttpRequest
     /**
      * @return array<mixed>
      */
-    private function parseQueryParams(Uri $uri) : array
+    private function parseQueryParams(Uri $uri): array
     {
         $queryParams = [];
         parse_str(string: $uri->getQuery(), result: $queryParams);
@@ -90,10 +89,10 @@ final readonly class ReadIncomingHttpRequest
     }
 
     /**
-     * @param array<string, list<string>> $headers
+     * @param  array<string, list<string>>  $headers
      * @return array<string, string>
      */
-    private function flattenHeaders(array $headers) : array
+    private function flattenHeaders(array $headers): array
     {
         $flat = [];
         foreach ($headers as $name => $values) {
@@ -106,12 +105,12 @@ final readonly class ReadIncomingHttpRequest
     /**
      * @return array<string, mixed>
      */
-    private function buildServerParams(Uri $uri, RuntimeRequest $runtimeRequest) : array
+    private function buildServerParams(Uri $uri, RuntimeRequest $runtimeRequest): array
     {
         $serverParams = [
             'REQUEST_METHOD' => $runtimeRequest->method(),
-            'REQUEST_URI'    => $uri->getPath() . ($uri->getQuery() === '' ? '' : '?' . $uri->getQuery()),
-            'HTTP_HOST'      => $uri->getHost() === '' ? 'localhost' : $uri->getHost(),
+            'REQUEST_URI' => $uri->getPath().($uri->getQuery() === '' ? '' : '?'.$uri->getQuery()),
+            'HTTP_HOST' => $uri->getHost() === '' ? 'localhost' : $uri->getHost(),
         ];
 
         if ($uri->getScheme() === 'https') {
@@ -127,16 +126,16 @@ final readonly class ReadIncomingHttpRequest
                 continue;
             }
 
-            $serverParams['HTTP_' . $serverKey] = implode(separator: ',', array: $values);
+            $serverParams['HTTP_'.$serverKey] = implode(separator: ',', array: $values);
         }
 
         return $serverParams;
     }
 
     /**
-     * @param array<string, list<string>> $headers
+     * @param  array<string, list<string>>  $headers
      */
-    private function headerLine(array $headers, string $name) : string
+    private function headerLine(array $headers, string $name): string
     {
         foreach ($headers as $headerName => $values) {
             if (strcasecmp(string1: $headerName, string2: $name) !== 0) {

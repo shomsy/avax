@@ -19,7 +19,8 @@ final readonly class Auth implements AuthInterface
 {
     public function __construct(
         private Identity $identity,
-    ) {}
+    ) {
+    }
 
     public function login(Credentials $credentials): AuthenticationResult
     {
@@ -48,12 +49,12 @@ final readonly class Auth implements AuthInterface
         return ! $this->check();
     }
 
-    public function register(RegistrationData $registrationData) : RegistrationResult
+    public function register(RegistrationData $registrationData): RegistrationResult
     {
         return $this->identity->account()->register($registrationData);
     }
 
-    public function changePassword(ChangePasswordData $changePasswordData) : void
+    public function changePassword(ChangePasswordData $changePasswordData): void
     {
         $this->identity->account()->changePassword($changePasswordData);
     }

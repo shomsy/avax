@@ -15,7 +15,7 @@ if (! function_exists('connection')) {
      *
      * @throws RuntimeException
      */
-    function connection(?string $connectionName = null) : PDO
+    function connection(?string $connectionName = null): PDO
     {
         /** @var Connections $connections */
         $connections = app(Connections::class);

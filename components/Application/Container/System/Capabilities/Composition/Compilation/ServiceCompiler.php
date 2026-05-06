@@ -18,24 +18,24 @@ use ReflectionFunction;
 final readonly class ServiceCompiler
 {
     private MethodEmitter $emitter;
+
     private CreateServiceBlueprint $blueprints;
+
     private ServiceRegistry $registrations;
 
     public function __construct(
-        ServiceRegistry        $registrations,
+        ServiceRegistry $registrations,
         CreateServiceBlueprint $blueprints,
-        MethodEmitter          $emitter = new MethodEmitter
-    )
-    {
+        MethodEmitter $emitter = new MethodEmitter()
+    ) {
         $this->registrations = $registrations;
         $this->blueprints = $blueprints;
         $this->emitter = $emitter;
     }
 
     /**
-     * @param string $serviceId
-     *
      * @return array{serviceId: string, method: string, signature: string, source: string}
+     *
      * @throws ReflectionException
      */
     public function compile(string $serviceId): array
@@ -54,7 +54,6 @@ final readonly class ServiceCompiler
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * } $description
-     *
      * @return array{serviceId: string, method: string, signature: string, source: string}
      */
     public function compileFromDescription(array $description): array
@@ -63,7 +62,7 @@ final readonly class ServiceCompiler
             ? $this->emitter->emitDirectMethod(
                 methodName: $description['method'],
                 serviceId: $description['serviceId'],
-                class: (string)$description['class'],
+                class: (string) $description['class'],
                 plan: $description['plan'],
                 registrationArguments: $description['registrationArguments'],
                 needsFinish: $description['needsFinish']
@@ -89,6 +88,7 @@ final readonly class ServiceCompiler
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * }
+     *
      * @throws ReflectionException
      */
     public function describe(string $serviceId): array
@@ -142,7 +142,7 @@ final readonly class ServiceCompiler
         ];
     }
 
-    private function candidateFor(string $serviceId, ServiceRegistration|null $registration): mixed
+    private function candidateFor(string $serviceId, ?ServiceRegistration $registration): mixed
     {
         if ($registration !== null) {
             return $registration->concrete;
@@ -152,12 +152,12 @@ final readonly class ServiceCompiler
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     private function supportsCompiledArguments(array $arguments): bool
     {
         foreach ($arguments as $value) {
-            if (!$this->supportsCompiledValue(value: $value)) {
+            if (! $this->supportsCompiledValue(value: $value)) {
                 return false;
             }
         }
@@ -171,12 +171,12 @@ final readonly class ServiceCompiler
             return true;
         }
 
-        if (!is_array(value: $value)) {
+        if (! is_array(value: $value)) {
             return false;
         }
 
         foreach ($value as $item) {
-            if (!$this->supportsCompiledValue(value: $item)) {
+            if (! $this->supportsCompiledValue(value: $item)) {
                 return false;
             }
         }
@@ -192,15 +192,15 @@ final readonly class ServiceCompiler
         if ($candidate instanceof Closure) {
             $reflection = new ReflectionFunction(function: $candidate);
 
-            return 'closure:' . ($reflection->getFileName() ?: 'internal')
-                . ':' . $reflection->getStartLine()
-                . ':' . $reflection->getEndLine();
+            return 'closure:'.($reflection->getFileName() ?: 'internal')
+                .':'.$reflection->getStartLine()
+                .':'.$reflection->getEndLine();
         }
 
         if (is_object(value: $candidate)) {
-            return 'object:' . $candidate::class;
+            return 'object:'.$candidate::class;
         }
 
-        return get_debug_type(value: $candidate) . ':' . var_export(value: $candidate, return: true);
+        return get_debug_type(value: $candidate).':'.var_export(value: $candidate, return: true);
     }
 }

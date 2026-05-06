@@ -11,7 +11,6 @@ final readonly class PasswordComplexity
 {
     public function __construct(
         public string $message = 'Password must contain uppercase, lowercase, and numeric characters',
-    ) {}
+    ) {
+    }
 }
-
-

@@ -31,8 +31,8 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
 
         for ($i = 1; $i <= 3; $i++) {
             $inMemoryCacheStore->write(
-                key   : $this->makeKey(key: 'key_' . $i),
-                record: $this->makeRecord(value: 'value_' . $i, ttlSeconds: 3600),
+                key   : $this->makeKey(key: 'key_'.$i),
+                record: $this->makeRecord(value: 'value_'.$i, ttlSeconds: 3600),
             );
         }
 
@@ -46,7 +46,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
 
     private function makeRecord(mixed $value, int $ttlSeconds): StoredCacheRecord
     {
-        $now       = $this->frozenClock->now();
+        $now = $this->frozenClock->now();
         $timestamp = $now->add(duration: Duration::ofSeconds(seconds: $ttlSeconds));
 
         $cachedValueLifecycle = CachedValueLifecycle::create(

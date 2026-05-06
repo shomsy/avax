@@ -8,7 +8,9 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements
 
 final readonly class ReadWorkloadIdentities
 {
-    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry)
+    {
+    }
 
     /**
      * @return list<WorkloadIdentityProfile>

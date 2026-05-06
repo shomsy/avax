@@ -28,10 +28,9 @@ final class PersistenceUnitOfWork implements UnitOfWorkInterface
     private array $snapshots = [];
 
     public function __construct(
-        private readonly IdentityMap              $identityMap,
+        private readonly IdentityMap $identityMap,
         private readonly EntityPersisterInterface $entityPersister,
-    )
-    {
+    ) {
     }
 
     public function persist(object $entity): void
@@ -59,7 +58,7 @@ final class PersistenceUnitOfWork implements UnitOfWorkInterface
     private function isDirty(object $entity): bool
     {
         $objectId = spl_object_id($entity);
-        if (!isset($this->snapshots[$objectId])) {
+        if (! isset($this->snapshots[$objectId])) {
             return true; // No snapshot, assume dirty
         }
 

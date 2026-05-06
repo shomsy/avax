@@ -21,14 +21,14 @@ final class NamespaceDriftTest extends TestCase
     private string $projectRoot;
 
     #[Test]
-    public function framework_classes_use_correct_namespace() : void
+    public function framework_classes_use_correct_namespace(): void
     {
-        $frameworkPath = $this->projectRoot . '/framework/System';
-        $drifts        = $this->findNamespaceDrifts($frameworkPath, 'Avax\\Framework\\System');
+        $frameworkPath = $this->projectRoot.'/framework/System';
+        $drifts = $this->findNamespaceDrifts($frameworkPath, 'Avax\\Framework\\System');
 
         $this->assertEmpty(
             actual : $drifts,
-            message: "Framework classes should use Avax\\Framework\\System namespace. Drifts:\n" . implode("\n", $drifts),
+            message: "Framework classes should use Avax\\Framework\\System namespace. Drifts:\n".implode("\n", $drifts),
         );
     }
 
@@ -37,7 +37,7 @@ final class NamespaceDriftTest extends TestCase
      *
      * @return list<string>
      */
-    private function findNamespaceDrifts(string $directory, string $expectedNamespacePrefix) : array
+    private function findNamespaceDrifts(string $directory, string $expectedNamespacePrefix): array
     {
         $drifts = [];
         $iterator = new RecursiveIteratorIterator(
@@ -59,8 +59,8 @@ final class NamespaceDriftTest extends TestCase
             if (preg_match('/^namespace\s+([^;]+);/m', $content, $matches)) {
                 $actualNamespace = $matches[1];
                 if (! str_starts_with($actualNamespace, $expectedNamespacePrefix)) {
-                    $relativePath = str_replace($this->projectRoot . '/', '', $file->getPathname());
-                    $drifts[]     = "{$relativePath}: declares '{$actualNamespace}', expected prefix '{$expectedNamespacePrefix}'";
+                    $relativePath = str_replace($this->projectRoot.'/', '', $file->getPathname());
+                    $drifts[] = "{$relativePath}: declares '{$actualNamespace}', expected prefix '{$expectedNamespacePrefix}'";
                 }
             }
         }
@@ -69,90 +69,90 @@ final class NamespaceDriftTest extends TestCase
     }
 
     #[Test]
-    public function application_text_classes_use_correct_namespace() : void
+    public function application_text_classes_use_correct_namespace(): void
     {
-        $componentPath = $this->projectRoot . '/components/Application/Text/System';
-        $drifts        = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\Application\\Text\\System');
+        $componentPath = $this->projectRoot.'/components/Application/Text/System';
+        $drifts = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\Application\\Text\\System');
 
         $this->assertEmpty(
             actual : $drifts,
-            message: "Application/Text classes should use Avax\\Components\\Application\\Text\\System namespace. Drifts:\n" . implode("\n", $drifts),
+            message: "Application/Text classes should use Avax\\Components\\Application\\Text\\System namespace. Drifts:\n".implode("\n", $drifts),
         );
     }
 
     #[Test]
-    public function application_validation_classes_use_correct_namespace() : void
+    public function application_validation_classes_use_correct_namespace(): void
     {
-        $componentPath = $this->projectRoot . '/components/Application/Validation/System';
-        $drifts        = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\Application\\Validation\\System');
+        $componentPath = $this->projectRoot.'/components/Application/Validation/System';
+        $drifts = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\Application\\Validation\\System');
 
         $this->assertEmpty(
             actual : $drifts,
-            message: "Application/Validation classes should use Avax\\Components\\Application\\Validation\\System namespace. Drifts:\n" . implode("\n", $drifts),
+            message: "Application/Validation classes should use Avax\\Components\\Application\\Validation\\System namespace. Drifts:\n".implode("\n", $drifts),
         );
     }
 
     #[Test]
-    public function http_session_classes_use_correct_namespace() : void
+    public function http_session_classes_use_correct_namespace(): void
     {
-        $componentPath = $this->projectRoot . '/components/HTTP/Session/System';
-        $drifts        = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\HTTP\\Session\\System');
+        $componentPath = $this->projectRoot.'/components/HTTP/Session/System';
+        $drifts = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\HTTP\\Session\\System');
 
         $this->assertEmpty(
             actual : $drifts,
-            message: "HTTP/Session classes should use Avax\\Components\\HTTP\\Session\\System namespace. Drifts:\n" . implode("\n", $drifts),
+            message: "HTTP/Session classes should use Avax\\Components\\HTTP\\Session\\System namespace. Drifts:\n".implode("\n", $drifts),
         );
     }
 
     #[Test]
-    public function http_middleware_classes_use_correct_namespace() : void
+    public function http_middleware_classes_use_correct_namespace(): void
     {
-        $componentPath = $this->projectRoot . '/components/HTTP/Middleware/System';
-        $drifts        = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\HTTP\\Middleware\\System');
+        $componentPath = $this->projectRoot.'/components/HTTP/Middleware/System';
+        $drifts = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\HTTP\\Middleware\\System');
 
         $this->assertEmpty(
             actual : $drifts,
-            message: "HTTP/Middleware classes should use Avax\\Components\\HTTP\\Middleware\\System namespace. Drifts:\n" . implode("\n", $drifts),
+            message: "HTTP/Middleware classes should use Avax\\Components\\HTTP\\Middleware\\System namespace. Drifts:\n".implode("\n", $drifts),
         );
     }
 
     #[Test]
-    public function http_response_classes_use_correct_namespace() : void
+    public function http_response_classes_use_correct_namespace(): void
     {
-        $componentPath = $this->projectRoot . '/components/HTTP/Response/System';
-        $drifts        = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\HTTP\\Response\\System');
+        $componentPath = $this->projectRoot.'/components/HTTP/Response/System';
+        $drifts = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\HTTP\\Response\\System');
 
         $this->assertEmpty(
             actual : $drifts,
-            message: "HTTP/Response classes should use Avax\\Components\\HTTP\\Response\\System namespace. Drifts:\n" . implode("\n", $drifts),
+            message: "HTTP/Response classes should use Avax\\Components\\HTTP\\Response\\System namespace. Drifts:\n".implode("\n", $drifts),
         );
     }
 
     #[Test]
-    public function operations_events_classes_use_correct_namespace() : void
+    public function operations_events_classes_use_correct_namespace(): void
     {
-        $componentPath = $this->projectRoot . '/components/Operations/Events/System';
-        $drifts        = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\Operations\\Events\\System');
+        $componentPath = $this->projectRoot.'/components/Operations/Events/System';
+        $drifts = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\Operations\\Events\\System');
 
         $this->assertEmpty(
             actual : $drifts,
-            message: "Operations/Events classes should use Avax\\Components\\Operations\\Events\\System namespace. Drifts:\n" . implode("\n", $drifts),
+            message: "Operations/Events classes should use Avax\\Components\\Operations\\Events\\System namespace. Drifts:\n".implode("\n", $drifts),
         );
     }
 
     #[Test]
-    public function application_datetime_classes_use_correct_namespace() : void
+    public function application_datetime_classes_use_correct_namespace(): void
     {
-        $componentPath = $this->projectRoot . '/components/Application/DateTime/System';
-        $drifts        = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\Application\\DateTime\\System');
+        $componentPath = $this->projectRoot.'/components/Application/DateTime/System';
+        $drifts = $this->findNamespaceDrifts($componentPath, 'Avax\\Components\\Application\\DateTime\\System');
 
         $this->assertEmpty(
             actual : $drifts,
-            message: "Application/DateTime classes should use Avax\\Components\\Application\\DateTime\\System namespace. Drifts:\n" . implode("\n", $drifts),
+            message: "Application/DateTime classes should use Avax\\Components\\Application\\DateTime\\System namespace. Drifts:\n".implode("\n", $drifts),
         );
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->projectRoot = dirname(__DIR__, 2);
     }

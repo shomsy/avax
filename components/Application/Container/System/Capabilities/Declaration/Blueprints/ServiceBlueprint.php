@@ -9,27 +9,32 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Resolve
 final readonly class ServiceBlueprint
 {
     public string $fingerprint;
+
     public bool $shared;
+
     public array $injectableMethods;
+
     public array $injectableProperties;
-    public ResolvePlan|null $constructor;
+
+    public ?ResolvePlan $constructor;
+
     public bool $instantiable;
+
     public string $class;
 
     /**
-     * @param list<array{name: string, serviceId: string|null, readonly: bool}> $injectableProperties
-     * @param list<array{name: string, plan: ResolvePlan}> $injectableMethods
+     * @param  list<array{name: string, serviceId: string|null, readonly: bool}>  $injectableProperties
+     * @param  list<array{name: string, plan: ResolvePlan}>  $injectableMethods
      */
     public function __construct(
-        string           $class,
-        bool|null        $instantiable = null,
-        ResolvePlan|null $constructor = null,
-        array|null       $injectableProperties = null,
-        array|null       $injectableMethods = null,
-        bool|null        $shared = null,
-        string           $fingerprint = ''
-    )
-    {
+        string $class,
+        ?bool $instantiable = null,
+        ?ResolvePlan $constructor = null,
+        ?array $injectableProperties = null,
+        ?array $injectableMethods = null,
+        ?bool $shared = null,
+        string $fingerprint = ''
+    ) {
         $instantiable ??= false;
         $injectableProperties ??= [];
         $injectableMethods ??= [];

@@ -33,7 +33,7 @@ class ProcessRegistry
     {
         return array_filter(
             $this->processes,
-            fn(ProcessRecord $processRecord): bool => $processRecord->isRunning()
+            fn (ProcessRecord $processRecord): bool => $processRecord->isRunning()
         );
     }
 }

@@ -9,7 +9,7 @@ use Avax\Tests\TestCase;
 
 final class WebSocketTest extends TestCase
 {
-    public function test_websocket_broadcast_reaches_channel_connections() : void
+    public function test_websocket_broadcast_reaches_channel_connections(): void
     {
         WebSocketServer::connect(connectionId: 'ws-one', channel: 'integration');
 
@@ -19,7 +19,7 @@ final class WebSocketTest extends TestCase
         self::assertSame(expected: ['hello'], actual: WebSocketServer::messages(connectionId: 'ws-one'));
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         WebSocketServer::reset();

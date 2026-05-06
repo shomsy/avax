@@ -17,7 +17,7 @@ final readonly class RuntimeIsolationGuard
     /**
      * @return list<string>
      */
-    public function detectLeaks(string $source, string $path = '') : array
+    public function detectLeaks(string $source, string $path = ''): array
     {
         $violations = [];
 

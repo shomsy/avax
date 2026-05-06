@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\PreCommit;
+
 final class Path
 {
     public static function normalize(string $path): string

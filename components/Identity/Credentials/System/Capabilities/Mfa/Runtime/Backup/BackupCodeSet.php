@@ -10,18 +10,19 @@ use SensitiveParameter;
 /**
  * Plain-text backup codes returned after generation or regeneration.
  *
- * @param list<BackupCode> $codes
+ * @param  list<BackupCode>  $codes
  */
 final readonly class BackupCodeSet
 {
     /**
-     * @param list<BackupCode> $codes
+     * @param  list<BackupCode>  $codes
      */
     public function __construct(
         #[SensitiveParameter]
         public array $codes,
         public DateTimeImmutable $generatedAt,
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<string>
@@ -29,7 +30,7 @@ final readonly class BackupCodeSet
     public function values(): array
     {
         return array_map(
-            callback: static fn (#[SensitiveParameter] BackupCode $backupCode) : string => $backupCode->value(),
+            callback: static fn (#[SensitiveParameter] BackupCode $backupCode): string => $backupCode->value(),
             array   : $this->codes,
         );
     }
@@ -41,7 +42,7 @@ final readonly class BackupCodeSet
     {
         return [
             'codes' => array_map(
-                callback: static fn (#[SensitiveParameter] BackupCode $backupCode) : string => $backupCode->masked(),
+                callback: static fn (#[SensitiveParameter] BackupCode $backupCode): string => $backupCode->masked(),
                 array   : $this->codes,
             ),
             'generatedAt' => $this->generatedAt,

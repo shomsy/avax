@@ -8,7 +8,8 @@ final readonly class RouteName
 {
     public function __construct(
         private string $name,
-    ) {}
+    ) {
+    }
 
     public function toString(): string
     {

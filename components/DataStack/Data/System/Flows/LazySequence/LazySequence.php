@@ -16,16 +16,17 @@ use Traversable;
 final readonly class LazySequence implements IteratorAggregate
 {
     /**
-     * @param Closure() : iterable<mixed>         $factory
-     * @param array<int, callable(mixed) : mixed> $maps
-     * @param array<int, callable(mixed) : bool>  $filters
+     * @param  Closure() : iterable<mixed>  $factory
+     * @param  array<int, callable(mixed) : mixed>  $maps
+     * @param  array<int, callable(mixed) : bool>  $filters
      */
     private function __construct(
         private Closure $factory,
         private array $maps = [],
         private array $filters = [],
         private ?int $limit = null,
-    ) {}
+    ) {
+    }
 
     public static function from(iterable $items): self
     {
@@ -33,7 +34,7 @@ final readonly class LazySequence implements IteratorAggregate
     }
 
     /**
-     * @param Closure() : iterable<mixed> $factory
+     * @param  Closure() : iterable<mixed>  $factory
      */
     public static function fromFactory(Closure $factory): self
     {

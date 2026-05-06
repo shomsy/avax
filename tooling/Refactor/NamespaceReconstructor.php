@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 /**
  * NamespaceReconstructor - The Nuclear Option V2 (Enhanced Auto-Fix).
  */
-
 $root = dirname(__DIR__, 2);
-require_once $root . '/vendor/autoload.php';
+require_once $root.'/vendor/autoload.php';
 
 echo "=== Namespace Reconstructor V2: Enhanced Auto-Fix ===\n\n";
 
@@ -23,11 +23,15 @@ $fqcnToPath = [];
 $scanDirs = ['framework', 'components'];
 foreach ($scanDirs as $dir) {
     $dirPath = "$root/$dir";
-    if (!is_dir($dirPath)) continue;
+    if (! is_dir($dirPath)) {
+        continue;
+    }
 
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath));
     foreach ($iterator as $file) {
-        if ($file->getExtension() !== 'php') continue;
+        if ($file->getExtension() !== 'php') {
+            continue;
+        }
 
         $content = file_get_contents($file->getPathname());
         if (preg_match('/namespace\s+([^;]+);/', $content, $nsMatches)) {
@@ -35,14 +39,14 @@ foreach ($scanDirs as $dir) {
 
             // Normalize namespace if it starts with components\ or framework\
             if (str_starts_with(strtolower($namespace), 'components\\')) {
-                $namespace = 'Avax\\Components\\' . substr($namespace, 11);
+                $namespace = 'Avax\\Components\\'.substr($namespace, 11);
             } elseif (str_starts_with(strtolower($namespace), 'framework\\')) {
-                $namespace = 'Avax\\Framework\\' . substr($namespace, 10);
+                $namespace = 'Avax\\Framework\\'.substr($namespace, 10);
             }
 
             if (preg_match('/(?:class|interface|trait|enum)\s+([A-Za-z0-9_]+)/', $content, $classMatches)) {
                 $shortName = $classMatches[1];
-                $fqcn = $namespace . '\\' . $shortName;
+                $fqcn = $namespace.'\\'.$shortName;
 
                 $classMap[$shortName][] = $fqcn;
                 $fqcnToPath[$fqcn] = $file->getPathname();
@@ -51,7 +55,7 @@ foreach ($scanDirs as $dir) {
     }
 }
 
-echo "Found " . count($classMap) . " unique short names across " . count($fqcnToPath) . " classes.\n\n";
+echo 'Found '.count($classMap).' unique short names across '.count($fqcnToPath)." classes.\n\n";
 
 // 2. Fix Imports Globally (not just in tests)
 echo "Step 2: Fixing imports globally...\n";
@@ -60,12 +64,18 @@ $fixedFiles = 0;
 
 foreach ($targetDirs as $targetDir) {
     $dirPath = "$root/$targetDir";
-    if (!is_dir($dirPath)) continue;
+    if (! is_dir($dirPath)) {
+        continue;
+    }
 
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath));
     foreach ($iterator as $file) {
-        if ($file->getExtension() !== 'php') continue;
-        if (str_contains($file->getPathname(), '/vendor/')) continue;
+        if ($file->getExtension() !== 'php') {
+            continue;
+        }
+        if (str_contains($file->getPathname(), '/vendor/')) {
+            continue;
+        }
 
         $content = file_get_contents($file->getPathname());
         $originalContent = $content;
@@ -79,7 +89,7 @@ foreach ($targetDirs as $targetDir) {
                 // If it starts with components\ or framework\, it's definitely broken
                 $isBrokenPrefix = str_starts_with(strtolower($fqcn), 'components\\') || str_starts_with(strtolower($fqcn), 'framework\\');
 
-                if (!$isBrokenPrefix && classExists($fqcn, $root)) {
+                if (! $isBrokenPrefix && classExists($fqcn, $root)) {
                     return $fullUse;
                 }
 
@@ -90,6 +100,7 @@ foreach ($targetDirs as $targetDir) {
                 if (isset($classMap[$shortName])) {
                     if (count($classMap[$shortName]) === 1) {
                         $newFqcn = $classMap[$shortName][0];
+
                         return str_replace($fqcn, $newFqcn, $fullUse);
                     } else {
                         // Heuristic: pick the one that matches the original FQCN suffix if possible
@@ -101,9 +112,9 @@ foreach ($targetDirs as $targetDir) {
 
                         // Heuristic: pick the one in the same suite if we are in components/
                         if (str_contains($file->getPathname(), 'components/')) {
-                            $suite = explode('/', str_replace($root . '/components/', '', $file->getPathname()))[0];
+                            $suite = explode('/', str_replace($root.'/components/', '', $file->getPathname()))[0];
                             foreach ($classMap[$shortName] as $potential) {
-                                if (str_contains($potential, 'Components\\' . $suite)) {
+                                if (str_contains($potential, 'Components\\'.$suite)) {
                                     return str_replace($fqcn, $potential, $fullUse);
                                 }
                             }
@@ -111,7 +122,7 @@ foreach ($targetDirs as $targetDir) {
                     }
                 }
                 if (isset($classMap[$shortName])) {
-                    echo "  [DEBUG] Found match for $shortName in " . count($classMap[$shortName]) . " locations.\n";
+                    echo "  [DEBUG] Found match for $shortName in ".count($classMap[$shortName])." locations.\n";
                 } else {
                     echo "  [DEBUG] No match found for $shortName in class map.\n";
                 }
@@ -124,7 +135,7 @@ foreach ($targetDirs as $targetDir) {
         if ($content !== $originalContent) {
             file_put_contents($file->getPathname(), $content);
             $fixedFiles++;
-            echo "  [FIXED] " . str_replace($root . '/', '', $file->getPathname()) . "\n";
+            echo '  [FIXED] '.str_replace($root.'/', '', $file->getPathname())."\n";
         }
     }
 }
@@ -139,10 +150,13 @@ function classExists(string $fqcn, string $root): bool
     foreach ($prefixes as $prefix => $dir) {
         if (str_starts_with($fqcn, $prefix)) {
             $relative = str_replace($prefix, '', $fqcn);
-            $path = $root . '/' . $dir . str_replace('\\', '/', $relative) . '.php';
-            if (file_exists($path)) return true;
+            $path = $root.'/'.$dir.str_replace('\\', '/', $relative).'.php';
+            if (file_exists($path)) {
+                return true;
+            }
         }
     }
+
     return false;
 }
 

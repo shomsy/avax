@@ -66,7 +66,7 @@ final class CacheReadRoutingTest extends TestCase
         $this->cacheContract->set('runtime_key', 'runtime_value');
 
         $runtimeCacheTarget = RuntimeCacheTarget::key('runtime_key', 'target_default');
-        $result             = Cache::read($runtimeCacheTarget);
+        $result = Cache::read($runtimeCacheTarget);
 
         $this->assertSame('runtime_value', $result);
     }
@@ -74,7 +74,7 @@ final class CacheReadRoutingTest extends TestCase
     public function test_read_uses_target_default_when_key_missing(): void
     {
         $runtimeCacheTarget = RuntimeCacheTarget::key('missing_key', 'target_default');
-        $result             = Cache::read($runtimeCacheTarget);
+        $result = Cache::read($runtimeCacheTarget);
 
         $this->assertSame('target_default', $result);
     }
@@ -82,11 +82,11 @@ final class CacheReadRoutingTest extends TestCase
     public function test_read_signature_accepts_cache_read_target(): void
     {
         $param = new ReflectionMethod(Cache::class, 'read')->getParameters()[0];
-        $type  = $param->getType();
+        $type = $param->getType();
 
         $this->assertInstanceOf(ReflectionUnionType::class, $type);
 
-        $types     = $type->getTypes();
+        $types = $type->getTypes();
         $typeNames = array_map(static fn (ReflectionIntersectionType|ReflectionNamedType $t) => $t->getName(), $types);
 
         $this->assertContains(\Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget::class, $typeNames);
@@ -211,7 +211,7 @@ final class CacheReadRoutingTest extends TestCase
         Cache::reset();
         CompiledCache::reset();
 
-        $this->frozenClock        = new FrozenClock();
+        $this->frozenClock = new FrozenClock();
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock);
         $this->cacheContract = new AvaxCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 

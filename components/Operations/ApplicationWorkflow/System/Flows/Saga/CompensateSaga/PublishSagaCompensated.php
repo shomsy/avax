@@ -8,7 +8,8 @@ final readonly class PublishSagaCompensated
 {
     public function __construct(
         private string $eventBus,
-    ) {}
+    ) {
+    }
 
     public function describeResponsibility(): string
     {
@@ -38,12 +39,13 @@ final readonly class SagaCompensatedEvent
         public string $sagaId,
         public array $compensatedSteps,
         public float $timestamp,
-    ) {}
+    ) {
+    }
 
     public function toMetadata(): array
     {
         return [
-            'saga_id'   => $this->sagaId,
+            'saga_id' => $this->sagaId,
             'compensated_steps' => $this->compensatedSteps,
             'timestamp' => $this->timestamp,
         ];

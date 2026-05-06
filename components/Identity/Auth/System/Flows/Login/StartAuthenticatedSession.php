@@ -15,9 +15,10 @@ final readonly class StartAuthenticatedSession
 {
     public function __construct(
         private Sessions $sessions,
-    ) {}
+    ) {
+    }
 
-    public function execute(IssuedAuthentication $issuedAuthentication) : void
+    public function execute(IssuedAuthentication $issuedAuthentication): void
     {
         $this->sessions->start($issuedAuthentication);
     }

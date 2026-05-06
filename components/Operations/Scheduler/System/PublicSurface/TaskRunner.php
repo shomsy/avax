@@ -23,7 +23,7 @@ final readonly class TaskRunner
             }
 
             $startedAt = microtime(true);
-            $status   = 'ok';
+            $status = 'ok';
 
             try {
                 ($scheduledTask->task)();
@@ -32,7 +32,7 @@ final readonly class TaskRunner
             }
 
             $duration = (microtime(true) - $startedAt) * 1000;
-            $taskName = 'task_' . $index;
+            $taskName = 'task_'.$index;
             $schedulerReport->addExecuted(task: $taskName, status: $status, duration: $duration);
             SchedulerHistory::record(task: $taskName, status: $status, durationMs: $duration);
         }

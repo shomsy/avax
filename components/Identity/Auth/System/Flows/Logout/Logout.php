@@ -15,7 +15,8 @@ final readonly class Logout
     public function __construct(
         private ClearAuthenticatedIdentity $clearAuthenticatedIdentity,
         private Identity $identity,
-    ) {}
+    ) {
+    }
 
     public function execute(): void
     {

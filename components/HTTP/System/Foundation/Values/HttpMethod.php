@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\System\Foundation\Values;
 
 use ValueError;
+
 use function strtoupper;
 
 enum HttpMethod: string
 {
-    case GET     = 'GET';
-    case POST    = 'POST';
-    case PUT     = 'PUT';
-    case PATCH   = 'PATCH';
-    case DELETE  = 'DELETE';
-    case HEAD    = 'HEAD';
+    case GET = 'GET';
+    case POST = 'POST';
+    case PUT = 'PUT';
+    case PATCH = 'PATCH';
+    case DELETE = 'DELETE';
+    case HEAD = 'HEAD';
     case OPTIONS = 'OPTIONS';
     case CONNECT = 'CONNECT';
-    case TRACE   = 'TRACE';
+    case TRACE = 'TRACE';
 
     /**
      * Try to create an HttpMethod from a string.
@@ -58,7 +59,7 @@ enum HttpMethod: string
             self::HEAD,
             self::OPTIONS,
             self::TRACE => true,
-            default     => false,
+            default => false,
         };
     }
 
@@ -77,7 +78,7 @@ enum HttpMethod: string
             self::DELETE,
             self::OPTIONS,
             self::TRACE => true,
-            default     => false,
+            default => false,
         };
     }
 
@@ -93,7 +94,7 @@ enum HttpMethod: string
             self::PUT,
             self::PATCH,
             self::DELETE => true,
-            default      => false,
+            default => false,
         };
     }
 }

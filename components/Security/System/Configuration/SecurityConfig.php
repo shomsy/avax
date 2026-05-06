@@ -8,7 +8,6 @@ final readonly class SecurityConfig
 {
     public function __construct(
         public bool $enabled = true,
-    )
-    {
+    ) {
     }
 }

@@ -16,7 +16,7 @@ use ReflectionProperty;
 final readonly class DataField
 {
     /**
-     * @param object[] $attributes
+     * @param  object[]  $attributes
      */
     public function __construct(
         public string $name,
@@ -30,7 +30,8 @@ final readonly class DataField
         public mixed $defaultValue,
         public ?ReflectionProperty $reflectionProperty = null,
         public ?ReflectionParameter $reflectionParameter = null,
-    ) {}
+    ) {
+    }
 
     public function isRequired(): bool
     {
@@ -47,7 +48,7 @@ final readonly class DataField
 
     public function hasAttribute(string $attributeClass): bool
     {
-        return array_any($this->attributes, fn ($attribute) : bool => $attribute instanceof $attributeClass);
+        return array_any($this->attributes, fn ($attribute): bool => $attribute instanceof $attributeClass);
     }
 
     public function isHidden(): bool
@@ -75,7 +76,7 @@ final readonly class DataField
 
                 $namespace = $this->reflectionProperty->getDeclaringClass()->getNamespaceName();
 
-                return $namespace === '' ? $class : $namespace . '\\' . $class;
+                return $namespace === '' ? $class : $namespace.'\\'.$class;
             }
         }
 

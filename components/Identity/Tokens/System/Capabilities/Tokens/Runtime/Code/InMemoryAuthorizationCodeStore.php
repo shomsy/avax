@@ -14,20 +14,19 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
     private array $codes = [];
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      *
      * @throws RandomException
      */
     public function create(
-        string            $subject,
+        string $subject,
         DateTimeImmutable $expiresAt,
-        ?string           $clientId = null,
-        array             $scopes = [],
-        ?string           $redirectUri = null,
-        ?string           $state = null,
-    ) : AuthorizationCodeRecord
-    {
-        $code   = bin2hex(string: random_bytes(length: 32));
+        ?string $clientId = null,
+        array $scopes = [],
+        ?string $redirectUri = null,
+        ?string $state = null,
+    ): AuthorizationCodeRecord {
+        $code = bin2hex(string: random_bytes(length: 32));
         $authorizationCodeRecord = new AuthorizationCodeRecord(
             code       : $code,
             subject    : $subject,
@@ -43,7 +42,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         return $authorizationCodeRecord;
     }
 
-    public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment) : AuthorizationCodeRecord|null
+    public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment): ?AuthorizationCodeRecord
     {
         $record = $this->codes[$code] ?? null;
         unset($this->codes[$code]);

@@ -92,7 +92,7 @@ final class ShutdownSequence
             try {
                 $callback();
             } catch (Throwable $e) {
-                error_log('Shutdown flush error: ' . $e->getMessage());
+                error_log('Shutdown flush error: '.$e->getMessage());
             }
         }
     }
@@ -110,7 +110,7 @@ final class ShutdownSequence
             try {
                 $callback();
             } catch (Throwable $e) {
-                error_log('Shutdown callback error: ' . $e->getMessage());
+                error_log('Shutdown callback error: '.$e->getMessage());
             }
         }
     }

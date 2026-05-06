@@ -30,24 +30,23 @@ final readonly class ResolutionPolicy
     public bool $strict;
 
     public function __construct(
-        ?bool   $strict = null,
-        ?bool   $debug = null,
+        ?bool $strict = null,
+        ?bool $debug = null,
         ?string $profile = null,
         ?string $failMode = null,
         public array $profiles = [],
-    )
-    {
-        $strict        ??= false;
-        $debug         ??= false;
-        $profile       ??= self::PROFILE_BALANCED;
+    ) {
+        $strict ??= false;
+        $debug ??= false;
+        $profile ??= self::PROFILE_BALANCED;
         $failMode ??= self::FAIL_MODE_CLOSED;
-        $this->strict  = $strict;
-        $this->debug   = $debug;
+        $this->strict = $strict;
+        $this->debug = $debug;
         $this->profile = $profile;
         $this->failMode = $failMode;
     }
 
-    public function isAllowed(string $abstract) : bool
+    public function isAllowed(string $abstract): bool
     {
         if (! $this->strict) {
             return true;
@@ -56,7 +55,7 @@ final readonly class ResolutionPolicy
         return class_exists(class: $abstract) || interface_exists(interface: $abstract);
     }
 
-    public function severityFor(#[SensitiveParameter] string $code, string $defaultSeverity) : string
+    public function severityFor(#[SensitiveParameter] string $code, string $defaultSeverity): string
     {
         return match ($this->profile) {
             self::PROFILE_RELAXED => match ($code) {
@@ -71,7 +70,7 @@ final readonly class ResolutionPolicy
         };
     }
 
-    public function forEnvironment(string $environment) : self
+    public function forEnvironment(string $environment): self
     {
         $normalized = trim(string: $environment);
         if ($normalized === '' || ! isset($this->profiles[$normalized])) {
@@ -87,13 +86,13 @@ final readonly class ResolutionPolicy
         );
     }
 
-    public function shouldFailOn(string $severity) : bool
+    public function shouldFailOn(string $severity): bool
     {
         return $this->failMode === self::FAIL_MODE_CLOSED
             && strtolower(string: trim(string: $severity)) === 'error';
     }
 
-    public function isFailClosed() : bool
+    public function isFailClosed(): bool
     {
         return $this->failMode === self::FAIL_MODE_CLOSED;
     }

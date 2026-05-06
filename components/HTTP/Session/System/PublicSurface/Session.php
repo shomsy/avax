@@ -19,17 +19,16 @@ final class Session implements SessionInterface
     private readonly SessionTransaction $sessionTransaction;
 
     public function __construct(
-        private readonly SessionScope     $sessionScope,
+        private readonly SessionScope $sessionScope,
         private readonly ?SessionMetadata $sessionMetadata = null,
-        private readonly ?SessionAudit    $sessionAudit = null,
+        private readonly ?SessionAudit $sessionAudit = null,
         private readonly ?SessionEventBus $sessionEventBus = null,
         private readonly ?LoggerInterface $logger = null,
-    )
-    {
+    ) {
         $this->sessionTransaction = new SessionTransaction($this->sessionScope);
     }
 
-    public function start() : bool
+    public function start(): bool
     {
         $started = $this->sessionScope->start();
 
@@ -64,12 +63,12 @@ final class Session implements SessionInterface
         return true;
     }
 
-    public function isStarted() : bool
+    public function isStarted(): bool
     {
         return $this->sessionScope->isStarted();
     }
 
-    private function createNewRecord() : void
+    private function createNewRecord(): void
     {
         $now = new DateTimeImmutable();
         $this->sessionRecord = new SessionRecord(
@@ -84,7 +83,7 @@ final class Session implements SessionInterface
         $this->saveRecord();
     }
 
-    private function touch() : void
+    private function touch(): void
     {
         if (! $this->sessionRecord instanceof SessionRecord) {
             return;
@@ -103,24 +102,24 @@ final class Session implements SessionInterface
         $this->saveRecord();
     }
 
-    private function saveRecord() : void
+    private function saveRecord(): void
     {
         if ($this->sessionRecord instanceof SessionRecord) {
             $this->sessionScope->set('_record', $this->sessionRecord);
         }
     }
 
-    public function id() : string
+    public function id(): string
     {
         return $this->sessionScope->id() ?: ($this->sessionRecord?->sessionId ?? '');
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return $this->sessionScope->has($key);
     }
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->sessionScope->get($key, $default);
         $this->sessionEventBus?->dispatch('session.retrieved', ['key' => $key]);
@@ -128,36 +127,36 @@ final class Session implements SessionInterface
         return $value;
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->sessionScope->all();
     }
 
-    public function set(string $key, mixed $value) : void
+    public function set(string $key, mixed $value): void
     {
         $this->put($key, $value);
     }
 
-    public function put(string $key, mixed $value) : void
+    public function put(string $key, mixed $value): void
     {
         $this->sessionScope->set($key, $value);
         $this->sessionAudit?->record('session.put', ['key' => $key]);
         $this->sessionEventBus?->dispatch('session.put', ['key' => $key]);
     }
 
-    public function forget(string $key) : void
+    public function forget(string $key): void
     {
         $this->sessionScope->forget($key);
         $this->sessionAudit?->record('session.forget', ['key' => $key]);
         $this->sessionEventBus?->dispatch('session.forget', ['key' => $key]);
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->flush();
     }
 
-    public function flush() : void
+    public function flush(): void
     {
         $this->sessionScope->clear();
         $this->sessionRecord = null;
@@ -165,7 +164,7 @@ final class Session implements SessionInterface
         $this->sessionEventBus?->dispatch('session.flushed');
     }
 
-    public function destroy() : void
+    public function destroy(): void
     {
         $this->sessionScope->destroy();
         $this->sessionRecord = null;
@@ -173,7 +172,7 @@ final class Session implements SessionInterface
         $this->sessionEventBus?->dispatch('session.destroyed');
     }
 
-    public function regenerate(bool $destroy = false) : bool
+    public function regenerate(bool $destroy = false): bool
     {
         $oldId = $this->id();
         $result = $this->sessionScope->regenerate($destroy);
@@ -182,45 +181,45 @@ final class Session implements SessionInterface
             $this->createNewRecord();
             $this->sessionAudit?->record('session.regenerated', ['old_id' => $oldId, 'new_id' => $this->id()]);
             $this->sessionEventBus?->dispatch('session.regenerated', ['old_id' => $oldId, 'new_id' => $this->id()]);
-            $this->logger?->info('Session regenerated: ' . $this->id());
+            $this->logger?->info('Session regenerated: '.$this->id());
         }
 
         return $result;
     }
 
-    public function save() : void
+    public function save(): void
     {
         $this->saveRecord();
         $this->sessionScope->save();
     }
 
-    public function flash(string $key, mixed $value) : void
+    public function flash(string $key, mixed $value): void
     {
         $flashes = $this->get('_flash_next', []);
         $flashes[$key] = $value;
         $this->put('_flash_next', $flashes);
     }
 
-    public function ageFlash() : void
+    public function ageFlash(): void
     {
         $next = $this->get('_flash_next', []);
         $this->put('_flash_current', $next);
         $this->forget('_flash_next');
     }
 
-    public function getFlash(string $key, mixed $default = null) : mixed
+    public function getFlash(string $key, mixed $default = null): mixed
     {
         $current = $this->get('_flash_current', []);
 
         return $current[$key] ?? $default;
     }
 
-    public function transaction() : SessionTransaction
+    public function transaction(): SessionTransaction
     {
         return $this->sessionTransaction;
     }
 
-    public function events() : SessionEventBus
+    public function events(): SessionEventBus
     {
         return $this->sessionEventBus ?? new SessionEventBus();
     }

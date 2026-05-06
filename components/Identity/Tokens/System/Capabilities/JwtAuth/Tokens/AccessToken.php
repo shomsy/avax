@@ -8,12 +8,11 @@ final readonly class AccessToken
 {
     public function __construct(
         public string $sub,
-        public array  $scopes,
-        public int    $exp,
-        public int    $iat,
+        public array $scopes,
+        public int $exp,
+        public int $iat,
         public string $jti,
-    )
-    {
+    ) {
     }
 
     public static function fromPayload(array $payload): self

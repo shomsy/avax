@@ -8,15 +8,30 @@ use Avax\Framework\System\Capabilities\ExternalState\System\PublicSurface\State;
 
 class Memory implements State
 {
-    public function get(string $key) : mixed { return null; }
+    public function get(string $key): mixed
+    {
+        return null;
+    }
 
-    public function set(string $key, mixed $value, int $ttl = 0) : void {}
+    public function set(string $key, mixed $value, int $ttl = 0): void
+    {
+    }
 
-    public function delete(string $key) : void {}
+    public function delete(string $key): void
+    {
+    }
 
-    public function exists(string $key) : bool { return false; }
+    public function exists(string $key): bool
+    {
+        return false;
+    }
 
-    public function increment(string $key, int $value = 1) : int { return 0; }
+    public function increment(string $key, int $value = 1): int
+    {
+        return 0;
+    }
 
-    public function expire(string $key, int $ttl) : void {}
+    public function expire(string $key, int $ttl): void
+    {
+    }
 }

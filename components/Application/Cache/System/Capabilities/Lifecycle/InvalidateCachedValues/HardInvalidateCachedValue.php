@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 interface HardInvalidateCachedValue
 {
-    public function delete(CacheKey $cacheKey) : void;
+    public function delete(CacheKey $cacheKey): void;
 
-    public function exists(CacheKey $cacheKey) : bool;
+    public function exists(CacheKey $cacheKey): bool;
 }

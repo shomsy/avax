@@ -57,10 +57,10 @@ class Table
         $line = '+';
 
         foreach ($widths as $width) {
-            $line .= str_repeat('-', $width + 2) . '+';
+            $line .= str_repeat('-', $width + 2).'+';
         }
 
-        echo $line . PHP_EOL;
+        echo $line.PHP_EOL;
     }
 
     /**
@@ -73,9 +73,9 @@ class Table
         foreach ($row as $i => $cell) {
             $cellStr = (string) $cell;
             $width = $widths[$i] ?? 0;
-            $line .= ' ' . str_pad($cellStr, $width) . ' |';
+            $line .= ' '.str_pad($cellStr, $width).' |';
         }
 
-        echo $line . PHP_EOL;
+        echo $line.PHP_EOL;
     }
 }

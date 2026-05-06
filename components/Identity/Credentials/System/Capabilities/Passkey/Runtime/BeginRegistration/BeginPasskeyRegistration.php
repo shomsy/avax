@@ -11,14 +11,14 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyRegistration;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengePurpose;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengeRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengeStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredentialStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyRuntimeInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyRegistration;
 use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;
@@ -29,15 +29,16 @@ final readonly class BeginPasskeyRegistration
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
         private RequireFreshMfa $requireFreshMfa,
-        private PasskeyRuntimeInterface         $passkeyRuntime,
+        private PasskeyRuntimeInterface $passkeyRuntime,
         #[SensitiveParameter]
         private PasskeyCredentialStoreInterface $passkeyCredentialStore,
-        private PasskeyChallengeStoreInterface  $passkeyChallengeStore,
+        private PasskeyChallengeStoreInterface $passkeyChallengeStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
         private string $rpId,
         private string $rpName,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PasskeyOperationFailed
@@ -55,10 +56,10 @@ final readonly class BeginPasskeyRegistration
 
         $this->requireFreshMfa->execute();
 
-        $challengeId = 'pkreg_' . bin2hex(string: random_bytes(length: 12));
-        $challenge   = bin2hex(string: random_bytes(length: 32));
-        $excludeIds  = array_map(
-            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyCredential) : string => $passkeyCredential->credentialId,
+        $challengeId = 'pkreg_'.bin2hex(string: random_bytes(length: 12));
+        $challenge = bin2hex(string: random_bytes(length: 32));
+        $excludeIds = array_map(
+            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyCredential): string => $passkeyCredential->credentialId,
             array   : $this->passkeyCredentialStore->forUser(userId: $user->id),
         );
 

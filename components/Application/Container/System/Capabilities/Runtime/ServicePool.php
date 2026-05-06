@@ -147,13 +147,12 @@ final class ServicePool
      * @return array{returned: bool, overflow: bool, unsafe: bool, reason: string}
      */
     public function releasePooled(
-        string    $abstract,
-        mixed     $instance,
-        int       $maxSize,
-        bool|null $resetBeforeReuse = null,
-        bool      $disposable = false
-    ): array
-    {
+        string $abstract,
+        mixed $instance,
+        int $maxSize,
+        ?bool $resetBeforeReuse = null,
+        bool $disposable = false
+    ): array {
         $resetBeforeReuse ??= true;
         $this->pooledOptions[$abstract] = [
             'maxSize' => max(1, $maxSize),
@@ -161,7 +160,7 @@ final class ServicePool
             'disposable' => $disposable,
         ];
 
-        if (!is_object(value: $instance)) {
+        if (! is_object(value: $instance)) {
             $this->pooledStats['unsafe']++;
 
             return [
@@ -173,7 +172,7 @@ final class ServicePool
         }
 
         if ($resetBeforeReuse) {
-            if (!$instance instanceof ResettableInterface) {
+            if (! $instance instanceof ResettableInterface) {
                 $this->pooledStats['unsafe']++;
 
                 return [
@@ -229,7 +228,7 @@ final class ServicePool
         }
 
         return array_sum(array: array_map(
-            callback: static fn(array $bucket): int => count(value: $bucket),
+            callback: static fn (array $bucket): int => count(value: $bucket),
             array: $this->pooled
         ));
     }
@@ -270,7 +269,7 @@ final class ServicePool
 
         foreach ($this->pooled as $serviceId => $bucket) {
             $snapshot[$serviceId] = array_map(
-                callback: static fn(mixed $instance): string => is_object(value: $instance) ? $instance::class : get_debug_type(value: $instance),
+                callback: static fn (mixed $instance): string => is_object(value: $instance) ? $instance::class : get_debug_type(value: $instance),
                 array: $bucket
             );
         }

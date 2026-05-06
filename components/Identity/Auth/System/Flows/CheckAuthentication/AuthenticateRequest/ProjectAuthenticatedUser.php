@@ -18,7 +18,8 @@ final readonly class ProjectAuthenticatedUser
         #[SensitiveParameter]
         private EmailVerificationStateStoreInterface $emailVerificationStateStore,
         private MfaStoreInterface $mfaStore,
-    ) {}
+    ) {
+    }
 
     public function fromUser(User $user): AuthenticatedUser
     {

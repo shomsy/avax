@@ -16,12 +16,12 @@ final class TokenStore
     /** @var array<string, DateTimeImmutable> */
     private array $revokedTokens = [];
 
-    public function revoke(#[SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt) : void
+    public function revoke(#[SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt): void
     {
         $this->revokedTokens[$tokenId] = $expiresAt;
     }
 
-    public function isRevoked(#[SensitiveParameter] string $tokenId = '', DateTimeImmutable|null $moment = null) : bool
+    public function isRevoked(#[SensitiveParameter] string $tokenId = '', ?DateTimeImmutable $moment = null): bool
     {
         if ($tokenId === '' || ! isset($this->revokedTokens[$tokenId])) {
             return false;

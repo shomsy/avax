@@ -20,14 +20,16 @@ final readonly class ResolvePlan
      *     allowsNull: bool
      * }> $parameters
      */
-    public function __construct(public array $parameters = []) {}
+    public function __construct(public array $parameters = [])
+    {
+    }
 
-    public static function __set_state(array $state) : self
+    public static function __set_state(array $state): self
     {
         return new self(parameters: $state['parameters'] ?? []);
     }
 
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->parameters === [];
     }

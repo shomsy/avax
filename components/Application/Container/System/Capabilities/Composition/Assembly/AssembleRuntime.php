@@ -16,9 +16,9 @@ use Avax\Components\Application\Container\System\Capabilities\Execution\Injectio
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Methods\InjectMethods;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Properties\InjectProperties;
-use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\CompiledRuntime;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\HotPathInliner;
@@ -30,36 +30,36 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Sco
  */
 final class AssembleRuntime
 {
-    public function assemble(CreateContainerConfig $createContainerConfig, ObservabilityAssembly $observabilityAssembly) : RuntimeAssembly
+    public function assemble(CreateContainerConfig $createContainerConfig, ObservabilityAssembly $observabilityAssembly): RuntimeAssembly
     {
-        $dependencyRegistry        = new DependencyRegistry();
-        $scopeStore    = new ScopeStore();
-        $dependencyPool            = new DependencyPool();
-        $manageScopes              = new ManageScopes(
+        $dependencyRegistry = new DependencyRegistry();
+        $scopeStore = new ScopeStore();
+        $dependencyPool = new DependencyPool();
+        $manageScopes = new ManageScopes(
             store  : $scopeStore,
             pool   : $dependencyPool,
             metrics: $observabilityAssembly->metrics,
         );
-        $resolveDependencies       = new ResolveDependencies();
+        $resolveDependencies = new ResolveDependencies();
         $createDependencyBlueprint = new CreateDependencyBlueprint(
             cache       : new BlueprintCache(
-                              cacheDir    : $createContainerConfig->cacheDir,
-                              cacheVersion: $createContainerConfig->cacheVersion,
-                              debug       : $createContainerConfig->debug,
-                              metrics     : $observabilityAssembly->metrics,
+                cacheDir    : $createContainerConfig->cacheDir,
+                cacheVersion: $createContainerConfig->cacheVersion,
+                debug       : $createContainerConfig->debug,
+                metrics     : $observabilityAssembly->metrics,
             ),
             dependencies: $resolveDependencies,
         );
-        $resolveCallArguments      = new ResolveCallArguments(dependencies: $resolveDependencies);
-        $functionCaller            = new FunctionCaller(arguments: $resolveCallArguments);
-        $resolutionPolicy          = new ResolutionPolicy(
+        $resolveCallArguments = new ResolveCallArguments(dependencies: $resolveDependencies);
+        $functionCaller = new FunctionCaller(arguments: $resolveCallArguments);
+        $resolutionPolicy = new ResolutionPolicy(
             strict  : $createContainerConfig->strict,
             debug   : $createContainerConfig->debug,
             profile : $createContainerConfig->effectivePolicyProfile(),
             failMode: $createContainerConfig->policyFailMode,
             profiles: $createContainerConfig->policyProfiles,
         );
-        $compileContainer          = new CompileContainer(
+        $compileContainer = new CompileContainer(
             cacheDir              : $createContainerConfig->cacheDir,
             cacheVersion          : $createContainerConfig->cacheVersion,
             configHash            : $createContainerConfig->configHash(),
@@ -78,16 +78,16 @@ final class AssembleRuntime
             blueprints            : $createDependencyBlueprint,
             metrics               : $observabilityAssembly->metrics,
             services              : new DependencyCompiler(
-                                        registrations: $dependencyRegistry,
-                                        blueprints   : $createDependencyBlueprint,
+                registrations: $dependencyRegistry,
+                blueprints   : $createDependencyBlueprint,
             ),
         );
-        $resolveDependency         = new ResolveDependency(
+        $resolveDependency = new ResolveDependency(
             registrations    : $dependencyRegistry,
             scopes           : $manageScopes,
             builder          : new BuildService(
-                                   blueprints  : $createDependencyBlueprint,
-                                   dependencies: $resolveDependencies,
+                blueprints  : $createDependencyBlueprint,
+                dependencies: $resolveDependencies,
             ),
             blueprints       : $createDependencyBlueprint,
             injectProperties : new InjectProperties(),
@@ -97,10 +97,10 @@ final class AssembleRuntime
             timeline         : $observabilityAssembly->timeline,
             policy           : $resolutionPolicy,
             compiledRuntime  : new CompiledRuntime(
-                                   executionMode: $createContainerConfig->executionMode,
-                                   compiler     : $compileContainer,
+                executionMode: $createContainerConfig->executionMode,
+                compiler     : $compileContainer,
                 inliner      : new HotPathInliner(),
-                                   metrics      : $observabilityAssembly->metrics,
+                metrics      : $observabilityAssembly->metrics,
             ),
             deferredProviders: new DeferredProviderRegistry(),
             diagnosticsMode  : $createContainerConfig->diagnosticsMode,

@@ -10,7 +10,7 @@ final readonly class DispatchStrategyResolver
     {
     }
 
-    public function resolve() : string
+    public function resolve(): string
     {
         $config = $this->loadTaskConfig();
         if ($config['strategy'] ?? '') {
@@ -20,7 +20,7 @@ final readonly class DispatchStrategyResolver
         return $this->defaultStrategy;
     }
 
-    private function loadTaskConfig() : array
+    private function loadTaskConfig(): array
     {
         return [];
     }

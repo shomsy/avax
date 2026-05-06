@@ -12,12 +12,13 @@ use stdClass;
 final readonly class ConfigureSagaRuntime
 {
     public function __construct(
-        private RegisterSagaStore      $registerSagaStore = new RegisterSagaStore(),
+        private RegisterSagaStore $registerSagaStore = new RegisterSagaStore(),
         private RegisterSagaStepRunner $registerSagaStepRunner = new RegisterSagaStepRunner(),
         private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus(),
-    ) {}
+    ) {
+    }
 
-    public function configure(SagaRuntimeConfig $sagaRuntimeConfig) : SagaRuntime
+    public function configure(SagaRuntimeConfig $sagaRuntimeConfig): SagaRuntime
     {
         $validateSagaRuntimeConfig = new ValidateSagaRuntimeConfig(config: $sagaRuntimeConfig);
         if (! $validateSagaRuntimeConfig->isValid()) {
@@ -28,7 +29,7 @@ final readonly class ConfigureSagaRuntime
             );
         }
 
-        $store      = $this->registerSagaStore->register(type: $sagaRuntimeConfig->storeType, config: $sagaRuntimeConfig->storeConfig);
+        $store = $this->registerSagaStore->register(type: $sagaRuntimeConfig->storeType, config: $sagaRuntimeConfig->storeConfig);
         $stepRunner = $this->registerSagaStepRunner->register();
         $messageBus = $this->registerSagaMessageBus->register($sagaRuntimeConfig->messageBusType, config: $sagaRuntimeConfig->messageBusConfig);
 
@@ -50,7 +51,8 @@ final readonly class SagaRuntime
         public object $messageBus,
         public ProtectSagaIdempotency $idempotency,
         public InspectSaga $inspect,
-    ) {}
+    ) {
+    }
 
     public static function inMemory(): self
     {
@@ -66,7 +68,8 @@ final readonly class SagaRuntime
 
 final readonly class SagaRuntimeConfig
 {
-    private function __construct(public string $storeType, public array $storeConfig, public string $messageBusType, public array $messageBusConfig, public ?int $timeoutSeconds, public ?int $maxRetries) {
+    private function __construct(public string $storeType, public array $storeConfig, public string $messageBusType, public array $messageBusConfig, public ?int $timeoutSeconds, public ?int $maxRetries)
+    {
     }
 
     public static function inMemory(): self

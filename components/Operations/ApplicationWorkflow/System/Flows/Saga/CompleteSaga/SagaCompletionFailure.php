@@ -9,4 +9,6 @@ use RuntimeException;
 /**
  * SagaCompletionFailure - reports invalid completion attempts.
  */
-final class SagaCompletionFailure extends RuntimeException {}
+final class SagaCompletionFailure extends RuntimeException
+{
+}

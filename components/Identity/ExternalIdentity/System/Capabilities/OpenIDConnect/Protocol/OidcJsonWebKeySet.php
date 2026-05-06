@@ -7,7 +7,9 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDCo
 final readonly class OidcJsonWebKeySet
 {
     /**
-     * @param list<OidcJsonWebKey> $keys
+     * @param  list<OidcJsonWebKey>  $keys
      */
-    public function __construct(public array $keys) {}
+    public function __construct(public array $keys)
+    {
+    }
 }

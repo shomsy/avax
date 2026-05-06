@@ -34,7 +34,7 @@ final class N1QueryDetector
             'total_queries' => $this->queryCount,
             'table_access' => $this->tableAccessLog,
             'is_n1_problem' => $this->isN1Problem(),
-            'patterns'     => $this->detectPatterns(),
+            'patterns' => $this->detectPatterns(),
         ];
     }
 
@@ -52,10 +52,10 @@ final class N1QueryDetector
         foreach ($this->tableAccessLog as $table => $count) {
             if ($count > 10) {
                 $patterns[] = [
-                    'type'       => 'N+1',
-                    'table'      => $table,
+                    'type' => 'N+1',
+                    'table' => $table,
                     'query_count' => $count,
-                    'suggestion' => 'Use eager loading or DataLoader for ' . $table,
+                    'suggestion' => 'Use eager loading or DataLoader for '.$table,
                 ];
             }
         }
@@ -65,7 +65,7 @@ final class N1QueryDetector
 
     public function reset(): void
     {
-        $this->queryLog   = [];
+        $this->queryLog = [];
         $this->queryCount = 0;
         $this->tableAccessLog = [];
     }

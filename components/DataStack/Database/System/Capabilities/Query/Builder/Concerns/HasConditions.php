@@ -21,15 +21,13 @@ trait HasConditions
     /**
      * Add an "OR WHERE" criterion to the current query context.
      *
-     * @param string|Closure $column   Field name or nested logic closure.
-     * @param mixed          $operator Comparison operator.
-     * @param mixed          $value    Comparison value.
-     *
-     * @return QueryBuilder
+     * @param  string|Closure  $column  Field name or nested logic closure.
+     * @param  mixed  $operator  Comparison operator.
+     * @param  mixed  $value  Comparison value.
      *
      * @throws ReflectionException
      */
-    public function orWhere(string|Closure $column, mixed $operator = null, mixed $value = null) : QueryBuilder
+    public function orWhere(string|Closure $column, mixed $operator = null, mixed $value = null): QueryBuilder
     {
         return $this->where(column: $column, operator: $operator, value: $value, boolean: 'OR');
     }
@@ -37,12 +35,10 @@ trait HasConditions
     /**
      * Add a basic filtering criterion to the current query context.
      *
-     * @param string|Closure $column   Field name or nested logic closure.
-     * @param mixed          $operator Comparison operator or value.
-     * @param mixed          $value    Comparison value.
-     * @param string         $boolean  Logical joiner ('AND' or 'OR').
-     *
-     * @return QueryBuilder
+     * @param  string|Closure  $column  Field name or nested logic closure.
+     * @param  mixed  $operator  Comparison operator or value.
+     * @param  mixed  $value  Comparison value.
+     * @param  string  $boolean  Logical joiner ('AND' or 'OR').
      *
      * @throws ReflectionException
      */
@@ -51,14 +47,13 @@ trait HasConditions
         mixed $operator = null,
         mixed $value = null,
         string $boolean = 'AND',
-    ) : QueryBuilder
-    {
+    ): QueryBuilder {
         if ($column instanceof Closure) {
             return $this->whereNested(callback: $column, boolean: $boolean);
         }
 
         if (func_num_args() === 2) {
-            $value    = $operator;
+            $value = $operator;
             $operator = '=';
         }
 
@@ -84,23 +79,22 @@ trait HasConditions
      * Encapsulate multiple conditions within parentheses in the resulting SQL,
      * allowing for complex logical grouping and order-of-operation control.
      *
-     * @param Closure $callback A configuration closure receiving a fresh builder instance.
-     * @param string  $boolean  The logical joiner for the entire nested group.
-     *
+     * @param  Closure  $callback  A configuration closure receiving a fresh builder instance.
+     * @param  string  $boolean  The logical joiner for the entire nested group.
      * @return QueryBuilder A
-     *                                    fresh,
-     *                                    cloned
-     *                                    builder
-     *                                    instance
-     *                                    containing
-     *                                    the
-     *                                    nested
-     *                                    logical
-     *                                    node.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      containing
+     *                      the
+     *                      nested
+     *                      logical
+     *                      node.
      *
      * @throws ReflectionException
      */
-    protected function whereNested(Closure $callback, string $boolean = 'AND') : QueryBuilder
+    protected function whereNested(Closure $callback, string $boolean = 'AND'): QueryBuilder
     {
         $query = $this->newQuery();
 
@@ -128,21 +122,20 @@ trait HasConditions
      * Provide an alternative membership filtering branch, acting as a
      * shorthand for whereIn() with the 'OR' boolean joiner.
      *
-     * @param string $column The technical field name to check.
-     * @param array  $values The collection of allowed data tokens.
-     *
+     * @param  string  $column  The technical field name to check.
+     * @param  array  $values  The collection of allowed data tokens.
      * @return QueryBuilder A
-     *                                    fresh,
-     *                                    cloned
-     *                                    builder
-     *                                    instance
-     *                                    with
-     *                                    the
-     *                                    OR
-     *                                    membership
-     *                                    filter.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      with
+     *                      the
+     *                      OR
+     *                      membership
+     *                      filter.
      */
-    public function orWhereIn(string $column, array $values) : QueryBuilder
+    public function orWhereIn(string $column, array $values): QueryBuilder
     {
         return $this->whereIn(column: $column, values: $values, boolean: 'OR');
     }
@@ -154,27 +147,26 @@ trait HasConditions
      * Provide an expressive DSL for SQL "IN" and "NOT IN" logic,
      * handling bulk parameter binding automatically.
      *
-     * @param string      $column  The technical field name to check for membership.
-     * @param array       $values  The collection of allowed data tokens.
-     * @param string|null $boolean The logical joiner ('AND' or 'OR').
-     * @param bool        $not     Flag indicating whether to use negative (NOT IN) logic.
-     *
+     * @param  string  $column  The technical field name to check for membership.
+     * @param  array  $values  The collection of allowed data tokens.
+     * @param  string|null  $boolean  The logical joiner ('AND' or 'OR').
+     * @param  bool  $not  Flag indicating whether to use negative (NOT IN) logic.
      * @return QueryBuilder A
-     *                                    fresh,
-     *                                    cloned
-     *                                    builder
-     *                                    instance
-     *                                    with
-     *                                    the
-     *                                    membership
-     *                                    filter.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      with
+     *                      the
+     *                      membership
+     *                      filter.
      */
-    public function whereIn(string $column, array $values, ?string $boolean = null, bool $not = false) : QueryBuilder
+    public function whereIn(string $column, array $values, ?string $boolean = null, bool $not = false): QueryBuilder
     {
         $boolean ??= 'AND';
         $operator = $not ? 'NOT IN' : 'IN';
 
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
             column  : $column,
             operator: $operator,
@@ -194,22 +186,21 @@ trait HasConditions
      * Provide an expressive DSL for SQL "BETWEEN" and "NOT BETWEEN" logic,
      * ensuring exactly two values are provided for the range.
      *
-     * @param string      $column  The technical field name to check.
-     * @param array       $values  A pair of values defining the inclusive range.
-     * @param string|null $boolean The logical joiner ('AND' or 'OR').
-     * @param bool        $not     Flag indicating whether to use negative (NOT BETWEEN) logic.
-     *
+     * @param  string  $column  The technical field name to check.
+     * @param  array  $values  A pair of values defining the inclusive range.
+     * @param  string|null  $boolean  The logical joiner ('AND' or 'OR').
+     * @param  bool  $not  Flag indicating whether to use negative (NOT BETWEEN) logic.
      * @return QueryBuilder A
-     *                                    fresh,
-     *                                    cloned
-     *                                    builder
-     *                                    instance
-     *                                    with
-     *                                    the
-     *                                    range
-     *                                    filter.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      with
+     *                      the
+     *                      range
+     *                      filter.
      */
-    public function whereBetween(string $column, array $values, ?string $boolean = null, bool $not = false) : QueryBuilder
+    public function whereBetween(string $column, array $values, ?string $boolean = null, bool $not = false): QueryBuilder
     {
         $boolean ??= 'AND';
         if (count(value: $values) !== 2) {
@@ -218,7 +209,7 @@ trait HasConditions
 
         $operator = $not ? 'NOT BETWEEN' : 'BETWEEN';
 
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
             column  : $column,
             operator: $operator,

@@ -15,5 +15,6 @@ final readonly class EmailChangeRecord
         #[SensitiveParameter]
         public string $newEmail,
         public DateTimeImmutable $expiresAt,
-    ) {}
+    ) {
+    }
 }

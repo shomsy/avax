@@ -12,7 +12,8 @@ final readonly class RecursiveCTE
         public string $name,
         public QueryState $initial,
         public QueryState $recursive,
-    ) {}
+    ) {
+    }
 
     public function register(CTEBuilder $cteBuilder): CTEBuilder
     {

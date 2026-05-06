@@ -18,16 +18,15 @@ final readonly class ResolveCallArguments
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<int, mixed>
      */
     public function resolve(
-        array          $parameters,
-        array          $overrides,
+        array $parameters,
+        array $overrides,
         ResolveDependency $resolveDependency,
-        ?ResolveRequest   $resolveRequest = null,
-    ) : array
-    {
+        ?ResolveRequest $resolveRequest = null,
+    ): array {
         return $this->resolvePlan(
             overrides: $overrides,
             plan     : $this->createPlan(parameters: $parameters),
@@ -37,16 +36,16 @@ final readonly class ResolveCallArguments
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<int, mixed>
      *
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan       $resolvePlan,
+        ResolvePlan $resolvePlan,
         array $overrides,
         ResolveDependency $resolveDependency,
-        ?ResolveRequest   $resolveRequest = null,
+        ?ResolveRequest $resolveRequest = null,
     ): array {
         return $this->resolveDependencies->resolvePlan(
             overrides: $overrides,
@@ -57,7 +56,7 @@ final readonly class ResolveCallArguments
     }
 
     /**
-     * @param list<ReflectionParameter> $parameters
+     * @param  list<ReflectionParameter>  $parameters
      */
     public function createPlan(array $parameters): ResolvePlan
     {

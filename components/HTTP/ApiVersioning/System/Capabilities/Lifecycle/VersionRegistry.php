@@ -16,7 +16,7 @@ final class VersionRegistry
     private array $deprecatedVersions = [];
 
     /**
-     * @param list<int> $supportedVersions
+     * @param  list<int>  $supportedVersions
      */
     public function __construct(private readonly int $currentVersion = 1, array $supportedVersions = [1])
     {
@@ -33,7 +33,7 @@ final class VersionRegistry
         $this->support(version: $this->currentVersion);
     }
 
-    public function support(int $version) : void
+    public function support(int $version): void
     {
         if ($version < 1) {
             throw new InvalidArgumentException(message: 'Supported API version must be greater than zero.');
@@ -42,12 +42,12 @@ final class VersionRegistry
         $this->supportedVersions[$version] = true;
     }
 
-    public function current() : int
+    public function current(): int
     {
         return $this->currentVersion;
     }
 
-    public function markDeprecated(int $version, DateTimeInterface $sunset) : void
+    public function markDeprecated(int $version, DateTimeInterface $sunset): void
     {
         $this->support(version: $version);
         $this->deprecatedVersions[$version] = $sunset;
@@ -56,7 +56,7 @@ final class VersionRegistry
     /**
      * @return list<int>
      */
-    public function supported() : array
+    public function supported(): array
     {
         $versions = array_keys(array: $this->supportedVersions);
         sort(array: $versions);
@@ -64,12 +64,12 @@ final class VersionRegistry
         return $versions;
     }
 
-    public function deprecated(int $version) : bool
+    public function deprecated(int $version): bool
     {
         return isset($this->deprecatedVersions[$version]);
     }
 
-    public function sunset(int $version) : DateTimeInterface|null
+    public function sunset(int $version): ?DateTimeInterface
     {
         return $this->deprecatedVersions[$version] ?? null;
     }

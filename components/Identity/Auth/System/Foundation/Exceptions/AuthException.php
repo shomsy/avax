@@ -6,4 +6,6 @@ namespace Avax\Components\Identity\Auth\System\Foundation\Exceptions;
 
 use RuntimeException;
 
-class AuthException extends RuntimeException {}
+class AuthException extends RuntimeException
+{
+}

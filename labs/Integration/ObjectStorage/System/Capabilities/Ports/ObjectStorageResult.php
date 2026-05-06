@@ -7,11 +7,10 @@ namespace Avax\Labs\Integration\ObjectStorage\System\Capabilities\Ports;
 class ObjectStorageResult
 {
     public function __construct(
-        public readonly bool    $success,
+        public readonly bool $success,
         public readonly ?string $error = null,
         public readonly ?string $url = null,
-    )
-    {
+    ) {
     }
 
     public static function success(?string $url = null): self

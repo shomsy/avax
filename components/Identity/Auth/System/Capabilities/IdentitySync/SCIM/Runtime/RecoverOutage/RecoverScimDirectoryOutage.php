@@ -6,16 +6,18 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Ru
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectoryStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class RecoverScimDirectoryOutage
 {
-    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function execute(RecoverScimDirectoryOutageData $recoverScimDirectoryOutageData) : ScimDirectory
+    public function execute(RecoverScimDirectoryOutageData $recoverScimDirectoryOutageData): ScimDirectory
     {
         $directory = $this->scimDirectoryStore->find(directoryId: $recoverScimDirectoryOutageData->directoryId);
 
@@ -29,8 +31,8 @@ final readonly class RecoverScimDirectoryOutage
             name      : 'auth.scim.directory.outage_recovered',
             occurredAt: $this->clock->now(),
             context   : [
-                            'directory_id' => $scimDirectory->directoryId,
-                            'tenant'       => $scimDirectory->tenantSlug,
+                'directory_id' => $scimDirectory->directoryId,
+                'tenant' => $scimDirectory->tenantSlug,
             ],
         ));
 

@@ -36,19 +36,18 @@ final class PreCommitConfig
     private bool $installHook = false;
 
     /**
-     * @param list<string>|null $enabledChecks
-     * @param list<string>|null $blockingChecks
-     * @param list<string>|null $warningChecks
+     * @param  list<string>|null  $enabledChecks
+     * @param  list<string>|null  $blockingChecks
+     * @param  list<string>|null  $warningChecks
      */
     public function __construct(
-        ?array  $enabledChecks = null,
-        ?array  $blockingChecks = null,
-        ?array  $warningChecks = null,
+        ?array $enabledChecks = null,
+        ?array $blockingChecks = null,
+        ?array $warningChecks = null,
         ?string $reportPath = null,
         ?string $todoPath = null,
         ?string $toolingPath = null
-    )
-    {
+    ) {
         $basePath = getcwd() ?: '.';
 
         $this->enabledChecks = $enabledChecks ?? [
@@ -81,87 +80,87 @@ final class PreCommitConfig
             'DetectTodoComments',
         ];
 
-        $this->reportPath  = $reportPath ?? $basePath . '/Code-Review-And-ToDo/pre-commit';
-        $this->todoPath    = $todoPath ?? $basePath . '/Code-Review-And-ToDo/pre-commit/pre-commit-todo.md';
-        $this->toolingPath = $toolingPath ?? $basePath . '/tooling';
+        $this->reportPath = $reportPath ?? $basePath.'/Code-Review-And-ToDo/pre-commit';
+        $this->todoPath = $todoPath ?? $basePath.'/Code-Review-And-ToDo/pre-commit/pre-commit-todo.md';
+        $this->toolingPath = $toolingPath ?? $basePath.'/tooling';
     }
 
-    public function isCheckEnabled(string $checkName) : bool
+    public function isCheckEnabled(string $checkName): bool
     {
         return in_array($checkName, $this->enabledChecks, true);
     }
 
-    public function getSeverity(string $checkName) : string
+    public function getSeverity(string $checkName): string
     {
         return $this->severityOverrides[$checkName] ?? match (true) {
             $this->isBlocking($checkName) => 'error',
-            $this->isWarning($checkName)  => 'warning',
-            default                       => 'info',
+            $this->isWarning($checkName) => 'warning',
+            default => 'info',
         };
     }
 
-    public function isBlocking(string $checkName) : bool
+    public function isBlocking(string $checkName): bool
     {
         return in_array($checkName, $this->blockingChecks, true);
     }
 
-    public function isWarning(string $checkName) : bool
+    public function isWarning(string $checkName): bool
     {
         return in_array($checkName, $this->warningChecks, true);
     }
 
-    public function getReportPath() : string
+    public function getReportPath(): string
     {
         return $this->reportPath;
     }
 
-    public function getTodoPath() : string
+    public function getTodoPath(): string
     {
         return $this->todoPath;
     }
 
-    public function getToolingPath() : string
+    public function getToolingPath(): string
     {
         return $this->toolingPath;
     }
 
-    public function isDryRun() : bool
+    public function isDryRun(): bool
     {
         return $this->dryRun;
     }
 
-    public function setDryRun(bool $dryRun) : self
+    public function setDryRun(bool $dryRun): self
     {
         $this->dryRun = $dryRun;
 
         return $this;
     }
 
-    public function isAutoFixEnabled() : bool
+    public function isAutoFixEnabled(): bool
     {
         return $this->autoFix;
     }
 
-    public function shouldInstallHook() : bool
+    public function shouldInstallHook(): bool
     {
         return $this->installHook;
     }
 
-    public function setAutoFix(bool $autoFix) : self
+    public function setAutoFix(bool $autoFix): self
     {
         $this->autoFix = $autoFix;
 
         return $this;
     }
 
-    public function setInstallHook(bool $installHook) : self
+    public function setInstallHook(bool $installHook): self
     {
         $this->installHook = $installHook;
 
         return $this;
     }
 
-    public function enableCheck(string $checkName) : self
+    public function enableCheck(string $checkName): self
     {
         if (! in_array($checkName, $this->enabledChecks)) {
             $this->enabledChecks[] = $checkName;
@@ -170,30 +169,30 @@ final class PreCommitConfig
         return $this;
     }
 
-    public function disableCheck(string $checkName) : self
+    public function disableCheck(string $checkName): self
     {
         $this->enabledChecks = array_values(array_filter(
             $this->enabledChecks,
-                                                static fn (string $check) : bool => $check !== $checkName
-                                            ));
+            static fn (string $check): bool => $check !== $checkName
+        ));
 
         return $this;
     }
 
     /** @return list<string> */
-    public function getEnabledChecks() : array
+    public function getEnabledChecks(): array
     {
         return $this->enabledChecks;
     }
 
     /** @return list<string> */
-    public function getBlockingChecks() : array
+    public function getBlockingChecks(): array
     {
         return $this->blockingChecks;
     }
 
     /** @return list<string> */
-    public function getWarningChecks() : array
+    public function getWarningChecks(): array
     {
         return $this->warningChecks;
     }

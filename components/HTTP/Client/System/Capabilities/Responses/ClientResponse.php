@@ -15,17 +15,17 @@ use JsonException;
 final readonly class ClientResponse
 {
     /**
-     * @param int $statusCode HTTP status code (e.g., 200, 404, 500)
-     * @param array<string, list<string>> $headers Response headers (name => [values])
-     * @param string $body Raw response body
-     * @param string $reasonPhrase HTTP reason phrase (e.g., "OK", "Not Found")
-     * @param string $protocol HTTP protocol version (e.g., "1.1", "2.0")
-     * @param float $transferTimeMs Transfer time in milliseconds
-     * @param float $connectTimeMs Connection time in milliseconds
-     * @param float $totalTimeMs Total time in milliseconds
-     * @param int $redirectCount Number of redirects followed
-     * @param string|null $effectiveUrl Final URL after redirects
-     * @param array<string, mixed> $context Additional response context
+     * @param  int  $statusCode  HTTP status code (e.g., 200, 404, 500)
+     * @param  array<string, list<string>>  $headers  Response headers (name => [values])
+     * @param  string  $body  Raw response body
+     * @param  string  $reasonPhrase  HTTP reason phrase (e.g., "OK", "Not Found")
+     * @param  string  $protocol  HTTP protocol version (e.g., "1.1", "2.0")
+     * @param  float  $transferTimeMs  Transfer time in milliseconds
+     * @param  float  $connectTimeMs  Connection time in milliseconds
+     * @param  float  $totalTimeMs  Total time in milliseconds
+     * @param  int  $redirectCount  Number of redirects followed
+     * @param  string|null  $effectiveUrl  Final URL after redirects
+     * @param  array<string, mixed>  $context  Additional response context
      */
     public function __construct(
         public int $statusCode = 200,
@@ -45,7 +45,7 @@ final readonly class ClientResponse
     /**
      * Create a response from raw data (for testing/fakes).
      *
-     * @param array<string, string|string[]> $headers Headers as name => value or name => [values]
+     * @param  array<string, string|string[]>  $headers  Headers as name => value or name => [values]
      */
     public static function fromRaw(
         int $statusCode,
@@ -74,25 +74,25 @@ final readonly class ClientResponse
     private static function defaultReasonPhrase(int $statusCode): string
     {
         return match ($statusCode) {
-            200     => 'OK',
-            201     => 'Created',
-            204     => 'No Content',
-            301     => 'Moved Permanently',
-            302     => 'Found',
-            304     => 'Not Modified',
-            400     => 'Bad Request',
-            401     => 'Unauthorized',
-            403     => 'Forbidden',
-            404     => 'Not Found',
-            405     => 'Method Not Allowed',
-            408     => 'Request Timeout',
-            422     => 'Unprocessable Entity',
-            429     => 'Too Many Requests',
-            500     => 'Internal Server Error',
-            502     => 'Bad Gateway',
-            503     => 'Service Unavailable',
-            504     => 'Gateway Timeout',
-            default => 'Status ' . $statusCode,
+            200 => 'OK',
+            201 => 'Created',
+            204 => 'No Content',
+            301 => 'Moved Permanently',
+            302 => 'Found',
+            304 => 'Not Modified',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            408 => 'Request Timeout',
+            422 => 'Unprocessable Entity',
+            429 => 'Too Many Requests',
+            500 => 'Internal Server Error',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout',
+            default => 'Status '.$statusCode,
         };
     }
 
@@ -185,7 +185,7 @@ final readonly class ClientResponse
     /**
      * Get the decoded JSON body.
      *
-     * @param bool $assoc When true, return associative array; when false, return stdClass
+     * @param  bool  $assoc  When true, return associative array; when false, return stdClass
      *
      * @throws JsonException if the body is not valid JSON
      */
@@ -197,9 +197,9 @@ final readonly class ClientResponse
     /**
      * Get the decoded body using the ResponseDecoder.
      *
-     * @param string|null $format Force a specific format ('json', 'xml', 'text')
+     * @param  string|null  $format  Force a specific format ('json', 'xml', 'text')
      */
-    public function decoded(?string $format = null) : mixed
+    public function decoded(?string $format = null): mixed
     {
         $responseDecoder = new ResponseDecoder();
 

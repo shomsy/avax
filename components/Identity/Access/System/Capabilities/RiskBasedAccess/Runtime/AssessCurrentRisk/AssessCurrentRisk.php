@@ -20,9 +20,10 @@ final readonly class AssessCurrentRisk
         private CurrentAuthentication $currentAuthentication,
         private UserSourceInterface $userSource,
         private DeterministicRiskEngine $deterministicRiskEngine,
-    ) {}
+    ) {
+    }
 
-    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : ?RiskDecision
+    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): ?RiskDecision
     {
         $user = $this->currentAuthentication->read()->user();
 

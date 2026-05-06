@@ -76,11 +76,11 @@ final class ConsistentHashRingTest extends TestCase
         $distribution = [];
 
         foreach ($keys as $keyStr) {
-            $key  = CacheKey::create(key: $keyStr);
+            $key = CacheKey::create(key: $keyStr);
             $node = $consistentHashRing->getNodeForKey(key: $key);
 
             if ($node instanceof CacheNode) {
-                $nodeId                = $node->id->toString();
+                $nodeId = $node->id->toString();
                 $distribution[$nodeId] = ($distribution[$nodeId] ?? 0) + 1;
             }
         }
@@ -93,7 +93,7 @@ final class ConsistentHashRingTest extends TestCase
         $consistentHashRing = new ConsistentHashRing();
 
         $cacheKey = CacheKey::create(key: 'any_key');
-        $node     = $consistentHashRing->getNodeForKey(key: $cacheKey);
+        $node = $consistentHashRing->getNodeForKey(key: $cacheKey);
 
         $this->assertNull(actual: $node);
     }
@@ -153,7 +153,7 @@ final class ConsistentHashRingTest extends TestCase
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_c', status: CacheNodeStatus::HEALTHY));
 
         $cacheKey = CacheKey::create(key: 'test_key');
-        $node     = $consistentHashRing->getNodeForKey(key: $cacheKey);
+        $node = $consistentHashRing->getNodeForKey(key: $cacheKey);
 
         $this->assertNotNull(actual: $node);
         $this->assertEquals(expected: 'node_a', actual: $node->id->toString());

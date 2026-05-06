@@ -2,13 +2,17 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
-final class PolicyProfileSmokeTest {}
+final class PolicyProfileSmokeTest
+{
+}
 
-final class ConditionalInternalService {}
+final class ConditionalInternalService
+{
+}
 
 $relaxed = makeTestContainer(config: CreateContainerConfig::create(
     policyProfile: CreateContainerConfig::POLICY_PROFILE_RELAXED,
@@ -36,11 +40,11 @@ $strict->bind(abstract: ConditionalInternalService::class, concrete: Conditional
     ->profiles(profiles: 'prod');
 
 $relaxedFindings = $relaxed->debugGraph()['policyFindings'];
-$strictFindings  = $strict->debugGraph()['policyFindings'];
+$strictFindings = $strict->debugGraph()['policyFindings'];
 $strictGovernance = $strict->debugGovernance();
 
-$relaxedFlowSeverities       = array_column(array: $relaxedFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
-$strictFlowSeverities        = array_column(array: $strictFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
+$relaxedFlowSeverities = array_column(array: $relaxedFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
+$strictFlowSeverities = array_column(array: $strictFindings[StrictSharedFlowService::class] ?? [], column_key: 'severity', index_key: 'code');
 $relaxedConditionalSeverities = array_column(array: $relaxedFindings[ConditionalInternalService::class] ?? [], column_key: 'severity', index_key: 'code');
 $strictConditionalSeverities = array_column(array: $strictFindings[ConditionalInternalService::class] ?? [], column_key: 'severity', index_key: 'code');
 
@@ -52,4 +56,4 @@ assertSame(expected: 'strict', actual: $strictGovernance['profile'] ?? null, mes
 assertSame(expected: 'closed', actual: $strictGovernance['failMode'] ?? null, message: 'Governance diagnostics should expose the fail-open/fail-closed posture.');
 assertTrue(condition: ($strictGovernance['blocked'] ?? false) === true, message: 'Fail-closed governance should report when policy errors block the composition.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

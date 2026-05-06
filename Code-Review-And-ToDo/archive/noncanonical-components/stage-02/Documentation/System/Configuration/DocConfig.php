@@ -8,5 +8,6 @@ final readonly class DocConfig
 {
     public function __construct(
         public string $output = 'docs/',
-    ) {}
+    ) {
+    }
 }

@@ -9,14 +9,14 @@ namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\En
  */
 enum EndpointPostureSignal: string
 {
-    case IP_REPUTATION      = 'ip_reputation';
-    case GEO_VELOCITY       = 'geo_velocity';
-    case IMPOSSIBLE_TRAVEL  = 'impossible_travel';
+    case IP_REPUTATION = 'ip_reputation';
+    case GEO_VELOCITY = 'geo_velocity';
+    case IMPOSSIBLE_TRAVEL = 'impossible_travel';
     case DEVICE_FINGERPRINT = 'device_fingerprint';
     case BROWSER_FINGERPRINT = 'browser_fingerprint';
-    case ASN_REPUTATION     = 'asn_reputation';
-    case VPN_DETECTION      = 'vpn_detection';
-    case PROXY_DETECTION    = 'proxy_detection';
+    case ASN_REPUTATION = 'asn_reputation';
+    case VPN_DETECTION = 'vpn_detection';
+    case PROXY_DETECTION = 'proxy_detection';
 }
 
 /**
@@ -24,5 +24,7 @@ enum EndpointPostureSignal: string
  */
 final readonly class EndpointPostureSignalData
 {
-    public function __construct(public EndpointPostureSignal $type, public float $score, public bool $anomalous, public string $detail) {}
+    public function __construct(public EndpointPostureSignal $type, public float $score, public bool $anomalous, public string $detail)
+    {
+    }
 }

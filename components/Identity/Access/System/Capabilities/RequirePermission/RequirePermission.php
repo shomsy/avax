@@ -20,13 +20,14 @@ final readonly class RequirePermission
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated
      * @throws PermissionDenied
      */
-    public function execute(UserPermission $userPermission) : void
+    public function execute(UserPermission $userPermission): void
     {
         $user = $this->currentAuthentication->read()->user();
 

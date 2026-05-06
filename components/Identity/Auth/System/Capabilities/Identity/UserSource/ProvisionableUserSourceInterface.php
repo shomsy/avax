@@ -13,19 +13,19 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
  */
 interface ProvisionableUserSourceInterface extends UserSourceInterface
 {
-    public function updateEmail(UserId $userId, string $email) : void;
+    public function updateEmail(UserId $userId, string $email): void;
 
     /**
-     * @param list<UserRole> $roles
+     * @param  list<UserRole>  $roles
      */
-    public function replaceRoles(UserId $userId, array $roles) : void;
+    public function replaceRoles(UserId $userId, array $roles): void;
 
     /**
-     * @param list<UserPermission> $permissions
+     * @param  list<UserPermission>  $permissions
      */
-    public function replacePermissions(UserId $userId, array $permissions) : void;
+    public function replacePermissions(UserId $userId, array $permissions): void;
 
-    public function deactivate(UserId $userId) : void;
+    public function deactivate(UserId $userId): void;
 
-    public function activate(UserId $userId) : void;
+    public function activate(UserId $userId): void;
 }

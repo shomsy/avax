@@ -12,15 +12,16 @@ final readonly class RateLimitDecision
         public int $remaining,
         public int $retryAfter,
         public int $resetSeconds,
-    ) {}
+    ) {
+    }
 
-    public function headers() : array
+    public function headers(): array
     {
         return [
             'X-RateLimit-Limit' => (string) $this->limit,
             'X-RateLimit-Remaining' => (string) $this->remaining,
             'X-RateLimit-Reset' => (string) $this->resetSeconds,
-            'Retry-After'       => (string) $this->retryAfter,
+            'Retry-After' => (string) $this->retryAfter,
         ];
     }
 }

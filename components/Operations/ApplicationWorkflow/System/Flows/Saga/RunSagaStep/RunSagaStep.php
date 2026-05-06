@@ -6,15 +6,13 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\RunSa
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaStepDefinition;
-use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\InspectSaga\InspectSaga;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\SagaInstance;
-use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaState\StoreSagaState;
 use Throwable;
 
 final readonly class RunSagaStep
 {
     public function execute(
-        SagaInstance   $sagaInstance,
+        SagaInstance $sagaInstance,
         SagaDefinition $sagaDefinition,
         callable $stepRunner,
     ): SagaStepResult {
@@ -38,7 +36,7 @@ final readonly class RunSagaStep
         $attempt = 1;
         $startTime = microtime(true);
 
-        while ( $attempt <= $sagaStepExecutionPolicy->maxRetries + 1 ) {
+        while ($attempt <= $sagaStepExecutionPolicy->maxRetries + 1) {
             try {
                 $output = $stepRunner($stepDef, $sagaInstance->data);
                 $duration = (microtime(true) - $startTime) * 1000;
@@ -77,7 +75,7 @@ final readonly class RunSagaStep
     }
 
     public function scheduleNext(
-        SagaInstance   $sagaInstance,
+        SagaInstance $sagaInstance,
         SagaStepResult $sagaStepResult,
         SagaDefinition $sagaDefinition,
     ): SagaInstance {
@@ -97,7 +95,7 @@ final readonly class RunSagaStep
         );
     }
 
-    public function chooseNext(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : ?SagaStepDefinition
+    public function chooseNext(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition): ?SagaStepDefinition
     {
         $currentIndex = $sagaInstance->currentStepIndex;
         $nextIndex = $currentIndex + 1;

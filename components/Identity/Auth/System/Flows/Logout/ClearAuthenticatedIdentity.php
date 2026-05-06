@@ -14,7 +14,8 @@ final readonly class ClearAuthenticatedIdentity
 {
     public function __construct(
         private Sessions $sessions,
-    ) {}
+    ) {
+    }
 
     public function execute(): void
     {

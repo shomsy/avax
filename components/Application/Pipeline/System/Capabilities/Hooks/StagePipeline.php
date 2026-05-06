@@ -12,7 +12,7 @@ final class StagePipeline
     public function register(PipelineHook $pipelineHook): void
     {
         $this->hooks[] = $pipelineHook;
-        usort($this->hooks, static fn($a, $b): int => $b->priority <=> $a->priority);
+        usort($this->hooks, static fn ($a, $b): int => $b->priority <=> $a->priority);
     }
 
     public function execute(string $stage, mixed $initial = null): mixed
@@ -30,6 +30,6 @@ final class StagePipeline
 
     public function hasHooks(string $stage): bool
     {
-        return array_any($this->hooks, fn($hook): bool => $hook->name === $stage);
+        return array_any($this->hooks, fn ($hook): bool => $hook->name === $stage);
     }
 }

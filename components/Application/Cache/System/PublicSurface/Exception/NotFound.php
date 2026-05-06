@@ -11,9 +11,9 @@ final class NotFound extends RuntimeException
     public function __construct(string $name, array $available)
     {
         parent::__construct(message: sprintf(
-                                         'Cache "%s" not found in registry. Available: %s',
-                                         $name,
-                                         implode(', ', $available),
-                                     ));
+            'Cache "%s" not found in registry. Available: %s',
+            $name,
+            implode(', ', $available),
+        ));
     }
 }

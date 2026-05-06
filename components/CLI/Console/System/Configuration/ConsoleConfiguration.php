@@ -9,6 +9,7 @@ final readonly class ConsoleConfiguration
     public function __construct(
         public string $name = 'Avax Console',
         public string $version = '1.0.0',
-        public bool   $interactive = true,
-    ) {}
+        public bool $interactive = true,
+    ) {
+    }
 }

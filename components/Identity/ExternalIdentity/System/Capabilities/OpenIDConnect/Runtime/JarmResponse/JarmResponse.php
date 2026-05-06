@@ -13,5 +13,6 @@ final readonly class JarmResponse
         #[SensitiveParameter]
         public string $responseJwt,
         public DateTimeImmutable $expiresAt,
-    ) {}
+    ) {
+    }
 }

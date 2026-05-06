@@ -9,9 +9,9 @@ use Exception;
 
 final class ReportExceptionToLogger
 {
-    public function report(Exception $exception, RequestInterface $request) : void
+    public function report(Exception $exception, RequestInterface $request): void
     {
         // Integration with Logger component would go here
-        error_log('HTTP Exception: ' . $exception->getMessage() . ' for URI: ' . $request->getUri());
+        error_log('HTTP Exception: '.$exception->getMessage().' for URI: '.$request->getUri());
     }
 }

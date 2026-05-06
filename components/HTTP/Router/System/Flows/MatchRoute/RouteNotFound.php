@@ -6,4 +6,6 @@ namespace Avax\Components\HTTP\Router\System\Flows\MatchRoute;
 
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 
-final class RouteNotFound extends RouterFailure {}
+final class RouteNotFound extends RouterFailure
+{
+}

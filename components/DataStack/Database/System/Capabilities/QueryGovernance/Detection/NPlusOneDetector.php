@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance
 
 final readonly class NPlusOneDetector
 {
-    public static function detect(string $query) : bool
+    public static function detect(string $query): bool
     {
         if (preg_match('/^\s*SELECT\s+.+\s+FROM\s+\w+\s+WHERE/i', $query)) {
             return false;

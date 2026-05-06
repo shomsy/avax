@@ -15,15 +15,15 @@ final readonly class TenantSecurityConfiguration
     public array $verifiedDomains;
 
     /**
-     * @param list<string>                $verifiedDomains
-     * @param array<string, list<string>> $groupRoleMap
+     * @param  list<string>  $verifiedDomains
+     * @param  array<string, list<string>>  $groupRoleMap
      */
     public function __construct(
         public string $tenantSlug,
         public ?string $federationConnectionId = null,
         public ?string $scimDirectoryId = null,
-        ?array  $verifiedDomains = null,
-        ?array  $groupRoleMap = null,
+        ?array $verifiedDomains = null,
+        ?array $groupRoleMap = null,
         ?string $policyProfile = null,
         public int $rolloutVersion = 1,
     ) {

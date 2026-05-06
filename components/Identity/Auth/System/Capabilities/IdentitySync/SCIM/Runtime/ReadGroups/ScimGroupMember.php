@@ -14,5 +14,6 @@ final readonly class ScimGroupMember
         public string $username,
         #[SensitiveParameter]
         public string $email,
-    ) {}
+    ) {
+    }
 }

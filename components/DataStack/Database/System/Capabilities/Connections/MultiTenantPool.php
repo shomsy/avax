@@ -12,7 +12,9 @@ final class MultiTenantPool implements ConnectionPool
 {
     private array $pools = [];
 
-    public function __construct(private readonly array $tenantConfigs) {}
+    public function __construct(private readonly array $tenantConfigs)
+    {
+    }
 
     public function getForTenant(string $tenantId): PDO
     {
@@ -31,5 +33,7 @@ final class MultiTenantPool implements ConnectionPool
     }
 
     #[Override]
-    public function release(PDO $pdo) : void {}
+    public function release(PDO $pdo): void
+    {
+    }
 }

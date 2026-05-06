@@ -7,10 +7,11 @@ namespace Avax\Components\Operations\Mail\System\Capabilities\Address;
 final readonly class Envelope
 {
     public function __construct(
-        public string  $from,
+        public string $from,
         public ?string $returnPath = null,
-        public array   $senderOptions = [],
-    ) {}
+        public array $senderOptions = [],
+    ) {
+    }
 
     public function withFrom(string $from): self
     {

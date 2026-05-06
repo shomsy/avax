@@ -17,11 +17,10 @@ final class MaterializedView implements MaterializedViewInterface
     private int $rowCount = 0;
 
     public function __construct(
-        private readonly string  $name,
+        private readonly string $name,
         private readonly Closure $query,
-        private readonly float   $stalenessThreshold = 3600.0
-    )
-    {
+        private readonly float $stalenessThreshold = 3600.0
+    ) {
     }
 
     public function name(): string
@@ -66,7 +65,7 @@ final class MaterializedView implements MaterializedViewInterface
 
         return array_values(array_filter(
             $this->data,
-            static fn(array $row): bool => array_all($filters, fn($value, $key): bool => isset($row[$key]) && $row[$key] === $value),
+            static fn (array $row): bool => array_all($filters, fn ($value, $key): bool => isset($row[$key]) && $row[$key] === $value),
         ));
     }
 

@@ -7,7 +7,9 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDCo
 final readonly class OidcUserInfo
 {
     /**
-     * @param array<string, bool|int|string> $claims
+     * @param  array<string, bool|int|string>  $claims
      */
-    public function __construct(public array $claims) {}
+    public function __construct(public array $claims)
+    {
+    }
 }

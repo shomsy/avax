@@ -6,5 +6,7 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Ru
 
 final readonly class ApproveClientRegistrationData
 {
-    public function __construct(public string $clientId, public string $approvedBy) {}
+    public function __construct(public string $clientId, public string $approvedBy)
+    {
+    }
 }

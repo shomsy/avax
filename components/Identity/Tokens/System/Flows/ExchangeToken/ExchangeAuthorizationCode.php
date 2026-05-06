@@ -20,50 +20,51 @@ final readonly class ExchangeAuthorizationCode
 {
     public function __construct(
         private AuthorizationCodeStoreInterface $authorizationCodeStore,
-        private TokenCodecInterface             $tokenCodec,
-        private DateInterval                    $accessTokenTtl = new DateInterval(duration: 'PT15M'),
-        private DateInterval                    $refreshTokenTtl = new DateInterval(duration: 'P30D'),
-    ) {}
+        private TokenCodecInterface $tokenCodec,
+        private DateInterval $accessTokenTtl = new DateInterval(duration: 'PT15M'),
+        private DateInterval $refreshTokenTtl = new DateInterval(duration: 'P30D'),
+    ) {
+    }
 
-    public function execute(#[SensitiveParameter] string $code) : stdClass
+    public function execute(#[SensitiveParameter] string $code): stdClass
     {
-        $now    = new DateTimeImmutable();
+        $now = new DateTimeImmutable();
         $record = $this->authorizationCodeStore->consume(code: $code, moment: $now);
 
-        if (!$record instanceof AuthorizationCodeRecord) {
+        if (! $record instanceof AuthorizationCodeRecord) {
             throw new RuntimeException(message: 'Authorization code is invalid or expired.');
         }
 
-        $accessTokenId    = bin2hex(string: random_bytes(length: 16));
-        $refreshTokenId   = bin2hex(string: random_bytes(length: 16));
-        $accessExpiresAt  = $now->add(interval: $this->accessTokenTtl);
+        $accessTokenId = bin2hex(string: random_bytes(length: 16));
+        $refreshTokenId = bin2hex(string: random_bytes(length: 16));
+        $accessExpiresAt = $now->add(interval: $this->accessTokenTtl);
         $refreshExpiresAt = $now->add(interval: $this->refreshTokenTtl);
-        $commonClaims     = [
-            'sub'       => $record->subject,
+        $commonClaims = [
+            'sub' => $record->subject,
             'client_id' => $record->clientId,
-            'scopes'    => $record->scopes,
-            'iat'       => $now->getTimestamp(),
+            'scopes' => $record->scopes,
+            'iat' => $now->getTimestamp(),
         ];
 
         $accessToken = $this->tokenCodec->encode(claims: $commonClaims + [
-                                                           'jti'  => $accessTokenId,
-                                                           'exp'  => $accessExpiresAt->getTimestamp(),
-                                                           'type' => 'access',
-                                                       ]);
+            'jti' => $accessTokenId,
+            'exp' => $accessExpiresAt->getTimestamp(),
+            'type' => 'access',
+        ]);
 
         $refreshToken = $this->tokenCodec->encode(claims: $commonClaims + [
-                                                            'jti'  => $refreshTokenId,
-                                                            'exp'  => $refreshExpiresAt->getTimestamp(),
-                                                            'type' => 'refresh',
-                                                        ]);
+            'jti' => $refreshTokenId,
+            'exp' => $refreshExpiresAt->getTimestamp(),
+            'type' => 'refresh',
+        ]);
 
         return (object) [
-            'access_token'  => $accessToken,
+            'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
-            'token_type'    => 'Bearer',
-            'expires_in'    => $accessExpiresAt->getTimestamp() - $now->getTimestamp(),
-            'expires_at'    => $accessExpiresAt,
-            'scope'         => implode(separator: ' ', array: $record->scopes),
+            'token_type' => 'Bearer',
+            'expires_in' => $accessExpiresAt->getTimestamp() - $now->getTimestamp(),
+            'expires_at' => $accessExpiresAt,
+            'scope' => implode(separator: ' ', array: $record->scopes),
         ];
     }
 }

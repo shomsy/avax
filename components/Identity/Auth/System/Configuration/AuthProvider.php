@@ -10,7 +10,7 @@ namespace Avax\Components\Identity\Auth\System\Configuration;
  */
 final class AuthProvider
 {
-    public function register() : void
+    public function register(): void
     {
         // Container registration logic
     }

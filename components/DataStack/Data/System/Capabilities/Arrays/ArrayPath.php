@@ -8,7 +8,8 @@ final readonly class ArrayPath
 {
     public function __construct(
         private string $path,
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $path): self
     {

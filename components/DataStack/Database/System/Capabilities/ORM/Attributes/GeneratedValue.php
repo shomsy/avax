@@ -9,5 +9,7 @@ use Attribute;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 final readonly class GeneratedValue
 {
-    public function __construct(public string $strategy = 'auto') {}
+    public function __construct(public string $strategy = 'auto')
+    {
+    }
 }

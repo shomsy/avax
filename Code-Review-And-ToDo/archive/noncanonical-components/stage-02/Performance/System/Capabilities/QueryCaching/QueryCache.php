@@ -11,7 +11,7 @@ final class QueryCache
     /** @var array<string, array{value:mixed,expires_at:int|null}> */
     private array $items = [];
 
-    public function remember(string $key, Closure $query, ?int $ttlSeconds = 60) : mixed
+    public function remember(string $key, Closure $query, ?int $ttlSeconds = 60): mixed
     {
         $cached = $this->items[$key] ?? null;
 
@@ -19,16 +19,16 @@ final class QueryCache
             return $cached['value'];
         }
 
-        $value             = $query();
+        $value = $query();
         $this->items[$key] = [
-            'value'      => $value,
+            'value' => $value,
             'expires_at' => $ttlSeconds === null ? null : time() + $ttlSeconds,
         ];
 
         return $value;
     }
 
-    public function forget(string $key) : void
+    public function forget(string $key): void
     {
         unset($this->items[$key]);
     }

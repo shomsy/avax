@@ -11,18 +11,18 @@ final readonly class CompiledCacheArtifact
     public function __construct(
         public CompiledCacheName $name,
         public CompiledCachePath $path,
-        public Timestamp         $createdAt,
-        public string            $sourceFingerprint,
-        public mixed             $payload = null
-    ) {}
+        public Timestamp $createdAt,
+        public string $sourceFingerprint,
+        public mixed $payload = null
+    ) {
+    }
 
     public static function create(
         string $name,
         string $path,
-        int    $createdAt,
+        int $createdAt,
         string $sourceFingerprint
-    ) : self
-    {
+    ): self {
         return new self(
             name             : new CompiledCacheName($name),
             path             : new CompiledCachePath($path),
@@ -31,7 +31,7 @@ final readonly class CompiledCacheArtifact
         );
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->path->toString();
     }

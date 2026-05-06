@@ -14,13 +14,12 @@ final class MemcachedCacheStore implements CacheStoreInterface
 
     public function __construct(
         private array $config = [],
-    )
-    {
+    ) {
         $this->memcached = new Memcached();
         $this->connect();
     }
 
-    private function connect() : void
+    private function connect(): void
     {
         $servers = $this->config['servers'] ?? [['127.0.0.1', 11211]];
 
@@ -30,19 +29,19 @@ final class MemcachedCacheStore implements CacheStoreInterface
     }
 
     #[Override]
-    public function forget(string $key) : bool
+    public function forget(string $key): bool
     {
         return $this->memcached->delete($key);
     }
 
     #[Override]
-    public function flush() : bool
+    public function flush(): bool
     {
         return $this->memcached->flush();
     }
 
     #[Override]
-    public function remember(string $key, int $ttl, callable $callback) : mixed
+    public function remember(string $key, int $ttl, callable $callback): mixed
     {
         if ($this->has($key)) {
             return $this->get($key);
@@ -55,7 +54,7 @@ final class MemcachedCacheStore implements CacheStoreInterface
     }
 
     #[Override]
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         $this->memcached->get($key);
 
@@ -63,7 +62,7 @@ final class MemcachedCacheStore implements CacheStoreInterface
     }
 
     #[Override]
-    public function get(string $key) : mixed
+    public function get(string $key): mixed
     {
         $value = $this->memcached->get($key);
 
@@ -71,13 +70,13 @@ final class MemcachedCacheStore implements CacheStoreInterface
     }
 
     #[Override]
-    public function set(string $key, mixed $value, int $ttl = 0) : bool
+    public function set(string $key, mixed $value, int $ttl = 0): bool
     {
         return $this->memcached->set($key, $value, $ttl);
     }
 
     #[Override]
-    public function tags(array $tags) : TaggedCache
+    public function tags(array $tags): TaggedCache
     {
         return new TaggedCache($this, $tags);
     }

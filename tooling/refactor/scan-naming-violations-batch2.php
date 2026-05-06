@@ -17,12 +17,12 @@ $it = new RecursiveIteratorIterator(
 
 foreach ($it as $info) {
     $path = $info->getPathname();
-    $relPath = str_replace($baseDir . '/', '', $path);
-    
+    $relPath = str_replace($baseDir.'/', '', $path);
+
     if (
-        str_contains($path, '/vendor/') || 
-        str_contains($path, '/tests/') || 
-        str_contains($path, '/.git/') || 
+        str_contains($path, '/vendor/') ||
+        str_contains($path, '/tests/') ||
+        str_contains($path, '/.git/') ||
         str_contains($path, '/.kilo/') ||
         str_contains($path, '/.agents/') ||
         str_contains($path, '/tooling/')
@@ -48,5 +48,5 @@ if (empty($violations)) {
     foreach ($violations as $v) {
         echo "{$v['type']}: {$v['path']} -> {$v['violation']}\n";
     }
-    echo "\nTotal: " . count($violations) . "\n";
+    echo "\nTotal: ".count($violations)."\n";
 }

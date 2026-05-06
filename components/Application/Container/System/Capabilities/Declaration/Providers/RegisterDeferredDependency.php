@@ -12,12 +12,12 @@ interface RegisterDeferredDependency extends RegisterDependency
     /**
      * Reports whether the provider is deferred.
      */
-    public function deferred() : bool;
+    public function deferred(): bool;
 
     /**
      * Returns the service ids owned by this deferred provider.
      *
      * @return list<string>
      */
-    public function provides() : array;
+    public function provides(): array;
 }

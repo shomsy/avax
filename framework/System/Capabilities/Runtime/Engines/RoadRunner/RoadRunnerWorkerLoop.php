@@ -9,9 +9,11 @@ use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerLoop;
 
 final readonly class RoadRunnerWorkerLoop
 {
-    public function __construct(private WorkerLoop $workerLoop) {}
+    public function __construct(private WorkerLoop $workerLoop)
+    {
+    }
 
-    public function run() : WorkerLifecycle
+    public function run(): WorkerLifecycle
     {
         return $this->workerLoop->run();
     }

@@ -29,7 +29,7 @@ final class FilesystemStorage
 
     private static function getStorage(): StorageInterface
     {
-        if (!self::$storage instanceof StorageInterface) {
+        if (! self::$storage instanceof StorageInterface) {
             throw new RuntimeException('Storage not configured. Call Storage::setStorage() first.');
         }
 

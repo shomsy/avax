@@ -24,7 +24,8 @@ final readonly class VerifyBackupCode
         private PasswordHasher $passwordHasher,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     public function execute(UserId $userId, #[SensitiveParameter] string $code): bool
     {
@@ -52,7 +53,7 @@ final readonly class VerifyBackupCode
                 name      : 'auth.mfa.backup_code.used',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'user_id' => $userId->value,
+                    'user_id' => $userId->value,
                     'backup_code_id' => $backupCode->backupCodeId,
                 ],
             ));

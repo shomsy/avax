@@ -17,5 +17,6 @@ final readonly class LogoutData
         public ?string $logoutToken = null,
         public ?string $postLogoutRedirectUri = null,
         public ?string $state = null,
-    ) {}
+    ) {
+    }
 }

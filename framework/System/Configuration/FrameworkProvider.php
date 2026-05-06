@@ -9,19 +9,18 @@ use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterf
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafety;
-use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 
 /**
  * Framework provider that registers core framework capabilities.
  */
 final class FrameworkProvider implements ComponentProviderInterface
 {
-    public static function name() : string
+    public static function name(): string
     {
         return 'framework';
     }
 
-    public function register(ComponentRegistry $componentRegistry) : void
+    public function register(ComponentRegistry $componentRegistry): void
     {
         $componentRegistry->register(
             new ComponentDefinition(
@@ -38,7 +37,7 @@ final class FrameworkProvider implements ComponentProviderInterface
         );
     }
 
-    public function boot(RuntimeInterface $runtime) : void
+    public function boot(RuntimeInterface $runtime): void
     {
         // RuntimeSafety is handled via the Runtime's constructor
     }

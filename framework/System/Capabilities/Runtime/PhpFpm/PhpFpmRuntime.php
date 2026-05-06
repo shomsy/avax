@@ -12,27 +12,27 @@ final readonly class PhpFpmRuntime
 {
     public function __construct(
         private HttpKernelInterface $httpKernel,
-        private PhpFpmRequestReader  $phpFpmRequestReader = new PhpFpmRequestReader(),
+        private PhpFpmRequestReader $phpFpmRequestReader = new PhpFpmRequestReader(),
         private PhpFpmResponseSender $phpFpmResponseSender = new PhpFpmResponseSender(),
-    ) {}
+    ) {
+    }
 
-    public function handle(RuntimeRequest $runtimeRequest) : RuntimeResponse
+    public function handle(RuntimeRequest $runtimeRequest): RuntimeResponse
     {
         return $this->httpKernel->handle(request: $runtimeRequest);
     }
 
     /**
-     * @param array<string, string> $server
-     * @param array<string, mixed> $query
-     * @param array<string, mixed> $parsedBody
+     * @param  array<string, string>  $server
+     * @param  array<string, mixed>  $query
+     * @param  array<string, mixed>  $parsedBody
      */
     public function handleGlobals(
         array $server,
         array $query = [],
         array $parsedBody = [],
-        string|null $body = null,
-    ) : RuntimeResponse
-    {
+        ?string $body = null,
+    ): RuntimeResponse {
         return $this->handle(
             runtimeRequest: $this->phpFpmRequestReader->read(
                 server    : $server,
@@ -43,7 +43,7 @@ final readonly class PhpFpmRuntime
         );
     }
 
-    public function send(RuntimeResponse $runtimeResponse) : void
+    public function send(RuntimeResponse $runtimeResponse): void
     {
         $this->phpFpmResponseSender->send(runtimeResponse: $runtimeResponse);
     }

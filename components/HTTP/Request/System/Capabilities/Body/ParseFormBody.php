@@ -9,7 +9,7 @@ final readonly class ParseFormBody
     /**
      * @return array<string, mixed>
      */
-    public function parse(string $body) : array
+    public function parse(string $body): array
     {
         if ($body === '') {
             return [];

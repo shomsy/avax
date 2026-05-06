@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\PreCommit;
+
 /**
  * Avax Pre-Commit Hook Installer
  *

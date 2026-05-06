@@ -22,16 +22,17 @@ final readonly class RequireFreshMfa
         private CurrentAuthentication $currentAuthentication,
         private Clock $clock,
         private int $maxAgeSeconds = 300,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated
      * @throws FreshMfaRequired
      */
-    public function execute(?int $maxAgeSeconds = null) : void
+    public function execute(?int $maxAgeSeconds = null): void
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $user                  = $authenticationContext->user();
+        $user = $authenticationContext->user();
         $maxAgeSeconds ??= $this->maxAgeSeconds;
 
         if (! $user instanceof AuthenticatedUser) {

@@ -8,6 +8,6 @@ final class CompileRoutePattern
 {
     public function compile(string $pattern): string
     {
-        return '#^' . preg_replace('/\{([a-zA-Z0-9]+)\}/', '(?P<$1>[^/]+)', $pattern) . '$#';
+        return '#^'.preg_replace('/\{([a-zA-Z0-9]+)\}/', '(?P<$1>[^/]+)', $pattern).'$#';
     }
 }

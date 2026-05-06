@@ -9,7 +9,7 @@ use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
  * This is an example of how to define routes in Avax.
  */
 $router = static function (RouterInterface $routes): void {
-    $routes->get('/', static fn() => [
+    $routes->get('/', static fn () => [
         'name' => 'Avax Golden Path App',
         'version' => '1.0.0',
         'message' => 'Welcome to Avax Framework',

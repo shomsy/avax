@@ -11,12 +11,13 @@ final readonly class ListComponents
 {
     public function __construct(
         private ComponentDiscovery $componentDiscovery = new ComponentDiscovery(),
-    ) {}
+    ) {
+    }
 
     /**
-     * @param array<string, ComponentManifest> $manifests
+     * @param  array<string, ComponentManifest>  $manifests
      */
-    public static function printTable(array $manifests) : void
+    public static function printTable(array $manifests): void
     {
         if ($manifests === []) {
             echo "No components registered.\n";
@@ -25,17 +26,17 @@ final readonly class ListComponents
         }
 
         $width = 100;
-        echo str_repeat('=', $width) . "\n";
+        echo str_repeat('=', $width)."\n";
         echo sprintf("%-25s | %-30s | %-15s | %s\n", 'Name', 'Provides', 'Depends On', 'Resettable');
-        echo str_repeat('=', $width) . "\n";
+        echo str_repeat('=', $width)."\n";
 
         foreach ($manifests as $manifest) {
             $provides = $manifest->path ?? $manifest->name;
-            $depends  = implode(', ', $manifest->dependencies);
+            $depends = implode(', ', $manifest->dependencies);
             $resettable = 'no';
 
             if (strlen($provides) > 30) {
-                $provides = substr($provides, 0, 27) . '...';
+                $provides = substr($provides, 0, 27).'...';
             }
 
             echo sprintf(
@@ -47,14 +48,14 @@ final readonly class ListComponents
             );
         }
 
-        echo str_repeat('=', $width) . "\n";
-        echo 'Total: ' . count($manifests) . " component(s)\n";
+        echo str_repeat('=', $width)."\n";
+        echo 'Total: '.count($manifests)." component(s)\n";
     }
 
     /**
-     * @param list<string> $searchPaths
+     * @param  list<string>  $searchPaths
      */
-    public function search(array $searchPaths) : self
+    public function search(array $searchPaths): self
     {
         $this->componentDiscovery->discover($searchPaths);
 
@@ -64,7 +65,7 @@ final readonly class ListComponents
     /**
      * @return array<string, ComponentManifest>
      */
-    public function list() : array
+    public function list(): array
     {
         return $this->componentDiscovery->all();
     }

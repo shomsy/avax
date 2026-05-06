@@ -8,12 +8,13 @@ final readonly class LoadConfiguration
 {
     public function __construct(
         private ConfigurationRepository $configurationRepository,
-    ) {}
+    ) {
+    }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
-    public function load(array $config) : void
+    public function load(array $config): void
     {
         $this->configurationRepository->load($config);
     }

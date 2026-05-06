@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 final class MetricsBackendTest extends TestCase
 {
-    public function test_prometheus_backend_counts() : void
+    public function test_prometheus_backend_counts(): void
     {
         $prometheusBackend = new PrometheusBackend();
 
@@ -25,7 +25,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertEquals(expected: 3, actual: $prometheusBackend->getCounters()['cache.miss']);
     }
 
-    public function test_prometheus_backend_gauges() : void
+    public function test_prometheus_backend_gauges(): void
     {
         $prometheusBackend = new PrometheusBackend();
 
@@ -34,7 +34,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertEquals(expected: 0.85, actual: $prometheusBackend->getGauges()['cache.hit_rate']);
     }
 
-    public function test_prometheus_backend_histogram() : void
+    public function test_prometheus_backend_histogram(): void
     {
         $prometheusBackend = new PrometheusBackend();
 
@@ -45,7 +45,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertCount(expectedCount: 3, haystack: $prometheusBackend->getHistograms()['cache.latency']);
     }
 
-    public function test_prometheus_render() : void
+    public function test_prometheus_render(): void
     {
         $prometheusBackend = new PrometheusBackend();
 
@@ -60,7 +60,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertStringContainsString(needle: '# TYPE cache.hit_rate gauge', haystack: $rendered);
     }
 
-    public function test_statsd_backend_messages() : void
+    public function test_statsd_backend_messages(): void
     {
         $statsDBackend = new StatsDBackend();
 
@@ -75,7 +75,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertContains(needle: 'cache.latency:150|ms', haystack: $messages);
     }
 
-    public function test_statsd_percentile() : void
+    public function test_statsd_percentile(): void
     {
         $statsDBackend = new StatsDBackend();
 
@@ -91,7 +91,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertEquals(expected: 300, actual: $percentile['cache.latency']);
     }
 
-    public function test_metrics_sink_records_hits() : void
+    public function test_metrics_sink_records_hits(): void
     {
         $prometheusBackend = new PrometheusBackend();
         $metricsSink = new MetricsSink(prefix: 'cache', backend: $prometheusBackend);
@@ -101,7 +101,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertEquals(expected: 1, actual: $prometheusBackend->getCounters()['cache.hit']);
     }
 
-    public function test_metrics_sink_records_latency() : void
+    public function test_metrics_sink_records_latency(): void
     {
         $prometheusBackend = new PrometheusBackend();
         $metricsSink = new MetricsSink(prefix: 'cache', backend: $prometheusBackend);
@@ -111,7 +111,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertEquals(expected: [5], actual: $prometheusBackend->getTimings()['cache.latency'] ?? []);
     }
 
-    public function test_metrics_sink_records_all_metrics() : void
+    public function test_metrics_sink_records_all_metrics(): void
     {
         $prometheusBackend = new PrometheusBackend();
         $metricsSink = new MetricsSink(prefix: 'cache', backend: $prometheusBackend);
@@ -133,7 +133,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertEquals(expected: 1, actual: $prometheusBackend->getCounters()['cache.stale_served']);
     }
 
-    public function test_metrics_sink_records_cache_metrics() : void
+    public function test_metrics_sink_records_cache_metrics(): void
     {
         $prometheusBackend = new PrometheusBackend();
         $metricsSink = new MetricsSink(prefix: 'cache', backend: $prometheusBackend);
@@ -150,7 +150,7 @@ final class MetricsBackendTest extends TestCase
         $this->assertEquals(expected: 0.75, actual: $prometheusBackend->getGauges()['cache.hit_rate']);
     }
 
-    public function test_metrics_sink_flush() : void
+    public function test_metrics_sink_flush(): void
     {
         $statsDBackend = new StatsDBackend();
         $metricsSink = new MetricsSink(prefix: 'cache', backend: $statsDBackend);

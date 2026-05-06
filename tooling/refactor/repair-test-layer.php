@@ -39,43 +39,43 @@ final class RepairTestLayer
         $this->defineNamespaceRewrites();
     }
 
-    private function defineNamespaceRewrites() : void
+    private function defineNamespaceRewrites(): void
     {
         $componentMoves = [
-            'FeatureFlags'       => 'Application\\FeatureFlags',
-            'Pipeline'           => 'Application\\Pipeline',
-            'ApiVersioning'      => 'HTTP\\ApiVersioning',
-            'AfterResponse'      => 'HTTP\\AfterResponse',
+            'FeatureFlags' => 'Application\\FeatureFlags',
+            'Pipeline' => 'Application\\Pipeline',
+            'ApiVersioning' => 'HTTP\\ApiVersioning',
+            'AfterResponse' => 'HTTP\\AfterResponse',
             'ContentNegotiation' => 'HTTP\\ContentNegotiation',
-            'Concurrency'        => 'Operations\\Concurrency',
-            'Realtime'           => 'Operations\\Realtime',
-            'MessageBus'         => 'Operations\\MessageBus',
-            'Idempotency'        => 'Operations\\Resilience\\System\\Capabilities\\Idempotency',
-            'Fallback'           => 'Operations\\Resilience\\System\\Capabilities\\Fallback',
-            'TaskDispatch'       => 'Operations\\Queue\\System\\Capabilities\\TaskDispatch',
-            'Orchestration'      => 'Operations\\ApplicationWorkflow\\System\\Capabilities\\Orchestration',
-            'Security'           => 'Security\\System',
-            'Secrets'            => 'Security\\Secrets',
-            'Policy'             => 'Identity\\Access\\System\\Capabilities\\Policy',
-            'Tenancy'            => 'Identity\\Tenancy',
-            'JwtAuth'            => 'Identity\\Tokens\\System\\Capabilities\\JwtAuth',
-            'HealthCheck'        => 'Operations\\Observability\\System\\Capabilities\\HealthCheck',
-            'ScalingReadiness'   => 'DeveloperTools\\Diagnostics\\System\\Capabilities\\ScalingReadiness',
-            'ServiceMap'         => 'Application\\Container\\System\\Capabilities\\ServiceMap',
-            'QueryGovernance'    => 'DataStack\\Database\\System\\Capabilities\\QueryGovernance',
-            'ContractTesting'    => 'DeveloperTools\\Testing\\System\\Capabilities\\ContractTesting',
+            'Concurrency' => 'Operations\\Concurrency',
+            'Realtime' => 'Operations\\Realtime',
+            'MessageBus' => 'Operations\\MessageBus',
+            'Idempotency' => 'Operations\\Resilience\\System\\Capabilities\\Idempotency',
+            'Fallback' => 'Operations\\Resilience\\System\\Capabilities\\Fallback',
+            'TaskDispatch' => 'Operations\\Queue\\System\\Capabilities\\TaskDispatch',
+            'Orchestration' => 'Operations\\ApplicationWorkflow\\System\\Capabilities\\Orchestration',
+            'Security' => 'Security\\System',
+            'Secrets' => 'Security\\Secrets',
+            'Policy' => 'Identity\\Access\\System\\Capabilities\\Policy',
+            'Tenancy' => 'Identity\\Tenancy',
+            'JwtAuth' => 'Identity\\Tokens\\System\\Capabilities\\JwtAuth',
+            'HealthCheck' => 'Operations\\Observability\\System\\Capabilities\\HealthCheck',
+            'ScalingReadiness' => 'DeveloperTools\\Diagnostics\\System\\Capabilities\\ScalingReadiness',
+            'ServiceMap' => 'Application\\Container\\System\\Capabilities\\ServiceMap',
+            'QueryGovernance' => 'DataStack\\Database\\System\\Capabilities\\QueryGovernance',
+            'ContractTesting' => 'DeveloperTools\\Testing\\System\\Capabilities\\ContractTesting',
             'EnvironmentAwareness' => 'Application\\Config\\System\\Capabilities\\EnvironmentAwareness',
-            'Resilience'         => 'Operations\\Resilience',
-            'Scheduler'          => 'Operations\\Scheduler',
-            'Tasks'              => 'Operations\\Tasks',
+            'Resilience' => 'Operations\\Resilience',
+            'Scheduler' => 'Operations\\Scheduler',
+            'Tasks' => 'Operations\\Tasks',
         ];
 
         foreach ($componentMoves as $old => $new) {
-            $this->namespaceRewrites['Avax\Components\\' . $old] = 'Avax\Components\\' . $new;
+            $this->namespaceRewrites['Avax\Components\\'.$old] = 'Avax\Components\\'.$new;
         }
     }
 
-    public function run() : int
+    public function run(): int
     {
         $this->assertRepoRoot();
 
@@ -102,26 +102,26 @@ final class RepairTestLayer
         return $this->errors !== [] ? 1 : 0;
     }
 
-    private function assertRepoRoot() : void
+    private function assertRepoRoot(): void
     {
         if (! is_dir($this->path('tests'))) {
             throw new RuntimeException('Run from AvaX repo root. Missing tests/');
         }
     }
 
-    private function path(string $path) : string
+    private function path(string $path): string
     {
-        return $this->root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
+        return $this->root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
-    private function printHeader() : void
+    private function printHeader(): void
     {
         echo "AvaX Test Layer Repair\n";
-        echo 'Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN') . "\n";
+        echo 'Mode: '.($this->apply ? 'APPLY' : 'DRY-RUN')."\n";
         echo "Scope: tests/ only\n\n";
     }
 
-    private function rewriteNamespaces() : void
+    private function rewriteNamespaces(): void
     {
         $testsPath = $this->path('tests');
 
@@ -141,7 +141,7 @@ final class RepairTestLayer
             $original = $content;
 
             foreach ($this->namespaceRewrites as $old => $new) {
-                $pattern = '/(?<![A-Za-z0-9_\\\\])' . preg_quote($old, '/') . '(?=\\\\|;|,|\\)|\\s|$)/';
+                $pattern = '/(?<![A-Za-z0-9_\\\\])'.preg_quote($old, '/').'(?=\\\\|;|,|\\)|\\s|$)/';
                 $content = preg_replace($pattern, str_replace('\\', '\\\\', $new), $content) ?? $content;
             }
 
@@ -149,10 +149,10 @@ final class RepairTestLayer
                 continue;
             }
 
-            $operation = 'REWRITE ' . $this->relative($file);
+            $operation = 'REWRITE '.$this->relative($file);
             $this->operations[] = $operation;
 
-            echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
+            echo ($this->apply ? '' : '[dry-run] ').$operation.PHP_EOL;
 
             if ($this->apply) {
                 file_put_contents($file, $content);
@@ -161,10 +161,10 @@ final class RepairTestLayer
             $changed++;
         }
 
-        echo PHP_EOL . ('Test namespace rewrites: ' . $changed) . PHP_EOL;
+        echo PHP_EOL.('Test namespace rewrites: '.$changed).PHP_EOL;
     }
 
-    private function phpFiles(string $path) : Generator
+    private function phpFiles(string $path): Generator
     {
         if (is_file($path)) {
             if (str_ends_with($path, '.php')) {
@@ -185,12 +185,12 @@ final class RepairTestLayer
         }
     }
 
-    private function relative(string $path) : string
+    private function relative(string $path): string
     {
         return ltrim(str_replace($this->root, '', $path), DIRECTORY_SEPARATOR);
     }
 
-    private function fixTestDoubles() : void
+    private function fixTestDoubles(): void
     {
         $paths = [
             $this->path('tests/Support'),
@@ -209,7 +209,7 @@ final class RepairTestLayer
         }
     }
 
-    private function fixTestDouble(string $file) : void
+    private function fixTestDouble(string $file): void
     {
         $content = file_get_contents($file);
 
@@ -220,12 +220,12 @@ final class RepairTestLayer
         $original = $content;
 
         $fixes = [
-            '/Avax\\\\Components\\\\HTTP\\\\Router\\\\Router;/'   => 'Avax\\Components\\HTTP\\Router\\Router;',
+            '/Avax\\\\Components\\\\HTTP\\\\Router\\\\Router;/' => 'Avax\\Components\\HTTP\\Router\\Router;',
             '/Avax\\\\Components\\\\HTTP\\\\Response\\\\Response;/' => 'Avax\\Components\\HTTP\\Response\\Response;',
             '/Avax\\\\Components\\\\HTTP\\\\Session\\\\Session;/' => 'Avax\\Components\\HTTP\\Session\\Session;',
-            '/Avax\\\\Components\\\\Container\\\\Container;/'     => 'Avax\\Components\\Application\\Container\\Container;',
-            '/Avax\\\\Components\\\\Cache\\\\Cache;/'             => 'Avax\\Components\\Application\\Cache\\Cache;',
-            '/Avax\\\\Components\\\\Config\\\\Config;/'           => 'Avax\\Components\\Application\\Config\\Config;',
+            '/Avax\\\\Components\\\\Container\\\\Container;/' => 'Avax\\Components\\Application\\Container\\Container;',
+            '/Avax\\\\Components\\\\Cache\\\\Cache;/' => 'Avax\\Components\\Application\\Cache\\Cache;',
+            '/Avax\\\\Components\\\\Config\\\\Config;/' => 'Avax\\Components\\Application\\Config\\Config;',
         ];
 
         foreach ($fixes as $pattern => $replacement) {
@@ -236,17 +236,17 @@ final class RepairTestLayer
             return;
         }
 
-        $operation = 'FIX ' . $this->relative($file);
+        $operation = 'FIX '.$this->relative($file);
         $this->operations[] = $operation;
 
-        echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
+        echo ($this->apply ? '' : '[dry-run] ').$operation.PHP_EOL;
 
         if ($this->apply) {
             file_put_contents($file, $content);
         }
     }
 
-    private function writeReport() : void
+    private function writeReport(): void
     {
         $report = $this->path('Code-Review-And-ToDo/component-taxonomy/test-layer-repair-report.md');
         $directory = dirname($report);
@@ -258,8 +258,8 @@ final class RepairTestLayer
         $lines = [
             '# Test Layer Repair Report',
             '',
-            '- Date: ' . date('Y-m-d H:i:s'),
-            '- Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN'),
+            '- Date: '.date('Y-m-d H:i:s'),
+            '- Mode: '.($this->apply ? 'APPLY' : 'DRY-RUN'),
             '',
             '## Operations',
             '',
@@ -269,7 +269,7 @@ final class RepairTestLayer
             $lines[] = '- none';
         } else {
             foreach ($this->operations as $operation) {
-                $lines[] = '- ' . $operation;
+                $lines[] = '- '.$operation;
             }
         }
 
@@ -280,13 +280,13 @@ final class RepairTestLayer
         $lines[] = '- Run composer dump-autoload after apply.';
         $lines[] = '- Run vendor/bin/phpunit --list-tests to verify.';
 
-        file_put_contents($report, implode(PHP_EOL, $lines) . PHP_EOL);
+        file_put_contents($report, implode(PHP_EOL, $lines).PHP_EOL);
     }
 }
 
 try {
     exit(new RepairTestLayer($argv)->run());
 } catch (Throwable $throwable) {
-    fwrite(STDERR, 'ERROR: ' . $throwable->getMessage() . PHP_EOL);
+    fwrite(STDERR, 'ERROR: '.$throwable->getMessage().PHP_EOL);
     exit(1);
 }

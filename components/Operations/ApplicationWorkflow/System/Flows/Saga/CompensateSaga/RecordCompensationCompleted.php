@@ -8,7 +8,8 @@ final readonly class RecordCompensationCompleted
 {
     public function __construct(
         private string $store,
-    ) {}
+    ) {
+    }
 
     public function describeResponsibility(): string
     {
@@ -41,12 +42,13 @@ final readonly class CompensationCompletedRecord
         public array $completedSteps,
         public array $results,
         public float $recordedAt,
-    ) {}
+    ) {
+    }
 
     public function toMetadata(): array
     {
         return [
-            'saga_id'     => $this->sagaId,
+            'saga_id' => $this->sagaId,
             'completed_steps' => $this->completedSteps,
             'recorded_at' => $this->recordedAt,
         ];

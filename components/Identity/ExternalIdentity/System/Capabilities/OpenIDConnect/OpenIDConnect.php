@@ -28,12 +28,13 @@ final readonly class OpenIDConnect
 {
     public function __construct(
         private ?ReadOidcProviderMetadata $readOidcProviderMetadata,
-        private ?ReadOidcJsonWebKeySet    $readOidcJsonWebKeySet,
-        private ?ReadOidcUserInfo         $readOidcUserInfo,
+        private ?ReadOidcJsonWebKeySet $readOidcJsonWebKeySet,
+        private ?ReadOidcUserInfo $readOidcUserInfo,
         private ?PushAuthorizationRequest $pushAuthorizationRequest,
         private ?Logout $logout,
         private ?BuildJarmResponse $buildJarmResponse,
-    ) {}
+    ) {
+    }
 
     public function isConfigured(): bool
     {
@@ -91,7 +92,7 @@ final readonly class OpenIDConnect
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function pushAuthorizationRequest(PushAuthorizationRequestData $pushAuthorizationRequestData) : PushedAuthorizationRequest
+    public function pushAuthorizationRequest(PushAuthorizationRequestData $pushAuthorizationRequestData): PushedAuthorizationRequest
     {
         return $this->pushAuthorizationRequestOrFail()->execute(data: $pushAuthorizationRequestData);
     }
@@ -101,7 +102,7 @@ final readonly class OpenIDConnect
         return $this->pushAuthorizationRequest ?? throw ExternalIdentityCapabilityUnavailable::oidc(operation: 'push_authorization_request');
     }
 
-    public function logout(LogoutData $logoutData) : LogoutResult
+    public function logout(LogoutData $logoutData): LogoutResult
     {
         return $this->logoutOrFail()->execute(data: $logoutData);
     }
@@ -115,7 +116,7 @@ final readonly class OpenIDConnect
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function buildJarmResponse(BuildJarmResponseData $buildJarmResponseData) : JarmResponse
+    public function buildJarmResponse(BuildJarmResponseData $buildJarmResponseData): JarmResponse
     {
         return $this->buildJarmResponseOrFail()->execute(data: $buildJarmResponseData);
     }

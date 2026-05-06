@@ -19,21 +19,21 @@ use Throwable;
 final readonly class WriteErrorLog
 {
     public function __construct(
-        private Logging        $logging,
+        private Logging $logging,
         private SecretRedactor $secretRedactor = new SecretRedactor(),
-        private ?string        $correlationId = null,
-        private ?string        $traceId = null,
-    ) {}
+        private ?string $correlationId = null,
+        private ?string $traceId = null,
+    ) {
+    }
 
     /**
      * Write a structured error log entry for an exception.
      *
-     * @param string $level PSR-3 log level
-     * @param array<string, mixed> $additionalContext Additional context beyond exception data
-     *
+     * @param  string  $level  PSR-3 log level
+     * @param  array<string, mixed>  $additionalContext  Additional context beyond exception data
      * @return array<string, mixed> The structured log record that was written
      */
-    public function writeException(string $level, Throwable $throwable, array $additionalContext = []) : array
+    public function writeException(string $level, Throwable $throwable, array $additionalContext = []): array
     {
         $context = array_merge($additionalContext, [
             'exception' => $this->buildExceptionData($throwable),
@@ -53,15 +53,15 @@ final readonly class WriteErrorLog
      *
      * @return array<string, mixed>
      */
-    private function buildExceptionData(Throwable $throwable) : array
+    private function buildExceptionData(Throwable $throwable): array
     {
         $data = [
-            'class'   => $throwable::class,
+            'class' => $throwable::class,
             'message' => $throwable->getMessage(),
-            'code'    => $throwable->getCode(),
-            'file'    => $throwable->getFile(),
-            'line'    => $throwable->getLine(),
-            'trace'   => $this->buildTrace($throwable),
+            'code' => $throwable->getCode(),
+            'file' => $throwable->getFile(),
+            'line' => $throwable->getLine(),
+            'trace' => $this->buildTrace($throwable),
         ];
 
         if ($throwable->getPrevious() instanceof Throwable) {
@@ -76,16 +76,16 @@ final readonly class WriteErrorLog
      *
      * @return list<array{file: string, line: int, class: string|null, type: string|null, function: string}>
      */
-    private function buildTrace(Throwable $throwable) : array
+    private function buildTrace(Throwable $throwable): array
     {
         $trace = [];
 
         foreach ($throwable->getTrace() as $frame) {
             $trace[] = [
-                'file'  => $frame['file'] ?? '[internal]',
-                'line'  => $frame['line'] ?? 0,
+                'file' => $frame['file'] ?? '[internal]',
+                'line' => $frame['line'] ?? 0,
                 'class' => $frame['class'] ?? null,
-                'type'  => $frame['type'] ?? null,
+                'type' => $frame['type'] ?? null,
                 'function' => $frame['function'],
             ];
         }
@@ -96,11 +96,10 @@ final readonly class WriteErrorLog
     /**
      * Write a structured error log entry.
      *
-     * @param string $level   PSR-3 log level (emergency, alert, critical, error, warning, notice, info,
-     *                        debug)
-     * @param string $message Log message
-     * @param array<string, mixed> $context Additional context data
-     *
+     * @param  string  $level  PSR-3 log level (emergency, alert, critical, error, warning, notice, info,
+     *                         debug)
+     * @param  string  $message  Log message
+     * @param  array<string, mixed>  $context  Additional context data
      * @return array<string, mixed> The structured log record that was written
      */
     public function write(string $level, string $message, array $context = []): array
@@ -120,10 +119,9 @@ final readonly class WriteErrorLog
     /**
      * Build a structured log record.
      *
-     * @param string $level   PSR-3 log level
-     * @param string $message Log message
-     * @param array<string, mixed> $context Additional context
-     *
+     * @param  string  $level  PSR-3 log level
+     * @param  string  $message  Log message
+     * @param  array<string, mixed>  $context  Additional context
      * @return array{level: string, message: string, context: array<string, mixed>}
      */
     private function buildRecord(string $level, string $message, array $context): array
@@ -140,8 +138,7 @@ final readonly class WriteErrorLog
     /**
      * Enrich context with system and request metadata.
      *
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     private function enrichContext(array $context): array
@@ -215,17 +212,16 @@ final readonly class WriteErrorLog
     {
         return [
             'php_version' => PHP_VERSION,
-            'sapi'         => PHP_SAPI,
+            'sapi' => PHP_SAPI,
             'memory_usage' => memory_get_usage(true),
-            'memory_peak'  => memory_get_peak_usage(true),
+            'memory_peak' => memory_get_peak_usage(true),
         ];
     }
 
     /**
      * Redact sensitive data from the log record.
      *
-     * @param array{level: string, message: string, context: array<string, mixed>} $record
-     *
+     * @param  array{level: string, message: string, context: array<string, mixed>}  $record
      * @return array{level: string, message: string, context: array<string, mixed>}
      */
     private function redactRecord(array $record): array

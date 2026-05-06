@@ -26,9 +26,9 @@ final readonly class HandleIncomingHttp
     /**
      * @throws RandomException
      */
-    public function handle(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest) : RuntimeResponse
+    public function handle(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest): RuntimeResponse
     {
-        $openHttpRequestScope  = new OpenHttpRequestScope(
+        $openHttpRequestScope = new OpenHttpRequestScope(
             requestScopes : $runtime->requestScopes(),
             runtimeContext   : $runtime->context(),
         );
@@ -43,7 +43,7 @@ final readonly class HandleIncomingHttp
         }
     }
 
-    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest) : RuntimeResponse
+    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest): RuntimeResponse
     {
         $httpHandler = $runtime->httpHandler();
 
@@ -95,9 +95,9 @@ final readonly class HandleIncomingHttp
 
         $normalizedBody = match (true) {
             $value instanceof Stringable => (string) $value,
-            is_scalar(value: $value)     => (string) $value,
-            $value === null              => '',
-            default                      => '',
+            is_scalar(value: $value) => (string) $value,
+            $value === null => '',
+            default => '',
         };
 
         return RuntimeResponse::fromPsrResponse(

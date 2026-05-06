@@ -24,24 +24,24 @@ final readonly class DispatchRouteAction
     ) {
     }
 
-    public function execute(callable|array|string $action, ServerRequestInterface $serverRequest) : ResponseInterface
+    public function execute(callable|array|string $action, ServerRequestInterface $serverRequest): ResponseInterface
     {
         return match (true) {
             is_callable($action) => $this->dispatchCallable($action, $serverRequest),
-            is_array($action)    => $this->dispatchControllerAndMethod($action, $serverRequest),
-            is_string($action)   => $this->dispatchInvokableController($action, $serverRequest),
-            default              => throw new InvalidArgumentException('Invalid route action provided.')
+            is_array($action) => $this->dispatchControllerAndMethod($action, $serverRequest),
+            is_string($action) => $this->dispatchInvokableController($action, $serverRequest),
+            default => throw new InvalidArgumentException('Invalid route action provided.')
         };
     }
 
-    private function dispatchCallable(callable $callable, ServerRequestInterface $serverRequest) : ResponseInterface
+    private function dispatchCallable(callable $callable, ServerRequestInterface $serverRequest): ResponseInterface
     {
         $result = $callable($serverRequest);
 
         return $this->ensureResponse($result, 'Callable');
     }
 
-    private function dispatchControllerAndMethod(array $action, ServerRequestInterface $serverRequest) : ResponseInterface
+    private function dispatchControllerAndMethod(array $action, ServerRequestInterface $serverRequest): ResponseInterface
     {
         if (count($action) !== 2) {
             throw new InvalidArgumentException('Controller action must be [Class, "method"]');
@@ -56,14 +56,14 @@ final readonly class DispatchRouteAction
         }
 
         $reflectionMethod = new ReflectionMethod($instance, $method);
-        $arguments        = $this->argumentResolver->resolve($reflectionMethod, $serverRequest);
+        $arguments = $this->argumentResolver->resolve($reflectionMethod, $serverRequest);
 
         $result = $reflectionMethod->invokeArgs($instance, $arguments);
 
         return $this->ensureResponse($result, sprintf('Method %s in %s', $method, $controllerClass));
     }
 
-    private function dispatchInvokableController(string $controllerClass, ServerRequestInterface $serverRequest) : ResponseInterface
+    private function dispatchInvokableController(string $controllerClass, ServerRequestInterface $serverRequest): ResponseInterface
     {
         $instance = $this->controllerResolver->resolve($controllerClass);
 
@@ -73,13 +73,13 @@ final readonly class DispatchRouteAction
 
         $result = $instance($serverRequest);
 
-        return $this->ensureResponse($result, 'Invokable controller ' . $controllerClass);
+        return $this->ensureResponse($result, 'Invokable controller '.$controllerClass);
     }
 
     private function ensureResponse(mixed $result, string $source): ResponseInterface
     {
         if ($result === null) {
-            return Response::text($source . ' returned null');
+            return Response::text($source.' returned null');
         }
 
         if (is_string($result)) {
@@ -87,7 +87,7 @@ final readonly class DispatchRouteAction
         }
 
         if (! $result instanceof ResponseInterface) {
-            throw new RuntimeException($source . ' must return a ResponseInterface.');
+            throw new RuntimeException($source.' must return a ResponseInterface.');
         }
 
         return $result;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
@@ -11,12 +11,12 @@ use Psr\Container\NotFoundExceptionInterface;
 
 interface OwnershipGateway
 {
-    public function label() : string;
+    public function label(): string;
 }
 
 final class OwnershipCompositionSmokeTest implements OwnershipGateway
 {
-    public function label() : string
+    public function label(): string
     {
         return 'shared-gateway';
     }
@@ -24,13 +24,15 @@ final class OwnershipCompositionSmokeTest implements OwnershipGateway
 
 final class InternalAuditTrail
 {
-    public function label() : string
+    public function label(): string
     {
         return 'internal-audit';
     }
 }
 
-final class ScopedOwnershipState {}
+final class ScopedOwnershipState
+{
+}
 
 final class BillingFlowUsesGateway
 {
@@ -53,7 +55,9 @@ final class SharedOwnershipFacade
     }
 }
 
-final class DevOnlyOwnershipProbe {}
+final class DevOnlyOwnershipProbe
+{
+}
 
 $container = makeTestContainer(config: CreateContainerConfig::create(settings: ['app_env' => 'prod']));
 
@@ -108,13 +112,13 @@ $container->bind(abstract: 'flow.login.clock', concrete: DateTimeImmutable::clas
     ->asPrivate()
     ->concept(concept: 'clock');
 
-$description    = $container->describeService(id: OwnershipGateway::class);
-$graph          = $container->debugGraph(id: BillingFlowUsesGateway::class);
-$fullGraph      = $container->debugGraph();
+$description = $container->describeService(id: OwnershipGateway::class);
+$graph = $container->debugGraph(id: BillingFlowUsesGateway::class);
+$fullGraph = $container->debugGraph();
 $validGatewayIssues = $container->validate(serviceIds: [BillingFlowUsesGateway::class]);
 $invalidAuditIssues = $container->validate(serviceIds: [BillingFlowUsesInternalAudit::class]);
 $lifetimeIssues = $container->validate(serviceIds: [SharedOwnershipFacade::class]);
-$profileIssues  = $container->validate(serviceIds: [DevOnlyOwnershipProbe::class]);
+$profileIssues = $container->validate(serviceIds: [DevOnlyOwnershipProbe::class]);
 
 assertSame(expected: 'capability.payments', actual: $description['ownership']['ownerSlice'] ?? null, message: 'Service descriptions should expose the owner slice.');
 assertSame(expected: 'shared', actual: $description['ownership']['visibility'] ?? null, message: 'Service descriptions should expose visibility.');
@@ -133,20 +137,20 @@ assertTrue(condition: isset($fullGraph['duplicateConcepts'][0]['concept']), mess
 assertTrue(condition: in_array(needle: BillingFlowUsesGateway::class, haystack: $fullGraph['deadRegistrations'], strict: true) === false, message: 'Live flow services should not be reported as dead.');
 array_filter(
     array   : $validGatewayIssues,
-    callback: static fn (string $issue) : bool => str_contains(haystack: $issue, needle: BillingFlowUsesGateway::class),
+    callback: static fn (string $issue): bool => str_contains(haystack: $issue, needle: BillingFlowUsesGateway::class),
 )
     |> array_values(...)
     |> (static fn ($x) => assertSame(expected: [], actual: $x, message: 'Imported shared capability dependencies should validate cleanly.'));
 
 $invalidAuditText = implode(separator: "\n", array: $invalidAuditIssues);
 assertTrue(
-    condition: str_contains(haystack: $invalidAuditText, needle: 'cannot use dependency [' . InternalAuditTrail::class . ']'),
+    condition: str_contains(haystack: $invalidAuditText, needle: 'cannot use dependency ['.InternalAuditTrail::class.']'),
     message  : 'Validation should block illegal internal cross-slice dependencies.',
 );
 
 $lifetimeText = implode(separator: "\n", array: $lifetimeIssues);
 assertTrue(
-    condition: str_contains(haystack: $lifetimeText, needle: 'captures scoped dependency [' . ScopedOwnershipState::class . ']'),
+    condition: str_contains(haystack: $lifetimeText, needle: 'captures scoped dependency ['.ScopedOwnershipState::class.']'),
     message  : 'Validation should detect shared-to-scoped lifetime capture.',
 );
 
@@ -168,10 +172,10 @@ assertSame(
 );
 
 assertThrows(
-/**
- * @throws ContainerExceptionInterface
- * @throws NotFoundExceptionInterface
- */ /**
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
  */ /**
@@ -180,17 +184,17 @@ assertThrows(
  * @throws Throwable
  */
     expectedClass: ContainerException::class,
-    callback     : static function () use ($container) : void {
+    callback     : static function () use ($container): void {
         $container->get(id: InternalAuditTrail::class);
     },
     message      : 'Top-level internal services should be blocked from direct resolution.',
 );
 
 assertThrows(
-/**
- * @throws ContainerExceptionInterface
- * @throws NotFoundExceptionInterface
- */ /**
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
  */ /**
@@ -199,10 +203,10 @@ assertThrows(
  * @throws Throwable
  */
     expectedClass: ContainerException::class,
-    callback     : static function () use ($container) : void {
+    callback     : static function () use ($container): void {
         $container->get(id: BillingFlowUsesInternalAudit::class);
     },
     message      : 'Illegal cross-slice runtime dependencies should fail fast during resolution.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

@@ -17,7 +17,8 @@ final readonly class Telemetry
         private EventBus $eventBus,
         private ?Config $config = null,
         private ExecutionScope $executionScope = new ExecutionScope(correlationId: 'database'),
-    ) {}
+    ) {
+    }
 
     public function eventBus(): EventBus
     {

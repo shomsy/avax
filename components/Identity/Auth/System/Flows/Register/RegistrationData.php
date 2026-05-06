@@ -22,5 +22,6 @@ final readonly class RegistrationData
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

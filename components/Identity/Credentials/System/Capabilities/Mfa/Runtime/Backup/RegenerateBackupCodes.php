@@ -32,7 +32,8 @@ final readonly class RegenerateBackupCodes
         private GenerateBackupCodes $generateBackupCodes,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated
@@ -41,7 +42,7 @@ final readonly class RegenerateBackupCodes
     public function execute(): BackupCodeSet
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $user                  = $authenticationContext->user();
+        $user = $authenticationContext->user();
 
         if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();

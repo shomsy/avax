@@ -9,9 +9,11 @@ use Avax\Components\Operations\Mail\System\PublicSurface\Mailer;
 
 final readonly class QueueMail
 {
-    public function __construct(private Mailer $mailer) {}
+    public function __construct(private Mailer $mailer)
+    {
+    }
 
-    public function queue(MimeMessage $mimeMessage) : void
+    public function queue(MimeMessage $mimeMessage): void
     {
         $this->mailer->queue(message: $mimeMessage);
     }

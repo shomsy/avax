@@ -10,7 +10,7 @@ namespace Avax\Components\Application\Text\System\Capabilities\Transform;
  */
 final class ToPlural
 {
-    public function execute(string $value, int $count = 2) : string
+    public function execute(string $value, int $count = 2): string
     {
         if ($count === 1) {
             return $value;
@@ -30,13 +30,13 @@ final class ToPlural
         }
 
         if (preg_match('/[sxz]$|sh$|ch$/i', $value)) {
-            return $value . 'es';
+            return $value.'es';
         }
 
         if (preg_match('/([^aeiou])y$/i', $value)) {
-            return substr($value, 0, -1) . 'ies';
+            return substr($value, 0, -1).'ies';
         }
 
-        return $value . 's';
+        return $value.'s';
     }
 }

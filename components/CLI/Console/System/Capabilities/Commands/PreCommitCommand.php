@@ -27,9 +27,9 @@ class PreCommitCommand extends Command
     #[Override]
     protected function handle(): int
     {
-        $dryRun  = ! $this->hasOption('fix');
-        $full    = $this->hasOption('full');
-        $check   = $this->option('check');
+        $dryRun = ! $this->hasOption('fix');
+        $full = $this->hasOption('full');
+        $check = $this->option('check');
 
         // Build config
         $config = new PreCommitConfig();
@@ -63,7 +63,7 @@ class PreCommitCommand extends Command
 
         // Run PreCommit
         $preCommit = new PreCommit($config, [], ! $full);
-        $result    = $preCommit->run();
+        $result = $preCommit->run();
 
         // Output summary
         $this->output->line($result->getSummaryText());

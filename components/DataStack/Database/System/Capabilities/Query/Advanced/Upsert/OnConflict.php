@@ -10,7 +10,8 @@ final readonly class OnConflict
         public array $columns,
         public array $updateColumns = [],
         public bool $doNothing = false,
-    ) {}
+    ) {
+    }
 
     public static function columns(array $columns, array $updateColumns = []): self
     {

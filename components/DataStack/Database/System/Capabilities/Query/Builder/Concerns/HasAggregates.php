@@ -16,8 +16,7 @@ trait HasAggregates
      *
      * @see /docs/Foundation/Database/DSL/Aggregates.md#count
      *
-     * @param string $column The specific technical field to target for counting (defaults to '*').
-     *
+     * @param  string  $column  The specific technical field to target for counting (defaults to '*').
      * @return int The total number of matching records found.
      *
      * @throws Throwable If the query execution fails at the driver level.
@@ -30,20 +29,19 @@ trait HasAggregates
     /**
      * Internal technician for executing a generic SQL aggregate function.
      *
-     * @param string $function The name of the SQL aggregate function (e.g., 'COUNT', 'SUM').
-     * @param array  $columns  The technical field identifiers to target for the calculation.
-     *
+     * @param  string  $function  The name of the SQL aggregate function (e.g., 'COUNT', 'SUM').
+     * @param  array  $columns  The technical field identifiers to target for the calculation.
      * @return mixed The resulting scalar data point retrieved from the aggregate projection.
      *
      * @throws Throwable If the underlying query execution or result extraction fails.
      *
      * @see /docs/Foundation/Database/DSL/Aggregates.md
      */
-    protected function aggregate(string $function, array $columns = ['*']) : mixed
+    protected function aggregate(string $function, array $columns = ['*']): mixed
     {
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->state = $clone->state->withColumns(columns: [
-                                                                $this->raw(value: $function . '(' . implode(separator: ', ', array: $columns) . ') as aggregate'),
+            $this->raw(value: $function.'('.implode(separator: ', ', array: $columns).') as aggregate'),
         ]);
 
         $result = $clone->get();
@@ -60,8 +58,7 @@ trait HasAggregates
      *
      * @see /docs/Foundation/Database/DSL/Aggregates.md#max
      *
-     * @param string $column The technical field name whose peak value is required.
-     *
+     * @param  string  $column  The technical field name whose peak value is required.
      * @return mixed The highest scalar value found in the specified field.
      *
      * @throws Throwable If the query execution fails at the driver level.
@@ -76,8 +73,7 @@ trait HasAggregates
      *
      * @see /docs/Foundation/Database/DSL/Aggregates.md#min
      *
-     * @param string $column The technical field name whose lowest value is required.
-     *
+     * @param  string  $column  The technical field name whose lowest value is required.
      * @return mixed The lowest scalar value found in the specified field.
      *
      * @throws Throwable If the query execution fails at the driver level.
@@ -92,8 +88,7 @@ trait HasAggregates
      *
      * @see /docs/Foundation/Database/DSL/Aggregates.md#avg
      *
-     * @param string $column The technical field name to target for averaging.
-     *
+     * @param  string  $column  The technical field name to target for averaging.
      * @return mixed The calculated average value, or 0 if no records match.
      *
      * @throws Throwable If the query execution fails at the driver level.
@@ -108,8 +103,7 @@ trait HasAggregates
      *
      * @see /docs/Foundation/Database/DSL/Aggregates.md#sum
      *
-     * @param string $column The technical field name to target for summation.
-     *
+     * @param  string  $column  The technical field name to target for summation.
      * @return mixed The total cumulative sum calculated by the database server.
      *
      * @throws Throwable If the query execution fails at the driver level.

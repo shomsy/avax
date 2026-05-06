@@ -6,10 +6,10 @@ namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
-use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
-use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Closure;
 use RuntimeException;
 
@@ -113,7 +113,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
         return new Registrar(route: $definition);
     }
 
-    public function dispatch(RequestInterface $request) : ResponseInterface
+    public function dispatch(RequestInterface $request): ResponseInterface
     {
         throw new RuntimeException('FrameworkRouteRegistrar is purely for configuration and does not support dispatching directly.');
     }

@@ -14,7 +14,7 @@ use SensitiveParameter;
 final readonly class AuthorizationCodeRecord
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
         #[SensitiveParameter]
@@ -32,7 +32,8 @@ final readonly class AuthorizationCodeRecord
         public ?DateTimeImmutable $usedAt = null,
         public ?DateTimeImmutable $mfaVerifiedAt = null,
         public bool $phishingResistant = false,
-    ) {}
+    ) {
+    }
 
     public function isExpiredAt(DateTimeImmutable $moment): bool
     {

@@ -6,5 +6,5 @@ namespace Avax\Components\Application\Validation\System\PublicSurface;
 
 interface ValidationInterface
 {
-    public function validate(array $data, array $rules) : ValidationResult;
+    public function validate(array $data, array $rules): ValidationResult;
 }

@@ -34,7 +34,7 @@ final readonly class Avax implements AvaxInterface
     ) {
     }
 
-    public static function boot(ApplicationBuilder $builder) : self
+    public static function boot(ApplicationBuilder $builder): self
     {
         $runtime = new BootApplication(
             buildApplicationState: new BuildApplicationState(),

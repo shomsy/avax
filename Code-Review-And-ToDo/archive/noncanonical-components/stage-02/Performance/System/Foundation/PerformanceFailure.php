@@ -6,4 +6,6 @@ namespace Avax\Components\Performance\System\Foundation;
 
 use RuntimeException;
 
-final class PerformanceFailure extends RuntimeException {}
+final class PerformanceFailure extends RuntimeException
+{
+}

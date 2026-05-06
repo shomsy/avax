@@ -36,9 +36,8 @@ final readonly class Observability
     public static function log(
         string $level,
         string $message,
-        array  $context = [],
-    ): StructuredLogRecord
-    {
+        array $context = [],
+    ): StructuredLogRecord {
         return new StructuredLogRecord($level, $message, $context);
     }
 
@@ -46,9 +45,8 @@ final readonly class Observability
         string $actor,
         string $action,
         string $target,
-        array  $metadata = [],
-    ): AuditEvent
-    {
+        array $metadata = [],
+    ): AuditEvent {
         return new AuditEvent($actor, $action, $target, $metadata);
     }
 }

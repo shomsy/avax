@@ -14,7 +14,8 @@ final class Failure extends Result
 {
     public function __construct(
         private readonly mixed $error,
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function isOk(): bool

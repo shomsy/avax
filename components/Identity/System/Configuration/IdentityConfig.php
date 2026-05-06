@@ -8,7 +8,6 @@ final readonly class IdentityConfig
 {
     public function __construct(
         public string $provider = 'default',
-    )
-    {
+    ) {
     }
 }

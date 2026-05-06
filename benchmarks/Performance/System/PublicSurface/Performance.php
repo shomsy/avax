@@ -16,7 +16,7 @@ final class Performance
 
     public static function queryCache(): QueryCache
     {
-        if (!self::$queryCache instanceof QueryCache) {
+        if (! self::$queryCache instanceof QueryCache) {
             self::$queryCache = new QueryCache();
         }
 

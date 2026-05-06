@@ -33,9 +33,10 @@ final readonly class ResetPassword
         private ?MfaChallengeStoreInterface $mfaChallengeStore = null,
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
-    ) {}
+    ) {
+    }
 
-    public function execute(ResetPasswordData $resetPasswordData) : bool
+    public function execute(ResetPasswordData $resetPasswordData): bool
     {
         $userId = $this->passwordResetStore->consume(token: $resetPasswordData->token, now: $this->clock->now());
 
@@ -44,9 +45,9 @@ final readonly class ResetPassword
                 name      : 'auth.password_reset.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'reason' => 'invalid_token',
-                                'ip_address' => $resetPasswordData->ipAddress,
-                                'user_agent' => $resetPasswordData->userAgent,
+                    'reason' => 'invalid_token',
+                    'ip_address' => $resetPasswordData->ipAddress,
+                    'user_agent' => $resetPasswordData->userAgent,
                 ],
             ));
 
@@ -65,9 +66,9 @@ final readonly class ResetPassword
             name      : 'auth.password_reset.completed',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id' => $userId->value,
-                            'ip_address' => $resetPasswordData->ipAddress,
-                            'user_agent' => $resetPasswordData->userAgent,
+                'user_id' => $userId->value,
+                'ip_address' => $resetPasswordData->ipAddress,
+                'user_agent' => $resetPasswordData->userAgent,
             ],
         ));
 

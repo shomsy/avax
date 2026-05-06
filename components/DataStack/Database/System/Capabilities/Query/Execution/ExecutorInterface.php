@@ -18,10 +18,9 @@ interface ExecutorInterface
     /**
      * Dispatch a retrieval instruction (SELECT) to the persistence driver.
      *
-     * @param string              $sql      Pre-compiled SQL retrieval string.
-     * @param array               $bindings Secure tokens for parameterization.
-     * @param ExecutionScope|null $executionScope Optional context for correlation.
-     *
+     * @param  string  $sql  Pre-compiled SQL retrieval string.
+     * @param  array  $bindings  Secure tokens for parameterization.
+     * @param  ExecutionScope|null  $executionScope  Optional context for correlation.
      * @return array<array-key, mixed>
      *
      * @throws Throwable If persistence connection failure occurs.
@@ -35,9 +34,9 @@ interface ExecutorInterface
     /**
      * Dispatch a mutation instruction (INSERT/UPDATE/DELETE/DDL) to the persistence driver.
      *
-     * @param string              $sql      Pre-compiled SQL mutation string.
-     * @param array               $bindings Secure tokens for parameterization.
-     * @param ExecutionScope|null $executionScope Optional context for correlation.
+     * @param  string  $sql  Pre-compiled SQL mutation string.
+     * @param  array  $bindings  Secure tokens for parameterization.
+     * @param  ExecutionScope|null  $executionScope  Optional context for correlation.
      *
      * @throws Throwable If technical modification fails.
      */

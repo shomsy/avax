@@ -16,7 +16,8 @@ final readonly class IdempotencyKey
         public string $sagaId,
         public string $stepName,
         public string $attempt,
-    ) {}
+    ) {
+    }
 
     /**
      * Generate a unique idempotency key for a step execution.

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+
 $basePath = dirname(__DIR__, 2);
 
 $renames = [
@@ -11,8 +12,8 @@ $renames = [
 ];
 
 foreach ($renames as $from => $to) {
-    $fromPath = $basePath . '/' . $from;
-    $toPath = $basePath . '/' . $to;
+    $fromPath = $basePath.'/'.$from;
+    $toPath = $basePath.'/'.$to;
 
     if (is_dir($fromPath)) {
         rename($fromPath, $toPath);

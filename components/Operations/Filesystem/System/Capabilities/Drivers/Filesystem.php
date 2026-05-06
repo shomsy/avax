@@ -23,7 +23,7 @@ final class Filesystem
     {
         $disk = $name ?? 'local';
 
-        if (!isset(self::$disks[$disk])) {
+        if (! isset(self::$disks[$disk])) {
             self::$disks[$disk] = self::buildDisk(name: $disk);
         }
 
@@ -32,7 +32,7 @@ final class Filesystem
 
     private static function buildDisk(string $name): StorageAdapter
     {
-        $config = function_exists(function: 'config') ? (config(key: 'filesystems.disks.' . $name, default: []) ?? []) : [];
+        $config = function_exists(function: 'config') ? (config(key: 'filesystems.disks.'.$name, default: []) ?? []) : [];
 
         return match ($name) {
             's3' => new S3(config: $config),

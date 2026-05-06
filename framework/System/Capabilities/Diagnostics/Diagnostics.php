@@ -20,12 +20,12 @@ final class Diagnostics
         return self::$traceId ??= TraceId::generate();
     }
 
-    public static function setCorrelationId(CorrelationId $correlationId) : void
+    public static function setCorrelationId(CorrelationId $correlationId): void
     {
         self::$correlationId = $correlationId;
     }
 
-    public static function setTraceId(TraceId $traceId) : void
+    public static function setTraceId(TraceId $traceId): void
     {
         self::$traceId = $traceId;
     }
@@ -33,6 +33,6 @@ final class Diagnostics
     public static function clear(): void
     {
         self::$correlationId = null;
-        self::$traceId       = null;
+        self::$traceId = null;
     }
 }

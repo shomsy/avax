@@ -10,14 +10,13 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions;
 final readonly class DeadlockDetectorConfig
 {
     /**
-     * @param list<string> $deadlockSqlStates SQLSTATE codes that indicate deadlocks
-     * @param list<string> $deadlockErrorCodes Additional error codes to check
+     * @param  list<string>  $deadlockSqlStates  SQLSTATE codes that indicate deadlocks
+     * @param  list<string>  $deadlockErrorCodes  Additional error codes to check
      */
     public function __construct(
         public array $deadlockSqlStates = ['40001', '40P01'],
         public array $deadlockErrorCodes = [],
-    )
-    {
+    ) {
     }
 
     /**

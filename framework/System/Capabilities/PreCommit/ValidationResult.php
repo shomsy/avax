@@ -6,24 +6,24 @@ namespace Avax\Framework\System\Capabilities\PreCommit;
 
 /**
  * Validation Result Value Object
- * 
+ *
  * Immutable container for validation outcomes.
  * Part of the Chain of Responsibility pattern.
  */
 final class ValidationResult
 {
-    private string      $severity;
+    private string $severity;
 
     /**
-     * @param list<string> $messages
+     * @param  list<string>  $messages
      */
     public function __construct(
-        private bool        $passed,
-        private array       $messages = [],
-        string|null $severity = 'info',
-        private string|null $file = null,
-        private int|null    $line = null,
-        private string|null $ruleCode = null
+        private bool $passed,
+        private array $messages = [],
+        ?string $severity = 'info',
+        private ?string $file = null,
+        private ?int $line = null,
+        private ?string $ruleCode = null
     ) {
         $this->severity = $severity ?? 'info';
     }
@@ -35,7 +35,7 @@ final class ValidationResult
 
     public function isFailed(): bool
     {
-        return !$this->passed;
+        return ! $this->passed;
     }
 
     /** @return list<string> */
@@ -44,22 +44,22 @@ final class ValidationResult
         return $this->messages;
     }
 
-    public function getSeverity() : string
+    public function getSeverity(): string
     {
         return $this->severity;
     }
 
-    public function getFile() : string|null
+    public function getFile(): ?string
     {
         return $this->file;
     }
 
-    public function getLine() : int|null
+    public function getLine(): ?int
     {
         return $this->line;
     }
 
-    public function getRuleCode() : string|null
+    public function getRuleCode(): ?string
     {
         return $this->ruleCode;
     }
@@ -68,6 +68,7 @@ final class ValidationResult
     {
         $new = clone $this;
         $new->messages[] = $message;
+
         return $new;
     }
 
@@ -112,7 +113,7 @@ final class ValidationResult
         return new self(true, $message !== '' && $message !== '0' ? [$message] : [], 'info');
     }
 
-    public static function fail(string $message, string|null $severity = 'error', string|null $file = null, int|null $line = null, string|null $ruleCode = null) : self
+    public static function fail(string $message, ?string $severity = 'error', ?string $file = null, ?int $line = null, ?string $ruleCode = null): self
     {
         return new self(false, [$message], $severity, $file, $line, $ruleCode);
     }

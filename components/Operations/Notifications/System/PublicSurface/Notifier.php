@@ -20,24 +20,24 @@ class Notifier
         $this->sendNotification = new SendNotification();
     }
 
-    public function registerChannel(NotificationChannel $notificationChannel) : self
+    public function registerChannel(NotificationChannel $notificationChannel): self
     {
         $this->sendNotification->registerChannel($notificationChannel);
 
         return $this;
     }
 
-    public function sendTo(mixed $notifiable, Notification $notification, ?string $channel = null) : void
+    public function sendTo(mixed $notifiable, Notification $notification, ?string $channel = null): void
     {
         $this->sendNotification->sendTo($notifiable, $notification, $channel);
     }
 
-    public function sendToMany(array $notifiables, Notification $notification, ?string $channel = null) : void
+    public function sendToMany(array $notifiables, Notification $notification, ?string $channel = null): void
     {
         $this->sendNotification->sendToMany($notifiables, $notification, $channel);
     }
 
-    public function hasChannel(string $name) : bool
+    public function hasChannel(string $name): bool
     {
         return $this->sendNotification->hasChannel($name);
     }

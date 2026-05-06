@@ -12,47 +12,47 @@ use JsonException;
 final class GraphExporter
 {
     /**
-     * @param array<string, mixed> $artifact
+     * @param  array<string, mixed>  $artifact
      */
     public function export(array $artifact, string $format = 'json'): string
     {
         return match (strtolower(string: trim(string: $format))) {
-            'mermaid'         => $this->toMermaid(artifact: $artifact),
+            'mermaid' => $this->toMermaid(artifact: $artifact),
             'dot', 'graphviz' => $this->toDot(artifact: $artifact),
-            'html'            => $this->toHtml(artifact: $artifact),
-            default           => $this->toJson(artifact: $artifact),
+            'html' => $this->toHtml(artifact: $artifact),
+            default => $this->toJson(artifact: $artifact),
         };
     }
 
     /**
-     * @param array<string, mixed> $artifact
+     * @param  array<string, mixed>  $artifact
      */
     private function toMermaid(array $artifact): string
     {
-        $lines   = ['flowchart LR'];
+        $lines = ['flowchart LR'];
         $nodeIds = [];
 
         foreach ($artifact['nodes'] ?? [] as $node) {
-            $label   = (string) ($node['label'] ?? $node['id'] ?? 'node');
-            $id      = $this->nodeId(label: (string) ($node['id'] ?? $label), seen: $nodeIds);
-            $lines[] = '    ' . $id . '["' . $this->escapeMermaid(label: $label) . '"]';
+            $label = (string) ($node['label'] ?? $node['id'] ?? 'node');
+            $id = $this->nodeId(label: (string) ($node['id'] ?? $label), seen: $nodeIds);
+            $lines[] = '    '.$id.'["'.$this->escapeMermaid(label: $label).'"]';
         }
 
         foreach ($artifact['edges'] ?? [] as $edge) {
-            $from  = $this->nodeId(label: (string) ($edge['from'] ?? 'from'), seen: $nodeIds);
-            $to    = $this->nodeId(label: (string) ($edge['to'] ?? 'to'), seen: $nodeIds);
+            $from = $this->nodeId(label: (string) ($edge['from'] ?? 'from'), seen: $nodeIds);
+            $to = $this->nodeId(label: (string) ($edge['to'] ?? 'to'), seen: $nodeIds);
             $label = trim(string: (string) ($edge['label'] ?? ''));
 
             $lines[] = $label !== ''
-                ? '    ' . $from . ' -->|' . $this->escapeMermaid(label: $label) . '| ' . $to
-                : '    ' . $from . ' --> ' . $to;
+                ? '    '.$from.' -->|'.$this->escapeMermaid(label: $label).'| '.$to
+                : '    '.$from.' --> '.$to;
         }
 
-        return implode(separator: PHP_EOL, array: $lines) . PHP_EOL;
+        return implode(separator: PHP_EOL, array: $lines).PHP_EOL;
     }
 
     /**
-     * @param array<string, string> $seen
+     * @param  array<string, string>  $seen
      */
     private function nodeId(string $label, array &$seen): string
     {
@@ -60,7 +60,7 @@ final class GraphExporter
             return $seen[$label];
         }
 
-        $seen[$label] = 'n' . substr(string: sha1(string: $label), offset: 0, length: 10);
+        $seen[$label] = 'n'.substr(string: sha1(string: $label), offset: 0, length: 10);
 
         return $seen[$label];
     }
@@ -71,40 +71,40 @@ final class GraphExporter
     }
 
     /**
-     * @param array<string, mixed> $artifact
+     * @param  array<string, mixed>  $artifact
      */
     private function toDot(array $artifact): string
     {
         $lines = ['digraph container {', '  rankdir=LR;'];
 
         foreach ($artifact['nodes'] ?? [] as $node) {
-            $id      = $this->quote(value: (string) ($node['id'] ?? 'node'));
-            $label   = $this->quote(value: (string) ($node['label'] ?? $node['id'] ?? 'node'));
-            $lines[] = '  ' . $id . ' [label=' . $label . '];';
+            $id = $this->quote(value: (string) ($node['id'] ?? 'node'));
+            $label = $this->quote(value: (string) ($node['label'] ?? $node['id'] ?? 'node'));
+            $lines[] = '  '.$id.' [label='.$label.'];';
         }
 
         foreach ($artifact['edges'] ?? [] as $edge) {
-            $from  = $this->quote(value: (string) ($edge['from'] ?? 'from'));
-            $to    = $this->quote(value: (string) ($edge['to'] ?? 'to'));
+            $from = $this->quote(value: (string) ($edge['from'] ?? 'from'));
+            $to = $this->quote(value: (string) ($edge['to'] ?? 'to'));
             $label = trim(string: (string) ($edge['label'] ?? ''));
 
             $lines[] = $label !== ''
-                ? '  ' . $from . ' -> ' . $to . ' [label=' . $this->quote(value: $label) . '];'
-                : '  ' . $from . ' -> ' . $to . ';';
+                ? '  '.$from.' -> '.$to.' [label='.$this->quote(value: $label).'];'
+                : '  '.$from.' -> '.$to.';';
         }
 
         $lines[] = '}';
 
-        return implode(separator: PHP_EOL, array: $lines) . PHP_EOL;
+        return implode(separator: PHP_EOL, array: $lines).PHP_EOL;
     }
 
     private function quote(string $value): string
     {
-        return '"' . str_replace(search: ['\\', '"'], replace: ['\\\\', '\\"'], subject: $value) . '"';
+        return '"'.str_replace(search: ['\\', '"'], replace: ['\\\\', '\\"'], subject: $value).'"';
     }
 
     /**
-     * @param array<string, mixed> $artifact
+     * @param  array<string, mixed>  $artifact
      */
     private function toHtml(array $artifact): string
     {
@@ -328,7 +328,7 @@ final class GraphExporter
     }
 
     /**
-     * @param array<string, mixed> $artifact
+     * @param  array<string, mixed>  $artifact
      */
     private function toJson(array $artifact): string
     {

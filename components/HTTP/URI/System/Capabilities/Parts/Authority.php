@@ -12,7 +12,8 @@ final readonly class Authority implements Stringable
         private Host $host,
         private ?Port $port = null,
         private ?UserInfo $userInfo = null,
-    ) {}
+    ) {
+    }
 
     public static function fromString(string $authority, Scheme $scheme): self
     {
@@ -31,7 +32,7 @@ final readonly class Authority implements Stringable
         if (str_contains($authority, ':')) {
             [$hostPart, $portPart] = explode(':', $authority, 2);
             $host = new Host($hostPart);
-            $port = new Port((int)$portPart, $scheme);
+            $port = new Port((int) $portPart, $scheme);
         } else {
             $host = new Host($authority);
         }
@@ -56,14 +57,14 @@ final readonly class Authority implements Stringable
 
     public function __toString(): string
     {
-        $authority = (string)$this->host;
-        
-        if ($this->userInfo !== null && (string)$this->userInfo !== '') {
-            $authority = (string)$this->userInfo . '@' . $authority;
+        $authority = (string) $this->host;
+
+        if ($this->userInfo !== null && (string) $this->userInfo !== '') {
+            $authority = (string) $this->userInfo.'@'.$authority;
         }
 
         if ($this->port !== null && $this->port->value() !== null) {
-            $authority .= ':' . $this->port->value();
+            $authority .= ':'.$this->port->value();
         }
 
         return $authority;

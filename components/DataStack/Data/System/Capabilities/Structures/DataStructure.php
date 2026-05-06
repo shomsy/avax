@@ -13,7 +13,7 @@ class DataStructure
     private array $fields = [];
 
     /**
-     * @param iterable<string> $requiredFields
+     * @param  iterable<string>  $requiredFields
      */
     public function __construct(iterable $requiredFields = [])
     {
@@ -22,14 +22,14 @@ class DataStructure
         }
     }
 
-    public function require(string $field) : void
+    public function require(string $field): void
     {
         if ($field !== '') {
             $this->fields[$field] = true;
         }
     }
 
-    public function has(string $field) : bool
+    public function has(string $field): bool
     {
         return isset($this->fields[$field]);
     }
@@ -37,17 +37,16 @@ class DataStructure
     /**
      * @return list<string>
      */
-    public function requiredFields() : array
+    public function requiredFields(): array
     {
         return array_keys(array: $this->fields);
     }
 
     /**
-     * @param array<string, mixed> $data
-     *
+     * @param  array<string, mixed>  $data
      * @return list<string>
      */
-    public function missingFields(array $data) : array
+    public function missingFields(array $data): array
     {
         $missing = [];
 

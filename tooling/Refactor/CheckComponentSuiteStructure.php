@@ -79,9 +79,9 @@ final class CheckComponentSuiteStructure
 
     private function checkComponentsRootContainsOnlySuites(): void
     {
-        $componentsPath = dirname(__DIR__, 2) . '/components';
+        $componentsPath = dirname(__DIR__, 2).'/components';
 
-        if (!is_dir($componentsPath)) {
+        if (! is_dir($componentsPath)) {
             $this->errors[] = 'components/ directory not found';
 
             return;
@@ -101,8 +101,8 @@ final class CheckComponentSuiteStructure
                 continue;
             }
 
-            $path = $componentsPath . '/' . $item;
-            if (!is_dir($path)) {
+            $path = $componentsPath.'/'.$item;
+            if (! is_dir($path)) {
                 continue;
             }
 
@@ -124,48 +124,48 @@ final class CheckComponentSuiteStructure
             }
 
             if (in_array($item, $this->allowedV2Labs, true)) {
-                $this->errors[] = 'Non-canonical: ' . $item . ' should be in labs/ (V2 locked)';
+                $this->errors[] = 'Non-canonical: '.$item.' should be in labs/ (V2 locked)';
 
                 continue;
             }
 
             if (in_array($item, $this->allowedBenchmarks, true)) {
-                $this->errors[] = 'Non-canonical: ' . $item . ' should be in benchmarks/';
+                $this->errors[] = 'Non-canonical: '.$item.' should be in benchmarks/';
 
                 continue;
             }
 
             if (in_array($item, $this->allowedTooling, true)) {
-                $this->errors[] = 'Non-canonical: ' . $item . ' should be in tooling/';
+                $this->errors[] = 'Non-canonical: '.$item.' should be in tooling/';
 
                 continue;
             }
 
             if (in_array($item, $this->allowedDocs, true)) {
-                $this->errors[] = 'Non-canonical: ' . $item . ' should be in docs/';
+                $this->errors[] = 'Non-canonical: '.$item.' should be in docs/';
 
                 continue;
             }
 
             if (in_array($item, $this->allowedFramework, true)) {
-                $this->errors[] = 'Non-canonical: ' . $item . ' should be in framework/';
+                $this->errors[] = 'Non-canonical: '.$item.' should be in framework/';
 
                 continue;
             }
 
-            $this->errors[] = 'Forbidden item at components/' . $item;
+            $this->errors[] = 'Forbidden item at components/'.$item;
         }
 
         foreach ($this->allowedSuites as $allowedSuite) {
-            if (!is_dir($componentsPath . '/' . $allowedSuite)) {
-                $this->errors[] = 'Missing required suite: components/' . $allowedSuite;
+            if (! is_dir($componentsPath.'/'.$allowedSuite)) {
+                $this->errors[] = 'Missing required suite: components/'.$allowedSuite;
             }
         }
     }
 
     private function checkEachSuiteHasSystemRoot(): void
     {
-        $componentsPath = dirname(__DIR__, 2) . '/components';
+        $componentsPath = dirname(__DIR__, 2).'/components';
 
         // Only check actual component directories, not all folders
         $componentDirs = [
@@ -180,19 +180,19 @@ final class CheckComponentSuiteStructure
         ];
 
         foreach ($componentDirs as $suite => $components) {
-            $suitePath = $componentsPath . '/' . $suite;
-            if (!is_dir($suitePath)) {
+            $suitePath = $componentsPath.'/'.$suite;
+            if (! is_dir($suitePath)) {
                 continue;
             }
 
             foreach ($components as $component) {
-                $componentPath = $suitePath . '/' . $component;
-                if (!is_dir($componentPath)) {
+                $componentPath = $suitePath.'/'.$component;
+                if (! is_dir($componentPath)) {
                     continue;
                 }
 
-                $systemPath = $componentPath . '/System';
-                if (!is_dir($systemPath)) {
+                $systemPath = $componentPath.'/System';
+                if (! is_dir($systemPath)) {
                     $this->errors[] = sprintf('components/%s/%s missing System/ root', $suite, $component);
                 }
             }
@@ -204,10 +204,10 @@ if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckComponentSuiteStructure();
     $result = $checker->check();
 
-    echo $result['status'] . "\n";
+    echo $result['status']."\n";
 
-    if (!empty($result['errors'])) {
-        echo implode("\n", $result['errors']) . "\n";
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors'])."\n";
         exit(1);
     }
 

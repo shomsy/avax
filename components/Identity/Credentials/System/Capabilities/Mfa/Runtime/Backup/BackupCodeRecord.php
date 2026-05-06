@@ -18,7 +18,8 @@ final readonly class BackupCodeRecord
         #[SensitiveParameter]
         public string $codeHash,
         public ?DateTimeImmutable $usedAt = null,
-    ) {}
+    ) {
+    }
 
     public function isUsed(): bool
     {

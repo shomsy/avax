@@ -12,7 +12,8 @@ final readonly class RunMiddlewarePipeline
 {
     public function __construct(
         private MiddlewarePipeline $middlewarePipeline,
-    ) {}
+    ) {
+    }
 
     public function execute(RequestInterface $request, callable $core): ResponseInterface
     {

@@ -12,7 +12,7 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\Storage;
  */
 final class RegisterStorage
 {
-    public function build() : Storage
+    public function build(): Storage
     {
         return new Storage(
             storage: new LocalStorage(),

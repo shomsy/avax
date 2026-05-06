@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataLayer;
@@ -11,8 +12,10 @@ use Avax\Components\DataLayer\ConfigureDataLayer\RegisterDataLayerRuntime;
 final class DataLayer
 {
     private AccessPersistentData $access;
-    private CommitDataChanges    $commit;
-    private DataLayerConfig      $config;
+
+    private CommitDataChanges $commit;
+
+    private DataLayerConfig $config;
 
     private function __construct(AccessPersistentData $access, CommitDataChanges $commit, DataLayerConfig $config)
     {
@@ -21,7 +24,7 @@ final class DataLayer
         $this->config = $config;
     }
 
-    public static function fromDatabaseRuntime(object $databaseRuntime) : self
+    public static function fromDatabaseRuntime(object $databaseRuntime): self
     {
         $config = (new RegisterDataLayerRuntime())->register(databaseRuntime: $databaseRuntime);
         $access = new AccessPersistentData(databaseRuntime: $databaseRuntime);
@@ -30,17 +33,17 @@ final class DataLayer
         return new self(access: $access, commit: $commit, config: $config);
     }
 
-    public function access() : AccessPersistentData
+    public function access(): AccessPersistentData
     {
         return $this->access;
     }
 
-    public function commit() : CommitDataChanges
+    public function commit(): CommitDataChanges
     {
         return $this->commit;
     }
 
-    public function configuration() : DataLayerConfig
+    public function configuration(): DataLayerConfig
     {
         return $this->config;
     }

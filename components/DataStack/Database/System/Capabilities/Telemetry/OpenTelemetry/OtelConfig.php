@@ -8,7 +8,8 @@ final readonly class OtelConfig
 {
     public function __construct(
         public string $serviceName = 'avax-database',
-        public bool   $enabled = true,
-        public array  $attributes = [],
-    ) {}
+        public bool $enabled = true,
+        public array $attributes = [],
+    ) {
+    }
 }

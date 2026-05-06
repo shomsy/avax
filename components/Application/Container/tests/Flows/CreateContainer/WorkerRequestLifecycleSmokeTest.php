@@ -2,16 +2,20 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
-final class WorkerRequestLifecycleSmokeTest {}
+final class WorkerRequestLifecycleSmokeTest
+{
+}
 
-final class WorkerScopedService {}
+final class WorkerScopedService
+{
+}
 
-$cacheDir = sys_get_temp_dir() . '/container-worker-lifecycle-' . uniqid();
-$version  = 'worker-lifecycle';
+$cacheDir = sys_get_temp_dir().'/container-worker-lifecycle-'.uniqid();
+$version = 'worker-lifecycle';
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,
@@ -54,4 +58,4 @@ assertInstanceOf(
     message      : 'Flush should still preserve authored registrations across jobs.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

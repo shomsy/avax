@@ -24,8 +24,7 @@ final class RawMailBuilder
     public function __construct(
         private readonly SendMail $sendMail,
         private readonly Envelope $envelope,
-    )
-    {
+    ) {
     }
 
     public function from(string $address, ?string $name = null): self

@@ -16,5 +16,6 @@ final readonly class BeginEmailChangeData
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

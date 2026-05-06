@@ -14,6 +14,6 @@ final class MaskSecret
             return str_repeat(string: '*', times: $length);
         }
 
-        return substr(string: $value, offset: 0, length: $visiblePrefix) . str_repeat(string: '*', times: $length - $visiblePrefix);
+        return substr(string: $value, offset: 0, length: $visiblePrefix).str_repeat(string: '*', times: $length - $visiblePrefix);
     }
 }

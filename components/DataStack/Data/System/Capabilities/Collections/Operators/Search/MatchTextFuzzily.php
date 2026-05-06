@@ -9,13 +9,15 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Operato
  */
 final readonly class MatchTextFuzzily
 {
-    public function __construct(private array $items = []) {}
+    public function __construct(private array $items = [])
+    {
+    }
 
     public function __invoke(string $query, int $threshold = 70, ?string $key = null): array
     {
         return array_values(array_filter(
             $this->items,
-                                static function (array $item) use ($query, $threshold, $key) : bool {
+            static function (array $item) use ($query, $threshold, $key): bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
                 if (! is_string($target)) {
                     return false;

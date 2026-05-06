@@ -17,7 +17,8 @@ final readonly class CompensationResult
         public array $compensatedSteps,
         public array $failedSteps,
         public ?string $failureReason = null,
-    ) {}
+    ) {
+    }
 }
 
 /**
@@ -28,10 +29,9 @@ final class CompensationExecutor
     /**
      * Run compensation for all completed steps in reverse order.
      *
-     * @param array<SagaStep>    $steps          All saga steps
-     * @param array<int, string> $completedSteps Names of completed steps (in order)
-     * @param mixed              $context        The saga context
-     *
+     * @param  array<SagaStep>  $steps  All saga steps
+     * @param  array<int, string>  $completedSteps  Names of completed steps (in order)
+     * @param  mixed  $context  The saga context
      * @return CompensationResult The result of compensation execution
      */
     public function execute(
@@ -54,7 +54,7 @@ final class CompensationExecutor
         }
 
         $compensated = [];
-        $failed      = [];
+        $failed = [];
         $failureReason = null;
 
         // Run compensation in REVERSE order of completed steps

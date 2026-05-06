@@ -7,17 +7,18 @@ namespace Avax\Components\Operations\Mail\System\Capabilities\Content;
 final readonly class MimeMessage
 {
     public function __construct(
-        public string  $from,
-        public string  $to,
-        public string  $subject,
-        public string  $body,
-        public string  $contentType = 'text/plain',
-        public array   $headers = [],
-        public array   $attachments = [],
+        public string $from,
+        public string $to,
+        public string $subject,
+        public string $body,
+        public string $contentType = 'text/plain',
+        public array $headers = [],
+        public array $attachments = [],
         public ?string $replyTo = null,
         public ?string $cc = null,
         public ?string $bcc = null,
-    ) {}
+    ) {
+    }
 
     public function withReplyTo(string $replyTo): self
     {
@@ -85,7 +86,7 @@ final readonly class MimeMessage
 
     public function withAttachment(string $filename, string $content, string $mimeType): self
     {
-        $attachments   = $this->attachments;
+        $attachments = $this->attachments;
         $attachments[] = [
             'filename' => $filename,
             'content' => $content,
@@ -109,17 +110,17 @@ final readonly class MimeMessage
     public function toRaw(): string
     {
         $lines = [];
-        $lines[] = 'From: ' . $this->from;
-        $lines[] = 'To: ' . $this->to;
-        $lines[] = 'Subject: ' . $this->subject;
+        $lines[] = 'From: '.$this->from;
+        $lines[] = 'To: '.$this->to;
+        $lines[] = 'Subject: '.$this->subject;
         $lines[] = sprintf('Content-Type: %s; charset=UTF-8', $this->contentType);
 
         if ($this->replyTo !== null) {
-            $lines[] = 'Reply-To: ' . $this->replyTo;
+            $lines[] = 'Reply-To: '.$this->replyTo;
         }
 
         if ($this->cc !== null) {
-            $lines[] = 'Cc: ' . $this->cc;
+            $lines[] = 'Cc: '.$this->cc;
         }
 
         foreach ($this->headers as $name => $value) {

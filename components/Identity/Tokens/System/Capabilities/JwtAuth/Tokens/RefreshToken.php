@@ -9,10 +9,9 @@ final readonly class RefreshToken
     public function __construct(
         public string $sub,
         public string $jti,
-        public int    $exp,
-        public int    $iat,
-    )
-    {
+        public int $exp,
+        public int $iat,
+    ) {
     }
 
     public static function fromPayload(array $payload): self

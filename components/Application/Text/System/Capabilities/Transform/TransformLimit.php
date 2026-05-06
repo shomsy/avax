@@ -8,10 +8,10 @@ use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class TransformLimit
 {
-    public function __invoke(Text $text, int $max, string $suffix = '…') : Text
+    public function __invoke(Text $text, int $max, string $suffix = '…'): Text
     {
         if ($max <= 0) {
-            return new Text('');
+            return Text::of('');
         }
 
         $len = $text->length();
@@ -23,6 +23,6 @@ final class TransformLimit
             ? mb_substr($text->toString(), 0, $max, 'UTF-8')
             : substr($text->toString(), 0, $max);
 
-        return new Text($cut . $suffix);
+        return Text::of($cut.$suffix);
     }
 }

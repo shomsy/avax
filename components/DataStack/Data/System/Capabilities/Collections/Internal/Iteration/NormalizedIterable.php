@@ -10,8 +10,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Interna
 final readonly class NormalizedIterable
 {
     /**
-     * @param iterable<mixed> $iterable
-     *
+     * @param  iterable<mixed>  $iterable
      * @return array<mixed>
      */
     public static function toArray(iterable $iterable): array
@@ -24,7 +23,7 @@ final readonly class NormalizedIterable
     }
 
     /**
-     * @param iterable<mixed> $iterable
+     * @param  iterable<mixed>  $iterable
      * @return array<mixed>
      */
     public static function toArrayPreserveKeys(iterable $iterable): array

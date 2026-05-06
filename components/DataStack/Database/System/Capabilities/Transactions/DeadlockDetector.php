@@ -22,7 +22,8 @@ final readonly class DeadlockReport
         public string $suggestion = '',
         public array $affectedTables = [],
         public float $detectedAt = 0.0,
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a report indicating a detected deadlock.
@@ -72,11 +73,11 @@ final readonly class DeadlockReport
         $summary .= sprintf('Message: %s%s', $this->message, PHP_EOL);
 
         if ($this->affectedTables !== []) {
-            $summary .= 'Affected Tables: ' . implode(', ', $this->affectedTables);
+            $summary .= 'Affected Tables: '.implode(', ', $this->affectedTables);
             $summary .= "\n";
         }
 
-        return $summary . ('Suggestion: ' . $this->suggestion);
+        return $summary.('Suggestion: '.$this->suggestion);
     }
 }
 
@@ -119,11 +120,11 @@ final readonly class DeadlockDetector
      *
      * @return DeadlockReport Analysis result
      */
-    public function analyze(Throwable $throwable) : DeadlockReport
+    public function analyze(Throwable $throwable): DeadlockReport
     {
-        $message   = strtolower($throwable->getMessage());
+        $message = strtolower($throwable->getMessage());
         $errorCode = (string) $throwable->getCode();
-        $sqlState  = $this->extractSqlState($throwable);
+        $sqlState = $this->extractSqlState($throwable);
 
         // Check SQLSTATE codes first
         if ($this->isDeadlockSqlState($sqlState)) {
@@ -166,7 +167,7 @@ final readonly class DeadlockDetector
     /**
      * Quick check if an exception is a deadlock.
      */
-    public function isDeadlock(Throwable $throwable) : bool
+    public function isDeadlock(Throwable $throwable): bool
     {
         return $this->analyze($throwable)->isDeadlock;
     }
@@ -174,8 +175,7 @@ final readonly class DeadlockDetector
     /**
      * Analyzes multiple exceptions to find deadlocks.
      *
-     * @param list<Throwable> $exceptions
-     *
+     * @param  list<Throwable>  $exceptions
      * @return list<DeadlockReport>
      */
     public function analyzeBatch(array $exceptions): array
@@ -188,7 +188,7 @@ final readonly class DeadlockDetector
 
         return array_values(array_filter(
             $reports,
-                                static fn (DeadlockReport $deadlockReport) : bool => $deadlockReport->isDeadlock,
+            static fn (DeadlockReport $deadlockReport): bool => $deadlockReport->isDeadlock,
         ));
     }
 
@@ -219,7 +219,7 @@ final readonly class DeadlockDetector
     /**
      * Extracts the SQLSTATE from a PDOException.
      */
-    private function extractSqlState(Throwable $throwable) : string
+    private function extractSqlState(Throwable $throwable): string
     {
         if (! $throwable instanceof PDOException) {
             return '';
@@ -270,11 +270,11 @@ final readonly class DeadlockDetector
     private function getSuggestionForPattern(string $pattern): string
     {
         return match ($pattern) {
-            'deadlock'                   => 'Deadlock detected. Ensure transactions access resources in a consistent order to prevent circular waits.',
-            'serialization failure'      => 'Serialization failure. Consider using SERIALIZABLE isolation level or retrying the transaction.',
-            'lock wait timeout'          => 'Lock wait timeout. The transaction waited too long for a lock. Check for long-running transactions.',
+            'deadlock' => 'Deadlock detected. Ensure transactions access resources in a consistent order to prevent circular waits.',
+            'serialization failure' => 'Serialization failure. Consider using SERIALIZABLE isolation level or retrying the transaction.',
+            'lock wait timeout' => 'Lock wait timeout. The transaction waited too long for a lock. Check for long-running transactions.',
             'try restarting transaction' => 'Database recommends restarting the transaction. Implement retry logic with backoff.',
-            default                      => 'Deadlock-like error detected. Retry the transaction with exponential backoff.',
+            default => 'Deadlock-like error detected. Retry the transaction with exponential backoff.',
         };
     }
 }
@@ -285,8 +285,8 @@ final readonly class DeadlockDetector
 final readonly class DeadlockDetectorConfig
 {
     /**
-     * @param list<string> $deadlockSqlStates  SQLSTATE codes that indicate deadlocks
-     * @param list<string> $deadlockErrorCodes Additional error codes to check
+     * @param  list<string>  $deadlockSqlStates  SQLSTATE codes that indicate deadlocks
+     * @param  list<string>  $deadlockErrorCodes  Additional error codes to check
      */
     public function __construct(
         public array $deadlockSqlStates = ['40001', '40P01'],

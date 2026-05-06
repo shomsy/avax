@@ -9,4 +9,6 @@ use RuntimeException;
 /**
  * Thrown when a permission check fails during authorization.
  */
-final class PermissionDenied extends RuntimeException {}
+final class PermissionDenied extends RuntimeException
+{
+}

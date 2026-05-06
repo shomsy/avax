@@ -23,7 +23,7 @@ final class ArrayPooledConnection implements PooledConnection
     }
 
     #[Override]
-    public function getResource() : stdClass
+    public function getResource(): stdClass
     {
         $this->lastUsedAt = microtime(as_float: true);
 

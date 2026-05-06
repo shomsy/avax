@@ -19,10 +19,11 @@ final class EventBus implements EventBusInterface
     private array $listeners = [];
 
     /**
-     * @param DispatchStrategyInterface $dispatchStrategy The logic for HOW to deliver the news (e.g., "Do it now" or "Queue
-     *                                                    *                                            it").
+     * @param  DispatchStrategyInterface  $dispatchStrategy  The logic for HOW to deliver the news (e.g., "Do it now" or "Queue
+     *                                                       *                                            it").
      */
-    public function __construct(private readonly DispatchStrategyInterface $dispatchStrategy = new SyncDispatchStrategy()) {
+    public function __construct(private readonly DispatchStrategyInterface $dispatchStrategy = new SyncDispatchStrategy())
+    {
     }
 
     /**
@@ -44,9 +45,9 @@ final class EventBus implements EventBusInterface
     /**
      * Sign up a multi-topic "Subscriber" (a class that listens to many things).
      *
-     * @param EventSubscriberInterface $eventSubscriber A helper object that contains multiple different listeners.
+     * @param  EventSubscriberInterface  $eventSubscriber  A helper object that contains multiple different listeners.
      */
-    public function registerSubscriber(EventSubscriberInterface $eventSubscriber) : void
+    public function registerSubscriber(EventSubscriberInterface $eventSubscriber): void
     {
         foreach ($eventSubscriber->getSubscribedEvents() as $event => $method) {
             $this->subscribe(event: $event, listener: [$eventSubscriber, $method]);
@@ -56,8 +57,8 @@ final class EventBus implements EventBusInterface
     /**
      * Register a listener for a specific event type.
      *
-     * @param string   $event    Event class name.
-     * @param callable $listener Callback to invoke.
+     * @param  string  $event  Event class name.
+     * @param  callable  $listener  Callback to invoke.
      */
     public function subscribe(string $event, callable $listener): void
     {

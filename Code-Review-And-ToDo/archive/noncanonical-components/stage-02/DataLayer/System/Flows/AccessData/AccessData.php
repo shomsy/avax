@@ -6,5 +6,7 @@ namespace Avax\Components\DataLayer\System\Flows\AccessData;
 
 final readonly class AccessData
 {
-    public static function access() : void {}
+    public static function access(): void
+    {
+    }
 }

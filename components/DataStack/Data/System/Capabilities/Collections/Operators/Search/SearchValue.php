@@ -9,7 +9,9 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Operato
  */
 final readonly class SearchValue
 {
-    public function __construct(private array $items = []) {}
+    public function __construct(private array $items = [])
+    {
+    }
 
     public function __invoke(mixed $value, bool $strict = true): string|int|false
     {

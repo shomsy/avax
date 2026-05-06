@@ -17,10 +17,10 @@ final readonly class Http implements HttpInterface
 
     public function handle(RequestInterface $req): ResponseInterface
     {
-        return $this->middlewarePipeline->run($req, fn (RequestInterface $request) : ResponseInterface => $this->router->dispatch($request));
+        return $this->middlewarePipeline->run($req, fn (RequestInterface $request): ResponseInterface => $this->router->dispatch($request));
     }
 
-    public function terminate(RequestInterface $request, ResponseInterface $response) : void
+    public function terminate(RequestInterface $request, ResponseInterface $response): void
     {
     }
 }

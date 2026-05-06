@@ -39,11 +39,11 @@ final readonly class OAuthClient
     public array $allowedAudiences;
 
     /**
-     * @param list<string>                $redirectUris
-     * @param list<string>                $allowedScopes
-     * @param list<string>                $allowedAudiences
-     * @param list<OAuthGrantType>        $allowedGrantTypes
-     * @param array<string, list<string>> $audienceScopeBoundaries
+     * @param  list<string>  $redirectUris
+     * @param  list<string>  $allowedScopes
+     * @param  list<string>  $allowedAudiences
+     * @param  list<OAuthGrantType>  $allowedGrantTypes
+     * @param  array<string, list<string>>  $audienceScopeBoundaries
      */
     public function __construct(
         public string $clientId,
@@ -52,48 +52,48 @@ final readonly class OAuthClient
         public array $redirectUris,
         public array $allowedScopes,
         public ?string $tenantSlug = null,
-        ?array                        $allowedAudiences = null,
-        ?array                        $allowedGrantTypes = null,
-        ?array                        $audienceScopeBoundaries = null,
+        ?array $allowedAudiences = null,
+        ?array $allowedGrantTypes = null,
+        ?array $audienceScopeBoundaries = null,
         #[SensitiveParameter]
         ?OAuthTokenEndpointAuthMethod $oAuthTokenEndpointAuthMethod = null,
         public ?OAuthSenderConstraintType $requiredSenderConstraint = null,
-        ?bool                         $workloadIdentity = null,
-        ?bool                         $phishingResistantRequired = null,
-        ?bool                         $requestObjectSignatureRequired = null,
-        ?bool                         $frontChannelLogoutSupported = null,
-        ?bool                         $backChannelLogoutSupported = null,
-        ?OAuthClientApprovalStatus    $oAuthClientApprovalStatus = null,
+        ?bool $workloadIdentity = null,
+        ?bool $phishingResistantRequired = null,
+        ?bool $requestObjectSignatureRequired = null,
+        ?bool $frontChannelLogoutSupported = null,
+        ?bool $backChannelLogoutSupported = null,
+        ?OAuthClientApprovalStatus $oAuthClientApprovalStatus = null,
         public ?DateTimeImmutable $approvedAt = null,
         public ?string $approvedBy = null,
-        ?bool                         $active = null,
+        ?bool $active = null,
         #[SensitiveParameter]
         public ?string $secretHash = null,
         #[SensitiveParameter]
         public ?string $requestObjectVerificationKeyPem = null,
     ) {
-        $allowedAudiences                  ??= [];
-        $allowedGrantTypes                 ??= [];
-        $audienceScopeBoundaries           ??= [];
+        $allowedAudiences ??= [];
+        $allowedGrantTypes ??= [];
+        $audienceScopeBoundaries ??= [];
         $oAuthTokenEndpointAuthMethod ??= OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC;
-        $workloadIdentity                  ??= false;
-        $phishingResistantRequired         ??= false;
+        $workloadIdentity ??= false;
+        $phishingResistantRequired ??= false;
         $requestObjectSignatureRequired ??= false;
-        $frontChannelLogoutSupported       ??= false;
-        $backChannelLogoutSupported        ??= false;
+        $frontChannelLogoutSupported ??= false;
+        $backChannelLogoutSupported ??= false;
         $oAuthClientApprovalStatus ??= OAuthClientApprovalStatus::APPROVED;
-        $active                            ??= true;
-        $this->allowedAudiences            = $allowedAudiences;
-        $this->allowedGrantTypes           = $allowedGrantTypes;
-        $this->audienceScopeBoundaries     = $audienceScopeBoundaries;
+        $active ??= true;
+        $this->allowedAudiences = $allowedAudiences;
+        $this->allowedGrantTypes = $allowedGrantTypes;
+        $this->audienceScopeBoundaries = $audienceScopeBoundaries;
         $this->tokenEndpointAuthMethod = $oAuthTokenEndpointAuthMethod;
-        $this->workloadIdentity            = $workloadIdentity;
-        $this->phishingResistantRequired   = $phishingResistantRequired;
+        $this->workloadIdentity = $workloadIdentity;
+        $this->phishingResistantRequired = $phishingResistantRequired;
         $this->requestObjectSignatureRequired = $requestObjectSignatureRequired;
         $this->frontChannelLogoutSupported = $frontChannelLogoutSupported;
-        $this->backChannelLogoutSupported  = $backChannelLogoutSupported;
+        $this->backChannelLogoutSupported = $backChannelLogoutSupported;
         $this->approvalStatus = $oAuthClientApprovalStatus;
-        $this->active                      = $active;
+        $this->active = $active;
     }
 
     public function isPublic(): bool
@@ -111,7 +111,7 @@ final readonly class OAuthClient
         return in_array(needle: $redirectUri, haystack: $this->redirectUris, strict: true);
     }
 
-    public function allowsGrantType(OAuthGrantType $oAuthGrantType) : bool
+    public function allowsGrantType(OAuthGrantType $oAuthGrantType): bool
     {
         return in_array(needle: $oAuthGrantType, haystack: $this->allowedGrantTypes, strict: true);
     }
@@ -135,7 +135,7 @@ final readonly class OAuthClient
     }
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function allowsAudienceScopes(?string $audience, array $scopes): bool
     {
@@ -149,15 +149,15 @@ final readonly class OAuthClient
             return true;
         }
 
-        return array_all(array: $scopes, callback: fn ($scope) : bool => in_array(needle: $scope, haystack: $this->audienceScopeBoundaries[$normalizedAudience], strict: true));
+        return array_all(array: $scopes, callback: fn ($scope): bool => in_array(needle: $scope, haystack: $this->audienceScopeBoundaries[$normalizedAudience], strict: true));
     }
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function allowsScopes(array $scopes): bool
     {
-        return array_all(array: $scopes, callback: fn ($scope) : bool => in_array(needle: $scope, haystack: $this->allowedScopes, strict: true));
+        return array_all(array: $scopes, callback: fn ($scope): bool => in_array(needle: $scope, haystack: $this->allowedScopes, strict: true));
     }
 
     public function requiresSenderConstraint(): bool

@@ -126,12 +126,13 @@ final readonly class RenderRuntimeFailure
         private string $environment = 'production',
         private ?string $correlationId = null,
         private ?string $traceId = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Render the error response and output it.
      */
-    public function render(Throwable $throwable) : void
+    public function render(Throwable $throwable): void
     {
         $isCli = PHP_SAPI === 'cli';
 
@@ -147,17 +148,17 @@ final readonly class RenderRuntimeFailure
     /**
      * Render error output for CLI environment.
      */
-    private function renderCli(Throwable $throwable) : void
+    private function renderCli(Throwable $throwable): void
     {
         if ($this->isDevelopment()) {
             $traceOutput = '';
             $index = 1;
 
             foreach ($throwable->getTrace() as $frame) {
-                $file  = $frame['file'] ?? '[internal]';
-                $line  = $frame['line'] ?? 0;
+                $file = $frame['file'] ?? '[internal]';
+                $line = $frame['line'] ?? 0;
                 $class = $frame['class'] ?? '';
-                $type  = $frame['type'] ?? '';
+                $type = $frame['type'] ?? '';
                 $function = $frame['function'];
 
                 $traceOutput .= sprintf(
@@ -190,7 +191,7 @@ final readonly class RenderRuntimeFailure
     /**
      * Check if the current environment is development.
      */
-    private function isDevelopment() : bool
+    private function isDevelopment(): bool
     {
         return in_array($this->environment, ['development', 'dev', 'local', 'testing'], true);
     }
@@ -198,7 +199,7 @@ final readonly class RenderRuntimeFailure
     /**
      * Render error output for HTTP environment.
      */
-    private function renderHttp(Throwable $throwable) : void
+    private function renderHttp(Throwable $throwable): void
     {
         if (! headers_sent()) {
             http_response_code(500);
@@ -215,16 +216,16 @@ final readonly class RenderRuntimeFailure
     /**
      * Render detailed development error page.
      */
-    private function renderDevelopmentPage(Throwable $throwable) : string
+    private function renderDevelopmentPage(Throwable $throwable): string
     {
         $traceHtml = '';
         $index = 1;
 
         foreach ($throwable->getTrace() as $frame) {
-            $file  = htmlspecialchars($frame['file'] ?? '[internal]', ENT_QUOTES, 'UTF-8');
-            $line  = (int) ($frame['line'] ?? 0);
+            $file = htmlspecialchars($frame['file'] ?? '[internal]', ENT_QUOTES, 'UTF-8');
+            $line = (int) ($frame['line'] ?? 0);
             $class = htmlspecialchars($frame['class'] ?? '', ENT_QUOTES, 'UTF-8');
-            $type  = htmlspecialchars($frame['type'] ?? '', ENT_QUOTES, 'UTF-8');
+            $type = htmlspecialchars($frame['type'] ?? '', ENT_QUOTES, 'UTF-8');
             $function = htmlspecialchars($frame['function'], ENT_QUOTES, 'UTF-8');
 
             $traceHtml .= sprintf(
@@ -266,7 +267,7 @@ final readonly class RenderRuntimeFailure
     /**
      * Render generic production error page.
      */
-    private function renderProductionPage() : string
+    private function renderProductionPage(): string
     {
         $errorId = $this->correlationId ?? bin2hex(random_bytes(8));
 

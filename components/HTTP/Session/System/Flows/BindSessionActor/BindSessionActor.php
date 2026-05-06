@@ -14,10 +14,10 @@ final readonly class BindSessionActor
     ) {
     }
 
-    public function handle(SessionActor $sessionActor) : void
+    public function handle(SessionActor $sessionActor): void
     {
         $this->session->put('_actor', [
-            'id'   => $sessionActor->id,
+            'id' => $sessionActor->id,
             'data' => $sessionActor->data,
         ]);
 

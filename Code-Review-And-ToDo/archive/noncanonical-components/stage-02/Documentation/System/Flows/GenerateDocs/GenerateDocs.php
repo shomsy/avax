@@ -6,5 +6,7 @@ namespace Avax\Components\Documentation\System\Flows\GenerateDocs;
 
 final readonly class GenerateDocs
 {
-    public static function generate() : void {}
+    public static function generate(): void
+    {
+    }
 }

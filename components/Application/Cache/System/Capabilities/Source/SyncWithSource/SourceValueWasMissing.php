@@ -8,5 +8,6 @@ final readonly class SourceValueWasMissing
 {
     public function __construct(
         public CacheSourceKey $cacheSourceKey,
-    ) {}
+    ) {
+    }
 }

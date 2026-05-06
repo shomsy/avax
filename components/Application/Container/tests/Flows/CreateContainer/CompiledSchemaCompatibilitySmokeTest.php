@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
@@ -17,9 +17,9 @@ final class SchemaCompatibilityService
     }
 }
 
-$cacheDir     = sys_get_temp_dir() . '/container-schema-compatibility-' . uniqid();
-$version      = 'compiled-schema-compatibility';
-$metadataPath = $cacheDir . '/container/' . rawurlencode(string: $version) . '/compiled/container.json';
+$cacheDir = sys_get_temp_dir().'/container-schema-compatibility-'.uniqid();
+$version = 'compiled-schema-compatibility';
+$metadataPath = $cacheDir.'/container/'.rawurlencode(string: $version).'/compiled/container.json';
 
 $compiled = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
@@ -29,9 +29,9 @@ $compiled = makeTestContainer(config: CreateContainerConfig::create(
 $compiled->singleton(abstract: SchemaCompatibilityDependency::class, concrete: SchemaCompatibilityDependency::class);
 $compiled->compileContainer(serviceIds: [SchemaCompatibilityService::class, SchemaCompatibilityDependency::class]);
 
-$metadata                  = json_decode(json: (string) file_get_contents(filename: $metadataPath), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
+$metadata = json_decode(json: (string) file_get_contents(filename: $metadataPath), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
 $metadata['schemaVersion'] = 999;
-file_put_contents(filename: $metadataPath, data: json_encode(value: $metadata, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
+file_put_contents(filename: $metadataPath, data: json_encode(value: $metadata, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
 
 $reloaded = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
@@ -40,7 +40,7 @@ $reloaded = makeTestContainer(config: CreateContainerConfig::create(
 ));
 $reloaded->singleton(abstract: SchemaCompatibilityDependency::class, concrete: SchemaCompatibilityDependency::class);
 
-$report   = $reloaded->compileReport(serviceIds: [SchemaCompatibilityService::class]);
+$report = $reloaded->compileReport(serviceIds: [SchemaCompatibilityService::class]);
 $resolved = $reloaded->get(id: SchemaCompatibilityService::class);
 
 assertTrue(condition: $report !== null, message: 'Schema compatibility checks should still expose compile reports.');
@@ -58,4 +58,4 @@ assertInstanceOf(
     message      : 'Schema-incompatible artifacts should fall back to dynamic resolution.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

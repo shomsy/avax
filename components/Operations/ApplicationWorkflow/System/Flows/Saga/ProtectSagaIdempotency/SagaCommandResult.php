@@ -9,5 +9,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Prote
  */
 final readonly class SagaCommandResult
 {
-    public function __construct(public mixed $result) {}
+    public function __construct(public mixed $result)
+    {
+    }
 }

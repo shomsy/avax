@@ -7,17 +7,16 @@ namespace Avax\Labs\API\DescribeApi\System\Capabilities\RequestContracts;
 final class RequestDtoContract
 {
     /**
-     * @param array<string, mixed> $properties
-     * @param list<string> $required
+     * @param  array<string, mixed>  $properties
+     * @param  list<string>  $required
      */
     public function __construct(
-        public readonly string      $name,
-        public readonly string      $description,
-        public readonly array       $properties = [],
-        public readonly array       $required = [],
-        public readonly string|null $example = null,
-    )
-    {
+        public readonly string $name,
+        public readonly string $description,
+        public readonly array $properties = [],
+        public readonly array $required = [],
+        public readonly ?string $example = null,
+    ) {
     }
 
     public function isRequired(string $field): bool

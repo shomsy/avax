@@ -9,7 +9,7 @@ use Avax\Framework\System\Foundation\Version\Version;
 final readonly class ComponentManifest
 {
     /**
-     * @param list<string> $dependencies
+     * @param  list<string>  $dependencies
      */
     public function __construct(
         public string $name,

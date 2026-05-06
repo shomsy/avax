@@ -9,7 +9,7 @@ use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 
 interface MailTransport
 {
-    public function send(MimeMessage $mimeMessage, Envelope $envelope) : TransportResult;
+    public function send(MimeMessage $mimeMessage, Envelope $envelope): TransportResult;
 
     public function supports(string $driver): bool;
 }

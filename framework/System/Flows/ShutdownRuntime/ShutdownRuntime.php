@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\ShutdownRuntime;
 
-use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
-
 final readonly class ShutdownRuntime
 {
-    public function shutdown() : void
+    public function shutdown(): void
     {
         $this->flushTerminableWork();
 
         $this->closeRuntimeResources();
     }
 
-    private function flushTerminableWork() : void {}
+    private function flushTerminableWork(): void
+    {
+    }
 
-    private function closeRuntimeResources() : void {}
+    private function closeRuntimeResources(): void
+    {
+    }
 }

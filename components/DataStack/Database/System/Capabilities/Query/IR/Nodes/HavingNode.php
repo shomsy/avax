@@ -8,11 +8,13 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 
 final readonly class HavingNode
 {
-    public function __construct(public WhereNode $condition) {}
+    public function __construct(public WhereNode $condition)
+    {
+    }
 
     public function getSql(GrammarInterface $grammar): string
     {
-        return 'HAVING ' . preg_replace(
+        return 'HAVING '.preg_replace(
             pattern    : '/^(AND|OR)\s+/i',
             replacement: '',
             subject    : $this->condition->getSql(grammar: $grammar),

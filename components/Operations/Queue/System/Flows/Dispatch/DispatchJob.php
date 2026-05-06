@@ -18,11 +18,11 @@ final readonly class DispatchJob
     {
     }
 
-    public function dispatchSync(JobDefinition $jobDefinition) : JobResult
+    public function dispatchSync(JobDefinition $jobDefinition): JobResult
     {
         try {
             $handler = $this->jobRegistry->resolve($jobDefinition->handler);
-            $result  = $handler($jobDefinition->payload);
+            $result = $handler($jobDefinition->payload);
 
             return JobResult::success($result);
         } catch (Throwable $throwable) {
@@ -30,7 +30,7 @@ final readonly class DispatchJob
         }
     }
 
-    public function later(JobDefinition $jobDefinition, DateTimeInterface $delay, QueueBroker $queueBroker) : JobId
+    public function later(JobDefinition $jobDefinition, DateTimeInterface $delay, QueueBroker $queueBroker): JobId
     {
         $queue = $jobDefinition->queue ?? 'default';
         $jobId = JobId::generate($queue);
@@ -44,7 +44,7 @@ final readonly class DispatchJob
         return $jobId;
     }
 
-    public function bulk(array $jobs, QueueBroker $queueBroker) : array
+    public function bulk(array $jobs, QueueBroker $queueBroker): array
     {
         $ids = [];
 
@@ -59,7 +59,7 @@ final readonly class DispatchJob
         return $ids;
     }
 
-    public function dispatch(JobDefinition $jobDefinition, QueueBroker $queueBroker) : JobId
+    public function dispatch(JobDefinition $jobDefinition, QueueBroker $queueBroker): JobId
     {
         $queue = $jobDefinition->queue ?? 'default';
         $jobId = JobId::generate($queue);

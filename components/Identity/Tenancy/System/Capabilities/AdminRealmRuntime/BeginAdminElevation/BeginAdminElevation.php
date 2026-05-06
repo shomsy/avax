@@ -30,7 +30,8 @@ final readonly class BeginAdminElevation
         private AuditLogInterface $auditLog,
         private Clock $clock,
         private bool $phishingResistantRequired = false,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws AdminElevationFailed
@@ -40,7 +41,7 @@ final readonly class BeginAdminElevation
     public function execute(): AdminElevation
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $user                  = $authenticationContext->user();
+        $user = $authenticationContext->user();
 
         if (! $user instanceof AuthenticatedUser) {
             throw AdminElevationFailed::unauthenticated();
@@ -73,7 +74,7 @@ final readonly class BeginAdminElevation
             name      : 'auth.admin.elevation.started',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id' => $user->id,
+                'user_id' => $user->id,
                 'binding_id' => $bindingId,
             ],
         ));
@@ -84,7 +85,7 @@ final readonly class BeginAdminElevation
         );
     }
 
-    private function bindingId(AuthenticationContext $authenticationContext) : ?string
+    private function bindingId(AuthenticationContext $authenticationContext): ?string
     {
         return $authenticationContext->sessionId()
             ?? $authenticationContext->accessTokenId()

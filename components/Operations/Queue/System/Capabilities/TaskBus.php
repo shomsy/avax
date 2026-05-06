@@ -15,7 +15,7 @@ interface TaskDriverInterface
 {
     public function dispatch(object $task): void;
 
-    public function dispatchlater(object $task, DateInterval $dateInterval) : void;
+    public function dispatchlater(object $task, DateInterval $dateInterval): void;
 }
 
 final class TaskBus
@@ -29,7 +29,7 @@ final class TaskBus
         $this->syncDriver = new SyncDriver();
     }
 
-    public function register(string $taskClass, TaskHandlerInterface $taskHandler) : void
+    public function register(string $taskClass, TaskHandlerInterface $taskHandler): void
     {
         $this->handlers[$taskClass] = $taskHandler;
     }
@@ -47,7 +47,7 @@ final class TaskBus
         $this->syncDriver->dispatch($task);
     }
 
-    public function dispatchlater(object $task, DateInterval $dateInterval) : void
+    public function dispatchlater(object $task, DateInterval $dateInterval): void
     {
         $this->syncDriver->dispatchlater($task, $dateInterval);
     }
@@ -55,7 +55,7 @@ final class TaskBus
 
 final readonly class SyncDriver implements TaskDriverInterface
 {
-    public function dispatchlater(object $task, DateInterval $dateInterval) : void
+    public function dispatchlater(object $task, DateInterval $dateInterval): void
     {
         $ms = (int) (($dateInterval->i * 60 + $dateInterval->s) * 1000);
 

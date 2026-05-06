@@ -8,9 +8,11 @@ use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegis
 
 final readonly class SubscribeToEvent
 {
-    public function __construct(private ListenerRegistry $listenerRegistry) {}
+    public function __construct(private ListenerRegistry $listenerRegistry)
+    {
+    }
 
-    public function execute(string $event, callable $listener, int $priority = 0) : void
+    public function execute(string $event, callable $listener, int $priority = 0): void
     {
         $this->listenerRegistry->subscribe(event: $event, listener: $listener, priority: $priority);
     }

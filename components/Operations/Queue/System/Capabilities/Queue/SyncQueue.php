@@ -25,13 +25,13 @@ final class SyncQueue implements QueueBroker
 
     public function remove(string $queue, string $jobId): void
     {
-        if (!isset($this->queues[$queue])) {
+        if (! isset($this->queues[$queue])) {
             return;
         }
 
         $this->queues[$queue] = array_filter(
             $this->queues[$queue],
-            static fn(array $job): bool => ($job['id'] ?? '') !== $jobId,
+            static fn (array $job): bool => ($job['id'] ?? '') !== $jobId,
         );
     }
 

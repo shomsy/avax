@@ -12,13 +12,12 @@ use stdClass;
 final readonly class SagaRuntime
 {
     public function __construct(
-        public object                 $store,
-        public object                 $stepRunner,
-        public object                 $messageBus,
+        public object $store,
+        public object $stepRunner,
+        public object $messageBus,
         public ProtectSagaIdempotency $idempotency,
-        public InspectSaga            $inspect,
-    )
-    {
+        public InspectSaga $inspect,
+    ) {
     }
 
     public static function inMemory(): self

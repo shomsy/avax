@@ -9,7 +9,7 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
     /** @var array<string, FederationConnection> */
     private array $connections = [];
 
-    public function save(FederationConnection $federationConnection) : void
+    public function save(FederationConnection $federationConnection): void
     {
         $this->connections[$federationConnection->connectionId] = $federationConnection;
     }

@@ -5,42 +5,43 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\System\Foundation\Values;
 
 use ValueError;
+
 use function str_starts_with;
 use function strtolower;
 use function trim;
 
 enum ContentType: string
 {
-    case APPLICATION_JSON            = 'application/json';
-    case APPLICATION_XML             = 'application/xml';
-    case TEXT_HTML                   = 'text/html';
-    case TEXT_PLAIN                  = 'text/plain';
-    case TEXT_XML                    = 'text/xml';
-    case TEXT_CSS                    = 'text/css';
-    case TEXT_CSV                    = 'text/csv';
-    case APPLICATION_JAVASCRIPT      = 'application/javascript';
+    case APPLICATION_JSON = 'application/json';
+    case APPLICATION_XML = 'application/xml';
+    case TEXT_HTML = 'text/html';
+    case TEXT_PLAIN = 'text/plain';
+    case TEXT_XML = 'text/xml';
+    case TEXT_CSS = 'text/css';
+    case TEXT_CSV = 'text/csv';
+    case APPLICATION_JAVASCRIPT = 'application/javascript';
     case APPLICATION_FORM_URLENCODED = 'application/x-www-form-urlencoded';
-    case MULTIPART_FORM_DATA         = 'multipart/form-data';
-    case APPLICATION_OCTET_STREAM    = 'application/octet-stream';
-    case APPLICATION_PDF             = 'application/pdf';
-    case APPLICATION_ZIP             = 'application/zip';
-    case APPLICATION_GZIP            = 'application/gzip';
-    case IMAGE_PNG                   = 'image/png';
-    case IMAGE_JPEG                  = 'image/jpeg';
-    case IMAGE_GIF                   = 'image/gif';
-    case IMAGE_SVG_XML               = 'image/svg+xml';
-    case IMAGE_WEBP                  = 'image/webp';
-    case IMAGE_ICON                  = 'image/x-icon';
-    case APPLICATION_ATOM_XML        = 'application/atom+xml';
-    case APPLICATION_RSS_XML         = 'application/rss+xml';
-    case APPLICATION_GRAPHQL         = 'application/graphql+json';
-    case APPLICATION_PROBLEM_JSON    = 'application/problem+json';
-    case APPLICATION_PROBLEM_XML     = 'application/problem+xml';
-    case APPLICATION_YAML            = 'application/yaml';
-    case APPLICATION_TOML            = 'application/toml';
-    case TEXT_MARKDOWN               = 'text/markdown';
-    case TEXT_CALENDAR               = 'text/calendar';
-    case EVENT_STREAM                = 'text/event-stream';
+    case MULTIPART_FORM_DATA = 'multipart/form-data';
+    case APPLICATION_OCTET_STREAM = 'application/octet-stream';
+    case APPLICATION_PDF = 'application/pdf';
+    case APPLICATION_ZIP = 'application/zip';
+    case APPLICATION_GZIP = 'application/gzip';
+    case IMAGE_PNG = 'image/png';
+    case IMAGE_JPEG = 'image/jpeg';
+    case IMAGE_GIF = 'image/gif';
+    case IMAGE_SVG_XML = 'image/svg+xml';
+    case IMAGE_WEBP = 'image/webp';
+    case IMAGE_ICON = 'image/x-icon';
+    case APPLICATION_ATOM_XML = 'application/atom+xml';
+    case APPLICATION_RSS_XML = 'application/rss+xml';
+    case APPLICATION_GRAPHQL = 'application/graphql+json';
+    case APPLICATION_PROBLEM_JSON = 'application/problem+json';
+    case APPLICATION_PROBLEM_XML = 'application/problem+xml';
+    case APPLICATION_YAML = 'application/yaml';
+    case APPLICATION_TOML = 'application/toml';
+    case TEXT_MARKDOWN = 'text/markdown';
+    case TEXT_CALENDAR = 'text/calendar';
+    case EVENT_STREAM = 'text/event-stream';
 
     /**
      * Default charset used when a charset parameter is requested.
@@ -90,9 +91,9 @@ enum ContentType: string
     /**
      * Get the MIME type with charset parameter appended.
      *
-     * @param string|null $charset Override the default charset. If null, uses utf-8.
+     * @param  string|null  $charset  Override the default charset. If null, uses utf-8.
      */
-    public function mimeTypeWithCharset(?string $charset = null) : string
+    public function mimeTypeWithCharset(?string $charset = null): string
     {
         $charset ??= self::DEFAULT_CHARSET;
 
@@ -164,7 +165,7 @@ enum ContentType: string
             self::APPLICATION_JSON,
             self::APPLICATION_GRAPHQL,
             self::APPLICATION_PROBLEM_JSON => true,
-            default                        => false,
+            default => false,
         };
     }
 
@@ -179,7 +180,7 @@ enum ContentType: string
             self::APPLICATION_ATOM_XML,
             self::APPLICATION_RSS_XML,
             self::APPLICATION_PROBLEM_XML => true,
-            default                       => false,
+            default => false,
         };
     }
 
@@ -199,7 +200,7 @@ enum ContentType: string
         return match ($this) {
             self::APPLICATION_FORM_URLENCODED,
             self::MULTIPART_FORM_DATA => true,
-            default                   => false,
+            default => false,
         };
     }
 
@@ -211,7 +212,7 @@ enum ContentType: string
         return match ($this) {
             self::APPLICATION_PROBLEM_JSON,
             self::APPLICATION_PROBLEM_XML => true,
-            default                       => false,
+            default => false,
         };
     }
 }

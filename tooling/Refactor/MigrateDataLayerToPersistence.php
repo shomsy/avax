@@ -48,7 +48,7 @@ final class MigrateDataLayerToPersistence
         );
 
         foreach ($iterator as $file) {
-            if (!$file->isFile()) {
+            if (! $file->isFile()) {
                 continue;
             }
 
@@ -65,8 +65,8 @@ final class MigrateDataLayerToPersistence
 
             foreach (self::MIGRATIONS as $old => $new) {
                 $content = str_replace(
-                    'use ' . $old . ';',
-                    'use ' . $new . ';',
+                    'use '.$old.';',
+                    'use '.$new.';',
                     $content,
                 );
             }
@@ -76,7 +76,7 @@ final class MigrateDataLayerToPersistence
                 if (file_put_contents($filePath, $content) !== false) {
                     $changed[] = $filePath;
                 } else {
-                    $errors[] = $filePath . ' (write failed)';
+                    $errors[] = $filePath.' (write failed)';
                 }
             }
         }

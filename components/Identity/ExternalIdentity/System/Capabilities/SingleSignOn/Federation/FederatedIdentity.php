@@ -12,7 +12,7 @@ final readonly class FederatedIdentity
     public array $groups;
 
     /**
-     * @param list<string> $groups
+     * @param  list<string>  $groups
      */
     public function __construct(
         public string $subject,

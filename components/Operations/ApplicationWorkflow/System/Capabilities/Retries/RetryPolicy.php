@@ -13,7 +13,8 @@ final readonly class RetryPolicy
         public int $maxAttempts = 3,
         public int $backoffMs = 100,
         public string $backoffType = 'exponential',
-    ) {}
+    ) {
+    }
 
     /**
      * Create a no-retry policy (execute once only).
@@ -63,7 +64,7 @@ final readonly class RetryPolicy
         return match ($this->backoffType) {
             'exponential' => (int) ($this->backoffMs * (2 ** ($attempt - 1))),
             'linear' => $this->backoffMs * $attempt,
-            default  => 0,
+            default => 0,
         };
     }
 

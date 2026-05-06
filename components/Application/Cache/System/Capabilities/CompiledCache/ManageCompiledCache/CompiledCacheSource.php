@@ -37,7 +37,7 @@ final readonly class CompiledCacheSource
             throw new InvalidArgumentException(message: sprintf('Source file does not exist: %s', $path));
         }
 
-        $stat  = stat($path);
+        $stat = stat($path);
         $mtime = $stat !== false ? $stat['mtime'] : filemtime($path);
 
         if (! is_int($mtime)) {
@@ -58,6 +58,6 @@ final readonly class CompiledCacheSource
 
         // Fast fingerprint based on mtime and size
         // md5_file is too slow for per-request checks
-        return md5($this->path . ':' . $this->mtime . ':' . filesize($this->path));
+        return md5($this->path.':'.$this->mtime.':'.filesize($this->path));
     }
 }

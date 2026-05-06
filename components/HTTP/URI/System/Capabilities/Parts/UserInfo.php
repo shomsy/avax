@@ -13,7 +13,8 @@ final readonly class UserInfo implements Stringable
         private string $user,
         #[SensitiveParameter]
         private ?string $password = null,
-    ) {}
+    ) {
+    }
 
     public function user(): string
     {
@@ -31,6 +32,6 @@ final readonly class UserInfo implements Stringable
             return '';
         }
 
-        return $this->user . ($this->password !== null ? ':' . $this->password : '');
+        return $this->user.($this->password !== null ? ':'.$this->password : '');
     }
 }

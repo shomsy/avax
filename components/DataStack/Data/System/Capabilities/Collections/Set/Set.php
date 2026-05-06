@@ -25,7 +25,7 @@ final readonly class Set implements Countable, IteratorAggregate
     private array $items;
 
     /**
-     * @param iterable<mixed> $items
+     * @param  iterable<mixed>  $items
      */
     public function __construct(
         iterable $items = [],
@@ -34,14 +34,13 @@ final readonly class Set implements Countable, IteratorAggregate
     }
 
     /**
-     * @param iterable<mixed> $items
-     *
+     * @param  iterable<mixed>  $items
      * @return array<int, mixed>
      */
     private function normalize(iterable $items): array
     {
         $normalized = [];
-        $seen       = [];
+        $seen = [];
 
         foreach (NormalizedIterable::toArrayPreserveKeys(iterable: $items) as $item) {
             try {

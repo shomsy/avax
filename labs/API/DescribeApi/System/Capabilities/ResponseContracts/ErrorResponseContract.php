@@ -7,16 +7,15 @@ namespace Avax\Labs\API\DescribeApi\System\Capabilities\ResponseContracts;
 final class ErrorResponseContract
 {
     /**
-     * @param array<string, mixed>|null $details
+     * @param  array<string, mixed>|null  $details
      */
     public function __construct(
-        public readonly int         $statusCode,
-        public readonly string      $code,
-        public readonly string      $message,
-        public readonly string|null $description,
-        public readonly array|null  $details,
-    )
-    {
+        public readonly int $statusCode,
+        public readonly string $code,
+        public readonly string $message,
+        public readonly ?string $description,
+        public readonly ?array $details,
+    ) {
     }
 
     public function isClientError(): bool

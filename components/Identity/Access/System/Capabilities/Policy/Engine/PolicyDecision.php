@@ -7,10 +7,9 @@ namespace Avax\Components\Identity\Access\System\Capabilities\Policy\Engine;
 final readonly class PolicyDecision
 {
     public function __construct(
-        public bool    $allowed,
+        public bool $allowed,
         public ?string $reason,
-    )
-    {
+    ) {
     }
 
     public static function deny(?string $reason): self

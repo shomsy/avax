@@ -20,7 +20,7 @@ final readonly class ArgumentResolver
     ) {
     }
 
-    public function resolve(ReflectionMethod $reflectionMethod, ServerRequestInterface $serverRequest) : array
+    public function resolve(ReflectionMethod $reflectionMethod, ServerRequestInterface $serverRequest): array
     {
         $arguments = [];
 

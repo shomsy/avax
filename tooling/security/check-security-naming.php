@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-$root          = dirname(__DIR__, 2);
-$componentsDir = $root . '/components';
-$frameworkDir  = $root . '/framework';
+$root = dirname(__DIR__, 2);
+$componentsDir = $root.'/components';
+$frameworkDir = $root.'/framework';
 
 $forbiddenPathPrefixes = [
     'Security/Services',
@@ -16,7 +16,7 @@ $forbiddenPathPrefixes = [
 ];
 
 $violations = [];
-$warnings   = [];
+$warnings = [];
 
 $searchDirs = [$componentsDir, $frameworkDir];
 
@@ -34,13 +34,13 @@ foreach ($searchDirs as $searchDir) {
             continue;
         }
 
-        $path         = $file->getPathname();
-        $relativePath = str_replace($root . '/', '', $path);
+        $path = $file->getPathname();
+        $relativePath = str_replace($root.'/', '', $path);
 
         foreach ($forbiddenPathPrefixes as $prefix) {
-            if (strpos($path, $prefix) !== false || strpos($path, $prefix . '/') !== false) {
+            if (strpos($path, $prefix) !== false || strpos($path, $prefix.'/') !== false) {
                 $violations[] = [
-                    'path'  => $relativePath,
+                    'path' => $relativePath,
                     'issue' => "contains forbidden path prefix: $prefix",
                 ];
             }
@@ -50,7 +50,7 @@ foreach ($searchDirs as $searchDir) {
 
         if (stripos($content, 'debug=true') !== false && stripos($content, 'if') === false && stripos($content, '?') === false) {
             $warnings[] = [
-                'path'  => $relativePath,
+                'path' => $relativePath,
                 'issue' => 'debug flag without conditional',
             ];
         }

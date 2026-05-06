@@ -7,17 +7,17 @@ namespace Avax\Components\Operations\Mail\System\PublicSurface;
 final class MailMessage
 {
     private array $data = [
-        'from'    => null,
-        'to'      => [],
-        'cc'      => [],
-        'bcc'     => [],
+        'from' => null,
+        'to' => [],
+        'cc' => [],
+        'bcc' => [],
         'subject' => '',
-        'body'    => '',
-        'html'    => null,
+        'body' => '',
+        'html' => null,
         'attachments' => [],
     ];
 
-    public function from(string $address, ?string $name = null) : self
+    public function from(string $address, ?string $name = null): self
     {
         $formatted = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
         $this->data['from'] = $formatted;
@@ -25,7 +25,7 @@ final class MailMessage
         return $this;
     }
 
-    public function to(string $address, ?string $name = null) : self
+    public function to(string $address, ?string $name = null): self
     {
         $formatted = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
         $this->data['to'][] = $formatted;
@@ -33,7 +33,7 @@ final class MailMessage
         return $this;
     }
 
-    public function cc(string $address, ?string $name = null) : self
+    public function cc(string $address, ?string $name = null): self
     {
         $formatted = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
         $this->data['cc'][] = $formatted;
@@ -41,7 +41,7 @@ final class MailMessage
         return $this;
     }
 
-    public function bcc(string $address, ?string $name = null) : self
+    public function bcc(string $address, ?string $name = null): self
     {
         $formatted = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
         $this->data['bcc'][] = $formatted;
@@ -70,7 +70,7 @@ final class MailMessage
         return $this;
     }
 
-    public function attach(string $path, ?string $name = null) : self
+    public function attach(string $path, ?string $name = null): self
     {
         $this->data['attachments'][] = ['path' => $path, 'name' => $name ?? basename($path)];
 

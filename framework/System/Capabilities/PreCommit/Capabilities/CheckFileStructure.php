@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit\Capabilities;
 
-use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 
 /**
@@ -22,26 +21,25 @@ final class CheckFileStructure implements CheckInterface
         ];
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array
+    public function run(array $context): array
     {
-        $issues     = [];
-        $files      = $context['files'] ?? [];
-        $basePath   = $context['base_path'] ?? getcwd();
+        $issues = [];
+        $files = $context['files'] ?? [];
+        $basePath = $context['base_path'] ?? getcwd();
         $systemRoot = $context['system_root'] ?? $basePath;
 
         foreach ($files as $file) {
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
 
             // Check top-level folders
-            $relativePath = str_replace($systemRoot . '/', '', $filePath);
-            $parts        = explode('/', $relativePath);
+            $relativePath = str_replace($systemRoot.'/', '', $filePath);
+            $parts = explode('/', $relativePath);
 
             if (count($parts) >= 2) {
                 $topFolder = $parts[0];

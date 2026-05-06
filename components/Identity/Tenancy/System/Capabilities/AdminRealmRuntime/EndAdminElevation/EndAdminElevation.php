@@ -22,7 +22,8 @@ final readonly class EndAdminElevation
         private AdminElevationStoreInterface $adminElevationStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws AdminElevationFailed
@@ -30,8 +31,8 @@ final readonly class EndAdminElevation
     public function execute(): void
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $user                  = $authenticationContext->user();
-        $bindingId             = $this->bindingId(context: $authenticationContext);
+        $user = $authenticationContext->user();
+        $bindingId = $this->bindingId(context: $authenticationContext);
 
         if (! $user instanceof AuthenticatedUser || $bindingId === null) {
             throw AdminElevationFailed::notElevated();
@@ -42,13 +43,13 @@ final readonly class EndAdminElevation
             name      : 'auth.admin.elevation.ended',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id' => $user->id,
+                'user_id' => $user->id,
                 'binding_id' => $bindingId,
             ],
         ));
     }
 
-    private function bindingId(AuthenticationContext $authenticationContext) : ?string
+    private function bindingId(AuthenticationContext $authenticationContext): ?string
     {
         return $authenticationContext->sessionId()
             ?? $authenticationContext->accessTokenId()

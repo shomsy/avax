@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -22,16 +23,16 @@ $checked = 0;
 
 function getExpectedNamespace(string $filePath, array $psr4Map, string $basePath): ?string
 {
-    $relativePath = str_replace($basePath . '/', '', $filePath);
+    $relativePath = str_replace($basePath.'/', '', $filePath);
 
     foreach ($psr4Map as $prefix => $dir) {
-        if (str_starts_with($relativePath, (string)$dir)) {
-            $remainingPath = substr($relativePath, strlen((string)$dir));
+        if (str_starts_with($relativePath, (string) $dir)) {
+            $remainingPath = substr($relativePath, strlen((string) $dir));
             $parts = explode('/', $remainingPath);
             array_pop($parts);
-            $parts = array_filter($parts, fn(string $p): bool => $p !== '.' && $p !== '..');
+            $parts = array_filter($parts, fn (string $p): bool => $p !== '.' && $p !== '..');
 
-            return $prefix . implode('\\', $parts);
+            return $prefix.implode('\\', $parts);
         }
     }
 
@@ -69,7 +70,7 @@ function fixFile(string $filePath, string $expectedNamespace, array $psr4Map): b
         if ($cleanNamespace !== $expectedNamespace) {
             $content = preg_replace(
                 '/^namespace\s+[A-Za-z\\\\]+;/m',
-                'namespace ' . $expectedNamespace . ';',
+                'namespace '.$expectedNamespace.';',
                 $content
             );
             $modified = true;
@@ -77,14 +78,14 @@ function fixFile(string $filePath, string $expectedNamespace, array $psr4Map): b
     }
 
     foreach (array_keys($psr4Map) as $prefix) {
-        if (preg_match_all('/use\s+(' . preg_quote((string)$prefix, '/') . '[A-Za-z\\\\]+);/m', $content, $matches)) {
+        if (preg_match_all('/use\s+('.preg_quote((string) $prefix, '/').'[A-Za-z\\\\]+);/m', $content, $matches)) {
             foreach ($matches[1] as $oldUse) {
                 $parts = explode('\\', $oldUse);
                 $parts = normalizePathSegments($parts);
                 $newUse = implode('\\', $parts);
 
                 if ($oldUse !== $newUse) {
-                    $content = str_replace('use ' . $oldUse . ';', 'use ' . $newUse . ';', $content);
+                    $content = str_replace('use '.$oldUse.';', 'use '.$newUse.';', $content);
                     $modified = true;
                 }
             }
@@ -105,8 +106,8 @@ $dirs = ['framework', 'components', 'labs', 'benchmarks', 'docs', 'tooling', 'te
 echo "=== Namespace Fixer v2 ===\n\n";
 
 foreach ($dirs as $dir) {
-    $fullPath = $basePath . '/' . $dir;
-    if (!is_dir($fullPath)) {
+    $fullPath = $basePath.'/'.$dir;
+    if (! is_dir($fullPath)) {
         continue;
     }
 
@@ -132,7 +133,7 @@ foreach ($dirs as $dir) {
 
         if (fixFile($filePath, $expectedNs, $psr4Map)) {
             $fixed++;
-            $relPath = str_replace($basePath . '/', '', $filePath);
+            $relPath = str_replace($basePath.'/', '', $filePath);
             echo sprintf('  [FIXED] %s%s', $relPath, PHP_EOL);
         }
     }

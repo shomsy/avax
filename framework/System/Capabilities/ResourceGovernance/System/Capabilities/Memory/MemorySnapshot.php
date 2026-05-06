@@ -10,12 +10,13 @@ final readonly class MemorySnapshot
         public int $requestNumber,
         public int $memoryUsed,
         public int $workerMemory,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array{request_number: int, memory_used_mb: float, worker_memory_mb: float}
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'request_number' => $this->requestNumber,

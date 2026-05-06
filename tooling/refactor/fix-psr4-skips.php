@@ -13,22 +13,24 @@ for ($i = 0; $i < count($matches[0]); $i++) {
 foreach ($skips as $skip) {
     $file = $skip['file'];
     $class = $skip['class'];
-    if (!file_exists($file)) continue;
+    if (! file_exists($file)) {
+        continue;
+    }
 
     $content = file_get_contents($file);
-    
+
     // Expected PSR-4 Class Name
-    $expectedClass = 'Avax\\Components\\' . str_replace('/', '\\', substr($file, 11, -4));
-    
+    $expectedClass = 'Avax\\Components\\'.str_replace('/', '\\', substr($file, 11, -4));
+
     echo "File: $file\n";
     echo "  Actual: $class\n";
     echo "  Expect: $expectedClass\n";
-    
+
     // Let's try to fix namespace
     $parts = explode('\\', $expectedClass);
     $expectedClassName = array_pop($parts);
     $expectedNamespace = implode('\\', $parts);
-    
+
     // What is the current namespace?
     if (preg_match('/namespace\s+(.*?);/', $content, $nsMatch)) {
         $currentNamespace = trim($nsMatch[1]);
@@ -37,7 +39,7 @@ foreach ($skips as $skip) {
             $content = str_replace("namespace $currentNamespace;", "namespace $expectedNamespace;", $content);
         }
     }
-    
+
     // What is the current class name?
     if (preg_match('/class\s+([A-Za-z0-9_]+)/', $content, $clMatch)) {
         $currentClassName = $clMatch[1];

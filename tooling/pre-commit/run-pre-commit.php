@@ -13,31 +13,30 @@ declare(strict_types=1);
  *   cp tooling/pre-commit/run-pre-commit.php .git/hooks/pre-commit
  *   chmod +x .git/hooks/pre-commit
  */
-
 $rootDir = dirname(__DIR__, 2);
 
 // Find vendor autoload
-while ( ! file_exists($rootDir . '/vendor/autoload.php') && $rootDir !== dirname($rootDir) ) {
+while (! file_exists($rootDir.'/vendor/autoload.php') && $rootDir !== dirname($rootDir)) {
     $rootDir = dirname($rootDir);
 }
 
-require_once $rootDir . '/vendor/autoload.php';
+require_once $rootDir.'/vendor/autoload.php';
 
 use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\PreCommit;
 
 // Parse arguments
 $options = [
-    'dry-run'  => true,
+    'dry-run' => true,
     'auto-fix' => false,
-    'full'     => false,
-    'help'     => false,
+    'full' => false,
+    'help' => false,
 ];
 
 foreach ($argv as $arg) {
     if ($arg === '--fix') {
         $options['auto-fix'] = true;
-        $options['dry-run']  = false;
+        $options['dry-run'] = false;
     } elseif ($arg === '--full') {
         $options['full'] = true;
     } elseif ($arg === '-h' || $arg === '--help') {
@@ -62,7 +61,7 @@ $config->setDryRun(! $options['auto-fix']);
 
 // Run PreCommit
 $preCommit = new PreCommit($config, [], ! $options['full']);
-$result    = $preCommit->run();
+$result = $preCommit->run();
 
 // Output summary
 echo $result->getSummaryText();

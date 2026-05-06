@@ -8,9 +8,10 @@ final readonly class RawBody
 {
     public function __construct(
         private string $content,
-    ) {}
+    ) {
+    }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->content;
     }

@@ -31,14 +31,14 @@ final readonly class BuildCompiledCache
         return new readonly class ($compiledCacheConfiguration->directory, $this->clock) implements CompiledCacheContract {
             public function __construct(
                 private string $directory,
-                private Clock  $clock,
+                private Clock $clock,
             ) {
             }
 
-            public function read(string $name, callable $build, CompiledCacheSources $sources) : mixed
+            public function read(string $name, callable $build, CompiledCacheSources $sources): mixed
             {
                 $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory);
-                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
+                $compiledCacheManifest = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
 
                 $readCompiledCache = new ReadCompiledCache(
                     $compiledCacheDirectory,
@@ -49,10 +49,10 @@ final readonly class BuildCompiledCache
                 return $readCompiledCache->read(name: $name, build: $build, compiledCacheSources: $sources);
             }
 
-            public function compile(string $name, callable $build, CompiledCacheSources $sources) : CompiledCacheArtifact
+            public function compile(string $name, callable $build, CompiledCacheSources $sources): CompiledCacheArtifact
             {
                 $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory);
-                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
+                $compiledCacheManifest = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
 
                 $compileCache = new CompileCache(
                     $compiledCacheDirectory,
@@ -66,7 +66,7 @@ final readonly class BuildCompiledCache
             public function clear(string $name): void
             {
                 $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory);
-                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
+                $compiledCacheManifest = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
 
                 $clearCompiledCache = new ClearCompiledCache(
                     $compiledCacheDirectory,
@@ -79,7 +79,7 @@ final readonly class BuildCompiledCache
             public function clearAll(): void
             {
                 $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory);
-                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
+                $compiledCacheManifest = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString());
 
                 $clearCompiledCache = new ClearCompiledCache(
                     $compiledCacheDirectory,

@@ -20,7 +20,7 @@ final readonly class MatchHttpRoute
         $this->matchRoute = $matchRoute ?? new MatchRoute();
     }
 
-    public function match(RegisteredHttpRoutes $registeredHttpRoutes, ServerRequest $serverRequest) : MatchedHttpRoute
+    public function match(RegisteredHttpRoutes $registeredHttpRoutes, ServerRequest $serverRequest): MatchedHttpRoute
     {
         $routeCollection = new RouteCollection();
         foreach ($registeredHttpRoutes->routesByMethod() as $method => $definitions) {
@@ -44,16 +44,16 @@ final readonly class MatchHttpRoute
         );
 
         if ($allowedMethods !== []) {
-            throw new MethodNotAllowedException('Method ' . $serverRequest->getMethod() . ' is not allowed.');
+            throw new MethodNotAllowedException('Method '.$serverRequest->getMethod().' is not allowed.');
         }
 
-        throw new RouteNotFoundException('Route ' . $serverRequest->getUri()->getPath() . ' not found.');
+        throw new RouteNotFoundException('Route '.$serverRequest->getUri()->getPath().' not found.');
     }
 
     /**
      * @return array<int, string>
      */
-    private function allowedMethodsFor(RouteCollection $routeCollection, ServerRequest $serverRequest) : array
+    private function allowedMethodsFor(RouteCollection $routeCollection, ServerRequest $serverRequest): array
     {
         $allowedMethods = [];
         $path = $serverRequest->getUri()->getPath();

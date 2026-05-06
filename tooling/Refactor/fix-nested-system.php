@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+
 $root = getcwd();
 
 $nestedMoves = [
@@ -27,24 +28,24 @@ $nestedMoves = [
     'components/Operations/Queue/System/Capabilities/TaskDispatch/System/PublicSurface' => 'components/Operations/Queue/System/Capabilities/TaskDispatch/PublicSurface',
 ];
 
-$dryRun = !in_array('--apply', $argv, true);
+$dryRun = ! in_array('--apply', $argv, true);
 
 echo "Phase 1: Fix Nested System Folders\n";
-echo 'Mode: ' . ($dryRun ? 'DRY-RUN' : 'APPLY') . "\n\n";
+echo 'Mode: '.($dryRun ? 'DRY-RUN' : 'APPLY')."\n\n";
 
 foreach ($nestedMoves as $from => $to) {
-    $fromPath = $root . '/' . $from;
-    $toPath = $root . '/' . $to;
+    $fromPath = $root.'/'.$from;
+    $toPath = $root.'/'.$to;
 
-    if (!is_dir($fromPath)) {
+    if (! is_dir($fromPath)) {
         continue;
     }
 
     $op = sprintf('MOVE %s -> %s', $from, $to);
-    echo ($dryRun ? '[dry-run] ' : '') . $op . "\n";
+    echo ($dryRun ? '[dry-run] ' : '').$op."\n";
 
-    if (!$dryRun) {
-        if (!is_dir(dirname($toPath))) {
+    if (! $dryRun) {
+        if (! is_dir(dirname($toPath))) {
             mkdir(dirname($toPath), 0o777, true);
         }
 
@@ -58,8 +59,8 @@ foreach ($nestedMoves as $from => $to) {
                 continue;
             }
 
-            $src = $fromPath . '/' . $item;
-            $dst = $toPath . '/' . $item;
+            $src = $fromPath.'/'.$item;
+            $dst = $toPath.'/'.$item;
 
             if (is_dir($src)) {
                 rename($src, $dst);

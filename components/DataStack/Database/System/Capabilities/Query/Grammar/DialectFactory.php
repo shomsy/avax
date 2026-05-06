@@ -25,6 +25,6 @@ final class DialectFactory
         }
 
         return Dialect::tryFrom(value: strtolower(string: $dialect))
-            ?? throw new InvalidArgumentException(message: 'Unsupported database dialect: ' . $dialect);
+            ?? throw new InvalidArgumentException(message: 'Unsupported database dialect: '.$dialect);
     }
 }

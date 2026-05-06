@@ -20,27 +20,27 @@ use ReflectionUnionType;
 final readonly class CreateServiceBlueprint
 {
     private BlueprintCache $cache;
-    private ResolveDependencies|null $dependencies;
+
+    private ?ResolveDependencies $dependencies;
 
     public function __construct(
-        BlueprintCache|null      $cache = null,
-        ResolveDependencies|null $dependencies = null
-    )
-    {
+        ?BlueprintCache $cache = null,
+        ?ResolveDependencies $dependencies = null
+    ) {
         $this->dependencies = $dependencies;
-        $this->cache = $cache ?? new BlueprintCache;
-        $this->dependencies ??= new ResolveDependencies;
+        $this->cache = $cache ?? new BlueprintCache();
+        $this->dependencies ??= new ResolveDependencies();
     }
 
     /**
-     * @param list<string> $classes
+     * @param  list<string>  $classes
      *
      * @throws ReflectionException
      */
     public function warm(array $classes): void
     {
         foreach (array_values(array: array_unique(array: $classes)) as $class) {
-            if (!class_exists(class: $class)) {
+            if (! class_exists(class: $class)) {
                 continue;
             }
 
@@ -66,11 +66,11 @@ final readonly class CreateServiceBlueprint
 
         $properties = array_values(array: array_filter(
             array: $reflection->getProperties(),
-            callback: static fn($property) => $property->getAttributes(name: Inject::class) !== [] && !$property->isStatic()
+            callback: static fn ($property) => $property->getAttributes(name: Inject::class) !== [] && ! $property->isStatic()
         ));
         $methods = array_values(array: array_filter(
             array: $reflection->getMethods(),
-            callback: static fn($method) => $method->getAttributes(name: Inject::class) !== [] && !$method->isStatic()
+            callback: static fn ($method) => $method->getAttributes(name: Inject::class) !== [] && ! $method->isStatic()
         ));
 
         return $this->cache->put(blueprint: new ServiceBlueprint(
@@ -80,7 +80,7 @@ final readonly class CreateServiceBlueprint
                 ? $this->dependencies->createPlan(parameters: $reflection->getConstructor()->getParameters())
                 : null,
             injectableProperties: array_map(
-                callback: fn(ReflectionProperty $property) => [
+                callback: fn (ReflectionProperty $property) => [
                     'name' => $property->getName(),
                     'serviceId' => $this->serviceIdFor(property: $property),
                     'readonly' => $property->isReadOnly(),
@@ -88,7 +88,7 @@ final readonly class CreateServiceBlueprint
                 array: $properties
             ),
             injectableMethods: array_map(
-                callback: fn(ReflectionMethod $method) => [
+                callback: fn (ReflectionMethod $method) => [
                     'name' => $method->getName(),
                     'plan' => $this->dependencies->createPlan(parameters: $method->getParameters()),
                 ],
@@ -116,17 +116,18 @@ final readonly class CreateServiceBlueprint
         $parts = [];
 
         foreach ($files as $file) {
-            $timestamp = is_file(filename: $file) ? (string)filemtime(filename: $file) : 'missing';
-            $parts[] = $file . ':' . $timestamp;
+            $timestamp = is_file(filename: $file) ? (string) filemtime(filename: $file) : 'missing';
+            $parts[] = $file.':'.$timestamp;
         }
 
         sort(array: $parts);
 
-        return sha1(string: $reflection->getName() . '|' . implode(separator: '|', array: $parts));
+        return sha1(string: $reflection->getName().'|'.implode(separator: '|', array: $parts));
     }
 
     /**
      * @return list<string>
+     *
      * @throws ReflectionException
      * @throws ReflectionException
      */
@@ -183,7 +184,7 @@ final readonly class CreateServiceBlueprint
     /**
      * Infers one service id from the property attribute or object type.
      */
-    private function serviceIdFor(ReflectionProperty $property): string|null
+    private function serviceIdFor(ReflectionProperty $property): ?string
     {
         $attributes = $property->getAttributes(name: Inject::class);
         if ($attributes !== []) {
@@ -194,12 +195,12 @@ final readonly class CreateServiceBlueprint
         }
 
         $type = $property->getType();
-        if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
+        if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
             return $type->getName();
         }
         if ($type instanceof ReflectionUnionType) {
             foreach ($type->getTypes() as $namedType) {
-                if ($namedType instanceof ReflectionNamedType && !$namedType->isBuiltin()) {
+                if ($namedType instanceof ReflectionNamedType && ! $namedType->isBuiltin()) {
                     return $namedType->getName();
                 }
             }

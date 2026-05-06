@@ -24,7 +24,8 @@ final readonly class RequireFreshPasskeyForAdminAction
     public function __construct(
         #[SensitiveParameter]
         private RequireAccessPolicy $requireAccessPolicy,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws AdminElevationFailed

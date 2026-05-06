@@ -102,7 +102,7 @@ final class CompiledCacheManifest
             $this->entries,
         );
 
-        $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn " . var_export($entries, true) . ";\n";
+        $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn ".var_export($entries, true).";\n";
 
         file_put_contents($path, $content, LOCK_EX);
     }

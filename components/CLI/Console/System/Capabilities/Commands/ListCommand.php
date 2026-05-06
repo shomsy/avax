@@ -19,7 +19,9 @@ class ListCommand extends Command
 
     protected string $signature = 'list';
 
-    public function __construct(private readonly Console $console) {}
+    public function __construct(private readonly Console $console)
+    {
+    }
 
     #[Override]
     protected function handle(): int

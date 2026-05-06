@@ -11,16 +11,16 @@ use PHPUnit\Framework\TestCase;
 
 final class SagaTest extends TestCase
 {
-    public function test_saga_executes_all_steps_on_success() : void
+    public function test_saga_executes_all_steps_on_success(): void
     {
         $workflow = new Workflow();
-        $def      = new SagaDefinition();
+        $def = new SagaDefinition();
 
         $steps = 0;
-        $def->step('step1', static function () use (&$steps) : void {
+        $def->step('step1', static function () use (&$steps): void {
             $steps++;
         });
-        $def->step('step2', static function () use (&$steps) : void {
+        $def->step('step2', static function () use (&$steps): void {
             $steps++;
         });
 
@@ -29,25 +29,25 @@ final class SagaTest extends TestCase
         $this->assertEquals(2, $steps);
     }
 
-    public function test_saga_runs_compensations_on_failure() : void
+    public function test_saga_runs_compensations_on_failure(): void
     {
         $workflow = new Workflow();
-        $def      = new SagaDefinition();
+        $def = new SagaDefinition();
 
         $step1Done = false;
         $step1Compensated = false;
 
         $def->step(
             'step1',
-            static function () use (&$step1Done) : void {
+            static function () use (&$step1Done): void {
                 $step1Done = true;
             },
-            static function () use (&$step1Compensated) : void {
+            static function () use (&$step1Compensated): void {
                 $step1Compensated = true;
             },
         );
 
-        $def->step('step2', static function () : void {
+        $def->step('step2', static function (): void {
             throw new Exception('Fail at step 2');
         });
 

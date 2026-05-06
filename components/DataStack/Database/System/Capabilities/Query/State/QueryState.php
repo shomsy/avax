@@ -39,78 +39,78 @@ final readonly class QueryState
     public array $windows;
 
     /**
-     * @param string[]                         $columns       The list of technical column identifiers or expressions
-     *                                                        for projection.
-     * @param string|null                      $from          The primary technical identifier for the data source
-     *                                                        (table).
-     * @param JoinNode[]                       $joins         The collection of structural nodes representing source
-     *                                                        relationships.
-     * @param array<WhereNode|NestedWhereNode> $wheres        The hierarchical collection of logical filters and
-     *                                                        branches.
-     * @param string[]                         $groups        The collection of column identifiers used for result
-     *                                                        aggregation.
-     * @param array                            $havings       The collection of logical filters applied to aggregate
-     *                                                        sets.
-     * @param OrderNode[]                      $orders        The collection of structural nodes defining the result
-     *                                                        set sequence.
-     * @param int|null                         $limit         The strictly enforced upper limit of records to be
-     *                                                        retrieved.
-     * @param int|null                         $offset        The number of records to bypass before the retrieval
-     *                                                        window starts.
-     * @param array                            $values        The associative map of column/value pairs for mutation
-     *                                                        operations.
-     * @param string[]                         $updateColumns The specific technical columns targeted for update or
-     *                                                        upsert logic.
-     * @param bool                             $distinct      Toggle indicating if strictly unique records should be
-     *                                                        projected.
-     * @param array                            $ctes          Common Table Expressions (WITH clauses).
-     * @param array                            $windows       Window Function definitions (OVER clauses).
-     * @param BindingBag $bindingBag                          The immutable container for secure, parameterized query
-     *                                                        tokens.
+     * @param  string[]  $columns  The list of technical column identifiers or expressions
+     *                             for projection.
+     * @param  string|null  $from  The primary technical identifier for the data source
+     *                             (table).
+     * @param  JoinNode[]  $joins  The collection of structural nodes representing source
+     *                             relationships.
+     * @param  array<WhereNode|NestedWhereNode>  $wheres  The hierarchical collection of logical filters and
+     *                                                    branches.
+     * @param  string[]  $groups  The collection of column identifiers used for result
+     *                            aggregation.
+     * @param  array  $havings  The collection of logical filters applied to aggregate
+     *                          sets.
+     * @param  OrderNode[]  $orders  The collection of structural nodes defining the result
+     *                               set sequence.
+     * @param  int|null  $limit  The strictly enforced upper limit of records to be
+     *                           retrieved.
+     * @param  int|null  $offset  The number of records to bypass before the retrieval
+     *                            window starts.
+     * @param  array  $values  The associative map of column/value pairs for mutation
+     *                         operations.
+     * @param  string[]  $updateColumns  The specific technical columns targeted for update or
+     *                                   upsert logic.
+     * @param  bool  $distinct  Toggle indicating if strictly unique records should be
+     *                          projected.
+     * @param  array  $ctes  Common Table Expressions (WITH clauses).
+     * @param  array  $windows  Window Function definitions (OVER clauses).
+     * @param  BindingBag  $bindingBag  The immutable container for secure, parameterized query
+     *                                  tokens.
      */
     public function __construct(
-        ?array             $columns = null,
-        public ?string     $from = null,
-        ?array             $joins = null,
-        ?array             $wheres = null,
-        ?array             $groups = null,
-        ?array             $havings = null,
-        ?array             $orders = null,
-        public ?int        $limit = null,
-        public ?int        $offset = null,
-        ?array             $values = null,
-        ?array             $updateColumns = null,
-        ?bool              $distinct = null,
-        ?array             $ctes = null,
-        ?array             $windows = null,
+        ?array $columns = null,
+        public ?string $from = null,
+        ?array $joins = null,
+        ?array $wheres = null,
+        ?array $groups = null,
+        ?array $havings = null,
+        ?array $orders = null,
+        public ?int $limit = null,
+        public ?int $offset = null,
+        ?array $values = null,
+        ?array $updateColumns = null,
+        ?bool $distinct = null,
+        ?array $ctes = null,
+        ?array $windows = null,
         private BindingBag $bindingBag = new BindingBag(),
     ) {
-        $columns        ??= ['*'];
-        $joins          ??= [];
-        $wheres         ??= [];
-        $groups         ??= [];
-        $havings        ??= [];
-        $orders         ??= [];
-        $values         ??= [];
+        $columns ??= ['*'];
+        $joins ??= [];
+        $wheres ??= [];
+        $groups ??= [];
+        $havings ??= [];
+        $orders ??= [];
+        $values ??= [];
         $updateColumns ??= [];
-        $distinct       ??= false;
-        $this->columns  = $columns;
-        $this->joins    = $joins;
-        $this->wheres   = $wheres;
-        $this->groups   = $groups;
-        $this->havings  = $havings;
-        $this->orders   = $orders;
-        $this->values   = $values;
+        $distinct ??= false;
+        $this->columns = $columns;
+        $this->joins = $joins;
+        $this->wheres = $wheres;
+        $this->groups = $groups;
+        $this->havings = $havings;
+        $this->orders = $orders;
+        $this->values = $values;
         $this->updateColumns = $updateColumns;
         $this->distinct = $distinct;
-        $this->ctes     = $ctes ?? [];
-        $this->windows  = $windows ?? [];
+        $this->ctes = $ctes ?? [];
+        $this->windows = $windows ?? [];
     }
 
     /**
      * Create a new state with the assigned target table (FROM).
      *
-     * @param string $table Target table name.
+     * @param  string  $table  Target table name.
      */
     public function withFrom(string $table): self
     {
@@ -122,7 +122,7 @@ final readonly class QueryState
     /**
      * Create a new state with the defined selection (SELECT) columns.
      *
-     * @param string[] $columns Collection of column identifiers.
+     * @param  string[]  $columns  Collection of column identifiers.
      */
     public function withColumns(array $columns): self
     {
@@ -134,7 +134,7 @@ final readonly class QueryState
     /**
      * Create a new state with the unique records flag (DISTINCT).
      *
-     * @param bool $distinct Whether to project unique records.
+     * @param  bool  $distinct  Whether to project unique records.
      */
     public function withDistinct(bool $distinct = true): self
     {
@@ -150,8 +150,7 @@ final readonly class QueryState
      * Caps the number of records retrieved by the persistence engine,
      * typically used for pagination or existence checks.
      *
-     * @param int|null $limit The maximum record volume allowed in the result set.
-     *
+     * @param  int|null  $limit  The maximum record volume allowed in the result set.
      * @return self A fresh QueryState instance with the applied limit.
      */
     public function withLimit(?int $limit): self
@@ -168,8 +167,7 @@ final readonly class QueryState
      * Skip a specified number of leading records in the retrieval window,
      * essential for deep-traversal pagination logic.
      *
-     * @param int|null $offset The technical volume of records to skip.
-     *
+     * @param  int|null  $offset  The technical volume of records to skip.
      * @return self A fresh QueryState instance with the applied offset.
      */
     public function withOffset(?int $offset): self
@@ -186,8 +184,7 @@ final readonly class QueryState
      * Stores the key-value map representing the new state to be persisted
      * in an INSERT or UPDATE context.
      *
-     * @param array $values The associative map of technical column/value pairs.
-     *
+     * @param  array  $values  The associative map of technical column/value pairs.
      * @return self A fresh QueryState instance with the applied mutation payload.
      */
     public function withValues(array $values): self
@@ -204,8 +201,7 @@ final readonly class QueryState
      * Defines a subset of technical columns that should be updated,
      * typically used in complex UPSERT or partial UPDATE scenarios.
      *
-     * @param string[] $columns The collection of technical identifiers allowed for update.
-     *
+     * @param  string[]  $columns  The collection of technical identifiers allowed for update.
      * @return self A fresh QueryState instance with the applied target columns.
      */
     public function withUpdateColumns(array $columns): self
@@ -222,11 +218,10 @@ final readonly class QueryState
      * Appends a new structural node defining a relationship with another
      * data source to the existing joins collection.
      *
-     * @param JoinNode $joinNode The structural node abstraction defining the join relationship.
-     *
+     * @param  JoinNode  $joinNode  The structural node abstraction defining the join relationship.
      * @return self A fresh QueryState instance with the added relationship.
      */
-    public function addJoin(JoinNode $joinNode) : self
+    public function addJoin(JoinNode $joinNode): self
     {
         return new self(
             ...[...get_object_vars(object: $this), 'joins' => [...$this->joins, $joinNode]],
@@ -236,7 +231,7 @@ final readonly class QueryState
     /**
      * Create a new state including a filter instruction (WHERE).
      *
-     * @param WhereNode|NestedWhereNode $where Filter node data.
+     * @param  WhereNode|NestedWhereNode  $where  Filter node data.
      */
     public function addWhere(WhereNode|NestedWhereNode $where): self
     {
@@ -252,8 +247,7 @@ final readonly class QueryState
      * Incorporates a new technical identifier into the collection used
      * for record grouping and server-side analysis.
      *
-     * @param string $column The structural identifier of the column to group by.
-     *
+     * @param  string  $column  The structural identifier of the column to group by.
      * @return self A fresh QueryState instance with the added grouping instruction.
      */
     public function addGroup(string $column): self
@@ -270,8 +264,7 @@ final readonly class QueryState
      * Overwrites the current grouping collection with a new set of technical
      * identifiers for aggregation.
      *
-     * @param string[] $groups The collection of column identifiers for aggregation.
-     *
+     * @param  string[]  $groups  The collection of column identifiers for aggregation.
      * @return self A fresh QueryState instance with the bulk applied groups.
      */
     public function withGroups(array $groups): self
@@ -288,8 +281,7 @@ final readonly class QueryState
      * Appends a logical condition applied to groups/aggregates, maintaining
      * the collection of aggregate-level constraints.
      *
-     * @param array $having The technical data representing an aggregate filter.
-     *
+     * @param  array  $having  The technical data representing an aggregate filter.
      * @return self A fresh QueryState instance with the added aggregate filter.
      */
     public function addHaving(array $having): self
@@ -306,11 +298,10 @@ final readonly class QueryState
      * Appends a sorting abstraction to the collection, defining the final
      * chronological or alphabetic sequence of the retrieved data.
      *
-     * @param OrderNode $orderNode The structural abstraction defining the sorting logic.
-     *
+     * @param  OrderNode  $orderNode  The structural abstraction defining the sorting logic.
      * @return self A fresh QueryState instance with the applied sorting.
      */
-    public function addOrder(OrderNode $orderNode) : self
+    public function addOrder(OrderNode $orderNode): self
     {
         return new self(
             ...[...get_object_vars(object: $this), 'orders' => [...$this->orders, $orderNode]],
@@ -334,7 +325,7 @@ final readonly class QueryState
     /**
      * Create a new state with a securely attached parameter token.
      *
-     * @param mixed $value Raw data to be bound.
+     * @param  mixed  $value  Raw data to be bound.
      */
     public function addBinding(mixed $value): self
     {
@@ -350,8 +341,7 @@ final readonly class QueryState
      * Facilitates the mass-parameterization of query values while
      * maintaining immutable state transitions.
      *
-     * @param array $values The collection of raw data tokens to be secured.
-     *
+     * @param  array  $values  The collection of raw data tokens to be secured.
      * @return self A fresh QueryState instance with the merged parameter tokens.
      */
     public function mergeBindings(array $values): self
@@ -370,7 +360,7 @@ final readonly class QueryState
      *
      * @return self A fresh QueryState instance with a cleared parameter bag.
      */
-    public function resetBindings() : self
+    public function resetBindings(): self
     {
         return new self(
             ...[...get_object_vars(object: $this), 'bindingBag' => new BindingBag()],

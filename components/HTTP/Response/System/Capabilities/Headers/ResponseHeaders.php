@@ -9,7 +9,7 @@ final class ResponseHeaders
     /** @var ResponseHeader[] */
     private array $headers = [];
 
-    public function add(ResponseHeader $responseHeader) : void
+    public function add(ResponseHeader $responseHeader): void
     {
         $this->headers[] = $responseHeader;
     }

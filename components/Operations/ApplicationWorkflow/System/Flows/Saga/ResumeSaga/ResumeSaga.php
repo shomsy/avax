@@ -8,7 +8,6 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaStepDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\SagaInstance;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\SagaInstanceStatus;
-use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StoreSagaState\StoreSagaState;
 
 final readonly class ResumeSaga
 {
@@ -18,7 +17,7 @@ final readonly class ResumeSaga
     }
 
     public function resume(
-        SagaInstance   $sagaInstance,
+        SagaInstance $sagaInstance,
         SagaDefinition $sagaDefinition,
     ): SagaInstance {
         if ($sagaInstance->status !== SagaInstanceStatus::FAILED) {
@@ -44,9 +43,8 @@ final readonly class ResumeSaga
         return $sagaInstance->retry();
     }
 
-    public function canRecover(SagaInstance $sagaInstance) : bool
+    public function canRecover(SagaInstance $sagaInstance): bool
     {
         return $sagaInstance->status === SagaInstanceStatus::FAILED;
     }
 }
-

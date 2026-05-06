@@ -12,12 +12,14 @@ use Throwable;
  */
 final readonly class RunTransaction
 {
-    public function __construct(private OnConnection $onConnection) {}
+    public function __construct(private OnConnection $onConnection)
+    {
+    }
 
     /**
      * @throws Throwable
      */
-    public function run(callable $callback, ?string $connectionName = null) : mixed
+    public function run(callable $callback, ?string $connectionName = null): mixed
     {
         return $this->onConnection->for(connectionName: $connectionName)->transaction(callback: $callback);
     }

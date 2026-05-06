@@ -9,12 +9,12 @@ interface SessionStoreInterface
     /**
      * @return array<string, mixed>
      */
-    public function read(string $id) : array;
+    public function read(string $id): array;
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
-    public function write(string $id, array $data) : bool;
+    public function write(string $id, array $data): bool;
 
-    public function destroy(string $id) : bool;
+    public function destroy(string $id): bool;
 }

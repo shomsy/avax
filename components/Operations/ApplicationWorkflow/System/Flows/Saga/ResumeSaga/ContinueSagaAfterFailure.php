@@ -18,7 +18,7 @@ final readonly class ContinueSagaAfterFailure
         }
 
         $definitionSteps = $definition['steps'] ?? [];
-        $stepOrder       = $definition['stepOrder'] ?? [];
+        $stepOrder = $definition['stepOrder'] ?? [];
 
         $currentIndex = $sagaInstance->currentStepIndex;
         if ($currentIndex >= count($stepOrder)) {

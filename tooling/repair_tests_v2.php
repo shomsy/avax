@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $baseDir = realpath(__DIR__);
-$testDir = $baseDir . '/tests';
+$testDir = $baseDir.'/tests';
 
 if (! is_dir($testDir)) {
     exit("❌ Test directory not found!\n");
@@ -16,7 +16,7 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path    = realpath($file->getPathname());
+    $path = realpath($file->getPathname());
     $content = file_get_contents($path);
     $original = $content;
 
@@ -26,7 +26,7 @@ foreach ($iterator as $file) {
 
     $expectedNamespace = 'Avax\\Tests';
     if ($relativePath !== '') {
-        $expectedNamespace .= '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relativePath);
+        $expectedNamespace .= '\\'.str_replace(DIRECTORY_SEPARATOR, '\\', $relativePath);
     }
 
     // 2. Fix corrupted namespaces from previous run (handling the absolute path mess)
@@ -37,7 +37,7 @@ foreach ($iterator as $file) {
         $currentNamespace = trim($matches[1]);
         if ($currentNamespace !== $expectedNamespace) {
             $content = str_replace("namespace $currentNamespace;", "namespace $expectedNamespace;", $content);
-            echo '✅ Fixed: ' . basename($path) . " ($currentNamespace -> $expectedNamespace)\n";
+            echo '✅ Fixed: '.basename($path)." ($currentNamespace -> $expectedNamespace)\n";
         }
     }
 

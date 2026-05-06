@@ -4,4 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM;
 
-class EntityManager {}
+class EntityManager
+{
+}

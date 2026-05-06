@@ -12,5 +12,6 @@ final readonly class RegisteredScimDirectory
         public ScimDirectory $directory,
         #[SensitiveParameter]
         public string $plainTextToken,
-    ) {}
+    ) {
+    }
 }

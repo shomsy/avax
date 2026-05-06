@@ -37,9 +37,10 @@ use Throwable;
 readonly class ContextContainer implements ContainerInterface
 {
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    public function __construct(private FoundationContainer $foundationContainer, private ResolveDependency $resolveDependency, private array $context) {
+    public function __construct(private FoundationContainer $foundationContainer, private ResolveDependency $resolveDependency, private array $context)
+    {
     }
 
     public function has(string $id): bool
@@ -134,7 +135,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @param array<int, string|RegisterDependency> $providers
+     * @param  array<int, string|RegisterDependency>  $providers
      */
     public function bootProviders(array $providers): void
     {
@@ -277,7 +278,7 @@ readonly class ContextContainer implements ContainerInterface
         $this->foundationContainer->openScope(kind: $kind, scopeId: $scopeId);
     }
 
-    public function closeScope(?string $kind = null) : void
+    public function closeScope(?string $kind = null): void
     {
         $this->foundationContainer->closeScope(kind: $kind);
     }
@@ -291,8 +292,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @param list<string> $serviceIds
-     *
+     * @param  list<string>  $serviceIds
      * @return list<string>
      */
     protected function compileTargets(array $serviceIds): array
@@ -312,7 +312,7 @@ readonly class ContextContainer implements ContainerInterface
         }
 
         $resolvedIds = array_map(
-            callback: fn (string $serviceId) : string => $this->resolveDependency->registrations()->resolveAlias(abstract: $serviceId),
+            callback: fn (string $serviceId): string => $this->resolveDependency->registrations()->resolveAlias(abstract: $serviceId),
             array   : $serviceIds,
         );
         $filtered = array_values(array: array_intersect($visibleIds, $resolvedIds));
@@ -473,14 +473,14 @@ readonly class ContextContainer implements ContainerInterface
         $this->foundationContainer->alias(alias: $alias, abstract: $abstract);
     }
 
-    public function bind(string $abstract, mixed $concrete = null, bool $shared = false) : DependencyRegistration
+    public function bind(string $abstract, mixed $concrete = null, bool $shared = false): DependencyRegistration
     {
         return $this->applySliceMetadata(
             registration: $this->foundationContainer->bind(abstract: $abstract, concrete: $concrete),
         );
     }
 
-    protected function applySliceMetadata(DependencyRegistration $dependencyRegistration) : DependencyRegistration
+    protected function applySliceMetadata(DependencyRegistration $dependencyRegistration): DependencyRegistration
     {
         $slice = SliceContext::from(context: $this->context);
         if ($slice === '') {
@@ -610,7 +610,7 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function forContext(array $context): ContainerInterface
     {
@@ -637,16 +637,16 @@ readonly class ContextContainer implements ContainerInterface
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     protected function sliceView(array $context): ContainerInterface
     {
         return match (SliceContext::category(slice: SliceContext::from(context: $context))) {
-            'flow'          => new FlowSliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
-            'capability'    => new CapabilitySliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
+            'flow' => new FlowSliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
+            'capability' => new CapabilitySliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
             'configuration' => new ConfigurationSliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
-            'foundation'    => new FoundationSliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
-            default         => new self(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
+            'foundation' => new FoundationSliceView(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
+            default => new self(context: $context, base: $this->foundationContainer, resolver: $this->resolveDependency),
         };
     }
 }

@@ -17,7 +17,7 @@ final class Realtime
 
     private static ?ChannelManager $channelManager = null;
 
-    public static function connect(Closure $sender) : Connection
+    public static function connect(Closure $sender): Connection
     {
         $connection = new Connection(sender: $sender);
         self::pool()->add(connection: $connection);
@@ -25,7 +25,7 @@ final class Realtime
         return $connection;
     }
 
-    private static function pool() : ConnectionPool
+    private static function pool(): ConnectionPool
     {
         if (! self::$connectionPool instanceof ConnectionPool) {
             self::$connectionPool = new ConnectionPool();
@@ -34,12 +34,12 @@ final class Realtime
         return self::$connectionPool;
     }
 
-    public static function channel(string $name) : Channel
+    public static function channel(string $name): Channel
     {
         return self::channels()->get(name: $name);
     }
 
-    private static function channels() : ChannelManager
+    private static function channels(): ChannelManager
     {
         if (! self::$channelManager instanceof ChannelManager) {
             self::$channelManager = new ChannelManager();
@@ -48,18 +48,18 @@ final class Realtime
         return self::$channelManager;
     }
 
-    public static function broadcast(string $channel, mixed $message) : int
+    public static function broadcast(string $channel, mixed $message): int
     {
         return self::channels()->broadcast(channel: $channel, message: $message);
     }
 
-    public static function disconnect(Connection $connection) : void
+    public static function disconnect(Connection $connection): void
     {
         self::pool()->remove(connection: $connection);
         self::channels()->forget(connection: $connection);
     }
 
-    public static function websocket() : string
+    public static function websocket(): string
     {
         return WebSocketServer::clientScript();
     }

@@ -6,9 +6,9 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runti
 
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredentialStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use SensitiveParameter;
 
 final readonly class ListPasskeys
@@ -18,7 +18,8 @@ final readonly class ListPasskeys
         private CurrentAuthentication $currentAuthentication,
         #[SensitiveParameter]
         private PasskeyCredentialStoreInterface $passkeyCredentialStore,
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<PasskeyCredential>

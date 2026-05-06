@@ -6,5 +6,7 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 
 final readonly class FederatedIdentityLink
 {
-    public function __construct(public string $connectionId, public string $subject, public int $userId) {}
+    public function __construct(public string $connectionId, public string $subject, public int $userId)
+    {
+    }
 }

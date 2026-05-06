@@ -16,11 +16,13 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFa
 
 final readonly class TransferTenantOwnership
 {
-    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
-
-    public function execute(TransferTenantOwnershipData $transferTenantOwnershipData) : Tenant
+    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock)
     {
-        $tenant    = $this->tenantStore->findTenantBySlug(slug: $transferTenantOwnershipData->tenantSlug);
+    }
+
+    public function execute(TransferTenantOwnershipData $transferTenantOwnershipData): Tenant
+    {
+        $tenant = $this->tenantStore->findTenantBySlug(slug: $transferTenantOwnershipData->tenantSlug);
 
         if (! $tenant instanceof Tenant) {
             throw TenantFailed::tenantNotFound(tenantSlug: $transferTenantOwnershipData->tenantSlug);
@@ -63,9 +65,9 @@ final readonly class TransferTenantOwnership
             name      : 'auth.tenant.owner.transferred',
             occurredAt: $this->clock->now(),
             context   : [
-                            'tenant_id'   => $tenant->tenantId,
-                            'tenant_slug' => $tenant->slug,
-                            'new_owner_user_id' => $transferTenantOwnershipData->newOwnerUserId,
+                'tenant_id' => $tenant->tenantId,
+                'tenant_slug' => $tenant->slug,
+                'new_owner_user_id' => $transferTenantOwnershipData->newOwnerUserId,
             ],
         ));
 

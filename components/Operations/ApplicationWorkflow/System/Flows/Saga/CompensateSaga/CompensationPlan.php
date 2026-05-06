@@ -11,7 +11,8 @@ final readonly class CompensationPlan
         public array $steps,
         public bool $parallel,
         public int $timeoutMs,
-    ) {}
+    ) {
+    }
 
     public static function create(string $sagaType, array $steps): self
     {
@@ -38,7 +39,7 @@ final readonly class CompensationPlan
         return [
             'saga_type' => $this->sagaType,
             'step_count' => count($this->steps),
-            'parallel'  => $this->parallel,
+            'parallel' => $this->parallel,
             'timeout_ms' => $this->timeoutMs,
         ];
     }

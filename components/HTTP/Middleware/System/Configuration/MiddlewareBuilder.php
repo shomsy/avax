@@ -48,7 +48,7 @@ final class MiddlewareBuilder
     /**
      * Add multiple middleware at once.
      *
-     * @param list<MiddlewareInterface> $middleware
+     * @param  list<MiddlewareInterface>  $middleware
      */
     public function addMany(array $middleware): self
     {
@@ -61,7 +61,7 @@ final class MiddlewareBuilder
     /**
      * Set a fallback handler for when no middleware matches.
      */
-    public function withFallback(MiddlewareInterface $middleware) : self
+    public function withFallback(MiddlewareInterface $middleware): self
     {
         $self = clone $this;
         $self->fallback = $middleware;

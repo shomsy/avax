@@ -9,8 +9,7 @@ use Avax\Components\Operations\Concurrency\System\Capabilities\Tasks\TaskRunner;
 final readonly class RunConcurrentTasks
 {
     /**
-     * @param list<callable(): mixed> $tasks
-     *
+     * @param  list<callable(): mixed>  $tasks
      * @return list<mixed>
      */
     public function run(array $tasks): array

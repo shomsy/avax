@@ -25,12 +25,13 @@ final readonly class ExchangeClientCredentials
         private JwtIdentityInterface $jwtIdentity,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
      */
-    public function execute(ExchangeClientCredentialsData $exchangeClientCredentialsData) : OAuthTokenGrant
+    public function execute(ExchangeClientCredentialsData $exchangeClientCredentialsData): OAuthTokenGrant
     {
         $client = $this->oAuthClientRegistry->find(clientId: $exchangeClientCredentialsData->clientId);
 
@@ -46,8 +47,8 @@ final readonly class ExchangeClientCredentials
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
-        $scopes      = $this->normalizeScopes(scopes: $exchangeClientCredentialsData->scopes);
-        $audience    = $this->normalizeAudience(audience: $exchangeClientCredentialsData->audience);
+        $scopes = $this->normalizeScopes(scopes: $exchangeClientCredentialsData->scopes);
+        $audience = $this->normalizeAudience(audience: $exchangeClientCredentialsData->audience);
 
         if (! $client->allowsScopes(scopes: $scopes)) {
             $this->recordFailure(reason: 'scope_mismatch', data: $exchangeClientCredentialsData);
@@ -72,7 +73,7 @@ final readonly class ExchangeClientCredentials
             throw OAuthTokenExchangeFailed::invalidSenderConstraint();
         }
 
-        $subject = 'client:' . $client->clientId;
+        $subject = 'client:'.$client->clientId;
         $issuedToken = $this->jwtIdentity->issueWorkloadToken(
             subject         : $subject,
             clientId        : $client->clientId,
@@ -85,11 +86,11 @@ final readonly class ExchangeClientCredentials
             name      : 'auth.oauth.client_credentials.exchanged',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id' => $client->clientId,
-                            'scope'     => implode(separator: ' ', array: $scopes),
-                            'audience'  => $audience,
-                            'ip_address' => $exchangeClientCredentialsData->ipAddress,
-                            'user_agent' => $exchangeClientCredentialsData->userAgent,
+                'client_id' => $client->clientId,
+                'scope' => implode(separator: ' ', array: $scopes),
+                'audience' => $audience,
+                'ip_address' => $exchangeClientCredentialsData->ipAddress,
+                'user_agent' => $exchangeClientCredentialsData->userAgent,
             ],
         ));
 
@@ -109,17 +110,17 @@ final readonly class ExchangeClientCredentials
         );
     }
 
-    private function recordFailure(ExchangeClientCredentialsData $exchangeClientCredentialsData, string $reason) : void
+    private function recordFailure(ExchangeClientCredentialsData $exchangeClientCredentialsData, string $reason): void
     {
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.client_credentials.failed',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'  => $exchangeClientCredentialsData->clientId,
-                            'reason'    => $reason,
-                            'audience'   => $this->normalizeAudience(audience: $exchangeClientCredentialsData->audience),
-                            'ip_address' => $exchangeClientCredentialsData->ipAddress,
-                            'user_agent' => $exchangeClientCredentialsData->userAgent,
+                'client_id' => $exchangeClientCredentialsData->clientId,
+                'reason' => $reason,
+                'audience' => $this->normalizeAudience(audience: $exchangeClientCredentialsData->audience),
+                'ip_address' => $exchangeClientCredentialsData->ipAddress,
+                'user_agent' => $exchangeClientCredentialsData->userAgent,
             ],
         ));
     }
@@ -132,8 +133,7 @@ final readonly class ExchangeClientCredentials
     }
 
     /**
-     * @param list<string> $scopes
-     *
+     * @param  list<string>  $scopes
      * @return list<string>
      */
     private function normalizeScopes(array $scopes): array

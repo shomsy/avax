@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 final readonly class RuntimeResponse
 {
     /**
-     * @param array<string, list<string>> $headers
+     * @param  array<string, list<string>>  $headers
      */
     public function __construct(
         private int $statusCode,
@@ -24,7 +24,7 @@ final readonly class RuntimeResponse
         }
     }
 
-    public static function fromPsrResponse(ResponseInterface $response) : self
+    public static function fromPsrResponse(ResponseInterface $response): self
     {
         $headers = [];
         foreach ($response->getHeaders() as $name => $values) {
@@ -38,7 +38,7 @@ final readonly class RuntimeResponse
         );
     }
 
-    public function statusCode() : int
+    public function statusCode(): int
     {
         return $this->statusCode;
     }
@@ -46,12 +46,12 @@ final readonly class RuntimeResponse
     /**
      * @return array<string, list<string>>
      */
-    public function headers() : array
+    public function headers(): array
     {
         return $this->headers;
     }
 
-    public function body() : string
+    public function body(): string
     {
         return $this->body;
     }

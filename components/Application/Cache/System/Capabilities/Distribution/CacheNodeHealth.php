@@ -35,7 +35,7 @@ final class CacheNodeHealth
     public function check(CacheNode $cacheNode): NodeHealthRecord
     {
         $nodeId = $cacheNode->id->toString();
-        $now    = $this->clock->now();
+        $now = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
@@ -51,7 +51,7 @@ final class CacheNodeHealth
             return $this->records[$nodeId];
         }
 
-        $record                 = $this->records[$nodeId];
+        $record = $this->records[$nodeId];
         $this->records[$nodeId] = $record->withLastCheck($now);
 
         return $this->records[$nodeId];
@@ -63,7 +63,7 @@ final class CacheNodeHealth
     public function markHealthy(CacheNode $cacheNode): NodeHealthRecord
     {
         $nodeId = $cacheNode->id->toString();
-        $now    = $this->clock->now();
+        $now = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
@@ -79,9 +79,9 @@ final class CacheNodeHealth
             return $this->records[$nodeId];
         }
 
-        $record       = $this->records[$nodeId];
+        $record = $this->records[$nodeId];
         $newSuccesses = $record->consecutiveSuccesses + 1;
-        $newStatus    = $record->cacheNodeStatus;
+        $newStatus = $record->cacheNodeStatus;
 
         // If we've recovered enough times, mark as healthy
         if ($newSuccesses >= $this->recoveryThreshold) {
@@ -107,7 +107,7 @@ final class CacheNodeHealth
     public function markUnhealthy(CacheNode $cacheNode): NodeHealthRecord
     {
         $nodeId = $cacheNode->id->toString();
-        $now    = $this->clock->now();
+        $now = $this->clock->now();
 
         if (! isset($this->records[$nodeId])) {
             $this->records[$nodeId] = new NodeHealthRecord(
@@ -123,9 +123,9 @@ final class CacheNodeHealth
             return $this->records[$nodeId];
         }
 
-        $record      = $this->records[$nodeId];
+        $record = $this->records[$nodeId];
         $newFailures = $record->consecutiveFailures + 1;
-        $newStatus   = $record->cacheNodeStatus;
+        $newStatus = $record->cacheNodeStatus;
 
         // If we've failed enough times, mark as unhealthy
         if ($newFailures >= $this->failureThreshold) {

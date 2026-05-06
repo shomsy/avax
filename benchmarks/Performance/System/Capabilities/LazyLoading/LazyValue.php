@@ -18,7 +18,7 @@ final class LazyValue
 
     public function get(): mixed
     {
-        if (!$this->resolved) {
+        if (! $this->resolved) {
             $this->value = ($this->resolver)();
             $this->resolved = true;
         }

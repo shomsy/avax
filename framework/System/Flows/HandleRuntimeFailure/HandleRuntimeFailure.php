@@ -49,7 +49,7 @@ final readonly class HandleRuntimeFailure
     /**
      * Handle a fatal error captured during shutdown.
      *
-     * @param array{type: int, message: string, file: string, line: int} $error
+     * @param  array{type: int, message: string, file: string, line: int}  $error
      */
     public function handleFatalError(array $error): void
     {

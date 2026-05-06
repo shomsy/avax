@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 
 final class MiddlewareProvider implements ComponentProviderInterface
 {
-    public function register(ComponentRegistry $componentRegistry) : void
+    public function register(ComponentRegistry $componentRegistry): void
     {
         // Registration logic
     }

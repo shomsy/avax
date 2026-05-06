@@ -9,8 +9,8 @@ use Closure;
 final readonly class DataTransferConfig
 {
     /**
-     * @param array<class-string, class-string|object|callable> $valueCasters
-     * @param array<class-string, object|callable>              $validationRules
+     * @param  array<class-string, class-string|object|callable>  $valueCasters
+     * @param  array<class-string, object|callable>  $validationRules
      */
     public function __construct(
         public UnknownFieldPolicy $unknownFieldPolicy = UnknownFieldPolicy::Reject,
@@ -20,7 +20,8 @@ final readonly class DataTransferConfig
         private ?Closure $namingPolicy = null,
         private array $valueCasters = [],
         private array $validationRules = [],
-    ) {}
+    ) {
+    }
 
     public static function default(): self
     {

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+
 /**
  * Fix composer.json autoload files - remove missing, map known moves.
  */
@@ -34,7 +35,7 @@ $files = $json['autoload']['files'] ?? [];
 $newFiles = [];
 
 foreach ($files as $file) {
-    if (!file_exists($file)) {
+    if (! file_exists($file)) {
         echo sprintf('REMOVED (missing): %s%s', $file, PHP_EOL);
 
         continue;
@@ -60,4 +61,4 @@ if (isset($json['suggest']) && $json['suggest'] === []) {
     unset($json['suggest']);
 }
 
-file_put_contents('composer.json', json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+file_put_contents('composer.json', json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");

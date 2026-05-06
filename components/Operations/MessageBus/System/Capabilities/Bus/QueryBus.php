@@ -24,8 +24,8 @@ final class QueryBus
     {
         $class = $query::class;
 
-        if (!isset($this->handlers[$class])) {
-            throw new RuntimeException('No handler registered for query: ' . $class);
+        if (! isset($this->handlers[$class])) {
+            throw new RuntimeException('No handler registered for query: '.$class);
         }
 
         $handler = $this->handlers[$class];

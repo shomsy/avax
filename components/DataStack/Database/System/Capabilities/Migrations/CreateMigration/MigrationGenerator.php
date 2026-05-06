@@ -17,19 +17,18 @@ final class MigrationGenerator
     /**
      * Generate a new migration file.
      *
-     * @param string      $name   Migration name (e.g., 'create_users_table')
-     * @param string      $path   Target directory
-     * @param string|null $table  Associated table name
-     * @param bool        $create Whether this is a creation migration
-     *
+     * @param  string  $name  Migration name (e.g., 'create_users_table')
+     * @param  string  $path  Target directory
+     * @param  string|null  $table  Associated table name
+     * @param  bool  $create  Whether this is a creation migration
      * @return string Created file path
      */
-    public function generate(string $name, string $path, ?string $table = null, bool $create = false) : string
+    public function generate(string $name, string $path, ?string $table = null, bool $create = false): string
     {
         $timestamp = $this->getTimestamp();
         $className = $this->getClassName(name: $name);
         $filename = sprintf('%s_%s.php', $timestamp, $name);
-        $filepath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
+        $filepath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$filename;
 
         $stub = $this->getStubContent(table: $table, create: $create);
         $content = $this->populateStub(stub: $stub, className: $className, table: $table);
@@ -52,7 +51,7 @@ final class MigrationGenerator
     {
         return str_replace(search: '_', replace: ' ', subject: $name)
                 |> ucwords(...)
-                |> (static fn ($x) : string|array => str_replace(search: ' ', replace: '', subject: $x));
+                |> (static fn ($x): string|array => str_replace(search: ' ', replace: '', subject: $x));
     }
 
     private function getStubContent(?string $table, bool $create): string
@@ -63,10 +62,10 @@ final class MigrationGenerator
             $stubName = $create ? 'create.stub' : 'update.stub';
         }
 
-        $stubPath = __DIR__ . DIRECTORY_SEPARATOR . 'Stubs' . DIRECTORY_SEPARATOR . $stubName;
+        $stubPath = __DIR__.DIRECTORY_SEPARATOR.'Stubs'.DIRECTORY_SEPARATOR.$stubName;
 
         if (! file_exists(filename: $stubPath)) {
-            throw new RuntimeException(message: 'Migration stub not found: ' . $stubPath);
+            throw new RuntimeException(message: 'Migration stub not found: '.$stubPath);
         }
 
         return file_get_contents(filename: $stubPath);
@@ -76,7 +75,7 @@ final class MigrationGenerator
     {
         $replacements = [
             '{{className}}' => $className,
-            '{{table}}'     => $table ?? '',
+            '{{table}}' => $table ?? '',
         ];
 
         return str_replace(

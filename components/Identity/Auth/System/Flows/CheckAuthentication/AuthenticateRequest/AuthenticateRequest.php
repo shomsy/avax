@@ -32,9 +32,10 @@ final readonly class AuthenticateRequest
         private ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
         private ?JwtIdentityInterface $jwtIdentity = null,
-    ) {}
+    ) {
+    }
 
-    public function execute(AuthenticationRequest $authenticationRequest) : AuthenticationContext
+    public function execute(AuthenticationRequest $authenticationRequest): AuthenticationContext
     {
         [$sessionUser, $sessionId, $sessionMfaVerifiedAt, $sessionPhishingResistant] = $this->resolveSessionUser(request: $authenticationRequest);
         $resolvedToken = $authenticationRequest->bearerToken !== null
@@ -52,8 +53,8 @@ final readonly class AuthenticateRequest
                 name      : 'auth.ingress.conflict',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'ip_address' => $authenticationRequest->ipAddress,
-                                'user_agent' => $authenticationRequest->userAgent,
+                    'ip_address' => $authenticationRequest->ipAddress,
+                    'user_agent' => $authenticationRequest->userAgent,
                 ],
             ));
 
@@ -118,7 +119,7 @@ final readonly class AuthenticateRequest
     /**
      * @return array{0: User|null, 1: string|null, 2: DateTimeImmutable|null, 3: bool}
      */
-    private function resolveSessionUser(AuthenticationRequest $authenticationRequest) : array
+    private function resolveSessionUser(AuthenticationRequest $authenticationRequest): array
     {
         if (! $authenticationRequest->allowSession || ! $this->sessionIdentity instanceof SessionIdentityInterface) {
             return [null, null, null, false];

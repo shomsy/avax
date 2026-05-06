@@ -8,9 +8,10 @@ final readonly class QueryString
 {
     public function __construct(
         private string $query,
-    ) {}
+    ) {
+    }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         $params = [];
         parse_str($this->query, $params);
@@ -18,7 +19,7 @@ final readonly class QueryString
         return $params;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->query;
     }

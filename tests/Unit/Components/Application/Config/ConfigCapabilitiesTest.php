@@ -9,13 +9,13 @@ use PHPUnit\Framework\TestCase;
 
 final class ConfigCapabilitiesTest extends TestCase
 {
-    public function testConfigurationRepository() : void
+    public function test_configuration_repository(): void
     {
         $repo = new ConfigurationRepository();
         $this->assertInstanceOf(ConfigurationRepository::class, $repo);
     }
 
-    public function testConfigurationRepositorySet() : void
+    public function test_configuration_repository_set(): void
     {
         $repo = new ConfigurationRepository();
         $repo->set('key', 'value');
@@ -23,7 +23,7 @@ final class ConfigCapabilitiesTest extends TestCase
         $this->assertTrue($repo->has('key'));
     }
 
-    public function testConfigurationRepositoryGet() : void
+    public function test_configuration_repository_get(): void
     {
         $repo = new ConfigurationRepository();
         $repo->set('key', 'value');
@@ -31,7 +31,7 @@ final class ConfigCapabilitiesTest extends TestCase
         $this->assertSame('value', $repo->get('key'));
     }
 
-    public function testConfigurationRepositoryHas() : void
+    public function test_configuration_repository_has(): void
     {
         $repo = new ConfigurationRepository();
         $repo->set('key', 'value');
@@ -40,7 +40,7 @@ final class ConfigCapabilitiesTest extends TestCase
         $this->assertFalse($repo->has('nonexistent'));
     }
 
-    public function testConfigurationRepositoryGetNested() : void
+    public function test_configuration_repository_get_nested(): void
     {
         $repo = new ConfigurationRepository();
         $repo->set('database.host', 'localhost');
@@ -49,7 +49,7 @@ final class ConfigCapabilitiesTest extends TestCase
         $this->assertSame('localhost', $repo->get('database.host'));
     }
 
-    public function testConfigurationRepositoryMany() : void
+    public function test_configuration_repository_many(): void
     {
         $repo = new ConfigurationRepository();
         $repo->set('a', 1);
@@ -61,7 +61,7 @@ final class ConfigCapabilitiesTest extends TestCase
         $this->assertTrue($repo->has('c'));
     }
 
-    public function testConfigurationRepositoryDefaultValue() : void
+    public function test_configuration_repository_default_value(): void
     {
         $repo = new ConfigurationRepository();
         $repo->set('key', 'value');
@@ -70,7 +70,7 @@ final class ConfigCapabilitiesTest extends TestCase
         $this->assertSame('default', $result);
     }
 
-    public function testConfigurationRepositoryAll() : void
+    public function test_configuration_repository_all(): void
     {
         $repo = new ConfigurationRepository();
         $repo->set('a', 1);
@@ -82,7 +82,7 @@ final class ConfigCapabilitiesTest extends TestCase
         $this->assertArrayHasKey('b', $all);
     }
 
-    public function testConfigurationRepositoryMerge() : void
+    public function test_configuration_repository_merge(): void
     {
         $repo = new ConfigurationRepository();
         $repo->set('a', 1);

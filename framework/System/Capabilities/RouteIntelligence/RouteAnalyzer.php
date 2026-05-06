@@ -15,12 +15,12 @@ final class RouteAnalyzer
     private array $routes = [];
 
     /**
-     * @param list<array{method: string, path: string, handler: mixed, middleware?: list<string>}> $routes
+     * @param  list<array{method: string, path: string, handler: mixed, middleware?: list<string>}>  $routes
      */
-    public function setRoutes(array $routes) : self
+    public function setRoutes(array $routes): self
     {
         $this->routes = array_map(
-            fn (array $route) : RouteInfo => new RouteInfo(
+            fn (array $route): RouteInfo => new RouteInfo(
                 method    : strtoupper($route['method']),
                 pattern   : $route['path'],
                 handler   : $this->describeHandler($route['handler']),
@@ -32,7 +32,7 @@ final class RouteAnalyzer
         return $this;
     }
 
-    private function describeHandler(mixed $handler) : string
+    private function describeHandler(mixed $handler): string
     {
         if (is_string($handler)) {
             return $handler;
@@ -54,7 +54,7 @@ final class RouteAnalyzer
     /**
      * @return list<RouteInfo>
      */
-    public function routes() : array
+    public function routes(): array
     {
         return $this->routes;
     }
@@ -64,7 +64,7 @@ final class RouteAnalyzer
      *
      * @return list<RouteConflict>
      */
-    public function detectConflicts() : array
+    public function detectConflicts(): array
     {
         $conflicts = [];
         $count = count($this->routes);
@@ -89,7 +89,7 @@ final class RouteAnalyzer
         return $conflicts;
     }
 
-    private function checkConflict(RouteInfo $a, RouteInfo $b) : ?RouteConflict
+    private function checkConflict(RouteInfo $a, RouteInfo $b): ?RouteConflict
     {
         if ($a->pattern === $b->pattern) {
             return new RouteConflict(
@@ -97,10 +97,10 @@ final class RouteAnalyzer
                 routeA: $a,
                 routeB: $b,
                 reason: sprintf(
-                            'Exact duplicate: %s %s',
-                            $a->method,
-                            $a->pattern,
-                        ),
+                    'Exact duplicate: %s %s',
+                    $a->method,
+                    $a->pattern,
+                ),
             );
         }
 
@@ -110,17 +110,17 @@ final class RouteAnalyzer
                 routeA: $a,
                 routeB: $b,
                 reason: sprintf(
-                            "Ambiguous: '%s' and '%s' may match same URLs",
-                            $a->pattern,
-                            $b->pattern,
-                        ),
+                    "Ambiguous: '%s' and '%s' may match same URLs",
+                    $a->pattern,
+                    $b->pattern,
+                ),
             );
         }
 
         return null;
     }
 
-    private function patternsMayConflict(string $pattern1, string $pattern2) : bool
+    private function patternsMayConflict(string $pattern1, string $pattern2): bool
     {
         $parts1 = explode('/', $pattern1);
         $parts2 = explode('/', $pattern2);
@@ -146,7 +146,7 @@ final class RouteAnalyzer
     /**
      * Explain how a request would be matched.
      */
-    public function explainMatch(string $method, string $path) : ?RouteInfo
+    public function explainMatch(string $method, string $path): ?RouteInfo
     {
         $method = strtoupper($method);
 
@@ -163,7 +163,7 @@ final class RouteAnalyzer
         return null;
     }
 
-    private function matchesPattern(string $pattern, string $path) : bool
+    private function matchesPattern(string $pattern, string $path): bool
     {
         $patternParts = explode('/', trim($pattern, '/'));
         $pathParts = explode('/', trim($path, '/'));
@@ -201,7 +201,7 @@ final class RouteAnalyzer
      *
      * @return list<RouteConflict>
      */
-    public function findUnreachableRoutes() : array
+    public function findUnreachableRoutes(): array
     {
         $unreachable = [];
 
@@ -221,12 +221,12 @@ final class RouteAnalyzer
                         routeA: $route,
                         routeB: $late,
                         reason: sprintf(
-                                    "Route '%s %s' shadows '%s %s'",
-                                    $route->method,
-                                    $route->pattern,
-                                    $late->method,
-                                    $late->pattern,
-                                ),
+                            "Route '%s %s' shadows '%s %s'",
+                            $route->method,
+                            $route->pattern,
+                            $late->method,
+                            $late->pattern,
+                        ),
                     );
                 }
             }
@@ -235,7 +235,7 @@ final class RouteAnalyzer
         return $unreachable;
     }
 
-    private function isShadowed(RouteInfo $specific, RouteInfo $general) : bool
+    private function isShadowed(RouteInfo $specific, RouteInfo $general): bool
     {
         $specificParams = $specific->parameters();
         $generalParams = $general->parameters();

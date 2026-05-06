@@ -14,5 +14,6 @@ final readonly class EmailChangeChallenge
         #[SensitiveParameter]
         public ?string $token = null,
         public ?DateTimeImmutable $expiresAt = null,
-    ) {}
+    ) {
+    }
 }

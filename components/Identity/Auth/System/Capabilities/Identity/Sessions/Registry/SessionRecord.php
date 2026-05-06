@@ -26,7 +26,8 @@ final readonly class SessionRecord
         public ?string $userAgentCreated = null,
         public ?DateTimeImmutable $revokedAt = null,
         public ?string $revokeReason = null,
-    ) {}
+    ) {
+    }
 
     public function isActiveAt(DateTimeImmutable $moment): bool
     {

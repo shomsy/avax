@@ -16,5 +16,7 @@ final class NullEmailVerificationStateStore implements EmailVerificationStateSto
         return false;
     }
 
-    public function markVerified(UserId $userId) : void {}
+    public function markVerified(UserId $userId): void
+    {
+    }
 }

@@ -15,22 +15,23 @@ use SensitiveParameter;
 final readonly class AuthenticationResult
 {
     public function __construct(
-        private AuthenticationState   $authenticationState,
+        private AuthenticationState $authenticationState,
         private AuthenticationContext $authenticationContext,
-        private ?AuthenticatedUser    $authenticatedUser = null,
+        private ?AuthenticatedUser $authenticatedUser = null,
         #[SensitiveParameter]
         private ?string $accessToken = null,
         #[SensitiveParameter]
         private ?string $refreshToken = null,
         private ?MfaChallenge $mfaChallenge = null,
-    ) {}
+    ) {
+    }
 
     public static function success(
         AuthenticationContext $authenticationContext,
         #[SensitiveParameter]
-        ?string               $accessToken = null,
+        ?string $accessToken = null,
         #[SensitiveParameter]
-        ?string               $refreshToken = null,
+        ?string $refreshToken = null,
     ): self {
         return new self(
             accessToken : $accessToken,
@@ -48,7 +49,7 @@ final readonly class AuthenticationResult
 
     public static function mfaRequired(
         AuthenticatedUser $authenticatedUser,
-        MfaChallenge      $mfaChallenge,
+        MfaChallenge $mfaChallenge,
     ): self {
         return new self(
             mfaChallenge: $mfaChallenge,

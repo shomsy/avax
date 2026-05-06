@@ -6,12 +6,14 @@ namespace Avax\Components\Performance\System\Capabilities\ConfigCaching;
 
 final readonly class ConfigCache
 {
-    public function __construct(private string $path) {}
+    public function __construct(private string $path)
+    {
+    }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
-    public function write(array $config) : void
+    public function write(array $config): void
     {
         $directory = dirname(path: $this->path);
 
@@ -21,14 +23,14 @@ final readonly class ConfigCache
 
         file_put_contents(
             filename: $this->path,
-            data    : '<?php return ' . var_export(value: $config, return: true) . ';' . PHP_EOL,
+            data    : '<?php return '.var_export(value: $config, return: true).';'.PHP_EOL,
         );
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function read() : array
+    public function read(): array
     {
         if (! is_file(filename: $this->path)) {
             return [];
@@ -39,7 +41,7 @@ final readonly class ConfigCache
         return is_array(value: $config) ? $config : [];
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         if (is_file(filename: $this->path)) {
             unlink(filename: $this->path);

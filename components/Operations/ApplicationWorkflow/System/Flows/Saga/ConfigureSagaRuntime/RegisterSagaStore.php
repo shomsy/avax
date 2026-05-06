@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ConfigureSagaRuntime;
 
-use RuntimeException;
-
 final readonly class RegisterSagaStore
 {
     public function register(string $type, array $config): object
@@ -13,14 +11,14 @@ final readonly class RegisterSagaStore
         return match ($type) {
             'memory' => $this->createInMemoryStore(),
             'database' => $this->createDatabaseStore(config: $config),
-            'redis'  => $this->createRedisStore(config: $config),
-            default  => throw new SagaRuntimeConfigurationFailure(
+            'redis' => $this->createRedisStore(config: $config),
+            default => throw new SagaRuntimeConfigurationFailure(
                 message: sprintf('Unknown saga store type: %s', $type),
             ),
         };
     }
 
-    private function createInMemoryStore() : object
+    private function createInMemoryStore(): object
     {
         return new class () {
             public array $data = [];
@@ -55,9 +53,13 @@ final readonly class RegisterSagaStore
                 return null;
             }
 
-            public function set(string $key, array $value) : void {}
+            public function set(string $key, array $value): void
+            {
+            }
 
-            public function delete(string $key) : void {}
+            public function delete(string $key): void
+            {
+            }
 
             public function all(): array
             {
@@ -74,9 +76,13 @@ final readonly class RegisterSagaStore
                 return null;
             }
 
-            public function set(string $key, array $value) : void {}
+            public function set(string $key, array $value): void
+            {
+            }
 
-            public function delete(string $key) : void {}
+            public function delete(string $key): void
+            {
+            }
 
             public function all(): array
             {

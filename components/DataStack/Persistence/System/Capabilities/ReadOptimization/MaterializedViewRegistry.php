@@ -32,7 +32,7 @@ final class MaterializedViewRegistry
 
     public function get(string $name): MaterializedView
     {
-        if (!isset($this->views[$name])) {
+        if (! isset($this->views[$name])) {
             throw new RuntimeException(sprintf("Materialized view '%s' not found", $name));
         }
 

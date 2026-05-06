@@ -28,11 +28,11 @@ final class RuntimeTimeline
     /**
      * Start timing a named operation.
      */
-    public function begin(string $name, ?string $category = null) : TraceSpan
+    public function begin(string $name, ?string $category = null): TraceSpan
     {
         return new TraceSpan(
             name    : $name,
-            onFinish: function (float $durationMS) use ($name, $category) : void {
+            onFinish: function (float $durationMS) use ($name, $category): void {
                 $this->record(
                     name      : $name,
                     durationMS: $durationMS,
@@ -43,15 +43,14 @@ final class RuntimeTimeline
     }
 
     /**
-     * @param array<string, mixed> $metadata
+     * @param  array<string, mixed>  $metadata
      */
     public function record(
         string $name,
-        ?float  $durationMS = null,
+        ?float $durationMS = null,
         ?string $category = null,
-        array  $metadata = [],
-    ) : void
-    {
+        array $metadata = [],
+    ): void {
         $timestamp = microtime(true) * 1000;
 
         $this->events[] = new RuntimeEvent(
@@ -63,7 +62,7 @@ final class RuntimeTimeline
         );
     }
 
-    public function finish() : void
+    public function finish(): void
     {
         $this->endMS = microtime(true) * 1000;
         $this->isFinished = true;
@@ -74,7 +73,7 @@ final class RuntimeTimeline
         );
     }
 
-    public function durationMS() : float
+    public function durationMS(): float
     {
         $end = $this->endMS ?? (microtime(true) * 1000);
 
@@ -84,12 +83,12 @@ final class RuntimeTimeline
     /**
      * @return list<RuntimeEvent>
      */
-    public function events() : array
+    public function events(): array
     {
         return $this->events;
     }
 
-    public function isFinished() : bool
+    public function isFinished(): bool
     {
         return $this->isFinished;
     }
@@ -97,7 +96,7 @@ final class RuntimeTimeline
     /**
      * Export timeline as formatted string.
      */
-    public function exportText() : string
+    public function exportText(): string
     {
         $lines = ['Execution Timeline:'];
 
@@ -130,17 +129,17 @@ final class RuntimeTimeline
      * @return array{duration_ms: float, events: list<array{name: string, timestamp_ms: float, duration_ms: float|null,
      *                            category: string|null, metadata: array<string, mixed>}>}
      */
-    public function exportArray() : array
+    public function exportArray(): array
     {
         return [
             'duration_ms' => $this->durationMS(),
             'events' => array_map(
-                static fn (RuntimeEvent $runtimeEvent) : array => [
-                    'name'         => $runtimeEvent->name,
+                static fn (RuntimeEvent $runtimeEvent): array => [
+                    'name' => $runtimeEvent->name,
                     'timestamp_ms' => round($runtimeEvent->timestampMS, 2),
-                    'duration_ms'  => $runtimeEvent->durationMS !== null ? round($runtimeEvent->durationMS, 2) : null,
-                    'category'     => $runtimeEvent->category,
-                    'metadata'     => $runtimeEvent->metadata,
+                    'duration_ms' => $runtimeEvent->durationMS !== null ? round($runtimeEvent->durationMS, 2) : null,
+                    'category' => $runtimeEvent->category,
+                    'metadata' => $runtimeEvent->metadata,
                 ],
                 $this->events,
             ),

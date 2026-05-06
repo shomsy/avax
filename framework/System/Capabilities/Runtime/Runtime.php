@@ -18,78 +18,79 @@ use Closure;
 final readonly class Runtime implements RuntimeInterface
 {
     /**
-     * @param array<string, Closure> $consoleCommands
+     * @param  array<string, Closure>  $consoleCommands
      */
     public function __construct(
-        private RuntimeState      $runtimeState,
-        private RuntimeContext    $runtimeContext,
+        private RuntimeState $runtimeState,
+        private RuntimeContext $runtimeContext,
         private RequestScopeStore $requestScopeStore,
         private StateResetRegistry $stateResetRegistry,
         private ComponentRegistry $componentRegistry,
         private ProjectPath $projectPath,
-        private EnvironmentName   $environmentName,
+        private EnvironmentName $environmentName,
         private Clock $clock,
         private string $runtimeName,
         private ?Closure $httpHandler = null,
         private array $consoleCommands = [],
-    ) {}
+    ) {
+    }
 
-    public function state() : RuntimeState
+    public function state(): RuntimeState
     {
         return $this->runtimeState;
     }
 
-    public function context() : RuntimeContext
+    public function context(): RuntimeContext
     {
         return $this->runtimeContext;
     }
 
-    public function requestScopes() : RequestScopeStore
+    public function requestScopes(): RequestScopeStore
     {
         return $this->requestScopeStore;
     }
 
-    public function components() : ComponentRegistry
+    public function components(): ComponentRegistry
     {
         return $this->componentRegistry;
     }
 
-    public function stateResetRegistry() : StateResetRegistry
+    public function stateResetRegistry(): StateResetRegistry
     {
         return $this->stateResetRegistry;
     }
 
-    public function projectPath() : ProjectPath
+    public function projectPath(): ProjectPath
     {
         return $this->projectPath;
     }
 
-    public function environment() : EnvironmentName
+    public function environment(): EnvironmentName
     {
         return $this->environmentName;
     }
 
-    public function clock() : Clock
+    public function clock(): Clock
     {
         return $this->clock;
     }
 
-    public function runtimeName() : string
+    public function runtimeName(): string
     {
         return $this->runtimeName;
     }
 
-    public function httpHandler() : ?Closure
+    public function httpHandler(): ?Closure
     {
         return $this->httpHandler;
     }
 
-    public function consoleCommands() : array
+    public function consoleCommands(): array
     {
         return $this->consoleCommands;
     }
 
-    public function runWorker(WorkerRuntimeInterface $workerRuntime) : WorkerLifecycle
+    public function runWorker(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle
     {
         $workerLoop = new WorkerLoop(
             runtime      : $this,

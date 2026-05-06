@@ -6,5 +6,7 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\Su
 
 final readonly class SuspendTenantMemberData
 {
-    public function __construct(public string $tenantSlug, public int $userId) {}
+    public function __construct(public string $tenantSlug, public int $userId)
+    {
+    }
 }

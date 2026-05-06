@@ -103,7 +103,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private function buildNamedCache(string $name, array $config): AvaxCache
     {
@@ -118,7 +118,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
                 config: $cacheConfiguration,
             ),
             'file' => $buildCache->inDirectory(
-                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir() . '/cache_' . $name,
+                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir().'/cache_'.$name,
                 config: $cacheConfiguration,
             ),
             'redis' => $buildCache->redis(
@@ -131,7 +131,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function defaultStore(string $store = 'in_memory', array $options = []): self
     {
@@ -141,7 +141,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function store(string $name, string $store = 'in_memory', array $options = []): self
     {

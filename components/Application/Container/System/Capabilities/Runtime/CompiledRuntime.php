@@ -25,12 +25,12 @@ final class CompiledRuntime
     private readonly HotPathInliner $hotPathInliner;
 
     public function __construct(
-        private readonly ?CompileContainer  $compileContainer = null,
-        ?HotPathInliner                     $hotPathInliner = null,
+        private readonly ?CompileContainer $compileContainer = null,
+        ?HotPathInliner $hotPathInliner = null,
         private readonly ?ResolutionMetrics $resolutionMetrics = null,
-        private readonly string             $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
+        private readonly string $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
     ) {
-        $hotPathInliner       ??= new HotPathInliner();
+        $hotPathInliner ??= new HotPathInliner();
         $this->hotPathInliner = $hotPathInliner;
     }
 
@@ -60,9 +60,9 @@ final class CompiledRuntime
      * @throws ReflectionException
      * @throws JsonException
      */
-    public function compile(?array $serviceIds = null, ?array $validationIssues = null, bool $warmed = false) : ?CompiledContainer
+    public function compile(?array $serviceIds = null, ?array $validationIssues = null, bool $warmed = false): ?CompiledContainer
     {
-        $serviceIds       ??= [];
+        $serviceIds ??= [];
         $validationIssues ??= [];
 
         return $this->compileContainer?->compile(
@@ -94,7 +94,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function isCompiled(DependencyRegistry $dependencyRegistry, string $serviceId) : bool
+    public function isCompiled(DependencyRegistry $dependencyRegistry, string $serviceId): bool
     {
         $this->refresh(serviceId: $serviceId, registrations: $dependencyRegistry);
         if ($this->hotPathInliner->has(serviceId: $serviceId)) {
@@ -107,7 +107,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function refresh(DependencyRegistry $dependencyRegistry, ?string $serviceId = null) : void
+    public function refresh(DependencyRegistry $dependencyRegistry, ?string $serviceId = null): void
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
             $this->hotPathInliner->detach();
@@ -131,7 +131,7 @@ final class CompiledRuntime
         if ($compiled instanceof CompiledContainer) {
             $this->hotPathInliner->attach(compiled: $compiled);
         } else {
-            $artifactAvailable   = $this->compileContainer->report()->available;
+            $artifactAvailable = $this->compileContainer->report()->available;
             $requestedIsCompiled = $serviceId !== null && $this->compileContainer->contains(serviceId: $serviceId);
 
             if (! $artifactAvailable || $requestedIsCompiled) {
@@ -146,7 +146,7 @@ final class CompiledRuntime
         $this->compiledRevision = $revision;
     }
 
-    public function attach(CompiledContainer $compiledContainer, int $revision) : void
+    public function attach(CompiledContainer $compiledContainer, int $revision): void
     {
         $this->hotPathInliner->attach(compiled: $compiledContainer);
         $this->compiledRevision = $revision;
@@ -157,27 +157,27 @@ final class CompiledRuntime
      */
     public function summary(): array
     {
-        $report       = $this->compileContainer?->report();
+        $report = $this->compileContainer?->report();
         $inlinerState = $this->hotPathInliner->state();
 
         return [
             'attached' => $this->hotPathInliner->isAttached(),
-            'entryCount'        => $inlinerState['entryCount'],
-            'artifactAvailable' => $report?->available      ?? false,
-            'compatible'        => $report?->compatible     ?? false,
-            'freshnessState'    => $report?->freshnessState ?? 'missing',
-            'executionMode'     => $report?->executionMode  ?? $this->executionMode,
-            'reason'            => $inlinerState['reason'],
+            'entryCount' => $inlinerState['entryCount'],
+            'artifactAvailable' => $report?->available ?? false,
+            'compatible' => $report?->compatible ?? false,
+            'freshnessState' => $report?->freshnessState ?? 'missing',
+            'executionMode' => $report?->executionMode ?? $this->executionMode,
+            'reason' => $inlinerState['reason'],
         ];
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function state(DependencyRegistry $dependencyRegistry, string $serviceId) : array
+    public function state(DependencyRegistry $dependencyRegistry, string $serviceId): array
     {
         $this->refresh(serviceId: $serviceId, registrations: $dependencyRegistry);
-        $report       = $this->compileContainer?->report(serviceIds: [$serviceId]);
+        $report = $this->compileContainer?->report(serviceIds: [$serviceId]);
         $decision = $this->decision(
             registrations: $dependencyRegistry,
             request      : new ResolveRequest(serviceId: $serviceId),
@@ -185,26 +185,26 @@ final class CompiledRuntime
         $inlinerState = $this->hotPathInliner->state(serviceId: $serviceId);
 
         return [
-            'attached'            => $inlinerState['attached'],
+            'attached' => $inlinerState['attached'],
             'entryAttached' => $this->hotPathInliner->has(serviceId: $serviceId),
-            'entryCount'          => $inlinerState['entryCount'],
+            'entryCount' => $inlinerState['entryCount'],
             'containsEntry' => $this->compileContainer?->contains(serviceId: $serviceId) ?? false,
-            'artifactAvailable'   => $report?->available                               ?? false,
-            'compatible'          => $report?->compatible                              ?? false,
-            'compatibilityIssues' => $report?->compatibilityIssues                     ?? [],
-            'freshnessState'      => $report?->freshnessState                          ?? 'missing',
-            'compileMode'         => $report?->compileMode                             ?? '',
-            'executionMode'       => $report?->executionMode                           ?? $this->executionMode,
-            'decision'            => $decision['decision'],
-            'reason'              => $decision['reason'],
-            'hotPath'             => $inlinerState,
+            'artifactAvailable' => $report?->available ?? false,
+            'compatible' => $report?->compatible ?? false,
+            'compatibilityIssues' => $report?->compatibilityIssues ?? [],
+            'freshnessState' => $report?->freshnessState ?? 'missing',
+            'compileMode' => $report?->compileMode ?? '',
+            'executionMode' => $report?->executionMode ?? $this->executionMode,
+            'decision' => $decision['decision'],
+            'reason' => $decision['reason'],
+            'hotPath' => $inlinerState,
         ];
     }
 
     /**
      * @return array{useCompiled: bool, decision: string, reason: string}
      */
-    public function decision(DependencyRegistry $dependencyRegistry, ResolveRequest $resolveRequest) : array
+    public function decision(DependencyRegistry $dependencyRegistry, ResolveRequest $resolveRequest): array
     {
         $this->refresh(serviceId: $resolveRequest->serviceId, registrations: $dependencyRegistry);
         $report = $this->compileContainer?->report(serviceIds: [$resolveRequest->serviceId]);
@@ -212,16 +212,16 @@ final class CompiledRuntime
         if (! $this->compileContainer instanceof CompileContainer) {
             return [
                 'useCompiled' => false,
-                'decision'    => 'dynamic',
-                'reason'      => 'compiled runtime is not configured',
+                'decision' => 'dynamic',
+                'reason' => 'compiled runtime is not configured',
             ];
         }
 
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
             return [
                 'useCompiled' => false,
-                'decision'    => 'dynamic',
-                'reason'      => 'execution mode is dynamic',
+                'decision' => 'dynamic',
+                'reason' => 'execution mode is dynamic',
             ];
         }
 
@@ -230,14 +230,14 @@ final class CompiledRuntime
 
             return [
                 'useCompiled' => false,
-                'decision'    => 'dynamic',
-                'reason'      => match ($state) {
-                    'missing'      => 'compiled artifact is missing',
+                'decision' => 'dynamic',
+                'reason' => match ($state) {
+                    'missing' => 'compiled artifact is missing',
                     'incompatible' => 'compiled artifact is incompatible with the current runtime',
-                    'partial'      => 'compiled artifact does not contain the requested entry',
-                    'corrupt'      => 'compiled artifact is corrupt',
-                    'stale'        => 'compiled artifact is stale',
-                    default        => 'compiled artifact is unavailable',
+                    'partial' => 'compiled artifact does not contain the requested entry',
+                    'corrupt' => 'compiled artifact is corrupt',
+                    'stale' => 'compiled artifact is stale',
+                    default => 'compiled artifact is unavailable',
                 },
             ];
         }
@@ -245,26 +245,26 @@ final class CompiledRuntime
         if (! $this->hotPathInliner->has(serviceId: $resolveRequest->serviceId)) {
             return [
                 'useCompiled' => false,
-                'decision'    => 'dynamic',
-                'reason'      => 'compiled runtime is attached but the requested entry is missing',
+                'decision' => 'dynamic',
+                'reason' => 'compiled runtime is attached but the requested entry is missing',
             ];
         }
 
         $consumer = $resolveRequest->parent?->serviceId ?? $resolveRequest->consumer;
         if (
-            $consumer                                                                              !== null
+            $consumer !== null
             && $dependencyRegistry->getContextualMatch(consumer: $consumer, needs: $resolveRequest->serviceId) !== null
         ) {
             return [
                 'useCompiled' => false,
-                'decision'    => 'dynamic',
-                'reason'      => 'contextual binding overrides the compiled path',
+                'decision' => 'dynamic',
+                'reason' => 'contextual binding overrides the compiled path',
             ];
         }
 
         return [
             'useCompiled' => true,
-            'decision'    => $this->executionMode === CreateContainerConfig::EXECUTION_MODE_GENERATED
+            'decision' => $this->executionMode === CreateContainerConfig::EXECUTION_MODE_GENERATED
                 ? 'generated'
                 : 'compiled',
             'reason' => $this->executionMode === CreateContainerConfig::EXECUTION_MODE_GENERATED
@@ -276,7 +276,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function shouldUse(DependencyRegistry $dependencyRegistry, ResolveRequest $resolveRequest) : bool
+    public function shouldUse(DependencyRegistry $dependencyRegistry, ResolveRequest $resolveRequest): bool
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
             return false;
@@ -299,7 +299,7 @@ final class CompiledRuntime
         ) === null;
     }
 
-    public function resolve(ResolveDependency $resolveDependency, ResolveRequest $resolveRequest) : mixed
+    public function resolve(ResolveDependency $resolveDependency, ResolveRequest $resolveRequest): mixed
     {
         $this->resolutionMetrics?->increment(name: 'container_compiled_container_resolve_total');
 

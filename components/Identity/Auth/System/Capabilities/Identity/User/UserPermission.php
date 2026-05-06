@@ -11,7 +11,9 @@ use Stringable;
  */
 final readonly class UserPermission implements Stringable
 {
-    public function __construct(public string $value) {}
+    public function __construct(public string $value)
+    {
+    }
 
     public function equals(self $other): bool
     {

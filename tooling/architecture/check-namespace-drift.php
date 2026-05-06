@@ -7,8 +7,8 @@ declare(strict_types=1);
  * Ensures all files in components/ follow the Avax\Components\<Component>\System pattern
  * or are explicitly whitelisted (like compat.php).
  */
-$componentsDir = __DIR__ . '/../../components';
-$errors        = [];
+$componentsDir = __DIR__.'/../../components';
+$errors = [];
 
 if (! is_dir($componentsDir)) {
     exit(0);
@@ -25,8 +25,8 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path         = $file->getRealPath();
-    $relativePath = str_replace(realpath($componentsDir) . '/', '', $path);
+    $path = $file->getRealPath();
+    $relativePath = str_replace(realpath($componentsDir).'/', '', $path);
 
     // Skip root files in components/
     if (! str_contains($relativePath, '/')) {

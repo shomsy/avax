@@ -12,12 +12,13 @@ use ReflectionException;
  */
 final readonly class ValidateComposition
 {
-    public function __construct(private ResolveDependency $resolveDependency) {}
+    public function __construct(private ResolveDependency $resolveDependency)
+    {
+    }
 
     /**
-     * @param list<string> $serviceIds
-     * @param array<string, mixed> $context
-     *
+     * @param  list<string>  $serviceIds
+     * @param  array<string, mixed>  $context
      * @return list<string>
      *
      * @throws ReflectionException

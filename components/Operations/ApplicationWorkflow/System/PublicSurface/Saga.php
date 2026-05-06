@@ -52,9 +52,9 @@ final class Saga
 
     private function __construct(private readonly string $name)
     {
-        $this->id                   = $this->generateId();
+        $this->id = $this->generateId();
         $this->sagaStore = new InMemorySagaStore();
-        $this->stepRunner           = new StepRunner();
+        $this->stepRunner = new StepRunner();
         $this->compensationExecutor = new CompensationExecutor();
     }
 
@@ -82,7 +82,7 @@ final class Saga
     /**
      * Create a saga from an existing store (for resuming).
      */
-    public static function fromStore(SagaStoreInterface $sagaStore, string $sagaId) : ?self
+    public static function fromStore(SagaStoreInterface $sagaStore, string $sagaId): ?self
     {
         return $sagaStore->findById($sagaId);
     }
@@ -90,11 +90,11 @@ final class Saga
     /**
      * Add a step to the saga definition.
      *
-     * @param string       $name         The step name
-     * @param Closure      $action       The action to execute
-     * @param Closure|null $compensation The compensation to run on failure
+     * @param  string  $name  The step name
+     * @param  Closure  $action  The action to execute
+     * @param  Closure|null  $compensation  The compensation to run on failure
      */
-    public function step(string $name, Closure $action, ?Closure $compensation = null) : self
+    public function step(string $name, Closure $action, ?Closure $compensation = null): self
     {
         $this->steps[] = new SagaStep(
             name        : $name,
@@ -136,7 +136,7 @@ final class Saga
         if ($compensationResult->success) {
             $this->sagaState = SagaState::Compensated;
         } else {
-            $this->sagaState     = SagaState::Failed;
+            $this->sagaState = SagaState::Failed;
         }
 
         $this->sagaStore->save($this);
@@ -154,8 +154,7 @@ final class Saga
     /**
      * Execute the saga with the given context.
      *
-     * @param mixed $context The initial context/data for the saga
-     *
+     * @param  mixed  $context  The initial context/data for the saga
      * @return SagaResult The result of the saga execution
      */
     public function execute(mixed $context = []): SagaResult
@@ -198,9 +197,9 @@ final class Saga
     /**
      * Handle a failure during saga execution.
      */
-    private function handleFailure(Throwable $throwable) : SagaResult
+    private function handleFailure(Throwable $throwable): SagaResult
     {
-        $this->sagaState     = SagaState::Failed;
+        $this->sagaState = SagaState::Failed;
         $this->failureReason = $throwable->getMessage();
 
         // Run compensation for completed steps in reverse order
@@ -245,7 +244,7 @@ final class Saga
     /**
      * Set the saga status (used by store).
      */
-    public function setStatus(SagaState $sagaState) : void
+    public function setStatus(SagaState $sagaState): void
     {
         $this->sagaState = $sagaState;
     }
@@ -309,10 +308,10 @@ final class Saga
     /**
      * Set the store for this saga.
      */
-    public function withStore(SagaStoreInterface $sagaStore) : self
+    public function withStore(SagaStoreInterface $sagaStore): self
     {
         $this->sagaStore = $sagaStore;
-        $this->stepRunner           = new StepRunner();
+        $this->stepRunner = new StepRunner();
         $this->compensationExecutor = new CompensationExecutor();
 
         return $this;

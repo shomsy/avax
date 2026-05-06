@@ -10,7 +10,7 @@ use Avax\Docs\Components\Api\Capabilities\Swagger\SwaggerUi;
 final readonly class ApiDocumentation
 {
     /**
-     * @param list<array{method:string,path:string,summary?:string,tags?:list<string>}> $routes
+     * @param  list<array{method:string,path:string,summary?:string,tags?:list<string>}>  $routes
      */
     public static function openApi(array $routes = []): array
     {

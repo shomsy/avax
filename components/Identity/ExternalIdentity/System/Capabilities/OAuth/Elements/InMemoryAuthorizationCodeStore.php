@@ -29,17 +29,17 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         string $redirectUri,
         array $scopes,
         DateTimeImmutable $expiresAt,
-        ?string            $state = null,
-        ?string            $nonce = null,
+        ?string $state = null,
+        ?string $nonce = null,
         #[SensitiveParameter]
-        ?string            $codeChallenge = null,
+        ?string $codeChallenge = null,
         #[SensitiveParameter]
-        ?PkceMethod        $pkceMethod = null,
+        ?PkceMethod $pkceMethod = null,
         ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): IssuedAuthorizationCode {
         $plainCode = bin2hex(string: random_bytes(length: 32));
-        $codeId = 'code_' . bin2hex(string: random_bytes(length: 12));
+        $codeId = 'code_'.bin2hex(string: random_bytes(length: 12));
 
         $this->records[$codeId] = new AuthorizationCodeRecord(
             codeId             : $codeId,

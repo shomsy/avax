@@ -8,7 +8,7 @@ use SensitiveParameter;
 
 interface ScimDirectoryStoreInterface
 {
-    public function save(ScimDirectory $scimDirectory) : void;
+    public function save(ScimDirectory $scimDirectory): void;
 
     public function find(string $directoryId): ?ScimDirectory;
 

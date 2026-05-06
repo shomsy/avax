@@ -13,31 +13,32 @@ final readonly class RateLimitMiddleware
 {
     public function __construct(
         private RedisRateLimiter $redisRateLimiter = new RedisRateLimiter(),
-        private ResponseFactory  $responseFactory = new ResponseFactory(),
-        private array            $config = [],
-    ) {}
+        private ResponseFactory $responseFactory = new ResponseFactory(),
+        private array $config = [],
+    ) {
+    }
 
-    public function process(ServerRequestInterface $serverRequest, object $handler) : ResponseInterface
+    public function process(ServerRequestInterface $serverRequest, object $handler): ResponseInterface
     {
         return $this->handle(
-            next   : static fn (ServerRequestInterface $serverRequest) : ResponseInterface => $handler->handle($serverRequest),
+            next   : static fn (ServerRequestInterface $serverRequest): ResponseInterface => $handler->handle($serverRequest),
             request: $serverRequest,
         );
     }
 
-    public function handle(ServerRequestInterface $serverRequest, Closure $next) : ResponseInterface
+    public function handle(ServerRequestInterface $serverRequest, Closure $next): ResponseInterface
     {
         $decision = $this->decision(request: $serverRequest);
 
         if (! $decision->allowed) {
             return $this->withRateLimitHeaders(
                 response: $this->responseFactory->json(
-                            data      : [
-                                            'message'     => 'Too Many Requests',
-                                            'retry_after' => $decision->retryAfter,
-                                        ],
-                            statusCode: 429,
-                        ),
+                    data      : [
+                        'message' => 'Too Many Requests',
+                        'retry_after' => $decision->retryAfter,
+                    ],
+                    statusCode: 429,
+                ),
                 decision: $decision,
             );
         }
@@ -48,7 +49,7 @@ final readonly class RateLimitMiddleware
         );
     }
 
-    private function decision(ServerRequestInterface $serverRequest) : RateLimitDecision
+    private function decision(ServerRequestInterface $serverRequest): RateLimitDecision
     {
         return new RateLimiter(limiter: $this->redisRateLimiter)->attempt(
             key         : $this->keyFor(request: $serverRequest),
@@ -57,7 +58,7 @@ final readonly class RateLimitMiddleware
         );
     }
 
-    private function keyFor(ServerRequestInterface $serverRequest) : string
+    private function keyFor(ServerRequestInterface $serverRequest): string
     {
         $server = $serverRequest->getServerParams();
         $parts = [];
@@ -73,7 +74,7 @@ final readonly class RateLimitMiddleware
         return implode(':', $parts);
     }
 
-    private function withRateLimitHeaders(ResponseInterface $response, RateLimitDecision $rateLimitDecision) : ResponseInterface
+    private function withRateLimitHeaders(ResponseInterface $response, RateLimitDecision $rateLimitDecision): ResponseInterface
     {
         foreach ($rateLimitDecision->headers() as $name => $value) {
             $response = $response->withHeader($name, $value);

@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRuntimeInterface;
 
 interface RuntimeKernelInterface
 {
-    public function state() : RuntimeState;
+    public function state(): RuntimeState;
 
-    public function runWorker(WorkerRuntimeInterface $workerRuntime) : WorkerLifecycle;
+    public function runWorker(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle;
 }

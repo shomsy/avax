@@ -27,12 +27,12 @@ final class BlueprintCache
         ?bool $debug = null,
         private readonly ?ResolutionMetrics $resolutionMetrics = null,
     ) {
-        $cacheDir     ??= '';
+        $cacheDir ??= '';
         $cacheVersion ??= 'container-v1';
-        $debug        ??= false;
-        $this->cacheDir     = $cacheDir;
+        $debug ??= false;
+        $this->cacheDir = $cacheDir;
         $this->cacheVersion = $cacheVersion;
-        $this->debug        = $debug;
+        $this->debug = $debug;
     }
 
     /**
@@ -99,12 +99,12 @@ final class BlueprintCache
 
     private function pathFor(string $class): string
     {
-        return $this->directory() . '/' . sha1(string: $class) . '.php';
+        return $this->directory().'/'.sha1(string: $class).'.php';
     }
 
     private function directory(): string
     {
-        return rtrim(string: $this->cacheDir, characters: '/\\') . '/container/' . rawurlencode(string: $this->cacheVersion) . '/blueprints';
+        return rtrim(string: $this->cacheDir, characters: '/\\').'/container/'.rawurlencode(string: $this->cacheVersion).'/blueprints';
     }
 
     /**
@@ -140,8 +140,8 @@ final class BlueprintCache
         }
 
         $path = $this->pathFor(class: $dependencyBlueprint->class);
-        $temp = $path . '.' . uniqid(prefix: 'tmp', more_entropy: true);
-        $body = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export(value: $dependencyBlueprint, return: true) . ';' . PHP_EOL;
+        $temp = $path.'.'.uniqid(prefix: 'tmp', more_entropy: true);
+        $body = '<?php'.PHP_EOL.PHP_EOL.'return '.var_export(value: $dependencyBlueprint, return: true).';'.PHP_EOL;
 
         if (file_put_contents(filename: $temp, data: $body, flags: LOCK_EX) === false) {
             throw new ContainerException(message: sprintf('Cannot write blueprint cache file [%s].', $temp));
@@ -182,7 +182,7 @@ final class BlueprintCache
                 continue;
             }
 
-            $path = $directory . '/' . $file;
+            $path = $directory.'/'.$file;
             if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);
 
@@ -209,7 +209,7 @@ final class BlueprintCache
                 continue;
             }
 
-            $path = $directory . '/' . $file;
+            $path = $directory.'/'.$file;
             if (is_dir(filename: $path)) {
                 $this->deleteDirectory(directory: $path);
 

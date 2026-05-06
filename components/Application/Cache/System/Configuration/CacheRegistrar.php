@@ -74,7 +74,7 @@ final class CacheRegistrar extends BaseRegisterDependency
         });
 
         if ($this->compiledCacheDirectory !== null) {
-            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: function () : CompiledCacheContract {
+            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: function (): CompiledCacheContract {
                 if ($this->compiledCacheDirectory === null) {
                     throw new LogicException('Compiled cache directory was not configured.');
                 }
@@ -103,11 +103,11 @@ final class CacheRegistrar extends BaseRegisterDependency
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     private function buildNamedCache(string $name, array $config): AvaxCache
     {
-        $buildCache         = new BuildCache();
+        $buildCache = new BuildCache();
         $cacheConfiguration = new CacheConfiguration(
             name      : $name,
             defaultTtl: is_int($config['ttl'] ?? null) ? $config['ttl'] : 3600,
@@ -118,7 +118,7 @@ final class CacheRegistrar extends BaseRegisterDependency
                 config: $cacheConfiguration,
             ),
             'file' => $buildCache->inDirectory(
-                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir() . '/cache_' . $name,
+                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir().'/cache_'.$name,
                 config   : $cacheConfiguration,
             ),
             'redis' => $buildCache->redis(
@@ -131,7 +131,7 @@ final class CacheRegistrar extends BaseRegisterDependency
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function defaultStore(string $store = 'in_memory', array $options = []): self
     {
@@ -141,7 +141,7 @@ final class CacheRegistrar extends BaseRegisterDependency
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function store(string $name, string $store = 'in_memory', array $options = []): self
     {

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Avax\Tooling\Refactor;
 
 use Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Formats\ContentFormatterInterface;
@@ -34,9 +33,10 @@ $files = [
 ];
 
 foreach ($files as $file => $classes) {
-    $path = $basePath . '/' . $file;
-    if (!file_exists($path)) {
+    $path = $basePath.'/'.$file;
+    if (! file_exists($path)) {
         echo sprintf('NOT FOUND: %s%s', $file, PHP_EOL);
+
         continue;
     }
 
@@ -46,10 +46,10 @@ foreach ($files as $file => $classes) {
 
     $dir = dirname($path);
     foreach ($classes as $classFull => $className) {
-        if (preg_match('/^.*\\\\(' . preg_quote($className) . ')$/', $classFull, $m)) {
-            $classPath = $dir . '/' . $className . '.php';
-            if (!file_exists($classPath)) {
-                preg_match('/^(final\s+)?(class|interface)\s+' . preg_quote($className) . '/m', $content, $match, PREG_OFFSET_CAPTURE);
+        if (preg_match('/^.*\\\\('.preg_quote($className).')$/', $classFull, $m)) {
+            $classPath = $dir.'/'.$className.'.php';
+            if (! file_exists($classPath)) {
+                preg_match('/^(final\s+)?(class|interface)\s+'.preg_quote($className).'/m', $content, $match, PREG_OFFSET_CAPTURE);
                 if ($match !== []) {
                     $start = $match[0][1];
                     $end = strlen($content);
@@ -74,7 +74,7 @@ foreach ($files as $file => $classes) {
 
                     $classCode = substr($content, $start, $end - $start);
 
-                    $newContent = "<?php\n\ndeclare(strict_types=1);\n\nnamespace {$namespace};\n\n" . trim($classCode) . "\n";
+                    $newContent = "<?php\n\ndeclare(strict_types=1);\n\nnamespace {$namespace};\n\n".trim($classCode)."\n";
                     file_put_contents($classPath, $newContent);
                     echo sprintf('CREATED: %s%s', $classPath, PHP_EOL);
                 }

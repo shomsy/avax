@@ -19,7 +19,7 @@ final class ReadFakeApiDescriptions implements ReadApiDescriptions
         $this->endpoints[] = $endpoint;
     }
 
-    public function findEndpoint(string $path, string $method): EndpointContract|null
+    public function findEndpoint(string $path, string $method): ?EndpointContract
     {
         foreach ($this->endpoints as $endpoint) {
             if ($endpoint->path === $path && $endpoint->method === $method) {
@@ -46,7 +46,7 @@ final class ReadFakeApiDescriptions implements ReadApiDescriptions
         return array_values(
             array_filter(
                 $this->endpoints,
-                static fn(EndpointContract $endpoint): bool => $endpoint->version === $version,
+                static fn (EndpointContract $endpoint): bool => $endpoint->version === $version,
             ),
         );
     }

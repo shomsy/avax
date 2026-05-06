@@ -9,9 +9,9 @@ use Avax\Tests\TestCase;
 
 final class StorageTest extends TestCase
 {
-    public function test_storage_adapter_handles_directory_lifecycle() : void
+    public function test_storage_adapter_handles_directory_lifecycle(): void
     {
-        $storage = new LocalStorageAdapter(config: ['root' => sys_get_temp_dir() . '/avax-storage-integration-' . uniqid()]);
+        $storage = new LocalStorageAdapter(config: ['root' => sys_get_temp_dir().'/avax-storage-integration-'.uniqid()]);
 
         $storage->put(path: 'nested/file.txt', contents: 'payload');
 

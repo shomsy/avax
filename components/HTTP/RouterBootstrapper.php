@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP;
 
-use Avax\Components\HTTP\Dispatcher\System\PublicSurface\ControllerDispatcher;
 use Avax\Components\HTTP\Middleware\MiddlewareInterface;
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
@@ -30,10 +29,10 @@ final class RouterBootstrapper
 {
     public array $globalMiddleware
         = [] {
-            get {
-                return $this->globalMiddleware;
-            }
+        get {
+            return $this->globalMiddleware;
         }
+    }
 
     private readonly RouterInterface $router;
 
@@ -41,10 +40,10 @@ final class RouterBootstrapper
 
     private array $routeMiddleware
         = [] {
-            get {
-                return $this->routeMiddleware;
-            }
+        get {
+            return $this->routeMiddleware;
         }
+    }
 
     private array $middlewareGroups = [];
 
@@ -66,7 +65,7 @@ final class RouterBootstrapper
     /**
      * Register multiple routes for different HTTP methods on the same path.
      */
-    public function match(array $methods, string $path, callable|array|string $handler) : self
+    public function match(array $methods, string $path, callable|array|string $handler): self
     {
         foreach ($methods as $method) {
             $this->route(method: $method, path: $path, handler: $handler);
@@ -78,9 +77,9 @@ final class RouterBootstrapper
     /**
      * Register a route with optional middleware.
      */
-    public function route(string $method, string $path, callable|array|string $handler) : self
+    public function route(string $method, string $path, callable|array|string $handler): self
     {
-        $method   = strtoupper(string: $method);
+        $method = strtoupper(string: $method);
         $fullPath = $this->qualifyPath(path: $path);
         $routeKey = $this->routeKey(method: $method, path: $fullPath);
         $routeRegistrarProxy = $this->registerWithDsl(method: $method, path: $fullPath, handler: $handler);
@@ -91,8 +90,8 @@ final class RouterBootstrapper
         }
 
         $this->routes[$routeKey] = [
-            'method'  => $method,
-            'path'    => $fullPath,
+            'method' => $method,
+            'path' => $fullPath,
             'handler' => $handler,
             'middleware' => $routeMiddleware,
         ];
@@ -100,7 +99,7 @@ final class RouterBootstrapper
         return $this;
     }
 
-    private function qualifyPath(string $path) : string
+    private function qualifyPath(string $path): string
     {
         $prefix = '';
 
@@ -109,29 +108,29 @@ final class RouterBootstrapper
                 continue;
             }
 
-            $prefix .= '/' . trim(string: (string) $groupPrefix, characters: '/');
+            $prefix .= '/'.trim(string: (string) $groupPrefix, characters: '/');
         }
 
-        $qualifiedPath = trim(string: $prefix . '/' . ltrim(string: $path, characters: '/'), characters: '/');
+        $qualifiedPath = trim(string: $prefix.'/'.ltrim(string: $path, characters: '/'), characters: '/');
 
-        return '/' . $qualifiedPath;
+        return '/'.$qualifiedPath;
     }
 
-    private function routeKey(string $method, string $path) : string
+    private function routeKey(string $method, string $path): string
     {
-        return $method . ' ' . $path;
+        return $method.' '.$path;
     }
 
-    private function registerWithDsl(string $method, string $path, callable|array|string $handler) : Registrar
+    private function registerWithDsl(string $method, string $path, callable|array|string $handler): Registrar
     {
         return match ($method) {
-            'GET'    => $this->router->get(path: $path, action: $handler),
-            'POST'   => $this->router->post(path: $path, action: $handler),
-            'PUT'    => $this->router->put(path: $path, action: $handler),
-            'PATCH'  => $this->router->patch(path: $path, action: $handler),
+            'GET' => $this->router->get(path: $path, action: $handler),
+            'POST' => $this->router->post(path: $path, action: $handler),
+            'PUT' => $this->router->put(path: $path, action: $handler),
+            'PATCH' => $this->router->patch(path: $path, action: $handler),
             'DELETE' => $this->router->delete(path: $path, action: $handler),
             'OPTIONS' => $this->router->options(path: $path, action: $handler),
-            'HEAD'   => $this->router->head(path: $path, action: $handler),
+            'HEAD' => $this->router->head(path: $path, action: $handler),
             default => throw new InvalidArgumentException(message: sprintf("Unsupported HTTP method '%s'.", $method)),
         };
     }
@@ -139,7 +138,7 @@ final class RouterBootstrapper
     /**
      * Register GET route.
      */
-    public function get(string $path, callable|array|string $handler) : self
+    public function get(string $path, callable|array|string $handler): self
     {
         return $this->route(method: 'GET', path: $path, handler: $handler);
     }
@@ -147,7 +146,7 @@ final class RouterBootstrapper
     /**
      * Register POST route.
      */
-    public function post(string $path, callable|array|string $handler) : self
+    public function post(string $path, callable|array|string $handler): self
     {
         return $this->route(method: 'POST', path: $path, handler: $handler);
     }
@@ -155,7 +154,7 @@ final class RouterBootstrapper
     /**
      * Register PUT route.
      */
-    public function put(string $path, callable|array|string $handler) : self
+    public function put(string $path, callable|array|string $handler): self
     {
         return $this->route(method: 'PUT', path: $path, handler: $handler);
     }
@@ -163,7 +162,7 @@ final class RouterBootstrapper
     /**
      * Register PATCH route.
      */
-    public function patch(string $path, callable|array|string $handler) : self
+    public function patch(string $path, callable|array|string $handler): self
     {
         return $this->route(method: 'PATCH', path: $path, handler: $handler);
     }
@@ -171,7 +170,7 @@ final class RouterBootstrapper
     /**
      * Register DELETE route.
      */
-    public function delete(string $path, callable|array|string $handler) : self
+    public function delete(string $path, callable|array|string $handler): self
     {
         return $this->route(method: 'DELETE', path: $path, handler: $handler);
     }
@@ -179,10 +178,9 @@ final class RouterBootstrapper
     /**
      * Assign middleware to a specific route.
      *
-     * @param string                                        $routeKey
-     * @param MiddlewareInterface|list<MiddlewareInterface> $middleware
+     * @param  MiddlewareInterface|list<MiddlewareInterface>  $middleware
      */
-    public function middleware(string $routeKey, MiddlewareInterface|array $middleware) : self
+    public function middleware(string $routeKey, MiddlewareInterface|array $middleware): self
     {
         $middlewareArray = is_array(value: $middleware) ? $middleware : [$middleware];
         $this->routeMiddleware[$routeKey] = array_merge(
@@ -196,25 +194,25 @@ final class RouterBootstrapper
     /**
      * Group routes with common middleware or prefix.
      *
-     * @param callable(self): void           $routes
-     * @param list<MiddlewareInterface>|null $middleware
+     * @param  callable(self): void  $routes
+     * @param  list<MiddlewareInterface>|null  $middleware
      */
-    public function group(callable $routes, ?array $middleware = null, string $prefix = '') : self
+    public function group(callable $routes, ?array $middleware = null, string $prefix = ''): self
     {
         $middleware ??= [];
         $previousMiddleware = $this->activeMiddleware;
         $previousPrefixes = $this->groupPrefixes;
 
         $this->activeMiddleware = array_values(array_merge(
-                                                   $this->activeMiddleware,
-                                                   $middleware,
-                                               ));
-        $this->groupPrefixes[]  = $prefix;
+            $this->activeMiddleware,
+            $middleware,
+        ));
+        $this->groupPrefixes[] = $prefix;
 
         $routes($this);
 
         $this->activeMiddleware = $previousMiddleware;
-        $this->groupPrefixes    = $previousPrefixes;
+        $this->groupPrefixes = $previousPrefixes;
 
         return $this;
     }
@@ -222,9 +220,9 @@ final class RouterBootstrapper
     /**
      * Define a middleware group for reuse.
      *
-     * @param list<MiddlewareInterface> $middleware
+     * @param  list<MiddlewareInterface>  $middleware
      */
-    public function middlewareGroup(string $name, array $middleware) : self
+    public function middlewareGroup(string $name, array $middleware): self
     {
         $this->middlewareGroups[$name] = $middleware;
 
@@ -234,16 +232,16 @@ final class RouterBootstrapper
     /**
      * Apply middleware group to current routes.
      */
-    public function useGroup(string $name) : self
+    public function useGroup(string $name): self
     {
         if (! isset($this->middlewareGroups[$name])) {
             throw new InvalidArgumentException(message: sprintf("Middleware group '%s' not defined.", $name));
         }
 
         $this->activeMiddleware = array_values(array_merge(
-                                                   $this->activeMiddleware,
-                                                   $this->middlewareGroups[$name],
-                                               ));
+            $this->activeMiddleware,
+            $this->middlewareGroups[$name],
+        ));
 
         return $this;
     }
@@ -251,9 +249,9 @@ final class RouterBootstrapper
     /**
      * Set global middleware applied to all routes.
      *
-     * @param list<MiddlewareInterface> $middleware
+     * @param  list<MiddlewareInterface>  $middleware
      */
-    public function globalMiddleware(array $middleware) : self
+    public function globalMiddleware(array $middleware): self
     {
         $this->globalMiddleware = $middleware;
 
@@ -265,7 +263,7 @@ final class RouterBootstrapper
      *
      * @return list<array<string, mixed>>
      */
-    public function getRoutes() : array
+    public function getRoutes(): array
     {
         return array_values(array: $this->routes);
     }
@@ -275,8 +273,7 @@ final class RouterBootstrapper
      */
     public function createApp(
         ResponseFactory $responseFactory,
-    ) : AppKernel
-    {
+    ): AppKernel {
         $routerRuntime = $this->bootstrap();
 
         return new AppKernel(
@@ -289,7 +286,7 @@ final class RouterBootstrapper
     /**
      * Bootstrap the router with registered routes.
      */
-    public function bootstrap() : RouterRuntimeInterface
+    public function bootstrap(): RouterRuntimeInterface
     {
         if (! $this->routerRuntime instanceof RouterRuntimeInterface) {
             throw new LogicException(

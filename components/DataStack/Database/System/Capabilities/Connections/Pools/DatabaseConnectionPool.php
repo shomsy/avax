@@ -34,17 +34,16 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
     private ?ExecutionScope $executionScope = null;
 
     /**
-     * @param array<string, mixed> $config The instructions for the garage (e.g., "Max 10 cars").
-     * @param EventBus|null $eventBus The "Notification System" for reporting when a car is taken or returned.
+     * @param  array<string, mixed>  $config  The instructions for the garage (e.g., "Max 10 cars").
+     * @param  EventBus|null  $eventBus  The "Notification System" for reporting when a car is taken or returned.
      */
     public function __construct(
-        private readonly array     $config,
+        private readonly array $config,
         private readonly ?EventBus $eventBus = null,
-    )
-    {
+    ) {
         $this->pool = new SplQueue();
         $this->poolState = new PoolState(
-            maxConnections: (int)($this->config['pool']['max_connections'] ?? 10),
+            maxConnections: (int) ($this->config['pool']['max_connections'] ?? 10),
         );
     }
 
@@ -59,7 +58,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
         $this->pruneStaleConnections();
 
         // 1. Try to reuse an existing one.
-        if (!$this->pool->isEmpty()) {
+        if (! $this->pool->isEmpty()) {
             $item = $this->pool->dequeue();
             $connection = $item['connection'];
 
@@ -82,10 +81,10 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
         // 2. If no recyclables, try to create a new one.
         $name = $this->config['name'] ?? 'anonymous';
 
-        if (!$this->poolState->tryReserveSlot()) {
+        if (! $this->poolState->tryReserveSlot()) {
             $limit = $this->config['pool']['max_connections'] ?? 10;
 
-            throw new PoolLimitReachedException(name: $name, limit: (int)$limit);
+            throw new PoolLimitReachedException(name: $name, limit: (int) $limit);
         }
 
         $connection = new OpenConnection(
@@ -116,12 +115,12 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
 
         $validConnections = new SplQueue();
 
-        while (!$this->pool->isEmpty()) {
+        while (! $this->pool->isEmpty()) {
             $item = $this->pool->dequeue();
             $idleTime = $currentTime - $item['released_at'];
 
             // If it's too old or doesn't "Ping" correctly, it's gone.
-            if ($idleTime > $maxIdleTime || !$this->validateConnection(connection: $item['connection'])) {
+            if ($idleTime > $maxIdleTime || ! $this->validateConnection(connection: $item['connection'])) {
                 $this->poolState->releaseSlot();
                 $prunedCount++;
 
@@ -132,7 +131,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
         }
 
         // Put the survivors back in the garage.
-        while (!$validConnections->isEmpty()) {
+        while (! $validConnections->isEmpty()) {
             $this->pool->enqueue(value: $validConnections->dequeue());
         }
 
@@ -144,7 +143,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
      */
     public function validateConnection(?DatabaseConnection $databaseConnection = null): bool
     {
-        if (!$databaseConnection instanceof DatabaseConnection) {
+        if (! $databaseConnection instanceof DatabaseConnection) {
             return false;
         }
 
@@ -177,7 +176,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
     /**
      * Return a used connection to the pool.
      *
-     * @param DatabaseConnection $databaseConnection The connection to return.
+     * @param  DatabaseConnection  $databaseConnection  The connection to return.
      */
     public function release(DatabaseConnection $databaseConnection): void
     {
@@ -185,7 +184,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
             $databaseConnection = $databaseConnection->getOriginalConnection();
         }
 
-        if (!$this->validateConnection(connection: $databaseConnection)) {
+        if (! $this->validateConnection(connection: $databaseConnection)) {
             $this->poolState->releaseSlot();
 
             return;
@@ -235,9 +234,9 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
     public function getMetrics(): ConnectionPoolMetrics
     {
         $maxIdleTime = 0;
-        if (!$this->pool->isEmpty()) {
+        if (! $this->pool->isEmpty()) {
             $oldest = $this->pool->bottom();
-            $maxIdleTime = (int)(microtime(as_float: true) - $oldest['released_at']);
+            $maxIdleTime = (int) (microtime(as_float: true) - $oldest['released_at']);
         }
 
         return new ConnectionPoolMetrics(
@@ -245,7 +244,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
                 'spawnedConnections' => $this->poolState->spawnedCount,
                 'idleConnections' => $this->pool->count(),
                 'activeConnections' => max(0, $this->poolState->spawnedCount - $this->pool->count()),
-                'maxConnections' => (int)($this->config['pool']['max_connections'] ?? 10),
+                'maxConnections' => (int) ($this->config['pool']['max_connections'] ?? 10),
                 'totalAcquisitions' => $this->poolState->totalAcquisitions,
                 'maxIdleTime' => $maxIdleTime,
             ],

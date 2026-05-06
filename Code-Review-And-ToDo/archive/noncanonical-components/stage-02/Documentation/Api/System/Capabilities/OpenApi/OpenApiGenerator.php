@@ -9,22 +9,22 @@ final readonly class OpenApiGenerator
     public function __construct(
         private string $title = 'Avax API',
         private string $version = '1.0.0',
-    ) {}
+    ) {
+    }
 
     /**
-     * @param list<array{method:string,path:string,summary?:string,tags?:list<string>}> $routes
-     *
+     * @param  list<array{method:string,path:string,summary?:string,tags?:list<string>}>  $routes
      * @return array<string, mixed>
      */
-    public function generate(array $routes) : array
+    public function generate(array $routes): array
     {
         $paths = [];
 
         foreach ($routes as $route) {
-            $method                         = strtolower(string: $route['method']);
+            $method = strtolower(string: $route['method']);
             $paths[$route['path']][$method] = [
-                'summary'   => $route['summary'] ?? $method . ' ' . $route['path'],
-                'tags'      => $route['tags'] ?? ['Application'],
+                'summary' => $route['summary'] ?? $method.' '.$route['path'],
+                'tags' => $route['tags'] ?? ['Application'],
                 'responses' => [
                     '200' => [
                         'description' => 'Successful response',
@@ -37,11 +37,11 @@ final readonly class OpenApiGenerator
 
         return [
             'openapi' => '3.1.0',
-            'info'    => [
-                'title'   => $this->title,
+            'info' => [
+                'title' => $this->title,
                 'version' => $this->version,
             ],
-            'paths'   => $paths,
+            'paths' => $paths,
         ];
     }
 }

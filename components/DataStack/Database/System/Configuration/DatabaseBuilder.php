@@ -32,7 +32,7 @@ final class DatabaseBuilder
     private array $config = [];
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function usingConfig(array $config): self
     {
@@ -42,7 +42,7 @@ final class DatabaseBuilder
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function addConnection(string $name, array $config): self
     {

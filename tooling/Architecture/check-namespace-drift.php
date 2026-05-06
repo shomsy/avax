@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -11,17 +12,17 @@ use RecursiveIteratorIterator;
  * Ensures all files in components/ follow the Avax\Components\<Component>\System pattern
  * or are explicitly whitelisted (like compat.php).
  */
-$componentsDir = __DIR__ . '/../../components';
+$componentsDir = __DIR__.'/../../components';
 $errors = [];
 
-if (!is_dir($componentsDir)) {
+if (! is_dir($componentsDir)) {
     exit(0);
 }
 
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($componentsDir));
 
 foreach ($iterator as $file) {
-    if (!$file->isFile()) {
+    if (! $file->isFile()) {
         continue;
     }
 
@@ -30,10 +31,10 @@ foreach ($iterator as $file) {
     }
 
     $path = $file->getRealPath();
-    $relativePath = str_replace(realpath($componentsDir) . '/', '', $path);
+    $relativePath = str_replace(realpath($componentsDir).'/', '', $path);
 
     // Skip root files in components/
-    if (!str_contains($relativePath, '/')) {
+    if (! str_contains($relativePath, '/')) {
         continue;
     }
 
@@ -59,8 +60,8 @@ foreach ($iterator as $file) {
         }
 
         // Check for missing 'Components' in Avax namespace for components
-        if (str_starts_with($namespace, 'Avax\\') && !str_starts_with($namespace, 'Avax\\Components\\') && !str_starts_with($namespace, 'Avax\\Database\\') && // Database is special
-            !str_starts_with($namespace, 'Avax\\Framework\\')) {
+        if (str_starts_with($namespace, 'Avax\\') && ! str_starts_with($namespace, 'Avax\\Components\\') && ! str_starts_with($namespace, 'Avax\\Database\\') && // Database is special
+            ! str_starts_with($namespace, 'Avax\\Framework\\')) {
             $errors[] = sprintf("Missing 'Components' sub-namespace in %s: %s", $relativePath, $namespace);
         }
     }

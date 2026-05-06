@@ -13,7 +13,7 @@ final class HookRegistry
 
     public function add(string $name, Closure $handler): void
     {
-        if (!isset($this->hooks[$name])) {
+        if (! isset($this->hooks[$name])) {
             $this->hooks[$name] = [];
         }
 

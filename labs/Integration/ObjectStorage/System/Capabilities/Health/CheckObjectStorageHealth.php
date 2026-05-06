@@ -11,8 +11,7 @@ class CheckObjectStorageHealth
 {
     public function __construct(
         private ObjectStoragePort $adapter,
-    )
-    {
+    ) {
     }
 
     public function check(): ObjectStorageHealthReport

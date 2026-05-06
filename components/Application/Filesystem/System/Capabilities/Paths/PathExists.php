@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Filesystem\System\Capabilities\Paths;
 
 class PathExists
 {
-    public function execute(string $path) : bool
+    public function execute(string $path): bool
     {
         return file_exists(filename: $path);
     }

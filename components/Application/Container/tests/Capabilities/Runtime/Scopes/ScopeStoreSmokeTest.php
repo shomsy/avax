@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-require_once dirname(3, path: __DIR__) . '/bootstrap.php';
+require_once dirname(3, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeStore;
 
-$store  = new ScopeStore();
+$store = new ScopeStore();
 $scoped = new ArrayObject();
 
 assertThrows(
@@ -26,4 +26,4 @@ assertSame(expected: null, actual: $store->get(abstract: 'scoped'), message: 'Sc
 $store->terminate();
 assertSame(expected: null, actual: $store->get(abstract: 'scoped'), message: 'Terminate should leave the scoped store empty.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

@@ -8,11 +8,10 @@ final readonly class CompensationCompletedRecord
 {
     public function __construct(
         public string $sagaId,
-        public array  $completedSteps,
-        public array  $results,
-        public float  $recordedAt,
-    )
-    {
+        public array $completedSteps,
+        public array $results,
+        public float $recordedAt,
+    ) {
     }
 
     public function toMetadata(): array

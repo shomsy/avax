@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\System\ContainerInterface;
 
 final readonly class ContainerAnalyzer
 {
-    public function __construct(private ContainerInterface|null $container = null)
+    public function __construct(private ?ContainerInterface $container = null)
     {
     }
 
@@ -28,7 +28,7 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function getServiceDependencies() : array
+    public function getServiceDependencies(): array
     {
         return [];
     }
@@ -50,7 +50,7 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function whoUses() : array
+    public function whoUses(): array
     {
         return [];
     }
@@ -58,7 +58,7 @@ final readonly class ContainerAnalyzer
     /**
      * @return list<string>
      */
-    public function whatBreaksIf() : array
+    public function whatBreaksIf(): array
     {
         return [];
     }

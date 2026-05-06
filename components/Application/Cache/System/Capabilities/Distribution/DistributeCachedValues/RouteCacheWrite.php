@@ -10,9 +10,10 @@ final readonly class RouteCacheWrite
 {
     public function __construct(
         private ChooseCacheNodeForKey $chooseCacheNodeForKey,
-    ) {}
+    ) {
+    }
 
-    public function routeToPrimary(CacheKey $cacheKey) : ?CacheNode
+    public function routeToPrimary(CacheKey $cacheKey): ?CacheNode
     {
         return $this->chooseCacheNodeForKey->choose(cacheKey: $cacheKey);
     }
@@ -20,7 +21,7 @@ final readonly class RouteCacheWrite
     /**
      * @return list<CacheNode>
      */
-    public function routeToAll(CacheKey $cacheKey) : array
+    public function routeToAll(CacheKey $cacheKey): array
     {
         return $this->routeToReplicas(cacheKey: $cacheKey);
     }
@@ -28,7 +29,7 @@ final readonly class RouteCacheWrite
     /**
      * @return list<CacheNode>
      */
-    public function routeToReplicas(CacheKey $cacheKey) : array
+    public function routeToReplicas(CacheKey $cacheKey): array
     {
         $primary = $this->chooseCacheNodeForKey->choose(cacheKey: $cacheKey);
 

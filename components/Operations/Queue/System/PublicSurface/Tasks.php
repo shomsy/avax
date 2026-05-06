@@ -9,19 +9,19 @@ use DateInterval;
 
 final readonly class Tasks
 {
-    public static function dispatch(object $task) : void
+    public static function dispatch(object $task): void
     {
         $taskBus = new TaskBus();
         $taskBus->dispatch($task);
     }
 
-    public static function later(object $task, DateInterval $dateInterval) : void
+    public static function later(object $task, DateInterval $dateInterval): void
     {
         $taskBus = new TaskBus();
         $taskBus->dispatchlater($task, $dateInterval);
     }
 
-    public static function batch(array $tasks) : TaskBatch
+    public static function batch(array $tasks): TaskBatch
     {
         return new TaskBatch($tasks);
     }
@@ -32,11 +32,10 @@ final readonly class TaskBatch
     public function __construct(
         /** @var list<object> */
         private array $tasks
-    )
-    {
+    ) {
     }
 
-    public function dispatch() : void
+    public function dispatch(): void
     {
         $taskBus = new TaskBus();
 

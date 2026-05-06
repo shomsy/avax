@@ -16,40 +16,39 @@ interface RepositoryStorageInterface
     /**
      * Find a single entity by its identifier.
      *
-     * @param class-string $entityClass
+     * @param  class-string  $entityClass
      */
     public function find(string $entityClass, string|int $id): ?object;
 
     /**
      * Find entities by criteria with optional ordering and pagination.
      *
-     * @param class-string               $entityClass
-     * @param array<string, mixed>       $criteria
-     * @param array<string, string>|null $orderBy
-     *
+     * @param  class-string  $entityClass
+     * @param  array<string, mixed>  $criteria
+     * @param  array<string, string>|null  $orderBy
      * @return array<object>
      */
     public function findBy(
         string $entityClass,
         array $criteria,
         ?array $orderBy = null,
-        ?int   $limit = null,
-        ?int   $offset = null,
+        ?int $limit = null,
+        ?int $offset = null,
     ): array;
 
     /**
      * Check if any entity exists matching the criteria.
      *
-     * @param class-string         $entityClass
-     * @param array<string, mixed> $criteria
+     * @param  class-string  $entityClass
+     * @param  array<string, mixed>  $criteria
      */
     public function exists(string $entityClass, array $criteria): bool;
 
     /**
      * Count entities matching the criteria.
      *
-     * @param class-string         $entityClass
-     * @param array<string, mixed> $criteria
+     * @param  class-string  $entityClass
+     * @param  array<string, mixed>  $criteria
      */
     public function count(string $entityClass, array $criteria): int;
 }

@@ -15,39 +15,39 @@ use Throwable;
 final readonly class RecordedHttpResponse
 {
     /**
-     * @param string                $urlPattern URL pattern to match (exact or regex)
-     * @param string                $method     HTTP method to match (e.g., 'GET', 'POST')
-     * @param int                   $statusCode HTTP status code to return
-     * @param array<string, string> $headers    Headers to return
-     * @param string                $body       Response body
-     * @param float                 $delayMs    Artificial delay in milliseconds (for testing timeouts)
-     * @param bool                  $useRegex   Whether urlPattern is a regex
-     * @param Throwable|null        $exception  Exception to throw instead of returning a response
+     * @param  string  $urlPattern  URL pattern to match (exact or regex)
+     * @param  string  $method  HTTP method to match (e.g., 'GET', 'POST')
+     * @param  int  $statusCode  HTTP status code to return
+     * @param  array<string, string>  $headers  Headers to return
+     * @param  string  $body  Response body
+     * @param  float  $delayMs  Artificial delay in milliseconds (for testing timeouts)
+     * @param  bool  $useRegex  Whether urlPattern is a regex
+     * @param  Throwable|null  $exception  Exception to throw instead of returning a response
      */
     public function __construct(
         public string $urlPattern,
         public string $method = '*',
-        public int  $statusCode = 200,
+        public int $statusCode = 200,
         public array $headers = [],
         public string $body = '',
         public float $delayMs = 0.0,
         public bool $useRegex = false,
         public ?Throwable $exception = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a successful response recording.
      *
-     * @param string $url  URL to match
-     * @param string $body Response body
-     * @param array<string, string> $headers Headers to include
+     * @param  string  $url  URL to match
+     * @param  string  $body  Response body
+     * @param  array<string, string>  $headers  Headers to include
      */
     public static function ok(
         string $url,
         string $body = '',
         array $headers = [],
-    ) : self
-    {
+    ): self {
         return new self(
             urlPattern: $url,
             method    : '*',
@@ -60,16 +60,15 @@ final readonly class RecordedHttpResponse
     /**
      * Create a JSON response recording.
      *
-     * @param string $url    URL to match
-     * @param mixed  $data   Data to JSON encode
-     * @param int    $status HTTP status code
+     * @param  string  $url  URL to match
+     * @param  mixed  $data  Data to JSON encode
+     * @param  int  $status  HTTP status code
      */
     public static function json(
         string $url,
         mixed $data = [],
         int $status = 200,
-    ) : self
-    {
+    ): self {
         return new self(
             urlPattern: $url,
             method    : '*',
@@ -82,16 +81,15 @@ final readonly class RecordedHttpResponse
     /**
      * Create an error response recording.
      *
-     * @param string $url    URL to match
-     * @param int    $status HTTP status code
-     * @param string $message Error message in body
+     * @param  string  $url  URL to match
+     * @param  int  $status  HTTP status code
+     * @param  string  $message  Error message in body
      */
     public static function error(
         string $url,
         int $status = 500,
         string $message = 'Internal Server Error',
-    ) : self
-    {
+    ): self {
         return new self(
             urlPattern: $url,
             method    : '*',
@@ -103,10 +101,10 @@ final readonly class RecordedHttpResponse
     /**
      * Create a response recording that throws an exception.
      *
-     * @param string $url URL to match
-     * @param Throwable $throwable Exception to throw
+     * @param  string  $url  URL to match
+     * @param  Throwable  $throwable  Exception to throw
      */
-    public static function throws(string $url, Throwable $throwable) : self
+    public static function throws(string $url, Throwable $throwable): self
     {
         return new self(
             urlPattern: $url,
@@ -118,10 +116,10 @@ final readonly class RecordedHttpResponse
     /**
      * Create a response with an artificial delay.
      *
-     * @param string $url     URL to match
-     * @param float  $delayMs Delay in milliseconds
+     * @param  string  $url  URL to match
+     * @param  float  $delayMs  Delay in milliseconds
      */
-    public static function delayed(string $url, float $delayMs) : self
+    public static function delayed(string $url, float $delayMs): self
     {
         return new self(
             urlPattern: $url,
@@ -133,10 +131,10 @@ final readonly class RecordedHttpResponse
     /**
      * Check if this recorded response matches the given request.
      *
-     * @param string $url The request URL
-     * @param string $method The request HTTP method
+     * @param  string  $url  The request URL
+     * @param  string  $method  The request HTTP method
      */
-    public function matches(string $url, string $method = 'GET') : bool
+    public function matches(string $url, string $method = 'GET'): bool
     {
         // Check method match (* matches all)
         if ($this->method !== '*' && strtoupper($this->method) !== strtoupper($method)) {

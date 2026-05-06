@@ -8,7 +8,9 @@ use DateTimeImmutable;
 
 final readonly class AdminElevationRecord
 {
-    public function __construct(public int $userId, public string $bindingId, public DateTimeImmutable $expiresAt) {}
+    public function __construct(public int $userId, public string $bindingId, public DateTimeImmutable $expiresAt)
+    {
+    }
 
     public function isExpiredAt(DateTimeImmutable $moment): bool
     {

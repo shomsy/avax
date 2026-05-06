@@ -29,8 +29,9 @@ final readonly class SuspendUser
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         private ?AdminElevationStoreInterface $adminElevationStore = null,
-        private ?LifecycleOrchestrator           $lifecycleOrchestrator = null,
-    ) {}
+        private ?LifecycleOrchestrator $lifecycleOrchestrator = null,
+    ) {
+    }
 
     public function execute(int $userId): void
     {

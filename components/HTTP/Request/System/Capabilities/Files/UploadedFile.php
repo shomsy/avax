@@ -11,42 +11,43 @@ use Psr\Http\Message\UploadedFileInterface;
 final class UploadedFile implements UploadedFileInterface
 {
     public function __construct(
-        private readonly string  $file,
-        private readonly ?int    $size,
-        private readonly int     $error,
+        private readonly string $file,
+        private readonly ?int $size,
+        private readonly int $error,
         private readonly ?string $clientFilename = null,
         private readonly ?string $clientMediaType = null,
         private bool $moved = false,
-    ) {}
+    ) {
+    }
 
-    public function getStream() : StreamInterface
+    public function getStream(): StreamInterface
     {
         return Utils::streamFor(fopen($this->file, 'r'));
     }
 
-    public function moveTo($targetPath) : void
+    public function moveTo($targetPath): void
     {
         if (move_uploaded_file($this->file, $targetPath)) {
             $this->moved = true;
         }
     }
 
-    public function getSize() : ?int
+    public function getSize(): ?int
     {
         return $this->size;
     }
 
-    public function getError() : int
+    public function getError(): int
     {
         return $this->error;
     }
 
-    public function getClientFilename() : ?string
+    public function getClientFilename(): ?string
     {
         return $this->clientFilename;
     }
 
-    public function getClientMediaType() : ?string
+    public function getClientMediaType(): ?string
     {
         return $this->clientMediaType;
     }

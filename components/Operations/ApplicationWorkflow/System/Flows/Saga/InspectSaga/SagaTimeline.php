@@ -10,7 +10,9 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Inspe
 final readonly class SagaTimeline
 {
     /**
-     * @param list<SagaRuntimeEvent> $events
+     * @param  list<SagaRuntimeEvent>  $events
      */
-    public function __construct(public string $instanceId, public array $events) {}
+    public function __construct(public string $instanceId, public array $events)
+    {
+    }
 }

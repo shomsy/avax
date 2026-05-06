@@ -25,8 +25,7 @@ interface AsyncOperationPromise
     /**
      * Attach a callback to be executed when the operation resolves successfully.
      *
-     * @param callable(mixed):mixed $onResolved Callback receiving the resolved value
-     *
+     * @param  callable(mixed):mixed  $onResolved  Callback receiving the resolved value
      * @return AsyncOperationPromise A new promise for chaining
      */
     public function then(callable $onResolved): AsyncOperationPromise;
@@ -34,8 +33,7 @@ interface AsyncOperationPromise
     /**
      * Attach a callback to be executed when the operation fails.
      *
-     * @param callable(Throwable):mixed $onRejected Callback receiving the exception
-     *
+     * @param  callable(Throwable):mixed  $onRejected  Callback receiving the exception
      * @return AsyncOperationPromise A new promise for chaining
      */
     public function catch(callable $onRejected): AsyncOperationPromise;

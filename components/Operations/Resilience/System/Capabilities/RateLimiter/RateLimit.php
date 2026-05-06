@@ -8,17 +8,17 @@ final class RateLimit
 {
     private static ?RedisRateLimiter $redisRateLimiter = null;
 
-    public static function setLimiter(RedisRateLimiter $redisRateLimiter) : void
+    public static function setLimiter(RedisRateLimiter $redisRateLimiter): void
     {
         self::useLimiter(limiter: $redisRateLimiter);
     }
 
-    public static function useLimiter(RedisRateLimiter $redisRateLimiter) : void
+    public static function useLimiter(RedisRateLimiter $redisRateLimiter): void
     {
         self::$redisRateLimiter = $redisRateLimiter;
     }
 
-    public static function attempt(string $key, int $maxAttempts, int $decaySeconds = 60) : bool
+    public static function attempt(string $key, int $maxAttempts, int $decaySeconds = 60): bool
     {
         return self::limiter()->attempt(
             key         : $key,
@@ -27,7 +27,7 @@ final class RateLimit
         );
     }
 
-    private static function limiter() : RedisRateLimiter
+    private static function limiter(): RedisRateLimiter
     {
         if (! self::$redisRateLimiter instanceof RedisRateLimiter) {
             self::$redisRateLimiter = new RedisRateLimiter(config: ['driver' => 'auto']);
@@ -36,7 +36,7 @@ final class RateLimit
         return self::$redisRateLimiter;
     }
 
-    public static function remaining(string $key, int $maxAttempts, int $decaySeconds = 60) : int
+    public static function remaining(string $key, int $maxAttempts, int $decaySeconds = 60): int
     {
         return self::limiter()->remaining(
             key         : $key,
@@ -45,17 +45,17 @@ final class RateLimit
         );
     }
 
-    public static function clear(string $key) : void
+    public static function clear(string $key): void
     {
         self::limiter()->clear(key: $key);
     }
 
-    public static function availableIn(string $key, int $decaySeconds = 60) : int
+    public static function availableIn(string $key, int $decaySeconds = 60): int
     {
         return self::limiter()->availableIn(key: $key, decaySeconds: $decaySeconds);
     }
 
-    public static function tooManyAttempts(string $key, int $maxAttempts, int $decaySeconds = 60) : bool
+    public static function tooManyAttempts(string $key, int $maxAttempts, int $decaySeconds = 60): bool
     {
         return self::limiter()->tooManyAttempts(
             key         : $key,

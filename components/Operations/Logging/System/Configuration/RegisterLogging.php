@@ -12,15 +12,15 @@ use Avax\Components\Operations\Logging\System\PublicSurface\Log;
  */
 final class RegisterLogging
 {
-    public function build(string $channel = 'app') : Log
+    public function build(string $channel = 'app'): Log
     {
-        $logPath = storage_path('logs/' . $channel);
+        $logPath = storage_path('logs/'.$channel);
 
         return new Log(
             writer: new RotatingFileWriter(
-                        baseLogPath: $logPath,
-                        timezone   : config('app.timezone', 'UTC'),
-                    ),
+                baseLogPath: $logPath,
+                timezone   : config('app.timezone', 'UTC'),
+            ),
         );
     }
 }

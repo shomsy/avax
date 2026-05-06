@@ -13,31 +13,31 @@ use SensitiveParameter;
 final readonly class ArtifactMetadata
 {
     /**
-     * @param array<string, string> $entries
-     * @param array<string, array{method: string, signature: string}> $schemaVersion
-     *                                                                               $services
-     * @param array<string, string> $sources
-     * @param array<string, list<string>> $dependencies
-     * @param array<string, string> $aliases
-     * @param array<string, list<string>> $tags
+     * @param  array<string, string>  $entries
+     * @param  array<string, array{method: string, signature: string}>  $schemaVersion
+     *                                                                                  $services
+     * @param  array<string, string>  $sources
+     * @param  array<string, list<string>>  $dependencies
+     * @param  array<string, string>  $aliases
+     * @param  array<string, list<string>>  $tags
      * @param array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool, poolSize:
      *                                  int, poolResetBeforeReuse: bool}> $lifetimes
-     * @param array<string, bool> $deferred
-     * @param array<string, int> $decorations
-     * @param array<string, array<string, mixed>> $pruneMode
-     *                                                       $ownership
-     * @param array<string, array<string, mixed>> $diagnosticsMode
-     *                                                             $slices
-     * @param array<string, mixed> $pruning
-     * @param list<string> $changedServices
-     * @param list<string> $invalidatedServices
-     * @param list<string> $validationIssues
-     * @param list<string> $invalidationReasons
-     * @param array<string, int> $statistics
+     * @param  array<string, bool>  $deferred
+     * @param  array<string, int>  $decorations
+     * @param  array<string, array<string, mixed>>  $pruneMode
+     *                                                          $ownership
+     * @param  array<string, array<string, mixed>>  $diagnosticsMode
+     *                                                                $slices
+     * @param  array<string, mixed>  $pruning
+     * @param  list<string>  $changedServices
+     * @param  list<string>  $invalidatedServices
+     * @param  list<string>  $validationIssues
+     * @param  list<string>  $invalidationReasons
+     * @param  array<string, int>  $statistics
      */
     public function __construct(
         public string $format,
-        public int    $schemaVersion,
+        public int $schemaVersion,
         public string $compiledAt,
         public string $cacheVersion,
         #[SensitiveParameter]
@@ -48,39 +48,39 @@ final readonly class ArtifactMetadata
         public string $executionMode,
         public string $pruneMode,
         public string $diagnosticsMode,
-        public bool   $strict,
+        public bool $strict,
         public string $fingerprint,
         public string $dependencyGraphRevision,
-        public array  $artifactPaths,
-        public bool   $warmed,
+        public array $artifactPaths,
+        public bool $warmed,
         public string $benchmarkBuildMarker,
-        public array  $entries,
-        public array  $services,
-        public array  $sources,
-        public array  $dependencies,
-        public array  $aliases,
-        public array  $tags,
-        public array  $lifetimes,
-        public array  $deferred,
-        public array  $decorations,
-        public array  $ownership,
-        public array  $slices,
-        public array  $pruning,
-        public array  $changedServices,
-        public array  $invalidatedServices,
-        public array  $validationIssues,
-        public array  $invalidationReasons,
-        public array  $statistics,
+        public array $entries,
+        public array $services,
+        public array $sources,
+        public array $dependencies,
+        public array $aliases,
+        public array $tags,
+        public array $lifetimes,
+        public array $deferred,
+        public array $decorations,
+        public array $ownership,
+        public array $slices,
+        public array $pruning,
+        public array $changedServices,
+        public array $invalidatedServices,
+        public array $validationIssues,
+        public array $invalidationReasons,
+        public array $statistics,
         public string $checksum
     ) {
     }
 
     /**
-     * @param list<string> $serviceIds
+     * @param  list<string>  $serviceIds
      */
     public function includes(array $serviceIds): bool
     {
-        return array_all(array_values(array: array_unique(array: $serviceIds)), fn (string $serviceId) : bool => $this->hasEntry(serviceId: $serviceId));
+        return array_all(array_values(array: array_unique(array: $serviceIds)), fn (string $serviceId): bool => $this->hasEntry(serviceId: $serviceId));
     }
 
     public function hasEntry(string $serviceId): bool
@@ -113,7 +113,7 @@ final readonly class ArtifactMetadata
     }
 
     /**
-     * @param array<string, mixed> $state
+     * @param  array<string, mixed>  $state
      */
     public static function fromArray(array $state): self
     {
@@ -201,7 +201,7 @@ final readonly class ArtifactMetadata
             }
 
             $services[$serviceId] = [
-                'method'    => (string) ($service['method'] ?? ''),
+                'method' => (string) ($service['method'] ?? ''),
                 'signature' => (string) ($service['signature'] ?? ''),
             ];
         }
@@ -279,41 +279,41 @@ final readonly class ArtifactMetadata
     public function toArray(): array
     {
         return [
-            'format'                  => $this->format,
-            'schemaVersion'           => $this->schemaVersion,
-            'compiledAt'              => $this->compiledAt,
-            'cacheVersion'            => $this->cacheVersion,
-            'configHash'              => $this->configHash,
-            'settingsFingerprint'     => $this->settingsFingerprint,
-            'environment'             => $this->environment,
-            'compileMode'             => $this->compileMode,
-            'executionMode'           => $this->executionMode,
-            'pruneMode'               => $this->pruneMode,
-            'diagnosticsMode'         => $this->diagnosticsMode,
-            'strict'                  => $this->strict,
-            'fingerprint'             => $this->fingerprint,
+            'format' => $this->format,
+            'schemaVersion' => $this->schemaVersion,
+            'compiledAt' => $this->compiledAt,
+            'cacheVersion' => $this->cacheVersion,
+            'configHash' => $this->configHash,
+            'settingsFingerprint' => $this->settingsFingerprint,
+            'environment' => $this->environment,
+            'compileMode' => $this->compileMode,
+            'executionMode' => $this->executionMode,
+            'pruneMode' => $this->pruneMode,
+            'diagnosticsMode' => $this->diagnosticsMode,
+            'strict' => $this->strict,
+            'fingerprint' => $this->fingerprint,
             'dependencyGraphRevision' => $this->dependencyGraphRevision,
-            'artifactPaths'           => $this->artifactPaths,
-            'warmed'                  => $this->warmed,
-            'benchmarkBuildMarker'    => $this->benchmarkBuildMarker,
-            'entries'                 => $this->entries,
-            'services'                => $this->services,
-            'sources'                 => $this->sources,
-            'dependencies'            => $this->dependencies,
-            'aliases'                 => $this->aliases,
-            'tags'                    => $this->tags,
-            'lifetimes'               => $this->lifetimes,
-            'deferred'                => $this->deferred,
-            'decorations'             => $this->decorations,
-            'ownership'               => $this->ownership,
-            'slices'                  => $this->slices,
-            'pruning'                 => $this->pruning,
-            'changedServices'         => $this->changedServices,
-            'invalidatedServices'     => $this->invalidatedServices,
-            'validationIssues'        => $this->validationIssues,
-            'invalidationReasons'     => $this->invalidationReasons,
-            'statistics'              => $this->statistics,
-            'checksum'                => $this->checksum,
+            'artifactPaths' => $this->artifactPaths,
+            'warmed' => $this->warmed,
+            'benchmarkBuildMarker' => $this->benchmarkBuildMarker,
+            'entries' => $this->entries,
+            'services' => $this->services,
+            'sources' => $this->sources,
+            'dependencies' => $this->dependencies,
+            'aliases' => $this->aliases,
+            'tags' => $this->tags,
+            'lifetimes' => $this->lifetimes,
+            'deferred' => $this->deferred,
+            'decorations' => $this->decorations,
+            'ownership' => $this->ownership,
+            'slices' => $this->slices,
+            'pruning' => $this->pruning,
+            'changedServices' => $this->changedServices,
+            'invalidatedServices' => $this->invalidatedServices,
+            'validationIssues' => $this->validationIssues,
+            'invalidationReasons' => $this->invalidationReasons,
+            'statistics' => $this->statistics,
+            'checksum' => $this->checksum,
         ];
     }
 

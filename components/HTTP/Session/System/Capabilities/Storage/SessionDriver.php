@@ -6,9 +6,9 @@ namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
 final class SessionDriver
 {
-    private static SessionStoreInterface|null $sessionStore = null;
+    private static ?SessionStoreInterface $sessionStore = null;
 
-    public static function setStore(SessionStoreInterface $store) : void
+    public static function setStore(SessionStoreInterface $store): void
     {
         self::$sessionStore = $store;
     }
@@ -16,25 +16,25 @@ final class SessionDriver
     /**
      * @return array<string, mixed>
      */
-    public static function read(string $sessionId) : array
+    public static function read(string $sessionId): array
     {
         return self::get()->read(id: $sessionId);
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
-    public static function write(string $sessionId, array $data) : bool
+    public static function write(string $sessionId, array $data): bool
     {
         return self::get()->write(id: $sessionId, data: $data);
     }
 
-    public static function destroy(string $sessionId) : bool
+    public static function destroy(string $sessionId): bool
     {
         return self::get()->destroy(id: $sessionId);
     }
 
-    public static function exists(string $sessionId) : bool
+    public static function exists(string $sessionId): bool
     {
         $sessionStore = self::get();
 
@@ -43,7 +43,7 @@ final class SessionDriver
             : $sessionStore->read(id: $sessionId) !== [];
     }
 
-    public static function get() : SessionStoreInterface
+    public static function get(): SessionStoreInterface
     {
         if (! self::$sessionStore instanceof SessionStoreInterface) {
             self::$sessionStore = self::make();
@@ -53,18 +53,18 @@ final class SessionDriver
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
-    public static function make(array $config = []) : SessionStoreInterface
+    public static function make(array $config = []): SessionStoreInterface
     {
         $driver = $config['driver'] ?? 'file';
 
         return match ($driver) {
-            'redis'    => new RedisSessionStore(config: $config['redis'] ?? []),
+            'redis' => new RedisSessionStore(config: $config['redis'] ?? []),
             'database' => isset($config['database']['pdo'])
                 ? new DatabaseSessionStore(pdo: $config['database']['pdo'], table: $config['database']['table'] ?? 'sessions')
                 : new ArraySessionStore(),
-            'array'    => new ArraySessionStore(),
+            'array' => new ArraySessionStore(),
             default => new FileSessionStore(config: $config['file'] ?? []),
         };
     }

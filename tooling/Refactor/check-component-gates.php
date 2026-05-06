@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -26,7 +27,6 @@ use RecursiveIteratorIterator;
  * 14. documentation
  * 15. operator diagnostics
  */
-
 if ($argc < 2) {
     echo "Usage: php check-component-gates.php <component-path>\n";
     echo "Example: php check-component-gates.php components/API/Contracts\n";
@@ -35,7 +35,7 @@ if ($argc < 2) {
 
 $componentPath = $argv[1];
 
-if (!is_dir($componentPath)) {
+if (! is_dir($componentPath)) {
     echo "Error: {$componentPath} is not a directory\n";
     exit(1);
 }
@@ -75,19 +75,19 @@ foreach ($iterator as $file) {
     }
 }
 
-echo "Scanning " . count($files) . " PHP files...\n\n";
+echo 'Scanning '.count($files)." PHP files...\n\n";
 
 foreach ($files as $file) {
     $content = file_get_contents($file);
-    $basename = basename((string)$file);
+    $basename = basename((string) $file);
 
     // 1. Public contract (System/PublicSurface)
-    if (stripos((string)$file, 'PublicSurface') !== false || $basename === 'PublicSurface.php') {
+    if (stripos((string) $file, 'PublicSurface') !== false || $basename === 'PublicSurface.php') {
         $results['public_contract'] = true;
     }
 
     // 2. Internal runtime (Capabilities/*)
-    if (stripos((string)$file, 'Capabilities') !== false) {
+    if (stripos((string) $file, 'Capabilities') !== false) {
         $results['internal_runtime'] = true;
     }
 
@@ -107,17 +107,17 @@ foreach ($files as $file) {
     }
 
     // 6. Configuration
-    if (stripos((string)$file, 'Configuration') !== false || stripos($basename, 'Config') !== false) {
+    if (stripos((string) $file, 'Configuration') !== false || stripos($basename, 'Config') !== false) {
         $results['configuration'] = true;
     }
 
     // 7. Health check
-    if (stripos((string)$file, 'Health') !== false || stripos($basename, 'Health') !== false) {
+    if (stripos((string) $file, 'Health') !== false || stripos($basename, 'Health') !== false) {
         $results['health_check'] = true;
     }
 
     // 8. Failure model (Foundation/Failure)
-    if (stripos((string)$file, 'Failure') !== false || stripos($basename, 'Exception') !== false) {
+    if (stripos((string) $file, 'Failure') !== false || stripos($basename, 'Exception') !== false) {
         $results['failure_model'] = true;
     }
 
@@ -142,7 +142,7 @@ foreach ($files as $file) {
     }
 
     // 13. Example usage
-    if (stripos((string)$file, 'examples') !== false || stripos($basename, 'Example') !== false) {
+    if (stripos((string) $file, 'examples') !== false || stripos($basename, 'Example') !== false) {
         $results['example_usage'] = true;
     }
 
@@ -204,7 +204,7 @@ foreach ($critical as $key) {
     }
 }
 
-echo sprintf('CRITICAL GATES: %s/', $criticalPassed) . count($critical) . "\n";
+echo sprintf('CRITICAL GATES: %s/', $criticalPassed).count($critical)."\n";
 
 if ($passed === $total) {
     echo "\n✅ ALL GATES PASSED\n";

@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 final class QueryBuilderSelectTest extends TestCase
 {
-    public function test_select_where_order_and_limit_are_compiled_with_bindings() : void
+    public function test_select_where_order_and_limit_are_compiled_with_bindings(): void
     {
         $executor = new RecordingQueryExecutor(rows: [
-                                                         [
-                                                             'id'   => 123,
-                                                             'name' => 'Milos',
-                                                         ],
-                                                     ]);
+            [
+                'id' => 123,
+                'name' => 'Milos',
+            ],
+        ]);
 
         $builder = new QueryBuilder(
             grammar     : new MySQLGrammar(),
@@ -38,18 +38,18 @@ final class QueryBuilderSelectTest extends TestCase
 
         self::assertSame(
             expected: [
-                          [
-                              'id'   => 123,
-                              'name' => 'Milos',
-                          ],
-                      ],
+                [
+                    'id' => 123,
+                    'name' => 'Milos',
+                ],
+            ],
             actual  : $rows,
         );
 
         self::assertCount(expectedCount: 1, haystack: $executor->queries);
 
         $recordedQuery = $executor->queries[0];
-        $sql           = self::normalizeSql($recordedQuery['sql']);
+        $sql = self::normalizeSql($recordedQuery['sql']);
 
         self::assertSame(expected: [123], actual: $recordedQuery['bindings']);
 
@@ -61,7 +61,7 @@ final class QueryBuilderSelectTest extends TestCase
         self::assertMatchesRegularExpression(pattern: '/LIMIT 1/i', string: $sql);
     }
 
-    private static function normalizeSql(string $sql) : string
+    private static function normalizeSql(string $sql): string
     {
         return preg_replace(pattern: '/\s+/', replacement: ' ', subject: trim($sql)) ?? $sql;
     }
@@ -80,7 +80,7 @@ final class RecordingQueryExecutor implements ExecutorInterface
     private array $rows;
 
     /**
-     * @param list<array<string, mixed>> $rows
+     * @param  list<array<string, mixed>>  $rows
      */
     public function __construct(array $rows = [])
     {
@@ -88,18 +88,16 @@ final class RecordingQueryExecutor implements ExecutorInterface
     }
 
     /**
-     * @param list<mixed> $bindings
-     *
+     * @param  list<mixed>  $bindings
      * @return list<array<string, mixed>>
      */
     public function query(
-        string          $sql,
-        array           $bindings = [],
+        string $sql,
+        array $bindings = [],
         ?ExecutionScope $executionScope = null,
-    ) : array
-    {
+    ): array {
         $this->queries[] = [
-            'sql'      => $sql,
+            'sql' => $sql,
             'bindings' => array_values($bindings),
         ];
 
@@ -107,18 +105,17 @@ final class RecordingQueryExecutor implements ExecutorInterface
     }
 
     /**
-     * @param list<mixed> $bindings
+     * @param  list<mixed>  $bindings
      */
     public function execute(
-        string          $sql,
-        array           $bindings = [],
+        string $sql,
+        array $bindings = [],
         ?ExecutionScope $executionScope = null,
-    ) : ExecutionResult
-    {
+    ): ExecutionResult {
         return ExecutionResult::success(affectedRows: 1);
     }
 
-    public function getDriverName() : string
+    public function getDriverName(): string
     {
         return 'mysql';
     }

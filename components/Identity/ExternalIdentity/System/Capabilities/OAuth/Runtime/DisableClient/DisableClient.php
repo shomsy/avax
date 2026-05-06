@@ -13,7 +13,9 @@ use RuntimeException;
 
 final readonly class DisableClient
 {
-    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     public function execute(string $clientId): OAuthClient
     {
@@ -27,7 +29,7 @@ final readonly class DisableClient
             name      : 'auth.oauth.client.disabled',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id' => $client->clientId,
+                'client_id' => $client->clientId,
                 'tenant_slug' => $client->tenantSlug,
             ],
         ));

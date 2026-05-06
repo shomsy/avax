@@ -12,8 +12,8 @@ final class EventDrivenInvalidation implements InvalidationStrategy
     private array $eventMapping = [];
 
     /**
-     * @param array<string, string> $eventRules
-     * @param array<string, string> $eventMapping
+     * @param  array<string, string>  $eventRules
+     * @param  array<string, string>  $eventMapping
      */
     public function __construct(
         array $eventRules = [],
@@ -29,7 +29,7 @@ final class EventDrivenInvalidation implements InvalidationStrategy
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     #[Override]
     public function shouldInvalidate(string $key, string $reason, array $context = []): bool
@@ -51,7 +51,7 @@ final class EventDrivenInvalidation implements InvalidationStrategy
 
     public function addRule(string $event, string $invalidationReason): self
     {
-        $new                       = clone $this;
+        $new = clone $this;
         $new->eventMapping[$event] = $invalidationReason;
 
         return $new;

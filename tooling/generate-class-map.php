@@ -3,11 +3,12 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 $root = getcwd();
-$map  = [];
+$map = [];
 
 $dirs = [
     'framework/System' => 'Avax\\Framework\\System',
@@ -15,8 +16,8 @@ $dirs = [
 ];
 
 foreach (array_keys($dirs) as $base) {
-    $path = $root . '/' . $base;
-    if (!is_dir($path)) {
+    $path = $root.'/'.$base;
+    if (! is_dir($path)) {
         continue;
     }
 
@@ -26,7 +27,7 @@ foreach (array_keys($dirs) as $base) {
     );
 
     foreach ($iterator as $file) {
-        if (!$file->isFile()) {
+        if (! $file->isFile()) {
             continue;
         }
 
@@ -34,16 +35,16 @@ foreach (array_keys($dirs) as $base) {
             continue;
         }
 
-        $rel = substr((string)$file->getPathname(), strlen($root) + 1);
+        $rel = substr((string) $file->getPathname(), strlen($root) + 1);
         $content = file_get_contents($file->getPathname());
 
-        if (!preg_match('/^namespace\s+([^;]+);/m', $content, $m)) {
+        if (! preg_match('/^namespace\s+([^;]+);/m', $content, $m)) {
             continue;
         }
 
         $namespace = trim($m[1]);
 
-        if (!preg_match(
+        if (! preg_match(
             '/^(?:final|abstract)\s+(?:readonly\s+)?(?:class|interface|trait)\s+(\w+)/m',
             $content,
             $c,
@@ -52,7 +53,7 @@ foreach (array_keys($dirs) as $base) {
         }
 
         $className = $c[1];
-        $fqcn = $namespace . '\\' . $className;
+        $fqcn = $namespace.'\\'.$className;
 
         $parts = explode('/', $rel);
         $lane = 'unknown';
@@ -95,7 +96,7 @@ foreach (array_keys($dirs) as $base) {
 }
 
 $json = json_encode(array_values($map), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-file_put_contents($root . '/build/canonical-class-map.json', $json);
+file_put_contents($root.'/build/canonical-class-map.json', $json);
 
-echo 'Generated ' . count($map) . " class entries\n";
-echo 'Output: build/canonical-class-map.json' . PHP_EOL;
+echo 'Generated '.count($map)." class entries\n";
+echo 'Output: build/canonical-class-map.json'.PHP_EOL;

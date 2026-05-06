@@ -9,12 +9,12 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 interface InvalidateByTags
 {
     /**
-     * @param iterable<CacheTag> $tags
+     * @param  iterable<CacheTag>  $tags
      */
     public function invalidateByTags(iterable $tags): int;
 
     /**
-     * @param iterable<CacheTag> $tags
+     * @param  iterable<CacheTag>  $tags
      */
     public function areAllTagsInvalidated(iterable $tags): bool;
 }

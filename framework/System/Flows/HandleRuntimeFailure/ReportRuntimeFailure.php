@@ -19,12 +19,13 @@ final readonly class ReportRuntimeFailure
         private ?Logging $logging = null,
         private ?string $correlationId = null,
         private ?string $traceId = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Report a runtime failure with full context.
      */
-    public function report(Throwable $throwable) : void
+    public function report(Throwable $throwable): void
     {
         $context = $this->buildContext($throwable);
 
@@ -41,15 +42,15 @@ final readonly class ReportRuntimeFailure
      *
      * @return array<string, mixed>
      */
-    private function buildContext(Throwable $throwable) : array
+    private function buildContext(Throwable $throwable): array
     {
         $context = [
             'exception_class' => $throwable::class,
             'exception_message' => $throwable->getMessage(),
-            'exception_file'  => $throwable->getFile(),
-            'exception_line'  => $throwable->getLine(),
-            'exception_code'  => $throwable->getCode(),
-            'trace'           => $this->formatTrace($throwable),
+            'exception_file' => $throwable->getFile(),
+            'exception_line' => $throwable->getLine(),
+            'exception_code' => $throwable->getCode(),
+            'trace' => $this->formatTrace($throwable),
         ];
 
         if ($this->correlationId !== null) {
@@ -78,16 +79,16 @@ final readonly class ReportRuntimeFailure
      *
      * @return list<array{file: string, line: int, class: string|null, type: string|null, function: string}>
      */
-    private function formatTrace(Throwable $throwable) : array
+    private function formatTrace(Throwable $throwable): array
     {
         $trace = [];
 
         foreach ($throwable->getTrace() as $frame) {
             $trace[] = [
-                'file'  => $frame['file'] ?? '[internal]',
-                'line'  => $frame['line'] ?? 0,
+                'file' => $frame['file'] ?? '[internal]',
+                'line' => $frame['line'] ?? 0,
                 'class' => $frame['class'] ?? null,
-                'type'  => $frame['type'] ?? null,
+                'type' => $frame['type'] ?? null,
                 'function' => $frame['function'],
             ];
         }
@@ -100,7 +101,7 @@ final readonly class ReportRuntimeFailure
      *
      * @return array<string, mixed>
      */
-    private function getRequestInfo() : array
+    private function getRequestInfo(): array
     {
         $info = [];
 
@@ -132,7 +133,7 @@ final readonly class ReportRuntimeFailure
      *
      * @return array<string, mixed>
      */
-    private function getUserInfo() : array
+    private function getUserInfo(): array
     {
         $info = [];
 
@@ -150,7 +151,7 @@ final readonly class ReportRuntimeFailure
     /**
      * Build a human-readable log message.
      */
-    private function buildLogMessage(Throwable $throwable) : string
+    private function buildLogMessage(Throwable $throwable): string
     {
         $message = sprintf(
             'Runtime failure: %s in %s:%d',
@@ -165,5 +166,4 @@ final readonly class ReportRuntimeFailure
 
         return $message;
     }
-
 }

@@ -9,9 +9,8 @@ final readonly class HealthReport
     public function __construct(
         public string $status,
         /** @var array<string, CheckResult> */
-        public array  $checks = []
-    )
-    {
+        public array $checks = []
+    ) {
     }
 
     public function toArray(): array
@@ -19,7 +18,7 @@ final readonly class HealthReport
         return [
             'status' => $this->status,
             'checks' => array_map(
-                static fn(CheckResult $checkResult): array => $checkResult->toArray(),
+                static fn (CheckResult $checkResult): array => $checkResult->toArray(),
                 $this->checks,
             ),
         ];

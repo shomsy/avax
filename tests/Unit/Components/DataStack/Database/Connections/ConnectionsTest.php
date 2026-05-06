@@ -9,27 +9,27 @@ use PHPUnit\Framework\TestCase;
 
 final class ConnectionsTest extends TestCase
 {
-    public function testConnectionsClassExists() : void
+    public function test_connections_class_exists(): void
     {
         $this->assertTrue(class_exists(Connections::class));
     }
 
-    public function testConnectionsHasConnectionMethod() : void
+    public function test_connections_has_connection_method(): void
     {
         $this->assertTrue(method_exists(Connections::class, 'connection'));
     }
 
-    public function testConnectionsHasPoolMethod() : void
+    public function test_connections_has_pool_method(): void
     {
         $this->assertTrue(method_exists(Connections::class, 'pool'));
     }
 
-    public function testConnectionsHasPdoMethod() : void
+    public function test_connections_has_pdo_method(): void
     {
         $this->assertTrue(method_exists(Connections::class, 'pdo'));
     }
 
-    public function testConnectionsHasWithScopeMethod() : void
+    public function test_connections_has_with_scope_method(): void
     {
         $this->assertTrue(method_exists(Connections::class, 'withScope'));
     }

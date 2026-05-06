@@ -9,7 +9,9 @@ namespace Avax\Components\DataStack\Data\System\Flows\Aggregate;
  */
 final readonly class AverageValues
 {
-    public function __construct(private SumValues $sumValues) {}
+    public function __construct(private SumValues $sumValues)
+    {
+    }
 
     public function execute(iterable $items, string|callable|null $key = null): float
     {

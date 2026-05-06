@@ -9,11 +9,10 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User as User
 class UserRecord
 {
     public function __construct(
-        public readonly string  $id,
-        public readonly string  $email,
+        public readonly string $id,
+        public readonly string $email,
         public readonly ?string $name = null,
-    )
-    {
+    ) {
     }
 
     public static function fromEntity(UserEntity $userEntity): self

@@ -11,4 +11,6 @@ use RuntimeException;
  *
  * @see /docs/Foundation/Database/Concepts/Architecture.md#databaseexception
  */
-abstract class DatabaseException extends RuntimeException implements DatabaseThrowable {}
+abstract class DatabaseException extends RuntimeException implements DatabaseThrowable
+{
+}

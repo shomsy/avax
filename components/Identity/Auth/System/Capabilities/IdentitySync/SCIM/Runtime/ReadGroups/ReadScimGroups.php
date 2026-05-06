@@ -8,7 +8,9 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\
 
 final readonly class ReadScimGroups
 {
-    public function __construct(private ReadScimUsers $readScimUsers) {}
+    public function __construct(private ReadScimUsers $readScimUsers)
+    {
+    }
 
     /**
      * @return list<ScimGroupProjection>

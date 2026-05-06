@@ -6,10 +6,10 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Ru
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\RegisteredScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectoryStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\GroupRoleMappingValidator;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
@@ -25,13 +25,14 @@ final readonly class RegisterScimDirectory
         private GroupRoleMappingValidator $groupRoleMappingValidator,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws ScimFailed
      * @throws RandomException
      */
-    public function execute(RegisterScimDirectoryData $registerScimDirectoryData) : RegisteredScimDirectory
+    public function execute(RegisterScimDirectoryData $registerScimDirectoryData): RegisteredScimDirectory
     {
         if (! $this->groupRoleMappingValidator->isValid(groupRoleMap: $registerScimDirectoryData->groupRoleMap)) {
             throw ScimFailed::invalidGroupRoleMapping();
@@ -39,7 +40,7 @@ final readonly class RegisterScimDirectory
 
         $plainTextToken = bin2hex(string: random_bytes(length: 24));
         $scimDirectory = new ScimDirectory(
-            directoryId : 'scim_' . bin2hex(string: random_bytes(length: 12)),
+            directoryId : 'scim_'.bin2hex(string: random_bytes(length: 12)),
             tenantSlug  : trim(string: $registerScimDirectoryData->tenantSlug),
             name        : trim(string: $registerScimDirectoryData->name),
             tokenHash   : $this->passwordHasher->hash(password: $plainTextToken),
@@ -52,9 +53,9 @@ final readonly class RegisterScimDirectory
             name      : 'auth.scim.directory.registered',
             occurredAt: $this->clock->now(),
             context   : [
-                            'directory_id' => $scimDirectory->directoryId,
-                            'tenant'       => $scimDirectory->tenantSlug,
-                            'name'         => $scimDirectory->name,
+                'directory_id' => $scimDirectory->directoryId,
+                'tenant' => $scimDirectory->tenantSlug,
+                'name' => $scimDirectory->name,
             ],
         ));
 

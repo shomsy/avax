@@ -10,26 +10,26 @@ namespace Avax\Framework\System\Capabilities\TracingTimeline;
 final readonly class RuntimeEvent
 {
     /**
-     * @param array<string, mixed> $metadata
+     * @param  array<string, mixed>  $metadata
      */
     public function __construct(
         public string $name,
-        public float  $timestampMS,
+        public float $timestampMS,
         public ?float $durationMS = null,
         public ?string $category = null,
-        public array  $metadata = [],
-    ) {}
+        public array $metadata = [],
+    ) {
+    }
 
     /**
-     * @param array<string, mixed> $metadata
+     * @param  array<string, mixed>  $metadata
      */
     public static function make(
         string $name,
-        ?float  $durationMS = null,
+        ?float $durationMS = null,
         ?string $category = null,
-        array  $metadata = [],
-    ) : self
-    {
+        array $metadata = [],
+    ): self {
         return new self(
             name       : $name,
             timestampMS: microtime(true) * 1000,

@@ -22,5 +22,6 @@ final readonly class ExchangeAuthorizationCodeData
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
         public ?OAuthSenderConstraint $senderConstraint = null,
-    ) {}
+    ) {
+    }
 }

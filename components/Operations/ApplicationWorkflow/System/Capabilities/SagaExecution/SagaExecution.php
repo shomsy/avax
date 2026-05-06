@@ -41,7 +41,7 @@ final class SagaExecution
      */
     private array $completedSteps = [];
 
-    private string|null $failureReason = null;
+    private ?string $failureReason = null;
 
     private SagaStoreInterface $sagaStore;
 
@@ -72,7 +72,7 @@ final class SagaExecution
         return new self($name);
     }
 
-    public function addStep(string $name, Closure $action, Closure|null $compensation = null): void
+    public function addStep(string $name, Closure $action, ?Closure $compensation = null): void
     {
         $this->steps[] = new SagaStep(
             name: $name,
@@ -129,7 +129,7 @@ final class SagaExecution
 
         try {
             foreach ($this->steps as $index => $step) {
-                $idempotencyKey = IdempotencyKey::generate($this->id, $step->name, (string)$index);
+                $idempotencyKey = IdempotencyKey::generate($this->id, $step->name, (string) $index);
 
                 $result = $this->stepRunner->execute(
                     context: $this->context,
@@ -228,7 +228,7 @@ final class SagaExecution
         return $this->stepResults;
     }
 
-    public function getFailureReason(): string|null
+    public function getFailureReason(): ?string
     {
         return $this->failureReason;
     }

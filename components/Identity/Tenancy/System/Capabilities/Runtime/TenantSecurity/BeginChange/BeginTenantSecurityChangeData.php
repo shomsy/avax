@@ -8,5 +8,7 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class BeginTenantSecurityChangeData
 {
-    public function __construct(public string $tenantSlug, public string $requestedBy, public string $reason, public TenantSecurityConfiguration $after) {}
+    public function __construct(public string $tenantSlug, public string $requestedBy, public string $reason, public TenantSecurityConfiguration $after)
+    {
+    }
 }

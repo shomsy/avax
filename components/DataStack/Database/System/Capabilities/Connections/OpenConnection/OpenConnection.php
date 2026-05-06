@@ -20,10 +20,11 @@ final readonly class OpenConnection
         private BuildPhysicalConnection $buildPhysicalConnection,
         private ?EventBus $eventBus = null,
         private ?ExecutionScope $executionScope = null,
-    ) {}
+    ) {
+    }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      *
      * @throws Throwable
      */

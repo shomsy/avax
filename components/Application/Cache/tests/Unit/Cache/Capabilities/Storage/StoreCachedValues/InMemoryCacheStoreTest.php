@@ -18,7 +18,7 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_stores_and_retrieves_values(): void
     {
-        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
         $avaxCache = new AvaxCache(clock: $frozenClock, store: $inMemoryCacheStore);
@@ -33,7 +33,7 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_returns_default_for_missing_key(): void
     {
-        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
         $avaxCache = new AvaxCache(clock: $frozenClock, store: $inMemoryCacheStore);
@@ -46,7 +46,7 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_stores_null_without_confusion(): void
     {
-        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
         $avaxCache = new AvaxCache(clock: $frozenClock, store: $inMemoryCacheStore);
@@ -62,7 +62,7 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_deletes_value(): void
     {
-        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
         $avaxCache = new AvaxCache(clock: $frozenClock, store: $inMemoryCacheStore);
@@ -79,7 +79,7 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_clears_all_values(): void
     {
-        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
         $avaxCache = new AvaxCache(clock: $frozenClock, store: $inMemoryCacheStore);
@@ -98,7 +98,7 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_remembers_missing_value(): void
     {
-        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
         $avaxCache = new AvaxCache(clock: $frozenClock, store: $inMemoryCacheStore);
@@ -114,14 +114,14 @@ final class InMemoryCacheStoreTest extends TestCase
      */
     public function test_does_not_reload_existing_value(): void
     {
-        $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
+        $frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
         $avaxCache = new AvaxCache(clock: $frozenClock, store: $inMemoryCacheStore);
         $avaxCache->set(key: 'existing', value: 'original');
 
         $loadCount = 0;
-        $result    = $avaxCache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount): string {
+        $result = $avaxCache->remember(key: 'existing', ttl: 3600, loader: static function () use (&$loadCount): string {
             $loadCount++;
 
             return 'loaded';

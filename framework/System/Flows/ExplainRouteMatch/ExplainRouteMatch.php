@@ -15,7 +15,7 @@ final readonly class ExplainRouteMatch
     }
 
     /**
-     * @param list<array{method: string, path: string, handler: mixed, middleware?: list<string>}> $routes
+     * @param  list<array{method: string, path: string, handler: mixed, middleware?: list<string>}>  $routes
      */
     public function loadRoutes(array $routes): self
     {
@@ -35,16 +35,16 @@ final readonly class ExplainRouteMatch
         $lines = [
             sprintf('Route: %s %s', $method, $path),
             sprintf('Matched: %s %s', $matched->method, $matched->pattern),
-            'Handler: ' . $matched->handler,
+            'Handler: '.$matched->handler,
         ];
 
         if ($matched->middleware !== []) {
-            $lines[] = 'Middleware: ' . implode(', ', $matched->middleware);
+            $lines[] = 'Middleware: '.implode(', ', $matched->middleware);
         }
 
         $params = $matched->parameters();
         if ($params !== []) {
-            $lines[] = 'Parameters: ' . implode(', ', $params);
+            $lines[] = 'Parameters: '.implode(', ', $params);
         }
 
         return implode("\n", $lines);

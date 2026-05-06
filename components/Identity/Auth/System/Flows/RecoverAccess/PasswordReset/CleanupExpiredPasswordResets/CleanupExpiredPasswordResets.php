@@ -14,7 +14,8 @@ final readonly class CleanupExpiredPasswordResets
         #[SensitiveParameter]
         private ?PruneExpiredPasswordResetsInterface $pruneExpiredPasswordResets,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     public function execute(): int
     {

@@ -15,17 +15,17 @@ final readonly class Dispatcher
     {
     }
 
-    public function dispatch(JobDefinition $jobDefinition) : JobId
+    public function dispatch(JobDefinition $jobDefinition): JobId
     {
         return $this->dispatchJob->dispatch($jobDefinition, $this->queueBroker);
     }
 
-    public function dispatchSync(JobDefinition $jobDefinition) : mixed
+    public function dispatchSync(JobDefinition $jobDefinition): mixed
     {
         return $this->dispatchJob->dispatchSync($jobDefinition);
     }
 
-    public function later(JobDefinition $jobDefinition, DateTimeInterface $delay) : JobId
+    public function later(JobDefinition $jobDefinition, DateTimeInterface $delay): JobId
     {
         return $this->dispatchJob->later($jobDefinition, $delay, $this->queueBroker);
     }
@@ -39,12 +39,12 @@ final readonly class Dispatcher
 final readonly class JobId
 {
     public function __construct(
-        public string  $value,
+        public string $value,
         public ?string $queue = null,
     ) {
     }
 
-    public static function generate(?string $queue = null) : self
+    public static function generate(?string $queue = null): self
     {
         return new self(
             value: uniqid('job-', true),
@@ -56,10 +56,10 @@ final readonly class JobId
 final readonly class JobResult
 {
     public function __construct(
-        public bool    $success,
-        public mixed   $result = null,
+        public bool $success,
+        public mixed $result = null,
         public ?string $error = null,
-        public ?int    $attempts = null,
+        public ?int $attempts = null,
     ) {
     }
 

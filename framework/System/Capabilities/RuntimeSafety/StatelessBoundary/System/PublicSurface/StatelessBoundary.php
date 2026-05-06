@@ -10,24 +10,24 @@ final class StatelessBoundary
 {
     private static string $mode = 'hybrid';
 
-    public static function configure(string $mode) : void
+    public static function configure(string $mode): void
     {
         self::$mode = $mode;
     }
 
-    public static function mode() : string
+    public static function mode(): string
     {
         return self::$mode;
     }
 
-    public static function enforceForRoute(string $route) : void
+    public static function enforceForRoute(string $route): void
     {
         if (self::isStatelessRoute($route)) {
             StatelessGuard::enforce();
         }
     }
 
-    public static function isStatelessRoute(string $route) : bool
+    public static function isStatelessRoute(string $route): bool
     {
         if (self::$mode === 'stateless') {
             return true;
@@ -40,7 +40,7 @@ final class StatelessBoundary
         return str_starts_with($route, '/api/');
     }
 
-    public static function audit() : BoundaryAudit
+    public static function audit(): BoundaryAudit
     {
         return new BoundaryAudit(
             mode              : self::$mode,
@@ -52,7 +52,7 @@ final class StatelessBoundary
     /**
      * @return list<string>
      */
-    private static function detectedStatelessRoutes() : array
+    private static function detectedStatelessRoutes(): array
     {
         return ['/api/*'];
     }
@@ -60,7 +60,7 @@ final class StatelessBoundary
     /**
      * @return list<string>
      */
-    private static function detectViolations() : array
+    private static function detectViolations(): array
     {
         return [];
     }

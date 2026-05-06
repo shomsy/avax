@@ -10,7 +10,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 final readonly class BuildResponse
 {
     public function __construct(
-        private NormalizeResponseBody    $normalizeResponseBody,
+        private NormalizeResponseBody $normalizeResponseBody,
         private NormalizeResponseHeaders $normalizeResponseHeaders,
     ) {
     }

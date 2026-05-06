@@ -21,7 +21,7 @@ interface CacheStoreInterface
     public function has(string $key): bool;
 
     /**
-     * @param array<string> $tags
+     * @param  array<string>  $tags
      */
     public function tags(array $tags): TaggedCache;
 }

@@ -1,23 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataLayer\AccessPersistentData;
-
-use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
-use Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure;
 
 final class AccessPersistentData
 {
     public function __construct(
         private object $databaseRuntime
-    ) {}
+    ) {
+    }
 
-    public function read(PersistentDataRequest $request) : PersistentDataResult
+    public function read(PersistentDataRequest $request): PersistentDataResult
     {
         return $this->raw(request: $request);
     }
 
-    public function raw(PersistentDataRequest $request) : PersistentDataResult
+    public function raw(PersistentDataRequest $request): PersistentDataResult
     {
         $this->validateParameters(request: $request);
 
@@ -39,7 +38,7 @@ final class AccessPersistentData
         throw new PersistentDataFailure(message: 'Database runtime does not support raw queries');
     }
 
-    private function validateParameters(PersistentDataRequest $request) : void
+    private function validateParameters(PersistentDataRequest $request): void
     {
         foreach ($request->parameters as $key => $value) {
             if (is_numeric($key)) {
@@ -48,7 +47,7 @@ final class AccessPersistentData
         }
     }
 
-    public function transaction(callable $callback, string $connectionName = 'primary') : mixed
+    public function transaction(callable $callback, string $connectionName = 'primary'): mixed
     {
         if (method_exists($this->databaseRuntime, 'runDataTransaction')) {
             // @phpstan-ignore-next-line

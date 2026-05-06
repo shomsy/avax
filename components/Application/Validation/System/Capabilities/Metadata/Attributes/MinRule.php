@@ -16,9 +16,10 @@ final readonly class MinRule
     public function __construct(
         private int|float|string $min,
         private string $message = 'Field "{property}" must be at least {min}.',
-    ) {}
+    ) {
+    }
 
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if ($value === null || $value === '') {
             return;

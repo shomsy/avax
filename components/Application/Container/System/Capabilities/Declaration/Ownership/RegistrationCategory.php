@@ -17,7 +17,7 @@ final class RegistrationCategory
 
     public const string FOUNDATION = 'foundation';
 
-    public static function normalize(string $category) : string
+    public static function normalize(string $category): string
     {
         $normalized = strtolower(string: trim(string: $category));
 
@@ -29,7 +29,7 @@ final class RegistrationCategory
     /**
      * @return list<string>
      */
-    public static function all() : array
+    public static function all(): array
     {
         return [
             self::FLOW,

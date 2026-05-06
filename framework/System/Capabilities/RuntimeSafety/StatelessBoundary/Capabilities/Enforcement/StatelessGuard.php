@@ -24,6 +24,6 @@ final readonly class StatelessGuard
 
     public static function detectCookieWrite(): bool
     {
-        return !headers_sent();
+        return ! headers_sent();
     }
 }

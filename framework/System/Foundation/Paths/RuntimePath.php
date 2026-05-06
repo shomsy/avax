@@ -29,13 +29,13 @@ final readonly class RuntimePath
         $this->value = $projectPath->join(relativePath: $normalizedPath);
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value;
     }
 
-    public function join(string $relativePath) : string
+    public function join(string $relativePath): string
     {
-        return $this->value . '/' . ltrim(string: $relativePath, characters: '/');
+        return $this->value.'/'.ltrim(string: $relativePath, characters: '/');
     }
 }

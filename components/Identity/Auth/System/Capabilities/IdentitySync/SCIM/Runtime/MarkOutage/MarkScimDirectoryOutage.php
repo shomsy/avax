@@ -6,16 +6,18 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Ru
 
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectoryStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 final readonly class MarkScimDirectoryOutage
 {
-    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function execute(MarkScimDirectoryOutageData $markScimDirectoryOutageData) : ScimDirectory
+    public function execute(MarkScimDirectoryOutageData $markScimDirectoryOutageData): ScimDirectory
     {
         $directory = $this->scimDirectoryStore->find(directoryId: $markScimDirectoryOutageData->directoryId);
 
@@ -29,9 +31,9 @@ final readonly class MarkScimDirectoryOutage
             name      : 'auth.scim.directory.outage_marked',
             occurredAt: $this->clock->now(),
             context   : [
-                            'directory_id' => $scimDirectory->directoryId,
-                            'tenant'       => $scimDirectory->tenantSlug,
-                            'reason'       => $scimDirectory->outageReason,
+                'directory_id' => $scimDirectory->directoryId,
+                'tenant' => $scimDirectory->tenantSlug,
+                'reason' => $scimDirectory->outageReason,
             ],
         ));
 

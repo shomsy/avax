@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
@@ -21,8 +21,8 @@ final class CompatibilityTarget
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-compatibility-' . uniqid();
-$version  = 'compiled-compatibility-smoke';
+$cacheDir = sys_get_temp_dir().'/container-compatibility-'.uniqid();
+$version = 'compiled-compatibility-smoke';
 
 $compiled = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
@@ -43,7 +43,7 @@ $reloaded = makeTestContainer(config: CreateContainerConfig::create(
 ));
 $reloaded->singleton(abstract: CompatibilityDependency::class, concrete: CompatibilityDependency::class);
 
-$report   = $reloaded->compileReport(serviceIds: [CompatibilityTarget::class]);
+$report = $reloaded->compileReport(serviceIds: [CompatibilityTarget::class]);
 $resolved = $reloaded->get(id: CompatibilityTarget::class);
 
 assertTrue(condition: $report !== null, message: 'Compile reports should still exist for incompatible artifacts.');
@@ -65,4 +65,4 @@ assertTrue(
 assertTrue(condition: ! $reloaded->isCompiled(id: CompatibilityTarget::class), message: 'Incompatible artifacts must not report compiled service availability.');
 assertSame(expected: 'compatibility', actual: $resolved->dependency->id(), message: 'Runtime should fall back to dynamic resolution for incompatible artifacts.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

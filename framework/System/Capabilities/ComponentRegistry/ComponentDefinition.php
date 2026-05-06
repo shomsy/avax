@@ -8,7 +8,7 @@ final readonly class ComponentDefinition
 {
     public function __construct(
         private string $name,
-        private string|null $providerClass = null,
+        private ?string $providerClass = null,
     ) {
     }
 
@@ -17,7 +17,7 @@ final readonly class ComponentDefinition
         return $this->name;
     }
 
-    public function providerClass() : string|null
+    public function providerClass(): ?string
     {
         return $this->providerClass;
     }

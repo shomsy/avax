@@ -9,9 +9,10 @@ final readonly class SourceValueWasLoaded
     public function __construct(
         public CacheSourceKey $cacheSourceKey,
         public mixed $value,
-    ) {}
+    ) {
+    }
 
-    public function hasValue() : bool
+    public function hasValue(): bool
     {
         return $this->value !== null;
     }

@@ -16,7 +16,7 @@ final readonly class AuditContainerScope
     }
 
     /**
-     * @param list<ScopeViolation> $violations
+     * @param  list<ScopeViolation>  $violations
      */
     public static function printReport(array $violations): int
     {
@@ -35,7 +35,7 @@ final readonly class AuditContainerScope
             echo sprintf("  Dependency: %s\n\n", $violation->dependency);
         }
 
-        echo 'Total: ' . count($violations) . " violation(s)\n";
+        echo 'Total: '.count($violations)." violation(s)\n";
 
         return 1;
     }

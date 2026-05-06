@@ -8,7 +8,8 @@ final readonly class RouteMethod
 {
     public function __construct(
         private string $method,
-    ) {}
+    ) {
+    }
 
     public function toString(): string
     {

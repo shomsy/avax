@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\WorkerManagement\PublicSurface;
 
-use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Stringable;
-use Avax\Framework\System\Capabilities\WorkerManagement\Capabilities\Workers\WorkerProcess;
-
 final readonly class Workers
 {
     public function __construct(private WorkerPool $workerPool)
@@ -14,7 +11,7 @@ final readonly class Workers
     }
 
     /**
-     * @param array{max_memory?: int} $options
+     * @param  array{max_memory?: int}  $options
      */
     public function start(int $processes = 1, array $options = []): void
     {

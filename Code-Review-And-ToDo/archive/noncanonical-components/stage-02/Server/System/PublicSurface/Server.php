@@ -11,17 +11,16 @@ final readonly class Server
 {
     public static function serve(
         string $host = '0.0.0.0',
-        int    $port = 8000,
+        int $port = 8000,
         string $router = 'auto',
-    ) : ServerResult
-    {
+    ): ServerResult {
         $routerFile = match ($router) {
-            'auto'  => self::findRouterFile(),
+            'auto' => self::findRouterFile(),
             default => $router,
         };
 
         if (! file_exists($routerFile)) {
-            return ServerResult::error('Router file not found: ' . $routerFile);
+            return ServerResult::error('Router file not found: '.$routerFile);
         }
 
         $started = RunApplicationOnRunApplicationOnPhpBuiltInServer::start(
@@ -41,7 +40,7 @@ final readonly class Server
         return ServerResult::error(sprintf('Failed to start server on %s:%d', $host, $port));
     }
 
-    public static function findRouterFile() : string
+    public static function findRouterFile(): string
     {
         $candidates = [
             'routes/web.php',
@@ -54,7 +53,7 @@ final readonly class Server
         $basePath = dirname(path: __DIR__, levels: 4);
 
         foreach ($candidates as $candidate) {
-            $path = $basePath . '/' . $candidate;
+            $path = $basePath.'/'.$candidate;
             if (file_exists($path)) {
                 return $path;
             }
@@ -63,10 +62,10 @@ final readonly class Server
         throw new RuntimeException('No router file found. Create routes/web.php or routes/api.php');
     }
 
-    public static function findPublicPath() : string
+    public static function findPublicPath(): string
     {
-        $basePath   = dirname(path: __DIR__, levels: 4);
-        $publicPath = $basePath . '/public';
+        $basePath = dirname(path: __DIR__, levels: 4);
+        $publicPath = $basePath.'/public';
 
         if (! is_dir($publicPath)) {
             mkdir($publicPath, 0o755, true);
@@ -79,19 +78,19 @@ final readonly class Server
 final class ServerResult
 {
     private function __construct(
-        public bool   $success,
+        public bool $success,
         public string $message = '',
         public string $host = '0.0.0.0',
-        public int    $port = 8000,
+        public int $port = 8000,
         public string $router = '',
-    ) {}
+    ) {
+    }
 
     public static function success(
         string $host,
-        int    $port,
+        int $port,
         string $router,
-    ) : self
-    {
+    ): self {
         return new self(
             success: true,
             message: sprintf('Server started at http://%s:%d', $host, $port),
@@ -101,7 +100,7 @@ final class ServerResult
         );
     }
 
-    public static function error(string $message) : self
+    public static function error(string $message): self
     {
         return new self(
             success: false,
@@ -112,15 +111,15 @@ final class ServerResult
     /**
      * @return array<string, mixed>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'success' => $this->success,
             'message' => $this->message,
-            'host'    => $this->host,
-            'port'    => $this->port,
-            'router'  => $this->router,
-            'url'     => $this->success ? sprintf('http://%s:%d', $this->host, $this->port) : null,
+            'host' => $this->host,
+            'port' => $this->port,
+            'router' => $this->router,
+            'url' => $this->success ? sprintf('http://%s:%d', $this->host, $this->port) : null,
         ];
     }
 }

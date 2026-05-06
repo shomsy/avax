@@ -9,14 +9,16 @@ use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 
 final readonly class SmtpTransport implements MailTransport
 {
-    public function __construct(private array $config = []) {}
+    public function __construct(private array $config = [])
+    {
+    }
 
-    public function send(MimeMessage $mimeMessage, Envelope $envelope) : TransportResult
+    public function send(MimeMessage $mimeMessage, Envelope $envelope): TransportResult
     {
         $headers = [
-            'From: ' . $envelope->from,
+            'From: '.$envelope->from,
             'MIME-Version: 1.0',
-            'Content-Type: ' . $mimeMessage->contentType . '; charset=UTF-8',
+            'Content-Type: '.$mimeMessage->contentType.'; charset=UTF-8',
         ];
 
         $sent = mail(
@@ -32,7 +34,7 @@ final readonly class SmtpTransport implements MailTransport
 
         return new TransportResult(
             success  : true,
-            messageId: '<' . uniqid(prefix: 'msg-', more_entropy: true) . '@' . ($this->config['domain'] ?? 'localhost') . '>',
+            messageId: '<'.uniqid(prefix: 'msg-', more_entropy: true).'@'.($this->config['domain'] ?? 'localhost').'>',
         );
     }
 

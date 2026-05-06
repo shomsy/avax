@@ -15,7 +15,8 @@ final readonly class VerifyPassword
 {
     public function __construct(
         private PasswordHasher $passwordHasher,
-    ) {}
+    ) {
+    }
 
     public function execute(User $user, string $password): bool
     {

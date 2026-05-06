@@ -13,7 +13,8 @@ final readonly class ChunkValues
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $size): array
     {

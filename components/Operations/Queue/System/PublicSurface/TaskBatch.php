@@ -11,8 +11,7 @@ final readonly class TaskBatch
     public function __construct(
         /** @var list<object> */
         private array $tasks
-    )
-    {
+    ) {
     }
 
     public function dispatch(): void

@@ -10,5 +10,6 @@ readonly class DiskDefinition
         public string $name,
         public string $driver,
         public array $config = [],
-    ) {}
+    ) {
+    }
 }

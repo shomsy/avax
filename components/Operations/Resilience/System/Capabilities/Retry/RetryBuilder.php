@@ -12,29 +12,28 @@ final class RetryBuilder
 
     public function __construct(
         private readonly Closure $operation,
-    )
-    {
+    ) {
         $this->retryOptions = new RetryOptions(
             attempts : 3,
             backoffMs: 200,
         );
     }
 
-    public function times(int $attempts) : self
+    public function times(int $attempts): self
     {
         $this->retryOptions = $this->retryOptions->withAttempts($attempts);
 
         return $this;
     }
 
-    public function backoff(int $milliseconds) : self
+    public function backoff(int $milliseconds): self
     {
         $this->retryOptions = $this->retryOptions->withBackoff($milliseconds);
 
         return $this;
     }
 
-    public function run() : RetryResult
+    public function run(): RetryResult
     {
         $retryExecutor = new RetryExecutor($this->operation, $this->retryOptions);
 

@@ -13,16 +13,16 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\FilesystemInterf
 
 final class RegisterFilesystem
 {
-    public function execute(BindingRegistry $bindingRegistry) : void
+    public function execute(BindingRegistry $bindingRegistry): void
     {
         $bindingRegistry->singleton(
             abstract: FilesystemConfig::class,
-            concrete: static fn () : FilesystemConfig => FilesystemConfig::defaults(),
+            concrete: static fn (): FilesystemConfig => FilesystemConfig::defaults(),
         );
 
         $bindingRegistry->singleton(
             abstract: ResolveDisk::class,
-            concrete: static fn (ResolveDependency $resolver) : ResolveDisk => new ResolveDisk(
+            concrete: static fn (ResolveDependency $resolver): ResolveDisk => new ResolveDisk(
                 filesystemConfig: $resolver->resolve(abstract: FilesystemConfig::class),
             ),
         );
@@ -34,7 +34,7 @@ final class RegisterFilesystem
 
         $bindingRegistry->singleton(
             abstract: Filesystem::class,
-            concrete: static fn (ResolveDependency $resolver) : Filesystem => new Filesystem(
+            concrete: static fn (ResolveDependency $resolver): Filesystem => new Filesystem(
                 disk: $resolver->resolve(abstract: Disk::class),
             ),
         );

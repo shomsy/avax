@@ -8,5 +8,6 @@ final readonly class SessionState
 {
     public function __construct(
         public string $value,
-    ) {}
+    ) {
+    }
 }

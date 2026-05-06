@@ -11,7 +11,8 @@ final readonly class TrimValues
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(string $characters = " \n\r\t\v\x00"): array
     {

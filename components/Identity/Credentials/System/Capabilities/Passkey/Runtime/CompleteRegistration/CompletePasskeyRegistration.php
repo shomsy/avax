@@ -9,12 +9,12 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLog
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengeRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengeStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredentialStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyRuntimeInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use SensitiveParameter;
 
 final readonly class CompletePasskeyRegistration
@@ -22,19 +22,20 @@ final readonly class CompletePasskeyRegistration
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-        private PasskeyRuntimeInterface         $passkeyRuntime,
+        private PasskeyRuntimeInterface $passkeyRuntime,
         #[SensitiveParameter]
         private PasskeyCredentialStoreInterface $passkeyCredentialStore,
-        private PasskeyChallengeStoreInterface  $passkeyChallengeStore,
+        private PasskeyChallengeStoreInterface $passkeyChallengeStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
         private string $rpId,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PasskeyOperationFailed
      */
-    public function execute(CompletePasskeyRegistrationData $completePasskeyRegistrationData) : PasskeyCredential
+    public function execute(CompletePasskeyRegistrationData $completePasskeyRegistrationData): PasskeyCredential
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -77,10 +78,10 @@ final readonly class CompletePasskeyRegistration
             name      : 'auth.passkey.registered',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id'    => $user->id,
-                            'credential_id' => $passkeyCredential->credentialId,
-                            'ip_address'    => $completePasskeyRegistrationData->ipAddress,
-                            'user_agent'    => $completePasskeyRegistrationData->userAgent,
+                'user_id' => $user->id,
+                'credential_id' => $passkeyCredential->credentialId,
+                'ip_address' => $completePasskeyRegistrationData->ipAddress,
+                'user_agent' => $completePasskeyRegistrationData->userAgent,
             ],
         ));
 

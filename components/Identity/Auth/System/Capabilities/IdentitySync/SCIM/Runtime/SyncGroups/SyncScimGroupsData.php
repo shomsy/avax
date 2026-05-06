@@ -10,7 +10,7 @@ use SensitiveParameter;
 final readonly class SyncScimGroupsData
 {
     /**
-     * @param list<string> $groups
+     * @param  list<string>  $groups
      */
     public function __construct(
         public string $directoryId,
@@ -19,5 +19,6 @@ final readonly class SyncScimGroupsData
         public string $externalId,
         public array $groups,
         public ScimAccountState $state = ScimAccountState::ACTIVE,
-    ) {}
+    ) {
+    }
 }

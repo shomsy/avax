@@ -9,7 +9,8 @@ final readonly class RouteParameter
     public function __construct(
         private string $name,
         private mixed $value,
-    ) {}
+    ) {
+    }
 
     public function name(): string
     {

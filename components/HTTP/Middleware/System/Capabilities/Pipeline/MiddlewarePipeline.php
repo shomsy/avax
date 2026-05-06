@@ -16,32 +16,32 @@ final class MiddlewarePipeline
     private array $middleware = [];
 
     /**
-     * @param list<MiddlewareInterface> $middleware
+     * @param  list<MiddlewareInterface>  $middleware
      */
     public function __construct(array $middleware = [])
     {
         $this->middleware = $middleware;
     }
 
-    public function add(MiddlewareInterface $middleware) : void
+    public function add(MiddlewareInterface $middleware): void
     {
         $this->middleware[] = $middleware;
     }
 
-    public function run(RequestInterface $request, callable $core) : ResponseInterface
+    public function run(RequestInterface $request, callable $core): ResponseInterface
     {
         $handler = $core;
 
         $pipeline = $this->middleware;
-        while ( $mw = array_pop($pipeline) ) {
+        while ($mw = array_pop($pipeline)) {
             $handler = $this->wrapMiddleware($mw, $handler);
         }
 
         return $handler($request);
     }
 
-    private function wrapMiddleware(MiddlewareInterface $middleware, callable $next) : callable
+    private function wrapMiddleware(MiddlewareInterface $middleware, callable $next): callable
     {
-        return static fn (RequestInterface $request) : ResponseInterface => $middleware->handle($request, $next);
+        return static fn (RequestInterface $request): ResponseInterface => $middleware->handle($request, $next);
     }
 }

@@ -16,9 +16,11 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFa
 
 final readonly class SuspendTenantMember
 {
-    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function execute(SuspendTenantMemberData $suspendTenantMemberData) : TenantMember
+    public function execute(SuspendTenantMemberData $suspendTenantMemberData): TenantMember
     {
         $tenant = $this->tenantStore->findTenantBySlug(slug: $suspendTenantMemberData->tenantSlug);
 
@@ -48,9 +50,9 @@ final readonly class SuspendTenantMember
             name      : 'auth.tenant.member.suspended',
             occurredAt: $this->clock->now(),
             context   : [
-                            'tenant_id' => $tenant->tenantId,
+                'tenant_id' => $tenant->tenantId,
                 'tenant_slug' => $tenant->slug,
-                            'user_id'   => $member->userId,
+                'user_id' => $member->userId,
             ],
         ));
 

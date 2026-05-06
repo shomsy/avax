@@ -23,7 +23,7 @@ final class StaticStateScanner
      *
      * @return list<RuntimeSafetyFinding>
      */
-    public function scan() : array
+    public function scan(): array
     {
         $findings = [];
 
@@ -57,7 +57,7 @@ final class StaticStateScanner
     }
 
     /**
-     * @param class-string $className
+     * @param  class-string  $className
      * @return list<RuntimeSafetyFinding>
      */
     private function scanClass(string $className): array
@@ -67,7 +67,7 @@ final class StaticStateScanner
         $reflectionClass = new ReflectionClass($className);
 
         $staticProperties = $reflectionClass->getProperties(ReflectionProperty::IS_STATIC);
-        $hasResetHook     = $reflectionClass->implementsInterface(ResettableState::class);
+        $hasResetHook = $reflectionClass->implementsInterface(ResettableState::class);
 
         foreach ($staticProperties as $staticProperty) {
             if ($staticProperty->isReadOnly()) {
@@ -83,15 +83,15 @@ final class StaticStateScanner
                 severity   : RuntimeSafetyFinding::SEVERITY_WARNING,
                 component  : $className,
                 message    : sprintf(
-                                 'Class %s has mutable static property $%s without reset hook',
-                                 $className,
-                                 $staticProperty->getName(),
-                             ),
+                    'Class %s has mutable static property $%s without reset hook',
+                    $className,
+                    $staticProperty->getName(),
+                ),
                 remediation: sprintf(
-                                 'Implement ResettableState on %s or make $%s readonly',
-                                 $className,
-                                 $staticProperty->getName(),
-                             ),
+                    'Implement ResettableState on %s or make $%s readonly',
+                    $className,
+                    $staticProperty->getName(),
+                ),
                 location   : $this->propertyLocation(reflectionProperty: $staticProperty),
             );
         }
@@ -100,7 +100,7 @@ final class StaticStateScanner
     }
 
     /**
-     * @param class-string $traitName
+     * @param  class-string  $traitName
      * @return list<RuntimeSafetyFinding>
      */
     private function scanTrait(string $traitName): array
@@ -119,10 +119,10 @@ final class StaticStateScanner
                 severity   : RuntimeSafetyFinding::SEVERITY_WARNING,
                 component  : $traitName,
                 message    : sprintf(
-                                 'Trait %s introduces mutable static state via $%s',
-                                 $traitName,
-                                 $reflectionProperty->getName(),
-                             ),
+                    'Trait %s introduces mutable static state via $%s',
+                    $traitName,
+                    $reflectionProperty->getName(),
+                ),
                 remediation: 'Avoid static state in traits or ensure consumers implement ResettableState',
                 location   : $this->propertyLocation(reflectionProperty: $reflectionProperty),
             );
@@ -131,12 +131,12 @@ final class StaticStateScanner
         return $findings;
     }
 
-    private function propertyLocation(ReflectionProperty $reflectionProperty) : string
+    private function propertyLocation(ReflectionProperty $reflectionProperty): string
     {
         $reflectionClass = $reflectionProperty->getDeclaringClass();
-        $file            = $reflectionClass->getFileName();
-        $line            = $reflectionClass->getStartLine();
+        $file = $reflectionClass->getFileName();
+        $line = $reflectionClass->getStartLine();
 
-        return ($file !== false ? $file : $reflectionClass->getName()) . ':' . $line;
+        return ($file !== false ? $file : $reflectionClass->getName()).':'.$line;
     }
 }

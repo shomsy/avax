@@ -13,7 +13,8 @@ final readonly class FindMinValue
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(string|callable $key): mixed
     {

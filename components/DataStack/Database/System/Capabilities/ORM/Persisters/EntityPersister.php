@@ -20,7 +20,8 @@ final readonly class EntityPersister
         private Query $query,
         private AttributeMetadataReader $attributeMetadataReader,
         private Hydrator $hydrator,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Throwable
@@ -32,7 +33,7 @@ final readonly class EntityPersister
         $payload = $this->payload(entity: $entity, includeIdentifier: false, metadata: $entityMetadata);
 
         $queryBuilder = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
-        $generatedId  = $queryBuilder->insertGetId(values: $payload);
+        $generatedId = $queryBuilder->insertGetId(values: $payload);
 
         if ($identifier instanceof FieldMetadata && $identifier->generated) {
             $this->setPropertyValue(entity: $entity, property: $identifier->property, value: $generatedId);
@@ -158,7 +159,7 @@ final readonly class EntityPersister
     }
 
     /**
-     * @param class-string $entityClass
+     * @param  class-string  $entityClass
      *
      * @throws Throwable
      */
@@ -185,8 +186,7 @@ final readonly class EntityPersister
     }
 
     /**
-     * @param array<string, mixed> $criteria
-     *
+     * @param  array<string, mixed>  $criteria
      * @return list<object>
      *
      * @throws Throwable
@@ -199,8 +199,8 @@ final readonly class EntityPersister
     }
 
     /**
-     * @param class-string         $entityClass
-     * @param array<string, mixed> $criteria
+     * @param  class-string  $entityClass
+     * @param  array<string, mixed>  $criteria
      * @return list<object>
      *
      * @throws Throwable
@@ -215,16 +215,16 @@ final readonly class EntityPersister
         ?string $connectionName = null,
     ): array {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
-        $query          = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
+        $query = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
 
         foreach ($criteria as $column => $value) {
             $actualColumn = $entityMetadata->fields[$column]->column ?? $column;
-            $query        = $query->where(column: $actualColumn, operator: '=', value: $value);
+            $query = $query->where(column: $actualColumn, operator: '=', value: $value);
         }
 
         if ($orderBy !== null) {
             $actualOrderBy = $entityMetadata->fields[$orderBy]->column ?? $orderBy;
-            $query         = $query->orderBy(column: $actualOrderBy, direction: $direction ?? 'ASC');
+            $query = $query->orderBy(column: $actualOrderBy, direction: $direction ?? 'ASC');
         }
 
         if ($limit !== null) {
@@ -236,7 +236,7 @@ final readonly class EntityPersister
         }
 
         return array_map(
-            callback: fn (array $row) : object => $this->hydrator->hydrate(
+            callback: fn (array $row): object => $this->hydrator->hydrate(
                 entityClass: $entityClass,
                 row        : $row,
                 metadata   : $entityMetadata,

@@ -20,7 +20,9 @@ final class NativeSessionStore implements SessionStoreInterface
 
     private bool $cliFallbackActive = false;
 
-    public function __construct(private readonly SessionCookieSettings $sessionCookieSettings = new SessionCookieSettings()) {}
+    public function __construct(private readonly SessionCookieSettings $sessionCookieSettings = new SessionCookieSettings())
+    {
+    }
 
     public function regenerate(): string
     {
@@ -65,11 +67,11 @@ final class NativeSessionStore implements SessionStoreInterface
 
         if (! headers_sent()) {
             session_set_cookie_params(lifetime_or_options: [
-                                                               'secure'   => $this->sessionCookieSettings->secure,
-                                                               'httponly' => $this->sessionCookieSettings->httpOnly,
-                                                               'samesite' => $this->normalizeSameSite(sameSite: $this->sessionCookieSettings->sameSite),
-                                                               'path'     => $this->sessionCookieSettings->path,
-                                                               'domain'   => $this->sessionCookieSettings->domain,
+                'secure' => $this->sessionCookieSettings->secure,
+                'httponly' => $this->sessionCookieSettings->httpOnly,
+                'samesite' => $this->normalizeSameSite(sameSite: $this->sessionCookieSettings->sameSite),
+                'path' => $this->sessionCookieSettings->path,
+                'domain' => $this->sessionCookieSettings->domain,
             ]);
         }
 
@@ -97,7 +99,7 @@ final class NativeSessionStore implements SessionStoreInterface
     {
         return match (strtolower(string: $sameSite)) {
             'strict' => 'Strict',
-            'none'  => 'None',
+            'none' => 'None',
             default => 'Lax',
         };
     }
@@ -109,7 +111,7 @@ final class NativeSessionStore implements SessionStoreInterface
 
     private function generateCliSessionId(): string
     {
-        return 'cli-session-' . str_replace(search: '.', replace: '', subject: uniqid(prefix: '', more_entropy: true));
+        return 'cli-session-'.str_replace(search: '.', replace: '', subject: uniqid(prefix: '', more_entropy: true));
     }
 
     private function readNativeSessionId(): string
@@ -199,9 +201,9 @@ final class NativeSessionStore implements SessionStoreInterface
             if ($sessionName !== false) {
                 setcookie($sessionName, '', [
                     'expires' => time() - 42000,
-                    'path'    => $params['path'],
-                    'domain'  => $params['domain'],
-                    'secure'  => $params['secure'],
+                    'path' => $params['path'],
+                    'domain' => $params['domain'],
+                    'secure' => $params['secure'],
                     'httponly' => $params['httponly'],
                     'samesite' => $this->normalizeSameSite(sameSite: $params['samesite']),
                 ]);

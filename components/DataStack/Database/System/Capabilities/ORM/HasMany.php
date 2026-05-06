@@ -11,23 +11,22 @@ use RuntimeException;
 final class HasMany extends Relation
 {
     /**
-     * @param (Closure(string, string, string, string): array)|null $loader
+     * @param  (Closure(string, string, string, string): array)|null  $loader
      */
     public function __construct(
-        string                        $parent,
-        string                        $related,
-        string                        $foreignKey,
-        string                        $localKey,
-        private readonly Closure|null $loader = null,
-    )
-    {
+        string $parent,
+        string $related,
+        string $foreignKey,
+        string $localKey,
+        private readonly ?Closure $loader = null,
+    ) {
         parent::__construct(parent: $parent, related: $related, foreignKey: $foreignKey, localKey: $localKey);
     }
 
     #[Override]
     public function getResults(): array
     {
-        if (!$this->loader instanceof Closure) {
+        if (! $this->loader instanceof Closure) {
             throw new RuntimeException(message: 'HasMany relation requires a loader before results can be read.');
         }
 

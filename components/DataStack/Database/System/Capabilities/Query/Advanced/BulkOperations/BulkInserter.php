@@ -15,7 +15,8 @@ final class BulkInserter
         private readonly GrammarInterface $grammar,
         private readonly string $table,
         private readonly array $columns,
-    ) {}
+    ) {
+    }
 
     public function batchSize(int $size): self
     {
@@ -50,7 +51,7 @@ final class BulkInserter
                 $placeholders[] = $value instanceof Expression ? $value->getValue() : '?';
             }
 
-            $valueGroups[] = '(' . implode(separator: ', ', array: $placeholders) . ')';
+            $valueGroups[] = '('.implode(separator: ', ', array: $placeholders).')';
         }
 
         implode(separator: ', ', array: $valueGroups);

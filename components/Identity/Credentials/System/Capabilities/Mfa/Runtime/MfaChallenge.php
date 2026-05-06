@@ -12,7 +12,9 @@ use DateTimeImmutable;
  */
 final readonly class MfaChallenge
 {
-    public function __construct(public string $challengeId, public MfaChallengePurpose $purpose, public DateTimeImmutable $expiresAt, public int $remainingAttempts) {}
+    public function __construct(public string $challengeId, public MfaChallengePurpose $purpose, public DateTimeImmutable $expiresAt, public int $remainingAttempts)
+    {
+    }
 
     /**
      * @return array<string, mixed>
@@ -21,8 +23,8 @@ final readonly class MfaChallenge
     {
         return [
             'challengeId' => $this->challengeId,
-            'purpose'     => $this->purpose->value,
-            'expiresAt'   => $this->expiresAt,
+            'purpose' => $this->purpose->value,
+            'expiresAt' => $this->expiresAt,
             'remainingAttempts' => $this->remainingAttempts,
         ];
     }

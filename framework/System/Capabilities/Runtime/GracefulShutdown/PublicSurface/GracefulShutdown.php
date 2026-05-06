@@ -11,12 +11,12 @@ final readonly class GracefulShutdown
 {
     public static function install(int $timeoutSeconds = 30): void
     {
-        if (!extension_loaded('pcntl')) {
+        if (! extension_loaded('pcntl')) {
             return;
         }
 
-        pcntl_signal(SIGTERM, static fn() => ShutdownSequence::execute($timeoutSeconds));
-        pcntl_signal(SIGINT, static fn() => ShutdownSequence::execute($timeoutSeconds));
+        pcntl_signal(SIGTERM, static fn () => ShutdownSequence::execute($timeoutSeconds));
+        pcntl_signal(SIGINT, static fn () => ShutdownSequence::execute($timeoutSeconds));
     }
 
     public static function sequence(): ShutdownSequence

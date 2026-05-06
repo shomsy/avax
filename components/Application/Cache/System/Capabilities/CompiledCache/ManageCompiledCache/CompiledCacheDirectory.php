@@ -48,11 +48,11 @@ final readonly class CompiledCacheDirectory
 
     public function resolve(string $filename): CompiledCachePath
     {
-        return new CompiledCachePath(path: $this->path . DIRECTORY_SEPARATOR . $filename . '.php');
+        return new CompiledCachePath(path: $this->path.DIRECTORY_SEPARATOR.$filename.'.php');
     }
 
     public function resolveManifestPath(): CompiledCachePath
     {
-        return new CompiledCachePath(path: $this->path . DIRECTORY_SEPARATOR . 'manifest.php');
+        return new CompiledCachePath(path: $this->path.DIRECTORY_SEPARATOR.'manifest.php');
     }
 }

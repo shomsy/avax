@@ -53,10 +53,10 @@ foreach ($files as $filePath) {
 
 echo "\n=== Summary ===\n";
 echo sprintf('Total files: %d%s', $totalFiles, PHP_EOL);
-echo 'Missing mermaid: ' . count(value: $missingFiles) . "\n";
+echo 'Missing mermaid: '.count(value: $missingFiles)."\n";
 
 if ($missingFiles !== []) {
-    echo "\nFAIL: " . count(value: $missingFiles) . " how-this-works.md file(s) missing Mermaid diagram block\n";
+    echo "\nFAIL: ".count(value: $missingFiles)." how-this-works.md file(s) missing Mermaid diagram block\n";
     exit(EXIT_FAILURE);
 }
 
@@ -114,7 +114,7 @@ function containsMermaidBlock(string $filePath): bool
     $content = file_get_contents(filename: $filePath);
 
     if ($content === false) {
-        throw new RuntimeException(message: 'Unable to read file: ' . $filePath);
+        throw new RuntimeException(message: 'Unable to read file: '.$filePath);
     }
 
     return preg_match(pattern: '/```mermaid\b/i', subject: $content) === 1;
@@ -122,13 +122,13 @@ function containsMermaidBlock(string $filePath): bool
 
 function shouldSkip(string $relativePath): bool
 {
-    return array_any(array: EXCLUDED_PATH_PREFIXES, callback: static fn ($prefix) : bool => str_starts_with(haystack: $relativePath, needle: (string) $prefix));
+    return array_any(array: EXCLUDED_PATH_PREFIXES, callback: static fn ($prefix): bool => str_starts_with(haystack: $relativePath, needle: (string) $prefix));
 
 }
 
 function toRelativePath(string $fullPath, string $rootDirectory): string
 {
-    $normalizedRoot = rtrim(string: $rootDirectory, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    $normalizedRoot = rtrim(string: $rootDirectory, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
     if (str_starts_with(haystack: $fullPath, needle: $normalizedRoot)) {
         return substr(string: $fullPath, offset: strlen(string: $normalizedRoot));

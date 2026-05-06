@@ -8,7 +8,7 @@ use DateTimeImmutable;
 
 interface PasskeyCredentialStoreInterface
 {
-    public function save(PasskeyCredential $passkeyCredential) : void;
+    public function save(PasskeyCredential $passkeyCredential): void;
 
     public function find(string $credentialId): ?PasskeyCredential;
 

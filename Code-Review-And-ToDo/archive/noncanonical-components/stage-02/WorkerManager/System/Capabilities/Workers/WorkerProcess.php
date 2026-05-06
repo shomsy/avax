@@ -24,14 +24,14 @@ final class WorkerProcess
     private int $startTime = 0;
 
     /**
-     * @param array{max_memory?: int} $options
+     * @param  array{max_memory?: int}  $options
      */
     public function __construct(private readonly array $options = [])
     {
         $this->maxMemory = $this->options['max_memory'] ?? 128;
     }
 
-    public function restart(bool $graceful = false) : void
+    public function restart(bool $graceful = false): void
     {
         if ($graceful) {
             $this->drain();
@@ -42,12 +42,12 @@ final class WorkerProcess
         $this->start();
     }
 
-    public function drain() : void
+    public function drain(): void
     {
         $this->idle = true;
     }
 
-    public function stop() : void
+    public function stop(): void
     {
         if ($this->pid > 0) {
             posix_kill($this->pid, SIGTERM);
@@ -56,7 +56,7 @@ final class WorkerProcess
         $this->running = false;
     }
 
-    public function start() : void
+    public function start(): void
     {
         $pid = getmypid();
 
@@ -64,48 +64,48 @@ final class WorkerProcess
             throw new RuntimeException('Unable to resolve current process id.');
         }
 
-        $this->pid       = $pid;
-        $this->running   = true;
+        $this->pid = $pid;
+        $this->running = true;
         $this->startTime = time();
-        $this->idle      = true;
+        $this->idle = true;
     }
 
-    public function isRunning() : bool
+    public function isRunning(): bool
     {
         return $this->running;
     }
 
-    public function isIdle() : bool
+    public function isIdle(): bool
     {
         return $this->idle;
     }
 
-    public function isDead() : bool
+    public function isDead(): bool
     {
         return ! $this->running;
     }
 
-    public function taskCount() : int
+    public function taskCount(): int
     {
         return $this->taskCount;
     }
 
-    public function memoryUsage() : int
+    public function memoryUsage(): int
     {
         return $this->memoryUsage;
     }
 
-    public function maxMemory() : int
+    public function maxMemory(): int
     {
         return $this->maxMemory;
     }
 
-    public function uptime() : int
+    public function uptime(): int
     {
         return time() - $this->startTime;
     }
 
-    public function execute(Closure $task) : void
+    public function execute(Closure $task): void
     {
         $this->idle = false;
 

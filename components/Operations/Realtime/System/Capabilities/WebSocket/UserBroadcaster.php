@@ -6,11 +6,13 @@ namespace Avax\Components\Operations\Realtime\System\Capabilities\WebSocket;
 
 final readonly class UserBroadcaster
 {
-    public function __construct(private int|string $userId) {}
-
-    public function send(string $event, mixed $data) : int
+    public function __construct(private int|string $userId)
     {
-        $channel = 'user.' . $this->userId;
+    }
+
+    public function send(string $event, mixed $data): int
+    {
+        $channel = 'user.'.$this->userId;
 
         return WebSocketServer::broadcast(
             channel: $channel,

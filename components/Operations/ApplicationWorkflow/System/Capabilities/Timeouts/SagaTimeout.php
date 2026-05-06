@@ -11,7 +11,8 @@ final readonly class SagaTimeout
 {
     public function __construct(
         public int $timeoutMs = 30000,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a timeout in milliseconds.

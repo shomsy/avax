@@ -6,5 +6,5 @@ namespace Avax\Components\CLI\Commands\System\Capabilities\Generators;
 
 interface ControllerGeneratorInterface
 {
-    public function create(string $name) : void;
+    public function create(string $name): void;
 }

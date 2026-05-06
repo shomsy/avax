@@ -15,8 +15,7 @@ interface StringEncrypterInterface
     /**
      * Encrypt the given value.
      *
-     * @param mixed $value The value to encrypt.
-     *
+     * @param  mixed  $value  The value to encrypt.
      * @return string The encrypted string.
      */
     public function encrypt(mixed $value): string;
@@ -24,8 +23,7 @@ interface StringEncrypterInterface
     /**
      * Decrypt the given payload.
      *
-     * @param string $payload The encrypted payload.
-     *
+     * @param  string  $payload  The encrypted payload.
      * @return mixed The decrypted value.
      */
     public function decrypt(string $payload): mixed;

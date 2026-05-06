@@ -7,4 +7,6 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes;
 use Attribute;
 
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
-final readonly class Id {}
+final readonly class Id
+{
+}

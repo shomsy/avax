@@ -17,7 +17,8 @@ final readonly class PasskeyCredential
         public DateTimeImmutable $registeredAt,
         public ?DateTimeImmutable $lastUsedAt = null,
         public ?DateTimeImmutable $revokedAt = null,
-    ) {}
+    ) {
+    }
 
     public function isRevoked(): bool
     {

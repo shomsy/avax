@@ -19,5 +19,6 @@ final readonly class IssuedAuthorizationCode
         public string $codeId,
         public DateTimeImmutable $expiresAt,
         public ?string $state = null,
-    ) {}
+    ) {
+    }
 }

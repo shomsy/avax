@@ -12,7 +12,7 @@ use SensitiveParameter;
 final readonly class RefreshTokenRecord
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
         #[SensitiveParameter]
@@ -27,7 +27,8 @@ final readonly class RefreshTokenRecord
         public ?string $replacementId = null,
         public ?OAuthSenderConstraint $senderConstraint = null,
         public bool $revoked = false,
-    ) {}
+    ) {
+    }
 
     public function isExpired(): bool
     {

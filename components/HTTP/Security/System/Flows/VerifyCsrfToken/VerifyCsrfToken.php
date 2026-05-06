@@ -16,9 +16,10 @@ final readonly class VerifyCsrfToken
 
     public function __construct(
         private CsrfTokens $csrfTokens,
-    ) {}
+    ) {
+    }
 
-    public function handle(RequestInterface $serverRequest, Closure $next) : mixed
+    public function handle(RequestInterface $serverRequest, Closure $next): mixed
     {
         if (in_array($serverRequest->getMethod(), self::SAFE_METHODS, true)) {
             return $next($serverRequest);
@@ -33,7 +34,7 @@ final readonly class VerifyCsrfToken
         return $next($serverRequest);
     }
 
-    private function extractToken(RequestInterface $serverRequest) : ?string
+    private function extractToken(RequestInterface $serverRequest): ?string
     {
         $token = $serverRequest->getHeaderLine('X-CSRF-TOKEN')
             ?: $serverRequest->getHeaderLine('X-XSRF-TOKEN');
@@ -55,8 +56,8 @@ final readonly class VerifyCsrfToken
     {
         return (new Response(403, ['Content-Type' => 'application/json']))
             ->withBody(Utils::streamFor(json_encode([
-                                                        'error'   => 'CSRF_TOKEN_MISMATCH',
-                                                        'message' => 'The CSRF token is invalid or expired.',
-                                                    ])));
+                'error' => 'CSRF_TOKEN_MISMATCH',
+                'message' => 'The CSRF token is invalid or expired.',
+            ])));
     }
 }

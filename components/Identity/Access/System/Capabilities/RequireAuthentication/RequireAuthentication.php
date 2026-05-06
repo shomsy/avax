@@ -17,7 +17,8 @@ final readonly class RequireAuthentication
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated

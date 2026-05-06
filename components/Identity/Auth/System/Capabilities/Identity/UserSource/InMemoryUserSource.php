@@ -20,7 +20,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     /** @var array<int, User> */
     private array $users = [];
 
-    public function findById(UserId $userId) : ?User
+    public function findById(UserId $userId): ?User
     {
         return $this->users[$userId->value] ?? null;
     }
@@ -45,7 +45,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         #[SensitiveParameter]
         string $email,
     ): bool {
-        return array_any(array: $this->users, callback: static fn ($user) : bool => strtolower(string: (string) $user->getEmail()->value) === strtolower(string: $email));
+        return array_any(array: $this->users, callback: static fn ($user): bool => strtolower(string: (string) $user->getEmail()->value) === strtolower(string: $email));
     }
 
     public function findByEmail(#[SensitiveParameter] string $email): ?User
@@ -61,10 +61,10 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
 
     public function usernameExists(string $username): bool
     {
-        return array_any(array: $this->users, callback: static fn ($user) : bool => strtolower(string: (string) $user->getUsername()) === strtolower(string: $username));
+        return array_any(array: $this->users, callback: static fn ($user): bool => strtolower(string: (string) $user->getUsername()) === strtolower(string: $username));
     }
 
-    public function updatePassword(UserId $userId, #[SensitiveParameter] string $passwordHash) : void
+    public function updatePassword(UserId $userId, #[SensitiveParameter] string $passwordHash): void
     {
         $this->replace(
             mutate: static fn (User $user): User => User::create(
@@ -81,9 +81,9 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     }
 
     /**
-     * @param callable(User) : User $mutate
+     * @param  callable(User) : User  $mutate
      */
-    private function replace(UserId $userId, callable $mutate) : void
+    private function replace(UserId $userId, callable $mutate): void
     {
         $user = $this->users[$userId->value] ?? null;
 
@@ -101,7 +101,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         return $user;
     }
 
-    public function updateEmail(UserId $userId, #[SensitiveParameter] string $email) : void
+    public function updateEmail(UserId $userId, #[SensitiveParameter] string $email): void
     {
         $this->replace(
             mutate: static fn (User $user): User => User::create(
@@ -117,7 +117,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         );
     }
 
-    public function replaceRoles(UserId $userId, array $roles) : void
+    public function replaceRoles(UserId $userId, array $roles): void
     {
         $this->replace(
             mutate: static fn (User $user): User => User::create(
@@ -133,7 +133,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         );
     }
 
-    public function replacePermissions(UserId $userId, array $permissions) : void
+    public function replacePermissions(UserId $userId, array $permissions): void
     {
         $this->replace(
             mutate: static fn (User $user): User => User::create(
@@ -149,15 +149,15 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         );
     }
 
-    public function deactivate(UserId $userId) : void
+    public function deactivate(UserId $userId): void
     {
         $this->setActive(isActive: false, id: $userId);
     }
 
-    private function setActive(UserId $userId, bool $isActive) : void
+    private function setActive(UserId $userId, bool $isActive): void
     {
         $this->replace(
-            mutate: static fn (User $user) : User => User::create(
+            mutate: static fn (User $user): User => User::create(
                 username    : $user->username,
                 passwordHash: $user->passwordHash,
                 roles       : $user->roles,
@@ -170,7 +170,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         );
     }
 
-    public function activate(UserId $userId) : void
+    public function activate(UserId $userId): void
     {
         $this->setActive(isActive: true, id: $userId);
     }

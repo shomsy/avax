@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Filesystem\System\Capabilities\Paths;
 
 class PathIsWritable
 {
-    public function execute(string $path) : bool
+    public function execute(string $path): bool
     {
         return is_writable(filename: $path);
     }

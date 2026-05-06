@@ -21,15 +21,15 @@ interface RegisterDependency
      *
      * @return list<class-string<RegisterDependency>>
      */
-    public function dependsOn() : array;
+    public function dependsOn(): array;
 
     /**
      * Registers provider-owned services.
      */
-    public function register() : void;
+    public function register(): void;
 
     /**
      * Boots provider-owned side effects after registration.
      */
-    public function boot() : void;
+    public function boot(): void;
 }

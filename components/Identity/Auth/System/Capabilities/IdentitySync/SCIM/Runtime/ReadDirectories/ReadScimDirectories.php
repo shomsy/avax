@@ -9,12 +9,14 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Director
 
 final readonly class ReadScimDirectories
 {
-    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore) {}
+    public function __construct(private ScimDirectoryStoreInterface $scimDirectoryStore)
+    {
+    }
 
     /**
      * @return list<ScimDirectory>
      */
-    public function execute(?string $tenantSlug = null) : array
+    public function execute(?string $tenantSlug = null): array
     {
         $directories = $this->scimDirectoryStore->all();
 
@@ -24,7 +26,7 @@ final readonly class ReadScimDirectories
 
         return array_values(array: array_filter(
             array   : $directories,
-            callback: static fn (ScimDirectory $scimDirectory) : bool => $scimDirectory->tenantSlug === trim(string: $tenantSlug),
+            callback: static fn (ScimDirectory $scimDirectory): bool => $scimDirectory->tenantSlug === trim(string: $tenantSlug),
         ));
     }
 }

@@ -16,7 +16,8 @@ final readonly class ReadMigrationStatus
     public function __construct(
         private MigrationRepository $migrationRepository,
         private MigrationLoader $migrationLoader,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array{
@@ -28,8 +29,8 @@ final readonly class ReadMigrationStatus
      */
     public function read(string $path): array
     {
-        $all  = $this->migrationLoader->load(path: $path);
-        $ran  = $this->migrationRepository->getRan();
+        $all = $this->migrationLoader->load(path: $path);
+        $ran = $this->migrationRepository->getRan();
         $ranMap = array_column(array: $ran, column_key: 'checksum', index_key: 'migration');
         $rows = [];
 
@@ -44,7 +45,7 @@ final readonly class ReadMigrationStatus
                 $integrity = match (true) {
                     ! $dbChecksum => 'LEGACY',
                     $dbChecksum === $fileChecksum => 'OK',
-                    default       => 'TAMPERED',
+                    default => 'TAMPERED',
                 };
             }
 
@@ -56,10 +57,10 @@ final readonly class ReadMigrationStatus
         }
 
         return [
-            'rows'    => $rows,
+            'rows' => $rows,
             'summary' => [
                 'total' => count(value: $all),
-                'ran'   => count(value: $ran),
+                'ran' => count(value: $ran),
                 'pending' => count(value: $all) - count(value: $ran),
             ],
         ];

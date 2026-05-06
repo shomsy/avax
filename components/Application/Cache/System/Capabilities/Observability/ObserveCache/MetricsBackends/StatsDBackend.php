@@ -24,23 +24,23 @@ final class StatsDBackend implements MetricsBackend
     private array $messages = [];
 
     #[Override]
-    public function increment(string $metric, int $value = 1) : void
+    public function increment(string $metric, int $value = 1): void
     {
-        $key              = sprintf('%s:%d|c', $metric, $value);
+        $key = sprintf('%s:%d|c', $metric, $value);
         $this->messages[] = $key;
         $this->counters[$metric] = ($this->counters[$metric] ?? 0) + $value;
     }
 
     #[Override]
-    public function gauge(string $metric, float $value) : void
+    public function gauge(string $metric, float $value): void
     {
-        $key              = sprintf('%s:%s|g', $metric, $value);
+        $key = sprintf('%s:%s|g', $metric, $value);
         $this->messages[] = $key;
         $this->gauges[$metric] = $value;
     }
 
     #[Override]
-    public function histogram(string $metric, float $value) : void
+    public function histogram(string $metric, float $value): void
     {
         $key = sprintf('%s:%s|h', $metric, $value);
         $this->messages[] = $key;
@@ -53,7 +53,7 @@ final class StatsDBackend implements MetricsBackend
     }
 
     #[Override]
-    public function timing(string $metric, int $milliseconds) : void
+    public function timing(string $metric, int $milliseconds): void
     {
         $key = sprintf('%s:%d|ms', $metric, $milliseconds);
         $this->messages[] = $key;
@@ -66,7 +66,7 @@ final class StatsDBackend implements MetricsBackend
     }
 
     #[Override]
-    public function flush() : void
+    public function flush(): void
     {
         $this->messages = [];
     }
@@ -74,7 +74,7 @@ final class StatsDBackend implements MetricsBackend
     /**
      * @return list<string>
      */
-    public function getMessages() : array
+    public function getMessages(): array
     {
         return $this->messages;
     }
@@ -82,7 +82,7 @@ final class StatsDBackend implements MetricsBackend
     /**
      * @return array<string, int>
      */
-    public function getCounters() : array
+    public function getCounters(): array
     {
         return $this->counters;
     }
@@ -90,7 +90,7 @@ final class StatsDBackend implements MetricsBackend
     /**
      * @return array<string, float>
      */
-    public function getGauges() : array
+    public function getGauges(): array
     {
         return $this->gauges;
     }
@@ -98,7 +98,7 @@ final class StatsDBackend implements MetricsBackend
     /**
      * @return array<string, list<int>>
      */
-    public function getTimings() : array
+    public function getTimings(): array
     {
         return $this->timings;
     }
@@ -106,7 +106,7 @@ final class StatsDBackend implements MetricsBackend
     /**
      * @return array<string, int>
      */
-    public function getPercentile(float $percentile) : array
+    public function getPercentile(float $percentile): array
     {
         $result = [];
 

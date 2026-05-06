@@ -9,10 +9,9 @@ use Exception;
 class ObjectStorageWriteFailed extends Exception
 {
     public function __construct(
-        public readonly string  $key,
+        public readonly string $key,
         public readonly ?string $reason,
-    )
-    {
+    ) {
         parent::__construct("Failed to write object {$key}: {$reason}");
     }
 }

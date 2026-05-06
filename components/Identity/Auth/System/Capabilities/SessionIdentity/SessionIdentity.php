@@ -12,16 +12,17 @@ use Exception;
 final readonly class SessionIdentity
 {
     public function __construct(
-        private Session         $session,
+        private Session $session,
         private SessionLifetime $sessionLifetime,
-        private string          $sessionKey = 'auth_user_id',
-        private string          $mfaVerifiedAtKey = 'auth_mfa_verified_at',
-        private string          $phishingResistantKey = 'auth_phishing_resistant',
-        private string          $issuedAtKey = 'auth_session_issued_at',
-        private string          $lastSeenAtKey = 'auth_session_last_seen_at',
-    ) {}
+        private string $sessionKey = 'auth_user_id',
+        private string $mfaVerifiedAtKey = 'auth_mfa_verified_at',
+        private string $phishingResistantKey = 'auth_phishing_resistant',
+        private string $issuedAtKey = 'auth_session_issued_at',
+        private string $lastSeenAtKey = 'auth_session_last_seen_at',
+    ) {
+    }
 
-    public function issue(int $userId, ?DateTimeImmutable $mfaVerifiedAt = null, bool $phishingResistant = false) : string
+    public function issue(int $userId, ?DateTimeImmutable $mfaVerifiedAt = null, bool $phishingResistant = false): string
     {
         $this->session->regenerate();
         $now = new DateTimeImmutable()->format(DATE_ATOM);

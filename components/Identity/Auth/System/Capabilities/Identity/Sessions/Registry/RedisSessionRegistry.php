@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Infrastructure\System\Capabilities\Cache\Driver;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Avax\Components\Infrastructure\System\Capabilities\Cache\Driver;
 use SensitiveParameter;
 
 class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegistryInterface
@@ -17,36 +17,38 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
 
     private const string USER_KEY_PREFIX = 'auth:user_sessions:';
 
-    public function __construct(private readonly Driver $redis, private readonly int $ttlSeconds = 86400) {}
+    public function __construct(private readonly Driver $redis, private readonly int $ttlSeconds = 86400)
+    {
+    }
 
-    public function save(SessionRecord $sessionRecord) : void
+    public function save(SessionRecord $sessionRecord): void
     {
         $this->track(record: $sessionRecord);
     }
 
-    public function track(SessionRecord $sessionRecord) : void
+    public function track(SessionRecord $sessionRecord): void
     {
-        $key = self::KEY_PREFIX . $sessionRecord->sessionId;
+        $key = self::KEY_PREFIX.$sessionRecord->sessionId;
 
         $this->redis->hMset(
             key      : $key,
             fieldvals: [
-                           'session_id'          => $sessionRecord->sessionId,
-                           'user_id'             => $sessionRecord->userId->value,
-                           'created_at'          => $sessionRecord->createdAt->format(format: DateTimeInterface::ATOM),
-                           'last_seen_at'        => $sessionRecord->lastSeenAt->format(format: DateTimeInterface::ATOM),
-                           'idle_expires_at'     => $sessionRecord->idleExpiresAt->format(format: DateTimeInterface::ATOM),
-                           'absolute_expires_at' => $sessionRecord->absoluteExpiresAt->format(format: DateTimeInterface::ATOM),
-                           'ip_created'          => $sessionRecord->ipCreated ?? '',
-                           'user_agent_created'  => $sessionRecord->userAgentCreated ?? '',
-                           'revoked_at'          => $sessionRecord->revokedAt?->format(format: DateTimeInterface::ATOM) ?? '',
-                           'revoke_reason'       => $sessionRecord->revokeReason ?? '',
+                'session_id' => $sessionRecord->sessionId,
+                'user_id' => $sessionRecord->userId->value,
+                'created_at' => $sessionRecord->createdAt->format(format: DateTimeInterface::ATOM),
+                'last_seen_at' => $sessionRecord->lastSeenAt->format(format: DateTimeInterface::ATOM),
+                'idle_expires_at' => $sessionRecord->idleExpiresAt->format(format: DateTimeInterface::ATOM),
+                'absolute_expires_at' => $sessionRecord->absoluteExpiresAt->format(format: DateTimeInterface::ATOM),
+                'ip_created' => $sessionRecord->ipCreated ?? '',
+                'user_agent_created' => $sessionRecord->userAgentCreated ?? '',
+                'revoked_at' => $sessionRecord->revokedAt?->format(format: DateTimeInterface::ATOM) ?? '',
+                'revoke_reason' => $sessionRecord->revokeReason ?? '',
             ],
         );
 
         $this->redis->expire(key: $key, timeout: $this->ttlSeconds);
 
-        $userKey = self::USER_KEY_PREFIX . $sessionRecord->userId->value;
+        $userKey = self::USER_KEY_PREFIX.$sessionRecord->userId->value;
         $this->redis->sAdd(key: $userKey, value: $sessionRecord->sessionId);
     }
 
@@ -64,7 +66,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
      */
     public function listForUser(UserId $userId): array
     {
-        $userKey = self::USER_KEY_PREFIX . $userId->value;
+        $userKey = self::USER_KEY_PREFIX.$userId->value;
         $sessionIds = $this->redis->sMembers(key: $userKey);
 
         $records = [];
@@ -93,7 +95,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
      */
     public function find(#[SensitiveParameter] string $sessionId): ?SessionRecord
     {
-        $key = self::KEY_PREFIX . $sessionId;
+        $key = self::KEY_PREFIX.$sessionId;
         $data = $this->redis->hGetAll(key: $key);
 
         if ($data === []) {
@@ -104,7 +106,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
     }
 
     /**
-     * @param array<string, string> $data
+     * @param  array<string, string>  $data
      *
      * @throws DateMalformedStringException
      */
@@ -126,14 +128,14 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
 
     public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason): void
     {
-        $key = self::KEY_PREFIX . $sessionId;
+        $key = self::KEY_PREFIX.$sessionId;
 
         $this->redis->hSet($key, 'revoked_at', $revokedAt->format(format: DateTimeInterface::ATOM));
         $this->redis->hSet($key, 'revoke_reason', $reason);
 
         $data = $this->redis->hGetAll(key: $key);
         if (isset($data['user_id']) && $data['user_id'] !== '') {
-            $userKey = self::USER_KEY_PREFIX . $data['user_id'];
+            $userKey = self::USER_KEY_PREFIX.$data['user_id'];
             $this->redis->srem(key: $userKey, value: $sessionId);
         }
     }
@@ -145,7 +147,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
     {
         $removed = 0;
 
-        foreach ($this->redis->keys(pattern: self::KEY_PREFIX . '*') as $redi) {
+        foreach ($this->redis->keys(pattern: self::KEY_PREFIX.'*') as $redi) {
             if ($redi === '') {
                 continue;
             }
@@ -168,7 +170,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
             $sessionId = $data['session_id'] ?? null;
 
             if (is_string(value: $userId) && $userId !== '' && is_string(value: $sessionId) && $sessionId !== '') {
-                $this->redis->srem(key: self::USER_KEY_PREFIX . $userId, value: $sessionId);
+                $this->redis->srem(key: self::USER_KEY_PREFIX.$userId, value: $sessionId);
             }
 
             $removed++;

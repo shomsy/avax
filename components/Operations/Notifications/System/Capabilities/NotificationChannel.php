@@ -12,10 +12,10 @@ interface NotificationChannel
     /**
      * Send a notification to a recipient.
      */
-    public function send(mixed $notifiable, Notification $notification) : void;
+    public function send(mixed $notifiable, Notification $notification): void;
 
     /**
      * Get the channel name.
      */
-    public function name() : string;
+    public function name(): string;
 }

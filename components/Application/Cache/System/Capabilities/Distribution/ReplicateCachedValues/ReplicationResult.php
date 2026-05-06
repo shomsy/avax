@@ -10,12 +10,14 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Rep
 final readonly class ReplicationResult
 {
     /** @param list<ReplicaWriteResult> $replicaResults */
-    public function __construct(public string $key, public bool $primarySuccess, public array $replicaResults, public PrimaryReplicaPolicy $primaryReplicaPolicy) {}
+    public function __construct(public string $key, public bool $primarySuccess, public array $replicaResults, public PrimaryReplicaPolicy $primaryReplicaPolicy)
+    {
+    }
 
     /**
      * Check if replication was fully successful (primary + all replicas).
      */
-    public function isFullySuccessful() : bool
+    public function isFullySuccessful(): bool
     {
         if (! $this->primarySuccess) {
             return false;
@@ -27,7 +29,7 @@ final readonly class ReplicationResult
     /**
      * Check if replication met the quorum requirement.
      */
-    public function meetsQuorum() : bool
+    public function meetsQuorum(): bool
     {
         if (! $this->primarySuccess) {
             return false;
@@ -50,7 +52,7 @@ final readonly class ReplicationResult
     /**
      * Get the number of successful replica writes.
      */
-    public function getSuccessfulReplicaCount() : int
+    public function getSuccessfulReplicaCount(): int
     {
         $count = 0;
 

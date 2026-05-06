@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
@@ -39,10 +39,10 @@ final class ContextualInjectionTarget
     public string $name = 'unset';
 }
 
-$envKey = 'AVAX_CONTAINER_ENV_' . uniqid();
+$envKey = 'AVAX_CONTAINER_ENV_'.uniqid();
 putenv(assignment: $envKey);
 
-$config    = CreateContainerConfig::create(settings: ['env' => [$envKey => 'test']]);
+$config = CreateContainerConfig::create(settings: ['env' => [$envKey => 'test']]);
 $container = makeTestContainer(config: $config);
 
 $container->singleton(abstract: DiagnosticsContract::class, concrete: DiagnosticsService::class);
@@ -53,21 +53,21 @@ $container->openScope();
 $container->get(id: DiagnosticsScopedService::class);
 $container->compileContainer(serviceIds: [DiagnosticsContract::class, ContextualNameConsumer::class, DiagnosticsScopedService::class]);
 
-$description      = $container->describeService(id: DiagnosticsContract::class);
+$description = $container->describeService(id: DiagnosticsContract::class);
 $aliasDescription = $container->describeService(id: 'diagnostics.service');
-$debugService     = $container->debugService(id: DiagnosticsContract::class);
-$plan             = $container->debugPlan(id: DiagnosticsContract::class);
-$tags             = $container->debugTags(tag: 'diagnostics');
-$selection        = $container->debugSelection(id: DiagnosticsContract::class);
-$governance       = $container->debugGovernance();
-$architecture     = $container->debugArchitecture();
-$aliases          = $container->debugAliases();
-$scope            = $container->debugScope();
-$compileReport    = $container->compileReport(serviceIds: [DiagnosticsContract::class]);
-$runtimeReport    = $container->runtimeReport();
-$validated        = $container->validate(serviceIds: [DiagnosticsContract::class, ContextualNameConsumer::class]);
-$contextual       = $container->forContext(context: ['name' => 'from-context'])->make(abstract: ContextualNameConsumer::class);
-$called           = $container->forContext(context: ['name' => 'from-call'])->call(
+$debugService = $container->debugService(id: DiagnosticsContract::class);
+$plan = $container->debugPlan(id: DiagnosticsContract::class);
+$tags = $container->debugTags(tag: 'diagnostics');
+$selection = $container->debugSelection(id: DiagnosticsContract::class);
+$governance = $container->debugGovernance();
+$architecture = $container->debugArchitecture();
+$aliases = $container->debugAliases();
+$scope = $container->debugScope();
+$compileReport = $container->compileReport(serviceIds: [DiagnosticsContract::class]);
+$runtimeReport = $container->runtimeReport();
+$validated = $container->validate(serviceIds: [DiagnosticsContract::class, ContextualNameConsumer::class]);
+$contextual = $container->forContext(context: ['name' => 'from-context'])->make(abstract: ContextualNameConsumer::class);
+$called = $container->forContext(context: ['name' => 'from-call'])->call(
     callable: static fn (string $name): string => $name,
 );
 $injected = $container->forContext(context: ['name' => 'from-injection'])->injectInto(target: new ContextualInjectionTarget());
@@ -177,4 +177,4 @@ $ciReport = $ciContainer->runtimeReport();
 assertSame(expected: CreateContainerConfig::DIAGNOSTICS_MODE_CI, actual: $ciReport->diagnosticsMode, message: 'CI diagnostics mode should be preserved in runtime reports.');
 assertTrue(condition: $ciReport->timelineEnabled, message: 'CI diagnostics mode should keep timeline recording enabled.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

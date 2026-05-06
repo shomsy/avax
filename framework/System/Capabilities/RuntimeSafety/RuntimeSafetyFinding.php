@@ -22,14 +22,15 @@ final readonly class RuntimeSafetyFinding
         public string $message,
         public ?string $remediation = null,
         public ?string $location = null,
-    ) {}
+    ) {
+    }
 
-    public function isCritical() : bool
+    public function isCritical(): bool
     {
         return $this->severity === self::SEVERITY_CRITICAL;
     }
 
-    public function isWarning() : bool
+    public function isWarning(): bool
     {
         return $this->severity === self::SEVERITY_WARNING;
     }

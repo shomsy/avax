@@ -18,30 +18,31 @@ final class MailNotificationContent
         public string $actionUrl = '',
         public string $greeting = '',
         public string $signOff = '',
-    ) {}
+    ) {
+    }
 
-    public function subject(string $subject) : self
+    public function subject(string $subject): self
     {
         $this->subject = $subject;
 
         return $this;
     }
 
-    public function line(string $line) : self
+    public function line(string $line): self
     {
         $this->line = $line;
 
         return $this;
     }
 
-    public function lines(array $lines) : self
+    public function lines(array $lines): self
     {
         $this->lines = $lines;
 
         return $this;
     }
 
-    public function action(string $text, string $url) : self
+    public function action(string $text, string $url): self
     {
         $this->actionText = $text;
         $this->actionUrl = $url;
@@ -49,14 +50,14 @@ final class MailNotificationContent
         return $this;
     }
 
-    public function greeting(string $greeting) : self
+    public function greeting(string $greeting): self
     {
         $this->greeting = $greeting;
 
         return $this;
     }
 
-    public function signOff(string $signOff) : self
+    public function signOff(string $signOff): self
     {
         $this->signOff = $signOff;
 

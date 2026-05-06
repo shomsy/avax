@@ -18,10 +18,10 @@ foreach ($lines as $line) {
         $identifier = isset($m[3]) ? trim($m[3]) : '';
         if ($currentFile && (strpos($identifier, 'non-ignorable') !== false || strpos($type, 'non-ignorable') !== false)) {
             $errors[] = [
-                    'file' => $currentFile,
-                    'line' => $m[1],
-                    'type' => $type,
-                    'id' => $identifier,
+                'file' => $currentFile,
+                'line' => $m[1],
+                'type' => $type,
+                'id' => $identifier,
             ];
         }
     }
@@ -36,24 +36,26 @@ foreach ($errors as $e) {
 
 echo "=== PHPStan Non-Baselineable Errors ===\n\n";
 foreach ($byType as $type => $list) {
-    echo "{$type}: " . count($list) . " errors\n";
+    echo "{$type}: ".count($list)." errors\n";
 }
 
 echo "\n=== Quick Fix Candidates ===\n\n";
 foreach ($byType as $type => $list) {
     if (strpos($type, 'duplicateProperty') !== false) {
-        echo "DUPLICATE PROPERTY: " . count($list) . " files\n";
+        echo 'DUPLICATE PROPERTY: '.count($list)." files\n";
         foreach ($list as $e) {
             echo "  - {$e['file']}#{$e['line']}\n";
         }
         echo "\n";
     }
     if (strpos($type, 'class.notFound') !== false) {
-        echo "CLASS NOT FOUND: " . count($list) . " files\n";
+        echo 'CLASS NOT FOUND: '.count($list)." files\n";
         foreach (array_slice($list, 0, 10) as $e) {
             echo "  - {$e['file']}#{$e['line']}\n";
         }
-        if (count($list) > 10) echo "  ... and " . (count($list) - 10) . " more\n";
+        if (count($list) > 10) {
+            echo '  ... and '.(count($list) - 10)." more\n";
+        }
         echo "\n";
     }
 }

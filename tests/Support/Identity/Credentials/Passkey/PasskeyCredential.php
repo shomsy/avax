@@ -10,15 +10,14 @@ use SensitiveParameter;
 final readonly class PasskeyCredential
 {
     public function __construct(
-        public int                $userId,
+        public int $userId,
         #[SensitiveParameter]
-        public string             $credentialId,
-        public string             $label,
-        public DateTimeImmutable  $registeredAt,
+        public string $credentialId,
+        public string $label,
+        public DateTimeImmutable $registeredAt,
         public ?DateTimeImmutable $lastUsedAt = null,
         public ?DateTimeImmutable $revokedAt = null,
-    )
-    {
+    ) {
     }
 
     public function isRevoked(): bool

@@ -8,8 +8,7 @@ class RollbackPlan
 {
     public function __construct(
         private readonly ReleaseManifest $releaseManifest,
-    )
-    {
+    ) {
     }
 
     /**

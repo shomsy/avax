@@ -12,9 +12,10 @@ final readonly class Min
     public function __construct(
         public int|float $minimum,
         public ?string $message = null,
-    ) {}
+    ) {
+    }
 
-    public function getMessage(string $property) : string
+    public function getMessage(string $property): string
     {
         return $this->message ?? sprintf('Field %s must be at least %s.', $property, $this->minimum);
     }

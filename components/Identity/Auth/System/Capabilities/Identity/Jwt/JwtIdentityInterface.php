@@ -20,29 +20,29 @@ use DateTimeImmutable;
 interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterface
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function issue(
         User $user,
-        ?DateTimeImmutable     $issuedAt = null,
+        ?DateTimeImmutable $issuedAt = null,
         bool $phishingResistant = false,
-        ?string                $audience = null,
+        ?string $audience = null,
         array $scopes = [],
-        ?string                $issuer = null,
+        ?string $issuer = null,
         ?OAuthSenderConstraint $oAuthSenderConstraint = null,
     ): IssuedToken;
 
     public function resolve(string $token): ?ResolvedToken;
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function issueWorkloadToken(
         string $subject,
         string $clientId,
         array $scopes = [],
         ?OAuthSenderConstraint $oAuthSenderConstraint = null,
-        ?string                $audience = null,
+        ?string $audience = null,
     ): IssuedToken;
 
     public function resolveWorkloadToken(
@@ -52,13 +52,13 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
     ): ?ResolvedWorkloadToken;
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function issueRefreshToken(
         User $user,
-        ?DateTimeImmutable     $issuedAt = null,
+        ?DateTimeImmutable $issuedAt = null,
         bool $phishingResistant = false,
-        ?string                $audience = null,
+        ?string $audience = null,
         array $scopes = [],
         ?OAuthSenderConstraint $oAuthSenderConstraint = null,
     ): ?IssuedRefreshToken;

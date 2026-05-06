@@ -10,7 +10,8 @@ final readonly class Security
 {
     public function __construct(
         private CsrfTokens $csrfTokens,
-    ) {}
+    ) {
+    }
 
     public function csrfToken(): string
     {

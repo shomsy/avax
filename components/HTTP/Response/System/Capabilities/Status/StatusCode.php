@@ -8,9 +8,10 @@ final readonly class StatusCode
 {
     public function __construct(
         private int $code,
-    ) {}
+    ) {
+    }
 
-    public function value() : int
+    public function value(): int
     {
         return $this->code;
     }

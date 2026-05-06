@@ -7,8 +7,7 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Passk
 interface PasskeyRuntimeInterface
 {
     /**
-     * @param list<string> $excludeCredentialIds
-     *
+     * @param  list<string>  $excludeCredentialIds
      * @return array<string, mixed>
      */
     public function beginRegistration(
@@ -22,7 +21,7 @@ interface PasskeyRuntimeInterface
     ): array;
 
     /**
-     * @param array<string, mixed> $response
+     * @param  array<string, mixed>  $response
      */
     public function completeRegistration(
         string $rpId,
@@ -31,7 +30,7 @@ interface PasskeyRuntimeInterface
     ): ResolvedPasskeyCredential;
 
     /**
-     * @param list<string> $allowCredentialIds
+     * @param  list<string>  $allowCredentialIds
      * @return array<string, mixed>
      */
     public function beginAuthentication(
@@ -41,8 +40,8 @@ interface PasskeyRuntimeInterface
     ): array;
 
     /**
-     * @param array<string, mixed>    $response
-     * @param list<PasskeyCredential> $knownCredentials
+     * @param  array<string, mixed>  $response
+     * @param  list<PasskeyCredential>  $knownCredentials
      */
     public function completeAuthentication(
         string $rpId,

@@ -6,10 +6,10 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\Desi
 
 enum ForeignAction: string
 {
-    case Cascade  = 'CASCADE';
+    case Cascade = 'CASCADE';
     case Restrict = 'RESTRICT';
     case NoAction = 'NO ACTION';
-    case SetNull  = 'SET NULL';
+    case SetNull = 'SET NULL';
     case SetDefault = 'SET DEFAULT';
 
     public static function fromInput(string|self|null $value): ?self
@@ -23,12 +23,12 @@ enum ForeignAction: string
         }
 
         return match (self::normalize(value: $value)) {
-            'CASCADE'   => self::Cascade,
-            'RESTRICT'  => self::Restrict,
+            'CASCADE' => self::Cascade,
+            'RESTRICT' => self::Restrict,
             'NO ACTION' => self::NoAction,
-            'SET NULL'  => self::SetNull,
+            'SET NULL' => self::SetNull,
             'SET DEFAULT' => self::SetDefault,
-            default     => null,
+            default => null,
         };
     }
 

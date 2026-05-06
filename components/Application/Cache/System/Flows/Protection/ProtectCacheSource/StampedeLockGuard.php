@@ -11,14 +11,15 @@ final readonly class StampedeLockGuard
     public function __construct(
         private CacheLock $cacheLock,
         private string $key,
-    ) {}
+    ) {
+    }
 
-    public function release() : void
+    public function release(): void
     {
         $this->cacheLock->release(key: $this->key);
     }
 
-    public function key() : string
+    public function key(): string
     {
         return $this->key;
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, 3).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 
@@ -80,4 +80,4 @@ assertSame(
     message : 'Ownership maps should preserve provenance for diagnostics and compile metadata.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

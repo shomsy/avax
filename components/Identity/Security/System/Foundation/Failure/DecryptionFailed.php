@@ -12,4 +12,6 @@ namespace Avax\Components\Identity\Security\System\Foundation\Failure;
  * - Wrong encryption key
  * - Corrupted or invalid payload data
  */
-final class DecryptionFailed extends SecurityFailure {}
+final class DecryptionFailed extends SecurityFailure
+{
+}

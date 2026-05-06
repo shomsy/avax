@@ -18,7 +18,7 @@ final readonly class ForgetCachedValue
     }
 
     /**
-     * @param iterable<CacheKey|string> $keys
+     * @param  iterable<CacheKey|string>  $keys
      */
     public function forgetMany(iterable $keys): int
     {
@@ -57,7 +57,7 @@ final readonly class ForgetCachedValue
             return;
         }
 
-        $endTime             = hrtime(true);
+        $endTime = hrtime(true);
         $latencyMicroseconds = (int) (($endTime - $startTime) / 1000);
 
         $this->cacheMetrics->recordLatency(microseconds: $latencyMicroseconds);

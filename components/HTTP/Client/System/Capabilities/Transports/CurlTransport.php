@@ -23,16 +23,15 @@ final class CurlTransport implements HttpTransportInterface
     /**
      * Send an HTTP request using cURL.
      *
-     * @param OutboundRequest $outboundRequest The outbound request to send
-     *
+     * @param  OutboundRequest  $outboundRequest  The outbound request to send
      * @return ClientResponse The HTTP response
      *
      * @throws HttpRequestFailed if the request cannot be completed
      * @throws HttpTimeout if the request times out
      */
-    public function send(OutboundRequest $outboundRequest) : ClientResponse
+    public function send(OutboundRequest $outboundRequest): ClientResponse
     {
-        $options           = $outboundRequest->options ?? new RequestOptions();
+        $options = $outboundRequest->options ?? new RequestOptions();
 
         $ch = curl_init();
         if ($ch === false) {
@@ -42,16 +41,16 @@ final class CurlTransport implements HttpTransportInterface
         try {
             $this->configureCurl($ch, $outboundRequest, $options);
 
-            $startTime   = microtime(true);
+            $startTime = microtime(true);
             $rawResponse = curl_exec($ch);
-            $endTime     = microtime(true);
+            $endTime = microtime(true);
 
             $curlError = curl_error($ch);
             $curlErrno = curl_errno($ch);
 
             // Get timing info from cURL
             $connectTimeMs = (curl_getinfo($ch, CURLINFO_CONNECT_TIME) ?: 0.0) * 1000;
-            $totalTimeMs   = (curl_getinfo($ch, CURLINFO_TOTAL_TIME) ?: 0.0)   * 1000;
+            $totalTimeMs = (curl_getinfo($ch, CURLINFO_TOTAL_TIME) ?: 0.0) * 1000;
             if ($totalTimeMs === 0.0) {
                 $totalTimeMs = ($endTime - $startTime) * 1000;
             }
@@ -63,24 +62,24 @@ final class CurlTransport implements HttpTransportInterface
 
             // Parse the response
             $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $headerStr  = substr($rawResponse, 0, $headerSize);
-            $body       = substr($rawResponse, $headerSize);
+            $headerStr = substr($rawResponse, 0, $headerSize);
+            $body = substr($rawResponse, $headerSize);
 
-            $statusCode    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $effectiveUrl  = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL) ?: null;
+            $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $effectiveUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL) ?: null;
             $redirectCount = curl_getinfo($ch, CURLINFO_REDIRECT_COUNT);
 
-            $headers      = $this->parseHeaders($headerStr);
+            $headers = $this->parseHeaders($headerStr);
             $reasonPhrase = curl_getinfo($ch, CURLINFO_HTTP_VERSION) !== false
                 ? $this->getReasonPhrase($statusCode)
                 : '';
 
             $protocol = match (curl_getinfo($ch, CURLINFO_HTTP_VERSION)) {
-                CURL_HTTP_VERSION_2   => '2.0',
+                CURL_HTTP_VERSION_2 => '2.0',
                 CURL_HTTP_VERSION_2_0 => '2.0',
                 CURL_HTTP_VERSION_1_1 => '1.1',
                 CURL_HTTP_VERSION_1_0 => '1.0',
-                default               => '1.1',
+                default => '1.1',
             };
 
             return new ClientResponse(
@@ -104,22 +103,22 @@ final class CurlTransport implements HttpTransportInterface
      * Configure cURL options for the request.
      */
     private function configureCurl(
-        CurlHandle      $curlHandle,
+        CurlHandle $curlHandle,
         OutboundRequest $outboundRequest,
-        RequestOptions  $requestOptions,
+        RequestOptions $requestOptions,
     ): void {
         // Basic options
         curl_setopt_array($curlHandle, [
-            CURLOPT_URL               => $outboundRequest->url,
-            CURLOPT_RETURNTRANSFER    => true,
-            CURLOPT_HEADER            => true,
-            CURLOPT_FOLLOWLOCATION    => $requestOptions->followRedirects,
-            CURLOPT_MAXREDIRS         => $requestOptions->maxRedirects,
+            CURLOPT_URL => $outboundRequest->url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_FOLLOWLOCATION => $requestOptions->followRedirects,
+            CURLOPT_MAXREDIRS => $requestOptions->maxRedirects,
             CURLOPT_CONNECTTIMEOUT_MS => $requestOptions->connectTimeout,
-            CURLOPT_TIMEOUT_MS        => $requestOptions->timeout,
-            CURLOPT_SSL_VERIFYPEER    => $requestOptions->verifySsl,
-            CURLOPT_SSL_VERIFYHOST    => $requestOptions->verifySsl ? 2 : 0,
-            CURLOPT_CUSTOMREQUEST     => $outboundRequest->method,
+            CURLOPT_TIMEOUT_MS => $requestOptions->timeout,
+            CURLOPT_SSL_VERIFYPEER => $requestOptions->verifySsl,
+            CURLOPT_SSL_VERIFYHOST => $requestOptions->verifySsl ? 2 : 0,
+            CURLOPT_CUSTOMREQUEST => $outboundRequest->method,
         ]);
 
         // Set headers
@@ -161,7 +160,7 @@ final class CurlTransport implements HttpTransportInterface
      *
      * @return list<string>
      */
-    private function buildHeaderArray(OutboundRequest $outboundRequest) : array
+    private function buildHeaderArray(OutboundRequest $outboundRequest): array
     {
         $headers = [];
         foreach ($outboundRequest->headers as $name => $value) {
@@ -198,7 +197,7 @@ final class CurlTransport implements HttpTransportInterface
      * @throws HttpRequestFailed for other errors
      */
     private function handleCurlError(
-        CurlHandle      $curlHandle,
+        CurlHandle $curlHandle,
         int $errno,
         string $error,
         OutboundRequest $outboundRequest,
@@ -208,7 +207,7 @@ final class CurlTransport implements HttpTransportInterface
         // Timeout errors
         if (in_array($errno, [CURLE_OPERATION_TIMEDOUT, CURLE_COULDNT_CONNECT], true)) {
             throw new HttpTimeout(
-                message  : 'HTTP request timed out: ' . $error,
+                message  : 'HTTP request timed out: '.$error,
                 timeoutMs: $outboundRequest->options?->timeout ?? RequestOptions::DEFAULT_TIMEOUT,
                 url      : $url,
                 method   : $outboundRequest->method,
@@ -231,7 +230,7 @@ final class CurlTransport implements HttpTransportInterface
     private function parseHeaders(string $headerStr): array
     {
         $headers = [];
-        $lines   = explode("\r\n", $headerStr);
+        $lines = explode("\r\n", $headerStr);
 
         foreach ($lines as $line) {
             $line = trim($line);
@@ -245,8 +244,8 @@ final class CurlTransport implements HttpTransportInterface
 
             $parts = explode(':', $line, 2);
             if (count($parts) === 2) {
-                $name             = trim($parts[0]);
-                $value            = trim($parts[1]);
+                $name = trim($parts[0]);
+                $value = trim($parts[1]);
                 $headers[$name][] = $value;
             }
         }
@@ -260,32 +259,32 @@ final class CurlTransport implements HttpTransportInterface
     private function getReasonPhrase(int $statusCode): string
     {
         return match ($statusCode) {
-            200     => 'OK',
-            201     => 'Created',
-            204     => 'No Content',
-            301     => 'Moved Permanently',
-            302     => 'Found',
-            304     => 'Not Modified',
-            400     => 'Bad Request',
-            401     => 'Unauthorized',
-            403     => 'Forbidden',
-            404     => 'Not Found',
-            405     => 'Method Not Allowed',
-            408     => 'Request Timeout',
-            422     => 'Unprocessable Entity',
-            429     => 'Too Many Requests',
-            500     => 'Internal Server Error',
-            502     => 'Bad Gateway',
-            503     => 'Service Unavailable',
-            504     => 'Gateway Timeout',
-            default => 'Status ' . $statusCode,
+            200 => 'OK',
+            201 => 'Created',
+            204 => 'No Content',
+            301 => 'Moved Permanently',
+            302 => 'Found',
+            304 => 'Not Modified',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            408 => 'Request Timeout',
+            422 => 'Unprocessable Entity',
+            429 => 'Too Many Requests',
+            500 => 'Internal Server Error',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout',
+            default => 'Status '.$statusCode,
         };
     }
 
     /**
      * Build a PSR-7 request from the outbound request.
      */
-    public function buildPsr7Request(OutboundRequest $outboundRequest) : Request
+    public function buildPsr7Request(OutboundRequest $outboundRequest): Request
     {
         $body = $this->normalizeBody($outboundRequest->body);
 

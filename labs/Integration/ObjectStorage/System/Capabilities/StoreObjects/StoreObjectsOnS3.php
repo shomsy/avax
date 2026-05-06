@@ -6,7 +6,6 @@ namespace Avax\Labs\Integration\ObjectStorage\System\Capabilities\StoreObjects;
 
 use Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort;
 use Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult;
-use Avax\Integration\ObjectStorage\System\Foundation\Failure\ObjectStorageUnavailable;
 use Aws\PresignUrlMiddleware;
 use Aws\S3\S3Client;
 use Throwable;
@@ -14,17 +13,20 @@ use Throwable;
 class StoreObjectsOnS3 implements ObjectStoragePort
 {
     private string $bucket;
+
     private string $region;
+
     private ?string $endpoint;
+
     private object $client;
+
     private object $presigner;
 
     public function __construct(
-        string  $bucket,
-        string  $region = 'us-east-1',
+        string $bucket,
+        string $region = 'us-east-1',
         ?string $endpoint = null,
-    )
-    {
+    ) {
         $this->bucket = $bucket;
         $this->region = $region;
         $this->endpoint = $endpoint;
@@ -111,7 +113,7 @@ class StoreObjectsOnS3 implements ObjectStoragePort
 
     private function presigner(): object
     {
-        if (!isset($this->presigner)) {
+        if (! isset($this->presigner)) {
             $this->presigner = new PresignUrlMiddleware(
                 $this->client(),
                 's3'
@@ -123,7 +125,7 @@ class StoreObjectsOnS3 implements ObjectStoragePort
 
     private function client(): object
     {
-        if (!isset($this->client)) {
+        if (! isset($this->client)) {
             $config = [
                 'region' => $this->region,
                 'version' => 'latest',

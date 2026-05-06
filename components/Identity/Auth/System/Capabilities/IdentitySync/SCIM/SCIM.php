@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM;
 
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\IdentitySyncCapabilityUnavailable;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\RegisteredScimDirectory;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\RunScimBulk;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkRequest;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\ScimBulkResponse;
@@ -28,8 +30,6 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotateScimToken;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroups;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\RegisteredScimDirectory;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectory;
 use Random\RandomException;
 use SensitiveParameter;
 
@@ -48,7 +48,8 @@ final readonly class SCIM
         private ?ReadScimGroups $readScimGroups,
         private ?SyncScimGroups $syncScimGroups,
         private ?RunScimBulk $runScimBulk,
-    ) {}
+    ) {
+    }
 
     public function isConfigured(): bool
     {
@@ -68,7 +69,7 @@ final readonly class SCIM
     /**
      * @throws RandomException
      */
-    public function registerDirectory(RegisterScimDirectoryData $registerScimDirectoryData) : RegisteredScimDirectory
+    public function registerDirectory(RegisterScimDirectoryData $registerScimDirectoryData): RegisteredScimDirectory
     {
         return $this->registerScimDirectoryOrFail()->execute(data: $registerScimDirectoryData);
     }
@@ -81,7 +82,7 @@ final readonly class SCIM
     /**
      * @return list<ScimDirectory>
      */
-    public function readDirectories(?string $tenantSlug = null) : array
+    public function readDirectories(?string $tenantSlug = null): array
     {
         return $this->readScimDirectoriesOrFail()->execute(tenantSlug: $tenantSlug);
     }
@@ -104,7 +105,7 @@ final readonly class SCIM
         return $this->rotateScimToken ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'rotate_token');
     }
 
-    public function markDirectoryOutage(MarkScimDirectoryOutageData $markScimDirectoryOutageData) : ScimDirectory
+    public function markDirectoryOutage(MarkScimDirectoryOutageData $markScimDirectoryOutageData): ScimDirectory
     {
         return $this->markScimDirectoryOutageOrFail()->execute(data: $markScimDirectoryOutageData);
     }
@@ -114,7 +115,7 @@ final readonly class SCIM
         return $this->markScimDirectoryOutage ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'mark_directory_outage');
     }
 
-    public function recoverDirectoryOutage(RecoverScimDirectoryOutageData $recoverScimDirectoryOutageData) : ScimDirectory
+    public function recoverDirectoryOutage(RecoverScimDirectoryOutageData $recoverScimDirectoryOutageData): ScimDirectory
     {
         return $this->recoverScimDirectoryOutageOrFail()->execute(data: $recoverScimDirectoryOutageData);
     }
@@ -127,7 +128,7 @@ final readonly class SCIM
     /**
      * @throws RandomException
      */
-    public function provisionUser(ProvisionScimUserData $provisionScimUserData) : ScimProvisioningResult
+    public function provisionUser(ProvisionScimUserData $provisionScimUserData): ScimProvisioningResult
     {
         return $this->provisionScimUserOrFail()->execute(data: $provisionScimUserData);
     }
@@ -137,7 +138,7 @@ final readonly class SCIM
         return $this->provisionScimUser ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'provision_user');
     }
 
-    public function deleteUser(DeleteScimUserData $deleteScimUserData) : void
+    public function deleteUser(DeleteScimUserData $deleteScimUserData): void
     {
         $this->deleteScimUserOrFail()->execute(data: $deleteScimUserData);
     }
@@ -176,7 +177,7 @@ final readonly class SCIM
     /**
      * @throws RandomException
      */
-    public function syncGroups(SyncScimGroupsData $syncScimGroupsData) : ScimProvisioningResult
+    public function syncGroups(SyncScimGroupsData $syncScimGroupsData): ScimProvisioningResult
     {
         return $this->syncScimGroupsOrFail()->execute(data: $syncScimGroupsData);
     }
@@ -186,7 +187,7 @@ final readonly class SCIM
         return $this->syncScimGroups ?? throw IdentitySyncCapabilityUnavailable::scim(operation: 'sync_groups');
     }
 
-    public function runBulk(ScimBulkRequest $scimBulkRequest) : ScimBulkResponse
+    public function runBulk(ScimBulkRequest $scimBulkRequest): ScimBulkResponse
     {
         return $this->runScimBulkOrFail()->execute(request: $scimBulkRequest);
     }

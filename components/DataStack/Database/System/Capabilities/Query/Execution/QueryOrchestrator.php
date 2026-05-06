@@ -17,14 +17,14 @@ final class QueryOrchestrator
     private bool $isPretending = false;
 
     /**
-     * @param ExecutorInterface   $executor Low-level executor.
-     * @param ExecutionScope|null $executionScope Correlation scope (optional).
+     * @param  ExecutorInterface  $executor  Low-level executor.
+     * @param  ExecutionScope|null  $executionScope  Correlation scope (optional).
      *
      * @throws RandomException
      */
     public function __construct(
         private readonly ExecutorInterface $executor,
-        private ?ExecutionScope            $executionScope
+        private ?ExecutionScope $executionScope
         = null {
             get {
                 return $this->executionScope;
@@ -90,7 +90,7 @@ final class QueryOrchestrator
         return $this->executor->execute(sql: $sql, bindings: $bindings, executionScope: $this->executionScope);
     }
 
-    public function withScope(ExecutionScope $executionScope) : self
+    public function withScope(ExecutionScope $executionScope): self
     {
         return clone (object: $this, withProperties: [
             'executionScope' => $executionScope,

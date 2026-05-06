@@ -28,8 +28,8 @@ Route::get('/test', static fn () => 'Test route - Enterprise Router Active! = ')
 
 // Dedicated assets/utility routes
 Route::get('/favicon.ico', static fn () => Response::noContent([
-                                                                   'Content-Type' => 'image/x-icon',
-                                                               ]));
+    'Content-Type' => 'image/x-icon',
+]));
 
 // Global fallback handler for unmatched routes
 // Using PSR-7 ServerRequestInterface for maximum compatibility and stability
@@ -38,6 +38,6 @@ Route::fallback(static fn (ServerRequestInterface $request) => Response::text(
         'Route not found for [%s] %s',
         $request->getMethod(),
         $request->getUri()->getPath(),
-             ),
+    ),
     status : 404,
 ));

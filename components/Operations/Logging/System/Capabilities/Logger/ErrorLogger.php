@@ -56,12 +56,12 @@ final readonly class ErrorLogger implements LoggerInterface
         }
 
         if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
-            $e                    = $context['exception'];
+            $e = $context['exception'];
             $context['exception'] = [
-                'class'   => $e::class,
+                'class' => $e::class,
                 'message' => $e->getMessage(),
-                'file'    => $e->getFile() . ':' . $e->getLine(),
-                'trace'   => array_slice(explode("\n", $e->getTraceAsString()), 0, 10),
+                'file' => $e->getFile().':'.$e->getLine(),
+                'trace' => array_slice(explode("\n", $e->getTraceAsString()), 0, 10),
             ];
         }
 

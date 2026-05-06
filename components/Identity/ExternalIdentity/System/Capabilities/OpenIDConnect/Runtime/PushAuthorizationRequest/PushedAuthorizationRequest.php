@@ -14,7 +14,7 @@ final readonly class PushedAuthorizationRequest
     public array $scopes;
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
         #[SensitiveParameter]

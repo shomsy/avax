@@ -8,9 +8,11 @@ use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
 
 final readonly class ReadFileLastModifiedAt
 {
-    public function __construct(private Disk $disk) {}
+    public function __construct(private Disk $disk)
+    {
+    }
 
-    public function execute(string $path) : ?int
+    public function execute(string $path): ?int
     {
         return $this->disk->lastModified(path: $path);
     }

@@ -12,7 +12,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 final readonly class GroupRoleMappingValidator
 {
     /**
-     * @param array<string, list<string>> $groupRoleMap
+     * @param  array<string, list<string>>  $groupRoleMap
      */
     public function isValid(array $groupRoleMap): bool
     {

@@ -14,5 +14,6 @@ final readonly class ReplicaSyncResult
         public string $key,
         public bool $wasInSync,
         public bool $syncSuccess,
-    ) {}
+    ) {
+    }
 }

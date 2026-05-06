@@ -14,7 +14,7 @@ final class ConfigValidator
      */
     private array $schemas = [];
 
-    public function register(ConfigSchema $configSchema) : self
+    public function register(ConfigSchema $configSchema): self
     {
         $this->schemas[$configSchema->name] = $configSchema;
 
@@ -24,8 +24,7 @@ final class ConfigValidator
     /**
      * Validate all registered schemas against config sections.
      *
-     * @param array<string, array<string, mixed>> $allConfig
-     *
+     * @param  array<string, array<string, mixed>>  $allConfig
      * @return list<ConfigSchemaViolation>
      */
     public function validateAll(array $allConfig): array
@@ -33,7 +32,7 @@ final class ConfigValidator
         $violations = [];
 
         foreach (array_keys($this->schemas) as $name) {
-            $section    = $allConfig[$name] ?? [];
+            $section = $allConfig[$name] ?? [];
             $violations = [...$violations, ...$this->validate($name, $section)];
         }
 
@@ -43,8 +42,7 @@ final class ConfigValidator
     /**
      * Validate a config section against its schema.
      *
-     * @param array<string, mixed> $config
-     *
+     * @param  array<string, mixed>  $config
      * @return list<ConfigSchemaViolation>
      */
     public function validate(string $schemaName, array $config): array
@@ -57,13 +55,13 @@ final class ConfigValidator
             )];
         }
 
-        $schema     = $this->schemas[$schemaName];
+        $schema = $this->schemas[$schemaName];
         $violations = [];
 
         foreach ($schema->fields as $fieldName => $field) {
             $dotKey = sprintf('%s.%s', $schemaName, $fieldName);
             $exists = array_key_exists($fieldName, $config);
-            $value  = $exists ? $config[$fieldName] : null;
+            $value = $exists ? $config[$fieldName] : null;
 
             if (! $exists) {
                 if ($field->required) {
@@ -81,7 +79,7 @@ final class ConfigValidator
             }
 
             $typeViolations = $this->validateType($dotKey, $value, $field);
-            $violations     = [...$violations, ...$typeViolations];
+            $violations = [...$violations, ...$typeViolations];
 
             if ($field->allowed !== [] && ! in_array($value, $field->allowed, true)) {
                 $violations[] = new ConfigSchemaViolation(
@@ -108,20 +106,20 @@ final class ConfigValidator
     /**
      * @return list<ConfigSchemaViolation>
      */
-    private function validateType(string $key, mixed $value, ConfigSchemaField $configSchemaField) : array
+    private function validateType(string $key, mixed $value, ConfigSchemaField $configSchemaField): array
     {
         $violations = [];
 
         $isValid = match ($configSchemaField->type) {
-            ConfigSchemaField::TYPE_STRING           => is_string($value),
+            ConfigSchemaField::TYPE_STRING => is_string($value),
             ConfigSchemaField::TYPE_NON_EMPTY_STRING => is_string($value) && $value !== '',
-            ConfigSchemaField::TYPE_INT              => is_int($value),
-            ConfigSchemaField::TYPE_FLOAT            => is_float($value) || is_int($value),
-            ConfigSchemaField::TYPE_BOOL             => is_bool($value),
-            ConfigSchemaField::TYPE_ARRAY            => is_array($value),
-            ConfigSchemaField::TYPE_URL              => is_string($value) && filter_var($value, FILTER_VALIDATE_URL)   !== false,
-            ConfigSchemaField::TYPE_EMAIL            => is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false,
-            default                                  => true,
+            ConfigSchemaField::TYPE_INT => is_int($value),
+            ConfigSchemaField::TYPE_FLOAT => is_float($value) || is_int($value),
+            ConfigSchemaField::TYPE_BOOL => is_bool($value),
+            ConfigSchemaField::TYPE_ARRAY => is_array($value),
+            ConfigSchemaField::TYPE_URL => is_string($value) && filter_var($value, FILTER_VALIDATE_URL) !== false,
+            ConfigSchemaField::TYPE_EMAIL => is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false,
+            default => true,
         };
 
         if (! $isValid) {

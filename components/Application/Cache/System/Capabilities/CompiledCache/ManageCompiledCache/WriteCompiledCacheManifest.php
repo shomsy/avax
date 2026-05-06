@@ -11,9 +11,9 @@ final class WriteCompiledCacheManifest
     /**
      * @throws RandomException
      */
-    public function write(CompiledCacheManifest $compiledCacheManifest, CompiledCachePath $compiledCachePath) : void
+    public function write(CompiledCacheManifest $compiledCacheManifest, CompiledCachePath $compiledCachePath): void
     {
-        $tempPath = $compiledCachePath->toString() . '.tmp.' . bin2hex(random_bytes(8));
+        $tempPath = $compiledCachePath->toString().'.tmp.'.bin2hex(random_bytes(8));
 
         $manifestDir = dirname($compiledCachePath->toString());
         if (! is_dir($manifestDir)) {
@@ -25,7 +25,7 @@ final class WriteCompiledCacheManifest
             $entries[] = $entry->toArray();
         }
 
-        $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn " . var_export($entries, true) . ";\n";
+        $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn ".var_export($entries, true).";\n";
 
         $written = file_put_contents($tempPath, $content, LOCK_EX);
 

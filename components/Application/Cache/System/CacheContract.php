@@ -21,19 +21,18 @@ interface CacheContract
     public function has(string $key): bool;
 
     /**
-     * @param iterable<string> $keys
-     *
+     * @param  iterable<string>  $keys
      * @return iterable<string, mixed>
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable;
 
     /**
-     * @param iterable<string, mixed> $values
+     * @param  iterable<string, mixed>  $values
      */
     public function setMultiple(iterable $values, int|DateInterval|null $ttl = null): bool;
 
     /**
-     * @param iterable<string> $keys
+     * @param  iterable<string>  $keys
      */
     public function deleteMultiple(iterable $keys): bool;
 }

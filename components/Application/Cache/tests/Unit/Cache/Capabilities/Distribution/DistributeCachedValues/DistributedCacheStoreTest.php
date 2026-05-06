@@ -48,7 +48,7 @@ final class DistributedCacheStoreTest extends TestCase
 
     private function makeRecord(string $value): StoredCacheRecord
     {
-        $now                  = $this->frozenClock->now();
+        $now = $this->frozenClock->now();
         $cachedValueLifecycle = CachedValueLifecycle::create(
             createdAt: $now,
             expiresAt: $now->add(duration: Duration::ofSeconds(seconds: 3600)),

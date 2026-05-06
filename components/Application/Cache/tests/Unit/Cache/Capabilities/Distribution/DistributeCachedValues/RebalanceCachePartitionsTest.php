@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 final class RebalanceCachePartitionsTest extends TestCase
 {
-    public function test_add_node_calculates_partition_moves() : void
+    public function test_add_node_calculates_partition_moves(): void
     {
         $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
@@ -24,7 +24,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         $this->assertIsArray(actual: $moves);
     }
 
-    public function test_remove_node_calculates_partition_moves() : void
+    public function test_remove_node_calculates_partition_moves(): void
     {
         $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
@@ -37,7 +37,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         $this->assertIsArray(actual: $moves);
     }
 
-    public function test_rebalance_returns_all_partitions() : void
+    public function test_rebalance_returns_all_partitions(): void
     {
         $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
@@ -50,7 +50,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         $this->assertCount(expectedCount: 256, haystack: $distribution);
     }
 
-    public function test_partition_moves_have_from_and_to() : void
+    public function test_partition_moves_have_from_and_to(): void
     {
         $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(node: CacheNode::create(id: 'node_a'));
@@ -70,7 +70,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         }
     }
 
-    public function test_empty_ring_returns_empty_distribution() : void
+    public function test_empty_ring_returns_empty_distribution(): void
     {
         $consistentHashRing = new ConsistentHashRing();
 

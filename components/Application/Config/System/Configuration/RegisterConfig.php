@@ -12,7 +12,7 @@ use Avax\Components\Application\Config\System\PublicSurface\Config;
  */
 final class RegisterConfig
 {
-    public function build() : Config
+    public function build(): Config
     {
         return new Config(
             repository: new ConfigurationRepository(),

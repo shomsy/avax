@@ -18,7 +18,7 @@ final readonly class GzipCompressor implements CacheCompressor
     public function compress(string $data): CompressedCachePayload
     {
         $originalSize = strlen($data);
-        $compressed   = gzcompress($data, level: self::LEVEL);
+        $compressed = gzcompress($data, level: self::LEVEL);
 
         if ($compressed === false) {
             throw new RuntimeException(message: 'Failed to compress data using gzip');

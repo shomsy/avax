@@ -21,7 +21,7 @@ final class PrometheusBackend implements MetricsBackend
     private array $timings = [];
 
     #[Override]
-    public function increment(string $metric, int $value = 1) : void
+    public function increment(string $metric, int $value = 1): void
     {
         if (! isset($this->counters[$metric])) {
             $this->counters[$metric] = 0;
@@ -31,13 +31,13 @@ final class PrometheusBackend implements MetricsBackend
     }
 
     #[Override]
-    public function gauge(string $metric, float $value) : void
+    public function gauge(string $metric, float $value): void
     {
         $this->gauges[$metric] = $value;
     }
 
     #[Override]
-    public function histogram(string $metric, float $value) : void
+    public function histogram(string $metric, float $value): void
     {
         if (! isset($this->histograms[$metric])) {
             $this->histograms[$metric] = [];
@@ -47,7 +47,7 @@ final class PrometheusBackend implements MetricsBackend
     }
 
     #[Override]
-    public function timing(string $metric, int $milliseconds) : void
+    public function timing(string $metric, int $milliseconds): void
     {
         if (! isset($this->timings[$metric])) {
             $this->timings[$metric] = [];
@@ -57,12 +57,14 @@ final class PrometheusBackend implements MetricsBackend
     }
 
     #[Override]
-    public function flush() : void {}
+    public function flush(): void
+    {
+    }
 
     /**
      * @return array<string, float>
      */
-    public function getCounters() : array
+    public function getCounters(): array
     {
         return $this->counters;
     }
@@ -70,7 +72,7 @@ final class PrometheusBackend implements MetricsBackend
     /**
      * @return array<string, float>
      */
-    public function getGauges() : array
+    public function getGauges(): array
     {
         return $this->gauges;
     }
@@ -78,7 +80,7 @@ final class PrometheusBackend implements MetricsBackend
     /**
      * @return array<string, list<float>>
      */
-    public function getHistograms() : array
+    public function getHistograms(): array
     {
         return $this->histograms;
     }
@@ -86,12 +88,12 @@ final class PrometheusBackend implements MetricsBackend
     /**
      * @return array<string, list<int>>
      */
-    public function getTimings() : array
+    public function getTimings(): array
     {
         return $this->timings;
     }
 
-    public function render() : string
+    public function render(): string
     {
         $output = [];
 
@@ -105,6 +107,6 @@ final class PrometheusBackend implements MetricsBackend
             $output[] = sprintf('%s %s', $metric, $value);
         }
 
-        return implode("\n", $output) . "\n";
+        return implode("\n", $output)."\n";
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\WorkerManagement\PublicSurface;
 
-use Avax\Framework\System\Capabilities\WorkerManagement\Capabilities\Workers\WorkerProcess;
 use Stringable;
 
 final readonly class WorkerStatus implements Stringable
@@ -15,8 +14,7 @@ final readonly class WorkerStatus implements Stringable
         public int $idle,
         public int $totalTasks,
         public int $totalMemory,
-    )
-    {
+    ) {
     }
 
     /**

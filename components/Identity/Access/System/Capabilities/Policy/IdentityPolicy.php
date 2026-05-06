@@ -22,8 +22,8 @@ final readonly class IdentityPolicy
     public bool $phishingResistantRequired;
 
     /**
-     * @param list<AuthenticationFactor> $allowedFactors
-     * @param list<AuthenticationFactor> $requiredFactors
+     * @param  list<AuthenticationFactor>  $allowedFactors
+     * @param  list<AuthenticationFactor>  $requiredFactors
      */
     public function __construct(
         public IdentityActor $actor,
@@ -42,26 +42,26 @@ final readonly class IdentityPolicy
         ?bool $separationOfDutiesRequired = null,
         public bool $privilegedApprovalRequired = false,
     ) {
-        $phishingResistantRequired        ??= false;
-        $adminElevationRequired           ??= false;
+        $phishingResistantRequired ??= false;
+        $adminElevationRequired ??= false;
         $senderConstrainedTokensRequired ??= false;
-        $denyByDefault                    ??= true;
-        $resourceChecksRequired           ??= true;
-        $separationOfDutiesRequired       ??= false;
-        $this->phishingResistantRequired  = $phishingResistantRequired;
-        $this->adminElevationRequired     = $adminElevationRequired;
+        $denyByDefault ??= true;
+        $resourceChecksRequired ??= true;
+        $separationOfDutiesRequired ??= false;
+        $this->phishingResistantRequired = $phishingResistantRequired;
+        $this->adminElevationRequired = $adminElevationRequired;
         $this->senderConstrainedTokensRequired = $senderConstrainedTokensRequired;
-        $this->denyByDefault              = $denyByDefault;
-        $this->resourceChecksRequired     = $resourceChecksRequired;
+        $this->denyByDefault = $denyByDefault;
+        $this->resourceChecksRequired = $resourceChecksRequired;
         $this->separationOfDutiesRequired = $separationOfDutiesRequired;
     }
 
-    public function allowsFactor(AuthenticationFactor $authenticationFactor) : bool
+    public function allowsFactor(AuthenticationFactor $authenticationFactor): bool
     {
         return in_array(needle: $authenticationFactor, haystack: $this->allowedFactors, strict: true);
     }
 
-    public function requiresFactor(AuthenticationFactor $authenticationFactor) : bool
+    public function requiresFactor(AuthenticationFactor $authenticationFactor): bool
     {
         return in_array(needle: $authenticationFactor, haystack: $this->requiredFactors, strict: true);
     }

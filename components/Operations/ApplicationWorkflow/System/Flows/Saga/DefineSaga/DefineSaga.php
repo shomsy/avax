@@ -12,14 +12,15 @@ final readonly class DefineSaga
     public function __construct(
         private ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition(),
         private RegisterSagaDefinition $registerSagaDefinition = new RegisterSagaDefinition(),
-    ) {}
+    ) {
+    }
 
-    public function validate() : void
+    public function validate(): void
     {
         $this->validateSagaDefinition->validate();
     }
 
-    public function register(SagaDefinition $sagaDefinition) : SagaDefinition
+    public function register(SagaDefinition $sagaDefinition): SagaDefinition
     {
         return $this->registerSagaDefinition->register(definition: $sagaDefinition);
     }

@@ -30,7 +30,7 @@ class MemoryTracker
 
     public function track(string $operation, int $bytes): void
     {
-        if (!$this->enabled) {
+        if (! $this->enabled) {
             return;
         }
 

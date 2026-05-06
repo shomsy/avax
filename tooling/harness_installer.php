@@ -5,16 +5,16 @@ declare(strict_types=1);
 $source = '/home/shomsy/projects/agent-harness/.agents';
 $target = '/home/shomsy/projects/avax/.agents/.rules';
 
-function recurse_copy(string $src, string $dst) : void
+function recurse_copy(string $src, string $dst): void
 {
     $dir = opendir($src);
     @mkdir($dst, 0o777, true);
     while (false !== ($file = readdir($dir))) {
         if (($file !== '.') && ($file !== '..')) {
-            if (is_dir($src . '/' . $file)) {
-                recurse_copy($src . '/' . $file, $dst . '/' . $file);
+            if (is_dir($src.'/'.$file)) {
+                recurse_copy($src.'/'.$file, $dst.'/'.$file);
             } else {
-                copy($src . '/' . $file, $dst . '/' . $file);
+                copy($src.'/'.$file, $dst.'/'.$file);
             }
         }
     }
@@ -27,7 +27,7 @@ recurse_copy($source, $target);
 echo "Done!\n";
 
 // Also copy scaffolds
-$skeleton      = '/home/shomsy/projects/agent-harness/scaffolds/agents-skeleton';
+$skeleton = '/home/shomsy/projects/agent-harness/scaffolds/agents-skeleton';
 $visibleAgents = '/home/shomsy/projects/avax/.agents';
 if (is_dir($skeleton)) {
     echo "Copying skeleton to {$visibleAgents}...\n";

@@ -17,26 +17,26 @@ final readonly class SagaStepResult
     public float $durationMs;
 
     private function __construct(
-        public string             $stepName,
-        public bool               $success,
-        ?array                    $output = null,
-        public ?string            $error = null,
-        ?int                      $attempt = null,
-        ?float                    $durationMs = null,
+        public string $stepName,
+        public bool $success,
+        ?array $output = null,
+        public ?string $error = null,
+        ?int $attempt = null,
+        ?float $durationMs = null,
         public ?DateTimeImmutable $completedAt = null,
     ) {
-        $output           ??= [];
-        $attempt          ??= 1;
+        $output ??= [];
+        $attempt ??= 1;
         $durationMs ??= 0.0;
-        $this->output     = $output;
-        $this->attempt    = $attempt;
+        $this->output = $output;
+        $this->attempt = $attempt;
         $this->durationMs = $durationMs;
     }
 
     public static function success(
         string $stepName,
         ?array $output = null,
-        ?int   $attempt = null,
+        ?int $attempt = null,
         float $durationMs = 0.0,
     ): self {
         $output ??= [];
@@ -73,11 +73,11 @@ final readonly class SagaStepResult
     public function toArray(): array
     {
         return [
-            'step_name'   => $this->stepName,
-            'success'     => $this->success,
-            'output'      => $this->output,
-            'error'       => $this->error,
-            'attempt'     => $this->attempt,
+            'step_name' => $this->stepName,
+            'success' => $this->success,
+            'output' => $this->output,
+            'error' => $this->error,
+            'attempt' => $this->attempt,
             'duration_ms' => $this->durationMs,
             'completed_at' => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
         ];
@@ -95,19 +95,19 @@ final readonly class SagaStepExecutionPolicy
     public bool $continueOnFailure;
 
     private function __construct(
-        ?int        $maxRetries = null,
-        ?int        $retryDelayMs = null,
-        ?int        $timeoutSeconds = null,
-        ?bool       $continueOnFailure = null,
+        ?int $maxRetries = null,
+        ?int $retryDelayMs = null,
+        ?int $timeoutSeconds = null,
+        ?bool $continueOnFailure = null,
         public bool $isolationPerStep = true,
     ) {
-        $maxRetries             ??= 0;
-        $retryDelayMs           ??= 1000;
-        $timeoutSeconds         ??= 30;
+        $maxRetries ??= 0;
+        $retryDelayMs ??= 1000;
+        $timeoutSeconds ??= 30;
         $continueOnFailure ??= false;
-        $this->maxRetries       = $maxRetries;
-        $this->retryDelayMs     = $retryDelayMs;
-        $this->timeoutSeconds   = $timeoutSeconds;
+        $this->maxRetries = $maxRetries;
+        $this->retryDelayMs = $retryDelayMs;
+        $this->timeoutSeconds = $timeoutSeconds;
         $this->continueOnFailure = $continueOnFailure;
     }
 
@@ -120,7 +120,7 @@ final readonly class SagaStepExecutionPolicy
         );
     }
 
-    public static function fromStep(SagaStepDefinition $sagaStepDefinition) : self
+    public static function fromStep(SagaStepDefinition $sagaStepDefinition): self
     {
         return new self(
             maxRetries    : $sagaStepDefinition->maxRetries,
@@ -148,9 +148,9 @@ final readonly class SagaStepExecutionPolicy
     public function toArray(): array
     {
         return [
-            'max_retries'        => $this->maxRetries,
-            'retry_delay_ms'     => $this->retryDelayMs,
-            'timeout_seconds'    => $this->timeoutSeconds,
+            'max_retries' => $this->maxRetries,
+            'retry_delay_ms' => $this->retryDelayMs,
+            'timeout_seconds' => $this->timeoutSeconds,
             'continue_on_failure' => $this->continueOnFailure,
             'isolation_per_step' => $this->isolationPerStep,
         ];

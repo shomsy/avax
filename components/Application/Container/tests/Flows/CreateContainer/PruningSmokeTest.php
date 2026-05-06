@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
-final class PruningSmokeTest {}
+final class PruningSmokeTest
+{
+}
 
 final class PrunedFlowEntry
 {
@@ -15,9 +17,11 @@ final class PrunedFlowEntry
     }
 }
 
-final class DeadPrunableService {}
+final class DeadPrunableService
+{
+}
 
-$cacheDir = sys_get_temp_dir() . '/container-pruning-smoke-' . uniqid(prefix: '', more_entropy: true);
+$cacheDir = sys_get_temp_dir().'/container-pruning-smoke-'.uniqid(prefix: '', more_entropy: true);
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: 'pruning-smoke',
@@ -34,7 +38,7 @@ $container->bind(abstract: PrunedFlowEntry::class, concrete: PrunedFlowEntry::cl
 
 $container->compileContainer(serviceIds: [PrunedFlowEntry::class, PrunedDependency::class]);
 
-$report    = $container->compileReport(serviceIds: [PrunedFlowEntry::class]);
+$report = $container->compileReport(serviceIds: [PrunedFlowEntry::class]);
 $deadSlice = $container->forSlice(slice: 'flow.dead');
 $deadSliceView = $deadSlice->debugSlice();
 
@@ -65,7 +69,7 @@ assertTrue(
 assertSame(expected: false, actual: $container->has(id: DeadPrunableService::class), message: 'Pruned private flow services should still stay outside the top-level surface.');
 assertSame(expected: true, actual: $deadSlice->has(id: DeadPrunableService::class), message: 'Pruning must not mutate canonical authored slice visibility.');
 array_column(array: $deadSliceView['visible'] ?? [], column_key: 'serviceId')
-    |> (static fn ($x) : bool => in_array(needle: DeadPrunableService::class, haystack: $x, strict: true))
+    |> (static fn ($x): bool => in_array(needle: DeadPrunableService::class, haystack: $x, strict: true))
     |> (static fn (bool $x) => assertTrue(condition: $x, message: 'Slice views should still expose authored services even when pruning omits them from the artifact.'));
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

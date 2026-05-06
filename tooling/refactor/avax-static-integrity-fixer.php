@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2).'/vendor/autoload.php';
 
 final class StaticIntegrityRule
 {
     /**
-     * @param Closure(string, string): RuleResult $repair
+     * @param  Closure(string, string): RuleResult  $repair
      */
     public function __construct(
         public readonly string $name,
         public readonly string $description,
         public readonly bool $fixable,
         private readonly Closure $repair,
-    ) {}
+    ) {
+    }
 
     public function apply(string $path, string $content): RuleResult
     {
@@ -25,24 +26,26 @@ final class StaticIntegrityRule
 final class RuleResult
 {
     /**
-     * @param list<string> $messages
+     * @param  list<string>  $messages
      */
     public function __construct(
         public readonly string $content,
         public readonly array $messages,
-    ) {}
+    ) {
+    }
 }
 
 final class FileReport
 {
     /**
-     * @param list<string> $messages
+     * @param  list<string>  $messages
      */
     public function __construct(
         public readonly string $path,
         public readonly bool $changed,
         public readonly array $messages,
-    ) {}
+    ) {
+    }
 }
 
 $root = dirname(__DIR__, 2);
@@ -132,8 +135,8 @@ foreach ($files as $file) {
 
 $mode = $apply ? 'apply' : 'dry-run';
 echo "AvaX static-integrity fixer ({$mode})\n";
-echo 'Checked files: ' . count($files) . "\n";
-echo 'Affected files: ' . count($reports) . "\n\n";
+echo 'Checked files: '.count($files)."\n";
+echo 'Affected files: '.count($reports)."\n\n";
 
 foreach ($reports as $report) {
     $status = $report->changed ? ($apply ? 'UPDATED' : 'WOULD UPDATE') : 'CHECK';
@@ -223,7 +226,7 @@ function avaxStaticIntegrityRules(): array
 }
 
 /**
- * @param array<string, string> $replacements
+ * @param  array<string, string>  $replacements
  */
 function replaceExact(string $content, array $replacements, string $message): RuleResult
 {
@@ -324,7 +327,7 @@ function detectForbiddenTechnicalSegments(string $path, string $content): RuleRe
     }
 
     foreach ($forbiddenSegments as $forbiddenSegment) {
-        if (preg_match('/namespace\s+[^;]*\\\\' . preg_quote($forbiddenSegment, '/') . '(?:\\\\|;)/', $content) === 1) {
+        if (preg_match('/namespace\s+[^;]*\\\\'.preg_quote($forbiddenSegment, '/').'(?:\\\\|;)/', $content) === 1) {
             $messages[] = "forbidden namespace segment '{$forbiddenSegment}'";
         }
     }
@@ -336,8 +339,8 @@ function detectForbiddenTechnicalSegments(string $path, string $content): RuleRe
 }
 
 /**
- * @param list<string>          $methodNames
- * @param array<string, string> $argumentMap
+ * @param  list<string>  $methodNames
+ * @param  array<string, string>  $argumentMap
  */
 function replaceNamedArgumentsInCalls(string $content, array $methodNames, array $argumentMap): string
 {
@@ -348,7 +351,7 @@ function replaceNamedArgumentsInCalls(string $content, array $methodNames, array
         $methodNames,
     ));
 
-    while (preg_match('/->\s*(?:' . $methodPattern . ')\s*\(/', $updatedContent, $matches, PREG_OFFSET_CAPTURE, $offset) === 1) {
+    while (preg_match('/->\s*(?:'.$methodPattern.')\s*\(/', $updatedContent, $matches, PREG_OFFSET_CAPTURE, $offset) === 1) {
         $matchText = $matches[0][0];
         $matchOffset = $matches[0][1];
         $openParenthesis = $matchOffset + strlen($matchText) - 1;
@@ -356,6 +359,7 @@ function replaceNamedArgumentsInCalls(string $content, array $methodNames, array
 
         if ($closeParenthesis === null) {
             $offset = $openParenthesis + 1;
+
             continue;
         }
 
@@ -364,8 +368,8 @@ function replaceNamedArgumentsInCalls(string $content, array $methodNames, array
 
         foreach ($argumentMap as $oldName => $newName) {
             $updatedCall = (string) preg_replace(
-                pattern: '/(?<![A-Za-z0-9_])' . preg_quote($oldName, '/') . '\s*:/',
-                replacement: $newName . ':',
+                pattern: '/(?<![A-Za-z0-9_])'.preg_quote($oldName, '/').'\s*:/',
+                replacement: $newName.':',
                 subject: $updatedCall,
             );
         }
@@ -379,6 +383,7 @@ function replaceNamedArgumentsInCalls(string $content, array $methodNames, array
             );
 
             $offset = $matchOffset + strlen($updatedCall);
+
             continue;
         }
 
@@ -388,7 +393,7 @@ function replaceNamedArgumentsInCalls(string $content, array $methodNames, array
     return $updatedContent;
 }
 
-function findClosingParenthesis(string $content, int $openParenthesis): int|null
+function findClosingParenthesis(string $content, int $openParenthesis): ?int
 {
     $depth = 0;
     $length = strlen($content);
@@ -401,11 +406,13 @@ function findClosingParenthesis(string $content, int $openParenthesis): int|null
         if ($quote !== '') {
             if ($escaped) {
                 $escaped = false;
+
                 continue;
             }
 
             if ($char === '\\') {
                 $escaped = true;
+
                 continue;
             }
 
@@ -418,11 +425,13 @@ function findClosingParenthesis(string $content, int $openParenthesis): int|null
 
         if ($char === '\'' || $char === '"') {
             $quote = $char;
+
             continue;
         }
 
         if ($char === '(') {
             $depth++;
+
             continue;
         }
 
@@ -438,8 +447,7 @@ function findClosingParenthesis(string $content, int $openParenthesis): int|null
 }
 
 /**
- * @param list<string> $arguments
- *
+ * @param  list<string>  $arguments
  * @return list<string>
  */
 function optionValues(array $arguments, string $prefix): array
@@ -459,8 +467,7 @@ function optionValues(array $arguments, string $prefix): array
 }
 
 /**
- * @param list<string> $paths
- *
+ * @param  list<string>  $paths
  * @return list<string>
  */
 function collectPhpFiles(string $root, array $paths): array
@@ -523,12 +530,12 @@ function absolutePath(string $root, string $path): string
         return $path;
     }
 
-    return $root . '/' . ltrim($path, '/');
+    return $root.'/'.ltrim($path, '/');
 }
 
 function relativePath(string $root, string $path): string
 {
-    $normalizedRoot = rtrim($root, '/') . '/';
+    $normalizedRoot = rtrim($root, '/').'/';
 
     if (str_starts_with($path, $normalizedRoot)) {
         return substr($path, strlen($normalizedRoot));
@@ -548,7 +555,7 @@ function pathShouldBeSkipped(string $path): bool
         '/node_modules/',
     ];
 
-    $normalized = '/' . trim($path, '/') . '/';
+    $normalized = '/'.trim($path, '/').'/';
 
     foreach ($skipped as $skip) {
         if (str_contains($normalized, $skip)) {

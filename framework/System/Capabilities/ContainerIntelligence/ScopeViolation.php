@@ -13,5 +13,6 @@ final readonly class ScopeViolation
         public string $service,
         public string $dependency,
         public string $message,
-    ) {}
+    ) {
+    }
 }

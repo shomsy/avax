@@ -16,19 +16,20 @@ class ColumnDefinition
      *
      * -- intent: capture the name and technical type of the column.
      *
-     * @param string $name       Technical name of the column
-     * @param string $type       Database-specific data type
-     * @param array  $attributes Collection of column modifiers (nullable, default, etc)
+     * @param  string  $name  Technical name of the column
+     * @param  string  $type  Database-specific data type
+     * @param  array  $attributes  Collection of column modifiers (nullable, default, etc)
      */
-    public function __construct(public readonly string $name, public readonly string $type, public array $attributes = []) {}
+    public function __construct(public readonly string $name, public readonly string $type, public array $attributes = [])
+    {
+    }
 
     /**
      * Mark the column as allowing NULL values.
      *
      * -- intent: provide a pragmatic shorthand for the NULL attribute.
      *
-     * @param bool $value Whether null is allowed
-     *
+     * @param  bool  $value  Whether null is allowed
      * @return $this
      */
     public function nullable(bool $value = true): self
@@ -43,8 +44,7 @@ class ColumnDefinition
      *
      * -- intent: provide a pragmatic shorthand for the DEFAULT attribute.
      *
-     * @param mixed $value Fallback data value
-     *
+     * @param  mixed  $value  Fallback data value
      * @return $this
      */
     public function default(mixed $value): self
@@ -115,8 +115,7 @@ class ColumnDefinition
      *
      * -- intent: optimize query performance for this column.
      *
-     * @param string|null $name Optional index name
-     *
+     * @param  string|null  $name  Optional index name
      * @return $this
      */
     public function index(?string $name = null): self
@@ -131,8 +130,7 @@ class ColumnDefinition
      *
      * -- intent: define encoding for string columns.
      *
-     * @param string $charset Character set name (e.g., 'utf8mb4')
-     *
+     * @param  string  $charset  Character set name (e.g., 'utf8mb4')
      * @return $this
      */
     public function charset(string $charset): self
@@ -147,8 +145,7 @@ class ColumnDefinition
      *
      * -- intent: define sorting rules for string columns.
      *
-     * @param string $collation Collation name (e.g., 'utf8mb4_unicode_ci')
-     *
+     * @param  string  $collation  Collation name (e.g., 'utf8mb4_unicode_ci')
      * @return $this
      */
     public function collation(string $collation): self
@@ -219,20 +216,19 @@ class ColumnDefinition
      *
      * -- intent: establish referential integrity with another table.
      *
-     * @param string      $table    Referenced table name
-     * @param string|null $column   Referenced column name
-     * @param string|null $onDelete ON DELETE action (CASCADE, SET NULL, etc.)
-     * @param string $onUpdate ON UPDATE action
-     *
+     * @param  string  $table  Referenced table name
+     * @param  string|null  $column  Referenced column name
+     * @param  string|null  $onDelete  ON DELETE action (CASCADE, SET NULL, etc.)
+     * @param  string  $onUpdate  ON UPDATE action
      * @return $this
      */
     public function references(string $table, ?string $column = null, ?string $onDelete = null, string $onUpdate = 'CASCADE'): self
     {
-        $column   ??= 'id';
+        $column ??= 'id';
         $onDelete ??= 'CASCADE';
         $this->attributes['foreign'] = [
             'table' => $table,
-            'column'    => $column,
+            'column' => $column,
             'on_delete' => $onDelete,
             'on_update' => $onUpdate,
         ];
@@ -245,8 +241,7 @@ class ColumnDefinition
      *
      * -- intent: facilitate database self-documentation via column comments.
      *
-     * @param string $text Explanatory description
-     *
+     * @param  string  $text  Explanatory description
      * @return $this
      */
     public function comment(string $text): self

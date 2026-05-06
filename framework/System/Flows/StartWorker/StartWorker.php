@@ -9,22 +9,23 @@ use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRuntimeInterface;
 final readonly class StartWorker
 {
     public function __construct(
-        private WorkerRuntimeInterface|null $workerRuntime = null,
-    ) {}
+        private ?WorkerRuntimeInterface $workerRuntime = null,
+    ) {
+    }
 
-    public function start(callable $bootstrap) : void
+    public function start(callable $bootstrap): void
     {
         $this->bootWorkerApplication($bootstrap);
 
         $this->startWorkerLoop();
     }
 
-    private function bootWorkerApplication(callable $bootstrap) : void
+    private function bootWorkerApplication(callable $bootstrap): void
     {
         $bootstrap();
     }
 
-    private function startWorkerLoop() : void
+    private function startWorkerLoop(): void
     {
         $this->workerRuntime?->run();
     }

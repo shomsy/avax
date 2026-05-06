@@ -9,4 +9,6 @@ use RuntimeException;
 /**
  * Exception thrown when a testing fake assertion fails.
  */
-final class TestingFakeException extends RuntimeException {}
+final class TestingFakeException extends RuntimeException
+{
+}

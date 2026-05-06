@@ -30,7 +30,7 @@ if (! function_exists('csrf_field')) {
      */
     function csrf_field(): string
     {
-        return '<input type="hidden" name="_csrf" value="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
+        return '<input type="hidden" name="_csrf" value="'.htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8').'">';
     }
 }
 
@@ -40,7 +40,7 @@ if (! function_exists('csrf_method')) {
      */
     function csrf_method(): string
     {
-        return '<meta name="csrf-token" content="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
+        return '<meta name="csrf-token" content="'.htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8').'">';
     }
 }
 
@@ -52,9 +52,9 @@ if (! function_exists('secure_headers')) {
     {
         $defaults = [
             'X-Content-Type-Options' => 'nosniff',
-            'X-Frame-Options'    => 'SAMEORIGIN',
-            'X-XSS-Protection'   => '1; mode=block',
-            'Referrer-Policy'    => 'strict-origin-when-cross-origin',
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'X-XSS-Protection' => '1; mode=block',
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
             'Permissions-Policy' => 'camera=(), microphone=(), geolocation=()',
         ];
 

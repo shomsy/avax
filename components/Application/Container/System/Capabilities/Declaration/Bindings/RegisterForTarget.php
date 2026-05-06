@@ -17,14 +17,14 @@ final class RegisterForTarget
     {
     }
 
-    public function needs(string $abstract) : self
+    public function needs(string $abstract): self
     {
         $this->needs = $abstract;
 
         return $this;
     }
 
-    public function give(mixed $implementation) : void
+    public function give(mixed $implementation): void
     {
         if ($this->needs === '') {
             throw new LogicException(

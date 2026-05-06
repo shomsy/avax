@@ -17,13 +17,13 @@ final readonly class RecordSagaStepFailed
     /**
      * @throws RandomException
      */
-    public function record(StoreSagaState $storeSagaState, string $instanceId, string $stepName, string $correlationId, Throwable $throwable) : SagaEvent
+    public function record(StoreSagaState $storeSagaState, string $instanceId, string $stepName, string $correlationId, Throwable $throwable): SagaEvent
     {
         return $storeSagaState->appendEvent(event: new SagaEvent(
-                                                       id: 'saga-event-' . bin2hex(string: random_bytes(length: 8)),
+            id: 'saga-event-'.bin2hex(string: random_bytes(length: 8)),
             type         : 'saga.step.failed',
-                                                       payload: ['step' => $stepName, 'failure' => $throwable->getMessage()],
-                                                       instanceId: $instanceId,
+            payload: ['step' => $stepName, 'failure' => $throwable->getMessage()],
+            instanceId: $instanceId,
             correlationId: $correlationId,
         ));
     }

@@ -13,7 +13,7 @@ final readonly class PushAuthorizationRequestData
     public array $scopes;
 
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
         public string $clientId,

@@ -19,7 +19,8 @@ final readonly class Tenancy
         private Tenants $tenants,
         #[SensitiveParameter]
         private Security $security,
-    ) {}
+    ) {
+    }
 
     public function tenants(): Tenants
     {

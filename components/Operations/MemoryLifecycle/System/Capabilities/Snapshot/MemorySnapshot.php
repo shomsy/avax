@@ -27,6 +27,7 @@ class MemorySnapshot
             'gc_enabled' => gc_enabled(),
             'gc_stats' => gc_status(),
         ];
+
         return $snapshot;
     }
 
@@ -43,7 +44,7 @@ class MemorySnapshot
         return [
             'memory_used' => $this->getUsed(),
             'memory_peak' => $this->getPeak(),
-            'timestamp' => date('c', (int)$this->timestamp),
+            'timestamp' => date('c', (int) $this->timestamp),
         ];
     }
 

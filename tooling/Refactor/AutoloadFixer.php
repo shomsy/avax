@@ -33,7 +33,7 @@ class AutoloadFixer
 
         file_put_contents(
             'composer.json',
-            json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
+            json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n"
         );
 
         echo "Added compatibility autoload paths\n";

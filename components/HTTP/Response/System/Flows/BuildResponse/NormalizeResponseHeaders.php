@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Response\System\Flows\BuildResponse;
 
 final class NormalizeResponseHeaders
 {
-    public function normalize(array $headers) : array
+    public function normalize(array $headers): array
     {
         return $headers; // Simplified
     }

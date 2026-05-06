@@ -12,8 +12,8 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements
 final readonly class OAuthClientApprovalPolicy
 {
     public function requiresApproval(
-        ?bool                      $workloadIdentity = null,
-        ?bool                      $phishingResistantRequired = null,
+        ?bool $workloadIdentity = null,
+        ?bool $phishingResistantRequired = null,
         ?OAuthSenderConstraintType $oAuthSenderConstraintType = null,
     ): bool {
         $workloadIdentity ??= false;

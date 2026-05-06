@@ -23,35 +23,35 @@ use Throwable;
 final readonly class SendHttpRequest
 {
     /**
-     * @param BuildOutboundRequest   $buildRequest   Request builder
-     * @param DecodeHttpResponse     $decodeResponse Response decoder
-     * @param HandleHttpFailure      $handleFailure  Failure handler with retry logic
-     * @param HttpTransportInterface $transport      HTTP transport backend
+     * @param  BuildOutboundRequest  $buildRequest  Request builder
+     * @param  DecodeHttpResponse  $decodeResponse  Response decoder
+     * @param  HandleHttpFailure  $handleFailure  Failure handler with retry logic
+     * @param  HttpTransportInterface  $transport  HTTP transport backend
      */
     public function __construct(
         public BuildOutboundRequest $buildRequest,
         public DecodeHttpResponse $decodeResponse,
         public HandleHttpFailure $handleFailure,
         public HttpTransportInterface $transport,
-    ) {}
+    ) {
+    }
 
     /**
      * Execute an outbound HTTP request.
      *
-     * @param OutboundRequest $outboundRequest The outbound request to execute
-     *
+     * @param  OutboundRequest  $outboundRequest  The outbound request to execute
      * @return ClientResponse The HTTP response
      *
      * @throws HttpRequestFailed if the request fails and retries are exhausted
      * @throws HttpTimeout if the request times out
      */
-    public function execute(OutboundRequest $outboundRequest) : ClientResponse
+    public function execute(OutboundRequest $outboundRequest): ClientResponse
     {
         try {
             return $this->transport->send($outboundRequest);
         } catch (Throwable $throwable) {
             return $this->handleFailure->handle(
-                retryCallback: fn (OutboundRequest $outboundRequest) : ClientResponse => $this->transport->send($outboundRequest),
+                retryCallback: fn (OutboundRequest $outboundRequest): ClientResponse => $this->transport->send($outboundRequest),
                 request      : $outboundRequest,
                 exception    : $throwable,
                 options      : $outboundRequest->options,

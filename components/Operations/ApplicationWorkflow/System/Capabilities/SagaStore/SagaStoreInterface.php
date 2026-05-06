@@ -25,7 +25,7 @@ interface SagaStoreInterface
     /**
      * Update the status of a saga instance.
      */
-    public function updateStatus(Saga $saga, SagaState $sagaState) : void;
+    public function updateStatus(Saga $saga, SagaState $sagaState): void;
 
     /**
      * Delete a saga instance from the store.

@@ -12,19 +12,19 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryStat
  */
 final class CockroachDBGrammar extends PostgreSQLGrammar
 {
-    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string
     {
         $sql = $this->compileInsert($queryState);
 
         $conflictColumns = array_map(
-            callback: fn ($col) : string => $this->wrap(value: $col),
+            callback: fn ($col): string => $this->wrap(value: $col),
             array   : $uniqueBy,
         );
         $conflictClause = implode(separator: ', ', array: $conflictColumns);
 
         $updates = [];
         foreach ($update as $column) {
-            $updates[] = $this->wrap(value: $column) . ' = EXCLUDED.' . $this->wrap(value: $column);
+            $updates[] = $this->wrap(value: $column).' = EXCLUDED.'.$this->wrap(value: $column);
         }
 
         $updateClause = implode(separator: ', ', array: $updates);
@@ -49,6 +49,6 @@ final class CockroachDBGrammar extends PostgreSQLGrammar
 
     public function compileRegionalInTable(string $region): string
     {
-        return 'REGIONAL BY TABLE IN ' . $region;
+        return 'REGIONAL BY TABLE IN '.$region;
     }
 }

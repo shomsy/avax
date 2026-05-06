@@ -9,14 +9,18 @@ namespace Psr\Container {
     if (! interface_exists(ContainerInterface::class)) {
         interface ContainerInterface
         {
-            public function get(string $id) : mixed;
+            public function get(string $id): mixed;
 
-            public function has(string $id) : bool;
+            public function has(string $id): bool;
         }
 
-        interface ContainerExceptionInterface extends Throwable {}
+        interface ContainerExceptionInterface extends Throwable
+        {
+        }
 
-        interface NotFoundExceptionInterface extends ContainerExceptionInterface {}
+        interface NotFoundExceptionInterface extends ContainerExceptionInterface
+        {
+        }
     }
 }
 
@@ -26,8 +30,8 @@ namespace {
     use Avax\Components\Application\Container\System\Container;
     use Avax\Components\Application\Container\System\Flows\CreateContainer\CreateContainer;
 
-    $root             = dirname(__DIR__) . '/DI';
-    $composerAutoload = dirname(__DIR__, 2) . '/vendor/autoload.php';
+    $root = dirname(__DIR__).'/DI';
+    $composerAutoload = dirname(__DIR__, 2).'/vendor/autoload.php';
     if (is_file($composerAutoload)) {
         require_once $composerAutoload;
     }
@@ -40,7 +44,7 @@ namespace {
             }
 
             $relative = substr($class, strlen($prefix));
-            $path     = $root . '/' . str_replace('\\', '/', $relative) . '.php';
+            $path = $root.'/'.str_replace('\\', '/', $relative).'.php';
 
             if (is_file($path)) {
                 require_once $path;
@@ -59,7 +63,7 @@ namespace {
     {
         if ($expected !== $actual) {
             throw new RuntimeException(
-                $message . ' Expected ' . var_export($expected, true) . ' but got ' . var_export($actual, true) . '.',
+                $message.' Expected '.var_export($expected, true).' but got '.var_export($actual, true).'.',
             );
         }
     }
@@ -74,7 +78,7 @@ namespace {
     function assertInstanceOf(string $expectedClass, mixed $value, string $message): void
     {
         if (! $value instanceof $expectedClass) {
-            throw new RuntimeException($message . ' Expected instance of ' . $expectedClass . '.');
+            throw new RuntimeException($message.' Expected instance of '.$expectedClass.'.');
         }
     }
 
@@ -88,14 +92,14 @@ namespace {
             }
 
             throw new RuntimeException(
-                $message . ' Expected ' . $expectedClass . ' but got ' . $throwable::class . '.',
+                $message.' Expected '.$expectedClass.' but got '.$throwable::class.'.',
                 0,
                 $throwable,
             );
         }
 
         throw new RuntimeException(
-            $message . ' Expected ' . $expectedClass . ' but nothing was thrown.',
+            $message.' Expected '.$expectedClass.' but nothing was thrown.',
         );
     }
 

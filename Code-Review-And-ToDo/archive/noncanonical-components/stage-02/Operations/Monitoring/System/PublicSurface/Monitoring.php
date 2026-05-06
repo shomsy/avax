@@ -15,7 +15,7 @@ final class Monitoring
 {
     private static ?MetricsRegistry $metricsRegistry = null;
 
-    public static function dashboard() : array
+    public static function dashboard(): array
     {
         return new MonitoringDashboard(
             metrics: self::metrics(),
@@ -23,7 +23,7 @@ final class Monitoring
         )->data();
     }
 
-    public static function metrics() : MetricsRegistry
+    public static function metrics(): MetricsRegistry
     {
         if (! self::$metricsRegistry instanceof MetricsRegistry) {
             self::$metricsRegistry = new MetricsRegistry();
@@ -32,12 +32,12 @@ final class Monitoring
         return self::$metricsRegistry;
     }
 
-    public static function health(array $checks = []) : HealthReport
+    public static function health(array $checks = []): HealthReport
     {
         return new HealthEndpoint()->report(checks: $checks);
     }
 
-    public static function report(Throwable $throwable) : void
+    public static function report(Throwable $throwable): void
     {
         new SentryReporter()->capture(throwable: $throwable);
     }

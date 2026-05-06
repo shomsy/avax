@@ -9,7 +9,7 @@ use Avax\Components\Operations\Notifications\System\PublicSurface\Notifier;
 
 final class RegisterNotificationDependencies
 {
-    public static function register(NotificationChannel $notificationChannel) : void
+    public static function register(NotificationChannel $notificationChannel): void
     {
         Notifier::setChannel($notificationChannel);
     }

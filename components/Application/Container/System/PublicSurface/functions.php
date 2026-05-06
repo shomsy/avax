@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Container;
+use Avax\Components\Application\Container\System\ContainerInterface;
 
 if (! function_exists('appInstance')) {
     /**
      * Get or set the global container instance.
      */
-    function appInstance(?ContainerInterface $instance = null) : ?ContainerInterface
+    function appInstance(?ContainerInterface $instance = null): ?ContainerInterface
     {
         static $container = null;
 
@@ -30,7 +30,7 @@ if (! function_exists('app')) {
      *   app()                    -> returns container
      *   app(Service::class)      -> resolves service
      */
-    function app(?string $abstract = null) : mixed
+    function app(?string $abstract = null): mixed
     {
         $container = appInstance();
 

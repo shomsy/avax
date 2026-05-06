@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Di
 
 interface ScimProvisionedIdentityStoreInterface
 {
-    public function save(ScimProvisionedIdentity $scimProvisionedIdentity) : void;
+    public function save(ScimProvisionedIdentity $scimProvisionedIdentity): void;
 
     public function find(string $directoryId, string $externalId): ?ScimProvisionedIdentity;
 

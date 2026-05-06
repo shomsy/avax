@@ -13,7 +13,7 @@ if (! function_exists('config')) {
     /**
      * Retrieve a configuration value or the entire configuration instance.
      */
-    function config(string $key, mixed $default = null) : mixed
+    function config(string $key, mixed $default = null): mixed
     {
         return app(Config::class)->get($key, $default);
     }
@@ -23,12 +23,12 @@ if (! function_exists('base_path')) {
     /**
      * Resolves the base path of the application.
      *
-     * @param string $path The relative path to append to the base path.
+     * @param  string  $path  The relative path to append to the base path.
      * @return string The resolved base path.
      */
-    function base_path(string $path = '') : string
+    function base_path(string $path = ''): string
     {
-        return rtrim(AppPath::getRoot(), '/') . '/' . ltrim($path, '/');
+        return rtrim(AppPath::getRoot(), '/').'/'.ltrim($path, '/');
     }
 }
 
@@ -36,10 +36,10 @@ if (! function_exists('storage_path')) {
     /**
      * Resolves the storage path.
      */
-    function storage_path(string $path = '') : string
+    function storage_path(string $path = ''): string
     {
         $base = base_path('storage');
 
-        return rtrim($base, '/') . '/' . ltrim($path, '/');
+        return rtrim($base, '/').'/'.ltrim($path, '/');
     }
 }

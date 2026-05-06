@@ -24,9 +24,9 @@ final class CompiledCache
     private static function instance(): CompiledCacheContract
     {
         if (! self::$compiledCacheContract instanceof CompiledCacheContract) {
-            $directory = self::$defaultDirectory ?? sys_get_temp_dir() . '/compiled_cache';
+            $directory = self::$defaultDirectory ?? sys_get_temp_dir().'/compiled_cache';
 
-            $config             = CompiledCacheConfiguration::inDirectory($directory);
+            $config = CompiledCacheConfiguration::inDirectory($directory);
             $buildCompiledCache = new BuildCompiledCache();
 
             self::$compiledCacheContract = $buildCompiledCache->fromConfiguration(configuration: $config);
@@ -57,13 +57,13 @@ final class CompiledCache
 
     public static function configure(string $directory): void
     {
-        self::$defaultDirectory      = $directory;
+        self::$defaultDirectory = $directory;
         self::$compiledCacheContract = null;
     }
 
     public static function reset(): void
     {
         self::$compiledCacheContract = null;
-        self::$defaultDirectory      = null;
+        self::$defaultDirectory = null;
     }
 }

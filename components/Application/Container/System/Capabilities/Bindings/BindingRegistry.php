@@ -30,11 +30,11 @@ final class BindingRegistry
 
     public function bind(string $abstract, mixed $concrete = null, bool $shared = false, bool $scoped = false): void
     {
-        $abstract                  = $this->resolveAlias($abstract);
+        $abstract = $this->resolveAlias($abstract);
         $this->bindings[$abstract] = [
             'concrete' => $concrete ?? $abstract,
-            'shared'   => $shared,
-            'scoped'   => $scoped,
+            'shared' => $shared,
+            'scoped' => $scoped,
         ];
     }
 
@@ -52,14 +52,14 @@ final class BindingRegistry
 
     public function instance(string $abstract, object $instance): void
     {
-        $abstract                   = $this->resolveAlias($abstract);
+        $abstract = $this->resolveAlias($abstract);
         $this->instances[$abstract] = $instance;
     }
 
     public function alias(string $alias, string $abstract): void
     {
         if ($alias === $abstract) {
-            throw new LogicException('Cannot alias a service to itself: ' . $alias);
+            throw new LogicException('Cannot alias a service to itself: '.$alias);
         }
 
         $this->aliases[$alias] = $abstract;
@@ -102,9 +102,9 @@ final class BindingRegistry
 
     public function clear(): void
     {
-        $this->bindings  = [];
-        $this->aliases   = [];
-        $this->tags      = [];
+        $this->bindings = [];
+        $this->aliases = [];
+        $this->tags = [];
         $this->instances = [];
     }
 

@@ -55,15 +55,15 @@ final readonly class FileCacheStore implements CacheStore
         $serializedCachePayload = $this->jsonCacheSerializer->serialize(value: $storedCacheRecord->value);
 
         $data = [
-            'value'          => $serializedCachePayload->data,
-            'format'         => $serializedCachePayload->format,
-            'lifecycle'      => $this->serializeLifecycle(cachedValueLifecycle: $storedCacheRecord->cachedValueLifecycle),
+            'value' => $serializedCachePayload->data,
+            'format' => $serializedCachePayload->format,
+            'lifecycle' => $this->serializeLifecycle(cachedValueLifecycle: $storedCacheRecord->cachedValueLifecycle),
             'serializedData' => $storedCacheRecord->serializedData,
         ];
 
         $content = json_encode($data, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE);
 
-        $tempPath = $filePath . '.tmp.' . uniqid(more_entropy: true);
+        $tempPath = $filePath.'.tmp.'.uniqid(more_entropy: true);
 
         $result = file_put_contents(
             filename: $tempPath,
@@ -97,9 +97,9 @@ final readonly class FileCacheStore implements CacheStore
     private function getFilePath(CacheKey $cacheKey): string
     {
         $keyHash = hash('xxh128', $cacheKey->fullKey());
-        $subDir  = substr($keyHash, 0, 2);
+        $subDir = substr($keyHash, 0, 2);
 
-        return $this->basePath . '/' . $subDir . '/' . $keyHash . self::FILE_EXTENSION;
+        return $this->basePath.'/'.$subDir.'/'.$keyHash.self::FILE_EXTENSION;
     }
 
     private function ensureDirectoryExistsForKey(string $filePath): void
@@ -124,12 +124,12 @@ final readonly class FileCacheStore implements CacheStore
     private function serializeLifecycle(CachedValueLifecycle $cachedValueLifecycle): array
     {
         return [
-            'createdAt'      => $cachedValueLifecycle->createdAt->toUnixTime(),
+            'createdAt' => $cachedValueLifecycle->createdAt->toUnixTime(),
             'lastAccessedAt' => $cachedValueLifecycle->lastAccessedAt->toUnixTime(),
-            'expiresAt'      => $cachedValueLifecycle->expiresAt->toUnixTime(),
-            'refreshedAt'    => $cachedValueLifecycle->refreshedAt->toUnixTime(),
-            'hitCount'       => $cachedValueLifecycle->hitCount,
-            'refreshCount'   => $cachedValueLifecycle->refreshCount,
+            'expiresAt' => $cachedValueLifecycle->expiresAt->toUnixTime(),
+            'refreshedAt' => $cachedValueLifecycle->refreshedAt->toUnixTime(),
+            'hitCount' => $cachedValueLifecycle->hitCount,
+            'refreshCount' => $cachedValueLifecycle->refreshCount,
         ];
     }
 
@@ -240,7 +240,7 @@ final readonly class FileCacheStore implements CacheStore
             );
 
             $updatedLifecycle = $lifecycle->withAccessed(clock: $clock);
-            $record           = new StoredCacheRecord(
+            $record = new StoredCacheRecord(
                 value               : $record->value,
                 serializedData      : $record->serializedData,
                 format              : $record->format,
@@ -270,7 +270,7 @@ final readonly class FileCacheStore implements CacheStore
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private function deserializeLifecycle(array $data, Clock $clock): CachedValueLifecycle
     {

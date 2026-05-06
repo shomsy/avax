@@ -17,7 +17,7 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      *
      * @throws ReflectionException
      */
@@ -32,13 +32,13 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function export(?string $format = null, ?string $kind = null, ?string $id = null, array $context = []): string
     {
         $format ??= 'json';
-        $kind   ??= 'dependency';
-        $id     ??= '';
+        $kind ??= 'dependency';
+        $id ??= '';
         if ($context === []) {
             return $this->resolveDependency->exportGraph(format: $format, kind: $kind, id: $id);
         }
@@ -52,12 +52,12 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function diff(?string $format = null, ?string $id = null, array $context = []): string
     {
         $format ??= 'json';
-        $id     ??= '';
+        $id ??= '';
         if ($context === []) {
             return $this->resolveDependency->diffGraph(format: $format, id: $id);
         }
@@ -66,8 +66,7 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -82,7 +81,7 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -97,7 +96,7 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -112,7 +111,7 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -127,7 +126,7 @@ final readonly class ExportGraph
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function showSlice(?string $slice = null, array $context = []): array

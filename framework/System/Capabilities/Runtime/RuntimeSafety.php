@@ -35,12 +35,13 @@ final class RuntimeSafety
 
     public function __construct(
         private readonly StateResetRegistry $stateResetRegistry,
-    ) {}
+    ) {
+    }
 
     /**
      * Register a resettable state component.
      */
-    public function registerResettable(string $name, ResettableState $resettableState) : self
+    public function registerResettable(string $name, ResettableState $resettableState): self
     {
         $this->resettableStates[$name] = $resettableState;
         $this->stateResetRegistry->register($name, $resettableState);
@@ -51,7 +52,7 @@ final class RuntimeSafety
     /**
      * Register a custom reset callback.
      */
-    public function onReset(string $name, callable $callback) : self
+    public function onReset(string $name, callable $callback): self
     {
         $this->resetCallbacks[$name] = $callback;
 
@@ -61,7 +62,7 @@ final class RuntimeSafety
     /**
      * Enable or disable database transaction leak detection.
      */
-    public function setTransactionLeakDetection(bool $enabled) : self
+    public function setTransactionLeakDetection(bool $enabled): self
     {
         $this->transactionLeakDetection = $enabled;
 
@@ -71,7 +72,7 @@ final class RuntimeSafety
     /**
      * Track an active database transaction.
      */
-    public function trackTransaction(string $connectionName) : void
+    public function trackTransaction(string $connectionName): void
     {
         $this->activeTransactions[$connectionName] = $connectionName;
     }
@@ -81,14 +82,14 @@ final class RuntimeSafety
      *
      * @return array{reset: list<string>, failures: array<string, string>, transactionLeaks: list<string>}
      */
-    public function reset() : array
+    public function reset(): array
     {
         $reset = [];
         $failures = [];
 
         // Reset registered states via the registry
         $stateResetReport = $this->stateResetRegistry->resetAll();
-        $reset            = $stateResetReport->resetComponents();
+        $reset = $stateResetReport->resetComponents();
 
         foreach ($stateResetReport->failures() as $name => $throwable) {
             $failures[$name] = $throwable->getMessage();
@@ -113,7 +114,7 @@ final class RuntimeSafety
         }
 
         return [
-            'reset'    => $reset,
+            'reset' => $reset,
             'failures' => $failures,
             'transactionLeaks' => $transactionLeaks,
         ];
@@ -124,7 +125,7 @@ final class RuntimeSafety
      *
      * @return list<string>
      */
-    public function detectTransactionLeaks() : array
+    public function detectTransactionLeaks(): array
     {
         if (! $this->transactionLeakDetection) {
             return [];
@@ -136,7 +137,7 @@ final class RuntimeSafety
     /**
      * Mark a database transaction as completed.
      */
-    public function completeTransaction(string $connectionName) : void
+    public function completeTransaction(string $connectionName): void
     {
         unset($this->activeTransactions[$connectionName]);
     }
@@ -144,7 +145,7 @@ final class RuntimeSafety
     /**
      * Get the count of active transaction leaks.
      */
-    public function transactionLeakCount() : int
+    public function transactionLeakCount(): int
     {
         return count($this->activeTransactions);
     }
@@ -152,7 +153,7 @@ final class RuntimeSafety
     /**
      * Check if there are any transaction leaks.
      */
-    public function hasTransactionLeaks() : bool
+    public function hasTransactionLeaks(): bool
     {
         return $this->activeTransactions !== [];
     }
@@ -160,7 +161,7 @@ final class RuntimeSafety
     /**
      * Clear all tracked transactions (emergency cleanup).
      */
-    public function clearTransactions() : void
+    public function clearTransactions(): void
     {
         $this->activeTransactions = [];
     }

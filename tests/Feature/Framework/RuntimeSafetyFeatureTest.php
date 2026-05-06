@@ -33,11 +33,11 @@ use PHPUnit\Framework\TestCase;
 final class RuntimeSafetyFeatureTest extends TestCase
 {
     #[Test]
-    public function request_a_state_does_not_leak_into_request_b_after_reset() : void
+    public function request_a_state_does_not_leak_into_request_b_after_reset(): void
     {
         // Build the core runtime components directly
-        $requestScopeStore  = new RequestScopeStore();
-        $runtimeContext     = new RuntimeContext();
+        $requestScopeStore = new RequestScopeStore();
+        $runtimeContext = new RuntimeContext();
         $stateResetRegistry = new StateResetRegistry();
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
@@ -110,10 +110,10 @@ final class RuntimeSafetyFeatureTest extends TestCase
     }
 
     #[Test]
-    public function runtime_context_is_cleared_between_requests() : void
+    public function runtime_context_is_cleared_between_requests(): void
     {
-        $requestScopeStore  = new RequestScopeStore();
-        $runtimeContext     = new RuntimeContext();
+        $requestScopeStore = new RequestScopeStore();
+        $runtimeContext = new RuntimeContext();
         $stateResetRegistry = new StateResetRegistry();
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
@@ -146,17 +146,17 @@ final class RuntimeSafetyFeatureTest extends TestCase
     }
 
     #[Test]
-    public function multiple_sequential_requests_remain_isolated() : void
+    public function multiple_sequential_requests_remain_isolated(): void
     {
-        $requestScopeStore  = new RequestScopeStore();
-        $runtimeContext     = new RuntimeContext();
+        $requestScopeStore = new RequestScopeStore();
+        $runtimeContext = new RuntimeContext();
         $stateResetRegistry = new StateResetRegistry();
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
 
         // Process 5 sequential requests, each with different data
         for ($i = 1; $i <= 5; $i++) {
-            $request = new RuntimeRequest(method: 'GET', uri: '/page-' . $i);
+            $request = new RuntimeRequest(method: 'GET', uri: '/page-'.$i);
 
             $openScope = new OpenHttpRequestScope(
                 runtimeContext: $runtimeContext,
@@ -166,14 +166,14 @@ final class RuntimeSafetyFeatureTest extends TestCase
 
             $scope = $requestScopeStore->current();
             $scope->write(key: 'page_number', value: $i);
-            $scope->write(key: 'page_uri', value: '/page-' . $i);
+            $scope->write(key: 'page_uri', value: '/page-'.$i);
 
             // Verify only current request's data is visible
             self::assertSame($i, $scope->read(key: 'page_number'));
-            self::assertSame('/page-' . $i, $scope->read(key: 'page_uri'));
+            self::assertSame('/page-'.$i, $scope->read(key: 'page_uri'));
 
             $runtimeContext->recordResult(
-                result: RuntimeResult::fromConsoleOutput(output: 'page-' . $i, exitCode: 200),
+                result: RuntimeResult::fromConsoleOutput(output: 'page-'.$i, exitCode: 200),
             );
 
             $closeScope = new CloseHttpRequestScope(requestScopes: $requestScopeStore);
@@ -189,7 +189,7 @@ final class RuntimeSafetyFeatureTest extends TestCase
     }
 
     #[Test]
-    public function state_reset_registry_resets_all_registered_components() : void
+    public function state_reset_registry_resets_all_registered_components(): void
     {
         $stateResetRegistry = new StateResetRegistry();
 
@@ -197,7 +197,7 @@ final class RuntimeSafetyFeatureTest extends TestCase
         $mockResettable = new class () implements ResettableState {
             public int $resetCount = 0;
 
-            public function resetState() : void
+            public function resetState(): void
             {
                 $this->resetCount++;
             }
@@ -220,7 +220,7 @@ final class RuntimeSafetyFeatureTest extends TestCase
     }
 
     #[Test]
-    public function request_scope_store_resets_properly() : void
+    public function request_scope_store_resets_properly(): void
     {
         $requestScopeStore = new RequestScopeStore();
 
@@ -253,10 +253,10 @@ final class RuntimeSafetyFeatureTest extends TestCase
     }
 
     #[Test]
-    public function runtime_safety_detects_transaction_leaks() : void
+    public function runtime_safety_detects_transaction_leaks(): void
     {
         $stateResetRegistry = new StateResetRegistry();
-        $runtimeSafety      = new RuntimeSafety(
+        $runtimeSafety = new RuntimeSafety(
             stateResetRegistry: $stateResetRegistry,
         );
 

@@ -33,9 +33,10 @@ final readonly class EvictCachedValue
     }
 
     /**
-     * @param array<string, mixed> $entries
+     * @param  array<string, mixed>  $entries
      */
-    public function evictUntilCapacityIsSafe(array $entries, int $maxCapacity): int {
+    public function evictUntilCapacityIsSafe(array $entries, int $maxCapacity): int
+    {
         $evicted = 0;
 
         while (count($entries) > $maxCapacity) {

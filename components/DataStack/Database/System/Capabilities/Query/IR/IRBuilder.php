@@ -31,14 +31,14 @@ final readonly class IRBuilder
         return $this;
     }
 
-    public function from(string $table, ?string $alias = null) : self
+    public function from(string $table, ?string $alias = null): self
     {
         $this->queryNode->from(table: $table, alias: $alias);
 
         return $this;
     }
 
-    public function join(string $table, ?string $type = null, ?WhereNode $whereNode = null, ?string $alias = null) : self
+    public function join(string $table, ?string $type = null, ?WhereNode $whereNode = null, ?string $alias = null): self
     {
         $type ??= 'inner';
         $this->queryNode->join(join: new JoinNode(type: $type, table: $table, alias: $alias, on: $whereNode));

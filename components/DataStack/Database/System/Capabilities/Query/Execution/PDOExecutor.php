@@ -21,13 +21,14 @@ use Throwable;
  */
 final readonly class PDOExecutor implements ExecutorInterface
 {
-    public function __construct(private DatabaseConnection $databaseConnection, private ?EventBus $eventBus = null, private string $connectionName = 'default') {}
+    public function __construct(private DatabaseConnection $databaseConnection, private ?EventBus $eventBus = null, private string $connectionName = 'default')
+    {
+    }
 
     /**
      * Execute a "Read" query (SELECT) and get the rows back.
      *
-     * @param list<mixed> $bindings
-     *
+     * @param  list<mixed>  $bindings
      * @return list<array<string, mixed>>
      */
     #[Override]
@@ -57,7 +58,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             return $results;
         } catch (Throwable $throwable) {
             throw new QueryException(
-                message    : 'Query execution failed: ' . $throwable->getMessage(),
+                message    : 'Query execution failed: '.$throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
                 throwable  : $throwable,
@@ -73,7 +74,7 @@ final readonly class PDOExecutor implements ExecutorInterface
     /**
      * Execute a "Change" query (INSERT/UPDATE/DELETE/DDL).
      *
-     * @param list<mixed> $bindings
+     * @param  list<mixed>  $bindings
      */
     #[Override]
     public function execute(
@@ -103,7 +104,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             );
         } catch (Throwable $throwable) {
             throw new QueryException(
-                message    : 'Execution failed: ' . $throwable->getMessage(),
+                message    : 'Execution failed: '.$throwable->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
                 throwable  : $throwable,
@@ -112,7 +113,7 @@ final readonly class PDOExecutor implements ExecutorInterface
     }
 
     /**
-     * @param list<mixed> $bindings
+     * @param  list<mixed>  $bindings
      *
      * @throws RandomException
      */
@@ -128,7 +129,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             return;
         }
 
-        $correlationId = $executionScope->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
+        $correlationId = $executionScope->correlationId ?? ('ctx_'.bin2hex(string: random_bytes(length: 4)));
 
         $this->eventBus->dispatch(event: new QueryExecuted(
             sql           : $sql,
@@ -149,7 +150,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         return strtolower(string: (string) $flag) !== 'raw';
     }
 
-    private function resolveLastInsertId(string $sql): string|null
+    private function resolveLastInsertId(string $sql): ?string
     {
         if (preg_match(pattern: '/^\s*insert\b/i', subject: $sql) !== 1) {
             return null;

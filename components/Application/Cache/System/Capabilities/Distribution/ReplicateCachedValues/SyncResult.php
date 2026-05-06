@@ -14,12 +14,13 @@ final readonly class SyncResult
         public string $key,
         public bool $foundOnPrimary,
         public array $replicaSyncResults,
-    ) {}
+    ) {
+    }
 
     /**
      * Check if all replicas are in sync.
      */
-    public function allReplicasInSync() : bool
+    public function allReplicasInSync(): bool
     {
         return array_all($this->replicaSyncResults, fn ($replicaSyncResult) => $replicaSyncResult->wasInSync);
     }

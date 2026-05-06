@@ -19,7 +19,7 @@ final class RedisSessionStore implements SessionStoreInterface
     private readonly int $ttl;
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function __construct(private array $config = [])
     {
@@ -31,7 +31,7 @@ final class RedisSessionStore implements SessionStoreInterface
     /**
      * @return array<string, mixed>
      */
-    public function read(string $id) : array
+    public function read(string $id): array
     {
         if (! $this->redis instanceof Redis) {
             return $this->fallback[$id] ?? [];
@@ -49,9 +49,9 @@ final class RedisSessionStore implements SessionStoreInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
-    public function write(string $id, array $data) : bool
+    public function write(string $id, array $data): bool
     {
         if (! $this->redis instanceof Redis) {
             $this->fallback[$id] = $data;
@@ -64,7 +64,7 @@ final class RedisSessionStore implements SessionStoreInterface
         return (bool) $this->redis->setex($this->key(sessionId: $id), $this->ttl, $payload);
     }
 
-    public function destroy(string $id) : bool
+    public function destroy(string $id): bool
     {
         if (! $this->redis instanceof Redis) {
             unset($this->fallback[$id]);
@@ -75,7 +75,7 @@ final class RedisSessionStore implements SessionStoreInterface
         return $this->redis->del($this->key(sessionId: $id)) >= 0;
     }
 
-    public function exists(string $sessionId) : bool
+    public function exists(string $sessionId): bool
     {
         if (! $this->redis instanceof Redis) {
             return isset($this->fallback[$sessionId]);
@@ -84,17 +84,17 @@ final class RedisSessionStore implements SessionStoreInterface
         return $this->redis->exists($this->key(sessionId: $sessionId)) > 0;
     }
 
-    public function gc(int $maxLifetime) : int
+    public function gc(int $maxLifetime): int
     {
         return 0;
     }
 
-    private function key(string $sessionId) : string
+    private function key(string $sessionId): string
     {
-        return $this->prefix . $sessionId;
+        return $this->prefix.$sessionId;
     }
 
-    private function connect() : void
+    private function connect(): void
     {
         if (($this->config['driver'] ?? 'auto') === 'array' || ! class_exists(class: Redis::class)) {
             return;

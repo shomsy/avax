@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -11,10 +12,10 @@ use RecursiveIteratorIterator;
  * Ensures the same class name is not defined in multiple components as a real class.
  */
 $rootDir = dirname(__DIR__, 2);
-$componentsDir = $rootDir . '/components';
+$componentsDir = $rootDir.'/components';
 $errors = [];
 
-if (!is_dir($componentsDir)) {
+if (! is_dir($componentsDir)) {
     exit(0);
 }
 
@@ -23,7 +24,7 @@ $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($compon
 $classMap = [];
 
 foreach ($iterator as $file) {
-    if (!$file->isFile()) {
+    if (! $file->isFile()) {
         continue;
     }
 
@@ -32,7 +33,7 @@ foreach ($iterator as $file) {
     }
 
     $path = $file->getRealPath();
-    $relativePath = str_replace($rootDir . '/', '', $path);
+    $relativePath = str_replace($rootDir.'/', '', $path);
     // Ignore vendor, tests, tooling
     if (str_contains($relativePath, 'vendor/')) {
         continue;
@@ -49,7 +50,7 @@ foreach ($iterator as $file) {
 
         // Exclude common names that are expected to be duplicated across components like Exception, Configuration
         $commonNames = ['Exception', 'Configuration', 'ServiceProvider', 'Factory', 'Manager', 'Builder'];
-        $isCommon = array_any($commonNames, fn($common): bool => str_ends_with($className, (string)$common));
+        $isCommon = array_any($commonNames, fn ($common): bool => str_ends_with($className, (string) $common));
 
         if ($isCommon) {
             continue;
@@ -58,9 +59,9 @@ foreach ($iterator as $file) {
         if (isset($classMap[$className])) {
             // Check if one is a bridge
             $isCurrentBridge = str_contains($content, '@deprecated') || str_contains($content, 'bridge');
-            $isPreviousBridge = str_contains(file_get_contents($rootDir . '/' . $classMap[$className]), '@deprecated') || str_contains(file_get_contents($rootDir . '/' . $classMap[$className]), 'bridge');
+            $isPreviousBridge = str_contains(file_get_contents($rootDir.'/'.$classMap[$className]), '@deprecated') || str_contains(file_get_contents($rootDir.'/'.$classMap[$className]), 'bridge');
 
-            if (!$isCurrentBridge && !$isPreviousBridge) {
+            if (! $isCurrentBridge && ! $isPreviousBridge) {
                 $errors[] = sprintf('Duplicate class name owner found: %s. Claimed by both %s and %s', $className, $classMap[$className], $relativePath);
             }
         } else {

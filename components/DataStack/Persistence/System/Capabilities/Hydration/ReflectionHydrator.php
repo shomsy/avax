@@ -22,7 +22,8 @@ final readonly class ReflectionHydrator implements HydratorInterface
 {
     public function __construct(
         private IdentityMap $identityMap,
-    ) {}
+    ) {
+    }
 
     public function hydrateAll(string $entityClass, array $rows): array
     {

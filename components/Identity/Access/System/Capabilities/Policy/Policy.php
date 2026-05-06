@@ -47,7 +47,7 @@ final class Policy
         return self::$policyEvaluator;
     }
 
-    public static function register(PolicyRule $policyRule) : void
+    public static function register(PolicyRule $policyRule): void
     {
         self::evaluator()->register($policyRule);
     }
@@ -63,14 +63,15 @@ final readonly class PolicyDecision
     public function __construct(
         public bool $allowed,
         public ?string $reason = null,
-    ) {}
+    ) {
+    }
 
-    public static function allow(?string $reason = null) : self
+    public static function allow(?string $reason = null): self
     {
         return new self(true, $reason);
     }
 
-    public static function deny(?string $reason = null) : self
+    public static function deny(?string $reason = null): self
     {
         return new self(false, $reason);
     }
@@ -88,7 +89,7 @@ final readonly class DecisionExplanation
     public function toString(): string
     {
         return $this->allowed
-            ? 'ALLOWED: ' . implode(' AND ', $this->reasons)
-            : 'DENIED: ' . implode(' AND ', $this->reasons);
+            ? 'ALLOWED: '.implode(' AND ', $this->reasons)
+            : 'DENIED: '.implode(' AND ', $this->reasons);
     }
 }

@@ -8,5 +8,7 @@ use Closure;
 
 class FrankenPhpRuntime
 {
-    public function __construct(private Closure $receiver, private Closure $sender) {}
+    public function __construct(private Closure $receiver, private Closure $sender)
+    {
+    }
 }

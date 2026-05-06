@@ -12,12 +12,14 @@ foreach ($dirs as $dir) {
 }
 
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     if (preg_match('/(?:class|interface|enum|trait)\s+([a-zA-Z0-9_]+)/', $content, $m)) {
         $name = $m[1];
         $dir = dirname($file);
-        $newName = $dir . '/' . $name . '.php';
+        $newName = $dir.'/'.$name.'.php';
         echo "Renaming $file to $newName\n";
         rename($file, $newName);
     } else {

@@ -6,5 +6,7 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 
 final readonly class StartFederatedLoginData
 {
-    public function __construct(public string $connectionId, public string $redirectUri, public ?string $state = null) {}
+    public function __construct(public string $connectionId, public string $redirectUri, public ?string $state = null)
+    {
+    }
 }

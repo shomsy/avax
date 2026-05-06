@@ -14,16 +14,17 @@ use Random\RandomException;
 final readonly class ExecutionScope
 {
     /**
-     * @param string $correlationId The unique "Trace ID" for this specific run.
-     * @param array  $metadata      Any extra notes you want to carry with the query for logging.
+     * @param  string  $correlationId  The unique "Trace ID" for this specific run.
+     * @param  array  $metadata  Any extra notes you want to carry with the query for logging.
      */
-    public function __construct(public string $correlationId, public array $metadata = []) {
+    public function __construct(public string $correlationId, public array $metadata = [])
+    {
     }
 
     /**
      * Create a new scope with a randomly generated correlation ID.
      *
-     * @param array $metadata Initial metrics/context data.
+     * @param  array  $metadata  Initial metrics/context data.
      *
      * @throws RandomException
      */

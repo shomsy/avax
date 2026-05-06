@@ -30,7 +30,7 @@ class ComponentIntegrationTest extends TestCase
 
     public function test_rate_limit_remaining(): void
     {
-        $key = 'test_rate_limit_' . uniqid();
+        $key = 'test_rate_limit_'.uniqid();
 
         RateLimit::clear($key);
 
@@ -41,7 +41,7 @@ class ComponentIntegrationTest extends TestCase
 
     public function test_websocket_connect_disconnect(): void
     {
-        $connectionId = 'test_conn_' . uniqid();
+        $connectionId = 'test_conn_'.uniqid();
 
         WebSocketServer::connect($connectionId, 'test-channel');
 
@@ -56,7 +56,7 @@ class ComponentIntegrationTest extends TestCase
     {
         $storage = new LocalStorageAdapter();
 
-        $path    = 'test/' . uniqid() . '.txt';
+        $path = 'test/'.uniqid().'.txt';
         $content = 'Hello, Avax!';
 
         $this->assertTrue($storage->put($path, $content));

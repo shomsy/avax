@@ -31,8 +31,7 @@ interface MaterializedViewInterface
     /**
      * Reads data from the materialized view.
      *
-     * @param array<string, mixed> $filters Optional filters to apply
-     *
+     * @param  array<string, mixed>  $filters  Optional filters to apply
      * @return array<string, mixed>|list<mixed>
      */
     public function read(array $filters = []): array;
@@ -116,18 +115,17 @@ final class MaterializedView implements MaterializedViewInterface
     private int $rowCount = 0;
 
     /**
-     * @param Closure() : T $query              Closure that produces the view data
-     * @param float         $stalenessThreshold Seconds before view is considered stale
+     * @param  Closure() : T  $query  Closure that produces the view data
+     * @param  float  $stalenessThreshold  Seconds before view is considered stale
      */
     public function __construct(
         /**
          * @var string Unique view name
          */
-        private readonly string  $name,
+        private readonly string $name,
         private readonly Closure $query,
-        private readonly float   $stalenessThreshold = 3600.0
-    )
-    {
+        private readonly float $stalenessThreshold = 3600.0
+    ) {
     }
 
     public function name(): string
@@ -140,10 +138,10 @@ final class MaterializedView implements MaterializedViewInterface
         $startTime = microtime(true);
 
         try {
-            $data                  = ($this->query)();
-            $this->data            = $data;
+            $data = ($this->query)();
+            $this->data = $data;
             $this->lastRefreshedAt = microtime(true);
-            $this->rowCount        = is_array($data) ? count($data) : 0;
+            $this->rowCount = is_array($data) ? count($data) : 0;
 
             $durationMs = (microtime(true) - $startTime) * 1000;
 
@@ -172,7 +170,7 @@ final class MaterializedView implements MaterializedViewInterface
 
         return array_values(array_filter(
             $this->data,
-                                static fn (array $row) : bool => array_all($filters, fn ($value, $key) : bool => isset($row[$key]) && $row[$key] === $value),
+            static fn (array $row): bool => array_all($filters, fn ($value, $key): bool => isset($row[$key]) && $row[$key] === $value),
         ));
     }
 
@@ -207,9 +205,9 @@ final class MaterializedView implements MaterializedViewInterface
      */
     public function clear(): void
     {
-        $this->data            = null;
+        $this->data = null;
         $this->lastRefreshedAt = null;
-        $this->rowCount        = 0;
+        $this->rowCount = 0;
     }
 
     /**
@@ -273,7 +271,7 @@ final class MaterializedViewRegistry
     /**
      * Registers a materialized view.
      */
-    public function register(MaterializedView $materializedView) : void
+    public function register(MaterializedView $materializedView): void
     {
         $this->views[$materializedView->name()] = $materializedView;
     }
@@ -325,7 +323,7 @@ final class MaterializedViewRegistry
     {
         return array_values(array_filter(
             $this->views,
-                                static fn (MaterializedView $materializedView) : bool => $materializedView->isStale(),
+            static fn (MaterializedView $materializedView): bool => $materializedView->isStale(),
         ));
     }
 

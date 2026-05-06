@@ -17,7 +17,7 @@ declare(strict_types=1);
  */
 return [
     'schemaVersion' => 1,
-    'serviceIds'    => [
+    'serviceIds' => [
         'HintConditionalService',
         'HintIdentityService',
         'HintPipelineStepA',

@@ -9,4 +9,6 @@ use RuntimeException;
 /**
  * SagaCompensationFailure - reports failed compensation.
  */
-final class SagaCompensationFailure extends RuntimeException {}
+final class SagaCompensationFailure extends RuntimeException
+{
+}

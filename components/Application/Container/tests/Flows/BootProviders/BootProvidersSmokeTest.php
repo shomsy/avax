@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 2) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 2).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
@@ -49,7 +49,7 @@ final readonly class BaseProvider implements RegisterDependency
      */
     public function boot(): void
     {
-        ProviderState::$events[]                           = 'base-boot';
+        ProviderState::$events[] = 'base-boot';
         $this->container->get(id: ProviderState::class)->message = 'base-booted';
     }
 }
@@ -179,7 +179,7 @@ final readonly class CycleProviderB implements RegisterDependency
 }
 
 ProviderState::$events = [];
-$container             = makeTestContainer();
+$container = makeTestContainer();
 
 new BootProviders(container: $container)->boot(providers: [DemoProvider::class]);
 
@@ -200,7 +200,7 @@ assertTrue(
 );
 
 ProviderState::$events = [];
-$deferredContainer     = makeTestContainer();
+$deferredContainer = makeTestContainer();
 
 new BootProviders(container: $deferredContainer)->boot(providers: [DeferredDemoProvider::class]);
 
@@ -226,7 +226,7 @@ assertTrue(
     message  : 'Deferred provider metrics should record lazy provider boots.',
 );
 
-ProviderState::$events     = [];
+ProviderState::$events = [];
 $compiledDeferredContainer = makeTestContainer();
 $compiledDeferredContainer->singleton(abstract: DeferredProviderConsumer::class, concrete: DeferredProviderConsumer::class);
 
@@ -234,9 +234,9 @@ new BootProviders(container: $compiledDeferredContainer)->boot(providers: [Defer
 $compiledDeferredContainer->compileContainer(serviceIds: [DeferredProviderConsumer::class]);
 
 $compiledDeferredReport = $compiledDeferredContainer->compileReport(serviceIds: [
-                                                                                    DeferredProviderConsumer::class,
-                                                                                    DeferredProvidedContract::class,
-                                                                                ]);
+    DeferredProviderConsumer::class,
+    DeferredProvidedContract::class,
+]);
 
 assertSame(
     expected: ['deferred-register', 'deferred-boot'],
@@ -260,4 +260,4 @@ assertThrows(
     message      : 'Provider dependency cycles should fail fast.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

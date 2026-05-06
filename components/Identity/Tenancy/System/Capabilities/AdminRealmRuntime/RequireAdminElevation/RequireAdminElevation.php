@@ -21,7 +21,8 @@ final readonly class RequireAdminElevation
         private CurrentAuthentication $currentAuthentication,
         private AdminElevationStoreInterface $adminElevationStore,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws AdminElevationFailed
@@ -29,8 +30,8 @@ final readonly class RequireAdminElevation
     public function execute(): void
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $user                  = $authenticationContext->user();
-        $bindingId             = $this->bindingId(context: $authenticationContext);
+        $user = $authenticationContext->user();
+        $bindingId = $this->bindingId(context: $authenticationContext);
 
         if (! $user instanceof AuthenticatedUser) {
             throw AdminElevationFailed::unauthenticated();
@@ -53,7 +54,7 @@ final readonly class RequireAdminElevation
         }
     }
 
-    private function bindingId(AuthenticationContext $authenticationContext) : ?string
+    private function bindingId(AuthenticationContext $authenticationContext): ?string
     {
         return $authenticationContext->sessionId()
             ?? $authenticationContext->accessTokenId()

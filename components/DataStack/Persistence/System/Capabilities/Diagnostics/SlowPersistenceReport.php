@@ -15,14 +15,13 @@ final readonly class SlowPersistenceReport
     public function __construct(
         public string $operation,
         public string $type,
-        public float  $durationMs,
-        public float  $thresholdMs,
+        public float $durationMs,
+        public float $thresholdMs,
         public string $fingerprint = '',
-        public array  $context = [],
-        public float  $timestamp = 0.0,
-        public int    $occurrences = 1,
-    )
-    {
+        public array $context = [],
+        public float $timestamp = 0.0,
+        public int $occurrences = 1,
+    ) {
     }
 
     /**
@@ -31,11 +30,10 @@ final readonly class SlowPersistenceReport
     public static function create(
         string $operation,
         string $type,
-        float  $durationMs,
-        float  $thresholdMs,
-        array  $context = [],
-    ): self
-    {
+        float $durationMs,
+        float $thresholdMs,
+        array $context = [],
+    ): self {
         return new self(
             operation: $operation,
             type: $type,
@@ -52,14 +50,14 @@ final readonly class SlowPersistenceReport
      */
     private static function computeFingerprint(string $operation, string $type, array $context): string
     {
-        $normalized = $type . ':' . $operation;
+        $normalized = $type.':'.$operation;
 
         if (isset($context['entity'])) {
-            $normalized .= ':entity:' . $context['entity'];
+            $normalized .= ':entity:'.$context['entity'];
         }
 
         if (isset($context['table'])) {
-            $normalized .= ':table:' . $context['table'];
+            $normalized .= ':table:'.$context['table'];
         }
 
         return hash('sha256', $normalized);

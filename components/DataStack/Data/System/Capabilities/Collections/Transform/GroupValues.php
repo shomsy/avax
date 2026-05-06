@@ -11,7 +11,8 @@ final readonly class GroupValues
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<mixed>

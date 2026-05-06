@@ -17,7 +17,7 @@ final readonly class HttpKernel implements HttpKernelInterface
     ) {
     }
 
-    public function handle(RuntimeRequest $request) : RuntimeResponse
+    public function handle(RuntimeRequest $request): RuntimeResponse
     {
         return $this->handleIncomingHttp->handle(
             runtime       : $this->runtime,

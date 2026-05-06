@@ -18,7 +18,8 @@ final readonly class RollbackMigrations
         private MigrationRepository $migrationRepository,
         private MigrationRunner $migrationRunner,
         private MigrationLoader $migrationLoader,
-    ) {}
+    ) {
+    }
 
     /**
      * @return string[]

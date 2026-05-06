@@ -18,7 +18,7 @@ final class InMemoryKnownAuthenticationEnvironmentStore implements KnownAuthenti
 
     private function key(#[SensitiveParameter] ?string $ipAddress, ?string $userAgent): string
     {
-        return strtolower(string: trim(string: $ipAddress ?? 'unknown')) . '|' . strtolower(string: trim(string: $userAgent ?? 'unknown'));
+        return strtolower(string: trim(string: $ipAddress ?? 'unknown')).'|'.strtolower(string: trim(string: $userAgent ?? 'unknown'));
     }
 
     public function remember(int $userId, #[SensitiveParameter] ?string $ipAddress, ?string $userAgent): void

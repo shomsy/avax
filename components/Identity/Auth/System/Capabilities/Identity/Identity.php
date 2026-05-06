@@ -61,7 +61,7 @@ final readonly class Identity implements IdentityInterface
         #[SensitiveParameter]
         ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
-        ?JwtIdentityInterface     $jwtIdentity = null,
+        ?JwtIdentityInterface $jwtIdentity = null,
     ): self {
         return new self(
             sessionIdentity: $sessionIdentity,
@@ -120,7 +120,7 @@ final readonly class Identity implements IdentityInterface
         return AuthenticationMode::TOKEN;
     }
 
-    public function clear(?AuthenticationContext $authenticationContext = null) : void
+    public function clear(?AuthenticationContext $authenticationContext = null): void
     {
         $this->sessionIdentity?->clear();
 

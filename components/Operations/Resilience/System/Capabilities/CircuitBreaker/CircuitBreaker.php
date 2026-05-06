@@ -24,8 +24,7 @@ final class CircuitBreaker
     /**
      * @template TResult
      *
-     * @param callable(): TResult $operation
-     *
+     * @param  callable(): TResult  $operation
      * @return TResult
      *
      * @throws Throwable

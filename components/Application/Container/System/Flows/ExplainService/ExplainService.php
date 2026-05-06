@@ -16,16 +16,14 @@ final readonly class ExplainService
 
     public function __construct(
         ServiceResolver $resolver
-    )
-    {
+    ) {
         $this->resolver = $resolver;
     }
 
     /**
-     * @param string $id
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
     public function describe(string $id, array $context = []): array
@@ -38,10 +36,9 @@ final readonly class ExplainService
     }
 
     /**
-     * @param string $id
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
     public function debugPlan(string $id, array $context = []): array
@@ -54,11 +51,10 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugGovernance(string|null $id = null, array $context = []): array
+    public function debugGovernance(?string $id = null, array $context = []): array
     {
         $id ??= '';
         if ($context === []) {
@@ -69,11 +65,10 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugArchitecture(string|null $id = null, array $context = []): array
+    public function debugArchitecture(?string $id = null, array $context = []): array
     {
         $id ??= '';
         if ($context === []) {
@@ -84,11 +79,10 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugSlice(string|null $slice = null, array $context = []): array
+    public function debugSlice(?string $slice = null, array $context = []): array
     {
         $slice ??= '';
         if ($context === []) {
@@ -99,11 +93,10 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugImports(string|null $slice = null, array $context = []): array
+    public function debugImports(?string $slice = null, array $context = []): array
     {
         $slice ??= '';
         if ($context === []) {
@@ -114,12 +107,12 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
-    public function debugExports(string|null $slice = null, array $context = []): array
+    public function debugExports(?string $slice = null, array $context = []): array
     {
         $slice ??= '';
         if ($context === []) {
@@ -130,12 +123,11 @@ final readonly class ExplainService
     }
 
     /**
-     * @param list<string> $serviceIds
-     * @param array<string, mixed> $context
-     *
+     * @param  list<string>  $serviceIds
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugVisibilityViolations(array|null $serviceIds = null, array $context = []): array
+    public function debugVisibilityViolations(?array $serviceIds = null, array $context = []): array
     {
         $serviceIds ??= [];
         if ($context === []) {
@@ -149,9 +141,9 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
     public function debugTags(string $tag, array $context = []): array
@@ -164,9 +156,9 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
     public function debugGroup(string $group, array $context = []): array
@@ -179,9 +171,9 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
+     *
      * @throws ReflectionException
      */
     public function debugSelection(string $id, array $context = []): array
@@ -194,8 +186,7 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, string>
      */
     public function debugAliases(array $context = []): array
@@ -208,8 +199,7 @@ final readonly class ExplainService
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function debugScope(array $context = []): array

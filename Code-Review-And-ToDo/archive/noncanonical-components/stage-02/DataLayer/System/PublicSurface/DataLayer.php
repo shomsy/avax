@@ -6,7 +6,7 @@ namespace Avax\Components\DataLayer\System\PublicSurface;
 
 final readonly class DataLayer
 {
-    public static function access() : self
+    public static function access(): self
     {
         return new self();
     }

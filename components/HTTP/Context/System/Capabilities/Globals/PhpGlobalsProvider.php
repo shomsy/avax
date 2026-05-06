@@ -9,32 +9,32 @@ namespace Avax\Components\HTTP\Context\System\Capabilities\Globals;
  */
 final class PhpGlobalsProvider implements GlobalsProviderInterface
 {
-    public function server() : array
+    public function server(): array
     {
         return $_SERVER ?? [];
     }
 
-    public function query() : array
+    public function query(): array
     {
         return $_GET ?? [];
     }
 
-    public function post() : array
+    public function post(): array
     {
         return $_POST ?? [];
     }
 
-    public function cookies() : array
+    public function cookies(): array
     {
         return $_COOKIE ?? [];
     }
 
-    public function files() : array
+    public function files(): array
     {
         return $_FILES ?? [];
     }
 
-    public function session() : array
+    public function session(): array
     {
         return $_SESSION ?? [];
     }

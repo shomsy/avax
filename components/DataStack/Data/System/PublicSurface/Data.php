@@ -25,7 +25,8 @@ final readonly class Data implements DataInterface
         private WriteNestedValue $writeNestedValue,
         private SumValues $sumValues,
         private AverageValues $averageValues,
-    ) {}
+    ) {
+    }
 
     public function get(array $data, string $key, mixed $default = null): mixed
     {

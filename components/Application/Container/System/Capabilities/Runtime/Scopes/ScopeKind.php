@@ -19,18 +19,18 @@ final class ScopeKind
 
     public const string TENANT = 'tenant';
 
-    public static function rank(string $kind) : int
+    public static function rank(string $kind): int
     {
         return match (self::normalize(kind: $kind)) {
             self::OPERATION => 1,
             self::REQUEST => 2,
-            self::JOB     => 3,
-            self::TENANT  => 4,
-            default       => 0,
+            self::JOB => 3,
+            self::TENANT => 4,
+            default => 0,
         };
     }
 
-    public static function normalize(string $kind) : string
+    public static function normalize(string $kind): string
     {
         return match (trim(string: $kind)) {
             self::ANY,

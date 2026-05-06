@@ -8,7 +8,8 @@ final readonly class CompiledRoutePattern
 {
     public function __construct(
         private string $regex,
-    ) {}
+    ) {
+    }
 
     public function regex(): string
     {

@@ -87,35 +87,36 @@ final readonly class SecretRedactor
      */
     private const array STRING_PATTERNS
         = [
-            'bearer_token'      => '/Bearer\s+[A-Za-z0-9\-_\.]+\s*/i',
-            'api_key_header'    => '/(?:x-api-key|api-key)\s*[:=]\s*[A-Za-z0-9\-_\.]+\s*/i',
+            'bearer_token' => '/Bearer\s+[A-Za-z0-9\-_\.]+\s*/i',
+            'api_key_header' => '/(?:x-api-key|api-key)\s*[:=]\s*[A-Za-z0-9\-_\.]+\s*/i',
             'authorization_header' => '/Authorization\s*[:=]\s*[A-Za-z0-9\-_\.]+\s*/i',
-            'jwt_token'         => '/eyJ[A-Za-z0-9\-_]+\.eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+/',
-            'aws_access_key'    => '/AKIA[0-9A-Z]{16}/',
-            'aws_secret_key'    => '/(?<![A-Za-z0-9\/+])[A-Za-z0-9\/+=]{40}(?![A-Za-z0-9\/+=])/',
-            'credit_card'       => '/\b(?:\d{4}[\s\-]?){3}\d{4}\b/',
-            'ssn'               => '/\b\d{3}-\d{2}-\d{4}\b/',
+            'jwt_token' => '/eyJ[A-Za-z0-9\-_]+\.eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+/',
+            'aws_access_key' => '/AKIA[0-9A-Z]{16}/',
+            'aws_secret_key' => '/(?<![A-Za-z0-9\/+])[A-Za-z0-9\/+=]{40}(?![A-Za-z0-9\/+=])/',
+            'credit_card' => '/\b(?:\d{4}[\s\-]?){3}\d{4}\b/',
+            'ssn' => '/\b\d{3}-\d{2}-\d{4}\b/',
             'private_key_block' => '/-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----/',
-            'generic_api_key'   => '/(?:api[_-]?key|apikey)\s*[:=]\s*["\']?[A-Za-z0-9\-_\.]{16,}["\']?/i',
+            'generic_api_key' => '/(?:api[_-]?key|apikey)\s*[:=]\s*["\']?[A-Za-z0-9\-_\.]{16,}["\']?/i',
         ];
 
     /**
-     * @param string $redactionMask The replacement string for redacted values
-     * @param bool   $redactEmails  Whether to redact email addresses
-     * @param list<string> $additionalSensitiveKeys Additional sensitive keys to redact
+     * @param  string  $redactionMask  The replacement string for redacted values
+     * @param  bool  $redactEmails  Whether to redact email addresses
+     * @param  list<string>  $additionalSensitiveKeys  Additional sensitive keys to redact
      */
     public function __construct(
         private string $redactionMask = self::REDACTED,
         private bool $redactEmails = false,
         private array $additionalSensitiveKeys = [],
-    ) {}
+    ) {
+    }
 
     /**
      * Recursively redact sensitive data from an array.
      *
      * Redacts values for sensitive keys and scans string values for patterns.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     public function redactArray(array $data): array
@@ -126,7 +127,7 @@ final readonly class SecretRedactor
     /**
      * Recursively process and redact an array.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     private function redactRecursive(array $data): array
@@ -178,7 +179,7 @@ final readonly class SecretRedactor
             return true;
         }
 
-        return array_any(self::SENSITIVE_KEY_PATTERNS, fn ($pattern) : bool => str_contains($normalizedKey, (string) $pattern));
+        return array_any(self::SENSITIVE_KEY_PATTERNS, fn ($pattern): bool => str_contains($normalizedKey, (string) $pattern));
     }
 
     /**
@@ -191,7 +192,7 @@ final readonly class SecretRedactor
         foreach (self::STRING_PATTERNS as $patternName => $pattern) {
             $value = (string) preg_replace_callback(
                 $pattern,
-                fn (array $matches) : string => $this->createRedactedPlaceholder($patternName),
+                fn (array $matches): string => $this->createRedactedPlaceholder($patternName),
                 $value,
             );
         }

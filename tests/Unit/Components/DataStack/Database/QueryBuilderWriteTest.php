@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 final class QueryBuilderWriteTest extends TestCase
 {
-    public function test_insert_compiles_sql_and_bindings() : void
+    public function test_insert_compiles_sql_and_bindings(): void
     {
         $executor = new RecordingWriteExecutor();
 
@@ -26,9 +26,9 @@ final class QueryBuilderWriteTest extends TestCase
         $result = $builder
             ->from(table: 'users')
             ->insert([
-                         'name'  => 'Milos',
-                         'email' => 'milos@example.test',
-                     ]);
+                'name' => 'Milos',
+                'email' => 'milos@example.test',
+            ]);
 
         self::assertTrue($result);
         self::assertCount(1, $executor->executions);
@@ -39,12 +39,12 @@ final class QueryBuilderWriteTest extends TestCase
         self::assertSame(['Milos', 'milos@example.test'], $execution['bindings']);
     }
 
-    private static function normalizeSql(string $sql) : string
+    private static function normalizeSql(string $sql): string
     {
         return preg_replace('/\s+/', ' ', trim($sql)) ?? $sql;
     }
 
-    public function test_update_compiles_sql_and_bindings() : void
+    public function test_update_compiles_sql_and_bindings(): void
     {
         $executor = new RecordingWriteExecutor();
 
@@ -57,14 +57,14 @@ final class QueryBuilderWriteTest extends TestCase
             ->from(table: 'users')
             ->where(column: 'id', operator: '=', value: 123)
             ->update([
-                         'name' => 'Milos',
-                     ]);
+                'name' => 'Milos',
+            ]);
 
         self::assertTrue($result);
         self::assertCount(1, $executor->executions);
 
         $execution = $executor->executions[0];
-        $sql       = self::normalizeSql($execution['sql']);
+        $sql = self::normalizeSql($execution['sql']);
 
         self::assertMatchesRegularExpression('/UPDATE .*users/i', $sql);
         self::assertMatchesRegularExpression('/SET .*name.*= \?/i', $sql);
@@ -72,7 +72,7 @@ final class QueryBuilderWriteTest extends TestCase
         self::assertSame(['Milos', 123], $execution['bindings']);
     }
 
-    public function test_delete_compiles_sql_and_bindings() : void
+    public function test_delete_compiles_sql_and_bindings(): void
     {
         $executor = new RecordingWriteExecutor();
 
@@ -90,7 +90,7 @@ final class QueryBuilderWriteTest extends TestCase
         self::assertCount(1, $executor->executions);
 
         $execution = $executor->executions[0];
-        $sql       = self::normalizeSql($execution['sql']);
+        $sql = self::normalizeSql($execution['sql']);
 
         self::assertMatchesRegularExpression('/DELETE FROM .*users/i', $sql);
         self::assertMatchesRegularExpression('/WHERE .*id.*= \?/i', $sql);
@@ -109,32 +109,30 @@ final class RecordingWriteExecutor implements ExecutorInterface
      * @return list<array<string, mixed>>
      */
     public function query(
-        string          $sql,
-        array           $bindings = [],
+        string $sql,
+        array $bindings = [],
         ?ExecutionScope $executionScope = null,
-    ) : array
-    {
+    ): array {
         return [];
     }
 
     /**
-     * @param list<mixed> $bindings
+     * @param  list<mixed>  $bindings
      */
     public function execute(
-        string          $sql,
-        array           $bindings = [],
+        string $sql,
+        array $bindings = [],
         ?ExecutionScope $executionScope = null,
-    ) : ExecutionResult
-    {
+    ): ExecutionResult {
         $this->executions[] = [
-            'sql'      => $sql,
+            'sql' => $sql,
             'bindings' => array_values($bindings),
         ];
 
         return ExecutionResult::success(affectedRows: 1);
     }
 
-    public function getDriverName() : string
+    public function getDriverName(): string
     {
         return 'mysql';
     }

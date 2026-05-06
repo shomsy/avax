@@ -13,7 +13,7 @@ final readonly class ValidateRegistrationData
     /**
      * @throws RegistrationFailed
      */
-    public function execute(RegistrationData $registrationData) : void
+    public function execute(RegistrationData $registrationData): void
     {
         if ($registrationData->email === '' || $registrationData->email === '0' || ($registrationData->password === '' || $registrationData->password === '0')) {
             throw new RegistrationFailed('Email and password are required');

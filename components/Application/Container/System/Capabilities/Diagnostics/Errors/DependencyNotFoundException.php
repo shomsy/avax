@@ -9,4 +9,6 @@ use Psr\Container\NotFoundExceptionInterface;
 /**
  * Explicit PSR-11 not-found boundary for missing services.
  */
-final class DependencyNotFoundException extends ContainerException implements NotFoundExceptionInterface {}
+final class DependencyNotFoundException extends ContainerException implements NotFoundExceptionInterface
+{
+}

@@ -21,8 +21,8 @@ use SensitiveParameter;
 final readonly class VerifySenderConstrainedRequest
 {
     /**
-     * @param array<string, mixed> $headers
-     * @param array<string, mixed> $server
+     * @param  array<string, mixed>  $headers
+     * @param  array<string, mixed>  $server
      */
     public function execute(
         string $method,
@@ -32,7 +32,7 @@ final readonly class VerifySenderConstrainedRequest
         array $server,
         #[SensitiveParameter]
         ?string $accessToken,
-        ?OAuthSenderConstraint     $oAuthSenderConstraint = null,
+        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
         ?OAuthSenderConstraintType $oAuthSenderConstraintType = null,
     ): ?OAuthSenderConstraint {
         $nullAuditLog = new NullAuditLog();

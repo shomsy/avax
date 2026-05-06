@@ -14,10 +14,11 @@ use Stringable;
 final readonly class TableIdentifier implements Stringable
 {
     /**
-     * @param string      $name  The technical identifier (physical name) of the database table.
-     * @param string|null $alias The optional domain-specific label (alias) assigned to the table source.
+     * @param  string  $name  The technical identifier (physical name) of the database table.
+     * @param  string|null  $alias  The optional domain-specific label (alias) assigned to the table source.
      */
-    public function __construct(public string $name, public ?string $alias = null) {
+    public function __construct(public string $name, public ?string $alias = null)
+    {
     }
 
     /**

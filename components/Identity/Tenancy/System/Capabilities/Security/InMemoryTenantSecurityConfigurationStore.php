@@ -9,7 +9,7 @@ final class InMemoryTenantSecurityConfigurationStore implements TenantSecurityCo
     /** @var array<string, TenantSecurityConfiguration> */
     private array $configurations = [];
 
-    public function save(TenantSecurityConfiguration $tenantSecurityConfiguration) : void
+    public function save(TenantSecurityConfiguration $tenantSecurityConfiguration): void
     {
         $this->configurations[$tenantSecurityConfiguration->tenantSlug] = $tenantSecurityConfiguration;
     }

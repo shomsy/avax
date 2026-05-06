@@ -14,7 +14,8 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
  */
 final readonly class CacheHealthStatus
 {
-    public function __construct(public bool $connected, public int $latency, public float $memoryUsage, public float $hitRate, public Timestamp $timestamp, public ?string $error = null, public int $memoryLimit = 0, public int $keyCount = 0, public int $connectionCount = 0, public string $version = '') {
+    public function __construct(public bool $connected, public int $latency, public float $memoryUsage, public float $hitRate, public Timestamp $timestamp, public ?string $error = null, public int $memoryLimit = 0, public int $keyCount = 0, public int $connectionCount = 0, public string $version = '')
+    {
     }
 
     /**
@@ -109,7 +110,7 @@ final readonly class CacheHealthStatus
             return false;
         }
 
-        return $this->latency     > $maxLatencyMs
+        return $this->latency > $maxLatencyMs
             || $this->memoryUsage > $maxMemoryUsagePercent
             || $this->hitRate < $minHitRate;
     }
@@ -179,18 +180,18 @@ final readonly class CacheHealthStatus
     public function toArray(): array
     {
         return [
-            'connected'          => $this->connected,
-            'latency'            => $this->latency,
-            'memoryUsage'        => $this->memoryUsage,
-            'hitRate'            => $this->hitRate,
-            'lastCheck'          => $this->timestamp->seconds,
-            'error'              => $this->error,
-            'memoryLimit'        => $this->memoryLimit,
-            'keyCount'           => $this->keyCount,
-            'connectionCount'    => $this->connectionCount,
-            'version'            => $this->version,
+            'connected' => $this->connected,
+            'latency' => $this->latency,
+            'memoryUsage' => $this->memoryUsage,
+            'hitRate' => $this->hitRate,
+            'lastCheck' => $this->timestamp->seconds,
+            'error' => $this->error,
+            'memoryLimit' => $this->memoryLimit,
+            'keyCount' => $this->keyCount,
+            'connectionCount' => $this->connectionCount,
+            'version' => $this->version,
             'memoryUsagePercent' => $this->getMemoryUsagePercent(),
-            'healthLevel'        => $this->getHealthLevel(),
+            'healthLevel' => $this->getHealthLevel(),
         ];
     }
 

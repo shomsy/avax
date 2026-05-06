@@ -8,5 +8,7 @@ use DateTimeImmutable;
 
 final readonly class TenantMember
 {
-    public function __construct(public string $tenantId, public int $userId, public TenantMemberRole $role, public TenantMemberState $state, public DateTimeImmutable $joinedAt) {}
+    public function __construct(public string $tenantId, public int $userId, public TenantMemberRole $role, public TenantMemberState $state, public DateTimeImmutable $joinedAt)
+    {
+    }
 }

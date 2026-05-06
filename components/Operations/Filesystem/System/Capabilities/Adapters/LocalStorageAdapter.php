@@ -11,7 +11,7 @@ final readonly class LocalStorageAdapter
     private Local $local;
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function __construct(array $config = [])
     {
@@ -23,7 +23,7 @@ final readonly class LocalStorageAdapter
         return $this->local->put(path: $path, contents: $contents);
     }
 
-    public function get(string $path): string|null
+    public function get(string $path): ?string
     {
         return $this->local->get(path: $path);
     }

@@ -21,7 +21,8 @@ final readonly class TenantInvite
         public DateTimeImmutable $createdAt,
         public ?DateTimeImmutable $acceptedAt = null,
         public ?int $acceptedByUserId = null,
-    ) {}
+    ) {
+    }
 
     public function isAccepted(): bool
     {

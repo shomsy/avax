@@ -17,7 +17,8 @@ final readonly class VersionedValue
         public VectorClock $clock,
         public string $nodeId,
         public float $timestamp,
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a new versioned value.
@@ -26,7 +27,7 @@ final readonly class VersionedValue
         mixed $value,
         string $nodeId,
         ?VectorClock $vectorClock = null,
-        ?float       $timestamp = null,
+        ?float $timestamp = null,
     ): self {
         $vectorClock ??= VectorClock::initial($nodeId);
         $timestamp ??= microtime(true);
@@ -63,7 +64,8 @@ final readonly class Conflict
         public VersionedValue $valueB,
         public string $key,
         public float $detectedAt,
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a conflict from two versioned values.
@@ -92,7 +94,8 @@ final readonly class ConflictResolutionResult
         public string $strategy,
         public bool $wasConflict,
         public array $details = [],
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a result with no conflict (straightforward value).
@@ -145,7 +148,7 @@ final class EventualConsistency implements ConsistencyPolicy
     private array $conflicts = [];
 
     public function __construct(
-        ?ConflictResolution       $conflictResolution = null,
+        ?ConflictResolution $conflictResolution = null,
         /**
          * @var Closure|null Custom conflict resolver callback
          */
@@ -153,7 +156,7 @@ final class EventualConsistency implements ConsistencyPolicy
         /**
          * @var int Maximum conflicts to retain
          */
-        private readonly int      $maxConflictHistory = 100,
+        private readonly int $maxConflictHistory = 100,
     ) {
         $this->conflictResolution = $conflictResolution ?? ConflictResolution::lastWriteWins();
     }
@@ -175,8 +178,7 @@ final class EventualConsistency implements ConsistencyPolicy
     /**
      * Merges a set of versioned values from multiple replicas.
      *
-     * @param list<VersionedValue> $values
-     *
+     * @param  list<VersionedValue>  $values
      * @return VersionedValue The merged value
      */
     public function mergeReplicas(array $values): VersionedValue
@@ -206,7 +208,7 @@ final class EventualConsistency implements ConsistencyPolicy
 
                 // Create new versioned value with merged clock and resolved value
                 $mergedClock = $latest->clock->merge($current->clock);
-                $latest      = new VersionedValue(
+                $latest = new VersionedValue(
                     value    : $resolved,
                     clock    : $mergedClock,
                     nodeId   : 'merged',
@@ -259,7 +261,7 @@ final class EventualConsistency implements ConsistencyPolicy
                 strategy: 'custom',
                 details : [
                     'conflict' => $conflict,
-                    'context'  => $context,
+                    'context' => $context,
                 ],
             );
         }
@@ -269,12 +271,12 @@ final class EventualConsistency implements ConsistencyPolicy
             valueA : $valueA->value,
             valueB : $valueB->value,
             context: array_merge($context, [
-                         'clockA'  => $valueA->clock,
-                         'clockB'  => $valueB->clock,
+                'clockA' => $valueA->clock,
+                'clockB' => $valueB->clock,
                 'timestampA' => $valueA->timestamp,
                 'timestampB' => $valueB->timestamp,
-                         'nodeIdA' => $valueA->nodeId,
-                         'nodeIdB' => $valueB->nodeId,
+                'nodeIdA' => $valueA->nodeId,
+                'nodeIdB' => $valueB->nodeId,
             ]),
         );
     }

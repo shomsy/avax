@@ -7,19 +7,19 @@ namespace Avax\Framework\System\Capabilities\Runtime\PublicSurface;
 final class ServerResult
 {
     private function __construct(
-        public bool   $success,
+        public bool $success,
         public string $message = '',
         public string $host = '0.0.0.0',
-        public int    $port = 8000,
+        public int $port = 8000,
         public string $router = '',
-    ) {}
+    ) {
+    }
 
     public static function success(
         string $host,
-        int    $port,
+        int $port,
         string $router,
-    ) : self
-    {
+    ): self {
         return new self(
             success: true,
             message: sprintf('Server started at http://%s:%d', $host, $port),
@@ -29,7 +29,7 @@ final class ServerResult
         );
     }
 
-    public static function error(string $message) : self
+    public static function error(string $message): self
     {
         return new self(
             success: false,
@@ -40,15 +40,15 @@ final class ServerResult
     /**
      * @return array<string, mixed>
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'success' => $this->success,
             'message' => $this->message,
-            'host'    => $this->host,
-            'port'    => $this->port,
-            'router'  => $this->router,
-            'url'     => $this->success ? sprintf('http://%s:%d', $this->host, $this->port) : null,
+            'host' => $this->host,
+            'port' => $this->port,
+            'router' => $this->router,
+            'url' => $this->success ? sprintf('http://%s:%d', $this->host, $this->port) : null,
         ];
     }
 }

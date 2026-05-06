@@ -14,16 +14,15 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
     public function __construct(
         CacheVersion $initialVersion,
         ?CacheVersion $currentVersion = null,
-    )
-    {
+    ) {
         $this->cacheVersion = $currentVersion ?? $initialVersion;
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     #[Override]
-    public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
+    public function shouldInvalidate(string $key, string $reason, array $context = []): bool
     {
         if ($reason === 'version_change') {
             return true;
@@ -35,12 +34,12 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
     }
 
     #[Override]
-    public function strategyName() : string
+    public function strategyName(): string
     {
         return 'versioned_key';
     }
 
-    public function bumpVersion() : self
+    public function bumpVersion(): self
     {
         $new = clone $this;
         $new->cacheVersion = $this->cacheVersion instanceof CacheVersion
@@ -50,7 +49,7 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
         return $new;
     }
 
-    public function getCurrentVersion() : ?CacheVersion
+    public function getCurrentVersion(): ?CacheVersion
     {
         return $this->cacheVersion;
     }

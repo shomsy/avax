@@ -11,9 +11,10 @@ final readonly class RunDoctor
 {
     public function __construct(
         private RuntimeSafety $runtimeSafety = new RuntimeSafety(),
-    ) {}
+    ) {
+    }
 
-    public function handle(bool $workerMode = false) : int
+    public function handle(bool $workerMode = false): int
     {
         echo "\033[33mAvax Runtime Doctor\033[0m\n";
         echo sprintf("Mode: %s\n\n", $workerMode ? 'worker' : 'development');
@@ -38,7 +39,7 @@ final readonly class RunDoctor
             match ($finding->severity) {
                 RuntimeSafetyFinding::SEVERITY_CRITICAL => $criticalCount++,
                 RuntimeSafetyFinding::SEVERITY_WARNING => $warningCount++,
-                default                                => $infoCount++,
+                default => $infoCount++,
             };
         }
 
@@ -71,12 +72,12 @@ final readonly class RunDoctor
         return $criticalCount > 0 ? 1 : 0;
     }
 
-    private function printFinding(RuntimeSafetyFinding $runtimeSafetyFinding) : void
+    private function printFinding(RuntimeSafetyFinding $runtimeSafetyFinding): void
     {
         $color = match ($runtimeSafetyFinding->severity) {
             RuntimeSafetyFinding::SEVERITY_CRITICAL => '31',
             RuntimeSafetyFinding::SEVERITY_WARNING => '33',
-            default                                => '36',
+            default => '36',
         };
 
         echo sprintf(

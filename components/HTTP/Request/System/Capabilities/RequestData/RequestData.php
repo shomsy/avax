@@ -17,14 +17,15 @@ final readonly class RequestData
         public RequestHeaders $headers,
         public RequestBody $body,
         public UploadedFiles $files,
-        public array  $serverParams,
-        public array  $cookieParams,
-        public array  $queryParams,
-        public array  $attributes,
+        public array $serverParams,
+        public array $cookieParams,
+        public array $queryParams,
+        public array $attributes,
         public string $protocolVersion,
-    ) {}
+    ) {
+    }
 
-    public function withMethod(string $method) : self
+    public function withMethod(string $method): self
     {
         return new self(
             method         : $method,
@@ -40,7 +41,7 @@ final readonly class RequestData
         );
     }
 
-    public function withProtocolVersion(string $version) : self
+    public function withProtocolVersion(string $version): self
     {
         return new self(
             method         : $this->method,
@@ -56,7 +57,7 @@ final readonly class RequestData
         );
     }
 
-    public function withUri(RequestUri $requestUri) : self
+    public function withUri(RequestUri $requestUri): self
     {
         return new self(
             method         : $this->method,
@@ -72,7 +73,7 @@ final readonly class RequestData
         );
     }
 
-    public function withCookieParams(array $cookies) : self
+    public function withCookieParams(array $cookies): self
     {
         return new self(
             method         : $this->method,
@@ -88,7 +89,7 @@ final readonly class RequestData
         );
     }
 
-    public function withQueryParams(array $query) : self
+    public function withQueryParams(array $query): self
     {
         return new self(
             method         : $this->method,
@@ -104,7 +105,7 @@ final readonly class RequestData
         );
     }
 
-    public function withAttribute(string $name, mixed $value) : self
+    public function withAttribute(string $name, mixed $value): self
     {
         $attributes = $this->attributes;
         $attributes[$name] = $value;
@@ -123,7 +124,7 @@ final readonly class RequestData
         );
     }
 
-    public function withoutAttribute(string $name) : self
+    public function withoutAttribute(string $name): self
     {
         $attributes = $this->attributes;
         unset($attributes[$name]);

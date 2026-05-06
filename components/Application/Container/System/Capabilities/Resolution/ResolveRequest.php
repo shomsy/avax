@@ -16,19 +16,18 @@ final readonly class ResolveRequest
     public array $overrides;
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      */
     public function __construct(
         public string $serviceId,
-        ?array         $overrides = null,
-        ?array         $context = null,
-        public ?self  $parent = null,
-        ?bool          $manualInjection = null,
+        ?array $overrides = null,
+        ?array $context = null,
+        public ?self $parent = null,
+        ?bool $manualInjection = null,
         public ?string $consumer = null,
-    )
-    {
-        $overrides       ??= [];
-        $context         ??= [];
+    ) {
+        $overrides ??= [];
+        $context ??= [];
         $manualInjection ??= false;
         $this->overrides = $overrides;
         $this->context = $context;
@@ -36,9 +35,9 @@ final readonly class ResolveRequest
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      */
-    public function child(string $serviceId, array $overrides = []) : self
+    public function child(string $serviceId, array $overrides = []): self
     {
         return new self(
             serviceId      : $serviceId,
@@ -53,9 +52,9 @@ final readonly class ResolveRequest
     /**
      * Returns a copy with one updated resolution context.
      *
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    public function withContext(array $context) : self
+    public function withContext(array $context): self
     {
         return new self(
             serviceId      : $this->serviceId,
@@ -70,10 +69,10 @@ final readonly class ResolveRequest
     /**
      * Returns whether one service id already exists in the parent request chain.
      */
-    public function contains(string $serviceId) : bool
+    public function contains(string $serviceId): bool
     {
         $current = $this->parent;
-        while ( $current instanceof ResolveRequest ) {
+        while ($current instanceof ResolveRequest) {
             if ($current->serviceId === $serviceId) {
                 return true;
             }
@@ -87,10 +86,10 @@ final readonly class ResolveRequest
     /**
      * Returns the full dependency path for diagnostics.
      */
-    public function getPath() : string
+    public function getPath(): string
     {
         $path = $this->parent?->getPath() ?? '';
 
-        return ($path !== '' ? $path . ' -> ' : '') . $this->serviceId;
+        return ($path !== '' ? $path.' -> ' : '').$this->serviceId;
     }
 }

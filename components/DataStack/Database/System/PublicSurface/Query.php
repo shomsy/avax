@@ -16,29 +16,30 @@ final readonly class Query
     public function __construct(
         private QueryCapability $queryCapability,
         private ?string $connectionName = null,
-    ) {}
+    ) {
+    }
 
-    public function on(?string $connectionName = null) : self
+    public function on(?string $connectionName = null): self
     {
         return new self($this->queryCapability, $connectionName);
     }
 
-    public function builder(?string $connectionName = null) : QueryBuilder
+    public function builder(?string $connectionName = null): QueryBuilder
     {
         return $this->queryCapability->builder($connectionName ?? $this->connectionName);
     }
 
-    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    public function table(string $table, ?string $connectionName = null): QueryBuilder
     {
         return $this->from($table, $connectionName);
     }
 
-    public function from(string $table, ?string $connectionName = null) : QueryBuilder
+    public function from(string $table, ?string $connectionName = null): QueryBuilder
     {
         return $this->queryCapability->from($table, $connectionName ?? $this->connectionName);
     }
 
-    public function raw(string $value, ?string $connectionName = null) : Expression
+    public function raw(string $value, ?string $connectionName = null): Expression
     {
         return $this->queryCapability->raw($value, $connectionName ?? $this->connectionName);
     }

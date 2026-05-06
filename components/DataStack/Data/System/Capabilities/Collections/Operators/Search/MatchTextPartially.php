@@ -9,13 +9,15 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Operato
  */
 final readonly class MatchTextPartially
 {
-    public function __construct(private array $items = []) {}
+    public function __construct(private array $items = [])
+    {
+    }
 
     public function __invoke(string $query, ?string $key = null, bool $caseSensitive = false): array
     {
         return array_values(array_filter(
             $this->items,
-                                static function (array $item) use ($query, $key, $caseSensitive) : bool {
+            static function (array $item) use ($query, $key, $caseSensitive): bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
                 if (! is_string($target)) {
                     return false;

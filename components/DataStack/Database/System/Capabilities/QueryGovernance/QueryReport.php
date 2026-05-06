@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance;
 
-use Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\Detection\NPlusOneDetector;
-use Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\Detection\SlowQueryDetector;
-
 final class QueryReport
 {
     /** @var array<string, int> */

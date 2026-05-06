@@ -22,35 +22,36 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     public function __construct(
         #[SensitiveParameter]
         private readonly PasswordHasher $passwordHasher,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws RandomException
      */
     public function register(
         string $name,
-        OAuthClientType               $oAuthClientType,
+        OAuthClientType $oAuthClientType,
         array $redirectUris,
-        ?string                       $tenantSlug = null,
+        ?string $tenantSlug = null,
         array $allowedScopes = [],
         array $allowedAudiences = [],
         array $allowedGrantTypes = [],
         array $audienceScopeBoundaries = [],
         #[SensitiveParameter]
         ?OAuthTokenEndpointAuthMethod $oAuthTokenEndpointAuthMethod = null,
-        ?OAuthSenderConstraintType    $oAuthSenderConstraintType = null,
+        ?OAuthSenderConstraintType $oAuthSenderConstraintType = null,
         bool $workloadIdentity = false,
         bool $phishingResistantRequired = false,
         bool $requestObjectSignatureRequired = false,
         bool $frontChannelLogoutSupported = false,
         bool $backChannelLogoutSupported = false,
-        ?bool                         $approvalRequired = null,
+        ?bool $approvalRequired = null,
         #[SensitiveParameter]
-        ?string                       $requestObjectVerificationKeyPem = null,
+        ?string $requestObjectVerificationKeyPem = null,
     ): RegisteredOAuthClient {
         $normalizedRedirectUris = $this->normalizeRedirectUris(redirectUris: $redirectUris);
-        $normalizedScopes       = $this->normalizeScopes(allowedScopes: $allowedScopes);
-        $normalizedAudiences    = $this->normalizeStrings(values: $allowedAudiences);
+        $normalizedScopes = $this->normalizeScopes(allowedScopes: $allowedScopes);
+        $normalizedAudiences = $this->normalizeStrings(values: $allowedAudiences);
         $normalizedGrantTypes = $this->normalizeGrantTypes(allowedGrantTypes: $allowedGrantTypes, type: $oAuthClientType);
         $normalizedAudienceScopeBoundaries = $this->normalizeAudienceScopeBoundaries(audienceScopeBoundaries: $audienceScopeBoundaries);
 
@@ -83,9 +84,9 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             }
         }
 
-        $clientId       = 'oauth_' . bin2hex(string: random_bytes(length: 12));
+        $clientId = 'oauth_'.bin2hex(string: random_bytes(length: 12));
         $plainSecret = null;
-        $secretHash     = null;
+        $secretHash = null;
 
         if ($oAuthClientType === OAuthClientType::CONFIDENTIAL) {
             $plainSecret = bin2hex(string: random_bytes(length: 24));
@@ -128,8 +129,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param list<string> $redirectUris
-     *
+     * @param  list<string>  $redirectUris
      * @return list<string>
      */
     private function normalizeRedirectUris(array $redirectUris): array
@@ -153,7 +153,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param list<string> $allowedScopes
+     * @param  list<string>  $allowedScopes
      * @return list<string>
      */
     private function normalizeScopes(array $allowedScopes): array
@@ -162,7 +162,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param list<string> $values
+     * @param  list<string>  $values
      * @return list<string>
      */
     private function normalizeStrings(array $values): array
@@ -188,10 +188,10 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param list<OAuthGrantType> $allowedGrantTypes
+     * @param  list<OAuthGrantType>  $allowedGrantTypes
      * @return list<OAuthGrantType>
      */
-    private function normalizeGrantTypes(OAuthClientType $oAuthClientType, array $allowedGrantTypes) : array
+    private function normalizeGrantTypes(OAuthClientType $oAuthClientType, array $allowedGrantTypes): array
     {
         if ($allowedGrantTypes === []) {
             return [
@@ -218,7 +218,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     }
 
     /**
-     * @param array<string, list<string>> $audienceScopeBoundaries
+     * @param  array<string, list<string>>  $audienceScopeBoundaries
      * @return array<string, list<string>>
      */
     private function normalizeAudienceScopeBoundaries(array $audienceScopeBoundaries): array
@@ -247,7 +247,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         return $normalized !== '' ? strtolower(string: $normalized) : null;
     }
 
-    public function replace(OAuthClient $oAuthClient) : void
+    public function replace(OAuthClient $oAuthClient): void
     {
         $this->clients[$oAuthClient->clientId] = $oAuthClient;
     }
@@ -260,7 +260,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return null;
         }
 
-        $oAuthClient              = new OAuthClient(
+        $oAuthClient = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
             type                          : $client->type,
@@ -301,7 +301,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return null;
         }
 
-        $oAuthClient              = new OAuthClient(
+        $oAuthClient = new OAuthClient(
             clientId                      : $client->clientId,
             name                          : $client->name,
             type                          : $client->type,

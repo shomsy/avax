@@ -30,9 +30,9 @@ final readonly class Redis implements State
 
     public function get(string $key): mixed
     {
-        $value = $this->redis->get($this->prefix . $key);
+        $value = $this->redis->get($this->prefix.$key);
 
-        return $value !== false ? unserialize((string)$value) : null;
+        return $value !== false ? unserialize((string) $value) : null;
     }
 
     public function set(string $key, mixed $value, int $ttl = 0): void
@@ -40,31 +40,31 @@ final readonly class Redis implements State
         $serialized = serialize($value);
 
         if ($ttl > 0) {
-            $this->redis->setex($this->prefix . $key, $ttl, $serialized);
+            $this->redis->setex($this->prefix.$key, $ttl, $serialized);
         } else {
-            $this->redis->set($this->prefix . $key, $serialized);
+            $this->redis->set($this->prefix.$key, $serialized);
         }
     }
 
     public function delete(string $key): void
     {
-        $this->redis->del($this->prefix . $key);
+        $this->redis->del($this->prefix.$key);
     }
 
     public function exists(string $key): bool
     {
-        $result = $this->redis->exists($this->prefix . $key);
+        $result = $this->redis->exists($this->prefix.$key);
 
-        return is_int($result) ? $result > 0 : (bool)$result;
+        return is_int($result) ? $result > 0 : (bool) $result;
     }
 
     public function increment(string $key, int $value = 1): int
     {
-        return (int)$this->redis->incrby($this->prefix . $key, $value);
+        return (int) $this->redis->incrby($this->prefix.$key, $value);
     }
 
     public function expire(string $key, int $ttl): void
     {
-        $this->redis->expire($this->prefix . $key, $ttl);
+        $this->redis->expire($this->prefix.$key, $ttl);
     }
 }

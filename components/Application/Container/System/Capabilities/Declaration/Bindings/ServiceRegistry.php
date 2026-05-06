@@ -293,7 +293,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
             return $decorator;
         }
 
-        if (is_object(value: $decorator) && !$decorator instanceof Closure) {
+        if (is_object(value: $decorator) && ! $decorator instanceof Closure) {
             return $decorator::class;
         }
 
@@ -307,7 +307,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     public function tag(string|array $abstracts, string|array $tags): void
     {
-        foreach ((array)$abstracts as $abstract) {
+        foreach ((array) $abstracts as $abstract) {
             $this->addTags(abstract: $abstract, tags: $tags);
         }
     }
@@ -316,7 +316,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     {
         $abstract = $this->resolveAlias(abstract: $abstract);
 
-        if (!isset($this->services[$abstract])) {
+        if (! isset($this->services[$abstract])) {
             return;
         }
 
@@ -381,7 +381,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         usort(
             array: $items,
-            callback: static fn(array $left, array $right): int => [$left['order'], $left['serviceId']]
+            callback: static fn (array $left, array $right): int => [$left['order'], $left['serviceId']]
                 <=> [$right['order'], $right['serviceId']]
         );
 
@@ -394,7 +394,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     public function getContextualMatch(string $consumer, string $needs): mixed
     {
         $needs = $this->resolveAlias(abstract: $needs);
-        $cacheKey = $consumer . '@' . $needs;
+        $cacheKey = $consumer.'@'.$needs;
         if (array_key_exists(key: $cacheKey, array: $this->resolvedCache)) {
             return $this->resolvedCache[$cacheKey];
         }
@@ -492,12 +492,12 @@ final class ServiceRegistry implements ServiceRegistryInterface
         return isset($this->aliases[$alias]);
     }
 
-    public function ownership(string $abstract): RegistrationMetadata|null
+    public function ownership(string $abstract): ?RegistrationMetadata
     {
         return $this->get(abstract: $abstract)?->metadata;
     }
 
-    public function get(string $abstract): ServiceRegistration|null
+    public function get(string $abstract): ?ServiceRegistration
     {
         $abstract = $this->resolveAlias(abstract: $abstract);
 
@@ -545,7 +545,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     /**
      * @return array<string, mixed>|null
      */
-    public function sliceManifest(string $slice): array|null
+    public function sliceManifest(string $slice): ?array
     {
         $normalized = trim(string: $slice);
         if ($normalized === '') {
@@ -582,9 +582,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
             $manifests[$slice]['categories'][$metadata->category] = true;
             $manifests[$slice]['services'][] = $abstract;
             $manifests[$slice]['imports'] = array_merge(
-                    $manifests[$slice]['imports'],
-                    $metadata->imports
-                )
+                $manifests[$slice]['imports'],
+                $metadata->imports
+            )
                     |> array_unique(...)
                     |> array_values(...);
 
@@ -638,6 +638,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
             if ($access['allowed']) {
                 $visible[] = $row;
+
                 continue;
             }
 
@@ -646,11 +647,11 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         usort(
             array: $visible,
-            callback: static fn(array $left, array $right): int => $left['serviceId'] <=> $right['serviceId']
+            callback: static fn (array $left, array $right): int => $left['serviceId'] <=> $right['serviceId']
         );
         usort(
             array: $hidden,
-            callback: static fn(array $left, array $right): int => $left['serviceId'] <=> $right['serviceId']
+            callback: static fn (array $left, array $right): int => $left['serviceId'] <=> $right['serviceId']
         );
 
         return [
@@ -674,7 +675,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $viewer = [
             'slice' => $normalized,
             'exists' => $manifest !== null,
-            'category' => (string)($manifest['category'] ?? ''),
+            'category' => (string) ($manifest['category'] ?? ''),
             'imports' => $manifest['imports'] ?? [],
             'exports' => $manifest['exports'] ?? [],
         ];
@@ -760,7 +761,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
             usort(
                 array: $services,
-                callback: static fn(array $left, array $right): int => [$left['ownerSlice'], $left['serviceId']]
+                callback: static fn (array $left, array $right): int => [$left['ownerSlice'], $left['serviceId']]
                     <=> [$right['ownerSlice'], $right['serviceId']]
             );
 
@@ -772,7 +773,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
         usort(
             array: $duplicates,
-            callback: static fn(array $left, array $right): int => $left['concept'] <=> $right['concept']
+            callback: static fn (array $left, array $right): int => $left['concept'] <=> $right['concept']
         );
 
         return $duplicates;
@@ -836,7 +837,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         if ($dependency->visibility === RegistrationVisibility::SHARED) {
-            if (!$dependency->exported) {
+            if (! $dependency->exported) {
                 return [
                     'allowed' => false,
                     'reason' => 'shared dependency is not exported by its owning slice',
@@ -845,7 +846,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
                 ];
             }
 
-            if (!in_array(needle: $dependency->ownerSlice, haystack: $consumer->imports, strict: true)) {
+            if (! in_array(needle: $dependency->ownerSlice, haystack: $consumer->imports, strict: true)) {
                 return [
                     'allowed' => false,
                     'reason' => "consumer slice [{$consumer->ownerSlice}] does not declare an import for [{$dependency->ownerSlice}]",
@@ -979,7 +980,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
      */
     public function aliasChain(string $abstract): array
     {
-        if (!isset($this->aliases[$abstract])) {
+        if (! isset($this->aliases[$abstract])) {
             return [];
         }
 
@@ -987,7 +988,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $seen = [];
         $current = $abstract;
 
-        while (isset($this->aliases[$current]) && !isset($seen[$current])) {
+        while (isset($this->aliases[$current]) && ! isset($seen[$current])) {
             $seen[$current] = true;
             $current = $this->aliases[$current];
             $chain[] = $current;
@@ -1064,7 +1065,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         foreach ($index as $group => $items) {
             usort(
                 array: $items,
-                callback: static fn(array $left, array $right): int => [$left['order'], $left['serviceId']]
+                callback: static fn (array $left, array $right): int => [$left['order'], $left['serviceId']]
                     <=> [$right['order'], $right['serviceId']]
             );
             $index[$group] = $items;

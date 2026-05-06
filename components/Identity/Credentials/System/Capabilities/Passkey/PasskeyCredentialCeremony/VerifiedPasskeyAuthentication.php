@@ -12,5 +12,6 @@ final readonly class VerifiedPasskeyAuthentication
         public int $userId,
         #[SensitiveParameter]
         public string $credentialId,
-    ) {}
+    ) {
+    }
 }

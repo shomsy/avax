@@ -24,8 +24,8 @@ final class IRNormalizer
     {
         return [
             'select' => array_values(array: $queryNode->getSelect()),
-            'from'   => $queryNode->getFrom()?->table,
-            'joins'  => array_map(
+            'from' => $queryNode->getFrom()?->table,
+            'joins' => array_map(
                 callback: static fn ($join): array => [
                     'type' => strtoupper(string: (string) $join->type),
                     'table' => $join->table,
@@ -35,7 +35,7 @@ final class IRNormalizer
             ),
             'wheres' => array_map(
                 callback: static fn ($where): array => [
-                    'column'  => $where->column,
+                    'column' => $where->column,
                     'operator' => $where->operator->value,
                     'boolean' => strtoupper(string: (string) $where->boolean),
                 ],
@@ -46,14 +46,14 @@ final class IRNormalizer
                 callback: static fn ($order): array => [
                     'column' => $order->column,
                     'direction' => strtoupper(string: (string) $order->direction),
-                    'nulls'  => $order->nulls,
+                    'nulls' => $order->nulls,
                 ],
                 array   : $queryNode->getOrders(),
             ),
-            'limit'  => $queryNode->getLimit(),
+            'limit' => $queryNode->getLimit(),
             'offset' => $queryNode->getOffset(),
             'distinct' => $queryNode->isDistinct(),
-            'ctes'   => array_map(
+            'ctes' => array_map(
                 callback: static fn ($cte): array => [
                     'name' => $cte->name,
                     'columns' => $cte->columns,

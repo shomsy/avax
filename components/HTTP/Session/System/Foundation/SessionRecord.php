@@ -9,7 +9,7 @@ use DateTimeImmutable;
 final readonly class SessionRecord
 {
     public function __construct(
-        public string  $sessionId,
+        public string $sessionId,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $lastSeenAt,
         public DateTimeImmutable $idleExpiresAt,
@@ -19,9 +19,10 @@ final readonly class SessionRecord
         public ?string $userAgentCreated = null,
         public ?DateTimeImmutable $revokedAt = null,
         public ?string $revokeReason = null,
-    ) {}
+    ) {
+    }
 
-    public function isExpired() : bool
+    public function isExpired(): bool
     {
         $now = new DateTimeImmutable();
 

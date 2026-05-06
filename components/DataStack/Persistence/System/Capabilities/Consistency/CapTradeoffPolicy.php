@@ -179,7 +179,8 @@ final readonly class CapTradeoffPolicy
          * Number of replicas required for a successful read.
          */
         public int $readQuorum = 2,
-    ) {}
+    ) {
+    }
 
     /**
      * Creates a policy optimized for strong consistency (CP).
@@ -249,10 +250,10 @@ final readonly class CapTradeoffPolicy
     {
         return sprintf(
             "CAP Policy: %s (C: %.1f, A: %.1f)\n"
-            . "Max Staleness: %.1fs\n"
-            . "Quorums - Write: %d, Read: %d\n"
-            . "Stale Reads: %s\n"
-            . 'Consensus Timeout: %dms',
+            ."Max Staleness: %.1fs\n"
+            ."Quorums - Write: %d, Read: %d\n"
+            ."Stale Reads: %s\n"
+            .'Consensus Timeout: %dms',
             $this->tradeoff->value,
             $this->tradeoff->consistencyLevel(),
             $this->tradeoff->availabilityLevel(),

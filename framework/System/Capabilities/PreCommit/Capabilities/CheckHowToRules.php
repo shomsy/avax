@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit\Capabilities;
 
-use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 
 /**
@@ -23,29 +22,29 @@ final class CheckHowToRules implements CheckInterface
         $this->loadRules();
     }
 
-    private function loadRules() : void
+    private function loadRules(): void
     {
         $basePath = getcwd() ?: '.';
-        $howToDir = $basePath . '/.agents/how-to';
+        $howToDir = $basePath.'/.agents/how-to';
 
         if (! is_dir($howToDir)) {
             return;
         }
 
-        $files = glob($howToDir . '/how-to-*.md') ?: [];
+        $files = glob($howToDir.'/how-to-*.md') ?: [];
         foreach ($files as $file) {
             $this->parseRuleFile($file);
         }
     }
 
-    private function parseRuleFile(string $filePath) : void
+    private function parseRuleFile(string $filePath): void
     {
         $content = file_get_contents($filePath);
         if ($content === false) {
             return;
         }
 
-        $fileName          = basename($filePath, '.md');
+        $fileName = basename($filePath, '.md');
         $forbiddenPatterns = [];
 
         // Look for "Forbidden" or "Avoid" sections
@@ -74,17 +73,16 @@ final class CheckHowToRules implements CheckInterface
         }
 
         $this->rules[$fileName] = [
-            'file'               => $fileName,
+            'file' => $fileName,
             'forbidden_patterns' => array_values(array_unique($forbiddenPatterns)),
         ];
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array
+    public function run(array $context): array
     {
         $issues = [];
 
@@ -92,7 +90,7 @@ final class CheckHowToRules implements CheckInterface
             return $issues;
         }
 
-        $files    = is_array($context['files'] ?? null) ? $context['files'] : [];
+        $files = is_array($context['files'] ?? null) ? $context['files'] : [];
         $basePath = is_string($context['base_path'] ?? null) ? $context['base_path'] : (getcwd() ?: '.');
 
         foreach ($files as $file) {
@@ -100,7 +98,7 @@ final class CheckHowToRules implements CheckInterface
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
@@ -129,7 +127,7 @@ final class CheckHowToRules implements CheckInterface
                             sprintf("Pattern '%s' from %s violates documented rule", $pattern, $ruleName),
                             $file,
                             null,
-                            'HOWTO_RULE_' . strtoupper(substr($ruleName, -3))
+                            'HOWTO_RULE_'.strtoupper(substr($ruleName, -3))
                         );
                     }
                 }
@@ -139,17 +137,17 @@ final class CheckHowToRules implements CheckInterface
         return $issues;
     }
 
-    private function isInComment(string $content, string $pattern) : bool
+    private function isInComment(string $content, string $pattern): bool
     {
         $pos = stripos($content, $pattern);
         if ($pos === false) {
             return false;
         }
 
-        $before           = substr($content, 0, $pos);
+        $before = substr($content, 0, $pos);
         $lastBlockComment = strrpos($before, '/*');
-        $lastLineComment  = strrpos($before, '//');
-        $lastHashComment  = strrpos($before, '#');
+        $lastLineComment = strrpos($before, '//');
+        $lastHashComment = strrpos($before, '#');
 
         if ($lastBlockComment !== false) {
             $blockEnd = strpos($content, '*/', $lastBlockComment);

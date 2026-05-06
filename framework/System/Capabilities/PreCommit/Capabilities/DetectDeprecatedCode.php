@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit\Capabilities;
 
-use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 
 /**
@@ -18,19 +17,18 @@ final class DetectDeprecatedCode implements CheckInterface
     /** @var array<string, string> */
     private array $deprecatedPatterns
         = [
-            '/\$this->validate\(/'    => 'uses $this->validate() (deprecated)',
+            '/\$this->validate\(/' => 'uses $this->validate() (deprecated)',
             '/\$this->validateAll\(/' => 'uses $this->validateAll() (deprecated)',
         ];
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array
+    public function run(array $context): array
     {
-        $issues   = [];
-        $files    = $context['files'] ?? [];
+        $issues = [];
+        $files = $context['files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
 
         foreach ($files as $file) {
@@ -38,7 +36,7 @@ final class DetectDeprecatedCode implements CheckInterface
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
@@ -53,7 +51,7 @@ final class DetectDeprecatedCode implements CheckInterface
                     $issues[] = new PreCommitIssue(
                         'DetectDeprecatedCode',
                         PreCommitIssue::SEVERITY_WARNING,
-                        'Deprecated pattern: ' . $description,
+                        'Deprecated pattern: '.$description,
                         $file,
                         null,
                         'DEPRECATED_PATTERN'
@@ -66,7 +64,7 @@ final class DetectDeprecatedCode implements CheckInterface
                 $issues[] = new PreCommitIssue(
                     'DetectDeprecatedCode',
                     PreCommitIssue::SEVERITY_WARNING,
-                    'File contains @deprecated annotations (' . count($matches[0]) . ')',
+                    'File contains @deprecated annotations ('.count($matches[0]).')',
                     $file,
                     null,
                     'DEPRECATED_ANNOTATION'

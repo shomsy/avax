@@ -9,4 +9,6 @@ use Avax\Components\Application\Container\System\ContextContainer;
 /**
  * Logical root composition view over the assembled container.
  */
-final readonly class RootCompositionView extends ContextContainer {}
+final readonly class RootCompositionView extends ContextContainer
+{
+}

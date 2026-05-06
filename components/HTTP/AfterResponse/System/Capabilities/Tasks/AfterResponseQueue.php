@@ -11,7 +11,7 @@ final class AfterResponseQueue
     /** @var list<AfterResponseTask> */
     private array $tasks = [];
 
-    public function enqueue(AfterResponseTask $afterResponseTask) : void
+    public function enqueue(AfterResponseTask $afterResponseTask): void
     {
         $this->tasks[] = $afterResponseTask;
     }
@@ -22,7 +22,7 @@ final class AfterResponseQueue
             try {
                 $task->execute();
             } catch (Throwable $e) {
-                error_log('AfterResponse error: ' . $e->getMessage());
+                error_log('AfterResponse error: '.$e->getMessage());
             }
         }
     }

@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts
 
 final class RunDatabaseTransaction
 {
-    public function execute(DatabaseConnection $databaseConnection, callable $work) : mixed
+    public function execute(DatabaseConnection $databaseConnection, callable $work): mixed
     {
         return $work();
     }

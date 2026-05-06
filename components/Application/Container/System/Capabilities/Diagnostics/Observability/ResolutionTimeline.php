@@ -19,8 +19,7 @@ final class ResolutionTimeline
     public function __construct(
         ?Clock $clock = null,
         private readonly bool $enabled = true,
-    )
-    {
+    ) {
         $clock ??= new Clock();
         $this->clock = $clock;
     }
@@ -28,15 +27,15 @@ final class ResolutionTimeline
     /**
      * Records one timeline event when diagnostics are enabled.
      */
-    public function record(string $action, string $serviceId, string $outcome) : void
+    public function record(string $action, string $serviceId, string $outcome): void
     {
         if (! $this->enabled) {
             return;
         }
 
         $this->entries[] = [
-            'time'    => $this->clock->now(),
-            'action'  => $action,
+            'time' => $this->clock->now(),
+            'action' => $action,
             'serviceId' => $serviceId,
             'outcome' => $outcome,
         ];
@@ -45,7 +44,7 @@ final class ResolutionTimeline
     /**
      * Reports whether timeline recording is enabled.
      */
-    public function enabled() : bool
+    public function enabled(): bool
     {
         return $this->enabled;
     }
@@ -53,7 +52,7 @@ final class ResolutionTimeline
     /**
      * Returns the recorded timeline entries.
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->entries;
     }
@@ -61,7 +60,7 @@ final class ResolutionTimeline
     /**
      * Clears all recorded timeline entries.
      */
-    public function reset() : void
+    public function reset(): void
     {
         $this->entries = [];
     }

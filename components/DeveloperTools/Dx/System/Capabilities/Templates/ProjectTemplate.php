@@ -23,12 +23,14 @@ class ProjectTemplate
     public function addFile(string $path, string $content): self
     {
         $this->files[$path] = $content;
+
         return $this;
     }
 
     public function addReplacement(string $search, string $replace): self
     {
         $this->replacements[$search] = $replace;
+
         return $this;
     }
 

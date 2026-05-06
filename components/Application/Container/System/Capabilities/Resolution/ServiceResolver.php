@@ -23,8 +23,7 @@ final class ServiceResolver
 
     public function __construct(
         private readonly BindingRegistry $bindings
-    )
-    {
+    ) {
     }
 
     public function call(callable $callback, array $parameters = []): mixed
@@ -85,20 +84,20 @@ final class ServiceResolver
 
     private function build(string $concrete, array $parameters): object
     {
-        if (!class_exists($concrete)) {
+        if (! class_exists($concrete)) {
             throw new RuntimeException("Target class [{$concrete}] does not exist.");
         }
 
         $reflector = new ReflectionClass($concrete);
 
-        if (!$reflector->isInstantiable()) {
+        if (! $reflector->isInstantiable()) {
             throw new RuntimeException("Target class [{$concrete}] is not instantiable.");
         }
 
         $constructor = $reflector->getConstructor();
 
-        if (null === $constructor) {
-            return new $concrete;
+        if ($constructor === null) {
+            return new $concrete();
         }
 
         $dependencies = $this->resolveDependencies($constructor->getParameters(), $parameters);
@@ -115,18 +114,20 @@ final class ServiceResolver
 
             if (array_key_exists($name, $overrides)) {
                 $dependencies[] = $overrides[$name];
+
                 continue;
             }
 
             $type = $parameter->getType();
 
-            if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
+            if (! $type instanceof ReflectionNamedType || $type->isBuiltin()) {
                 if ($parameter->isDefaultValueAvailable()) {
                     $dependencies[] = $parameter->getDefaultValue();
+
                     continue;
                 }
 
-                throw new RuntimeException("Cannot resolve parameter [\${$name}] of type " . ($type ? $type->getName() : 'unknown'));
+                throw new RuntimeException("Cannot resolve parameter [\${$name}] of type ".($type ? $type->getName() : 'unknown'));
             }
 
             $dependencies[] = $this->resolve($type->getName());

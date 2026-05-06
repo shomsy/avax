@@ -11,12 +11,13 @@ final readonly class ListRoutes
 {
     public function __construct(
         private RouteAnalyzer $routeAnalyzer = new RouteAnalyzer(),
-    ) {}
+    ) {
+    }
 
     /**
-     * @param list<RouteInfo> $routes
+     * @param  list<RouteInfo>  $routes
      */
-    public static function printTable(array $routes) : void
+    public static function printTable(array $routes): void
     {
         if ($routes === []) {
             echo "No routes registered.\n";
@@ -24,7 +25,7 @@ final readonly class ListRoutes
             return;
         }
 
-        $methodWidth  = 7;
+        $methodWidth = 7;
         $patternWidth = 40;
         $handlerWidth = 50;
         $middlewareWidth = 30;
@@ -38,17 +39,17 @@ final readonly class ListRoutes
         );
 
         echo $header;
-        echo str_repeat('-', strlen($header)) . "\n";
+        echo str_repeat('-', strlen($header))."\n";
 
         foreach ($routes as $route) {
-            $method  = $route->method;
+            $method = $route->method;
             $pattern = $route->pattern;
             $handler = strlen($route->handler) > $handlerWidth
-                ? substr($route->handler, 0, $handlerWidth - 3) . '...'
+                ? substr($route->handler, 0, $handlerWidth - 3).'...'
                 : $route->handler;
             $middleware = implode(', ', $route->middleware);
             if (strlen($middleware) > $middlewareWidth) {
-                $middleware = substr($middleware, 0, $middlewareWidth - 3) . '...';
+                $middleware = substr($middleware, 0, $middlewareWidth - 3).'...';
             }
 
             echo sprintf(
@@ -60,13 +61,13 @@ final readonly class ListRoutes
             );
         }
 
-        echo "\nTotal: " . count($routes) . " routes\n";
+        echo "\nTotal: ".count($routes)." routes\n";
     }
 
     /**
-     * @param list<array{method: string, path: string, handler: mixed, middleware?: list<string>}> $routes
+     * @param  list<array{method: string, path: string, handler: mixed, middleware?: list<string>}>  $routes
      */
-    public function loadRoutes(array $routes) : self
+    public function loadRoutes(array $routes): self
     {
         $this->routeAnalyzer->setRoutes($routes);
 
@@ -76,7 +77,7 @@ final readonly class ListRoutes
     /**
      * @return list<RouteInfo>
      */
-    public function list() : array
+    public function list(): array
     {
         return $this->routeAnalyzer->routes();
     }

@@ -19,9 +19,9 @@ final readonly class RecordSagaCompleted
     public function record(StoreSagaState $storeSagaState, string $instanceId, string $correlationId): SagaEvent
     {
         return $storeSagaState->appendEvent(event: new SagaEvent(
-                                                       id: 'saga-event-' . bin2hex(string: random_bytes(length: 8)),
+            id: 'saga-event-'.bin2hex(string: random_bytes(length: 8)),
             type         : 'saga.completed',
-                                                       instanceId: $instanceId,
+            instanceId: $instanceId,
             correlationId: $correlationId,
         ));
     }

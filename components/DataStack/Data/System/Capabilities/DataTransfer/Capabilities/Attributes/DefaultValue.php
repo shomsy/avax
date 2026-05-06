@@ -9,5 +9,7 @@ use Attribute;
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 final readonly class DefaultValue
 {
-    public function __construct(public mixed $value) {}
+    public function __construct(public mixed $value)
+    {
+    }
 }

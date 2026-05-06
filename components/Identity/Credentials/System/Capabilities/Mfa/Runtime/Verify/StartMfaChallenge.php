@@ -30,11 +30,11 @@ final readonly class StartMfaChallenge
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-        private GeneralMfaStoreInterface   $generalMfaStore,
+        private GeneralMfaStoreInterface $generalMfaStore,
         private MfaChallengeStoreInterface $mfaChallengeStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        ?int                               $expiresAfterSeconds = null,
+        ?int $expiresAfterSeconds = null,
         private int $maxAttempts = 5,
     ) {
         $expiresAfterSeconds ??= 300;
@@ -46,7 +46,7 @@ final readonly class StartMfaChallenge
      * @throws RandomException
      * @throws Unauthenticated
      */
-    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : MfaChallenge
+    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): MfaChallenge
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -95,11 +95,11 @@ final readonly class StartMfaChallenge
             name      : 'auth.mfa.challenge.requested',
             occurredAt: $now,
             context   : [
-                            'user_id'    => $userId->value,
-                            'challenge_id' => $mfaChallengeRecord->challengeId,
-                            'purpose'      => $mfaChallengePurpose->value,
-                            'ip_address' => $ipAddress,
-                            'user_agent' => $userAgent,
+                'user_id' => $userId->value,
+                'challenge_id' => $mfaChallengeRecord->challengeId,
+                'purpose' => $mfaChallengePurpose->value,
+                'ip_address' => $ipAddress,
+                'user_agent' => $userAgent,
             ],
         ));
 
@@ -110,7 +110,7 @@ final readonly class StartMfaChallenge
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function issueForLogin(User $user, #[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : MfaChallenge
+    public function issueForLogin(User $user, #[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null): MfaChallenge
     {
         return $this->issueForUserId(
             userId   : $user->getId(),

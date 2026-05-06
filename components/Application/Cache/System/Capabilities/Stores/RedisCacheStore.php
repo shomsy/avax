@@ -17,15 +17,14 @@ final class RedisCacheStore implements CacheStoreInterface
 
     public function __construct(
         private array $config = [],
-    )
-    {
+    ) {
         $this->prefix = $config['prefix'] ?? 'cache_';
 
         $this->redis = new Redis();
         $this->connect();
     }
 
-    private function connect() : void
+    private function connect(): void
     {
         $host = $this->config['host'] ?? '127.0.0.1';
         $port = $this->config['port'] ?? 6379;
@@ -46,21 +45,21 @@ final class RedisCacheStore implements CacheStoreInterface
     }
 
     #[Override]
-    public function forget(string $key) : bool
+    public function forget(string $key): bool
     {
-        $deleted = $this->redis->del($this->prefix . $key);
+        $deleted = $this->redis->del($this->prefix.$key);
 
         return is_int($deleted) && $deleted > 0;
     }
 
     #[Override]
-    public function flush() : bool
+    public function flush(): bool
     {
         return $this->redis->flushDB();
     }
 
     #[Override]
-    public function remember(string $key, int $ttl, callable $callback) : mixed
+    public function remember(string $key, int $ttl, callable $callback): mixed
     {
         if ($this->has($key)) {
             return $this->get($key);
@@ -73,40 +72,40 @@ final class RedisCacheStore implements CacheStoreInterface
     }
 
     #[Override]
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
-        $exists = $this->redis->exists($this->prefix . $key);
+        $exists = $this->redis->exists($this->prefix.$key);
 
         return is_int($exists) && $exists > 0;
     }
 
     #[Override]
-    public function get(string $key) : mixed
+    public function get(string $key): mixed
     {
-        $value = $this->redis->get($this->prefix . $key);
+        $value = $this->redis->get($this->prefix.$key);
 
         return $value === false ? null : unserialize($value);
     }
 
     #[Override]
-    public function set(string $key, mixed $value, int $ttl = 0) : bool
+    public function set(string $key, mixed $value, int $ttl = 0): bool
     {
         $serialized = serialize($value);
 
         if ($ttl > 0) {
-            return $this->redis->setex($this->prefix . $key, $ttl, $serialized) === true;
+            return $this->redis->setex($this->prefix.$key, $ttl, $serialized) === true;
         }
 
-        return $this->redis->set($this->prefix . $key, $serialized) === true;
+        return $this->redis->set($this->prefix.$key, $serialized) === true;
     }
 
-    public function getRedis() : Redis
+    public function getRedis(): Redis
     {
         return $this->redis;
     }
 
     #[Override]
-    public function tags(array $tags) : TaggedCache
+    public function tags(array $tags): TaggedCache
     {
         return new TaggedCache($this, $tags);
     }

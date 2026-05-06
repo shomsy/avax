@@ -11,11 +11,13 @@ use Psr\Http\Message\StreamInterface;
 final readonly class StreamResponseBody
 {
     /**
-     * @param Closure(): iterable<string> $chunks
+     * @param  Closure(): iterable<string>  $chunks
      */
-    public function __construct(private Closure $chunks) {}
+    public function __construct(private Closure $chunks)
+    {
+    }
 
-    public function toStream() : StreamInterface
+    public function toStream(): StreamInterface
     {
         $stream = Utils::streamFor('');
 

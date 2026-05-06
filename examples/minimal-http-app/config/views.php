@@ -15,7 +15,7 @@ use Avax\Config\Architecture\DDD\AppPath;
  * environment-independent.
  */
 return [
-    'views_path' => AppPath::getRoot() . 'Presentation/resources/views', // Dynamic path for views folder.
+    'views_path' => AppPath::getRoot().'Presentation/resources/views', // Dynamic path for views folder.
     'cache_path' => AppPath::VIEW_CACHE_PATH->get(),          // Dynamic path for cached templates.
-    'assets'     => '/Presentation/views/assets',              // Static folder path for view assets.
+    'assets' => '/Presentation/views/assets',              // Static folder path for view assets.
 ];

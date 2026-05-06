@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration;
 
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\Kubernetes\GracefulStop;
 use Throwable;
 
 final readonly class ReadinessCheck
 {
     public function __construct(
-        public string  $name,
-        public bool    $ready,
-        public float   $latencyMs = 0.0,
+        public string $name,
+        public bool $ready,
+        public float $latencyMs = 0.0,
         public ?string $error = null,
-    )
-    {
+    ) {
     }
 
     public static function check(string $name): self

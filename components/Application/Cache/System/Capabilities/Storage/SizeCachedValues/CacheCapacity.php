@@ -33,7 +33,7 @@ readonly class CacheCapacity
 
     public function canStore(int $currentCount, int $currentSizeBytes): bool
     {
-        return $currentCount     < $this->maxEntries
+        return $currentCount < $this->maxEntries
             && $currentSizeBytes < $this->maxSizeBytes;
     }
 

@@ -10,5 +10,6 @@ final readonly class TransportResult
         public bool $success,
         public ?string $messageId = null,
         public ?string $error = null,
-    ) {}
+    ) {
+    }
 }

@@ -13,9 +13,11 @@ use RuntimeException;
 
 final readonly class ApproveClientRegistration
 {
-    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
-    public function execute(ApproveClientRegistrationData $approveClientRegistrationData) : OAuthClient
+    public function execute(ApproveClientRegistrationData $approveClientRegistrationData): OAuthClient
     {
         $client = $this->oAuthClientRegistry->approve(
             clientId  : $approveClientRegistrationData->clientId,
@@ -30,9 +32,9 @@ final readonly class ApproveClientRegistration
             name      : 'auth.oauth.client.approved',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'   => $client->clientId,
-                            'tenant_slug' => $client->tenantSlug,
-                            'approved_by' => $client->approvedBy,
+                'client_id' => $client->clientId,
+                'tenant_slug' => $client->tenantSlug,
+                'approved_by' => $client->approvedBy,
                 'approval_status' => $client->approvalStatus->value,
             ],
         ));

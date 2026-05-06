@@ -9,18 +9,18 @@ final class ValidationResult
     /** @var array<string, list<string>> */
     private array $errors = [];
 
-    public function addError(string $property, string $message) : void
+    public function addError(string $property, string $message): void
     {
         $this->errors[$property] ??= [];
         $this->errors[$property][] = $message;
     }
 
-    public function getErrors() : array
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
-    public function isValid() : bool
+    public function isValid(): bool
     {
         return $this->errors === [];
     }

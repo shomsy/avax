@@ -9,11 +9,11 @@ use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 
 final readonly class NullTransport implements MailTransport
 {
-    public function send(MimeMessage $mimeMessage, Envelope $envelope) : TransportResult
+    public function send(MimeMessage $mimeMessage, Envelope $envelope): TransportResult
     {
         return new TransportResult(
             success  : true,
-            messageId: '<' . uniqid(prefix: 'msg-', more_entropy: true) . '-null@local>',
+            messageId: '<'.uniqid(prefix: 'msg-', more_entropy: true).'-null@local>',
         );
     }
 

@@ -20,12 +20,11 @@ final readonly class RepairDivergedReplica
     public function __construct(
         private Clock $clock,
         CacheStore ...$cacheStore,
-    )
-    {
+    ) {
         $this->stores = $cacheStore;
     }
 
-    public function repairAll(int $referenceReplicaIndex = 0) : int
+    public function repairAll(int $referenceReplicaIndex = 0): int
     {
         $repaired = 0;
 
@@ -46,7 +45,7 @@ final readonly class RepairDivergedReplica
         return $repaired;
     }
 
-    public function repair(CacheKey $cacheKey, int $referenceReplicaIndex = 0) : bool
+    public function repair(CacheKey $cacheKey, int $referenceReplicaIndex = 0): bool
     {
         if (! isset($this->stores[$referenceReplicaIndex])) {
             return false;
@@ -60,7 +59,7 @@ final readonly class RepairDivergedReplica
         }
 
         $referenceRecord = $referenceResult->storedCacheRecord;
-        $repaired       = false;
+        $repaired = false;
 
         foreach ($this->stores as $index => $store) {
             if ($index === $referenceReplicaIndex) {

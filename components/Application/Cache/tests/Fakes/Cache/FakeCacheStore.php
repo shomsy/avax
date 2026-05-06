@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\tests\Fakes\Cache;
 
-use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
-use Avax\Components\Application\DateTime\System\PublicSurface\SystemClock;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\DateTime\System\PublicSurface\Clock;
+use Avax\Components\Application\DateTime\System\PublicSurface\SystemClock;
 use Override;
 
 final class FakeCacheStore implements CacheStore
@@ -27,7 +27,7 @@ final class FakeCacheStore implements CacheStore
     {
         $fullKey = $cacheKey->fullKey();
 
-        if (!isset($this->records[$fullKey])) {
+        if (! isset($this->records[$fullKey])) {
             return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
@@ -65,11 +65,11 @@ final class FakeCacheStore implements CacheStore
     {
         $fullKey = $cacheKey->fullKey();
 
-        if (!isset($this->records[$fullKey])) {
+        if (! isset($this->records[$fullKey])) {
             return false;
         }
 
-        return !$this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
+        return ! $this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
     }
 
     public function getRecords(): array
@@ -89,6 +89,6 @@ final class FakeCacheStore implements CacheStore
 
     public function containsValue(mixed $value): bool
     {
-        return array_any($this->records, fn($record): bool => $record->value === $value);
+        return array_any($this->records, fn ($record): bool => $record->value === $value);
     }
 }

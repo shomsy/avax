@@ -52,12 +52,14 @@ final readonly class DetectSagaCompletion
 
 final readonly class RecordSagaCompleted
 {
-    public function __construct(private object $store, private object $inspect) {}
+    public function __construct(private object $store, private object $inspect)
+    {
+    }
 
-    public function record(SagaInstance $sagaInstance) : void
+    public function record(SagaInstance $sagaInstance): void
     {
         $completed = $sagaInstance->complete();
-        $this->store->set('saga_' . $completed->id, $completed->toArray());
+        $this->store->set('saga_'.$completed->id, $completed->toArray());
 
         $this->inspect->record(
             SagaRuntimeEvent::completed(
@@ -70,20 +72,22 @@ final readonly class RecordSagaCompleted
 
 final readonly class PublishSagaCompleted
 {
-    public function __construct(private object $messageBus) {}
+    public function __construct(private object $messageBus)
+    {
+    }
 
-    public function publish(SagaInstance $sagaInstance) : void
+    public function publish(SagaInstance $sagaInstance): void
     {
         $topic = sprintf('saga.%s.completed', $sagaInstance->definitionName);
 
         $this->messageBus->publish($topic, [
-            'saga_id'         => $sagaInstance->id,
+            'saga_id' => $sagaInstance->id,
             'definition_name' => $sagaInstance->definitionName,
-            'final_data'      => $sagaInstance->data,
+            'final_data' => $sagaInstance->data,
             'completed_steps' => $sagaInstance->completedSteps,
-            'correlation_id'  => $sagaInstance->correlationId,
-            'tenant_id'       => $sagaInstance->tenantId,
-            'completed_at'    => $sagaInstance->completedAt?->format(format: DateTimeInterface::ISO8601),
+            'correlation_id' => $sagaInstance->correlationId,
+            'tenant_id' => $sagaInstance->tenantId,
+            'completed_at' => $sagaInstance->completedAt?->format(format: DateTimeInterface::ISO8601),
         ]);
     }
 }

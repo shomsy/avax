@@ -130,16 +130,15 @@ class SyntaxErrorFixer
     {
         // Use existing php-cs-fixer config
         $command = 'vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --verbose';
-        exec($command . ' 2>&1', $output, $return);
+        exec($command.' 2>&1', $output, $return);
 
         if ($return === 0) {
             echo "php-cs-fixer applied successfully.\n";
         } else {
-            echo implode("\n", $output) . "\n";
+            echo implode("\n", $output)."\n";
         }
     }
 }
 
 $fixer = new SyntaxErrorFixer();
 $fixer->run();
-

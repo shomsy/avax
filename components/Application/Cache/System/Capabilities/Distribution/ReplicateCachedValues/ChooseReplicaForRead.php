@@ -26,7 +26,7 @@ final readonly class ChooseReplicaForRead
         return new SecondaryReplica(index: 1);
     }
 
-    public function chooseAny() : PrimaryReplica
+    public function chooseAny(): PrimaryReplica
     {
         return new PrimaryReplica(index: 0);
     }

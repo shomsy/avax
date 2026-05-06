@@ -9,10 +9,10 @@ namespace Avax\Components\Application\Text\System\Capabilities\Transform;
  */
 final class ToSingular
 {
-    public function execute(string $value) : string
+    public function execute(string $value): string
     {
         if (preg_match('/ies$/i', $value)) {
-            return substr($value, 0, -3) . 'y';
+            return substr($value, 0, -3).'y';
         }
 
         if (preg_match('/es$/i', $value)) {

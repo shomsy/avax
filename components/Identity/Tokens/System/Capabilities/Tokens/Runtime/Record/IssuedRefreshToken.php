@@ -18,5 +18,6 @@ final readonly class IssuedRefreshToken
         public string $familyId,
         public ?DateTimeImmutable $mfaVerifiedAt = null,
         public bool $phishingResistant = false,
-    ) {}
+    ) {
+    }
 }

@@ -6,4 +6,6 @@ namespace Avax\Components\HTTP\Session\System\Foundation\Failure;
 
 use RuntimeException;
 
-final class SessionFailure extends RuntimeException {}
+final class SessionFailure extends RuntimeException
+{
+}

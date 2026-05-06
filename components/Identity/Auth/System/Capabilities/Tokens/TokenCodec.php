@@ -21,15 +21,14 @@ final readonly class TokenCodec
         #[SensitiveParameter]
         string $secret,
         string $algorithm = 'HS256',
-    )
-    {
+    ) {
         $this->tokenCodec = new HmacTokenCodec(secret: $secret, algorithm: $algorithm);
     }
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
-    public function encode(array $payload) : string
+    public function encode(array $payload): string
     {
         return $this->tokenCodec->encode(claims: $payload);
     }
@@ -37,7 +36,7 @@ final readonly class TokenCodec
     /**
      * @return array<string, mixed>
      */
-    public function decode(string $token) : array
+    public function decode(string $token): array
     {
         $payload = $this->tokenCodec->decode(token: $token);
 

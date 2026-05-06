@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__) . '/bootstrap.php';
+require_once dirname(path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
@@ -10,7 +10,7 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observ
 
 final class ValidateReportSchemasReportSchemas
 {
-    public function value() : string
+    public function value(): string
     {
         return 'diagnostics-schema';
     }
@@ -18,21 +18,23 @@ final class ValidateReportSchemasReportSchemas
 
 final class DiagnosticsSchemaConsumer
 {
-    public function __construct(public DiagnosticsSchemaDependency $diagnosticsSchemaDependency) {}
+    public function __construct(public DiagnosticsSchemaDependency $diagnosticsSchemaDependency)
+    {
+    }
 }
 
 /**
- * @param array<string, mixed> $payload
- * @param list<string> $requiredKeys
+ * @param  array<string, mixed>  $payload
+ * @param  list<string>  $requiredKeys
  */
-function assertSchemaKeys(array $payload, array $requiredKeys, string $label) : void
+function assertSchemaKeys(array $payload, array $requiredKeys, string $label): void
 {
     foreach ($requiredKeys as $requiredKey) {
         assertTrue(condition: array_key_exists(key: $requiredKey, array: $payload), message: sprintf('%s should expose required key [%s].', $label, $requiredKey));
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-diagnostics-schema-' . uniqid();
+$cacheDir = sys_get_temp_dir().'/container-diagnostics-schema-'.uniqid();
 $container = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir       : $cacheDir,
     cacheVersion   : 'diagnostics-schema',
@@ -59,45 +61,45 @@ assertSame(expected: RuntimeReport::SCHEMA_VERSION, actual: $runtimePayload['sch
 assertSchemaKeys(
     payload     : $compilePayload,
     requiredKeys: [
-                      'schemaVersion',
-                      'available',
-                      'compatible',
-                      'freshnessState',
-                      'warnings',
-                      'compileMode',
-                      'executionMode',
-                      'pruneMode',
-                      'environment',
-                      'fingerprint',
-                      'entries',
-                      'pruning',
-                      'compatibilityIssues',
-                      'statistics',
-                      'metadata',
-                  ],
+        'schemaVersion',
+        'available',
+        'compatible',
+        'freshnessState',
+        'warnings',
+        'compileMode',
+        'executionMode',
+        'pruneMode',
+        'environment',
+        'fingerprint',
+        'entries',
+        'pruning',
+        'compatibilityIssues',
+        'statistics',
+        'metadata',
+    ],
     label       : 'Compile report',
 );
 assertSchemaKeys(
     payload     : $runtimePayload,
     requiredKeys: [
-                      'schemaVersion',
-                      'registrationRevision',
-                      'compiledRevision',
-                      'compiledAttached',
-                      'warmedUp',
-                      'diagnosticsMode',
-                      'executionMode',
-                      'asyncTarget',
-                      'sliceBoundaryMode',
-                      'timelineEnabled',
-                      'sharedServiceCount',
-                      'scopedServiceCount',
-                      'metrics',
-                      'timeline',
-                      'scopes',
-                      'hotPath',
-                      'compiled',
-                  ],
+        'schemaVersion',
+        'registrationRevision',
+        'compiledRevision',
+        'compiledAttached',
+        'warmedUp',
+        'diagnosticsMode',
+        'executionMode',
+        'asyncTarget',
+        'sliceBoundaryMode',
+        'timelineEnabled',
+        'sharedServiceCount',
+        'scopedServiceCount',
+        'metrics',
+        'timeline',
+        'scopes',
+        'hotPath',
+        'compiled',
+    ],
     label       : 'Runtime report',
 );
 
@@ -115,4 +117,4 @@ assertSame(
     message : 'Runtime report JSON should preserve its schema version.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

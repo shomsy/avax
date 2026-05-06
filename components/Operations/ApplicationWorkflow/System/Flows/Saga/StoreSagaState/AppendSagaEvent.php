@@ -10,11 +10,11 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Store
 final readonly class AppendSagaEvent
 {
     /**
-     * @param array<string, list<SagaEvent>> $events
+     * @param  array<string, list<SagaEvent>>  $events
      */
-    public function append(array &$events, SagaEvent $sagaEvent) : SagaEvent
+    public function append(array &$events, SagaEvent $sagaEvent): SagaEvent
     {
-        $events[$sagaEvent->instanceId]   ??= [];
+        $events[$sagaEvent->instanceId] ??= [];
         $events[$sagaEvent->instanceId][] = $sagaEvent;
 
         return $sagaEvent;

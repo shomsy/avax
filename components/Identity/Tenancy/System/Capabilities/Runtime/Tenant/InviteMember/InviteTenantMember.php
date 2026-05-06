@@ -15,14 +15,16 @@ use Random\RandomException;
 
 final readonly class InviteTenantMember
 {
-    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantStoreInterface $tenantStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws RandomException
      */
-    public function execute(InviteTenantMemberData $inviteTenantMemberData) : IssuedTenantInvite
+    public function execute(InviteTenantMemberData $inviteTenantMemberData): IssuedTenantInvite
     {
-        $tenant       = $this->tenantStore->findTenantBySlug(slug: $inviteTenantMemberData->tenantSlug);
+        $tenant = $this->tenantStore->findTenantBySlug(slug: $inviteTenantMemberData->tenantSlug);
 
         if (! $tenant instanceof Tenant) {
             throw TenantFailed::tenantNotFound(tenantSlug: $inviteTenantMemberData->tenantSlug);
@@ -30,7 +32,7 @@ final readonly class InviteTenantMember
 
         $plainTextToken = bin2hex(string: random_bytes(length: 32));
         $tenantInvite = new TenantInvite(
-            inviteId : 'invite_' . bin2hex(string: random_bytes(length: 12)),
+            inviteId : 'invite_'.bin2hex(string: random_bytes(length: 12)),
             tenantId : $tenant->tenantId,
             email    : strtolower(string: trim(string: $inviteTenantMemberData->email)),
             role     : $inviteTenantMemberData->role,
@@ -43,12 +45,12 @@ final readonly class InviteTenantMember
             name      : 'auth.tenant.member.invited',
             occurredAt: $tenantInvite->createdAt,
             context   : [
-                            'tenant_id'  => $tenant->tenantId,
+                'tenant_id' => $tenant->tenantId,
                 'tenant_slug' => $tenant->slug,
-                            'invite_id'  => $tenantInvite->inviteId,
-                            'email'      => $tenantInvite->email,
-                            'role'       => $tenantInvite->role->value,
-                            'invited_by' => $tenantInvite->invitedBy,
+                'invite_id' => $tenantInvite->inviteId,
+                'email' => $tenantInvite->email,
+                'role' => $tenantInvite->role->value,
+                'invited_by' => $tenantInvite->invitedBy,
             ],
         ));
 

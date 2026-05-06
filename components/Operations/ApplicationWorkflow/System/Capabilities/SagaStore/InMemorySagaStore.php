@@ -27,7 +27,7 @@ final class InMemorySagaStore implements SagaStoreInterface
         return $this->sagas[$id] ?? null;
     }
 
-    public function updateStatus(Saga $saga, SagaState $sagaState) : void
+    public function updateStatus(Saga $saga, SagaState $sagaState): void
     {
         $saga->setStatus($sagaState);
         $this->sagas[$saga->getId()] = $saga;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
-$root         = dirname(path: __DIR__);
-$patterns     = ['$_SERVER', '$_GET', '$_POST', '$_COOKIE', '$_FILES', '$_SESSION', '$_REQUEST'];
+$root = dirname(path: __DIR__);
+$patterns = ['$_SERVER', '$_GET', '$_POST', '$_COOKIE', '$_FILES', '$_SESSION', '$_REQUEST'];
 $scanRoots = [
     'components',
     'framework',
@@ -40,7 +40,7 @@ $allowedFiles = [
 $violations = [];
 
 foreach ($scanRoots as $scanRoot) {
-    $scanPath = $root . '/' . $scanRoot;
+    $scanPath = $root.'/'.$scanRoot;
 
     if (! is_dir(filename: $scanPath)) {
         continue;

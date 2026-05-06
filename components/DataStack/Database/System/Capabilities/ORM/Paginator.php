@@ -11,7 +11,8 @@ final readonly class Paginator
         public int $total,
         public int $perPage,
         public int $currentPage,
-    ) {}
+    ) {
+    }
 
     public function lastPage(): int
     {

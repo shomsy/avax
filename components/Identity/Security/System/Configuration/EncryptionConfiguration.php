@@ -102,10 +102,10 @@ final readonly class EncryptionConfiguration
     public function toArray(): array
     {
         return [
-            'cipher'       => $this->cipher,
+            'cipher' => $this->cipher,
             'key_versions' => $this->keyVersions,
             'current_version' => $this->currentVersion,
-            'salt'         => $this->salt,
+            'salt' => $this->salt,
         ];
     }
 }

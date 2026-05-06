@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orc
 
 final readonly class Probes
 {
-    public static function execute() : never
+    public static function execute(): never
     {
         echo "Starting graceful shutdown...\n";
 

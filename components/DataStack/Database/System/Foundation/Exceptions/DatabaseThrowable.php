@@ -11,4 +11,6 @@ use Throwable;
  *
  * @see /docs/Foundation/Database/Concepts/Architecture.md#databasethrowable
  */
-interface DatabaseThrowable extends Throwable {}
+interface DatabaseThrowable extends Throwable
+{
+}

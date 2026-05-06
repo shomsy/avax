@@ -15,13 +15,13 @@ final class ListenerRegistry
     /** @var array<string, array<callable>> Sorted cache */
     private array $sorted = [];
 
-    public function subscribe(string $event, callable $listener, int $priority = 0) : void
+    public function subscribe(string $event, callable $listener, int $priority = 0): void
     {
         $this->listeners[$event][$priority][] = $listener;
         unset($this->sorted[$event]);
     }
 
-    public function getListenersFor(string $event) : array
+    public function getListenersFor(string $event): array
     {
         if (isset($this->sorted[$event])) {
             return $this->sorted[$event];
@@ -39,23 +39,23 @@ final class ListenerRegistry
         return $this->sorted[$event];
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->listeners = [];
         $this->sorted = [];
     }
 
-    public function remove(string $event) : void
+    public function remove(string $event): void
     {
         unset($this->listeners[$event], $this->sorted[$event]);
     }
 
-    public function hasListeners(string $event) : bool
+    public function hasListeners(string $event): bool
     {
         return isset($this->listeners[$event]) && (isset($this->listeners[$event]) && $this->listeners[$event] !== []);
     }
 
-    public function listenerCount(string $event) : int
+    public function listenerCount(string $event): int
     {
         if (! isset($this->listeners[$event])) {
             return 0;

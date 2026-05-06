@@ -9,19 +9,18 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 final readonly class PhpFpmRequestReader
 {
     /**
-     * @param array<string, string> $server
-     * @param array<string, mixed> $query
-     * @param array<string, mixed> $parsedBody
+     * @param  array<string, string>  $server
+     * @param  array<string, mixed>  $query
+     * @param  array<string, mixed>  $parsedBody
      */
     public function read(
         array $server,
         array $query = [],
         array $parsedBody = [],
         ?string $body = null,
-    ) : RuntimeRequest
-    {
-        $method  = $server['REQUEST_METHOD'] ?? 'GET';
-        $uri     = $server['REQUEST_URI'] ?? '/';
+    ): RuntimeRequest {
+        $method = $server['REQUEST_METHOD'] ?? 'GET';
+        $uri = $server['REQUEST_URI'] ?? '/';
         $attributes = ['query' => $query, 'parsedBody' => $parsedBody];
         $headers = [];
 

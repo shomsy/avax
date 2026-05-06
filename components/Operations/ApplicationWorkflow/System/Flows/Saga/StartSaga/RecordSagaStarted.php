@@ -16,14 +16,14 @@ final readonly class RecordSagaStarted
     /**
      * @throws RandomException
      */
-    public function record(StoreSagaState $storeSagaState, SagaInstance $sagaInstance) : SagaEvent
+    public function record(StoreSagaState $storeSagaState, SagaInstance $sagaInstance): SagaEvent
     {
         return $storeSagaState->appendEvent(event: new SagaEvent(
-                                                       id: 'saga-event-' . bin2hex(string: random_bytes(length: 8)),
+            id: 'saga-event-'.bin2hex(string: random_bytes(length: 8)),
             type         : 'saga.started',
-                                                       payload: ['definition' => $sagaInstance->definitionName, 'current_step' => $sagaInstance->currentStepName],
-                                                       instanceId: $sagaInstance->id,
-                                                       correlationId: $sagaInstance->correlationId->value,
+            payload: ['definition' => $sagaInstance->definitionName, 'current_step' => $sagaInstance->currentStepName],
+            instanceId: $sagaInstance->id,
+            correlationId: $sagaInstance->correlationId->value,
         ));
     }
 }

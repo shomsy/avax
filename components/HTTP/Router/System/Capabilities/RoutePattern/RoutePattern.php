@@ -8,7 +8,8 @@ final readonly class RoutePattern
 {
     public function __construct(
         private string $pattern,
-    ) {}
+    ) {
+    }
 
     public function toString(): string
     {

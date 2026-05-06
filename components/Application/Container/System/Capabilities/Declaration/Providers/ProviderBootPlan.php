@@ -13,17 +13,17 @@ use LogicException;
 final readonly class ProviderBootPlan
 {
     /**
-     * @param list<class-string<RegisterDependency>> $order
-     * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
+     * @param  list<class-string<RegisterDependency>>  $order
+     * @param  array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>>  $dependencies
      */
     private function __construct(public array $order, public array $dependencies)
     {
     }
 
     /**
-     * @param array<class-string<RegisterDependency>, RegisterDependency> $instances
+     * @param  array<class-string<RegisterDependency>, RegisterDependency>  $instances
      */
-    public static function build(array $instances) : self
+    public static function build(array $instances): self
     {
         ksort(array: $instances);
 
@@ -56,10 +56,10 @@ final readonly class ProviderBootPlan
     }
 
     /**
-     * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
-     * @param list<class-string<RegisterDependency>>          $ordered
-     * @param array<class-string<RegisterDependency>, string> $state
-     * @param list<class-string<RegisterDependency>>          $stack
+     * @param  array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>>  $dependencies
+     * @param  list<class-string<RegisterDependency>>  $ordered
+     * @param  array<class-string<RegisterDependency>, string>  $state
+     * @param  list<class-string<RegisterDependency>>  $stack
      */
     private static function visit(
         string $class,
@@ -67,8 +67,7 @@ final readonly class ProviderBootPlan
         array &$ordered,
         array &$state,
         array $stack,
-    ) : void
-    {
+    ): void {
         $currentState = $state[$class] ?? 'new';
         if ($currentState === 'done') {
             return;
@@ -78,7 +77,7 @@ final readonly class ProviderBootPlan
             $stack[] = $class;
 
             throw new LogicException(
-                message: 'Provider dependency cycle detected: ' . implode(separator: ' -> ', array: $stack),
+                message: 'Provider dependency cycle detected: '.implode(separator: ' -> ', array: $stack),
             );
         }
 
@@ -104,7 +103,7 @@ final readonly class ProviderBootPlan
     }
 
     /**
-     * @param array<class-string<RegisterDependency>, RegisterDependency> $instances
+     * @param  array<class-string<RegisterDependency>, RegisterDependency>  $instances
      * @return list<RegisterDependency>
      */
     public function orderedInstances(array $instances): array
@@ -128,7 +127,7 @@ final readonly class ProviderBootPlan
     public function toArray(): array
     {
         return [
-            'order'        => $this->order,
+            'order' => $this->order,
             'dependencies' => $this->dependencies,
             'providerCount' => count(value: $this->order),
         ];

@@ -10,7 +10,7 @@ namespace Avax\Components\Application\Container\System\Capabilities\Composition;
 final class ContainerSettings
 {
     /**
-     * @param array<string, mixed> $items
+     * @param  array<string, mixed>  $items
      */
     public function __construct(private array $items = [])
     {
@@ -23,7 +23,7 @@ final class ContainerSettings
         }
 
         $segments = explode(separator: '.', string: $key);
-        $target   = &$this->items;
+        $target = &$this->items;
 
         foreach ($segments as $segment) {
             if (! isset($target[$segment]) || ! is_array(value: $target[$segment])) {
@@ -47,8 +47,8 @@ final class ContainerSettings
             return $value;
         }
 
-        if ($this->has(key: 'env.' . $key)) {
-            return $this->get(key: 'env.' . $key, default: $default);
+        if ($this->has(key: 'env.'.$key)) {
+            return $this->get(key: 'env.'.$key, default: $default);
         }
 
         return $default;
@@ -61,7 +61,7 @@ final class ContainerSettings
         }
 
         $segments = explode(separator: '.', string: $key);
-        $value    = $this->items;
+        $value = $this->items;
 
         foreach ($segments as $segment) {
             if (! is_array(value: $value) || ! array_key_exists(key: $segment, array: $value)) {
@@ -81,7 +81,7 @@ final class ContainerSettings
         }
 
         $segments = explode(separator: '.', string: $key);
-        $value    = $this->items;
+        $value = $this->items;
 
         foreach ($segments as $segment) {
             if (! is_array(value: $value) || ! array_key_exists(key: $segment, array: $value)) {

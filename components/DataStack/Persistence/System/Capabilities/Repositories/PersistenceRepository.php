@@ -20,9 +20,8 @@ abstract class PersistenceRepository implements RepositoryInterface
 {
     public function __construct(
         private readonly RepositoryStorageInterface $repositoryStorage,
-        private readonly UnitOfWorkInterface        $unitOfWork,
-    )
-    {
+        private readonly UnitOfWorkInterface $unitOfWork,
+    ) {
     }
 
     public function findById(string|int $id): ?object
@@ -44,12 +43,11 @@ abstract class PersistenceRepository implements RepositoryInterface
     }
 
     public function findBy(
-        array  $criteria,
+        array $criteria,
         ?array $orderBy = null,
-        ?int   $limit = null,
-        ?int   $offset = null,
-    ): array
-    {
+        ?int $limit = null,
+        ?int $offset = null,
+    ): array {
         return $this->repositoryStorage->findBy(
             entityClass: $this->entityClass(),
             criteria: $criteria,

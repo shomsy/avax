@@ -20,7 +20,7 @@ final class InjectProperties
     private array $writers = [];
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      *
      * @throws Throwable
      */
@@ -61,7 +61,7 @@ final class InjectProperties
      */
     private function writerFor(string $class, string $property): Closure
     {
-        $key = $class . '::$' . $property;
+        $key = $class.'::$'.$property;
 
         return $this->writers[$key] ?? ($this->writers[$key] = Closure::bind(
             closure : static function (object $target, mixed $value) use ($property): void {

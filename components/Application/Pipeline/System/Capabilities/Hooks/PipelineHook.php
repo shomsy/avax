@@ -28,7 +28,8 @@ final readonly class PipelineHook
         public string $name,
         public Closure $handler,
         public int $priority = 0,
-    ) {}
+    ) {
+    }
 }
 
 final readonly class PipelineStage
@@ -37,9 +38,10 @@ final readonly class PipelineStage
         public string $name,
         public bool $stopped = false,
         public mixed $data = null,
-    ) {}
+    ) {
+    }
 
-    public function stop(mixed $data = null) : self
+    public function stop(mixed $data = null): self
     {
         return new self($this->name, true, $data ?? $this->data);
     }
@@ -50,13 +52,13 @@ final class StagePipeline
     /** @var list<PipelineHook> */
     private array $hooks = [];
 
-    public function register(PipelineHook $pipelineHook) : void
+    public function register(PipelineHook $pipelineHook): void
     {
         $this->hooks[] = $pipelineHook;
-        usort($this->hooks, static fn ($a, $b) : int => $b->priority <=> $a->priority);
+        usort($this->hooks, static fn ($a, $b): int => $b->priority <=> $a->priority);
     }
 
-    public function execute(string $stage, mixed $initial = null) : mixed
+    public function execute(string $stage, mixed $initial = null): mixed
     {
         $result = $initial;
 
@@ -69,8 +71,8 @@ final class StagePipeline
         return $result;
     }
 
-    public function hasHooks(string $stage) : bool
+    public function hasHooks(string $stage): bool
     {
-        return array_any($this->hooks, fn ($hook) : bool => $hook->name === $stage);
+        return array_any($this->hooks, fn ($hook): bool => $hook->name === $stage);
     }
 }

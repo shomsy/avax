@@ -9,4 +9,6 @@ use RuntimeException;
 /**
  * DuplicateSagaCommand - reports a command-key collision that cannot safely replay a previous result.
  */
-final class DuplicateSagaCommand extends RuntimeException {}
+final class DuplicateSagaCommand extends RuntimeException
+{
+}

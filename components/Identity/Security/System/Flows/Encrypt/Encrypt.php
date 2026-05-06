@@ -10,9 +10,11 @@ use Avax\Components\Identity\Security\System\Flows\EncryptValue\EncryptValue;
 
 final readonly class Encrypt
 {
-    public function __construct(private EncryptValue $encryptValue) {}
+    public function __construct(private EncryptValue $encryptValue)
+    {
+    }
 
-    public function execute(mixed $value, EncryptionKey|null $encryptionKey = null) : EncryptedPayload
+    public function execute(mixed $value, ?EncryptionKey $encryptionKey = null): EncryptedPayload
     {
         return $this->encryptValue->execute(value: $value, key: $encryptionKey);
     }

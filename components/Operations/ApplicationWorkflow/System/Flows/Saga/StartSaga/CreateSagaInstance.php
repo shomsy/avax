@@ -15,16 +15,16 @@ final readonly class CreateSagaInstance
 {
     public function createFromCommand(
         SagaStartCommand $sagaStartCommand,
-        SagaDefinition   $sagaDefinition,
+        SagaDefinition $sagaDefinition,
     ): SagaInstance {
         return $this->create(
             id         : $sagaStartCommand->sagaId ?? $this->generateId(),
             initialData: $sagaStartCommand->initialData,
             options    : [
-                             'correlation_id'  => $sagaStartCommand->correlationId,
-                             'tenant_id'       => $sagaStartCommand->tenantId,
-                             'idempotency_key' => $sagaStartCommand->idempotencyKey,
-                             'timeout_seconds' => $sagaDefinition->timeoutSeconds,
+                'correlation_id' => $sagaStartCommand->correlationId,
+                'tenant_id' => $sagaStartCommand->tenantId,
+                'idempotency_key' => $sagaStartCommand->idempotencyKey,
+                'timeout_seconds' => $sagaDefinition->timeoutSeconds,
             ],
             definition : $sagaDefinition,
         );
@@ -64,7 +64,7 @@ final readonly class CreateSagaCorrelationId
     /**
      * @throws RandomException
      */
-    public function create(?string $prefix = null, ?string $suffix = null) : string
+    public function create(?string $prefix = null, ?string $suffix = null): string
     {
         $parts = array_filter([
             $prefix,
@@ -76,7 +76,7 @@ final readonly class CreateSagaCorrelationId
         return implode('_', $parts);
     }
 
-    public function fromCommand(SagaStartCommand $sagaStartCommand) : string
+    public function fromCommand(SagaStartCommand $sagaStartCommand): string
     {
         return $this->create(
             prefix: $sagaStartCommand->definitionName,
@@ -86,11 +86,13 @@ final readonly class CreateSagaCorrelationId
 
 final readonly class RecordSagaStarted
 {
-    public function __construct(private object $store, private object $inspect) {}
-
-    public function record(SagaInstance $sagaInstance) : void
+    public function __construct(private object $store, private object $inspect)
     {
-        $this->store->set('saga_' . $sagaInstance->id, $sagaInstance->toArray());
+    }
+
+    public function record(SagaInstance $sagaInstance): void
+    {
+        $this->store->set('saga_'.$sagaInstance->id, $sagaInstance->toArray());
 
         $this->inspect->record(
             SagaRuntimeEvent::started(
@@ -103,7 +105,7 @@ final readonly class RecordSagaStarted
 
 final readonly class ScheduleFirstSagaStep
 {
-    public function schedule(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : SagaInstance
+    public function schedule(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition): SagaInstance
     {
         $firstStep = $sagaDefinition->getFirstStep();
 

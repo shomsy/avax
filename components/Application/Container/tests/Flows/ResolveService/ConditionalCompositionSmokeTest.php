@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
@@ -31,14 +31,14 @@ final class OverrideConditionalGateway implements ConditionalGateway
 }
 
 $activeConfig = CreateContainerConfig::create(settings: [
-                                                            'app_env'     => 'prod',
-                                                            'composition' => [
-                                                                'flags'  => ['beta'],
-                                                                'tenant' => 'tenant-a',
-                                                                'region' => 'eu',
-                                                                'mode'   => 'online',
-                                                            ],
-                                                        ]);
+    'app_env' => 'prod',
+    'composition' => [
+        'flags' => ['beta'],
+        'tenant' => 'tenant-a',
+        'region' => 'eu',
+        'mode' => 'online',
+    ],
+]);
 
 $active = makeTestContainer(config: $activeConfig);
 $active->singleton(abstract: ConditionalGateway::class, concrete: ActiveConditionalGateway::class)
@@ -53,7 +53,7 @@ $active->singleton(abstract: ConditionalGateway::class, concrete: ActiveConditio
     ->because(reason: 'regional payments gateway');
 
 $activeDescription = $active->describeService(id: ConditionalGateway::class);
-$activeGraph       = $active->debugGraph();
+$activeGraph = $active->debugGraph();
 
 assertTrue(condition: $active->has(id: ConditionalGateway::class), message: 'Active conditional registrations should remain resolvable.');
 assertSame(expected: 'active', actual: $active->get(id: ConditionalGateway::class)->name(), message: 'Active conditional registrations should resolve normally.');
@@ -64,14 +64,14 @@ assertTrue(
 );
 
 $inactiveConfig = CreateContainerConfig::create(settings: [
-                                                              'app_env'     => 'prod',
-                                                              'composition' => [
-                                                                  'flags'  => ['beta'],
-                                                                  'tenant' => 'tenant-a',
-                                                                  'region' => 'us',
-                                                                  'mode'   => 'online',
-                                                              ],
-                                                          ]);
+    'app_env' => 'prod',
+    'composition' => [
+        'flags' => ['beta'],
+        'tenant' => 'tenant-a',
+        'region' => 'us',
+        'mode' => 'online',
+    ],
+]);
 
 $inactive = makeTestContainer(config: $inactiveConfig);
 $inactive->singleton(abstract: ConditionalGateway::class, concrete: ActiveConditionalGateway::class)
@@ -131,13 +131,13 @@ $override->singleton(abstract: ConditionalGateway::class, concrete: OverrideCond
     ->because(reason: 'test override')
     ->concept(concept: 'payments.gateway');
 
-$overrideDebug  = $override->debugGraph(id: ConditionalGateway::class);
+$overrideDebug = $override->debugGraph(id: ConditionalGateway::class);
 $overrideIssues = implode(separator: "\n", array: $override->validate(serviceIds: [ConditionalGateway::class]));
 
 assertTrue(condition: $overrideDebug['overrides'] !== [], message: 'Graph diagnostics should expose override history for rebound abstracts.');
 assertTrue(
-    condition: str_contains(haystack: $overrideIssues, needle: 'Override collision for service [' . ConditionalGateway::class . '] changes ownership posture'),
+    condition: str_contains(haystack: $overrideIssues, needle: 'Override collision for service ['.ConditionalGateway::class.'] changes ownership posture'),
     message  : 'Validation should reject overlapping overrides that change ownership posture silently.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

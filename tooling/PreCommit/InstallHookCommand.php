@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\PreCommit;
+
 final readonly class InstallHookCommand
 {
     public function __construct(
-        private Console       $console,
-        private Filesystem    $filesystem,
+        private Console $console,
+        private Filesystem $filesystem,
         private GitRepository $gitRepository,
-        private string        $rootDirectory,
-        private string        $sourceFile,
-    )
-    {
+        private string $rootDirectory,
+        private string $sourceFile,
+    ) {
     }
 
     public function run(CommandOptions $commandOptions): int
@@ -24,7 +24,7 @@ final readonly class InstallHookCommand
         }
 
         if ($commandOptions->unknownOptions !== []) {
-            $this->console->error('Unknown option(s): ' . implode(', ', $commandOptions->unknownOptions));
+            $this->console->error('Unknown option(s): '.implode(', ', $commandOptions->unknownOptions));
             $this->printHelp();
 
             return ExitCode::INVALID_ARGUMENTS;
@@ -67,7 +67,8 @@ final readonly class InstallHookCommand
 
     private function printHelp(): void
     {
-        $this->console->line(<<<'HELP'
+        $this->console->line(
+            <<<'HELP'
                                  Avax Pre-Commit Hook Installer
                                  
                                  Usage:
@@ -91,7 +92,7 @@ final readonly class InstallHookCommand
 
     private function uninstall(string $targetFile, bool $force, bool $dryRun): void
     {
-        if (!is_file($targetFile)) {
+        if (! is_file($targetFile)) {
             $this->console->info('No pre-commit hook found to remove.');
 
             return;
@@ -100,21 +101,21 @@ final readonly class InstallHookCommand
         $existingContent = $this->filesystem->readFile($targetFile);
         $generatedByAvax = AvaxPreCommitHook::isGeneratedByAvax($existingContent);
 
-        if (!$generatedByAvax && !$force) {
+        if (! $generatedByAvax && ! $force) {
             throw new HookInstallerException(
                 'Refusing to remove a non-Avax pre-commit hook. Use --uninstall --force to remove it intentionally.'
             );
         }
 
         if ($dryRun) {
-            $this->console->warning('Would remove hook: ' . $targetFile);
+            $this->console->warning('Would remove hook: '.$targetFile);
 
             return;
         }
 
-        if (!$generatedByAvax) {
+        if (! $generatedByAvax) {
             $backupFile = $this->filesystem->backupFile($targetFile);
-            $this->console->info('Backup created before forced uninstall: ' . $backupFile);
+            $this->console->info('Backup created before forced uninstall: '.$backupFile);
         }
 
         $this->filesystem->deleteFile($targetFile);
@@ -127,7 +128,7 @@ final readonly class InstallHookCommand
             $existingContent = $this->filesystem->readFile($targetFile);
             $generatedByAvax = AvaxPreCommitHook::isGeneratedByAvax($existingContent);
 
-            if (!$force) {
+            if (! $force) {
                 $owner = $generatedByAvax ? 'an existing Avax hook' : 'a non-Avax hook';
 
                 throw new HookInstallerException(
@@ -136,17 +137,17 @@ final readonly class InstallHookCommand
             }
 
             if ($dryRun) {
-                $this->console->warning('Would backup existing hook before overwrite: ' . $targetFile);
+                $this->console->warning('Would backup existing hook before overwrite: '.$targetFile);
             } else {
                 $backupFile = $this->filesystem->backupFile($targetFile);
-                $this->console->info('Backup created: ' . $backupFile);
+                $this->console->info('Backup created: '.$backupFile);
             }
         }
 
-        $hookContent = AvaxPreCommitHook::render($phpBinary) . PHP_EOL;
+        $hookContent = AvaxPreCommitHook::render($phpBinary).PHP_EOL;
 
         if ($dryRun) {
-            $this->console->info('Would install pre-commit hook: ' . $targetFile);
+            $this->console->info('Would install pre-commit hook: '.$targetFile);
 
             return;
         }
@@ -154,7 +155,7 @@ final readonly class InstallHookCommand
         $this->filesystem->atomicWriteExecutable($targetFile, $hookContent);
 
         $this->console->success('Pre-commit hook installed.');
-        $this->console->line('Location: ' . $targetFile);
-        $this->console->line('Project: ' . $this->rootDirectory);
+        $this->console->line('Location: '.$targetFile);
+        $this->console->line('Project: '.$this->rootDirectory);
     }
 }

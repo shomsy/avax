@@ -17,7 +17,7 @@ final readonly class UserEmail implements Stringable
         public string $value,
     ) {
         if (! new ValidateEmail()->execute(email: $this->value)) {
-            throw new InvalidArgumentException(message: 'Invalid email format: ' . $this->value);
+            throw new InvalidArgumentException(message: 'Invalid email format: '.$this->value);
         }
     }
 

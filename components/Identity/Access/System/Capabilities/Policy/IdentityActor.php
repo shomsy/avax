@@ -9,11 +9,11 @@ namespace Avax\Components\Identity\Access\System\Capabilities\Policy;
  */
 enum IdentityActor: string
 {
-    case USER            = 'user';
+    case USER = 'user';
     case PRIVILEGED_USER = 'privileged_user';
-    case ADMIN           = 'admin';
-    case SUPPORT         = 'support';
+    case ADMIN = 'admin';
+    case SUPPORT = 'support';
     case MACHINE_IDENTITY = 'machine_identity';
-    case TENANT_ADMIN    = 'tenant_admin';
-    case BREAK_GLASS     = 'break_glass';
+    case TENANT_ADMIN = 'tenant_admin';
+    case BREAK_GLASS = 'break_glass';
 }

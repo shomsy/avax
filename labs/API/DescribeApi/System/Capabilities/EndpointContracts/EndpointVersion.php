@@ -17,6 +17,6 @@ enum EndpointVersion: string
 
     public function isLatest(): bool
     {
-        return self::V3 === $this;
+        return $this === self::V3;
     }
 }

@@ -32,7 +32,8 @@ final readonly class LogoutAllSessions
         private ?SessionRegistryInterface $sessionRegistry = null,
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated
@@ -40,7 +41,7 @@ final readonly class LogoutAllSessions
     public function execute(): void
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $user                  = $authenticationContext->user();
+        $user = $authenticationContext->user();
 
         if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();

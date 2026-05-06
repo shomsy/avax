@@ -17,8 +17,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -33,7 +32,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -48,7 +47,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function debugGovernance(?string $id = null, array $context = []): array
@@ -62,7 +61,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function debugArchitecture(?string $id = null, array $context = []): array
@@ -76,7 +75,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function debugSlice(?string $slice = null, array $context = []): array
@@ -90,7 +89,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function debugImports(?string $slice = null, array $context = []): array
@@ -104,7 +103,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -120,8 +119,8 @@ final readonly class Explanation
     }
 
     /**
-     * @param list<string> $serviceIds
-     * @param array<string, mixed> $context
+     * @param  list<string>  $serviceIds
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function debugVisibilityViolations(?array $serviceIds = null, array $context = []): array
@@ -138,7 +137,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -153,7 +152,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -168,7 +167,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      *
      * @throws ReflectionException
@@ -183,7 +182,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, string>
      */
     public function debugAliases(array $context = []): array
@@ -196,7 +195,7 @@ final readonly class Explanation
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public function debugScope(array $context = []): array

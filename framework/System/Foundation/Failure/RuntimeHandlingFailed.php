@@ -11,7 +11,7 @@ use Throwable;
  */
 class RuntimeHandlingFailed extends FrameworkFailure
 {
-    public static function fromThrowable(Throwable $throwable) : self
+    public static function fromThrowable(Throwable $throwable): self
     {
         return new self(
             message : sprintf('Runtime error handling failed: %s', $throwable->getMessage()),

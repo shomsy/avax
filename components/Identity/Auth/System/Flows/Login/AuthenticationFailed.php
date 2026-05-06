@@ -6,4 +6,6 @@ namespace Avax\Components\Identity\Auth\System\Flows\Login;
 
 use RuntimeException;
 
-final class AuthenticationFailed extends RuntimeException {}
+final class AuthenticationFailed extends RuntimeException
+{
+}

@@ -38,7 +38,8 @@ final readonly class RequireAccessPolicy
         private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
         private RequireFreshMfa $requireFreshMfa,
         private RequireAdminElevation $requireAdminElevation,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws AdminElevationFailed
@@ -49,7 +50,7 @@ final readonly class RequireAccessPolicy
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function execute(AccessPolicy $accessPolicy) : void
+    public function execute(AccessPolicy $accessPolicy): void
     {
         $this->requireAuthentication->execute();
         $identityPolicy = $accessPolicy->identityPolicy;

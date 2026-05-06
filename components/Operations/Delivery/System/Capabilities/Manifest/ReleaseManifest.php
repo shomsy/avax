@@ -14,6 +14,7 @@ class ReleaseManifest
     public function addStep(string $name, callable $action): self
     {
         $this->steps[] = ['name' => $name, 'action' => $action];
+
         return $this;
     }
 
@@ -31,7 +32,7 @@ class ReleaseManifest
     public function toArray(): array
     {
         return [
-            'steps' => array_map(fn(array $s): string => $s['name'], $this->steps),
+            'steps' => array_map(fn (array $s): string => $s['name'], $this->steps),
             'created_at' => date('c'),
         ];
     }

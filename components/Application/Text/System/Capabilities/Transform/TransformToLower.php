@@ -8,13 +8,13 @@ use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class TransformToLower
 {
-    public function __invoke(Text $text) : Text
+    public function __invoke(Text $text): Text
     {
         $value = $text->toString();
         if (function_exists('mb_strtolower')) {
-            return new Text(mb_strtolower($value, 'UTF-8'));
+            return Text::of(mb_strtolower($value, 'UTF-8'));
         }
 
-        return new Text(strtolower($value));
+        return Text::of(strtolower($value));
     }
 }

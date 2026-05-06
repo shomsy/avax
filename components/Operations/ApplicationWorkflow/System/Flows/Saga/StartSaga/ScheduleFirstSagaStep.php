@@ -9,7 +9,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Start
  */
 final readonly class ScheduleFirstSagaStep
 {
-    public function schedule(SagaInstance $sagaInstance) : string
+    public function schedule(SagaInstance $sagaInstance): string
     {
         return $sagaInstance->currentStepName;
     }

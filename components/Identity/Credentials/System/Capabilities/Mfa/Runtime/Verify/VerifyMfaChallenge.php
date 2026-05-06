@@ -45,16 +45,17 @@ final readonly class VerifyMfaChallenge
         private CurrentAuthentication $currentAuthentication,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private ?LimitMfaAttempts          $limitMfaAttempts = null,
-        private ?DeterministicRiskEngine   $deterministicRiskEngine = null,
-    ) {}
+        private ?LimitMfaAttempts $limitMfaAttempts = null,
+        private ?DeterministicRiskEngine $deterministicRiskEngine = null,
+    ) {
+    }
 
     /**
      * @throws MfaChallengeFailed
      */
-    public function execute(VerifyMfaChallengeData $verifyMfaChallengeData) : AuthenticationResult
+    public function execute(VerifyMfaChallengeData $verifyMfaChallengeData): AuthenticationResult
     {
-        $record            = $this->mfaChallengeStore->find(challengeId: $verifyMfaChallengeData->challengeId);
+        $record = $this->mfaChallengeStore->find(challengeId: $verifyMfaChallengeData->challengeId);
 
         if (! $record instanceof MfaChallengeRecord) {
             $this->recordFailure(
@@ -95,7 +96,7 @@ final readonly class VerifyMfaChallenge
             throw MfaChallengeFailed::locked(retryAfter: 0);
         }
 
-        $attemptLimitKey = 'mfa:' . $record->userId->value;
+        $attemptLimitKey = 'mfa:'.$record->userId->value;
 
         try {
             $this->limitMfaAttempts?->check(key: $attemptLimitKey);
@@ -112,7 +113,7 @@ final readonly class VerifyMfaChallenge
             throw MfaChallengeFailed::locked(retryAfter: $mfaAttemptLimitReached->retryAfter());
         }
 
-        $user              = $this->userSource->findById(id: $record->userId);
+        $user = $this->userSource->findById(id: $record->userId);
         $method = $this->mfaStore->findMethod(userId: $record->userId);
 
         if (! $user instanceof User || ! $user->isActive() || ! $method instanceof MfaMethodRecord) {
@@ -129,8 +130,8 @@ final readonly class VerifyMfaChallenge
         }
 
         $acceptedMethod = null;
-        $updatedMethod     = $method;
-        $totpVerification  = $this->totp->verify(
+        $updatedMethod = $method;
+        $totpVerification = $this->totp->verify(
             secret              : $method->secret,
             code                : $verifyMfaChallengeData->code,
             moment              : $now,
@@ -193,13 +194,13 @@ final readonly class VerifyMfaChallenge
             name      : 'auth.mfa.challenge.passed',
             occurredAt: $now,
             context   : [
-                            'user_id'     => $user->getId()->value,
+                'user_id' => $user->getId()->value,
                 'challenge_id' => $record->challengeId,
-                            'purpose'     => $record->purpose->value,
-                            'method'      => $acceptedMethod->value,
-                            'risk_action' => $riskDecision?->action->value,
-                            'ip_address' => $verifyMfaChallengeData->ipAddress,
-                            'user_agent' => $verifyMfaChallengeData->userAgent,
+                'purpose' => $record->purpose->value,
+                'method' => $acceptedMethod->value,
+                'risk_action' => $riskDecision?->action->value,
+                'ip_address' => $verifyMfaChallengeData->ipAddress,
+                'user_agent' => $verifyMfaChallengeData->userAgent,
             ],
         ));
 
@@ -223,11 +224,11 @@ final readonly class VerifyMfaChallenge
             name      : 'auth.mfa.challenge.failed',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id'    => $userId,
+                'user_id' => $userId,
                 'challenge_id' => $challengeId,
-                            'reason'     => $reason,
-                            'ip_address' => $ipAddress,
-                            'user_agent' => $userAgent,
+                'reason' => $reason,
+                'ip_address' => $ipAddress,
+                'user_agent' => $userAgent,
             ],
         ));
 
@@ -239,11 +240,11 @@ final readonly class VerifyMfaChallenge
             name      : 'auth.mfa.suspicious_failures',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id'    => $userId,
+                'user_id' => $userId,
                 'challenge_id' => $challengeId,
-                            'reason'     => $reason,
-                            'ip_address' => $ipAddress,
-                            'user_agent' => $userAgent,
+                'reason' => $reason,
+                'ip_address' => $ipAddress,
+                'user_agent' => $userAgent,
             ],
         ));
     }

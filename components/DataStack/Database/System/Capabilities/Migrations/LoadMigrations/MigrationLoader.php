@@ -19,7 +19,7 @@ final class MigrationLoader
      */
     public function getChecksum(string $name, string $path): string
     {
-        $file = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . '.php';
+        $file = rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$name.'.php';
 
         if (! file_exists(filename: $file)) {
             return '';

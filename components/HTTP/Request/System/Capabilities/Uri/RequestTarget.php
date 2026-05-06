@@ -8,9 +8,10 @@ final readonly class RequestTarget
 {
     public function __construct(
         private string $target,
-    ) {}
+    ) {
+    }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->target;
     }

@@ -16,12 +16,12 @@ final readonly class Scheme implements Stringable
     public function __construct(string $scheme)
     {
         $normalized = strtolower(trim($scheme));
-        
+
         if ($normalized === '') {
             throw new InvalidArgumentException('Scheme cannot be empty');
         }
 
-        if (!in_array($normalized, self::ALLOWED, true)) {
+        if (! in_array($normalized, self::ALLOWED, true)) {
             throw new InvalidArgumentException("Scheme '{$normalized}' is not allowed");
         }
 
@@ -30,7 +30,7 @@ final readonly class Scheme implements Stringable
 
     public function isDefaultPort(int $port): bool
     {
-        return ($this->scheme === 'http' && $port === 80) 
+        return ($this->scheme === 'http' && $port === 80)
             || ($this->scheme === 'https' && $port === 443);
     }
 

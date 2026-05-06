@@ -18,13 +18,12 @@ final readonly class TraceSpan
     public function __construct(
         private string $name,
         ?Closure $onFinish = null,
-    )
-    {
+    ) {
         $this->startMS = microtime(true) * 1000;
-        $this->onFinish = $onFinish ?? static fn () : null => null;
+        $this->onFinish = $onFinish ?? static fn (): null => null;
     }
 
-    public function end() : float
+    public function end(): float
     {
         $duration = microtime(true) * 1000 - $this->startMS;
 
@@ -33,7 +32,7 @@ final readonly class TraceSpan
         return $duration;
     }
 
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }

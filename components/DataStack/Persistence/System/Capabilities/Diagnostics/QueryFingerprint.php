@@ -18,7 +18,8 @@ final readonly class QueryFingerprint implements Stringable
         public string $originalQuery,
         public ?string $pattern = null,
         public ?string $hash = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Returns the normalized query pattern.
@@ -84,7 +85,7 @@ final readonly class QueryFingerprint implements Stringable
     /**
      * Checks if this fingerprint matches another fingerprint.
      */
-    public function matchesFingerprint(QueryFingerprint $queryFingerprint) : bool
+    public function matchesFingerprint(QueryFingerprint $queryFingerprint): bool
     {
         return $this->hash === $queryFingerprint->hash;
     }

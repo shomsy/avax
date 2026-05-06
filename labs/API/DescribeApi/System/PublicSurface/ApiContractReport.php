@@ -9,16 +9,15 @@ use Avax\Labs\API\DescribeApi\System\Capabilities\BreakingChanges\BreakingChange
 final class ApiContractReport
 {
     /**
-     * @param list<string> $errors
-     * @param list<string> $warnings
+     * @param  list<string>  $errors
+     * @param  list<string>  $warnings
      */
     public function __construct(
-        public readonly ApiContract               $contract,
-        public readonly array                     $errors = [],
-        public readonly array                     $warnings = [],
-        public readonly BreakingChangeReport|null $breakingChanges = null,
-    )
-    {
+        public readonly ApiContract $contract,
+        public readonly array $errors = [],
+        public readonly array $warnings = [],
+        public readonly ?BreakingChangeReport $breakingChanges = null,
+    ) {
     }
 
     public function isValid(): bool

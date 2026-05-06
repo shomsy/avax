@@ -1,17 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\AccessPersistentData;
 
-use Avax\Components\Persistence\System\Capabilities\Repositories\Repository;
 use Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure;
 
 final class AccessPersistentData
 {
     public function __construct(
         private object $databaseRuntime
-    )
-    {
+    ) {
     }
 
     public function read(PersistentDataRequest $request): PersistentDataResult

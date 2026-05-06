@@ -6,18 +6,20 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-require_once dirname(3, path: __DIR__) . '/bootstrap.php';
+require_once dirname(3, path: __DIR__).'/bootstrap.php';
 
-final class ManageScopesSmokeTest {}
+final class ManageScopesSmokeTest
+{
+}
 
 $container = makeTestContainer();
 $container->scoped(abstract: ScopedService::class, concrete: ScopedService::class);
 
 assertThrows(
-/**
- * @throws ContainerExceptionInterface
- * @throws NotFoundExceptionInterface
- */ /**
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */ /**
  * @throws ContainerExceptionInterface
  * @throws NotFoundExceptionInterface
  */ /**
@@ -31,7 +33,7 @@ assertThrows(
 );
 
 $fromWithinScope = $container->scopes()->withinScope(
-    callback: static function () use ($container) : object {
+    callback: static function () use ($container): object {
         $first = $container->get(id: ScopedService::class);
         $second = $container->get(id: ScopedService::class);
 
@@ -52,4 +54,4 @@ $container->closeScope();
 assertInstanceOf(expectedClass: ScopedService::class, value: $fromWithinScope, message: 'Scope callback should return the resolved service.');
 assertNotSame(expected: $firstScope, actual: $secondScope, message: 'Scoped services should not leak across scopes.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

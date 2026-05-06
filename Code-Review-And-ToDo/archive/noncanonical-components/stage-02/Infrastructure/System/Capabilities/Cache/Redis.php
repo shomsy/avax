@@ -14,19 +14,20 @@ final class Redis implements Driver
     private ?PhpRedis $redis = null;
 
     public function __construct(
-        private readonly string  $host = '127.0.0.1',
-        private readonly int     $port = 6379,
+        private readonly string $host = '127.0.0.1',
+        private readonly int $port = 6379,
         private readonly ?string $auth = null,
-        private readonly int     $database = 0,
-        private readonly float   $timeout = 5.0
-    ) {}
+        private readonly int $database = 0,
+        private readonly float $timeout = 5.0
+    ) {
+    }
 
-    public function set(string $key, mixed $value, ?int $ttl = null) : bool
+    public function set(string $key, mixed $value, ?int $ttl = null): bool
     {
         return $this->ensureConnected()->set($key, $value, $ttl ?? 0);
     }
 
-    private function ensureConnected() : PhpRedis
+    private function ensureConnected(): PhpRedis
     {
         if ($this->redis === null) {
             $this->redis = new PhpRedis();
@@ -42,20 +43,20 @@ final class Redis implements Driver
         return $this->redis;
     }
 
-    public function get(string $key) : mixed
+    public function get(string $key): mixed
     {
         return $this->ensureConnected()->get($key);
     }
 
-    public function del(string $key) : int
+    public function del(string $key): int
     {
         return (int) $this->ensureConnected()->del($key);
     }
 
     /**
-     * @param array<string, mixed> $dictionary
+     * @param  array<string, mixed>  $dictionary
      */
-    public function hMSet(string $key, array $dictionary) : bool
+    public function hMSet(string $key, array $dictionary): bool
     {
         return $this->ensureConnected()->hMSet($key, $dictionary);
     }
@@ -63,22 +64,22 @@ final class Redis implements Driver
     /**
      * @return array<string, mixed>
      */
-    public function hGetAll(string $key) : array
+    public function hGetAll(string $key): array
     {
         return $this->ensureConnected()->hGetAll($key);
     }
 
-    public function expire(string $key, int $seconds) : bool
+    public function expire(string $key, int $seconds): bool
     {
         return $this->ensureConnected()->expire($key, $seconds);
     }
 
-    public function sAdd(string $key, string $value) : int
+    public function sAdd(string $key, string $value): int
     {
         return (int) $this->ensureConnected()->sAdd($key, $value);
     }
 
-    public function sRem(string $key, string $value) : int
+    public function sRem(string $key, string $value): int
     {
         return (int) $this->ensureConnected()->sRem($key, $value);
     }
@@ -86,7 +87,7 @@ final class Redis implements Driver
     /**
      * @return list<string>
      */
-    public function sMembers(string $key) : array
+    public function sMembers(string $key): array
     {
         return $this->ensureConnected()->sMembers($key);
     }

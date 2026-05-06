@@ -9,5 +9,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Prote
  */
 final readonly class SagaCommandKey
 {
-    public function __construct(public string $value) {}
+    public function __construct(public string $value)
+    {
+    }
 }

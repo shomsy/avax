@@ -63,7 +63,7 @@ class CacheRegistry
 
     public function clear(): void
     {
-        $this->caches      = [];
+        $this->caches = [];
         $this->defaultName = null;
     }
 }

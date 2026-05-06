@@ -11,7 +11,7 @@ final readonly class OidcRequestObject
     public bool $signatureVerified;
 
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
     public function __construct(
         public string $requestUri,

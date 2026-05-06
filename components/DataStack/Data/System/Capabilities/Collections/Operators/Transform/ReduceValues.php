@@ -9,7 +9,9 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Collections\Operato
  */
 final readonly class ReduceValues
 {
-    public function __construct(private array $items = []) {}
+    public function __construct(private array $items = [])
+    {
+    }
 
     public function __invoke(callable $callback, mixed $initial = null): mixed
     {

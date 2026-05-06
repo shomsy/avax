@@ -10,9 +10,10 @@ final readonly class OpenWorkerRequestScope
 {
     public function __construct(
         private RequestScope $requestScope,
-    ) {}
+    ) {
+    }
 
-    public function open() : void
+    public function open(): void
     {
         $this->requestScope->open();
     }

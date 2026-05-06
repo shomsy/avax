@@ -13,21 +13,22 @@ use stdClass;
 final readonly class IntrospectToken
 {
     public function __construct(
-        private TokenCodecInterface           $tokenCodec,
+        private TokenCodecInterface $tokenCodec,
         private TokenRevocationStoreInterface $tokenRevocationStore,
-    ) {}
+    ) {
+    }
 
-    public function execute(#[SensitiveParameter] string $token) : stdClass
+    public function execute(#[SensitiveParameter] string $token): stdClass
     {
         $claims = $this->tokenCodec->decode(token: $token);
-        $now    = new DateTimeImmutable();
+        $now = new DateTimeImmutable();
 
         if ($claims === null) {
             return (object) ['active' => false];
         }
 
         $expiresAt = $claims['exp'] ?? null;
-        $tokenId   = $claims['jti'] ?? null;
+        $tokenId = $claims['jti'] ?? null;
 
         if (! is_int(value: $expiresAt) || $expiresAt <= $now->getTimestamp()) {
             return (object) ['active' => false];
@@ -38,23 +39,22 @@ final readonly class IntrospectToken
         }
 
         return (object) [
-            'active'     => true,
-            'sub'        => $claims['sub'] ?? null,
-            'client_id'  => $claims['client_id'] ?? null,
-            'scope'      => implode(separator: ' ', array: $this->scopes(claims: $claims)),
+            'active' => true,
+            'sub' => $claims['sub'] ?? null,
+            'client_id' => $claims['client_id'] ?? null,
+            'scope' => implode(separator: ' ', array: $this->scopes(claims: $claims)),
             'token_type' => $claims['type'] ?? null,
-            'exp'        => $expiresAt,
-            'iat'        => $claims['iat'] ?? null,
-            'jti'        => $tokenId,
+            'exp' => $expiresAt,
+            'iat' => $claims['iat'] ?? null,
+            'jti' => $tokenId,
         ];
     }
 
     /**
-     * @param array<string, mixed> $claims
-     *
+     * @param  array<string, mixed>  $claims
      * @return list<string>
      */
-    private function scopes(array $claims) : array
+    private function scopes(array $claims): array
     {
         $scopes = $claims['scopes'] ?? [];
 
@@ -63,8 +63,8 @@ final readonly class IntrospectToken
         }
 
         return array_values(array: array_filter(
-                                       array   : $scopes,
-                                       callback: static fn (mixed $scope) : bool => is_string(value: $scope),
-                                   ));
+            array   : $scopes,
+            callback: static fn (mixed $scope): bool => is_string(value: $scope),
+        ));
     }
 }

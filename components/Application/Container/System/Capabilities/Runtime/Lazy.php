@@ -89,7 +89,7 @@ final class Lazy
     {
         return [
             'serviceId' => $this->serviceId,
-            'resolved'  => isset(self::$instances[$this]),
+            'resolved' => isset(self::$instances[$this]),
         ];
     }
 }

@@ -15,7 +15,9 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\Requi
 
 final readonly class ReactivateUser
 {
-    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private RequireAdminElevation $requireAdminElevation, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycleOrchestrator = null) {}
+    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private RequireAdminElevation $requireAdminElevation, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycleOrchestrator = null)
+    {
+    }
 
     public function execute(int $userId): void
     {

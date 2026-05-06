@@ -22,7 +22,7 @@ final class CompiledCache
         return self::instance()->read(name: $name, build: $build, sources: $sources);
     }
 
-    private static function instance() : CompiledCacheContract
+    private static function instance(): CompiledCacheContract
     {
         if (! self::$compiledCacheContract instanceof CompiledCacheContract) {
             throw new NotConfigured(message: 'No compiled cache configured');

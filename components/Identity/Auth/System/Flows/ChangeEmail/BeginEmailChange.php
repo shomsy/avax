@@ -32,17 +32,18 @@ final readonly class BeginEmailChange
         private AuditLogInterface $auditLog,
         private Clock $clock,
         private int $expiresAfterSeconds = 1800,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws EmailChangeFailed
      * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
-    public function execute(BeginEmailChangeData $beginEmailChangeData) : EmailChangeChallenge
+    public function execute(BeginEmailChangeData $beginEmailChangeData): EmailChangeChallenge
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $actor                 = $authenticationContext->user();
+        $actor = $authenticationContext->user();
 
         if (! $actor instanceof AuthenticatedUser) {
             throw EmailChangeFailed::unauthenticated();
@@ -65,10 +66,10 @@ final readonly class BeginEmailChange
                 name      : 'auth.email_change.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'user_id' => $user->getId()->value,
-                                'reason'  => 'invalid_password',
-                                'ip_address' => $beginEmailChangeData->ipAddress,
-                                'user_agent' => $beginEmailChangeData->userAgent,
+                    'user_id' => $user->getId()->value,
+                    'reason' => 'invalid_password',
+                    'ip_address' => $beginEmailChangeData->ipAddress,
+                    'user_agent' => $beginEmailChangeData->userAgent,
                 ],
             ));
 
@@ -90,10 +91,10 @@ final readonly class BeginEmailChange
             name      : 'auth.email_change.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id'   => $user->getId()->value,
-                            'new_email' => $newEmail,
-                            'ip_address' => $beginEmailChangeData->ipAddress,
-                            'user_agent' => $beginEmailChangeData->userAgent,
+                'user_id' => $user->getId()->value,
+                'new_email' => $newEmail,
+                'ip_address' => $beginEmailChangeData->ipAddress,
+                'user_agent' => $beginEmailChangeData->userAgent,
             ],
         ));
 

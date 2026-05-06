@@ -17,7 +17,7 @@ final readonly class CallFunction
     }
 
     /**
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      *
      * @throws ReflectionException
      */

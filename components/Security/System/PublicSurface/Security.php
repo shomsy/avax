@@ -28,7 +28,7 @@ final class Security
         return CsrfToken::rotate();
     }
 
-    public static function verifyCsrfToken(string $token, ?string $sessionToken = null) : bool
+    public static function verifyCsrfToken(string $token, ?string $sessionToken = null): bool
     {
         $valid = CsrfVerifier::verify(token: $token, sessionToken: $sessionToken);
         self::audit(event: $valid ? 'csrf.accepted' : 'csrf.rejected');
@@ -52,9 +52,8 @@ final class Security
     }
 
     /**
-     * @param array<string, mixed> $input
-     * @param list<string>         $fillable
-     *
+     * @param  array<string, mixed>  $input
+     * @param  list<string>  $fillable
      * @return array<string, mixed>
      */
     public static function fillable(array $input, array $fillable): array
@@ -67,7 +66,7 @@ final class Security
         return SecurityHeaders::apply(responseFormatter: $responseFormatter);
     }
 
-    public static function generateSignedUrl(string $path, DateInterval $dateInterval) : string
+    public static function generateSignedUrl(string $path, DateInterval $dateInterval): string
     {
         return SignedUrlGenerator::generate(path: $path, dateInterval: $dateInterval);
     }
@@ -97,7 +96,7 @@ final class Security
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public static function audit(string $event, array $context = []): void
     {

@@ -20,17 +20,18 @@ final class Transaction implements TransactionsInterface
     private int $transactions = 0;
 
     /**
-     * @param DatabaseConnection $databaseConnection The physical persistence gateway to use.
+     * @param  DatabaseConnection  $databaseConnection  The physical persistence gateway to use.
      */
-    private function __construct(private readonly DatabaseConnection $databaseConnection) {
+    private function __construct(private readonly DatabaseConnection $databaseConnection)
+    {
     }
 
     /**
      * Initialize a transaction manager on a specific connection.
      *
-     * @param DatabaseConnection $databaseConnection Physical gateway.
+     * @param  DatabaseConnection  $databaseConnection  Physical gateway.
      */
-    public static function on(DatabaseConnection $databaseConnection) : self
+    public static function on(DatabaseConnection $databaseConnection): self
     {
         return new self(connection: $databaseConnection);
     }
@@ -38,8 +39,7 @@ final class Transaction implements TransactionsInterface
     /**
      * A cleaner name for starting a transaction.
      *
-     * @param callable $callback The code you want to protect.
-     *
+     * @param  callable  $callback  The code you want to protect.
      * @return mixed Whatever your code returns.
      */
     public function run(callable $callback): mixed
@@ -50,7 +50,7 @@ final class Transaction implements TransactionsInterface
     /**
      * Execute a closure within a transaction bubble.
      *
-     * @param callable $callback Logic to protect.
+     * @param  callable  $callback  Logic to protect.
      */
     public function transaction(callable $callback): mixed
     {
@@ -73,7 +73,7 @@ final class Transaction implements TransactionsInterface
             }
 
             throw new TransactionException(
-                message     : 'Transaction failed: ' . $throwable->getMessage(),
+                message     : 'Transaction failed: '.$throwable->getMessage(),
                 nestingLevel: $this->transactions,
                 previous    : $throwable,
             );
@@ -90,14 +90,14 @@ final class Transaction implements TransactionsInterface
                 $this->databaseConnection->getConnection()->beginTransaction();
             } else {
                 // Create a bookmark for the inner bubble.
-                $savepointName = 'sp_' . $this->transactions;
-                $this->databaseConnection->getConnection()->exec(statement: 'SAVEPOINT ' . $savepointName);
+                $savepointName = 'sp_'.$this->transactions;
+                $this->databaseConnection->getConnection()->exec(statement: 'SAVEPOINT '.$savepointName);
             }
 
             $this->transactions++;
         } catch (Throwable $throwable) {
             throw new TransactionException(
-                message     : 'Failed to begin transaction: ' . $throwable->getMessage(),
+                message     : 'Failed to begin transaction: '.$throwable->getMessage(),
                 nestingLevel: $this->transactions,
                 previous    : $throwable,
             );
@@ -131,14 +131,14 @@ final class Transaction implements TransactionsInterface
                 $this->databaseConnection->getConnection()->commit();
             } else {
                 // Remove the inner bookmark.
-                $savepointName = 'sp_' . ($this->transactions - 1);
-                $this->databaseConnection->getConnection()->exec(statement: 'RELEASE SAVEPOINT ' . $savepointName);
+                $savepointName = 'sp_'.($this->transactions - 1);
+                $this->databaseConnection->getConnection()->exec(statement: 'RELEASE SAVEPOINT '.$savepointName);
             }
 
             $this->transactions = max(0, $this->transactions - 1);
         } catch (Throwable $throwable) {
             throw new TransactionException(
-                message     : 'Failed to commit transaction: ' . $throwable->getMessage(),
+                message     : 'Failed to commit transaction: '.$throwable->getMessage(),
                 nestingLevel: $this->transactions,
                 previous    : $throwable,
             );
@@ -165,15 +165,15 @@ final class Transaction implements TransactionsInterface
                 $this->transactions = 0;
             } else {
                 // Revert back to the inner bookmark.
-                $savepointName = 'sp_' . ($this->transactions - 1);
-                $this->databaseConnection->getConnection()->exec(statement: 'ROLLBACK TO SAVEPOINT ' . $savepointName);
+                $savepointName = 'sp_'.($this->transactions - 1);
+                $this->databaseConnection->getConnection()->exec(statement: 'ROLLBACK TO SAVEPOINT '.$savepointName);
                 $this->transactions = max(0, $this->transactions - 1);
             }
         } catch (Throwable $throwable) {
             $this->transactions = 0;
 
             throw new TransactionException(
-                message     : 'Failed to rollback transaction: ' . $throwable->getMessage(),
+                message     : 'Failed to rollback transaction: '.$throwable->getMessage(),
                 nestingLevel: $this->transactions,
                 previous    : $throwable,
             );
@@ -185,7 +185,7 @@ final class Transaction implements TransactionsInterface
     /**
      * Create an automatic, RAII-style transaction scope.
      *
-     * @param callable $callback Logic to run within the scope.
+     * @param  callable  $callback  Logic to run within the scope.
      *
      * @throws Throwable
      */
@@ -202,7 +202,7 @@ final class Transaction implements TransactionsInterface
     /**
      * Create a named savepoint (bookmark) within the active transaction.
      *
-     * @param string $name Unique savepoint identifier.
+     * @param  string  $name  Unique savepoint identifier.
      */
     public function savepoint(string $name): self
     {
@@ -214,10 +214,10 @@ final class Transaction implements TransactionsInterface
         }
 
         try {
-            $this->databaseConnection->getConnection()->exec(statement: 'SAVEPOINT ' . $name);
+            $this->databaseConnection->getConnection()->exec(statement: 'SAVEPOINT '.$name);
         } catch (Throwable $throwable) {
             throw new TransactionException(
-                message     : sprintf('Failed to create savepoint [%s]: ', $name) . $throwable->getMessage(),
+                message     : sprintf('Failed to create savepoint [%s]: ', $name).$throwable->getMessage(),
                 nestingLevel: $this->transactions,
                 previous    : $throwable,
             );
@@ -249,10 +249,10 @@ final class Transaction implements TransactionsInterface
         }
 
         try {
-            $this->databaseConnection->getConnection()->exec(statement: 'ROLLBACK TO SAVEPOINT ' . $name);
+            $this->databaseConnection->getConnection()->exec(statement: 'ROLLBACK TO SAVEPOINT '.$name);
         } catch (Throwable $throwable) {
             throw new TransactionException(
-                message     : sprintf('Failed to rollback to savepoint [%s]: ', $name) . $throwable->getMessage(),
+                message     : sprintf('Failed to rollback to savepoint [%s]: ', $name).$throwable->getMessage(),
                 nestingLevel: $this->transactions,
                 previous    : $throwable,
             );

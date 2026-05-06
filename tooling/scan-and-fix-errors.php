@@ -21,8 +21,11 @@ use SplFileInfo;
 class ErrorScannerFixer
 {
     private array $syntaxErrors = [];
+
     private array $missingClasses = [];
+
     private array $namespaceIssues = [];
+
     private array $fixedFiles = [];
 
     public function run(): void
@@ -35,7 +38,7 @@ class ErrorScannerFixer
         $this->stepSummarize();
 
         echo "\n=== Scan Complete ===\n";
-        echo "Files modified: " . count($this->fixedFiles) . "\n";
+        echo 'Files modified: '.count($this->fixedFiles)."\n";
         foreach ($this->fixedFiles as $file) {
             echo "  - $file\n";
         }
@@ -50,7 +53,7 @@ class ErrorScannerFixer
         $errorCount = 0;
 
         foreach ($phpFiles as $file) {
-            exec("php -l " . escapeshellarg($file) . " 2>&1", $output, $return);
+            exec('php -l '.escapeshellarg($file).' 2>&1', $output, $return);
             if ($return !== 0) {
                 $errorCount++;
                 $this->syntaxErrors[] = $file;
@@ -97,7 +100,7 @@ class ErrorScannerFixer
         echo "--------------------------------\n";
 
         // Run tests and capture "Class not found" errors
-        exec("vendor/bin/phpunit tests --no-coverage 2>&1", $output, $return);
+        exec('vendor/bin/phpunit tests --no-coverage 2>&1', $output, $return);
         $testOutput = implode("\n", $output);
 
         // Extract class names from "Class 'X' not found" errors
@@ -111,7 +114,7 @@ class ErrorScannerFixer
             return;
         }
 
-        echo "  Found " . count($missing) . " unique missing classes\n";
+        echo '  Found '.count($missing)." unique missing classes\n";
 
         // Categorize by namespace pattern
         $categorized = [];
@@ -126,12 +129,12 @@ class ErrorScannerFixer
         }
 
         foreach ($categorized as $namespace => $classes) {
-            echo "\n  Namespace: $namespace (" . count($classes) . " classes)\n";
+            echo "\n  Namespace: $namespace (".count($classes)." classes)\n";
             foreach (array_slice($classes, 0, 5) as $cls) {
                 echo "    - $cls\n";
             }
             if (count($classes) > 5) {
-                echo "    ... and " . (count($classes) - 5) . " more\n";
+                echo '    ... and '.(count($classes) - 5)." more\n";
             }
         }
 
@@ -147,7 +150,7 @@ class ErrorScannerFixer
         echo "----------------------------\n";
 
         // Run existing namespace drift check
-        exec("php tooling/Refactor/CheckNamespaceDrift.php 2>&1", $output, $return);
+        exec('php tooling/Refactor/CheckNamespaceDrift.php 2>&1', $output, $return);
         $result = implode("\n", $output);
 
         if (str_contains($result, 'PASS') || str_contains($result, 'No namespace drift')) {
@@ -158,7 +161,7 @@ class ErrorScannerFixer
         }
 
         // Check component suite structure
-        exec("php tooling/Refactor/CheckComponentSuiteStructure.php 2>&1", $output2, $return2);
+        exec('php tooling/Refactor/CheckComponentSuiteStructure.php 2>&1', $output2, $return2);
         $result2 = implode("\n", $output2);
 
         if (str_contains($result2, 'PASS')) {

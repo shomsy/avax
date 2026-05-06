@@ -6,4 +6,6 @@ namespace Avax\Framework\System\Flows\HandleException;
 
 use RuntimeException;
 
-final class FrameworkExceptionHandlingFailed extends RuntimeException {}
+final class FrameworkExceptionHandlingFailed extends RuntimeException
+{
+}

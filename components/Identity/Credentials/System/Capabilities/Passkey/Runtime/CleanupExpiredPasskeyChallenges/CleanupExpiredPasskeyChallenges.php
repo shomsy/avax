@@ -9,7 +9,9 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCred
 
 final readonly class CleanupExpiredPasskeyChallenges
 {
-    public function __construct(private ?PruneExpiredPasskeyChallengesInterface $pruneExpiredPasskeyChallenges, private Clock $clock) {}
+    public function __construct(private ?PruneExpiredPasskeyChallengesInterface $pruneExpiredPasskeyChallenges, private Clock $clock)
+    {
+    }
 
     public function execute(): int
     {

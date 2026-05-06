@@ -12,7 +12,7 @@ use Override;
  */
 final class ElasticsearchGrammar extends BaseGrammar
 {
-    public function compileSelect(QueryState $queryState) : string
+    public function compileSelect(QueryState $queryState): string
     {
         $index = $this->wrap(value: $queryState->from);
         $query = $this->compileElasticsearchQuery($queryState);
@@ -25,7 +25,7 @@ final class ElasticsearchGrammar extends BaseGrammar
         return (string) $value;
     }
 
-    private function compileElasticsearchQuery(QueryState $queryState) : string
+    private function compileElasticsearchQuery(QueryState $queryState): string
     {
         $query = ['query' => ['match_all' => (object) []]];
 
@@ -55,38 +55,38 @@ final class ElasticsearchGrammar extends BaseGrammar
     }
 
     #[Override]
-    public function compileInsert(QueryState $queryState) : string
+    public function compileInsert(QueryState $queryState): string
     {
-        $index    = $this->wrap(value: $queryState->from);
+        $index = $this->wrap(value: $queryState->from);
         $document = json_encode(value: $queryState->values);
 
         return sprintf('%s/_doc %s', $index, $document);
     }
 
     #[Override]
-    public function compileUpdate(QueryState $queryState) : string
+    public function compileUpdate(QueryState $queryState): string
     {
-        $index    = $this->wrap(value: $queryState->from);
-        $id       = $queryState->values['id'] ?? '';
+        $index = $this->wrap(value: $queryState->from);
+        $id = $queryState->values['id'] ?? '';
         $document = json_encode(value: $queryState->values);
 
         return sprintf('%s/_doc/%s %s', $index, $id, $document);
     }
 
     #[Override]
-    public function compileDelete(QueryState $queryState) : string
+    public function compileDelete(QueryState $queryState): string
     {
         $index = $this->wrap(value: $queryState->from);
-        $id    = $queryState->values['id'] ?? '';
+        $id = $queryState->values['id'] ?? '';
 
         return sprintf('%s/_doc/%s', $index, $id);
     }
 
     #[Override]
-    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string
     {
-        $index    = $this->wrap(value: $queryState->from);
-        $id       = $queryState->values['id'] ?? '';
+        $index = $this->wrap(value: $queryState->from);
+        $id = $queryState->values['id'] ?? '';
         $document = json_encode(value: $queryState->values);
 
         return sprintf('%s/_doc/%s %s', $index, $id, $document);
@@ -117,7 +117,7 @@ final class ElasticsearchGrammar extends BaseGrammar
         return json_encode(value: ['range' => [$field => $range]]);
     }
 
-    public function compileBool(?array $must = null, ?array $mustNot = null, array $should = []) : string
+    public function compileBool(?array $must = null, ?array $mustNot = null, array $should = []): string
     {
         $must ??= [];
         $mustNot ??= [];
@@ -145,6 +145,6 @@ final class ElasticsearchGrammar extends BaseGrammar
     #[Override]
     public function compileTruncate(string $table): string
     {
-        return $table . '/_delete_by_query ' . json_encode(value: ['query' => ['match_all' => (object) []]]);
+        return $table.'/_delete_by_query '.json_encode(value: ['query' => ['match_all' => (object) []]]);
     }
 }

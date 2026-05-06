@@ -14,7 +14,8 @@ final readonly class RequirePhishingResistantAuthentication
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PhishingResistantAuthenticationRequired

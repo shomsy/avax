@@ -10,16 +10,16 @@ use SensitiveParameter;
 interface AuthorizationCodeStoreInterface
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function create(
-        string            $subject,
+        string $subject,
         DateTimeImmutable $expiresAt,
-        ?string           $clientId = null,
-        array             $scopes = [],
-        ?string           $redirectUri = null,
-        ?string           $state = null,
-    ) : AuthorizationCodeRecord;
+        ?string $clientId = null,
+        array $scopes = [],
+        ?string $redirectUri = null,
+        ?string $state = null,
+    ): AuthorizationCodeRecord;
 
-    public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment) : AuthorizationCodeRecord|null;
+    public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment): ?AuthorizationCodeRecord;
 }

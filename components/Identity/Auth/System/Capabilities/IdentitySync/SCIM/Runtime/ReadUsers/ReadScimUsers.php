@@ -11,7 +11,9 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Director
 
 final readonly class ReadScimUsers
 {
-    public function __construct(private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private UserSourceInterface $userSource) {}
+    public function __construct(private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private UserSourceInterface $userSource)
+    {
+    }
 
     /**
      * @return list<ScimUserProjection>

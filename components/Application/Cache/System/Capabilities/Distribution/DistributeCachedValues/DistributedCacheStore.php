@@ -21,7 +21,7 @@ use Traversable;
 final readonly class DistributedCacheStore implements CacheStore, IteratorAggregate
 {
     /**
-     * @param array<string, CacheStore> $nodeStores
+     * @param  array<string, CacheStore>  $nodeStores
      */
     public function __construct(
         private ConsistentHashRing $consistentHashRing,

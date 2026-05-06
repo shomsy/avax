@@ -9,7 +9,7 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinit
 
 final class RegisterRoute
 {
-    public function execute(RouteCollection $routeCollection, RouteDefinition $routeDefinition) : void
+    public function execute(RouteCollection $routeCollection, RouteDefinition $routeDefinition): void
     {
         $routeCollection->add($routeDefinition);
     }

@@ -78,17 +78,17 @@ final class NotImplemented extends Exception
 
     private function moveFile(string $from, string $to, ?string $newContent = null, ?string $oldNs = null, ?string $newNs = null): void
     {
-        $fromPath = $this->basePath . '/' . $from;
-        $toPath = $this->basePath . '/' . $to;
+        $fromPath = $this->basePath.'/'.$from;
+        $toPath = $this->basePath.'/'.$to;
 
-        if (!file_exists($fromPath)) {
+        if (! file_exists($fromPath)) {
             echo "Skipping: $from (not found)\n";
 
             return;
         }
 
         $toDir = dirname($toPath);
-        if (!is_dir($toDir)) {
+        if (! is_dir($toDir)) {
             mkdir($toDir, 0755, true);
         }
 
@@ -108,7 +108,7 @@ final class NotImplemented extends Exception
 
     private function removeDir(string $dir): void
     {
-        $path = $this->basePath . '/' . $dir;
+        $path = $this->basePath.'/'.$dir;
         if (is_dir($path)) {
             $this->delTree($path);
             echo "Removed: $dir/\n";
@@ -127,8 +127,8 @@ final class NotImplemented extends Exception
 
     private function createDir(string $dir): void
     {
-        $path = $this->basePath . '/' . $dir;
-        if (!is_dir($path)) {
+        $path = $this->basePath.'/'.$dir;
+        if (! is_dir($path)) {
             mkdir($path, 0755, true);
             echo "Created: $dir/\n";
         }
@@ -136,17 +136,17 @@ final class NotImplemented extends Exception
 
     private function moveDir(string $from, string $to): void
     {
-        $fromPath = $this->basePath . '/' . $from;
-        $toPath = $this->basePath . '/' . $to;
+        $fromPath = $this->basePath.'/'.$from;
+        $toPath = $this->basePath.'/'.$to;
 
-        if (!is_dir($fromPath)) {
+        if (! is_dir($fromPath)) {
             echo "Skipping: $from/ (not found)\n";
 
             return;
         }
 
         $toParent = dirname($toPath);
-        if (!is_dir($toParent)) {
+        if (! is_dir($toParent)) {
             mkdir($toParent, 0755, true);
         }
 
@@ -156,7 +156,7 @@ final class NotImplemented extends Exception
 
     private function removeFile(string $file): void
     {
-        $path = $this->basePath . '/' . $file;
+        $path = $this->basePath.'/'.$file;
         if (file_exists($path)) {
             unlink($path);
             echo "Removed: $file\n";

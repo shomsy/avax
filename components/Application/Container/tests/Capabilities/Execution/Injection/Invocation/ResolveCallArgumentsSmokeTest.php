@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(4, path: __DIR__) . '/bootstrap.php';
+require_once dirname(4, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies;
@@ -10,13 +10,13 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Resolve
 
 interface CallArgumentGreeterContract
 {
-    public function message() : string;
+    public function message(): string;
 }
 
 final class ResolveCallArgumentsSmokeTest implements CallArgumentGreeterContract
 {
     #[Override]
-    public function message() : string
+    public function message(): string
     {
         return 'args';
     }
@@ -24,7 +24,7 @@ final class ResolveCallArgumentsSmokeTest implements CallArgumentGreeterContract
 
 final class CallArgumentTarget
 {
-    public function handle(CallArgumentGreeterContract $callArgumentGreeterContract, string $name = 'fallback') : array
+    public function handle(CallArgumentGreeterContract $callArgumentGreeterContract, string $name = 'fallback'): array
     {
         return [$callArgumentGreeterContract->message(), $name];
     }
@@ -33,10 +33,10 @@ final class CallArgumentTarget
 $container = makeTestContainer();
 $container->bind(abstract: CallArgumentGreeterContract::class, concrete: CallArgumentGreeter::class);
 
-$resolver  = $container->get(id: ResolveDependency::class);
+$resolver = $container->get(id: ResolveDependency::class);
 $arguments = new ResolveCallArguments(dependencies: new ResolveDependencies());
 $reflection = new ReflectionMethod(objectOrMethod: CallArgumentTarget::class, method: 'handle');
-$resolved  = $arguments->resolve(
+$resolved = $arguments->resolve(
     parameters: $reflection->getParameters(),
     overrides : ['name' => 'custom'],
     resolver  : $resolver,
@@ -45,4 +45,4 @@ $resolved  = $arguments->resolve(
 assertSame(expected: 'args', actual: $resolved[0]->message(), message: 'Call arguments should resolve container-backed dependencies.');
 assertSame(expected: 'custom', actual: $resolved[1], message: 'Call arguments should honor explicit overrides.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

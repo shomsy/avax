@@ -10,7 +10,8 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 
 final readonly class CacheStoreRecordWasFound
 {
-    public function __construct(public CacheKey $cacheKey, public StoredCacheRecord $storedCacheRecord, public Clock $clock) {
+    public function __construct(public CacheKey $cacheKey, public StoredCacheRecord $storedCacheRecord, public Clock $clock)
+    {
     }
 
     public function value(): mixed

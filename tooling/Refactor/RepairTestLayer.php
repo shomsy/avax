@@ -79,7 +79,7 @@ final class RepairTestLayer
         ];
 
         foreach ($componentMoves as $old => $new) {
-            $this->namespaceRewrites['Avax\Components\\' . $old] = 'Avax\Components\\' . $new;
+            $this->namespaceRewrites['Avax\Components\\'.$old] = 'Avax\Components\\'.$new;
         }
     }
 
@@ -97,7 +97,7 @@ final class RepairTestLayer
             ? "✅ Test layer repair applied.\n"
             : "✅ Dry-run complete. No files changed.\n";
 
-        if (!$this->apply) {
+        if (! $this->apply) {
             echo PHP_EOL;
             echo "Ako je report čist, pokreni:\n";
             echo "php tooling/refactor/repair-test-layer.php --apply\n";
@@ -112,20 +112,20 @@ final class RepairTestLayer
 
     private function assertRepoRoot(): void
     {
-        if (!is_dir($this->path('tests'))) {
+        if (! is_dir($this->path('tests'))) {
             throw new RuntimeException('Run from AvaX repo root. Missing tests/');
         }
     }
 
     private function path(string $path): string
     {
-        return $this->root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
+        return $this->root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
     private function printHeader(): void
     {
         echo "AvaX Test Layer Repair\n";
-        echo 'Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN') . "\n";
+        echo 'Mode: '.($this->apply ? 'APPLY' : 'DRY-RUN')."\n";
         echo "Scope: tests/ only\n\n";
     }
 
@@ -133,7 +133,7 @@ final class RepairTestLayer
     {
         $testsPath = $this->path('tests');
 
-        if (!is_dir($testsPath)) {
+        if (! is_dir($testsPath)) {
             return;
         }
 
@@ -149,7 +149,7 @@ final class RepairTestLayer
             $original = $content;
 
             foreach ($this->namespaceRewrites as $old => $new) {
-                $pattern = '/(?<![A-Za-z0-9_\\\\])' . preg_quote($old, '/') . '(?=\\\\|;|,|\\)|\\s|$)/';
+                $pattern = '/(?<![A-Za-z0-9_\\\\])'.preg_quote($old, '/').'(?=\\\\|;|,|\\)|\\s|$)/';
                 $content = preg_replace($pattern, str_replace('\\', '\\\\', $new), $content) ?? $content;
             }
 
@@ -157,10 +157,10 @@ final class RepairTestLayer
                 continue;
             }
 
-            $operation = 'REWRITE ' . $this->relative($file);
+            $operation = 'REWRITE '.$this->relative($file);
             $this->operations[] = $operation;
 
-            echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
+            echo ($this->apply ? '' : '[dry-run] ').$operation.PHP_EOL;
 
             if ($this->apply) {
                 file_put_contents($file, $content);
@@ -169,7 +169,7 @@ final class RepairTestLayer
             $changed++;
         }
 
-        echo PHP_EOL . ('Test namespace rewrites: ' . $changed) . PHP_EOL;
+        echo PHP_EOL.('Test namespace rewrites: '.$changed).PHP_EOL;
     }
 
     private function phpFiles(string $path): Generator
@@ -207,7 +207,7 @@ final class RepairTestLayer
         ];
 
         foreach ($paths as $path) {
-            if (!is_dir($path)) {
+            if (! is_dir($path)) {
                 continue;
             }
 
@@ -244,10 +244,10 @@ final class RepairTestLayer
             return;
         }
 
-        $operation = 'FIX ' . $this->relative($file);
+        $operation = 'FIX '.$this->relative($file);
         $this->operations[] = $operation;
 
-        echo ($this->apply ? '' : '[dry-run] ') . $operation . PHP_EOL;
+        echo ($this->apply ? '' : '[dry-run] ').$operation.PHP_EOL;
 
         if ($this->apply) {
             file_put_contents($file, $content);
@@ -259,15 +259,15 @@ final class RepairTestLayer
         $report = $this->path('Code-Review-And-ToDo/component-taxonomy/test-layer-repair-report.md');
         $directory = dirname($report);
 
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0o777, true);
         }
 
         $lines = [
             '# Test Layer Repair Report',
             '',
-            '- Date: ' . date('Y-m-d H:i:s'),
-            '- Mode: ' . ($this->apply ? 'APPLY' : 'DRY-RUN'),
+            '- Date: '.date('Y-m-d H:i:s'),
+            '- Mode: '.($this->apply ? 'APPLY' : 'DRY-RUN'),
             '',
             '## Operations',
             '',
@@ -277,7 +277,7 @@ final class RepairTestLayer
             $lines[] = '- none';
         } else {
             foreach ($this->operations as $operation) {
-                $lines[] = '- ' . $operation;
+                $lines[] = '- '.$operation;
             }
         }
 
@@ -288,13 +288,13 @@ final class RepairTestLayer
         $lines[] = '- Run composer dump-autoload after apply.';
         $lines[] = '- Run vendor/bin/phpunit --list-tests to verify.';
 
-        file_put_contents($report, implode(PHP_EOL, $lines) . PHP_EOL);
+        file_put_contents($report, implode(PHP_EOL, $lines).PHP_EOL);
     }
 }
 
 try {
     exit(new RepairTestLayer($argv)->run());
 } catch (Throwable $throwable) {
-    fwrite(STDERR, 'ERROR: ' . $throwable->getMessage() . PHP_EOL);
+    fwrite(STDERR, 'ERROR: '.$throwable->getMessage().PHP_EOL);
     exit(1);
 }

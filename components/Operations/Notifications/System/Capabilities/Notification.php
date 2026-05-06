@@ -16,7 +16,7 @@ abstract class Notification
         $this->id = uniqid('notif-', true);
     }
 
-    public function getId() : string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -26,12 +26,12 @@ abstract class Notification
      *
      * @return list<string>
      */
-    abstract public function via() : array;
+    abstract public function via(): array;
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail() : ?MailNotificationContent
+    public function toMail(): ?MailNotificationContent
     {
         return null;
     }
@@ -39,7 +39,7 @@ abstract class Notification
     /**
      * Get the database representation of the notification.
      */
-    public function toDatabase() : ?array
+    public function toDatabase(): ?array
     {
         return null;
     }
@@ -47,9 +47,8 @@ abstract class Notification
     /**
      * Get the array representation of the notification.
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [];
     }
 }
-

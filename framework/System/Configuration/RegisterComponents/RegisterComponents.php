@@ -13,7 +13,7 @@ final class RegisterComponents
      */
     private array $registrations = [];
 
-    public function register(ComponentDefinition $componentDefinition) : self
+    public function register(ComponentDefinition $componentDefinition): self
     {
         $this->registrations[] = $componentDefinition;
 
@@ -23,7 +23,7 @@ final class RegisterComponents
     /**
      * @return list<ComponentDefinition>
      */
-    public function getRegistrations() : array
+    public function getRegistrations(): array
     {
         return $this->registrations;
     }

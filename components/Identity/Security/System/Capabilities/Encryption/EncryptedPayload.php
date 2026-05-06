@@ -23,7 +23,8 @@ final readonly class EncryptedPayload
         private string $iv,
         private string $tag,
         private string $keyVersion = '1',
-    ) {}
+    ) {
+    }
 
     /**
      * Deserialize a string representation into an EncryptedPayload.
@@ -35,13 +36,13 @@ final readonly class EncryptedPayload
         $parts = explode(self::SEPARATOR, $serialized);
 
         if (count($parts) !== 5) {
-            throw new DecryptionFailed('Invalid encrypted payload format: expected 5 parts, got ' . count($parts));
+            throw new DecryptionFailed('Invalid encrypted payload format: expected 5 parts, got '.count($parts));
         }
 
         [$version, $cipherTextB64, $ivB64, $tagB64, $keyVersion] = $parts;
 
         if ($version !== self::VERSION_PREFIX) {
-            throw new DecryptionFailed('Unknown payload version: ' . $version);
+            throw new DecryptionFailed('Unknown payload version: '.$version);
         }
 
         $cipherText = base64_decode($cipherTextB64, true);

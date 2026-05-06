@@ -9,14 +9,14 @@ use SensitiveParameter;
 final readonly class OidcProviderMetadata
 {
     /**
-     * @param list<string> $scopesSupported
-     * @param list<string> $responseTypesSupported
-     * @param list<string> $grantTypesSupported
-     * @param list<string> $subjectTypesSupported
-     * @param list<string> $idTokenSigningAlgValuesSupported
-     * @param list<string> $codeChallengeMethodsSupported
-     * @param list<string> $requestObjectSigningAlgValuesSupported
-     * @param list<string> $authorizationResponseSigningAlgValuesSupported
+     * @param  list<string>  $scopesSupported
+     * @param  list<string>  $responseTypesSupported
+     * @param  list<string>  $grantTypesSupported
+     * @param  list<string>  $subjectTypesSupported
+     * @param  list<string>  $idTokenSigningAlgValuesSupported
+     * @param  list<string>  $codeChallengeMethodsSupported
+     * @param  list<string>  $requestObjectSigningAlgValuesSupported
+     * @param  list<string>  $authorizationResponseSigningAlgValuesSupported
      */
     public function __construct(
         public string $issuer,
@@ -42,5 +42,6 @@ final readonly class OidcProviderMetadata
         public bool $backChannelLogoutSessionSupported,
         public array $requestObjectSigningAlgValuesSupported,
         public array $authorizationResponseSigningAlgValuesSupported,
-    ) {}
+    ) {
+    }
 }

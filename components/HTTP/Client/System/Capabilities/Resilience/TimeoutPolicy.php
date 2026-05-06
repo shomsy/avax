@@ -22,24 +22,25 @@ namespace Avax\Components\HTTP\Client\System\Capabilities\Resilience;
 final readonly class TimeoutPolicy
 {
     /**
-     * @param int  $connectTimeoutMs  Timeout for establishing connection (ms)
-     * @param int  $transferTimeoutMs Timeout for receiving data/transfer (ms)
-     * @param int  $timeoutMs         Overall total timeout (ms)
-     * @param bool $enforce           Whether to strictly enforce timeouts
+     * @param  int  $connectTimeoutMs  Timeout for establishing connection (ms)
+     * @param  int  $transferTimeoutMs  Timeout for receiving data/transfer (ms)
+     * @param  int  $timeoutMs  Overall total timeout (ms)
+     * @param  bool  $enforce  Whether to strictly enforce timeouts
      */
     public function __construct(
         public int $connectTimeoutMs = 5000,
         public int $transferTimeoutMs = 30000,
         public int $timeoutMs = 30000,
         public bool $enforce = true,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a strict timeout policy (all timeouts at the same value).
      *
-     * @param int $timeoutMs The timeout value in milliseconds
+     * @param  int  $timeoutMs  The timeout value in milliseconds
      */
-    public static function strict(int $timeoutMs = 5000) : self
+    public static function strict(int $timeoutMs = 5000): self
     {
         return new self(
             connectTimeoutMs : $timeoutMs,
@@ -51,9 +52,9 @@ final readonly class TimeoutPolicy
     /**
      * Create a relaxed timeout policy (longer timeouts).
      *
-     * @param int $timeoutMs The timeout value in milliseconds (default: 60s)
+     * @param  int  $timeoutMs  The timeout value in milliseconds (default: 60s)
      */
-    public static function relaxed(int $timeoutMs = 60_000) : self
+    public static function relaxed(int $timeoutMs = 60_000): self
     {
         return new self(
             connectTimeoutMs : $timeoutMs,
@@ -65,7 +66,7 @@ final readonly class TimeoutPolicy
     /**
      * Create a policy optimized for fast requests.
      */
-    public static function fast() : self
+    public static function fast(): self
     {
         return new self(
             connectTimeoutMs : 2000,
@@ -77,7 +78,7 @@ final readonly class TimeoutPolicy
     /**
      * Create a policy optimized for streaming/long requests.
      */
-    public static function streaming() : self
+    public static function streaming(): self
     {
         return new self(
             connectTimeoutMs : 10000,
@@ -90,7 +91,7 @@ final readonly class TimeoutPolicy
      * Create a disabled timeout policy (no timeouts).
      * Use with caution - can cause requests to hang indefinitely.
      */
-    public static function none() : self
+    public static function none(): self
     {
         return new self(
             connectTimeoutMs : 0,
@@ -103,7 +104,7 @@ final readonly class TimeoutPolicy
     /**
      * Get the minimum timeout value (for connect timeout).
      */
-    public function minTimeout() : int
+    public function minTimeout(): int
     {
         return $this->connectTimeoutMs;
     }
@@ -111,7 +112,7 @@ final readonly class TimeoutPolicy
     /**
      * Get the maximum timeout value.
      */
-    public function maxTimeout() : int
+    public function maxTimeout(): int
     {
         return max($this->connectTimeoutMs, $this->transferTimeoutMs, $this->timeoutMs);
     }

@@ -27,7 +27,8 @@ final readonly class Database
         private MigrationsCapability $migrationsCapability,
         private TransactionsCapability $transactionsCapability,
         private TelemetryCapability $telemetryCapability,
-    ) {}
+    ) {
+    }
 
     public static function configuration(): DatabaseBuilder
     {
@@ -69,7 +70,7 @@ final readonly class Database
         return new Telemetry(telemetryCapability: $this->telemetryCapability);
     }
 
-    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    public function table(string $table, ?string $connectionName = null): QueryBuilder
     {
         return $this->queryCapability->from(table: $table, connectionName: $connectionName);
     }

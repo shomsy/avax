@@ -11,7 +11,7 @@ final class PolicyEvaluator
     /** @var list<PolicyRule> */
     private array $rules = [];
 
-    public function register(PolicyRule $policyRule) : void
+    public function register(PolicyRule $policyRule): void
     {
         $this->rules[] = $policyRule;
     }
@@ -62,7 +62,7 @@ final class PolicyEvaluator
         }
 
         return PolicyDecision::allow(
-            $reasons !== [] ? 'Matched ' . count($reasons) . ' rules' : null,
+            $reasons !== [] ? 'Matched '.count($reasons).' rules' : null,
         );
     }
 }
@@ -72,5 +72,6 @@ final readonly class PolicyDecision
     public function __construct(
         public bool $allowed,
         public ?string $reason,
-    ) {}
+    ) {
+    }
 }

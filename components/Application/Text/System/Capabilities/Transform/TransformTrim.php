@@ -8,8 +8,8 @@ use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class TransformTrim
 {
-    public function __invoke(Text $text, string $chars = " \t\n\r\0\x0B") : Text
+    public function __invoke(Text $text, string $chars = " \t\n\r\0\x0B"): Text
     {
-        return new Text(trim($text->toString(), $chars));
+        return Text::of(trim($text->toString(), $chars));
     }
 }

@@ -13,7 +13,7 @@ final readonly class ParseJsonBody
      *
      * @throws JsonException
      */
-    public function parse(string $body) : array
+    public function parse(string $body): array
     {
         if (trim(string: $body) === '') {
             return [];

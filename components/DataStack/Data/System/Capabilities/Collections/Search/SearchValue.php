@@ -11,7 +11,8 @@ final readonly class SearchValue
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(mixed $value): int|false
     {

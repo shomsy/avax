@@ -23,9 +23,9 @@ final readonly class RequireCsrfProtection
     }
 
     /**
-     * @param array<string, mixed> $server
-     * @param array<string, mixed> $headers
-     * @param array<string, mixed> $cookies
+     * @param  array<string, mixed>  $server
+     * @param  array<string, mixed>  $headers
+     * @param  array<string, mixed>  $cookies
      */
     public function execute(
         string $method,
@@ -42,7 +42,7 @@ final readonly class RequireCsrfProtection
 
         $origin = $this->readValue(values: $server, key: 'HTTP_ORIGIN');
         $referer = $this->readValue(values: $server, key: 'HTTP_REFERER');
-        $host   = $this->readValue(values: $server, key: 'HTTP_HOST');
+        $host = $this->readValue(values: $server, key: 'HTTP_HOST');
 
         if (! $this->sameOrigin(originLikeValue: $origin, host: $host) && ! $this->sameOrigin(originLikeValue: $referer, host: $host)) {
             return false;
@@ -64,7 +64,7 @@ final readonly class RequireCsrfProtection
     }
 
     /**
-     * @param array<string, mixed> $values
+     * @param  array<string, mixed>  $values
      */
     private function readValue(array $values, string $key): ?string
     {

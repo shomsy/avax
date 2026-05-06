@@ -14,7 +14,7 @@ final readonly class MigrateCommand
 
     public function __construct()
     {
-        $this->path = dirname(__DIR__, 6) . '/database/migrations';
+        $this->path = dirname(__DIR__, 6).'/database/migrations';
     }
 
     public function up(): array
@@ -30,7 +30,7 @@ final readonly class MigrateCommand
 
         foreach ($migrations as $file) {
             require_once $file;
-            $class     = $this->getMigrationClass($file);
+            $class = $this->getMigrationClass($file);
             $migration = new $class();
 
             $migration->up();
@@ -39,7 +39,7 @@ final readonly class MigrateCommand
 
         return [
             'status' => 'success',
-            'ran'   => $ran,
+            'ran' => $ran,
             'count' => count($ran),
         ];
     }
@@ -50,7 +50,7 @@ final readonly class MigrateCommand
             return [];
         }
 
-        return glob($this->path . '/*_*.php');
+        return glob($this->path.'/*_*.php');
     }
 
     private function getConnection(): PDO
@@ -79,7 +79,7 @@ final readonly class MigrateCommand
             }
 
             require_once $last['file'];
-            $class     = $this->getMigrationClass($last['file']);
+            $class = $this->getMigrationClass($last['file']);
             $migration = new $class();
             $migration->down();
 
@@ -89,7 +89,7 @@ final readonly class MigrateCommand
         return [
             'status' => 'success',
             'rolled_back' => $ran,
-            'count'  => count($ran),
+            'count' => count($ran),
         ];
     }
 
@@ -115,7 +115,7 @@ final readonly class MigrateCommand
 
         return [
             'status' => 'success',
-            'ran'    => $ran,
+            'ran' => $ran,
             'pending' => array_diff(array_map(basename(...), $migrations), $ran),
         ];
     }
@@ -156,17 +156,17 @@ final class SeederCommand
 {
     public function run(): array
     {
-        $ran  = [];
-        $path = dirname(__DIR__, 6) . '/database/seeders';
+        $ran = [];
+        $path = dirname(__DIR__, 6).'/database/seeders';
         if (! is_dir($path)) {
             return ['status' => 'nothing', 'message' => 'No seeders found'];
         }
 
-        $files = glob($path . '/*Seeder.php');
+        $files = glob($path.'/*Seeder.php');
         foreach ($files as $file) {
             require_once $file;
-            $className = str_replace([$path . '/', '.php'], '', $file);
-            $seeder    = new $className();
+            $className = str_replace([$path.'/', '.php'], '', $file);
+            $seeder = new $className();
             $seeder->run();
 
             $ran[] = $className;

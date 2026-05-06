@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\ResourceGovernance\PublicSurface;
 
-use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Stringable;
 use Avax\Framework\System\Capabilities\ResourceGovernance\Capabilities\Memory\MemoryBudget;
 use Avax\Framework\System\Capabilities\ResourceGovernance\Capabilities\Memory\MemorySnapshot;
 
@@ -22,7 +21,7 @@ final class ResourceGovernor
     private static int $totalMemoryStart = 0;
 
     /**
-     * @param array{worker_memory?: string, request_memory?: string} $config
+     * @param  array{worker_memory?: string, request_memory?: string}  $config
      */
     public static function configure(array $config): void
     {
@@ -58,7 +57,7 @@ final class ResourceGovernor
     {
         $budget = self::$memoryBudget;
 
-        if (!$budget instanceof MemoryBudget) {
+        if (! $budget instanceof MemoryBudget) {
             return true;
         }
 
@@ -113,7 +112,7 @@ final class ResourceGovernor
         }
 
         $recent = array_slice(self::$snapshots, -10);
-        $total = array_sum(array_map(static fn(MemorySnapshot $memorySnapshot): int => $memorySnapshot->memoryUsed, $recent));
+        $total = array_sum(array_map(static fn (MemorySnapshot $memorySnapshot): int => $memorySnapshot->memoryUsed, $recent));
 
         return $total / count($recent);
     }

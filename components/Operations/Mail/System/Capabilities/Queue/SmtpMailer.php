@@ -6,7 +6,9 @@ namespace Avax\Components\Operations\Mail\System\Capabilities\Queue;
 
 final readonly class SmtpMailer
 {
-    public function __construct(private array $config = []) {}
+    public function __construct(private array $config = [])
+    {
+    }
 
     public function send(Mailable $mailable): bool
     {
@@ -15,13 +17,13 @@ final readonly class SmtpMailer
         }
 
         $headers = [
-            'From: ' . ($mailable->getFrom() ?? $this->config['from'] ?? 'noreply@localhost'),
+            'From: '.($mailable->getFrom() ?? $this->config['from'] ?? 'noreply@localhost'),
             'MIME-Version: 1.0',
             'Content-Type: text/html; charset=UTF-8',
         ];
 
         foreach ($mailable->getCc() as $cc) {
-            $headers[] = 'Cc: ' . $cc;
+            $headers[] = 'Cc: '.$cc;
         }
 
         return mail(

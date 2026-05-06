@@ -16,17 +16,17 @@ final class MessageBus
 
     private static EventBus $eventBus;
 
-    public static function query(object $query) : mixed
+    public static function query(object $query): mixed
     {
         return self::queryBus()->dispatch($query);
     }
 
-    public static function dispatch(object $command) : mixed
+    public static function dispatch(object $command): mixed
     {
         return self::commandBus()->dispatch($command);
     }
 
-    private static function commandBus() : CommandBus
+    private static function commandBus(): CommandBus
     {
         if (! isset(self::$commandBus)) {
             self::$commandBus = new CommandBus();
@@ -35,7 +35,7 @@ final class MessageBus
         return self::$commandBus;
     }
 
-    private static function queryBus() : QueryBus
+    private static function queryBus(): QueryBus
     {
         if (! isset(self::$queryBus)) {
             self::$queryBus = new QueryBus();
@@ -44,12 +44,12 @@ final class MessageBus
         return self::$queryBus;
     }
 
-    public static function publish(object $event) : void
+    public static function publish(object $event): void
     {
         self::eventBus()->dispatch($event);
     }
 
-    private static function eventBus() : EventBus
+    private static function eventBus(): EventBus
     {
         if (! isset(self::$eventBus)) {
             self::$eventBus = new EventBus();
@@ -58,7 +58,7 @@ final class MessageBus
         return self::$eventBus;
     }
 
-    public static function listen(string $messageClass, object $handler) : void
+    public static function listen(string $messageClass, object $handler): void
     {
         if (is_a($messageClass, Command::class, true)) {
             self::commandBus()->register($messageClass, $handler);

@@ -11,7 +11,9 @@ use Stringable;
  */
 final readonly class UserId implements Stringable
 {
-    public function __construct(public int $value) {}
+    public function __construct(public int $value)
+    {
+    }
 
     public function __toString(): string
     {

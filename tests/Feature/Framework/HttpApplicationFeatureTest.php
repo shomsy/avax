@@ -16,7 +16,7 @@ final class HttpApplicationFeatureTest extends TestCase
         $avax = Avax::boot(
             builder: BuildApplication::fromProjectPath(projectPath: $this->projectRoot())
                 ->withHttpHandler(
-                    httpHandler: static fn (RuntimeRequest $runtimeRequest) : string => 'hello ' . $runtimeRequest->uri(),
+                    httpHandler: static fn (RuntimeRequest $runtimeRequest): string => 'hello '.$runtimeRequest->uri(),
                 ),
         );
 

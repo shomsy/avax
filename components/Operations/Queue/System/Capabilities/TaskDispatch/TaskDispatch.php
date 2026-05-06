@@ -48,7 +48,7 @@ final class TaskDispatch
         $asyncDispatcher->dispatch($task);
     }
 
-    public static function later(object $task, DateInterval $dateInterval) : void
+    public static function later(object $task, DateInterval $dateInterval): void
     {
         $deferredDispatcher = new DeferredDispatcher($dateInterval);
         $deferredDispatcher->dispatch($task);

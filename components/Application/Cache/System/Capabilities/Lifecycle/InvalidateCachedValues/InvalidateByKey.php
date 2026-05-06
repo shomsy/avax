@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 interface InvalidateByKey
 {
-    public function invalidate(CacheKey $cacheKey) : void;
+    public function invalidate(CacheKey $cacheKey): void;
 
-    public function isInvalidated(CacheKey $cacheKey) : bool;
+    public function isInvalidated(CacheKey $cacheKey): bool;
 }

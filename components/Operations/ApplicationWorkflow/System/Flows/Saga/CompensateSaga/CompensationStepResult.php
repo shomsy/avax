@@ -20,7 +20,8 @@ final readonly class CompensationStepResult
         public ?string $error,
         public float $startedAt,
         public ?float $finishedAt,
-    ) {}
+    ) {
+    }
 
     public static function success(string $stepName, float $startedAt): self
     {
@@ -58,8 +59,8 @@ final readonly class CompensationStepResult
     {
         return [
             'step_name' => $this->stepName,
-            'status'    => $this->status->value,
-            'error'     => $this->error,
+            'status' => $this->status->value,
+            'error' => $this->error,
             'duration_ms' => $this->durationMs(),
         ];
     }

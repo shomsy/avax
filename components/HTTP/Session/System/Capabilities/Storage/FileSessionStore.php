@@ -9,11 +9,11 @@ final readonly class FileSessionStore implements SessionStoreInterface
     private string $path;
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function __construct(array $config = [])
     {
-        $this->path = $config['path'] ?? sys_get_temp_dir() . '/avax-sessions';
+        $this->path = $config['path'] ?? sys_get_temp_dir().'/avax-sessions';
 
         if (! is_dir(filename: $this->path)) {
             mkdir(directory: $this->path, permissions: 0o755, recursive: true);
@@ -37,11 +37,11 @@ final readonly class FileSessionStore implements SessionStoreInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function write(string $id, array $data): bool
     {
-        $file      = $this->filePath(sessionId: $id);
+        $file = $this->filePath(sessionId: $id);
         $directory = dirname(path: $file);
 
         if (! is_dir(filename: $directory)) {
@@ -70,7 +70,7 @@ final readonly class FileSessionStore implements SessionStoreInterface
     {
         $removed = 0;
 
-        foreach (glob(pattern: $this->path . '/*/*.json') ?: [] as $file) {
+        foreach (glob(pattern: $this->path.'/*/*.json') ?: [] as $file) {
             if ((filemtime(filename: $file) ?: 0) < time() - $maxLifetime && unlink(filename: $file)) {
                 $removed++;
             }
@@ -83,6 +83,6 @@ final readonly class FileSessionStore implements SessionStoreInterface
     {
         $prefix = substr(string: $sessionId, offset: 0, length: 2);
 
-        return $this->path . '/' . $prefix . '/' . $sessionId . '.json';
+        return $this->path.'/'.$prefix.'/'.$sessionId.'.json';
     }
 }

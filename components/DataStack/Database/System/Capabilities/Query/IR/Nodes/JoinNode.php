@@ -9,12 +9,13 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final readonly class JoinNode
 {
     public function __construct(
-        public string     $type,
-        public string     $table,
-        public ?string    $alias = null,
+        public string $type,
+        public string $table,
+        public ?string $alias = null,
         public ?WhereNode $on = null,
-        public ?string    $using = null,
-    ) {}
+        public ?string $using = null,
+    ) {
+    }
 
     public function getSql(GrammarInterface $grammar): string
     {
@@ -22,15 +23,15 @@ final readonly class JoinNode
         $table = $grammar->wrap(value: $this->table);
 
         if ($this->alias !== null) {
-            $table .= ' AS ' . $grammar->wrap(value: $this->alias);
+            $table .= ' AS '.$grammar->wrap(value: $this->alias);
         }
 
         $sql = sprintf('%s JOIN %s', $type, $table);
 
         if ($this->using !== null) {
-            $sql .= ' USING (' . $grammar->wrap(value: $this->using) . ')';
+            $sql .= ' USING ('.$grammar->wrap(value: $this->using).')';
         } elseif ($this->on instanceof WhereNode) {
-            $sql .= ' ON ' . $this->on->getSql(grammar: $grammar);
+            $sql .= ' ON '.$this->on->getSql(grammar: $grammar);
         }
 
         return $sql;

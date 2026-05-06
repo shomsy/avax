@@ -11,8 +11,9 @@ final readonly class View implements ViewInterface
 {
     public function __construct(
         private TemplateEngineInterface $templateEngine,
-        private RenderView              $renderView,
-    ) {}
+        private RenderView $renderView,
+    ) {
+    }
 
     public function render(string $view, array $data = []): string
     {

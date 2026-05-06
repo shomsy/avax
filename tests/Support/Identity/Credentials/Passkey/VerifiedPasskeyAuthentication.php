@@ -9,10 +9,9 @@ use SensitiveParameter;
 final readonly class VerifiedPasskeyAuthentication
 {
     public function __construct(
-        public int    $userId,
+        public int $userId,
         #[SensitiveParameter]
         public string $credentialId,
-    )
-    {
+    ) {
     }
 }

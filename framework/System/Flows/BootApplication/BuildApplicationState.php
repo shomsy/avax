@@ -14,13 +14,13 @@ use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
 
 final readonly class BuildApplicationState
 {
-    public function build(ApplicationBuilder $builder) : Runtime
+    public function build(ApplicationBuilder $builder): Runtime
     {
         $componentRegistry = new ComponentRegistry();
         $requestScopeStore = new RequestScopeStore();
-        $runtimeContext     = new RuntimeContext();
+        $runtimeContext = new RuntimeContext();
         $stateResetRegistry = new StateResetRegistry();
-        $runtimeState      = new RuntimeState(runtimeName: $builder->runtimeName());
+        $runtimeState = new RuntimeState(runtimeName: $builder->runtimeName());
 
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);

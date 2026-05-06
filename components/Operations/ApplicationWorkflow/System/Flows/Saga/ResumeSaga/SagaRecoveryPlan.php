@@ -32,7 +32,7 @@ final readonly class SagaRecoveryPlan
     public function toArray(): array
     {
         return [
-            'saga_id'     => $this->sagaId,
+            'saga_id' => $this->sagaId,
             'failed_step' => $this->failedStep,
             'attempt_number' => $this->attemptNumber,
             'recovery_steps' => $this->recoverySteps,

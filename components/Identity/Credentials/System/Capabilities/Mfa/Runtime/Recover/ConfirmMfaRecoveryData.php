@@ -17,5 +17,6 @@ final readonly class ConfirmMfaRecoveryData
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

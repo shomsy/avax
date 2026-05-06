@@ -30,21 +30,20 @@ final class StepRunner
 
     public function __construct(
         ?IdempotencyStore $idempotencyStore = null,
-        ?RetryPolicy      $retryPolicy = null,
-        ?SagaTimeout      $sagaTimeout = null,
+        ?RetryPolicy $retryPolicy = null,
+        ?SagaTimeout $sagaTimeout = null,
     ) {
         $this->idempotencyStore = $idempotencyStore ?? new IdempotencyStore();
-        $this->retryPolicy      = $retryPolicy ?? RetryPolicy::none();
+        $this->retryPolicy = $retryPolicy ?? RetryPolicy::none();
         $this->sagaTimeout = $sagaTimeout ?? SagaTimeout::seconds(30);
     }
 
     /**
      * Execute a saga step with idempotency check, retry, and timeout handling.
      *
-     * @param SagaStep $sagaStep The step to execute
-     * @param mixed          $context        The saga context
-     * @param IdempotencyKey $idempotencyKey The idempotency key for this execution
-     *
+     * @param  SagaStep  $sagaStep  The step to execute
+     * @param  mixed  $context  The saga context
+     * @param  IdempotencyKey  $idempotencyKey  The idempotency key for this execution
      * @return mixed The result of the step execution
      *
      * @throws Throwable If the step fails after all retries
@@ -114,7 +113,7 @@ final class StepRunner
     /**
      * Execute a step with timeout enforcement.
      */
-    private function executeWithTimeout(SagaStep $sagaStep, mixed $context) : mixed
+    private function executeWithTimeout(SagaStep $sagaStep, mixed $context): mixed
     {
         $startTime = hrtime(true);
 
@@ -139,11 +138,11 @@ final class StepRunner
     /**
      * Record a step failure.
      */
-    private function recordFailure(IdempotencyKey $idempotencyKey, Throwable $throwable, int $attempt) : void
+    private function recordFailure(IdempotencyKey $idempotencyKey, Throwable $throwable, int $attempt): void
     {
         $this->failureLog[$idempotencyKey->toString()] = [
             'error' => $throwable->getMessage(),
-            'time'  => date('c'),
+            'time' => date('c'),
             'attempt' => $attempt,
         ];
     }
@@ -151,7 +150,7 @@ final class StepRunner
     /**
      * Sleep for a given number of milliseconds (testable).
      */
-    private function sleep(int $ms) : void
+    private function sleep(int $ms): void
     {
         usleep($ms * 1000);
     }

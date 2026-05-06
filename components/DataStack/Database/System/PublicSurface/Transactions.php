@@ -13,24 +13,25 @@ final readonly class Transactions
 {
     public function __construct(
         private TransactionsCapability $transactionsCapability,
-    ) {}
+    ) {
+    }
 
-    public function begin(?string $connectionName = null) : void
+    public function begin(?string $connectionName = null): void
     {
         $this->transactionsCapability->begin($connectionName);
     }
 
-    public function commit(?string $connectionName = null) : void
+    public function commit(?string $connectionName = null): void
     {
         $this->transactionsCapability->commit($connectionName);
     }
 
-    public function rollback(?string $connectionName = null) : void
+    public function rollback(?string $connectionName = null): void
     {
         $this->transactionsCapability->rollback($connectionName);
     }
 
-    public function run(callable $callback, ?string $connectionName = null) : mixed
+    public function run(callable $callback, ?string $connectionName = null): mixed
     {
         return $this->transactionsCapability->run($callback, $connectionName);
     }

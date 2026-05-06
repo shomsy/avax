@@ -9,7 +9,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
 final class CreateRequestFromGlobals
 {
-    public static function execute() : RequestInterface
+    public static function execute(): RequestInterface
     {
         return ServerRequest::fromGlobals();
     }

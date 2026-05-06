@@ -12,5 +12,6 @@ final readonly class ClientRequest
         public array $headers = [],
         public ?string $body = null,
         public array $options = [],
-    ) {}
+    ) {
+    }
 }

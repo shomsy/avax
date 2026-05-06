@@ -18,7 +18,7 @@ final class ValidateData
      *
      * @throws InvalidArgumentException
      */
-    public function executeOrFail(array $data, array $rules, array $messages = []) : array
+    public function executeOrFail(array $data, array $rules, array $messages = []): array
     {
         $validationFailure = $this->execute($data, $rules, $messages);
 
@@ -29,7 +29,7 @@ final class ValidateData
         return $data;
     }
 
-    public function execute(array $data, array $rules, array $messages = []) : ValidationFailure
+    public function execute(array $data, array $rules, array $messages = []): ValidationFailure
     {
         return Validator::make($data, $rules, $messages);
     }

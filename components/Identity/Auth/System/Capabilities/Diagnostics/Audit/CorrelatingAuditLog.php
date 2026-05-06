@@ -9,9 +9,11 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit;
  */
 final readonly class CorrelatingAuditLog implements AuditLogInterface
 {
-    public function __construct(private AuditLogInterface $auditLog, private string $correlationId) {}
+    public function __construct(private AuditLogInterface $auditLog, private string $correlationId)
+    {
+    }
 
-    public function record(AuditEvent $auditEvent) : void
+    public function record(AuditEvent $auditEvent): void
     {
         if ($auditEvent->correlationId !== null && trim(string: $auditEvent->correlationId) !== '') {
             $this->auditLog->record(event: $auditEvent);

@@ -29,7 +29,8 @@ final readonly class Database implements DatabaseInterface
         private Migrations $migrations,
         private Transactions $transactions,
         private Telemetry $telemetry,
-    ) {}
+    ) {
+    }
 
     public static function configuration(): DatabaseBuilder
     {
@@ -75,7 +76,7 @@ final readonly class Database implements DatabaseInterface
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    public function table(string $table, ?string $connectionName = null): QueryBuilder
     {
         return $this->query->from(table: $table, connectionName: $connectionName);
     }

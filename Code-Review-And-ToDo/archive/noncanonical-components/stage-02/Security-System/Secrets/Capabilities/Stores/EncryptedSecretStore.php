@@ -12,28 +12,27 @@ final readonly class EncryptedSecretStore implements SecretStore
 
     public function __construct(
         private SecretStore $secretStore,
-        string              $encryptionKey,
-    )
-    {
+        string $encryptionKey,
+    ) {
         $this->secretEncrypter = new SecretEncrypter(encryptionKey: $encryptionKey);
     }
 
-    public function get(string $key) : string
+    public function get(string $key): string
     {
         return $this->secretEncrypter->decrypt($this->secretStore->get($key));
     }
 
-    public function set(string $key, string $value) : void
+    public function set(string $key, string $value): void
     {
         $this->secretStore->set($key, $this->secretEncrypter->encrypt($value));
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return $this->secretStore->has($key);
     }
 
-    public function forget(string $key) : void
+    public function forget(string $key): void
     {
         $this->secretStore->forget($key);
     }

@@ -12,14 +12,15 @@ final readonly class RetryExecutor
     public function __construct(
         private Closure $operation,
         private RetryOptions $retryOptions,
-    ) {}
+    ) {
+    }
 
-    public function execute() : RetryResult
+    public function execute(): RetryResult
     {
         $lastException = null;
         $attemptNumber = 0;
 
-        while ( $attemptNumber < $this->retryOptions->attempts ) {
+        while ($attemptNumber < $this->retryOptions->attempts) {
             $attemptNumber++;
 
             try {
@@ -48,7 +49,7 @@ final readonly class RetryExecutor
         );
     }
 
-    private function sleep() : void
+    private function sleep(): void
     {
         $delay = (int) ($this->retryOptions->backoffMs * (1 + random_int(0, 100) / 100));
         usleep($delay * 1000);

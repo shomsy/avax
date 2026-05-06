@@ -20,7 +20,8 @@ final readonly class Sessions
         private ReadActiveSessions $readActiveSessions,
         #[SensitiveParameter]
         private RevokeSession $revokeSession,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated

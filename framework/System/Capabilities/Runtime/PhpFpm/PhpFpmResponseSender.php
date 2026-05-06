@@ -8,7 +8,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 
 final readonly class PhpFpmResponseSender
 {
-    public function send(RuntimeResponse $runtimeResponse) : void
+    public function send(RuntimeResponse $runtimeResponse): void
     {
         http_response_code(response_code: $runtimeResponse->statusCode());
 

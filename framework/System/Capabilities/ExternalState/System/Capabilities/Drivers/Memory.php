@@ -39,6 +39,7 @@ final class Memory implements State
     public function increment(string $key, int $value = 1): int
     {
         $this->data[$key] = ($this->data[$key] ?? 0) + $value;
+
         return (int) $this->data[$key];
     }
 

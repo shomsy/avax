@@ -20,14 +20,14 @@ final readonly class BuildCache
     {
     }
 
-    public function inMemory(?CacheConfiguration $config = null) : AvaxCache
+    public function inMemory(?CacheConfiguration $config = null): AvaxCache
     {
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->clock);
 
         return $this->fromStore(store: $inMemoryCacheStore, config: $config);
     }
 
-    public function fromStore(CacheStore $store, ?CacheConfiguration $config = null) : AvaxCache
+    public function fromStore(CacheStore $store, ?CacheConfiguration $config = null): AvaxCache
     {
         $config ??= new CacheConfiguration();
 
@@ -41,12 +41,12 @@ final readonly class BuildCache
         );
     }
 
-    public function inDirectory(string $directory, ?CacheConfiguration $config = null) : AvaxCache
+    public function inDirectory(string $directory, ?CacheConfiguration $config = null): AvaxCache
     {
         return $this->file(basePath: $directory, config: $config);
     }
 
-    public function file(string $basePath, ?CacheConfiguration $config = null) : AvaxCache
+    public function file(string $basePath, ?CacheConfiguration $config = null): AvaxCache
     {
         $fileCacheStore = new FileCacheStore(
             basePath: $basePath,

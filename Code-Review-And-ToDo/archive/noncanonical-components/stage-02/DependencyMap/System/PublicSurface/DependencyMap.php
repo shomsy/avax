@@ -8,17 +8,19 @@ use Avax\Components\DependencyMap\System\Capabilities\Graph\DependencyGraph;
 
 final readonly class DependencyMap
 {
-    public function __construct(private DependencyGraph $dependencyGraph) {}
+    public function __construct(private DependencyGraph $dependencyGraph)
+    {
+    }
 
     /**
-     * @param list<string> $dependsOn
+     * @param  list<string>  $dependsOn
      */
-    public function add(string $dependency, array $dependsOn = []) : void
+    public function add(string $dependency, array $dependsOn = []): void
     {
         $this->dependencyGraph->add($dependency, $dependsOn);
     }
 
-    public function remove(string $dependency) : void
+    public function remove(string $dependency): void
     {
         $this->dependencyGraph->remove($dependency);
     }
@@ -26,7 +28,7 @@ final readonly class DependencyMap
     /**
      * @return list<string>
      */
-    public function dependsOn(string $dependency) : array
+    public function dependsOn(string $dependency): array
     {
         return $this->dependencyGraph->dependsOn($dependency);
     }
@@ -34,7 +36,7 @@ final readonly class DependencyMap
     /**
      * @return list<string>
      */
-    public function dependents(string $dependency) : array
+    public function dependents(string $dependency): array
     {
         return $this->dependencyGraph->dependents($dependency);
     }
@@ -42,7 +44,7 @@ final readonly class DependencyMap
     /**
      * @return list<list<string>>
      */
-    public function cycles() : array
+    public function cycles(): array
     {
         return $this->dependencyGraph->detectCycles();
     }
@@ -50,12 +52,12 @@ final readonly class DependencyMap
     /**
      * @return list<string>
      */
-    public function orphans() : array
+    public function orphans(): array
     {
         return $this->dependencyGraph->findOrphans();
     }
 
-    public function exportMermaid() : string
+    public function exportMermaid(): string
     {
         return $this->dependencyGraph->toMermaid();
     }

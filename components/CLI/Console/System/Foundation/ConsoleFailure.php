@@ -6,4 +6,6 @@ namespace Avax\Components\CLI\Console\System\Foundation;
 
 use RuntimeException;
 
-final class ConsoleFailure extends RuntimeException {}
+final class ConsoleFailure extends RuntimeException
+{
+}

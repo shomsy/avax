@@ -20,8 +20,8 @@ readonly class InjectionReport
         public bool $success = true,
     ) {
         $injectedProperties ??= [];
-        $injectedMethods    ??= [];
+        $injectedMethods ??= [];
         $this->injectedProperties = $injectedProperties;
-        $this->injectedMethods    = $injectedMethods;
+        $this->injectedMethods = $injectedMethods;
     }
 }

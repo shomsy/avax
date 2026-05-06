@@ -7,7 +7,9 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Ru
 final readonly class ScimBulkResponse
 {
     /**
-     * @param list<ScimBulkOperationResult> $operations
+     * @param  list<ScimBulkOperationResult>  $operations
      */
-    public function __construct(public array $operations) {}
+    public function __construct(public array $operations)
+    {
+    }
 }

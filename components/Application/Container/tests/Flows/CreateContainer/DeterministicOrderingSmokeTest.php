@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
@@ -93,10 +93,10 @@ function normalizedArtifactMetadata(Container $container): array
 }
 
 $providerPlan = ProviderBootPlan::build(instances: [
-                                                       OrderingProviderGamma::class => new OrderingProviderGamma(app: makeTestContainer()),
-                                                       OrderingProviderAlpha::class => new OrderingProviderAlpha(app: makeTestContainer()),
-                                                       OrderingProviderBeta::class  => new OrderingProviderBeta(app: makeTestContainer()),
-                                                   ]);
+    OrderingProviderGamma::class => new OrderingProviderGamma(app: makeTestContainer()),
+    OrderingProviderAlpha::class => new OrderingProviderAlpha(app: makeTestContainer()),
+    OrderingProviderBeta::class => new OrderingProviderBeta(app: makeTestContainer()),
+]);
 
 assertSame(
     expected: [OrderingProviderAlpha::class, OrderingProviderBeta::class, OrderingProviderGamma::class],
@@ -123,8 +123,8 @@ assertSame(
     message : 'Decoration ordering must stay deterministic and preserve explicit registration order.',
 );
 
-$leftCache  = sys_get_temp_dir() . '/container-ordering-left-' . uniqid();
-$rightCache = sys_get_temp_dir() . '/container-ordering-right-' . uniqid();
+$leftCache = sys_get_temp_dir().'/container-ordering-left-'.uniqid();
+$rightCache = sys_get_temp_dir().'/container-ordering-right-'.uniqid();
 
 $left = makeTestContainer(config: CreateContainerConfig::create(cacheDir: $leftCache, cacheVersion: 'ordering-proof'));
 $left->singleton(abstract: OrderingArtifactDependency::class, concrete: OrderingArtifactDependency::class);
@@ -150,4 +150,4 @@ assertSame(
     message : 'Compiled artifact metadata ordering must stay deterministic across equivalent registration orderings.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

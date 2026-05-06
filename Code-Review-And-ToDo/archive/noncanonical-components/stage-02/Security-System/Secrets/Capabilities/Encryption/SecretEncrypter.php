@@ -10,11 +10,12 @@ final readonly class SecretEncrypter
 {
     public function __construct(
         private string $encryptionKey,
-    ) {}
+    ) {
+    }
 
-    public function encrypt(string $value) : string
+    public function encrypt(string $value): string
     {
-        $iv        = random_bytes(16);
+        $iv = random_bytes(16);
         $encrypted = openssl_encrypt(
             data       : $value,
             cipher_algo: 'aes-256-gcm',
@@ -28,10 +29,10 @@ final readonly class SecretEncrypter
             throw new RuntimeException('Secret encryption failed.');
         }
 
-        return base64_encode($iv . $tag . $encrypted);
+        return base64_encode($iv.$tag.$encrypted);
     }
 
-    public function decrypt(string $value) : string
+    public function decrypt(string $value): string
     {
         $data = base64_decode($value, strict: true);
 
@@ -39,8 +40,8 @@ final readonly class SecretEncrypter
             throw new RuntimeException('Encrypted secret payload is invalid.');
         }
 
-        $iv        = substr($data, 0, 16);
-        $tag       = substr($data, 16, 16);
+        $iv = substr($data, 0, 16);
+        $tag = substr($data, 16, 16);
         $encrypted = substr($data, 32);
 
         $decrypted = openssl_decrypt(

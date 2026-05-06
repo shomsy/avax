@@ -12,5 +12,6 @@ final readonly class VerifyFederationDomainData
         public string $connectionId,
         #[SensitiveParameter]
         public string $verificationToken,
-    ) {}
+    ) {
+    }
 }

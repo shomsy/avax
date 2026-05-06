@@ -14,10 +14,12 @@ use Throwable;
  */
 final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
 {
-    public function __construct(private string $keyRingPath) {}
+    public function __construct(private string $keyRingPath)
+    {
+    }
 
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
     public function encode(array $claims): string
     {
@@ -49,13 +51,13 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
     private function readConfiguration(): array
     {
         if (! is_file(filename: $this->keyRingPath) || ! is_readable(filename: $this->keyRingPath)) {
-            throw new InvalidArgumentException(message: 'Key ring file is not readable: ' . $this->keyRingPath);
+            throw new InvalidArgumentException(message: 'Key ring file is not readable: '.$this->keyRingPath);
         }
 
         $json = file_get_contents(filename: $this->keyRingPath);
 
         if ($json === false) {
-            throw new InvalidArgumentException(message: 'Key ring file could not be read: ' . $this->keyRingPath);
+            throw new InvalidArgumentException(message: 'Key ring file could not be read: '.$this->keyRingPath);
         }
 
         try {
@@ -92,7 +94,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
 
         $secret = trim(string: (string) ($candidate['secret'] ?? ''));
         $algorithm = trim(string: (string) ($candidate['algorithm'] ?? 'HS256'));
-        $kid    = trim(string: (string) ($candidate['kid'] ?? ''));
+        $kid = trim(string: (string) ($candidate['kid'] ?? ''));
 
         if ($secret === '') {
             throw new InvalidArgumentException(message: sprintf('Key ring %s secret cannot be empty.', $label));
@@ -101,12 +103,12 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
         return [
             'secret' => $secret,
             'algorithm' => $algorithm,
-            'kid'    => $kid !== '' ? $kid : null,
+            'kid' => $kid !== '' ? $kid : null,
         ];
     }
 
     /**
-     * @param array{secret:string, algorithm:string, kid:string|null} $configuration
+     * @param  array{secret:string, algorithm:string, kid:string|null}  $configuration
      */
     private function createCodec(array $configuration): TokenCodecInterface
     {

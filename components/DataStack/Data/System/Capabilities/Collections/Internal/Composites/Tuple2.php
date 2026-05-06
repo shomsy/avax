@@ -12,7 +12,8 @@ final readonly class Tuple2
     public function __construct(
         private mixed $first,
         private mixed $second,
-    ) {}
+    ) {
+    }
 
     public function first(): mixed
     {

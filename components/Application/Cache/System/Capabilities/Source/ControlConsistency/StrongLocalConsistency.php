@@ -6,12 +6,12 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Source\ControlCo
 
 final readonly class StrongLocalConsistency
 {
-    public function isStrongConsistencyGuaranteed() : bool
+    public function isStrongConsistencyGuaranteed(): bool
     {
         return true;
     }
 
-    public function requiresSynchronousWrite() : bool
+    public function requiresSynchronousWrite(): bool
     {
         return true;
     }

@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\PreCommit;
+
 final class ProcessRunner
 {
     /**
-     * @param list<string> $command
+     * @param  list<string>  $command
      */
     public function run(array $command, ?string $workingDirectory = null): ProcessResult
     {
@@ -23,8 +24,8 @@ final class ProcessRunner
             cwd: $workingDirectory,
         );
 
-        if (!is_resource($process)) {
-            throw new HookInstallerException('Failed to start process: ' . implode(' ', $command));
+        if (! is_resource($process)) {
+            throw new HookInstallerException('Failed to start process: '.implode(' ', $command));
         }
 
         fclose($pipes[0]);

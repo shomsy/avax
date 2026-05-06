@@ -12,11 +12,12 @@ final readonly class BulkUpsert
 {
     public function __construct(
         private GrammarInterface $grammar,
-        private string           $table,
-        private array            $columns,
-        private OnConflict       $onConflict,
-        private int              $batchSize = 100,
-    ) {}
+        private string $table,
+        private array $columns,
+        private OnConflict $onConflict,
+        private int $batchSize = 100,
+    ) {
+    }
 
     /**
      * @return list<array{sql: string, bindings: list<mixed>}>

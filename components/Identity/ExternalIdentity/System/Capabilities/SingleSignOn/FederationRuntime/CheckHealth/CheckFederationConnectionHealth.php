@@ -15,7 +15,9 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\F
 
 final readonly class CheckFederationConnectionHealth
 {
-    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private FederationHealthCheckInterface $federationHealthCheck, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private FederationHealthCheckInterface $federationHealthCheck, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws FederationFailed
@@ -29,15 +31,15 @@ final readonly class CheckFederationConnectionHealth
         }
 
         $federationConnectionHealth = $this->federationHealthCheck->checkHealth(connection: $connection);
-        $federationConnection       = $connection->withHealth(checkedAt: $this->clock->now(), health: $federationConnectionHealth);
+        $federationConnection = $connection->withHealth(checkedAt: $this->clock->now(), health: $federationConnectionHealth);
         $this->federationConnectionStore->save(connection: $federationConnection);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.health.checked',
             occurredAt: $this->clock->now(),
             context   : [
-                            'connection_id' => $federationConnection->connectionId,
-                            'tenant'        => $federationConnection->tenantSlug,
-                            'health'        => $federationConnectionHealth->value,
+                'connection_id' => $federationConnection->connectionId,
+                'tenant' => $federationConnection->tenantSlug,
+                'health' => $federationConnectionHealth->value,
             ],
         ));
 

@@ -17,25 +17,25 @@ final class MigrateDataLayerToPersistence
 {
     private const array MIGRATIONS
         = [
-        'Avax\DataLayer\AccessPersistentData\AccessPersistentData' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
-        'Avax\DataLayer\AccessPersistentData\PersistentDataFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
-        'Avax\DataLayer\AccessPersistentData\PersistentDataRequest' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
-        'Avax\DataLayer\AccessPersistentData\PersistentDataResult' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
+            'Avax\DataLayer\AccessPersistentData\AccessPersistentData' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
+            'Avax\DataLayer\AccessPersistentData\PersistentDataFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
+            'Avax\DataLayer\AccessPersistentData\PersistentDataRequest' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
+            'Avax\DataLayer\AccessPersistentData\PersistentDataResult' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
 
-        'Avax\DataLayer\CommitDataChanges\CommitDataChanges'     => 'Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork',
-        'Avax\DataLayer\CommitDataChanges\DataTransactionFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
-        'Avax\DataLayer\CommitDataChanges\DataTransactionPolicy' => 'Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface',
+            'Avax\DataLayer\CommitDataChanges\CommitDataChanges' => 'Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWork',
+            'Avax\DataLayer\CommitDataChanges\DataTransactionFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
+            'Avax\DataLayer\CommitDataChanges\DataTransactionPolicy' => 'Avax\Components\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface',
 
-        'Avax\DataLayer\ConfigureDataLayer\DataLayerConfig'          => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
-        'Avax\DataLayer\ConfigureDataLayer\DataLayerConfigurationFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
-        'Avax\DataLayer\ConfigureDataLayer\RegisterDataLayerRuntime' => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
-        'Avax\DataLayer\ConfigureDataLayer\ResolveDataLayerRuntime'  => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
+            'Avax\DataLayer\ConfigureDataLayer\DataLayerConfig' => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
+            'Avax\DataLayer\ConfigureDataLayer\DataLayerConfigurationFailure' => 'Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure',
+            'Avax\DataLayer\ConfigureDataLayer\RegisterDataLayerRuntime' => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
+            'Avax\DataLayer\ConfigureDataLayer\ResolveDataLayerRuntime' => 'Avax\Components\Persistence\System\Configuration\PersistenceBuilder',
 
-        'Avax\DataLayer\DataLayer' => 'Avax\Components\Persistence\System\PublicSurface\Persistence',
+            'Avax\DataLayer\DataLayer' => 'Avax\Components\Persistence\System\PublicSurface\Persistence',
 
-        // Saga references
-        'Avax\DataLayer\ProtectStoredData\TenantBoundary' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
-    ];
+            // Saga references
+            'Avax\DataLayer\ProtectStoredData\TenantBoundary' => 'Avax\Components\Persistence\System\Capabilities\Repositories\Repository',
+        ];
 
     public function migrate(string $rootPath = 'components'): array
     {
@@ -65,8 +65,8 @@ final class MigrateDataLayerToPersistence
 
             foreach (self::MIGRATIONS as $old => $new) {
                 $content = str_replace(
-                    'use ' . $old . ';',
-                    'use ' . $new . ';',
+                    'use '.$old.';',
+                    'use '.$new.';',
                     $content,
                 );
             }
@@ -76,15 +76,15 @@ final class MigrateDataLayerToPersistence
                 if (file_put_contents($filePath, $content) !== false) {
                     $changed[] = $filePath;
                 } else {
-                    $errors[] = $filePath . ' (write failed)';
+                    $errors[] = $filePath.' (write failed)';
                 }
             }
         }
 
         return [
             'changed' => count($changed),
-            'files'   => $changed,
-            'errors'  => count($errors),
+            'files' => $changed,
+            'errors' => count($errors),
             'error_details' => $errors,
         ];
     }
@@ -92,7 +92,7 @@ final class MigrateDataLayerToPersistence
 
 if (PHP_SAPI === 'cli') {
     $migrator = new MigrateDataLayerToPersistence();
-    $results  = $migrator->migrate('components');
+    $results = $migrator->migrate('components');
 
     echo "DataLayer -> Persistence Migration\n";
     echo "======================================\n\n";

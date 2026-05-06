@@ -12,5 +12,6 @@ final readonly class ValueConversionContext
         public DataField $dataField,
         public ?object $parent = null,
         public ?string $propertyName = null,
-    ) {}
+    ) {
+    }
 }

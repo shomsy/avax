@@ -33,34 +33,33 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     private string $method = 'GET';
 
     public function __construct(
-        private array            $serverParams = [],
-        private array            $cookieParams = [],
-        private array            $queryParams = [],
-        private array            $uploadedFiles = [],
-        private ?array           $parsedBody = null,
-        string              $method = 'GET',
+        private array $serverParams = [],
+        private array $cookieParams = [],
+        private array $queryParams = [],
+        private array $uploadedFiles = [],
+        private ?array $parsedBody = null,
+        string $method = 'GET',
         UriInterface|string|null $uri = null,
-        private string           $protocolVersion = '1.1',
-        array               $headers = [],
-        ?StreamInterface         $stream = null,
-    )
-    {
-        $this->method        = strtoupper($method);
+        private string $protocolVersion = '1.1',
+        array $headers = [],
+        ?StreamInterface $stream = null,
+    ) {
+        $this->method = strtoupper($method);
         $this->stream = $stream ?? Utils::streamFor('');
-        $this->headers       = $this->normalizeHeaders($headers);
+        $this->headers = $this->normalizeHeaders($headers);
 
         if ($uri !== null) {
             $this->uri = is_string($uri) ? $this->createUriFromString($uri) : $uri;
         }
     }
 
-    private function normalizeHeaders(array $headers) : array
+    private function normalizeHeaders(array $headers): array
     {
         $normalized = [];
         foreach ($headers as $name => $value) {
-            $values                                         = is_array(value: $value) ? $value : [$value];
+            $values = is_array(value: $value) ? $value : [$value];
             $normalized[strtolower(string: (string) $name)] = array_map(
-                callback: static fn (mixed $headerValue) : string => (string) $headerValue,
+                callback: static fn (mixed $headerValue): string => (string) $headerValue,
                 array   : array_values(array: $values),
             );
         }
@@ -68,7 +67,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $normalized;
     }
 
-    private function createUriFromString(string $uri) : UriInterface
+    private function createUriFromString(string $uri): UriInterface
     {
         $parts = parse_url($uri);
 
@@ -81,97 +80,98 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 private string $query,
                 private string $fragment,
                 private string $user,
-            ) {}
+            ) {
+            }
 
-            public function getScheme() : string
+            public function getScheme(): string
             {
                 return $this->scheme;
             }
 
-            public function getAuthority() : string
+            public function getAuthority(): string
             {
                 $authority = $this->host;
                 if ($this->port !== null) {
-                    $authority .= ':' . $this->port;
+                    $authority .= ':'.$this->port;
                 }
 
                 return $authority;
             }
 
-            public function getUserInfo() : string
+            public function getUserInfo(): string
             {
                 return $this->user;
             }
 
-            public function getHost() : string
+            public function getHost(): string
             {
                 return $this->host;
             }
 
-            public function getPort() : ?int
+            public function getPort(): ?int
             {
                 return $this->port;
             }
 
-            public function getPath() : string
+            public function getPath(): string
             {
                 return $this->path;
             }
 
-            public function getQuery() : string
+            public function getQuery(): string
             {
                 return $this->query;
             }
 
-            public function getFragment() : string
+            public function getFragment(): string
             {
                 return $this->fragment;
             }
 
-            public function withScheme($scheme) : self
+            public function withScheme($scheme): self
             {
                 return new self($scheme, $this->host, $this->port, $this->path, $this->query, $this->fragment, $this->user);
             }
 
-            public function withUserInfo($user, $password = null) : self
+            public function withUserInfo($user, $password = null): self
             {
                 return new self($this->scheme, $this->host, $this->port, $this->path, $this->query, $this->fragment, $user);
             }
 
-            public function withHost($host) : self
+            public function withHost($host): self
             {
                 return new self($this->scheme, $host, $this->port, $this->path, $this->query, $this->fragment, $this->user);
             }
 
-            public function withPort($port) : self
+            public function withPort($port): self
             {
                 return new self($this->scheme, $this->host, $port, $this->path, $this->query, $this->fragment, $this->user);
             }
 
-            public function withPath($path) : self
+            public function withPath($path): self
             {
                 return new self($this->scheme, $this->host, $this->port, $path, $this->query, $this->fragment, $this->user);
             }
 
-            public function withQuery($query) : self
+            public function withQuery($query): self
             {
                 return new self($this->scheme, $this->host, $this->port, $this->path, $query, $this->fragment, $this->user);
             }
 
-            public function withFragment($fragment) : self
+            public function withFragment($fragment): self
             {
                 return new self($this->scheme, $this->host, $this->port, $this->path, $this->query, $fragment, $this->user);
             }
 
-            public function __toString() : string
+            public function __toString(): string
             {
-                $uri = $this->scheme . '://' . $this->getAuthority() . $this->path;
+                $uri = $this->scheme.'://'.$this->getAuthority().$this->path;
                 if ($this->query !== '') {
-                    $uri .= '?' . $this->query;
+                    $uri .= '?'.$this->query;
                 }
 
                 if ($this->fragment !== '') {
-                    $uri .= '#' . $this->fragment;
+                    $uri .= '#'.$this->fragment;
                 }
 
                 return $uri;
@@ -182,7 +182,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     /**
      * Create a ServerRequest from PHP superglobals.
      */
-    public static function fromGlobals() : self
+    public static function fromGlobals(): self
     {
         return new self(
             serverParams : $_SERVER,
@@ -196,7 +196,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         );
     }
 
-    private static function normalizeFiles(array $files) : array
+    private static function normalizeFiles(array $files): array
     {
         $normalized = [];
         foreach ($files as $key => $value) {
@@ -206,13 +206,13 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $normalized;
     }
 
-    private static function createUploadedFile(array $file) : UploadedFileInterface
+    private static function createUploadedFile(array $file): UploadedFileInterface
     {
-        $tmpName         = $file['tmp_name'] ?? '';
-        $streamOrFile    = is_string(value: $tmpName) && $tmpName !== ''
+        $tmpName = $file['tmp_name'] ?? '';
+        $streamOrFile = is_string(value: $tmpName) && $tmpName !== ''
             ? $tmpName
             : Utils::streamFor('');
-        $clientFilename  = isset($file['name']) && is_string(value: $file['name']) && $file['name'] !== ''
+        $clientFilename = isset($file['name']) && is_string(value: $file['name']) && $file['name'] !== ''
             ? $file['name']
             : null;
         $clientMediaType = isset($file['type']) && is_string(value: $file['type']) && $file['type'] !== ''
@@ -230,12 +230,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     // PSR-7 RequestInterface methods
 
-    public function getProtocolVersion() : string
+    public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
     }
 
-    public function withProtocolVersion($version) : self
+    public function withProtocolVersion($version): self
     {
         $new = clone $this;
         $new->protocolVersion = $version;
@@ -243,27 +243,27 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getHeaders() : array
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    public function hasHeader($name) : bool
+    public function hasHeader($name): bool
     {
         return isset($this->headers[strtolower(string: (string) $name)]);
     }
 
-    public function getHeaderLine($name) : string
+    public function getHeaderLine($name): string
     {
         return implode(', ', $this->getHeader($name));
     }
 
-    public function getHeader($name) : array
+    public function getHeader($name): array
     {
         return $this->headers[strtolower(string: (string) $name)] ?? [];
     }
 
-    public function withHeader($name, $value) : self
+    public function withHeader($name, $value): self
     {
         $new = clone $this;
         $new->headers[strtolower(string: (string) $name)] = is_array(value: $value) ? $value : [$value];
@@ -271,9 +271,9 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function withAddedHeader($name, $value) : self
+    public function withAddedHeader($name, $value): self
     {
-        $new      = clone $this;
+        $new = clone $this;
         $existing = $this->getHeader($name);
         $new->headers[strtolower(string: (string) $name)] = array_merge(
             $existing,
@@ -283,7 +283,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function withoutHeader($name) : self
+    public function withoutHeader($name): self
     {
         $new = clone $this;
         unset($new->headers[strtolower(string: (string) $name)]);
@@ -291,7 +291,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getBody() : StreamInterface
+    public function getBody(): StreamInterface
     {
         if ($this->stream instanceof StreamInterface) {
             return $this->stream;
@@ -300,7 +300,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return Utils::streamFor($this->stream ?? '');
     }
 
-    public function withBody(StreamInterface $body) : self
+    public function withBody(StreamInterface $body): self
     {
         $new = clone $this;
         $new->stream = $body;
@@ -309,17 +309,17 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     }
 
     // PSR-7 ServerRequestInterface methods
-    public function getServerParams() : array
+    public function getServerParams(): array
     {
         return $this->serverParams;
     }
 
-    public function getCookieParams() : array
+    public function getCookieParams(): array
     {
         return $this->cookieParams;
     }
 
-    public function withCookieParams(array $cookies) : self
+    public function withCookieParams(array $cookies): self
     {
         $new = clone $this;
         $new->cookieParams = $cookies;
@@ -327,12 +327,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getQueryParams() : array
+    public function getQueryParams(): array
     {
         return $this->queryParams;
     }
 
-    public function withQueryParams(array $query) : self
+    public function withQueryParams(array $query): self
     {
         $new = clone $this;
         $new->queryParams = $query;
@@ -340,12 +340,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getUploadedFiles() : array
+    public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
     }
 
-    public function withUploadedFiles(array $uploadedFiles) : self
+    public function withUploadedFiles(array $uploadedFiles): self
     {
         $new = clone $this;
         $new->uploadedFiles = $uploadedFiles;
@@ -353,12 +353,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getParsedBody() : ?array
+    public function getParsedBody(): ?array
     {
         return $this->parsedBody;
     }
 
-    public function withParsedBody($data) : self
+    public function withParsedBody($data): self
     {
         $new = clone $this;
         $new->parsedBody = $data;
@@ -366,17 +366,17 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getAttributes() : array
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    public function getAttribute($name, $default = null) : mixed
+    public function getAttribute($name, $default = null): mixed
     {
         return $this->attributes[$name] ?? $default;
     }
 
-    public function withAttribute($name, $value) : self
+    public function withAttribute($name, $value): self
     {
         $new = clone $this;
         $new->attributes[$name] = $value;
@@ -384,7 +384,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function withoutAttribute($name) : self
+    public function withoutAttribute($name): self
     {
         $new = clone $this;
         unset($new->attributes[$name]);
@@ -392,12 +392,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getRequestTarget() : string
+    public function getRequestTarget(): string
     {
         return $this->requestTarget ?? $this->uri?->getPath() ?? '/';
     }
 
-    public function withRequestTarget($requestTarget) : self
+    public function withRequestTarget($requestTarget): self
     {
         $new = clone $this;
         $new->requestTarget = $requestTarget;
@@ -405,12 +405,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getMethod() : string
+    public function getMethod(): string
     {
         return $this->method;
     }
 
-    public function withMethod($method) : self
+    public function withMethod($method): self
     {
         $new = clone $this;
         $new->method = strtoupper($method);
@@ -418,12 +418,12 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getUri() : UriInterface
+    public function getUri(): UriInterface
     {
         return $this->uri ?? $this->createUriFromString('');
     }
 
-    public function withUri(UriInterface $uri, $preserveHost = false) : self
+    public function withUri(UriInterface $uri, $preserveHost = false): self
     {
         $new = clone $this;
         $new->uri = $uri;
@@ -432,7 +432,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
     }
 
     // RequestInterface (Avax) methods
-    public function input(string $key, mixed $default = null) : mixed
+    public function input(string $key, mixed $default = null): mixed
     {
         $body = $this->parsedBody ?? [];
         $query = $this->queryParams;
@@ -440,7 +440,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $body[$key] ?? $query[$key] ?? $default;
     }
 
-    public function all() : array
+    public function all(): array
     {
         return array_merge($this->queryParams, $this->parsedBody ?? []);
     }

@@ -9,9 +9,9 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\M
  */
 enum MfaChallengeFailure: string
 {
-    case INVALID   = 'invalid';
-    case EXPIRED   = 'expired';
-    case LOCKED    = 'locked';
+    case INVALID = 'invalid';
+    case EXPIRED = 'expired';
+    case LOCKED = 'locked';
     case NOT_FOUND = 'not_found';
     case NOT_ENABLED = 'not_enabled';
 }

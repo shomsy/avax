@@ -12,7 +12,7 @@ final class SQLiteGrammarCompileTest extends TestCase
 {
     private SQLiteGrammar $grammar;
 
-    public function testCompileSelectBasic() : void
+    public function test_compile_select_basic(): void
     {
         $state = new QueryState();
         $state = $state->withFrom(table: 'users');
@@ -23,7 +23,7 @@ final class SQLiteGrammarCompileTest extends TestCase
         $this->assertStringContainsString('users', $sql);
     }
 
-    public function testCompileSelectWithColumns() : void
+    public function test_compile_select_with_columns(): void
     {
         $state = new QueryState();
         $state = $state->withFrom(table: 'users')
@@ -36,7 +36,7 @@ final class SQLiteGrammarCompileTest extends TestCase
         $this->assertStringContainsString('name', $sql);
     }
 
-    public function testCompileInsert() : void
+    public function test_compile_insert(): void
     {
         $state = new QueryState();
         $state = $state->withFrom(table: 'users')
@@ -48,7 +48,7 @@ final class SQLiteGrammarCompileTest extends TestCase
         $this->assertStringContainsString('users', $sql);
     }
 
-    public function testCompileUpdate() : void
+    public function test_compile_update(): void
     {
         $state = new QueryState();
         $state = $state->withFrom(table: 'users')
@@ -60,7 +60,7 @@ final class SQLiteGrammarCompileTest extends TestCase
         $this->assertStringContainsString('users', $sql);
     }
 
-    public function testCompileDelete() : void
+    public function test_compile_delete(): void
     {
         $state = new QueryState();
         $state = $state->withFrom(table: 'users');
@@ -71,7 +71,7 @@ final class SQLiteGrammarCompileTest extends TestCase
         $this->assertStringContainsString('users', $sql);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->grammar = new SQLiteGrammar();

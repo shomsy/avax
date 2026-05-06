@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Request\System\Capabilities\Files;
 
 final class NormalizeUploadedFiles
 {
-    public function normalize(array $f) : array
+    public function normalize(array $f): array
     {
         $norm = [];
         foreach ($f as $k => $v) {

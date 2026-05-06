@@ -9,7 +9,9 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\DrainAud
 
 final readonly class ExportAuditEvents
 {
-    public function __construct(private DrainAuditLogInterface $drainAuditLog, private AuditExporterInterface $auditExporter) {}
+    public function __construct(private DrainAuditLogInterface $drainAuditLog, private AuditExporterInterface $auditExporter)
+    {
+    }
 
     public function execute(): int
     {

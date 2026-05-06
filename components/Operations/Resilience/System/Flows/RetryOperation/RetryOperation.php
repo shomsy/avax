@@ -11,7 +11,7 @@ use Closure;
 
 final readonly class RetryOperation
 {
-    public function retry(Closure $operation, int $attempts = 3, int $backoffMs = 200) : RetryResult
+    public function retry(Closure $operation, int $attempts = 3, int $backoffMs = 200): RetryResult
     {
         return new RetryExecutor(
             operation: $operation,

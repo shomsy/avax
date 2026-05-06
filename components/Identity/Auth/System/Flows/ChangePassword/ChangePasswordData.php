@@ -18,5 +18,6 @@ final readonly class ChangePasswordData
         public string $currentPassword,
         #[SensitiveParameter]
         public string $newPassword,
-    ) {}
+    ) {
+    }
 }

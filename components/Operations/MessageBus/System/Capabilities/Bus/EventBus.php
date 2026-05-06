@@ -11,7 +11,7 @@ final class EventBus
 
     public function register(string $eventClass, object $handler): void
     {
-        if (!isset($this->handlers[$eventClass])) {
+        if (! isset($this->handlers[$eventClass])) {
             $this->handlers[$eventClass] = [];
         }
 

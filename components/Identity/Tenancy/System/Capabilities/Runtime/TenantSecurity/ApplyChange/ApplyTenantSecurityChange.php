@@ -16,7 +16,9 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class ApplyTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws TenantSecurityFailed
@@ -54,9 +56,9 @@ final readonly class ApplyTenantSecurityChange
             name      : 'auth.tenant_security.change.applied',
             occurredAt: $this->clock->now(),
             context   : [
-                            'change_id'       => $tenantSecurityChangeRequest->changeId,
-                            'tenant'          => $tenantSecurityChangeRequest->tenantSlug,
-                            'rollout_version' => $tenantSecurityChangeRequest->after->rolloutVersion,
+                'change_id' => $tenantSecurityChangeRequest->changeId,
+                'tenant' => $tenantSecurityChangeRequest->tenantSlug,
+                'rollout_version' => $tenantSecurityChangeRequest->after->rolloutVersion,
             ],
         ));
 

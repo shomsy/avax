@@ -38,10 +38,10 @@ final class ApplicationBuilder
     ) {
         $this->registerConsoleCommand(
             name   : 'runtime:doctor',
-            command: static function (array $args) : string {
+            command: static function (array $args): string {
                 $workerMode = in_array('--worker', $args, true);
-                $runDoctor  = new RunDoctor();
-                $exitCode   = $runDoctor->handle(workerMode: $workerMode);
+                $runDoctor = new RunDoctor();
+                $exitCode = $runDoctor->handle(workerMode: $workerMode);
 
                 return $exitCode === 0 ? "Runtime doctor passed\n" : "Runtime doctor failed\n";
             },
@@ -70,7 +70,7 @@ final class ApplicationBuilder
 
     public function withEnvironment(EnvironmentName|string $environment): self
     {
-        $clone              = clone $this;
+        $clone = clone $this;
         $clone->environmentName = $environment instanceof EnvironmentName
             ? $environment
             : new EnvironmentName(value: $environment);
@@ -80,7 +80,7 @@ final class ApplicationBuilder
 
     public function withClock(Clock $clock): self
     {
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->clock = $clock;
 
         return $clone;
@@ -88,18 +88,18 @@ final class ApplicationBuilder
 
     public function withRuntimeName(string $runtimeName): self
     {
-        $clone              = clone $this;
+        $clone = clone $this;
         $clone->runtimeName = trim(string: $runtimeName);
 
         return $clone;
     }
 
     /**
-     * @param callable(RuntimeRequest, RuntimeInterface):RuntimeResponse|ConfiguredRoutesHttpHandler $httpHandler
+     * @param  callable(RuntimeRequest, RuntimeInterface):RuntimeResponse|ConfiguredRoutesHttpHandler  $httpHandler
      */
-    public function withHttpHandler(callable|ConfiguredRoutesHttpHandler $httpHandler) : self
+    public function withHttpHandler(callable|ConfiguredRoutesHttpHandler $httpHandler): self
     {
-        $clone              = clone $this;
+        $clone = clone $this;
         $clone->httpHandler = $httpHandler instanceof ConfiguredRoutesHttpHandler
             ? $httpHandler->__invoke(...)
             : Closure::fromCallable($httpHandler);
@@ -133,15 +133,15 @@ final class ApplicationBuilder
 
     public function registerConsoleCommand(string $name, callable $command): self
     {
-        $clone                         = clone $this;
+        $clone = clone $this;
         $clone->consoleCommands[$name] = Closure::fromCallable($command);
 
         return $clone;
     }
 
-    public function registerComponentProvider(ComponentProviderInterface $componentProvider) : self
+    public function registerComponentProvider(ComponentProviderInterface $componentProvider): self
     {
-        $clone                     = clone $this;
+        $clone = clone $this;
         $clone->componentProviders = [...$clone->componentProviders, $componentProvider];
 
         return $clone;

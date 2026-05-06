@@ -8,8 +8,7 @@ class Metric
 {
     public function __construct(
         public readonly string $name,
-        public readonly array  $tags = [],
-    )
-    {
+        public readonly array $tags = [],
+    ) {
     }
 }

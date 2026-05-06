@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Filesystem\System\Capabilities\Paths;
 
 class PathHasPermissions
 {
-    public function execute(string $path, int $permissions) : bool
+    public function execute(string $path, int $permissions): bool
     {
         if (! file_exists(filename: $path)) {
             return false;

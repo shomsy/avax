@@ -11,7 +11,7 @@ interface ReadApiDescriptions
 {
     public function registerEndpoint(EndpointContract $endpoint): void;
 
-    public function findEndpoint(string $path, string $method): EndpointContract|null;
+    public function findEndpoint(string $path, string $method): ?EndpointContract;
 
     /**
      * @return list<EndpointContract>

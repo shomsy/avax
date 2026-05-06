@@ -9,6 +9,7 @@ use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncrypterIn
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptionKey;
 use Avax\Components\Identity\Security\System\Capabilities\Encryption\KeyResolver;
 use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed;
+
 use function is_string;
 
 /**
@@ -21,13 +22,13 @@ final readonly class DecryptValue
     public function __construct(
         private EncrypterInterface $encrypter,
         private KeyResolver $keyResolver,
-    ) {}
+    ) {
+    }
 
     /**
      * Execute the decryption flow.
      *
-     * @param EncryptedPayload|string $payload The encrypted payload or serialized string
-     *
+     * @param  EncryptedPayload|string  $payload  The encrypted payload or serialized string
      * @return string The decrypted plaintext
      *
      * @throws DecryptionFailed if decryption fails or payload has been tampered with

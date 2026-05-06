@@ -24,5 +24,5 @@ interface RouterInterface
 
     public function head(string $path, mixed $action): Registrar;
 
-    public function dispatch(RequestInterface $request) : ResponseInterface;
+    public function dispatch(RequestInterface $request): ResponseInterface;
 }

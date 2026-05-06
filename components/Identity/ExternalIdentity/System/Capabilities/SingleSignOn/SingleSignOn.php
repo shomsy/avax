@@ -29,16 +29,17 @@ use SensitiveParameter;
 final readonly class SingleSignOn
 {
     public function __construct(
-        private ?RegisterFederationConnection       $registerFederationConnection,
-        private ?ReadFederationConnections          $readFederationConnections,
-        private ?VerifyFederationDomain             $verifyFederationDomain,
-        private ?SyncFederationMetadata             $syncFederationMetadata,
-        private ?CheckFederationConnectionHealth    $checkFederationConnectionHealth,
+        private ?RegisterFederationConnection $registerFederationConnection,
+        private ?ReadFederationConnections $readFederationConnections,
+        private ?VerifyFederationDomain $verifyFederationDomain,
+        private ?SyncFederationMetadata $syncFederationMetadata,
+        private ?CheckFederationConnectionHealth $checkFederationConnectionHealth,
         private ?EvaluateFederationBreakGlassBypass $evaluateFederationBreakGlassBypass,
-        private ?DiscoverFederationConnection       $discoverFederationConnection,
+        private ?DiscoverFederationConnection $discoverFederationConnection,
         private ?StartFederatedLogin $startFederatedLogin,
         private ?CompleteFederatedLogin $completeFederatedLogin,
-    ) {}
+    ) {
+    }
 
     public function isConfigured(): bool
     {
@@ -56,7 +57,7 @@ final readonly class SingleSignOn
     /**
      * @throws RandomException
      */
-    public function registerConnection(RegisterFederationConnectionData $registerFederationConnectionData) : FederationConnection
+    public function registerConnection(RegisterFederationConnectionData $registerFederationConnectionData): FederationConnection
     {
         return $this->registerConnectionOrFail()->execute(data: $registerFederationConnectionData);
     }
@@ -79,7 +80,7 @@ final readonly class SingleSignOn
         return $this->readFederationConnections ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'read_connections');
     }
 
-    public function verifyDomain(VerifyFederationDomainData $verifyFederationDomainData) : FederationConnection
+    public function verifyDomain(VerifyFederationDomainData $verifyFederationDomainData): FederationConnection
     {
         return $this->verifyDomainOrFail()->execute(data: $verifyFederationDomainData);
     }
@@ -132,7 +133,7 @@ final readonly class SingleSignOn
         return $this->discoverFederationConnection ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'discover_connection');
     }
 
-    public function startFederatedLogin(StartFederatedLoginData $startFederatedLoginData) : StartedFederatedLogin
+    public function startFederatedLogin(StartFederatedLoginData $startFederatedLoginData): StartedFederatedLogin
     {
         return $this->startFederatedLoginOrFail()->execute(data: $startFederatedLoginData);
     }
@@ -145,7 +146,7 @@ final readonly class SingleSignOn
     /**
      * @throws RandomException
      */
-    public function completeFederatedLogin(CompleteFederatedLoginData $completeFederatedLoginData) : AuthenticationResult
+    public function completeFederatedLogin(CompleteFederatedLoginData $completeFederatedLoginData): AuthenticationResult
     {
         return $this->completeFederatedLoginOrFail()->execute(data: $completeFederatedLoginData);
     }

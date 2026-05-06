@@ -13,17 +13,17 @@ final readonly class CatchUnhandledExceptions
 {
     public function __construct(
         private ReportExceptionToLogger $reportExceptionToLogger,
-        private CreateJsonResponse      $createJsonResponse,
+        private CreateJsonResponse $createJsonResponse,
     ) {
     }
 
-    public function handle(Exception $exception, RequestInterface $request) : ResponseInterface
+    public function handle(Exception $exception, RequestInterface $request): ResponseInterface
     {
         $this->reportExceptionToLogger->report($exception, $request);
 
         return $this->createJsonResponse->execute([
-                                                   'error'   => 'Internal Server Error',
-                                                   'message' => $exception->getMessage(),
+            'error' => 'Internal Server Error',
+            'message' => $exception->getMessage(),
         ], 500);
     }
 }

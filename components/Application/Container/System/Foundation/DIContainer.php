@@ -120,7 +120,7 @@ final readonly class DIContainer implements ContainerInterface
     }
 
     /**
-     * @param array<int, string|RegisterDependency> $providers
+     * @param  array<int, string|RegisterDependency>  $providers
      */
     public function bootProviders(array $providers): void
     {
@@ -128,8 +128,7 @@ final readonly class DIContainer implements ContainerInterface
     }
 
     /**
-     * @param list<string> $serviceIds
-     *
+     * @param  list<string>  $serviceIds
      * @return list<string>
      *
      * @throws ReflectionException
@@ -284,7 +283,7 @@ final readonly class DIContainer implements ContainerInterface
         return new OpenScope(resolver: $this->resolveDependency);
     }
 
-    public function closeScope(?string $kind = null) : void
+    public function closeScope(?string $kind = null): void
     {
         $this->closeScopeFlow()->close(kind: $kind);
     }
@@ -524,16 +523,16 @@ final readonly class DIContainer implements ContainerInterface
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     private function sliceView(array $context): ContainerInterface
     {
         return match (SliceContext::category(slice: SliceContext::from(context: $context))) {
-            'flow'          => new FlowSliceView(context: $context, base: $this, resolver: $this->resolveDependency),
-            'capability'    => new CapabilitySliceView(context: $context, base: $this, resolver: $this->resolveDependency),
+            'flow' => new FlowSliceView(context: $context, base: $this, resolver: $this->resolveDependency),
+            'capability' => new CapabilitySliceView(context: $context, base: $this, resolver: $this->resolveDependency),
             'configuration' => new ConfigurationSliceView(context: $context, base: $this, resolver: $this->resolveDependency),
-            'foundation'    => new FoundationSliceView(context: $context, base: $this, resolver: $this->resolveDependency),
-            default         => new ContextContainer(base: $this, resolver: $this->resolveDependency, context: $context),
+            'foundation' => new FoundationSliceView(context: $context, base: $this, resolver: $this->resolveDependency),
+            default => new ContextContainer(base: $this, resolver: $this->resolveDependency, context: $context),
         };
     }
 }

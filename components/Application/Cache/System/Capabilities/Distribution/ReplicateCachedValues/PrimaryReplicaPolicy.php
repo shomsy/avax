@@ -13,13 +13,13 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Rep
 final readonly class PrimaryReplicaPolicy
 {
     /**
-     * @param bool              $readFromReplicaOnMiss  When true, attempt to read from replicas on primary miss
-     * @param bool              $asyncReplication       When true, use asynchronous replication (fire-and-forget)
-     * @param bool              $syncReplication        When true, use synchronous replication (wait for all replicas)
-     * @param bool              $failover               When true, automatically promote a replica on primary failure
-     * @param ReplicationPolicy $replicationPolicy      The replication strategy to use
-     * @param int               $failoverTimeoutSeconds Maximum time to wait before triggering failover
-     * @param int               $maxReplicationRetries  Maximum number of replication retry attempts
+     * @param  bool  $readFromReplicaOnMiss  When true, attempt to read from replicas on primary miss
+     * @param  bool  $asyncReplication  When true, use asynchronous replication (fire-and-forget)
+     * @param  bool  $syncReplication  When true, use synchronous replication (wait for all replicas)
+     * @param  bool  $failover  When true, automatically promote a replica on primary failure
+     * @param  ReplicationPolicy  $replicationPolicy  The replication strategy to use
+     * @param  int  $failoverTimeoutSeconds  Maximum time to wait before triggering failover
+     * @param  int  $maxReplicationRetries  Maximum number of replication retry attempts
      */
     public function __construct(
         public bool $readFromReplicaOnMiss = false,
@@ -29,14 +29,15 @@ final readonly class PrimaryReplicaPolicy
         public ReplicationPolicy $replicationPolicy = ReplicationPolicy::SYNCHRONOUS,
         public int $failoverTimeoutSeconds = 30,
         public int $maxReplicationRetries = 3,
-    ) {}
+    ) {
+    }
 
     /**
      * Create a policy with default settings.
      *
      * Default: synchronous replication, no read-from-replica on miss, no automatic failover.
      */
-    public static function default() : self
+    public static function default(): self
     {
         return new self();
     }
@@ -46,7 +47,7 @@ final readonly class PrimaryReplicaPolicy
      *
      * Reads from replicas on primary miss, asynchronous replication.
      */
-    public static function readHeavy() : self
+    public static function readHeavy(): self
     {
         return new self(
             readFromReplicaOnMiss: true,
@@ -62,7 +63,7 @@ final readonly class PrimaryReplicaPolicy
      *
      * Synchronous replication, no read-from-replica on miss.
      */
-    public static function writeHeavy() : self
+    public static function writeHeavy(): self
     {
         return new self(
             readFromReplicaOnMiss: false,
@@ -78,7 +79,7 @@ final readonly class PrimaryReplicaPolicy
      *
      * Automatic failover, read from replicas, quorum replication.
      */
-    public static function highAvailability() : self
+    public static function highAvailability(): self
     {
         return new self(
             readFromReplicaOnMiss : true,
@@ -96,7 +97,7 @@ final readonly class PrimaryReplicaPolicy
      *
      * Asynchronous replication, read from replicas, no automatic failover.
      */
-    public static function eventualConsistency() : self
+    public static function eventualConsistency(): self
     {
         return new self(
             readFromReplicaOnMiss: true,
@@ -112,7 +113,7 @@ final readonly class PrimaryReplicaPolicy
      *
      * Synchronous replication, no read from replicas, no failover.
      */
-    public static function strictConsistency() : self
+    public static function strictConsistency(): self
     {
         return new self(
             readFromReplicaOnMiss: false,
@@ -126,7 +127,7 @@ final readonly class PrimaryReplicaPolicy
     /**
      * Create a policy with automatic failover enabled.
      */
-    public function withFailover(int $timeoutSeconds = 30) : self
+    public function withFailover(int $timeoutSeconds = 30): self
     {
         return new self(
             readFromReplicaOnMiss : $this->readFromReplicaOnMiss,
@@ -142,7 +143,7 @@ final readonly class PrimaryReplicaPolicy
     /**
      * Create a policy with read-from-replica on miss enabled.
      */
-    public function withReadFromReplicaOnMiss() : self
+    public function withReadFromReplicaOnMiss(): self
     {
         return new self(
             readFromReplicaOnMiss : true,
@@ -158,7 +159,7 @@ final readonly class PrimaryReplicaPolicy
     /**
      * Create a policy with asynchronous replication.
      */
-    public function withAsyncReplication() : self
+    public function withAsyncReplication(): self
     {
         return new self(
             readFromReplicaOnMiss : $this->readFromReplicaOnMiss,
@@ -174,7 +175,7 @@ final readonly class PrimaryReplicaPolicy
     /**
      * Create a policy with synchronous replication.
      */
-    public function withSyncReplication() : self
+    public function withSyncReplication(): self
     {
         return new self(
             readFromReplicaOnMiss : $this->readFromReplicaOnMiss,
@@ -190,7 +191,7 @@ final readonly class PrimaryReplicaPolicy
     /**
      * Create a policy with a specific replication policy.
      */
-    public function withReplicationPolicy(ReplicationPolicy $replicationPolicy) : self
+    public function withReplicationPolicy(ReplicationPolicy $replicationPolicy): self
     {
         $async = $replicationPolicy === ReplicationPolicy::ASYNCHRONOUS;
         $sync = $replicationPolicy !== ReplicationPolicy::ASYNCHRONOUS;
@@ -209,7 +210,7 @@ final readonly class PrimaryReplicaPolicy
     /**
      * Create a policy with custom retry count.
      */
-    public function withMaxRetries(int $retries) : self
+    public function withMaxRetries(int $retries): self
     {
         return new self(
             readFromReplicaOnMiss : $this->readFromReplicaOnMiss,
@@ -235,14 +236,14 @@ final readonly class PrimaryReplicaPolicy
      *     maxReplicationRetries: int
      * }
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'readFromReplicaOnMiss' => $this->readFromReplicaOnMiss,
-            'asyncReplication'      => $this->asyncReplication,
-            'syncReplication'       => $this->syncReplication,
-            'failover'              => $this->failover,
-            'replicationPolicy'     => $this->replicationPolicy->value,
+            'asyncReplication' => $this->asyncReplication,
+            'syncReplication' => $this->syncReplication,
+            'failover' => $this->failover,
+            'replicationPolicy' => $this->replicationPolicy->value,
             'failoverTimeoutSeconds' => $this->failoverTimeoutSeconds,
             'maxReplicationRetries' => $this->maxReplicationRetries,
         ];

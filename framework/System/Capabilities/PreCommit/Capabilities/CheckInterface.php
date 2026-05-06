@@ -9,9 +9,8 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 interface CheckInterface
 {
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array;
+    public function run(array $context): array;
 }

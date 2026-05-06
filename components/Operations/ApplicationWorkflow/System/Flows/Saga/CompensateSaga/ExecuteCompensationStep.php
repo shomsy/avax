@@ -11,7 +11,9 @@ use Throwable;
 
 final readonly class ExecuteCompensationStep
 {
-    public function __construct(private object $compensationRunner) {}
+    public function __construct(private object $compensationRunner)
+    {
+    }
 
     public function execute(
         SagaStepDefinition $sagaStepDefinition,
@@ -32,7 +34,7 @@ final readonly class ExecuteCompensationStep
 
         return [
             'success' => true,
-            'output'  => is_array($result) ? $result : ['result' => $result],
+            'output' => is_array($result) ? $result : ['result' => $result],
             'duration_ms' => $duration,
         ];
     }
@@ -40,7 +42,9 @@ final readonly class ExecuteCompensationStep
 
 final readonly class RecordCompensationCompleted
 {
-    public function __construct(private object $inspect) {}
+    public function __construct(private object $inspect)
+    {
+    }
 
     public function record(
         string $sagaId,
@@ -61,7 +65,9 @@ final readonly class RecordCompensationCompleted
 
 final readonly class RecordCompensationFailed
 {
-    public function __construct(private object $inspect) {}
+    public function __construct(private object $inspect)
+    {
+    }
 
     public function record(
         string $sagaId,
@@ -82,7 +88,9 @@ final readonly class RecordCompensationFailed
 
 final readonly class PublishSagaCompensated
 {
-    public function __construct(private object $messageBus) {}
+    public function __construct(private object $messageBus)
+    {
+    }
 
     public function publish(
         string $sagaId,
@@ -92,7 +100,7 @@ final readonly class PublishSagaCompensated
         $topic = sprintf('saga.%s.compensated', $definitionName);
 
         $this->messageBus->publish($topic, [
-            'saga_id'         => $sagaId,
+            'saga_id' => $sagaId,
             'definition_name' => $definitionName,
             'compensation_results' => $compensationResults,
         ]);

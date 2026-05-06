@@ -13,14 +13,14 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
  */
 class DeprecatedCodeValidator extends BaseValidator
 {
-    public function getName() : string
+    public function getName(): string
     {
         return 'DeprecatedCodeValidator';
     }
 
-    public function validate(array $context) : ValidationResult
+    public function validate(array $context): ValidationResult
     {
-        $files    = $context['staged_files'] ?? [];
+        $files = $context['staged_files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
         $messages = [];
 
@@ -29,7 +29,7 @@ class DeprecatedCodeValidator extends BaseValidator
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
@@ -48,7 +48,7 @@ class DeprecatedCodeValidator extends BaseValidator
             foreach ($deprecated as $pattern) {
                 if (preg_match($pattern, $content)) {
                     $messages[] = sprintf(
-                        "Deprecated pattern detected in %s",
+                        'Deprecated pattern detected in %s',
                         $file
                     );
                 }

@@ -12,7 +12,8 @@ final readonly class BatchUpdate
         private GrammarInterface $grammar,
         private string $table,
         private string $keyColumn,
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<array{sql: string, bindings: list<mixed>}>
@@ -34,7 +35,7 @@ final readonly class BatchUpdate
                     continue;
                 }
 
-                $sets[] = $this->grammar->wrap(value: $column) . ' = ?';
+                $sets[] = $this->grammar->wrap(value: $column).' = ?';
                 $bindings[] = $value;
             }
 
@@ -42,11 +43,11 @@ final readonly class BatchUpdate
                 continue;
             }
 
-            $bindings[]   = $row[$this->keyColumn];
+            $bindings[] = $row[$this->keyColumn];
             $statements[] = [
-                'sql' => 'UPDATE ' . $this->grammar->wrap(value: $this->table)
-                    . ' SET ' . implode(separator: ', ', array: $sets)
-                    . ' WHERE ' . $this->grammar->wrap(value: $this->keyColumn) . ' = ?',
+                'sql' => 'UPDATE '.$this->grammar->wrap(value: $this->table)
+                    .' SET '.implode(separator: ', ', array: $sets)
+                    .' WHERE '.$this->grammar->wrap(value: $this->keyColumn).' = ?',
                 'bindings' => $bindings,
             ];
         }

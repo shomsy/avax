@@ -10,4 +10,6 @@ use Attribute;
  * Marks one class as shared across the container lifetime.
  */
 #[Attribute(flags: Attribute::TARGET_CLASS)]
-final class Singleton {}
+final class Singleton
+{
+}

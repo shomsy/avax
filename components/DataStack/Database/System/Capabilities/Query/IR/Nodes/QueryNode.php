@@ -33,21 +33,21 @@ final class QueryNode
         return $this;
     }
 
-    public function from(string $table, ?string $alias = null) : self
+    public function from(string $table, ?string $alias = null): self
     {
         $this->fromNode = new FromNode(table: $table, alias: $alias);
 
         return $this;
     }
 
-    public function join(JoinNode $joinNode) : self
+    public function join(JoinNode $joinNode): self
     {
         $this->joins[] = $joinNode;
 
         return $this;
     }
 
-    public function where(WhereNode $whereNode) : self
+    public function where(WhereNode $whereNode): self
     {
         $this->wheres[] = $whereNode;
 
@@ -89,7 +89,7 @@ final class QueryNode
         return $this;
     }
 
-    public function withCTE(CTENode $cteNode) : self
+    public function withCTE(CTENode $cteNode): self
     {
         $this->ctes[] = $cteNode;
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Observability;
 
-
 /**
  * Records and manages a timeline of query executions with timestamps and durations.
  *
@@ -182,7 +181,7 @@ final class QueryTimeline
             return null;
         }
 
-        $slowest         = null;
+        $slowest = null;
         $maxDuration = -1.0;
 
         foreach ($this->entries as $entry) {

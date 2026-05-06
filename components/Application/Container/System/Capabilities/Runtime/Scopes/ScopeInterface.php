@@ -9,19 +9,19 @@ namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scop
  */
 interface ScopeInterface
 {
-    public function has(string $abstract) : bool;
+    public function has(string $abstract): bool;
 
-    public function get(string $abstract) : mixed;
+    public function get(string $abstract): mixed;
 
-    public function set(string $abstract, mixed $instance) : void;
+    public function set(string $abstract, mixed $instance): void;
 
-    public function instance(string $abstract, mixed $instance) : void;
+    public function instance(string $abstract, mixed $instance): void;
 
-    public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = '') : mixed;
+    public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = ''): mixed;
 
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void;
+    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void;
 
-    public function closeScope(?string $kind = null) : void;
+    public function closeScope(?string $kind = null): void;
 
-    public function terminate() : void;
+    public function terminate(): void;
 }

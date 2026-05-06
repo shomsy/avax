@@ -17,7 +17,7 @@ final class AfterResponse
         self::queue()->enqueue(new AfterResponseTask($task));
     }
 
-    private static function queue() : AfterResponseQueue
+    private static function queue(): AfterResponseQueue
     {
         if (! isset(self::$afterResponseQueue)) {
             self::$afterResponseQueue = new AfterResponseQueue();

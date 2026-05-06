@@ -1,20 +1,20 @@
 <?php
 
-
 namespace Avax\Tooling\Refactor;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 $dirs = [
-    __DIR__ . '/../../tooling/dependency-map',
-    __DIR__ . '/../../benchmarks/performance',
-    __DIR__ . '/../../docs/components/System',
+    __DIR__.'/../../tooling/dependency-map',
+    __DIR__.'/../../benchmarks/performance',
+    __DIR__.'/../../docs/components/System',
 ];
 
 $fixed = 0;
 
 foreach ($dirs as $dir) {
-    if (!is_dir($dir)) {
+    if (! is_dir($dir)) {
         continue;
     }
 
@@ -35,7 +35,7 @@ foreach ($dirs as $dir) {
         if ($content !== $original) {
             file_put_contents($file->getPathname(), $content);
             $fixed++;
-            echo "Fixed: " . $file->getPathname() . "\n";
+            echo 'Fixed: '.$file->getPathname()."\n";
         }
     }
 }

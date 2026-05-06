@@ -16,7 +16,7 @@ final class CurrentAuthentication
         $this->authenticationContext = AuthenticationContext::guest();
     }
 
-    public function store(AuthenticationContext $authenticationContext) : void
+    public function store(AuthenticationContext $authenticationContext): void
     {
         $this->authenticationContext = $authenticationContext;
     }

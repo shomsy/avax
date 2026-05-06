@@ -10,9 +10,10 @@ final readonly class SessionAudit
 {
     public function __construct(
         private ?LoggerInterface $logger = null,
-    ) {}
+    ) {
+    }
 
-    public function record(string $event, array $data = []) : void
+    public function record(string $event, array $data = []): void
     {
         if (! $this->logger instanceof LoggerInterface) {
             return;
@@ -21,7 +22,7 @@ final readonly class SessionAudit
         $payload = [
             'event' => $event,
             'timestamp' => time(),
-            'data'  => $data,
+            'data' => $data,
         ];
 
         $this->logger->info(json_encode($payload));

@@ -11,7 +11,7 @@ final class Tracing
 {
     private ?RuntimeTimeline $runtimeTimeline = null;
 
-    public function start() : RuntimeTimeline
+    public function start(): RuntimeTimeline
     {
         $this->runtimeTimeline = new RuntimeTimeline();
 
@@ -21,15 +21,14 @@ final class Tracing
     }
 
     /**
-     * @param array<string, mixed> $metadata
+     * @param  array<string, mixed>  $metadata
      */
     public function record(
         string $name,
-        ?float  $durationMS = null,
+        ?float $durationMS = null,
         ?string $category = null,
-        array  $metadata = [],
-    ) : void
-    {
+        array $metadata = [],
+    ): void {
         $this->runtimeTimeline?->record(
             name      : $name,
             durationMS: $durationMS,
@@ -38,12 +37,12 @@ final class Tracing
         );
     }
 
-    public function timeline() : ?RuntimeTimeline
+    public function timeline(): ?RuntimeTimeline
     {
         return $this->runtimeTimeline;
     }
 
-    public function begin(string $name, ?string $category = null) : TraceSpan
+    public function begin(string $name, ?string $category = null): TraceSpan
     {
         return $this->runtimeTimeline?->begin(
             name    : $name,
@@ -51,12 +50,12 @@ final class Tracing
         ) ?? new TraceSpan(name: $name);
     }
 
-    public function finish() : void
+    public function finish(): void
     {
         $this->runtimeTimeline?->finish();
     }
 
-    public function export() : string
+    public function export(): string
     {
         return $this->runtimeTimeline?->exportText() ?? 'No active timeline';
     }

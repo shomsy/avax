@@ -21,7 +21,7 @@ final readonly class ChooseCompensationSteps
      *
      * @return array<int, SagaStepDefinition>
      */
-    public function choose(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : array
+    public function choose(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition): array
     {
         $this->validateSagaInstance(saga: $sagaInstance);
 
@@ -46,7 +46,7 @@ final readonly class ChooseCompensationSteps
         return $compensationSteps;
     }
 
-    private function validateSagaInstance(SagaInstance $sagaInstance) : void
+    private function validateSagaInstance(SagaInstance $sagaInstance): void
     {
         if ($sagaInstance->id === '' || $sagaInstance->id === '0') {
             throw new InvalidArgumentException(message: 'Saga instance ID cannot be empty.');

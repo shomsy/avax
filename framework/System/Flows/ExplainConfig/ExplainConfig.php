@@ -15,7 +15,7 @@ final readonly class ExplainConfig
     }
 
     /**
-     * @param array<string, ConfigSource> $sources
+     * @param  array<string, ConfigSource>  $sources
      */
     public static function printSources(array $sources, bool $safe = false): void
     {
@@ -46,7 +46,7 @@ final readonly class ExplainConfig
         foreach ($secretPatterns as $secretPattern) {
             if (stripos($key, $secretPattern) !== false) {
                 return is_string($value) && $value !== ''
-                    ? substr($value, 0, 3) . '***' . substr($value, -2)
+                    ? substr($value, 0, 3).'***'.substr($value, -2)
                     : $value;
             }
         }
@@ -63,7 +63,7 @@ final readonly class ExplainConfig
         }
 
         $lines = [
-            'Config: ' . $key,
+            'Config: '.$key,
             sprintf('  Value: %s', var_export($source->value, true)),
             sprintf('  Source: %s', $source->source),
         ];

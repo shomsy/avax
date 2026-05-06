@@ -6,4 +6,6 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 use RuntimeException;
 
-final class CompiledCacheManifestWasInvalid extends RuntimeException {}
+final class CompiledCacheManifestWasInvalid extends RuntimeException
+{
+}

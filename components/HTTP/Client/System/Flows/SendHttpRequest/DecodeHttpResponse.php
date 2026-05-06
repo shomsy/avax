@@ -17,17 +17,16 @@ final class DecodeHttpResponse
     /**
      * Decode raw HTTP response data into a ClientResponse.
      *
-     * @param int $statusCode HTTP status code
-     * @param array<string, string> $headers Response headers
-     * @param string $body Response body
-     * @param string $reasonPhrase HTTP reason phrase
-     * @param string $protocol HTTP protocol version
-     * @param float $transferTimeMs Transfer time in ms
-     * @param float $connectTimeMs Connect time in ms
-     * @param float $totalTimeMs Total time in ms
-     * @param int $redirectCount Number of redirects
-     * @param string|null $effectiveUrl Final URL after redirects
-     *
+     * @param  int  $statusCode  HTTP status code
+     * @param  array<string, string>  $headers  Response headers
+     * @param  string  $body  Response body
+     * @param  string  $reasonPhrase  HTTP reason phrase
+     * @param  string  $protocol  HTTP protocol version
+     * @param  float  $transferTimeMs  Transfer time in ms
+     * @param  float  $connectTimeMs  Connect time in ms
+     * @param  float  $totalTimeMs  Total time in ms
+     * @param  int  $redirectCount  Number of redirects
+     * @param  string|null  $effectiveUrl  Final URL after redirects
      * @return ClientResponse The decoded response
      */
     public function decode(
@@ -68,25 +67,25 @@ final class DecodeHttpResponse
     private function defaultReasonPhrase(int $statusCode): string
     {
         return match ($statusCode) {
-            200     => 'OK',
-            201     => 'Created',
-            204     => 'No Content',
-            301     => 'Moved Permanently',
-            302     => 'Found',
-            304     => 'Not Modified',
-            400     => 'Bad Request',
-            401     => 'Unauthorized',
-            403     => 'Forbidden',
-            404     => 'Not Found',
-            405     => 'Method Not Allowed',
-            408     => 'Request Timeout',
-            422     => 'Unprocessable Entity',
-            429     => 'Too Many Requests',
-            500     => 'Internal Server Error',
-            502     => 'Bad Gateway',
-            503     => 'Service Unavailable',
-            504     => 'Gateway Timeout',
-            default => 'Status ' . $statusCode,
+            200 => 'OK',
+            201 => 'Created',
+            204 => 'No Content',
+            301 => 'Moved Permanently',
+            302 => 'Found',
+            304 => 'Not Modified',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            405 => 'Method Not Allowed',
+            408 => 'Request Timeout',
+            422 => 'Unprocessable Entity',
+            429 => 'Too Many Requests',
+            500 => 'Internal Server Error',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout',
+            default => 'Status '.$statusCode,
         };
     }
 }

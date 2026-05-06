@@ -12,7 +12,8 @@ final readonly class MapEntry
     public function __construct(
         private int|string $key,
         private mixed $value,
-    ) {}
+    ) {
+    }
 
     public function key(): int|string
     {

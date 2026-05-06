@@ -15,9 +15,13 @@ use PHPUnit\Framework\TestCase;
 final class CacheServiceProviderTest extends TestCase
 {
     private FrozenClock $clock;
+
     private InMemoryCacheStore $defaultStore;
+
     private InMemoryCacheStore $apiStore;
+
     private CacheContract $defaultCache;
+
     private CacheContract $apiCache;
 
     public function test_cache_store_with_name_requires_provider(): void

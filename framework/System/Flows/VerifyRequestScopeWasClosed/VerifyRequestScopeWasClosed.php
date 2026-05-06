@@ -11,12 +11,13 @@ final readonly class VerifyRequestScopeWasClosed
 {
     public function __construct(
         private RuntimeSafety $runtimeSafety = new RuntimeSafety(),
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<RuntimeSafetyFinding>
      */
-    public function verify() : array
+    public function verify(): array
     {
         return $this->runtimeSafety->resetVerifier()->verify();
     }

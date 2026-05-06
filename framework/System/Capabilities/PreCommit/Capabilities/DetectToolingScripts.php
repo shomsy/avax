@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit\Capabilities;
 
-use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 
 /**
@@ -15,14 +14,13 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 final class DetectToolingScripts implements CheckInterface
 {
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array
+    public function run(array $context): array
     {
-        $issues   = [];
-        $files    = $context['files'] ?? [];
+        $issues = [];
+        $files = $context['files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
 
         foreach ($files as $file) {
@@ -31,7 +29,7 @@ final class DetectToolingScripts implements CheckInterface
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
@@ -43,7 +41,7 @@ final class DetectToolingScripts implements CheckInterface
                     $issues[] = new PreCommitIssue(
                         'DetectToolingScripts',
                         PreCommitIssue::SEVERITY_INFO,
-                        'Shell script missing shebang: ' . $file,
+                        'Shell script missing shebang: '.$file,
                         $file,
                         null,
                         'TOOLING_SHEBANG'
@@ -58,7 +56,7 @@ final class DetectToolingScripts implements CheckInterface
                     $issues[] = new PreCommitIssue(
                         'DetectToolingScripts',
                         PreCommitIssue::SEVERITY_INFO,
-                        'Shell script may need executable permission: ' . $file,
+                        'Shell script may need executable permission: '.$file,
                         $file,
                         null,
                         'TOOLING_PERM'

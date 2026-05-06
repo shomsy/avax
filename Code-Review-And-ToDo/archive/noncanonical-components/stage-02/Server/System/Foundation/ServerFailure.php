@@ -6,4 +6,6 @@ namespace Avax\Components\Server\System\Foundation;
 
 use RuntimeException;
 
-final class ServerFailure extends RuntimeException {}
+final class ServerFailure extends RuntimeException
+{
+}

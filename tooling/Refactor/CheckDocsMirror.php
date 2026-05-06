@@ -31,9 +31,9 @@ final class CheckDocsMirror
 
     private function scanDocsForObsoleteRefs(): void
     {
-        $docsPath = dirname(__DIR__, 2) . '/docs';
+        $docsPath = dirname(__DIR__, 2).'/docs';
 
-        if (!is_dir($docsPath)) {
+        if (! is_dir($docsPath)) {
             return;
         }
 
@@ -50,8 +50,8 @@ final class CheckDocsMirror
 
             $content = file_get_contents($file->getPathname());
             foreach ($this->forbiddenDocRefs as $forbiddenDocRef) {
-                if (str_contains($content, (string)$forbiddenDocRef)) {
-                    $this->errors[] = $file->getPathname() . ': references obsolete ' . $forbiddenDocRef;
+                if (str_contains($content, (string) $forbiddenDocRef)) {
+                    $this->errors[] = $file->getPathname().': references obsolete '.$forbiddenDocRef;
                 }
             }
         }
@@ -62,10 +62,10 @@ if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckDocsMirror();
     $result = $checker->check();
 
-    echo $result['status'] . "\n";
+    echo $result['status']."\n";
 
-    if (!empty($result['errors'])) {
-        echo implode("\n", $result['errors']) . "\n";
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors'])."\n";
         exit(1);
     }
 

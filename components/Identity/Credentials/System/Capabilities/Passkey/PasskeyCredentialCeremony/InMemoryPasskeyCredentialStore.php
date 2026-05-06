@@ -12,7 +12,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
     /** @var array<string, PasskeyCredential> */
     private array $credentials = [];
 
-    public function save(#[SensitiveParameter] PasskeyCredential $passkeyCredential) : void
+    public function save(#[SensitiveParameter] PasskeyCredential $passkeyCredential): void
     {
         $this->credentials[$passkeyCredential->credentialId] = $passkeyCredential;
     }
@@ -80,7 +80,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
     {
         return array_any(
             array   : $this->forUser(userId: $userId),
-            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyCredential) : bool => ! $passkeyCredential->isRevoked(),
+            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyCredential): bool => ! $passkeyCredential->isRevoked(),
         );
     }
 
@@ -88,7 +88,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
     {
         return array_values(array: array_filter(
             array   : $this->credentials,
-            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyCredential) : bool => $passkeyCredential->userId === $userId,
+            callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyCredential): bool => $passkeyCredential->userId === $userId,
         ));
     }
 }

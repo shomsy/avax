@@ -25,7 +25,7 @@ final class DeferredSourceWrite
     public function queue(CacheSourceKey $cacheSourceKey, mixed $value): void
     {
         $this->queue[$cacheSourceKey->fullKey()] = [
-            'key'   => $cacheSourceKey,
+            'key' => $cacheSourceKey,
             'value' => $value,
         ];
     }

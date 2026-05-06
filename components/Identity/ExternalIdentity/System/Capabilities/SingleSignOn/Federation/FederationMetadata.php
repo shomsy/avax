@@ -10,7 +10,9 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 final readonly class FederationMetadata
 {
     /**
-     * @param array<string, string> $claims
+     * @param  array<string, string>  $claims
      */
-    public function __construct(public string $issuer, public string $singleSignOnUrl, public array $claims = []) {}
+    public function __construct(public string $issuer, public string $singleSignOnUrl, public array $claims = [])
+    {
+    }
 }

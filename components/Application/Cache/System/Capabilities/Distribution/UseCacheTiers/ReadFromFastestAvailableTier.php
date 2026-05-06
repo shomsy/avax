@@ -13,9 +13,10 @@ final readonly class ReadFromFastestAvailableTier
 {
     public function __construct(
         private TieredCache $tieredCache,
-    ) {}
+    ) {
+    }
 
-    public function read(CacheKey $cacheKey, Clock $clock) : CacheStoreRecordWasFound|CacheStoreRecordWasMissing
+    public function read(CacheKey $cacheKey, Clock $clock): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         return $this->tieredCache->read(cacheKey: $cacheKey, clock: $clock);
     }

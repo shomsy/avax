@@ -9,13 +9,12 @@ use Avax\Labs\API\DescribeApi\System\Foundation\Failure\ApiContractInvalid;
 final class RequestValidationResult
 {
     /**
-     * @param array<string, string> $errors
+     * @param  array<string, string>  $errors
      */
     public function __construct(
-        public readonly bool  $valid,
+        public readonly bool $valid,
         public readonly array $errors = [],
-    )
-    {
+    ) {
     }
 
     public static function valid(): self
@@ -24,14 +23,14 @@ final class RequestValidationResult
     }
 
     /**
-     * @param array<string, string> $errors
+     * @param  array<string, string>  $errors
      */
     public static function invalid(array $errors): self
     {
         return new self(false, $errors);
     }
 
-    public function toException(): ApiContractInvalid|null
+    public function toException(): ?ApiContractInvalid
     {
         if ($this->valid) {
             return null;

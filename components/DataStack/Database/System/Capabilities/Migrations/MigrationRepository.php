@@ -8,7 +8,9 @@ use PDO;
 
 final readonly class MigrationRepository
 {
-    public function __construct(private PDO $pdo) {}
+    public function __construct(private PDO $pdo)
+    {
+    }
 
     public function ensureTableExists(): void
     {

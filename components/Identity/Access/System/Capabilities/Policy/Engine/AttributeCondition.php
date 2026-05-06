@@ -23,7 +23,7 @@ final readonly class AttributeCondition
 
     public static function withinHours(int $startHour, int $endHour): bool
     {
-        $hour = (int)date('H');
+        $hour = (int) date('H');
 
         return $hour >= $startHour && $hour < $endHour;
     }

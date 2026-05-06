@@ -34,7 +34,7 @@ final class ConsistentHashRing
         $virtualNodeCount = max(1, (int) round(150 * $cacheNode->weight));
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
-            $hash              = $this->hash($nodeId . '#' . $i);
+            $hash = $this->hash($nodeId.'#'.$i);
             $this->ring[$hash] = $cacheNode;
         }
 
@@ -52,11 +52,11 @@ final class ConsistentHashRing
             return $this;
         }
 
-        $node             = $this->physicalNodes[$nodeId];
+        $node = $this->physicalNodes[$nodeId];
         $virtualNodeCount = max(1, (int) round(150 * $node->weight));
 
         for ($i = 0; $i < $virtualNodeCount; $i++) {
-            $hash = $this->hash($nodeId . '#' . $i);
+            $hash = $this->hash($nodeId.'#'.$i);
             unset($this->ring[$hash]);
         }
 
@@ -93,8 +93,7 @@ final class ConsistentHashRing
     /**
      * Get multiple nodes responsible for a given key (for replication).
      *
-     * @param positive-int $count Number of nodes to return
-     *
+     * @param  positive-int  $count  Number of nodes to return
      * @return list<CacheNode>
      *
      * @throws RuntimeException if the ring has fewer nodes than requested
@@ -117,12 +116,12 @@ final class ConsistentHashRing
             );
         }
 
-        $hash     = $this->hash($key);
+        $hash = $this->hash($key);
         $selected = [];
-        $seen     = [];
+        $seen = [];
 
         // Walk the ring forward from the key's hash position
-        $ringKeys   = array_keys($this->ring);
+        $ringKeys = array_keys($this->ring);
         $ringLength = count($ringKeys);
 
         // Find starting position
@@ -142,8 +141,8 @@ final class ConsistentHashRing
             $startIndex = 0;
         }
 
-        $position      = $startIndex;
-        $iterations    = 0;
+        $position = $startIndex;
+        $iterations = 0;
         $maxIterations = $ringLength;
 
         while (count($selected) < $count && $iterations < $maxIterations) {
@@ -153,7 +152,7 @@ final class ConsistentHashRing
 
             if (! isset($seen[$nodeId])) {
                 $seen[$nodeId] = true;
-                $selected[]      = $node;
+                $selected[] = $node;
             }
 
             $position = ($position + 1) % $ringLength;

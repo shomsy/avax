@@ -12,7 +12,8 @@ final readonly class Pair
     public function __construct(
         private mixed $first,
         private mixed $second,
-    ) {}
+    ) {
+    }
 
     public function first(): mixed
     {

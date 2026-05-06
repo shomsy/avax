@@ -9,13 +9,13 @@ use Override;
 
 /**
  * File Structure Validator
- * 
+ *
  * Validates that file structure follows the architectural pattern:
  * - Flow slices in Flow/ folder
  * - Capabilities in Capabilities/ folder
  * - Configuration in Configuration/ folder
  * - Foundation in Foundation/ folder
- * 
+ *
  * Enforces the rule: folder says flow or capability, unit says responsibility
  */
 class FileStructureValidator extends BaseValidator
@@ -56,25 +56,25 @@ class FileStructureValidator extends BaseValidator
         $files = $context['staged_files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
         $systemRoot = $context['system_root'] ?? $this->detectSystemRoot($basePath);
-        
+
         $messages = [];
         $allPassed = true;
 
         foreach ($files as $file) {
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             $relativePath = $this->getRelativePath($filePath, $systemRoot);
-            
+
             // Skip if not in system root
             if ($relativePath === $file) {
                 continue;
             }
 
             $pathParts = explode('/', $relativePath);
-            
+
             // Check top-level folders in system root
             if (count($pathParts) >= 2) {
                 $topFolder = $pathParts[0];
-                
+
                 // Check for forbidden top-level folders
                 foreach ($this->forbiddenTopLevelFolders as $forbiddenTopLevelFolder) {
                     if (strcasecmp($topFolder, $forbiddenTopLevelFolder) === 0) {
@@ -91,14 +91,14 @@ class FileStructureValidator extends BaseValidator
                 if (count($pathParts) >= 3) {
                     $secondLevel = $pathParts[1];
                     $thirdLevel = $pathParts[2];
-                    
+
                     $structureResult = $this->validateStructureNaming(
                         $secondLevel,
                         $thirdLevel,
                         $file
                     );
-                    
-                    if (!$structureResult->isPassed()) {
+
+                    if (! $structureResult->isPassed()) {
                         $allPassed = false;
                         $messages = array_merge($messages, $structureResult->getMessages());
                     }
@@ -107,14 +107,14 @@ class FileStructureValidator extends BaseValidator
 
             // Check for hallway folders (unnecessary nesting)
             $nestingResult = $this->checkNestingDepth($relativePath, $file);
-            if (!$nestingResult->isPassed()) {
+            if (! $nestingResult->isPassed()) {
                 // Warning only
                 $messages = array_merge($messages, $nestingResult->getMessages());
             }
 
             // Check folder vs file naming
             $namingResult = $this->checkFolderFileNaming($pathParts);
-            if (!$namingResult->isPassed()) {
+            if (! $namingResult->isPassed()) {
                 $allPassed = false;
                 $messages = array_merge($messages, $namingResult->getMessages());
             }
@@ -145,10 +145,10 @@ class FileStructureValidator extends BaseValidator
 
         // Check if second level is a recognized system root category
         $isKnownCategory = isset($this->expectedFolders[$secondLevel]);
-        
+
         if ($isKnownCategory) {
             $categoryType = $this->expectedFolders[$secondLevel];
-            
+
             // Flow slices should have action-oriented names
             if ($categoryType === 'flow' || $categoryType === 'capability') {
                 // Third level should be PascalCase and descriptive
@@ -159,7 +159,7 @@ class FileStructureValidator extends BaseValidator
                         $file,
                         $categoryType
                     );
-                    $allPassed  = false;
+                    $allPassed = false;
                 }
 
                 // Check for generic names in flow/capability slices
@@ -194,26 +194,26 @@ class FileStructureValidator extends BaseValidator
     {
         $messages = [];
         $parts = explode('/', $relativePath);
-        
+
         // Count actual directory levels (excluding filename)
         $depth = count($parts) - 1;
-        
+
         // Warn if depth > 4 in system root
         if ($depth > 4) {
             $messages[] = sprintf(
-                "Deep nesting (depth %d) in %s. Consider flattening structure to improve locality.",
+                'Deep nesting (depth %d) in %s. Consider flattening structure to improve locality.',
                 $depth,
                 $file
             );
         }
-        
+
         // Check for single-item folders (potential hallway)
         for ($i = 0; $i < count($parts) - 2; $i++) {
             $segment = $parts[$i];
             // This would need actual filesystem check - simplified here
         }
 
-        if (!empty($messages)) {
+        if (! empty($messages)) {
             return new ValidationResult(
                 true, // Warning only, doesn't fail
                 $messages,
@@ -230,9 +230,9 @@ class FileStructureValidator extends BaseValidator
     /**
      * Check folder vs file naming consistency
      *
-     * @param list<string> $pathParts
+     * @param  list<string>  $pathParts
      */
-    private function checkFolderFileNaming(array $pathParts) : ValidationResult
+    private function checkFolderFileNaming(array $pathParts): ValidationResult
     {
         if (count($pathParts) < 2) {
             return ValidationResult::pass();
@@ -258,9 +258,9 @@ class FileStructureValidator extends BaseValidator
     private function detectSystemRoot(string $basePath): string
     {
         $candidates = ['src', 'system', 'System', 'product', 'app'];
-        
+
         foreach ($candidates as $candidate) {
-            $candidatePath = $basePath . '/' . $candidate;
+            $candidatePath = $basePath.'/'.$candidate;
             if (is_dir($candidatePath)) {
                 return $candidatePath;
             }
@@ -269,7 +269,7 @@ class FileStructureValidator extends BaseValidator
         // Check if we're already in a system-like structure
         $subdirs = ['Flows', 'Capabilities', 'Configuration', 'Foundation'];
         foreach ($subdirs as $subdir) {
-            if (is_dir($basePath . '/' . $subdir)) {
+            if (is_dir($basePath.'/'.$subdir)) {
                 return $basePath;
             }
         }
@@ -282,7 +282,7 @@ class FileStructureValidator extends BaseValidator
      */
     private function getRelativePath(string $filePath, string $systemRoot): string
     {
-        $systemRoot = rtrim($systemRoot, '/') . '/';
+        $systemRoot = rtrim($systemRoot, '/').'/';
         $filePath = ltrim($filePath, '/');
 
         if (str_starts_with($filePath, $systemRoot)) {
@@ -295,6 +295,6 @@ class FileStructureValidator extends BaseValidator
     #[Override]
     public function supports(array $context): bool
     {
-        return !empty($context['staged_files'] ?? []);
+        return ! empty($context['staged_files'] ?? []);
     }
 }

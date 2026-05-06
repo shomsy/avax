@@ -8,7 +8,9 @@ use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts
 
 final readonly class Locks
 {
-    public function __construct(private DatabaseConnection $databaseConnection) {}
+    public function __construct(private DatabaseConnection $databaseConnection)
+    {
+    }
 
     public function namedLock(string $name, int $timeoutSeconds = 10): bool
     {

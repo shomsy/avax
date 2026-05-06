@@ -13,7 +13,8 @@ final readonly class Tuple3
         private mixed $first,
         private mixed $second,
         private mixed $third,
-    ) {}
+    ) {
+    }
 
     public function first(): mixed
     {

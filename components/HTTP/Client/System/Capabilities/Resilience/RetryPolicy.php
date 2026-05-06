@@ -25,14 +25,14 @@ namespace Avax\Components\HTTP\Client\System\Capabilities\Resilience;
 final readonly class RetryPolicy
 {
     /**
-     * @param int       $attempts               Maximum number of retry attempts (not including the initial attempt)
-     * @param int       $baseDelayMs            Base delay between retries in milliseconds
-     * @param float     $backoffMultiplier      Multiplier for exponential backoff
-     * @param int       $maxDelayMs             Maximum delay cap in milliseconds
-     * @param bool      $jitter                 Whether to add random jitter to delays
-     * @param list<int> $retryOnStatus          HTTP status codes that should trigger a retry
-     * @param bool      $retryOnTimeout         Whether to retry on timeout
-     * @param bool      $retryOnConnectionError Whether to retry on connection errors
+     * @param  int  $attempts  Maximum number of retry attempts (not including the initial attempt)
+     * @param  int  $baseDelayMs  Base delay between retries in milliseconds
+     * @param  float  $backoffMultiplier  Multiplier for exponential backoff
+     * @param  int  $maxDelayMs  Maximum delay cap in milliseconds
+     * @param  bool  $jitter  Whether to add random jitter to delays
+     * @param  list<int>  $retryOnStatus  HTTP status codes that should trigger a retry
+     * @param  bool  $retryOnTimeout  Whether to retry on timeout
+     * @param  bool  $retryOnConnectionError  Whether to retry on connection errors
      */
     public function __construct(
         public int $attempts = 3,
@@ -43,7 +43,8 @@ final readonly class RetryPolicy
         public array $retryOnStatus = [500, 502, 503, 504],
         public bool $retryOnTimeout = true,
         public bool $retryOnConnectionError = true,
-    ) {}
+    ) {
+    }
 
     /**
      * Create an exponential backoff retry policy.
@@ -55,8 +56,7 @@ final readonly class RetryPolicy
         int $baseDelayMs = 1000,
         float $multiplier = 2.0,
         int $maxDelayMs = 30_000,
-    ) : self
-    {
+    ): self {
         return new self(
             attempts         : $attempts,
             baseDelayMs      : $baseDelayMs,
@@ -73,8 +73,7 @@ final readonly class RetryPolicy
     public static function fixed(
         int $attempts = 3,
         int $delayMs = 1000,
-    ) : self
-    {
+    ): self {
         return new self(
             attempts         : $attempts,
             baseDelayMs      : $delayMs,
@@ -91,8 +90,7 @@ final readonly class RetryPolicy
         int $attempts = 3,
         int $baseDelayMs = 1000,
         int $maxDelayMs = 30_000,
-    ) : self
-    {
+    ): self {
         return new self(
             attempts         : $attempts,
             baseDelayMs      : $baseDelayMs,
@@ -104,7 +102,7 @@ final readonly class RetryPolicy
     /**
      * Create a no-retry policy (for testing or explicit disabling).
      */
-    public static function none() : self
+    public static function none(): self
     {
         return new self(attempts: 0);
     }
@@ -112,7 +110,7 @@ final readonly class RetryPolicy
     /**
      * Check if a response status code should trigger a retry.
      */
-    public function shouldRetryStatus(int $statusCode) : bool
+    public function shouldRetryStatus(int $statusCode): bool
     {
         return in_array($statusCode, $this->retryOnStatus, true);
     }
@@ -120,7 +118,7 @@ final readonly class RetryPolicy
     /**
      * Check if a timeout should trigger a retry.
      */
-    public function shouldRetryTimeout() : bool
+    public function shouldRetryTimeout(): bool
     {
         return $this->retryOnTimeout;
     }
@@ -128,7 +126,7 @@ final readonly class RetryPolicy
     /**
      * Check if a connection error should trigger a retry.
      */
-    public function shouldRetryConnectionError() : bool
+    public function shouldRetryConnectionError(): bool
     {
         return $this->retryOnConnectionError;
     }
@@ -136,9 +134,9 @@ final readonly class RetryPolicy
     /**
      * Check if there are remaining retry attempts.
      *
-     * @param int $currentAttempt The current attempt number (1-based)
+     * @param  int  $currentAttempt  The current attempt number (1-based)
      */
-    public function hasRemainingAttempts(int $currentAttempt) : bool
+    public function hasRemainingAttempts(int $currentAttempt): bool
     {
         return $currentAttempt <= $this->attempts;
     }
@@ -146,7 +144,7 @@ final readonly class RetryPolicy
     /**
      * Get the total maximum delay across all attempts.
      */
-    public function getTotalMaxDelay() : int
+    public function getTotalMaxDelay(): int
     {
         $total = 0;
         for ($i = 1; $i <= $this->attempts; $i++) {
@@ -159,7 +157,7 @@ final readonly class RetryPolicy
     /**
      * Calculate the delay for a given retry attempt.
      *
-     * @param int $attempt The current attempt number (1-based)
+     * @param  int  $attempt  The current attempt number (1-based)
      * @return int Delay in milliseconds
      */
     public function delayForAttempt(int $attempt): int

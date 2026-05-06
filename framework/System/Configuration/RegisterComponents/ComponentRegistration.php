@@ -15,12 +15,12 @@ final readonly class ComponentRegistration
     ) {
     }
 
-    public function register(ComponentDefinition $componentDefinition) : void
+    public function register(ComponentDefinition $componentDefinition): void
     {
         $this->componentRegistry->register(definition: $componentDefinition);
     }
 
-    public function registerProvider(ComponentProviderInterface $componentProvider) : void
+    public function registerProvider(ComponentProviderInterface $componentProvider): void
     {
         $this->componentRegistry->registerProvider(provider: $componentProvider);
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit\Capabilities;
 
-use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 
 /**
@@ -16,14 +15,13 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 final class DetectLegacyAliases implements CheckInterface
 {
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array
+    public function run(array $context): array
     {
-        $issues   = [];
-        $files    = $context['files'] ?? [];
+        $issues = [];
+        $files = $context['files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
 
         foreach ($files as $file) {
@@ -31,7 +29,7 @@ final class DetectLegacyAliases implements CheckInterface
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
@@ -61,7 +59,7 @@ final class DetectLegacyAliases implements CheckInterface
                     $issues[] = new PreCommitIssue(
                         'DetectLegacyAliases',
                         PreCommitIssue::SEVERITY_WARNING,
-                        'Uses legacy require: ' . $match,
+                        'Uses legacy require: '.$match,
                         $file,
                         null,
                         'LEGACY_REQUIRE'
@@ -71,7 +69,7 @@ final class DetectLegacyAliases implements CheckInterface
         }
 
         // Check compat.php for aliases (global)
-        $compatPath = $basePath . '/components/compat.php';
+        $compatPath = $basePath.'/components/compat.php';
         if (file_exists($compatPath)) {
             $content = file_get_contents($compatPath);
             if ($content !== false && preg_match_all('/class_alias\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,/', $content, $matches)) {

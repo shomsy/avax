@@ -10,9 +10,11 @@ use Attribute;
 final readonly class ListOf
 {
     /**
-     * @param class-string $class
+     * @param  class-string  $class
      */
-    public function __construct(public string $class) {}
+    public function __construct(public string $class)
+    {
+    }
 
     /**
      * Legacy DTO list attributes used an of() method.

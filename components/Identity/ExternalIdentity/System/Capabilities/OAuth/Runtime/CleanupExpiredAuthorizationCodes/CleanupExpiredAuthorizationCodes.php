@@ -14,7 +14,8 @@ final readonly class CleanupExpiredAuthorizationCodes
         #[SensitiveParameter]
         private ?PruneExpiredAuthorizationCodesInterface $pruneExpiredAuthorizationCodes,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     public function execute(): int
     {

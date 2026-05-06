@@ -17,90 +17,100 @@ declare(strict_types=1);
  */
 final class ExitCode
 {
-    public const SUCCESS           = 0;
-    public const FAILURE           = 1;
+    public const SUCCESS = 0;
+
+    public const FAILURE = 1;
+
     public const INVALID_ARGUMENTS = 2;
 }
 
-final class HookInstallerException extends RuntimeException {}
+final class HookInstallerException extends RuntimeException
+{
+}
 
 final class Console
 {
-    public function info(string $message) : void
+    public function info(string $message): void
     {
         $this->line("Info: {$message}");
     }
 
-    public function line(string $message = '') : void
+    public function line(string $message = ''): void
     {
-        fwrite(STDOUT, $message . PHP_EOL);
+        fwrite(STDOUT, $message.PHP_EOL);
     }
 
-    public function success(string $message) : void
+    public function success(string $message): void
     {
         $this->line("Success: {$message}");
     }
 
-    public function warning(string $message) : void
+    public function warning(string $message): void
     {
         $this->line("Warning: {$message}");
     }
 
-    public function error(string $message) : void
+    public function error(string $message): void
     {
-        fwrite(STDERR, "Error: {$message}" . PHP_EOL);
+        fwrite(STDERR, "Error: {$message}".PHP_EOL);
     }
 }
 
 final class CommandOptions
 {
     /**
-     * @param list<string> $unknownOptions
+     * @param  list<string>  $unknownOptions
      */
     public function __construct(
-        public readonly bool   $force,
-        public readonly bool   $uninstall,
-        public readonly bool   $dryRun,
-        public readonly bool   $help,
+        public readonly bool $force,
+        public readonly bool $uninstall,
+        public readonly bool $dryRun,
+        public readonly bool $help,
         public readonly string $phpBinary,
-        public readonly array  $unknownOptions,
-    ) {}
+        public readonly array $unknownOptions,
+    ) {
+    }
 
     /**
-     * @param list<string> $argv
+     * @param  list<string>  $argv
      */
-    public static function fromArgv(array $argv) : self
+    public static function fromArgv(array $argv): self
     {
-        $force          = false;
-        $uninstall      = false;
-        $dryRun         = false;
-        $help           = false;
-        $phpBinary      = PHP_BINARY;
+        $force = false;
+        $uninstall = false;
+        $dryRun = false;
+        $help = false;
+        $phpBinary = PHP_BINARY;
         $unknownOptions = [];
 
         foreach (array_slice($argv, 1) as $argument) {
             if ($argument === '--force') {
                 $force = true;
+
                 continue;
             }
 
             if ($argument === '--uninstall') {
                 $uninstall = true;
+
                 continue;
             }
 
             if ($argument === '--dry-run') {
                 $dryRun = true;
+
                 continue;
             }
 
             if ($argument === '--help' || $argument === '-h') {
                 $help = true;
+
                 continue;
             }
 
             if (str_starts_with($argument, '--php=')) {
                 $phpBinary = trim(substr($argument, strlen('--php=')));
+
                 continue;
             }
 
@@ -121,12 +131,13 @@ final class CommandOptions
 final class ProcessResult
 {
     public function __construct(
-        public readonly int    $exitCode,
+        public readonly int $exitCode,
         public readonly string $stdout,
         public readonly string $stderr,
-    ) {}
+    ) {
+    }
 
-    public function successful() : bool
+    public function successful(): bool
     {
         return $this->exitCode === 0;
     }
@@ -135,9 +146,9 @@ final class ProcessResult
 final class ProcessRunner
 {
     /**
-     * @param list<string> $command
+     * @param  list<string>  $command
      */
-    public function run(array $command, ?string $workingDirectory = null) : ProcessResult
+    public function run(array $command, ?string $workingDirectory = null): ProcessResult
     {
         $descriptorSpec = [
             0 => ['pipe', 'r'],
@@ -153,7 +164,7 @@ final class ProcessRunner
         );
 
         if (! is_resource($process)) {
-            throw new HookInstallerException('Failed to start process: ' . implode(' ', $command));
+            throw new HookInstallerException('Failed to start process: '.implode(' ', $command));
         }
 
         fclose($pipes[0]);
@@ -176,7 +187,7 @@ final class ProcessRunner
 
 final class Filesystem
 {
-    public function ensureDirectoryExists(string $directory, int $permissions = 0775) : void
+    public function ensureDirectoryExists(string $directory, int $permissions = 0775): void
     {
         if (is_dir($directory)) {
             return;
@@ -187,7 +198,7 @@ final class Filesystem
         }
     }
 
-    public function assertReadableFile(string $file) : void
+    public function assertReadableFile(string $file): void
     {
         if (! is_file($file)) {
             throw new HookInstallerException("File does not exist: {$file}");
@@ -198,7 +209,7 @@ final class Filesystem
         }
     }
 
-    public function assertExecutable(string $file) : void
+    public function assertExecutable(string $file): void
     {
         if (! is_file($file)) {
             throw new HookInstallerException("Executable does not exist: {$file}");
@@ -209,10 +220,10 @@ final class Filesystem
         }
     }
 
-    public function atomicWriteExecutable(string $targetFile, string $content) : void
+    public function atomicWriteExecutable(string $targetFile, string $content): void
     {
-        $directory     = dirname($targetFile);
-        $temporaryFile = tempnam($directory, basename($targetFile) . '.tmp.');
+        $directory = dirname($targetFile);
+        $temporaryFile = tempnam($directory, basename($targetFile).'.tmp.');
 
         if ($temporaryFile === false) {
             throw new HookInstallerException("Failed to create temporary file in: {$directory}");
@@ -239,7 +250,7 @@ final class Filesystem
         }
     }
 
-    public function backupFile(string $file) : string
+    public function backupFile(string $file): string
     {
         $backupFile = sprintf(
             '%s.backup.%s',
@@ -254,7 +265,7 @@ final class Filesystem
         return $backupFile;
     }
 
-    public function readFile(string $file) : string
+    public function readFile(string $file): string
     {
         $content = file_get_contents($file);
 
@@ -265,7 +276,7 @@ final class Filesystem
         return $content;
     }
 
-    public function deleteFile(string $file) : void
+    public function deleteFile(string $file): void
     {
         if (! is_file($file)) {
             return;
@@ -279,7 +290,7 @@ final class Filesystem
 
 final class Path
 {
-    public static function normalize(string $path) : string
+    public static function normalize(string $path): string
     {
         $realPath = realpath($path);
 
@@ -290,7 +301,7 @@ final class Path
         return rtrim($path, DIRECTORY_SEPARATOR);
     }
 
-    public static function join(string ...$parts) : string
+    public static function join(string ...$parts): string
     {
         $cleanParts = [];
 
@@ -307,7 +318,7 @@ final class Path
         return implode(DIRECTORY_SEPARATOR, $cleanParts);
     }
 
-    public static function isAbsolute(string $path) : bool
+    public static function isAbsolute(string $path): bool
     {
         return str_starts_with($path, DIRECTORY_SEPARATOR)
             || preg_match('/^[A-Za-z]:[\\\\\\/]/', $path) === 1;
@@ -316,9 +327,9 @@ final class Path
 
 final class Shell
 {
-    public static function quote(string $value) : string
+    public static function quote(string $value): string
     {
-        return "'" . str_replace("'", "'\\''", $value) . "'";
+        return "'".str_replace("'", "'\\''", $value)."'";
     }
 }
 
@@ -326,11 +337,11 @@ final class GitRepository
 {
     public function __construct(
         private readonly ProcessRunner $processRunner,
-        private readonly string        $rootDirectory,
+        private readonly string $rootDirectory,
     ) {
     }
 
-    public function assertInsideWorkTree() : void
+    public function assertInsideWorkTree(): void
     {
         $result = $this->processRunner->run(
             command: ['git', '-C', $this->rootDirectory, 'rev-parse', '--is-inside-work-tree'],
@@ -341,7 +352,7 @@ final class GitRepository
         }
     }
 
-    public function hooksDirectory() : string
+    public function hooksDirectory(): string
     {
         $result = $this->processRunner->run(
             command: ['git', '-C', $this->rootDirectory, 'rev-parse', '--git-path', 'hooks'],
@@ -367,17 +378,17 @@ final class AvaxPreCommitHook
 {
     private const MARKER = 'AVAX_PRE_COMMIT_HOOK=1';
 
-    public static function marker() : string
+    public static function marker(): string
     {
         return self::MARKER;
     }
 
-    public static function isGeneratedByAvax(string $content) : bool
+    public static function isGeneratedByAvax(string $content): bool
     {
         return str_contains($content, self::MARKER);
     }
 
-    public static function render(string $phpBinary) : string
+    public static function render(string $phpBinary): string
     {
         $template = <<<'HOOK'
 #!/usr/bin/env sh
@@ -419,14 +430,15 @@ HOOK;
 final class InstallHookCommand
 {
     public function __construct(
-        private readonly Console       $console,
-        private readonly Filesystem    $filesystem,
+        private readonly Console $console,
+        private readonly Filesystem $filesystem,
         private readonly GitRepository $gitRepository,
-        private readonly string        $rootDirectory,
-        private readonly string        $sourceFile,
-    ) {}
+        private readonly string $rootDirectory,
+        private readonly string $sourceFile,
+    ) {
+    }
 
-    public function run(CommandOptions $options) : int
+    public function run(CommandOptions $options): int
     {
         if ($options->help) {
             $this->printHelp();
@@ -435,7 +447,7 @@ final class InstallHookCommand
         }
 
         if ($options->unknownOptions !== []) {
-            $this->console->error('Unknown option(s): ' . implode(', ', $options->unknownOptions));
+            $this->console->error('Unknown option(s): '.implode(', ', $options->unknownOptions));
             $this->printHelp();
 
             return ExitCode::INVALID_ARGUMENTS;
@@ -447,7 +459,7 @@ final class InstallHookCommand
             $this->filesystem->assertExecutable($options->phpBinary);
 
             $hooksDirectory = $this->gitRepository->hooksDirectory();
-            $targetFile     = Path::join($hooksDirectory, 'pre-commit');
+            $targetFile = Path::join($hooksDirectory, 'pre-commit');
 
             $this->filesystem->ensureDirectoryExists($hooksDirectory);
 
@@ -476,7 +488,7 @@ final class InstallHookCommand
         }
     }
 
-    private function install(string $targetFile, string $phpBinary, bool $force, bool $dryRun) : void
+    private function install(string $targetFile, string $phpBinary, bool $force, bool $dryRun): void
     {
         if (is_file($targetFile)) {
             $existingContent = $this->filesystem->readFile($targetFile);
@@ -498,7 +510,7 @@ final class InstallHookCommand
             }
         }
 
-        $hookContent = AvaxPreCommitHook::render($phpBinary) . PHP_EOL;
+        $hookContent = AvaxPreCommitHook::render($phpBinary).PHP_EOL;
 
         if ($dryRun) {
             $this->console->info("Would install pre-commit hook: {$targetFile}");
@@ -513,7 +525,7 @@ final class InstallHookCommand
         $this->console->line("Project: {$this->rootDirectory}");
     }
 
-    private function uninstall(string $targetFile, bool $force, bool $dryRun) : void
+    private function uninstall(string $targetFile, bool $force, bool $dryRun): void
     {
         if (! is_file($targetFile)) {
             $this->console->info('No pre-commit hook found to remove.');
@@ -545,9 +557,10 @@ final class InstallHookCommand
         $this->console->success('Pre-commit hook removed.');
     }
 
-    private function printHelp() : void
+    private function printHelp(): void
     {
-        $this->console->line(<<<'HELP'
+        $this->console->line(
+            <<<'HELP'
                                  Avax Pre-Commit Hook Installer
                                  
                                  Usage:
@@ -570,13 +583,13 @@ final class InstallHookCommand
     }
 }
 
-function runInstaller() : int
+function runInstaller(): int
 {
     $rootDirectory = Path::normalize(dirname(__DIR__, 2));
-    $sourceFile    = Path::join($rootDirectory, 'tooling', 'pre-commit', 'run-pre-commit.php');
+    $sourceFile = Path::join($rootDirectory, 'tooling', 'pre-commit', 'run-pre-commit.php');
 
-    $console       = new Console();
-    $filesystem    = new Filesystem();
+    $console = new Console();
+    $filesystem = new Filesystem();
     $processRunner = new ProcessRunner();
     $gitRepository = new GitRepository(
         processRunner: $processRunner,

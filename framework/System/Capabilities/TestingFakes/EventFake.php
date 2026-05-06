@@ -24,15 +24,15 @@ final class EventFake
     private bool $preventingRealDispatch = true;
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function dispatch(string $event, array $payload = []): void
     {
-        $this->dispatched[$event]           = ($this->dispatched[$event] ?? 0) + 1;
+        $this->dispatched[$event] = ($this->dispatched[$event] ?? 0) + 1;
         $this->dispatchedPayloads[$event][] = $payload;
     }
 
-    public function assertDispatched(string $event, ?int $times = null) : self
+    public function assertDispatched(string $event, ?int $times = null): self
     {
         if (! $this->wasDispatched($event)) {
             throw new TestingFakeException(
@@ -134,7 +134,7 @@ final class EventFake
 
     public function clear(): void
     {
-        $this->dispatched         = [];
+        $this->dispatched = [];
         $this->dispatchedPayloads = [];
     }
 }

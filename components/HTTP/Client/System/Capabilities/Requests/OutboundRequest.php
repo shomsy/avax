@@ -13,12 +13,12 @@ namespace Avax\Components\HTTP\Client\System\Capabilities\Requests;
 final readonly class OutboundRequest
 {
     /**
-     * @param string               $method  HTTP method (GET, POST, etc.)
-     * @param string               $url     Full URL or path
-     * @param mixed                $body    Request body (string, array, null)
-     * @param array<string, string> $headers HTTP headers
-     * @param RequestOptions|null  $options Request options
-     * @param array<string, mixed> $context Additional context for middleware
+     * @param  string  $method  HTTP method (GET, POST, etc.)
+     * @param  string  $url  Full URL or path
+     * @param  mixed  $body  Request body (string, array, null)
+     * @param  array<string, string>  $headers  HTTP headers
+     * @param  RequestOptions|null  $options  Request options
+     * @param  array<string, mixed>  $context  Additional context for middleware
      */
     public function __construct(
         public string $method = 'GET',
@@ -27,12 +27,13 @@ final readonly class OutboundRequest
         public array $headers = [],
         public ?RequestOptions $options = null,
         public array $context = [],
-    ) {}
+    ) {
+    }
 
     /**
      * Create a new instance with a different method.
      */
-    public function withMethod(string $method) : self
+    public function withMethod(string $method): self
     {
         return new self(
             method : $method,
@@ -47,7 +48,7 @@ final readonly class OutboundRequest
     /**
      * Create a new instance with a different URL.
      */
-    public function withUrl(string $url) : self
+    public function withUrl(string $url): self
     {
         return new self(
             method : $this->method,
@@ -62,7 +63,7 @@ final readonly class OutboundRequest
     /**
      * Create a new instance with a different body.
      */
-    public function withBody(mixed $body) : self
+    public function withBody(mixed $body): self
     {
         return new self(
             method : $this->method,
@@ -77,9 +78,9 @@ final readonly class OutboundRequest
     /**
      * Create a new instance with additional headers.
      *
-     * @param array<string, string> $headers Headers to add/merge
+     * @param  array<string, string>  $headers  Headers to add/merge
      */
-    public function withHeaders(array $headers) : self
+    public function withHeaders(array $headers): self
     {
         return new self(
             method : $this->method,
@@ -94,7 +95,7 @@ final readonly class OutboundRequest
     /**
      * Create a new instance with different options.
      */
-    public function withOptions(RequestOptions $requestOptions) : self
+    public function withOptions(RequestOptions $requestOptions): self
     {
         return new self(
             method : $this->method,
@@ -109,9 +110,9 @@ final readonly class OutboundRequest
     /**
      * Create a new instance with additional context.
      *
-     * @param array<string, mixed> $context Context to merge
+     * @param  array<string, mixed>  $context  Context to merge
      */
-    public function withContext(array $context) : self
+    public function withContext(array $context): self
     {
         return new self(
             method : $this->method,
@@ -126,7 +127,7 @@ final readonly class OutboundRequest
     /**
      * Check if the request has a body.
      */
-    public function hasBody() : bool
+    public function hasBody(): bool
     {
         return $this->body !== null;
     }
@@ -134,7 +135,7 @@ final readonly class OutboundRequest
     /**
      * Check if the request expects JSON.
      */
-    public function expectsJson() : bool
+    public function expectsJson(): bool
     {
         $accept = $this->getHeader('Accept') ?? '';
 
@@ -144,7 +145,7 @@ final readonly class OutboundRequest
     /**
      * Get a specific header value.
      */
-    public function getHeader(string $name) : ?string
+    public function getHeader(string $name): ?string
     {
         return $this->headers[$name] ?? null;
     }
@@ -152,7 +153,7 @@ final readonly class OutboundRequest
     /**
      * Check if this is a safe method (no side effects).
      */
-    public function isSafe() : bool
+    public function isSafe(): bool
     {
         return in_array(strtoupper($this->method), ['GET', 'HEAD', 'OPTIONS'], true);
     }
@@ -160,7 +161,7 @@ final readonly class OutboundRequest
     /**
      * Check if this is an idempotent method.
      */
-    public function isIdempotent() : bool
+    public function isIdempotent(): bool
     {
         return in_array(strtoupper($this->method), ['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE'], true);
     }

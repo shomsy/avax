@@ -13,25 +13,25 @@ final readonly class UtcTimezone implements Timezone
     private const string NAME = 'UTC';
 
     #[Override]
-    public function getName() : string
+    public function getName(): string
     {
         return self::NAME;
     }
 
     #[Override]
-    public function toPhpTimezone() : DateTimeZone
+    public function toPhpTimezone(): DateTimeZone
     {
         return new DateTimeZone(self::NAME);
     }
 
     #[Override]
-    public function getOffset(DateTimeInterface $dateTime) : int
+    public function getOffset(DateTimeInterface $dateTime): int
     {
         return 0;
     }
 
     #[Override]
-    public function isUtc() : bool
+    public function isUtc(): bool
     {
         return true;
     }

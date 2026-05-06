@@ -7,4 +7,6 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\Desi
 /**
  * Backward-compatible migration base type for migrations authored against the recovered API.
  */
-abstract class BaseMigration extends Migration {}
+abstract class BaseMigration extends Migration
+{
+}

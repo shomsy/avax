@@ -9,14 +9,15 @@ final readonly class ResponseHeader
     public function __construct(
         private string $name,
         private array $values,
-    ) {}
+    ) {
+    }
 
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function values() : array
+    public function values(): array
     {
         return $this->values;
     }

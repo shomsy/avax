@@ -9,7 +9,7 @@ namespace Avax\Components\Identity\Access\System\Flows\AdminElevation;
  */
 final readonly class EndAdminElevation
 {
-    public function execute() : void
+    public function execute(): void
     {
         BeginAdminElevation::reset();
     }

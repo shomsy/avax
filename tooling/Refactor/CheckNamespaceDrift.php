@@ -35,13 +35,13 @@ final class CheckNamespaceDrift
     private function scanForNamespaceDrift(): void
     {
         $basePath = dirname(__DIR__, 2);
-        $this->checkDirectory($basePath . '/components');
-        $this->checkDirectory($basePath . '/framework');
+        $this->checkDirectory($basePath.'/components');
+        $this->checkDirectory($basePath.'/framework');
     }
 
     private function checkDirectory(string $path): void
     {
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             return;
         }
 
@@ -68,8 +68,8 @@ final class CheckNamespaceDrift
 
             $content = file_get_contents($filePath);
             foreach ($this->forbiddenNamespaces as $forbiddenNamespace) {
-                if (str_contains($content, 'namespace ' . $forbiddenNamespace)) {
-                    $this->checkedFiles[] = $filePath . ': contains ' . $forbiddenNamespace;
+                if (str_contains($content, 'namespace '.$forbiddenNamespace)) {
+                    $this->checkedFiles[] = $filePath.': contains '.$forbiddenNamespace;
                 }
             }
         }
@@ -80,10 +80,10 @@ if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckNamespaceDrift();
     $result = $checker->check();
 
-    echo $result['status'] . "\n";
+    echo $result['status']."\n";
 
-    if (!empty($result['files'])) {
-        echo implode("\n", $result['files']) . "\n";
+    if (! empty($result['files'])) {
+        echo implode("\n", $result['files'])."\n";
         exit(1);
     }
 

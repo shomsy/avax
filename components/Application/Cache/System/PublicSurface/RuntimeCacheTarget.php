@@ -4,4 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\PublicSurface;
 
-final readonly class RuntimeCacheTarget extends Read\RuntimeCacheTarget {}
+final readonly class RuntimeCacheTarget extends Read\RuntimeCacheTarget
+{
+}

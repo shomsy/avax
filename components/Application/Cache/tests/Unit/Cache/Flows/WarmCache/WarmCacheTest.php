@@ -21,14 +21,14 @@ final class WarmCacheTest extends TestCase
 
     private InMemoryCacheStore $inMemoryCacheStore;
 
-    public function test_warm_with_callable_loaders() : void
+    public function test_warm_with_callable_loaders(): void
     {
         $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         $entries = [
-            'user:1' => static fn () : string => 'User One',
-            'user:2' => static fn () : string => 'User Two',
-            'user:3' => static fn () : string => 'User Three',
+            'user:1' => static fn (): string => 'User One',
+            'user:2' => static fn (): string => 'User Two',
+            'user:3' => static fn (): string => 'User Three',
         ];
 
         $count = $warmCache->warm(entries: $entries);
@@ -39,7 +39,7 @@ final class WarmCacheTest extends TestCase
         $this->assertEquals(expected: 'User Three', actual: $this->inMemoryCacheStore->read(clock: $this->frozenClock, key: CacheKey::create(key: 'user:3'))->record->value);
     }
 
-    public function test_warm_with_static_values() : void
+    public function test_warm_with_static_values(): void
     {
         $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
@@ -54,7 +54,7 @@ final class WarmCacheTest extends TestCase
         $this->assertEquals(expected: 'dark', actual: $this->inMemoryCacheStore->read(clock: $this->frozenClock, key: CacheKey::create(key: 'config:theme'))->record->value);
     }
 
-    public function test_warm_with_custom_ttl() : void
+    public function test_warm_with_custom_ttl(): void
     {
         $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
@@ -67,16 +67,16 @@ final class WarmCacheTest extends TestCase
         $this->assertEquals(expected: 1, actual: $count);
     }
 
-    public function test_warm_returns_correct_count() : void
+    public function test_warm_returns_correct_count(): void
     {
         $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         $entries = [
-            'key_1' => static fn () : string => 'value_1',
-            'key_2' => static fn () : string => 'value_2',
-            'key_3' => static fn () : string => 'value_3',
-            'key_4' => static fn () : string => 'value_4',
-            'key_5' => static fn () : string => 'value_5',
+            'key_1' => static fn (): string => 'value_1',
+            'key_2' => static fn (): string => 'value_2',
+            'key_3' => static fn (): string => 'value_3',
+            'key_4' => static fn (): string => 'value_4',
+            'key_5' => static fn (): string => 'value_5',
         ];
 
         $count = $warmCache->warm(entries: $entries);
@@ -84,21 +84,21 @@ final class WarmCacheTest extends TestCase
         $this->assertEquals(expected: 5, actual: $count);
     }
 
-    public function test_warm_overwrites_existing() : void
+    public function test_warm_overwrites_existing(): void
     {
         $this->inMemoryCacheStore->write(key: CacheKey::create(key: 'existing'), record: new StoredCacheRecord(
             value    : 'old_value',
             lifecycle: CachedValueLifecycle::create(
-                           createdAt: $this->frozenClock->now(),
-                           expiresAt: $this->frozenClock->now()->add(duration: Duration::ofSeconds(seconds: 3600)),
-                           clock    : $this->frozenClock,
-                       ),
+                createdAt: $this->frozenClock->now(),
+                expiresAt: $this->frozenClock->now()->add(duration: Duration::ofSeconds(seconds: 3600)),
+                clock    : $this->frozenClock,
+            ),
         ));
 
         $warmCache = new WarmCache(clock: $this->frozenClock, store: $this->inMemoryCacheStore);
 
         $entries = [
-            'existing' => static fn () : string => 'new_value',
+            'existing' => static fn (): string => 'new_value',
         ];
 
         $warmCache->warm(entries: $entries);
@@ -109,7 +109,7 @@ final class WarmCacheTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());

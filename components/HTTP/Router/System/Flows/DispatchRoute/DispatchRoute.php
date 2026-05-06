@@ -12,10 +12,11 @@ final readonly class DispatchRoute
 {
     public function __construct(
         private ResolveRouteAction $resolveRouteAction,
-        private InvokeRouteAction  $invokeRouteAction,
-    ) {}
+        private InvokeRouteAction $invokeRouteAction,
+    ) {
+    }
 
-    public function execute(RouteDefinition $routeDefinition, RequestInterface $request) : ResponseInterface
+    public function execute(RouteDefinition $routeDefinition, RequestInterface $request): ResponseInterface
     {
         $action = $this->resolveRouteAction->resolve($routeDefinition);
 

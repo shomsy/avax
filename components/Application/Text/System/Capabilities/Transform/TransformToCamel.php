@@ -8,13 +8,13 @@ use Avax\Components\Application\Text\System\PublicSurface\Text;
 
 final class TransformToCamel
 {
-    public function __invoke(Text $text) : Text
+    public function __invoke(Text $text): Text
     {
         $studly = $text->studly()->toString();
         if ($studly === '') {
-            return new Text('');
+            return Text::of('');
         }
 
-        return new Text(lcfirst($studly));
+        return Text::of(lcfirst($studly));
     }
 }

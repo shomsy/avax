@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -11,10 +12,10 @@ use RecursiveIteratorIterator;
  * Ensures classes in System/PublicSurface are thin and delegate behavior.
  */
 $rootDir = dirname(__DIR__, 2);
-$componentsDir = $rootDir . '/components';
+$componentsDir = $rootDir.'/components';
 $errors = [];
 
-if (!is_dir($componentsDir)) {
+if (! is_dir($componentsDir)) {
     exit(0);
 }
 
@@ -30,7 +31,7 @@ $businessLogicTokens = [
 ];
 
 foreach ($iterator as $file) {
-    if (!$file->isFile()) {
+    if (! $file->isFile()) {
         continue;
     }
 
@@ -39,12 +40,12 @@ foreach ($iterator as $file) {
     }
 
     $path = $file->getRealPath();
-    if (!str_contains((string)$path, '/System/PublicSurface/')) {
+    if (! str_contains((string) $path, '/System/PublicSurface/')) {
         continue;
     }
 
     $content = file_get_contents($path);
-    $relativePath = str_replace($rootDir . '/', '', $path);
+    $relativePath = str_replace($rootDir.'/', '', $path);
 
     // We allow small exceptions like throwing exceptions if explicitly needed, but generally PublicSurface should delegate.
     // Let's do a strict check for loops and conditionals.

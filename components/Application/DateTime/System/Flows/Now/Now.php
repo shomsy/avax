@@ -9,32 +9,32 @@ use DateTimeZone;
 
 final class Now
 {
-    public static function now() : DateTimeImmutable
+    public static function now(): DateTimeImmutable
     {
         return new DateTimeImmutable();
     }
 
-    public static function today() : DateTimeImmutable
+    public static function today(): DateTimeImmutable
     {
         return new DateTimeImmutable('today');
     }
 
-    public static function yesterday() : DateTimeImmutable
+    public static function yesterday(): DateTimeImmutable
     {
         return new DateTimeImmutable('yesterday');
     }
 
-    public static function tomorrow() : DateTimeImmutable
+    public static function tomorrow(): DateTimeImmutable
     {
         return new DateTimeImmutable('tomorrow');
     }
 
-    public static function utc() : DateTimeImmutable
+    public static function utc(): DateTimeImmutable
     {
         return new DateTimeImmutable('now', new DateTimeZone('UTC'));
     }
 
-    public static function fromTimestamp(int $timestamp) : DateTimeImmutable
+    public static function fromTimestamp(int $timestamp): DateTimeImmutable
     {
         return DateTimeImmutable::createFromFormat('U', (string) $timestamp);
     }

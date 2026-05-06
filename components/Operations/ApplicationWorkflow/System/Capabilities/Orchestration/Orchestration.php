@@ -35,7 +35,7 @@ final readonly class Orchestration
         return new StartupResponse(status: 'started');
     }
 
-    public static function preStop() : never
+    public static function preStop(): never
     {
         GracefulStop::execute();
     }
@@ -45,7 +45,8 @@ final readonly class LivenessResponse
 {
     public function __construct(
         public string $status,
-    ) {}
+    ) {
+    }
 
     public function toArray(): array
     {
@@ -67,7 +68,7 @@ final readonly class ReadinessResponse
         return [
             'status' => $this->status,
             'checks' => array_map(
-                static fn (ReadinessCheck $readinessCheck) : array => $readinessCheck->toArray(),
+                static fn (ReadinessCheck $readinessCheck): array => $readinessCheck->toArray(),
                 $this->checks,
             ),
         ];
@@ -81,7 +82,8 @@ final readonly class ReadinessCheck
         public bool $ready,
         public float $latencyMs = 0.0,
         public ?string $error = null,
-    ) {}
+    ) {
+    }
 
     public static function check(string $name): self
     {
@@ -113,7 +115,8 @@ final readonly class StartupResponse
 {
     public function __construct(
         public string $status,
-    ) {}
+    ) {
+    }
 
     public function toArray(): array
     {

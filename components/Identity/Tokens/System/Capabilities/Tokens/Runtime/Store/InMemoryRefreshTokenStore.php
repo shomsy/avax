@@ -23,10 +23,10 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
     public function issue(
         UserId $userId,
         DateTimeImmutable $expiresAt,
-        ?string                $familyId = null,
-        ?DateTimeImmutable     $mfaVerifiedAt = null,
+        ?string $familyId = null,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
-        ?string                $clientId = null,
+        ?string $clientId = null,
         array $scopes = [],
         ?OAuthSenderConstraint $oAuthSenderConstraint = null,
     ): IssuedRefreshToken {

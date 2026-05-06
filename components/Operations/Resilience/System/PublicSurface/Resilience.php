@@ -10,12 +10,12 @@ use Closure;
 
 final readonly class Resilience
 {
-    public static function retry(Closure $operation) : RetryBuilder
+    public static function retry(Closure $operation): RetryBuilder
     {
         return new RetryBuilder($operation);
     }
 
-    public static function circuitBreaker(int $failureThreshold = 3, int $cooldownSeconds = 30) : CircuitBreaker
+    public static function circuitBreaker(int $failureThreshold = 3, int $cooldownSeconds = 30): CircuitBreaker
     {
         return new CircuitBreaker(
             failureThreshold: $failureThreshold,

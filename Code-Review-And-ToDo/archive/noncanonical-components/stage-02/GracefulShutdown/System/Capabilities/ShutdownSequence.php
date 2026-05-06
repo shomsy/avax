@@ -18,12 +18,12 @@ final class ShutdownSequence
 
     private static bool $executed = false;
 
-    public static function register(Closure $callback) : void
+    public static function register(Closure $callback): void
     {
         self::$callbacks[] = $callback;
     }
 
-    public static function execute(int $timeoutSeconds = 30) : void
+    public static function execute(int $timeoutSeconds = 30): void
     {
         if (self::$executed) {
             return;
@@ -48,20 +48,20 @@ final class ShutdownSequence
         exit(0);
     }
 
-    private static function stopAcceptingNewRequests() : void
+    private static function stopAcceptingNewRequests(): void
     {
         self::$draining = true;
         echo "[1/5] Stopping new requests\n";
     }
 
-    private static function waitForInFlightRequests(int $maxSeconds) : void
+    private static function waitForInFlightRequests(int $maxSeconds): void
     {
         echo "[2/5] Waiting for in-flight requests (max {$maxSeconds}s)...\n";
 
-        $timeout  = time() + $maxSeconds;
+        $timeout = time() + $maxSeconds;
         $inFlight = self::countInFlightRequests();
 
-        while ( $inFlight > 0 && time() < $timeout ) {
+        while ($inFlight > 0 && time() < $timeout) {
             usleep(100000);
             $newCount = self::countInFlightRequests();
 
@@ -79,12 +79,12 @@ final class ShutdownSequence
         }
     }
 
-    private static function countInFlightRequests() : int
+    private static function countInFlightRequests(): int
     {
         return 0;
     }
 
-    private static function flushBuffers() : void
+    private static function flushBuffers(): void
     {
         echo "[3/5] Flushing buffers...\n";
 
@@ -92,17 +92,17 @@ final class ShutdownSequence
             try {
                 $callback();
             } catch (Throwable $e) {
-                error_log('Shutdown flush error: ' . $e->getMessage());
+                error_log('Shutdown flush error: '.$e->getMessage());
             }
         }
     }
 
-    private static function closeConnections() : void
+    private static function closeConnections(): void
     {
         echo "[4/5] Closing connections...\n";
     }
 
-    private static function executeCallbacks() : void
+    private static function executeCallbacks(): void
     {
         echo "[5/5] Executing shutdown callbacks...\n";
 
@@ -110,12 +110,12 @@ final class ShutdownSequence
             try {
                 $callback();
             } catch (Throwable $e) {
-                error_log('Shutdown callback error: ' . $e->getMessage());
+                error_log('Shutdown callback error: '.$e->getMessage());
             }
         }
     }
 
-    public static function isDraining() : bool
+    public static function isDraining(): bool
     {
         return self::$draining;
     }

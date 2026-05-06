@@ -24,7 +24,7 @@ final class WorkerProcess
     private int $startTime = 0;
 
     /**
-     * @param array{max_memory?: int} $options
+     * @param  array{max_memory?: int}  $options
      */
     public function __construct(private readonly array $options = [])
     {
@@ -82,7 +82,7 @@ final class WorkerProcess
 
     public function isDead(): bool
     {
-        return !$this->running;
+        return ! $this->running;
     }
 
     public function taskCount(): int

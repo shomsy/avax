@@ -28,13 +28,13 @@ interface AccessInterface
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function requireRole(UserRole $userRole) : void;
+    public function requireRole(UserRole $userRole): void;
 
     /**
      * @throws PermissionDenied
      * @throws Unauthenticated
      */
-    public function requirePermission(UserPermission $userPermission) : void;
+    public function requirePermission(UserPermission $userPermission): void;
 
     /**
      * @throws AdminElevationFailed
@@ -44,5 +44,5 @@ interface AccessInterface
      * @throws RoleDenied
      * @throws Unauthenticated
      */
-    public function requirePolicy(AccessPolicy $accessPolicy) : void;
+    public function requirePolicy(AccessPolicy $accessPolicy): void;
 }

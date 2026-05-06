@@ -20,17 +20,17 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
     private int $currentStepIndex;
 
     public function __construct(
-        ?array          $events = null,
-        ?array          $data = null,
+        ?array $events = null,
+        ?array $data = null,
         private ?string $currentStep = null,
-        ?int            $currentStepIndex = null,
-        private array   $stepResults = [],
+        ?int $currentStepIndex = null,
+        private array $stepResults = [],
     ) {
-        $events            ??= [];
-        $data              ??= [];
+        $events ??= [];
+        $data ??= [];
         $currentStepIndex ??= 0;
-        $this->events      = $events;
-        $this->data        = $data;
+        $this->events = $events;
+        $this->data = $data;
         $this->currentStepIndex = $currentStepIndex;
     }
 
@@ -42,7 +42,7 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
         );
     }
 
-    public static function fromInstance(SagaInstance $sagaInstance) : self
+    public static function fromInstance(SagaInstance $sagaInstance): self
     {
         return new self(
             events          : [],
@@ -53,7 +53,7 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
         );
     }
 
-    public function appendEvent(SagaEvent $sagaEvent) : self
+    public function appendEvent(SagaEvent $sagaEvent): self
     {
         $events = $this->events;
         $events[] = $sagaEvent;

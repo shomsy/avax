@@ -2,13 +2,13 @@
 <?php
 
 declare(strict_types=1);
-$base = __DIR__ . '/../../components/ApplicationWorkflow/System';
+$base = __DIR__.'/../../components/ApplicationWorkflow/System';
 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS));
 foreach ($it as $file) {
     if ($file->getExtension() !== 'php') {
         continue;
     }
-    $path     = $file->getPathname();
+    $path = $file->getPathname();
     $content = file_get_contents($path);
     $changed = false;
 
@@ -48,7 +48,7 @@ foreach ($it as $file) {
         }
     } elseif (preg_match('#/System/Flows/Saga/([^/]+)/#', (string) $path, $m)) {
         $group = $m[1];
-        $newNs = 'Avax\Components\ApplicationWorkflow\System\Flows\Saga\\' . $group;
+        $newNs = 'Avax\Components\ApplicationWorkflow\System\Flows\Saga\\'.$group;
         $old1 = sprintf('namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\%s;', $group);
         $old2 = sprintf('namespace components\ApplicationWorkflow\Saga\%s;', $group);
         if (str_contains($content, $old1) || str_contains($content, $old2)) {

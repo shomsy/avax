@@ -15,19 +15,19 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengeRecord;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengeStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredentialStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyRuntimeInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\PasskeyOperationFailed;
 use SensitiveParameter;
 
 final readonly class CompletePasskeyAuthentication
 {
     public function __construct(
-        private PasskeyRuntimeInterface         $passkeyRuntime,
-        private PasskeyChallengeStoreInterface  $passkeyChallengeStore,
+        private PasskeyRuntimeInterface $passkeyRuntime,
+        private PasskeyChallengeStoreInterface $passkeyChallengeStore,
         #[SensitiveParameter]
         private PasskeyCredentialStoreInterface $passkeyCredentialStore,
         private UserSourceInterface $userSource,
@@ -38,12 +38,13 @@ final readonly class CompletePasskeyAuthentication
         private AuditLogInterface $auditLog,
         private Clock $clock,
         private string $rpId,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PasskeyOperationFailed
      */
-    public function execute(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData) : AuthenticationResult
+    public function execute(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData): AuthenticationResult
     {
         $challenge = $this->passkeyChallengeStore->find(challengeId: $completePasskeyAuthenticationData->challengeId);
 
@@ -82,7 +83,7 @@ final readonly class CompletePasskeyAuthentication
             throw PasskeyOperationFailed::notFound();
         }
 
-        $issuedAuthentication  = $this->identity->issue(
+        $issuedAuthentication = $this->identity->issue(
             user             : $user,
             mfaVerifiedAt    : $this->clock->now(),
             phishingResistant: true,
@@ -109,10 +110,10 @@ final readonly class CompletePasskeyAuthentication
             name      : 'auth.passkey.authentication.succeeded',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id'    => $user->getId()->value,
+                'user_id' => $user->getId()->value,
                 'credential_id' => $credential->credentialId,
-                            'ip_address' => $completePasskeyAuthenticationData->ipAddress,
-                            'user_agent' => $completePasskeyAuthenticationData->userAgent,
+                'ip_address' => $completePasskeyAuthenticationData->ipAddress,
+                'user_agent' => $completePasskeyAuthenticationData->userAgent,
             ],
         ));
 

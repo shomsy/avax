@@ -11,5 +11,6 @@ final readonly class Email
 {
     public function __construct(
         public string $message = 'Invalid email format',
-    ) {}
+    ) {
+    }
 }

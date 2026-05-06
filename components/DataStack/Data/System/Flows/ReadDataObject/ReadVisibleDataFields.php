@@ -13,7 +13,7 @@ final readonly class ReadVisibleDataFields
     /**
      * @return array<string, DataField>
      */
-    public function read(DataShape $dataShape, bool $excludeHidden = true) : array
+    public function read(DataShape $dataShape, bool $excludeHidden = true): array
     {
         return new ReadVisibleFields()->read(excludeHidden: $excludeHidden, shape: $dataShape);
     }

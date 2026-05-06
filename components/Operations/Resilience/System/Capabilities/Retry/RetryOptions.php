@@ -10,14 +10,15 @@ final readonly class RetryOptions
         public int $attempts,
         public int $backoffMs,
         public ?int $timeoutMs = null,
-    ) {}
+    ) {
+    }
 
-    public function withAttempts(int $attempts) : self
+    public function withAttempts(int $attempts): self
     {
         return new self($attempts, $this->backoffMs, $this->timeoutMs);
     }
 
-    public function withBackoff(int $backoffMs) : self
+    public function withBackoff(int $backoffMs): self
     {
         return new self($this->attempts, $backoffMs, $this->timeoutMs);
     }

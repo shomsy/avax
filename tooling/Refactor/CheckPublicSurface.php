@@ -24,14 +24,14 @@ final class CheckPublicSurface
 
     private function checkPublicSurfaceClassesAreThin(): void
     {
-        $componentsPath = dirname(__DIR__, 2) . '/components';
+        $componentsPath = dirname(__DIR__, 2).'/components';
 
         $this->scanPublicSurface($componentsPath);
     }
 
     private function scanPublicSurface(string $path): void
     {
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             return;
         }
 
@@ -46,7 +46,7 @@ final class CheckPublicSurface
                 continue;
             }
 
-            if (!str_contains($file->getPathname(), '/PublicSurface/')) {
+            if (! str_contains($file->getPathname(), '/PublicSurface/')) {
                 continue;
             }
 
@@ -55,7 +55,7 @@ final class CheckPublicSurface
             // Check for heavy behavior - only flag if excessive private state
             $privateCount = preg_match_all('/private\s+\w+\s+\$\w+\s*=/', $content);
             if ($privateCount > 3) {
-                $this->errors[] = $file->getPathname() . ': PublicSurface has excessive private state (' . $privateCount . ' properties)';
+                $this->errors[] = $file->getPathname().': PublicSurface has excessive private state ('.$privateCount.' properties)';
             }
         }
     }
@@ -65,10 +65,10 @@ if (PHP_SAPI === 'cli' && basename(__FILE__) === basename($argv[0] ?? '')) {
     $checker = new CheckPublicSurface();
     $result = $checker->check();
 
-    echo $result['status'] . "\n";
+    echo $result['status']."\n";
 
-    if (!empty($result['errors'])) {
-        echo implode("\n", $result['errors']) . "\n";
+    if (! empty($result['errors'])) {
+        echo implode("\n", $result['errors'])."\n";
         exit(1);
     }
 

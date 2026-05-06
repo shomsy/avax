@@ -11,9 +11,9 @@ final class ConfigurationRepository
      */
     private array $config = [];
 
-    public function get(string $key, ?string $default = null) : ?string
+    public function get(string $key, ?string $default = null): ?string
     {
-        $keys    = explode('.', $key);
+        $keys = explode('.', $key);
         $current = $this->config;
 
         foreach ($keys as $k) {
@@ -29,7 +29,7 @@ final class ConfigurationRepository
 
     public function set(string $key, mixed $value): void
     {
-        $keys    = explode('.', $key);
+        $keys = explode('.', $key);
         $current = &$this->config;
 
         foreach ($keys as $k) {
@@ -57,7 +57,7 @@ final class ConfigurationRepository
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function load(array $config): void
     {

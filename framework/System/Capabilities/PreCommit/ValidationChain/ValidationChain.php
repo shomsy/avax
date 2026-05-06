@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Validators\ValidatorInterface;
 
 /**
  * Chain of Responsibility Orchestrator
- * 
+ *
  * Manages the validator chain and executes validation pipeline.
  */
 class ValidationChain
@@ -51,7 +51,7 @@ class ValidationChain
      * Execute the validation chain
      */
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function validate(array $context): ValidationResult
     {

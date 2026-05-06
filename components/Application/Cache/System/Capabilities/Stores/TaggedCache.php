@@ -14,23 +14,22 @@ final class TaggedCache
     private array $trackedKeys = [];
 
     /**
-     * @param array<string> $tags
+     * @param  array<string>  $tags
      */
     public function __construct(
         private readonly CacheStoreInterface $cacheStore,
         array $tags,
-    )
-    {
+    ) {
         sort($tags);
-        $this->tagKey = 'tag:' . implode(':', $tags);
+        $this->tagKey = 'tag:'.implode(':', $tags);
     }
 
-    public function get(string $key) : mixed
+    public function get(string $key): mixed
     {
         return $this->cacheStore->get($this->scopedKey(cacheKey: $key));
     }
 
-    public function set(string $key, mixed $value, int $ttl = 0) : bool
+    public function set(string $key, mixed $value, int $ttl = 0): bool
     {
         $this->trackedKeys[$key] = true;
 
@@ -41,12 +40,12 @@ final class TaggedCache
         return $this->cacheStore->set($this->scopedKey(cacheKey: $key), $value, $ttl);
     }
 
-    private function scopedKey(string $key) : string
+    private function scopedKey(string $key): string
     {
-        return $this->tagKey . ':' . $key;
+        return $this->tagKey.':'.$key;
     }
 
-    public function flush() : bool
+    public function flush(): bool
     {
         $keys = array_keys($this->trackedKeys);
 

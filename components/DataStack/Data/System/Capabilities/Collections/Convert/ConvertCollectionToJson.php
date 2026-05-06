@@ -13,7 +13,8 @@ final readonly class ConvertCollectionToJson
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $flags = 0): string
     {
@@ -26,7 +27,7 @@ final readonly class ConvertCollectionToJson
 
         if ($json === false) {
             throw new InvalidArgumentException(
-                message: 'Failed to encode collection to JSON: ' . json_last_error_msg(),
+                message: 'Failed to encode collection to JSON: '.json_last_error_msg(),
             );
         }
 

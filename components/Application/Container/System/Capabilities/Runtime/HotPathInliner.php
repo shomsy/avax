@@ -30,7 +30,7 @@ final class HotPathInliner
         }
 
         $this->compiledContainer = $compiledContainer;
-        $this->calls             = [];
+        $this->calls = [];
     }
 
     /**
@@ -39,7 +39,7 @@ final class HotPathInliner
     public function detach(): void
     {
         $this->compiledContainer = null;
-        $this->calls             = [];
+        $this->calls = [];
     }
 
     /**
@@ -59,15 +59,15 @@ final class HotPathInliner
         $hasEntry = $attached && is_string(value: $serviceId) && $serviceId !== '' && $this->compiledContainer->has(serviceId: $serviceId);
 
         return [
-            'attached'   => $attached,
+            'attached' => $attached,
             'entryCount' => $this->compiledContainer?->entryCount() ?? 0,
-            'entryIds'   => $this->compiledContainer?->entryIds()   ?? [],
-            'hasEntry'   => $hasEntry,
-            'reason'     => match (true) {
-                ! $attached                              => 'no compiled runtime is attached',
+            'entryIds' => $this->compiledContainer?->entryIds() ?? [],
+            'hasEntry' => $hasEntry,
+            'reason' => match (true) {
+                ! $attached => 'no compiled runtime is attached',
                 $serviceId === null || $serviceId === '' => 'compiled runtime is attached',
-                $hasEntry                                => 'compiled entry is attached',
-                default                                  => 'compiled runtime is attached but the requested entry is missing',
+                $hasEntry => 'compiled entry is attached',
+                default => 'compiled runtime is attached but the requested entry is missing',
             },
         ];
     }

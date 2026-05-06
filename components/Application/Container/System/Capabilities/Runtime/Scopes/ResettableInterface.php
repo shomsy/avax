@@ -9,5 +9,5 @@ namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scop
  */
 interface ResettableInterface
 {
-    public function reset() : void;
+    public function reset(): void;
 }

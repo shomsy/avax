@@ -19,17 +19,16 @@ final class Request implements RequestInterface
 
     public function __construct(
         string $method,
-        RequestUri     $requestUri,
+        RequestUri $requestUri,
         RequestHeaders $requestHeaders,
-        RequestBody    $requestBody,
-        UploadedFiles  $uploadedFiles,
-        array  $serverParams = [],
-        array  $cookieParams = [],
-        array  $queryParams = [],
-        array  $attributes = [],
+        RequestBody $requestBody,
+        UploadedFiles $uploadedFiles,
+        array $serverParams = [],
+        array $cookieParams = [],
+        array $queryParams = [],
+        array $attributes = [],
         string $protocolVersion = '1.1',
-    )
-    {
+    ) {
         $this->requestData = new RequestData(
             method         : $method,
             uri            : $requestUri,
@@ -44,12 +43,12 @@ final class Request implements RequestInterface
         );
     }
 
-    public function getProtocolVersion() : string
+    public function getProtocolVersion(): string
     {
         return $this->requestData->protocolVersion;
     }
 
-    public function withProtocolVersion($version) : self
+    public function withProtocolVersion($version): self
     {
         $clone = clone $this;
         $clone->requestData = $this->requestData->withProtocolVersion($version);
@@ -57,27 +56,27 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getHeaders() : array
+    public function getHeaders(): array
     {
         return $this->requestData->headers->all();
     }
 
-    public function hasHeader($name) : bool
+    public function hasHeader($name): bool
     {
         return $this->requestData->headers->has($name);
     }
 
-    public function getHeader($name) : array
+    public function getHeader($name): array
     {
         return $this->requestData->headers->get($name)?->all() ?? [];
     }
 
-    public function getHeaderLine($name) : string
+    public function getHeaderLine($name): string
     {
         return $this->requestData->headers->get($name)?->line() ?? '';
     }
 
-    public function withHeader($name, $value) : self
+    public function withHeader($name, $value): self
     {
         $clone = clone $this;
         $clone->requestData->headers->set($name, $value);
@@ -85,42 +84,42 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function withAddedHeader($name, $value) : self
+    public function withAddedHeader($name, $value): self
     {
         return $this->withHeader($name, $value);
     }
 
-    public function withoutHeader($name) : self
+    public function withoutHeader($name): self
     {
         return $this;
     }
 
-    public function getBody() : StreamInterface
+    public function getBody(): StreamInterface
     {
         return Utils::streamFor($this->requestData->body->raw()->toString());
     }
 
-    public function withBody(StreamInterface $body) : self
+    public function withBody(StreamInterface $body): self
     {
         return $this;
     }
 
-    public function getRequestTarget() : string
+    public function getRequestTarget(): string
     {
         return $this->requestData->uri->getPath();
     }
 
-    public function withRequestTarget($target) : self
+    public function withRequestTarget($target): self
     {
         return $this;
     }
 
-    public function getMethod() : string
+    public function getMethod(): string
     {
         return $this->requestData->method;
     }
 
-    public function withMethod($method) : self
+    public function withMethod($method): self
     {
         $clone = clone $this;
         $clone->requestData = $this->requestData->withMethod($method);
@@ -128,12 +127,12 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getUri() : UriInterface
+    public function getUri(): UriInterface
     {
         return $this->requestData->uri;
     }
 
-    public function withUri(UriInterface $uri, $preserveHost = false) : self
+    public function withUri(UriInterface $uri, $preserveHost = false): self
     {
         $clone = clone $this;
         $clone->requestData = $this->requestData->withUri($uri);
@@ -141,17 +140,17 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getServerParams() : array
+    public function getServerParams(): array
     {
         return $this->requestData->serverParams;
     }
 
-    public function getCookieParams() : array
+    public function getCookieParams(): array
     {
         return $this->requestData->cookieParams;
     }
 
-    public function withCookieParams(array $cookies) : self
+    public function withCookieParams(array $cookies): self
     {
         $clone = clone $this;
         $clone->requestData = $this->requestData->withCookieParams($cookies);
@@ -159,12 +158,12 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getQueryParams() : array
+    public function getQueryParams(): array
     {
         return $this->requestData->queryParams;
     }
 
-    public function withQueryParams(array $query) : self
+    public function withQueryParams(array $query): self
     {
         $clone = clone $this;
         $clone->requestData = $this->requestData->withQueryParams($query);
@@ -172,27 +171,27 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function getUploadedFiles() : array
+    public function getUploadedFiles(): array
     {
         return $this->requestData->files->all();
     }
 
-    public function withUploadedFiles(array $uploadedFiles) : self
+    public function withUploadedFiles(array $uploadedFiles): self
     {
         return $this;
     }
 
-    public function getParsedBody() : array|object|null
+    public function getParsedBody(): array|object|null
     {
         return $this->requestData->body->parsed()->data();
     }
 
-    public function withParsedBody($data) : self
+    public function withParsedBody($data): self
     {
         return $this;
     }
 
-    public function getAttributes() : array
+    public function getAttributes(): array
     {
         return $this->requestData->attributes;
     }
@@ -202,7 +201,7 @@ final class Request implements RequestInterface
         return $this->requestData->attributes[$name] ?? $default;
     }
 
-    public function withAttribute($name, $value) : self
+    public function withAttribute($name, $value): self
     {
         $clone = clone $this;
         $clone->requestData = $this->requestData->withAttribute($name, $value);
@@ -210,7 +209,7 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function withoutAttribute($name) : self
+    public function withoutAttribute($name): self
     {
         $clone = clone $this;
         $clone->requestData = $this->requestData->withoutAttribute($name);
@@ -218,12 +217,12 @@ final class Request implements RequestInterface
         return $clone;
     }
 
-    public function input(string $key, mixed $default = null) : mixed
+    public function input(string $key, mixed $default = null): mixed
     {
         return $this->requestData->attributes[$key] ?? $this->requestData->queryParams[$key] ?? ($this->getParsedBody()[$key] ?? $default);
     }
 
-    public function all() : array
+    public function all(): array
     {
         return array_merge($this->requestData->queryParams, (array) $this->getParsedBody(), $this->requestData->attributes);
     }

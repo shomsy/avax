@@ -41,7 +41,7 @@ final readonly class StartMfaRecovery
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function execute(BeginMfaRecoveryData $beginMfaRecoveryData) : MfaRecoveryChallenge
+    public function execute(BeginMfaRecoveryData $beginMfaRecoveryData): MfaRecoveryChallenge
     {
         $throttleKey = $this->throttleKey(email: $beginMfaRecoveryData->email, ipAddress: $beginMfaRecoveryData->ipAddress);
 
@@ -52,10 +52,10 @@ final readonly class StartMfaRecovery
                 name      : 'auth.mfa.recovery.throttled',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'email'       => strtolower(string: $beginMfaRecoveryData->email),
-                                'ip_address'  => $beginMfaRecoveryData->ipAddress,
-                                'user_agent'  => $beginMfaRecoveryData->userAgent,
-                                'retry_after' => $attemptThrottleExceeded->retryAfter(),
+                    'email' => strtolower(string: $beginMfaRecoveryData->email),
+                    'ip_address' => $beginMfaRecoveryData->ipAddress,
+                    'user_agent' => $beginMfaRecoveryData->userAgent,
+                    'retry_after' => $attemptThrottleExceeded->retryAfter(),
                 ],
             ));
 
@@ -70,10 +70,10 @@ final readonly class StartMfaRecovery
                 name      : 'auth.mfa.recovery.started',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'email'      => strtolower(string: $beginMfaRecoveryData->email),
+                    'email' => strtolower(string: $beginMfaRecoveryData->email),
                     'dispatched' => false,
-                                'ip_address' => $beginMfaRecoveryData->ipAddress,
-                                'user_agent' => $beginMfaRecoveryData->userAgent,
+                    'ip_address' => $beginMfaRecoveryData->ipAddress,
+                    'user_agent' => $beginMfaRecoveryData->userAgent,
                 ],
             ));
 
@@ -88,17 +88,17 @@ final readonly class StartMfaRecovery
         $normalizedEmail = strtolower(string: trim(string: $email));
 
         if ($ipAddress === null || $ipAddress === '') {
-            return 'mfa_recovery:' . $normalizedEmail;
+            return 'mfa_recovery:'.$normalizedEmail;
         }
 
-        return 'mfa_recovery:' . $normalizedEmail . '|' . trim(string: $ipAddress);
+        return 'mfa_recovery:'.$normalizedEmail.'|'.trim(string: $ipAddress);
     }
 
     /**
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    private function issue(int $userId, BeginMfaRecoveryData $beginMfaRecoveryData) : MfaRecoveryChallenge
+    private function issue(int $userId, BeginMfaRecoveryData $beginMfaRecoveryData): MfaRecoveryChallenge
     {
         $plainToken = bin2hex(string: random_bytes(length: 32));
         $expiresAt = $this->clock->now()->modify(modifier: sprintf('+%d seconds', $this->expiresAfterSeconds));
@@ -112,10 +112,10 @@ final readonly class StartMfaRecovery
             name      : 'auth.mfa.recovery.started',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id' => $userId,
+                'user_id' => $userId,
                 'dispatched' => true,
-                            'ip_address' => $beginMfaRecoveryData->ipAddress,
-                            'user_agent' => $beginMfaRecoveryData->userAgent,
+                'ip_address' => $beginMfaRecoveryData->ipAddress,
+                'user_agent' => $beginMfaRecoveryData->userAgent,
             ],
         ));
 

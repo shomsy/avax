@@ -28,7 +28,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
     /**
      * Constructor to initialize the configurator with a config loader.
      *
-     * @param ConfigLoaderInterface $configLoader An instance responsible for loading config files.
+     * @param  ConfigLoaderInterface  $configLoader  An instance responsible for loading config files.
      */
     public function __construct(
         protected ConfigLoaderInterface $configLoader,
@@ -106,9 +106,8 @@ abstract class AppConfigurator implements ConfiguratorInterface
      * configuration values (e.g., "database.mysql.dsn"). It uses `data_get` to efficiently
      * resolve nested paths.
      *
-     * @param string $key The configuration key, supporting dot notation for nested access.
-     * @param mixed $default Default value if the key does not exist.
-     *
+     * @param  string  $key  The configuration key, supporting dot notation for nested access.
+     * @param  mixed  $default  Default value if the key does not exist.
      * @return mixed The configuration value or the default value if not found.
      *
      * @throws RuntimeException if the configuration key does not exist and no default is provided.
@@ -123,7 +122,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
         $value = data_get(target: $items, key: $key, default: $default);
 
         if ($value === $default && $default === null) {
-            throw new RuntimeException(message: 'Configuration key [' . $key . '] does not exist.');
+            throw new RuntimeException(message: 'Configuration key ['.$key.'] does not exist.');
         }
 
         return $value;
@@ -143,8 +142,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
     /**
      * Check if a specific configuration key exists.
      *
-     * @param string $key The configuration key, potentially in dot notation.
-     *
+     * @param  string  $key  The configuration key, potentially in dot notation.
      * @return bool Returns true if the key exists, false otherwise.
      */
     #[Override]

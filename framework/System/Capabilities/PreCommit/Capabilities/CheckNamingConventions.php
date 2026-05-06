@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit\Capabilities;
 
-use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 
 /**
@@ -27,14 +26,13 @@ final class CheckNamingConventions implements CheckInterface
         ];
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array
+    public function run(array $context): array
     {
-        $issues   = [];
-        $files    = is_array($context['files'] ?? null) ? $context['files'] : [];
+        $issues = [];
+        $files = is_array($context['files'] ?? null) ? $context['files'] : [];
         $basePath = is_string($context['base_path'] ?? null) ? $context['base_path'] : (getcwd() ?: '.');
 
         foreach ($files as $file) {
@@ -42,17 +40,17 @@ final class CheckNamingConventions implements CheckInterface
                 continue;
             }
 
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
 
             // Check for forbidden names in path
-            $dirPath  = dirname($filePath);
+            $dirPath = dirname($filePath);
             $fileName = basename($filePath);
 
             foreach ($this->forbiddenNames as $forbiddenName) {
-                if (stripos($dirPath, '/' . $forbiddenName . '/') !== false ||
+                if (stripos($dirPath, '/'.$forbiddenName.'/') !== false ||
                     stripos($fileName, $forbiddenName) !== false) {
                     $issues[] = new PreCommitIssue(
                         'CheckNamingConventions',
@@ -68,7 +66,7 @@ final class CheckNamingConventions implements CheckInterface
             // Check PHP class naming implements CheckInterface
             if (str_ends_with(strtolower($file), '.php')) {
                 $classIssues = $this->checkPhpClassNaming($filePath, $file);
-                $issues      = array_merge($issues, $classIssues);
+                $issues = array_merge($issues, $classIssues);
             }
         }
 
@@ -80,7 +78,7 @@ final class CheckNamingConventions implements CheckInterface
      *
      * @return list<PreCommitIssue>
      */
-    private function checkPhpClassNaming(string $filePath, string $relativePath) : array
+    private function checkPhpClassNaming(string $filePath, string $relativePath): array
     {
         $issues = [];
 
@@ -90,8 +88,8 @@ final class CheckNamingConventions implements CheckInterface
         }
 
         // Extract class names implements CheckInterface
-        $tokens    = token_get_all($content);
-        $classes   = [];
+        $tokens = token_get_all($content);
+        $classes = [];
         $count = count($tokens);
 
         for ($tokenIndex = 0; $tokenIndex < $count; $tokenIndex++) {
@@ -103,7 +101,7 @@ final class CheckNamingConventions implements CheckInterface
             if ($token[0] === T_NAMESPACE) {
                 $i = $tokenIndex + 1;
                 $nsTokens = [];
-                while ( isset($tokens[$i]) ) {
+                while (isset($tokens[$i])) {
                     $namespaceToken = $tokens[$i];
                     if (is_string($namespaceToken) && $namespaceToken === ';') {
                         break;
@@ -121,7 +119,7 @@ final class CheckNamingConventions implements CheckInterface
 
             if ($token[0] === T_CLASS) {
                 $i = $tokenIndex + 1;
-                while ( isset($tokens[$i]) && is_array($tokens[$i]) && $tokens[$i][0] === T_WHITESPACE ) {
+                while (isset($tokens[$i]) && is_array($tokens[$i]) && $tokens[$i][0] === T_WHITESPACE) {
                     $i++;
                 }
 

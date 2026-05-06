@@ -10,7 +10,7 @@ final class AuthorizationEngine
     private array $permissions = [];
 
     /**
-     * @param iterable<string> $permissions
+     * @param  iterable<string>  $permissions
      */
     public function __construct(iterable $permissions = [], private readonly bool $defaultAllow = false)
     {
@@ -19,19 +19,19 @@ final class AuthorizationEngine
         }
     }
 
-    public function grant(string $permission) : void
+    public function grant(string $permission): void
     {
         if ($permission !== '') {
             $this->permissions[$permission] = true;
         }
     }
 
-    public function revoke(string $permission) : void
+    public function revoke(string $permission): void
     {
         unset($this->permissions[$permission]);
     }
 
-    public function check(string $permission, mixed $resource = null) : bool
+    public function check(string $permission, mixed $resource = null): bool
     {
         if ($permission === '') {
             return false;
@@ -46,7 +46,7 @@ final class AuthorizationEngine
         }
 
         if ($resource !== null) {
-            $resourcePermission = $permission . ':' . $this->resourceKey(resource: $resource);
+            $resourcePermission = $permission.':'.$this->resourceKey(resource: $resource);
 
             if (isset($this->permissions[$resourcePermission])) {
                 return true;
@@ -56,7 +56,7 @@ final class AuthorizationEngine
         return $this->defaultAllow;
     }
 
-    private function resourceKey(mixed $resource) : string
+    private function resourceKey(mixed $resource): string
     {
         if (is_scalar(value: $resource) || $resource === null) {
             return (string) $resource;

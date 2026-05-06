@@ -30,7 +30,7 @@ final readonly class HttpClient
         return $this->send(new ClientRequest('POST', $url, $headers, $body, $options));
     }
 
-    public function send(ClientRequest $clientRequest) : ClientResponse
+    public function send(ClientRequest $clientRequest): ClientResponse
     {
         return $this->curlClient->send($clientRequest);
     }

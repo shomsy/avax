@@ -20,9 +20,10 @@ final readonly class RouteConflict
         public RouteInfo $routeA,
         public RouteInfo $routeB,
         public string $reason,
-    ) {}
+    ) {
+    }
 
-    public function isExact() : bool
+    public function isExact(): bool
     {
         return $this->type === self::CONFLICT_EXACT;
     }

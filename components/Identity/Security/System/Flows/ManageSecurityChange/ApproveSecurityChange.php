@@ -11,9 +11,11 @@ use Avax\Components\Identity\Security\System\Capabilities\Configuration\Security
  */
 final readonly class ApproveSecurityChange
 {
-    public function __construct(private SecurityConfigurationStore $securityConfigurationStore) {}
+    public function __construct(private SecurityConfigurationStore $securityConfigurationStore)
+    {
+    }
 
-    public function execute(string $requestId) : void
+    public function execute(string $requestId): void
     {
         $this->securityConfigurationStore->approve(requestId: $requestId);
     }

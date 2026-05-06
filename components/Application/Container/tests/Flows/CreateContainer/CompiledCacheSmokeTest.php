@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
@@ -21,10 +21,10 @@ final class CompiledCacheTarget
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-compiled-' . uniqid();
-$version  = 'compiled-smoke';
-$config   = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
-$artifact = $cacheDir . '/container/' . rawurlencode(string: $version) . '/blueprints/' . sha1(string: CompiledCacheTarget::class) . '.php';
+$cacheDir = sys_get_temp_dir().'/container-compiled-'.uniqid();
+$version = 'compiled-smoke';
+$config = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
+$artifact = $cacheDir.'/container/'.rawurlencode(string: $version).'/blueprints/'.sha1(string: CompiledCacheTarget::class).'.php';
 
 $container = makeTestContainer(config: $config);
 $container->warmCompiled(serviceIds: [CompiledCacheTarget::class, CompiledCacheDependency::class]);
@@ -39,12 +39,12 @@ $container->rebuildCompiled(serviceIds: [CompiledCacheTarget::class, CompiledCac
 assertTrue(condition: is_file(filename: $artifact), message: 'Rebuild should repopulate compiled blueprints.');
 assertTrue(condition: str_contains(haystack: (string) $container->exportMetrics(), needle: 'container_compiled_rebuilds_total'), message: 'Rebuild should be reported in metrics.');
 
-$second   = makeTestContainer(config: $config);
+$second = makeTestContainer(config: $config);
 $resolved = $second->get(id: CompiledCacheTarget::class);
-$metrics  = $second->exportMetrics();
+$metrics = $second->exportMetrics();
 
 assertInstanceOf(expectedClass: CompiledCacheTarget::class, value: $resolved, message: 'Compiled cache should still resolve services correctly.');
 assertSame(expected: 'compiled', actual: $resolved->dependency->id(), message: 'Compiled cache should preserve dependency resolution behavior.');
 assertTrue(condition: str_contains(haystack: (string) $metrics, needle: 'container_blueprint_cache_disk_hits_total'), message: 'Runtime should report compiled blueprint disk hits.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

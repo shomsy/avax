@@ -9,7 +9,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Compl
  */
 final readonly class PublishSagaCompleted
 {
-    public function publish(SagaCompletion $sagaCompletion) : SagaCompletion
+    public function publish(SagaCompletion $sagaCompletion): SagaCompletion
     {
         return $sagaCompletion;
     }

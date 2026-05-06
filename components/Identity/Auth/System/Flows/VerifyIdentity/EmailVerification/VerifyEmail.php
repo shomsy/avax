@@ -22,9 +22,10 @@ final readonly class VerifyEmail
         private EmailVerificationStateStoreInterface $emailVerificationStateStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
-    public function execute(VerifyEmailData $verifyEmailData) : bool
+    public function execute(VerifyEmailData $verifyEmailData): bool
     {
         $userId = $this->emailVerificationStore->consume(token: $verifyEmailData->token, now: $this->clock->now());
 
@@ -33,9 +34,9 @@ final readonly class VerifyEmail
                 name      : 'auth.email_verification.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'reason' => 'invalid_token',
-                                'ip_address' => $verifyEmailData->ipAddress,
-                                'user_agent' => $verifyEmailData->userAgent,
+                    'reason' => 'invalid_token',
+                    'ip_address' => $verifyEmailData->ipAddress,
+                    'user_agent' => $verifyEmailData->userAgent,
                 ],
             ));
 
@@ -47,9 +48,9 @@ final readonly class VerifyEmail
             name      : 'auth.email_verification.completed',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id' => $userId->value,
-                            'ip_address' => $verifyEmailData->ipAddress,
-                            'user_agent' => $verifyEmailData->userAgent,
+                'user_id' => $userId->value,
+                'ip_address' => $verifyEmailData->ipAddress,
+                'user_agent' => $verifyEmailData->userAgent,
             ],
         ));
 

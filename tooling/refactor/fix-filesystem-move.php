@@ -13,25 +13,27 @@ foreach ($dirs as $dir) {
 
 $count = 0;
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     $changed = false;
-    
+
     // Fix legacy LocalDisk to canonical
     if (str_contains($content, 'Avax\Filesystem\Disks\Local\LocalDisk')) {
         $content = str_replace(
-            'Avax\Filesystem\Disks\Local\LocalDisk', 
-            'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local\LocalDisk', 
+            'Avax\Filesystem\Disks\Local\LocalDisk',
+            'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Local\LocalDisk',
             $content
         );
         $changed = true;
     }
-    
+
     // Fix Disk reference (missing System\Capabilities)
     if (str_contains($content, 'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk')) {
         $content = str_replace(
-            'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk', 
-            'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk', 
+            'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk',
+            'Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk',
             $content
         );
         $changed = true;

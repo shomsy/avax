@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
 final class ReadFileInput
 {
-    public function read(RequestInterface $request, string $key) : mixed
+    public function read(RequestInterface $request, string $key): mixed
     {
         return $request->getUploadedFiles()[$key] ?? null;
     }

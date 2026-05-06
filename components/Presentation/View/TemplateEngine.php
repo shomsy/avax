@@ -27,9 +27,9 @@ class TemplateEngine extends BladeOne
     /**
      * TemplateEngine constructor.
      *
-     * @param string $templatePath The path to template files.
-     * @param string $compiledPath The path where compiled templates are stored.
-     * @param int    $mode         BladeOne mode (e.g., MODE_AUTO).
+     * @param  string  $templatePath  The path to template files.
+     * @param  string  $compiledPath  The path where compiled templates are stored.
+     * @param  int  $mode  BladeOne mode (e.g., MODE_AUTO).
      *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -65,7 +65,7 @@ class TemplateEngine extends BladeOne
     private function initializeBaseAssetPath(): void
     {
         // Retrieve the base URL and append the asset directory from configuration
-        $this->baseAssetPath = $this->getBaseUrl() . config(key: 'views.assets');
+        $this->baseAssetPath = $this->getBaseUrl().config(key: 'views.assets');
     }
 
     /**
@@ -113,7 +113,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'datetime',
-            handler: static fn (string $expression) : string => sprintf(
+            handler: static fn (string $expression): string => sprintf(
                 "<?php echo (new DateTime(%s))->format('Y-m-d H:i:s'); ?>",
                 $expression,
             ),
@@ -130,7 +130,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'ifenv',
-            handler: static fn (string $expression) : string => sprintf(
+            handler: static fn (string $expression): string => sprintf(
                 "<?php if (config('cashback.env') === %s): ?>",
                 $expression,
             ),
@@ -151,7 +151,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'markdown',
-            handler: static fn (string $expression) : string => sprintf(
+            handler: static fn (string $expression): string => sprintf(
                 '<?php echo (new Parsedown())->text(%s); ?>',
                 $expression,
             ),
@@ -168,7 +168,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'route',
-            handler: static fn (string $expression) : string => sprintf('<?php echo route(%s); ?>', $expression),
+            handler: static fn (string $expression): string => sprintf('<?php echo route(%s); ?>', $expression),
         );
     }
 
@@ -195,11 +195,11 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'dump',
-            handler: static fn (string $expression) : string => sprintf('<?php var_dump(%s); ?>', $expression),
+            handler: static fn (string $expression): string => sprintf('<?php var_dump(%s); ?>', $expression),
         );
         $this->directive(
             name   : 'dd',
-            handler: static fn (string $expression) : string => sprintf('<?php die(var_dump(%s)); ?>', $expression),
+            handler: static fn (string $expression): string => sprintf('<?php die(var_dump(%s)); ?>', $expression),
         );
     }
 
@@ -267,7 +267,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'checked',
-            handler: static fn (string $expression) : string => sprintf("<?php echo %s ? 'checked' : ''; ?>", $expression),
+            handler: static fn (string $expression): string => sprintf("<?php echo %s ? 'checked' : ''; ?>", $expression),
         );
     }
 
@@ -280,7 +280,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'selected',
-            handler: static fn (string $expression) : string => sprintf("<?php echo %s ? 'selected' : ''; ?>", $expression),
+            handler: static fn (string $expression): string => sprintf("<?php echo %s ? 'selected' : ''; ?>", $expression),
         );
     }
 }

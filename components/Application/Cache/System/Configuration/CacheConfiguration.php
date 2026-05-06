@@ -11,7 +11,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCache
 final readonly class CacheConfiguration
 {
     /**
-     * @param array<string, mixed> $serializerOptions
+     * @param  array<string, mixed>  $serializerOptions
      */
     public function __construct(
         public string $name = 'default',

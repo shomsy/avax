@@ -18,11 +18,12 @@ use Traversable;
 final readonly class Window implements Countable, IteratorAggregate
 {
     /**
-     * @param array<int, array<int, mixed>> $windows
+     * @param  array<int, array<int, mixed>>  $windows
      */
     private function __construct(
         private array $windows,
-    ) {}
+    ) {
+    }
 
     public static function from(iterable $items, int $size, int $step = 1): self
     {

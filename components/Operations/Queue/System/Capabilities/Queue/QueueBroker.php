@@ -6,13 +6,13 @@ namespace Avax\Components\Operations\Queue\System\Capabilities\Queue;
 
 interface QueueBroker
 {
-    public function push(string $queue, array $job) : void;
+    public function push(string $queue, array $job): void;
 
-    public function pop(string $queue) : ?array;
+    public function pop(string $queue): ?array;
 
-    public function size(string $queue) : int;
+    public function size(string $queue): int;
 
-    public function remove(string $queue, string $jobId) : void;
+    public function remove(string $queue, string $jobId): void;
 
-    public function clear(string $queue) : void;
+    public function clear(string $queue): void;
 }

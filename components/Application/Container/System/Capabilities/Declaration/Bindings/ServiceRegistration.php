@@ -56,7 +56,7 @@ final class ServiceRegistration
 
     public string $poolScopeKind = ScopeKind::OPERATION;
 
-    public string|null $group = null;
+    public ?string $group = null;
 
     public int $groupOrder = 0;
 
@@ -67,12 +67,12 @@ final class ServiceRegistration
     public array $arguments = [];
 
     public RegistrationMetadata $metadata;
+
     public readonly string $abstract;
 
     public function __construct(
         string $abstract
-    )
-    {
+    ) {
         $this->abstract = $abstract;
         $this->metadata = RegistrationMetadata::for(unitId: $abstract);
     }
@@ -89,13 +89,13 @@ final class ServiceRegistration
         $registration->warm = $array['warm'] ?? false;
         $registration->lazy = $array['lazy'] ?? false;
         $registration->disposable = $array['disposable'] ?? false;
-        $registration->poolSize = max(1, (int)($array['poolSize'] ?? 8));
-        $registration->poolResetBeforeReuse = (bool)($array['poolResetBeforeReuse'] ?? true);
+        $registration->poolSize = max(1, (int) ($array['poolSize'] ?? 8));
+        $registration->poolResetBeforeReuse = (bool) ($array['poolResetBeforeReuse'] ?? true);
         $registration->poolScopeKind = ScopeKind::normalize(
-            kind: (string)($array['poolScopeKind'] ?? ScopeKind::OPERATION)
+            kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION)
         );
         $registration->group = is_string(value: $array['group'] ?? null) ? $array['group'] : null;
-        $registration->groupOrder = (int)($array['groupOrder'] ?? 0);
+        $registration->groupOrder = (int) ($array['groupOrder'] ?? 0);
         $registration->tags = $array['tags'] ?? [];
         $registration->arguments = $array['arguments'] ?? [];
         $metadata = $array['metadata'] ?? null;
@@ -123,7 +123,7 @@ final class ServiceRegistration
      */
     public function tag(string|array $tags): self
     {
-        $this->tags = array_merge($this->tags, (array)$tags)
+        $this->tags = array_merge($this->tags, (array) $tags)
                 |> array_unique(...)
                 |> array_values(...);
 
@@ -139,7 +139,7 @@ final class ServiceRegistration
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     public function withArguments(array $arguments): self
     {
@@ -166,17 +166,15 @@ final class ServiceRegistration
     }
 
     /**
-     * @param mixed $values
-     *
      * @return list<string>
      */
     private function stringList(mixed $values): array
     {
         $items = array_map(
-                callback: static fn(mixed $value): string => is_string(value: $value) ? trim(string: $value) : '',
-                array: (array)$values
-            )
-                |> (static fn($x) => array_filter(array: $x, callback: static fn(string $value): bool => $value !== ''))
+            callback: static fn (mixed $value): string => is_string(value: $value) ? trim(string: $value) : '',
+            array: (array) $values
+        )
+                |> (static fn ($x) => array_filter(array: $x, callback: static fn (string $value): bool => $value !== ''))
                 |> array_values(...);
 
         $items = array_values(array: array_unique(array: $items));
@@ -396,11 +394,10 @@ final class ServiceRegistration
     }
 
     public function pooled(
-        int|null    $maxSize = null,
-        string|null $scopeKind = null,
-        bool        $resetBeforeReuse = true
-    ): self
-    {
+        ?int $maxSize = null,
+        ?string $scopeKind = null,
+        bool $resetBeforeReuse = true
+    ): self {
         $maxSize ??= 8;
         $scopeKind ??= ScopeKind::OPERATION;
         $this->lifetime = PooledLifetime::NAME;

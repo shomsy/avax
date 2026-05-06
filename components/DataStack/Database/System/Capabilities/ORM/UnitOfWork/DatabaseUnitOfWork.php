@@ -26,10 +26,9 @@ final class DatabaseUnitOfWork
 
     public function __construct(
         private readonly AttributeMetadataReader $attributeMetadataReader,
-        private readonly EntityPersister         $entityPersister,
-        private readonly IdentityMap             $identityMap,
-    )
-    {
+        private readonly EntityPersister $entityPersister,
+        private readonly IdentityMap $identityMap,
+    ) {
     }
 
     public function persist(object $entity): void
@@ -71,7 +70,7 @@ final class DatabaseUnitOfWork
 
             $metadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
             $identifier = $metadata->identifierField();
-            if (!$identifier instanceof FieldMetadata) {
+            if (! $identifier instanceof FieldMetadata) {
                 throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
             }
 

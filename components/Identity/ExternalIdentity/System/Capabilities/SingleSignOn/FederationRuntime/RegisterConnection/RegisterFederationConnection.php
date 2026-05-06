@@ -16,15 +16,17 @@ use Random\RandomException;
 
 final readonly class RegisterFederationConnection
 {
-    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private GroupRoleMappingValidator $groupRoleMappingValidator, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private FederationConnectionStoreInterface $federationConnectionStore, private GroupRoleMappingValidator $groupRoleMappingValidator, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     /**
      * @throws FederationFailed
      * @throws RandomException
      */
-    public function execute(RegisterFederationConnectionData $registerFederationConnectionData) : FederationConnection
+    public function execute(RegisterFederationConnectionData $registerFederationConnectionData): FederationConnection
     {
-        $domain   = strtolower(string: trim(string: $registerFederationConnectionData->domain));
+        $domain = strtolower(string: trim(string: $registerFederationConnectionData->domain));
         $existing = $this->federationConnectionStore->findByDomain(domain: $domain);
 
         if ($existing instanceof FederationConnection) {
@@ -40,7 +42,7 @@ final readonly class RegisterFederationConnection
         }
 
         $federationConnection = new FederationConnection(
-            connectionId           : 'fed_' . bin2hex(string: random_bytes(length: 12)),
+            connectionId           : 'fed_'.bin2hex(string: random_bytes(length: 12)),
             tenantSlug             : trim(string: $registerFederationConnectionData->tenantSlug),
             name                   : trim(string: $registerFederationConnectionData->name),
             provider               : $registerFederationConnectionData->provider,
@@ -58,11 +60,11 @@ final readonly class RegisterFederationConnection
             name      : 'auth.federation.connection.registered',
             occurredAt: $this->clock->now(),
             context   : [
-                            'connection_id'       => $federationConnection->connectionId,
-                            'tenant'              => $federationConnection->tenantSlug,
-                            'domain'              => $federationConnection->domain,
-                            'provider'            => $federationConnection->provider->value,
-                            'break_glass_allowed' => $federationConnection->breakGlassAllowed ? 1 : 0,
+                'connection_id' => $federationConnection->connectionId,
+                'tenant' => $federationConnection->tenantSlug,
+                'domain' => $federationConnection->domain,
+                'provider' => $federationConnection->provider->value,
+                'break_glass_allowed' => $federationConnection->breakGlassAllowed ? 1 : 0,
             ],
         ));
 

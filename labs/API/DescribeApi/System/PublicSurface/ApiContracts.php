@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Labs\API\DescribeApi\System\PublicSurface;
 
-use Avax\Labs\API\DescribeApi\System\Capabilities\ReadApiDescriptions\ReadApiDescriptions;
-use Avax\Labs\API\DescribeApi\System\Capabilities\ReadApiDescriptions\ReadFakeApiDescriptions;
 use Avax\Labs\API\DescribeApi\System\Capabilities\BreakingChanges\BreakingChangeDetector;
 use Avax\Labs\API\DescribeApi\System\Capabilities\BreakingChanges\BreakingChangeReport;
 use Avax\Labs\API\DescribeApi\System\Capabilities\EndpointContracts\EndpointContract;
+use Avax\Labs\API\DescribeApi\System\Capabilities\ReadApiDescriptions\ReadApiDescriptions;
+use Avax\Labs\API\DescribeApi\System\Capabilities\ReadApiDescriptions\ReadFakeApiDescriptions;
 use Avax\Labs\API\DescribeApi\System\Flows\DescribeHttpContracts\DescribeHttpContracts;
 use Avax\Labs\API\DescribeApi\System\Flows\DetectBreakingApiChanges\DetectBreakingApiChanges;
 use Avax\Labs\API\DescribeApi\System\Flows\GenerateApiContractTests\GenerateApiContractTests;
@@ -18,12 +18,11 @@ final class ApiContracts
 {
     public function __construct(
         private readonly ReadApiDescriptions $apiContracts,
-        private readonly DescribeHttpContracts        $describeHttpContracts,
-        private readonly ValidateApiContracts         $validateApiContracts,
-        private readonly DetectBreakingApiChanges     $detectBreakingApiChanges,
-        private readonly GenerateApiContractTests     $generateApiContractTests,
-    )
-    {
+        private readonly DescribeHttpContracts $describeHttpContracts,
+        private readonly ValidateApiContracts $validateApiContracts,
+        private readonly DetectBreakingApiChanges $detectBreakingApiChanges,
+        private readonly GenerateApiContractTests $generateApiContractTests,
+    ) {
     }
 
     public static function inMemory(): self

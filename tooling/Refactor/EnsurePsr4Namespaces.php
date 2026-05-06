@@ -37,8 +37,10 @@ final class EnsurePsr4Namespaces
         echo "=== Ensuring PSR-4 Namespaces (Aggressive) ===\n\n";
 
         foreach ($this->psr4Map as $prefix => $dir) {
-            $path = $this->root . '/' . $dir;
-            if (!is_dir($path)) continue;
+            $path = $this->root.'/'.$dir;
+            if (! is_dir($path)) {
+                continue;
+            }
 
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -47,7 +49,9 @@ final class EnsurePsr4Namespaces
 
             /** @var SplFileInfo $file */
             foreach ($iterator as $file) {
-                if ($file->getExtension() !== 'php') continue;
+                if ($file->getExtension() !== 'php') {
+                    continue;
+                }
                 $this->processFile($file->getPathname(), $prefix, $dir);
             }
         }
@@ -56,16 +60,18 @@ final class EnsurePsr4Namespaces
     private function processFile(string $path, string $prefix, string $baseDir): void
     {
         $content = file_get_contents($path);
-        if (!$content) return;
+        if (! $content) {
+            return;
+        }
 
-        $relativePath = str_replace($this->root . '/' . $baseDir, '', $path);
+        $relativePath = str_replace($this->root.'/'.$baseDir, '', $path);
         $parts = explode('/', trim($relativePath, '/'));
         array_pop($parts); // remove filename
 
         // Map directory names to valid namespace parts (remove -)
-        $parts = array_map(fn($p) => str_replace('-', '', $p), $parts);
+        $parts = array_map(fn ($p) => str_replace('-', '', $p), $parts);
 
-        $expectedNs = rtrim($prefix . implode('\\', $parts), '\\');
+        $expectedNs = rtrim($prefix.implode('\\', $parts), '\\');
 
         $modified = false;
         if (preg_match('/^namespace\s+([^;]+);/m', $content, $matches)) {
@@ -79,14 +85,14 @@ final class EnsurePsr4Namespaces
             if (preg_match('/^<\?php\s+(declare\(strict_types=1\);)?/s', $content, $m)) {
                 $header = $m[0];
                 $rest = substr($content, strlen($header));
-                $content = $header . "\n\nnamespace $expectedNs;\n" . ltrim($rest);
+                $content = $header."\n\nnamespace $expectedNs;\n".ltrim($rest);
                 $modified = true;
             }
         }
 
         if ($modified) {
             file_put_contents($path, $content);
-            echo "  [FIXED] " . str_replace($this->root . '/', '', $path) . " -> $expectedNs\n";
+            echo '  [FIXED] '.str_replace($this->root.'/', '', $path)." -> $expectedNs\n";
         }
     }
 }

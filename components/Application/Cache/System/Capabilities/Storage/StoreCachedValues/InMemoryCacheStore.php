@@ -46,7 +46,7 @@ final class InMemoryCacheStore implements CacheStore
             $this->chooseCachedValueForReplacement->recordAccess(key: $fullKey);
         }
 
-        $cachedValueLifecycle    = $record->cachedValueLifecycle->withAccessed(clock: $clock);
+        $cachedValueLifecycle = $record->cachedValueLifecycle->withAccessed(clock: $clock);
         $this->records[$fullKey] = new StoredCacheRecord(
             value         : $record->value,
             serializedData: $record->serializedData,

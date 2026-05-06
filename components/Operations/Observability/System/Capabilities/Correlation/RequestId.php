@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\Correlation;
 
-
 use Stringable;
 
 final readonly class RequestId implements Stringable

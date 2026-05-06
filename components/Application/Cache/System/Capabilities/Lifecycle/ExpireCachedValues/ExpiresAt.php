@@ -36,8 +36,7 @@ final readonly class ExpiresAt implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ) : Timestamp
-    {
+    ): Timestamp {
         return $this->timestamp;
     }
 

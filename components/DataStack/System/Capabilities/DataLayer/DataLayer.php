@@ -11,10 +11,9 @@ final readonly class DataLayer
 {
     private function __construct(
         private AccessPersistentData $accessPersistentData,
-        private CommitDataChanges    $commitDataChanges,
-        private DataLayerConfig      $dataLayerConfig,
-    )
-    {
+        private CommitDataChanges $commitDataChanges,
+        private DataLayerConfig $dataLayerConfig,
+    ) {
     }
 
     public static function fromDatabaseRuntime(object $databaseRuntime): self

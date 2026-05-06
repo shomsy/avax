@@ -48,7 +48,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
      * blocking file_get_contents() immediately.
      */
     #[Override]
-    public function asyncRead(string $path, array $options = []) : AsyncOperationPromise
+    public function asyncRead(string $path, array $options = []): AsyncOperationPromise
     {
         if ($path === '') {
             return new SyncOperationPromise(
@@ -59,7 +59,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
         $offset = $options['offset'] ?? 0;
         $length = $options['length'] ?? null;
 
-        $fiber = new Fiber(static function () use ($path, $offset, $length) : string {
+        $fiber = new Fiber(static function () use ($path, $offset, $length): string {
             $contents = file_get_contents($path);
 
             if ($contents === false) {
@@ -92,7 +92,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
      * blocking file_put_contents() immediately.
      */
     #[Override]
-    public function asyncWrite(string $path, string $contents, array $options = []) : AsyncOperationPromise
+    public function asyncWrite(string $path, string $contents, array $options = []): AsyncOperationPromise
     {
         if ($path === '') {
             return new SyncOperationPromise(
@@ -103,7 +103,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
         $flags = $options['flags'] ?? 0;
         $permissions = $options['permissions'] ?? null;
 
-        $fiber = new Fiber(static function () use ($path, $contents, $flags, $permissions) : bool {
+        $fiber = new Fiber(static function () use ($path, $contents, $flags, $permissions): bool {
             $dir = dirname($path);
 
             if (! is_dir($dir) && (! mkdir($dir, 0o755, true) && ! is_dir($dir))) {
@@ -145,7 +145,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
      * NOTE: This is synchronous under the hood.
      */
     #[Override]
-    public function asyncExists(string $path) : AsyncOperationPromise
+    public function asyncExists(string $path): AsyncOperationPromise
     {
         if ($path === '') {
             return new SyncOperationPromise(
@@ -153,7 +153,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
             );
         }
 
-        $fiber = new Fiber(static fn () : bool => file_exists($path));
+        $fiber = new Fiber(static fn (): bool => file_exists($path));
 
         try {
             $fiber->start();
@@ -170,10 +170,10 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
      *
      * NOTE: This is synchronous under the hood.
      *
-     * @param array<string, mixed> $options If 'recursive' is true, directories are deleted recursively
+     * @param  array<string, mixed>  $options  If 'recursive' is true, directories are deleted recursively
      */
     #[Override]
-    public function asyncDelete(string $path, array $options = []) : AsyncOperationPromise
+    public function asyncDelete(string $path, array $options = []): AsyncOperationPromise
     {
         if ($path === '') {
             return new SyncOperationPromise(
@@ -183,7 +183,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
 
         $recursive = $options['recursive'] ?? false;
 
-        $fiber = new Fiber(function () use ($path, $recursive) : bool {
+        $fiber = new Fiber(function () use ($path, $recursive): bool {
             if (is_file($path) || is_link($path)) {
                 if (! unlink($path)) {
                     throw new RuntimeException(
@@ -232,7 +232,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
     /**
      * Recursively delete a directory and its contents.
      */
-    private function deleteDirectoryRecursive(string $path) : bool
+    private function deleteDirectoryRecursive(string $path): bool
     {
         if (! is_dir($path)) {
             return false;
@@ -241,7 +241,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
         $items = array_diff(scandir($path), ['.', '..']);
 
         foreach ($items as $item) {
-            $fullPath = $path . DIRECTORY_SEPARATOR . $item;
+            $fullPath = $path.DIRECTORY_SEPARATOR.$item;
 
             if (is_dir($fullPath)) {
                 $this->deleteDirectoryRecursive($fullPath);
@@ -258,10 +258,10 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
      *
      * NOTE: This is synchronous under the hood.
      *
-     * @param array<string, mixed> $options Supported: 'recursive' (bool), 'includeHidden' (bool), 'filter' (callable)
+     * @param  array<string, mixed>  $options  Supported: 'recursive' (bool), 'includeHidden' (bool), 'filter' (callable)
      */
     #[Override]
-    public function asyncListDirectory(string $path, array $options = []) : AsyncOperationPromise
+    public function asyncListDirectory(string $path, array $options = []): AsyncOperationPromise
     {
         if ($path === '') {
             return new SyncOperationPromise(
@@ -271,7 +271,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
 
         $recursive = $options['recursive'] ?? false;
         $includeHidden = $options['includeHidden'] ?? false;
-        $filter    = $options['filter'] ?? null;
+        $filter = $options['filter'] ?? null;
 
         if ($filter !== null && ! is_callable($filter)) {
             return new SyncOperationPromise(
@@ -279,7 +279,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
             );
         }
 
-        $fiber = new Fiber(function () use ($path, $recursive, $includeHidden, $filter) : array {
+        $fiber = new Fiber(function () use ($path, $recursive, $includeHidden, $filter): array {
             if (! is_dir($path)) {
                 throw new RuntimeException(
                     sprintf('Path is not a directory: %s', $path),
@@ -312,7 +312,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
      *
      * @return list<string>
      */
-    private function listDirectoryRecursive(string $path, bool $includeHidden) : array
+    private function listDirectoryRecursive(string $path, bool $includeHidden): array
     {
         $items = [];
         $entries = array_diff(scandir($path), ['.', '..']);
@@ -322,8 +322,8 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
                 continue;
             }
 
-            $fullPath = $path . DIRECTORY_SEPARATOR . $entry;
-            $items[]  = $fullPath;
+            $fullPath = $path.DIRECTORY_SEPARATOR.$entry;
+            $items[] = $fullPath;
 
             if (is_dir($fullPath)) {
                 $items = [...$items, ...$this->listDirectoryRecursive($fullPath, $includeHidden)];
@@ -338,7 +338,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
      *
      * @return list<string>
      */
-    private function listDirectorySingle(string $path, bool $includeHidden) : array
+    private function listDirectorySingle(string $path, bool $includeHidden): array
     {
         $items = [];
         $handle = opendir($path);
@@ -347,7 +347,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
             return $items;
         }
 
-        while ( ($entry = readdir($handle)) !== false ) {
+        while (($entry = readdir($handle)) !== false) {
             if ($entry === '.') {
                 continue;
             }
@@ -360,7 +360,7 @@ final class RunFilesystemIoSynchronously implements AsyncFilesystemInterface
                 continue;
             }
 
-            $items[] = $path . DIRECTORY_SEPARATOR . $entry;
+            $items[] = $path.DIRECTORY_SEPARATOR.$entry;
         }
 
         closedir($handle);

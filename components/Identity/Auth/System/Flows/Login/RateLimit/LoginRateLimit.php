@@ -19,7 +19,7 @@ final readonly class LoginRateLimit
     public function __construct(
         private LoginRateLimitStorageInterface $loginRateLimitStorage,
         private Clock $clock,
-        ?int                                   $maxAttempts = null,
+        ?int $maxAttempts = null,
         private int $decaySeconds = 60,
     ) {
         $maxAttempts ??= 5;

@@ -11,31 +11,31 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryStat
  */
 final class Neo4jGrammar extends BaseGrammar
 {
-    public function compileSelect(QueryState $queryState) : string
+    public function compileSelect(QueryState $queryState): string
     {
         $pattern = $this->compileCypherPattern($queryState);
 
-        $sql = 'MATCH ' . $pattern;
+        $sql = 'MATCH '.$pattern;
 
         if ($queryState->wheres !== []) {
-            $sql .= ' WHERE ' . $this->compileCypherWhere($queryState);
+            $sql .= ' WHERE '.$this->compileCypherWhere($queryState);
         }
 
         $return = $queryState->columns === [] ? '*' : implode(separator: ', ', array: $queryState->columns);
-        $sql    .= ' RETURN ' . $return;
+        $sql .= ' RETURN '.$return;
 
         if ($queryState->orders !== []) {
-            $sql .= ' ORDER BY ' . $this->compileCypherOrder($queryState);
+            $sql .= ' ORDER BY '.$this->compileCypherOrder($queryState);
         }
 
         if ($queryState->limit) {
-            $sql .= ' LIMIT ' . $queryState->limit;
+            $sql .= ' LIMIT '.$queryState->limit;
         }
 
         return $sql;
     }
 
-    private function compileCypherPattern(QueryState $queryState) : string
+    private function compileCypherPattern(QueryState $queryState): string
     {
         $table = $queryState->from ?: 'n';
         $alias = 'n';
@@ -51,7 +51,7 @@ final class Neo4jGrammar extends BaseGrammar
         return sprintf('%s:%s', $alias, $table);
     }
 
-    private function compileCypherWhere(QueryState $queryState) : string
+    private function compileCypherWhere(QueryState $queryState): string
     {
         $conditions = [];
         foreach ($queryState->wheres as $where) {
@@ -65,7 +65,7 @@ final class Neo4jGrammar extends BaseGrammar
         return implode(separator: ' AND ', array: $conditions);
     }
 
-    private function compileCypherOrder(QueryState $queryState) : string
+    private function compileCypherOrder(QueryState $queryState): string
     {
         $orders = [];
         foreach ($queryState->orders as $order) {
@@ -75,10 +75,10 @@ final class Neo4jGrammar extends BaseGrammar
         return implode(separator: ', ', array: $orders);
     }
 
-    public function compileInsert(QueryState $queryState) : string
+    public function compileInsert(QueryState $queryState): string
     {
         $pattern = $this->compileCypherPattern($queryState);
-        $props   = $this->compileCypherProperties($queryState->values);
+        $props = $this->compileCypherProperties($queryState->values);
 
         return sprintf('CREATE (%s %s)', $pattern, $props);
     }
@@ -87,38 +87,38 @@ final class Neo4jGrammar extends BaseGrammar
     {
         $props = [];
         foreach ($values as $key => $value) {
-            $val     = is_string(value: $value) ? sprintf("'%s'", $value) : $value;
+            $val = is_string(value: $value) ? sprintf("'%s'", $value) : $value;
             $props[] = sprintf('%s: %s', $key, $val);
         }
 
-        return '{' . implode(separator: ', ', array: $props) . '}';
+        return '{'.implode(separator: ', ', array: $props).'}';
     }
 
-    public function compileUpdate(QueryState $queryState) : string
+    public function compileUpdate(QueryState $queryState): string
     {
         $pattern = $this->compileCypherPattern($queryState);
-        $props   = $this->compileCypherProperties($queryState->values);
+        $props = $this->compileCypherProperties($queryState->values);
 
-        $sql = 'MATCH ' . $pattern;
+        $sql = 'MATCH '.$pattern;
 
         if ($queryState->wheres !== []) {
-            $sql .= ' WHERE ' . $this->compileCypherWhere($queryState);
+            $sql .= ' WHERE '.$this->compileCypherWhere($queryState);
         }
 
-        return $sql . (' SET ' . $props);
+        return $sql.(' SET '.$props);
     }
 
-    public function compileDelete(QueryState $queryState) : string
+    public function compileDelete(QueryState $queryState): string
     {
         $pattern = $this->compileCypherPattern($queryState);
 
-        return 'DETACH DELETE ' . $pattern;
+        return 'DETACH DELETE '.$pattern;
     }
 
-    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string
     {
         $pattern = $this->compileCypherPattern($queryState);
-        $props   = $this->compileCypherProperties($queryState->values);
+        $props = $this->compileCypherProperties($queryState->values);
 
         return sprintf('MERGE (%s %s)', $pattern, $props);
     }
@@ -126,18 +126,18 @@ final class Neo4jGrammar extends BaseGrammar
     public function compileRelation(string $from, string $to, string $type, array $properties = []): string
     {
         $props = $this->compileCypherProperties(values: $properties);
-        $propsPart = $properties === [] ? '' : ' ' . $props;
+        $propsPart = $properties === [] ? '' : ' '.$props;
 
         return sprintf('(%s)-[:%s%s]->(%s)', $from, $type, $propsPart, $to);
     }
 
     public function compilePath(array $nodes, array $relations): string
     {
-        $path = '(' . $nodes[0] . ')';
+        $path = '('.$nodes[0].')';
         $counter = count(value: $relations);
 
         for ($i = 0; $i < $counter; $i++) {
-            $path .= sprintf('-[r:%s]->(', $relations[$i]) . $nodes[$i + 1] . ')';
+            $path .= sprintf('-[r:%s]->(', $relations[$i]).$nodes[$i + 1].')';
         }
 
         return $path;

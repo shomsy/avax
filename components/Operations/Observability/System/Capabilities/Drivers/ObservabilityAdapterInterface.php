@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\Observability\System\Capabilities\Drivers;
 
 use Avax\Components\Operations\Observability\System\Capabilities\Logs\StructuredLogRecord;
-use Avax\Components\Operations\Observability\System\Capabilities\Metrics\Counter;
-use Avax\Components\Operations\Observability\System\Capabilities\Metrics\Gauge;
 use Avax\Components\Operations\Observability\System\Capabilities\Tracing\Span;
 
 interface ObservabilityAdapterInterface

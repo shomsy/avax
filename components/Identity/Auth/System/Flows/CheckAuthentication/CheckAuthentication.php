@@ -17,7 +17,8 @@ final readonly class CheckAuthentication
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-    ) {}
+    ) {
+    }
 
     public function execute(): bool
     {

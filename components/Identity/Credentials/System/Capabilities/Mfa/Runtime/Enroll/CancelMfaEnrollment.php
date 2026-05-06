@@ -25,7 +25,8 @@ final readonly class CancelMfaEnrollment
         private MfaStoreInterface $mfaStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated

@@ -10,20 +10,19 @@ final class SecurityAuditLog
     private array $events = [];
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function record(string $event, array $context = []): void
     {
         $this->events[] = [
-            'event'   => $event,
+            'event' => $event,
             'context' => $this->redact(context: $context),
             'recorded_at' => date(format: DATE_ATOM),
         ];
     }
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     private function redact(array $context): array

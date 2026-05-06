@@ -115,21 +115,21 @@ final class CacheMetrics
     public function toArray(): array
     {
         return [
-            'hits'               => $this->hits,
-            'misses'             => $this->misses,
-            'writes'             => $this->writes,
-            'deletes'            => $this->deletes,
-            'evictions'          => $this->evictions,
-            'invalidations'      => $this->invalidations,
-            'refreshes'          => $this->refreshes,
-            'stale_served'       => $this->staleServed,
-            'lock_waits'         => $this->lockWaits,
-            'source_failures'    => $this->sourceFailures,
-            'store_failures'     => $this->storeFailures,
-            'hit_rate'           => $this->hitRate(),
-            'miss_rate'          => $this->missRate(),
+            'hits' => $this->hits,
+            'misses' => $this->misses,
+            'writes' => $this->writes,
+            'deletes' => $this->deletes,
+            'evictions' => $this->evictions,
+            'invalidations' => $this->invalidations,
+            'refreshes' => $this->refreshes,
+            'stale_served' => $this->staleServed,
+            'lock_waits' => $this->lockWaits,
+            'source_failures' => $this->sourceFailures,
+            'store_failures' => $this->storeFailures,
+            'hit_rate' => $this->hitRate(),
+            'miss_rate' => $this->missRate(),
             'average_latency_ms' => $this->averageLatencyMicroseconds() / 1000,
-            'total_operations'   => $this->totalOperations(),
+            'total_operations' => $this->totalOperations(),
         ];
     }
 

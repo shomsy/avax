@@ -10,7 +10,7 @@ namespace Avax\Framework\System\Capabilities\ConfigValidation;
 final readonly class ConfigSchema
 {
     /**
-     * @param array<string, ConfigSchemaField> $fields
+     * @param  array<string, ConfigSchemaField>  $fields
      */
     public function __construct(
         public string $name,
@@ -25,7 +25,7 @@ final readonly class ConfigSchema
     }
 
     /**
-     * @param list<mixed> $allowed
+     * @param  list<mixed>  $allowed
      */
     public function field(
         string $name,
@@ -35,7 +35,7 @@ final readonly class ConfigSchema
         array $allowed = [],
         ?string $description = null,
     ): self {
-        $fields        = $this->fields;
+        $fields = $this->fields;
         $fields[$name] = new ConfigSchemaField(
             name       : $name,
             type       : $type,

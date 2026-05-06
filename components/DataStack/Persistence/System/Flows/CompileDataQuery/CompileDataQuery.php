@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\CompileDataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQueryPlan;
 use InvalidArgumentException;
+
 use function end;
 use function explode;
 use function is_array;
@@ -23,15 +24,15 @@ final class CompileDataQuery
     /**
      * Compiles a DataQuery into a DataQueryPlan.
      */
-    public function compile(DataQuery $dataQuery) : DataQueryPlan
+    public function compile(DataQuery $dataQuery): DataQueryPlan
     {
         if ($dataQuery->entityType === null) {
             throw new InvalidArgumentException('Cannot compile query without entity type.');
         }
 
         $tableName = $this->extractTableName($dataQuery->entityType);
-        $sql       = $this->buildSql($dataQuery, $tableName);
-        $bindings  = $this->extractBindings($dataQuery);
+        $sql = $this->buildSql($dataQuery, $tableName);
+        $bindings = $this->extractBindings($dataQuery);
 
         return new DataQueryPlan(
             sql     : $sql,
@@ -42,7 +43,7 @@ final class CompileDataQuery
     /**
      * Extracts a table name from an entity class name.
      *
-     * @param class-string $entityType
+     * @param  class-string  $entityType
      */
     private function extractTableName(string $entityType): string
     {
@@ -63,10 +64,10 @@ final class CompileDataQuery
     /**
      * Builds SQL from the query and table name.
      */
-    private function buildSql(DataQuery $dataQuery, string $tableName) : string
+    private function buildSql(DataQuery $dataQuery, string $tableName): string
     {
         $select = implode(', ', $dataQuery->select);
-        $sql    = sprintf('SELECT %s FROM %s', $select, $tableName);
+        $sql = sprintf('SELECT %s FROM %s', $select, $tableName);
 
         // Add JOINs
         foreach ($dataQuery->joins as $join) {
@@ -76,7 +77,7 @@ final class CompileDataQuery
         // Add WHERE conditions
         $conditions = $this->buildWhereClause($dataQuery->conditions);
         if ($conditions !== '') {
-            $sql .= ' WHERE ' . $conditions;
+            $sql .= ' WHERE '.$conditions;
         }
 
         // Add ORDER BY
@@ -86,17 +87,17 @@ final class CompileDataQuery
                 $orderByParts[] = sprintf('%s %s', $field, $direction);
             }
 
-            $sql .= ' ORDER BY ' . implode(', ', $orderByParts);
+            $sql .= ' ORDER BY '.implode(', ', $orderByParts);
         }
 
         // Add LIMIT
         if ($dataQuery->limit !== null) {
-            $sql .= ' LIMIT ' . $dataQuery->limit;
+            $sql .= ' LIMIT '.$dataQuery->limit;
         }
 
         // Add OFFSET
         if ($dataQuery->offset !== null) {
-            $sql .= ' OFFSET ' . $dataQuery->offset;
+            $sql .= ' OFFSET '.$dataQuery->offset;
         }
 
         return $sql;
@@ -105,7 +106,7 @@ final class CompileDataQuery
     /**
      * Builds the WHERE clause from conditions.
      *
-     * @param array<array{field: string, value: mixed, operator: string}|mixed> $conditions
+     * @param  array<array{field: string, value: mixed, operator: string}|mixed>  $conditions
      */
     private function buildWhereClause(array $conditions): string
     {
@@ -131,7 +132,7 @@ final class CompileDataQuery
      *
      * @return array<int, mixed>
      */
-    private function extractBindings(DataQuery $dataQuery) : array
+    private function extractBindings(DataQuery $dataQuery): array
     {
         $bindings = [];
 

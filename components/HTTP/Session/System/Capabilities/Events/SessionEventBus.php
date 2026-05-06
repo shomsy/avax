@@ -10,16 +10,16 @@ final class SessionEventBus
 {
     private array $listeners = [];
 
-    public function once(string $event, callable $callback) : void
+    public function once(string $event, callable $callback): void
     {
-        $wrapper = function (...$args) use ($callback, $event, &$wrapper) : void {
+        $wrapper = function (...$args) use ($callback, $event, &$wrapper): void {
             $callback(...$args);
             $this->removeListener($event, $wrapper);
         };
         $this->listen($event, $wrapper);
     }
 
-    public function removeListener(string $event, callable $callback) : void
+    public function removeListener(string $event, callable $callback): void
     {
         if (! isset($this->listeners[$event])) {
             return;
@@ -27,16 +27,16 @@ final class SessionEventBus
 
         $this->listeners[$event] = array_filter(
             $this->listeners[$event],
-            static fn ($cb) : bool => $cb !== $callback,
+            static fn ($cb): bool => $cb !== $callback,
         );
     }
 
-    public function listen(string $event, callable $callback) : void
+    public function listen(string $event, callable $callback): void
     {
         $this->listeners[$event][] = $callback;
     }
 
-    public function dispatch(string $event, array $data = []) : void
+    public function dispatch(string $event, array $data = []): void
     {
         if (! isset($this->listeners[$event])) {
             return;

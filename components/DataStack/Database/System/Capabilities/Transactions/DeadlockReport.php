@@ -12,15 +12,14 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions;
 final readonly class DeadlockReport
 {
     public function __construct(
-        public bool   $isDeadlock,
+        public bool $isDeadlock,
         public string $type = '',
         public string $message = '',
         public string $errorCode = '',
         public string $suggestion = '',
-        public array  $affectedTables = [],
-        public float  $detectedAt = 0.0,
-    )
-    {
+        public array $affectedTables = [],
+        public float $detectedAt = 0.0,
+    ) {
     }
 
     /**
@@ -31,9 +30,8 @@ final readonly class DeadlockReport
         string $message,
         string $errorCode,
         string $suggestion,
-        array  $affectedTables = [],
-    ): self
-    {
+        array $affectedTables = [],
+    ): self {
         return new self(
             isDeadlock: true,
             type: $type,
@@ -63,7 +61,7 @@ final readonly class DeadlockReport
      */
     public function summary(): string
     {
-        if (!$this->isDeadlock) {
+        if (! $this->isDeadlock) {
             return 'No deadlock detected';
         }
 
@@ -72,10 +70,10 @@ final readonly class DeadlockReport
         $summary .= sprintf('Message: %s%s', $this->message, PHP_EOL);
 
         if ($this->affectedTables !== []) {
-            $summary .= 'Affected Tables: ' . implode(', ', $this->affectedTables);
+            $summary .= 'Affected Tables: '.implode(', ', $this->affectedTables);
             $summary .= "\n";
         }
 
-        return $summary . ('Suggestion: ' . $this->suggestion);
+        return $summary.('Suggestion: '.$this->suggestion);
     }
 }

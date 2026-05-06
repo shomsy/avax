@@ -13,8 +13,7 @@ final class TaskBatch
     public function __construct(
         /** @var list<object> */
         private readonly array $tasks
-    )
-    {
+    ) {
     }
 
     public function then(Closure $callback): self

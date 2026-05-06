@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness;
 
 use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\Detection\EnvironmentDetector;
-use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\LocalPolicy;
-use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\ProductionPolicy;
-use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\StagingPolicy;
-use Avax\Components\Application\Config\System\Capabilities\EnvironmentAwareness\TestingPolicy;
 
 interface EnvironmentConfig
 {
@@ -78,11 +74,11 @@ final class Environment
         $env = self::current();
 
         return match ($env) {
-            'local'      => new LocalPolicy(),
-            'staging'    => new StagingPolicy(),
+            'local' => new LocalPolicy(),
+            'staging' => new StagingPolicy(),
             'production' => new ProductionPolicy(),
-            'testing'    => new TestingPolicy(),
-            default      => new LocalPolicy(),
+            'testing' => new TestingPolicy(),
+            default => new LocalPolicy(),
         };
     }
 }

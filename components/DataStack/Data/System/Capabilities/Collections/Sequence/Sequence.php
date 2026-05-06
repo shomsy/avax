@@ -23,7 +23,7 @@ final readonly class Sequence implements Countable, IteratorAggregate
     private array $items;
 
     /**
-     * @param iterable<mixed> $items
+     * @param  iterable<mixed>  $items
      */
     public function __construct(
         iterable $items = [],

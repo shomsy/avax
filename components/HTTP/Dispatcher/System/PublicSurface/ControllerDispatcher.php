@@ -20,7 +20,7 @@ final readonly class ControllerDispatcher
     ) {
     }
 
-    public function dispatch(callable|array|string $action, ServerRequestInterface $serverRequest) : ResponseInterface
+    public function dispatch(callable|array|string $action, ServerRequestInterface $serverRequest): ResponseInterface
     {
         return $this->dispatchRouteAction->execute($action, $serverRequest);
     }

@@ -35,12 +35,13 @@ final readonly class Tenants
         private RemoveTenantMember $removeTenantMember,
         private SuspendTenantMember $suspendTenantMember,
         private TransferTenantOwnership $transferTenantOwnership,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws RandomException
      */
-    public function createTenant(CreateTenantData $createTenantData) : Tenant
+    public function createTenant(CreateTenantData $createTenantData): Tenant
     {
         return $this->createTenant->execute(data: $createTenantData);
     }
@@ -56,7 +57,7 @@ final readonly class Tenants
     /**
      * @throws RandomException
      */
-    public function inviteTenantMember(InviteTenantMemberData $inviteTenantMemberData) : IssuedTenantInvite
+    public function inviteTenantMember(InviteTenantMemberData $inviteTenantMemberData): IssuedTenantInvite
     {
         return $this->inviteTenantMember->execute(data: $inviteTenantMemberData);
     }
@@ -64,7 +65,7 @@ final readonly class Tenants
     /**
      * @throws TenantFailed
      */
-    public function acceptTenantInvite(AcceptTenantInviteData $acceptTenantInviteData) : TenantMember
+    public function acceptTenantInvite(AcceptTenantInviteData $acceptTenantInviteData): TenantMember
     {
         return $this->acceptTenantInvite->execute(data: $acceptTenantInviteData);
     }
@@ -77,17 +78,17 @@ final readonly class Tenants
         return $this->readTenantMembers->execute(tenantSlug: $tenantSlug);
     }
 
-    public function removeTenantMember(RemoveTenantMemberData $removeTenantMemberData) : void
+    public function removeTenantMember(RemoveTenantMemberData $removeTenantMemberData): void
     {
         $this->removeTenantMember->execute(data: $removeTenantMemberData);
     }
 
-    public function suspendTenantMember(SuspendTenantMemberData $suspendTenantMemberData) : TenantMember
+    public function suspendTenantMember(SuspendTenantMemberData $suspendTenantMemberData): TenantMember
     {
         return $this->suspendTenantMember->execute(data: $suspendTenantMemberData);
     }
 
-    public function transferTenantOwnership(TransferTenantOwnershipData $transferTenantOwnershipData) : Tenant
+    public function transferTenantOwnership(TransferTenantOwnershipData $transferTenantOwnershipData): Tenant
     {
         return $this->transferTenantOwnership->execute(data: $transferTenantOwnershipData);
     }

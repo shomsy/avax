@@ -27,7 +27,7 @@ final class HttpFake
     private ?array $defaultResponse = null;
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
     public function get(string $url, array $options = []): array
@@ -36,7 +36,7 @@ final class HttpFake
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
     private function recordRequest(string $method, string $url, array $options): array
@@ -49,7 +49,7 @@ final class HttpFake
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
     public function post(string $url, array $options = []): array
@@ -58,7 +58,7 @@ final class HttpFake
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
     public function put(string $url, array $options = []): array
@@ -67,7 +67,7 @@ final class HttpFake
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      * @return array{status: int, body: string, headers: array<string, list<string>>}
      */
     public function delete(string $url, array $options = []): array
@@ -76,13 +76,13 @@ final class HttpFake
     }
 
     /**
-     * @param array<string, list<string>> $headers
+     * @param  array<string, list<string>>  $headers
      */
     public function stub(string $method, string $url, int $status = 200, string $body = '', array $headers = []): self
     {
         $this->stubs[sprintf('%s:%s', $method, $url)] = [
-            'status'  => $status,
-            'body'    => $body,
+            'status' => $status,
+            'body' => $body,
             'headers' => $headers,
         ];
 
@@ -90,7 +90,7 @@ final class HttpFake
     }
 
     /**
-     * @param array<string, list<string>> $headers
+     * @param  array<string, list<string>>  $headers
      */
     public function defaultResponse(int $status = 200, string $body = '', array $headers = []): self
     {
@@ -99,7 +99,7 @@ final class HttpFake
         return $this;
     }
 
-    public function assertSent(string $method, ?string $url = null) : self
+    public function assertSent(string $method, ?string $url = null): self
     {
         $found = false;
 
@@ -129,7 +129,7 @@ final class HttpFake
         return $this;
     }
 
-    public function assertNotSent(string $method, ?string $url = null) : self
+    public function assertNotSent(string $method, ?string $url = null): self
     {
         foreach ($this->requests as $request) {
             if (strtoupper($request['method']) !== strtoupper($method)) {
@@ -179,8 +179,8 @@ final class HttpFake
 
     public function clear(): void
     {
-        $this->requests        = [];
-        $this->stubs           = [];
+        $this->requests = [];
+        $this->stubs = [];
         $this->defaultResponse = null;
     }
 }

@@ -10,29 +10,30 @@ final readonly class Timestamp
 {
     public function __construct(
         private DateTimeImmutable $value,
-    ) {}
+    ) {
+    }
 
-    public static function now(Clock $clock) : self
+    public static function now(Clock $clock): self
     {
         return new self(value: $clock->now());
     }
 
-    public function toDateTimeImmutable() : DateTimeImmutable
+    public function toDateTimeImmutable(): DateTimeImmutable
     {
         return $this->value;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value->format(format: 'Y-m-d H:i:s');
     }
 
-    public function isBefore(Timestamp $timestamp) : bool
+    public function isBefore(Timestamp $timestamp): bool
     {
         return $this->value < $timestamp->value;
     }
 
-    public function isAfter(Timestamp $timestamp) : bool
+    public function isAfter(Timestamp $timestamp): bool
     {
         return $this->value > $timestamp->value;
     }

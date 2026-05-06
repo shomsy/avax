@@ -11,8 +11,8 @@ final class InvalidTarget extends RuntimeException
     public function __construct(string $targetClass)
     {
         parent::__construct(message: sprintf(
-                                         'Cache read target "%s" is not supported. Use RuntimeCacheTarget or CompiledCacheTarget.',
-                                         $targetClass,
-                                     ));
+            'Cache read target "%s" is not supported. Use RuntimeCacheTarget or CompiledCacheTarget.',
+            $targetClass,
+        ));
     }
 }

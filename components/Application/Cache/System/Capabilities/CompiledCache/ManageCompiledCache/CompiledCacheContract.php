@@ -13,16 +13,15 @@ interface CompiledCacheContract
      *
      * @template T
      *
-     * @param callable() : T $build
-     *
+     * @param  callable() : T  $build
      * @return T
      */
-    public function read(string $name, callable $build, CompiledCacheSources $sources) : mixed;
+    public function read(string $name, callable $build, CompiledCacheSources $sources): mixed;
 
     /**
      * Compile and write an artifact immediately.
      */
-    public function compile(string $name, callable $build, CompiledCacheSources $sources) : CompiledCacheArtifact;
+    public function compile(string $name, callable $build, CompiledCacheSources $sources): CompiledCacheArtifact;
 
     /**
      * Delete one compiled artifact.

@@ -11,17 +11,17 @@ final class BeginAdminElevation
 {
     private static bool $elevated = false;
 
-    public function execute() : void
+    public function execute(): void
     {
         self::$elevated = true;
     }
 
-    public static function active() : bool
+    public static function active(): bool
     {
         return self::$elevated;
     }
 
-    public static function reset() : void
+    public static function reset(): void
     {
         self::$elevated = false;
     }

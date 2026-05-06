@@ -18,7 +18,8 @@ final readonly class ReadCurrentUser
     public function __construct(
         #[SensitiveParameter]
         private CurrentAuthentication $currentAuthentication,
-    ) {}
+    ) {
+    }
 
     public function execute(): ?AuthenticatedUser
     {

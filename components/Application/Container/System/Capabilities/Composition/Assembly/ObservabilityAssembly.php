@@ -19,8 +19,7 @@ final readonly class ObservabilityAssembly
         Clock $clock,
         public ResolutionMetrics $resolutionMetrics,
         public ResolutionTimeline $resolutionTimeline,
-    )
-    {
+    ) {
         $this->clock = $clock;
     }
 }

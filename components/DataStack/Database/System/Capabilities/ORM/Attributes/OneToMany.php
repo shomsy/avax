@@ -10,12 +10,13 @@ use Attribute;
 final readonly class OneToMany
 {
     /**
-     * @param list<string> $cascade
+     * @param  list<string>  $cascade
      */
     public function __construct(
         public string $targetEntity,
         public string $mappedBy,
         public array $cascade = [],
         public bool $lazy = true,
-    ) {}
+    ) {
+    }
 }

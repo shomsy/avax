@@ -6,7 +6,7 @@ namespace Avax\Components\Documentation\Api\System\Capabilities\Swagger;
 
 final readonly class SwaggerUi
 {
-    public function html(string $openApiUrl = '/api/docs/openapi.json') : string
+    public function html(string $openApiUrl = '/api/docs/openapi.json'): string
     {
         return <<<HTML
             <!doctype html>

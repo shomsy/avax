@@ -13,5 +13,6 @@ final readonly class FieldMetadata
         public bool $id = false,
         public bool $generated = false,
         public bool $nullable = false,
-    ) {}
+    ) {
+    }
 }

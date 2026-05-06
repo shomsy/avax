@@ -6,5 +6,7 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\Cr
 
 final readonly class CreateTenantData
 {
-    public function __construct(public string $slug, public string $name, public int $ownerUserId) {}
+    public function __construct(public string $slug, public string $name, public int $ownerUserId)
+    {
+    }
 }

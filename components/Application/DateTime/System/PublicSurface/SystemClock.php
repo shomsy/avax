@@ -11,7 +11,7 @@ final class SystemClock
 {
     private static ?DateTimeImmutable $dateTimeImmutable = null;
 
-    public static function create(?string $timezone = null) : DateTimeImmutable
+    public static function create(?string $timezone = null): DateTimeImmutable
     {
         if (self::$dateTimeImmutable instanceof DateTimeImmutable) {
             $tz = $timezone ?? date_default_timezone_get();
@@ -24,17 +24,17 @@ final class SystemClock
         return new DateTimeImmutable('now', new DateTimeZone($tz));
     }
 
-    public static function freeze(DateTimeImmutable $moment) : void
+    public static function freeze(DateTimeImmutable $moment): void
     {
         self::$dateTimeImmutable = $moment;
     }
 
-    public static function unfreeze() : void
+    public static function unfreeze(): void
     {
         self::$dateTimeImmutable = null;
     }
 
-    public static function isFrozen() : bool
+    public static function isFrozen(): bool
     {
         return self::$dateTimeImmutable instanceof DateTimeImmutable;
     }

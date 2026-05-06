@@ -12,7 +12,7 @@ final readonly class Path implements Stringable
 
     public function __construct(string $path)
     {
-        $this->path = '/' . ltrim($path, '/');
+        $this->path = '/'.ltrim($path, '/');
     }
 
     public function __toString(): string

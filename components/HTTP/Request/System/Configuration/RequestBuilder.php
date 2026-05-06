@@ -40,20 +40,20 @@ final class RequestBuilder
 
     public function __construct()
     {
-        $this->requestUri     = new RequestUri(path: '/');
+        $this->requestUri = new RequestUri(path: '/');
         $this->requestHeaders = new RequestHeaders();
-        $this->requestBody    = new RequestBody(rawBody: new RawBody(content: ''), parsedBody: new ParsedBody(data: null));
-        $this->uploadedFiles  = new UploadedFiles();
+        $this->requestBody = new RequestBody(rawBody: new RawBody(content: ''), parsedBody: new ParsedBody(data: null));
+        $this->uploadedFiles = new UploadedFiles();
     }
 
-    public function withMethod(string $method) : self
+    public function withMethod(string $method): self
     {
         $this->method = strtoupper(string: $method);
 
         return $this;
     }
 
-    public function withUri(RequestUri $requestUri) : self
+    public function withUri(RequestUri $requestUri): self
     {
         $this->requestUri = $requestUri;
 
@@ -61,16 +61,16 @@ final class RequestBuilder
     }
 
     /**
-     * @param array<string, string|list<string>> $headers
+     * @param  array<string, string|list<string>>  $headers
      */
-    public function withHeaders(array $headers) : self
+    public function withHeaders(array $headers): self
     {
         $this->requestHeaders = new RequestHeaders(headers: $headers);
 
         return $this;
     }
 
-    public function withBody(string $rawBody, array|object|null $parsedBody = null) : self
+    public function withBody(string $rawBody, array|object|null $parsedBody = null): self
     {
         $this->requestBody = new RequestBody(
             rawBody   : new RawBody(content: $rawBody),
@@ -80,7 +80,7 @@ final class RequestBuilder
         return $this;
     }
 
-    public function build() : Request
+    public function build(): Request
     {
         return new Request(
             method         : $this->method,

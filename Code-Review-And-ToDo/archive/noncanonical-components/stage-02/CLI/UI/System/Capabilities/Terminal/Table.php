@@ -9,9 +9,10 @@ final readonly class Table
     public function __construct(
         private array $headers,
         private array $rows,
-    ) {}
+    ) {
+    }
 
-    public function render() : void
+    public function render(): void
     {
         $widths = $this->calculateWidths();
         $this->renderSeparator($widths);
@@ -25,7 +26,7 @@ final readonly class Table
         $this->renderSeparator($widths);
     }
 
-    private function calculateWidths() : array
+    private function calculateWidths(): array
     {
         $widths = array_map(strlen(...), $this->headers);
         foreach ($this->rows as $row) {
@@ -37,17 +38,17 @@ final readonly class Table
         return $widths;
     }
 
-    private function renderSeparator(array $widths) : void
+    private function renderSeparator(array $widths): void
     {
         echo '+';
         foreach ($widths as $width) {
-            echo str_repeat('-', $width + 2) . '+';
+            echo str_repeat('-', $width + 2).'+';
         }
 
         echo "\n";
     }
 
-    private function renderRow(array $row, array $widths) : void
+    private function renderRow(array $row, array $widths): void
     {
         echo '|';
         foreach ($row as $i => $cell) {

@@ -9,12 +9,11 @@ final readonly class OpenApiGenerator
     public function __construct(
         private string $title = 'Avax API',
         private string $version = '1.0.0',
-    )
-    {
+    ) {
     }
 
     /**
-     * @param list<array{method:string,path:string,summary?:string,tags?:list<string>}> $routes
+     * @param  list<array{method:string,path:string,summary?:string,tags?:list<string>}>  $routes
      */
     public function generate(array $routes): array
     {
@@ -23,7 +22,7 @@ final readonly class OpenApiGenerator
         foreach ($routes as $route) {
             $method = strtolower(string: $route['method']);
             $paths[$route['path']][$method] = [
-                'summary' => $route['summary'] ?? $method . ' ' . $route['path'],
+                'summary' => $route['summary'] ?? $method.' '.$route['path'],
                 'tags' => $route['tags'] ?? ['Application'],
                 'responses' => [
                     '200' => [

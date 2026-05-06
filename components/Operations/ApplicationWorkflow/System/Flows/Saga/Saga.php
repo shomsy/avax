@@ -29,13 +29,14 @@ final readonly class Saga
         private ProtectSagaIdempotency $protectSagaIdempotency,
         private StoreSagaState $storeSagaState,
         private InspectSaga $inspectSaga,
-    ) {}
+    ) {
+    }
 
     public static function inMemory(): self
     {
-        $storeSagaState         = new StoreSagaState();
+        $storeSagaState = new StoreSagaState();
         $protectSagaIdempotency = new ProtectSagaIdempotency();
-        $inspectSaga            = new InspectSaga();
+        $inspectSaga = new InspectSaga();
 
         return new self(
             defineSaga            : new DefineSaga(),

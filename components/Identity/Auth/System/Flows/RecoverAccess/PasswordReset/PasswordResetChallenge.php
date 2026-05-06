@@ -17,7 +17,8 @@ final readonly class PasswordResetChallenge
         #[SensitiveParameter]
         public ?string $token = null,
         public ?DateTimeImmutable $expiresAt = null,
-    ) {}
+    ) {
+    }
 
     public static function hidden(): self
     {

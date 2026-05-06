@@ -9,7 +9,9 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements
 
 final readonly class ReadClients
 {
-    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry)
+    {
+    }
 
     /**
      * @return list<OAuthClient>

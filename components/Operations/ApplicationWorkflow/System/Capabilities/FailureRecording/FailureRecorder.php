@@ -11,7 +11,7 @@ final class FailureRecorder
     /** @var list<FailureRecord> */
     private array $records = [];
 
-    public function record(string $workflow, Throwable $throwable) : FailureRecord
+    public function record(string $workflow, Throwable $throwable): FailureRecord
     {
         $failureRecord = new FailureRecord(
             workflow: $workflow,
@@ -27,7 +27,7 @@ final class FailureRecorder
     /**
      * @return list<FailureRecord>
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->records;
     }
@@ -39,5 +39,6 @@ final readonly class FailureRecord
         public string $workflow,
         public string $message,
         public string $type,
-    ) {}
+    ) {
+    }
 }

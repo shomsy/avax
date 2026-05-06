@@ -11,7 +11,8 @@ final readonly class ShuffleValues
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(): array
     {

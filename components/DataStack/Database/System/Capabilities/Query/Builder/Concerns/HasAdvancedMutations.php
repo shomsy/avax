@@ -35,16 +35,15 @@ trait HasAdvancedMutations
      * records or update existing ones if a unique constraint conflict occurs,
      * significantly reducing net database round-trips.
      *
-     * @param array        $values   A single associative array or a collection of arrays representing records.
-     * @param array|string $uniqueBy The collection of technical field names that define the unique constraint.
-     * @param array|null   $update   The collection of technical fields to modify upon conflict (defaults to all
-     *                               provided values).
-     *
+     * @param  array  $values  A single associative array or a collection of arrays representing records.
+     * @param  array|string  $uniqueBy  The collection of technical field names that define the unique constraint.
+     * @param  array|null  $update  The collection of technical fields to modify upon conflict (defaults to all
+     *                              provided values).
      * @return int The total number of affected rows (database-specific semantics apply).
      *
      * @throws Throwable If the SQL compilation for the specific dialect or physical execution fails.
      */
-    public function upsert(array $values, array|string $uniqueBy, ?array $update = null) : int
+    public function upsert(array $values, array|string $uniqueBy, ?array $update = null): int
     {
         if ($values === []) {
             return 0;
@@ -62,7 +61,8 @@ trait HasAdvancedMutations
             ->withValues(values: $values)
             ->withUpdateColumns(columns: $update);
 
-        $sql = $this->grammar->compileUpsert(queryState: $state,
+        $sql = $this->grammar->compileUpsert(
+            queryState: $state,
             uniqueBy: (array) $uniqueBy,
             update  : $state->updateColumns,
         );
@@ -81,15 +81,14 @@ trait HasAdvancedMutations
      * the operation is thread-safe and immune to typical application-level
      * read-modify-write race conditions.
      *
-     * @param string         $column The technical name of the numeric field to increment.
-     * @param int|float|null $amount The quantity to add (defaults to 1).
-     * @param array          $extra  Optional additional fields to update simultaneously for auditing or state tracking.
-     *
+     * @param  string  $column  The technical name of the numeric field to increment.
+     * @param  int|float|null  $amount  The quantity to add (defaults to 1).
+     * @param  array  $extra  Optional additional fields to update simultaneously for auditing or state tracking.
      * @return bool True if the operation was successful.
      *
      * @throws Throwable If the resulting SQL update execution fails.
      */
-    public function increment(string $column, int|float|null $amount = null, array $extra = []) : bool
+    public function increment(string $column, int|float|null $amount = null, array $extra = []): bool
     {
         $amount ??= 1;
         $wrapped = $this->grammar->wrap(value: $column);
@@ -107,15 +106,14 @@ trait HasAdvancedMutations
      * Execute a server-side subtraction from a specific column, ensuring
      * thread-safe value modification at the database level.
      *
-     * @param string         $column The technical name of the numeric field to decrement.
-     * @param int|float|null $amount The quantity to subtract (defaults to 1).
-     * @param array          $extra  Optional additional fields to update simultaneously.
-     *
+     * @param  string  $column  The technical name of the numeric field to decrement.
+     * @param  int|float|null  $amount  The quantity to subtract (defaults to 1).
+     * @param  array  $extra  Optional additional fields to update simultaneously.
      * @return bool True if the operation was successful.
      *
      * @throws Throwable If the resulting SQL update execution fails.
      */
-    public function decrement(string $column, int|float|null $amount = null, array $extra = []) : bool
+    public function decrement(string $column, int|float|null $amount = null, array $extra = []): bool
     {
         $amount ??= 1;
         $wrapped = $this->grammar->wrap(value: $column);

@@ -11,19 +11,21 @@ use Random\RandomException;
 
 final readonly class BuildJarmResponse
 {
-    public function __construct(private OidcProviderInterface $oidcProvider, private Clock $clock) {}
+    public function __construct(private OidcProviderInterface $oidcProvider, private Clock $clock)
+    {
+    }
 
     /**
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function execute(BuildJarmResponseData $buildJarmResponseData) : JarmResponse
+    public function execute(BuildJarmResponseData $buildJarmResponseData): JarmResponse
     {
         $issuedAt = $this->clock->now();
         $expiresAt = $issuedAt->modify(modifier: '+5 minutes');
-        $claims   = [
+        $claims = [
             'iss' => $this->oidcProvider->readProviderMetadata()->issuer,
-            'aud'  => trim(string: $buildJarmResponseData->clientId),
+            'aud' => trim(string: $buildJarmResponseData->clientId),
             'code' => $buildJarmResponseData->code,
             'iat' => $issuedAt->getTimestamp(),
             'exp' => $expiresAt->getTimestamp(),

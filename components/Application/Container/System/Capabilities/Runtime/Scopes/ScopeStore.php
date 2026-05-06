@@ -25,12 +25,12 @@ final class ScopeStore
     /**
      * Returns whether the current scope already contains one service.
      */
-    public function has(string $abstract) : bool
+    public function has(string $abstract): bool
     {
         return $this->hasFor(abstract: $abstract);
     }
 
-    public function hasFor(string $abstract, string $kind = ScopeKind::ANY) : bool
+    public function hasFor(string $abstract, string $kind = ScopeKind::ANY): bool
     {
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
@@ -40,7 +40,7 @@ final class ScopeStore
         return array_key_exists(key: $abstract, array: $this->scopes[$index]['items']);
     }
 
-    private function frameIndex(string $kind) : ?int
+    private function frameIndex(string $kind): ?int
     {
         if ($this->scopes === []) {
             return null;
@@ -64,12 +64,12 @@ final class ScopeStore
     /**
      * Reads one scoped instance from the active scope.
      */
-    public function get(string $abstract) : mixed
+    public function get(string $abstract): mixed
     {
         return $this->getFor(abstract: $abstract);
     }
 
-    public function getFor(string $abstract, string $kind = ScopeKind::ANY) : mixed
+    public function getFor(string $abstract, string $kind = ScopeKind::ANY): mixed
     {
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
@@ -84,7 +84,7 @@ final class ScopeStore
      *
      * @throws ContainerException
      */
-    public function set(string $abstract, mixed $instance, bool $disposable = false) : void
+    public function set(string $abstract, mixed $instance, bool $disposable = false): void
     {
         $this->setFor(abstract: $abstract, instance: $instance, disposable: $disposable);
     }
@@ -94,11 +94,10 @@ final class ScopeStore
      */
     public function setFor(
         string $abstract,
-        mixed  $instance,
+        mixed $instance,
         ?string $kind = null,
-        bool   $disposable = false,
-    ) : void
-    {
+        bool $disposable = false,
+    ): void {
         $kind ??= ScopeKind::ANY;
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
@@ -120,13 +119,13 @@ final class ScopeStore
     /**
      * Opens one new nested scope.
      */
-    public function open(?string $kind = null, string $scopeId = '') : void
+    public function open(?string $kind = null, string $scopeId = ''): void
     {
         $kind ??= ScopeKind::OPERATION;
         $this->scopes[] = [
-            'kind'   => ScopeKind::normalize(kind: $kind),
-            'id'     => trim(string: $scopeId),
-            'items'  => [],
+            'kind' => ScopeKind::normalize(kind: $kind),
+            'id' => trim(string: $scopeId),
+            'items' => [],
             'disposable' => [],
             'pooled' => [],
         ];
@@ -145,7 +144,7 @@ final class ScopeStore
      *
      * @throws ContainerException
      */
-    public function close(?string $kind = null) : array
+    public function close(?string $kind = null): array
     {
         if ($this->scopes === []) {
             throw new ContainerException(message: 'Cannot close scope without an active scope.');
@@ -166,7 +165,7 @@ final class ScopeStore
     /**
      * Clears all active scopes.
      */
-    public function terminate() : array
+    public function terminate(): array
     {
         $frames = $this->scopes;
         $this->scopes = [];
@@ -174,7 +173,7 @@ final class ScopeStore
         return $frames;
     }
 
-    public function hasActive(string $kind = ScopeKind::ANY) : bool
+    public function hasActive(string $kind = ScopeKind::ANY): bool
     {
         return $this->frameIndex(kind: $kind) !== null;
     }
@@ -186,11 +185,10 @@ final class ScopeStore
         string $abstract,
         mixed $instance,
         string $kind,
-        int  $maxSize,
+        int $maxSize,
         ?bool $resetBeforeReuse = null,
         bool $disposable = false,
-    ) : void
-    {
+    ): void {
         $resetBeforeReuse ??= true;
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
@@ -201,16 +199,16 @@ final class ScopeStore
             );
         }
 
-        $this->scopes[$index]['items'][$abstract]  = $instance;
+        $this->scopes[$index]['items'][$abstract] = $instance;
         $this->scopes[$index]['disposable'][$abstract] = $disposable;
         $this->scopes[$index]['pooled'][$abstract] = [
-            'maxSize'    => max(1, $maxSize),
+            'maxSize' => max(1, $maxSize),
             'resetBeforeReuse' => $resetBeforeReuse,
             'disposable' => $disposable,
         ];
     }
 
-    public function hasPooledFor(string $abstract, string $kind = ScopeKind::ANY) : bool
+    public function hasPooledFor(string $abstract, string $kind = ScopeKind::ANY): bool
     {
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
@@ -228,18 +226,18 @@ final class ScopeStore
      *     frames: array<int, array{kind: string, id: string, services: list<string>, pooledServices: list<string>}>
      * }
      */
-    public function snapshot() : array
+    public function snapshot(): array
     {
         $frames = array_map(
-            callback: static function (array $frame) : array {
+            callback: static function (array $frame): array {
                 $services = array_keys(array: $frame['items']);
                 sort(array: $services);
                 $pooledServices = array_keys(array: $frame['pooled']);
                 sort(array: $pooledServices);
 
                 return [
-                    'kind'     => $frame['kind'],
-                    'id'       => $frame['id'],
+                    'kind' => $frame['kind'],
+                    'id' => $frame['id'],
                     'services' => $services,
                     'pooledServices' => $pooledServices,
                 ];
@@ -249,14 +247,14 @@ final class ScopeStore
 
         return [
             'scoped' => array_map(
-                callback: static fn (array $frame) : array => $frame['items'],
+                callback: static fn (array $frame): array => $frame['items'],
                 array   : $this->scopes,
             ),
             'pooled' => array_reduce(
                 array   : $this->scopes,
-                callback: static function (array $carry, array $frame) : array {
+                callback: static function (array $carry, array $frame): array {
                     foreach (array_keys($frame['pooled']) as $serviceId) {
-                        $carry[$serviceId][] = $frame['kind'] . ($frame['id'] !== '' ? ':' . $frame['id'] : '');
+                        $carry[$serviceId][] = $frame['kind'].($frame['id'] !== '' ? ':'.$frame['id'] : '');
                     }
 
                     return $carry;

@@ -19,12 +19,12 @@ final readonly class NormalizeDataObjectValue
         }
 
         return match (true) {
-            $value instanceof BackedEnum  => $value->value,
+            $value instanceof BackedEnum => $value->value,
             $value instanceof DateTimeInterface => $value->format(format: DATE_ATOM),
-            is_array(value: $value)       => $this->normalizeArray(value: $value, depth: $depth, seen: $seen),
+            is_array(value: $value) => $this->normalizeArray(value: $value, depth: $depth, seen: $seen),
             $value instanceof Traversable => $this->normalizeArray(value: iterator_to_array(iterator: $value), depth: $depth, seen: $seen),
-            is_object(value: $value)      => $this->normalizeObject(value: $value, depth: $depth, seen: $seen),
-            default                       => $value,
+            is_object(value: $value) => $this->normalizeObject(value: $value, depth: $depth, seen: $seen),
+            default => $value,
         };
     }
 

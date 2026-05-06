@@ -9,8 +9,7 @@ final readonly class AwaitTask
     /**
      * @template TResult
      *
-     * @param callable(): TResult $task
-     *
+     * @param  callable(): TResult  $task
      * @return TResult
      */
     public function await(callable $task): mixed

@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinit
 
 final class ResolveRouteAction
 {
-    public function resolve(RouteDefinition $routeDefinition) : mixed
+    public function resolve(RouteDefinition $routeDefinition): mixed
     {
         return $routeDefinition->action();
     }

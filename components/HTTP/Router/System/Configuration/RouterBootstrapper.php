@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\Configuration;
 
-use Avax\Components\HTTP\Dispatcher\System\PublicSurface\ControllerDispatcher;
 use Avax\Components\HTTP\Middleware\System\PublicSurface\MiddlewareInterface;
-use Avax\Components\HTTP\Response\ResponseFactory;
-use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use InvalidArgumentException;
 use LogicException;
-use ReflectionException;
 
 /**
  * Router Bootstrapper - Route Registration and Middleware Configuration
@@ -90,17 +87,17 @@ final class RouterBootstrapper
                 continue;
             }
 
-            $prefix .= '/' . trim(string: (string)$groupPrefix, characters: '/');
+            $prefix .= '/'.trim(string: (string) $groupPrefix, characters: '/');
         }
 
-        $qualifiedPath = trim(string: $prefix . '/' . ltrim(string: $path, characters: '/'), characters: '/');
+        $qualifiedPath = trim(string: $prefix.'/'.ltrim(string: $path, characters: '/'), characters: '/');
 
-        return '/' . $qualifiedPath;
+        return '/'.$qualifiedPath;
     }
 
     private function routeKey(string $method, string $path): string
     {
-        return $method . ' ' . $path;
+        return $method.' '.$path;
     }
 
     private function registerWithDsl(string $method, string $path, callable|array|string $handler): Registrar
@@ -185,7 +182,7 @@ final class RouterBootstrapper
      */
     public function useGroup(string $name): self
     {
-        if (!isset($this->middlewareGroups[$name])) {
+        if (! isset($this->middlewareGroups[$name])) {
             throw new InvalidArgumentException(message: sprintf("Middleware group '%s' not defined.", $name));
         }
 
@@ -220,7 +217,7 @@ final class RouterBootstrapper
      */
     public function bootstrap(): RouterRuntimeInterface
     {
-        if (!$this->routerRuntime instanceof RouterRuntimeInterface) {
+        if (! $this->routerRuntime instanceof RouterRuntimeInterface) {
             throw new LogicException(
                 message: 'RouterBootstrapper requires a runtime router instance to build an AppKernel.',
             );

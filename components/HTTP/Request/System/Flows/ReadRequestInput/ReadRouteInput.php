@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
 final class ReadRouteInput
 {
-    public function read(RequestInterface $request, string $key) : mixed
+    public function read(RequestInterface $request, string $key): mixed
     {
         return $request->getAttribute($key);
     }

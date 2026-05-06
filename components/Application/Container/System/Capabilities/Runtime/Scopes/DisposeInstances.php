@@ -10,8 +10,8 @@ namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scop
 final class DisposeInstances
 {
     /**
-     * @param array<string, mixed> $instances
-     * @param array<string, bool> $disposable
+     * @param  array<string, mixed>  $instances
+     * @param  array<string, bool>  $disposable
      */
     public function disposeMany(array $instances, array $disposable = []): void
     {

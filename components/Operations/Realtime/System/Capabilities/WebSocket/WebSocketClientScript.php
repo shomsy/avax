@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\Realtime\System\Capabilities\WebSocket;
 
 final readonly class WebSocketClientScript
 {
-    public static function forEndpoint(string $endpoint) : string
+    public static function forEndpoint(string $endpoint): string
     {
         return <<<JAVASCRIPT
             window.AvaxRealtime = {

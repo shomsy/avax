@@ -12,8 +12,8 @@ use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observ
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTelemetry;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTimeline;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\FunctionCaller;
-use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ManageScopes;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeInterface;
@@ -29,15 +29,14 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 final class SeedSystemDependencies
 {
     public function seed(
-        RuntimeAssembly       $runtimeAssembly,
+        RuntimeAssembly $runtimeAssembly,
         ObservabilityAssembly $observabilityAssembly,
         Container $container,
         CreateContainerConfig $createContainerConfig,
-        ResolutionTelemetry   $resolutionTelemetry,
-    ) : void
-    {
+        ResolutionTelemetry $resolutionTelemetry,
+    ): void {
         $containerSettings = new ContainerSettings(items: $createContainerConfig->settings);
-        $registrations     = $runtimeAssembly->registrations;
+        $registrations = $runtimeAssembly->registrations;
 
         $registrations->bootstrapInstance(abstract: PsrContainerInterface::class, instance: $container);
         $registrations->bootstrapInstance(abstract: ContainerInterface::class, instance: $container);

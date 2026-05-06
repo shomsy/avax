@@ -101,12 +101,12 @@ final readonly class AppKernel implements HttpInterface, Kernel
         };
     }
 
-    private function createSessionMiddleware() : SessionLifecycleMiddleware
+    private function createSessionMiddleware(): SessionLifecycleMiddleware
     {
         return new SessionLifecycleMiddleware(new NullSession());
     }
 
-    private function createRequestLogger() : RequestLoggerMiddleware
+    private function createRequestLogger(): RequestLoggerMiddleware
     {
         return new RequestLoggerMiddleware(
             new class () implements LoggerInterface {
@@ -158,7 +158,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
         );
     }
 
-    private function createRateLimiter() : RateLimiterMiddleware
+    private function createRateLimiter(): RateLimiterMiddleware
     {
         return new RateLimiterMiddleware(
             new class () implements RateLimiterInterface {
@@ -205,7 +205,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
         return MiddlewareRegistry::getPriorityHints();
     }
 
-    public function handle(ServerRequestInterface $serverRequest) : ResponseInterface
+    public function handle(ServerRequestInterface $serverRequest): ResponseInterface
     {
         if (! $serverRequest instanceof RequestInterface) {
             return $this->responseFactory->error('Invalid request type', 400);
@@ -216,7 +216,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
 
     private function runPipeline(RequestInterface $request): ResponseInterface
     {
-        $core = fn (RequestInterface $request) : ResponseInterface => $this->routerRuntime->resolve($request);
+        $core = fn (RequestInterface $request): ResponseInterface => $this->routerRuntime->resolve($request);
 
         $pipeline = $this->middlewareStack;
 
@@ -232,7 +232,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
         return $this->handle($request);
     }
 
-    public function terminate(RequestInterface $request, ResponseInterface $response) : void
+    public function terminate(RequestInterface $request, ResponseInterface $response): void
     {
     }
 

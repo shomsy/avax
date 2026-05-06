@@ -6,4 +6,6 @@ namespace Avax\Components\Identity\Auth\System\Foundation\Time;
 
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
-final class SystemClock extends Clock {}
+final class SystemClock extends Clock
+{
+}

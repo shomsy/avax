@@ -7,14 +7,15 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Telemetry\OpenT
 final readonly class QuerySpan
 {
     public function __construct(
-        public string  $query,
-        public array   $bindings = [],
-        public float   $startTime = 0.0,
-        public float   $endTime = 0.0,
+        public string $query,
+        public array $bindings = [],
+        public float $startTime = 0.0,
+        public float $endTime = 0.0,
         public ?string $connection = null,
-        public ?int    $rows = null,
+        public ?int $rows = null,
         public ?string $error = null,
-    ) {}
+    ) {
+    }
 
     public function isSlow(int $thresholdMs = 1000): bool
     {
@@ -29,12 +30,12 @@ final readonly class QuerySpan
     public function toArray(): array
     {
         return [
-            'query'      => $this->query,
-            'bindings'   => $this->bindings,
+            'query' => $this->query,
+            'bindings' => $this->bindings,
             'duration_ms' => $this->getDurationMs(),
             'connection' => $this->connection,
-            'rows'       => $this->rows,
-            'error'      => $this->error,
+            'rows' => $this->rows,
+            'error' => $this->error,
             'fingerprint' => $this->getFingerprint(),
         ];
     }

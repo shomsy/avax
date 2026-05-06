@@ -11,5 +11,5 @@ enum MfaStatus: string
 {
     case DISABLED = 'disabled';
     case ENROLLMENT_PENDING = 'enrollment_pending';
-    case ENABLED  = 'enabled';
+    case ENABLED = 'enabled';
 }

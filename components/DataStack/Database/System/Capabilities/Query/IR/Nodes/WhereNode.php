@@ -9,16 +9,17 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\Grammar
 final readonly class WhereNode
 {
     public function __construct(
-        public string             $column,
+        public string $column,
         public ComparisonOperator $operator,
-        public mixed              $value,
-        public string             $boolean = 'AND',
-        public ?string            $connector = null,
-    ) {}
+        public mixed $value,
+        public string $boolean = 'AND',
+        public ?string $connector = null,
+    ) {
+    }
 
     public function getSql(GrammarInterface $grammar): string
     {
-        $column  = $grammar->wrap(value: $this->column);
+        $column = $grammar->wrap(value: $this->column);
         $operator = $this->operator->value;
         $boolean = strtoupper(string: $this->boolean);
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\PreCommit\Capabilities;
 
-use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitIssue;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -19,25 +18,24 @@ use SplFileInfo;
 final class RunExternalToolingScripts implements CheckInterface
 {
     /** @var array<string, array{command: string, extension: string, timeout: int}> */
-    private static array    $scriptExecutors
+    private static array $scriptExecutors
         = [
-            'php'    => ['command' => 'php', 'extension' => '.php', 'timeout' => 30],
+            'php' => ['command' => 'php', 'extension' => '.php', 'timeout' => 30],
             'python' => ['command' => 'python3', 'extension' => '.py', 'timeout' => 30],
-            'shell'  => ['command' => 'bash', 'extension' => '.sh', 'timeout' => 30],
-            'go'     => ['command' => 'go run', 'extension' => '.go', 'timeout' => 60],
+            'shell' => ['command' => 'bash', 'extension' => '.sh', 'timeout' => 30],
+            'go' => ['command' => 'go run', 'extension' => '.go', 'timeout' => 60],
             'nodejs' => ['command' => 'node', 'extension' => '.js', 'timeout' => 30],
         ];
 
     /**
-     * @param array<string, mixed> $context
-     *
+     * @param  array<string, mixed>  $context
      * @return list<PreCommitIssue>
      */
-    public function run(array $context) : array
+    public function run(array $context): array
     {
-        $issues   = [];
+        $issues = [];
         $basePath = getcwd() ?: '.';
-        $toolingPath = $basePath . '/tooling';
+        $toolingPath = $basePath.'/tooling';
 
         if (! is_dir($toolingPath)) {
             return $issues;
@@ -56,7 +54,7 @@ final class RunExternalToolingScripts implements CheckInterface
                     $result['message'],
                     $script['path'],
                     null,
-                    'TOOL_SCRIPT_' . strtoupper(substr($script['name'], 0, 3))
+                    'TOOL_SCRIPT_'.strtoupper(substr($script['name'], 0, 3))
                 );
             }
         }
@@ -67,7 +65,7 @@ final class RunExternalToolingScripts implements CheckInterface
     /**
      * @return array<string, array{path: string, type: string, name: string}>
      */
-    private function discoverScripts(string $toolingPath) : array
+    private function discoverScripts(string $toolingPath): array
     {
         $scripts = [];
 
@@ -84,7 +82,7 @@ final class RunExternalToolingScripts implements CheckInterface
                 continue;
             }
 
-            $pathname  = $file->getPathname();
+            $pathname = $file->getPathname();
             $extension = $file->getExtension();
 
             $executorType = $this->matchExtension($extension);
@@ -109,7 +107,7 @@ final class RunExternalToolingScripts implements CheckInterface
         return $scripts;
     }
 
-    private function matchExtension(string $extension) : ?string
+    private function matchExtension(string $extension): ?string
     {
         foreach (self::$scriptExecutors as $type => $config) {
             $ext = ltrim($config['extension'], '.');
@@ -121,7 +119,7 @@ final class RunExternalToolingScripts implements CheckInterface
         return null;
     }
 
-    private function shouldSkip(string $scriptName) : bool
+    private function shouldSkip(string $scriptName): bool
     {
         $skipPatterns = ['/^_/', '/\.bak$/', '/^README/', '/^TODO/', '/\.md$/'];
 
@@ -135,11 +133,10 @@ final class RunExternalToolingScripts implements CheckInterface
     }
 
     /**
-     * @param array{path: string, type: string, name: string} $script
-     *
+     * @param  array{path: string, type: string, name: string}  $script
      * @return array{passed: bool, severity: string, message: string}
      */
-    private function executeScript(array $script) : array
+    private function executeScript(array $script): array
     {
         $scriptType = $script['type'];
         $scriptPath = $script['path'];
@@ -147,19 +144,19 @@ final class RunExternalToolingScripts implements CheckInterface
 
         if (! isset(self::$scriptExecutors[$scriptType])) {
             return [
-                'passed'   => false,
+                'passed' => false,
                 'severity' => PreCommitIssue::SEVERITY_ERROR,
-                'message' => 'Unknown script type: ' . $scriptType,
+                'message' => 'Unknown script type: '.$scriptType,
             ];
         }
 
         $executor = self::$scriptExecutors[$scriptType];
-        $command  = $executor['command'] . ' ' . escapeshellarg($scriptPath);
+        $command = $executor['command'].' '.escapeshellarg($scriptPath);
 
         // Execute with timeout
-        $output    = [];
+        $output = [];
         $returnVar = 0;
-        exec($command . ' 2>&1', $output, $returnVar);
+        exec($command.' 2>&1', $output, $returnVar);
         $outputText = implode("\n", $output);
 
         $passed = ($returnVar === 0);
@@ -173,12 +170,12 @@ final class RunExternalToolingScripts implements CheckInterface
 
         $message = $passed
             ? sprintf('Script %s passed', $scriptName)
-            : sprintf('Script %s failed: ', $scriptName) . substr($outputText, 0, 150);
+            : sprintf('Script %s failed: ', $scriptName).substr($outputText, 0, 150);
 
         return [
-            'passed'   => $passed || ! $hasError,
+            'passed' => $passed || ! $hasError,
             'severity' => $severity,
-            'message'  => $message,
+            'message' => $message,
         ];
     }
 }

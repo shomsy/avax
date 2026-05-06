@@ -14,7 +14,8 @@ final readonly class RunUnitOfWork
 {
     public function __construct(
         private UnitOfWorkInterface $unitOfWork,
-    ) {}
+    ) {
+    }
 
     public function execute(callable $operation): mixed
     {

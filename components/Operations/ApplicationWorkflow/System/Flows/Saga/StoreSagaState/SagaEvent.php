@@ -13,11 +13,11 @@ final readonly class SagaEvent
     public array $payload;
 
     private function __construct(
-        public string            $id,
-        public string            $type,
-        public string            $sagaId,
-        public string            $sagaName,
-        public ?string           $stepName,
+        public string $id,
+        public string $type,
+        public string $sagaId,
+        public string $sagaName,
+        public ?string $stepName,
         ?array $payload,
         public DateTimeImmutable $occurredAt,
     ) {
@@ -37,7 +37,7 @@ final readonly class SagaEvent
         string $sagaId,
         string $sagaName,
         string $type,
-        ?array  $payload = null,
+        ?array $payload = null,
         ?string $stepName = null,
     ): self {
         $payload ??= [];
@@ -97,12 +97,12 @@ final readonly class SagaEvent
     public function toArray(): array
     {
         return [
-            'id'        => $this->id,
-            'type'      => $this->type,
-            'saga_id'   => $this->sagaId,
+            'id' => $this->id,
+            'type' => $this->type,
+            'saga_id' => $this->sagaId,
             'saga_name' => $this->sagaName,
             'step_name' => $this->stepName,
-            'payload'   => $this->payload,
+            'payload' => $this->payload,
             'occurred_at' => $this->occurredAt->format(format: DateTimeInterface::ISO8601),
         ];
     }

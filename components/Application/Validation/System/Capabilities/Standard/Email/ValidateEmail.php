@@ -19,7 +19,7 @@ final readonly class ValidateEmail
     /**
      * Performs strict validation of the given email string.
      *
-     * @param string $email The email address to validate.
+     * @param  string  $email  The email address to validate.
      * @return bool True if the email is valid.
      */
     public function execute(#[SensitiveParameter] string $email): bool

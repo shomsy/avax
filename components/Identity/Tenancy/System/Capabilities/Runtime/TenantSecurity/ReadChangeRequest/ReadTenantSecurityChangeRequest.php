@@ -9,7 +9,9 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class ReadTenantSecurityChangeRequest
 {
-    public function __construct(private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) {}
+    public function __construct(private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore)
+    {
+    }
 
     public function execute(string $changeId): ?TenantSecurityChangeRequest
     {

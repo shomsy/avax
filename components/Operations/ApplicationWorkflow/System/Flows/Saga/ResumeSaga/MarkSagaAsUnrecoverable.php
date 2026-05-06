@@ -10,7 +10,8 @@ final readonly class MarkSagaAsUnrecoverable
 {
     public function __construct(
         private SagaRecoveryAction $sagaRecoveryAction,
-    ) {}
+    ) {
+    }
 
     public function describeResponsibility(): string
     {

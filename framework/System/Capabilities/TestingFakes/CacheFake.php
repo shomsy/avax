@@ -38,9 +38,9 @@ final class CacheFake
         return $this->store[$key] ?? $default;
     }
 
-    public function set(string $key, mixed $value, ?int $ttl = null) : void
+    public function set(string $key, mixed $value, ?int $ttl = null): void
     {
-        $this->setCalls[]  = ['key' => $key, 'value' => $value, 'ttl' => $ttl];
+        $this->setCalls[] = ['key' => $key, 'value' => $value, 'ttl' => $ttl];
         $this->store[$key] = $value;
     }
 
@@ -52,9 +52,9 @@ final class CacheFake
 
     public function clear(): void
     {
-        $this->store       = [];
-        $this->getCalls    = [];
-        $this->setCalls    = [];
+        $this->store = [];
+        $this->getCalls = [];
+        $this->setCalls = [];
         $this->deleteCalls = [];
     }
 
@@ -88,7 +88,7 @@ final class CacheFake
             sprintf(
                 "Cache::set('%s'%s) was not called",
                 $key,
-                $value !== null ? ', ' . var_export($value, true) : '',
+                $value !== null ? ', '.var_export($value, true) : '',
             ),
         );
     }

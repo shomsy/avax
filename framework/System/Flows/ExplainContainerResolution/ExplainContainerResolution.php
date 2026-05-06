@@ -15,7 +15,7 @@ final readonly class ExplainContainerResolution
     ) {
     }
 
-    public static function printExplanation(ContainerDependencyExplanation $containerDependencyExplanation) : void
+    public static function printExplanation(ContainerDependencyExplanation $containerDependencyExplanation): void
     {
         echo "\033[33mService: {$containerDependencyExplanation->serviceId}\033[0m\n";
         echo sprintf("  Scope: %s\n", $containerDependencyExplanation->scope);
@@ -44,7 +44,7 @@ final readonly class ExplainContainerResolution
     /**
      * @return list<string>
      */
-    public function whoUses() : array
+    public function whoUses(): array
     {
         $containerAnalyzer = new ContainerAnalyzer($this->container);
 
@@ -54,7 +54,7 @@ final readonly class ExplainContainerResolution
     /**
      * @return list<string>
      */
-    public function whatBreaksIf() : array
+    public function whatBreaksIf(): array
     {
         $containerAnalyzer = new ContainerAnalyzer($this->container);
 

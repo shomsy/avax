@@ -10,9 +10,10 @@ final readonly class LoadValueFromSource
 {
     public function __construct(
         private CacheSource $cacheSource,
-    ) {}
+    ) {
+    }
 
-    public function loadOrFail(CacheKey $cacheKey) : mixed
+    public function loadOrFail(CacheKey $cacheKey): mixed
     {
         $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 
@@ -26,7 +27,7 @@ final readonly class LoadValueFromSource
         return $this->cacheSource->load($cacheSourceKey);
     }
 
-    public function load(CacheKey $cacheKey) : mixed
+    public function load(CacheKey $cacheKey): mixed
     {
         $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 

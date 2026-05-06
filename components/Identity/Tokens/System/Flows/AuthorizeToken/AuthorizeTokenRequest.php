@@ -14,13 +14,14 @@ final readonly class AuthorizeTokenRequest
 {
     public function __construct(
         private AuthorizationCodeStoreInterface $authorizationCodeStore,
-        private DateInterval                    $dateInterval = new DateInterval(duration: 'PT5M'),
-    ) {}
+        private DateInterval $dateInterval = new DateInterval(duration: 'PT5M'),
+    ) {
+    }
 
     /**
-     * @param array<string, mixed> $request
+     * @param  array<string, mixed>  $request
      */
-    public function execute(array $request) : stdClass
+    public function execute(array $request): stdClass
     {
         $subject = $request['subject'] ?? $request['sub'] ?? $request['user_id'] ?? null;
 
@@ -28,12 +29,12 @@ final readonly class AuthorizeTokenRequest
             throw new InvalidArgumentException(message: 'Token authorization requires a subject, sub, or user_id value.');
         }
 
-        $clientId    = $request['client_id'] ?? null;
+        $clientId = $request['client_id'] ?? null;
         $redirectUri = $request['redirect_uri'] ?? null;
-        $state       = $request['state'] ?? null;
-        $scopes      = $this->normalizeScopes(scopes: $request['scope'] ?? $request['scopes'] ?? []);
-        $expiresAt   = new DateTimeImmutable()->add(interval: $this->dateInterval);
-        $authorizationCodeRecord      = $this->authorizationCodeStore->create(
+        $state = $request['state'] ?? null;
+        $scopes = $this->normalizeScopes(scopes: $request['scope'] ?? $request['scopes'] ?? []);
+        $expiresAt = new DateTimeImmutable()->add(interval: $this->dateInterval);
+        $authorizationCodeRecord = $this->authorizationCodeStore->create(
             subject    : (string) $subject,
             expiresAt  : $expiresAt,
             clientId   : is_string(value: $clientId) ? $clientId : null,
@@ -43,23 +44,23 @@ final readonly class AuthorizeTokenRequest
         );
 
         return (object) [
-            'code'       => $authorizationCodeRecord->code,
+            'code' => $authorizationCodeRecord->code,
             'token_type' => 'authorization_code',
             'expires_at' => $authorizationCodeRecord->expiresAt,
-            'state'      => $authorizationCodeRecord->state,
+            'state' => $authorizationCodeRecord->state,
         ];
     }
 
     /**
      * @return list<string>
      */
-    private function normalizeScopes(mixed $scopes) : array
+    private function normalizeScopes(mixed $scopes): array
     {
         if (is_string(value: $scopes)) {
             return array_values(array: array_filter(
-                                           array   : preg_split(pattern: '/\s+/', subject: trim(string: $scopes)) ?: [],
-                                           callback: static fn (string $scope) : bool => $scope !== '',
-                                       ));
+                array   : preg_split(pattern: '/\s+/', subject: trim(string: $scopes)) ?: [],
+                callback: static fn (string $scope): bool => $scope !== '',
+            ));
         }
 
         if (! is_array(value: $scopes)) {
@@ -67,8 +68,8 @@ final readonly class AuthorizeTokenRequest
         }
 
         return array_values(array: array_filter(
-                                       array   : $scopes,
-                                       callback: static fn (mixed $scope) : bool => is_string(value: $scope) && $scope !== '',
-                                   ));
+            array   : $scopes,
+            callback: static fn (mixed $scope): bool => is_string(value: $scope) && $scope !== '',
+        ));
     }
 }

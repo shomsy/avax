@@ -12,7 +12,7 @@ final class ArrayIdempotencyStore implements IdempotencyStore
     public function set(string $key, array $value, int $ttl): void
     {
         $this->store[$key] = [
-            'value'      => $value,
+            'value' => $value,
             'expires_at' => time() + $ttl,
         ];
     }

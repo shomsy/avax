@@ -11,7 +11,8 @@ final readonly class FileLogWriter
 {
     public function __construct(
         private string $path,
-    ) {}
+    ) {
+    }
 
     public function write(string $message): void
     {
@@ -20,6 +21,6 @@ final readonly class FileLogWriter
             mkdir($dir, 0o777, true);
         }
 
-        file_put_contents($this->path, $message . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->path, $message.PHP_EOL, FILE_APPEND);
     }
 }

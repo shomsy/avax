@@ -10,11 +10,13 @@ use RuntimeException;
 final readonly class RouteFacadeContainer implements ContainerInterface
 {
     /**
-     * @param array<string, mixed> $services
+     * @param  array<string, mixed>  $services
      */
-    public function __construct(private array $services = []) {}
+    public function __construct(private array $services = [])
+    {
+    }
 
-    public function get(string $id) : mixed
+    public function get(string $id): mixed
     {
         if (! $this->has(id: $id)) {
             throw new RuntimeException(
@@ -25,7 +27,7 @@ final readonly class RouteFacadeContainer implements ContainerInterface
         return $this->services[$id];
     }
 
-    public function has(string $id) : bool
+    public function has(string $id): bool
     {
         return array_key_exists(key: $id, array: $this->services);
     }

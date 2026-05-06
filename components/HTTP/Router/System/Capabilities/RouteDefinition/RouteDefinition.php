@@ -12,7 +12,8 @@ final readonly class RouteDefinition
         private RouteMethod $method,
         private string $uri,
         private mixed $action,
-    ) {}
+    ) {
+    }
 
     public function method(): RouteMethod
     {

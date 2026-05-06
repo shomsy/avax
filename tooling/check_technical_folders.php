@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$directories      = ['components', 'framework'];
+$directories = ['components', 'framework'];
 $technicalFolders = [
     'contracts', 'interfaces', 'exceptions', 'exception', 'enums', 'traits', 'types', 'abstracts', 'base',
 ];
@@ -23,7 +23,7 @@ foreach ($directories as $dir) {
             }
 
             if (in_array($name, $technicalFolders)) {
-                $violations[] = "[TECHNICAL FOLDER: $name] " . $file->getPathname();
+                $violations[] = "[TECHNICAL FOLDER: $name] ".$file->getPathname();
             }
         }
     }
@@ -35,7 +35,7 @@ if (! empty($violations)) {
     foreach (array_unique($violations) as $v) {
         echo "- $v\n";
     }
-    echo "\nTotal Suspicious Folders: " . count(array_unique($violations)) . "\n";
+    echo "\nTotal Suspicious Folders: ".count(array_unique($violations))."\n";
 } else {
     echo "✨ No generic technical folders found!\n";
 }

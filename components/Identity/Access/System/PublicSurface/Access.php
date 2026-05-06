@@ -17,8 +17,9 @@ final readonly class Access implements AccessInterface
     public function __construct(
         private AuthorizationEngine $authorizationEngine,
         private BeginAdminElevation $beginAdminElevation,
-        private EndAdminElevation   $endAdminElevation,
-    ) {}
+        private EndAdminElevation $endAdminElevation,
+    ) {
+    }
 
     public function allows(string $permission, mixed $resource = null): bool
     {
@@ -37,7 +38,7 @@ final readonly class Access implements AccessInterface
     public function authorize(string $permission, mixed $resource = null): void
     {
         if ($this->denies(permission: $permission, resource: $resource)) {
-            throw new PermissionDenied('Permission denied: ' . $permission);
+            throw new PermissionDenied('Permission denied: '.$permission);
         }
     }
 

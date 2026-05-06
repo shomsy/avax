@@ -15,7 +15,8 @@ final readonly class FindUserByCredentials
 {
     public function __construct(
         private UserSource $userSource,
-    ) {}
+    ) {
+    }
 
     public function execute(string $email): ?User
     {

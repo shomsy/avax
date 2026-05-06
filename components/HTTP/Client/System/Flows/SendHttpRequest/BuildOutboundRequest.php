@@ -19,13 +19,12 @@ final class BuildOutboundRequest
     /**
      * Build a PSR-7 request from an OutboundRequest.
      *
-     * @param OutboundRequest $outboundRequest The outbound request
-     *
+     * @param  OutboundRequest  $outboundRequest  The outbound request
      * @return Request The PSR-7 request
      */
-    public function build(OutboundRequest $outboundRequest) : Request
+    public function build(OutboundRequest $outboundRequest): Request
     {
-        $body    = $this->normalizeBody($outboundRequest->body);
+        $body = $this->normalizeBody($outboundRequest->body);
         $headers = $this->prepareHeaders($outboundRequest);
 
         return new Request(
@@ -69,7 +68,7 @@ final class BuildOutboundRequest
      *
      * @return array<string, string>
      */
-    private function prepareHeaders(OutboundRequest $outboundRequest) : array
+    private function prepareHeaders(OutboundRequest $outboundRequest): array
     {
         $headers = $outboundRequest->headers;
 

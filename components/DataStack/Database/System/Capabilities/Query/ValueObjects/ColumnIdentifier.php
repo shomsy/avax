@@ -14,10 +14,11 @@ use Stringable;
 final readonly class ColumnIdentifier implements Stringable
 {
     /**
-     * @param string      $name  The technical identifier of the database column.
-     * @param string|null $alias The optional domain-specific label (alias) for the projection.
+     * @param  string  $name  The technical identifier of the database column.
+     * @param  string|null  $alias  The optional domain-specific label (alias) for the projection.
      */
-    public function __construct(public string $name, public ?string $alias = null) {
+    public function __construct(public string $name, public ?string $alias = null)
+    {
     }
 
     /**

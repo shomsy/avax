@@ -22,7 +22,7 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
      */
     public function issue(UserId $userId, DateTimeImmutable $expiresAt): EmailVerificationChallenge
     {
-        $token                                             = bin2hex(string: random_bytes(length: 32));
+        $token = bin2hex(string: random_bytes(length: 32));
         $this->records[hash(algo: 'sha256', data: $token)] = [
             'user_id' => $userId->value,
             'expires_at' => $expiresAt->getTimestamp(),

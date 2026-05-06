@@ -10,7 +10,8 @@ final readonly class FlushChanges
 {
     public function __construct(
         private UnitOfWork $unitOfWork,
-    ) {}
+    ) {
+    }
 
     public function flush(): void
     {

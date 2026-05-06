@@ -13,7 +13,9 @@ use RuntimeException;
 
 final readonly class RotateClientSecret
 {
-    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock)
+    {
+    }
 
     public function execute(string $clientId): RegisteredOAuthClient
     {
@@ -27,8 +29,8 @@ final readonly class RotateClientSecret
             name      : 'auth.oauth.client.secret_rotated',
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'   => $registered->client->clientId,
-                            'tenant_slug' => $registered->client->tenantSlug,
+                'client_id' => $registered->client->clientId,
+                'tenant_slug' => $registered->client->tenantSlug,
                 'public_client' => $registered->client->isPublic() ? 1 : 0,
             ],
         ));

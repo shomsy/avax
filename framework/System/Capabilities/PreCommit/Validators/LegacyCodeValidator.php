@@ -37,8 +37,8 @@ class LegacyCodeValidator extends BaseValidator
     private array $legacyPatterns
         = [
             '# Legacy code' => 'contains legacy marker',
-            '@legacy'       => 'has @legacy annotation',
-            'class_alias('  => 'uses class_alias (legacy)',
+            '@legacy' => 'has @legacy annotation',
+            'class_alias(' => 'uses class_alias (legacy)',
         ];
 
     /** @var array<string> */
@@ -54,21 +54,21 @@ class LegacyCodeValidator extends BaseValidator
         parent::__construct('LegacyCodeValidator');
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function validate(array $context) : ValidationResult
+    public function validate(array $context): ValidationResult
     {
-        $files     = $context['staged_files'] ?? [];
+        $files = $context['staged_files'] ?? [];
         $basePath = $context['base_path'] ?? getcwd();
         $messages = [];
         $allPassed = true;
 
         // Check for legacy folders in staged files
         foreach ($files as $file) {
-            $filePath = $basePath . '/' . $file;
+            $filePath = $basePath.'/'.$file;
             if (! file_exists($filePath)) {
                 continue;
             }
@@ -77,7 +77,7 @@ class LegacyCodeValidator extends BaseValidator
             $legacyResult = $this->checkLegacyFolders($filePath, $file);
             if (! $legacyResult->isPassed()) {
                 $allPassed = false;
-                $messages  = array_merge($messages, $legacyResult->getMessages());
+                $messages = array_merge($messages, $legacyResult->getMessages());
             }
 
             // Check content for legacy patterns
@@ -87,7 +87,7 @@ class LegacyCodeValidator extends BaseValidator
                     $contentResult = $this->checkLegacyContent($file, $content);
                     if (! $contentResult->isPassed()) {
                         $allPassed = false;
-                        $messages  = array_merge($messages, $contentResult->getMessages());
+                        $messages = array_merge($messages, $contentResult->getMessages());
                     }
                 }
             }
@@ -97,7 +97,7 @@ class LegacyCodeValidator extends BaseValidator
                 $phpResult = $this->checkLegacyAliases($filePath, $file);
                 if (! $phpResult->isPassed()) {
                     $allPassed = false;
-                    $messages  = array_merge($messages, $phpResult->getMessages());
+                    $messages = array_merge($messages, $phpResult->getMessages());
                 }
             }
         }
@@ -106,14 +106,14 @@ class LegacyCodeValidator extends BaseValidator
         $compatResult = $this->checkCompatAliases($basePath);
         if (! $compatResult->isPassed()) {
             $allPassed = false;
-            $messages  = array_merge($messages, $compatResult->getMessages());
+            $messages = array_merge($messages, $compatResult->getMessages());
         }
 
         // Check for legacy folders that need cleanup
         $cleanupResult = $this->checkLegacyFoldersForCleanup($basePath);
         if (! $cleanupResult->isPassed()) {
             $allPassed = false;
-            $messages  = array_merge($messages, $cleanupResult->getMessages());
+            $messages = array_merge($messages, $cleanupResult->getMessages());
         }
 
         $validationResult = new ValidationResult(
@@ -131,15 +131,15 @@ class LegacyCodeValidator extends BaseValidator
     /**
      * Check for legacy folder patterns
      */
-    private function checkLegacyFolders(string $filePath, string $relativePath) : ValidationResult
+    private function checkLegacyFolders(string $filePath, string $relativePath): ValidationResult
     {
-        $messages  = [];
+        $messages = [];
         $allPassed = true;
 
         foreach ($this->legacyFolders as $legacyFolder) {
-            if (str_contains($filePath, '/' . $legacyFolder . '/') ||
-                str_contains($filePath, '/' . $legacyFolder . '\\')) {
-                $allPassed  = false;
+            if (str_contains($filePath, '/'.$legacyFolder.'/') ||
+                str_contains($filePath, '/'.$legacyFolder.'\\')) {
+                $allPassed = false;
                 $messages[] = sprintf(
                     "File '%s' is in legacy folder '%s'",
                     $relativePath,
@@ -161,9 +161,9 @@ class LegacyCodeValidator extends BaseValidator
     /**
      * Check content for legacy patterns
      */
-    private function checkLegacyContent(string $relativePath, string $content) : ValidationResult
+    private function checkLegacyContent(string $relativePath, string $content): ValidationResult
     {
-        $messages  = [];
+        $messages = [];
         $allPassed = true;
 
         foreach ($this->legacyPatterns as $pattern => $description) {
@@ -173,7 +173,7 @@ class LegacyCodeValidator extends BaseValidator
                     continue;
                 }
 
-                $allPassed  = false;
+                $allPassed = false;
                 $messages[] = sprintf(
                     "File '%s' %s: '%s'",
                     $relativePath,
@@ -196,20 +196,20 @@ class LegacyCodeValidator extends BaseValidator
     /**
      * Check for legacy alias usage
      */
-    private function checkLegacyAliases(string $filePath, string $relativePath) : ValidationResult
+    private function checkLegacyAliases(string $filePath, string $relativePath): ValidationResult
     {
         $content = file_get_contents($filePath);
         if ($content === false) {
             return ValidationResult::pass();
         }
 
-        $messages  = [];
+        $messages = [];
         $allPassed = true;
 
         // Check for class_alias to legacy classes
         if (preg_match_all('/class_alias\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,/', $content, $matches)) {
             foreach ($matches[1] as $alias) {
-                $allPassed  = false;
+                $allPassed = false;
                 $messages[] = sprintf(
                     "File '%s' uses class_alias to '%s' (legacy pattern)",
                     $relativePath,
@@ -243,14 +243,14 @@ class LegacyCodeValidator extends BaseValidator
     /**
      * Check compat.php for legacy aliases
      */
-    private function checkCompatAliases(string $basePath) : ValidationResult
+    private function checkCompatAliases(string $basePath): ValidationResult
     {
-        $messages  = [];
+        $messages = [];
         $allPassed = true;
 
         // Check for compat.php in various locations
         foreach ($this->compatFiles as $compatFile) {
-            $compatPath = $basePath . '/' . $compatFile;
+            $compatPath = $basePath.'/'.$compatFile;
             if (! file_exists($compatPath)) {
                 continue;
             }
@@ -273,9 +273,9 @@ class LegacyCodeValidator extends BaseValidator
 
             // Check for deprecated function wrappers
             if (preg_match_all('/function\s+(\w+)\s*\([^)]*\)\s*\{[^}]*@deprecated/ims', $content, $matches)) {
-                $allPassed  = false;
+                $allPassed = false;
                 $messages[] = sprintf(
-                    "compat.php has deprecated function wrappers: %s",
+                    'compat.php has deprecated function wrappers: %s',
                     implode(', ', $matches[1])
                 );
             }
@@ -294,20 +294,20 @@ class LegacyCodeValidator extends BaseValidator
     /**
      * Check for legacy folders that should be cleaned up
      */
-    private function checkLegacyFoldersForCleanup(string $basePath) : ValidationResult
+    private function checkLegacyFoldersForCleanup(string $basePath): ValidationResult
     {
-        $messages  = [];
+        $messages = [];
         $allPassed = true;
 
         // Check for shriomove and other temporary folders
         $foldersToCheck = ['shriomove', '.shriomove', 'tmp', 'Temp', 'temp'];
 
         foreach ($foldersToCheck as $folderToCheck) {
-            $folderPath     = $basePath . '/' . $folderToCheck;
+            $folderPath = $basePath.'/'.$folderToCheck;
             if (is_dir($folderPath)) {
                 $allPassed = false;
                 // Count files in folder
-                $fileCount = count(glob($folderPath . '/*') ?: []);
+                $fileCount = count(glob($folderPath.'/*') ?: []);
                 $messages[] = sprintf(
                     "Legacy folder '%s' exists with %d files - consider cleaning up",
                     $folderToCheck,
@@ -316,16 +316,16 @@ class LegacyCodeValidator extends BaseValidator
             }
 
             // Check for DataFoundation
-            $dataFoundationPath = $basePath . '/DataFoundation';
+            $dataFoundationPath = $basePath.'/DataFoundation';
             if (is_dir($dataFoundationPath)) {
-                $allPassed  = false;
+                $allPassed = false;
                 $messages[] = "Legacy 'DataFoundation' folder exists - should be migrated to components/";
             }
 
             // Check for components/Legacy
-            $componentsLegacyPath = $basePath . '/components/Legacy';
+            $componentsLegacyPath = $basePath.'/components/Legacy';
             if (is_dir($componentsLegacyPath)) {
-                $allPassed  = false;
+                $allPassed = false;
                 $messages[] = "Legacy 'components/Legacy' folder exists - should be cleaned up";
             }
         }
@@ -343,17 +343,17 @@ class LegacyCodeValidator extends BaseValidator
     /**
      * Check if pattern is inside a comment
      */
-    private function isInComment(string $content, string $pattern) : bool
+    private function isInComment(string $content, string $pattern): bool
     {
         $pos = stripos($content, $pattern);
         if ($pos === false) {
             return false;
         }
 
-        $before           = substr($content, 0, $pos);
+        $before = substr($content, 0, $pos);
         $lastBlockComment = strrpos($before, '/*');
-        $lastLineComment  = strrpos($before, '//');
-        $lastHashComment  = strrpos($before, '#');
+        $lastLineComment = strrpos($before, '//');
+        $lastHashComment = strrpos($before, '#');
 
         // Check if inside block comment
         if ($lastBlockComment !== false) {
@@ -375,7 +375,7 @@ class LegacyCodeValidator extends BaseValidator
     /**
      * Add custom legacy folder to check
      */
-    public function addLegacyFolder(string $folder) : self
+    public function addLegacyFolder(string $folder): self
     {
         if (! in_array($folder, $this->legacyFolders)) {
             $this->legacyFolders[] = $folder;
@@ -385,7 +385,7 @@ class LegacyCodeValidator extends BaseValidator
     }
 
     #[Override]
-    public function supports(array $context) : bool
+    public function supports(array $context): bool
     {
         return ! empty($context['staged_files'] ?? []);
     }

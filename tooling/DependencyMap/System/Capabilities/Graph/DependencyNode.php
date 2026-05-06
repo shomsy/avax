@@ -7,12 +7,11 @@ namespace Avax\Tooling\DependencyMap\System\Capabilities\Graph;
 final readonly class DependencyNode
 {
     /**
-     * @param list<string> $dependsOn
+     * @param  list<string>  $dependsOn
      */
     public function __construct(
         public string $name,
-        public array  $dependsOn = [],
-    )
-    {
+        public array $dependsOn = [],
+    ) {
     }
 }

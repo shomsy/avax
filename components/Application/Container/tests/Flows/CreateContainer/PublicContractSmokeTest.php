@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Container;
 use Avax\Components\Application\Container\System\ContainerInterface;
@@ -90,4 +90,4 @@ foreach ($forbiddenLegacyMethods as $forbiddenLegacyMethod) {
     assertTrue(condition: ! method_exists(object_or_class: Container::class, method: $forbiddenLegacyMethod), message: sprintf('Legacy public method [%s] must stay absent from Container.', $forbiddenLegacyMethod));
 }
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

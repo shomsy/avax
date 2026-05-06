@@ -17,10 +17,10 @@ readonly class FilesystemConfig
         return new self(
             default: 'local',
             disks  : [
-                         'local' => [
-                             'driver' => 'local',
-                         ],
-                     ],
+                'local' => [
+                    'driver' => 'local',
+                ],
+            ],
         );
     }
 

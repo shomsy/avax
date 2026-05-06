@@ -21,8 +21,8 @@ final class JwtAuth
 
     public static function configure(string $secret, string $algo = 'HS256'): void
     {
-        self::$jwtSigner      = new JwtSigner($secret, $algo);
-        self::$tokenVerifier  = new TokenVerifier(self::$jwtSigner);
+        self::$jwtSigner = new JwtSigner($secret, $algo);
+        self::$tokenVerifier = new TokenVerifier(self::$jwtSigner);
         self::$tokenBlacklist = new TokenBlacklist();
     }
 
@@ -80,15 +80,15 @@ final class JwtAuth
     {
         $signer = self::signer();
 
-        $now           = time();
+        $now = time();
         $accessExpires = $now + 900;
         $refreshExpires = $now + 604800;
 
         $accessPayload = [
-            'sub'  => $user['id'],
+            'sub' => $user['id'],
             'scopes' => $scopes,
-            'exp'  => $accessExpires,
-            'iat'  => $now,
+            'exp' => $accessExpires,
+            'iat' => $now,
             'type' => 'access',
         ];
 
@@ -120,10 +120,10 @@ final class JwtAuth
             return [
                 'active' => ! self::$tokenBlacklist->isRevoked($token),
                 'scope' => implode(' ', $payload['scopes'] ?? []),
-                'sub'   => $payload['sub'] ?? null,
-                'exp'   => $payload['exp'] ?? null,
-                'iat'   => $payload['iat'] ?? null,
-                'type'  => $payload['type'] ?? null,
+                'sub' => $payload['sub'] ?? null,
+                'exp' => $payload['exp'] ?? null,
+                'iat' => $payload['iat'] ?? null,
+                'type' => $payload['type'] ?? null,
             ];
         } catch (Throwable) {
             return ['active' => false];

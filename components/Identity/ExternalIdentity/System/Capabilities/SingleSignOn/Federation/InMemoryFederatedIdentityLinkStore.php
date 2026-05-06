@@ -9,14 +9,14 @@ final class InMemoryFederatedIdentityLinkStore implements FederatedIdentityLinkS
     /** @var array<string, FederatedIdentityLink> */
     private array $links = [];
 
-    public function save(FederatedIdentityLink $federatedIdentityLink) : void
+    public function save(FederatedIdentityLink $federatedIdentityLink): void
     {
         $this->links[$this->key(connectionId: $federatedIdentityLink->connectionId, subject: $federatedIdentityLink->subject)] = $federatedIdentityLink;
     }
 
     private function key(string $connectionId, string $subject): string
     {
-        return $connectionId . '|' . $subject;
+        return $connectionId.'|'.$subject;
     }
 
     public function find(string $connectionId, string $subject): ?FederatedIdentityLink

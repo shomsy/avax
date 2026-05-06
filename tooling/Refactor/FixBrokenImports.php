@@ -30,8 +30,12 @@ final class FixBrokenImports
         );
 
         foreach ($iterator as $file) {
-            if ($file->getExtension() !== 'php') continue;
-            if (str_contains($file->getPathname(), '/vendor/')) continue;
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+            if (str_contains($file->getPathname(), '/vendor/')) {
+                continue;
+            }
 
             $this->processFile($file->getPathname());
         }
@@ -40,7 +44,9 @@ final class FixBrokenImports
     private function processFile(string $path): void
     {
         $content = file_get_contents($path);
-        if (!$content) return;
+        if (! $content) {
+            return;
+        }
 
         $newContent = preg_replace_callback(
             '/^use\s+([A-Za-z0-9_\\\\]+);/m',
@@ -49,7 +55,9 @@ final class FixBrokenImports
                 $fullClass = $matches[1];
 
                 // If it looks like a global class, skip
-                if (!str_contains($fullClass, '\\')) return $useLine;
+                if (! str_contains($fullClass, '\\')) {
+                    return $useLine;
+                }
 
                 // Check if this class exists
                 if ($this->isClassInPsr4($fullClass)) {
@@ -59,7 +67,7 @@ final class FixBrokenImports
                 // If not, maybe it's a namespace and the class is inside with the same name
                 $parts = explode('\\', $fullClass);
                 $className = end($parts);
-                $potentialClass = $fullClass . '\\' . $className;
+                $potentialClass = $fullClass.'\\'.$className;
 
                 if ($this->isClassInPsr4($potentialClass)) {
                     echo "  [FIXED] Found moved class: $fullClass -> $potentialClass\n";
@@ -74,7 +82,7 @@ final class FixBrokenImports
 
         if ($newContent !== $content) {
             file_put_contents($path, $newContent);
-            echo "  [UPDATED] " . str_replace($this->root . '/', '', $path) . "\n";
+            echo '  [UPDATED] '.str_replace($this->root.'/', '', $path)."\n";
         }
     }
 
@@ -93,8 +101,10 @@ final class FixBrokenImports
         foreach ($psr4Map as $prefix => $dir) {
             if (str_starts_with($fullClass, $prefix)) {
                 $relative = str_replace($prefix, '', $fullClass);
-                $path = $this->root . '/' . $dir . str_replace('\\', '/', $relative) . '.php';
-                if (file_exists($path)) return true;
+                $path = $this->root.'/'.$dir.str_replace('\\', '/', $relative).'.php';
+                if (file_exists($path)) {
+                    return true;
+                }
             }
         }
 

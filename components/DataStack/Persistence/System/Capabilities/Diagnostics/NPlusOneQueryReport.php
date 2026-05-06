@@ -13,7 +13,7 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics;
 final readonly class NPlusOneQueryReport
 {
     /**
-     * @param array<string> $sampleQueries
+     * @param  array<string>  $sampleQueries
      */
     public function __construct(
         public QueryFingerprint $pattern,
@@ -21,7 +21,8 @@ final readonly class NPlusOneQueryReport
         public float $timeSpanMs,
         public array $sampleQueries = [],
         public ?string $suggestion = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Returns the number of times this pattern was executed.

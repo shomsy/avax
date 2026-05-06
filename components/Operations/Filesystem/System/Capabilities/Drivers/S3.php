@@ -9,7 +9,9 @@ final class S3 implements StorageAdapter
     /** @var array<string, string> */
     private array $objects = [];
 
-    public function __construct(private readonly array $config = []) {}
+    public function __construct(private readonly array $config = [])
+    {
+    }
 
     public function put(string $path, string $contents): bool
     {
@@ -44,10 +46,10 @@ final class S3 implements StorageAdapter
     {
         $expiresAt = time() + $expiresInSeconds;
         $normalizedPath = $this->normalize(path: $path);
-        $secret    = $this->config['secret'] ?? 'avax-s3-storage';
-        $signature = hash_hmac(algo: 'sha256', data: $normalizedPath . '|' . $expiresAt, key: $secret);
+        $secret = $this->config['secret'] ?? 'avax-s3-storage';
+        $signature = hash_hmac(algo: 'sha256', data: $normalizedPath.'|'.$expiresAt, key: $secret);
 
-        return $this->url(path: $normalizedPath) . '?X-Amz-Expires=' . $expiresInSeconds . '&X-Amz-Date=' . $expiresAt . '&X-Amz-Signature=' . $signature;
+        return $this->url(path: $normalizedPath).'?X-Amz-Expires='.$expiresInSeconds.'&X-Amz-Date='.$expiresAt.'&X-Amz-Signature='.$signature;
     }
 
     public function url(string $path): string
@@ -95,7 +97,7 @@ final class S3 implements StorageAdapter
 
         $filtered = array_values(array_filter(
             array   : $files,
-            callback: static fn (string $file) : bool => str_starts_with(haystack: $file, needle: rtrim(string: $prefix, characters: '/') . '/'),
+            callback: static fn (string $file): bool => str_starts_with(haystack: $file, needle: rtrim(string: $prefix, characters: '/').'/'),
         ));
         sort(array: $filtered);
 

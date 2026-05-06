@@ -9,19 +9,19 @@ $baseDir = dirname(dirname(__DIR__));
 
 // Section 21: Forbidden Generic Names (mostly for folders/buckets)
 $forbiddenBuckets = [
-    'Services', 'Helpers', 'Utils', 'Common', 'Misc', 'Managers', 'Stuff', 
-    'Shared', 'Base', 'Core', 'SharedThings', 'General', 'InternalHelpers'
+    'Services', 'Helpers', 'Utils', 'Common', 'Misc', 'Managers', 'Stuff',
+    'Shared', 'Base', 'Core', 'SharedThings', 'General', 'InternalHelpers',
 ];
 
 // Section 22.2: Bad examples (mostly for files/classes)
 $badExamples = [
-    'ServiceManager', 'CommonUtils', 'SharedService', 'CoreStuff', 
-    'DataHelpers', 'BaseHandler'
+    'ServiceManager', 'CommonUtils', 'SharedService', 'CoreStuff',
+    'DataHelpers', 'BaseHandler',
 ];
 
 // User-defined rules from previous interactions
 $userForbidden = [
-    'Adapter', 'Proxy'
+    'Adapter', 'Proxy',
 ];
 
 $violations = [];
@@ -33,13 +33,13 @@ $it = new RecursiveIteratorIterator(
 
 foreach ($it as $info) {
     $path = $info->getPathname();
-    $relPath = str_replace($baseDir . '/', '', $path);
-    
+    $relPath = str_replace($baseDir.'/', '', $path);
+
     // Ignore internal/third-party
     if (
-        str_contains($path, '/vendor/') || 
-        str_contains($path, '/tests/') || 
-        str_contains($path, '/.git/') || 
+        str_contains($path, '/vendor/') ||
+        str_contains($path, '/tests/') ||
+        str_contains($path, '/.git/') ||
         str_contains($path, '/.kilo/') ||
         str_contains($path, '/.agents/') ||
         str_contains($path, '/tooling/')
@@ -73,7 +73,7 @@ foreach ($it as $info) {
             $violations[] = ['path' => $relPath, 'type' => $info->isDir() ? 'Folder' : 'File', 'violation' => "User Prohibited: $uf"];
         }
     }
-    
+
     // Rule: Folder says flow or capability (nouns/verbs)
     // This is hard to automate, but we can flag very generic ones.
 }
@@ -85,5 +85,5 @@ if (empty($violations)) {
     foreach ($violations as $v) {
         echo "{$v['type']}: {$v['path']} -> {$v['violation']}\n";
     }
-    echo "\nTotal: " . count($violations) . "\n";
+    echo "\nTotal: ".count($violations)."\n";
 }

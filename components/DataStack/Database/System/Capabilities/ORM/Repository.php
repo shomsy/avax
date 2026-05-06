@@ -16,7 +16,9 @@ use Throwable;
  */
 abstract class Repository
 {
-    public function __construct(protected readonly QueryBuilder $queryBuilder) {}
+    public function __construct(protected readonly QueryBuilder $queryBuilder)
+    {
+    }
 
     /**
      * @throws ReflectionException
@@ -30,8 +32,7 @@ abstract class Repository
     /**
      * Find one entity by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
-     *
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      * @return object|null The found entity or null.
      *
      * @throws ReflectionException
@@ -97,8 +98,7 @@ abstract class Repository
     /**
      * Map a database row to an entity object.
      *
-     * @param array<string, mixed> $data The database row data.
-     *
+     * @param  array<string, mixed>  $data  The database row data.
      * @return object The mapped entity.
      */
     abstract protected function mapToEntity(array $data): object;
@@ -122,12 +122,11 @@ abstract class Repository
     /**
      * Find entities by conditions with optional pagination and sorting.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
-     * @param string|null          $orderBy    Column to order by.
-     * @param string|null          $direction  Sorting direction (ASC|DESC).
-     * @param int|null             $limit      Max results to return.
-     * @param int|null             $offset     Offset for pagination.
-     *
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
+     * @param  string|null  $orderBy  Column to order by.
+     * @param  string|null  $direction  Sorting direction (ASC|DESC).
+     * @param  int|null  $limit  Max results to return.
+     * @param  int|null  $offset  Offset for pagination.
      * @return array<object> The found entities.
      *
      * @throws ReflectionException
@@ -165,11 +164,11 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to find entities by conditions.', context: [
                 'conditions' => $conditions,
-                'orderBy'    => $orderBy,
-                'direction'  => $direction,
-                'limit'      => $limit,
-                'offset'     => $offset,
-                'exception'  => $exception,
+                'orderBy' => $orderBy,
+                'direction' => $direction,
+                'limit' => $limit,
+                'offset' => $offset,
+                'exception' => $exception,
             ]);
 
             throw $exception;
@@ -209,8 +208,7 @@ abstract class Repository
     /**
      * Map an entity object to a database row.
      *
-     * @param object $entity The entity to map.
-     *
+     * @param  object  $entity  The entity to map.
      * @return array<string, mixed> The database row representation.
      */
     abstract protected function mapToDatabase(object $entity): array;
@@ -238,7 +236,7 @@ abstract class Repository
     /**
      * Check if an entity exists by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -256,7 +254,7 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to check if entity exists.', context: [
                 'conditions' => $conditions,
-                'exception'  => $exception,
+                'exception' => $exception,
             ]);
 
             throw $exception;
@@ -266,7 +264,7 @@ abstract class Repository
     /**
      * Count entities by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -284,7 +282,7 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to count entities.', context: [
                 'conditions' => $conditions,
-                'exception'  => $exception,
+                'exception' => $exception,
             ]);
 
             throw $exception;

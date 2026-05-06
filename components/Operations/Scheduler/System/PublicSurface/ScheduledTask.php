@@ -12,9 +12,10 @@ final readonly class ScheduledTask
     public function __construct(
         public string $expression,
         public Closure $task,
-    ) {}
+    ) {
+    }
 
-    public function isDue() : bool
+    public function isDue(): bool
     {
         return CronExpression::matches($this->expression);
     }

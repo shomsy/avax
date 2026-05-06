@@ -18,7 +18,7 @@ final readonly class AtomicCompiledCacheWrite
         string $payload,
     ): CompiledCacheArtifact {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
+        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
         $temporaryPath = $compiledCachePath->toTemporaryPath();
 
@@ -65,7 +65,7 @@ final readonly class AtomicCompiledCacheWrite
 
     private function validatePhpSyntax(string $path): bool
     {
-        $output = shell_exec('php -l ' . escapeshellarg($path));
+        $output = shell_exec('php -l '.escapeshellarg($path));
         if ($output === false || $output === null) {
             return false;
         }

@@ -14,22 +14,22 @@ use Throwable;
 final readonly class LocalDisk implements Disk
 {
     #[Override]
-    public function read(string $path) : string
+    public function read(string $path): string
     {
         if (! file_exists($path) || ! is_readable($path)) {
-            throw new RuntimeException('File not found or not readable: ' . $path);
+            throw new RuntimeException('File not found or not readable: '.$path);
         }
 
         $content = file_get_contents($path);
         if ($content === false) {
-            throw new RuntimeException('Failed to read file: ' . $path);
+            throw new RuntimeException('Failed to read file: '.$path);
         }
 
         return $content;
     }
 
     #[Override]
-    public function write(string $path, string $content, bool $append = false) : bool
+    public function write(string $path, string $content, bool $append = false): bool
     {
         $directory = dirname($path);
         if (! is_dir($directory)) {
@@ -42,10 +42,10 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function copy(string $source, string $destination) : bool
+    public function copy(string $source, string $destination): bool
     {
         if (! file_exists($source)) {
-            throw new RuntimeException('Source file not found: ' . $source);
+            throw new RuntimeException('Source file not found: '.$source);
         }
 
         $directory = dirname($destination);
@@ -57,10 +57,10 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function move(string $source, string $destination) : bool
+    public function move(string $source, string $destination): bool
     {
         if (! file_exists($source)) {
-            throw new RuntimeException('Source file not found: ' . $source);
+            throw new RuntimeException('Source file not found: '.$source);
         }
 
         $directory = dirname($destination);
@@ -72,31 +72,31 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function delete(string $path) : bool
+    public function delete(string $path): bool
     {
         return file_exists($path) ? unlink($path) : true;
     }
 
     #[Override]
-    public function exists(string $path) : bool
+    public function exists(string $path): bool
     {
         return file_exists($path);
     }
 
     #[Override]
-    public function lastModified(string $path) : ?int
+    public function lastModified(string $path): ?int
     {
         return file_exists($path) ? (filemtime($path) ?: null) : null;
     }
 
     #[Override]
-    public function createDirectory(string $path, int $permissions = 0o755) : bool
+    public function createDirectory(string $path, int $permissions = 0o755): bool
     {
         return is_dir($path) || mkdir($path, $permissions, true);
     }
 
     #[Override]
-    public function deleteDirectory(string $path) : bool
+    public function deleteDirectory(string $path): bool
     {
         if (! is_dir($path)) {
             return true;
@@ -108,7 +108,7 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function clear(string $path) : bool
+    public function clear(string $path): bool
     {
         if (! is_dir($path)) {
             return false;
@@ -123,19 +123,19 @@ final readonly class LocalDisk implements Disk
     }
 
     #[Override]
-    public function isWritable(string $path) : bool
+    public function isWritable(string $path): bool
     {
         return is_writable($path);
     }
 
     #[Override]
-    public function setPermissions(string $path, int $permissions) : bool
+    public function setPermissions(string $path, int $permissions): bool
     {
         return file_exists($path) && chmod($path, $permissions);
     }
 
     #[Override]
-    public function listFiles(string $path) : array
+    public function listFiles(string $path): array
     {
         if (! is_dir($path) || ! is_readable($path)) {
             return [];
@@ -145,7 +145,7 @@ final readonly class LocalDisk implements Disk
             $iterator = new FilesystemIterator($path, FilesystemIterator::SKIP_DOTS);
 
             return array_map(
-                static fn (SplFileInfo $file) : string => $file->getPathname(),
+                static fn (SplFileInfo $file): string => $file->getPathname(),
                 iterator_to_array($iterator, false),
             );
         } catch (Throwable) {

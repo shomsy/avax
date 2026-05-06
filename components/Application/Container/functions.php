@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Container;
+use Avax\Components\Application\Container\System\ContainerInterface;
 
-if (!function_exists('appInstance')) {
+if (! function_exists('appInstance')) {
     /**
      * Get or set the global container instance.
      */
-    function appInstance(ContainerInterface|null $instance = null): ContainerInterface|null
+    function appInstance(?ContainerInterface $instance = null): ?ContainerInterface
     {
         static $container = null;
 
@@ -22,7 +22,7 @@ if (!function_exists('appInstance')) {
     }
 }
 
-if (!function_exists('app')) {
+if (! function_exists('app')) {
     /**
      * Get the container or resolve a service.
      *
@@ -30,7 +30,7 @@ if (!function_exists('app')) {
      *   app()              -> returns container
      *   app(Service::class) -> resolves service
      */
-    function app(string|null $abstract = null): mixed
+    function app(?string $abstract = null): mixed
     {
         $container = appInstance();
 
@@ -42,7 +42,7 @@ if (!function_exists('app')) {
     }
 }
 
-if (!function_exists('make')) {
+if (! function_exists('make')) {
     /**
      * Build a service from the container.
      */
@@ -52,7 +52,7 @@ if (!function_exists('make')) {
     }
 }
 
-if (!function_exists('bind')) {
+if (! function_exists('bind')) {
     /**
      * Bind a service to the container.
      */
@@ -62,7 +62,7 @@ if (!function_exists('bind')) {
     }
 }
 
-if (!function_exists('singleton')) {
+if (! function_exists('singleton')) {
     /**
      * Register a singleton in the container.
      */
@@ -72,7 +72,7 @@ if (!function_exists('singleton')) {
     }
 }
 
-if (!function_exists('resolve')) {
+if (! function_exists('resolve')) {
     /**
      * Resolve a service from the container.
      */

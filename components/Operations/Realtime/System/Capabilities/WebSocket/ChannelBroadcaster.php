@@ -6,7 +6,9 @@ namespace Avax\Components\Operations\Realtime\System\Capabilities\WebSocket;
 
 final readonly class ChannelBroadcaster
 {
-    public function __construct(private string $channel) {}
+    public function __construct(private string $channel)
+    {
+    }
 
     public function send(string $event, mixed $data): int
     {

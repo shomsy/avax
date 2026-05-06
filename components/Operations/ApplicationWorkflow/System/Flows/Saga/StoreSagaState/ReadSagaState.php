@@ -10,7 +10,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Store
 final readonly class ReadSagaState
 {
     /**
-     * @param array<string, SagaState> $states
+     * @param  array<string, SagaState>  $states
      */
     public function read(array $states, string $instanceId): SagaState
     {

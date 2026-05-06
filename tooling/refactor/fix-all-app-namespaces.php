@@ -3,7 +3,9 @@
 $appComponents = [];
 $dirs = scandir('components/Application');
 foreach ($dirs as $dir) {
-    if ($dir === '.' || $dir === '..' || !is_dir("components/Application/$dir")) continue;
+    if ($dir === '.' || $dir === '..' || ! is_dir("components/Application/$dir")) {
+        continue;
+    }
     $appComponents[] = $dir;
 }
 
@@ -20,7 +22,9 @@ foreach ($dirs as $dir) {
 
 $count = 0;
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     $changed = false;
 
@@ -28,15 +32,15 @@ foreach ($files as $file) {
     foreach ($appComponents as $comp) {
         $old = "Avax\\Components\\$comp";
         $new = "Avax\\Components\\Application\\$comp";
-        if (str_contains($content, $old) && !str_contains($content, $new)) {
-             $content = str_replace($old, $new, $content);
-             $changed = true;
+        if (str_contains($content, $old) && ! str_contains($content, $new)) {
+            $content = str_replace($old, $new, $content);
+            $changed = true;
         }
     }
 
     // 2. Fix 'Components\ystem' typo in framework
-    $typo = "Avax\\Components\\ystem";
-    $fixed = "Avax\\Framework\\System";
+    $typo = 'Avax\\Components\\ystem';
+    $fixed = 'Avax\\Framework\\System';
     if (str_contains($content, $typo)) {
         $content = str_replace($typo, $fixed, $content);
         $changed = true;

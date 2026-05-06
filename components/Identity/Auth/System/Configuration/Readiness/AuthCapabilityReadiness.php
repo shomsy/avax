@@ -18,7 +18,8 @@ final readonly class AuthCapabilityReadiness
         private bool $passkey,
         private bool $federation,
         private bool $scim,
-    ) {}
+    ) {
+    }
 
     public static function from(
         #[SensitiveParameter]

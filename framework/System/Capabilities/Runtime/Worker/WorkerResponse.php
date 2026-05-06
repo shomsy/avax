@@ -11,9 +11,10 @@ final readonly class WorkerResponse
     public function __construct(
         private string $requestId,
         private RuntimeResponse $runtimeResponse,
-    ) {}
+    ) {
+    }
 
-    public static function fromRuntimeResponse(string $requestId, RuntimeResponse $runtimeResponse) : self
+    public static function fromRuntimeResponse(string $requestId, RuntimeResponse $runtimeResponse): self
     {
         return new self(
             requestId: $requestId,
@@ -21,12 +22,12 @@ final readonly class WorkerResponse
         );
     }
 
-    public function requestId() : string
+    public function requestId(): string
     {
         return $this->requestId;
     }
 
-    public function response() : RuntimeResponse
+    public function response(): RuntimeResponse
     {
         return $this->runtimeResponse;
     }

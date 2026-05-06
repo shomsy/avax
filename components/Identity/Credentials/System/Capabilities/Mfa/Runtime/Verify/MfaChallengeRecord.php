@@ -13,14 +13,14 @@ use DateTimeImmutable;
 /**
  * Stored MFA challenge lifecycle state.
  *
- * @param list<MfaVerificationAttempt> $attempts
+ * @param  list<MfaVerificationAttempt>  $attempts
  */
 final readonly class MfaChallengeRecord
 {
     public int $maxAttempts;
 
     /**
-     * @param list<MfaVerificationAttempt> $attempts
+     * @param  list<MfaVerificationAttempt>  $attempts
      */
     public function __construct(
         public string $challengeId,
@@ -45,7 +45,7 @@ final readonly class MfaChallengeRecord
         return count(value: $this->attempts) >= $this->maxAttempts;
     }
 
-    public function recordAttempt(MfaVerificationAttempt $mfaVerificationAttempt) : self
+    public function recordAttempt(MfaVerificationAttempt $mfaVerificationAttempt): self
     {
         $attempts = $this->attempts;
         $attempts[] = $mfaVerificationAttempt;

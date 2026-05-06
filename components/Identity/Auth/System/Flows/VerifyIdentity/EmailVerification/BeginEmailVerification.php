@@ -24,12 +24,13 @@ final readonly class BeginEmailVerification
         private AuditLogInterface $auditLog,
         private Clock $clock,
         private int $expiresAfterSeconds = 86400,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws DateMalformedStringException
      */
-    public function execute(BeginEmailVerificationData $beginEmailVerificationData) : EmailVerificationChallenge
+    public function execute(BeginEmailVerificationData $beginEmailVerificationData): EmailVerificationChallenge
     {
         $user = $this->userSource->findByEmail(email: $beginEmailVerificationData->email);
 
@@ -46,9 +47,9 @@ final readonly class BeginEmailVerification
             name      : 'auth.email_verification.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id' => $user->getId()->value,
-                            'ip_address' => $beginEmailVerificationData->ipAddress,
-                            'user_agent' => $beginEmailVerificationData->userAgent,
+                'user_id' => $user->getId()->value,
+                'ip_address' => $beginEmailVerificationData->ipAddress,
+                'user_agent' => $beginEmailVerificationData->userAgent,
             ],
         ));
 

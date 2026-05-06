@@ -6,4 +6,6 @@ namespace Avax\Components\Application\DateTime\System\Foundation\Failure;
 
 use Exception;
 
-abstract class DateTimeFailure extends Exception {}
+abstract class DateTimeFailure extends Exception
+{
+}

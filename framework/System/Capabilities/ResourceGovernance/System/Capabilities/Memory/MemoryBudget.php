@@ -9,9 +9,10 @@ final class MemoryBudget
     public function __construct(
         public int $workerLimit,
         public int $requestLimit,
-    ) {}
+    ) {
+    }
 
-    public static function fromString(string $worker, string $request = '32M') : self
+    public static function fromString(string $worker, string $request = '32M'): self
     {
         return new self(
             workerLimit : self::parseSize($worker),
@@ -19,7 +20,7 @@ final class MemoryBudget
         );
     }
 
-    private static function parseSize(string $size) : int
+    private static function parseSize(string $size): int
     {
         $unit = strtoupper(substr($size, -1));
         $value = (int) substr($size, 0, -1);

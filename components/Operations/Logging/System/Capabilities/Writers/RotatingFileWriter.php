@@ -15,10 +15,11 @@ final readonly class RotatingFileWriter
     public function __construct(
         private string $baseLogPath,
         private string $timezone = 'UTC',
-        private int    $maxLogFiles = 30,
-    ) {}
+        private int $maxLogFiles = 30,
+    ) {
+    }
 
-    public function write(string $message, string $level = 'info', array $context = []) : void
+    public function write(string $message, string $level = 'info', array $context = []): void
     {
         $date = new DateTime('now', new DateTimeZone($this->timezone))->format('Y-m-d');
         $directory = dirname($this->baseLogPath);
@@ -38,7 +39,7 @@ final readonly class RotatingFileWriter
         $this->rotate();
     }
 
-    private function rotate() : void
+    private function rotate(): void
     {
         $directory = dirname($this->baseLogPath);
         $filename = basename($this->baseLogPath);
@@ -48,7 +49,7 @@ final readonly class RotatingFileWriter
             return;
         }
 
-        usort($files, static fn ($a, $b) : int => filemtime($a) - filemtime($b));
+        usort($files, static fn ($a, $b): int => filemtime($a) - filemtime($b));
 
         while (count($files) > $this->maxLogFiles) {
             unlink((string) array_shift($files));

@@ -10,10 +10,10 @@ use Avax\Components\HTTP\Session\System\PublicSurface\SessionScope;
 
 final class SessionBuilder
 {
-    public function build() : Session
+    public function build(): Session
     {
         $nativeSessionStore = new NativeSessionStore();
-        $sessionScope       = new SessionScope(store: $nativeSessionStore);
+        $sessionScope = new SessionScope(store: $nativeSessionStore);
 
         return new Session($sessionScope);
     }

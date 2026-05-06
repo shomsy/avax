@@ -13,24 +13,25 @@ final readonly class Migrations
 {
     public function __construct(
         private MigrationsCapability $migrationsCapability,
-    ) {}
+    ) {
+    }
 
-    public function status(?string $connectionName = null) : array
+    public function status(?string $connectionName = null): array
     {
         return $this->migrationsCapability->status($connectionName);
     }
 
-    public function migrate(?string $connectionName = null) : void
+    public function migrate(?string $connectionName = null): void
     {
         $this->migrationsCapability->migrate($connectionName);
     }
 
-    public function rollback(?string $connectionName = null, int $steps = 1) : void
+    public function rollback(?string $connectionName = null, int $steps = 1): void
     {
         $this->migrationsCapability->rollback($connectionName, $steps);
     }
 
-    public function seed(string $class, ?string $connectionName = null) : void
+    public function seed(string $class, ?string $connectionName = null): void
     {
         $this->migrationsCapability->seed($class, $connectionName);
     }

@@ -97,12 +97,12 @@ final class ExternalState
         return new Memory();
     }
 
-    public static function setSession(State $state) : void
+    public static function setSession(State $state): void
     {
         self::$session = $state;
     }
 
-    public static function setCache(State $state) : void
+    public static function setCache(State $state): void
     {
         self::$cache = $state;
     }
@@ -117,7 +117,7 @@ final class ExternalState
         );
     }
 
-    private static function adapterType(?State $state) : string
+    private static function adapterType(?State $state): string
     {
         if ($state instanceof Redis) {
             return 'Redis';

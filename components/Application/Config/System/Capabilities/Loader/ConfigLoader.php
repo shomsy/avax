@@ -20,10 +20,10 @@ final class ConfigLoader
     private function loadDirectory(string $directory): array
     {
         $config = [];
-        $files  = glob(rtrim($directory, '/') . '/*.php');
+        $files = glob(rtrim($directory, '/').'/*.php');
 
         foreach ($files as $file) {
-            $namespace          = pathinfo($file, PATHINFO_FILENAME);
+            $namespace = pathinfo($file, PATHINFO_FILENAME);
             $config[$namespace] = $this->loadFile($file);
         }
 
@@ -33,13 +33,13 @@ final class ConfigLoader
     private function loadFile(string $file): array
     {
         if (! file_exists($file)) {
-            throw new RuntimeException('Config file not found: ' . $file);
+            throw new RuntimeException('Config file not found: '.$file);
         }
 
         $data = require $file;
 
         if (! is_array($data)) {
-            throw new RuntimeException('Config file must return an array: ' . $file);
+            throw new RuntimeException('Config file must return an array: '.$file);
         }
 
         return $data;

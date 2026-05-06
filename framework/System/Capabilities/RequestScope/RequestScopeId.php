@@ -25,12 +25,12 @@ final readonly class RequestScopeId
     /**
      * @throws RandomException
      */
-    public static function generate() : self
+    public static function generate(): self
     {
         return new self(value: bin2hex(string: random_bytes(length: 16)));
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->value;
     }

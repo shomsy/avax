@@ -10,10 +10,10 @@ use Psr\Http\Message\RequestInterface;
 
 final readonly class VersionResolver
 {
-    public static function resolve(RequestInterface $request, VersionRegistry|null $versionRegistry = null) : ApiVersionResolved
+    public static function resolve(RequestInterface $request, ?VersionRegistry $versionRegistry = null): ApiVersionResolved
     {
         $versionRegistry ??= new VersionRegistry();
-        $version         = self::readVersion(request: $request) ?? $versionRegistry->current();
+        $version = self::readVersion(request: $request) ?? $versionRegistry->current();
 
         return new ApiVersionResolved(
             version   : $version,
@@ -22,7 +22,7 @@ final readonly class VersionResolver
         );
     }
 
-    private static function readVersion(RequestInterface $request) : int|null
+    private static function readVersion(RequestInterface $request): ?int
     {
         $headerVersion = self::positiveInt(value: $request->getHeaderLine('X-API-Version'));
 
@@ -48,7 +48,7 @@ final readonly class VersionResolver
         return self::positiveInt(value: $queryVersion);
     }
 
-    private static function positiveInt(mixed $value) : int|null
+    private static function positiveInt(mixed $value): ?int
     {
         if (is_int(value: $value)) {
             return $value > 0 ? $value : null;
@@ -63,7 +63,7 @@ final readonly class VersionResolver
         return $version > 0 ? $version : null;
     }
 
-    private static function readAcceptVersion(string $accept) : int|null
+    private static function readAcceptVersion(string $accept): ?int
     {
         if (preg_match(pattern: '/(?:v|version=)(\d+)/i', subject: $accept, matches: $matches) !== 1) {
             return null;

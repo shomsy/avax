@@ -76,8 +76,8 @@ final class EnvironmentDetector
 
     public function isCI(): bool
     {
-        return getenv('CI')             === 'true'
+        return getenv('CI') === 'true'
             || getenv('GITHUB_ACTIONS') === 'true'
-            || getenv('GITLAB_CI')      === 'true';
+            || getenv('GITLAB_CI') === 'true';
     }
 }

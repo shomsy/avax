@@ -17,7 +17,8 @@ final class MigrationRepository
 {
     private string $table = 'migrations';
 
-    public function __construct(private readonly QueryBuilder $queryBuilder, private readonly Schema $schema) {
+    public function __construct(private readonly QueryBuilder $queryBuilder, private readonly Schema $schema)
+    {
     }
 
     /**
@@ -60,7 +61,7 @@ final class MigrationRepository
     {
         $this->queryBuilder->from(table: $this->table)->insert(values: [
             'migration' => $name,
-            'batch'    => $batch,
+            'batch' => $batch,
             'checksum' => $checksum,
         ]);
     }

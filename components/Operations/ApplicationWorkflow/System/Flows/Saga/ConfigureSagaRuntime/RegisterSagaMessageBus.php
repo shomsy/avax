@@ -17,7 +17,7 @@ final readonly class RegisterSagaMessageBus
         };
     }
 
-    private function createInMemoryBus() : object
+    private function createInMemoryBus(): object
     {
         return new class () {
             public array $published = [];
@@ -27,16 +27,22 @@ final readonly class RegisterSagaMessageBus
                 $this->published[$topic][] = $message;
             }
 
-            public function subscribe(string $topic, callable $handler) : void {}
+            public function subscribe(string $topic, callable $handler): void
+            {
+            }
         };
     }
 
     private function createAsyncBus(array $config): object
     {
         return new class ($config) {
-            public function publish(string $topic, array $message) : void {}
+            public function publish(string $topic, array $message): void
+            {
+            }
 
-            public function subscribe(string $topic, callable $handler) : void {}
+            public function subscribe(string $topic, callable $handler): void
+            {
+            }
         };
     }
 }

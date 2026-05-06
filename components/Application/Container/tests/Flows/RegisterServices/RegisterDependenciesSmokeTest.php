@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Components\Application\Container\System\ContainerInterface;
 
 interface RegisterLoggerContract
 {
-    public function channel() : string;
+    public function channel(): string;
 }
 
 final class RegisterDependenciesSmokeTest implements RegisterLoggerContract
 {
     #[Override]
-    public function channel() : string
+    public function channel(): string
     {
         return 'default';
     }
@@ -24,7 +24,7 @@ final class RegisterDependenciesSmokeTest implements RegisterLoggerContract
 final class SpecialRegisterLogger implements RegisterLoggerContract
 {
     #[Override]
-    public function channel() : string
+    public function channel(): string
     {
         return 'special';
     }
@@ -32,28 +32,34 @@ final class SpecialRegisterLogger implements RegisterLoggerContract
 
 final class NeedsDefaultLogger
 {
-    public function __construct(public RegisterLoggerContract $registerLoggerContract) {}
+    public function __construct(public RegisterLoggerContract $registerLoggerContract)
+    {
+    }
 }
 
 final class NeedsSpecialLogger
 {
-    public function __construct(public RegisterLoggerContract $registerLoggerContract) {}
+    public function __construct(public RegisterLoggerContract $registerLoggerContract)
+    {
+    }
 }
 
 final class ExtensibleMessage
 {
     public string $value = 'base';
 
-    public function __construct(public string $name = 'unset') {}
+    public function __construct(public string $name = 'unset')
+    {
+    }
 }
 
 final class MessageDecorator implements DecoratorInterface
 {
-    public function decorate(mixed $instance, ?ContainerInterface $container = null) : mixed
+    public function decorate(mixed $instance, ?ContainerInterface $container = null): mixed
     {
         assertInstanceOf(expectedClass: ExtensibleMessage::class, value: $instance, message: 'Decorator contract should receive the resolved service instance.');
-        $message        = $instance;
-        $message->value = 'decorated:' . $message->value;
+        $message = $instance;
+        $message->value = 'decorated:'.$message->value;
 
         return $message;
     }
@@ -70,13 +76,13 @@ $container->tag(abstracts: [DefaultRegisterLogger::class, SpecialRegisterLogger:
 $container
     ->singleton(
         abstract: ExtensibleMessage::class,
-        concrete: static fn ($app, array $arguments = []) : ExtensibleMessage => new ExtensibleMessage(name: $arguments['name'] ?? 'missing'),
+        concrete: static fn ($app, array $arguments = []): ExtensibleMessage => new ExtensibleMessage(name: $arguments['name'] ?? 'missing'),
     )
     ->withArgument(name: 'name', value: 'configured');
 
 $container->extend(
     abstract: ExtensibleMessage::class,
-    closure : static function (ExtensibleMessage $extensibleMessage) : ExtensibleMessage {
+    closure : static function (ExtensibleMessage $extensibleMessage): ExtensibleMessage {
         $extensibleMessage->value = 'extended';
 
         return $extensibleMessage;
@@ -84,7 +90,7 @@ $container->extend(
 );
 $container->extend(
     abstract: ExtensibleMessage::class,
-    closure : static function (ExtensibleMessage $extensibleMessage) : null {
+    closure : static function (ExtensibleMessage $extensibleMessage): null {
         $extensibleMessage->value = 'extended-again';
 
         return null;
@@ -96,7 +102,7 @@ $default = $container->get(id: NeedsDefaultLogger::class);
 $special = $container->get(id: NeedsSpecialLogger::class);
 $aliased = $container->get(id: 'register.logger');
 $message = $container->get(id: ExtensibleMessage::class);
-$tagged  = $container->tagged(tag: 'logger');
+$tagged = $container->tagged(tag: 'logger');
 $messageDescription = $container->describeService(id: ExtensibleMessage::class);
 
 assertSame(expected: 'default', actual: $default->logger->channel(), message: 'Default registration should remain default.');
@@ -112,4 +118,4 @@ assertSame(
 assertSame(expected: 2, actual: count(value: $tagged), message: 'Tagged services should resolve back into service instances.');
 assertInstanceOf(expectedClass: DefaultRegisterLogger::class, value: $tagged[0], message: 'Tagged resolution should return the registered service.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

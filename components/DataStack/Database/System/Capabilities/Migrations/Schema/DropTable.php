@@ -12,7 +12,9 @@ use Throwable;
  */
 final readonly class DropTable
 {
-    public function __construct(private QueryBuilder $queryBuilder) {}
+    public function __construct(private QueryBuilder $queryBuilder)
+    {
+    }
 
     /**
      * @throws Throwable

@@ -10,8 +10,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Store
 final readonly class ReadSagaEvents
 {
     /**
-     * @param array<string, list<SagaEvent>> $events
-     *
+     * @param  array<string, list<SagaEvent>>  $events
      * @return list<SagaEvent>
      */
     public function read(array $events, string $instanceId): array

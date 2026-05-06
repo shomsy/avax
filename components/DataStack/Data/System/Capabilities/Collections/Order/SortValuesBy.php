@@ -11,7 +11,8 @@ final readonly class SortValuesBy
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(string|callable $key, ?int $options = null, bool $descending = false): array
     {

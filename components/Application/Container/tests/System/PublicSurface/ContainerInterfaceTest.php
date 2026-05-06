@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\tests\System\PublicSurface;
 
+use Avax\Components\Application\Container\System\Container;
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Foundation\DIContainer;
-use Avax\Components\Application\Container\System\Container;
 use Avax\Tests\TestCase;
 use DateTime;
 use DateTimeImmutable;
@@ -22,7 +22,7 @@ final class ContainerInterfaceTest extends TestCase
     {
         parent::setUp();
 
-        $this->container       = new DIContainer();
+        $this->container = new DIContainer();
         $this->publicContainer = Container::fromEngine($this->container);
     }
 

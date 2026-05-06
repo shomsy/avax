@@ -26,7 +26,7 @@ final class SourceSyncCoordinatorTest extends TestCase
 
     private TestCacheSource $testCacheSource;
 
-    public function test_write_through_invalidates_cache_after_source_write() : void
+    public function test_write_through_invalidates_cache_after_source_write(): void
     {
         $sourceSyncCoordinator = new SourceSyncCoordinator(
             source: $this->testCacheSource,
@@ -42,12 +42,12 @@ final class SourceSyncCoordinatorTest extends TestCase
         $this->assertEquals(expected: 'new_value', actual: $this->testCacheSource->get(key: 'key_1'));
     }
 
-    private function makeKey(string $key) : CacheKey
+    private function makeKey(string $key): CacheKey
     {
         return CacheKey::create(key: $key);
     }
 
-    private function makeRecord(string $value) : StoredCacheRecord
+    private function makeRecord(string $value): StoredCacheRecord
     {
         $now = $this->frozenClock->now();
         $cachedValueLifecycle = CachedValueLifecycle::create(
@@ -59,7 +59,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         return new StoredCacheRecord(value: $value, lifecycle: $cachedValueLifecycle);
     }
 
-    public function test_write_around_invalidates_cache_and_writes_to_source() : void
+    public function test_write_around_invalidates_cache_and_writes_to_source(): void
     {
         $sourceSyncCoordinator = new SourceSyncCoordinator(
             source: $this->testCacheSource,
@@ -75,7 +75,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $this->assertEquals(expected: 'new_value', actual: $this->testCacheSource->get(key: 'key_1'));
     }
 
-    public function test_delete_through_invalidates_cache_after_source_delete() : void
+    public function test_delete_through_invalidates_cache_after_source_delete(): void
     {
         $sourceSyncCoordinator = new SourceSyncCoordinator(
             source: $this->testCacheSource,
@@ -92,7 +92,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $this->assertFalse(condition: $this->testCacheSource->has(key: 'key_1'));
     }
 
-    public function test_delete_around_invalidates_cache_only() : void
+    public function test_delete_around_invalidates_cache_only(): void
     {
         $sourceSyncCoordinator = new SourceSyncCoordinator(
             source: $this->testCacheSource,
@@ -109,7 +109,7 @@ final class SourceSyncCoordinatorTest extends TestCase
         $this->assertTrue(condition: $this->testCacheSource->has(key: 'key_1'));
     }
 
-    public function test_should_populate_cache_on_miss() : void
+    public function test_should_populate_cache_on_miss(): void
     {
         $coordinator = new SourceSyncCoordinator(
             source: $this->testCacheSource,
@@ -129,9 +129,9 @@ final class SourceSyncCoordinatorTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
-        $this->frozenClock     = new FrozenClock(timestamp: Timestamp::now());
+        $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
         $this->testCacheSource = new TestCacheSource();
     }
@@ -143,40 +143,40 @@ final class TestCacheSource implements CacheSource
     private array $data = [];
 
     #[Override]
-    public function load(CacheSourceKey $cacheSourceKey) : mixed
+    public function load(CacheSourceKey $cacheSourceKey): mixed
     {
         return $this->data[$cacheSourceKey->fullKey()] ?? null;
     }
 
     #[Override]
-    public function write(CacheSourceKey $cacheSourceKey, mixed $value) : void
+    public function write(CacheSourceKey $cacheSourceKey, mixed $value): void
     {
         $this->data[$cacheSourceKey->fullKey()] = $value;
     }
 
     #[Override]
-    public function delete(CacheSourceKey $cacheSourceKey) : void
+    public function delete(CacheSourceKey $cacheSourceKey): void
     {
         unset($this->data[$cacheSourceKey->fullKey()]);
     }
 
     #[Override]
-    public function exists(CacheSourceKey $cacheSourceKey) : bool
+    public function exists(CacheSourceKey $cacheSourceKey): bool
     {
         return isset($this->data[$cacheSourceKey->fullKey()]);
     }
 
-    public function get(string $key) : mixed
+    public function get(string $key): mixed
     {
         return $this->data[$key] ?? null;
     }
 
-    public function set(string $key, mixed $value) : void
+    public function set(string $key, mixed $value): void
     {
         $this->data[$key] = $value;
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return isset($this->data[$key]);
     }

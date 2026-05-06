@@ -10,7 +10,9 @@ use SensitiveParameter;
 
 final readonly class Diagnostics
 {
-    public function __construct(#[SensitiveParameter] private AuthIssueExplainer $authIssueExplainer) {}
+    public function __construct(#[SensitiveParameter] private AuthIssueExplainer $authIssueExplainer)
+    {
+    }
 
     public function explainAccessDenied(
         string $resource,
@@ -29,7 +31,7 @@ final readonly class Diagnostics
     public function explainStepUpRequired(
         string $action,
         ?bool $phishingResistantRequired = null,
-        ?int  $freshAfterSeconds = null,
+        ?int $freshAfterSeconds = null,
     ): AuthIssueExplanation {
         $phishingResistantRequired ??= false;
 
@@ -40,7 +42,7 @@ final readonly class Diagnostics
         );
     }
 
-    public function explainSenderConstraintFailure(string $reason, ?string $requiredConstraint = null) : AuthIssueExplanation
+    public function explainSenderConstraintFailure(string $reason, ?string $requiredConstraint = null): AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainSenderConstraintFailure(
             reason            : $reason,
@@ -48,12 +50,12 @@ final readonly class Diagnostics
         );
     }
 
-    public function explainSessionRevocation(string $status, #[SensitiveParameter] ?string $sessionId = null) : AuthIssueExplanation
+    public function explainSessionRevocation(string $status, #[SensitiveParameter] ?string $sessionId = null): AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainSessionRevocation(status: $status, sessionId: $sessionId);
     }
 
-    public function explainTrustedDeviceDecision(?string $deviceId = null) : AuthIssueExplanation
+    public function explainTrustedDeviceDecision(?string $deviceId = null): AuthIssueExplanation
     {
         return $this->authIssueExplainer->explainTrustedDeviceDecision(deviceId: $deviceId);
     }

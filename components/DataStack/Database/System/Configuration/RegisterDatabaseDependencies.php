@@ -6,11 +6,6 @@ namespace Avax\Components\DataStack\Database\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\System\ContainerInterface;
-use Avax\Components\DataStack\Database\System\PublicSurface\Database;
-use Avax\Components\DataStack\Database\System\PublicSurface\EntityManager;
-use Avax\Components\DataStack\Database\System\PublicSurface\Migrations;
-use Avax\Components\DataStack\Database\System\PublicSurface\Query;
-use Avax\Components\DataStack\Database\System\PublicSurface\Schema;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
@@ -20,6 +15,11 @@ use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RollbackMi
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrations\MigrationRepository;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\PublicSurface\Database;
+use Avax\Components\DataStack\Database\System\PublicSurface\EntityManager;
+use Avax\Components\DataStack\Database\System\PublicSurface\Migrations;
+use Avax\Components\DataStack\Database\System\PublicSurface\Query;
+use Avax\Components\DataStack\Database\System\PublicSurface\Schema;
 use Avax\Components\DataStack\Database\System\PublicSurface\Telemetry;
 use Avax\Components\DataStack\Database\System\PublicSurface\Transactions;
 use Random\RandomException;
@@ -29,7 +29,9 @@ use Random\RandomException;
  */
 final readonly class RegisterDatabaseDependencies implements RegisterDependency
 {
-    public function __construct(private ContainerInterface $container) {}
+    public function __construct(private ContainerInterface $container)
+    {
+    }
 
     public function dependsOn(): array
     {

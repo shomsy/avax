@@ -8,8 +8,7 @@ final class TimezoneNotFound extends DateTimeFailure
 {
     public function __construct(
         string $timezone,
-    )
-    {
+    ) {
         parent::__construct(
             message: sprintf("Timezone '%s' not found or is invalid.", $timezone),
         );

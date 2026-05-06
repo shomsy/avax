@@ -36,13 +36,14 @@ final readonly class ConfirmMfaEnrollment
         private GenerateBackupCodes $generateBackupCodes,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated
      * @throws RandomException
      */
-    public function execute(ConfirmMfaEnrollmentData $confirmMfaEnrollmentData) : BackupCodeSet
+    public function execute(ConfirmMfaEnrollmentData $confirmMfaEnrollmentData): BackupCodeSet
     {
         $user = $this->currentAuthentication->read()->user();
 

@@ -7,14 +7,13 @@ namespace Avax\Labs\API\DescribeApi\System\Capabilities\AuthContracts;
 final class RequiredAuthentication
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
-        public readonly string      $type,
-        public readonly string|null $realm,
-        public readonly array       $scopes = [],
-    )
-    {
+        public readonly string $type,
+        public readonly ?string $realm,
+        public readonly array $scopes = [],
+    ) {
     }
 
     public function isBearer(): bool

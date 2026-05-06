@@ -12,7 +12,7 @@ use Stringable;
 /**
  * @implements IteratorAggregate<string, CacheTag>
  */
-final readonly class CacheTags implements Stringable, IteratorAggregate
+final readonly class CacheTags implements IteratorAggregate, Stringable
 {
     /** @var array<string, CacheTag> */
     private array $tags;
@@ -38,7 +38,7 @@ final readonly class CacheTags implements Stringable, IteratorAggregate
 
     public function add(CacheTag $cacheTag): self
     {
-        $newTags                        = $this->tags;
+        $newTags = $this->tags;
         $newTags[$cacheTag->toString()] = $cacheTag;
 
         return new self(...$newTags);
@@ -54,7 +54,7 @@ final readonly class CacheTags implements Stringable, IteratorAggregate
 
     public function hasAny(self $other): bool
     {
-        return array_any($this->tags, fn (CacheTag $cacheTag) : bool => $other->has(cacheTag: $cacheTag));
+        return array_any($this->tags, fn (CacheTag $cacheTag): bool => $other->has(cacheTag: $cacheTag));
     }
 
     public function has(CacheTag $cacheTag): bool
@@ -64,7 +64,7 @@ final readonly class CacheTags implements Stringable, IteratorAggregate
 
     public function hasAll(self $other): bool
     {
-        return array_all($other->tags, fn (CacheTag $cacheTag) : bool => $this->has(cacheTag: $cacheTag));
+        return array_all($other->tags, fn (CacheTag $cacheTag): bool => $this->has(cacheTag: $cacheTag));
     }
 
     public function isEmpty(): bool

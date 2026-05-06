@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Runtime\Capabilities;
 
-use Avax\Framework\System\Capabilities\Runtime\PublicSurface\ServerResult;
 use RuntimeException;
 
 final class RunApplicationOnPhpBuiltInServer
 {
     public static function start(
         string $host,
-        int    $port,
+        int $port,
         string $router,
-    ) : bool
-    {
+    ): bool {
         $command = sprintf(
             'php -S %s:%d -t %s %s 2>&1',
             $host,
@@ -39,10 +37,10 @@ final class RunApplicationOnPhpBuiltInServer
         return true;
     }
 
-    public static function findDocumentRoot() : string
+    public static function findDocumentRoot(): string
     {
-        $basePath   = dirname(path: __DIR__, levels: 4);
-        $publicPath = $basePath . '/public';
+        $basePath = dirname(path: __DIR__, levels: 4);
+        $publicPath = $basePath.'/public';
 
         if (! is_dir($publicPath)) {
             mkdir($publicPath, 0o755, true);
@@ -52,9 +50,9 @@ final class RunApplicationOnPhpBuiltInServer
         return $publicPath;
     }
 
-    private static function createBasicIndex(string $publicPath) : void
+    private static function createBasicIndex(string $publicPath): void
     {
-        $index = $publicPath . '/index.php';
+        $index = $publicPath.'/index.php';
 
         if (! file_exists($index)) {
             $content = '<?php
@@ -68,14 +66,14 @@ echo "<p>Create routes/web.php to get started.</p>";
         }
     }
 
-    private static function isBackground() : bool
+    private static function isBackground(): bool
     {
         global $argv;
 
         return in_array('--daemon', $argv, true) || in_array('-d', $argv, true);
     }
 
-    private static function startBackground(string $command, int $port) : void
+    private static function startBackground(string $command, int $port): void
     {
         if (self::isPortInUse($port)) {
             throw new RuntimeException(sprintf('Port %d is already in use', $port));
@@ -83,7 +81,7 @@ echo "<p>Create routes/web.php to get started.</p>";
 
         sys_get_temp_dir();
 
-        $pipes   = [];
+        $pipes = [];
         $process = proc_open($command, $descriptorSpec = [], $pipes);
 
         if (! is_resource($process)) {
@@ -93,7 +91,7 @@ echo "<p>Create routes/web.php to get started.</p>";
         proc_close($process);
     }
 
-    public static function isPortInUse(int $port) : bool
+    public static function isPortInUse(int $port): bool
     {
         $connection = @fsockopen('127.0.0.1', $port, $errno, $errstr, 1);
 
@@ -107,12 +105,12 @@ echo "<p>Create routes/web.php to get started.</p>";
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
-    public static function startWithOptions(array $options) : bool
+    public static function startWithOptions(array $options): bool
     {
-        $host   = $options['host'] ?? '0.0.0.0';
-        $port   = $options['port'] ?? 8000;
+        $host = $options['host'] ?? '0.0.0.0';
+        $port = $options['port'] ?? 8000;
         $router = $options['router'] ?? 'auto';
         $public = $options['public'] ?? self::findDocumentRoot();
 
@@ -132,7 +130,7 @@ echo "<p>Create routes/web.php to get started.</p>";
         return true;
     }
 
-    public static function findRouterFile() : string
+    public static function findRouterFile(): string
     {
         $basePath = dirname(path: __DIR__, levels: 4);
 
@@ -141,7 +139,7 @@ echo "<p>Create routes/web.php to get started.</p>";
             'routes/api.php',
             'bootstrap/routes.php',
             'public/index.php',
-            $basePath . '/router.php',
+            $basePath.'/router.php',
         ];
 
         foreach ($candidates as $candidate) {
@@ -150,10 +148,10 @@ echo "<p>Create routes/web.php to get started.</p>";
             }
         }
 
-        return $basePath . '/router.php';
+        return $basePath.'/router.php';
     }
 
-    public static function stop(int $port) : bool
+    public static function stop(int $port): bool
     {
         if (PHP_OS_FAMILY === 'Windows') {
             exec('taskkill /F /IM php.exe /FI "WINDOWTITLE like%AvaX%"');

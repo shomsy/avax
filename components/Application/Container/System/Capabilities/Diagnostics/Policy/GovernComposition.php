@@ -15,8 +15,8 @@ use ReflectionException;
 final readonly class GovernComposition
 {
     /**
-     * @param array<string, list<string>> $graph
-     * @param array<string, list<string>> $dependents
+     * @param  array<string, list<string>>  $graph
+     * @param  array<string, list<string>>  $dependents
      * @return array{
      *     schemaVersion: int,
      *     stage: string,
@@ -32,13 +32,13 @@ final readonly class GovernComposition
     public function report(
         array $graph,
         array $dependents,
-        DependencyRegistry        $dependencyRegistry,
+        DependencyRegistry $dependencyRegistry,
         CreateDependencyBlueprint $createDependencyBlueprint,
-        ResolutionPolicy          $resolutionPolicy,
+        ResolutionPolicy $resolutionPolicy,
         string $environment = '',
     ): array {
         $activePolicy = $resolutionPolicy->forEnvironment(environment: $environment);
-        $findings     = new CheckCompositionPolicies()->check(
+        $findings = new CheckCompositionPolicies()->check(
             graph        : $graph,
             dependents   : $dependents,
             registrations: $dependencyRegistry,
@@ -48,7 +48,7 @@ final readonly class GovernComposition
 
         $summary = [
             'error' => 0,
-            'warn'  => 0,
+            'warn' => 0,
         ];
         $blocked = false;
 
@@ -68,17 +68,17 @@ final readonly class GovernComposition
 
         return [
             'schemaVersion' => 1,
-            'stage'         => 'policy-governance',
-            'profile'       => $activePolicy->profile,
-            'failMode'      => $activePolicy->failMode,
-            'blocked'       => $blocked,
-            'summary'       => $summary,
-            'findings'      => $findings,
+            'stage' => 'policy-governance',
+            'profile' => $activePolicy->profile,
+            'failMode' => $activePolicy->failMode,
+            'blocked' => $blocked,
+            'summary' => $summary,
+            'findings' => $findings,
         ];
     }
 
     /**
-     * @param array<string, mixed> $report
+     * @param  array<string, mixed>  $report
      * @return list<string>
      */
     public function messages(array $report): array
@@ -88,12 +88,12 @@ final readonly class GovernComposition
         foreach ($report['findings'] ?? [] as $serviceId => $findings) {
             foreach ($findings as $finding) {
                 $messages[] = strtoupper(string: (string) ($finding['severity'] ?? 'warn'))
-                    . ' '
-                    . ($finding['code'] ?? 'POLICY')
-                    . ' ['
-                    . $serviceId
-                    . ']: '
-                    . ($finding['message'] ?? 'policy finding');
+                    .' '
+                    .($finding['code'] ?? 'POLICY')
+                    .' ['
+                    .$serviceId
+                    .']: '
+                    .($finding['message'] ?? 'policy finding');
             }
         }
 

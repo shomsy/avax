@@ -24,7 +24,7 @@ final class InjectMethods
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      *
      * @throws ContainerException
      */
@@ -54,7 +54,7 @@ final class InjectMethods
      */
     private function invokerFor(string $class, string $method): Closure
     {
-        $key = $class . '::' . $method;
+        $key = $class.'::'.$method;
 
         return $this->invokers[$key] ?? ($this->invokers[$key] = Closure::bind(
             closure : static fn (object $target, array $arguments): mixed => $target->{$method}(...$arguments),

@@ -103,9 +103,9 @@ final class ComponentMuscleAuditBuilder
         $this->writeJson();
         $this->writeMarkdown();
 
-        echo 'Component muscle audit rows: ' . count($this->components) . PHP_EOL;
-        echo 'Markdown: ' . $this->markdownOut . PHP_EOL;
-        echo 'JSON: ' . $this->jsonOut . PHP_EOL;
+        echo 'Component muscle audit rows: '.count($this->components).PHP_EOL;
+        echo 'Markdown: '.$this->markdownOut.PHP_EOL;
+        echo 'JSON: '.$this->jsonOut.PHP_EOL;
     }
 
     /**
@@ -113,18 +113,18 @@ final class ComponentMuscleAuditBuilder
      */
     private function readInventory(): array
     {
-        if (!is_file($this->inventoryPath)) {
-            throw new RuntimeException('Inventory not found: ' . $this->inventoryPath);
+        if (! is_file($this->inventoryPath)) {
+            throw new RuntimeException('Inventory not found: '.$this->inventoryPath);
         }
 
         $json = file_get_contents($this->inventoryPath);
         if ($json === false) {
-            throw new RuntimeException('Inventory unreadable: ' . $this->inventoryPath);
+            throw new RuntimeException('Inventory unreadable: '.$this->inventoryPath);
         }
 
         $decoded = json_decode($json, true);
-        if (!is_array($decoded)) {
-            throw new RuntimeException('Inventory JSON is invalid: ' . $this->inventoryPath);
+        if (! is_array($decoded)) {
+            throw new RuntimeException('Inventory JSON is invalid: '.$this->inventoryPath);
         }
 
         return $decoded;
@@ -133,8 +133,8 @@ final class ComponentMuscleAuditBuilder
     private function scanCurrentTree(): void
     {
         foreach (['framework', 'components', 'labs', 'tests'] as $root) {
-            $path = $this->repoRoot . '/' . $root;
-            if (!is_dir($path)) {
+            $path = $this->repoRoot.'/'.$root;
+            if (! is_dir($path)) {
                 continue;
             }
 
@@ -143,7 +143,7 @@ final class ComponentMuscleAuditBuilder
             );
 
             foreach ($iterator as $file) {
-                if (!$file instanceof SplFileInfo || !$file->isFile() || $file->getExtension() !== 'php') {
+                if (! $file instanceof SplFileInfo || ! $file->isFile() || $file->getExtension() !== 'php') {
                     continue;
                 }
 
@@ -155,6 +155,7 @@ final class ComponentMuscleAuditBuilder
 
                 if (str_starts_with($relative, 'tests/')) {
                     $this->currentTestFilesByTarget[$target] = ($this->currentTestFilesByTarget[$target] ?? 0) + 1;
+
                     continue;
                 }
 
@@ -183,7 +184,7 @@ final class ComponentMuscleAuditBuilder
                     return 'components/DeveloperTools';
                 }
 
-                return $parts[0] . '/' . $parts[1] . '/' . $parts[2];
+                return $parts[0].'/'.$parts[1].'/'.$parts[2];
             }
         }
 
@@ -246,17 +247,17 @@ final class ComponentMuscleAuditBuilder
     }
 
     /**
-     * @param array<string, mixed> $inventory
+     * @param  array<string, mixed>  $inventory
      */
     private function aggregateInventory(array $inventory): void
     {
         $records = $inventory['records'] ?? [];
-        if (!is_array($records)) {
+        if (! is_array($records)) {
             return;
         }
 
         foreach ($records as $record) {
-            if (!is_array($record)) {
+            if (! is_array($record)) {
                 continue;
             }
 
@@ -264,12 +265,12 @@ final class ComponentMuscleAuditBuilder
             $target = $this->normalizeTarget($target);
             $component = &$this->ensureComponent($target);
 
-            ++$component['backup_records'];
+            $component['backup_records']++;
             $version = (string) ($record['target_version'] ?? 'human-decision');
             $component['versions'][$version] = ($component['versions'][$version] ?? 0) + 1;
 
             if (($record['is_test'] ?? false) === true) {
-                ++$component['backup_tests'];
+                $component['backup_tests']++;
             }
 
             $feature = (string) ($record['feature'] ?? 'human-decision');
@@ -282,7 +283,7 @@ final class ComponentMuscleAuditBuilder
             $component['old_shapes'][$shape] = ($component['old_shapes'][$shape] ?? 0) + 1;
 
             foreach (($record['symbols'] ?? []) as $symbol) {
-                if (!is_string($symbol) || $symbol === '') {
+                if (! is_string($symbol) || $symbol === '') {
                     continue;
                 }
 
@@ -306,7 +307,7 @@ final class ComponentMuscleAuditBuilder
      */
     private function &ensureComponent(string $target): array
     {
-        if (!isset($this->components[$target])) {
+        if (! isset($this->components[$target])) {
             $this->components[$target] = [
                 'component' => $target,
                 'current_state' => 'unknown',
@@ -361,7 +362,7 @@ final class ComponentMuscleAuditBuilder
     }
 
     /**
-     * @param array<string, int> $versions
+     * @param  array<string, int>  $versions
      */
     private function versionLabel(array $versions): string
     {
@@ -381,7 +382,7 @@ final class ComponentMuscleAuditBuilder
     }
 
     /**
-     * @param array<string, mixed> $component
+     * @param  array<string, mixed>  $component
      */
     private function backupMuscleSummary(array $component): string
     {
@@ -402,7 +403,7 @@ final class ComponentMuscleAuditBuilder
     }
 
     /**
-     * @param array<string, mixed> $component
+     * @param  array<string, mixed>  $component
      */
     private function missingBehaviorSummary(array $component): string
     {
@@ -413,7 +414,7 @@ final class ComponentMuscleAuditBuilder
         $currentSymbols = array_flip($component['current_symbols']);
         $missing = [];
         foreach (array_keys($component['backup_symbols']) as $symbol) {
-            if (!isset($currentSymbols[$symbol])) {
+            if (! isset($currentSymbols[$symbol])) {
                 $missing[] = $symbol;
             }
 
@@ -425,11 +426,11 @@ final class ComponentMuscleAuditBuilder
         $shapes = implode(', ', array_slice(array_keys($component['old_shapes']), 0, 3));
         $symbolText = $missing === [] ? 'no obvious symbol gap from names' : implode(', ', $missing);
 
-        return 'candidate behavior/symbol gaps: ' . $symbolText . '; old shapes: ' . ($shapes === '' ? 'unknown' : $shapes);
+        return 'candidate behavior/symbol gaps: '.$symbolText.'; old shapes: '.($shapes === '' ? 'unknown' : $shapes);
     }
 
     /**
-     * @param array<string, mixed> $component
+     * @param  array<string, mixed>  $component
      */
     private function classifyState(array $component): string
     {
@@ -470,7 +471,7 @@ final class ComponentMuscleAuditBuilder
     }
 
     /**
-     * @param array<string, mixed> $component
+     * @param  array<string, mixed>  $component
      */
     private function classifyPriority(string $target, array $component): string
     {
@@ -500,7 +501,7 @@ final class ComponentMuscleAuditBuilder
     }
 
     /**
-     * @param array<string, mixed> $component
+     * @param  array<string, mixed>  $component
      */
     private function classifyRisk(array $component): string
     {
@@ -537,10 +538,10 @@ final class ComponentMuscleAuditBuilder
         }
 
         if (str_starts_with($target, 'labs/')) {
-            return $target . '/';
+            return $target.'/';
         }
 
-        return $target . '/System/{PublicSurface,Flows,Capabilities,Configuration,Foundation}/';
+        return $target.'/System/{PublicSurface,Flows,Capabilities,Configuration,Foundation}/';
     }
 
     /**
@@ -571,7 +572,7 @@ final class ComponentMuscleAuditBuilder
                     'components' => array_values($this->components),
                 ],
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-            ) . PHP_EOL
+            ).PHP_EOL
         );
     }
 
@@ -631,7 +632,7 @@ final class ComponentMuscleAuditBuilder
         $lines[] = 'Stage V1-03: Static Integrity Closure, unless `EXECUTION.md` is updated to insert a narrower repair stage.';
         $lines[] = '';
 
-        file_put_contents($this->markdownOut, implode(PHP_EOL, $lines) . PHP_EOL);
+        file_put_contents($this->markdownOut, implode(PHP_EOL, $lines).PHP_EOL);
     }
 
     private function escapeTable(string $value): string
@@ -645,7 +646,7 @@ final class ComponentMuscleAuditBuilder
     private function ensureParentDirectory(string $path): void
     {
         $directory = dirname($path);
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0775, true);
         }
     }
@@ -654,9 +655,9 @@ final class ComponentMuscleAuditBuilder
 $repoRoot = dirname(__DIR__, 2);
 $builder = new ComponentMuscleAuditBuilder(
     $repoRoot,
-    $repoRoot . '/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json',
-    $repoRoot . '/Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.md',
-    $repoRoot . '/Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.json'
+    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json',
+    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.md',
+    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.json'
 );
 
 $builder->build();

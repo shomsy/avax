@@ -6,7 +6,7 @@ namespace Avax\Components\Documentation\System\PublicSurface;
 
 final readonly class Documentation
 {
-    public static function generate() : self
+    public static function generate(): self
     {
         return new self();
     }

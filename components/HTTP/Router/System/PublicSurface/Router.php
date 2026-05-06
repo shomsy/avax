@@ -23,7 +23,7 @@ final readonly class Router implements RouterInterface, RouterRuntimeInterface
     public function __construct()
     {
         $this->routeCollection = new RouteCollection();
-        $this->matchRoute      = new MatchRoute();
+        $this->matchRoute = new MatchRoute();
     }
 
     #[Override]
@@ -72,22 +72,24 @@ final readonly class Router implements RouterInterface, RouterRuntimeInterface
     {
         $route = new RouteDefinition(new RouteMethod($method), $path, $action);
         $this->routeCollection->add($route);
+
         return new Registrar($route);
     }
 
     #[Override]
-    public function dispatch(RequestInterface $request) : ResponseInterface
+    public function dispatch(RequestInterface $request): ResponseInterface
     {
         $route = $this->matchRoute->execute($this->routeCollection, $request);
         if (! $route instanceof RouteDefinition) {
             throw new RouterFailure('Route not found');
         }
         $a = $route->action();
+
         return is_callable($a) ? $a($request) : throw new RouterFailure('Invalid action');
     }
 
     #[Override]
-    public function resolve(RequestInterface $request) : ResponseInterface
+    public function resolve(RequestInterface $request): ResponseInterface
     {
         return $this->dispatch(request: $request);
     }

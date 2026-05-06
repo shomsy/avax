@@ -14,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 final class QueryBuilderReadHelpersTest extends TestCase
 {
-    public function test_where_in_between_join_offset_and_distinct_compile_sql_and_bindings() : void
+    public function test_where_in_between_join_offset_and_distinct_compile_sql_and_bindings(): void
     {
         $executor = new RecordingReadHelperExecutor(rows: [
-                                                              ['id' => 1, 'name' => 'Milos'],
-                                                          ]);
+            ['id' => 1, 'name' => 'Milos'],
+        ]);
 
         $builder = new QueryBuilder(
             grammar     : new MySQLGrammar(),
@@ -41,7 +41,7 @@ final class QueryBuilderReadHelpersTest extends TestCase
         self::assertCount(1, $executor->queries);
 
         $query = $executor->queries[0];
-        $sql   = self::normalizeSql($query['sql']);
+        $sql = self::normalizeSql($query['sql']);
 
         self::assertStringStartsWith('SELECT DISTINCT', $sql);
         self::assertMatchesRegularExpression('/FROM .*users/i', $sql);
@@ -55,16 +55,16 @@ final class QueryBuilderReadHelpersTest extends TestCase
         self::assertSame([1, 2, 3, 30, 40], $query['bindings']);
     }
 
-    private static function normalizeSql(string $sql) : string
+    private static function normalizeSql(string $sql): string
     {
         return preg_replace('/\s+/', ' ', trim($sql)) ?? $sql;
     }
 
-    public function test_first_value_count_and_find_use_expected_queries() : void
+    public function test_first_value_count_and_find_use_expected_queries(): void
     {
         $executor = new RecordingReadHelperExecutor(rows: [
-                                                              ['id' => 123, 'name' => 'Milos', 'aggregate' => 7],
-                                                          ]);
+            ['id' => 123, 'name' => 'Milos', 'aggregate' => 7],
+        ]);
 
         $builder = new QueryBuilder(
             grammar     : new MySQLGrammar(),
@@ -94,11 +94,11 @@ final class QueryBuilderReadHelpersTest extends TestCase
         self::assertGreaterThanOrEqual(4, count($executor->queries));
     }
 
-    public function test_nested_where_compiles_parenthesized_conditions_and_bindings() : void
+    public function test_nested_where_compiles_parenthesized_conditions_and_bindings(): void
     {
         $executor = new RecordingReadHelperExecutor(rows: [
-                                                              ['id' => 1, 'name' => 'Milos'],
-                                                          ]);
+            ['id' => 1, 'name' => 'Milos'],
+        ]);
 
         $builder = new QueryBuilder(
             grammar     : new MySQLGrammar(),
@@ -107,7 +107,7 @@ final class QueryBuilderReadHelpersTest extends TestCase
 
         $rows = $builder
             ->from(table: 'users')
-            ->where(column: static function (QueryBuilder $query) : QueryBuilder {
+            ->where(column: static function (QueryBuilder $query): QueryBuilder {
                 return $query
                     ->where(column: 'status', operator: '=', value: 'active')
                     ->orWhere(column: 'role', operator: '=', value: 'admin');
@@ -118,7 +118,7 @@ final class QueryBuilderReadHelpersTest extends TestCase
         self::assertCount(1, $executor->queries);
 
         $query = $executor->queries[0];
-        $sql   = self::normalizeSql($query['sql']);
+        $sql = self::normalizeSql($query['sql']);
 
         self::assertStringContainsString('WHERE (`status` = ? OR `role` = ?)', $sql);
         self::assertSame(['active', 'admin'], $query['bindings']);
@@ -138,7 +138,7 @@ final class RecordingReadHelperExecutor implements ExecutorInterface
     private array $rows;
 
     /**
-     * @param list<array<string, mixed>> $rows
+     * @param  list<array<string, mixed>>  $rows
      */
     public function __construct(array $rows = [])
     {
@@ -146,18 +146,16 @@ final class RecordingReadHelperExecutor implements ExecutorInterface
     }
 
     /**
-     * @param list<mixed> $bindings
-     *
+     * @param  list<mixed>  $bindings
      * @return list<array<string, mixed>>
      */
     public function query(
-        string          $sql,
-        array           $bindings = [],
+        string $sql,
+        array $bindings = [],
         ?ExecutionScope $executionScope = null,
-    ) : array
-    {
+    ): array {
         $this->queries[] = [
-            'sql'      => $sql,
+            'sql' => $sql,
             'bindings' => array_values($bindings),
         ];
 
@@ -165,18 +163,17 @@ final class RecordingReadHelperExecutor implements ExecutorInterface
     }
 
     /**
-     * @param list<mixed> $bindings
+     * @param  list<mixed>  $bindings
      */
     public function execute(
-        string          $sql,
-        array           $bindings = [],
+        string $sql,
+        array $bindings = [],
         ?ExecutionScope $executionScope = null,
-    ) : ExecutionResult
-    {
+    ): ExecutionResult {
         return ExecutionResult::success(affectedRows: 1);
     }
 
-    public function getDriverName() : string
+    public function getDriverName(): string
     {
         return 'mysql';
     }

@@ -9,7 +9,9 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\S
 
 final readonly class RecordSagaUnrecoverableEvent
 {
-    public function __construct(private object $inspect) {}
+    public function __construct(private object $inspect)
+    {
+    }
 
     public function record(
         SagaInstance $sagaInstance,

@@ -38,7 +38,8 @@ final class GlobalErrorHandler
         private readonly HandleRuntimeFailure $handleRuntimeFailure,
         private readonly ShutdownErrorHandler $shutdownErrorHandler,
         private readonly Logging $logging,
-    ) {}
+    ) {
+    }
 
     /**
      * Get the singleton instance.
@@ -119,7 +120,7 @@ final class GlobalErrorHandler
     /**
      * Handle uncaught exceptions.
      */
-    public function handleException(Throwable $throwable) : never
+    public function handleException(Throwable $throwable): never
     {
         $this->handleRuntimeFailure->handleException($throwable);
     }
@@ -145,13 +146,13 @@ final class GlobalErrorHandler
         } catch (Throwable $throwable) {
             // If the handler itself fails, log and exit
             $this->logging->critical(
-                'Error handler failed: ' . $throwable->getMessage(),
+                'Error handler failed: '.$throwable->getMessage(),
                 [
                     'original_error' => [
                         'severity' => $severity,
                         'message' => $message,
-                        'file'    => $file,
-                        'line'    => $line,
+                        'file' => $file,
+                        'line' => $line,
                     ],
                     'handler_exception' => $throwable->getMessage(),
                 ],

@@ -19,8 +19,7 @@ final readonly class QueryFingerprintEntry implements Stringable
         public string $pattern,
         public string $hash,
         public string $originalQuery,
-    )
-    {
+    ) {
     }
 
     /**

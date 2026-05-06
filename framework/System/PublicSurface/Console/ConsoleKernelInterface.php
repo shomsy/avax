@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 interface ConsoleKernelInterface
 {
     /**
-     * @param array<int|string, mixed> $arguments
+     * @param  array<int|string, mixed>  $arguments
      */
     public function run(string $commandName, array $arguments = []): RuntimeResult;
 }

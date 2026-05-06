@@ -22,7 +22,7 @@ final class RegisterCacheDependenciesTest extends TestCase
 
     private CacheContract $cacheContract;
 
-    public function test_cache_store_with_name_requires_provider() : void
+    public function test_cache_store_with_name_requires_provider(): void
     {
         Cache::reset();
 
@@ -32,7 +32,7 @@ final class RegisterCacheDependenciesTest extends TestCase
         Cache::store(name: 'api');
     }
 
-    public function test_cache_store_returns_default() : void
+    public function test_cache_store_returns_default(): void
     {
         Cache::use(cache: $this->cacheContract);
 
@@ -41,7 +41,7 @@ final class RegisterCacheDependenciesTest extends TestCase
         $this->assertSame(expected: $this->cacheContract, actual: $store);
     }
 
-    public function test_cache_use_sets_default() : void
+    public function test_cache_use_sets_default(): void
     {
         Cache::use(cache: $this->cacheContract);
 
@@ -49,7 +49,7 @@ final class RegisterCacheDependenciesTest extends TestCase
         $this->assertSame(expected: 'default', actual: $result);
     }
 
-    public function test_static_cache_can_be_swapped() : void
+    public function test_static_cache_can_be_swapped(): void
     {
         $mockCache1 = $this->createMock(CacheContract::class);
         $mockCache1->method('get')->with('key')->willReturn(value: 'value1');
@@ -64,7 +64,7 @@ final class RegisterCacheDependenciesTest extends TestCase
         $this->assertSame(expected: 'value2', actual: Cache::get(cacheKey: 'key'));
     }
 
-    public function test_cache_reset_clears_static_instance() : void
+    public function test_cache_reset_clears_static_instance(): void
     {
         Cache::use(cache: $this->cacheContract);
 
@@ -75,7 +75,7 @@ final class RegisterCacheDependenciesTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
         Cache::reset();
         CompiledCache::reset();
@@ -90,7 +90,7 @@ final class RegisterCacheDependenciesTest extends TestCase
     }
 
     #[Override]
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         Cache::reset();
         CompiledCache::reset();

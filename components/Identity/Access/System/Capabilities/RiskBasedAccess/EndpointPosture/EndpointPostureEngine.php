@@ -10,8 +10,8 @@ namespace Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\En
 final readonly class EndpointPostureEngine
 {
     /**
-     * @param list<EndpointPostureSignalData> $signals
-     *                                                 Evaluates posture signals and determines action.
+     * @param  list<EndpointPostureSignalData>  $signals
+     *                                                    Evaluates posture signals and determines action.
      */
     public function evaluate(
         array $signals,
@@ -20,16 +20,16 @@ final readonly class EndpointPostureEngine
         $riskScore = $this->calculateRiskScore(signals: $signals);
 
         return match (true) {
-            $riskScore >= $endpointPosturePolicy->denyThreshold       => EndpointPostureDecision::DENY,
-            $riskScore >= $endpointPosturePolicy->stepUpThreshold     => EndpointPostureDecision::STEP_UP,
+            $riskScore >= $endpointPosturePolicy->denyThreshold => EndpointPostureDecision::DENY,
+            $riskScore >= $endpointPosturePolicy->stepUpThreshold => EndpointPostureDecision::STEP_UP,
             $riskScore >= $endpointPosturePolicy->quarantineThreshold => EndpointPostureDecision::QUARANTINE,
-            default                                => EndpointPostureDecision::ALLOW,
+            default => EndpointPostureDecision::ALLOW,
         };
     }
 
     /**
-     * @param list<EndpointPostureSignalData> $signals
-     *                                                 Calculates aggregate risk score from signals.
+     * @param  list<EndpointPostureSignalData>  $signals
+     *                                                    Calculates aggregate risk score from signals.
      */
     private function calculateRiskScore(array $signals): float
     {
@@ -42,11 +42,11 @@ final readonly class EndpointPostureEngine
 
         foreach ($signals as $signal) {
             $weight = match ($signal->type) {
-                EndpointPostureSignal::IP_REPUTATION                                         => 0.3,
-                EndpointPostureSignal::IMPOSSIBLE_TRAVEL                                     => 0.4,
+                EndpointPostureSignal::IP_REPUTATION => 0.3,
+                EndpointPostureSignal::IMPOSSIBLE_TRAVEL => 0.4,
                 EndpointPostureSignal::VPN_DETECTION, EndpointPostureSignal::PROXY_DETECTION => 0.25,
-                EndpointPostureSignal::GEO_VELOCITY                                          => 0.2,
-                EndpointPostureSignal::ASN_REPUTATION                                        => 0.15,
+                EndpointPostureSignal::GEO_VELOCITY => 0.2,
+                EndpointPostureSignal::ASN_REPUTATION => 0.15,
                 EndpointPostureSignal::DEVICE_FINGERPRINT, EndpointPostureSignal::BROWSER_FINGERPRINT => 0.1,
             };
 
@@ -72,7 +72,7 @@ final readonly class EndpointPosturePolicy
         ?float $stepUpThreshold = null,
         public float $quarantineThreshold = 0.3,
     ) {
-        $denyThreshold       ??= 0.8;
+        $denyThreshold ??= 0.8;
         $stepUpThreshold ??= 0.5;
         $this->denyThreshold = $denyThreshold;
         $this->stepUpThreshold = $stepUpThreshold;
@@ -84,8 +84,8 @@ final readonly class EndpointPosturePolicy
  */
 enum EndpointPostureDecision: string
 {
-    case ALLOW   = 'allow';
+    case ALLOW = 'allow';
     case STEP_UP = 'step_up';
-    case DENY    = 'deny';
+    case DENY = 'deny';
     case QUARANTINE = 'quarantine';
 }

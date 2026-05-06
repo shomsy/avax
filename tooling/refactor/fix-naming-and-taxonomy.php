@@ -13,16 +13,18 @@ foreach ($dirs as $dir) {
 
 $count = 0;
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     $changed = false;
-    
+
     // 1. TransactionManager -> Transactions
     if (str_contains($content, 'TransactionManager')) {
         // Specifically for the DataStack\Database namespace
         if (str_contains($content, 'Avax\Components\DataStack\Database\System\Capabilities\Transactions')) {
-             $content = str_replace('TransactionManager', 'Transactions', $content);
-             $changed = true;
+            $content = str_replace('TransactionManager', 'Transactions', $content);
+            $changed = true;
         }
     }
 

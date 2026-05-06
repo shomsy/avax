@@ -26,7 +26,8 @@ final readonly class ReadActiveSessions
         private Clock $clock,
         #[SensitiveParameter]
         private ?SessionRegistryInterface $sessionRegistry = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<ActiveSession>
@@ -36,7 +37,7 @@ final readonly class ReadActiveSessions
     public function execute(): array
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $user                  = $authenticationContext->user();
+        $user = $authenticationContext->user();
 
         if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
@@ -61,7 +62,7 @@ final readonly class ReadActiveSessions
         return $sessions;
     }
 
-    private function toBoundary(SessionRecord $sessionRecord, #[SensitiveParameter] ?string $currentSessionId) : ActiveSession
+    private function toBoundary(SessionRecord $sessionRecord, #[SensitiveParameter] ?string $currentSessionId): ActiveSession
     {
         return new ActiveSession(
             sessionId        : $sessionRecord->sessionId,

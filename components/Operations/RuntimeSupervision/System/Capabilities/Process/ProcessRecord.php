@@ -10,11 +10,10 @@ class ProcessRecord
         public readonly string $id,
         public readonly string $name,
         public readonly string $status,
-        public readonly int    $pid,
-        public readonly float  $startedAt,
+        public readonly int $pid,
+        public readonly float $startedAt,
         public readonly ?float $endedAt = null,
-    )
-    {
+    ) {
     }
 
     public function isRunning(): bool
@@ -30,6 +29,7 @@ class ProcessRecord
     public function duration(): float
     {
         $end = $this->endedAt ?? hrtime(true) / 1e9;
+
         return $end - $this->startedAt;
     }
 }

@@ -4,4 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Capabilities\Policy\Capabilities\Rules;
 
-class PolicyDecision {}
+class PolicyDecision
+{
+}

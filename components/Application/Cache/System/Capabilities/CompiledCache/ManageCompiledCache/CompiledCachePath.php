@@ -32,7 +32,7 @@ final readonly class CompiledCachePath
      */
     public function toTemporaryPath(): string
     {
-        return $this->path . '.' . bin2hex(random_bytes(8)) . '.tmp';
+        return $this->path.'.'.bin2hex(random_bytes(8)).'.tmp';
     }
 
     public function directory(): string

@@ -12,17 +12,17 @@ final class LogTransport implements MailTransport
     /** @var list<array<string, string>> */
     private array $messages = [];
 
-    public function send(MimeMessage $mimeMessage, Envelope $envelope) : TransportResult
+    public function send(MimeMessage $mimeMessage, Envelope $envelope): TransportResult
     {
         $this->messages[] = [
             'from' => $envelope->from,
-            'to'      => $mimeMessage->to,
+            'to' => $mimeMessage->to,
             'subject' => $mimeMessage->subject,
         ];
 
         return new TransportResult(
             success  : true,
-            messageId: '<' . uniqid(prefix: 'msg-', more_entropy: true) . '-logged@local>',
+            messageId: '<'.uniqid(prefix: 'msg-', more_entropy: true).'-logged@local>',
         );
     }
 

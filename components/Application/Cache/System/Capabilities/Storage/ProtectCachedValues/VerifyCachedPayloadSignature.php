@@ -8,9 +8,10 @@ final readonly class VerifyCachedPayloadSignature
 {
     public function __construct(
         private SignCachedPayload $signCachedPayload,
-    ) {}
+    ) {
+    }
 
-    public function verifyOrFail(string $payload, string $signature) : void
+    public function verifyOrFail(string $payload, string $signature): void
     {
         if (! $this->verify(payload: $payload, signature: $signature)) {
             throw new CachePayloadWasTampered(
@@ -19,7 +20,7 @@ final readonly class VerifyCachedPayloadSignature
         }
     }
 
-    public function verify(string $payload, string $signature) : bool
+    public function verify(string $payload, string $signature): bool
     {
         return $this->signCachedPayload->verify(payload: $payload, signature: $signature);
     }

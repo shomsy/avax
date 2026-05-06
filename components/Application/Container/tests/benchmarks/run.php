@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__) . '/bootstrap.php';
+require_once dirname(path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency;
@@ -16,12 +16,12 @@ const BENCHMARK_SUITE_VERSION = '2026-04-08';
 
 interface BenchDeferredProviderContract
 {
-    public function value() : string;
+    public function value(): string;
 }
 
 final class run
 {
-    public function value() : string
+    public function value(): string
     {
         return 'shared';
     }
@@ -29,7 +29,7 @@ final class run
 
 final class BenchTransientService
 {
-    public function value() : string
+    public function value(): string
     {
         return 'transient';
     }
@@ -37,7 +37,7 @@ final class BenchTransientService
 
 final class BenchScopedService
 {
-    public function value() : string
+    public function value(): string
     {
         return 'scoped';
     }
@@ -45,7 +45,7 @@ final class BenchScopedService
 
 final class BenchPooledService implements ResettableInterface
 {
-    public function value() : string
+    public function value(): string
     {
         return 'pooled';
     }
@@ -53,7 +53,7 @@ final class BenchPooledService implements ResettableInterface
 
 final class BenchLazyService
 {
-    public function value() : string
+    public function value(): string
     {
         return 'lazy';
     }
@@ -61,7 +61,7 @@ final class BenchLazyService
 
 final class BenchDeferredService
 {
-    public function value() : string
+    public function value(): string
     {
         return 'deferred';
     }
@@ -70,7 +70,7 @@ final class BenchDeferredService
 final class BenchDeferredProviderService implements BenchDeferredProviderContract
 {
     #[Override]
-    public function value() : string
+    public function value(): string
     {
         return 'deferred-provider';
     }
@@ -78,24 +78,26 @@ final class BenchDeferredProviderService implements BenchDeferredProviderContrac
 
 final readonly class BenchDeferredProvider implements RegisterDeferredDependency
 {
-    public function __construct(private ContainerInterface $container) {}
+    public function __construct(private ContainerInterface $container)
+    {
+    }
 
-    public function dependsOn() : array
+    public function dependsOn(): array
     {
         return [];
     }
 
-    public function deferred() : bool
+    public function deferred(): bool
     {
         return true;
     }
 
-    public function provides() : array
+    public function provides(): array
     {
         return [BenchDeferredProviderContract::class];
     }
 
-    public function register() : void
+    public function register(): void
     {
         $this->container->singleton(abstract: BenchDeferredProviderContract::class, concrete: BenchDeferredProviderService::class);
     }
@@ -103,43 +105,65 @@ final readonly class BenchDeferredProvider implements RegisterDeferredDependency
 
 final class BenchDeep5
 {
-    public function __construct(public BenchDeep4 $benchDeep4) {}
+    public function __construct(public BenchDeep4 $benchDeep4)
+    {
+    }
 }
 
 final class BenchDeep4
 {
-    public function __construct(public BenchDeep3 $benchDeep3) {}
+    public function __construct(public BenchDeep3 $benchDeep3)
+    {
+    }
 }
 
 final class BenchDeep3
 {
-    public function __construct(public BenchDeep2 $benchDeep2) {}
+    public function __construct(public BenchDeep2 $benchDeep2)
+    {
+    }
 }
 
 final class BenchDeep2
 {
-    public function __construct(public BenchDeep1 $benchDeep1) {}
+    public function __construct(public BenchDeep1 $benchDeep1)
+    {
+    }
 }
 
 final class BenchDeep1
 {
-    public function __construct(public BenchSharedService $benchSharedService) {}
+    public function __construct(public BenchSharedService $benchSharedService)
+    {
+    }
 }
 
 final class BenchWideRoot
 {
-    public function __construct(public BenchWide1 $benchWide1, public BenchWide2 $benchWide2, public BenchWide3 $benchWide3, public BenchWide4 $benchWide4, public BenchWide5 $benchWide5) {}
+    public function __construct(public BenchWide1 $benchWide1, public BenchWide2 $benchWide2, public BenchWide3 $benchWide3, public BenchWide4 $benchWide4, public BenchWide5 $benchWide5)
+    {
+    }
 }
 
-final class BenchWide1 {}
+final class BenchWide1
+{
+}
 
-final class BenchWide2 {}
+final class BenchWide2
+{
+}
 
-final class BenchWide3 {}
+final class BenchWide3
+{
+}
 
-final class BenchWide4 {}
+final class BenchWide4
+{
+}
 
-final class BenchWide5 {}
+final class BenchWide5
+{
+}
 
 final class BenchInjectionTarget
 {
@@ -149,7 +173,7 @@ final class BenchInjectionTarget
     public ?BenchSharedService $methodDependency = null;
 
     #[Inject]
-    public function wire(BenchSharedService $benchSharedService) : void
+    public function wire(BenchSharedService $benchSharedService): void
     {
         $this->methodDependency = $benchSharedService;
     }
@@ -158,11 +182,11 @@ final class BenchInjectionTarget
 /**
  * @return array{time_ms: float, peak_mb: float}
  */
-function benchmark(callable $callback, int $iterations = 1) : array
+function benchmark(callable $callback, int $iterations = 1): array
 {
     gc_collect_cycles();
     $peakBefore = memory_get_peak_usage(real_usage: true);
-    $start                   = hrtime(as_number: true);
+    $start = hrtime(as_number: true);
 
     for ($i = 0; $i < $iterations; $i++) {
         $callback();
@@ -178,24 +202,23 @@ function benchmark(callable $callback, int $iterations = 1) : array
 }
 
 /**
- * @param array<string, mixed> $settings
+ * @param  array<string, mixed>  $settings
  */
 function benchContainer(
-    ?array  $settings = null,
+    ?array $settings = null,
     ?string $compileMode = null,
-    ?bool   $debug = null,
+    ?bool $debug = null,
     ?string $diagnosticsMode = null,
     string $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
-) : Container
-{
-    $settings    ??= [];
+): Container {
+    $settings ??= [];
     $compileMode ??= CreateContainerConfig::COMPILE_MODE_PRODUCTION;
-    $debug       ??= false;
+    $debug ??= false;
     $diagnosticsMode ??= CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL;
 
     return makeTestContainer(config: CreateContainerConfig::create(
-        cacheDir       : sys_get_temp_dir() . '/container-bench-' . uniqid(),
-        cacheVersion   : 'bench-' . uniqid(),
+        cacheDir       : sys_get_temp_dir().'/container-bench-'.uniqid(),
+        cacheVersion   : 'bench-'.uniqid(),
         debug          : $debug,
         settings       : $settings,
         compileMode    : $compileMode,
@@ -205,32 +228,32 @@ function benchContainer(
 }
 
 /**
- * @param array{name: string, iterations: int, callback: callable() : void} $scenario
+ * @param  array{name: string, iterations: int, callback: callable() : void}  $scenario
  * @return array<string, mixed>
  */
-function measureScenario(array $scenario) : array
+function measureScenario(array $scenario): array
 {
     $result = benchmark(
         callback  : $scenario['callback'],
         iterations: $scenario['iterations'],
     );
-    $timeMs                  = $result['time_ms'];
+    $timeMs = $result['time_ms'];
     $iterations = max(1, $scenario['iterations']);
 
     return [
         'iterations' => $iterations,
-        'time_ms'    => $timeMs,
-        'ops_per_s'  => $timeMs > 0 ? ($iterations / $timeMs) * 1000 : 0.0,
-        'peak_mb'    => $result['peak_mb'],
+        'time_ms' => $timeMs,
+        'ops_per_s' => $timeMs > 0 ? ($iterations / $timeMs) * 1000 : 0.0,
+        'peak_mb' => $result['peak_mb'],
         'memory_per_op_kb' => ($result['peak_mb'] * 1024) / $iterations,
     ];
 }
 
 /**
- * @param array{name: string, iterations: int, callback: callable() : void} $scenario
+ * @param  array{name: string, iterations: int, callback: callable() : void}  $scenario
  * @return array<string, mixed>
  */
-function measureScenarioForGuard(array $scenario, int $runs = 3) : array
+function measureScenarioForGuard(array $scenario, int $runs = 3): array
 {
     $samples = [];
 
@@ -239,57 +262,57 @@ function measureScenarioForGuard(array $scenario, int $runs = 3) : array
     }
 
     $timeSamples = array_values(array: array_map(
-                                           callback: static fn (array $sample) : float => (float) $sample['time_ms'],
-                                           array   : $samples,
-                                       ));
+        callback: static fn (array $sample): float => (float) $sample['time_ms'],
+        array   : $samples,
+    ));
     sort(array: $timeSamples);
 
     $peakSamples = array_values(array: array_map(
-                                           callback: static fn (array $sample) : float => (float) $sample['peak_mb'],
-                                           array   : $samples,
-                                       ));
+        callback: static fn (array $sample): float => (float) $sample['peak_mb'],
+        array   : $samples,
+    ));
     sort(array: $peakSamples);
 
     $iterations = max(1, $scenario['iterations']);
-    $middle     = intdiv(num1: count(value: $timeSamples), num2: 2);
-    $timeMs     = $timeSamples[$middle] ?? 0.0;
-    $peakMb     = $peakSamples[$middle] ?? 0.0;
+    $middle = intdiv(num1: count(value: $timeSamples), num2: 2);
+    $timeMs = $timeSamples[$middle] ?? 0.0;
+    $peakMb = $peakSamples[$middle] ?? 0.0;
 
     return [
         'iterations' => $iterations,
-        'runs'       => $runs,
-        'time_ms'    => $timeMs,
-        'ops_per_s'  => $timeMs > 0 ? ($iterations / $timeMs) * 1000 : 0.0,
-        'peak_mb'    => $peakMb,
+        'runs' => $runs,
+        'time_ms' => $timeMs,
+        'ops_per_s' => $timeMs > 0 ? ($iterations / $timeMs) * 1000 : 0.0,
+        'peak_mb' => $peakMb,
         'memory_per_op_kb' => ($peakMb * 1024) / $iterations,
     ];
 }
 
-function benchmarkScenarios() : array
+function benchmarkScenarios(): array
 {
     return [
         [
-            'name'       => 'cold_boot',
+            'name' => 'cold_boot',
             'iterations' => 1,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchSharedService::class);
             },
         ],
         [
-            'name'       => 'warm_boot',
+            'name' => 'warm_boot',
             'iterations' => 1,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->warmCompiled(serviceIds: [BenchSharedService::class]);
             },
         ],
         [
-            'name'       => 'cached_get',
+            'name' => 'cached_get',
             'iterations' => 10000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchSharedService::class);
@@ -297,9 +320,9 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'worker_cached_get',
+            'name' => 'worker_cached_get',
             'iterations' => 10000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 static $container = null;
 
                 if ($container === null) {
@@ -311,18 +334,18 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'uncached_resolve',
+            'name' => 'uncached_resolve',
             'iterations' => 10000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchTransientService::class, concrete: BenchTransientService::class);
                 $container->make(abstract: BenchTransientService::class);
             },
         ],
         [
-            'name'       => 'request_lifecycle',
+            'name' => 'request_lifecycle',
             'iterations' => 5000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 static $container = null;
 
                 if ($container === null) {
@@ -336,25 +359,25 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'deep_graph',
+            'name' => 'deep_graph',
             'iterations' => 1000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->get(id: BenchDeep5::class);
             },
         ],
         [
-            'name'       => 'wide_graph',
+            'name' => 'wide_graph',
             'iterations' => 1000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->get(id: BenchWideRoot::class);
             },
         ],
         [
-            'name'       => 'scoped_service',
+            'name' => 'scoped_service',
             'iterations' => 5000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->scoped(abstract: BenchScopedService::class, concrete: BenchScopedService::class);
                 $container->openScope();
@@ -363,9 +386,9 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'pooled_service',
+            'name' => 'pooled_service',
             'iterations' => 5000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->bind(abstract: BenchPooledService::class, concrete: BenchPooledService::class)->pooled(maxSize: 8);
                 $container->openScope();
@@ -374,9 +397,9 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'lazy_service',
+            'name' => 'lazy_service',
             'iterations' => 10000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchLazyService::class, concrete: BenchLazyService::class);
 
@@ -385,45 +408,45 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'deferred_service',
+            'name' => 'deferred_service',
             'iterations' => 5000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->defer(abstract: BenchDeferredService::class, concrete: BenchDeferredService::class);
                 $container->get(id: BenchDeferredService::class);
             },
         ],
         [
-            'name'       => 'deferred_provider',
+            'name' => 'deferred_provider',
             'iterations' => 5000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->bootProviders(providers: [BenchDeferredProvider::class]);
                 $container->get(id: BenchDeferredProviderContract::class);
             },
         ],
         [
-            'name'       => 'function_call_injection',
+            'name' => 'function_call_injection',
             'iterations' => 5000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
-                $container->call(callable: static fn (BenchSharedService $benchSharedService) : string => $benchSharedService->value());
+                $container->call(callable: static fn (BenchSharedService $benchSharedService): string => $benchSharedService->value());
             },
         ],
         [
-            'name'       => 'property_injection',
+            'name' => 'property_injection',
             'iterations' => 2000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->injectInto(target: new BenchInjectionTarget());
             },
         ],
         [
-            'name'       => 'method_injection',
+            'name' => 'method_injection',
             'iterations' => 2000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
 
@@ -433,27 +456,27 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'compile_time',
+            'name' => 'compile_time',
             'iterations' => 1,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 $container = benchContainer();
                 $container->singleton(abstract: BenchSharedService::class, concrete: BenchSharedService::class);
                 $container->get(id: BenchDeep5::class);
                 $container->compileContainer(serviceIds: [
-                                                             BenchSharedService::class,
-                                                             BenchDeep1::class,
-                                                             BenchDeep2::class,
-                                                             BenchDeep3::class,
-                                                             BenchDeep4::class,
-                                                             BenchDeep5::class,
-                                                             BenchWideRoot::class,
-                                                         ]);
+                    BenchSharedService::class,
+                    BenchDeep1::class,
+                    BenchDeep2::class,
+                    BenchDeep3::class,
+                    BenchDeep4::class,
+                    BenchDeep5::class,
+                    BenchWideRoot::class,
+                ]);
             },
         ],
         [
-            'name'       => 'prod_compiled_get',
+            'name' => 'prod_compiled_get',
             'iterations' => 10000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 static $container = null;
 
                 if ($container === null) {
@@ -468,9 +491,9 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'generated_get',
+            'name' => 'generated_get',
             'iterations' => 10000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 static $container = null;
 
                 if ($container === null) {
@@ -486,9 +509,9 @@ function benchmarkScenarios() : array
             },
         ],
         [
-            'name'       => 'dev_compiled_get',
+            'name' => 'dev_compiled_get',
             'iterations' => 10000,
-            'callback' => static function () : void {
+            'callback' => static function (): void {
                 static $container = null;
 
                 if ($container === null) {
@@ -510,18 +533,18 @@ function benchmarkScenarios() : array
 /**
  * @return array<string, string|int|false>
  */
-function benchmarkPhpSettings() : array
+function benchmarkPhpSettings(): array
 {
     return [
         'memory_limit' => ini_get(option: 'memory_limit'),
         'opcache.enable_cli' => (string) ini_get(option: 'opcache.enable_cli'),
-        'zend.assertions'    => (string) ini_get(option: 'zend.assertions'),
+        'zend.assertions' => (string) ini_get(option: 'zend.assertions'),
     ];
 }
 
 /**
- * @param array<string, array{max_time_ms: float, max_peak_mb: float}> $thresholds
- * @param array<string, array<string, mixed>> $results
+ * @param  array<string, array{max_time_ms: float, max_peak_mb: float}>  $thresholds
+ * @param  array<string, array<string, mixed>>  $results
  */
 function assertThresholds(array $thresholds, array $results): void
 {
@@ -544,12 +567,12 @@ function assertThresholds(array $thresholds, array $results): void
     }
 
     if ($failures !== []) {
-        throw new RuntimeException(message: "Benchmark guard failed:\n- " . implode(separator: "\n- ", array: $failures));
+        throw new RuntimeException(message: "Benchmark guard failed:\n- ".implode(separator: "\n- ", array: $failures));
     }
 }
 
 $jsonOutput = in_array(needle: '--json', haystack: $argv, strict: true);
-$guard      = in_array(needle: '--guard', haystack: $argv, strict: true);
+$guard = in_array(needle: '--guard', haystack: $argv, strict: true);
 $outputPath = null;
 
 foreach ($argv as $argument) {
@@ -567,26 +590,26 @@ foreach (benchmarkScenarios() as $scenario) {
 
 if ($guard) {
     /** @var array<string, array{max_time_ms: float, max_peak_mb: float}> $thresholds */
-    $thresholds = require __DIR__ . '/thresholds.php';
+    $thresholds = require __DIR__.'/thresholds.php';
     assertThresholds(thresholds: $thresholds, results: $results);
 }
 
 if ($jsonOutput || is_string(value: $outputPath)) {
     $payload = json_encode(value: [
-                                      'meta'    => [
-                                          'php'           => PHP_VERSION,
-                                          'sapi'          => PHP_SAPI,
-                                          'timestamp'     => gmdate(format: 'c'),
-                                          'dockerImage'   => BENCHMARK_DOCKER_IMAGE,
-                                          'phpSettings'   => benchmarkPhpSettings(),
-                                          'suiteVersion'  => BENCHMARK_SUITE_VERSION,
-                                          'buildMarker'   => (string) (getenv(name: 'BENCHMARK_BUILD_MARKER') ?: ''),
-                                          'guard'         => $guard,
-                                          'scenarioCount' => count(value: $results),
-                                          'scenarios'     => array_keys(array: $results),
-                                      ],
-                                      'results' => $results,
-                                  ], flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
+        'meta' => [
+            'php' => PHP_VERSION,
+            'sapi' => PHP_SAPI,
+            'timestamp' => gmdate(format: 'c'),
+            'dockerImage' => BENCHMARK_DOCKER_IMAGE,
+            'phpSettings' => benchmarkPhpSettings(),
+            'suiteVersion' => BENCHMARK_SUITE_VERSION,
+            'buildMarker' => (string) (getenv(name: 'BENCHMARK_BUILD_MARKER') ?: ''),
+            'guard' => $guard,
+            'scenarioCount' => count(value: $results),
+            'scenarios' => array_keys(array: $results),
+        ],
+        'results' => $results,
+    ], flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL;
 
     if (is_string(value: $outputPath) && $outputPath !== '') {
         $directory = dirname(path: $outputPath);
@@ -609,9 +632,9 @@ foreach ($results as $name => $result) {
     fwrite(
         stream: STDOUT,
         data  : str_pad(string: (string) $name, length: 24)
-                . str_pad(string: number_format(num: $result['time_ms'], decimals: 2) . ' ms', length: 14)
-                . str_pad(string: number_format(num: $result['ops_per_s'], decimals: 2) . ' ops/s', length: 18)
-                . number_format(num: $result['peak_mb'], decimals: 2) . " MB\n",
+                .str_pad(string: number_format(num: $result['time_ms'], decimals: 2).' ms', length: 14)
+                .str_pad(string: number_format(num: $result['ops_per_s'], decimals: 2).' ops/s', length: 18)
+                .number_format(num: $result['peak_mb'], decimals: 2)." MB\n",
     );
 }
 

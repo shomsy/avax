@@ -13,12 +13,14 @@ foreach ($dirs as $dir) {
 
 $count = 0;
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     if (str_contains($content, 'Avax\Components\Cache\\') || str_contains($content, 'Avax\Components\Cache;')) {
         $content = str_replace(
-            ['Avax\Components\Cache\\', 'Avax\Components\Cache;'], 
-            ['Avax\Components\Application\Cache\\', 'Avax\Components\Application\Cache;'], 
+            ['Avax\Components\Cache\\', 'Avax\Components\Cache;'],
+            ['Avax\Components\Application\Cache\\', 'Avax\Components\Application\Cache;'],
             $content
         );
         file_put_contents($file, $content);

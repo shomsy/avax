@@ -6,5 +6,5 @@ namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSi
 
 interface FederationMetadataRuntimeInterface
 {
-    public function readMetadata(FederationConnection $federationConnection) : FederationMetadata;
+    public function readMetadata(FederationConnection $federationConnection): FederationMetadata;
 }

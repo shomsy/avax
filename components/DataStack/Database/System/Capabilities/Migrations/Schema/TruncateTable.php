@@ -12,7 +12,9 @@ use Throwable;
  */
 final readonly class TruncateTable
 {
-    public function __construct(private QueryBuilder $queryBuilder) {}
+    public function __construct(private QueryBuilder $queryBuilder)
+    {
+    }
 
     /**
      * @throws Throwable

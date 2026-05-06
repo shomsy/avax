@@ -18,7 +18,8 @@ abstract class ConnectionPool implements ConnectionPoolInterface
         protected int $maxConnections = 20,
         protected int $connectionTimeoutMs = 10000,
         protected int $idleTimeoutMs = 300000,
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function get(): PooledConnection

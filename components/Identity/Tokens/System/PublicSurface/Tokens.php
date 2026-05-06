@@ -24,15 +24,16 @@ final readonly class Tokens implements TokensInterface
     public function __construct(
         private AuthorizeTokenRequest $authorizeTokenRequest,
         private ExchangeAuthorizationCode $exchangeAuthorizationCode,
-        private IntrospectToken       $introspectToken,
-        private RevokeToken           $revokeToken,
-    ) {}
+        private IntrospectToken $introspectToken,
+        private RevokeToken $revokeToken,
+    ) {
+    }
 
-    public static function hmac(string $secret) : self
+    public static function hmac(string $secret): self
     {
         $inMemoryAuthorizationCodeStore = new InMemoryAuthorizationCodeStore();
-        $hmacTokenCodec             = new HmacTokenCodec(secret: $secret);
-        $inMemoryTokenRevocationStore   = new InMemoryTokenRevocationStore();
+        $hmacTokenCodec = new HmacTokenCodec(secret: $secret);
+        $inMemoryTokenRevocationStore = new InMemoryTokenRevocationStore();
 
         return self::fromRuntime(
             authorizationCodeStore: $inMemoryAuthorizationCodeStore,
@@ -43,24 +44,23 @@ final readonly class Tokens implements TokensInterface
 
     public static function fromRuntime(
         AuthorizationCodeStoreInterface $authorizationCodeStore,
-        TokenCodecInterface             $tokenCodec,
-        TokenRevocationStoreInterface   $tokenRevocationStore,
-    ) : self
-    {
+        TokenCodecInterface $tokenCodec,
+        TokenRevocationStoreInterface $tokenRevocationStore,
+    ): self {
         return new self(
             authorizeTokenRequest    : new AuthorizeTokenRequest(authorizationCodeStore: $authorizationCodeStore),
             exchangeAuthorizationCode: new ExchangeAuthorizationCode(
-                                           authorizationCodeStore: $authorizationCodeStore,
-                                           tokenCodec            : $tokenCodec,
-                                       ),
+                authorizationCodeStore: $authorizationCodeStore,
+                tokenCodec            : $tokenCodec,
+            ),
             introspectToken          : new IntrospectToken(
-                                           tokenCodec          : $tokenCodec,
-                                           tokenRevocationStore: $tokenRevocationStore,
-                                       ),
+                tokenCodec          : $tokenCodec,
+                tokenRevocationStore: $tokenRevocationStore,
+            ),
             revokeToken              : new RevokeToken(
-                                           tokenCodec          : $tokenCodec,
-                                           tokenRevocationStore: $tokenRevocationStore,
-                                       ),
+                tokenCodec          : $tokenCodec,
+                tokenRevocationStore: $tokenRevocationStore,
+            ),
         );
     }
 

@@ -17,5 +17,6 @@ final readonly class VerifyEmailData
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

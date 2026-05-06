@@ -15,5 +15,6 @@ final readonly class InviteTenantMemberData
         public string $email,
         public TenantMemberRole $role,
         public string $invitedBy,
-    ) {}
+    ) {
+    }
 }

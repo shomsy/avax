@@ -11,7 +11,8 @@ final readonly class AppendValue
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(mixed $value): array
     {

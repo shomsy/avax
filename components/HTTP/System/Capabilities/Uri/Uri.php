@@ -17,78 +17,79 @@ final readonly class Uri implements Stringable
         private string $fragment = '',
         private string $user = '',
         private ?string $password = null,
-    ) {}
+    ) {
+    }
 
-    public function getScheme() : string
+    public function getScheme(): string
     {
         return $this->scheme;
     }
 
-    public function getHost() : string
+    public function getHost(): string
     {
         return $this->host;
     }
 
-    public function getPath() : string
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    public function getPort() : ?int
+    public function getPort(): ?int
     {
         return $this->port;
     }
 
-    public function getQuery() : string
+    public function getQuery(): string
     {
         return $this->query;
     }
 
-    public function getFragment() : string
+    public function getFragment(): string
     {
         return $this->fragment;
     }
 
-    public function getUserInfo() : string
+    public function getUserInfo(): string
     {
-        return $this->user . ($this->password !== null ? ':' . $this->password : '');
+        return $this->user.($this->password !== null ? ':'.$this->password : '');
     }
 
-    public function getAuthority() : string
+    public function getAuthority(): string
     {
         $authority = $this->host;
         $userInfo = $this->getUserInfo();
         if ($userInfo !== '') {
-            $authority = $userInfo . '@' . $authority;
+            $authority = $userInfo.'@'.$authority;
         }
 
         if ($this->port !== null && ! $this->isDefaultPort()) {
-            $authority .= ':' . $this->port;
+            $authority .= ':'.$this->port;
         }
 
         return $authority;
     }
 
-    private function isDefaultPort() : bool
+    private function isDefaultPort(): bool
     {
         return ($this->scheme === 'http' && $this->port === 80) || ($this->scheme === 'https' && $this->port === 443);
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         $uri = '';
         if ($this->scheme !== '') {
-            $uri .= $this->scheme . '://';
+            $uri .= $this->scheme.'://';
         }
 
         $uri .= $this->getAuthority();
         $uri .= $this->path;
         if ($this->query !== '') {
-            $uri .= '?' . $this->query;
+            $uri .= '?'.$this->query;
         }
 
         if ($this->fragment !== '') {
-            $uri .= '#' . $this->fragment;
+            $uri .= '#'.$this->fragment;
         }
 
         return $uri;

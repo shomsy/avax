@@ -11,9 +11,10 @@ final readonly class WriteCachedValueToAllTiers
 {
     public function __construct(
         private TieredCache $tieredCache,
-    ) {}
+    ) {
+    }
 
-    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord) : void
+    public function write(CacheKey $cacheKey, StoredCacheRecord $storedCacheRecord): void
     {
         $this->tieredCache->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
     }

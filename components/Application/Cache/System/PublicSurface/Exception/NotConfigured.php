@@ -10,10 +10,9 @@ use Throwable;
 final class NotConfigured extends RuntimeException
 {
     public function __construct(
-        string    $message = 'No default cache configured',
+        string $message = 'No default cache configured',
         ?Throwable $throwable = null,
-    )
-    {
+    ) {
         parent::__construct(message: $message, code: 0, previous: $throwable);
     }
 }

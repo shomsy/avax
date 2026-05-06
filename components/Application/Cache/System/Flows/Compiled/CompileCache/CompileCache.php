@@ -33,16 +33,16 @@ final readonly class CompileCache
         $payload = $build();
 
         $buildCompiledPhpPayload = new BuildCompiledPhpPayload();
-        $phpPayload              = $buildCompiledPhpPayload->build(payload: $payload);
+        $phpPayload = $buildCompiledPhpPayload->build(payload: $payload);
 
         $atomicCompiledCacheWrite = new AtomicCompiledCacheWrite($this->compiledCacheDirectory, $this->clock);
-        $compiledCacheArtifact    = $atomicCompiledCacheWrite->write($compiledCacheName, $phpPayload);
+        $compiledCacheArtifact = $atomicCompiledCacheWrite->write($compiledCacheName, $phpPayload);
 
         $fingerprint = $compiledCacheSources->fingerprint();
 
         $resolveCompiledCachePath = new ResolveCompiledCachePath($this->compiledCacheDirectory);
-        $compiledCachePath        = $resolveCompiledCachePath->resolveArtifactPath($compiledCacheName);
-        $now                      = $this->clock->now();
+        $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath($compiledCacheName);
+        $now = $this->clock->now();
 
         $compiledCacheManifestEntry = CompiledCacheManifestEntry::create(
             name             : $compiledCacheName->toString(),
@@ -53,7 +53,7 @@ final readonly class CompileCache
 
         $this->compiledCacheManifest->set($compiledCacheManifestEntry);
 
-        $manifestPath               = $resolveCompiledCachePath->resolveManifestPath();
+        $manifestPath = $resolveCompiledCachePath->resolveManifestPath();
         $writeCompiledCacheManifest = new WriteCompiledCacheManifest();
         $writeCompiledCacheManifest->write($this->compiledCacheManifest, $manifestPath);
 

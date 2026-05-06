@@ -34,12 +34,12 @@ final class RedisCacheStore implements CacheStore
         private readonly string $host = '127.0.0.1',
         private readonly int $port = self::DEFAULT_PORT,
         #[SensitiveParameter]
-        private readonly string|null $connectionSecret = null,
+        private readonly ?string $connectionSecret = null,
         private readonly int $database = 0,
         private readonly float $timeout = self::DEFAULT_TIMEOUT,
         private readonly string $prefix = self::DEFAULT_PREFIX,
         private readonly Clock $clock = new SystemClock(),
-        CacheSerializer|null $cacheSerializer = null,
+        ?CacheSerializer $cacheSerializer = null,
     ) {
         if (! class_exists('Redis')) {
             throw new RuntimeException('Redis cache store requires the redis PHP extension.');
@@ -126,16 +126,16 @@ final class RedisCacheStore implements CacheStore
         $payload = $this->cacheSerializer->serialize(value: $storedCacheRecord->value);
 
         $data = [
-            'payload'          => $payload->data,
-            'format'           => $payload->format,
+            'payload' => $payload->data,
+            'format' => $payload->format,
             'payloadTimestamp' => $payload->timestamp->seconds,
-            'checksum'         => $payload->checksum,
-            'createdAt'        => $storedCacheRecord->cachedValueLifecycle->createdAt->seconds,
-            'lastAccessedAt'   => $storedCacheRecord->cachedValueLifecycle->lastAccessedAt->seconds,
-            'expiresAt'        => $storedCacheRecord->cachedValueLifecycle->expiresAt->seconds,
-            'refreshedAt'      => $storedCacheRecord->cachedValueLifecycle->refreshedAt->seconds,
-            'hitCount'         => $storedCacheRecord->cachedValueLifecycle->hitCount,
-            'refreshCount'     => $storedCacheRecord->cachedValueLifecycle->refreshCount,
+            'checksum' => $payload->checksum,
+            'createdAt' => $storedCacheRecord->cachedValueLifecycle->createdAt->seconds,
+            'lastAccessedAt' => $storedCacheRecord->cachedValueLifecycle->lastAccessedAt->seconds,
+            'expiresAt' => $storedCacheRecord->cachedValueLifecycle->expiresAt->seconds,
+            'refreshedAt' => $storedCacheRecord->cachedValueLifecycle->refreshedAt->seconds,
+            'hitCount' => $storedCacheRecord->cachedValueLifecycle->hitCount,
+            'refreshCount' => $storedCacheRecord->cachedValueLifecycle->refreshCount,
         ];
 
         $ttl = $storedCacheRecord->cachedValueLifecycle->expiresAt->seconds - $this->clock->now()->seconds;
@@ -159,7 +159,7 @@ final class RedisCacheStore implements CacheStore
     #[Override]
     public function clear(): void
     {
-        $keys = $this->callRedis('keys', $this->prefix . '*');
+        $keys = $this->callRedis('keys', $this->prefix.'*');
 
         if (! is_array($keys)) {
             return;
@@ -182,7 +182,7 @@ final class RedisCacheStore implements CacheStore
 
     private function prefixedKey(CacheKey $cacheKey): string
     {
-        return $this->prefix . $cacheKey->fullKey();
+        return $this->prefix.$cacheKey->fullKey();
     }
 
     private function callRedis(string $method, mixed ...$arguments): mixed
@@ -195,7 +195,7 @@ final class RedisCacheStore implements CacheStore
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private function deserializeLifecycle(array $data, Clock $clock): CachedValueLifecycle
     {

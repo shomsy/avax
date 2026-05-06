@@ -8,5 +8,6 @@ final readonly class DataLayerConfig
 {
     public function __construct(
         public bool $enabled = true,
-    ) {}
+    ) {
+    }
 }

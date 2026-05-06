@@ -12,7 +12,7 @@ use function count;
 final readonly class SlowPersistenceStatistics
 {
     public function __construct(
-        public int   $totalSlowOperations = 0,
+        public int $totalSlowOperations = 0,
         public float $totalDurationMs = 0.0,
         public float $averageDurationMs = 0.0,
         public float $maxDurationMs = 0.0,
@@ -20,14 +20,13 @@ final readonly class SlowPersistenceStatistics
         public array $countsByType = [],
         public array $countsByOperation = [],
         public array $countsByFingerprint = [],
-    )
-    {
+    ) {
     }
 
     /**
      * Creates statistics from a list of slow persistence reports.
      *
-     * @param list<SlowPersistenceReport> $reports
+     * @param  list<SlowPersistenceReport>  $reports
      */
     public static function fromReports(array $reports): self
     {
@@ -79,13 +78,13 @@ final readonly class SlowPersistenceStatistics
     {
         return sprintf(
             "Slow Persistence Statistics:\n"
-            . "  Total: %d\n"
-            . "  Avg: %.2fms\n"
-            . "  Max: %.2fms\n"
-            . "  Min: %.2fms\n"
-            . "  Total Duration: %.2fms\n"
-            . "  By Type: %s\n"
-            . '  By Operation: %s',
+            ."  Total: %d\n"
+            ."  Avg: %.2fms\n"
+            ."  Max: %.2fms\n"
+            ."  Min: %.2fms\n"
+            ."  Total Duration: %.2fms\n"
+            ."  By Type: %s\n"
+            .'  By Operation: %s',
             $this->totalSlowOperations,
             $this->averageDurationMs,
             $this->maxDurationMs,

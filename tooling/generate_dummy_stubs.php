@@ -1,7 +1,7 @@
 <?php
 
-$auditFile = __DIR__ . '/audit_broken_refs.php';
-exec('php ' . escapeshellarg($auditFile) . ' 2>&1 | grep "\[CRITICAL\]"', $output);
+$auditFile = __DIR__.'/audit_broken_refs.php';
+exec('php '.escapeshellarg($auditFile).' 2>&1 | grep "\[CRITICAL\]"', $output);
 
 $missingClasses = [];
 foreach ($output as $line) {
@@ -10,7 +10,7 @@ foreach ($output as $line) {
     }
 }
 
-echo "Generating stubs for " . count($missingClasses) . " critical missing classes...\n";
+echo 'Generating stubs for '.count($missingClasses)." critical missing classes...\n";
 
 foreach ($missingClasses as $classFqn) {
     // Only generate for Avax namespace
@@ -21,28 +21,28 @@ foreach ($missingClasses as $classFqn) {
     $parts = explode('\\', $classFqn);
     array_shift($parts); // Remove 'Avax'
 
-    $baseDir  = null;
+    $baseDir = null;
     $topLevel = array_shift($parts);
 
     if ($topLevel === 'Components') {
-        $baseDir = __DIR__ . '/../components/';
+        $baseDir = __DIR__.'/../components/';
     } elseif ($topLevel === 'Framework') {
-        $baseDir = __DIR__ . '/../framework/';
+        $baseDir = __DIR__.'/../framework/';
     } else {
         continue; // e.g. DataLayer, DataHandling, skip those
     }
 
     $className = array_pop($parts);
-    $path      = $baseDir . implode('/', $parts);
-    $file      = $path . '/' . $className . '.php';
+    $path = $baseDir.implode('/', $parts);
+    $file = $path.'/'.$className.'.php';
 
     if (! is_dir($path)) {
         mkdir($path, 0777, true);
     }
 
-    $namespace = "Avax\\" . $topLevel;
+    $namespace = 'Avax\\'.$topLevel;
     if (count($parts) > 0) {
-        $namespace .= "\\" . implode('\\', $parts);
+        $namespace .= '\\'.implode('\\', $parts);
     }
 
     // Guess type (interface, trait, class)

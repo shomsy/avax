@@ -10,44 +10,44 @@ use PHPUnit\Framework\TestCase;
 
 final class TimestampTest extends TestCase
 {
-    public function test_creates_from_unix_time() : void
+    public function test_creates_from_unix_time(): void
     {
         $timestamp = Timestamp::fromUnixTime(1700000000);
 
         $this->assertSame(1700000000, $timestamp->toUnixTime());
     }
 
-    public function test_calculates_difference() : void
+    public function test_calculates_difference(): void
     {
         $timestamp = Timestamp::fromUnixTime(100);
-        $b         = Timestamp::fromUnixTime(50);
+        $b = Timestamp::fromUnixTime(50);
 
         $duration = $timestamp->difference($b);
 
         $this->assertSame(50, $duration->toSeconds());
     }
 
-    public function test_adds_duration() : void
+    public function test_adds_duration(): void
     {
         $timestamp = Timestamp::fromUnixTime(100);
-        $duration  = Duration::ofSeconds(50);
+        $duration = Duration::ofSeconds(50);
 
         $result = $timestamp->add($duration);
 
         $this->assertSame(150, $result->toUnixTime());
     }
 
-    public function test_subtracts_duration() : void
+    public function test_subtracts_duration(): void
     {
         $timestamp = Timestamp::fromUnixTime(100);
-        $duration  = Duration::ofSeconds(30);
+        $duration = Duration::ofSeconds(30);
 
         $result = $timestamp->subtract($duration);
 
         $this->assertSame(70, $result->toUnixTime());
     }
 
-    public function test_compares_timestamps() : void
+    public function test_compares_timestamps(): void
     {
         $timestamp = Timestamp::fromUnixTime(timestamp: 100);
         $b = Timestamp::fromUnixTime(timestamp: 50);

@@ -9,7 +9,7 @@ use DateTimeImmutable;
 interface OidcRequestObjectStoreInterface
 {
     /**
-     * @param array<string, mixed> $claims
+     * @param  array<string, mixed>  $claims
      */
     public function store(
         string $requestUri,

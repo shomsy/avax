@@ -10,7 +10,8 @@ final readonly class RenderView
 {
     public function __construct(
         private TemplateEngineInterface $templateEngine,
-    ) {}
+    ) {
+    }
 
     public function handle(string $view, array $data = []): string
     {

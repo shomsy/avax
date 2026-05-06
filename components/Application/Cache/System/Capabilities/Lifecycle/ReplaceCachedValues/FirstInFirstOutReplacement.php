@@ -15,7 +15,7 @@ final readonly class FirstInFirstOutReplacement implements ChooseCachedValueForR
             return null;
         }
 
-        $oldest     = null;
+        $oldest = null;
         $oldestTime = PHP_INT_MAX;
 
         foreach ($entries as $key => $lifecycle) {
@@ -23,7 +23,7 @@ final readonly class FirstInFirstOutReplacement implements ChooseCachedValueForR
 
             if ($createdAt < $oldestTime) {
                 $oldestTime = $createdAt;
-                $oldest     = $key;
+                $oldest = $key;
             }
         }
 

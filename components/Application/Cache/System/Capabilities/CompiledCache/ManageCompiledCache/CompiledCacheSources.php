@@ -33,7 +33,7 @@ final class CompiledCacheSources
 
     public function add(CompiledCacheSource $compiledCacheSource): self
     {
-        $new                                      = clone $this;
+        $new = clone $this;
         $new->sources[$compiledCacheSource->path] = $compiledCacheSource;
 
         return $new;

@@ -36,14 +36,14 @@ final class ComponentRegistry
         $this->definitions[$definition->name()] = $definition;
     }
 
-    public function single(string $name, Closure $factory) : void
+    public function single(string $name, Closure $factory): void
     {
         if (! isset($this->instances[$name])) {
             $this->instances[$name] = $factory($this);
         }
     }
 
-    public function get(string $name) : mixed
+    public function get(string $name): mixed
     {
         if (! isset($this->instances[$name])) {
             throw new FrameworkMisconfigured(

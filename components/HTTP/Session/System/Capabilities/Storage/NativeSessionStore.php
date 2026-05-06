@@ -12,7 +12,7 @@ final class NativeSessionStore implements SessionStoreInterface
     /**
      * @return array<string, mixed>
      */
-    public function read(string $id) : array
+    public function read(string $id): array
     {
         $this->ensureStarted();
 
@@ -20,9 +20,9 @@ final class NativeSessionStore implements SessionStoreInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
-    public function write(string $id, array $data) : bool
+    public function write(string $id, array $data): bool
     {
         $this->ensureStarted();
 
@@ -31,7 +31,7 @@ final class NativeSessionStore implements SessionStoreInterface
         return true;
     }
 
-    public function destroy(string $id) : bool
+    public function destroy(string $id): bool
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
             $_SESSION = [];
@@ -50,7 +50,7 @@ final class NativeSessionStore implements SessionStoreInterface
         return false;
     }
 
-    private function ensureStarted() : void
+    private function ensureStarted(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

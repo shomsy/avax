@@ -32,8 +32,8 @@ final class TransactionScope
     private bool $completed = false;
 
     /**
-     * @param TransactionsInterface $transactionManager The active technical authority responsible for atomicity and
-     *                                             persistence.
+     * @param  TransactionsInterface  $transactionManager  The active technical authority responsible for atomicity and
+     *                                                     persistence.
      */
     public function __construct(private readonly TransactionsInterface $transactionManager)
     {

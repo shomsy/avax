@@ -14,7 +14,8 @@ final readonly class HashRegisteredPassword
 {
     public function __construct(
         private PasswordHasher $passwordHasher,
-    ) {}
+    ) {
+    }
 
     public function execute(string $password): string
     {

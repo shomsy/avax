@@ -14,7 +14,7 @@ final class SliceContext
     public const string ROOT = 'root';
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
     public static function with(array $context, string $slice): array
@@ -31,15 +31,15 @@ final class SliceContext
         return $context;
     }
 
-    public static function normalize(string $slice) : string
+    public static function normalize(string $slice): string
     {
         return trim(string: $slice);
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    public static function from(array $context) : string
+    public static function from(array $context): string
     {
         $slice = $context[self::KEY] ?? '';
 
@@ -53,18 +53,18 @@ final class SliceContext
         return $normalized === self::ROOT || $normalized === 'root.composition';
     }
 
-    public static function defaultVisibility(string $slice) : string
+    public static function defaultVisibility(string $slice): string
     {
         return match (self::category(slice: $slice)) {
             RegistrationCategory::FLOW => RegistrationVisibility::PRIVATE,
             RegistrationCategory::CAPABILITY,
             RegistrationCategory::CONFIGURATION,
             RegistrationCategory::FOUNDATION => RegistrationVisibility::INTERNAL,
-            default                          => RegistrationVisibility::PUBLIC,
+            default => RegistrationVisibility::PUBLIC,
         };
     }
 
-    public static function category(string $slice) : string
+    public static function category(string $slice): string
     {
         $normalized = self::normalize(slice: $slice);
 

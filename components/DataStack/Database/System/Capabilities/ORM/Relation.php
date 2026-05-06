@@ -15,7 +15,8 @@ abstract class Relation
         protected string $related,
         protected string $foreignKey,
         protected string $localKey,
-    ) {}
+    ) {
+    }
 
     abstract public function getResults(): mixed;
 }
@@ -23,16 +24,15 @@ abstract class Relation
 final class HasMany extends Relation
 {
     /**
-     * @param (Closure(string, string, string, string): array)|null $loader
+     * @param  (Closure(string, string, string, string): array)|null  $loader
      */
     public function __construct(
-        string               $parent,
-        string               $related,
-        string               $foreignKey,
-        string               $localKey,
-        private readonly Closure|null $loader = null,
-    )
-    {
+        string $parent,
+        string $related,
+        string $foreignKey,
+        string $localKey,
+        private readonly ?Closure $loader = null,
+    ) {
         parent::__construct(parent: $parent, related: $related, foreignKey: $foreignKey, localKey: $localKey);
     }
 

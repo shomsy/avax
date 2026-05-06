@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecyc
 
 enum LifecycleState: string
 {
-    case ACTIVE    = 'active';
+    case ACTIVE = 'active';
     case SUSPENDED = 'suspended';
     case DEPROVISIONED = 'deprovisioned';
 }

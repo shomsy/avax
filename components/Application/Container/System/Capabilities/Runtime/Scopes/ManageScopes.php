@@ -13,13 +13,15 @@ use Override;
  */
 final readonly class ManageScopes implements ScopeInterface
 {
-    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ?ResolutionMetrics $resolutionMetrics = null) {}
+    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ?ResolutionMetrics $resolutionMetrics = null)
+    {
+    }
 
     /**
      * Stores one shared instance.
      */
     #[Override]
-    public function instance(string $abstract, mixed $instance) : void
+    public function instance(string $abstract, mixed $instance): void
     {
         $this->dependencyPool->set(abstract: $abstract, instance: $instance);
     }
@@ -28,7 +30,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Stores one scoped instance.
      */
     #[Override]
-    public function set(string $abstract, mixed $instance) : void
+    public function set(string $abstract, mixed $instance): void
     {
         $this->scopeStore->set(abstract: $abstract, instance: $instance);
     }
@@ -37,7 +39,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Runs one callback inside a temporary active scope.
      */
     #[Override]
-    public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = '') : mixed
+    public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = ''): mixed
     {
         $this->openScope(kind: $kind, scopeId: $scopeId);
 
@@ -52,7 +54,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Opens one new scope layer.
      */
     #[Override]
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void
+    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void
     {
         $this->scopeStore->open(kind: $kind, scopeId: $scopeId);
         $this->resolutionMetrics?->increment(name: 'container_scope_open_total');
@@ -62,7 +64,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Closes the current scope layer.
      */
     #[Override]
-    public function closeScope(?string $kind = null) : void
+    public function closeScope(?string $kind = null): void
     {
         $frame = $this->scopeStore->close(kind: $kind);
         foreach ($frame['pooled'] as $serviceId => $options) {
@@ -96,7 +98,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Clears all shared and scoped runtime state.
      */
     #[Override]
-    public function terminate() : void
+    public function terminate(): void
     {
         $shared = $this->dependencyPool->drain();
         $this->disposeInstances?->disposeMany(instances: $shared['items'], disposable: $shared['disposable']);
@@ -146,21 +148,21 @@ final readonly class ManageScopes implements ScopeInterface
      *     frames: array<int, array{kind: string, id: string, services: list<string>, pooledServices: list<string>}>
      * }
      */
-    public function snapshot() : array
+    public function snapshot(): array
     {
         $snapshot = $this->scopeStore->snapshot();
 
         return [
-            'shared'      => $this->dependencyPool->snapshot(),
-            'scoped'      => $snapshot['scoped'],
-            'pooled'      => $snapshot['pooled'],
+            'shared' => $this->dependencyPool->snapshot(),
+            'scoped' => $snapshot['scoped'],
+            'pooled' => $snapshot['pooled'],
             'pooledAvailable' => $this->dependencyPool->pooledSnapshot(),
             'pooledStats' => $this->dependencyPool->pooledStats(),
-            'frames'      => $snapshot['frames'],
+            'frames' => $snapshot['frames'],
         ];
     }
 
-    public function hasShared(string $abstract) : bool
+    public function hasShared(string $abstract): bool
     {
         return $this->dependencyPool->has(abstract: $abstract);
     }
@@ -169,7 +171,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Returns whether one instance is available in shared or scoped storage.
      */
     #[Override]
-    public function has(string $abstract) : bool
+    public function has(string $abstract): bool
     {
         if ($this->scopeStore->has(abstract: $abstract)) {
             return true;
@@ -178,7 +180,7 @@ final readonly class ManageScopes implements ScopeInterface
         return $this->dependencyPool->has(abstract: $abstract);
     }
 
-    public function getShared(string $abstract) : mixed
+    public function getShared(string $abstract): mixed
     {
         return $this->dependencyPool->get(abstract: $abstract);
     }
@@ -187,7 +189,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Reads one shared or scoped instance.
      */
     #[Override]
-    public function get(string $abstract) : mixed
+    public function get(string $abstract): mixed
     {
         if ($this->scopeStore->has(abstract: $abstract)) {
             return $this->scopeStore->get(abstract: $abstract);
@@ -196,23 +198,22 @@ final readonly class ManageScopes implements ScopeInterface
         return $this->dependencyPool->get(abstract: $abstract);
     }
 
-    public function hasScoped(string $abstract, string $kind = ScopeKind::ANY) : bool
+    public function hasScoped(string $abstract, string $kind = ScopeKind::ANY): bool
     {
         return $this->scopeStore->hasFor(abstract: $abstract, kind: $kind);
     }
 
-    public function getScoped(string $abstract, string $kind = ScopeKind::ANY) : mixed
+    public function getScoped(string $abstract, string $kind = ScopeKind::ANY): mixed
     {
         return $this->scopeStore->getFor(abstract: $abstract, kind: $kind);
     }
 
     public function setScoped(
         string $abstract,
-        mixed  $instance,
+        mixed $instance,
         ?string $kind = null,
-        bool   $disposable = false,
-    ) : void
-    {
+        bool $disposable = false,
+    ): void {
         $kind ??= ScopeKind::ANY;
         $this->scopeStore->setFor(
             abstract  : $abstract,
@@ -222,7 +223,7 @@ final readonly class ManageScopes implements ScopeInterface
         );
     }
 
-    public function setShared(string $abstract, mixed $instance, bool $disposable = false) : void
+    public function setShared(string $abstract, mixed $instance, bool $disposable = false): void
     {
         $this->dependencyPool->set(abstract: $abstract, instance: $instance, disposable: $disposable);
     }
@@ -233,11 +234,10 @@ final readonly class ManageScopes implements ScopeInterface
     public function checkoutPooled(
         string $abstract,
         string $kind,
-        int  $maxSize,
+        int $maxSize,
         ?bool $resetBeforeReuse = null,
         bool $disposable = false,
-    ) : array
-    {
+    ): array {
         $resetBeforeReuse ??= true;
         if ($this->scopeStore->hasPooledFor(abstract: $abstract, kind: $kind)) {
             return [
@@ -263,12 +263,12 @@ final readonly class ManageScopes implements ScopeInterface
         return $checkedOut;
     }
 
-    public function hasPooled(string $abstract, string $kind) : bool
+    public function hasPooled(string $abstract, string $kind): bool
     {
         return $this->scopeStore->hasPooledFor(abstract: $abstract, kind: $kind);
     }
 
-    public function getPooled(string $abstract, string $kind) : mixed
+    public function getPooled(string $abstract, string $kind): mixed
     {
         return $this->scopeStore->getFor(abstract: $abstract, kind: $kind);
     }
@@ -277,11 +277,10 @@ final readonly class ManageScopes implements ScopeInterface
         string $abstract,
         mixed $instance,
         string $kind,
-        int  $maxSize,
+        int $maxSize,
         ?bool $resetBeforeReuse = null,
         bool $disposable = false,
-    ) : void
-    {
+    ): void {
         $resetBeforeReuse ??= true;
         $this->scopeStore->setPooledFor(
             abstract        : $abstract,
@@ -293,7 +292,7 @@ final readonly class ManageScopes implements ScopeInterface
         );
     }
 
-    public function hasActiveScope(string $kind = ScopeKind::ANY) : bool
+    public function hasActiveScope(string $kind = ScopeKind::ANY): bool
     {
         return $this->scopeStore->hasActive(kind: $kind);
     }

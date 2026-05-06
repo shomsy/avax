@@ -19,7 +19,7 @@ final class CacheCluster
         int $virtualNodes = 150,
         int $failureThreshold = 3,
     ) {
-        $this->consistentHashRing       = new ConsistentHashRing(virtualNodes: $virtualNodes);
+        $this->consistentHashRing = new ConsistentHashRing(virtualNodes: $virtualNodes);
         $this->detectUnhealthyCacheNode = new DetectUnhealthyCacheNode(failureThreshold: $failureThreshold);
     }
 

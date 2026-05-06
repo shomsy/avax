@@ -12,18 +12,19 @@ use Random\RandomException;
 
 enum SagaInstanceStatus: string
 {
-    case PENDING     = 'pending';
-    case RUNNING     = 'running';
-    case COMPLETED   = 'completed';
+    case PENDING = 'pending';
+    case RUNNING = 'running';
+    case COMPLETED = 'completed';
     case COMPENSATING = 'compensating';
     case COMPENSATED = 'compensated';
-    case FAILED      = 'failed';
-    case TIMEOUT     = 'timeout';
+    case FAILED = 'failed';
+    case TIMEOUT = 'timeout';
 }
 
 final readonly class SagaInstance
 {
-    private function __construct(public string $id, public string $definitionName, public string $type, public SagaInstanceStatus $status, public int $currentStepIndex, public ?string $currentStepName, public array $data, public array $completedSteps, public array $stepResults, public ?DateTimeImmutable $startedAt, public ?DateTimeImmutable $completedAt, public ?DateTimeImmutable $timeoutAt, public ?string $correlationId, public ?string $tenantId) {
+    private function __construct(public string $id, public string $definitionName, public string $type, public SagaInstanceStatus $status, public int $currentStepIndex, public ?string $currentStepName, public array $data, public array $completedSteps, public array $stepResults, public ?DateTimeImmutable $startedAt, public ?DateTimeImmutable $completedAt, public ?DateTimeImmutable $timeoutAt, public ?string $correlationId, public ?string $tenantId)
+    {
     }
 
     /**
@@ -227,20 +228,20 @@ final readonly class SagaInstance
     public function toArray(): array
     {
         return [
-            'id'                => $this->id,
-            'definition_name'   => $this->definitionName,
-            'type'              => $this->type,
-            'status'            => $this->status->value,
+            'id' => $this->id,
+            'definition_name' => $this->definitionName,
+            'type' => $this->type,
+            'status' => $this->status->value,
             'current_step_index' => $this->currentStepIndex,
             'current_step_name' => $this->currentStepName,
-            'data'              => $this->data,
-            'completed_steps'   => $this->completedSteps,
-            'step_results'      => $this->stepResults,
-            'started_at'        => $this->startedAt?->format(format: DateTimeInterface::ISO8601),
-            'completed_at'      => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
-            'timeout_at'        => $this->timeoutAt?->format(format: DateTimeInterface::ISO8601),
-            'correlation_id'    => $this->correlationId,
-            'tenant_id'         => $this->tenantId,
+            'data' => $this->data,
+            'completed_steps' => $this->completedSteps,
+            'step_results' => $this->stepResults,
+            'started_at' => $this->startedAt?->format(format: DateTimeInterface::ISO8601),
+            'completed_at' => $this->completedAt?->format(format: DateTimeInterface::ISO8601),
+            'timeout_at' => $this->timeoutAt?->format(format: DateTimeInterface::ISO8601),
+            'correlation_id' => $this->correlationId,
+            'tenant_id' => $this->tenantId,
         ];
     }
 }

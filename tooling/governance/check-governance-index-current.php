@@ -3,8 +3,8 @@
 
 declare(strict_types=1);
 
-$root      = dirname(__DIR__, 2);
-$agentsDir = $root . '/.agents';
+$root = dirname(__DIR__, 2);
+$agentsDir = $root.'/.agents';
 
 $requiredDocs = [
     'how-to-architecture.md',
@@ -25,14 +25,14 @@ $requiredDocs = [
 $violations = [];
 
 foreach ($requiredDocs as $doc) {
-    $path = $agentsDir . '/how-to/' . $doc;
+    $path = $agentsDir.'/how-to/'.$doc;
     if (! file_exists($path)) {
         $violations[] = "Missing: $path";
     }
 }
 
-$indexPath          = $agentsDir . '/GOVERNANCE_INDEX.md';
-$enforcementMapPath = $agentsDir . '/GOVERNANCE_ENFORCEMENT_MAP.md';
+$indexPath = $agentsDir.'/GOVERNANCE_INDEX.md';
+$enforcementMapPath = $agentsDir.'/GOVERNANCE_ENFORCEMENT_MAP.md';
 
 $optionalDocs = [
     $indexPath,

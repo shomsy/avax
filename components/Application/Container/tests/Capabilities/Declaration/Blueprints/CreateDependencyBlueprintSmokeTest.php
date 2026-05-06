@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, levels: 3) . '/bootstrap.php';
+require_once dirname(path: __DIR__, levels: 3).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\BlueprintCache;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
@@ -30,14 +30,14 @@ final class CreateDependencyBlueprintSmokeTest
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-blueprint-' . uniqid();
-$version  = 'blueprint-smoke';
-$factory  = new CreateDependencyBlueprint(
+$cacheDir = sys_get_temp_dir().'/container-blueprint-'.uniqid();
+$version = 'blueprint-smoke';
+$factory = new CreateDependencyBlueprint(
     cache       : new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
     dependencies: new ResolveDependencies(),
 );
-$first    = $factory->createFor(class: BlueprintTarget::class);
-$second   = $factory->createFor(class: BlueprintTarget::class);
+$first = $factory->createFor(class: BlueprintTarget::class);
+$second = $factory->createFor(class: BlueprintTarget::class);
 $reloaded = new CreateDependencyBlueprint(
     cache       : new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
     dependencies: new ResolveDependencies(),
@@ -54,6 +54,6 @@ assertSame(expected: 'property', actual: $first->injectableProperties[0]['name']
 assertSame(expected: stdClass::class, actual: $first->injectableProperties[0]['serviceId'], message: 'Compiled property metadata should keep the dependency id.');
 assertSame(expected: 'wire', actual: $first->injectableMethods[0]['name'], message: 'Compiled method metadata should keep the method name.');
 assertInstanceOf(expectedClass: ResolvePlan::class, value: $first->injectableMethods[0]['plan'], message: 'Compiled method metadata should keep a resolve plan.');
-assertTrue(condition: is_file(filename: $cacheDir . '/container/' . rawurlencode(string: $version) . '/blueprints/' . sha1(string: BlueprintTarget::class) . '.php'), message: 'Blueprint cache should write a compiled artifact to disk.');
+assertTrue(condition: is_file(filename: $cacheDir.'/container/'.rawurlencode(string: $version).'/blueprints/'.sha1(string: BlueprintTarget::class).'.php'), message: 'Blueprint cache should write a compiled artifact to disk.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

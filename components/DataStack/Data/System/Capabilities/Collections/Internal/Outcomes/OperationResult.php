@@ -13,7 +13,8 @@ final readonly class OperationResult
         public bool $success,
         public mixed $data = null,
         public ?string $error = null,
-    ) {}
+    ) {
+    }
 
     public static function success(mixed $data = null): self
     {

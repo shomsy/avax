@@ -37,7 +37,7 @@ final readonly class BeginPasswordReset
     /**
      * @throws DateMalformedStringException
      */
-    public function execute(BeginPasswordResetData $beginPasswordResetData) : PasswordResetChallenge
+    public function execute(BeginPasswordResetData $beginPasswordResetData): PasswordResetChallenge
     {
         $throttleKey = $this->throttleKey(email: $beginPasswordResetData->email, ipAddress: $beginPasswordResetData->ipAddress);
 
@@ -48,10 +48,10 @@ final readonly class BeginPasswordReset
                 name      : 'auth.password_reset.throttled',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'email'       => strtolower(string: $beginPasswordResetData->email),
-                                'ip_address'  => $beginPasswordResetData->ipAddress,
-                                'user_agent'  => $beginPasswordResetData->userAgent,
-                                'retry_after' => $attemptThrottleExceeded->retryAfter(),
+                    'email' => strtolower(string: $beginPasswordResetData->email),
+                    'ip_address' => $beginPasswordResetData->ipAddress,
+                    'user_agent' => $beginPasswordResetData->userAgent,
+                    'retry_after' => $attemptThrottleExceeded->retryAfter(),
                 ],
             ));
 
@@ -66,10 +66,10 @@ final readonly class BeginPasswordReset
                 name      : 'auth.password_reset.requested',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'email'      => strtolower(string: $beginPasswordResetData->email),
+                    'email' => strtolower(string: $beginPasswordResetData->email),
                     'dispatched' => false,
-                                'ip_address' => $beginPasswordResetData->ipAddress,
-                                'user_agent' => $beginPasswordResetData->userAgent,
+                    'ip_address' => $beginPasswordResetData->ipAddress,
+                    'user_agent' => $beginPasswordResetData->userAgent,
                 ],
             ));
 
@@ -85,10 +85,10 @@ final readonly class BeginPasswordReset
             name      : 'auth.password_reset.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id' => $user->getId()->value,
+                'user_id' => $user->getId()->value,
                 'dispatched' => true,
-                            'ip_address' => $beginPasswordResetData->ipAddress,
-                            'user_agent' => $beginPasswordResetData->userAgent,
+                'ip_address' => $beginPasswordResetData->ipAddress,
+                'user_agent' => $beginPasswordResetData->userAgent,
             ],
         ));
 
@@ -100,9 +100,9 @@ final readonly class BeginPasswordReset
         $normalizedEmail = strtolower(string: trim(string: $email));
 
         if ($ipAddress === null || $ipAddress === '') {
-            return 'password_reset:' . $normalizedEmail;
+            return 'password_reset:'.$normalizedEmail;
         }
 
-        return 'password_reset:' . $normalizedEmail . '|' . trim(string: $ipAddress);
+        return 'password_reset:'.$normalizedEmail.'|'.trim(string: $ipAddress);
     }
 }

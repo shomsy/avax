@@ -14,19 +14,18 @@ use Throwable;
 final class ValidationException extends RuntimeException
 {
     public function __construct(
-        string    $message,
-        int       $code = 422,
+        string $message,
+        int $code = 422,
         ?Throwable $throwable = null,
         private readonly array $metadata = [],
-    )
-    {
+    ) {
         parent::__construct(message: $message, code: $code, previous: $throwable);
     }
 
     /**
      * Retrieves metadata related to the validation error.
      */
-    public function getMetadata() : array
+    public function getMetadata(): array
     {
         return $this->metadata;
     }
@@ -34,11 +33,11 @@ final class ValidationException extends RuntimeException
     /**
      * Converts the exception into a detailed array representation.
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return [
             'message' => $this->getMessage(),
-            'code'   => $this->getCode(),
+            'code' => $this->getCode(),
             'errors' => $this->getErrors(),
         ];
     }
@@ -46,7 +45,7 @@ final class ValidationException extends RuntimeException
     /**
      * Retrieves the validation errors from metadata.
      */
-    public function getErrors() : array
+    public function getErrors(): array
     {
         return $this->metadata['errors'] ?? $this->metadata;
     }

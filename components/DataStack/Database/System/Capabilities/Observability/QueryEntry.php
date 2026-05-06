@@ -12,31 +12,29 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Observability;
 final readonly class QueryEntry
 {
     public function __construct(
-        public string  $sql,
-        public array   $bindings = [],
-        public float   $timestamp = 0.0,
-        public float   $durationMs = 0.0,
-        public string  $type = 'unknown',
-        public string  $connection = '',
-        public int     $affectedRows = 0,
+        public string $sql,
+        public array $bindings = [],
+        public float $timestamp = 0.0,
+        public float $durationMs = 0.0,
+        public string $type = 'unknown',
+        public string $connection = '',
+        public int $affectedRows = 0,
         public ?string $error = null,
-    )
-    {
+    ) {
     }
 
     /**
      * Creates a QueryEntry with the current timestamp.
      */
     public static function create(
-        string  $sql,
-        array   $bindings = [],
-        float   $durationMs = 0.0,
-        string  $type = 'unknown',
-        string  $connection = '',
-        int     $affectedRows = 0,
+        string $sql,
+        array $bindings = [],
+        float $durationMs = 0.0,
+        string $type = 'unknown',
+        string $connection = '',
+        int $affectedRows = 0,
         ?string $error = null,
-    ): self
-    {
+    ): self {
         return new self(
             sql: $sql,
             bindings: $bindings,
@@ -63,14 +61,14 @@ final readonly class QueryEntry
     public function formattedDuration(): string
     {
         if ($this->durationMs < 1) {
-            return number_format($this->durationMs * 1000, 2) . 'μs';
+            return number_format($this->durationMs * 1000, 2).'μs';
         }
 
         if ($this->durationMs < 1000) {
-            return number_format($this->durationMs, 2) . 'ms';
+            return number_format($this->durationMs, 2).'ms';
         }
 
-        return number_format($this->durationMs / 1000, 2) . 's';
+        return number_format($this->durationMs / 1000, 2).'s';
     }
 
     /**

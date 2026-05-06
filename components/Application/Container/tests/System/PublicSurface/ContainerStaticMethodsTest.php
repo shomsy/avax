@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\tests\System\PublicSurface;
 
-use Avax\Components\Application\Container\System\Foundation\DIContainer;
 use Avax\Components\Application\Container\System\Container as ContainerStatic;
+use Avax\Components\Application\Container\System\Foundation\DIContainer;
 use Avax\Tests\TestCase;
 use DateTime;
 use RuntimeException;

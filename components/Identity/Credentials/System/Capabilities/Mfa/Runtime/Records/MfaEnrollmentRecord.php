@@ -24,7 +24,8 @@ final readonly class MfaEnrollmentRecord
         public string $secret,
         public DateTimeImmutable $startedAt,
         public DateTimeImmutable $expiresAt,
-    ) {}
+    ) {
+    }
 
     public function isExpiredAt(DateTimeImmutable $moment): bool
     {

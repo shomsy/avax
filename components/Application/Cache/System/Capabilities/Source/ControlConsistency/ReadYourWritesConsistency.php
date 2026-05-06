@@ -7,18 +7,19 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Source\ControlCo
 final class ReadYourWritesConsistency
 {
     /**
-     * @param array<string, int> $writtenKeys
+     * @param  array<string, int>  $writtenKeys
      */
     public function __construct(
         private array $writtenKeys = [],
-    ) {}
+    ) {
+    }
 
-    public function recordWrite(string $key, int $timestamp) : void
+    public function recordWrite(string $key, int $timestamp): void
     {
         $this->writtenKeys[$key] = $timestamp;
     }
 
-    public function isConsistent(string $key, int $currentTimestamp) : bool
+    public function isConsistent(string $key, int $currentTimestamp): bool
     {
         if (! isset($this->writtenKeys[$key])) {
             return true;
@@ -29,7 +30,7 @@ final class ReadYourWritesConsistency
         return $writeTimestamp <= $currentTimestamp;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->writtenKeys = [];
     }

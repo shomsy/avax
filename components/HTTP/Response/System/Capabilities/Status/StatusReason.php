@@ -8,9 +8,10 @@ final readonly class StatusReason
 {
     public function __construct(
         private string $reason,
-    ) {}
+    ) {
+    }
 
-    public function toString() : string
+    public function toString(): string
     {
         return $this->reason;
     }

@@ -2,35 +2,57 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\ContainerInterface;
 
-final class PolicyAndStructureDiffSmokeTest {}
+final class PolicyAndStructureDiffSmokeTest
+{
+}
 
-final class PolicyDependencyB {}
+final class PolicyDependencyB
+{
+}
 
-final class PolicyDependencyC {}
+final class PolicyDependencyC
+{
+}
 
-final class PolicyDependencyD {}
+final class PolicyDependencyD
+{
+}
 
-final class PolicyDependencyE {}
+final class PolicyDependencyE
+{
+}
 
-final class PolicyDependencyF {}
+final class PolicyDependencyF
+{
+}
 
-final readonly class OverInjectedPolicyService {}
+final readonly class OverInjectedPolicyService
+{
+}
 
-final class OtherFlowLocal {}
+final class OtherFlowLocal
+{
+}
 
 final class FlowToFlowEntry
 {
-    public function __construct(public OtherFlowLocal $otherFlowLocal) {}
+    public function __construct(public OtherFlowLocal $otherFlowLocal)
+    {
+    }
 }
 
-final class GenericHelperService {}
+final class GenericHelperService
+{
+}
 
-final class StructureDiffService {}
+final class StructureDiffService
+{
+}
 
 final class LocatorDriftService
 {
@@ -42,8 +64,8 @@ final class LocatorDriftService
     }
 }
 
-$cacheDir     = sys_get_temp_dir() . '/container-policy-diff-' . uniqid(prefix: '', more_entropy: true);
-$config       = CreateContainerConfig::create(cacheDir: $cacheDir);
+$cacheDir = sys_get_temp_dir().'/container-policy-diff-'.uniqid(prefix: '', more_entropy: true);
+$config = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer(config: $config);
 
 $container->bind(abstract: PolicyDependencyA::class, concrete: PolicyDependencyA::class);
@@ -83,18 +105,18 @@ $container->singleton(abstract: StructureDiffService::class, concrete: Structure
     ->asPublic()
     ->concept(concept: 'structure.diff');
 
-$graph        = $container->debugGraph();
+$graph = $container->debugGraph();
 $serviceGraph = $container->debugGraph(id: StructureDiffService::class);
-$issues       = implode(separator: "\n", array: $container->validate(serviceIds: [
-                                                                                     OverInjectedPolicyService::class,
-                                                                                     FlowToFlowEntry::class,
-                                                                                     GenericHelperService::class,
-                                                                                     StructureDiffService::class,
-                                                                                     LocatorDriftService::class,
-                                                                                 ]));
+$issues = implode(separator: "\n", array: $container->validate(serviceIds: [
+    OverInjectedPolicyService::class,
+    FlowToFlowEntry::class,
+    GenericHelperService::class,
+    StructureDiffService::class,
+    LocatorDriftService::class,
+]));
 
 $overInjectedCodes = array_column(array: $graph['policyFindings'][OverInjectedPolicyService::class] ?? [], column_key: 'code');
-$flowCodes    = array_column(array: $graph['policyFindings'][FlowToFlowEntry::class] ?? [], column_key: 'code');
+$flowCodes = array_column(array: $graph['policyFindings'][FlowToFlowEntry::class] ?? [], column_key: 'code');
 $genericCodes = array_column(array: $graph['policyFindings'][GenericHelperService::class] ?? [], column_key: 'code');
 $locatorCodes = array_column(array: $graph['policyFindings'][LocatorDriftService::class] ?? [], column_key: 'code');
 
@@ -113,4 +135,4 @@ assertTrue(
 
 rmdir(directory: $cacheDir);
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

@@ -35,12 +35,13 @@ final readonly class ConfirmMfaRecovery
         #[SensitiveParameter]
         private ?CurrentAuthentication $currentAuthentication = null,
         private ?IdentityInterface $identity = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws MfaRecoveryFailed
      */
-    public function execute(ConfirmMfaRecoveryData $confirmMfaRecoveryData) : void
+    public function execute(ConfirmMfaRecoveryData $confirmMfaRecoveryData): void
     {
         $tokenHash = $this->hash(token: $confirmMfaRecoveryData->token);
         $record = $this->mfaStore->findRecovery(tokenHash: $tokenHash);
@@ -75,9 +76,9 @@ final readonly class ConfirmMfaRecovery
             name      : 'auth.mfa.recovery.used',
             occurredAt: $now,
             context   : [
-                            'user_id' => $record->userId->value,
-                            'ip_address' => $confirmMfaRecoveryData->ipAddress,
-                            'user_agent' => $confirmMfaRecoveryData->userAgent,
+                'user_id' => $record->userId->value,
+                'ip_address' => $confirmMfaRecoveryData->ipAddress,
+                'user_agent' => $confirmMfaRecoveryData->userAgent,
             ],
         ));
         $this->auditLog->record(event: new AuditEvent(

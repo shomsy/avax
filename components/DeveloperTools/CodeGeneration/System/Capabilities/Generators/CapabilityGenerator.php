@@ -15,9 +15,8 @@ class CapabilityGenerator extends CodeGenerator
     /**
      * Generate a capability class file.
      *
-     * @param string $name Capability name (e.g. "RegisterUser" or "SendWelcomeMail")
-     * @param array  $data Additional data (e.g. ['methods' => ['create', 'update']])
-     *
+     * @param  string  $name  Capability name (e.g. "RegisterUser" or "SendWelcomeMail")
+     * @param  array  $data  Additional data (e.g. ['methods' => ['create', 'update']])
      * @return string The generated file path
      */
     #[Override]
@@ -31,7 +30,7 @@ class CapabilityGenerator extends CodeGenerator
 
         $subDir = $data['subDir'] ?? 'Capabilities';
         $namespace = $this->getNamespace($subDir);
-        $methods   = $data['methods'] ?? [];
+        $methods = $data['methods'] ?? [];
 
         $stub = $this->buildStub($className, $namespace, $methods);
         $path = $this->getFilePath($className, $subDir);

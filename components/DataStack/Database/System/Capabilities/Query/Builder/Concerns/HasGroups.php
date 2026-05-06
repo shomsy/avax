@@ -22,20 +22,19 @@ trait HasGroups
      *
      * @see /docs/Foundation/Database/DSL/Grouping.md#groupby
      *
-     * @param string|array ...$columns A variable list of field names or arrays of names to group by.
-     *
+     * @param  string|array  ...$columns  A variable list of field names or arrays of names to group by.
      * @return QueryBuilder A
-     *                                fresh,
-     *                                cloned
-     *                                builder
-     *                                instance
-     *                                with
-     *                                the
-     *                                grouping
-     *                                criteria
-     *                                applied.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      with
+     *                      the
+     *                      grouping
+     *                      criteria
+     *                      applied.
      */
-    public function groupBy(string|array ...$columns) : QueryBuilder
+    public function groupBy(string|array ...$columns): QueryBuilder
     {
         $clone = clone $this;
         $groups = $this->state->groups;
@@ -54,23 +53,22 @@ trait HasGroups
      *
      * @see /docs/Foundation/Database/DSL/Grouping.md#having
      *
-     * @param string $column   The technical column name or aggregate function expression to filter.
-     * @param string $operator The SQL comparison operator (e.g., '=', '>', '<').
-     * @param mixed  $value    The comparison target value, which will be safely parameterized.
-     * @param string $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
-     *
+     * @param  string  $column  The technical column name or aggregate function expression to filter.
+     * @param  string  $operator  The SQL comparison operator (e.g., '=', '>', '<').
+     * @param  mixed  $value  The comparison target value, which will be safely parameterized.
+     * @param  string  $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
      * @return QueryBuilder A
-     *                                fresh,
-     *                                cloned
-     *                                builder
-     *                                instance
-     *                                with
-     *                                the
-     *                                aggregate
-     *                                filter
-     *                                applied.
+     *                      fresh,
+     *                      cloned
+     *                      builder
+     *                      instance
+     *                      with
+     *                      the
+     *                      aggregate
+     *                      filter
+     *                      applied.
      */
-    public function having(string $column, string $operator, mixed $value, string $boolean = 'AND') : QueryBuilder
+    public function having(string $column, string $operator, mixed $value, string $boolean = 'AND'): QueryBuilder
     {
         $clone = clone $this;
         $clone->state = $clone->state->addHaving(having: ['column' => $column, 'operator' => $operator, 'value' => $value, 'boolean' => $boolean]);

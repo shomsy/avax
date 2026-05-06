@@ -12,7 +12,7 @@ final class WebSocketServer
     /** @var array<string, array<string, true>> */
     private static array $channels = [];
 
-    public static function disconnect(string $connectionId) : void
+    public static function disconnect(string $connectionId): void
     {
         $channel = self::$connections[$connectionId]['channel'] ?? null;
 
@@ -23,7 +23,7 @@ final class WebSocketServer
         unset(self::$connections[$connectionId]);
     }
 
-    public static function subscribe(string $connectionId, string $channel) : void
+    public static function subscribe(string $connectionId, string $channel): void
     {
         if (! isset(self::$connections[$connectionId])) {
             self::connect(connectionId: $connectionId, channel: $channel);
@@ -37,18 +37,18 @@ final class WebSocketServer
         self::$channels[$channel][$connectionId] = true;
     }
 
-    public static function connect(string $connectionId, string $channel = 'default') : void
+    public static function connect(string $connectionId, string $channel = 'default'): void
     {
         self::$connections[$connectionId] = [
-            'id'       => $connectionId,
-            'channel'  => $channel,
+            'id' => $connectionId,
+            'channel' => $channel,
             'joined_at' => time(),
             'messages' => [],
         ];
         self::$channels[$channel][$connectionId] = true;
     }
 
-    public static function broadcast(string $channel, string|BroadcastMessage $message) : int
+    public static function broadcast(string $channel, string|BroadcastMessage $message): int
     {
         $sent = 0;
 
@@ -61,7 +61,7 @@ final class WebSocketServer
         return $sent;
     }
 
-    public static function send(string $connectionId, string|BroadcastMessage $message) : bool
+    public static function send(string $connectionId, string|BroadcastMessage $message): bool
     {
         if (! isset(self::$connections[$connectionId])) {
             return false;
@@ -72,22 +72,22 @@ final class WebSocketServer
         return true;
     }
 
-    public static function toChannel(string $channel) : ChannelBroadcaster
+    public static function toChannel(string $channel): ChannelBroadcaster
     {
         return new ChannelBroadcaster(channel: $channel);
     }
 
-    public static function toUser(int|string $userId) : UserBroadcaster
+    public static function toUser(int|string $userId): UserBroadcaster
     {
         return new UserBroadcaster(userId: $userId);
     }
 
-    public static function clientScript(string $endpoint = '/ws') : string
+    public static function clientScript(string $endpoint = '/ws'): string
     {
         return WebSocketClientScript::forEndpoint(endpoint: $endpoint);
     }
 
-    public static function connections(?string $channel = null) : array
+    public static function connections(?string $channel = null): array
     {
         if ($channel === null) {
             return array_keys(array: self::$connections);
@@ -96,12 +96,12 @@ final class WebSocketServer
         return array_keys(array: self::$channels[$channel] ?? []);
     }
 
-    public static function messages(string $connectionId) : array
+    public static function messages(string $connectionId): array
     {
         return self::$connections[$connectionId]['messages'] ?? [];
     }
 
-    public static function reset() : void
+    public static function reset(): void
     {
         self::$connections = [];
         self::$channels = [];

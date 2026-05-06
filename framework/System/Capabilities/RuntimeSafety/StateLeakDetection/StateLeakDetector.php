@@ -30,7 +30,7 @@ final class StateLeakDetector
         $this->registerDefaultChecks();
     }
 
-    private function registerDefaultChecks() : void
+    private function registerDefaultChecks(): void
     {
         $this->addCheck('static_mutation', $this->detectStaticMutation(...));
         $this->addCheck('singleton_leaks', $this->detectSingletonLeaks(...));
@@ -40,9 +40,9 @@ final class StateLeakDetector
      * Add a custom leak check.
      */
     /**
-     * @param callable(): mixed $check
+     * @param  callable(): mixed  $check
      */
-    public function addCheck(string $name, callable $check) : self
+    public function addCheck(string $name, callable $check): self
     {
         $this->leakChecks[$name] = $check;
 
@@ -54,7 +54,7 @@ final class StateLeakDetector
      *
      * @return list<RuntimeSafetyFinding>
      */
-    public function detect() : array
+    public function detect(): array
     {
         $findings = [];
 
@@ -77,7 +77,7 @@ final class StateLeakDetector
      *
      * @return list<RuntimeSafetyFinding>
      */
-    private function detectStaticMutation() : array
+    private function detectStaticMutation(): array
     {
         $findings = [];
         $declaredClasses = get_declared_classes();
@@ -100,14 +100,14 @@ final class StateLeakDetector
                         severity   : RuntimeSafetyFinding::SEVERITY_WARNING,
                         component  : $declaredClass,
                         message    : sprintf(
-                                         'Class %s has mutable static property $%s that may leak between requests',
-                                         $declaredClass,
-                                         $property->getName(),
-                                     ),
+                            'Class %s has mutable static property $%s that may leak between requests',
+                            $declaredClass,
+                            $property->getName(),
+                        ),
                         remediation: sprintf(
-                                         'Make $%s readonly or add a reset hook for worker mode',
-                                         $property->getName(),
-                                     ),
+                            'Make $%s readonly or add a reset hook for worker mode',
+                            $property->getName(),
+                        ),
                         location   : $this->propertyLocation(reflectionProperty: $property),
                     );
                 }
@@ -122,7 +122,7 @@ final class StateLeakDetector
      *
      * @return list<RuntimeSafetyFinding>
      */
-    private function detectSingletonLeaks() : array
+    private function detectSingletonLeaks(): array
     {
         $findings = [];
 
@@ -151,15 +151,15 @@ final class StateLeakDetector
                                 severity   : RuntimeSafetyFinding::SEVERITY_CRITICAL,
                                 component  : $abstract,
                                 message    : sprintf(
-                                                 'Singleton %s holds request-local data in $%s',
-                                                 $abstract,
-                                                 $propertyName,
-                                             ),
+                                    'Singleton %s holds request-local data in $%s',
+                                    $abstract,
+                                    $propertyName,
+                                ),
                                 remediation: sprintf(
-                                                 'Implement ResettableState on %s and clear $%s in reset()',
-                                                 $abstract,
-                                                 $propertyName,
-                                             ),
+                                    'Implement ResettableState on %s and clear $%s in reset()',
+                                    $abstract,
+                                    $propertyName,
+                                ),
                             );
                         }
                     }
@@ -170,12 +170,12 @@ final class StateLeakDetector
         return $findings;
     }
 
-    private function propertyLocation(ReflectionProperty $reflectionProperty) : string
+    private function propertyLocation(ReflectionProperty $reflectionProperty): string
     {
         $reflectionClass = $reflectionProperty->getDeclaringClass();
-        $file            = $reflectionClass->getFileName();
-        $line            = $reflectionClass->getStartLine();
+        $file = $reflectionClass->getFileName();
+        $line = $reflectionClass->getStartLine();
 
-        return ($file !== false ? $file : $reflectionClass->getName()) . ':' . $line;
+        return ($file !== false ? $file : $reflectionClass->getName()).':'.$line;
     }
 }

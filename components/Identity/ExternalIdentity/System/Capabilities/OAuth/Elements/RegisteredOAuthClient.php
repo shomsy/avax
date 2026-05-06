@@ -15,5 +15,6 @@ final readonly class RegisteredOAuthClient
         public OAuthClient $client,
         #[SensitiveParameter]
         public ?string $plainTextSecret = null,
-    ) {}
+    ) {
+    }
 }

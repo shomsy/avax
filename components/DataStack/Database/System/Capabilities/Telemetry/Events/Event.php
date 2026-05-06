@@ -22,12 +22,12 @@ abstract readonly class Event
     public int $sequence;
 
     /**
-     * @param string $correlationId The Trace ID representing the active work context.
+     * @param  string  $correlationId  The Trace ID representing the active work context.
      */
     public function __construct(public string $correlationId)
     {
         $this->timestamp = microtime(as_float: true);
-        $this->sequence  = SequenceTracker::next();
+        $this->sequence = SequenceTracker::next();
     }
 
     /**

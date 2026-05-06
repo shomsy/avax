@@ -10,12 +10,13 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Start
 final readonly class SagaStartCommand
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function __construct(
         public string $definitionName,
         public array $payload = [],
         public ?string $commandKey = null,
         public ?string $correlationId = null,
-    ) {}
+    ) {
+    }
 }

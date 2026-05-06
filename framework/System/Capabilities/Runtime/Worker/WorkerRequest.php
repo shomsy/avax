@@ -18,12 +18,12 @@ final readonly class WorkerRequest
         }
     }
 
-    public function id() : string
+    public function id(): string
     {
         return $this->id;
     }
 
-    public function request() : RuntimeRequest
+    public function request(): RuntimeRequest
     {
         return $this->runtimeRequest;
     }

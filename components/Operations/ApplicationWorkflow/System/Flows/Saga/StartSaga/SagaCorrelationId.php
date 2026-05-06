@@ -9,5 +9,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Start
  */
 final readonly class SagaCorrelationId
 {
-    public function __construct(public string $value) {}
+    public function __construct(public string $value)
+    {
+    }
 }

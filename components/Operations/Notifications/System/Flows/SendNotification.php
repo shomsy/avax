@@ -16,19 +16,19 @@ final class SendNotification
     /** @var array<string, NotificationChannel> */
     private array $channels = [];
 
-    public function registerChannel(NotificationChannel $notificationChannel) : self
+    public function registerChannel(NotificationChannel $notificationChannel): self
     {
         $this->channels[$notificationChannel->name()] = $notificationChannel;
 
         return $this;
     }
 
-    public function hasChannel(string $name) : bool
+    public function hasChannel(string $name): bool
     {
         return isset($this->channels[$name]);
     }
 
-    public function sendTo(mixed $notifiable, Notification $notification, ?string $channel = null) : void
+    public function sendTo(mixed $notifiable, Notification $notification, ?string $channel = null): void
     {
         $channels = $channel !== null ? [$channel] : $notification->via();
 
@@ -41,7 +41,7 @@ final class SendNotification
         }
     }
 
-    public function sendToMany(array $notifiables, Notification $notification, ?string $channel = null) : void
+    public function sendToMany(array $notifiables, Notification $notification, ?string $channel = null): void
     {
         foreach ($notifiables as $notifiable) {
             $this->sendTo($notifiable, $notification, $channel);

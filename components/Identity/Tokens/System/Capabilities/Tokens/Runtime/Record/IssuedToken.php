@@ -15,5 +15,6 @@ final readonly class IssuedToken
         #[SensitiveParameter]
         public string $tokenId,
         public DateTimeImmutable $expiresAt,
-    ) {}
+    ) {
+    }
 }

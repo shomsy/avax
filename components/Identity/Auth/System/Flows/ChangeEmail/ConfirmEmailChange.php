@@ -21,7 +21,7 @@ use SensitiveParameter;
 final readonly class ConfirmEmailChange
 {
     public function __construct(
-        private ProvisionableUserSourceInterface     $provisionableUserSource,
+        private ProvisionableUserSourceInterface $provisionableUserSource,
         #[SensitiveParameter]
         private EmailChangeStoreInterface $emailChangeStore,
         #[SensitiveParameter]
@@ -36,24 +36,25 @@ final readonly class ConfirmEmailChange
         private ?MfaChallengeStoreInterface $mfaChallengeStore = null,
         #[SensitiveParameter]
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws EmailChangeFailed
      */
-    public function execute(ConfirmEmailChangeData $confirmEmailChangeData) : bool
+    public function execute(ConfirmEmailChangeData $confirmEmailChangeData): bool
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $record                = $this->emailChangeStore->consume(token: $confirmEmailChangeData->token, now: $this->clock->now());
+        $record = $this->emailChangeStore->consume(token: $confirmEmailChangeData->token, now: $this->clock->now());
 
         if (! $record instanceof EmailChangeRecord) {
             $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.email_change.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
-                                'reason' => 'invalid_token',
-                                'ip_address' => $confirmEmailChangeData->ipAddress,
-                                'user_agent' => $confirmEmailChangeData->userAgent,
+                    'reason' => 'invalid_token',
+                    'ip_address' => $confirmEmailChangeData->ipAddress,
+                    'user_agent' => $confirmEmailChangeData->userAgent,
                 ],
             ));
 
@@ -83,10 +84,10 @@ final readonly class ConfirmEmailChange
             name      : 'auth.email_change.completed',
             occurredAt: $this->clock->now(),
             context   : [
-                            'user_id'   => $record->userId->value,
-                            'new_email' => $record->newEmail,
-                            'ip_address' => $confirmEmailChangeData->ipAddress,
-                            'user_agent' => $confirmEmailChangeData->userAgent,
+                'user_id' => $record->userId->value,
+                'new_email' => $record->newEmail,
+                'ip_address' => $confirmEmailChangeData->ipAddress,
+                'user_agent' => $confirmEmailChangeData->userAgent,
             ],
         ));
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
@@ -36,9 +36,9 @@ final class FreshnessConsumer
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-freshness-' . uniqid();
-$version  = 'compiled-freshness-smoke';
-$config   = CreateContainerConfig::create(
+$cacheDir = sys_get_temp_dir().'/container-freshness-'.uniqid();
+$version = 'compiled-freshness-smoke';
+$config = CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,
     compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
@@ -51,8 +51,8 @@ $compiled->compileContainer(serviceIds: [FreshnessConsumer::class, FreshnessDepe
 $reloaded = makeTestContainer(config: $config);
 $reloaded->singleton(abstract: FreshnessDependencyContract::class, concrete: FreshnessDependencyV2::class);
 
-$report   = $reloaded->compileReport(serviceIds: [FreshnessConsumer::class, FreshnessDependencyContract::class]);
-$debug    = $reloaded->debugService(id: FreshnessDependencyContract::class);
+$report = $reloaded->compileReport(serviceIds: [FreshnessConsumer::class, FreshnessDependencyContract::class]);
+$debug = $reloaded->debugService(id: FreshnessDependencyContract::class);
 $resolved = $reloaded->get(id: FreshnessConsumer::class);
 
 assertTrue(condition: $report !== null, message: 'Freshness checks should still expose compile reports.');
@@ -72,4 +72,4 @@ assertSame(
 );
 assertSame(expected: 'v2', actual: $resolved->dependency->version(), message: 'Runtime should resolve the fresh dynamic graph after signature drift.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

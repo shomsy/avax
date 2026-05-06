@@ -31,7 +31,7 @@ use PhpParser\ParserFactory;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
 $baseDir = dirname(__DIR__);
 $parser = new ParserFactory()->createForNewestSupportedVersion();
@@ -40,11 +40,11 @@ $externalPrefixes = loadExternalPrefixes($baseDir);
 /** @var list<string> $phpFiles */
 $phpFiles = [];
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir)) as $file) {
-    if (!$file instanceof SplFileInfo) {
+    if (! $file instanceof SplFileInfo) {
         continue;
     }
 
-    if (!$file->isFile()) {
+    if (! $file->isFile()) {
         continue;
     }
 
@@ -53,11 +53,11 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir))
     }
 
     $path = $file->getPathname();
-    if (str_contains((string)$path, '/vendor/')) {
+    if (str_contains((string) $path, '/vendor/')) {
         continue;
     }
 
-    if (str_contains((string)$path, '/audit_broken_refs.php')) {
+    if (str_contains((string) $path, '/audit_broken_refs.php')) {
         continue;
     }
 
@@ -72,7 +72,7 @@ echo "PASS 1: Parsing {$total} files for definitions...\n";
 
 foreach ($phpFiles as $idx => $path) {
     if (($idx + 1) % 500 === 0) {
-        echo '  ' . ($idx + 1) . sprintf(' / %d%s', $total, PHP_EOL);
+        echo '  '.($idx + 1).sprintf(' / %d%s', $total, PHP_EOL);
     }
 
     try {
@@ -86,7 +86,7 @@ foreach ($phpFiles as $idx => $path) {
         continue;
     }
 
-    if (!$stmts) {
+    if (! $stmts) {
         continue;
     }
 
@@ -96,21 +96,21 @@ foreach ($phpFiles as $idx => $path) {
             $ns = $stmt->name instanceof Name ? $stmt->name->toString() : '';
             foreach ($stmt->stmts as $inner) {
                 if ($inner instanceof ClassLike && isset($inner->name)) {
-                    $fqn = $ns !== '' && $ns !== '0' ? $ns . '\\' . $inner->name->toString() : $inner->name->toString();
+                    $fqn = $ns !== '' && $ns !== '0' ? $ns.'\\'.$inner->name->toString() : $inner->name->toString();
                     $defined[$fqn] = $path;
                 }
             }
         } elseif ($stmt instanceof ClassLike && isset($stmt->name)) {
-            $fqn = $ns !== '' && $ns !== '0' ? $ns . '\\' . $stmt->name->toString() : $stmt->name->toString();
+            $fqn = $ns !== '' && $ns !== '0' ? $ns.'\\'.$stmt->name->toString() : $stmt->name->toString();
             $defined[$fqn] = $path;
         }
     }
 }
 
-echo 'PASS 1 done. Defined: ' . count($defined) . "\n";
+echo 'PASS 1 done. Defined: '.count($defined)."\n";
 
 /**
- * @param array<string, string> $uses
+ * @param  array<string, string>  $uses
  */
 function resolveName(Name $name, string $ns, array $uses): string
 {
@@ -132,7 +132,7 @@ function resolveName(Name $name, string $ns, array $uses): string
         return implode('\\', $parts);
     }
 
-    return $ns !== '' && $ns !== '0' ? $ns . '\\' . $nameStr : $nameStr;
+    return $ns !== '' && $ns !== '0' ? $ns.'\\'.$nameStr : $nameStr;
 }
 
 function isBuiltin(string $name): bool
@@ -146,22 +146,22 @@ function isBuiltin(string $name): bool
 function loadExternalPrefixes(string $baseDir): array
 {
     $prefixes = ['Psr\\'];
-    $autoloadPsr4 = $baseDir . '/vendor/composer/autoload_psr4.php';
-    $autoloadNamespaced = $baseDir . '/vendor/composer/autoload_namespaces.php';
-    $autoloadClassmap = $baseDir . '/vendor/composer/autoload_classmap.php';
+    $autoloadPsr4 = $baseDir.'/vendor/composer/autoload_psr4.php';
+    $autoloadNamespaced = $baseDir.'/vendor/composer/autoload_namespaces.php';
+    $autoloadClassmap = $baseDir.'/vendor/composer/autoload_classmap.php';
 
     foreach ([$autoloadPsr4, $autoloadNamespaced] as $autoloadFile) {
-        if (!is_file($autoloadFile)) {
+        if (! is_file($autoloadFile)) {
             continue;
         }
 
         $loaded = require $autoloadFile;
-        if (!is_array($loaded)) {
+        if (! is_array($loaded)) {
             continue;
         }
 
         foreach (array_keys($loaded) as $prefix) {
-            if (is_string($prefix) && $prefix !== '' && !str_starts_with($prefix, 'Avax\\')) {
+            if (is_string($prefix) && $prefix !== '' && ! str_starts_with($prefix, 'Avax\\')) {
                 $prefixes[] = $prefix;
             }
         }
@@ -171,7 +171,7 @@ function loadExternalPrefixes(string $baseDir): array
         $loaded = require $autoloadClassmap;
         if (is_array($loaded)) {
             foreach (array_keys($loaded) as $className) {
-                if (!is_string($className)) {
+                if (! is_string($className)) {
                     continue;
                 }
 
@@ -189,7 +189,7 @@ function loadExternalPrefixes(string $baseDir): array
 
                 $parts = explode('\\', $className);
                 if (count($parts) > 1) {
-                    $prefixes[] = $parts[0] . '\\';
+                    $prefixes[] = $parts[0].'\\';
                 }
             }
         }
@@ -199,9 +199,9 @@ function loadExternalPrefixes(string $baseDir): array
 }
 
 /**
- * @param array<string, string> $defined
- * @param list<string> $externalPrefixes
- * @param array<string, list<array{file: string, context: string, line: int}>> $references
+ * @param  array<string, string>  $defined
+ * @param  list<string>  $externalPrefixes
+ * @param  array<string, list<array{file: string, context: string, line: int}>>  $references
  */
 function addRef(string $fqn, string $file, string $ctx, int $line, array &$references, array $defined, array $externalPrefixes): void
 {
@@ -229,7 +229,7 @@ function addRef(string $fqn, string $file, string $ctx, int $line, array &$refer
         }
     }
 
-    if (!str_contains($fqn, '\\')) {
+    if (! str_contains($fqn, '\\')) {
         $globals = ['arrayiterator', 'runtimeexception', 'invalidargumentexception', 'logicexception', 'exception', 'throwable', 'datetime', 'datetimeimmutable', 'dateinterval', 'closure', 'generator', 'arrayobject', 'splfileinfo', 'splfileobject', 'countable', 'iterator', 'iteratoraggregate', 'arrayaccess', 'serializable', 'jsonserializable', 'traversable', 'seekableiterator', 'recursiveiterator', 'pdostatement', 'pdoexception', 'reflectionclass', 'reflectionfunction', 'reflectionmethod', 'reflectionproperty', 'reflectionparameter', 'reflector', 'phpunit_framework_testcase', 'testcase'];
         if (in_array(strtolower($fqn), $globals, true)) {
             return;
@@ -240,14 +240,14 @@ function addRef(string $fqn, string $file, string $ctx, int $line, array &$refer
 }
 
 /**
- * @param array<string, string> $uses
- * @param array<string, list<array{file: string, context: string, line: int}>> $references
- * @param array<string, string> $defined
- * @param list<string> $externalPrefixes
+ * @param  array<string, string>  $uses
+ * @param  array<string, list<array{file: string, context: string, line: int}>>  $references
+ * @param  array<string, string>  $defined
+ * @param  list<string>  $externalPrefixes
  */
 function processType(?Node $node, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined, array $externalPrefixes): void
 {
-    if (!$node instanceof Node) {
+    if (! $node instanceof Node) {
         return;
     }
 
@@ -273,9 +273,9 @@ class RefVisitor extends NodeVisitorAbstract
     private array $references;
 
     /**
-     * @param array<string, string> $defined
-     * @param list<string> $externalPrefixes
-     * @param array<string, list<array{file: string, context: string, line: int}>> $references
+     * @param  array<string, string>  $defined
+     * @param  list<string>  $externalPrefixes
+     * @param  array<string, list<array{file: string, context: string, line: int}>>  $references
      */
     public function __construct(private readonly string $file, private readonly array $defined, private readonly array $externalPrefixes, array &$references)
     {
@@ -299,7 +299,7 @@ class RefVisitor extends NodeVisitorAbstract
             if ($node->type === Use_::TYPE_NORMAL) {
                 $prefix = $node->prefix->toString();
                 foreach ($node->uses as $use) {
-                    $fqn = $prefix . '\\' . $use->name->toString();
+                    $fqn = $prefix.'\\'.$use->name->toString();
                     $alias = $use->getAlias()->toString();
                     $this->uses[$alias] = $fqn;
                     $this->add($fqn, 'use-statement', $node->getStartLine());
@@ -411,7 +411,7 @@ echo "PASS 2: Parsing {$total} files for references...\n";
 
 foreach ($phpFiles as $idx => $path) {
     if (($idx + 1) % 500 === 0) {
-        echo '  ' . ($idx + 1) . sprintf(' / %d%s', $total, PHP_EOL);
+        echo '  '.($idx + 1).sprintf(' / %d%s', $total, PHP_EOL);
     }
 
     try {
@@ -425,7 +425,7 @@ foreach ($phpFiles as $idx => $path) {
         continue;
     }
 
-    if (!$stmts) {
+    if (! $stmts) {
         continue;
     }
 
@@ -435,14 +435,14 @@ foreach ($phpFiles as $idx => $path) {
 }
 
 // compat.php array-style aliases
-$compatPath = $baseDir . '/components/compat.php';
+$compatPath = $baseDir.'/components/compat.php';
 if (file_exists($compatPath)) {
     $src = file_get_contents($compatPath);
     if ($src !== false && preg_match_all('/[\'"]([^\'"]+)[\'"]\s*=>\s*[\'"]([^\'"]+)[\'"]/', $src, $m)) {
         $counter = count($m[1]);
         for ($k = 0; $k < $counter; $k++) {
             $target = trim($m[2][$k], '\\');
-            if (!isset($defined[$target])) {
+            if (! isset($defined[$target])) {
                 addRef($target, $compatPath, 'class_alias target', 0, $references, $defined, $externalPrefixes);
             }
         }
@@ -454,8 +454,8 @@ foreach ($references as $fqn => $refs) {
     $seen = [];
     $uniq = [];
     foreach ($refs as $ref) {
-        $k = $ref['file'] . '|' . $ref['context'] . '|' . $ref['line'];
-        if (!isset($seen[$k])) {
+        $k = $ref['file'].'|'.$ref['context'].'|'.$ref['line'];
+        if (! isset($seen[$k])) {
             $seen[$k] = true;
             $uniq[] = $ref;
         }
@@ -469,7 +469,7 @@ ksort($references);
 echo "\n=== BROKEN REFERENCES AUDIT REPORT ===\n\n";
 $severityCounts = ['CRITICAL' => 0, 'MINOR' => 0];
 foreach ($references as $fqn => $refs) {
-    $isCritical = array_any($refs, fn($r): bool => in_array($r['context'], ['extends', 'implements', 'class_alias target', 'catch', 'constructor-param', 'new']));
+    $isCritical = array_any($refs, fn ($r): bool => in_array($r['context'], ['extends', 'implements', 'class_alias target', 'catch', 'constructor-param', 'new']));
 
     $severity = $isCritical ? 'CRITICAL' : 'MINOR';
     $severityCounts[$severity]++;
@@ -482,7 +482,7 @@ foreach ($references as $fqn => $refs) {
 }
 
 echo "=== SUMMARY ===\n";
-echo 'Defined: ' . count($defined) . "\n";
-echo 'Missing: ' . count($references) . "\n";
-echo '  CRITICAL: ' . $severityCounts['CRITICAL'] . "\n";
-echo '  MINOR: ' . $severityCounts['MINOR'] . "\n";
+echo 'Defined: '.count($defined)."\n";
+echo 'Missing: '.count($references)."\n";
+echo '  CRITICAL: '.$severityCounts['CRITICAL']."\n";
+echo '  MINOR: '.$severityCounts['MINOR']."\n";

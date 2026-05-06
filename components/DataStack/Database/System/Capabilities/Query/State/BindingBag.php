@@ -12,9 +12,10 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Query\State;
 final readonly class BindingBag
 {
     /**
-     * @param array<array-key, mixed> $values The internal storage for raw, sanitized query parameters.
+     * @param  array<array-key, mixed>  $values  The internal storage for raw, sanitized query parameters.
      */
-    public function __construct(private array $values = []) {
+    public function __construct(private array $values = [])
+    {
     }
 
     /**

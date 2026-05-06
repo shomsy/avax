@@ -16,12 +16,12 @@ final class RuntimeContext implements ResettableState
 
     private ?RuntimeResult $runtimeResult = null;
 
-    public function hasActiveRequest() : bool
+    public function hasActiveRequest(): bool
     {
         return $this->runtimeRequest instanceof RuntimeRequest;
     }
 
-    public function startRequest(RequestScopeId $requestScopeId, RuntimeRequest $runtimeRequest) : void
+    public function startRequest(RequestScopeId $requestScopeId, RuntimeRequest $runtimeRequest): void
     {
         if ($this->hasActiveRequest()) {
             throw new FrameworkMisconfigured(message: 'Runtime context already has an active request.');
@@ -31,37 +31,37 @@ final class RuntimeContext implements ResettableState
         $this->runtimeRequest = $runtimeRequest;
     }
 
-    public function finishRequest(RuntimeResult $runtimeResult) : void
+    public function finishRequest(RuntimeResult $runtimeResult): void
     {
-        $this->runtimeResult  = $runtimeResult;
+        $this->runtimeResult = $runtimeResult;
         $this->runtimeRequest = null;
         $this->requestScopeId = null;
     }
 
-    public function recordResult(RuntimeResult $result) : void
+    public function recordResult(RuntimeResult $result): void
     {
         $this->runtimeResult = $result;
     }
 
-    public function currentRequest() : ?RuntimeRequest
+    public function currentRequest(): ?RuntimeRequest
     {
         return $this->runtimeRequest;
     }
 
-    public function currentScopeId() : ?RequestScopeId
+    public function currentScopeId(): ?RequestScopeId
     {
         return $this->requestScopeId;
     }
 
-    public function lastResult() : ?RuntimeResult
+    public function lastResult(): ?RuntimeResult
     {
         return $this->runtimeResult;
     }
 
-    public function resetState() : void
+    public function resetState(): void
     {
         $this->runtimeRequest = null;
         $this->requestScopeId = null;
-        $this->runtimeResult  = null;
+        $this->runtimeResult = null;
     }
 }

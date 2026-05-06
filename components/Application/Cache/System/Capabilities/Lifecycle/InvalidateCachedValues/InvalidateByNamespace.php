@@ -8,7 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 
 interface InvalidateByNamespace
 {
-    public function invalidateNamespace(CacheNamespace $cacheNamespace) : int;
+    public function invalidateNamespace(CacheNamespace $cacheNamespace): int;
 
-    public function isNamespaceInvalidated(CacheNamespace $cacheNamespace) : bool;
+    public function isNamespaceInvalidated(CacheNamespace $cacheNamespace): bool;
 }

@@ -34,14 +34,15 @@ final readonly class ExchangeRefreshToken
         private JwtIdentityInterface $jwtIdentity,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private ?DeterministicRiskEngine     $deterministicRiskEngine = null,
-    ) {}
+        private ?DeterministicRiskEngine $deterministicRiskEngine = null,
+    ) {
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
      * @throws DateMalformedStringException
      */
-    public function execute(ExchangeRefreshTokenData $exchangeRefreshTokenData) : OAuthTokenGrant
+    public function execute(ExchangeRefreshTokenData $exchangeRefreshTokenData): OAuthTokenGrant
     {
         $now = $this->clock->now();
         $client = $this->oAuthClientRegistry->find(clientId: $exchangeRefreshTokenData->clientId);
@@ -83,8 +84,8 @@ final readonly class ExchangeRefreshToken
                 name      : 'auth.oauth.refresh.review.opened',
                 occurredAt: $now,
                 context   : [
-                                'user_id'   => $record->userId->value,
-                                'client_id' => $record->clientId,
+                    'user_id' => $record->userId->value,
+                    'client_id' => $record->clientId,
                     'risk_action' => $riskDecision?->action->value,
                 ],
             ));
@@ -102,7 +103,7 @@ final readonly class ExchangeRefreshToken
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
-        $issuedToken        = $this->jwtIdentity->issue(
+        $issuedToken = $this->jwtIdentity->issue(
             user                : $user,
             phishingResistant   : $record->phishingResistant,
             scopes              : $record->scopes,
@@ -127,12 +128,12 @@ final readonly class ExchangeRefreshToken
             name      : 'auth.oauth.refresh.exchanged',
             occurredAt: $now,
             context   : [
-                            'client_id' => $client->clientId,
-                            'user_id'   => $user->getId()->value,
-                            'family_id'  => $issuedRefreshToken->familyId,
-                            'scope'     => implode(separator: ' ', array: $record->scopes),
-                            'ip_address' => $exchangeRefreshTokenData->ipAddress,
-                            'user_agent' => $exchangeRefreshTokenData->userAgent,
+                'client_id' => $client->clientId,
+                'user_id' => $user->getId()->value,
+                'family_id' => $issuedRefreshToken->familyId,
+                'scope' => implode(separator: ' ', array: $record->scopes),
+                'ip_address' => $exchangeRefreshTokenData->ipAddress,
+                'user_agent' => $exchangeRefreshTokenData->userAgent,
             ],
         ));
 
@@ -162,10 +163,10 @@ final readonly class ExchangeRefreshToken
             name      : $name,
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'  => $exchangeRefreshTokenData->clientId,
-                            'reason'    => $reason,
-                            'ip_address' => $exchangeRefreshTokenData->ipAddress,
-                            'user_agent' => $exchangeRefreshTokenData->userAgent,
+                'client_id' => $exchangeRefreshTokenData->clientId,
+                'reason' => $reason,
+                'ip_address' => $exchangeRefreshTokenData->ipAddress,
+                'user_agent' => $exchangeRefreshTokenData->userAgent,
             ],
         ));
     }

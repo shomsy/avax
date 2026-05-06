@@ -12,8 +12,7 @@ final readonly class ValidationFailure
     /** @param array<string, list<string>> $errors */
     public function __construct(
         public array $errors = [],
-    )
-    {
+    ) {
     }
 
     public function fails(): bool

@@ -73,7 +73,7 @@ final class ShardedPool
         );
 
         foreach ($this->pools as $pool) {
-            $stats      = $pool->stats();
+            $stats = $pool->stats();
             $totalStats = new PoolStats(
                 totalConnections : $totalStats->totalConnections + $stats->totalConnections,
                 activeConnections: $totalStats->activeConnections + $stats->activeConnections,
@@ -83,6 +83,6 @@ final class ShardedPool
             );
         }
 
-        return ['total' => $totalStats, 'shards' => array_map(callback: static fn (ConnectionPoolInterface $connectionPool) : PoolStats => $connectionPool->stats(), array: $this->pools)];
+        return ['total' => $totalStats, 'shards' => array_map(callback: static fn (ConnectionPoolInterface $connectionPool): PoolStats => $connectionPool->stats(), array: $this->pools)];
     }
 }

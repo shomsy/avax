@@ -10,7 +10,9 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\S
 
 final readonly class ExecuteSagaStep
 {
-    public function __construct(private object $stepRunner) {}
+    public function __construct(private object $stepRunner)
+    {
+    }
 
     public function execute(
         SagaStepDefinition $sagaStepDefinition,
@@ -26,7 +28,7 @@ final readonly class ExecuteSagaStep
 
         return [
             'success' => true,
-            'output'  => is_array($result) ? $result : ['result' => $result],
+            'output' => is_array($result) ? $result : ['result' => $result],
             'duration_ms' => $duration,
         ];
     }
@@ -49,11 +51,13 @@ final readonly class ExecuteSagaStep
 
 final readonly class LoadSagaInstance
 {
-    public function __construct(private object $store) {}
+    public function __construct(private object $store)
+    {
+    }
 
     public function load(string $sagaId): ?SagaInstance
     {
-        $data = $this->store->get('saga_' . $sagaId);
+        $data = $this->store->get('saga_'.$sagaId);
         if ($data === null) {
             return null;
         }
@@ -63,13 +67,15 @@ final readonly class LoadSagaInstance
 
     public function exists(string $sagaId): bool
     {
-        return $this->store->get('saga_' . $sagaId) !== null;
+        return $this->store->get('saga_'.$sagaId) !== null;
     }
 }
 
 final readonly class RecordSagaStepCompleted
 {
-    public function __construct(private object $store, private object $inspect) {}
+    public function __construct(private object $store, private object $inspect)
+    {
+    }
 
     public function record(
         SagaInstance $sagaInstance,
@@ -82,7 +88,7 @@ final readonly class RecordSagaStepCompleted
             result   : $result,
         );
 
-        $this->store->set('saga_' . $sagaInstance->id, $sagaInstance->toArray());
+        $this->store->set('saga_'.$sagaInstance->id, $sagaInstance->toArray());
 
         $this->inspect->record(
             SagaRuntimeEvent::stepCompleted(
@@ -97,7 +103,9 @@ final readonly class RecordSagaStepCompleted
 
 final readonly class RecordSagaStepFailed
 {
-    public function __construct(private object $store, private object $inspect) {}
+    public function __construct(private object $store, private object $inspect)
+    {
+    }
 
     public function record(
         SagaInstance $sagaInstance,
@@ -106,7 +114,7 @@ final readonly class RecordSagaStepFailed
     ): void {
         $sagaInstance = $sagaInstance->fail(error: $error);
 
-        $this->store->set('saga_' . $sagaInstance->id, $sagaInstance->toArray());
+        $this->store->set('saga_'.$sagaInstance->id, $sagaInstance->toArray());
 
         $this->inspect->record(
             SagaRuntimeEvent::stepFailed(

@@ -8,7 +8,6 @@ final readonly class ApplicationConfig
 {
     public function __construct(
         public string $environment = 'production',
-    )
-    {
+    ) {
     }
 }

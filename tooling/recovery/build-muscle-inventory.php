@@ -39,13 +39,13 @@ final class MuscleInventoryBuilder
     }
 
     /**
-     * @param array<string, string> $dumpSources
-     * @param list<string> $gitRefs
+     * @param  array<string, string>  $dumpSources
+     * @param  list<string>  $gitRefs
      */
     public function build(array $dumpSources, array $gitRefs): void
     {
         foreach ($dumpSources as $sourceName => $path) {
-            $this->readDumpSource($sourceName, $this->repoRoot . '/' . $path);
+            $this->readDumpSource($sourceName, $this->repoRoot.'/'.$path);
         }
 
         foreach ($gitRefs as $ref) {
@@ -57,22 +57,22 @@ final class MuscleInventoryBuilder
         $this->writeJson();
         $this->writeMarkdown();
 
-        echo 'Recovery muscle inventory records: ' . count($this->records) . PHP_EOL;
-        echo 'Markdown: ' . $this->markdownOut . PHP_EOL;
-        echo 'JSON: ' . $this->jsonOut . PHP_EOL;
+        echo 'Recovery muscle inventory records: '.count($this->records).PHP_EOL;
+        echo 'Markdown: '.$this->markdownOut.PHP_EOL;
+        echo 'JSON: '.$this->jsonOut.PHP_EOL;
     }
 
     private function readDumpSource(string $sourceName, string $path): void
     {
-        if (!is_file($path)) {
-            $this->skippedSources[] = $sourceName . ' missing at ' . $path;
+        if (! is_file($path)) {
+            $this->skippedSources[] = $sourceName.' missing at '.$path;
 
             return;
         }
 
         $handle = fopen($path, 'rb');
         if ($handle === false) {
-            $this->skippedSources[] = $sourceName . ' unreadable at ' . $path;
+            $this->skippedSources[] = $sourceName.' unreadable at '.$path;
 
             return;
         }
@@ -98,7 +98,7 @@ final class MuscleInventoryBuilder
 
             if ($currentPath !== null) {
                 $content .= $line;
-                ++$lineCount;
+                $lineCount++;
             }
         }
 
@@ -111,14 +111,14 @@ final class MuscleInventoryBuilder
 
     private function recordDumpEntry(string $sourceName, string $oldPath, string $content, int $lineCount): void
     {
-        $recordKey = $sourceName . "\0" . $oldPath . "\0" . sha1($content);
+        $recordKey = $sourceName."\0".$oldPath."\0".sha1($content);
         if (isset($this->seenRecordKeys[$recordKey])) {
             return;
         }
 
         $analysis = $this->analyzeEntry($sourceName, $oldPath, $content, $lineCount, 'dump');
 
-        if (!$analysis['meaningful']) {
+        if (! $analysis['meaningful']) {
             return;
         }
 
@@ -135,8 +135,8 @@ final class MuscleInventoryBuilder
     private function readGitRef(string $ref): void
     {
         $snapshotExists = $this->gitSnapshotExists($ref);
-        if (!$snapshotExists && !$this->gitRefExists($ref)) {
-            $this->skippedSources[] = 'git ref missing: ' . $ref;
+        if (! $snapshotExists && ! $this->gitRefExists($ref)) {
+            $this->skippedSources[] = 'git ref missing: '.$ref;
 
             return;
         }
@@ -151,19 +151,19 @@ final class MuscleInventoryBuilder
         }
 
         foreach ($paths as $path) {
-            $recordKey = 'git:' . $ref . "\0" . $path;
+            $recordKey = 'git:'.$ref."\0".$path;
             if (isset($this->seenRecordKeys[$recordKey])) {
                 continue;
             }
 
-            $analysis = $this->analyzeEntry('git:' . $ref, $path, '', 0, 'git-ref');
-            if (!$analysis['meaningful']) {
+            $analysis = $this->analyzeEntry('git:'.$ref, $path, '', 0, 'git-ref');
+            if (! $analysis['meaningful']) {
                 continue;
             }
 
             $this->seenRecordKeys[$recordKey] = true;
-            $this->sourceMeaningfulCounts['git:' . $ref] = ($this->sourceMeaningfulCounts['git:' . $ref] ?? 0) + 1;
-            $analysis['old_path'] = 'git:' . $ref . ':' . $path;
+            $this->sourceMeaningfulCounts['git:'.$ref] = ($this->sourceMeaningfulCounts['git:'.$ref] ?? 0) + 1;
+            $analysis['old_path'] = 'git:'.$ref.':'.$path;
             $analysis['behavior_summary'] = 'Path-level signal from local Git ref; content must be inspected before restore.';
             $analysis['tests_found'] = $analysis['is_test'] ? 'yes (git path)' : 'unknown from path-only inventory';
             $this->records[] = $analysis;
@@ -275,7 +275,7 @@ final class MuscleInventoryBuilder
 
     private function isReportLike(string $lowerPath, string $extension): bool
     {
-        if (!in_array($extension, ['md', 'txt'], true)) {
+        if (! in_array($extension, ['md', 'txt'], true)) {
             return false;
         }
 
@@ -664,7 +664,7 @@ final class MuscleInventoryBuilder
     }
 
     /**
-     * @param list<string> $symbols
+     * @param  list<string>  $symbols
      */
     private function classifyAction(
         string $targetVersion,
@@ -715,7 +715,7 @@ final class MuscleInventoryBuilder
     }
 
     /**
-     * @param list<string> $symbols
+     * @param  list<string>  $symbols
      */
     private function classifyOldShape(string $lowerPath, array $symbols, int $lineCount): string
     {
@@ -745,8 +745,8 @@ final class MuscleInventoryBuilder
     }
 
     /**
-     * @param list<string> $symbols
-     * @param list<string> $methods
+     * @param  list<string>  $symbols
+     * @param  list<string>  $methods
      */
     private function summarizeBehavior(
         string $feature,
@@ -757,7 +757,7 @@ final class MuscleInventoryBuilder
         bool $isReport
     ): string {
         if ($isReport) {
-            return 'Report or governance evidence for ' . $feature . '; preserve as planning context.';
+            return 'Report or governance evidence for '.$feature.'; preserve as planning context.';
         }
 
         $symbolText = $symbols === [] ? 'no top-level symbol detected' : implode(', ', array_slice($symbols, 0, 3));
@@ -791,7 +791,7 @@ final class MuscleInventoryBuilder
             return 'framework/System/{PublicSurface,Flows,Capabilities,Configuration,Foundation}/';
         }
 
-        return $targetComponent . '/System/{PublicSurface,Flows,Capabilities,Configuration,Foundation}/';
+        return $targetComponent.'/System/{PublicSurface,Flows,Capabilities,Configuration,Foundation}/';
     }
 
     private function attachFeatureTestEvidence(): void
@@ -803,7 +803,7 @@ final class MuscleInventoryBuilder
 
             $feature = (string) $record['feature'];
             $count = $this->featureTestCounts[$feature] ?? 0;
-            $record['tests_found'] = $count > 0 ? 'yes (' . $count . ' feature test files)' : 'none-detected';
+            $record['tests_found'] = $count > 0 ? 'yes ('.$count.' feature test files)' : 'none-detected';
         }
         unset($record);
     }
@@ -839,7 +839,7 @@ final class MuscleInventoryBuilder
             'records' => $this->records,
         ];
 
-        file_put_contents($this->jsonOut, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL);
+        file_put_contents($this->jsonOut, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES).PHP_EOL);
     }
 
     private function writeMarkdown(): void
@@ -876,7 +876,7 @@ final class MuscleInventoryBuilder
             $lines[] = '';
             $lines[] = 'Skipped sources:';
             foreach ($this->skippedSources as $source) {
-                $lines[] = '- ' . $source;
+                $lines[] = '- '.$source;
             }
         }
 
@@ -910,10 +910,10 @@ final class MuscleInventoryBuilder
             $lines[] = '## Local Git History Signals';
             foreach ($this->gitLogs as $ref => $entries) {
                 $lines[] = '';
-                $lines[] = '### `' . $ref . '`';
+                $lines[] = '### `'.$ref.'`';
                 $lines[] = '';
                 foreach (array_slice($entries, 0, 12) as $entry) {
-                    $lines[] = '- `' . $entry . '`';
+                    $lines[] = '- `'.$entry.'`';
                 }
             }
         }
@@ -947,7 +947,7 @@ final class MuscleInventoryBuilder
         $lines[] = '- No production code was restored by this stage.';
         $lines[] = '';
 
-        file_put_contents($this->markdownOut, implode(PHP_EOL, $lines) . PHP_EOL);
+        file_put_contents($this->markdownOut, implode(PHP_EOL, $lines).PHP_EOL);
     }
 
     /**
@@ -974,7 +974,7 @@ final class MuscleInventoryBuilder
         $summary = [];
         foreach ($this->records as $record) {
             $feature = (string) $record['feature'];
-            if (!isset($summary[$feature])) {
+            if (! isset($summary[$feature])) {
                 $summary[$feature] = [
                     'feature' => $feature,
                     'records' => 0,
@@ -984,9 +984,9 @@ final class MuscleInventoryBuilder
                 ];
             }
 
-            ++$summary[$feature]['records'];
+            $summary[$feature]['records']++;
             if ($record['is_test']) {
-                ++$summary[$feature]['tests'];
+                $summary[$feature]['tests']++;
             }
 
             $target = (string) $record['target_component'];
@@ -1022,7 +1022,7 @@ final class MuscleInventoryBuilder
     }
 
     /**
-     * @param array<string, mixed> $record
+     * @param  array<string, mixed>  $record
      */
     private function displayOldPath(array $record): string
     {
@@ -1031,7 +1031,7 @@ final class MuscleInventoryBuilder
             return $oldPath;
         }
 
-        return (string) $record['source'] . ':' . $oldPath;
+        return (string) $record['source'].':'.$oldPath;
     }
 
     private function gitRefExists(string $ref): bool
@@ -1044,9 +1044,9 @@ final class MuscleInventoryBuilder
     private function gitSnapshotExists(string $ref): bool
     {
         $safe = $this->safeRefName($ref);
-        $base = $this->repoRoot . '/Code-Review-And-ToDo/muscle-recovery/git-sources/' . $safe;
+        $base = $this->repoRoot.'/Code-Review-And-ToDo/muscle-recovery/git-sources/'.$safe;
 
-        return is_file($base . '.paths') || is_file($base . '.log');
+        return is_file($base.'.paths') || is_file($base.'.log');
     }
 
     /**
@@ -1055,11 +1055,11 @@ final class MuscleInventoryBuilder
     private function readGitSnapshot(string $ref): array
     {
         $safe = $this->safeRefName($ref);
-        $base = $this->repoRoot . '/Code-Review-And-ToDo/muscle-recovery/git-sources/' . $safe;
+        $base = $this->repoRoot.'/Code-Review-And-ToDo/muscle-recovery/git-sources/'.$safe;
 
         return [
-            'paths' => $this->readLineFile($base . '.paths'),
-            'log' => $this->readLineFile($base . '.log'),
+            'paths' => $this->readLineFile($base.'.paths'),
+            'log' => $this->readLineFile($base.'.log'),
         ];
     }
 
@@ -1068,7 +1068,7 @@ final class MuscleInventoryBuilder
      */
     private function readLineFile(string $path): array
     {
-        if (!is_file($path)) {
+        if (! is_file($path)) {
             return [];
         }
 
@@ -1086,7 +1086,7 @@ final class MuscleInventoryBuilder
     }
 
     /**
-     * @param list<string> $args
+     * @param  list<string>  $args
      * @return list<string>
      */
     private function runGitLines(array $args): array
@@ -1098,7 +1098,7 @@ final class MuscleInventoryBuilder
         ];
 
         $process = proc_open($command, $descriptorSpec, $pipes, $this->repoRoot);
-        if (!is_resource($process)) {
+        if (! is_resource($process)) {
             return [];
         }
 
@@ -1111,7 +1111,7 @@ final class MuscleInventoryBuilder
         if ($status !== 0) {
             $message = trim((string) $stderr);
             if ($message !== '') {
-                $this->skippedSources[] = 'git command failed: git ' . implode(' ', $args) . ' :: ' . $message;
+                $this->skippedSources[] = 'git command failed: git '.implode(' ', $args).' :: '.$message;
             }
 
             return [];
@@ -1128,7 +1128,7 @@ final class MuscleInventoryBuilder
     private function ensureParentDirectory(string $path): void
     {
         $directory = dirname($path);
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0775, true);
         }
     }
@@ -1137,8 +1137,8 @@ final class MuscleInventoryBuilder
 $repoRoot = dirname(__DIR__, 2);
 $builder = new MuscleInventoryBuilder(
     $repoRoot,
-    $repoRoot . '/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md',
-    $repoRoot . '/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json'
+    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md',
+    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json'
 );
 
 $builder->build(

@@ -11,23 +11,25 @@ use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLog
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleSource;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectory;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectoryHealth;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectoryStoreInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimProvisionedIdentity;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimProvisionedIdentityStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ScimFailed;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 final readonly class DeleteScimUser
 {
-    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private ScimDirectoryStoreInterface $scimDirectoryStore, private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycleOrchestrator = null, private ?AttemptThrottle $attemptThrottle = null) {}
+    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private ScimDirectoryStoreInterface $scimDirectoryStore, private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycleOrchestrator = null, private ?AttemptThrottle $attemptThrottle = null)
+    {
+    }
 
     /**
      * @throws ScimFailed
      */
-    public function execute(DeleteScimUserData $deleteScimUserData) : void
+    public function execute(DeleteScimUserData $deleteScimUserData): void
     {
         $scimDirectory = $this->authenticateDirectory(directoryId: $deleteScimUserData->directoryId, directoryToken: $deleteScimUserData->directoryToken);
         $this->enforceDirectoryAvailability(directory: $scimDirectory);
@@ -50,10 +52,10 @@ final readonly class DeleteScimUser
             name      : 'auth.scim.user.deleted',
             occurredAt: $this->clock->now(),
             context   : [
-                            'directory_id' => $scimDirectory->directoryId,
-                            'tenant'       => $scimDirectory->tenantSlug,
-                            'external_id'  => $deleteScimUserData->externalId,
-                'user_id'     => $identity->userId->value,
+                'directory_id' => $scimDirectory->directoryId,
+                'tenant' => $scimDirectory->tenantSlug,
+                'external_id' => $deleteScimUserData->externalId,
+                'user_id' => $identity->userId->value,
             ],
         ));
     }
@@ -79,7 +81,7 @@ final readonly class DeleteScimUser
         return $directory;
     }
 
-    private function enforceDirectoryAvailability(ScimDirectory $scimDirectory) : void
+    private function enforceDirectoryAvailability(ScimDirectory $scimDirectory): void
     {
         if ($scimDirectory->health === ScimDirectoryHealth::UNAVAILABLE) {
             throw ScimFailed::serviceUnavailable();
@@ -92,7 +94,7 @@ final readonly class DeleteScimUser
             return;
         }
 
-        $key = 'scim:' . $directoryId . ':' . 'delete';
+        $key = 'scim:'.$directoryId.':'.'delete';
 
         try {
             $this->attemptThrottle->check(key: $key);

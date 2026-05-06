@@ -7,15 +7,14 @@ namespace Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface;
 final readonly class CheckResult
 {
     /**
-     * @param array<string, mixed> $meta
+     * @param  array<string, mixed>  $meta
      */
     public function __construct(
-        public string  $status,
-        public float   $latencyMs = 0.0,
+        public string $status,
+        public float $latencyMs = 0.0,
         public ?string $error = null,
-        public array   $meta = [],
-    )
-    {
+        public array $meta = [],
+    ) {
     }
 
     public function withLatency(float $latencyMs): self

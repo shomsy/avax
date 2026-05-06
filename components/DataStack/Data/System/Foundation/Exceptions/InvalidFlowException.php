@@ -9,17 +9,17 @@ namespace Avax\Components\DataStack\Data\System\Foundation\Exceptions;
  */
 final class InvalidFlowException extends DataException
 {
-    public static function invalidWindowSize(int $size) : self
+    public static function invalidWindowSize(int $size): self
     {
         return new self(message: "Window size must be greater than zero, got '{$size}'.");
     }
 
-    public static function invalidBatchSize(int $size) : self
+    public static function invalidBatchSize(int $size): self
     {
         return new self(message: "Batch size must be greater than zero, got '{$size}'.");
     }
 
-    public static function pipelineHasNoStages() : self
+    public static function pipelineHasNoStages(): self
     {
         return new self(message: 'Pipeline has no stages to execute.');
     }

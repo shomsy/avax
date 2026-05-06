@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\ResourceGovernance\PublicSurface;
 
-use Avax\Framework\System\Capabilities\ResourceGovernance\Capabilities\Memory\MemoryBudget;
-use Avax\Framework\System\Capabilities\ResourceGovernance\Capabilities\Memory\MemorySnapshot;
 use Stringable;
 
 final readonly class ResourceReport implements Stringable
 {
     public function __construct(
-        public int   $requestCount,
-        public int   $workerMemory,
-        public int   $workerLimit,
-        public bool  $nearLimit,
+        public int $requestCount,
+        public int $workerMemory,
+        public int $workerLimit,
+        public bool $nearLimit,
         public float $trend,
-    )
-    {
+    ) {
     }
 
     /**

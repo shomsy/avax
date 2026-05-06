@@ -16,20 +16,21 @@ final readonly class LoadConfiguration
     public function __construct(
         private ConfigLoaderInterface $configLoader,
         private ConfigurationRepository $configurationRepository,
-    ) {}
+    ) {
+    }
 
     /**
      * Load all standard configuration files.
      */
-    public function load() : void
+    public function load(): void
     {
         $paths = [
-            'app'         => AppPath::CONFIG->get() . 'app.php',
-            'database'    => AppPath::CONFIG->get() . 'database.php',
-            'logging'     => AppPath::CONFIG->get() . 'logging.php',
-            'middleware'  => AppPath::CONFIG->get() . 'middleware.php',
-            'views'       => AppPath::CONFIG->get() . 'views.php',
-            'filesystems' => AppPath::CONFIG->get() . 'filesystems.php',
+            'app' => AppPath::CONFIG->get().'app.php',
+            'database' => AppPath::CONFIG->get().'database.php',
+            'logging' => AppPath::CONFIG->get().'logging.php',
+            'middleware' => AppPath::CONFIG->get().'middleware.php',
+            'views' => AppPath::CONFIG->get().'views.php',
+            'filesystems' => AppPath::CONFIG->get().'filesystems.php',
         ];
 
         foreach ($paths as $namespace => $filePath) {

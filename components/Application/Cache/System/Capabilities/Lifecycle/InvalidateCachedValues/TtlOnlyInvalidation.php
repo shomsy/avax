@@ -9,16 +9,16 @@ use Override;
 final readonly class TtlOnlyInvalidation implements InvalidationStrategy
 {
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     #[Override]
-    public function shouldInvalidate(string $key, string $reason, array $context = []) : bool
+    public function shouldInvalidate(string $key, string $reason, array $context = []): bool
     {
         return $reason === 'ttl_expired';
     }
 
     #[Override]
-    public function strategyName() : string
+    public function strategyName(): string
     {
         return 'ttl_only';
     }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\Architecture;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -29,17 +30,17 @@ $legacyFolders = [
 $errors = [];
 
 foreach ($forbiddenFolders as $forbiddenFolder) {
-    if (is_dir($rootDir . '/' . $forbiddenFolder)) {
+    if (is_dir($rootDir.'/'.$forbiddenFolder)) {
         $errors[] = sprintf('Forbidden dumping ground found: %s. Please use Screaming Architecture (System/Capabilities, System/Flows).', $forbiddenFolder);
     }
 }
 
 foreach ($legacyFolders as $legacyFolder) {
-    if (!is_dir($rootDir . '/' . $legacyFolder)) {
+    if (! is_dir($rootDir.'/'.$legacyFolder)) {
         continue;
     }
 
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootDir . '/' . $legacyFolder));
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootDir.'/'.$legacyFolder));
     foreach ($iterator as $file) {
         if ($file->isFile() && $file->getExtension() === 'php') {
             $content = file_get_contents($file->getRealPath());
@@ -48,8 +49,8 @@ foreach ($legacyFolders as $legacyFolder) {
             // A simple heuristic: if it has more than just an interface or a describeResponsibility method, it's a real file.
             // If it has actual methods with logic, it's a real file.
             // Let's just flag all files in legacy folders for now unless they contain 'bridge' or 'deprecated'
-            if (!str_contains($content, 'describeResponsibility') && !str_contains($content, 'extends') && !str_contains($content, 'implements') && (!str_contains(strtolower($content), '@deprecated') && !str_contains(strtolower($content), 'bridge'))) {
-                $errors[] = sprintf('Real file found in legacy folder %s: ', $legacyFolder) . str_replace($rootDir . '/', '', $file->getRealPath());
+            if (! str_contains($content, 'describeResponsibility') && ! str_contains($content, 'extends') && ! str_contains($content, 'implements') && (! str_contains(strtolower($content), '@deprecated') && ! str_contains(strtolower($content), 'bridge'))) {
+                $errors[] = sprintf('Real file found in legacy folder %s: ', $legacyFolder).str_replace($rootDir.'/', '', $file->getRealPath());
             }
         }
     }

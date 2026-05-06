@@ -8,7 +8,6 @@ final readonly class CliConfig
 {
     public function __construct(
         public string $name = 'avax',
-    )
-    {
+    ) {
     }
 }

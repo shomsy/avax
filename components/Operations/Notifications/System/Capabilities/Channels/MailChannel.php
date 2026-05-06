@@ -18,9 +18,10 @@ final readonly class MailChannel implements NotificationChannel
     public function __construct(
         private MailTransport $mailTransport,
         private string $fromAddress = 'notifications@example.com',
-    ) {}
+    ) {
+    }
 
-    public function send(mixed $notifiable, Notification $notification) : void
+    public function send(mixed $notifiable, Notification $notification): void
     {
         $mailContent = $notification->toMail();
         if (! $mailContent instanceof MailNotificationContent) {
@@ -48,13 +49,14 @@ final readonly class MailChannel implements NotificationChannel
             public function __construct(
                 public string $from,
                 public string $to,
-            ) {}
+            ) {
+            }
         };
 
         $this->mailTransport->send($mimeMessage, $envelope);
     }
 
-    private function resolveEmail(mixed $notifiable) : ?string
+    private function resolveEmail(mixed $notifiable): ?string
     {
         if (is_string($notifiable)) {
             return $notifiable;
@@ -77,7 +79,7 @@ final readonly class MailChannel implements NotificationChannel
         return null;
     }
 
-    private function buildBody(MailNotificationContent $mailNotificationContent) : string
+    private function buildBody(MailNotificationContent $mailNotificationContent): string
     {
         $html = '<html><body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">';
 
@@ -94,17 +96,17 @@ final readonly class MailChannel implements NotificationChannel
         }
 
         if ($mailNotificationContent->actionText !== '' && $mailNotificationContent->actionUrl !== '') {
-            $html .= '<p><a href="' . htmlspecialchars($mailNotificationContent->actionUrl) . '" style="display: inline-block; padding: 10px 20px; background-color: #3490dc; color: #ffffff; text-decoration: none; border-radius: 4px;">' . htmlspecialchars($mailNotificationContent->actionText) . '</a></p>';
+            $html .= '<p><a href="'.htmlspecialchars($mailNotificationContent->actionUrl).'" style="display: inline-block; padding: 10px 20px; background-color: #3490dc; color: #ffffff; text-decoration: none; border-radius: 4px;">'.htmlspecialchars($mailNotificationContent->actionText).'</a></p>';
         }
 
         if ($mailNotificationContent->signOff !== '') {
             $html .= sprintf('<p>%s</p>', $mailNotificationContent->signOff);
         }
 
-        return $html . '</body></html>';
+        return $html.'</body></html>';
     }
 
-    public function name() : string
+    public function name(): string
     {
         return 'mail';
     }

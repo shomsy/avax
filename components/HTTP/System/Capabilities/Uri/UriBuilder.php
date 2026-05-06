@@ -29,21 +29,21 @@ final class UriBuilder implements Stringable
 
     private ?string $password = null;
 
-    public static function createFromString(string $uri) : self
+    public static function createFromString(string $uri): self
     {
         $parts = parse_url($uri);
 
         if ($parts === false) {
-            throw new InvalidArgumentException('Invalid URI: ' . $uri);
+            throw new InvalidArgumentException('Invalid URI: '.$uri);
         }
 
-        $builder           = new self();
-        $builder->scheme   = $parts['scheme'] ?? '';
-        $builder->host     = $parts['host'] ?? '';
-        $builder->path     = $parts['path'] ?? '';
-        $builder->port     = $parts['port'] ?? null;
+        $builder = new self();
+        $builder->scheme = $parts['scheme'] ?? '';
+        $builder->host = $parts['host'] ?? '';
+        $builder->path = $parts['path'] ?? '';
+        $builder->port = $parts['port'] ?? null;
         $builder->fragment = $parts['fragment'] ?? '';
-        $builder->user     = $parts['user'] ?? '';
+        $builder->user = $parts['user'] ?? '';
         $builder->password = $parts['pass'] ?? null;
 
         if (isset($parts['query'])) {
@@ -53,7 +53,7 @@ final class UriBuilder implements Stringable
         return $builder;
     }
 
-    public function withScheme(string $scheme) : self
+    public function withScheme(string $scheme): self
     {
         $clone = clone $this;
         $clone->scheme = $scheme;
@@ -61,7 +61,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withHost(string $host) : self
+    public function withHost(string $host): self
     {
         $clone = clone $this;
         $clone->host = $host;
@@ -69,7 +69,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withPort(?int $port) : self
+    public function withPort(?int $port): self
     {
         $clone = clone $this;
         $clone->port = $port;
@@ -77,7 +77,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withPath(string $path) : self
+    public function withPath(string $path): self
     {
         $clone = clone $this;
         $clone->path = $path;
@@ -85,15 +85,15 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function appendPath(string $segment) : self
+    public function appendPath(string $segment): self
     {
-        $clone       = clone $this;
-        $clone->path = rtrim($this->path, '/') . '/' . ltrim($segment, '/');
+        $clone = clone $this;
+        $clone->path = rtrim($this->path, '/').'/'.ltrim($segment, '/');
 
         return $clone;
     }
 
-    public function withQueryParam(string $key, mixed $value) : self
+    public function withQueryParam(string $key, mixed $value): self
     {
         $clone = clone $this;
         $clone->queryParams[$key] = $value;
@@ -102,9 +102,9 @@ final class UriBuilder implements Stringable
     }
 
     /**
-     * @param array<int|string, mixed> $params
+     * @param  array<int|string, mixed>  $params
      */
-    public function withQueryParams(array $params) : self
+    public function withQueryParams(array $params): self
     {
         $clone = clone $this;
         $clone->queryParams = array_merge($clone->queryParams, $params);
@@ -112,7 +112,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withoutQueryParam(string $key) : self
+    public function withoutQueryParam(string $key): self
     {
         $clone = clone $this;
         unset($clone->queryParams[$key]);
@@ -120,7 +120,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withFragment(string $fragment) : self
+    public function withFragment(string $fragment): self
     {
         $clone = clone $this;
         $clone->fragment = $fragment;
@@ -128,21 +128,21 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withUserInfo(string $user, ?string $password = null) : self
+    public function withUserInfo(string $user, ?string $password = null): self
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->user = $user;
         $clone->password = $password;
 
         return $clone;
     }
 
-    public function toUri() : Uri
+    public function toUri(): Uri
     {
         return new Uri(
             scheme  : $this->scheme,
             host    : $this->host,
-            path    : '/' . ltrim($this->path, '/'),
+            path    : '/'.ltrim($this->path, '/'),
             port    : $this->port,
             query   : $this->queryParams !== [] ? http_build_query($this->queryParams) : '',
             fragment: $this->fragment,
@@ -151,23 +151,23 @@ final class UriBuilder implements Stringable
         );
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->build();
     }
 
-    public function build() : string
+    public function build(): string
     {
         $uri = '';
 
         if ($this->scheme !== '') {
-            $uri .= $this->scheme . '://';
+            $uri .= $this->scheme.'://';
         }
 
         if ($this->user !== '') {
             $uri .= $this->user;
             if ($this->password !== null) {
-                $uri .= ':' . $this->password;
+                $uri .= ':'.$this->password;
             }
 
             $uri .= '@';
@@ -176,23 +176,23 @@ final class UriBuilder implements Stringable
         $uri .= $this->host;
 
         if ($this->port !== null && ! $this->isDefaultPort()) {
-            $uri .= ':' . $this->port;
+            $uri .= ':'.$this->port;
         }
 
-        $uri .= '/' . ltrim($this->path, '/');
+        $uri .= '/'.ltrim($this->path, '/');
 
         if ($this->queryParams !== []) {
-            $uri .= '?' . http_build_query($this->queryParams);
+            $uri .= '?'.http_build_query($this->queryParams);
         }
 
         if ($this->fragment !== '') {
-            $uri .= '#' . $this->fragment;
+            $uri .= '#'.$this->fragment;
         }
 
         return $uri;
     }
 
-    private function isDefaultPort() : bool
+    private function isDefaultPort(): bool
     {
         return ($this->scheme === 'http' && $this->port === 80)
             || ($this->scheme === 'https' && $this->port === 443);

@@ -9,7 +9,7 @@ namespace Avax\Components\Application\Text\System\Capabilities\Validate;
  */
 final class IsValidEmail
 {
-    public function execute(string $value) : bool
+    public function execute(string $value): bool
     {
         return (bool) preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $value);
     }

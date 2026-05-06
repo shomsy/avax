@@ -13,11 +13,11 @@ namespace Avax\Components\HTTP\Router\System\Configuration;
 final readonly class RouterConfiguration
 {
     /**
-     * @param string               $prefix        Global URL prefix for all routes
-     * @param bool                 $cacheEnabled  Whether route matching cache is enabled
-     * @param bool                 $strictMode    Whether to enforce strict matching (no trailing slashes)
-     * @param array<string, mixed> $defaults      Default route parameters
-     * @param int                  $maxRouteCount Maximum number of routes allowed
+     * @param  string  $prefix  Global URL prefix for all routes
+     * @param  bool  $cacheEnabled  Whether route matching cache is enabled
+     * @param  bool  $strictMode  Whether to enforce strict matching (no trailing slashes)
+     * @param  array<string, mixed>  $defaults  Default route parameters
+     * @param  int  $maxRouteCount  Maximum number of routes allowed
      */
     public function __construct(
         private string $prefix = '',
@@ -25,7 +25,8 @@ final readonly class RouterConfiguration
         private bool $strictMode = false,
         private array $defaults = [],
         private int $maxRouteCount = 1000,
-    ) {}
+    ) {
+    }
 
     public function prefix(): string
     {
@@ -58,7 +59,7 @@ final readonly class RouterConfiguration
     /**
      * Create a new configuration with merged overrides.
      *
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      */
     public function with(array $overrides): self
     {
@@ -74,7 +75,7 @@ final readonly class RouterConfiguration
     /**
      * Create configuration from an array.
      *
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public static function fromArray(array $config): self
     {

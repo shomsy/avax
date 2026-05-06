@@ -8,9 +8,11 @@ use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
 
 final readonly class MoveFile
 {
-    public function __construct(private Disk $disk) {}
+    public function __construct(private Disk $disk)
+    {
+    }
 
-    public function execute(string $source, string $destination) : bool
+    public function execute(string $source, string $destination): bool
     {
         return $this->disk->move(source: $source, destination: $destination);
     }

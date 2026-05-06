@@ -10,7 +10,7 @@ abstract class JobHandler
 {
     abstract public function handle(array $payload): mixed;
 
-    public function failed(Throwable $throwable, array $payload) : void
+    public function failed(Throwable $throwable, array $payload): void
     {
     }
 }

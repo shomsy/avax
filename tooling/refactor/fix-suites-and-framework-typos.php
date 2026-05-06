@@ -21,7 +21,9 @@ foreach ($dirs as $dir) {
 
 $count = 0;
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     $changed = false;
 
@@ -29,15 +31,15 @@ foreach ($files as $file) {
     foreach ($suites as $suite) {
         $old = "Avax\\Components\\$suite";
         $new = "Avax\\Components\\Application\\$suite";
-        if (str_contains($content, $old) && !str_contains($content, $new)) {
-             $content = str_replace($old, $new, $content);
-             $changed = true;
+        if (str_contains($content, $old) && ! str_contains($content, $new)) {
+            $content = str_replace($old, $new, $content);
+            $changed = true;
         }
     }
 
     // 2. Fix 'Components\ystem' typo in framework
-    $typo = "Avax\\Components\\ystem";
-    $fixed = "Avax\\Framework\\System";
+    $typo = 'Avax\\Components\\ystem';
+    $fixed = 'Avax\\Framework\\System';
     if (str_contains($content, $typo)) {
         $content = str_replace($typo, $fixed, $content);
         $changed = true;
@@ -63,21 +65,23 @@ foreach ($allDirs as $dir) {
 }
 
 foreach ($allFiles as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     $changed = false;
 
     foreach ($suites as $suite) {
         $old = "Avax\\Components\\$suite";
         $new = "Avax\\Components\\Application\\$suite";
-        if (str_contains($content, $old) && !str_contains($content, $new)) {
-             $content = str_replace($old, $new, $content);
-             $changed = true;
+        if (str_contains($content, $old) && ! str_contains($content, $new)) {
+            $content = str_replace($old, $new, $content);
+            $changed = true;
         }
     }
-    
-    $typo = "Avax\\Components\\ystem";
-    $fixed = "Avax\\Framework\\System";
+
+    $typo = 'Avax\\Components\\ystem';
+    $fixed = 'Avax\\Framework\\System';
     if (str_contains($content, $typo)) {
         $content = str_replace($typo, $fixed, $content);
         $changed = true;

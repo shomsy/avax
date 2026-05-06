@@ -18,9 +18,10 @@ final class ProviderRegistry
 
     public function __construct(
         private readonly ContainerInterface $container,
-    ) {}
+    ) {
+    }
 
-    public function register(string $providerClass) : void
+    public function register(string $providerClass): void
     {
         $provider = new $providerClass($this->container);
         $provider->register();
@@ -31,7 +32,7 @@ final class ProviderRegistry
         }
     }
 
-    public function boot() : void
+    public function boot(): void
     {
         if ($this->booted) {
             return;

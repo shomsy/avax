@@ -32,8 +32,7 @@ abstract class DatabaseRepository
     /**
      * Find one entity by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
-     *
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      * @return object|null The found entity or null.
      *
      * @throws ReflectionException
@@ -77,7 +76,7 @@ abstract class DatabaseRepository
         /** @var class-string $entityClass */
         $entityClass = $this->getEntityClass();
 
-        if (!class_exists(class: $entityClass) || !method_exists(object_or_class: $entityClass, method: 'getTableName')) {
+        if (! class_exists(class: $entityClass) || ! method_exists(object_or_class: $entityClass, method: 'getTableName')) {
             throw new RuntimeException(
                 message: sprintf(
                     'Entity class %s must implement a getTableName() method.',
@@ -86,7 +85,7 @@ abstract class DatabaseRepository
             );
         }
 
-        return (string)$entityClass::getTableName();
+        return (string) $entityClass::getTableName();
     }
 
     /**
@@ -99,8 +98,7 @@ abstract class DatabaseRepository
     /**
      * Map a database row to an entity object.
      *
-     * @param array<string, mixed> $data The database row data.
-     *
+     * @param  array<string, mixed>  $data  The database row data.
      * @return object The mapped entity.
      */
     abstract protected function mapToEntity(array $data): object;
@@ -124,25 +122,23 @@ abstract class DatabaseRepository
     /**
      * Find entities by conditions with optional pagination and sorting.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
-     * @param string|null $orderBy Column to order by.
-     * @param string|null $direction Sorting direction (ASC|DESC).
-     * @param int|null $limit Max results to return.
-     * @param int|null $offset Offset for pagination.
-     *
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
+     * @param  string|null  $orderBy  Column to order by.
+     * @param  string|null  $direction  Sorting direction (ASC|DESC).
+     * @param  int|null  $limit  Max results to return.
+     * @param  int|null  $offset  Offset for pagination.
      * @return array<object> The found entities.
      *
      * @throws ReflectionException
      * @throws Throwable
      */
     public function findBy(
-        array   $conditions,
+        array $conditions,
         ?string $orderBy = null,
         ?string $direction = null,
-        ?int    $limit = null,
-        ?int    $offset = null,
-    ): array
-    {
+        ?int $limit = null,
+        ?int $offset = null,
+    ): array {
         try {
             $query = $this->query();
 
@@ -150,7 +146,7 @@ abstract class DatabaseRepository
                 $query->where(column: $column, operator: '=', value: $value);
             }
 
-            if (!in_array($orderBy, [null, '', '0'], true)) {
+            if (! in_array($orderBy, [null, '', '0'], true)) {
                 $query->orderBy(column: $orderBy, direction: $direction ?? 'ASC');
             }
 
@@ -212,8 +208,7 @@ abstract class DatabaseRepository
     /**
      * Map an entity object to a database row.
      *
-     * @param object $entity The entity to map.
-     *
+     * @param  object  $entity  The entity to map.
      * @return array<string, mixed> The database row representation.
      */
     abstract protected function mapToDatabase(object $entity): array;
@@ -229,7 +224,7 @@ abstract class DatabaseRepository
      */
     public function delete(object $entity): void
     {
-        if (!method_exists(object_or_class: $entity, method: 'getId') || $entity->getId() === null) {
+        if (! method_exists(object_or_class: $entity, method: 'getId') || $entity->getId() === null) {
             throw new RuntimeException(message: 'Entity must have an ID to be deleted.');
         }
 
@@ -241,7 +236,7 @@ abstract class DatabaseRepository
     /**
      * Check if an entity exists by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -269,7 +264,7 @@ abstract class DatabaseRepository
     /**
      * Count entities by conditions.
      *
-     * @param array<string, mixed> $conditions Conditions for filtering.
+     * @param  array<string, mixed>  $conditions  Conditions for filtering.
      *
      * @throws ReflectionException
      * @throws Throwable

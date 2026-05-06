@@ -12,5 +12,6 @@ final readonly class RenamePasskeyData
         #[SensitiveParameter]
         public string $credentialId,
         public string $label,
-    ) {}
+    ) {
+    }
 }

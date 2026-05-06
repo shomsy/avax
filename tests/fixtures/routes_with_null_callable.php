@@ -7,12 +7,12 @@ use Avax\Components\HTTP\Response\Response;
 use Avax\Facade\Facades\Route;
 use Psr\Http\Message\ResponseInterface;
 
-Route::get('/null-test', static function (Request $request) : ?ResponseInterface {
+Route::get('/null-test', static function (Request $request): ?ResponseInterface {
     // This callable intentionally returns null to test fallback handling
     return null;
 });
 
-Route::fallback(static function (Request $request) : ResponseInterface {
+Route::fallback(static function (Request $request): ResponseInterface {
     $message = sprintf(
         'Route not found for [%s] %s',
         $request->getMethod(),

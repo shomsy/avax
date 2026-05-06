@@ -20,8 +20,9 @@ final readonly class ExternalIdentity
         #[SensitiveParameter]
         private OAuth $oauth,
         private OpenIDConnect $openIDConnect,
-        private SingleSignOn  $singleSignOn,
-    ) {}
+        private SingleSignOn $singleSignOn,
+    ) {
+    }
 
     public function oauth(): OAuth
     {

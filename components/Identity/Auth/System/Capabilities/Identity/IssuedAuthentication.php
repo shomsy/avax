@@ -25,5 +25,6 @@ final readonly class IssuedAuthentication
         public ?IssuedRefreshToken $refreshToken = null,
         public ?DateTimeImmutable $mfaVerifiedAt = null,
         public bool $phishingResistant = false,
-    ) {}
+    ) {
+    }
 }

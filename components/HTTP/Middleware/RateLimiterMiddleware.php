@@ -18,7 +18,8 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
         private string $keySource = 'ip',
         private int $maxAttempts = 60,
         private int $decaySeconds = 60,
-    ) {}
+    ) {
+    }
 
     public function handle(RequestInterface $request, callable $next): ResponseInterface
     {
@@ -35,7 +36,9 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
             }
 
             return new readonly class ($remaining) implements ResponseInterface {
-                public function __construct(private int $retryAfter) {}
+                public function __construct(private int $retryAfter)
+                {
+                }
 
                 public function getStatusCode(): int
                 {

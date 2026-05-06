@@ -13,5 +13,6 @@ final readonly class RotatedScimToken
         public ScimDirectory $directory,
         #[SensitiveParameter]
         public string $plainTextToken,
-    ) {}
+    ) {
+    }
 }

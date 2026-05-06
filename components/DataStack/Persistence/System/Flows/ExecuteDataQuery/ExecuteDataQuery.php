@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\ExecuteDataQuery;
 use Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics\QueryFingerprint;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQueryPlan;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\QueryResult;
+
 use function count;
 
 /**
@@ -23,7 +24,7 @@ final class ExecuteDataQuery
     private $executor;
 
     /**
-     * @param callable(DataQueryPlan) : array<array<string, mixed>>|null $executor
+     * @param  callable(DataQueryPlan) : array<array<string, mixed>>|null  $executor
      */
     public function __construct(?callable $executor = null)
     {
@@ -33,7 +34,7 @@ final class ExecuteDataQuery
     /**
      * Executes the query plan and returns the result.
      */
-    public function execute(DataQueryPlan $dataQueryPlan) : QueryResult
+    public function execute(DataQueryPlan $dataQueryPlan): QueryResult
     {
         $startTime = $this->currentTimeMs();
 
@@ -65,7 +66,7 @@ final class ExecuteDataQuery
      *
      * @return array<array<string, mixed>>
      */
-    private function executeQuery(DataQueryPlan $dataQueryPlan) : array
+    private function executeQuery(DataQueryPlan $dataQueryPlan): array
     {
         if ($this->executor !== null) {
             return ($this->executor)($dataQueryPlan);

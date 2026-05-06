@@ -8,7 +8,9 @@ use PDO;
 
 final readonly class DatabaseSagaStore implements SagaStoreInterface
 {
-    public function __construct(private PDO $pdo) {}
+    public function __construct(private PDO $pdo)
+    {
+    }
 
     public function save(string $sagaId, string $status, array $context): void
     {

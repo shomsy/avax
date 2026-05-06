@@ -22,24 +22,23 @@ final readonly class RuntimeSafety
     private ResetVerifier $resetVerifier;
 
     public function __construct(
-        ?StateLeakDetector  $stateLeakDetector = null,
+        ?StateLeakDetector $stateLeakDetector = null,
         ?StaticStateScanner $staticStateScanner = null,
-        ?ResetVerifier      $resetVerifier = null,
-    )
-    {
-        $this->stateLeakDetector  = $stateLeakDetector ?? new StateLeakDetector();
+        ?ResetVerifier $resetVerifier = null,
+    ) {
+        $this->stateLeakDetector = $stateLeakDetector ?? new StateLeakDetector();
         $this->staticStateScanner = $staticStateScanner ?? new StaticStateScanner();
-        $this->resetVerifier      = $resetVerifier ?? new ResetVerifier();
+        $this->resetVerifier = $resetVerifier ?? new ResetVerifier();
     }
 
     /**
      * Check if runtime is safe for worker mode.
      */
-    public function isWorkerSafe() : bool
+    public function isWorkerSafe(): bool
     {
         $findings = $this->inspect();
 
-        return array_all($findings, fn ($finding) : bool => $finding->severity !== RuntimeSafetyFinding::SEVERITY_CRITICAL);
+        return array_all($findings, fn ($finding): bool => $finding->severity !== RuntimeSafetyFinding::SEVERITY_CRITICAL);
     }
 
     /**
@@ -47,7 +46,7 @@ final readonly class RuntimeSafety
      *
      * @return list<RuntimeSafetyFinding>
      */
-    public function inspect() : array
+    public function inspect(): array
     {
         $findings = [];
 
@@ -57,17 +56,17 @@ final readonly class RuntimeSafety
         return [...$findings, ...$this->resetVerifier->verify()];
     }
 
-    public function leakDetector() : StateLeakDetector
+    public function leakDetector(): StateLeakDetector
     {
         return $this->stateLeakDetector;
     }
 
-    public function staticScanner() : StaticStateScanner
+    public function staticScanner(): StaticStateScanner
     {
         return $this->staticStateScanner;
     }
 
-    public function resetVerifier() : ResetVerifier
+    public function resetVerifier(): ResetVerifier
     {
         return $this->resetVerifier;
     }

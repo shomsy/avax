@@ -6,6 +6,7 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\BuildDataQuery;
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQuery;
 use InvalidArgumentException;
+
 use function class_exists;
 use function in_array;
 use function is_array;
@@ -22,7 +23,7 @@ use function sprintf;
 final class BuildDataQuery
 {
     /**
-     * @param array<string, class-string> $entityRegistry
+     * @param  array<string, class-string>  $entityRegistry
      */
     public function __construct(private array $entityRegistry = [])
     {
@@ -31,11 +32,11 @@ final class BuildDataQuery
     /**
      * Builds a DataQuery from the given parameters.
      *
-     * @param class-string|string|null                              $entityType
-     * @param array<string, mixed>                                  $conditions
-     * @param array<string, string>                                 $orderBy
-     * @param array<string>                                         $select
-     * @param array<array{type: string, table: string, on: string}> $joins
+     * @param  class-string|string|null  $entityType
+     * @param  array<string, mixed>  $conditions
+     * @param  array<string, string>  $orderBy
+     * @param  array<string>  $select
+     * @param  array<array{type: string, table: string, on: string}>  $joins
      *
      * @throws InvalidArgumentException
      */
@@ -43,8 +44,8 @@ final class BuildDataQuery
         ?string $entityType = null,
         array $conditions = [],
         array $orderBy = [],
-        ?int    $limit = null,
-        ?int    $offset = null,
+        ?int $limit = null,
+        ?int $offset = null,
         array $joins = [],
         array $select = ['*'],
     ): DataQuery {
@@ -64,8 +65,7 @@ final class BuildDataQuery
     /**
      * Resolves an entity type alias to a class name.
      *
-     * @param class-string|string|null $entityType
-     *
+     * @param  class-string|string|null  $entityType
      * @return class-string|null
      *
      * @throws InvalidArgumentException
@@ -92,8 +92,7 @@ final class BuildDataQuery
     /**
      * Validates query conditions.
      *
-     * @param array<string, mixed> $conditions
-     *
+     * @param  array<string, mixed>  $conditions
      * @return array<string, mixed>
      *
      * @throws InvalidArgumentException
@@ -124,8 +123,7 @@ final class BuildDataQuery
     /**
      * Validates ORDER BY clauses.
      *
-     * @param array<string, string> $orderBy
-     *
+     * @param  array<string, string>  $orderBy
      * @return array<string, string>
      *
      * @throws InvalidArgumentException
@@ -181,7 +179,7 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    public function buildFrom(DataQuery $dataQuery) : DataQuery
+    public function buildFrom(DataQuery $dataQuery): DataQuery
     {
         return new DataQuery(
             entityType: $this->resolveEntityType($dataQuery->entityType),
@@ -197,7 +195,7 @@ final class BuildDataQuery
     /**
      * Registers an entity type alias.
      *
-     * @param class-string $className
+     * @param  class-string  $className
      */
     public function registerEntity(string $alias, string $className): void
     {

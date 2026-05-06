@@ -19,7 +19,7 @@ final readonly class CompiledCacheManifestEntry
     }
 
     /**
-     * @param array{name: string, path: string, createdAt: int, sourceFingerprint: string} $data
+     * @param  array{name: string, path: string, createdAt: int, sourceFingerprint: string}  $data
      */
     public static function fromArray(array $data): self
     {
@@ -58,12 +58,12 @@ final readonly class CompiledCacheManifestEntry
     public function toArray(): array
     {
         return [
-            'name'              => $this->compiledCacheName->toString(),
-            'path'              => $this->compiledCachePath->toString(),
-            'createdAt'         => $this->timestamp->seconds,
+            'name' => $this->compiledCacheName->toString(),
+            'path' => $this->compiledCachePath->toString(),
+            'createdAt' => $this->timestamp->seconds,
             'sourceFingerprint' => $this->sourceFingerprint,
-            'phpVersion'        => $this->phpVersion,
-            'frameworkVersion'  => $this->frameworkVersion,
+            'phpVersion' => $this->phpVersion,
+            'frameworkVersion' => $this->frameworkVersion,
         ];
     }
 }

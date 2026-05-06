@@ -8,10 +8,9 @@ final readonly class SagaCompensatedEvent
 {
     public function __construct(
         public string $sagaId,
-        public array  $compensatedSteps,
-        public float  $timestamp,
-    )
-    {
+        public array $compensatedSteps,
+        public float $timestamp,
+    ) {
     }
 
     public function toMetadata(): array

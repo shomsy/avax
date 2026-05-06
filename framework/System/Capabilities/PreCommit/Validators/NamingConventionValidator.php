@@ -9,10 +9,10 @@ use Override;
 
 /**
  * Naming Convention Validator
- * 
+ *
  * Enforces strict naming conventions per architectural standards:
  * - Folders say flow or capability
- * - Units say responsibility  
+ * - Units say responsibility
  * - Functions say exact action
  * - No generic names (Services, Helpers, Utils, etc.)
  */
@@ -25,7 +25,7 @@ class NamingConventionValidator extends BaseValidator
         'Base', 'Generic', 'Manager', 'Helper', 'Util',
         'ServiceManager', 'CommonUtils', 'SharedService',
         'CoreStuff', 'DataHelpers', 'BaseHandler', 'MiscFunctions',
-        'GenericProcessor', 'SharedThings', 'InternalHelpers'
+        'GenericProcessor', 'SharedThings', 'InternalHelpers',
     ];
 
     public function __construct()
@@ -46,8 +46,8 @@ class NamingConventionValidator extends BaseValidator
         $allPassed = true;
 
         foreach ($files as $file) {
-            $filePath = $basePath . '/' . $file;
-            if (!file_exists($filePath)) {
+            $filePath = $basePath.'/'.$file;
+            if (! file_exists($filePath)) {
                 continue;
             }
 
@@ -57,8 +57,8 @@ class NamingConventionValidator extends BaseValidator
 
             // Check for forbidden names in path
             foreach ($this->forbiddenNames as $forbiddenName) {
-                if (stripos($dirPath, '/' . $forbiddenName . '/') !== false ||
-                    stripos($dirPath, '/src/' . $forbiddenName) !== false ||
+                if (stripos($dirPath, '/'.$forbiddenName.'/') !== false ||
+                    stripos($dirPath, '/src/'.$forbiddenName) !== false ||
                     stripos($fileName, $forbiddenName) !== false) {
                     $allPassed = false;
                     $messages[] = sprintf(
@@ -72,7 +72,7 @@ class NamingConventionValidator extends BaseValidator
             // Check PHP class naming (if PHP file)
             if (str_ends_with(strtolower((string) $file), '.php')) {
                 $phpResult = $this->checkPhpClassNaming($filePath, $file);
-                if (!$phpResult->isPassed()) {
+                if (! $phpResult->isPassed()) {
                     $allPassed = false;
                     $messages = array_merge($messages, $phpResult->getMessages());
                 }
@@ -114,8 +114,8 @@ class NamingConventionValidator extends BaseValidator
                 if ($token[0] === T_NAMESPACE) {
                     $i += 2; // Skip namespace keyword and whitespace
                     $nsTokens = [];
-                    while ( isset($tokens[$i]) && is_array($tokens[$i]) &&
-                        in_array($tokens[$i][0], [T_STRING, T_NS_SEPARATOR], true) ) {
+                    while (isset($tokens[$i]) && is_array($tokens[$i]) &&
+                        in_array($tokens[$i][0], [T_STRING, T_NS_SEPARATOR], true)) {
                         $nsTokens[] = $tokens[$i][1];
                         $i++;
                     }
@@ -126,12 +126,12 @@ class NamingConventionValidator extends BaseValidator
                 if ($token[0] === T_CLASS) {
                     // Find the class name
                     $j = $i + 1;
-                    while ($j < count($tokens) && is_array($tokens[$j]) && 
+                    while ($j < count($tokens) && is_array($tokens[$j]) &&
                            $tokens[$j][0] === T_WHITESPACE) {
                         $j++;
                     }
 
-                    if (isset($tokens[$j]) && is_array($tokens[$j]) && 
+                    if (isset($tokens[$j]) && is_array($tokens[$j]) &&
                         $tokens[$j][0] === T_STRING) {
                         $classes[] = $tokens[$j][1];
                     }
@@ -192,6 +192,6 @@ class NamingConventionValidator extends BaseValidator
     #[Override]
     public function supports(array $context): bool
     {
-        return !empty($context['staged_files'] ?? []);
+        return ! empty($context['staged_files'] ?? []);
     }
 }

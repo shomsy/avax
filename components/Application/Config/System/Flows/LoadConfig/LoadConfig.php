@@ -12,9 +12,10 @@ final readonly class LoadConfig
     public function __construct(
         private ConfigLoader $configLoader,
         private ConfigurationRepository $configurationRepository,
-    ) {}
+    ) {
+    }
 
-    public function fromDirectory(string $directory) : void
+    public function fromDirectory(string $directory): void
     {
         $configs = $this->configLoader->load($directory);
         foreach ($configs as $namespace => $data) {

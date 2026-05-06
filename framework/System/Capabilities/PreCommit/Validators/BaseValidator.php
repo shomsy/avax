@@ -17,27 +17,27 @@ abstract class BaseValidator implements ValidatorInterface
         $this->name = $name ?: static::class;
     }
 
-    public function setNext(ValidatorInterface $validator) : ValidatorInterface
+    public function setNext(ValidatorInterface $validator): ValidatorInterface
     {
         $this->next = $validator;
 
         return $validator;
     }
 
-    abstract public function getName() : string;
+    abstract public function getName(): string;
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    public function supports(array $context) : bool
+    public function supports(array $context): bool
     {
         return true;
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    protected function passToNext(array $context) : ValidationResult
+    protected function passToNext(array $context): ValidationResult
     {
         if ($this->next !== null) {
             return $this->next->validate($context);
@@ -47,14 +47,14 @@ abstract class BaseValidator implements ValidatorInterface
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    abstract public function validate(array $context) : ValidationResult;
+    abstract public function validate(array $context): ValidationResult;
 
     /**
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
-    protected function combineWithNext(array $context, ValidationResult $currentResult) : ValidationResult
+    protected function combineWithNext(array $context, ValidationResult $currentResult): ValidationResult
     {
         if ($this->next === null) {
             return $currentResult;

@@ -31,11 +31,11 @@ use Throwable;
 final class FakeHttpClient implements HttpClientInterface
 {
     /**
-     * @param array<string, RecordedHttpResponse> $responses URL pattern => response mappings
-     * @param list<OutboundRequest> $recordedRequests All requests made through this client
+     * @param  array<string, RecordedHttpResponse>  $responses  URL pattern => response mappings
+     * @param  list<OutboundRequest>  $recordedRequests  All requests made through this client
      */
     public function __construct(
-        private readonly array   $responses = [],
+        private readonly array $responses = [],
         private array $recordedRequests = [],
         private readonly ?string $baseUrl = null,
     ) {
@@ -52,9 +52,9 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Create from URL => response mappings.
      *
-     * @param array<string, RecordedHttpResponse> $responses
+     * @param  array<string, RecordedHttpResponse>  $responses
      */
-    public static function fromResponses(array $responses, ?string $baseUrl = null) : self
+    public static function fromResponses(array $responses, ?string $baseUrl = null): self
     {
         return new self(responses: $responses, baseUrl: $baseUrl);
     }
@@ -95,7 +95,7 @@ final class FakeHttpClient implements HttpClientInterface
      * @throws HttpRequestFailed if no matching response is found
      * @throws Throwable if the recorded response has an exception
      */
-    public function send(OutboundRequest $outboundRequest) : ClientResponse
+    public function send(OutboundRequest $outboundRequest): ClientResponse
     {
         // Record this request
         $this->recordedRequests[] = $outboundRequest;
@@ -131,7 +131,7 @@ final class FakeHttpClient implements HttpClientInterface
     /**
      * Find a matching recorded response for the given request.
      */
-    private function findMatchingResponse(OutboundRequest $outboundRequest) : ?RecordedHttpResponse
+    private function findMatchingResponse(OutboundRequest $outboundRequest): ?RecordedHttpResponse
     {
         foreach ($this->responses as $response) {
             if ($response->matches($outboundRequest->url, $outboundRequest->method)) {
@@ -155,7 +155,7 @@ final class FakeHttpClient implements HttpClientInterface
             return $url;
         }
 
-        return rtrim($this->baseUrl, '/') . '/' . ltrim($url, '/');
+        return rtrim($this->baseUrl, '/').'/'.ltrim($url, '/');
     }
 
     /**
@@ -300,7 +300,7 @@ final class FakeHttpClientBuilder
     public function whenGet(string $url): self
     {
         $this->pendingMethod = 'GET';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -311,7 +311,7 @@ final class FakeHttpClientBuilder
     public function whenPost(string $url): self
     {
         $this->pendingMethod = 'POST';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -322,7 +322,7 @@ final class FakeHttpClientBuilder
     public function whenPut(string $url): self
     {
         $this->pendingMethod = 'PUT';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -333,7 +333,7 @@ final class FakeHttpClientBuilder
     public function whenDelete(string $url): self
     {
         $this->pendingMethod = 'DELETE';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -344,7 +344,7 @@ final class FakeHttpClientBuilder
     public function whenAny(string $url): self
     {
         $this->pendingMethod = '*';
-        $this->pendingUrl    = $url;
+        $this->pendingUrl = $url;
 
         return $this;
     }
@@ -352,8 +352,8 @@ final class FakeHttpClientBuilder
     /**
      * Respond with a JSON response.
      *
-     * @param mixed $data Data to JSON encode
-     * @param int $status HTTP status code
+     * @param  mixed  $data  Data to JSON encode
+     * @param  int  $status  HTTP status code
      */
     public function respondWithJson(mixed $data = [], int $status = 200): self
     {
@@ -382,9 +382,9 @@ final class FakeHttpClientBuilder
     /**
      * Respond with a custom recorded response.
      */
-    public function respondWith(RecordedHttpResponse $recordedHttpResponse) : self
+    public function respondWith(RecordedHttpResponse $recordedHttpResponse): self
     {
-        $key                   = sprintf('%s:%s', $this->pendingMethod, $this->pendingUrl);
+        $key = sprintf('%s:%s', $this->pendingMethod, $this->pendingUrl);
         $this->responses[$key] = $recordedHttpResponse;
 
         return $this;
@@ -393,9 +393,9 @@ final class FakeHttpClientBuilder
     /**
      * Respond with an exception.
      */
-    public function respondWithException(Throwable $throwable) : self
+    public function respondWithException(Throwable $throwable): self
     {
-        $key                   = sprintf('%s:%s', $this->pendingMethod, $this->pendingUrl);
+        $key = sprintf('%s:%s', $this->pendingMethod, $this->pendingUrl);
         $this->responses[$key] = RecordedHttpResponse::throws($this->pendingUrl, $throwable);
 
         return $this;
@@ -404,7 +404,7 @@ final class FakeHttpClientBuilder
     /**
      * Add a raw response mapping.
      *
-     * @param array<string, RecordedHttpResponse> $responses
+     * @param  array<string, RecordedHttpResponse>  $responses
      */
     public function withResponses(array $responses): self
     {

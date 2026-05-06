@@ -50,7 +50,7 @@ if (! function_exists('d')) {
 
         echo "<pre style='background:#1e1e1e;color:#d4d4d4;padding:12px;font-size:13px;'>\n";
         echo "<strong style='color:#569cd6;'>{$file}:{$line}</strong>\n";
-        echo str_repeat('-', 60) . "\n";
+        echo str_repeat('-', 60)."\n";
 
         foreach ($vars as $key => $var) {
             echo "\n[{$key}] ";

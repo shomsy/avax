@@ -12,4 +12,6 @@ use Avax\Components\HTTP\Middleware\System\PublicSurface\MiddlewareInterface as 
  *
  * @deprecated Import from System\PublicSurface\MiddlewareInterface directly
  */
-interface MiddlewareInterface extends ActualMiddlewareInterface {}
+interface MiddlewareInterface extends ActualMiddlewareInterface
+{
+}

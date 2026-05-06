@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DeveloperTools\Dx\System\Capabilities\Commands;
 
-
 use Stringable;
 
 class DxCommand implements Stringable

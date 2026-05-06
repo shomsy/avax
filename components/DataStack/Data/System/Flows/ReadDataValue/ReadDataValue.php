@@ -10,7 +10,8 @@ final readonly class ReadDataValue
 {
     public function __construct(
         private ArrayReader $arrayReader,
-    ) {}
+    ) {
+    }
 
     public function read(array $data, string $key, mixed $default = null): mixed
     {

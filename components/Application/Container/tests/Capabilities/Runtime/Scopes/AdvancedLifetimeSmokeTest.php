@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(3, path: __DIR__) . '/bootstrap.php';
+require_once dirname(3, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
@@ -84,8 +84,8 @@ final class JobScopedService
 {
 }
 
-$cacheDir  = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid(prefix: '', more_entropy: true);
-$config    = CreateContainerConfig::create(cacheDir: $cacheDir);
+$cacheDir = sys_get_temp_dir().'/container-advanced-lifetimes-'.uniqid(prefix: '', more_entropy: true);
+$config = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer(config: $config);
 
 $container->singleton(abstract: WarmSingletonService::class, concrete: WarmSingletonService::class)->warm();
@@ -100,17 +100,17 @@ $container->bind(abstract: InvalidTransientDisposableService::class, concrete: I
 $container->scoped(abstract: JobScopedService::class, concrete: JobScopedService::class)->job();
 
 $issues = implode(separator: "\n", array: $container->validate(serviceIds: [
-                                                                               SharedCapturesTransientService::class,
-                                                                               SharedCapturesRequestScopedService::class,
-                                                                               InvalidDisposableService::class,
-                                                                           ]));
+    SharedCapturesTransientService::class,
+    SharedCapturesRequestScopedService::class,
+    InvalidDisposableService::class,
+]));
 
 assertTrue(
-    condition: str_contains(haystack: $issues, needle: 'captures transient dependency [' . PlainTransientDependency::class . ']'),
+    condition: str_contains(haystack: $issues, needle: 'captures transient dependency ['.PlainTransientDependency::class.']'),
     message  : 'Validation should detect captured transient dependencies.',
 );
 assertTrue(
-    condition: str_contains(haystack: $issues, needle: 'captures scoped dependency [' . RequestScopedDisposableService::class . ']'),
+    condition: str_contains(haystack: $issues, needle: 'captures scoped dependency ['.RequestScopedDisposableService::class.']'),
     message  : 'Validation should detect shared services that capture scoped dependencies.',
 );
 assertTrue(
@@ -148,7 +148,7 @@ assertThrows(
 );
 
 $container->openScope(kind: ScopeKind::REQUEST, scopeId: 'request-1');
-$requestFirst  = $container->get(id: RequestScopedDisposableService::class);
+$requestFirst = $container->get(id: RequestScopedDisposableService::class);
 $requestSecond = $container->get(id: RequestScopedDisposableService::class);
 assertSame(expected: $requestFirst, actual: $requestSecond, message: 'ServerRequest-scoped services should reuse the same instance inside one request scope.');
 $container->closeScope(kind: ScopeKind::REQUEST);
@@ -173,7 +173,7 @@ assertThrows(
 );
 
 $container->openScope(kind: ScopeKind::JOB, scopeId: 'job-1');
-$jobFirst  = $container->get(id: JobScopedService::class);
+$jobFirst = $container->get(id: JobScopedService::class);
 $jobSecond = $container->get(id: JobScopedService::class);
 assertSame(expected: $jobFirst, actual: $jobSecond, message: 'Job-scoped services should reuse the same instance inside one job scope.');
 $container->closeScope(kind: ScopeKind::JOB);
@@ -185,4 +185,4 @@ assertSame(expected: 1, actual: AdvancedLifetimeSequence::$sharedDisposals, mess
 
 rmdir(directory: $cacheDir);
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

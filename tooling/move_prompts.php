@@ -10,9 +10,9 @@ if (! is_dir($dst)) {
 }
 
 $dir = opendir($src);
-while ( false !== ($file = readdir($dir)) ) {
+while (false !== ($file = readdir($dir))) {
     if (($file !== '.') && ($file !== '..')) {
-        rename($src . '/' . $file, $dst . '/' . $file);
+        rename($src.'/'.$file, $dst.'/'.$file);
     }
 }
 

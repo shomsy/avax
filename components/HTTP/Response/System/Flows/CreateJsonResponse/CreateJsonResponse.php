@@ -9,7 +9,7 @@ use Avax\Components\HTTP\System\Flows\BuildResponse\BuildResponse;
 
 final class CreateJsonResponse
 {
-    public function execute(mixed $data, int $status = 200) : ResponseInterface
+    public function execute(mixed $data, int $status = 200): ResponseInterface
     {
         return BuildResponse::execute(
             $status,

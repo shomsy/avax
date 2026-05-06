@@ -16,19 +16,20 @@ use Throwable;
  */
 final readonly class Builder
 {
-    public function __construct(private CreateDependencyBlueprint $createDependencyBlueprint, private ResolveDependencies $resolveDependencies) {
+    public function __construct(private CreateDependencyBlueprint $createDependencyBlueprint, private ResolveDependencies $resolveDependencies)
+    {
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      *
      * @throws ContainerException
      */
     public function build(
         string $class,
         ResolveDependency $resolveDependency,
-        ?array            $overrides = null,
-        ?ResolveRequest   $resolveRequest = null,
+        ?array $overrides = null,
+        ?ResolveRequest $resolveRequest = null,
     ): object {
         $overrides ??= [];
         $serviceId = $resolveRequest?->serviceId ?? $class;
@@ -39,8 +40,8 @@ final readonly class Builder
             if (! $blueprint->instantiable) {
                 throw new ContainerException(
                     message: sprintf('Class [%s] is not instantiable for service [%s]. ', $class, $serviceId)
-                             . sprintf('Dependency path [%s]. ', $path)
-                             . 'Likely fix: bind an instantiable concrete class or replace the abstract target.',
+                             .sprintf('Dependency path [%s]. ', $path)
+                             .'Likely fix: bind an instantiable concrete class or replace the abstract target.',
                 );
             }
 
@@ -60,9 +61,9 @@ final readonly class Builder
             }
 
             throw new ContainerException(message: sprintf('Failed to build service [%s] with class [%s]. ', $serviceId, $class)
-                                                  . sprintf('Dependency path [%s]. ', $path)
-                                                  . sprintf('Failure: %s. ', $throwable->getMessage())
-                                                  . 'Likely fix: fix the constructor graph, provide missing runtime input, or replace the concrete class.', code: $throwable->getCode(), previous: $throwable);
+                                                  .sprintf('Dependency path [%s]. ', $path)
+                                                  .sprintf('Failure: %s. ', $throwable->getMessage())
+                                                  .'Likely fix: fix the constructor graph, provide missing runtime input, or replace the concrete class.', code: $throwable->getCode(), previous: $throwable);
         }
     }
 }

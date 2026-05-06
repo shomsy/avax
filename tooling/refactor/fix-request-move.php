@@ -13,15 +13,17 @@ foreach ($dirs as $dir) {
 
 $count = 0;
 foreach ($files as $file) {
-    if (!$file) continue;
+    if (! $file) {
+        continue;
+    }
     $content = file_get_contents($file);
     $changed = false;
-    
+
     // Fix HTTP\Request\Request to HTTP\Request\System\Request
     if (str_contains($content, 'Avax\Components\HTTP\Request\Request')) {
         $content = str_replace(
-            'Avax\Components\HTTP\Request\Request', 
-            'Avax\Components\HTTP\Request\System\Request', 
+            'Avax\Components\HTTP\Request\Request',
+            'Avax\Components\HTTP\Request\System\Request',
             $content
         );
         $changed = true;

@@ -6,4 +6,6 @@ namespace Avax\Components\DeveloperTools\Diagnostics\System\Foundation;
 
 use Exception;
 
-final class DiagnosticsException extends Exception {}
+final class DiagnosticsException extends Exception
+{
+}

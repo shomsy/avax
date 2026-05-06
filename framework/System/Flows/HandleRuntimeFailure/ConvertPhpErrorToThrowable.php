@@ -20,21 +20,21 @@ final readonly class ConvertPhpErrorToThrowable
      */
     private const array ERROR_NAMES
         = [
-            E_ERROR             => 'E_ERROR',
-            E_WARNING           => 'E_WARNING',
-            E_PARSE             => 'E_PARSE',
-            E_NOTICE            => 'E_NOTICE',
-            E_CORE_ERROR        => 'E_CORE_ERROR',
-            E_CORE_WARNING      => 'E_CORE_WARNING',
-            E_COMPILE_ERROR     => 'E_COMPILE_ERROR',
-            E_COMPILE_WARNING   => 'E_COMPILE_WARNING',
-            E_USER_ERROR        => 'E_USER_ERROR',
-            E_USER_WARNING      => 'E_USER_WARNING',
-            E_USER_NOTICE       => 'E_USER_NOTICE',
-            E_STRICT            => 'E_STRICT',
+            E_ERROR => 'E_ERROR',
+            E_WARNING => 'E_WARNING',
+            E_PARSE => 'E_PARSE',
+            E_NOTICE => 'E_NOTICE',
+            E_CORE_ERROR => 'E_CORE_ERROR',
+            E_CORE_WARNING => 'E_CORE_WARNING',
+            E_COMPILE_ERROR => 'E_COMPILE_ERROR',
+            E_COMPILE_WARNING => 'E_COMPILE_WARNING',
+            E_USER_ERROR => 'E_USER_ERROR',
+            E_USER_WARNING => 'E_USER_WARNING',
+            E_USER_NOTICE => 'E_USER_NOTICE',
+            E_STRICT => 'E_STRICT',
             E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
-            E_DEPRECATED        => 'E_DEPRECATED',
-            E_USER_DEPRECATED   => 'E_USER_DEPRECATED',
+            E_DEPRECATED => 'E_DEPRECATED',
+            E_USER_DEPRECATED => 'E_USER_DEPRECATED',
         ];
 
     /**
@@ -53,7 +53,7 @@ final readonly class ConvertPhpErrorToThrowable
     /**
      * Convert an error array (from error_get_last()) to a throwable exception.
      *
-     * @param array{type: int, message: string, file: string, line: int} $error
+     * @param  array{type: int, message: string, file: string, line: int}  $error
      */
     public function convertFromErrorArray(array $error): Throwable
     {

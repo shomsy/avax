@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    '*'         => [
+    '*' => [
         'max_time_ratio_vs_peer' => 1.75,
         'max_peak_ratio_vs_peer' => 2.00,
     ],

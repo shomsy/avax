@@ -10,12 +10,12 @@ final class Pipeline
 {
     private static ?HookRegistry $hookRegistry = null;
 
-    public static function beforeRoute(Closure $handler) : void
+    public static function beforeRoute(Closure $handler): void
     {
         self::registry()->add('beforeRoute', $handler);
     }
 
-    private static function registry() : HookRegistry
+    private static function registry(): HookRegistry
     {
         if (! self::$hookRegistry instanceof HookRegistry) {
             self::$hookRegistry = new HookRegistry();
@@ -24,47 +24,47 @@ final class Pipeline
         return self::$hookRegistry;
     }
 
-    public static function afterRoute(Closure $handler) : void
+    public static function afterRoute(Closure $handler): void
     {
         self::registry()->add('afterRoute', $handler);
     }
 
-    public static function beforeController(Closure $handler) : void
+    public static function beforeController(Closure $handler): void
     {
         self::registry()->add('beforeController', $handler);
     }
 
-    public static function afterController(Closure $handler) : void
+    public static function afterController(Closure $handler): void
     {
         self::registry()->add('afterController', $handler);
     }
 
-    public static function beforeResponse(Closure $handler) : void
+    public static function beforeResponse(Closure $handler): void
     {
         self::registry()->add('beforeResponse', $handler);
     }
 
-    public static function afterResponse(Closure $handler) : void
+    public static function afterResponse(Closure $handler): void
     {
         self::registry()->add('afterResponse', $handler);
     }
 
-    public static function onException(Closure $handler) : void
+    public static function onException(Closure $handler): void
     {
         self::registry()->add('onException', $handler);
     }
 
-    public static function onTerminate(Closure $handler) : void
+    public static function onTerminate(Closure $handler): void
     {
         self::registry()->add('onTerminate', $handler);
     }
 
-    public static function execute(string $hook, mixed $data = null) : mixed
+    public static function execute(string $hook, mixed $data = null): mixed
     {
         return self::registry()->execute($hook, $data);
     }
 
-    public static function hooks() : array
+    public static function hooks(): array
     {
         return self::registry()->all();
     }
@@ -75,7 +75,7 @@ final class HookRegistry
     /** @var array<string, list<Closure>> */
     private array $hooks = [];
 
-    public function add(string $name, Closure $handler) : void
+    public function add(string $name, Closure $handler): void
     {
         if (! isset($this->hooks[$name])) {
             $this->hooks[$name] = [];
@@ -84,7 +84,7 @@ final class HookRegistry
         $this->hooks[$name][] = $handler;
     }
 
-    public function execute(string $hook, mixed $data = null) : mixed
+    public function execute(string $hook, mixed $data = null): mixed
     {
         $handlers = $this->hooks[$hook] ?? [];
         $result = $data;
@@ -96,17 +96,17 @@ final class HookRegistry
         return $result;
     }
 
-    public function has(string $hook) : bool
+    public function has(string $hook): bool
     {
         return isset($this->hooks[$hook]) && $this->hooks[$hook] !== [];
     }
 
-    public function count(string $hook) : int
+    public function count(string $hook): int
     {
         return count($this->hooks[$hook] ?? []);
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->hooks;
     }

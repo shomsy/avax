@@ -10,10 +10,11 @@ use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 final readonly class ResetApplicationState
 {
     public function __construct(
-        private StateResetRegistry|null $stateResetRegistry = null,
-    ) {}
+        private ?StateResetRegistry $stateResetRegistry = null,
+    ) {
+    }
 
-    public function reset() : StateResetReport
+    public function reset(): StateResetReport
     {
         $this->resetRequestScope();
         $this->resetRuntimeContext();
@@ -24,9 +25,15 @@ final readonly class ResetApplicationState
             : new StateResetReport(resetComponents: [], failures: []);
     }
 
-    private function resetRequestScope() : void {}
+    private function resetRequestScope(): void
+    {
+    }
 
-    private function resetRuntimeContext() : void {}
+    private function resetRuntimeContext(): void
+    {
+    }
 
-    private function resetDiagnosticsContext() : void {}
+    private function resetDiagnosticsContext(): void
+    {
+    }
 }

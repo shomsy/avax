@@ -13,8 +13,8 @@ use Avax\Components\Application\Container\System\Capabilities\Declaration\Owners
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\RegistrationMetadata;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\RegistrationVisibility;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\LifetimePlan;
-use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
+use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Components\Application\Container\System\Container;
 use Avax\Components\Application\Container\System\ContainerInterface;
@@ -28,9 +28,8 @@ use SensitiveParameter;
 final readonly class CheckCompositionPolicies
 {
     /**
-     * @param array<string, list<string>> $graph
-     * @param array<string, list<string>> $dependents
-     *
+     * @param  array<string, list<string>>  $graph
+     * @param  array<string, list<string>>  $dependents
      * @return array<string, list<array{code: string, severity: string, category: string, message: string}>>
      *
      * @throws ReflectionException
@@ -38,17 +37,17 @@ final readonly class CheckCompositionPolicies
     public function check(
         array $graph,
         array $dependents,
-        DependencyRegistry        $dependencyRegistry,
+        DependencyRegistry $dependencyRegistry,
         CreateDependencyBlueprint $createDependencyBlueprint,
-        ResolutionPolicy          $resolutionPolicy,
+        ResolutionPolicy $resolutionPolicy,
     ): array {
         $findings = [];
 
         foreach ($graph as $serviceId => $dependencies) {
             $findings[$serviceId] = [];
             $registration = $dependencyRegistry->get(abstract: $serviceId);
-            $metadata             = $registration?->metadata ?? RegistrationMetadata::for(unitId: $serviceId);
-            $candidate            = $registration?->concrete;
+            $metadata = $registration?->metadata ?? RegistrationMetadata::for(unitId: $serviceId);
+            $candidate = $registration?->concrete;
 
             if ($candidate === null && class_exists(class: $serviceId)) {
                 $candidate = $serviceId;
@@ -96,7 +95,7 @@ final readonly class CheckCompositionPolicies
                     ?? RegistrationMetadata::for(unitId: $dependency);
 
                 if (
-                    $metadata->category              === RegistrationCategory::FLOW
+                    $metadata->category === RegistrationCategory::FLOW
                     && $dependencyMetadata->category === RegistrationCategory::FLOW
                     && $metadata->ownerSlice !== $dependencyMetadata->ownerSlice
                 ) {
@@ -115,7 +114,7 @@ final readonly class CheckCompositionPolicies
                     Container::class,
                     ResolveDependency::class,
                     DependencyRegistryContract::class,
-                ],           strict: true)) {
+                ], strict: true)) {
                     $findings[$serviceId][] = $this->finding(
                         code    : 'POL-008',
                         severity: 'error',
@@ -126,9 +125,9 @@ final readonly class CheckCompositionPolicies
                 }
 
                 if (in_array(needle: $dependency, haystack: [
-                        ContainerSettings::class,
-                        CreateContainerConfig::class,
-                    ],       strict: true) && $metadata->category !== RegistrationCategory::CONFIGURATION) {
+                    ContainerSettings::class,
+                    CreateContainerConfig::class,
+                ], strict: true) && $metadata->category !== RegistrationCategory::CONFIGURATION) {
                     $findings[$serviceId][] = $this->finding(
                         code    : 'POL-009',
                         severity: 'warn',
@@ -259,10 +258,10 @@ final readonly class CheckCompositionPolicies
         string $message,
     ): array {
         return [
-            'code'     => $code,
+            'code' => $code,
             'severity' => $resolutionPolicy->severityFor(code: $code, defaultSeverity: $severity),
             'category' => $category,
-            'message'  => $message,
+            'message' => $message,
         ];
     }
 }

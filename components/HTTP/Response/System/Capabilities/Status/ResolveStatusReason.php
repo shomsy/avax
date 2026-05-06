@@ -13,7 +13,7 @@ final class ResolveStatusReason
             500 => 'Internal Server Error',
         ];
 
-    public function resolve(int $code) : string
+    public function resolve(int $code): string
     {
         return self::PHRASES[$code] ?? 'Unknown Status';
     }

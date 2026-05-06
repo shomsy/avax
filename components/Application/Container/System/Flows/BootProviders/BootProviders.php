@@ -19,23 +19,24 @@ use Throwable;
  */
 final readonly class BootProviders
 {
-    public function __construct(private ContainerInterface $container) {
+    public function __construct(private ContainerInterface $container)
+    {
     }
 
     /**
-     * @param array<int, string|RegisterDependency> $providers
+     * @param  array<int, string|RegisterDependency>  $providers
      *
      * @throws InvalidArgumentException
      * @throws ContainerException
      */
     public function boot(array $providers): void
     {
-        $instances      = $this->resolveProviders(providers: $providers);
+        $instances = $this->resolveProviders(providers: $providers);
         $providerBootPlan = ProviderBootPlan::build(instances: $instances);
         $ordered = $providerBootPlan->orderedInstances(instances: $instances);
         $eagerProviders = $this->eagerProviderClasses(instances: $instances, plan: $providerBootPlan);
-        $metrics        = $this->metrics();
-        $resolver       = $this->resolver();
+        $metrics = $this->metrics();
+        $resolver = $this->resolver();
 
         $metrics?->increment(name: 'container_provider_plan_total');
         $metrics?->increment(name: 'container_provider_plan_entries_total', by: count(value: $providerBootPlan->order));
@@ -69,8 +70,7 @@ final readonly class BootProviders
     }
 
     /**
-     * @param array<int, string|RegisterDependency> $providers
-     *
+     * @param  array<int, string|RegisterDependency>  $providers
      * @return array<class-string<RegisterDependency>, RegisterDependency>
      *
      * @throws InvalidArgumentException
@@ -81,7 +81,7 @@ final readonly class BootProviders
         $instances = [];
 
         foreach ($providers as $provider) {
-            $instance                    = $this->instanceFor(provider: $provider);
+            $instance = $this->instanceFor(provider: $provider);
             $instances[$instance::class] = $instance;
         }
 
@@ -93,9 +93,9 @@ final readonly class BootProviders
                     continue;
                 }
 
-                $dependency                    = $this->instanceFor(provider: $dependencyClass);
+                $dependency = $this->instanceFor(provider: $dependencyClass);
                 $instances[$dependency::class] = $dependency;
-                $queue[]                       = $dependency;
+                $queue[] = $dependency;
             }
         }
 
@@ -103,7 +103,7 @@ final readonly class BootProviders
     }
 
     /**
-     * @param array<int, string|RegisterDependency> $providers
+     * @param  array<int, string|RegisterDependency>  $providers
      *
      * @throws InvalidArgumentException
      * @throws ContainerException
@@ -128,10 +128,10 @@ final readonly class BootProviders
     }
 
     /**
-     * @param array<class-string<RegisterDependency>, RegisterDependency> $instances
+     * @param  array<class-string<RegisterDependency>, RegisterDependency>  $instances
      * @return list<class-string<RegisterDependency>>
      */
-    private function eagerProviderClasses(ProviderBootPlan $providerBootPlan, array $instances) : array
+    private function eagerProviderClasses(ProviderBootPlan $providerBootPlan, array $instances): array
     {
         $eager = [];
 
@@ -154,15 +154,15 @@ final readonly class BootProviders
         return $classes;
     }
 
-    private function isDeferredProvider(RegisterDependency $registerDependency) : bool
+    private function isDeferredProvider(RegisterDependency $registerDependency): bool
     {
         return $registerDependency instanceof RegisterDeferredDependency
             && $registerDependency->deferred();
     }
 
     /**
-     * @param array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>> $dependencies
-     * @param array<class-string<RegisterDependency>, true> $eager
+     * @param  array<class-string<RegisterDependency>, list<class-string<RegisterDependency>>>  $dependencies
+     * @param  array<class-string<RegisterDependency>, true>  $eager
      */
     private function markDependenciesAsEager(string $class, array $dependencies, array &$eager): void
     {
@@ -213,7 +213,7 @@ final readonly class BootProviders
      *
      * @return list<string>
      */
-    private function providedServices(RegisterDependency $registerDependency) : array
+    private function providedServices(RegisterDependency $registerDependency): array
     {
         if (! $registerDependency instanceof RegisterDeferredDependency) {
             return [];

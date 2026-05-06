@@ -29,7 +29,7 @@ use SensitiveParameter;
 final readonly class ExchangeAuthorizationCode
 {
     public function __construct(
-        private OAuthClientRegistryInterface    $oAuthClientRegistry,
+        private OAuthClientRegistryInterface $oAuthClientRegistry,
         #[SensitiveParameter]
         private AuthorizationCodeStoreInterface $authorizationCodeStore,
         private UserSourceInterface $userSource,
@@ -42,13 +42,14 @@ final readonly class ExchangeAuthorizationCode
         #[SensitiveParameter]
         private ?CurrentAuthentication $currentAuthentication = null,
         private ?OidcProviderInterface $oidcProvider = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
      * @throws DateMalformedStringException
      */
-    public function execute(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData) : OAuthTokenGrant
+    public function execute(ExchangeAuthorizationCodeData $exchangeAuthorizationCodeData): OAuthTokenGrant
     {
         $now = $this->clock->now();
         $client = $this->oAuthClientRegistry->find(clientId: $exchangeAuthorizationCodeData->clientId);
@@ -134,7 +135,7 @@ final readonly class ExchangeAuthorizationCode
             scopes           : $record->scopes,
             senderConstraint : $exchangeAuthorizationCodeData->senderConstraint,
         );
-        $issuedToken        = $this->jwtIdentity->issue(
+        $issuedToken = $this->jwtIdentity->issue(
             user                : $user,
             phishingResistant   : $record->phishingResistant,
             scopes              : $record->scopes,
@@ -167,12 +168,12 @@ final readonly class ExchangeAuthorizationCode
             name      : 'auth.oauth.authorization_code.exchanged',
             occurredAt: $now,
             context   : [
-                            'client_id' => $client->clientId,
-                            'user_id'   => $user->getId()->value,
-                            'code_id'   => $record->codeId,
-                            'scope'     => implode(separator: ' ', array: $record->scopes),
-                            'ip_address' => $exchangeAuthorizationCodeData->ipAddress,
-                            'user_agent' => $exchangeAuthorizationCodeData->userAgent,
+                'client_id' => $client->clientId,
+                'user_id' => $user->getId()->value,
+                'code_id' => $record->codeId,
+                'scope' => implode(separator: ' ', array: $record->scopes),
+                'ip_address' => $exchangeAuthorizationCodeData->ipAddress,
+                'user_agent' => $exchangeAuthorizationCodeData->userAgent,
             ],
         ));
 
@@ -202,11 +203,11 @@ final readonly class ExchangeAuthorizationCode
             name      : $name,
             occurredAt: $this->clock->now(),
             context   : [
-                            'client_id'    => $exchangeAuthorizationCodeData->clientId,
-                            'redirect_uri' => $exchangeAuthorizationCodeData->redirectUri,
-                            'reason'     => $reason,
-                            'ip_address'   => $exchangeAuthorizationCodeData->ipAddress,
-                            'user_agent'   => $exchangeAuthorizationCodeData->userAgent,
+                'client_id' => $exchangeAuthorizationCodeData->clientId,
+                'redirect_uri' => $exchangeAuthorizationCodeData->redirectUri,
+                'reason' => $reason,
+                'ip_address' => $exchangeAuthorizationCodeData->ipAddress,
+                'user_agent' => $exchangeAuthorizationCodeData->userAgent,
             ],
         ));
     }

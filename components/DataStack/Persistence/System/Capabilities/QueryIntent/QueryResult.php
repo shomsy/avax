@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent;
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics\QueryFingerprint;
+
 use function count;
 
 /**
@@ -15,14 +16,15 @@ use function count;
 final readonly class QueryResult
 {
     /**
-     * @param array<array<string, mixed>> $rows
+     * @param  array<array<string, mixed>>  $rows
      */
     public function __construct(
         private array $rows = [],
         public ?int $count = null,
         public ?float $tookMs = null,
         public ?QueryFingerprint $fingerprint = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Returns the result rows.
@@ -81,7 +83,7 @@ final readonly class QueryResult
     /**
      * Returns a new instance with the specified rows.
      *
-     * @param array<array<string, mixed>> $rows
+     * @param  array<array<string, mixed>>  $rows
      */
     public function withRows(array $rows): QueryResult
     {
@@ -109,7 +111,7 @@ final readonly class QueryResult
     /**
      * Returns a new instance with the specified fingerprint.
      */
-    public function withFingerprint(QueryFingerprint $queryFingerprint) : QueryResult
+    public function withFingerprint(QueryFingerprint $queryFingerprint): QueryResult
     {
         return new QueryResult(
             rows       : $this->rows,

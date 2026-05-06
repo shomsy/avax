@@ -30,7 +30,8 @@ final readonly class RevokeSession
         private Clock $clock,
         #[SensitiveParameter]
         private ?SessionRegistryInterface $sessionRegistry = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws Unauthenticated
@@ -38,7 +39,7 @@ final readonly class RevokeSession
     public function execute(#[SensitiveParameter] string $sessionId): void
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $user                  = $authenticationContext->user();
+        $user = $authenticationContext->user();
 
         if (! $user instanceof AuthenticatedUser) {
             throw new Unauthenticated();
@@ -67,9 +68,9 @@ final readonly class RevokeSession
             name      : 'auth.session.revoked',
             occurredAt: $now,
             context   : [
-                            'user_id' => $user->id,
+                'user_id' => $user->id,
                 'session_id' => $sessionId,
-                            'reason'  => 'user_revoke',
+                'reason' => 'user_revoke',
             ],
         ));
     }

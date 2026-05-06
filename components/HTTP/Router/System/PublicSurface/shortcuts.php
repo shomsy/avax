@@ -45,7 +45,7 @@ if (! function_exists('url')) {
         $path = ltrim($path, '/');
 
         if ($parameters !== []) {
-            $path .= '?' . http_build_query($parameters);
+            $path .= '?'.http_build_query($parameters);
         }
 
         return sprintf('%s://%s/%s', $scheme, $host, $path);

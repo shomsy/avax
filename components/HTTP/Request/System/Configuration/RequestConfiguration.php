@@ -8,5 +8,6 @@ final readonly class RequestConfiguration
 {
     public function __construct(
         public array $trustedProxies = [],
-    ) {}
+    ) {
+    }
 }

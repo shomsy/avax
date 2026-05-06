@@ -26,7 +26,7 @@ final readonly class AcceptHeaderParser
             }
 
             $segments = explode(';', $part);
-            $mime     = trim($segments[0]);
+            $mime = trim($segments[0]);
 
             if ($mime !== '') {
                 $types[] = $mime;
@@ -41,8 +41,8 @@ final readonly class AcceptHeaderParser
         $parts = explode(',', $header);
 
         foreach ($parts as $part) {
-            $part       = trim($part);
-            $segments   = explode(';', $part);
+            $part = trim($part);
+            $segments = explode(';', $part);
             $parsedMime = trim($segments[0]);
 
             if ($parsedMime === $mime || $parsedMime === '*/*') {

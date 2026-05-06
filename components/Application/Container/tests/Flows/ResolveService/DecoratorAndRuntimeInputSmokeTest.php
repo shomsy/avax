@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
@@ -101,13 +101,13 @@ $container->singleton(abstract: SecondGroupedStep::class, concrete: SecondGroupe
     ->export()
     ->group(group: 'checkout.steps', order: 10);
 
-$runtimeFactory  = $container->factory(abstract: RuntimeInputConsumer::class);
-$consumer        = $container->make(abstract: RuntimeInputConsumer::class, parameters: ['name' => 'Ada']);
+$runtimeFactory = $container->factory(abstract: RuntimeInputConsumer::class);
+$consumer = $container->make(abstract: RuntimeInputConsumer::class, parameters: ['name' => 'Ada']);
 $factoryConsumer = $runtimeFactory(['name' => 'Grace']);
-$description     = $container->describeService(id: DecoratedContract::class);
-$grouped         = $container->grouped(group: 'checkout.steps');
-$graph           = $container->debugGraph();
-$groupReport     = $container->debugGroup(group: 'checkout.steps');
+$description = $container->describeService(id: DecoratedContract::class);
+$grouped = $container->grouped(group: 'checkout.steps');
+$graph = $container->debugGraph();
+$groupReport = $container->debugGroup(group: 'checkout.steps');
 $selectionReport = $container->debugSelection(id: DecoratedContract::class);
 
 assertSame(expected: 'Ada', actual: $consumer->name, message: 'Runtime input should come from explicit caller overrides.');
@@ -159,10 +159,10 @@ $container->singleton(abstract: ConflictingGroupedStep::class, concrete: Conflic
     ->group(group: 'checkout.steps', order: 10);
 
 $groupIssues = implode(separator: "\n", array: $container->validate(serviceIds: [
-                                                                                    FirstGroupedStep::class,
-                                                                                    SecondGroupedStep::class,
-                                                                                    ConflictingGroupedStep::class,
-                                                                                ]));
+    FirstGroupedStep::class,
+    SecondGroupedStep::class,
+    ConflictingGroupedStep::class,
+]));
 
 assertTrue(
     condition: str_contains(haystack: $groupIssues, needle: 'Group [checkout.steps] uses duplicate order [10]'),
@@ -186,4 +186,4 @@ assertTrue(
     message  : 'Validation should reject decorators that violate slice visibility.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

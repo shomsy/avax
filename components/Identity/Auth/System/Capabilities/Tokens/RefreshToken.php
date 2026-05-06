@@ -15,5 +15,6 @@ final readonly class RefreshToken
     public function __construct(
         public string $value,
         public DateTimeImmutable $expiresAt,
-    ) {}
+    ) {
+    }
 }

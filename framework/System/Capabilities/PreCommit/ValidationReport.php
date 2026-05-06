@@ -6,7 +6,7 @@ namespace Avax\Framework\System\Capabilities\PreCommit;
 
 /**
  * Validation Report Storage
- * 
+ *
  * JSON-based report storage with timestamp tracking.
  * Stores validation history for audit trail.
  */
@@ -30,7 +30,7 @@ final class ValidationReport
         $this->reportId = uniqid('val-', true);
     }
 
-    public function addResult(ValidationResult $validationResult) : void
+    public function addResult(ValidationResult $validationResult): void
     {
         $this->results[] = $validationResult;
     }
@@ -47,18 +47,18 @@ final class ValidationReport
     public function getFailedResults(): array
     {
         return array_values(array_filter(
-                                $this->results,
-                                static fn (ValidationResult $validationResult) : bool => $validationResult->isFailed()
-                            ));
+            $this->results,
+            static fn (ValidationResult $validationResult): bool => $validationResult->isFailed()
+        ));
     }
 
     /** @return list<ValidationResult> */
     public function getPassedResults(): array
     {
         return array_values(array_filter(
-                                $this->results,
-                                static fn (ValidationResult $validationResult) : bool => $validationResult->isPassed()
-                            ));
+            $this->results,
+            static fn (ValidationResult $validationResult): bool => $validationResult->isPassed()
+        ));
     }
 
     public function isAllPassed(): bool
@@ -119,7 +119,7 @@ final class ValidationReport
 
     /**
      * Convert report to JSON-serializable array
-     * 
+     *
      * @return array<string, mixed>
      */
     public function toArray(): array
@@ -136,11 +136,11 @@ final class ValidationReport
             ],
             'metadata' => $this->metadata,
             'results' => array_map(fn (ValidationResult $validationResult): array => [
-                'passed'    => $validationResult->isPassed(),
-                'severity'  => $validationResult->getSeverity(),
-                'messages'  => $validationResult->getMessages(),
-                'file'      => $validationResult->getFile(),
-                'line'      => $validationResult->getLine(),
+                'passed' => $validationResult->isPassed(),
+                'severity' => $validationResult->getSeverity(),
+                'messages' => $validationResult->getMessages(),
+                'file' => $validationResult->getFile(),
+                'line' => $validationResult->getLine(),
                 'rule_code' => $validationResult->getRuleCode(),
             ], $this->results),
         ];
@@ -157,7 +157,7 @@ final class ValidationReport
         }
 
         $dir = dirname($outputPath);
-        if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+        if (! is_dir($dir) && ! mkdir($dir, 0755, true) && ! is_dir($dir)) {
             return false;
         }
 
@@ -175,7 +175,7 @@ final class ValidationReport
         $output .= "═══════════════════════════════════════════════════════════════\n";
         $output .= sprintf('  Report ID : %s%s', $this->reportId, PHP_EOL);
         $output .= sprintf('  Timestamp : %s%s', $this->timestamp, PHP_EOL);
-        $output .= "  Duration  : " . number_format($this->executionTime, 4) . "s\n";
+        $output .= '  Duration  : '.number_format($this->executionTime, 4)."s\n";
         $output .= "───────────────────────────────────────────────────────────────\n";
         $output .= "  Results   : {$this->getPassedCount()}/{$this->getTotalCount()} passed\n";
         if ($this->getFailedCount() > 0) {
@@ -197,6 +197,6 @@ final class ValidationReport
             $output .= "  ❌ VALIDATION FAILED\n";
         }
 
-        return $output . "═══════════════════════════════════════════════════════════════\n\n";
+        return $output."═══════════════════════════════════════════════════════════════\n\n";
     }
 }

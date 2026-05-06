@@ -18,5 +18,6 @@ final readonly class VerifyMfaChallengeData
         #[SensitiveParameter]
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 }

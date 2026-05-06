@@ -15,7 +15,8 @@ final readonly class Provisioning
         private ?SuspendUser $suspendUser,
         private ?ReactivateUser $reactivateUser,
         private ?DeprovisionUser $deprovisionUser,
-    ) {}
+    ) {
+    }
 
     public function isConfigured(): bool
     {

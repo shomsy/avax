@@ -9,21 +9,21 @@ use PHPUnit\Framework\TestCase;
 
 final class SchemaBuilderTest extends TestCase
 {
-    public function testSchemaBuilderCanCreateTable() : void
+    public function test_schema_builder_can_create_table(): void
     {
         $builder = new SchemaBuilder();
 
         $this->assertTrue(method_exists($builder, 'create'));
     }
 
-    public function testSchemaBuilderCanDropTable() : void
+    public function test_schema_builder_can_drop_table(): void
     {
         $builder = new SchemaBuilder();
 
         $this->assertTrue(method_exists($builder, 'drop'));
     }
 
-    public function testSchemaBuilderIsInstantiable() : void
+    public function test_schema_builder_is_instantiable(): void
     {
         $builder = new SchemaBuilder();
 

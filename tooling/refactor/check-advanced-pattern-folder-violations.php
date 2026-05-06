@@ -3,8 +3,8 @@
 
 declare(strict_types=1);
 
-$root          = dirname(__DIR__, 2);
-$componentsDir = $root . '/components';
+$root = dirname(__DIR__, 2);
+$componentsDir = $root.'/components';
 
 if (! is_dir($componentsDir)) {
     echo "No components directory found. Skipping.\n";
@@ -34,12 +34,12 @@ $forbiddenFolders = [
     'Observers',
 ];
 
-$allowlistFile = $root . '/.agents/governance-allowlist/advanced-pattern-folder-exceptions.json';
-$allowlist     = [];
+$allowlistFile = $root.'/.agents/governance-allowlist/advanced-pattern-folder-exceptions.json';
+$allowlist = [];
 
 if (file_exists($allowlistFile)) {
-    $json      = file_get_contents($allowlistFile);
-    $data      = json_decode($json, true) ?? [];
+    $json = file_get_contents($allowlistFile);
+    $data = json_decode($json, true) ?? [];
     $allowlist = $data['exceptions'] ?? [];
 }
 
@@ -49,7 +49,7 @@ foreach ($allowlist as $entry) {
 }
 
 $violations = [];
-$warnings   = [];
+$warnings = [];
 
 $iterator = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($componentsDir, RecursiveDirectoryIterator::SKIP_DOTS)
@@ -60,14 +60,14 @@ foreach ($iterator as $file) {
         continue;
     }
 
-    $path         = $file->getPathname();
-    $relativePath = str_replace($componentsDir . '/', '', $path);
+    $path = $file->getPathname();
+    $relativePath = str_replace($componentsDir.'/', '', $path);
 
     foreach ($forbiddenFolders as $forbidden) {
-        if (strpos($path, '/' . $forbidden) !== false || strpos($path, '/' . $forbidden . '/') !== false) {
+        if (strpos($path, '/'.$forbidden) !== false || strpos($path, '/'.$forbidden.'/') !== false) {
             if (! isset($allowlistPaths[$relativePath])) {
                 $violations[] = [
-                    'path'   => $relativePath,
+                    'path' => $relativePath,
                     'folder' => $forbidden,
                     'reason' => 'forbidden pattern folder',
                 ];

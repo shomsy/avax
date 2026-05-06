@@ -6,6 +6,7 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey;
 
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\BeginAuthentication\BeginPasskeyAuthentication;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\BeginAuthentication\BeginPasskeyAuthenticationData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\BeginRegistration\BeginPasskeyRegistration;
@@ -20,7 +21,6 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\Pas
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskey;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskeyData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RevokePasskey\RevokePasskey;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredential;
 use DateMalformedStringException;
 use Random\RandomException;
 use SensitiveParameter;
@@ -38,7 +38,8 @@ final readonly class Passkey
         private ?RenamePasskey $renamePasskey,
         #[SensitiveParameter]
         private ?RevokePasskey $revokePasskey,
-    ) {}
+    ) {
+    }
 
     public function isConfigured(): bool
     {
@@ -66,7 +67,7 @@ final readonly class Passkey
         return $this->beginPasskeyRegistration ?? throw PasskeyOperationFailed::runtimeNotConfigured();
     }
 
-    public function completePasskeyRegistration(CompletePasskeyRegistrationData $completePasskeyRegistrationData) : PasskeyCredential
+    public function completePasskeyRegistration(CompletePasskeyRegistrationData $completePasskeyRegistrationData): PasskeyCredential
     {
         return $this->completePasskeyRegistrationOrFail()->execute(data: $completePasskeyRegistrationData);
     }
@@ -80,7 +81,7 @@ final readonly class Passkey
      * @throws RandomException
      * @throws DateMalformedStringException
      */
-    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $beginPasskeyAuthenticationData) : PasskeyAuthenticationChallenge
+    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $beginPasskeyAuthenticationData): PasskeyAuthenticationChallenge
     {
         return $this->beginPasskeyAuthenticationOrFail()->execute(data: $beginPasskeyAuthenticationData);
     }
@@ -90,7 +91,7 @@ final readonly class Passkey
         return $this->beginPasskeyAuthentication ?? throw PasskeyOperationFailed::runtimeNotConfigured();
     }
 
-    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData) : AuthenticationResult
+    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $completePasskeyAuthenticationData): AuthenticationResult
     {
         return $this->completePasskeyAuthenticationOrFail()->execute(data: $completePasskeyAuthenticationData);
     }
@@ -113,7 +114,7 @@ final readonly class Passkey
         return $this->listPasskeys ?? throw PasskeyOperationFailed::runtimeNotConfigured();
     }
 
-    public function renamePasskey(RenamePasskeyData $renamePasskeyData) : PasskeyCredential
+    public function renamePasskey(RenamePasskeyData $renamePasskeyData): PasskeyCredential
     {
         return $this->renamePasskeyOrFail()->execute(data: $renamePasskeyData);
     }

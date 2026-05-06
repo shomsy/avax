@@ -22,42 +22,43 @@ final readonly class RequestOptions
     public const int DEFAULT_CONNECT_TIMEOUT = 10_000;
 
     /**
-     * @param int                  $timeout         Total request timeout in milliseconds
-     * @param int                  $connectTimeout  Connection timeout in milliseconds
-     * @param bool                 $verifySsl       Whether to verify SSL certificates
-     * @param string|null          $sslCertPath     Path to SSL certificate file
-     * @param string|null          $sslKeyPath      Path to SSL key file
-     * @param string|null          $proxy           Proxy URL (e.g., http://proxy:8080)
-     * @param string|null          $proxyAuth       Proxy authentication string
-     * @param bool                 $followRedirects Whether to follow redirects
-     * @param int                  $maxRedirects    Maximum number of redirects to follow
-     * @param bool                 $httpErrors      Whether to throw on HTTP error status codes
-     * @param string|null          $encoding        Request body encoding
-     * @param RetryPolicy|null     $retryPolicy     Retry policy for failed requests
-     * @param TimeoutPolicy|null   $timeoutPolicy   Timeout policy configuration
-     * @param array<string, mixed> $additional      Additional custom options
+     * @param  int  $timeout  Total request timeout in milliseconds
+     * @param  int  $connectTimeout  Connection timeout in milliseconds
+     * @param  bool  $verifySsl  Whether to verify SSL certificates
+     * @param  string|null  $sslCertPath  Path to SSL certificate file
+     * @param  string|null  $sslKeyPath  Path to SSL key file
+     * @param  string|null  $proxy  Proxy URL (e.g., http://proxy:8080)
+     * @param  string|null  $proxyAuth  Proxy authentication string
+     * @param  bool  $followRedirects  Whether to follow redirects
+     * @param  int  $maxRedirects  Maximum number of redirects to follow
+     * @param  bool  $httpErrors  Whether to throw on HTTP error status codes
+     * @param  string|null  $encoding  Request body encoding
+     * @param  RetryPolicy|null  $retryPolicy  Retry policy for failed requests
+     * @param  TimeoutPolicy|null  $timeoutPolicy  Timeout policy configuration
+     * @param  array<string, mixed>  $additional  Additional custom options
      */
     public function __construct(
-        public int          $timeout = self::DEFAULT_TIMEOUT,
-        public int          $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT,
-        public bool         $verifySsl = true,
-        public ?string      $sslCertPath = null,
-        public ?string      $sslKeyPath = null,
-        public ?string      $proxy = null,
-        public ?string      $proxyAuth = null,
-        public bool         $followRedirects = true,
-        public int          $maxRedirects = 5,
-        public bool         $httpErrors = false,
-        public ?string      $encoding = null,
+        public int $timeout = self::DEFAULT_TIMEOUT,
+        public int $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT,
+        public bool $verifySsl = true,
+        public ?string $sslCertPath = null,
+        public ?string $sslKeyPath = null,
+        public ?string $proxy = null,
+        public ?string $proxyAuth = null,
+        public bool $followRedirects = true,
+        public int $maxRedirects = 5,
+        public bool $httpErrors = false,
+        public ?string $encoding = null,
         public ?RetryPolicy $retryPolicy = null,
         public ?TimeoutPolicy $timeoutPolicy = null,
-        public array        $additional = [],
-    ) {}
+        public array $additional = [],
+    ) {
+    }
 
     /**
      * Create options with a custom timeout.
      */
-    public static function withTimeout(int $timeoutMs) : self
+    public static function withTimeout(int $timeoutMs): self
     {
         return new self(timeout: $timeoutMs);
     }
@@ -65,7 +66,7 @@ final readonly class RequestOptions
     /**
      * Create options with SSL verification disabled.
      */
-    public static function insecure() : self
+    public static function insecure(): self
     {
         return new self(verifySsl: false);
     }
@@ -73,7 +74,7 @@ final readonly class RequestOptions
     /**
      * Create options with a retry policy.
      */
-    public static function withRetry(RetryPolicy $retryPolicy) : self
+    public static function withRetry(RetryPolicy $retryPolicy): self
     {
         return new self(retryPolicy: $retryPolicy);
     }
@@ -81,7 +82,7 @@ final readonly class RequestOptions
     /**
      * Create options with a proxy.
      */
-    public static function withProxy(string $proxyUrl, ?string $auth = null) : self
+    public static function withProxy(string $proxyUrl, ?string $auth = null): self
     {
         return new self(proxy: $proxyUrl, proxyAuth: $auth);
     }
@@ -89,7 +90,7 @@ final readonly class RequestOptions
     /**
      * Create options without following redirects.
      */
-    public static function noRedirects() : self
+    public static function noRedirects(): self
     {
         return new self(followRedirects: false);
     }
@@ -98,7 +99,7 @@ final readonly class RequestOptions
      * Merge these options with another set.
      * Values from the other options override these where set.
      */
-    public function merge(self $other) : self
+    public function merge(self $other): self
     {
         return new self(
             timeout        : $other->timeout !== self::DEFAULT_TIMEOUT ? $other->timeout : $this->timeout,
@@ -121,7 +122,7 @@ final readonly class RequestOptions
     /**
      * Get the effective timeout from the timeout policy if set, otherwise the timeout value.
      */
-    public function effectiveTimeout() : int
+    public function effectiveTimeout(): int
     {
         return $this->timeoutPolicy?->timeoutMs ?? $this->timeout;
     }
@@ -129,7 +130,7 @@ final readonly class RequestOptions
     /**
      * Get an additional option by key.
      */
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         return $this->additional[$key] ?? $default;
     }
@@ -137,7 +138,7 @@ final readonly class RequestOptions
     /**
      * Check if retries are configured.
      */
-    public function hasRetry() : bool
+    public function hasRetry(): bool
     {
         return $this->retryPolicy instanceof RetryPolicy;
     }

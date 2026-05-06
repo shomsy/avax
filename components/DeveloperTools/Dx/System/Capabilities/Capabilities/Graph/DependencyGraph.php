@@ -58,7 +58,7 @@ final class DependencyGraph
             return true;
         }
 
-        if (!isset($this->nodes[$dependency])) {
+        if (! isset($this->nodes[$dependency])) {
             return false;
         }
 

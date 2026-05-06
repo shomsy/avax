@@ -40,7 +40,7 @@ final class FunctionCaller
     /**
      * Calls one target with container-resolved arguments.
      *
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      *
      * @throws ReflectionException
      * @throws Throwable
@@ -55,9 +55,9 @@ final class FunctionCaller
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
         }
 
-        $normalized                 = $this->normalizeTarget(target: $target, request: $resolveRequest);
+        $normalized = $this->normalizeTarget(target: $target, request: $resolveRequest);
         $reflectionFunctionAbstract = $this->reflect(target: $normalized);
-        $arguments                  = $this->resolveCallArguments->resolvePlan(
+        $arguments = $this->resolveCallArguments->resolvePlan(
             overrides: $parameters,
             plan     : $this->planFor(reflection: $reflectionFunctionAbstract),
             resolver : $this->resolveDependency,
@@ -109,7 +109,7 @@ final class FunctionCaller
 
         if (is_string(value: $target) && str_contains(haystack: $target, needle: '::')) {
             [$class, $method] = explode(separator: '::', string: $target, limit: 2);
-            $reflection       = new ReflectionMethod(objectOrMethod: $class, method: $method);
+            $reflection = new ReflectionMethod(objectOrMethod: $class, method: $method);
 
             return $reflection->isStatic()
                 ? [$class, $method]
@@ -166,23 +166,23 @@ final class FunctionCaller
     private function planKeyOf(ReflectionFunctionAbstract $reflectionFunctionAbstract): string
     {
         if ($reflectionFunctionAbstract instanceof ReflectionMethod) {
-            return 'method:' . $reflectionFunctionAbstract->class . '::' . $reflectionFunctionAbstract->getName();
+            return 'method:'.$reflectionFunctionAbstract->class.'::'.$reflectionFunctionAbstract->getName();
         }
 
         if ($reflectionFunctionAbstract instanceof ReflectionFunction && $reflectionFunctionAbstract->isClosure()) {
-            return 'closure:' . ($reflectionFunctionAbstract->getFileName() ?: 'internal') . ':' . $reflectionFunctionAbstract->getStartLine() . ':' . $reflectionFunctionAbstract->getEndLine();
+            return 'closure:'.($reflectionFunctionAbstract->getFileName() ?: 'internal').':'.$reflectionFunctionAbstract->getStartLine().':'.$reflectionFunctionAbstract->getEndLine();
         }
 
-        return 'function:' . $reflectionFunctionAbstract->getName();
+        return 'function:'.$reflectionFunctionAbstract->getName();
     }
 
     private function nameOf(ReflectionFunctionAbstract $reflectionFunctionAbstract): string
     {
         if ($reflectionFunctionAbstract instanceof ReflectionMethod) {
-            return 'call:' . $reflectionFunctionAbstract->class . '::' . $reflectionFunctionAbstract->getName();
+            return 'call:'.$reflectionFunctionAbstract->class.'::'.$reflectionFunctionAbstract->getName();
         }
 
-        return 'call:' . $reflectionFunctionAbstract->getName();
+        return 'call:'.$reflectionFunctionAbstract->getName();
     }
 
     /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
@@ -24,16 +24,16 @@ final class IntegrityTarget
     }
 }
 
-$productionCache   = sys_get_temp_dir() . '/container-integrity-prod-' . uniqid();
+$productionCache = sys_get_temp_dir().'/container-integrity-prod-'.uniqid();
 $productionVersion = 'compiled-integrity-production';
-$productionConfig  = CreateContainerConfig::create(
+$productionConfig = CreateContainerConfig::create(
     cacheDir    : $productionCache,
     cacheVersion: $productionVersion,
     compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
 );
-$productionArtifactDir = $productionCache . '/container/' . rawurlencode(string: $productionVersion) . '/compiled';
-$productionArtifact    = $productionArtifactDir . '/container.php';
-$productionMetadata    = $productionArtifactDir . '/container.json';
+$productionArtifactDir = $productionCache.'/container/'.rawurlencode(string: $productionVersion).'/compiled';
+$productionArtifact = $productionArtifactDir.'/container.php';
+$productionMetadata = $productionArtifactDir.'/container.json';
 
 $production = makeTestContainer(config: $productionConfig);
 $production->singleton(abstract: IntegrityDependency::class, concrete: IntegrityDependency::class);
@@ -68,23 +68,23 @@ assertThrows(
     message      : 'Production mode should fail closed when the compiled artifact is corrupted.',
 );
 assertTrue(
-    condition: glob(pattern: $productionArtifactDir . '/quarantine/*.php') !== [],
+    condition: glob(pattern: $productionArtifactDir.'/quarantine/*.php') !== [],
     message  : 'Corrupted production artifacts should be quarantined instead of silently reused.',
 );
 assertTrue(
-    condition: glob(pattern: $productionArtifactDir . '/quarantine/*.json') !== [],
+    condition: glob(pattern: $productionArtifactDir.'/quarantine/*.json') !== [],
     message  : 'Corrupted production metadata should also be quarantined.',
 );
 
-$developmentCache   = sys_get_temp_dir() . '/container-integrity-dev-' . uniqid();
+$developmentCache = sys_get_temp_dir().'/container-integrity-dev-'.uniqid();
 $developmentVersion = 'compiled-integrity-development';
-$developmentConfig  = CreateContainerConfig::create(
+$developmentConfig = CreateContainerConfig::create(
     cacheDir    : $developmentCache,
     cacheVersion: $developmentVersion,
     compileMode : CreateContainerConfig::COMPILE_MODE_DEV,
 );
 $developmentArtifact = $developmentCache
-    . '/container/' . rawurlencode(string: $developmentVersion) . '/compiled/container.php';
+    .'/container/'.rawurlencode(string: $developmentVersion).'/compiled/container.php';
 
 $development = makeTestContainer(config: $developmentConfig);
 $development->singleton(abstract: IntegrityDependency::class, concrete: IntegrityDependency::class);
@@ -102,4 +102,4 @@ assertInstanceOf(
 );
 assertSame(expected: 'ok', actual: $resolved->dependency->value(), message: 'Fallback resolution should preserve service behavior.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

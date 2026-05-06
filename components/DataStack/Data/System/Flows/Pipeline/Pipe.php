@@ -14,7 +14,8 @@ final readonly class Pipe
     public function __construct(
         private Closure $callback,
         private ?string $name = null,
-    ) {}
+    ) {
+    }
 
     public static function from(callable $callback, ?string $name = null): self
     {

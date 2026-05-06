@@ -14,5 +14,6 @@ final readonly class SessionCookieSettings
         public bool $secure = false,
         public bool $httpOnly = true,
         public string $sameSite = 'Lax',
-    ) {}
+    ) {
+    }
 }

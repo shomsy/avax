@@ -11,7 +11,9 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\TenantFa
 
 final readonly class ReadTenantMembers
 {
-    public function __construct(private TenantStoreInterface $tenantStore) {}
+    public function __construct(private TenantStoreInterface $tenantStore)
+    {
+    }
 
     /**
      * @return list<TenantMember>

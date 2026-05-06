@@ -13,7 +13,7 @@ use DateTimeImmutable;
 interface AuthorizationCodeStoreInterface
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function issue(
         UserId $userId,
@@ -21,10 +21,10 @@ interface AuthorizationCodeStoreInterface
         string $redirectUri,
         array $scopes,
         DateTimeImmutable $expiresAt,
-        ?string            $state = null,
-        ?string            $nonce = null,
-        ?string            $codeChallenge = null,
-        ?PkceMethod        $pkceMethod = null,
+        ?string $state = null,
+        ?string $nonce = null,
+        ?string $codeChallenge = null,
+        ?PkceMethod $pkceMethod = null,
         ?DateTimeImmutable $mfaVerifiedAt = null,
         bool $phishingResistant = false,
     ): IssuedAuthorizationCode;

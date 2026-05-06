@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-$root          = dirname(__DIR__, 2);
-$componentsDir = $root . '/components';
-$frameworkDir  = $root . '/framework';
+$root = dirname(__DIR__, 2);
+$componentsDir = $root.'/components';
+$frameworkDir = $root.'/framework';
 
 $forbiddenPathPrefixes = [
     'Performance/Services',
@@ -17,7 +17,7 @@ $forbiddenPathPrefixes = [
 $searchDirs = [$componentsDir, $frameworkDir];
 
 $violations = [];
-$warnings   = [];
+$warnings = [];
 
 foreach ($searchDirs as $searchDir) {
     if (! is_dir($searchDir)) {
@@ -33,14 +33,14 @@ foreach ($searchDirs as $searchDir) {
             continue;
         }
 
-        $path         = $file->getPathname();
-        $relativePath = str_replace($root . '/', '', $path);
-        $isTest       = strpos($path, '/tests/') !== false;
+        $path = $file->getPathname();
+        $relativePath = str_replace($root.'/', '', $path);
+        $isTest = strpos($path, '/tests/') !== false;
 
         foreach ($forbiddenPathPrefixes as $prefix) {
-            if (strpos($path, $prefix) !== false || strpos($path, $prefix . '/') !== false) {
+            if (strpos($path, $prefix) !== false || strpos($path, $prefix.'/') !== false) {
                 $violations[] = [
-                    'path'  => $relativePath,
+                    'path' => $relativePath,
                     'issue' => "contains forbidden path prefix: $prefix",
                 ];
             }
@@ -50,7 +50,7 @@ foreach ($searchDirs as $searchDir) {
 
         if (! $isTest && strpos($content, 'sleep(') !== false) {
             $warnings[] = [
-                'path'  => $relativePath,
+                'path' => $relativePath,
                 'issue' => 'sleep() call found',
             ];
         }

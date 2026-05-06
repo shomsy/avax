@@ -12,5 +12,6 @@ final readonly class PoolStats
         public int $idleConnections,
         public int $waitingRequests,
         public float $averageWaitTimeMs,
-    ) {}
+    ) {
+    }
 }

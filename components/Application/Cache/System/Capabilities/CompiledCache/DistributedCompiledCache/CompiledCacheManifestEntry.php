@@ -12,15 +12,15 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 final readonly class CompiledCacheManifestEntry
 {
     /**
-     * @param string $name Unique name/identifier for this entry
-     * @param string $compiledPath Path to the compiled file
-     * @param list<string> $sourceFiles List of source file paths
-     * @param string $fingerprint Hash fingerprint of source files
-     * @param Timestamp $createdAt When this entry was created
-     * @param Timestamp $updatedAt When this entry was last updated
-     * @param string|null $type Type of compiled cache (config, routes, views, etc.)
-     * @param string|null $phpVersion PHP version used for compilation
-     * @param string|null $frameworkVersion Framework version used for compilation
+     * @param  string  $name  Unique name/identifier for this entry
+     * @param  string  $compiledPath  Path to the compiled file
+     * @param  list<string>  $sourceFiles  List of source file paths
+     * @param  string  $fingerprint  Hash fingerprint of source files
+     * @param  Timestamp  $createdAt  When this entry was created
+     * @param  Timestamp  $updatedAt  When this entry was last updated
+     * @param  string|null  $type  Type of compiled cache (config, routes, views, etc.)
+     * @param  string|null  $phpVersion  PHP version used for compilation
+     * @param  string|null  $frameworkVersion  Framework version used for compilation
      */
     public function __construct(
         public string $name,
@@ -59,8 +59,8 @@ final readonly class CompiledCacheManifestEntry
             fingerprint     : $data['fingerprint'],
             createdAt       : Timestamp::fromUnixTime($data['createdAt']),
             updatedAt       : Timestamp::fromUnixTime($data['updatedAt']),
-            type            : $data['type']             ?? null,
-            phpVersion      : $data['phpVersion']       ?? null,
+            type            : $data['type'] ?? null,
+            phpVersion      : $data['phpVersion'] ?? null,
             frameworkVersion: $data['frameworkVersion'] ?? null,
         );
     }
@@ -83,14 +83,14 @@ final readonly class CompiledCacheManifestEntry
     public function toArray(): array
     {
         return [
-            'name'             => $this->name,
-            'compiledPath'     => $this->compiledPath,
-            'sourceFiles'      => $this->sourceFiles,
-            'fingerprint'      => $this->fingerprint,
-            'createdAt'        => $this->createdAt->seconds,
-            'updatedAt'        => $this->updatedAt->seconds,
-            'type'             => $this->type,
-            'phpVersion'       => $this->phpVersion,
+            'name' => $this->name,
+            'compiledPath' => $this->compiledPath,
+            'sourceFiles' => $this->sourceFiles,
+            'fingerprint' => $this->fingerprint,
+            'createdAt' => $this->createdAt->seconds,
+            'updatedAt' => $this->updatedAt->seconds,
+            'type' => $this->type,
+            'phpVersion' => $this->phpVersion,
             'frameworkVersion' => $this->frameworkVersion,
         ];
     }

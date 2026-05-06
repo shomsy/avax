@@ -32,13 +32,14 @@ final readonly class FrontChannelLogout
         private ?RefreshTokenStoreInterface $refreshTokenStore = null,
         private ?OidcProviderInterface $oidcProvider = null,
         private ?OAuthClientRegistryInterface $oAuthClientRegistry = null,
-    ) {}
+    ) {
+    }
 
-    public function execute(FrontChannelLogoutData $frontChannelLogoutData) : LogoutResult
+    public function execute(FrontChannelLogoutData $frontChannelLogoutData): LogoutResult
     {
         $authenticationContext = $this->currentAuthentication->read();
-        $now     = $this->clock->now();
-        $sessionId             = $frontChannelLogoutData->sessionId ?? $authenticationContext->sessionId();
+        $now = $this->clock->now();
+        $sessionId = $frontChannelLogoutData->sessionId ?? $authenticationContext->sessionId();
 
         if ($sessionId === null && $frontChannelLogoutData->idTokenHint !== null && $this->oidcProvider instanceof OidcProviderInterface) {
             $claims = $this->oidcProvider->resolveIdToken(idToken: $frontChannelLogoutData->idTokenHint);
@@ -62,12 +63,12 @@ final readonly class FrontChannelLogout
                 name      : 'auth.oidc.front_channel_logout.succeeded',
                 occurredAt: $now,
                 context   : [
-                                'user_id'                       => $user->id,
-                                'session_id'                    => $sessionId,
-                                'state' => $frontChannelLogoutData->state,
-                                'client_id'                     => $client?->clientId,
+                    'user_id' => $user->id,
+                    'session_id' => $sessionId,
+                    'state' => $frontChannelLogoutData->state,
+                    'client_id' => $client?->clientId,
                     'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
-                                'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
+                    'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
                 ],
             ));
         }

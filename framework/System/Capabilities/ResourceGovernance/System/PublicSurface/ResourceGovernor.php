@@ -6,7 +6,6 @@ namespace Avax\Framework\System\Capabilities\ResourceGovernance\System\PublicSur
 
 use Avax\Framework\System\Capabilities\ResourceGovernance\System\Capabilities\Memory\MemoryBudget;
 use Avax\Framework\System\Capabilities\ResourceGovernance\System\Capabilities\Memory\MemorySnapshot;
-use Stringable;
 
 final class ResourceGovernor
 {
@@ -22,9 +21,9 @@ final class ResourceGovernor
     private static int $totalMemoryStart = 0;
 
     /**
-     * @param array{worker_memory?: string, request_memory?: string} $config
+     * @param  array{worker_memory?: string, request_memory?: string}  $config
      */
-    public static function configure(array $config) : void
+    public static function configure(array $config): void
     {
         self::$memoryBudget = MemoryBudget::fromString(
             worker : $config['worker_memory'] ?? '256M',
@@ -32,13 +31,13 @@ final class ResourceGovernor
         );
     }
 
-    public static function onRequestStart() : void
+    public static function onRequestStart(): void
     {
         self::$requestCount++;
         self::$totalMemoryStart = memory_get_usage(true);
     }
 
-    public static function onRequestEnd() : void
+    public static function onRequestEnd(): void
     {
         $endMemory = memory_get_usage(true);
         $delta = $endMemory - self::$totalMemoryStart;
@@ -54,7 +53,7 @@ final class ResourceGovernor
         }
     }
 
-    public static function check() : bool
+    public static function check(): bool
     {
         $budget = self::$memoryBudget;
 
@@ -73,7 +72,7 @@ final class ResourceGovernor
         return true;
     }
 
-    public static function report() : ResourceReport
+    public static function report(): ResourceReport
     {
         return new ResourceReport(
             requestCount: self::$requestCount,
@@ -84,17 +83,17 @@ final class ResourceGovernor
         );
     }
 
-    public static function workerMemory() : int
+    public static function workerMemory(): int
     {
         return memory_get_usage(true);
     }
 
-    public static function workerLimit() : int
+    public static function workerLimit(): int
     {
         return self::$memoryBudget->workerLimit ?? 0;
     }
 
-    public static function isNearLimit(float $threshold = 0.8) : bool
+    public static function isNearLimit(float $threshold = 0.8): bool
     {
         $current = self::workerMemory();
         $limit = self::workerLimit();
@@ -106,14 +105,14 @@ final class ResourceGovernor
         return ($current / $limit) >= $threshold;
     }
 
-    private static function calculateTrend() : float
+    private static function calculateTrend(): float
     {
         if (count(self::$snapshots) < 10) {
             return 0.0;
         }
 
         $recent = array_slice(self::$snapshots, -10);
-        $total = array_sum(array_map(static fn (MemorySnapshot $memorySnapshot) : int => $memorySnapshot->memoryUsed, $recent));
+        $total = array_sum(array_map(static fn (MemorySnapshot $memorySnapshot): int => $memorySnapshot->memoryUsed, $recent));
 
         return $total / count($recent);
     }

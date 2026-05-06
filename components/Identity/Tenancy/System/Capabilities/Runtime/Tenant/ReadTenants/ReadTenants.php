@@ -9,7 +9,9 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterf
 
 final readonly class ReadTenants
 {
-    public function __construct(private TenantStoreInterface $tenantStore) {}
+    public function __construct(private TenantStoreInterface $tenantStore)
+    {
+    }
 
     /**
      * @return list<Tenant>

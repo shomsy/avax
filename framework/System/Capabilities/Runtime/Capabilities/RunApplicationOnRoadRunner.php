@@ -14,39 +14,44 @@ use RuntimeException;
 final readonly class RunApplicationOnRoadRunner implements WorkerRuntimeInterface
 {
     /**
-     * @param Closure(): (WorkerRequest|null) $receiver
-     * @param Closure(WorkerResponse) : void  $sender
+     * @param  Closure(): (WorkerRequest|null)  $receiver
+     * @param  Closure(WorkerResponse) : void  $sender
      */
     public function __construct(
         private Closure $receiver,
         private Closure $sender,
-    ) {}
+    ) {
+    }
 
-    public function name() : string
+    public function name(): string
     {
         return 'roadrunner';
     }
 
-    public function receive() : ?WorkerRequest
+    public function receive(): ?WorkerRequest
     {
         return ($this->receiver)();
     }
 
-    public function send(WorkerResponse $workerResponse) : void
+    public function send(WorkerResponse $workerResponse): void
     {
         ($this->sender)($workerResponse);
     }
 
-    public function run() : void {}
+    public function run(): void
+    {
+    }
 
-    public function handleRequest(object $request) : object
+    public function handleRequest(object $request): object
     {
         return $request;
     }
 
-    public function stop() : void {}
+    public function stop(): void
+    {
+    }
 
-    public function getContext() : RuntimeContext
+    public function getContext(): RuntimeContext
     {
         throw new RuntimeException('Not implemented');
     }

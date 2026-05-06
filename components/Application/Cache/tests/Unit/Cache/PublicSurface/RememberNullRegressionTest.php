@@ -23,13 +23,13 @@ final class RememberNullRegressionTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_it_does_not_reload_when_cached_value_is_null() : void
+    public function test_it_does_not_reload_when_cached_value_is_null(): void
     {
         $this->avaxCache->set(value: null, cacheKey: 'nullable');
 
         $loadCount = 0;
 
-        $result = $this->avaxCache->remember(ttl: 3600, loader: static function () use (&$loadCount) : string {
+        $result = $this->avaxCache->remember(ttl: 3600, loader: static function () use (&$loadCount): string {
             $loadCount++;
 
             return 'loaded';
@@ -39,11 +39,11 @@ final class RememberNullRegressionTest extends TestCase
         $this->assertSame(expected: 0, actual: $loadCount);
     }
 
-    public function test_it_does_reload_when_key_does_not_exist() : void
+    public function test_it_does_reload_when_key_does_not_exist(): void
     {
         $loadCount = 0;
 
-        $result = $this->avaxCache->remember(ttl: 3600, loader: static function () use (&$loadCount) : string {
+        $result = $this->avaxCache->remember(ttl: 3600, loader: static function () use (&$loadCount): string {
             $loadCount++;
 
             return 'loaded';
@@ -56,13 +56,13 @@ final class RememberNullRegressionTest extends TestCase
     /**
      * @throws InvalidArgumentException
      */
-    public function test_it_reloads_when_value_is_not_null() : void
+    public function test_it_reloads_when_value_is_not_null(): void
     {
         $this->avaxCache->set(value: 'not_null', cacheKey: 'exists');
 
         $loadCount = 0;
 
-        $result = $this->avaxCache->remember(ttl: 3600, loader: static function () use (&$loadCount) : string {
+        $result = $this->avaxCache->remember(ttl: 3600, loader: static function () use (&$loadCount): string {
             $loadCount++;
 
             return 'loaded';
@@ -73,7 +73,7 @@ final class RememberNullRegressionTest extends TestCase
     }
 
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());

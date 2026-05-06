@@ -58,7 +58,7 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     private function registerIdentity(): void
     {
         if (! $this->container->has(id: IdentityInterface::class)) {
-            $this->container->singleton(abstract: IdentityInterface::class, concrete: function () : Identity {
+            $this->container->singleton(abstract: IdentityInterface::class, concrete: function (): Identity {
                 $sessionIdentity = $this->container->has(id: SessionIdentityInterface::class)
                     ? $this->container->get(id: SessionIdentityInterface::class)
                     : null;
@@ -85,7 +85,7 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     private function registerAuth(): void
     {
         if (! $this->container->has(id: Auth::class)) {
-            $this->container->singleton(abstract: Auth::class, concrete: function () : Auth {
+            $this->container->singleton(abstract: Auth::class, concrete: function (): Auth {
                 $authBuilder = $this->applyOptionalBindings(builder: DefaultAuth::configuration()
                     ->forUser(userSource: $this->container->get(id: UserSourceInterface::class))
                     ->withIdentity(identity: $this->container->get(id: IdentityInterface::class))
@@ -106,7 +106,7 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     /**
      * @throws ReflectionException
      */
-    private function applyOptionalBindings(AuthBuilder $authBuilder) : AuthBuilder
+    private function applyOptionalBindings(AuthBuilder $authBuilder): AuthBuilder
     {
         if ($this->container->has(id: Clock::class)) {
             $authBuilder->withClock(clock: $this->container->get(id: Clock::class));

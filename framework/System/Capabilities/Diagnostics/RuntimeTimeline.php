@@ -11,7 +11,7 @@ final class RuntimeTimeline
      */
     private array $events = [];
 
-    public function record(RuntimeEvent $runtimeEvent) : void
+    public function record(RuntimeEvent $runtimeEvent): void
     {
         $this->events[] = $runtimeEvent;
     }
@@ -19,12 +19,12 @@ final class RuntimeTimeline
     /**
      * @return list<RuntimeEvent>
      */
-    public function events() : array
+    public function events(): array
     {
         return $this->events;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->events = [];
     }

@@ -12,7 +12,6 @@ final readonly class ResolvedPasskeyCredential
         #[SensitiveParameter]
         public string $credentialId,
         public string $label,
-    )
-    {
+    ) {
     }
 }

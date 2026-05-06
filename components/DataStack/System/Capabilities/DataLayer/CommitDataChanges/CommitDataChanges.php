@@ -23,7 +23,7 @@ final readonly class CommitDataChanges
             throw new DataTransactionFailure(message: 'Cannot begin transaction');
         }
 
-        return (object)['status' => 'open'];
+        return (object) ['status' => 'open'];
     }
 
     public function rollback(object $transaction): stdClass
@@ -34,10 +34,10 @@ final readonly class CommitDataChanges
             $this->databaseRuntime->transactions()->rollback();
         }
 
-        return (object)['status' => 'rolled_back'];
+        return (object) ['status' => 'rolled_back'];
     }
 
-    public function commit(object|null $transaction = null): void
+    public function commit(?object $transaction = null): void
     {
         if (method_exists($this->databaseRuntime, 'commit')) {
             $this->databaseRuntime->commit();
@@ -48,7 +48,7 @@ final readonly class CommitDataChanges
 
     public function retryTransientFailure(callable $work, DataTransactionPolicy $dataTransactionPolicy): mixed
     {
-        if (!$dataTransactionPolicy->idempotent) {
+        if (! $dataTransactionPolicy->idempotent) {
             throw new DataTransactionFailure(message: 'Work is not idempotent and policy forbids retry');
         }
 
@@ -61,7 +61,7 @@ final readonly class CommitDataChanges
             } catch (Throwable $e) {
                 $msg = strtolower($e->getMessage());
                 $isTransient = str_contains($msg, 'deadlock') || str_contains($msg, '40001') || str_contains($msg, 'sqlstate');
-                if (!$isTransient || !$dataTransactionPolicy->retryTransientFailures) {
+                if (! $isTransient || ! $dataTransactionPolicy->retryTransientFailures) {
                     throw $e;
                 }
 

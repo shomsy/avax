@@ -9,4 +9,6 @@ use RuntimeException;
 /**
  * SagaStartFailure - reports failed saga instance creation.
  */
-final class SagaStartFailure extends RuntimeException {}
+final class SagaStartFailure extends RuntimeException
+{
+}

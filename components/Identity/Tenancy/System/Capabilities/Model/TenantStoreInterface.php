@@ -18,7 +18,7 @@ interface TenantStoreInterface
      */
     public function allTenants(): array;
 
-    public function saveMember(TenantMember $tenantMember) : void;
+    public function saveMember(TenantMember $tenantMember): void;
 
     public function findMember(string $tenantId, int $userId): ?TenantMember;
 
@@ -29,7 +29,7 @@ interface TenantStoreInterface
 
     public function removeMember(string $tenantId, int $userId): void;
 
-    public function saveInvite(TenantInvite $tenantInvite) : void;
+    public function saveInvite(TenantInvite $tenantInvite): void;
 
     public function findInviteById(string $inviteId): ?TenantInvite;
 

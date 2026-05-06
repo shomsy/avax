@@ -14,10 +14,11 @@ final readonly class Entities
 {
     public function __construct(
         private EntitiesCapability $entitiesCapability,
-    ) {}
+    ) {
+    }
 
     /**
-     * @param class-string $entityClass
+     * @param  class-string  $entityClass
      */
     public function find(string $entityClass, mixed $id, ?string $connectionName = null): ?object
     {
@@ -29,9 +30,8 @@ final readonly class Entities
     }
 
     /**
-     * @param class-string         $entityClass
-     * @param array<string, mixed> $criteria
-     *
+     * @param  class-string  $entityClass
+     * @param  array<string, mixed>  $criteria
      * @return list<object>
      */
     public function findBy(

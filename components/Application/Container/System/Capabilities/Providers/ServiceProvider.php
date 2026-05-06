@@ -13,8 +13,7 @@ abstract class ServiceProvider
 {
     public function __construct(
         protected readonly ContainerInterface $container
-    )
-    {
+    ) {
     }
 
     /**

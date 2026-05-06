@@ -16,12 +16,12 @@ final readonly class ProcessJob
     {
     }
 
-    public function processAll(QueueBroker $queueBroker, string $queue = 'default') : array
+    public function processAll(QueueBroker $queueBroker, string $queue = 'default'): array
     {
         return $this->processQueue($queue, $queueBroker, 100);
     }
 
-    public function processQueue(string $queue, QueueBroker $queueBroker, int $limit = 10) : array
+    public function processQueue(string $queue, QueueBroker $queueBroker, int $limit = 10): array
     {
         $results = [];
 
@@ -45,9 +45,9 @@ final readonly class ProcessJob
         return $results;
     }
 
-    public function process(array $jobData, QueueBroker $queueBroker) : JobResult
+    public function process(array $jobData, QueueBroker $queueBroker): JobResult
     {
-        $jobDefinition                = JobDefinition::fromArray($jobData);
+        $jobDefinition = JobDefinition::fromArray($jobData);
         $attempts = ($jobData['attempts'] ?? 0) + 1;
 
         if ($attempts > $jobDefinition->maxAttempts) {
@@ -58,7 +58,7 @@ final readonly class ProcessJob
 
         try {
             $handler = $this->jobRegistry->resolve($jobDefinition->handler);
-            $result  = $handler($jobDefinition->payload);
+            $result = $handler($jobDefinition->payload);
 
             $queueBroker->remove($jobDefinition->queue ?? 'default', $jobData['id']);
 

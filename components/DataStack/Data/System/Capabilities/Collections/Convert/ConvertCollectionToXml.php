@@ -15,7 +15,8 @@ final readonly class ConvertCollectionToXml
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function __invoke(string $rootElement = 'root'): string
     {
@@ -31,7 +32,7 @@ final readonly class ConvertCollectionToXml
             return $xml->asXML() ?: '';
         } catch (Exception $exception) {
             throw new LogicException(
-                message : 'Failed to convert collection to XML: ' . $exception->getMessage(),
+                message : 'Failed to convert collection to XML: '.$exception->getMessage(),
                 code    : $exception->getCode(),
                 previous: $exception,
             );

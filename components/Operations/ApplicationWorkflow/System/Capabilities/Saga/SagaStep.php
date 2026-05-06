@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Saga;
@@ -9,11 +10,11 @@ final readonly class SagaStep
 {
     public Closure $action;
 
-    public Closure|null $compensation;
+    public ?Closure $compensation;
 
-    public function __construct(public string $name, callable $action, callable|null $compensation = null)
+    public function __construct(public string $name, callable $action, ?callable $compensation = null)
     {
-        $this->action       = Closure::fromCallable($action);
+        $this->action = Closure::fromCallable($action);
         $this->compensation = $compensation === null ? null : Closure::fromCallable($compensation);
     }
 }

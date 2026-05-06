@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
@@ -40,8 +40,8 @@ final readonly class CompileReportService implements CompileReportContract
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-compile-report-' . uniqid();
-$config   = CreateContainerConfig::create(
+$cacheDir = sys_get_temp_dir().'/container-compile-report-'.uniqid();
+$config = CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: 'compile-report-smoke',
     compileMode : CreateContainerConfig::COMPILE_MODE_WARMUP,
@@ -157,4 +157,4 @@ assertSame(
     message : 'Compile reports and artifact metadata should agree on invalidated services.',
 );
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

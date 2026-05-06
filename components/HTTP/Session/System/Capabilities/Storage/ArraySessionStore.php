@@ -21,7 +21,7 @@ final class ArraySessionStore implements SessionStoreInterface
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function write(string $id, array $data): bool
     {

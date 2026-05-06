@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\Tracing;
 
-use Avax\Components\Operations\Observability\System\Capabilities\Correlation\SpanId;
-use Avax\Components\Operations\Observability\System\Capabilities\Correlation\TraceId;
-
 class TraceTimeline
 {
     /**
@@ -22,7 +19,7 @@ class TraceTimeline
     public function toArray(): array
     {
         return array_map(
-            fn(Span $span): array => [
+            fn (Span $span): array => [
                 'name' => $span->name,
                 'operation' => $span->operation,
                 'duration' => $span->duration(),

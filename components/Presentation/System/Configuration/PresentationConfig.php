@@ -8,7 +8,6 @@ final readonly class PresentationConfig
 {
     public function __construct(
         public string $path = 'views/',
-    )
-    {
+    ) {
     }
 }

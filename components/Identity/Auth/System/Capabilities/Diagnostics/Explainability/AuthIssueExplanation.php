@@ -9,8 +9,8 @@ use SensitiveParameter;
 final readonly class AuthIssueExplanation
 {
     /**
-     * @param list<string> $resolution
-     * @param array<string, scalar|null> $context
+     * @param  list<string>  $resolution
+     * @param  array<string, scalar|null>  $context
      */
     public function __construct(
         #[SensitiveParameter]

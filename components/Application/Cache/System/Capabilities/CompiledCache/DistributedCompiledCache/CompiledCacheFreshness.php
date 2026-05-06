@@ -34,8 +34,7 @@ final class CompiledCacheFreshness
     /**
      * Check freshness for multiple entries.
      *
-     * @param list<CompiledCacheManifestEntry> $entries
-     *
+     * @param  list<CompiledCacheManifestEntry>  $entries
      * @return array<string, FreshnessStatus> Keyed by entry name
      */
     public function checkAll(array $entries): array
@@ -55,7 +54,7 @@ final class CompiledCacheFreshness
     public function check(CompiledCacheManifestEntry $compiledCacheManifestEntry): FreshnessStatus
     {
         // Check cache first
-        $cacheKey = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;
+        $cacheKey = $compiledCacheManifestEntry->name.':'.$compiledCacheManifestEntry->fingerprint;
 
         if (isset($this->statusCache[$cacheKey])) {
             $cached = $this->statusCache[$cacheKey];
@@ -66,7 +65,7 @@ final class CompiledCacheFreshness
             }
         }
 
-        $freshnessStatus              = $this->doCheck($compiledCacheManifestEntry);
+        $freshnessStatus = $this->doCheck($compiledCacheManifestEntry);
         $this->statusCache[$cacheKey] = $freshnessStatus;
 
         return $freshnessStatus;
@@ -157,7 +156,7 @@ final class CompiledCacheFreshness
     /**
      * Get the maximum modification time of source files.
      *
-     * @param list<string> $sourceFiles
+     * @param  list<string>  $sourceFiles
      */
     private function getSourceFilesMtime(array $sourceFiles): int
     {
@@ -179,8 +178,7 @@ final class CompiledCacheFreshness
     /**
      * Get list of missing source files.
      *
-     * @param list<string> $sourceFiles
-     *
+     * @param  list<string>  $sourceFiles
      * @return list<string>
      */
     private function getMissingSourceFiles(array $sourceFiles): array
@@ -199,14 +197,14 @@ final class CompiledCacheFreshness
     /**
      * Calculate a fingerprint for a set of source files.
      *
-     * @param list<string> $sourceFiles
+     * @param  list<string>  $sourceFiles
      */
     private function calculateFingerprint(array $sourceFiles): string
     {
         $hashParts = [];
 
         foreach ($sourceFiles as $sourceFile) {
-            $hashParts[] = file_exists($sourceFile) ? $sourceFile . ':' . filemtime($sourceFile) : $sourceFile . ':missing';
+            $hashParts[] = file_exists($sourceFile) ? $sourceFile.':'.filemtime($sourceFile) : $sourceFile.':missing';
         }
 
         return hash('sha256', implode('|', $hashParts));
@@ -226,7 +224,7 @@ final class CompiledCacheFreshness
             compiledFileMtime: $compiledCacheManifestEntry->compiledFileExists() ? $compiledCacheManifestEntry->getCompiledFileMtime() : 0,
         );
 
-        $cacheKey                     = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;
+        $cacheKey = $compiledCacheManifestEntry->name.':'.$compiledCacheManifestEntry->fingerprint;
         $this->statusCache[$cacheKey] = $freshnessStatus;
 
         return $freshnessStatus;
@@ -246,7 +244,7 @@ final class CompiledCacheFreshness
             compiledFileMtime: $compiledCacheManifestEntry->compiledFileExists() ? $compiledCacheManifestEntry->getCompiledFileMtime() : 0,
         );
 
-        $cacheKey                     = $compiledCacheManifestEntry->name . ':' . $compiledCacheManifestEntry->fingerprint;
+        $cacheKey = $compiledCacheManifestEntry->name.':'.$compiledCacheManifestEntry->fingerprint;
         $this->statusCache[$cacheKey] = $freshnessStatus;
 
         return $freshnessStatus;
@@ -255,8 +253,7 @@ final class CompiledCacheFreshness
     /**
      * Get all entries that need rebuilding.
      *
-     * @param list<CompiledCacheManifestEntry> $entries
-     *
+     * @param  list<CompiledCacheManifestEntry>  $entries
      * @return list<CompiledCacheManifestEntry>
      */
     public function getEntriesNeedingRebuild(array $entries): array
@@ -296,7 +293,7 @@ final class CompiledCacheFreshness
         $keysToRemove = [];
 
         foreach (array_keys($this->statusCache) as $key) {
-            if (str_starts_with($key, $entryName . ':')) {
+            if (str_starts_with($key, $entryName.':')) {
                 $keysToRemove[] = $key;
             }
         }

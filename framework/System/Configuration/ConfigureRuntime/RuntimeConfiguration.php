@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\ConfigureRuntime;
 
+use Avax\Framework\System\Capabilities\Runtime\Cli\CliRuntime;
+use Avax\Framework\System\Capabilities\Runtime\PhpFpm\PhpFpmRuntime;
 use Avax\Framework\System\Capabilities\Runtime\RunApplication\FrankenPhp\FrankenPhpRuntime;
 use Avax\Framework\System\Capabilities\Runtime\RunApplication\RoadRunner\RoadRunnerRuntime;
 use Avax\Framework\System\Capabilities\Runtime\RunApplication\Swoole\SwooleRuntime;
 use Avax\Framework\System\Capabilities\Runtime\RunApplication\Workerman\WorkermanRuntime;
-use Avax\Framework\System\Capabilities\Runtime\Cli\CliRuntime;
-use Avax\Framework\System\Capabilities\Runtime\PhpFpm\PhpFpmRuntime;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRequest;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerResponse;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernelInterface;
@@ -26,22 +26,22 @@ final class RuntimeConfiguration
      */
     private array $options = [];
 
-    public function setAdapter(string $adapter) : self
+    public function setAdapter(string $adapter): self
     {
         $this->adapter = $adapter;
 
         return $this;
     }
 
-    public function getAdapter() : string
+    public function getAdapter(): string
     {
         return $this->adapter;
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
-    public function setOptions(array $options) : self
+    public function setOptions(array $options): self
     {
         $this->options = $options;
 
@@ -51,25 +51,25 @@ final class RuntimeConfiguration
     /**
      * @return array<string, mixed>
      */
-    public function getOptions() : array
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    public function createRuntime() : object
+    public function createRuntime(): object
     {
         return match ($this->adapter) {
-            'php-fpm'   => new PhpFpmRuntime(httpKernel: $this->httpKernel()),
-            'cli'       => new CliRuntime(consoleKernel: $this->consoleKernel()),
+            'php-fpm' => new PhpFpmRuntime(httpKernel: $this->httpKernel()),
+            'cli' => new CliRuntime(consoleKernel: $this->consoleKernel()),
             'roadrunner' => new RoadRunnerRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'frankenphp' => new FrankenPhpRuntime(receiver: $this->receiver(), sender: $this->sender()),
-            'swoole'    => new SwooleRuntime(receiver: $this->receiver(), sender: $this->sender()),
+            'swoole' => new SwooleRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'workerman' => new WorkermanRuntime(receiver: $this->receiver(), sender: $this->sender()),
-            default => throw new RuntimeException('Unknown adapter: ' . $this->adapter),
+            default => throw new RuntimeException('Unknown adapter: '.$this->adapter),
         };
     }
 
-    private function httpKernel() : HttpKernelInterface
+    private function httpKernel(): HttpKernelInterface
     {
         $httpKernel = $this->options['httpKernel'] ?? null;
 
@@ -80,7 +80,7 @@ final class RuntimeConfiguration
         return $httpKernel;
     }
 
-    private function consoleKernel() : ConsoleKernelInterface
+    private function consoleKernel(): ConsoleKernelInterface
     {
         $consoleKernel = $this->options['consoleKernel'] ?? null;
 
@@ -94,7 +94,7 @@ final class RuntimeConfiguration
     /**
      * @return Closure(): (WorkerRequest|null)
      */
-    private function receiver() : Closure
+    private function receiver(): Closure
     {
         $receiver = $this->options['receiver'] ?? null;
 
@@ -106,13 +106,13 @@ final class RuntimeConfiguration
             return Closure::fromCallable($receiver);
         }
 
-        return static fn () : ?WorkerRequest => null;
+        return static fn (): ?WorkerRequest => null;
     }
 
     /**
      * @return Closure(WorkerResponse): void
      */
-    private function sender() : Closure
+    private function sender(): Closure
     {
         $sender = $this->options['sender'] ?? null;
 
@@ -124,6 +124,7 @@ final class RuntimeConfiguration
             return Closure::fromCallable($sender);
         }
 
-        return static function (WorkerResponse $workerResponse) : void {};
+        return static function (WorkerResponse $workerResponse): void {
+        };
     }
 }

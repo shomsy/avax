@@ -16,24 +16,25 @@ final readonly class Log
 {
     public function __construct(
         private RotatingFileWriter $rotatingFileWriter,
-    ) {}
+    ) {
+    }
 
-    public function info(string $message, array $context = []) : void
+    public function info(string $message, array $context = []): void
     {
         $this->rotatingFileWriter->write($message, 'info', $context);
     }
 
-    public function error(string $message, array $context = []) : void
+    public function error(string $message, array $context = []): void
     {
         $this->rotatingFileWriter->write($message, 'error', $context);
     }
 
-    public function warning(string $message, array $context = []) : void
+    public function warning(string $message, array $context = []): void
     {
         $this->rotatingFileWriter->write($message, 'warning', $context);
     }
 
-    public function debug(string $message, array $context = []) : void
+    public function debug(string $message, array $context = []): void
     {
         $this->rotatingFileWriter->write($message, 'debug', $context);
     }

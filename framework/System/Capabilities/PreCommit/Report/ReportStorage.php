@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationReport;
 
 /**
  * Report Storage
- * 
+ *
  * Manages persistence of validation reports.
  */
 final readonly class ReportStorage
@@ -21,21 +21,21 @@ final readonly class ReportStorage
     public function __construct(?string $reportDir = null, ?string $todoFile = null)
     {
         $basePath = getcwd() ?: '.';
-        $this->reportDir = $reportDir ?? $basePath . '/.agents/reports/validation';
-        $this->todoFile = $todoFile ?? $basePath . '/.agents/management/TODO.md';
+        $this->reportDir = $reportDir ?? $basePath.'/.agents/reports/validation';
+        $this->todoFile = $todoFile ?? $basePath.'/.agents/management/TODO.md';
     }
 
-    public function save(ValidationReport $validationReport, bool $saveTodo = true) : bool
+    public function save(ValidationReport $validationReport, bool $saveTodo = true): bool
     {
         $timestamp = date('Y-m-d_His');
         $filename = sprintf('validation-%s-%s.json', $timestamp, $validationReport->getReportId());
-        $filepath = $this->reportDir . '/' . $filename;
+        $filepath = $this->reportDir.'/'.$filename;
 
         if (! $validationReport->saveToFile($filepath)) {
             return false;
         }
 
-        $latestPath = $this->reportDir . '/latest.json';
+        $latestPath = $this->reportDir.'/latest.json';
         @copy($filepath, $latestPath);
 
         if ($saveTodo && $validationReport->getFailedCount() > 0) {
@@ -45,15 +45,15 @@ final readonly class ReportStorage
         return true;
     }
 
-    private function generateTodo(ValidationReport $validationReport) : void
+    private function generateTodo(ValidationReport $validationReport): void
     {
         $failures = [];
         foreach ($validationReport->getFailedResults() as $validationResult) {
             $failures[] = [
-                'messages'  => $validationResult->getMessages(),
-                'severity'  => $validationResult->getSeverity(),
-                'file'      => $validationResult->getFile(),
-                'line'      => $validationResult->getLine(),
+                'messages' => $validationResult->getMessages(),
+                'severity' => $validationResult->getSeverity(),
+                'file' => $validationResult->getFile(),
+                'line' => $validationResult->getLine(),
                 'rule_code' => $validationResult->getRuleCode(),
             ];
         }
@@ -65,12 +65,13 @@ final readonly class ReportStorage
     /** @return array<string, mixed>|null */
     public function getLatest(): ?array
     {
-        $latestPath = $this->reportDir . '/latest.json';
-        if (!file_exists($latestPath)) {
+        $latestPath = $this->reportDir.'/latest.json';
+        if (! file_exists($latestPath)) {
             return null;
         }
 
         $data = file_get_contents($latestPath);
+
         return $data === false ? null : json_decode($data, true);
     }
 
@@ -79,11 +80,11 @@ final readonly class ReportStorage
      */
     public function list(): array
     {
-        if (!is_dir($this->reportDir)) {
+        if (! is_dir($this->reportDir)) {
             return [];
         }
 
-        $files = glob($this->reportDir . '/validation-*.json');
+        $files = glob($this->reportDir.'/validation-*.json');
         if ($files === false) {
             return [];
         }

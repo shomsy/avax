@@ -21,11 +21,13 @@ final class BorrowedConnection implements DatabaseConnection
     private bool $released = false;
 
     /**
-     * @param DatabaseConnection      $databaseConnection The actual, physical connection to the database.
-     * @param ConnectionPoolInterface $connectionPool     The "Library Manager" that knows how to put this connection back on
-     *                                                    the shelf.
+     * @param  DatabaseConnection  $databaseConnection  The actual, physical connection to the database.
+     * @param  ConnectionPoolInterface  $connectionPool  The "Library Manager" that knows how to put this connection back on
+     *                                                   the shelf.
      */
-    public function __construct(private readonly DatabaseConnection $databaseConnection, private readonly ConnectionPoolInterface $connectionPool) {}
+    public function __construct(private readonly DatabaseConnection $databaseConnection, private readonly ConnectionPoolInterface $connectionPool)
+    {
+    }
 
     /**
      * Get the underlying PDO tool to run your queries.

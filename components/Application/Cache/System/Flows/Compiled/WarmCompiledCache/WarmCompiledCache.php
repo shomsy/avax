@@ -15,8 +15,7 @@ final class WarmCompiledCache
         public string $name,
         public Closure $builder,
         public CompiledCacheSources $compiledCacheSources,
-    )
-    {
+    ) {
         $this->sources = $compiledCacheSources;
     }
 }

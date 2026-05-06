@@ -17,9 +17,10 @@ final readonly class ReadCachedValue
         private CacheStore $cacheStore,
         private Clock $clock,
         private ?CacheMetrics $cacheMetrics = null,
-    ) {}
+    ) {
+    }
 
-    public function read(CacheKey $cacheKey, mixed $default = null) : mixed
+    public function read(CacheKey $cacheKey, mixed $default = null): mixed
     {
         $startTime = hrtime(true);
 
@@ -51,7 +52,7 @@ final readonly class ReadCachedValue
         }
     }
 
-    private function recordLatency(int $startTime) : void
+    private function recordLatency(int $startTime): void
     {
         if (! $this->cacheMetrics instanceof CacheMetrics) {
             return;

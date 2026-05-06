@@ -32,14 +32,15 @@ final readonly class Account
         #[SensitiveParameter]
         private ?ConfirmEmailChange $confirmEmailChange,
         private Register $register,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PasswordChangeFailed
      * @throws RateLimitException
      * @throws Unauthenticated
      */
-    public function changePassword(ChangePasswordData $changePasswordData) : void
+    public function changePassword(ChangePasswordData $changePasswordData): void
     {
         $this->changePassword->execute(data: $changePasswordData);
     }
@@ -48,12 +49,12 @@ final readonly class Account
      * @throws DateMalformedStringException
      * @throws Unauthenticated
      */
-    public function beginEmailChange(BeginEmailChangeData $beginEmailChangeData) : EmailChangeChallenge
+    public function beginEmailChange(BeginEmailChangeData $beginEmailChangeData): EmailChangeChallenge
     {
         return $this->beginEmailChange->execute(data: $beginEmailChangeData);
     }
 
-    public function confirmEmailChange(ConfirmEmailChangeData $confirmEmailChangeData) : bool
+    public function confirmEmailChange(ConfirmEmailChangeData $confirmEmailChangeData): bool
     {
         return $this->confirmEmailChangeOrFail()->execute(data: $confirmEmailChangeData);
     }
@@ -67,7 +68,7 @@ final readonly class Account
      * @throws RegistrationFailed
      * @throws RateLimitException
      */
-    public function register(RegistrationData $registrationData) : RegistrationResult
+    public function register(RegistrationData $registrationData): RegistrationResult
     {
         return $this->register->execute(data: $registrationData);
     }

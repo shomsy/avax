@@ -8,9 +8,10 @@ final readonly class PrimaryReplica
 {
     public function __construct(
         public int $index = 0,
-    ) {}
+    ) {
+    }
 
-    public function isPrimary() : bool
+    public function isPrimary(): bool
     {
         return $this->index === 0;
     }

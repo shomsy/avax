@@ -10,7 +10,7 @@ final readonly class SyncDriver implements TaskDriverInterface
 {
     public function dispatchlater(object $task, DateInterval $dateInterval): void
     {
-        $ms = (int)(($dateInterval->i * 60 + $dateInterval->s) * 1000);
+        $ms = (int) (($dateInterval->i * 60 + $dateInterval->s) * 1000);
 
         $this->schedule($task, $ms);
     }

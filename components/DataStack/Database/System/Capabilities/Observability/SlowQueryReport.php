@@ -14,15 +14,14 @@ final readonly class SlowQueryReport
 {
     public function __construct(
         public string $sql,
-        public array  $bindings = [],
-        public float  $durationMs = 0.0,
-        public float  $thresholdMs = 0.0,
+        public array $bindings = [],
+        public float $durationMs = 0.0,
+        public float $thresholdMs = 0.0,
         public string $fingerprint = '',
         public string $connection = '',
-        public float  $timestamp = 0.0,
-        public int    $occurrences = 1,
-    )
-    {
+        public float $timestamp = 0.0,
+        public int $occurrences = 1,
+    ) {
     }
 
     /**

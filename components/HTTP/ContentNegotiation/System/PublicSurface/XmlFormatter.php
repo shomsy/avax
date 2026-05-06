@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\ContentNegotiation\System\PublicSurface;
 
-use Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Negotiator\AcceptHeaderParser;
-use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use SimpleXMLElement;
 
 final class XmlFormatter implements ContentFormatter
@@ -16,7 +14,7 @@ final class XmlFormatter implements ContentFormatter
             return $this->arrayToXml($data);
         }
 
-        return (string)$data;
+        return (string) $data;
     }
 
     private function arrayToXml(array $data): string
@@ -35,7 +33,7 @@ final class XmlFormatter implements ContentFormatter
                 $child = $xml->addChild(is_numeric($key) ? 'item' : $key);
                 $this->arrayToXmlRecursive($value, $child);
             } else {
-                $xml->addChild(is_numeric($key) ? 'item' : $key, (string)$value);
+                $xml->addChild(is_numeric($key) ? 'item' : $key, (string) $value);
             }
         }
     }

@@ -31,8 +31,7 @@ final readonly class ExpiresAfter implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ) : Timestamp
-    {
+    ): Timestamp {
         return $clock->now()->add(duration: $this->duration);
     }
 

@@ -10,12 +10,11 @@ namespace Avax\Components\DataStack\Persistence\System\Capabilities\Consistency;
 final readonly class ConflictResolutionResult
 {
     public function __construct(
-        public mixed  $resolvedValue,
+        public mixed $resolvedValue,
         public string $strategy,
-        public bool   $wasConflict,
-        public array  $details = [],
-    )
-    {
+        public bool $wasConflict,
+        public array $details = [],
+    ) {
     }
 
     /**

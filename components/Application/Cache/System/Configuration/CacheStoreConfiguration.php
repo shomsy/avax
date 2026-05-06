@@ -12,7 +12,7 @@ use InvalidArgumentException;
 final readonly class CacheStoreConfiguration
 {
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function __construct(
         public string $type,
@@ -42,14 +42,14 @@ final readonly class CacheStoreConfiguration
     {
         $basePath = is_string($this->options['base_path'] ?? null)
             ? $this->options['base_path']
-            : sys_get_temp_dir() . '/avax_cache';
+            : sys_get_temp_dir().'/avax_cache';
 
         return match ($this->type) {
             'memory' => new InMemoryCacheStore(),
-            'file'   => new FileCacheStore(
+            'file' => new FileCacheStore(
                 basePath: $basePath,
             ),
-            default => throw new InvalidArgumentException(message: 'Unknown store type: ' . $this->type),
+            default => throw new InvalidArgumentException(message: 'Unknown store type: '.$this->type),
         };
     }
 }

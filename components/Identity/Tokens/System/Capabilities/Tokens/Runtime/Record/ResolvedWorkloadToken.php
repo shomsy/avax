@@ -11,7 +11,7 @@ use SensitiveParameter;
 final readonly class ResolvedWorkloadToken
 {
     /**
-     * @param list<string> $scopes
+     * @param  list<string>  $scopes
      */
     public function __construct(
         public string $subject,
@@ -23,5 +23,6 @@ final readonly class ResolvedWorkloadToken
         public ?string $audience = null,
         public ?string $issuer = null,
         public ?OAuthSenderConstraint $senderConstraint = null,
-    ) {}
+    ) {
+    }
 }

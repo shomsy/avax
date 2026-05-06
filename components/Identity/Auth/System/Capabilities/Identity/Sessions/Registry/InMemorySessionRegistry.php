@@ -16,7 +16,7 @@ final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, Se
     /** @var array<string, SessionRecord> */
     private array $records = [];
 
-    public function track(SessionRecord $sessionRecord) : void
+    public function track(SessionRecord $sessionRecord): void
     {
         $this->records[$sessionRecord->sessionId] = $sessionRecord;
     }
@@ -26,7 +26,7 @@ final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, Se
         return $this->records[$sessionId] ?? null;
     }
 
-    public function save(SessionRecord $sessionRecord) : void
+    public function save(SessionRecord $sessionRecord): void
     {
         $this->records[$sessionRecord->sessionId] = $sessionRecord;
     }

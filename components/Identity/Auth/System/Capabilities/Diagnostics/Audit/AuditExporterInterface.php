@@ -7,7 +7,7 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit;
 interface AuditExporterInterface
 {
     /**
-     * @param list<AuditEvent> $events
+     * @param  list<AuditEvent>  $events
      */
     public function export(array $events): void;
 }

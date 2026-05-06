@@ -15,7 +15,7 @@ final readonly class DetectRouteConflict
     }
 
     /**
-     * @param list<RouteConflict> $conflicts
+     * @param  list<RouteConflict>  $conflicts
      */
     public static function printReport(array $conflicts): int
     {
@@ -39,13 +39,13 @@ final readonly class DetectRouteConflict
             echo "\n";
         }
 
-        echo 'Total: ' . count($conflicts) . " conflict(s)\n";
+        echo 'Total: '.count($conflicts)." conflict(s)\n";
 
         return array_filter($conflicts, static fn ($c) => $c->isExact()) !== [] ? 1 : 0;
     }
 
     /**
-     * @param list<array{method: string, path: string, handler: mixed, middleware?: list<string>}> $routes
+     * @param  list<array{method: string, path: string, handler: mixed, middleware?: list<string>}>  $routes
      */
     public function loadRoutes(array $routes): self
     {

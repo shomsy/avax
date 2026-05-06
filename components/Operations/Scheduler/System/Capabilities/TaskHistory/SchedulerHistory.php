@@ -11,7 +11,7 @@ final class SchedulerHistory
     public static function record(string $task, string $status, float $durationMs): void
     {
         self::$history[] = [
-            'task'   => $task,
+            'task' => $task,
             'status' => $status,
             'duration_ms' => $durationMs,
             'executed_at' => date('Y-m-d H:i:s'),

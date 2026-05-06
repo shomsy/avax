@@ -24,7 +24,7 @@ class BladeTemplateEngine extends BladeOne
     private function initializeBaseAssetPath(): void
     {
         // Define the base asset path dynamically
-        $this->baseAssetPath = $this->getBaseUrl() . '/assets';
+        $this->baseAssetPath = $this->getBaseUrl().'/assets';
     }
 
     private function getBaseUrl(): string
@@ -34,7 +34,7 @@ class BladeTemplateEngine extends BladeOne
             return $context->baseUrl();
         }
 
-        $url  = parse_url(url: (string) config(key: 'app.url', default: 'http://localhost'));
+        $url = parse_url(url: (string) config(key: 'app.url', default: 'http://localhost'));
         $scheme = $url['scheme'] ?? 'http';
         $host = $url['host'] ?? 'localhost';
 
@@ -44,7 +44,7 @@ class BladeTemplateEngine extends BladeOne
     private function configureCustomDirectives(): void
     {
         // Asset directive
-        $this->directive(name: 'asset', handler: fn (string $expression) : string => sprintf(
+        $this->directive(name: 'asset', handler: fn (string $expression): string => sprintf(
             "<?php echo preg_match('/^public/', %s) ? '%s/' . ltrim(%s, '\"\\'/') : '%s/' . ltrim(%s, '\"\\'/'); ?>",
             $expression,
             $this->getBaseUrl(),
@@ -54,7 +54,7 @@ class BladeTemplateEngine extends BladeOne
         ));
 
         // Datetime directive
-        $this->directive(name: 'datetime', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'datetime', handler: static fn (string $expression): string => sprintf(
             "<?php echo with(%s)->format('Y-m-d H:i:s'); ?>",
             $expression,
         ));
@@ -63,19 +63,19 @@ class BladeTemplateEngine extends BladeOne
         $this->directive(name: 'csrf', handler: static fn (): string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
 
         // Route directive
-        $this->directive(name: 'route', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'route', handler: static fn (string $expression): string => sprintf(
             '<?php echo route(%s); ?>',
             $expression,
         ));
 
         // Checked directive
-        $this->directive(name: 'checked', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'checked', handler: static fn (string $expression): string => sprintf(
             "<?php echo %s ? 'checked' : ''; ?>",
             $expression,
         ));
 
         // Selected directive
-        $this->directive(name: 'selected', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'selected', handler: static fn (string $expression): string => sprintf(
             "<?php echo %s ? 'selected' : ''; ?>",
             $expression,
         ));
@@ -83,20 +83,20 @@ class BladeTemplateEngine extends BladeOne
         // Dump directive
         $this->directive(
             name   : 'dump',
-            handler: static fn (string $expression) : string => sprintf(
+            handler: static fn (string $expression): string => sprintf(
                 '<?php var_dump(%s); ?>',
                 $expression,
             ),
         );
 
         // Die and dump directive
-        $this->directive(name: 'dd', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'dd', handler: static fn (string $expression): string => sprintf(
             '<?php die(var_dump(%s)); ?>',
             $expression,
         ));
 
         // Markdown directive
-        $this->directive(name: 'markdown', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'markdown', handler: static fn (string $expression): string => sprintf(
             '<?php echo (new Parsedown())->text(%s); ?>',
             $expression,
         ));
@@ -111,7 +111,7 @@ class BladeTemplateEngine extends BladeOne
         $this->directive(name: 'endguest', handler: static fn (): string => '<?php endif; ?>');
 
         // Environment directive
-        $this->directive(name: 'ifenv', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'ifenv', handler: static fn (string $expression): string => sprintf(
             "<?php if (config('cashback.env') === %s): ?>",
             $expression,
         ));
@@ -126,7 +126,7 @@ class BladeTemplateEngine extends BladeOne
         ));
 
         // HTTP method directive
-        $this->directive(name: 'method', handler: static fn (string $expression) : string => sprintf(
+        $this->directive(name: 'method', handler: static fn (string $expression): string => sprintf(
             "<?php echo '<input type=\"hidden\" name=\"_method\" value=\"' . %s . '\">'; ?>",
             $expression,
         ));
@@ -139,7 +139,7 @@ class BladeTemplateEngine extends BladeOne
         } catch (Throwable $throwable) {
             logger(message: 'View rendering to html failed.', context: ['view' => $view, 'exception' => $throwable]);
 
-            return '<div>View rendering error: ' . $throwable->getMessage() . '</div>';
+            return '<div>View rendering error: '.$throwable->getMessage().'</div>';
         }
     }
 }

@@ -20,16 +20,15 @@ final readonly class SessionCookieSettings
     public bool $secure;
 
     /**
-     * @param 'Lax'|'Strict'|'None' $sameSite
+     * @param  'Lax'|'Strict'|'None'  $sameSite
      */
     public function __construct(
-        ?bool         $secure = null,
-        ?bool         $httpOnly = null,
-        ?string       $sameSite = null,
-        ?string       $path = null,
+        ?bool $secure = null,
+        ?bool $httpOnly = null,
+        ?string $sameSite = null,
+        ?string $path = null,
         public string $domain = '',
-    )
-    {
+    ) {
         $secure ??= true;
         $httpOnly ??= true;
         $sameSite ??= 'Lax';
@@ -38,11 +37,11 @@ final readonly class SessionCookieSettings
         $this->httpOnly = $httpOnly;
         $this->sameSite = $sameSite;
         $this->path = $path;
-        if (!in_array(needle: $this->sameSite, haystack: ['Lax', 'Strict', 'None'], strict: true)) {
+        if (! in_array(needle: $this->sameSite, haystack: ['Lax', 'Strict', 'None'], strict: true)) {
             throw new InvalidArgumentException(message: 'Cookie sameSite must be Lax, Strict, or None.');
         }
 
-        if ($this->sameSite === 'None' && !$this->secure) {
+        if ($this->sameSite === 'None' && ! $this->secure) {
             throw new InvalidArgumentException(message: 'Cookie sameSite None requires a secure cookie.');
         }
     }

@@ -18,7 +18,7 @@ final class InMemoryLockStoreTest extends TestCase
     public function test_acquire_returns_true_when_no_lock_exists(): void
     {
         $inMemoryLockStore = new InMemoryLockStore();
-        $result            = $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 30);
+        $result = $inMemoryLockStore->acquire(key: 'test_key', ttlSeconds: 30);
         $this->assertTrue(condition: $result);
     }
 
@@ -81,7 +81,7 @@ final class InMemoryLockStoreTest extends TestCase
     public function test_get_owner_returns_null_when_not_locked(): void
     {
         $inMemoryLockStore = new InMemoryLockStore();
-        $owner             = $inMemoryLockStore->getOwner(key: 'test_key');
+        $owner = $inMemoryLockStore->getOwner(key: 'test_key');
         $this->assertNull(actual: $owner);
     }
 

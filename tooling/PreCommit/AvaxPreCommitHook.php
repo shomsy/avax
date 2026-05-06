@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\PreCommit;
+
 final class AvaxPreCommitHook
 {
     private const string MARKER = 'AVAX_PRE_COMMIT_HOOK=1';

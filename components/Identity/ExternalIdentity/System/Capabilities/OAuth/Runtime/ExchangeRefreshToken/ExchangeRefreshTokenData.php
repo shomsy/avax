@@ -19,5 +19,6 @@ final readonly class ExchangeRefreshTokenData
         public ?string $ipAddress = null,
         public ?string $userAgent = null,
         public ?OAuthSenderConstraint $senderConstraint = null,
-    ) {}
+    ) {
+    }
 }

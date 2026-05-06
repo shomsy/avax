@@ -11,11 +11,12 @@ final readonly class ReadRequestInput
     public function __construct(
         private ReadRouteInput $readRouteInput,
         private ReadQueryInput $readQueryInput,
-        private ReadBodyInput  $readBodyInput,
-        private ReadFileInput  $readFileInput,
-    ) {}
+        private ReadBodyInput $readBodyInput,
+        private ReadFileInput $readFileInput,
+    ) {
+    }
 
-    public function read(RequestInterface $request, string $key, mixed $default = null) : mixed
+    public function read(RequestInterface $request, string $key, mixed $default = null): mixed
     {
         return $this->readRouteInput->read($request, $key)
             ?? $this->readQueryInput->read($request, $key)

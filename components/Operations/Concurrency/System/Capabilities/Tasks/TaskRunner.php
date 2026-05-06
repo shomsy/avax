@@ -10,7 +10,7 @@ use Fiber;
 final readonly class TaskRunner
 {
     /**
-     * @param list<Closure(): mixed> $tasks
+     * @param  list<Closure(): mixed>  $tasks
      * @return list<mixed>
      */
     public function runAll(array $tasks): array
@@ -23,7 +23,7 @@ final readonly class TaskRunner
     }
 
     /**
-     * @param list<Closure(): mixed> $tasks
+     * @param  list<Closure(): mixed>  $tasks
      * @return list<mixed>
      */
     private function runAllSync(array $tasks): array
@@ -38,19 +38,19 @@ final readonly class TaskRunner
     }
 
     /**
-     * @param list<Closure(): mixed> $tasks
+     * @param  list<Closure(): mixed>  $tasks
      * @return list<mixed>
      */
     private function runAllFibers(array $tasks): array
     {
         $fibers = array_map(
-            static fn (callable $task) : Fiber => new Fiber($task),
+            static fn (callable $task): Fiber => new Fiber($task),
             $tasks,
         );
 
         $results = array_fill(0, count($tasks), null);
 
-        while ( $this->hasActiveFibers($fibers) ) {
+        while ($this->hasActiveFibers($fibers)) {
             foreach ($fibers as $index => $fiber) {
                 if (! $fiber->isStarted()) {
                     $fiber->start();
@@ -72,15 +72,15 @@ final readonly class TaskRunner
     }
 
     /**
-     * @param list<Fiber> $fibers
+     * @param  list<Fiber>  $fibers
      */
     private function hasActiveFibers(array $fibers): bool
     {
-        return array_any($fibers, fn ($fiber) : bool => ! $fiber->isTerminated());
+        return array_any($fibers, fn ($fiber): bool => ! $fiber->isTerminated());
     }
 
     /**
-     * @param list<Closure(): mixed> $tasks
+     * @param  list<Closure(): mixed>  $tasks
      */
     public function race(array $tasks): mixed
     {
@@ -92,7 +92,7 @@ final readonly class TaskRunner
     }
 
     /**
-     * @param list<Closure(): mixed> $tasks
+     * @param  list<Closure(): mixed>  $tasks
      */
     private function raceSync(array $tasks): mixed
     {
@@ -108,7 +108,7 @@ final readonly class TaskRunner
     }
 
     /**
-     * @param list<Closure(): mixed> $tasks
+     * @param  list<Closure(): mixed>  $tasks
      */
     private function raceFibers(array $tasks): mixed
     {

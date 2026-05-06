@@ -10,13 +10,13 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 abstract class TestCase extends BaseTestCase
 {
     #[Override]
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
     }
 
     #[Override]
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         parent::tearDown();
     }

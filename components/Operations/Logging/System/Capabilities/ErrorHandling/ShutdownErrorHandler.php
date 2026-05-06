@@ -24,12 +24,13 @@ final class ShutdownErrorHandler
     public function __construct(
         private readonly HandleRuntimeFailure $handleRuntimeFailure,
         private readonly Logging $logging,
-    ) {}
+    ) {
+    }
 
     /**
      * Get the singleton instance.
      */
-    public static function getInstance() : ?self
+    public static function getInstance(): ?self
     {
         return self::$instance;
     }
@@ -37,7 +38,7 @@ final class ShutdownErrorHandler
     /**
      * Set the singleton instance.
      */
-    public static function setInstance(self $instance) : void
+    public static function setInstance(self $instance): void
     {
         self::$instance = $instance;
     }
@@ -45,7 +46,7 @@ final class ShutdownErrorHandler
     /**
      * Register the shutdown function.
      */
-    public function register() : void
+    public function register(): void
     {
         if ($this->registered) {
             return;
@@ -62,7 +63,7 @@ final class ShutdownErrorHandler
      * Unregister is not directly possible for shutdown functions,
      * but we can mark it as unregistered to prevent processing.
      */
-    public function unregister() : void
+    public function unregister(): void
     {
         $this->registered = false;
     }
@@ -70,7 +71,7 @@ final class ShutdownErrorHandler
     /**
      * Check if the shutdown handler is registered.
      */
-    public function isRegistered() : bool
+    public function isRegistered(): bool
     {
         return $this->registered;
     }
@@ -78,7 +79,7 @@ final class ShutdownErrorHandler
     /**
      * Handle shutdown event - check for fatal errors.
      */
-    public function handleShutdown() : void
+    public function handleShutdown(): void
     {
         if (! $this->registered) {
             return;
@@ -121,7 +122,7 @@ final class ShutdownErrorHandler
         } catch (Throwable $throwable) {
             // If even the handler fails, ensure we log the original error
             $this->logging->emergency(
-                'Shutdown error handler failed: ' . $throwable->getMessage(),
+                'Shutdown error handler failed: '.$throwable->getMessage(),
                 ['original_fatal_error' => $error],
             );
         }
@@ -130,23 +131,23 @@ final class ShutdownErrorHandler
     /**
      * Get the human-readable name for a PHP error type.
      */
-    private function getErrorTypeName(int $type) : string
+    private function getErrorTypeName(int $type): string
     {
         return match ($type) {
-            E_ERROR           => 'E_ERROR',
-            E_WARNING         => 'E_WARNING',
-            E_PARSE           => 'E_PARSE',
-            E_NOTICE          => 'E_NOTICE',
-            E_CORE_ERROR      => 'E_CORE_ERROR',
-            E_CORE_WARNING    => 'E_CORE_WARNING',
-            E_COMPILE_ERROR   => 'E_COMPILE_ERROR',
+            E_ERROR => 'E_ERROR',
+            E_WARNING => 'E_WARNING',
+            E_PARSE => 'E_PARSE',
+            E_NOTICE => 'E_NOTICE',
+            E_CORE_ERROR => 'E_CORE_ERROR',
+            E_CORE_WARNING => 'E_CORE_WARNING',
+            E_COMPILE_ERROR => 'E_COMPILE_ERROR',
             E_COMPILE_WARNING => 'E_COMPILE_WARNING',
-            E_USER_ERROR      => 'E_USER_ERROR',
-            E_USER_WARNING    => 'E_USER_WARNING',
-            E_USER_NOTICE     => 'E_USER_NOTICE',
-            E_STRICT          => 'E_STRICT',
+            E_USER_ERROR => 'E_USER_ERROR',
+            E_USER_WARNING => 'E_USER_WARNING',
+            E_USER_NOTICE => 'E_USER_NOTICE',
+            E_STRICT => 'E_STRICT',
             E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
-            E_DEPRECATED      => 'E_DEPRECATED',
+            E_DEPRECATED => 'E_DEPRECATED',
             E_USER_DEPRECATED => 'E_USER_DEPRECATED',
             default => sprintf('E_UNKNOWN(%s)', $type),
         };

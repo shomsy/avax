@@ -13,7 +13,8 @@ final readonly class BatchInsert
         private string $table,
         private array $columns,
         private int $batchSize = 100,
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<array{sql: string, bindings: list<mixed>}>
@@ -27,7 +28,7 @@ final readonly class BatchInsert
             $groups = [];
 
             foreach ($batch as $row) {
-                $groups[] = '(' . implode(separator: ', ', array: array_fill(start_index: 0, count: count(value: $this->columns), value: '?')) . ')';
+                $groups[] = '('.implode(separator: ', ', array: array_fill(start_index: 0, count: count(value: $this->columns), value: '?')).')';
 
                 foreach ($this->columns as $column) {
                     $bindings[] = $row[$column] ?? null;
@@ -35,8 +36,8 @@ final readonly class BatchInsert
             }
 
             $statements[] = [
-                'sql' => 'INSERT INTO ' . $this->grammar->wrap(value: $this->table)
-                    . ' (' . $this->wrappedColumns() . ') VALUES ' . implode(separator: ', ', array: $groups),
+                'sql' => 'INSERT INTO '.$this->grammar->wrap(value: $this->table)
+                    .' ('.$this->wrappedColumns().') VALUES '.implode(separator: ', ', array: $groups),
                 'bindings' => $bindings,
             ];
         }

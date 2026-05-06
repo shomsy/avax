@@ -18,18 +18,17 @@ use Throwable;
 final class ResolveDependencies
 {
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<int, mixed>
      *
      * @throws Throwable
      */
     public function resolveParameters(
-        array          $parameters,
-        array          $overrides,
+        array $parameters,
+        array $overrides,
         ResolveDependency $resolveDependency,
-        ?ResolveRequest   $resolveRequest = null,
-    ) : array
-    {
+        ?ResolveRequest $resolveRequest = null,
+    ): array {
         return $this->resolvePlan(
             overrides: $overrides,
             plan     : $this->createPlan(parameters: $parameters),
@@ -39,17 +38,17 @@ final class ResolveDependencies
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<int, mixed>
      *
      * @throws ContainerException
      * @throws Throwable
      */
     public function resolvePlan(
-        ResolvePlan       $resolvePlan,
+        ResolvePlan $resolvePlan,
         array $overrides,
         ResolveDependency $resolveDependency,
-        ?ResolveRequest   $resolveRequest,
+        ?ResolveRequest $resolveRequest,
     ): array {
         $resolved = [];
 
@@ -68,7 +67,7 @@ final class ResolveDependencies
     /**
      * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default:
      *                            string, allowsNull: bool} $parameter
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      *
      * @throws Throwable
      */
@@ -76,7 +75,7 @@ final class ResolveDependencies
         array $parameter,
         array $overrides,
         ResolveDependency $resolveDependency,
-        ?ResolveRequest   $resolveRequest,
+        ?ResolveRequest $resolveRequest,
     ): mixed {
         if (array_key_exists(key: $parameter['name'], array: $overrides)) {
             return $overrides[$parameter['name']];
@@ -108,14 +107,14 @@ final class ResolveDependencies
         throw new ContainerException(
             message: $parameter['source'] === 'runtime'
                          ? sprintf('Runtime input [$%s] is missing for [%s]. ', $parameter['inputName'], $resolveRequest?->serviceId)
-                       . sprintf('Dependency path [%s]. Likely fix: pass an explicit override, use forContext(), or add a default value.', $resolveRequest?->getPath())
+                       .sprintf('Dependency path [%s]. Likely fix: pass an explicit override, use forContext(), or add a default value.', $resolveRequest?->getPath())
                          : sprintf('Cannot resolve parameter [$%s] for service [%s]. ', $parameter['name'], $resolveRequest?->serviceId)
-                       . sprintf('Dependency path [%s]. Likely fix: register the dependency, add an Inject attribute, or provide an override.', $resolveRequest?->getPath()),
+                       .sprintf('Dependency path [%s]. Likely fix: register the dependency, add an Inject attribute, or provide an override.', $resolveRequest?->getPath()),
         );
     }
 
     /**
-     * @param list<ReflectionParameter> $parameters
+     * @param  list<ReflectionParameter>  $parameters
      */
     public function createPlan(array $parameters): ResolvePlan
     {
@@ -123,12 +122,12 @@ final class ResolveDependencies
 
         foreach ($parameters as $parameter) {
             $compiled[] = [
-                'name'       => $parameter->getName(),
-                'serviceId'  => $this->serviceIdFor(parameter: $parameter),
-                'source'     => $this->sourceFor(parameter: $parameter),
-                'inputName'  => $this->inputNameFor(parameter: $parameter),
+                'name' => $parameter->getName(),
+                'serviceId' => $this->serviceIdFor(parameter: $parameter),
+                'source' => $this->sourceFor(parameter: $parameter),
+                'inputName' => $this->inputNameFor(parameter: $parameter),
                 'hasDefault' => $parameter->isDefaultValueAvailable(),
-                'default'    => $parameter->isDefaultValueAvailable()
+                'default' => $parameter->isDefaultValueAvailable()
                     ? $parameter->getDefaultValue()
                         |> serialize(...)
                         |> base64_encode(...)
@@ -143,7 +142,7 @@ final class ResolveDependencies
     /**
      * Infers one service id from the parameter attribute or object type.
      */
-    private function serviceIdFor(ReflectionParameter $reflectionParameter) : ?string
+    private function serviceIdFor(ReflectionParameter $reflectionParameter): ?string
     {
         if ($reflectionParameter->getAttributes(name: RuntimeInput::class) !== []) {
             return null;
@@ -173,12 +172,12 @@ final class ResolveDependencies
         return null;
     }
 
-    private function sourceFor(ReflectionParameter $reflectionParameter) : string
+    private function sourceFor(ReflectionParameter $reflectionParameter): string
     {
         return $this->serviceIdFor(parameter: $reflectionParameter) !== null ? 'service' : 'runtime';
     }
 
-    private function inputNameFor(ReflectionParameter $reflectionParameter) : string
+    private function inputNameFor(ReflectionParameter $reflectionParameter): string
     {
         $attributes = $reflectionParameter->getAttributes(name: RuntimeInput::class);
         if ($attributes === []) {

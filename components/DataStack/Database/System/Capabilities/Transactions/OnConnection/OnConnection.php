@@ -13,12 +13,14 @@ use Throwable;
  */
 final readonly class OnConnection
 {
-    public function __construct(private Connections $connections) {}
+    public function __construct(private Connections $connections)
+    {
+    }
 
     /**
      * @throws Throwable
      */
-    public function for(?string $connectionName = null) : Transaction
+    public function for(?string $connectionName = null): Transaction
     {
         return Transaction::on(connection: $this->connections->connection(name: $connectionName));
     }

@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 namespace Avax\Tooling\PreCommit;
+
 final readonly class GitRepository
 {
     public function __construct(
         private ProcessRunner $processRunner,
-        private string        $rootDirectory,
-    )
-    {
+        private string $rootDirectory,
+    ) {
     }
 
     public function assertInsideWorkTree(): void
@@ -18,8 +18,8 @@ final readonly class GitRepository
             command: ['git', '-C', $this->rootDirectory, 'rev-parse', '--is-inside-work-tree'],
         );
 
-        if (!$processResult->successful() || $processResult->stdout !== 'true') {
-            throw new HookInstallerException('Not inside a Git work tree: ' . $this->rootDirectory);
+        if (! $processResult->successful() || $processResult->stdout !== 'true') {
+            throw new HookInstallerException('Not inside a Git work tree: '.$this->rootDirectory);
         }
     }
 
@@ -29,7 +29,7 @@ final readonly class GitRepository
             command: ['git', '-C', $this->rootDirectory, 'rev-parse', '--git-path', 'hooks'],
         );
 
-        if (!$processResult->successful() || $processResult->stdout === '') {
+        if (! $processResult->successful() || $processResult->stdout === '') {
             $error = $processResult->stderr !== '' ? $processResult->stderr : 'Git did not return a hooks path.';
 
             throw new HookInstallerException($error);
@@ -37,7 +37,7 @@ final readonly class GitRepository
 
         $hooksDirectory = $processResult->stdout;
 
-        if (!Path::isAbsolute($hooksDirectory)) {
+        if (! Path::isAbsolute($hooksDirectory)) {
             $hooksDirectory = Path::join($this->rootDirectory, $hooksDirectory);
         }
 

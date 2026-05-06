@@ -8,14 +8,14 @@ final class ValidationBuilder
 {
     private array $rules = [];
 
-    public function addRule(string $field, array $rules) : self
+    public function addRule(string $field, array $rules): self
     {
         $this->rules[$field] = $rules;
 
         return $this;
     }
 
-    public function getRules() : array
+    public function getRules(): array
     {
         return $this->rules;
     }

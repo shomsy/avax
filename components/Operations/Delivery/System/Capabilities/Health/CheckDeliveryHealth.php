@@ -10,13 +10,12 @@ class CheckDeliveryHealth
 {
     public function __construct(
         private readonly ?DeliveryConfigurationInterface $deliveryConfiguration = null,
-    )
-    {
+    ) {
     }
 
     public function check(): DeliveryHealthReport
     {
-        if (!$this->deliveryConfiguration instanceof DeliveryConfigurationInterface) {
+        if (! $this->deliveryConfiguration instanceof DeliveryConfigurationInterface) {
             return new DeliveryHealthReport(
                 healthy: false,
                 message: 'Configuration not initialized',

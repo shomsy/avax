@@ -17,7 +17,7 @@ final class DbMetricsCollector
     /** @var array<string, int> */
     private array $byConnection = [];
 
-    public function record(QuerySpan $querySpan) : void
+    public function record(QuerySpan $querySpan): void
     {
         $this->queryCount++;
         $this->totalDurationMs += $querySpan->getDurationMs();
@@ -33,19 +33,19 @@ final class DbMetricsCollector
     public function snapshot(): array
     {
         return [
-            'query_count'       => $this->queryCount,
+            'query_count' => $this->queryCount,
             'total_duration_ms' => $this->totalDurationMs,
             'average_duration_ms' => $this->queryCount === 0 ? 0.0 : $this->totalDurationMs / $this->queryCount,
-            'error_count'       => $this->errorCount,
-            'by_connection'     => $this->byConnection,
+            'error_count' => $this->errorCount,
+            'by_connection' => $this->byConnection,
         ];
     }
 
     public function reset(): void
     {
-        $this->queryCount   = 0;
+        $this->queryCount = 0;
         $this->totalDurationMs = 0.0;
-        $this->errorCount   = 0;
+        $this->errorCount = 0;
         $this->byConnection = [];
     }
 }

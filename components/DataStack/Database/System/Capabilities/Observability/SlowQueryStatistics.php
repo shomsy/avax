@@ -10,21 +10,20 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Observability;
 final readonly class SlowQueryStatistics
 {
     public function __construct(
-        public int   $totalSlowQueries = 0,
+        public int $totalSlowQueries = 0,
         public float $totalDurationMs = 0.0,
         public float $averageDurationMs = 0.0,
         public float $maxDurationMs = 0.0,
         public float $minDurationMs = 0.0,
         public array $countsByFingerprint = [],
         public array $countsByConnection = [],
-    )
-    {
+    ) {
     }
 
     /**
      * Creates statistics from a list of slow query reports.
      *
-     * @param list<SlowQueryReport> $reports
+     * @param  list<SlowQueryReport>  $reports
      */
     public static function fromReports(array $reports): self
     {

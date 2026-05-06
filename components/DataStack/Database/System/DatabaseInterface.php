@@ -32,5 +32,5 @@ interface DatabaseInterface
 
     public function telemetry(): Telemetry;
 
-    public function table(string $table, ?string $connectionName = null) : QueryBuilder;
+    public function table(string $table, ?string $connectionName = null): QueryBuilder;
 }

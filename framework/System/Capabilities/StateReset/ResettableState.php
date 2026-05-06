@@ -6,5 +6,5 @@ namespace Avax\Framework\System\Capabilities\StateReset;
 
 interface ResettableState
 {
-    public function resetState() : void;
+    public function resetState(): void;
 }

@@ -16,7 +16,8 @@ final class MySQLPool implements ConnectionPool
         private readonly string $username,
         private readonly string $password,
         private readonly array $options = [],
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function get(): PDO

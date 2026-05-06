@@ -13,9 +13,9 @@ use ReflectionClass;
 final readonly class ReadClassDataShape
 {
     /**
-     * @param class-string $class
+     * @param  class-string  $class
      */
-    public function read(string $class, DataTransferConfig $dataTransferConfig) : DataShape
+    public function read(string $class, DataTransferConfig $dataTransferConfig): DataShape
     {
         $reflectionClass = new ReflectionClass(objectOrClass: $class);
 

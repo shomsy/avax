@@ -12,7 +12,7 @@ use Stringable;
 final readonly class Expression implements Stringable
 {
     /**
-     * @param string $value The raw technical SQL fragment to be injected literally.
+     * @param  string  $value  The raw technical SQL fragment to be injected literally.
      */
     public function __construct(public string $value)
     {

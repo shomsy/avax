@@ -15,9 +15,8 @@ class ControllerGenerator extends CodeGenerator
     /**
      * Generate a controller class file.
      *
-     * @param string $name Controller name (e.g. "UserController" or "User")
-     * @param array  $data Additional data (e.g. ['methods' => ['index', 'show']])
-     *
+     * @param  string  $name  Controller name (e.g. "UserController" or "User")
+     * @param  array  $data  Additional data (e.g. ['methods' => ['index', 'show']])
      * @return string The generated file path
      */
     #[Override]
@@ -30,9 +29,9 @@ class ControllerGenerator extends CodeGenerator
             $className .= 'Controller';
         }
 
-        $subDir    = $data['subDir'] ?? 'Controllers';
+        $subDir = $data['subDir'] ?? 'Controllers';
         $namespace = $this->getNamespace($subDir);
-        $methods   = $data['methods'] ?? [];
+        $methods = $data['methods'] ?? [];
 
         $stub = $this->buildStub($className, $namespace, $methods);
         $path = $this->getFilePath($className, $subDir);

@@ -12,7 +12,8 @@ final readonly class DescribeSagaStep
         public array $inputSchema,
         public array $outputSchema,
         public bool $compensatable,
-    ) {}
+    ) {
+    }
 
     public static function create(
         string $name,
@@ -36,8 +37,8 @@ final readonly class DescribeSagaStep
     public function toMetadata(): array
     {
         return [
-            'name'         => $this->name,
-            'description'  => $this->description,
+            'name' => $this->name,
+            'description' => $this->description,
             'input_schema' => $this->inputSchema,
             'output_schema' => $this->outputSchema,
             'compensatable' => $this->compensatable,

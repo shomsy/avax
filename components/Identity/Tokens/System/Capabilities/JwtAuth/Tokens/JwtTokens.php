@@ -12,7 +12,8 @@ final readonly class JwtTokens
         public int $exp,
         public int $iat,
         public string $jti,
-    ) {}
+    ) {
+    }
 
     public static function fromPayload(array $payload): self
     {
@@ -28,11 +29,11 @@ final readonly class JwtTokens
     public function toPayload(): array
     {
         return [
-            'sub'  => $this->sub,
+            'sub' => $this->sub,
             'scopes' => $this->scopes,
-            'exp'  => $this->exp,
-            'iat'  => $this->iat,
-            'jti'  => $this->jti,
+            'exp' => $this->exp,
+            'iat' => $this->iat,
+            'jti' => $this->jti,
             'type' => 'access',
         ];
     }
@@ -45,7 +46,8 @@ final readonly class RefreshToken
         public string $jti,
         public int $exp,
         public int $iat,
-    ) {}
+    ) {
+    }
 
     public static function fromPayload(array $payload): self
     {
@@ -65,15 +67,16 @@ final readonly class TokenPair
         public string $refreshToken,
         public int $expiresIn,
         public string $tokenType,
-    ) {}
+    ) {
+    }
 
     public function toArray(): array
     {
         return [
             'access_token' => $this->accessToken,
             'refresh_token' => $this->refreshToken,
-            'expires_in'   => $this->expiresIn,
-            'token_type'   => $this->tokenType,
+            'expires_in' => $this->expiresIn,
+            'token_type' => $this->tokenType,
         ];
     }
 }

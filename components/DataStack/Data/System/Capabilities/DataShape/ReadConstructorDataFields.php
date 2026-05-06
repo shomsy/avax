@@ -16,13 +16,12 @@ use ReflectionException;
 final readonly class ReadConstructorDataFields
 {
     /**
-     * @param ReflectionClass<object> $reflectionClass
-     *
+     * @param  ReflectionClass<object>  $reflectionClass
      * @return array<string, DataField>
      *
      * @throws ReflectionException
      */
-    public function read(ReflectionClass $reflectionClass, DataTransferConfig $dataTransferConfig) : array
+    public function read(ReflectionClass $reflectionClass, DataTransferConfig $dataTransferConfig): array
     {
         $constructor = $reflectionClass->getConstructor();
 
@@ -48,7 +47,7 @@ final readonly class ReadConstructorDataFields
             }
 
             $attributes = new ReadDataFieldAttributes()->read(property: $property, parameter: $reflectionParameter);
-            $inputName  = new ReadMappedInputName()->read(
+            $inputName = new ReadMappedInputName()->read(
                 fieldName : $reflectionParameter->getName(),
                 attributes: $attributes,
                 config    : $dataTransferConfig,

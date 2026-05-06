@@ -12,11 +12,12 @@ use SensitiveParameter;
 final readonly class RevokeToken
 {
     public function __construct(
-        private TokenCodecInterface           $tokenCodec,
+        private TokenCodecInterface $tokenCodec,
         private TokenRevocationStoreInterface $tokenRevocationStore,
-    ) {}
+    ) {
+    }
 
-    public function execute(#[SensitiveParameter] string $token) : void
+    public function execute(#[SensitiveParameter] string $token): void
     {
         $claims = $this->tokenCodec->decode(token: $token);
 
@@ -26,7 +27,7 @@ final readonly class RevokeToken
 
         $this->tokenRevocationStore->revoke(
             tokenId  : $claims['jti'],
-            expiresAt: new DateTimeImmutable(datetime: '@' . $claims['exp']),
+            expiresAt: new DateTimeImmutable(datetime: '@'.$claims['exp']),
         );
     }
 }

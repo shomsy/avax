@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(2, path: __DIR__) . '/bootstrap.php';
+require_once dirname(2, path: __DIR__).'/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\DisposableInterface;
@@ -26,12 +26,12 @@ final class ReusablePooledService implements DisposableInterface, ResettableInte
         $this->id = ++PooledLifetimeSequence::$created;
     }
 
-    public function reset() : void
+    public function reset(): void
     {
         PooledLifetimeSequence::$reset++;
     }
 
-    public function dispose() : void
+    public function dispose(): void
     {
         PooledLifetimeSequence::$disposed++;
     }
@@ -104,4 +104,4 @@ assertSame(expected: 'pooled', actual: $debug['lifetimePlan']['name'] ?? null, m
 assertSame(expected: 1, actual: $debug['lifetimePlan']['poolSize'] ?? null, message: 'Pooled lifetime plans should expose pool size.');
 assertSame(expected: true, actual: $debug['lifetimePlan']['poolResetBeforeReuse'] ?? null, message: 'Pooled lifetime plans should expose reset-before-reuse posture.');
 
-echo basename(path: __FILE__) . " ok\n";
+echo basename(path: __FILE__)." ok\n";

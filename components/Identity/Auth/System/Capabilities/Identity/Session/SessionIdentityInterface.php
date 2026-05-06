@@ -17,7 +17,7 @@ interface SessionIdentityInterface
         bool $phishingResistant = false,
     ): ?string;
 
-    public function captureCurrentSession(?string $ipAddress = null, ?string $userAgent = null) : void;
+    public function captureCurrentSession(?string $ipAddress = null, ?string $userAgent = null): void;
 
     public function resolveUserId(): ?int;
 

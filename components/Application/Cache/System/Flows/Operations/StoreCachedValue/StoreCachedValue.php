@@ -19,12 +19,13 @@ final readonly class StoreCachedValue
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private Clock    $clock,
+        private Clock $clock,
         private ?CacheMetrics $cacheMetrics = null,
         private CacheTtl $cacheTtl = new CacheTtl(),
-    ) {}
+    ) {
+    }
 
-    public function store(CacheKey $cacheKey, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public function store(CacheKey $cacheKey, mixed $value, int|DateInterval|null $ttl = null): bool
     {
         $startTime = hrtime(true);
 
@@ -58,7 +59,7 @@ final readonly class StoreCachedValue
         }
     }
 
-    private function recordLatency(int $startTime) : void
+    private function recordLatency(int $startTime): void
     {
         if (! $this->cacheMetrics instanceof CacheMetrics) {
             return;

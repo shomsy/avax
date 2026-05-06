@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tooling\DependencyMap\System\PublicSurface;
 
-use Avax\Tooling\DependencyMap\Capabilities\Graph\DependencyGraph;
+use Avax\Tooling\DependencyMap\System\Capabilities\Graph\DependencyGraph;
 
 final readonly class DependencyMap
 {

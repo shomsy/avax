@@ -246,6 +246,13 @@ function addRef(string $fqn, string $file, string $ctx, int $line, array &$refer
         }
     }
 
+    $globalClasses = ['SplFileInfo', 'SplFileObject', 'FilesystemIterator', 'RecursiveDirectoryIterator', 'RecursiveIteratorIterator', 'ArrayIterator', 'Iterator', 'IteratorAggregate', 'ArrayAccess', 'Serializable', 'JsonSerializable', 'Traversable', 'SeekableIterator', 'ReflectionClass', 'ReflectionFunction', 'ReflectionMethod', 'ReflectionProperty', 'ReflectionParameter', 'DateTime', 'DateTimeImmutable', 'DateInterval', 'Closure', 'Generator', 'ArrayObject', 'RuntimeException', 'InvalidArgumentException', 'LogicException', 'Exception', 'Throwable', 'PDOStatement', 'PHPUnit\\Framework\\TestCase'];
+    foreach ($globalClasses as $global) {
+        if (str_ends_with($fqn, '\\'.$global) && class_exists($global, false)) {
+            return;
+        }
+    }
+
     $references[$fqn][] = ['file' => $file, 'context' => $ctx, 'line' => $line];
 }
 

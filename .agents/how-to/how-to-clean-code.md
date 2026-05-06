@@ -386,6 +386,94 @@ Use this school to fight:
 
 Bloch has priority in library code, public APIs, reusable components, and places where misuse cost is high.
 
+### Joshua Bloch Operational Checklist
+
+Use these rules especially for public APIs, reusable components, value objects, configuration objects, DTOs, and
+framework primitives.
+
+#### Immutability
+
+Prefer immutable objects when the object represents a value, configuration, public API input, public API output, or
+reusable framework state.
+
+Mutable objects are allowed only when lifecycle, performance, or runtime behavior requires mutation.
+
+If mutable, mutation must be explicit and controlled.
+
+#### Builder Pattern
+
+Use a builder when object construction has many optional fields, named construction improves readability, or invalid
+partial construction must be avoided.
+
+Do not use builders for simple objects with one to three obvious required values.
+
+#### Equality
+
+Objects with value semantics must define equality intentionally.
+
+In PHP this means providing explicit equality behavior such as:
+
+```php
+public function equals(self $other): bool
+```
+
+Do not rely on accidental object identity when the domain expects value equality.
+
+#### Enums
+
+Use enums when the allowed values are closed, named, and meaningful.
+
+Do not use strings for closed state sets.
+
+Do not use enums when values are open, user-defined, external, or expected to grow dynamically.
+
+#### Type Safety
+
+Use precise types where PHP needs help expressing collection shape.
+
+Prefer precise types over `array`, `mixed`, or vague DTO bags.
+
+A collection must document its key and value types.
+
+#### Avoid Null
+
+Avoid `null` when a clearer model exists.
+
+Prefer:
+
+```text
+explicit optional value
+null object
+empty collection
+result object
+specific failure
+```
+
+Use `null` only when absence is truly the simplest and clearest meaning.
+
+#### Defensive Copies
+
+Use defensive copies when exposing or accepting mutable data that could violate object invariants.
+
+Public value objects and configuration objects must not leak mutable internal state.
+
+Arrays crossing public boundaries must be copied, normalized, or converted into immutable/value-safe structures when
+mutation would be dangerous.
+
+#### AvaX Interpretation
+
+Bloch has priority in:
+
+- `PublicSurface/`
+- value objects
+- configuration objects
+- reusable component APIs
+- framework primitives
+- public events and messages
+- any API where misuse would be expensive
+
+Bloch must not be over-applied to tiny internal flow-local code.
+
 ---
 
 ## 6.8 Sandi Metz canon
@@ -417,7 +505,143 @@ Use Metz when objects start knowing too much about each other or classes become 
 
 ---
 
-## 6.9 Eric Evans canon
+## 6.9 Gang of Four Pattern Rule
+
+Gang of Four patterns are allowed as implementation techniques, not as architecture identity.
+
+A pattern may be used only when it makes behavior clearer, removes duplication, protects extension points, or reduces
+conditional complexity.
+
+A pattern must not become the folder language.
+
+Folder still says flow or capability.
+
+Unit still says responsibility.
+
+Function still says exact action.
+
+### Factory
+
+Use factory when object construction has rules, multiple steps, or must hide complexity.
+
+Do not use factory for simple `new` with one to three obvious required values.
+
+### Strategy
+
+Use Strategy when variants grow over time, each variant has real behavior, variants need separate tests, adding a
+variant should not edit a central conditional, or behavior is configured at runtime.
+
+A small `match` over a stable enum is OK when variants are few, stable, and logic is small.
+
+### Adapter
+
+Adapter as a pattern has meaning.
+
+Adapter as a folder `Adapters/` should not be the default.
+
+Use concrete boundary names:
+
+```text
+S3ObjectStorage
+StripePaymentGateway
+RedisCacheStore
+```
+
+### Decorator
+
+Decorator is valuable for retry, logging, metrics, cache, tracing, authorization wrapper, rate limiting.
+
+Use decorator for reliability and observability wrappers.
+
+### Observer
+
+Observer lives today as events, listeners, domain events, telemetry, hooks.
+
+Useful, but must not hide flow.
+
+If reaction must be part of the main transaction, do not push it blindly into observer.
+
+### Command
+
+Command as a message-bus concept can exist.
+
+Command as a folder `Commands/` should not exist.
+
+In AvaX style, use case is a `Flow`:
+
+```text
+RegisterUser
+RunMigration
+PublishPendingEvent
+```
+
+### Template Method
+
+Use Template Method sparingly.
+
+Prefer composition over inheritance.
+
+Template Method is OK for stable framework lifecycle skeleton.
+
+Not OK if it leads to deep inheritance hierarchy.
+
+### Switch vs Strategy Rule
+
+Use `match` or `switch` when:
+
+```text
+variants are few
+variants are stable
+logic is small
+the decision is local and obvious
+```
+
+Use Strategy when:
+
+```text
+variants grow over time
+each variant has real behavior
+variants need separate tests
+adding a variant should not edit a central conditional
+behavior is configured or selected at runtime
+```
+
+### Folder Example
+
+Bad:
+
+```text
+Capabilities/
+  Strategies/
+    RedisStrategy.php
+    FileStrategy.php
+
+  Factories/
+    CacheFactory.php
+
+  Adapters/
+    RedisAdapter.php
+```
+
+Good:
+
+```text
+Capabilities/
+  RedisCacheStore/
+    ReadRedisCache.php
+    WriteRedisCache.php
+
+  FileCacheStore/
+    ReadFileCache.php
+    WriteFileCache.php
+
+  CacheStoreSelection/
+    ChooseCacheStore.php
+```
+
+---
+
+## 6.11 Eric Evans canon
 
 **Core concern:** domain-driven design, ubiquitous language, model integrity.
 
@@ -440,7 +664,7 @@ Evans has priority when the business domain is complex, long-lived, and central 
 
 ---
 
-## 6.10 Bertrand Meyer canon
+## 6.12 Bertrand Meyer canon
 
 **Core concern:** contracts, correctness, explicit obligations, robust OO design.
 
@@ -463,7 +687,7 @@ is dangerous.
 
 ---
 
-## 6.11 Law of Demeter canon
+## 6.13 Law of Demeter canon
 
 **Core concern:** least knowledge, shallow navigation, controlled collaboration.
 
@@ -485,7 +709,7 @@ If you see chains that expose deep structure knowledge, treat that as a warning 
 
 ---
 
-## 6.12 Ron Jeffries and YAGNI canon
+## 6.14 Ron Jeffries and YAGNI canon
 
 **Core concern:** do not build what you do not need yet.
 
@@ -511,7 +735,7 @@ Reject:
 
 ---
 
-## 6.13 Jeff Bay and Object Calisthenics canon
+## 6.15 Jeff Bay and Object Calisthenics canon
 
 **Core concern:** training exercises that force better OO habits.
 
@@ -534,7 +758,7 @@ Use it to discover better design. Do not force it everywhere.
 
 ---
 
-## 6.14 Tim Peters and the Pythonic canon
+## 6.16 Tim Peters and the Pythonic canon
 
 **Core concern:** readability, explicitness, practical elegance.
 

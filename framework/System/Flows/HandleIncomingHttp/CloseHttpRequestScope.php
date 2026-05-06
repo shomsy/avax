@@ -8,14 +8,14 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 
 final readonly class CloseHttpRequestScope
 {
-    public function __construct(private RequestScopeStore $requestScopeStore)
+    public function __construct(private RequestScopeStore $requestScopes)
     {
     }
 
     public function close(): void
     {
-        if ($this->requestScopeStore->hasCurrent()) {
-            $this->requestScopeStore->closeCurrent();
+        if ($this->requestScopes->hasCurrent()) {
+            $this->requestScopes->closeCurrent();
         }
     }
 }

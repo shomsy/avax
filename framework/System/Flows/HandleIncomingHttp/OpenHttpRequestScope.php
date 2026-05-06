@@ -13,19 +13,19 @@ use Random\RandomException;
 final readonly class OpenHttpRequestScope
 {
     public function __construct(
-        private RequestScopeStore $requestScopeStore,
+        private RequestScopeStore $requestScopes,
         private RuntimeContext $runtimeContext,
     ) {}
 
     /**
      * @throws RandomException
      */
-    public function open(RuntimeRequest $runtimeRequest) : RequestScope
+    public function open(RuntimeRequest $request) : RequestScope
     {
-        $requestScope = $this->requestScopeStore->open();
+        $requestScope = $this->requestScopes->open();
         $this->runtimeContext->startRequest(
             requestScopeId: $requestScope->id(),
-            runtimeRequest: $runtimeRequest,
+            runtimeRequest: $request,
         );
 
         return $requestScope;

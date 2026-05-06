@@ -21,7 +21,7 @@ final class RequestScopeStore implements ResettableState
             throw new FrameworkMisconfigured(message: 'Cannot open a new request scope while another scope is active.');
         }
 
-        $this->requestScope = new RequestScope(requestScopeId: RequestScopeId::generate());
+        $this->requestScope = new RequestScope(id: RequestScopeId::generate());
 
         return $this->requestScope;
     }

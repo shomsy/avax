@@ -27,9 +27,9 @@ final readonly class Concurrency
      *
      * @return list<mixed>
      */
-    public static function run(array $tasks) : array
+    public static function run(array $tasks, int|null $maxConcurrent = null) : array
     {
-        return self::all($tasks);
+        return self::all(tasks: $tasks);
     }
 
     /**

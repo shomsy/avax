@@ -13,25 +13,23 @@ use Closure;
 
 final readonly class RunConsoleCommand
 {
-    /** @var array<string, Closure> */
-    private array $commandOverrides;
-
+    /**
+     * @param array<string, Closure> $commandOverrides
+     */
     public function __construct(
         private RuntimeInterface $runtime,
-    )
-    {
-        $this->commandOverrides = [];
-    }
+        private array $commandOverrides = [],
+    ) {}
 
     /**
      * @param array<string, Closure> $commands
      */
     public function withCommands(array $commands) : self
     {
-        $clone                   = clone $this;
-        $clone->commandOverrides = $commands;
-
-        return $clone;
+        return new self(
+            runtime         : $this->runtime,
+            commandOverrides: $commands,
+        );
     }
 
     public function getRuntimeContext() : RuntimeContext
@@ -45,14 +43,17 @@ final readonly class RunConsoleCommand
 
         foreach ($args as $arg) {
             if (is_array($arg)) {
-                $argv = array_merge($argv, $arg);
+                $argv = array_merge($argv, array_values($arg));
             } else {
                 $argv[] = $arg;
             }
         }
 
-        $commandName = $argv[0] ?? 'help';
-        $commandArgs = array_slice($argv, 1);
+        $commandName = (string) ($argv[0] ?? 'help');
+        $commandArgs = array_map(
+            callback: static fn (mixed $arg) : string => (string) $arg,
+            array   : array_slice($argv, 1),
+        );
 
         $input = $this->readConsoleInput($commandArgs);
         $command = $this->resolveConsoleCommand($commandName);
@@ -65,6 +66,7 @@ final readonly class RunConsoleCommand
     }
 
     /**
+     * @param list<string> $argv
      * @return list<string>
      */
     private function readConsoleInput(array $argv) : array
@@ -73,7 +75,7 @@ final readonly class RunConsoleCommand
     }
 
     /**
-     * @return callable(array<string>): string
+     * @return callable(list<string>): string
      */
     private function resolveConsoleCommand(string $commandName) : callable
     {
@@ -90,21 +92,21 @@ final readonly class RunConsoleCommand
     }
 
     /**
-     * @return callable(array<string>): string
+     * @return callable(list<string>): string
      */
     private function getBuiltInCommand(string $commandName) : callable
     {
         return match ($commandName) {
             'help'       => $this->showHelp(...),
-            'pre-commit' => static fn (array $args) => $this->handlePreCommit($args),
-            default      => static fn () : string => sprintf("Unknown command: %s%s", $commandName, PHP_EOL),
+            'pre-commit' => fn (array $args) : string => $this->handlePreCommit(args: array_values($args)),
+            default      => static fn (array $args) : string => sprintf("Unknown command: %s%s", $commandName, PHP_EOL),
         };
     }
 
     /**
-     * Show general help.
+     * @param list<string> $args
      */
-    private function showHelp() : string
+    private function showHelp(array $args = []) : string
     {
         return <<<'HELP'
             Avax Console
@@ -122,6 +124,9 @@ final readonly class RunConsoleCommand
             HELP;
     }
 
+    /**
+     * @param list<string> $args
+     */
     private function handlePreCommit(array $args) : string
     {
         $dryRun = ! in_array('--fix', $args, true);
@@ -137,14 +142,16 @@ final readonly class RunConsoleCommand
     }
 
     /**
-     * @param callable(array<string>): string $command
+     * @param callable(list<string>): string $command
+     * @param list<string> $input
      */
     private function executeConsoleCommand(callable $command, array $input) : string
     {
         ob_start();
-        $command($input);
+        $result = $command($input);
+        $output = ob_get_clean();
 
-        return ob_get_clean();
+        return ($output === false ? '' : $output) . $result;
     }
 
     private function writeConsoleOutput(string $output) : void

@@ -6,7 +6,6 @@ namespace Avax\Components\Operations\RuntimeSupervision\System\PublicSurface;
 
 use Avax\Components\Operations\RuntimeSupervision\System\Capabilities\Process\ProcessRegistry;
 use Avax\Components\Operations\RuntimeSupervision\System\Capabilities\Supervision\Supervisor;
-use Avax\Operations\RuntimeSupervision\System\Capabilities\Health\SupervisorHealthReport;
 
 final readonly class RuntimeSupervision
 {

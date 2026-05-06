@@ -38,9 +38,9 @@ final class RuntimeContext implements ResettableState
         $this->requestScopeId = null;
     }
 
-    public function recordResult(RuntimeResult $runtimeResult) : void
+    public function recordResult(RuntimeResult $result) : void
     {
-        $this->runtimeResult = $runtimeResult;
+        $this->runtimeResult = $result;
     }
 
     public function currentRequest() : ?RuntimeRequest

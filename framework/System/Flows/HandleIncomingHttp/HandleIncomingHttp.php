@@ -29,12 +29,12 @@ final readonly class HandleIncomingHttp
     public function handle(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest) : RuntimeResponse
     {
         $openHttpRequestScope  = new OpenHttpRequestScope(
-            requestScopeStore: $runtime->requestScopes(),
+            requestScopes : $runtime->requestScopes(),
             runtimeContext   : $runtime->context(),
         );
-        $closeHttpRequestScope = new CloseHttpRequestScope(requestScopeStore: $runtime->requestScopes());
+        $closeHttpRequestScope = new CloseHttpRequestScope(requestScopes: $runtime->requestScopes());
 
-        $openHttpRequestScope->open(runtimeRequest: $runtimeRequest);
+        $openHttpRequestScope->open(request: $runtimeRequest);
 
         try {
             return $this->handleInCurrentScope(runtime: $runtime, runtimeRequest: $runtimeRequest);

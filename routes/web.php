@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use Avax\Components\Documentation\Api\System\PublicSurface\ApiDocumentation;
 use Avax\Components\Operations\Monitoring\System\PublicSurface\Monitoring;
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 
-$router = static function (RouteBuilder $routes) : void {
+$router = static function (RouterInterface $routes) : void {
     $routes->get('/', static fn () => [
         'name' => 'Avax',
         'version' => '1.0.0',

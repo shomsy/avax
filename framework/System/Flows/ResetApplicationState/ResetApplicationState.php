@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 final readonly class ResetApplicationState
 {
     public function __construct(
-        private ?StateResetRegistry $stateResetRegistry = null,
+        private StateResetRegistry|null $stateResetRegistry = null,
     ) {}
 
     public function reset() : StateResetReport

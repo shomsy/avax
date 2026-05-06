@@ -23,7 +23,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGr
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueCasterInterface;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueConversionContext;
-use Avax\Components\DataStack\Data\System\Capabilities\ObjectHandling\DTO\AbstractDTO;
+use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO;
 use Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel;
 use Avax\Components\HTTP\Context\System\PublicSurface\HttpContext;
 use Avax\Components\HTTP\System\Capabilities\Kernel\HttpKernel;
@@ -43,8 +43,8 @@ $classAliases = [
     ValueCasterInterface::class                                   => ValueCasterInterface::class,
     ValueConversionContext::class                                 => ValueConversionContext::class,
     'Avax\\DataHandling\\DataTransfer\\InspectDataShape\\DataField'                         => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataShape\\DataField',
-    AbstractDTO::class                                            => \Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO::class,
-    \Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO::class    => \Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO::class,
+    AbstractDTO::class                                            => AbstractDTO::class,
+    'Avax\\DataFoundation\\ObjectHandling\\DTO\\AbstractDTO'      => AbstractDTO::class,
     'Avax\\DataFoundation\\Collection'                                                      => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collections\\Collection',
     'Avax\\DataFoundation\\Arrhae'                                                          => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collections\\Arrhae',
     'Avax\\DataFoundation\\Collections\\Map\\Map'                                           => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collections\\Map\\Map',
@@ -140,7 +140,7 @@ $classAliases = [
     View::class                                                   => View::class,
     Filesystem::class                                             => Filesystem::class,
     Config::class                                                 => Config::class,
-    \Avax\Container\ContainerInterface::class => ContainerInterface::class,
+    'Avax\\Container\\ContainerInterface' => ContainerInterface::class,
 ];
 
 foreach ($classAliases as $alias => $target) {

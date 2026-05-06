@@ -33,7 +33,7 @@ final class SessionProvider implements ComponentProviderInterface
     {
         $componentRegistry->single(SessionStoreInterface::class, static fn () : NativeSessionStore => new NativeSessionStore());
 
-        $componentRegistry->single(SessionScope::class, static fn (ComponentRegistry $registry) : SessionScope => new SessionScope($registry->get(SessionStoreInterface::class)));
+        $componentRegistry->single(SessionScope::class, static fn (ComponentRegistry $registry) : SessionScope => new SessionScope(store: $registry->get(SessionStoreInterface::class)));
 
         $componentRegistry->single(SessionInterface::class, static fn (ComponentRegistry $registry) : Session => new Session(
             sessionScope   : $registry->get(SessionScope::class),

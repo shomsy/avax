@@ -6,11 +6,11 @@ namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
 final class SessionDriver
 {
-    private static ?SessionStoreInterface $sessionStore = null;
+    private static SessionStoreInterface|null $sessionStore = null;
 
-    public static function setStore(SessionStoreInterface $sessionStore) : void
+    public static function setStore(SessionStoreInterface $store) : void
     {
-        self::$sessionStore = $sessionStore;
+        self::$sessionStore = $store;
     }
 
     /**

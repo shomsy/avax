@@ -9,5 +9,5 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 
 interface HttpKernelInterface
 {
-    public function handle(RuntimeRequest $runtimeRequest) : RuntimeResponse;
+    public function handle(RuntimeRequest $request) : RuntimeResponse;
 }

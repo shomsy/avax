@@ -4,8 +4,7 @@
          failOnWarning="false">
     <testsuites>
         <testsuite name="Core">
-            <directory>tests/Unit/Framework/System/Capabilities/ComponentRegistry</directory>
-            <directory>tests/Unit/Framework/System/Capabilities/StateReset</directory>
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

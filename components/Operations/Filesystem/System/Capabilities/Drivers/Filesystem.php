@@ -35,8 +35,8 @@ final class Filesystem
         $config = function_exists(function: 'config') ? (config(key: 'filesystems.disks.' . $name, default: []) ?? []) : [];
 
         return match ($name) {
-            's3' => new S3StorageAdapter(config: $config),
-            default => new LocalStorageAdapter(config: $config),
+            's3' => new S3(config: $config),
+            default => new Local(config: $config),
         };
     }
 

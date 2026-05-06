@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Filesystem\System\Capabilities\Drivers;
 
-class StorageAdapter {}
+interface StorageAdapter extends Storage {}

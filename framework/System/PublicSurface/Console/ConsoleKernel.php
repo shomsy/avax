@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\PublicSurface\Console;
 
-use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand;
 
@@ -21,7 +20,7 @@ final readonly class ConsoleKernel implements ConsoleKernelInterface
     public function run(string $commandName, array $arguments = []): RuntimeResult
     {
         return $this->runConsoleCommand->run(
-            arguments: [$commandName] + $arguments,
+            arguments: array_merge([$commandName], $arguments),
         );
     }
 }

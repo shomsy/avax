@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 
 /**
  * Golden Path App Routes
  * This is an example of how to define routes in Avax.
  */
-$router = static function (RouteBuilder $routes): void {
+$router = static function (RouterInterface $routes): void {
     $routes->get('/', static fn() => [
         'name' => 'Avax Golden Path App',
         'version' => '1.0.0',

@@ -1,6 +1,6 @@
 # Broken Reference Groups
 
-## TEST-ONLY (68)
+## TEST-ONLY (71)
 
 - **ActiveConditionalGateway** [MINOR]
   - components/Application/Container/tests/Flows/ResolveService/ConditionalCompositionSmokeTest.php:44 (class-const-fetch)
@@ -90,6 +90,9 @@
   - tests/Integration/RouterHardeningTest.php:261 (class-const-fetch)
   - tests/Integration/RouterIntegrationTest.php:19 (use-statement)
   - tests/Integration/RouterIntegrationTest.php:229 (class-const-fetch)
+- **Avax\Components\HTTP\Response\Response** [MINOR]
+  - tests/fixtures/routes_with_null_callable.php:6 (use-statement)
+  - tests/fixtures/routes_with_null_callable.php:22 (static-call)
 - **Avax\Components\HTTP\Router\RouterInterface** [MINOR]
   - tests/Integration/Framework/HandleIncomingHttpIntegrationTest.php:7 (use-statement)
 - **Avax\Components\HTTP\Router\RouterRuntimeInterface** [MINOR]
@@ -102,6 +105,11 @@
 - **Avax\Components\Operations\Resilience\System\Capabilities\Fallback\System\PublicSurface\Fallback** [MINOR]
   - tests/Integration/GoldenPath/GoldenPathTest.php:11 (use-statement)
   - tests/Integration/GoldenPath/GoldenPathTest.php:72 (static-call)
+- **Avax\Components\Operations\Tasks\System\Capabilities\Queue\Queue** [MINOR]
+  - tests/Integration/Components/QueueTest.php:7 (use-statement)
+  - tests/Integration/Components/QueueTest.php:15 (static-call)
+  - tests/Integration/Components/QueueTest.php:19 (static-call)
+  - tests/Integration/Components/QueueTest.php:28 (static-call)
 - **Avax\Components\Security\System\System\PublicSurface\Security** [MINOR]
   - tests/Integration/GoldenPath/GoldenPathTest.php:12 (use-statement)
   - tests/Integration/GoldenPath/GoldenPathTest.php:97 (static-call)
@@ -125,6 +133,10 @@
   - tests/Integration/AppKernelIntegrationTest.php:69 (new)
   - tests/Integration/AppKernelIntegrationTest.php:99 (new)
   - tests/Integration/AppKernelIntegrationTest.php:121 (new)
+- **Avax\HTTP\RouterBootstrapper** [CRITICAL]
+  - tests/Integration/AppKernelIntegrationTest.php:13 (use-statement)
+  - tests/Integration/AppKernelIntegrationTest.php:34 (property-type)
+  - tests/Integration/AppKernelIntegrationTest.php:181 (new)
 - **Avax\HTTP\Router\RouterInterface** [MINOR]
   - tests/Integration/AppKernelIntegrationTest.php:11 (use-statement)
   - tests/Integration/AppKernelIntegrationTest.php:28 (property-type)
@@ -324,276 +336,11 @@
 ## DOCS-ONLY (0)
 
 
-## NON-PRODUCTION (24)
+## NON-PRODUCTION (138)
 
 - **Avax\Components\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware** [MINOR]
   - examples/minimal-http-app/config/middleware.php:12 (use-statement)
   - examples/minimal-http-app/config/middleware.php:34 (class-const-fetch)
-- **Avax\Components\HTTP\Middleware\CorsMiddleware** [MINOR]
-  - examples/minimal-http-app/config/middleware.php:13 (use-statement)
-  - examples/minimal-http-app/config/middleware.php:31 (class-const-fetch)
-- **Avax\Components\HTTP\Middleware\ExceptionHandlerMiddleware** [MINOR]
-  - examples/minimal-http-app/config/middleware.php:14 (use-statement)
-  - examples/minimal-http-app/config/middleware.php:24 (class-const-fetch)
-- **Avax\Components\HTTP\Middleware\JsonResponseMiddleware** [MINOR]
-  - examples/minimal-http-app/config/middleware.php:15 (use-statement)
-  - examples/minimal-http-app/config/middleware.php:33 (class-const-fetch)
-- **Avax\Components\HTTP\Middleware\SecurityHeadersMiddleware** [MINOR]
-  - examples/minimal-http-app/config/middleware.php:18 (use-statement)
-  - examples/minimal-http-app/config/middleware.php:25 (class-const-fetch)
-- **Avax\Config\Architecture\DDD\AppPath** [MINOR]
-  - examples/minimal-http-app/config/views.php:7 (use-statement)
-  - examples/minimal-http-app/config/views.php:18 (static-call)
-  - examples/minimal-http-app/config/views.php:19 (class-const-fetch)
-  - examples/minimal-http-app/config/filesystems.php:5 (use-statement)
-  - examples/minimal-http-app/config/filesystems.php:13 (static-call)
-- **Avax\Docs\Components\Api\Capabilities\OpenApi\OpenApiGenerator** [CRITICAL]
-  - docs/Components/PublicSurface/ApiDocumentation.php:7 (use-statement)
-  - docs/Components/PublicSurface/ApiDocumentation.php:17 (new)
-- **Avax\Docs\Components\Api\Capabilities\Swagger\SwaggerUi** [CRITICAL]
-  - docs/Components/PublicSurface/ApiDocumentation.php:8 (use-statement)
-  - docs/Components/PublicSurface/ApiDocumentation.php:22 (new)
-- **Avax\Facade\Facades\Route** [MINOR]
-  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:5 (use-statement)
-  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:20 (static-call)
-  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:23 (static-call)
-  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:26 (static-call)
-  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:30 (static-call)
-  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:36 (static-call)
-  - tests/fixtures/routes_with_null_callable.php:7 (use-statement)
-  - tests/fixtures/routes_with_null_callable.php:10 (static-call)
-  - tests/fixtures/routes_with_null_callable.php:15 (static-call)
-- **Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort** [CRITICAL]
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:7 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:14 (implements)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:7 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:10 (implements)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:7 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:10 (implements)
-  - labs/Integration/ObjectStorage/System/Capabilities/Health/ObjectStorageHealthReport.php:7 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/Health/CheckObjectStorageHealth.php:7 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/Health/CheckObjectStorageHealth.php:13 (constructor-param)
-- **Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult** [MINOR]
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:8 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:33 (return-type)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:43 (static-call)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:45 (static-call)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:8 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:17 (return-type)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:21 (static-call)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:8 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:22 (return-type)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:34 (static-call)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:37 (static-call)
-- **Avax\Integration\ObjectStorage\System\Foundation\Failure\ObjectStorageUnavailable** [MINOR]
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:9 (use-statement)
-- **Avax\Tooling\Architecture\FilesystemIterator** [MINOR]
-  - tooling/Architecture/check-runtime-leaks.php:33 (class-const-fetch)
-- **Avax\Tooling\Architecture\SplFileInfo** [MINOR]
-  - tooling/Architecture/check-runtime-leaks.php:37 (instanceof)
-- **Avax\Tooling\DependencyMap\Capabilities\Graph\DependencyGraph** [CRITICAL]
-  - tooling/DependencyMap/System/PublicSurface/DependencyMap.php:7 (use-statement)
-  - tooling/DependencyMap/System/PublicSurface/DependencyMap.php:11 (constructor-param)
-- **Avax\Tooling\Exception** [CRITICAL]
-  - tooling/RefVisitor.php:85 (catch)
-  - tooling/RefVisitor.php:424 (catch)
-- **Avax\Tooling\FilesystemIterator** [MINOR]
-  - tooling/generate-class-map.php:24 (class-const-fetch)
-- **Avax\Tooling\Refactor\FilesystemIterator** [MINOR]
-  - tooling/Refactor/FreezeComponentTaxonomy.php:732 (class-const-fetch)
-  - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:480 (class-const-fetch)
-  - tooling/Refactor/RepairTestLayer.php:186 (class-const-fetch)
-- **Avax\Tooling\Refactor\SplFileInfo** [MINOR]
-  - tooling/Refactor/FreezeComponentTaxonomy.php:736 (instanceof)
-  - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:484 (instanceof)
-  - tooling/Refactor/RepairTestLayer.php:190 (instanceof)
-- **Avax\Tooling\SplFileInfo** [MINOR]
-  - tooling/RefVisitor.php:43 (instanceof)
-- **Aws\PresignUrlMiddleware** [CRITICAL]
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:10 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:115 (new)
-- **Aws\S3\S3Client** [CRITICAL]
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:11 (use-statement)
-  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:134 (new)
-- **Presentation\HTTP\Middleware\OfficeIpRestrictionMiddleware** [MINOR]
-  - examples/minimal-http-app/config/middleware.php:20 (use-statement)
-  - examples/minimal-http-app/config/middleware.php:37 (class-const-fetch)
-- **SecurityFailure** [CRITICAL]
-  - test_decrypt_tmp.php:3 (extends)
-
-## VENDOR-EXTERNAL (5)
-
-- **Cron\CronExpression** [CRITICAL]
-  - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:7 (use-statement)
-  - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:14 (new)
-  - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:21 (new)
-  - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:28 (static-call)
-- **Memcached** [CRITICAL]
-  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:8 (use-statement)
-  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:13 (property-type)
-  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:19 (new)
-  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:62 (class-const-fetch)
-  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:70 (class-const-fetch)
-- **PhpCsFixer\Config** [CRITICAL]
-  - .php-cs-fixer.dist.php:14 (new)
-- **PhpCsFixer\Finder** [MINOR]
-  - .php-cs-fixer.dist.php:3 (static-call)
-- **Redis** [CRITICAL]
-  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:7 (use-statement)
-  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:12 (property-type)
-  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:21 (class-const-fetch)
-  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:26 (new)
-  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:43 (instanceof)
-  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:59 (instanceof)
-  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:78 (instanceof)
-  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:7 (use-statement)
-  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:15 (property-type)
-  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:30 (class-const-fetch)
-  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:35 (new)
-  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:65 (instanceof)
-  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:99 (instanceof)
-  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:118 (instanceof)
-  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:138 (instanceof)
-  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:7 (use-statement)
-  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:15 (property-type)
-  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:36 (instanceof)
-  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:56 (instanceof)
-  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:69 (instanceof)
-  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:80 (instanceof)
-  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:99 (class-const-fetch)
-  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:104 (new)
-  - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:9 (use-statement)
-  - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:14 (property-type)
-  - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:24 (new)
-  - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:103 (return-type)
-  - Code-Review-And-ToDo/archive/noncanonical-components/stage-02/Infrastructure/System/Capabilities/Cache/Redis.php:7 (use-statement)
-  - Code-Review-And-ToDo/archive/noncanonical-components/stage-02/Infrastructure/System/Capabilities/Cache/Redis.php:14 (property-type)
-  - Code-Review-And-ToDo/archive/noncanonical-components/stage-02/Infrastructure/System/Capabilities/Cache/Redis.php:29 (return-type)
-  - Code-Review-And-ToDo/archive/noncanonical-components/stage-02/Infrastructure/System/Capabilities/Cache/Redis.php:32 (new)
-  - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:8 (use-statement)
-  - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:15 (property-type)
-  - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:25 (new)
-
-## STALE-NAMESPACE (46)
-
-- **Avax\Components\Application\Cache\CompiledCache** [MINOR]
-  - components/Application/Cache/tests/Unit/Cache/PublicCacheClassesAutoloadTest.php:7 (use-statement)
-  - components/Application/Cache/tests/Unit/Cache/PublicCacheClassesAutoloadTest.php:24 (class-const-fetch)
-  - components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:8 (use-statement)
-  - components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:78 (static-call)
-  - components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:98 (static-call)
-  - components/Application/Cache/tests/Unit/Cache/Providers/RegisterCacheDependenciesTest.php:8 (use-statement)
-  - components/Application/Cache/tests/Unit/Cache/Providers/RegisterCacheDependenciesTest.php:81 (static-call)
-  - components/Application/Cache/tests/Unit/Cache/Providers/RegisterCacheDependenciesTest.php:96 (static-call)
-  - components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:8 (use-statement)
-  - components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:98 (class-const-fetch)
-  - components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:108 (class-const-fetch)
-  - components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:120 (static-call)
-  - components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:127 (static-call)
-  - components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:212 (static-call)
-  - components/Application/Cache/tests/Unit/Cache/PublicSurface/CacheReadRoutingTest.php:226 (static-call)
-  - components/Application/Cache/tests/Unit/Cache/NoTimeFunctionInSystemTest.php:8 (use-statement)
-  - components/Application/Cache/tests/Unit/Cache/NoTimeFunctionInSystemTest.php:53 (class-const-fetch)
-  - components/Application/Cache/Cache.php:86 (static-call)
-- **Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheOperation** [MINOR]
-  - components/Application/Cache/System/Capabilities/Observability/ObserveCache/CacheTrace.php:9 (param-type)
-- **Avax\Components\Application\Config\Architecture\DDD\AppPath** [MINOR]
-  - components/Application/Config/System/PublicSurface/shortcuts.php:9 (use-statement)
-  - components/Application/Config/System/PublicSurface/shortcuts.php:31 (static-call)
-  - components/Application/Config/functions.php:5 (use-statement)
-  - components/Application/Config/functions.php:33 (static-call)
-- **Avax\Components\Application\Config\Service\Config** [MINOR]
-  - components/Application/Config/System/PublicSurface/shortcuts.php:10 (use-statement)
-  - components/Application/Config/System/PublicSurface/shortcuts.php:18 (class-const-fetch)
-  - components/Application/Config/functions.php:6 (use-statement)
-  - components/Application/Config/functions.php:19 (class-const-fetch)
-- **Avax\Components\Application\Container\Core\Capabilities\Binding\Binders\Binder** [MINOR]
-  - components/Application/Filesystem/System/Configuration/RegisterFilesystem.php:7 (use-statement)
-- **Avax\Components\Application\Container\Core\Capabilities\Binding\BindingRepository** [MINOR]
-  - components/Application/Filesystem/System/Configuration/RegisterFilesystem.php:8 (use-statement)
-  - components/Application/Filesystem/System/Configuration/RegisterFilesystem.php:16 (param-type)
-- **Avax\Components\Application\Container\Core\Exceptions\FoundationContainerException** [MINOR]
-  - components/Presentation/View/TemplateEngine.php:14 (use-statement)
-- **Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy** [MINOR]
-  - components/Application/Container/System/ContainerInterface.php:14 (use-statement)
-  - components/Application/Container/System/ContainerInterface.php:281 (return-type)
-  - components/Application/Container/System/Foundation/DIContainer.php:21 (use-statement)
-  - components/Application/Container/System/Foundation/DIContainer.php:493 (return-type)
-  - components/Application/Container/System/ContextContainer.php:22 (use-statement)
-  - components/Application/Container/System/ContextContainer.php:408 (return-type)
-- **Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\SharedLifetime** [MINOR]
-  - components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:11 (use-statement)
-  - components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:183 (class-const-fetch)
-  - components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:195 (class-const-fetch)
-  - components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:204 (class-const-fetch)
-- **Avax\Components\Application\Container\System\ContainerFacade** [MINOR]
-  - components/Application/Container/functions.php:7 (use-statement)
-  - components/Application/Container/functions.php:19 (static-call)
-- **Avax\Components\Application\Filesystem\System\PublicSurface\FilesystemInterfaceInterface** [MINOR]
-  - components/Application/Filesystem/System/Configuration/RegisterFilesystem.php:12 (use-statement)
-- **Avax\Components\Application\Text\Pattern** [MINOR]
-  - components/Application/Validation/System/Capabilities/Standard/Email/ValidateEmail.php:7 (use-statement)
-  - components/Application/Validation/System/Capabilities/Standard/Email/ValidateEmail.php:32 (static-call)
-- **Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\DefaultValue** [MINOR]
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:7 (use-statement)
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:111 (class-const-fetch)
-- **Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Optional** [MINOR]
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:12 (use-statement)
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:88 (class-const-fetch)
-- **Avax\Components\DataFoundation\Collection** [MINOR]
-  - components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:8 (use-statement)
-  - components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:26 (property-type)
-  - components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:63 (return-type)
-  - components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:81 (return-type)
-  - components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:137 (return-type)
-  - components/Application/Config/System/Capabilities/Configuration/AppConfigurator.php:164 (return-type)
-  - components/Application/Config/Configurator/AppConfigurator.php:8 (use-statement)
-  - components/Application/Config/Configurator/AppConfigurator.php:25 (property-type)
-  - components/Application/Config/Configurator/AppConfigurator.php:65 (return-type)
-  - components/Application/Config/Configurator/AppConfigurator.php:83 (return-type)
-  - components/Application/Config/Configurator/AppConfigurator.php:138 (return-type)
-  - components/Application/Config/Configurator/AppConfigurator.php:163 (return-type)
-- **Avax\Components\DataStack\Data\Exceptions\InvalidFlowException** [MINOR]
-  - components/DataStack/Data/System/Flows/Window/Window.php:8 (use-statement)
-  - components/DataStack/Data/System/Flows/Window/Window.php:30 (static-call)
-  - components/DataStack/Data/System/Flows/Window/Window.php:34 (static-call)
-  - components/DataStack/Data/System/Flows/Batch/Batch.php:8 (use-statement)
-  - components/DataStack/Data/System/Flows/Batch/Batch.php:30 (static-call)
-  - components/DataStack/Data/System/Flows/Pipeline/Pipeline.php:7 (use-statement)
-  - components/DataStack/Data/System/Flows/Pipeline/Pipeline.php:32 (static-call)
-- **Avax\Components\DataStack\Data\Exceptions\InvalidValueException** [MINOR]
-  - components/DataStack/Data/System/Capabilities/Collections/Internal/Composites/RecordField.php:7 (use-statement)
-  - components/DataStack/Data/System/Capabilities/Collections/Internal/Composites/RecordField.php:19 (static-call)
-  - components/DataStack/Data/System/Capabilities/Collections/Internal/Values/Result/Success.php:7 (use-statement)
-  - components/DataStack/Data/System/Capabilities/Collections/Internal/Values/Result/Success.php:34 (static-call)
-  - components/DataStack/Data/System/Capabilities/Collections/Internal/Values/Result/Failure.php:7 (use-statement)
-  - components/DataStack/Data/System/Capabilities/Collections/Internal/Values/Result/Failure.php:28 (static-call)
-- **Avax\Components\DataStack\Data\Internal\Iteration\NormalizedIterable** [MINOR]
-  - components/DataStack/Data/System/Flows/Window/Window.php:9 (use-statement)
-  - components/DataStack/Data/System/Flows/Window/Window.php:37 (static-call)
-  - components/DataStack/Data/System/Flows/Batch/Batch.php:9 (use-statement)
-  - components/DataStack/Data/System/Flows/Batch/Batch.php:35 (static-call)
-- **Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Compatibility\LegacyAbstractDTO** [MINOR]
-  - components/DataStack/Data/System/Capabilities/DataShape/ReadConstructorDataFields.php:8 (use-statement)
-  - components/DataStack/Data/System/Capabilities/DataShape/ReadConstructorDataFields.php:35 (class-const-fetch)
-  - components/DataStack/Data/System/Capabilities/DataShape/ReadConstructorDataFields.php:36 (class-const-fetch)
-- **Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\DataTransferConfig** [MINOR]
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:31 (property-type)
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:33 (param-type)
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:72 (static-call)
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:179 (return-type)
-  - components/DataStack/Data/System/Capabilities/DataTransfer/DataTransfer.php:181 (static-call)
-- **Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\BaseMigration** [MINOR]
-  - components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:7 (use-statement)
-  - components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:56 (instanceof)
-  - components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:89 (return-type)
-  - components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:93 (instanceof)
-- **Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\System\Capabilities\Detection\NPlusOneDetector** [MINOR]
-  - components/DataStack/Database/System/Capabilities/QueryGovernance/QueryGovernance.php:7 (use-statement)
-  - components/DataStack/Database/System/Capabilities/QueryGovernance/QueryGovernance.php:31 (static-call)
-- **Avax\Components\DataStack\Database\System\Capabilities\QueryGovernance\System\Capabilities\Detection\SlowQueryDetector** [MINOR]
-  - components/DataStack/Database/System/Capabilities/QueryGovernance/QueryGovernance.php:8 (use-statement)
-  - components/DataStack/Database/System/Capabilities/QueryGovernance/QueryGovernance.php:36 (static-call)
 - **Avax\Components\Database\System\Capabilities\Connections\Connections** [CRITICAL]
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:7 (use-statement)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:23 (constructor-param)
@@ -656,54 +403,27 @@
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Transactions.php:15 (constructor-param)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:14 (use-statement)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:28 (constructor-param)
-- **Avax\Components\Filesystem\System\Capabilities\Storage\StorageInterface** [MINOR]
-  - components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:7 (use-statement)
-  - components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:18 (property-type)
-  - components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:20 (param-type)
-  - components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:30 (return-type)
-  - components/Application/Filesystem/System/PublicSurface/FilesystemStorage.php:32 (instanceof)
-- **Avax\Components\HTTP\Response\Response** [MINOR]
-  - components/Presentation/View/System/PublicSurface/shortcuts.php:9 (use-statement)
-  - components/Presentation/View/System/PublicSurface/shortcuts.php:25 (static-call)
-  - tests/fixtures/routes_with_null_callable.php:6 (use-statement)
-  - tests/fixtures/routes_with_null_callable.php:22 (static-call)
-- **Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Orchestration\System\Capabilities\Kubernetes\GracefulStop** [MINOR]
-  - components/Operations/ApplicationWorkflow/System/Capabilities/Orchestration/Orchestration.php:7 (use-statement)
-  - components/Operations/ApplicationWorkflow/System/Capabilities/Orchestration/Orchestration.php:40 (static-call)
-- **Avax\Components\Operations\Events\System\Capabilities\EventDispatcherInterface** [MINOR]
-  - components/Operations/Events/System/Configuration/RegisterEventDependencies.php:7 (use-statement)
-  - components/Operations/Events/System/Configuration/RegisterEventDependencies.php:12 (param-type)
-- **Avax\Components\Operations\MessageBus\System\Capabilities\Bus\Closure** [MINOR]
-  - components/Operations/MessageBus/System/Capabilities/Bus/CommandBus.php:37 (return-type)
-- **Avax\Components\Operations\MessageBus\System\Capabilities\Bus\Command** [MINOR]
-  - components/Operations/MessageBus/System/Capabilities/Bus/CommandBus.php:23 (param-type)
-  - components/Operations/MessageBus/System/Capabilities/Bus/CommandBus.php:50 (param-type)
-- **Avax\Components\Operations\Notifications\System\Configuration\NotificationChannel** [MINOR]
-  - components/Operations/Notifications/System/Configuration/RegisterNotificationDependencies.php:11 (param-type)
-- **Avax\Components\Operations\Resilience\System\Capabilities\Idempotency\System\Capabilities\Keys\IdempotencyStore** [MINOR]
-  - components/Operations/Resilience/System/Capabilities/Idempotency/Idempotency.php:7 (use-statement)
-  - components/Operations/Resilience/System/Capabilities/Idempotency/Idempotency.php:12 (property-type)
-  - components/Operations/Resilience/System/Capabilities/Idempotency/Idempotency.php:19 (return-type)
-- **Avax\Components\Operations\Tasks\System\Capabilities\Queue\Queue** [MINOR]
-  - components/Operations/Mail/System/Capabilities/Queue/MailQueue.php:7 (use-statement)
-  - components/Operations/Mail/System/Capabilities/Queue/MailQueue.php:13 (static-call)
-  - components/Operations/Mail/System/Capabilities/Queue/MailQueue.php:22 (static-call)
-  - components/Operations/Mail/System/Capabilities/Queue/MailQueue.php:39 (static-call)
-  - tests/Integration/Components/QueueTest.php:7 (use-statement)
-  - tests/Integration/Components/QueueTest.php:15 (static-call)
-  - tests/Integration/Components/QueueTest.php:19 (static-call)
-  - tests/Integration/Components/QueueTest.php:28 (static-call)
-- **Avax\Components\Operations\Tasks\System\Foundation\JobInterface** [MINOR]
-  - components/Operations/Queue/System/Capabilities/Queue/Queue.php:7 (use-statement)
-  - components/Operations/Queue/System/Capabilities/Queue/Queue.php:15 (param-type)
-  - components/Operations/Queue/System/Capabilities/Queue/Queue.php:31 (param-type)
-  - components/Operations/Queue/System/Capabilities/Queue/Queue.php:107 (instanceof)
-- **Avax\Components\Presentation\View\System\Capabilities\TemplateEngineInterface** [MINOR]
-  - components/Presentation/View/System/Configuration/RegisterViewDependencies.php:7 (use-statement)
-  - components/Presentation/View/System/Configuration/RegisterViewDependencies.php:13 (param-type)
-
-## REAL-PRODUCTION (102)
-
+- **Avax\Components\HTTP\Middleware\CorsMiddleware** [MINOR]
+  - examples/minimal-http-app/config/middleware.php:13 (use-statement)
+  - examples/minimal-http-app/config/middleware.php:31 (class-const-fetch)
+- **Avax\Components\HTTP\Middleware\ExceptionHandlerMiddleware** [MINOR]
+  - examples/minimal-http-app/config/middleware.php:14 (use-statement)
+  - examples/minimal-http-app/config/middleware.php:24 (class-const-fetch)
+- **Avax\Components\HTTP\Middleware\JsonResponseMiddleware** [MINOR]
+  - examples/minimal-http-app/config/middleware.php:15 (use-statement)
+  - examples/minimal-http-app/config/middleware.php:33 (class-const-fetch)
+- **Avax\Components\HTTP\Middleware\SecurityHeadersMiddleware** [MINOR]
+  - examples/minimal-http-app/config/middleware.php:18 (use-statement)
+  - examples/minimal-http-app/config/middleware.php:25 (class-const-fetch)
+- **Avax\Config\Architecture\DDD\AppPath** [MINOR]
+  - examples/minimal-http-app/config/views.php:7 (use-statement)
+  - examples/minimal-http-app/config/views.php:18 (static-call)
+  - examples/minimal-http-app/config/views.php:19 (class-const-fetch)
+  - examples/minimal-http-app/config/filesystems.php:5 (use-statement)
+  - examples/minimal-http-app/config/filesystems.php:13 (static-call)
+- **Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO** [CRITICAL]
+  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:7 (use-statement)
+  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:34 (extends)
 - **Avax\DataFoundation\Validation\Attributes\Rules\IntegerRule** [MINOR]
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:8 (use-statement)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:37 (attribute)
@@ -906,11 +626,83 @@
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Exceptions/PoolLimitReachedException.php:33 (extends)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Exceptions/ConnectionFailure.php:7 (use-statement)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Exceptions/ConnectionFailure.php:32 (extends)
-- **Avax\HTTP\Router\System\Flows\RegisterRoutes\Definitions\RouteBuilder** [MINOR]
-  - examples/golden-path-app/routes/web.php:5 (use-statement)
-  - routes/web.php:7 (use-statement)
-- **Avax\Operations\RuntimeSupervision\System\Capabilities\Health\SupervisorHealthReport** [MINOR]
-  - components/Operations/RuntimeSupervision/System/PublicSurface/RuntimeSupervision.php:9 (use-statement)
+- **Avax\Docs\Components\Api\Capabilities\OpenApi\OpenApiGenerator** [CRITICAL]
+  - docs/Components/PublicSurface/ApiDocumentation.php:7 (use-statement)
+  - docs/Components/PublicSurface/ApiDocumentation.php:17 (new)
+- **Avax\Docs\Components\Api\Capabilities\Swagger\SwaggerUi** [CRITICAL]
+  - docs/Components/PublicSurface/ApiDocumentation.php:8 (use-statement)
+  - docs/Components/PublicSurface/ApiDocumentation.php:22 (new)
+- **Avax\Facade\Facades\Route** [MINOR]
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:5 (use-statement)
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:20 (static-call)
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:23 (static-call)
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:26 (static-call)
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:30 (static-call)
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:36 (static-call)
+  - tests/fixtures/routes_with_null_callable.php:7 (use-statement)
+  - tests/fixtures/routes_with_null_callable.php:10 (static-call)
+  - tests/fixtures/routes_with_null_callable.php:15 (static-call)
+- **Avax\HTTP\Response\Response** [MINOR]
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:6 (use-statement)
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:30 (static-call)
+  - examples/minimal-http-app/app/HTTP/routes/web.routes.php:36 (static-call)
+- **Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort** [CRITICAL]
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:7 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:14 (implements)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:7 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:10 (implements)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:7 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:10 (implements)
+  - labs/Integration/ObjectStorage/System/Capabilities/Health/ObjectStorageHealthReport.php:7 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/Health/CheckObjectStorageHealth.php:7 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/Health/CheckObjectStorageHealth.php:13 (constructor-param)
+- **Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult** [MINOR]
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:8 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:33 (return-type)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:43 (static-call)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:45 (static-call)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:8 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:17 (return-type)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:21 (static-call)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:8 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:22 (return-type)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:34 (static-call)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:37 (static-call)
+- **Avax\Integration\ObjectStorage\System\Foundation\Failure\ObjectStorageUnavailable** [MINOR]
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:9 (use-statement)
+- **Avax\Tooling\Architecture\FilesystemIterator** [MINOR]
+  - tooling/Architecture/check-runtime-leaks.php:33 (class-const-fetch)
+- **Avax\Tooling\Architecture\SplFileInfo** [MINOR]
+  - tooling/Architecture/check-runtime-leaks.php:37 (instanceof)
+- **Avax\Tooling\DependencyMap\Capabilities\Graph\DependencyGraph** [CRITICAL]
+  - tooling/DependencyMap/System/PublicSurface/DependencyMap.php:7 (use-statement)
+  - tooling/DependencyMap/System/PublicSurface/DependencyMap.php:11 (constructor-param)
+- **Avax\Tooling\Exception** [CRITICAL]
+  - tooling/RefVisitor.php:85 (catch)
+  - tooling/RefVisitor.php:424 (catch)
+- **Avax\Tooling\FilesystemIterator** [MINOR]
+  - tooling/generate-class-map.php:24 (class-const-fetch)
+- **Avax\Tooling\Refactor\FilesystemIterator** [MINOR]
+  - tooling/Refactor/FreezeComponentTaxonomy.php:732 (class-const-fetch)
+  - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:480 (class-const-fetch)
+  - tooling/Refactor/RepairTestLayer.php:186 (class-const-fetch)
+- **Avax\Tooling\Refactor\SplFileInfo** [MINOR]
+  - tooling/Refactor/FreezeComponentTaxonomy.php:736 (instanceof)
+  - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:484 (instanceof)
+  - tooling/Refactor/RepairTestLayer.php:190 (instanceof)
+- **Avax\Tooling\SplFileInfo** [MINOR]
+  - tooling/RefVisitor.php:43 (instanceof)
+- **Aws\PresignUrlMiddleware** [CRITICAL]
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:10 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:115 (new)
+- **Aws\S3\S3Client** [CRITICAL]
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:11 (use-statement)
+  - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:134 (new)
+- **Presentation\HTTP\Middleware\OfficeIpRestrictionMiddleware** [MINOR]
+  - examples/minimal-http-app/config/middleware.php:20 (use-statement)
+  - examples/minimal-http-app/config/middleware.php:37 (class-const-fetch)
+- **SecurityFailure** [CRITICAL]
+  - test_decrypt_tmp.php:3 (extends)
 - **components\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface** [CRITICAL]
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/AvaxContainer/DatabaseServiceProvider.php:7 (use-statement)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/AvaxContainer/DatabaseServiceProvider.php:30 (implements)
@@ -1289,4 +1081,63 @@
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/AvaxContainer/DatabaseServiceProvider.php:65 (class-const-fetch)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Database.php:61 (return-type)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Database.php:63 (new)
+
+## VENDOR-EXTERNAL (5)
+
+- **Cron\CronExpression** [CRITICAL]
+  - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:7 (use-statement)
+  - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:14 (new)
+  - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:21 (new)
+  - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:28 (static-call)
+- **Memcached** [CRITICAL]
+  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:8 (use-statement)
+  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:13 (property-type)
+  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:19 (new)
+  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:62 (class-const-fetch)
+  - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:70 (class-const-fetch)
+- **PhpCsFixer\Config** [CRITICAL]
+  - .php-cs-fixer.dist.php:14 (new)
+- **PhpCsFixer\Finder** [MINOR]
+  - .php-cs-fixer.dist.php:3 (static-call)
+- **Redis** [CRITICAL]
+  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:7 (use-statement)
+  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:12 (property-type)
+  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:21 (class-const-fetch)
+  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:26 (new)
+  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:43 (instanceof)
+  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:59 (instanceof)
+  - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:78 (instanceof)
+  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:7 (use-statement)
+  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:15 (property-type)
+  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:30 (class-const-fetch)
+  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:35 (new)
+  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:65 (instanceof)
+  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:99 (instanceof)
+  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:118 (instanceof)
+  - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:138 (instanceof)
+  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:7 (use-statement)
+  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:15 (property-type)
+  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:36 (instanceof)
+  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:56 (instanceof)
+  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:69 (instanceof)
+  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:80 (instanceof)
+  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:99 (class-const-fetch)
+  - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:104 (new)
+  - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:9 (use-statement)
+  - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:14 (property-type)
+  - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:24 (new)
+  - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:103 (return-type)
+  - Code-Review-And-ToDo/archive/noncanonical-components/stage-02/Infrastructure/System/Capabilities/Cache/Redis.php:7 (use-statement)
+  - Code-Review-And-ToDo/archive/noncanonical-components/stage-02/Infrastructure/System/Capabilities/Cache/Redis.php:14 (property-type)
+  - Code-Review-And-ToDo/archive/noncanonical-components/stage-02/Infrastructure/System/Capabilities/Cache/Redis.php:29 (return-type)
+  - Code-Review-And-ToDo/archive/noncanonical-components/stage-02/Infrastructure/System/Capabilities/Cache/Redis.php:32 (new)
+  - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:8 (use-statement)
+  - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:15 (property-type)
+  - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:25 (new)
+
+## STALE-NAMESPACE (0)
+
+
+## REAL-PRODUCTION (0)
+
 

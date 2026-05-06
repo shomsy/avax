@@ -27,7 +27,7 @@ final class CacheServiceProvider extends ServiceProvider
             $this->namedCaches['default'] = ['store' => 'in_memory'];
         }
 
-        $this->app->singleton(id: CacheRegistry::class, implementation: function () {
+        $this->container->singleton(abstract: CacheRegistry::class, concrete: function () {
             $registry = new CacheRegistry();
 
             foreach ($this->namedCaches as $name => $config) {
@@ -37,7 +37,7 @@ final class CacheServiceProvider extends ServiceProvider
             return $registry;
         });
 
-        $this->app->singleton(id: CacheFacade::class, implementation: function ($app) {
+        $this->container->singleton(abstract: CacheFacade::class, concrete: function ($app) {
             $compiledCache = $this->compiledCacheDirectory !== null
                 ? $app->get(id: CompiledCacheContract::class)
                 : null;
@@ -45,7 +45,7 @@ final class CacheServiceProvider extends ServiceProvider
             return new CacheFacade($app->get(id: CacheRegistry::class), $compiledCache);
         });
 
-        $this->app->singleton(id: ReadFromCache::class, implementation: function ($app) {
+        $this->container->singleton(abstract: ReadFromCache::class, concrete: function ($app) {
             $compiledCache = $this->compiledCacheDirectory !== null
                 ? $app->get(id: CompiledCacheContract::class)
                 : null;
@@ -53,20 +53,20 @@ final class CacheServiceProvider extends ServiceProvider
             return new ReadFromCache($app->get(id: CacheRegistry::class), $compiledCache);
         });
 
-        $this->app->singleton(id: CacheContract::class, implementation: static function ($app) {
+        $this->container->singleton(abstract: CacheContract::class, concrete: static function ($app) {
             return $app->get(id: CacheRegistry::class)->default();
         });
 
         if ($this->compiledCacheDirectory !== null) {
-            $this->app->singleton(id: CompiledCacheContract::class, implementation: function () {
+            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: function () {
                 return (new BuildCompiledCache())->inDirectory(directory: $this->compiledCacheDirectory);
             });
         }
 
-        Cache::use(cache: $this->app->get(id: CacheContract::class));
+        Cache::use(cache: $this->container->get(id: CacheContract::class));
 
         if ($this->compiledCacheDirectory !== null) {
-            CompiledCache::use(compiledCacheContract: $this->app->get(id: CompiledCacheContract::class));
+            CompiledCache::use(compiledCacheContract: $this->container->get(id: CompiledCacheContract::class));
         }
     }
 

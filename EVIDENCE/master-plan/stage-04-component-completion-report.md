@@ -76,12 +76,17 @@ Which items remain blockers before V1 Kernel Green can be claimed?
 - `components/Operations/ApplicationWorkflow/System/Flows/Saga/ResumeSaga/MarkSagaAsUnrecoverable.php`
 - `tests/Unit/Components/Application/FeatureFlags/FeatureFlagsTest.php`
 - `tests/Unit/Components/Application/Pipeline/PipelineCapabilitiesTest.php`
+- `components/CLI/Console/System/Capabilities/Input/ConsoleInput.php`
+- `components/CLI/Console/System/PublicSurface/Command.php`
+- `tests/Unit/Components/CLI/Console/ConsoleCapabilitiesTest.php`
 
 Production changes were restricted to Stage 04 static/component proof:
 
 - removed unused `describeResponsibility()` methods with no call sites
 - removed duplicate inline production definitions from FeatureFlags and Pipeline public/capability files
 - repaired `StagePipeline` closure invocation uncovered by the new Pipeline proof
+- implemented required CLI argument validation and positional binding by name
+- improved `Command` and `ConsoleInput` robustness for argument lookup
 
 ## Evidence Folder
 
@@ -115,13 +120,15 @@ Previous Stage 04 evidence folders were not overwritten.
 
 Additional focused repair/proof commands:
 
-| Command                                                                                                                                                            | Log                                                                                         | Exit | Result                       |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|-----:|------------------------------|
-| `rg -n "describeResponsibility\(" components/Operations/ApplicationWorkflow/System`                                                                                | `stage-04-applicationworkflow-repair-validation/00-describe-responsibility-scan.log`        |    1 | PASS as no matches           |
-| `vendor/bin/phpunit --no-coverage --filter FeatureFlagsTest`                                                                                                       | `stage-04-featureflags-proof-validation/00-phpunit-featureflags.log`                        |    0 | PASS, 5 tests, 9 assertions  |
-| `vendor/bin/phpstan analyse components/Application/FeatureFlags tests/Unit/Components/Application/FeatureFlags --memory-limit=1G --error-format=raw --no-progress` | `stage-04-featureflags-proof-validation/00-phpstan-featureflags-after-test-type-repair.raw` |    0 | PASS                         |
-| `vendor/bin/phpunit --no-coverage --filter PipelineCapabilitiesTest`                                                                                               | `00-phpunit-pipeline-after-closure-call-repair.log`                                         |    0 | PASS, 5 tests, 11 assertions |
-| `vendor/bin/phpstan analyse components/Application/Pipeline tests/Unit/Components/Application/Pipeline --memory-limit=1G --error-format=raw --no-progress`         | `00-phpstan-pipeline.raw`                                                                   |    0 | PASS                         |
+| Command                                                                                                                                                            | Log                                                                                         | Exit | Result                        |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|-----:|-------------------------------|
+| `rg -n "describeResponsibility\(" components/Operations/ApplicationWorkflow/System`                                                                                | `stage-04-applicationworkflow-repair-validation/00-describe-responsibility-scan.log`        |    1 | PASS as no matches            |
+| `vendor/bin/phpunit --no-coverage --filter FeatureFlagsTest`                                                                                                       | `stage-04-featureflags-proof-validation/00-phpunit-featureflags.log`                        |    0 | PASS, 5 tests, 9 assertions   |
+| `vendor/bin/phpstan analyse components/Application/FeatureFlags tests/Unit/Components/Application/FeatureFlags --memory-limit=1G --error-format=raw --no-progress` | `stage-04-featureflags-proof-validation/00-phpstan-featureflags-after-test-type-repair.raw` |    0 | PASS                          |
+| `vendor/bin/phpunit --no-coverage --filter PipelineCapabilitiesTest`                                                                                               | `00-phpunit-pipeline-after-closure-call-repair.log`                                         |    0 | PASS, 5 tests, 11 assertions  |
+| `vendor/bin/phpstan analyse components/Application/Pipeline tests/Unit/Components/Application/Pipeline --memory-limit=1G --error-format=raw --no-progress`         | `00-phpstan-pipeline.raw`                                                                   |    0 | PASS                          |
+| `vendor/bin/phpunit --no-coverage --filter ConsoleCapabilitiesTest`                                                                                                | `00-phpunit-console-behavior-proof.log`                                                     |    0 | PASS, 15 tests, 47 assertions |
+| `vendor/bin/phpstan analyse components/CLI/Console tests/Unit/Components/CLI/Console --memory-limit=1G --error-format=raw --no-progress`                           | `00-phpstan-console.raw`                                                                    |    0 | PASS                          |
 
 ## Validation Summary
 
@@ -145,6 +152,7 @@ performance naming: GREEN exit code, warnings recorded
 ApplicationWorkflow describeResponsibility scan: GREEN, no matches remain
 FeatureFlags focused proof: GREEN
 Pipeline focused proof: GREEN
+Console focused behavior proof: GREEN
 ```
 
 The validation commands were run with approved escalation because the local PHP/Composer wrapper needs Docker socket
@@ -235,6 +243,10 @@ Stage 04 component-completion blockers:
   adapter boundaries need explicit component proof before completion claims.
 - Component-local documentation and root test coverage are uneven.
 - Performance naming warnings remain for sleep/backoff style paths.
+- **CLI positional argument binding is now proven.** Current behavior correctly binds positional arguments to
+  named parameters from the command signature. Required arguments are validated before execution, failing with
+  `Command::INVALID` if missing. Exit code propagation and index-independent lookup are verified. Console component
+  remains `STATIC_GREEN_BEHAVIOR_PARTIAL` pending documentation and operator diagnostic proof.
 
 ## Next Allowed Action
 

@@ -9,8 +9,11 @@ namespace Avax\Components\CLI\Console\System\Capabilities\Input;
  */
 class ConsoleInput
 {
-    /** Positional arguments */
+    /** Positional arguments (indexed) */
     private array $arguments = [];
+
+    /** @var array<string, mixed> Named arguments mapped by declared argument name */
+    private array $namedArguments = [];
 
     /** Named options (--key=value or -k) */
     private array $options = [];
@@ -72,12 +75,45 @@ class ConsoleInput
     }
 
     /**
+     * Map positional arguments to declared argument names from command signature.
+     *
+     * @param array<string> $argumentNames Ordered list of argument names from signature
+     */
+    public function bindNamedArguments(array $argumentNames) : self
+    {
+        $this->namedArguments = [];
+
+        foreach ($argumentNames as $index => $name) {
+            if (isset($this->arguments[$index])) {
+                $this->namedArguments[$name] = $this->arguments[$index];
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Get a positional argument by index or name.
      */
     public function getArgument(int|string $key, mixed $default = null): mixed
     {
-        // Named arguments mapped from command definition
+        if (is_string($key) && array_key_exists($key, $this->namedArguments)) {
+            return $this->namedArguments[$key];
+        }
+
         return $this->arguments[$key] ?? $default;
+    }
+
+    /**
+     * Check if a positional argument exists by index or name.
+     */
+    public function hasArgument(int|string $key) : bool
+    {
+        if (is_string($key)) {
+            return array_key_exists($key, $this->namedArguments);
+        }
+
+        return array_key_exists($key, $this->arguments);
     }
 
     /**

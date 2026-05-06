@@ -53,7 +53,45 @@ abstract class Command
         $this->input = $consoleInput;
         $this->output = $consoleOutput;
 
+        $argumentMetadata = $this->parseArgumentMetadataFromSignature($this->signature);
+        $this->input->bindNamedArguments(array_column($argumentMetadata, 'name'));
+
+        foreach ($argumentMetadata as $meta) {
+            if ($meta['required'] && ! $this->input->hasArgument($meta['name'])) {
+                $this->output->error(sprintf('Missing required argument: %s', $meta['name']));
+
+                return self::INVALID;
+            }
+        }
+
         return $this->handle();
+    }
+
+    /**
+     * Extract argument metadata from signature like "make:controller {name} {entity?}"
+     *
+     * @return array<int, array{name: string, required: bool}> Ordered list of argument metadata
+     */
+    private function parseArgumentMetadataFromSignature(string $signature) : array
+    {
+        $metadata = [];
+
+        if ($signature === '') {
+            return $metadata;
+        }
+
+        preg_match_all('/\{([^}]+)\}/', $signature, $matches);
+
+        foreach ($matches[1] as $arg) {
+            $isRequired = ! str_ends_with($arg, '?');
+            $name       = rtrim($arg, '?');
+            $metadata[] = [
+                'name'     => $name,
+                'required' => $isRequired,
+            ];
+        }
+
+        return $metadata;
     }
 
     /**
@@ -103,9 +141,9 @@ abstract class Command
     }
 
     /**
-     * Get an argument value by name.
+     * Get an argument value by name or index.
      */
-    protected function argument(string $key, mixed $default = null): mixed
+    protected function argument(string|int $key, mixed $default = null) : mixed
     {
         return $this->input->getArgument($key) ?? $default;
     }
